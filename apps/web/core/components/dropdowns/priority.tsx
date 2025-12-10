@@ -84,7 +84,7 @@ function BorderButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] rounded-sm text-11 px-2 py-0.5",
+          "h-full flex items-center gap-1.5 border-[0.5px] rounded-sm px-2  py-0.5",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
@@ -121,7 +121,9 @@ function BorderButton(props: ButtonProps) {
           ) : (
             <SignalHigh className="size-3" />
           ))}
-        {!hideText && <span className="flex-grow truncate">{priorityDetails?.title ?? placeholder}</span>}
+        {!hideText && (
+          <span className="flex-grow truncate text-caption-sm-medium">{priorityDetails?.title ?? placeholder}</span>
+        )}
         {dropdownArrow && (
           <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
@@ -167,7 +169,7 @@ function BackgroundButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 rounded-sm text-11 px-2 py-0.5",
+          "h-full flex items-center gap-1.5 rounded-sm  px-2 py-0.5",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
@@ -205,7 +207,9 @@ function BackgroundButton(props: ButtonProps) {
             <SignalHigh className="size-3" />
           ))}
         {!hideText && (
-          <span className="flex-grow truncate">{priorityDetails?.title ?? t("common.priority") ?? placeholder}</span>
+          <span className="flex-grow truncate text-caption-sm-medium">
+            {priorityDetails?.title ?? t("common.priority") ?? placeholder}
+          </span>
         )}
         {dropdownArrow && (
           <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
@@ -253,7 +257,7 @@ function TransparentButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full w-full flex items-center gap-1.5 rounded-sm text-11 px-2 py-0.5 hover:bg-layer-1",
+          "h-full w-full flex items-center gap-1.5 rounded-sm  px-2 py-0.5 hover:bg-layer-1",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
@@ -292,7 +296,9 @@ function TransparentButton(props: ButtonProps) {
             <SignalHigh className="size-3" />
           ))}
         {!hideText && (
-          <span className="flex-grow truncate">{priorityDetails?.title ?? t("common.priority") ?? placeholder}</span>
+          <span className="flex-grow truncate text-caption-sm-medium">
+            {priorityDetails?.title ?? t("common.priority") ?? placeholder}
+          </span>
         )}
         {dropdownArrow && (
           <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />

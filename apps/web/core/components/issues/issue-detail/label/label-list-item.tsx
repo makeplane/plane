@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import { CloseIcon } from "@plane/propel/icons";
+import { cn } from "@plane/utils";
 // types
 import { useLabel } from "@/hooks/store/use-label";
 import type { TLabelOperations } from "./root";
@@ -32,9 +33,13 @@ export const LabelListItem = observer(function LabelListItem(props: TLabelListIt
   return (
     <div
       key={labelId}
-      className={`transition-all relative flex items-center gap-1 truncate border border-subtle rounded-full text-11 p-0.5 px-1 group ${
-        !disabled ? "cursor-pointer hover:border-red-500/50 hover:bg-red-500/20" : "cursor-not-allowed"
-      } `}
+      className={cn(
+        "transition-all relative flex items-center gap-1 truncate border border-subtle rounded-full text-caption-sm-regular p-0.5 px-1 group",
+        {
+          "cursor-pointer hover:border-danger-strong hover:bg-danger-subtle": !disabled,
+          "cursor-not-allowed": disabled,
+        }
+      )}
       onClick={handleLabel}
     >
       <div
@@ -46,7 +51,7 @@ export const LabelListItem = observer(function LabelListItem(props: TLabelListIt
       <div className="truncate">{label.name}</div>
       {!disabled && (
         <div className="flex-shrink-0">
-          <CloseIcon className="transition-all h-2.5 w-2.5 group-hover:text-red-500" />
+          <CloseIcon className="transition-all h-2.5 w-2.5 group-hover:text-danger" />
         </div>
       )}
     </div>

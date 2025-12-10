@@ -130,14 +130,18 @@ export function LabelDropdown(props: ILabelDropdownProps) {
 
   const onOpen = useCallback(() => {
     if (!storeLabels && workspaceSlug && projectId)
-      fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
-  }, [storeLabels, workspaceSlug, projectId, fetchProjectLabels]);
+      fetchProjectLabels(workspaceSlug, projectId)
+        .then(() => setIsLoading(false))
+        .catch(() => {
+          setIsLoading(false);
+        });
+  }, [storeLabels, workspaceSlug, projectId, fetchProjectLabels, setIsLoading]);
 
   const toggleDropdown = useCallback(() => {
     if (!isOpen) onOpen();
     setIsOpen((prevIsOpen) => !prevIsOpen);
     if (isOpen && onClose) onClose();
-  }, [onOpen, onClose, isOpen]);
+  }, [onOpen, onClose, isOpen, setIsOpen]);
 
   const handleClose = () => {
     if (!isOpen) return;
@@ -159,6 +163,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
     e.stopPropagation();
     if (query !== "" && e.key === "Escape") {
       setQuery("");
+      e.preventDefault();
     }
 
     if (query !== "" && e.key === "Enter" && !e.nativeEvent.isComposing && canCreateLabel) {
@@ -190,7 +195,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
       <button
         ref={setReferenceElement}
         type="button"
-        className={`clickable flex w-full h-full items-center justify-center gap-1 text-11 ${fullWidth && "hover:bg-layer-1"} ${
+        className={`clickable flex w-full h-full items-center justify-center gap-1 text-caption-sm-regular ${fullWidth && "hover:bg-layer-1"} ${
           disabled
             ? "cursor-not-allowed text-secondary"
             : value.length <= maxRender
@@ -204,7 +209,17 @@ export function LabelDropdown(props: ILabelDropdownProps) {
         {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
       </button>
     ),
-    [buttonClassName, disabled, fullWidth, handleOnClick, hideDropdownArrow, label, maxRender, value.length]
+    [
+      buttonClassName,
+      disabled,
+      fullWidth,
+      handleOnClick,
+      hideDropdownArrow,
+      label,
+      maxRender,
+      value.length,
+      setReferenceElement,
+    ]
   );
 
   const preventPropagation = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -229,7 +244,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
         {isOpen && (
           <Combobox.Options className="fixed z-10" static>
             <div
-              className={`z-10 my-1 w-48 h-auto whitespace-nowrap rounded-sm border border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
+              className={`z-10 my-1 w-48 h-auto whitespace-nowrap rounded-sm border border-strong bg-surface-1 px-2 py-2.5 text-caption-sm-regular shadow-raised-200 focus:outline-none ${optionsClassName}`}
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}
@@ -238,7 +253,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
                 <Search className="h-3.5 w-3.5 text-tertiary" />
                 <Combobox.Input
                   ref={inputRef}
-                  className="w-full bg-transparent px-2 py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
+                  className="w-full bg-transparent px-2 py-1 text-caption-sm-regular text-secondary placeholder:text-placeholder focus:outline-none"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("common.search.label")}
