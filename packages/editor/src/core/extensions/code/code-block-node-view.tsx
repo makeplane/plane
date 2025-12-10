@@ -53,7 +53,7 @@ export function CodeBlockComponent({ node }: Props) {
         </button>
       </Tooltip>
 
-      <pre className="bg-surface-2 text-primary rounded-lg p-4 my-2">
+      <pre className="bg-layer-2 text-primary rounded-lg p-4 my-2">
         <NodeViewContent as="code" className="whitespace-pre-wrap" />
       </pre>
     </NodeViewWrapper>
