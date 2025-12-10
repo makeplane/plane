@@ -176,4 +176,4 @@ export const EditorContainer: FC<Props> = (props) => {
       </div>
     </>
   );
-}
+};
