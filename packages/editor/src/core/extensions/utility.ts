@@ -8,8 +8,6 @@ import type { TAdditionalActiveDropbarExtensions } from "@/plane-editor/types/ut
 import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
-// types
-import { PasteAssetPlugin } from "@/plugins/paste-asset";
 import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
 
 type TActiveDropbarExtensions =
@@ -82,7 +80,6 @@ export const UtilityExtension = (props: Props) => {
           flaggedExtensions,
           editor: this.editor,
         }),
-        PasteAssetPlugin(),
       ];
     },
 

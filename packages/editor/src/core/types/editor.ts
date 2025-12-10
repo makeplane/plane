@@ -118,6 +118,7 @@ export type EditorRefApi = {
   getDocumentInfo: () => TDocumentInfo;
   getHeadings: () => IMarking[];
   getMarkDown: () => string;
+  copyMarkdownToClipboard: () => void;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
   isAnyDropbarOpen: () => boolean;
@@ -164,6 +165,7 @@ export type IEditorProps = {
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
+  showPlaceholderOnEmpty?: boolean;
   tabIndex?: number;
   value?: string | null;
   extendedEditorProps: IEditorPropsExtended;

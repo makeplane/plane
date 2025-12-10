@@ -19,6 +19,7 @@ import { copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
 import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
 // helpers
+import { TimezoneSelect } from "@/components/global/timezone-select";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -30,6 +31,7 @@ const defaultValues: Partial<IWorkspace> = {
   url: "",
   organization_size: "2-10",
   logo_url: null,
+  timezone: "UTC",
 };
 
 export const WorkspaceDetails = observer(function WorkspaceDetails() {
@@ -62,64 +64,69 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
     const payload: Partial<IWorkspace> = {
       name: formData.name,
       organization_size: formData.organization_size,
+      timezone: formData.timezone,
     };
 
-    await updateWorkspace(currentWorkspace.slug, payload)
-      .then(() => {
-        captureSuccess({
-          eventName: WORKSPACE_TRACKER_EVENTS.update,
-          payload: { slug: currentWorkspace.slug },
-        });
-        setToast({
-          title: "Success!",
-          type: TOAST_TYPE.SUCCESS,
-          message: "Workspace updated successfully",
-        });
-      })
-      .catch((err) => {
-        captureError({
-          eventName: WORKSPACE_TRACKER_EVENTS.update,
-          payload: { slug: currentWorkspace.slug },
-          error: err,
-        });
-        console.error(err);
+    try {
+      await updateWorkspace(currentWorkspace.slug, payload);
+      captureSuccess({
+        eventName: WORKSPACE_TRACKER_EVENTS.update,
+        payload: { slug: currentWorkspace.slug },
       });
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
+      setToast({
+        title: "Success!",
+        type: TOAST_TYPE.SUCCESS,
+        message: "Workspace updated successfully",
+      });
+    } catch (err: unknown) {
+      captureError({
+        eventName: WORKSPACE_TRACKER_EVENTS.update,
+        payload: { slug: currentWorkspace.slug },
+        error: err instanceof Error ? err : new Error(String(err)),
+      });
+      console.error(err);
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300);
+    }
   };
 
   const handleRemoveLogo = async () => {
     if (!currentWorkspace) return;
 
-    await updateWorkspace(currentWorkspace.slug, {
-      logo_url: "",
-    })
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Workspace picture removed successfully.",
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "There was some error in deleting your profile picture. Please try again.",
-        });
+    try {
+      await updateWorkspace(currentWorkspace.slug, {
+        logo_url: "",
       });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Workspace picture removed successfully.",
+      });
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "There was some error in deleting your profile picture. Please try again.",
+      });
+    }
   };
 
   const handleCopyUrl = () => {
     if (!currentWorkspace) return;
 
-    copyUrlToClipboard(`${currentWorkspace.slug}`).then(() => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Workspace URL copied to the clipboard.",
+    void copyUrlToClipboard(`${currentWorkspace.slug}`)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Workspace URL copied to the clipboard.",
+        });
+        return undefined;
+      })
+      .catch(() => {
+        // Silently handle clipboard errors
       });
-    });
   };
 
   useEffect(() => {
@@ -264,9 +271,27 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.url)}
-                    className="w-full"
+                    className="w-full cursor-not-allowed rounded-md !bg-custom-background-90"
                     disabled
                   />
+                )}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1 ">
+              <h4 className="text-sm">{t("workspace_settings.settings.general.workspace_timezone")}</h4>
+              <Controller
+                name="timezone"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <>
+                    <TimezoneSelect
+                      value={value}
+                      onChange={onChange}
+                      buttonClassName="border-none"
+                      disabled={!isAdmin}
+                    />
+                  </>
                 )}
               />
             </div>
@@ -277,7 +302,9 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
               <Button
                 data-ph-element={WORKSPACE_TRACKER_ELEMENTS.UPDATE_WORKSPACE_BUTTON}
                 variant="primary"
-                onClick={handleSubmit(onSubmit)}
+                onClick={(e) => {
+                  void handleSubmit(onSubmit)(e);
+                }}
                 loading={isLoading}
               >
                 {isLoading ? t("updating") : t("workspace_settings.settings.general.update_workspace")}

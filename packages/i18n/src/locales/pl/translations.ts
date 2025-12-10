@@ -1581,6 +1581,7 @@ export default {
         name: "Nazwa przestrzeni roboczej",
         company_size: "Rozmiar firmy",
         url: "URL przestrzeni roboczej",
+        workspace_timezone: "Strefa czasowa przestrzeni roboczej",
         update_workspace: "Zaktualizuj przestrzeń",
         delete_workspace: "Usuń tę przestrzeń",
         delete_workspace_description:

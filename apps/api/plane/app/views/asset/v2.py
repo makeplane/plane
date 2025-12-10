@@ -766,7 +766,7 @@ class DuplicateAssetEndpoint(BaseAPIView):
 
         return {}
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def post(self, request, slug, asset_id):
         project_id = request.data.get("project_id", None)
         entity_id = request.data.get("entity_id", None)
@@ -792,7 +792,7 @@ class DuplicateAssetEndpoint(BaseAPIView):
 
         storage = S3Storage(request=request)
         original_asset = FileAsset.objects.filter(
-            workspace=workspace, id=asset_id, is_uploaded=True
+            id=asset_id, is_uploaded=True
         ).first()
 
         if not original_asset:
