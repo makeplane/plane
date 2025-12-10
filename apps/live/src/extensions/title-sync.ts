@@ -101,7 +101,7 @@ export class TitleSyncExtension implements Extension {
   private handleTitleChange(documentName: string, events: Y.YEvent<any>[]) {
     let title = "";
     events.forEach((event) => {
-      title = extractTextFromHTML(event.currentTarget.toJSON());
+      title = extractTextFromHTML(event.currentTarget.toJSON() as string);
     });
 
     // Get the manager for this document

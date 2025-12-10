@@ -27,7 +27,8 @@ import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web imports
-import { useRealtimePageEvents, type TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
+import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
+import { useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
 import { EditorAIMenu } from "@/plane-web/components/pages";
 import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
