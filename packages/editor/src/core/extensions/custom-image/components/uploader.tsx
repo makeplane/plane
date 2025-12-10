@@ -170,6 +170,11 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
 
   const isErrorState = failedToLoadImage || hasDuplicationFailed;
 
+  const borderColor =
+    selected && editor.isEditable && !isErrorState
+      ? "color-mix(in srgb, var(--border-color-accent-strong) 20%, transparent)"
+      : undefined;
+
   const getDisplayMessage = useCallback(() => {
     const isUploading = isImageBeingUploaded;
     if (isErrorState) {
@@ -202,11 +207,10 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
       className={cn(
         "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-tertiary bg-layer-1 border border-dashed transition-all duration-200 ease-in-out cursor-default",
         {
-          "border-subtle": !isErrorState,
-          "border-red-500": isErrorState,
+          "border-subtle": !(selected && editor.isEditable && !isErrorState),
           "hover:text-secondary hover:bg-layer-1-hover cursor-pointer": editor.isEditable && !isErrorState,
           "bg-layer-1-hover text-secondary": draggedInside && editor.isEditable && !isErrorState,
-          "text-accent-secondary bg-accent-primary/10 border-accent-strong-200/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
+          "text-accent-secondary bg-accent-primary/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
             selected && editor.isEditable && !isErrorState,
           "text-red-500 cursor-default": isErrorState,
           "hover:text-red-500 hover:bg-red-500/10": isErrorState && editor.isEditable,
@@ -214,6 +218,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
           "hover:bg-red-500/20": isErrorState && selected && editor.isEditable,
         }
       )}
+      style={borderColor ? { borderColor } : undefined}
       onDrop={onDrop}
       onDragOver={onDragEnter}
       onDragLeave={onDragLeave}
@@ -231,7 +236,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
           type="button"
           onClick={handleRetryClick}
           className={cn(
-            "flex items-center gap-1 px-2 py-1 text-11 font-medium text-red-500 rounded-md transition-all duration-200 ease-in-out hover:bg-red-500/20 hover:text-red-500",
+            "flex items-center gap-1 px-2 py-1 font-medium text-red-500 rounded-md transition-all duration-200 ease-in-out hover:bg-red-500/20 hover:text-red-500",
             {
               "bg-red-500/10": selected,
             }
@@ -239,7 +244,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
           title="Retry duplication"
         >
           <RotateCcw className="size-3" />
-          Retry
+          <span className="text-11">Retry</span>
         </button>
       )}
       <input

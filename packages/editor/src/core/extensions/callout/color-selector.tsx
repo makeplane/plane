@@ -43,7 +43,7 @@ export function CalloutBlockColorSelector(props: Props) {
           )}
           disabled={disabled}
         >
-          <span>Color</span>
+          <span className="text-12">Color</span>
           <ChevronDownIcon className="flex-shrink-0 size-3" />
         </button>
         {isOpen && (
