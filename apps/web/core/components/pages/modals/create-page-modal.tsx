@@ -14,6 +14,9 @@ import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageStore } from "@/plane-web/hooks/store";
 // local imports
 import { PageForm } from "./page-form";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { getUserRoleString, trackPageCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 
 type Props = {
   workspaceSlug: string;
@@ -45,6 +48,10 @@ export function CreatePageModal(props: Props) {
   const router = useAppRouter();
   // store hooks
   const { createPage } = usePageStore(storeType);
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+  const { data: currentUser } = useUser();
+  const { currentWorkspace } = useWorkspace();
+
   const handlePageFormData = <T extends keyof TPage>(key: T, value: TPage[T]) =>
     setPageFormData((prev) => ({ ...prev, [key]: value }));
 
@@ -64,12 +71,16 @@ export function CreatePageModal(props: Props) {
     try {
       const pageData = await createPage(pageFormData);
       if (pageData) {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            id: pageData.id,
-          },
-        });
+        if (currentWorkspace && currentUser) {
+          const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+          trackPageCreated(
+            { id: pageData.id ?? "", created_at: new Date().toISOString() },
+            currentWorkspace,
+            currentUser,
+            "project",
+            getUserRoleString(role)
+          );
+        }
         handleStateClear();
         if (redirectionEnabled) router.push(`/${workspaceSlug}/projects/${projectId}/pages/${pageData.id}`);
       }

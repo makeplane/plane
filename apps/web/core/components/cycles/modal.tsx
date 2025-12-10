@@ -18,6 +18,9 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { CycleService } from "@/services/cycle.service";
 // local imports
 import { CycleForm } from "./form";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { getUserRoleString, trackCycleCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 
 type CycleModalProps = {
   isOpen: boolean;
@@ -38,6 +41,10 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
   const { workspaceProjectIds } = useProject();
   const { createCycle, updateCycleDetails } = useCycle();
   const { isMobile } = usePlatformOS();
+
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+  const { data: currentUser } = useUser();
+  const { currentWorkspace } = useWorkspace();
 
   const { setValue: setCycleTab } = useLocalStorage<TCycleTabOptions>("cycle_tab", "active");
 
@@ -62,12 +69,16 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
           title: "Success!",
           message: "Cycle created successfully.",
         });
-        captureSuccess({
-          eventName: CYCLE_TRACKER_EVENTS.create,
-          payload: {
-            id: res.id,
-          },
-        });
+        if (currentWorkspace && currentUser) {
+          const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+          trackCycleCreated(
+            { id: res.id, created_at: new Date().toISOString() },
+            { id: projectId },
+            currentWorkspace,
+            currentUser,
+            getUserRoleString(role)
+          );
+        }
       })
       .catch((err) => {
         setToast({

@@ -17,6 +17,9 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { QuickAddIssueFormRoot } from "@/plane-web/components/issues/quick-add";
 // local imports
 import { CreateIssueToastActionItems } from "../../create-issue-toast-action-items";
+import { getUserRoleString, trackWorkItemCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 export type TQuickAddIssueForm = {
   ref: React.RefObject<HTMLFormElement>;
@@ -67,6 +70,12 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
   const { workspaceSlug, projectId } = useParams();
   // states
   const [isOpen, setIsOpen] = useState(isQuickAddOpen ?? false);
+
+  // store hooks
+  const { currentWorkspace } = useWorkspace();
+  const { data: currentUser } = useUser();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+
   // form info
   const {
     reset,
@@ -127,20 +136,26 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
         },
       });
 
-      await quickAddPromise
-        .then((res) => {
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.create,
-            payload: { id: res?.id },
-          });
-        })
-        .catch((error) => {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.create,
-            payload: { id: payload.id },
-            error: error as Error,
-          });
+      const quickAddRes = await quickAddPromise;
+
+      try {
+        if (currentWorkspace && currentUser && quickAddRes) {
+          const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+          trackWorkItemCreated(
+            { id: quickAddRes.id, created_at: new Date().toISOString() },
+            { id: projectId.toString() },
+            currentWorkspace,
+            currentUser,
+            getUserRoleString(role)
+          );
+        }
+      } catch (error) {
+        captureError({
+          eventName: WORK_ITEM_TRACKER_EVENTS.create,
+          payload: { id: payload.id },
+          error: error as Error,
         });
+      }
     }
   };
 

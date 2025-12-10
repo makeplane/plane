@@ -1,16 +1,15 @@
-import type { ReactNode } from "react";
-import { lazy, Suspense, useEffect, useCallback, useRef, useState } from "react";
 import { PostHogProvider as PHProvider } from "@posthog/react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import posthog from "posthog-js";
+import type { ReactNode } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 // constants
-import { GROUP_WORKSPACE_TRACKER_EVENT } from "@plane/constants";
 // hooks
-import { captureClick, joinEventGroup } from "@/helpers/event-tracker.helper";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { identifyUser, joinWorkspaceGroup } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { useInstance } from "@/hooks/store/use-instance";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUser, useUserPermissions, useUserProfile } from "@/hooks/store/user";
 // dynamic imports
 const PostHogPageView = lazy(function PostHogPageView() {
   return import("@/lib/posthog-view");
@@ -24,44 +23,27 @@ const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper
   const { children } = props;
   const { data: user } = useUser();
   const { data: profile } = useUserProfile();
-  const { currentWorkspace } = useWorkspace();
   const { instance } = useInstance();
-  const { workspaceSlug, projectId } = useParams();
-  const { getWorkspaceRoleByWorkspaceSlug, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
+  const { currentWorkspace } = useWorkspace();
   // refs
   const isInitializedRef = useRef(false);
   // states
   const [hydrated, setHydrated] = useState(false);
-  // derived values
-  const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(
-    workspaceSlug?.toString(),
-    projectId?.toString()
-  );
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug?.toString());
+
   const is_telemetry_enabled = instance?.is_telemetry_enabled || false;
   const is_posthog_enabled = process.env.VITE_POSTHOG_KEY && process.env.VITE_POSTHOG_HOST && is_telemetry_enabled;
 
   useEffect(() => {
-    if (user && profile && hydrated) {
-      // Identify sends an event, so you want may want to limit how often you call it
-      posthog?.identify(user.email, {
-        id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        display_name: user.display_name,
-        date_joined: user.date_joined,
-        last_login_medium: user.last_login_medium,
-        is_email_verified: user.is_email_verified,
-        timezone: user.user_timezone,
-        is_onboarded: profile.is_onboarded,
-        role: profile.role,
-        use_case: profile.use_case,
-        language: profile.language,
-        last_workspace_id: profile.last_workspace_id,
-      });
+    if (user && profile && hydrated && is_posthog_enabled) {
+      identifyUser(user, profile);
     }
-  }, [user, profile, hydrated]);
+  }, [user, profile, hydrated, is_posthog_enabled]);
+
+  useEffect(() => {
+    if (currentWorkspace && hydrated && is_posthog_enabled) {
+      joinWorkspaceGroup(currentWorkspace);
+    }
+  }, [currentWorkspace, hydrated, is_posthog_enabled]);
 
   useEffect(() => {
     if (isInitializedRef.current) return; // prevent multiple initializations

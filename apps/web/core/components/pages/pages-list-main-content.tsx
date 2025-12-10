@@ -17,9 +17,11 @@ import { EUserProjectRoles } from "@plane/types";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { getUserRoleString, trackPageCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 
 type Props = {
   children: React.ReactNode;
@@ -35,8 +37,10 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
   const { currentProjectDetails } = useProject();
   const { isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, loader } =
     usePageStore(storeType);
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { createPage } = usePageStore(EPageStoreType.PROJECT);
+  const { data: currentUser } = useUser();
+  const { currentWorkspace } = useWorkspace();
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // router
@@ -60,13 +64,16 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
 
     await createPage(payload)
       .then((res) => {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            id: res?.id,
-            state: "SUCCESS",
-          },
-        });
+        if (currentWorkspace && currentUser && res?.id) {
+          const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+          trackPageCreated(
+            { id: res.id, created_at: new Date().toISOString() },
+            currentWorkspace,
+            currentUser,
+            "project",
+            getUserRoleString(role)
+          );
+        }
         const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
         router.push(pageId);
       })

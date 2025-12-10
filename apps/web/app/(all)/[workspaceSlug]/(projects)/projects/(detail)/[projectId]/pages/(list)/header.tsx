@@ -18,6 +18,9 @@ import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { getUserRoleString, trackPageCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 
 export const PagesListHeader = observer(function PagesListHeader() {
   // states
@@ -28,6 +31,9 @@ export const PagesListHeader = observer(function PagesListHeader() {
   const searchParams = useSearchParams();
   const pageType = searchParams.get("type");
   // store hooks
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+  const { data: currentUser } = useUser();
+  const { currentWorkspace } = useWorkspace();
   const { currentProjectDetails, loader } = useProject();
   const { canCurrentUserCreatePage, createPage } = usePageStore(EPageStoreType.PROJECT);
   // handle page create
@@ -40,13 +46,16 @@ export const PagesListHeader = observer(function PagesListHeader() {
 
     await createPage(payload)
       .then((res) => {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            id: res?.id,
-            state: "SUCCESS",
-          },
-        });
+        if (currentWorkspace && currentUser) {
+          const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+          trackPageCreated(
+            { id: res?.id ?? "", created_at: new Date().toISOString() },
+            currentWorkspace,
+            currentUser,
+            "project",
+            getUserRoleString(role)
+          );
+        }
         const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
         router.push(pageId);
       })
