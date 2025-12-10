@@ -66,8 +66,10 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
     <Row
       className={cn(
         "relative py-4 flex items-center gap-2 border-b border-subtle cursor-pointer transition-all group",
-        currentSelectedNotificationId === notification?.id ? "bg-layer-1/30" : "",
-        notification.read_at === null ? "bg-accent-primary/5" : ""
+        {
+          "bg-layer-1/30": currentSelectedNotificationId === notification?.id,
+          "bg-accent-primary/5": notification.read_at === null,
+        }
       )}
       onClick={handleNotificationIssuePeekOverview}
     >
@@ -83,14 +85,14 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
               src={getFileURL(notificationTriggeredBy.avatar_url)}
               size={42}
               shape="circle"
-              className="!text-14 !bg-layer-1"
+              className="text-body-sm-medium bg-layer-1"
             />
           )}
         </div>
 
         <div className="w-full space-y-1 -mt-2">
           <div className="relative flex items-center gap-3 h-8">
-            <div className="w-full overflow-hidden whitespace-normal break-all truncate line-clamp-1 text-13 text-primary">
+            <div className="w-full overflow-hidden whitespace-normal break-all truncate line-clamp-1 text-body-xs-medium text-primary">
               <NotificationContent
                 notification={notification}
                 workspaceId={workspace.id}
@@ -108,7 +110,7 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
             />
           </div>
 
-          <div className="relative flex items-center gap-3 text-11 text-secondary">
+          <div className="relative flex items-center gap-3 text-caption-sm-regular text-secondary">
             <div className="w-full overflow-hidden whitespace-normal break-words truncate line-clamp-1">
               {notification?.data?.issue?.identifier}-{notification?.data?.issue?.sequence_id}&nbsp;
               {notification?.data?.issue?.name}
