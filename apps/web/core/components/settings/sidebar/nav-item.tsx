@@ -37,15 +37,11 @@ const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: T
   // hooks
   const { toggleSidebar } = useUserSettings();
   // derived
-  const buttonClass = cn(
-    "flex w-full items-center px-2 py-1.5 rounded-sm text-secondary justify-between",
-    "hover:bg-accent-primary/10",
-    {
-      "text-secondary bg-layer-1/75": typeof isActive === "function" ? isActive(setting) : isActive,
-      "text-secondary hover:bg-surface-2 active:bg-surface-2":
-        typeof isActive === "function" ? !isActive(setting) : !isActive,
-    }
-  );
+  const isItemActive = typeof isActive === "function" ? isActive(setting) : isActive;
+  const buttonClass = cn("flex w-full items-center px-2 py-1.5 rounded-sm text-secondary justify-between", {
+    "bg-layer-transparent-active hover:bg-layer-transparent-active": isItemActive,
+    "hover:bg-layer-transparent-hover": !isItemActive,
+  });
 
   const titleElement = (
     <>
@@ -84,7 +80,7 @@ const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: T
       {/* Nested Navigation */}
       {isExpanded && (
         <Disclosure.Panel as="div" className={cn("relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5")} static>
-          <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-subtle-1" />
+          <div className="absolute left-[15px] top-0 bottom-1 w-px bg-subtle-1" />
           {renderChildren?.(setting.key)}
         </Disclosure.Panel>
       )}
