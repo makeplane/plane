@@ -39,6 +39,7 @@
     "./emoji-icon-picker": "./dist/emoji-icon-picker/index.js",
     "./emoji-reaction": "./dist/emoji-reaction/index.js",
     "./empty-state": "./dist/empty-state/index.js",
+    "./icon-button": "./dist/icon-button/index.js",
     "./icons": "./dist/icons/index.js",
     "./input": "./dist/input/index.js",
     "./menu": "./dist/menu/index.js",
