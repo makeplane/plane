@@ -1110,6 +1110,10 @@
   height: 3.25rem;
 }
 
+@utility p-page-x {
+  padding: 1.35rem;
+}
+
 @utility px-page-x {
   padding-left: 1.35rem;
   padding-right: 1.35rem;
