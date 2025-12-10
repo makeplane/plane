@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from plane.db.models import PlanCaseRecord
+from plane.db.models import PlanCaseRecord, CaseLabel
 
 
 class CaseExecuteRecordSerializer(ModelSerializer):
@@ -12,4 +12,9 @@ class CaseExecuteRecordSerializer(ModelSerializer):
 
     class Meta:
         model = PlanCaseRecord
+        fields = '__all__'
+
+class CaseLabelListSerializer(ModelSerializer):
+    class Meta:
+        model = CaseLabel
         fields = '__all__'

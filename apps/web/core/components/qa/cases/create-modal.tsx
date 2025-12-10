@@ -174,6 +174,45 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
     }));
   }, [enumsData.case_priority]);
 
+  // 新增：标签状态管理
+  const [labelInput, setLabelInput] = useState("");
+  const [labelList, setLabelList] = useState<any[]>([]);
+
+  // 处理创建标签
+  const handleCreateLabel = async () => {
+    const name = labelInput.trim();
+    if (!name || !workspaceSlug || !repositoryId) return;
+
+    try {
+      // 调用创建接口，caseId传空字符串
+      const res = await caseService.createlabel(workspaceSlug, name, undefined, repositoryId);
+      // 假设返回结果包含新创建的标签对象，或者直接使用返回结果
+      // 这里根据 service 实现，res 可能是标签对象或数组
+      // 假设 res 是数组，取第一个；或者是对象
+      const newLabel = Array.isArray(res) ? res[0] : res;
+
+      if (newLabel && newLabel.id) {
+        setLabelList((prev) => [...prev, newLabel]);
+        setLabelInput("");
+      }
+    } catch (error) {
+      console.error("创建标签失败:", error);
+      message.error("创建标签失败");
+    }
+  };
+
+  // 处理删除标签
+  const handleDeleteLabel = async (labelId: string) => {
+    if (!workspaceSlug || !labelId) return;
+    try {
+      await caseService.deletelabel(workspaceSlug, labelId, undefined);
+      setLabelList((prev) => prev.filter((l) => l.id !== labelId));
+    } catch (error) {
+      console.error("删除标签失败:", error);
+      message.error("删除标签失败");
+    }
+  };
+
   // 弹窗打开后，根据选项自动设置默认值（不覆盖用户已选择）
   useEffect(() => {
     if (!isOpen) return;
@@ -807,6 +846,8 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
         test_type: values?.test_type || null,
         // 新增：工作项以 id 列表传递
         issues: Array.isArray(selectedIssues) ? selectedIssues.map((i) => i.id) : [],
+        // 新增：标签 id 列表
+        labels: labelList.map((l) => l.id),
       };
 
       if (!payload.name) {
@@ -840,6 +881,9 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
       setAttachmentFiles([]);
       setAttachmentAssetIds([]);
       setAttachmentUploading({});
+      // 重置标签列表
+      setLabelList([]);
+      setLabelInput("");
       onCloseWithReset();
     } catch (e: any) {
       const msg = e?.message || e?.detail || e?.error || "操作失败，请稍后重试";
@@ -1078,12 +1122,17 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
           </div>
 
           {/* 右侧区域 */}
-          <div style={{ flex: 1 }}>
-            <Form.Item label="所属测试库" name="repository">
+          <div style={{ flex: 1 }} className="space-y-2">
+            <Form.Item label="所属测试库" name="repository" className="mb-2">
               <Input placeholder="所属测试库" disabled />
             </Form.Item>
 
-            <Form.Item label="维护人" name="assignee" rules={[{ required: true, message: "请选择维护人" }]}>
+            <Form.Item
+              label="维护人"
+              name="assignee"
+              rules={[{ required: true, message: "请选择维护人" }]}
+              className="mb-2"
+            >
               <Select
                 placeholder="选择维护人"
                 options={assigneeOptions}
@@ -1095,7 +1144,7 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
             </Form.Item>
 
             {/* 将模块改为下拉框 */}
-            <Form.Item label="模块" name="module">
+            <Form.Item label="模块" name="module" className="mb-2">
               <Select
                 placeholder="请选择模块"
                 options={moduleOptions}
@@ -1105,7 +1154,7 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
               />
             </Form.Item>
 
-            <Form.Item label="用例类型" name="type">
+            <Form.Item label="用例类型" name="type" className="mb-2">
               <Select
                 placeholder="请选择用例类型"
                 options={caseTypeOptions}
@@ -1114,22 +1163,68 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
               />
             </Form.Item>
 
-            <Form.Item label="重要程度" name="priority">
+            <Form.Item label="优先级" name="priority" className="mb-2">
               <Select
-                placeholder="请选择重要程度"
+                placeholder="请选择优先级"
                 options={casePriorityOptions}
                 showSearch
                 filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
               />
             </Form.Item>
 
-            <Form.Item label="测试类型" name="test_type">
+            <Form.Item label="测试类型" name="test_type" className="mb-2">
               <Select
                 placeholder="请选择测试类型"
                 options={caseTestTypeOptions}
                 showSearch
                 filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
               />
+            </Form.Item>
+
+            {/* 标签 */}
+            <Form.Item label="标签" className="mb-2">
+              <div
+                className="flex flex-wrap items-center gap-2 min-h-[32px] p-1 border border-custom-border-200 rounded cursor-text bg-white"
+                onClick={() => {
+                  const input = document.getElementById("label-input");
+                  input?.focus();
+                }}
+              >
+                {/* 渲染已有的标签 */}
+                {labelList.map((label) => (
+                  <div
+                    key={label.id}
+                    className="flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-xs border border-blue-100 group"
+                  >
+                    <span>{label.name}</span>
+                    <span
+                      className="cursor-pointer opacity-50 group-hover:opacity-100 hover:text-red-500 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteLabel(label.id);
+                      }}
+                    >
+                      <LucideIcons.X size={12} />
+                    </span>
+                  </div>
+                ))}
+
+                {/* 输入框 */}
+                <input
+                  id="label-input"
+                  value={labelInput}
+                  onChange={(e) => setLabelInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleCreateLabel();
+                    }
+                  }}
+                  onBlur={handleCreateLabel}
+                  placeholder={labelList.length === 0 ? "输入标签名称" : ""}
+                  className="flex-1 min-w-[60px] outline-none text-sm bg-transparent"
+                />
+              </div>
             </Form.Item>
           </div>
         </div>

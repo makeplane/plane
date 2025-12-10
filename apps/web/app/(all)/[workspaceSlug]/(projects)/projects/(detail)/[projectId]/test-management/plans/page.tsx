@@ -647,7 +647,7 @@ export default function TestPlanDetailPage() {
                   onMouseDown={onMouseDownResize}
                 />
               </div>
-              <div className="flex-1 overflow-auto p-4">
+              <div className="flex-1 overflow-auto py-4 pt-0">
                 {loading && (
                   <div className="flex items-center justify-center py-12">
                     <div className="text-custom-text-300">加载中...</div>

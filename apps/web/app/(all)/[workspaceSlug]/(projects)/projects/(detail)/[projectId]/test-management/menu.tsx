@@ -22,16 +22,16 @@ const MENU_ITEMS: TMenuItem[] = [
     isActive: (pathname, ws, pid) => isTMOverviewActive(pathname, ws, pid),
   },
   {
-    key: "plans",
-    label: "测试计划",
-    href: (ws, pid) => `/${ws}/projects/${pid}/test-management/plans`,
-    isActive: (pathname, ws, pid) => pathname.startsWith(`/${ws}/projects/${pid}/test-management/plans`),
-  },
-  {
     key: "cases",
     label: "测试用例",
     href: (ws, pid) => `/${ws}/projects/${pid}/test-management/cases`,
     isActive: (pathname, ws, pid) => pathname.startsWith(`/${ws}/projects/${pid}/test-management/cases`),
+  },
+  {
+    key: "plans",
+    label: "测试计划",
+    href: (ws, pid) => `/${ws}/projects/${pid}/test-management/plans`,
+    isActive: (pathname, ws, pid) => pathname.startsWith(`/${ws}/projects/${pid}/test-management/plans`),
   },
   {
     key: "reviews",

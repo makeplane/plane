@@ -15,6 +15,7 @@ import { CaseModuleService } from "@/services/qa";
 import UpdateModal from "@/components/qa/cases/update-modal";
 import { useQueryParams } from "@/hooks/use-query-params";
 import { CaseService as ReviewApiService } from "@/services/qa/review.service";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { FolderOpenDot } from "lucide-react";
 import { formatDateTime, globalEnums } from "../util";
 
@@ -52,6 +53,8 @@ type TestCaseResponse = {
   data: TestCase[];
 };
 
+import { MoveCaseModal } from "@/components/qa/cases/move-modal";
+
 export default function TestCasesPage() {
   const { workspaceSlug } = useParams();
   const router = useRouter();
@@ -80,6 +83,8 @@ export default function TestCasesPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [activeCase, setActiveCase] = useState<any | null>(null);
+  const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
+  const [selectedCaseIds, setSelectedCaseIds] = useState<string[]>([]);
 
   // 分页状态管理
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -89,6 +94,7 @@ export default function TestCasesPage() {
   // 筛选状态管理
   const [filters, setFilters] = useState<{
     name?: string;
+    labels__name__icontains?: string;
     state?: number[];
     type?: number[];
     priority?: number[];
@@ -306,6 +312,32 @@ export default function TestCasesPage() {
   };
 
   // 修改 fetchCases：支持 module_id 过滤
+  const confirmDeleteCases = () => {
+    if (selectedCaseIds.length === 0) return;
+
+    Modal.confirm({
+      title: "确认删除",
+      content: `确定要删除选中的 ${selectedCaseIds.length} 个用例吗？操作不可撤销。`,
+      okText: "删除",
+      cancelText: "取消",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        if (!workspaceSlug) return;
+        try {
+          await caseService.deleteCase(workspaceSlug as string, selectedCaseIds);
+          message.success("删除成功");
+          setSelectedCaseIds([]);
+          // 删除后刷新列表，如果当前页空了，考虑回到上一页（这里简化为刷新当前页）
+          await fetchModules();
+          await fetchCases(currentPage, pageSize, filters);
+        } catch (e) {
+          console.error("批量删除失败:", e);
+          message.error("删除失败");
+        }
+      },
+    });
+  };
+
   const fetchCases = async (
     page: number = currentPage,
     size: number = pageSize,
@@ -315,6 +347,8 @@ export default function TestCasesPage() {
     try {
       setLoading(true);
       setError(null);
+      // 重置选择
+      setSelectedCaseIds([]);
 
       const queryParams: any = {
         page,
@@ -328,6 +362,13 @@ export default function TestCasesPage() {
       }
 
       // name__icontains, state__in, type__in, priority__in
+      if (filterParams.name) queryParams.name__icontains = filterParams.name;
+      if (filterParams.labels__name__icontains)
+        queryParams.labels__name__icontains = filterParams.labels__name__icontains;
+      if (filterParams.state && filterParams.state.length > 0) queryParams.state__in = filterParams.state.join(",");
+      if (filterParams.type && filterParams.type.length > 0) queryParams.type__in = filterParams.type.join(",");
+      if (filterParams.priority && filterParams.priority.length > 0)
+        queryParams.priority__in = filterParams.priority.join(",");
 
       const response: TestCaseResponse = await caseService.getCases(workspaceSlug as string, queryParams);
       setCases(response?.data || []);
@@ -368,6 +409,8 @@ export default function TestCasesPage() {
     const key = selectedKeys[0] as string | undefined;
     const nextModuleId = !key || key === "all" ? null : key;
     setSelectedModuleId(nextModuleId);
+    // 切换模块后重置选中
+    setSelectedCaseIds([]);
   };
 
   // Helper：获取节点数量（兼容不同字段名），没有则返回 undefined 不展示
@@ -540,21 +583,24 @@ export default function TestCasesPage() {
     },
   ];
 
-  const getColumnSearchProps = (dataIndex: keyof TestCase | string): TableColumnType<TestCase> => ({
+  const getColumnSearchProps = (
+    dataIndex: keyof TestCase | string,
+    queryParam?: string
+  ): TableColumnType<TestCase> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInput}
-          placeholder={`搜索 ${dataIndex === "name" ? "名称" : "其他"}`}
+          placeholder={`搜索 ${dataIndex === "name" ? "名称" : dataIndex === "labels" ? "标签" : "其他"}`}
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(selectedKeys as string[], dataIndex, confirm)}
+          onPressEnter={() => handleSearch(selectedKeys as string[], dataIndex, confirm, queryParam)}
           style={{ marginBottom: 8, display: "block" }}
         />
         <Space>
           <Button
             type="primary"
-            onClick={() => handleSearch(selectedKeys as string[], dataIndex, confirm)}
+            onClick={() => handleSearch(selectedKeys as string[], dataIndex, confirm, queryParam)}
             icon={<SearchOutlined />}
             size="small"
             style={{ width: 90 }}
@@ -562,7 +608,7 @@ export default function TestCasesPage() {
             搜索
           </Button>
           <Button
-            onClick={() => clearFilters && handleReset(clearFilters, dataIndex, confirm)}
+            onClick={() => clearFilters && handleReset(clearFilters, dataIndex, confirm, queryParam)}
             size="small"
             style={{ width: 90 }}
           >
@@ -572,36 +618,70 @@ export default function TestCasesPage() {
       </div>
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />,
+    onFilter: (value, record) => {
+      // 本地筛选逻辑保留，但实际上主要依赖服务端筛选
+      if (dataIndex === "name") {
+        return record.name
+          .toString()
+          .toLowerCase()
+          .includes((value as string).toLowerCase());
+      }
+      return true;
+    },
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
-    filteredValue: dataIndex === "name" ? (filters.name ? [filters.name] : null) : null,
+    filteredValue:
+      dataIndex === "name" && filters.name
+        ? [filters.name]
+        : queryParam === "labels__name__icontains" && filters.labels__name__icontains
+          ? [filters.labels__name__icontains]
+          : null,
   });
 
-  const handleSearch = (selectedKeys: string[], dataIndex: keyof TestCase | string, confirm?: () => void) => {
+  const handleSearch = (
+    selectedKeys: string[],
+    dataIndex: keyof TestCase | string,
+    confirm?: () => void,
+    queryParam?: string
+  ) => {
     setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
+    setSearchedColumn(dataIndex as string);
 
     const newFilters = { ...filters };
+    const paramKey = queryParam || (dataIndex as string);
+
     if (selectedKeys[0]) {
-      if (dataIndex === "name") newFilters.name = selectedKeys[0];
+      if (paramKey === "name") newFilters.name = selectedKeys[0];
+      if (paramKey === "labels__name__icontains") newFilters.labels__name__icontains = selectedKeys[0];
     } else {
-      if (dataIndex === "name") delete newFilters.name;
+      if (paramKey === "name") delete newFilters.name;
+      if (paramKey === "labels__name__icontains") delete newFilters.labels__name__icontains;
     }
 
     setFilters(newFilters);
     confirm?.();
   };
 
-  const handleReset = (clearFilters: () => void, dataIndex: keyof TestCase | string, confirm?: () => void) => {
+  const handleReset = (
+    clearFilters: () => void,
+    dataIndex: keyof TestCase | string,
+    confirm?: () => void,
+    queryParam?: string
+  ) => {
     clearFilters();
     setSearchText("");
 
     const newFilters = { ...filters };
-    if (dataIndex === "name") {
+    const paramKey = queryParam || (dataIndex as string);
+
+    if (paramKey === "name") {
       delete newFilters.name;
+    }
+    if (paramKey === "labels__name__icontains") {
+      delete newFilters.labels__name__icontains;
     }
 
     setFilters(newFilters);
@@ -613,6 +693,8 @@ export default function TestCasesPage() {
     const selectedStates = (tableFilters?.state as number[] | undefined) || [];
     const selectedTypes = (tableFilters?.type as number[] | undefined) || [];
     const selectedPriorities = (tableFilters?.priority as number[] | undefined) || [];
+    const nameFilter = tableFilters?.name?.[0] as string | undefined;
+    const labelsFilter = tableFilters?.labels?.[0] as string | undefined;
 
     const newFilters = {
       ...filters,
@@ -620,6 +702,19 @@ export default function TestCasesPage() {
       type: selectedTypes.length ? selectedTypes.map((v) => Number(v)) : undefined,
       priority: selectedPriorities.length ? selectedPriorities.map((v) => Number(v)) : undefined,
     };
+
+    // 从 tableFilters 中获取最新的搜索值，而不是依赖 filters 状态
+    if (nameFilter) {
+      newFilters.name = nameFilter;
+    } else {
+      delete newFilters.name;
+    }
+
+    if (labelsFilter) {
+      newFilters.labels__name__icontains = labelsFilter;
+    } else {
+      delete newFilters.labels__name__icontains;
+    }
 
     const nextPage = pagination.current || 1;
     const nextPageSize = pagination.pageSize || pageSize;
@@ -803,7 +898,7 @@ export default function TestCasesPage() {
           </Tag>
         );
       },
-      width: 140,
+      width: 100,
       // filters: Object.entries((globalEnums.Enums as any)?.case_state || {}).map(([value, label]) => ({
       //   text: String(label),
       //   value: Number(value),
@@ -816,7 +911,7 @@ export default function TestCasesPage() {
       dataIndex: "type",
       key: "type",
       render: (v) => renderEnumTag("case_type", v, "magenta"),
-      width: 140,
+      width: 100,
       filters: Object.entries((globalEnums.Enums as any)?.case_type || {}).map(([value, label]) => ({
         text: String(label),
         value: Number(value),
@@ -829,7 +924,7 @@ export default function TestCasesPage() {
       dataIndex: "priority",
       key: "priority",
       render: (v) => renderEnumTag("case_priority", v, "warning"),
-      width: 120,
+      width: 80,
       filters: Object.entries((globalEnums.Enums as any)?.case_priority || {}).map(([value, label]) => ({
         text: String(label),
         value: Number(value),
@@ -845,13 +940,45 @@ export default function TestCasesPage() {
       width: 140,
     },
     {
-      title: "创建人",
-      dataIndex: "created_by",
-      key: "created_by",
-      render: (creator: TCreator | undefined) => creator?.display_name || "-",
+      title: "维护人",
+      dataIndex: "assignee",
+      key: "assignee",
+      render: (assignee: any) =>
+        assignee?.id ? (
+          <MemberDropdown
+            multiple={false}
+            value={assignee?.id ?? null}
+            onChange={() => {}}
+            disabled={true}
+            placeholder={""}
+            className="w-full text-sm"
+            buttonContainerClassName="w-full text-left p-0 cursor-default"
+            buttonVariant="transparent-with-text"
+            buttonClassName="text-sm p-0 hover:bg-transparent hover:bg-inherit"
+            showUserDetails={true}
+            optionsClassName="z-[60]"
+          />
+        ) : (
+          ""
+        ),
       width: 140,
     },
-    { title: "创建时间", dataIndex: "created_at", key: "created_at", render: (d) => formatDateTime(d), width: 180 },
+    {
+      title: "标签",
+      dataIndex: "labels",
+      key: "labels",
+      ...getColumnSearchProps("labels", "labels__name__icontains"),
+      render: (labels: any[]) => (
+        <Space size={[0, 8]} wrap>
+          {labels?.map((label: any) => (
+            <Tag key={label.id} color="blue">
+              {label.name}
+            </Tag>
+          ))}
+        </Space>
+      ),
+      width: 200,
+    },
     { title: "更新时间", dataIndex: "updated_at", key: "updated_at", render: (d) => formatDateTime(d), width: 180 },
     {
       title: "操作",
@@ -872,21 +999,50 @@ export default function TestCasesPage() {
       <PageHead title={`测试用例${repositoryName ? " - " + decodeURIComponent(repositoryName) : ""}`} />
       <div className="h-full w-full">
         <div className="flex h-full w-full flex-col">
-          <Row wrap={false} className="flex-1 overflow-hidden p-4 sm:p-5" gutter={[0, 16]}>
+          <Row wrap={false} className="flex-1 overflow-hidden py-4 sm:py-5 " gutter={[0, 16]}>
             <Col
               className="relative border-r border-custom-border-200 overflow-y-auto"
               flex="0 0 auto"
               style={{ width: leftWidth, minWidth: 200, maxWidth: 300 }}
             >
               <div className="p-2">
+                <Input
+                  allowClear
+                  placeholder="按模块名称搜索"
+                  value={searchModule}
+                  onChange={(e) => setSearchModule(e.target.value)}
+                />
+              </div>
+              <div
+                onMouseDown={onMouseDownResize}
+                className="absolute right-0 top-0 h-full w-2"
+                style={{ cursor: "col-resize", zIndex: 10 }}
+              />
+              <style
+                dangerouslySetInnerHTML={{
+                  __html: `
+                .custom-tree-indent .ant-tree-indent-unit {
+                  width: 10px !important;
+                }
+              `,
+                }}
+              />
+              <Tree
+                showLine={false}
+                defaultExpandAll
+                onSelect={onSelect}
+                onExpand={onExpand}
+                expandedKeys={expandedKeys}
+                autoExpandParent={autoExpandParent}
+                treeData={treeData}
+                selectedKeys={selectedModuleId ? [selectedModuleId] : ["all"]}
+                className="py-2 custom-tree-indent"
+              />
+            </Col>
+            {/* 右侧表格 */}
+            <Col flex="auto" className="overflow-y-auto">
+              <div className="mb-4 ml-4 flex justify-start">
                 <Space>
-                  <Input
-                    allowClear
-                    placeholder="按模块名称搜索"
-                    value={searchModule}
-                    onChange={(e) => setSearchModule(e.target.value)}
-                    style={{ width: 140 }}
-                  />
                   <Button type="primary" onClick={() => setIsCreateModalOpen(true)} disabled={!repositoryId}>
                     新建
                   </Button>
@@ -902,25 +1058,6 @@ export default function TestCasesPage() {
                   />
                 </Space>
               </div>
-              <div
-                onMouseDown={onMouseDownResize}
-                className="absolute right-0 top-0 h-full w-2"
-                style={{ cursor: "col-resize", zIndex: 10 }}
-              />
-              <Tree
-                showLine={false}
-                defaultExpandAll
-                onSelect={onSelect}
-                onExpand={onExpand}
-                expandedKeys={expandedKeys}
-                autoExpandParent={autoExpandParent}
-                treeData={treeData}
-                selectedKeys={selectedModuleId ? [selectedModuleId] : ["all"]}
-                className="py-2"
-              />
-            </Col>
-            {/* 右侧表格 */}
-            <Col flex="auto" className="overflow-y-auto">
               {/* 加载/错误/空状态 */}
               {loading && (
                 <div className="flex items-center justify-center py-12">
@@ -941,22 +1078,51 @@ export default function TestCasesPage() {
               )}
 
               {repositoryId && !loading && !error && (
-                <Table
-                  dataSource={cases}
-                  columns={columns}
-                  rowKey="id"
-                  bordered={true}
-                  onChange={handleTableChange}
-                  pagination={{
-                    current: currentPage,
-                    pageSize: pageSize,
-                    total: total,
-                    showSizeChanger: true,
-                    showQuickJumper: true,
-                    showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
-                    pageSizeOptions: ["10", "20", "50", "100"],
-                  }}
-                />
+                <div className="relative">
+                  <Table
+                    dataSource={cases}
+                    columns={columns}
+                    rowKey="id"
+                    bordered={true}
+                    onChange={handleTableChange}
+                    rowSelection={{
+                      selectedRowKeys: selectedCaseIds,
+                      onChange: (newSelectedRowKeys) => {
+                        setSelectedCaseIds(newSelectedRowKeys as string[]);
+                      },
+                    }}
+                    pagination={{
+                      current: currentPage,
+                      pageSize: pageSize,
+                      total: total,
+                      showSizeChanger: true,
+                      showQuickJumper: true,
+                      showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
+                      pageSizeOptions: ["10", "20", "50", "100"],
+                    }}
+                  />
+
+                  {/* 在表格外部以绝对定位放置选中操作，防止挤压分页器 */}
+                  {selectedCaseIds.length > 0 && (
+                    <div
+                      style={{ position: "absolute", left: 12, bottom: 12, zIndex: 20 }}
+                      className="flex items-center gap-2 bg-transparent"
+                    >
+                      <span className="text-custom-text-300">已选择 {selectedCaseIds.length} 条</span>
+                      <Button
+                        type="link"
+                        size="small"
+                        onClick={() => setIsMoveModalOpen(true)}
+                        className="p-0 text-custom-primary-100 font-medium"
+                      >
+                        移动到
+                      </Button>
+                      <Button type="link" size="small" danger onClick={confirmDeleteCases} className="p-0 font-medium">
+                        删除
+                      </Button>
+                    </div>
+                  )}
+                </div>
               )}
             </Col>
           </Row>
@@ -994,6 +1160,21 @@ export default function TestCasesPage() {
         }}
         caseId={activeCase?.id}
       />
+
+      {repositoryId && (
+        <MoveCaseModal
+          isOpen={isMoveModalOpen}
+          handleClose={() => setIsMoveModalOpen(false)}
+          workspaceSlug={workspaceSlug as string}
+          repositoryId={repositoryId}
+          selectedCaseIds={selectedCaseIds}
+          onSuccess={() => {
+            fetchModules();
+            fetchCases(currentPage, pageSize, filters);
+            setSelectedCaseIds([]);
+          }}
+        />
+      )}
     </>
   );
 }

@@ -700,7 +700,7 @@ export default function ReviewsPage() {
           </div>
           <div className={styles.resizer} onMouseDown={onMouseDownResize} />
         </div>
-        <div className={styles.right}>
+        <div className={`${styles.right} pt-0 `}>
           <Table
             rowKey="id"
             dataSource={reviews}

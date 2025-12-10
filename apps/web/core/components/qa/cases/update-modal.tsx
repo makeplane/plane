@@ -39,6 +39,7 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
   // 新增：加载状态和用例数据状态
   const [loading, setLoading] = React.useState<boolean>(false);
   const [caseData, setCaseData] = React.useState<any>(null);
+  const [labelList, setLabelList] = React.useState<any[]>([]);
 
   // 新增：监听open变化，当模态框打开时获取数据
   React.useEffect(() => {
@@ -47,6 +48,7 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
     } else {
       // 关闭时清空数据
       setCaseData(null);
+      setLabelList([]);
       setReplyTargetId(undefined);
       setReplyContent({});
     }
@@ -59,6 +61,9 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
     try {
       const data = await caseService.getCase(String(workspaceSlug), caseId);
       setCaseData(data);
+      if (data?.labels) {
+        setLabelList(data.labels);
+      }
     } catch (error) {
       console.error("获取用例数据失败:", error);
       // 这里可以添加错误提示
@@ -84,6 +89,34 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
       setCaseData((prev: any) => (prev ? { ...prev, name: newName } : prev));
     } catch {
       // 静默处理（可接入通知）
+    }
+  };
+
+  const handleCreateLabel = async (name: string) => {
+    // 允许 repository_id 为空，因为可能不是必须的
+    if (!name || !workspaceSlug || !caseId) return;
+    try {
+      // 传递 repository_id，如果 caseData 中没有，尝试使用默认值或空字符串
+      const repoId = caseData?.repository.id || "";
+      const res = await caseService.createlabel(workspaceSlug, name, caseId, repoId);
+      const newLabel = Array.isArray(res) ? res[0] : res;
+      if (newLabel && newLabel.id) {
+        setLabelList((prev) => [...prev, newLabel]);
+      }
+    } catch (error) {
+      console.error("创建标签失败:", error);
+      message.error("创建标签失败");
+    }
+  };
+
+  const handleDeleteLabel = async (labelId: string) => {
+    if (!workspaceSlug || !caseId) return;
+    try {
+      await caseService.deletelabel(workspaceSlug, labelId, caseId);
+      setLabelList((prev) => prev.filter((l) => l.id !== labelId));
+    } catch (error) {
+      console.error("删除标签失败:", error);
+      message.error("删除标签失败");
     }
   };
 
@@ -878,6 +911,9 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
               onPriorityChange={(v) => setPriorityValue(normalizeId(v))}
               onPriorityBlur={handleBlurPriority}
               casePriorityOptions={casePriorityOptions}
+              labelList={labelList}
+              onCreateLabel={handleCreateLabel}
+              onDeleteLabel={handleDeleteLabel}
             />
             {/* Menu 导航 */}
             <div className="mt-6">

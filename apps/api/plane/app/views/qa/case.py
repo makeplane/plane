@@ -8,7 +8,7 @@ from django.db.utils import IntegrityError
 from django.core.exceptions import ValidationError
 
 from plane.app.serializers.qa import CaseAttachmentSerializer, IssueListSerializer, CaseIssueSerializer, \
-    TestCaseCommentSerializer, PlanCaseRecordSerializer, CaseListSerializer
+    TestCaseCommentSerializer, PlanCaseRecordSerializer, CaseListSerializer, CaseLabelListSerializer
 from plane.app.serializers.qa.case import CaseExecuteRecordSerializer
 from plane.app.views import BaseAPIView, BaseViewSet
 from plane.app.views.qa.utils import parser_case_file
@@ -41,6 +41,35 @@ class CaseIssueWithType(BaseAPIView):
         cases = self.filter_queryset(self.queryset).distinct()
         serializer = self.serializer_class(instance=cases, many=True)
         return Response(data=serializer.data)
+
+
+class CaseLabelAPIView(BaseAPIView):
+    model = CaseLabel
+    queryset = CaseLabel.objects.all()
+    serializer_class = CaseLabelListSerializer
+    filterset_fields = {
+        'name': ['exact', 'icontains'],
+        'repository_id': ['exact'],
+        'id': ['exact']
+    }
+
+    def get(self, request, slug):
+        serializer = self.serializer_class(instance=self.filter_queryset(self.queryset), many=True)
+        return Response(data=serializer.data)
+
+    def post(self, request, slug):
+        name = request.data['name']
+        case_id = request.data['case_id']
+
+        case = TestCase.objects.get(id=case_id)
+        label, _ = CaseLabel.objects.get_or_create(name=name, repository=case.repository)
+        case.labels.add(label)
+        case.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def delete(self, request, slug):
+        self.filter_queryset(self.queryset).delete(soft=False)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TestCaseCommentAPIView(BaseAPIView):
@@ -196,7 +225,7 @@ class CaseAPI(BaseViewSet):
         try:
             case_data = parser_case_file(files)
         except Exception as e:
-            return Response({'error': f'用例导入失败:{str(e)}'})
+            return Response({'error': f'用例导入失败:{str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
         total_count = len(case_data)
         success_count = 0
         fail_list = []
@@ -229,3 +258,11 @@ class CaseAPI(BaseViewSet):
 
         return Response(data={'total_count': total_count, 'success_count': success_count, 'fail': fail_list},
                         status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'], url_path='update-module')
+    def update_module(self, request, slug):
+        cases_id = request.data.get('cases_id')
+        module_id = request.data.get('module_id')
+
+        TestCase.objects.filter(pk__in=cases_id).update(module_id=module_id)
+        return Response(status=status.HTTP_200_OK)

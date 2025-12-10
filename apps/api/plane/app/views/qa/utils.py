@@ -71,13 +71,10 @@ def clear_excel_data(excel_data: list[dict]):
     for data in excel_data:
         description = data.pop('description')
         result = data.pop('result')
-        try:
-            steps = build_description_result_list(description, result)
-            data['steps'] = steps
-            # 标签
-            data['label'] = [label.strip() for label in data['label'].split('\n') if label]
-        except Exception as e:
-            print(e)
+        steps = build_description_result_list(description, result)
+        data['steps'] = steps
+        # 标签
+        data['label'] = [label.strip() for label in data['label'].split('\n') if label]
 
         excel.append(data)
     return excel
@@ -92,5 +89,5 @@ def parser_case_file(files: list[InMemoryUploadedFile]) -> list:
             data = parser_excel_case(BytesIO(file.read()))
             result.extend(clear_excel_data(data))
         else:
-            continue
+            raise Exception('不是支持的文件类型')
     return result

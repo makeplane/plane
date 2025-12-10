@@ -81,8 +81,9 @@ export class CaseService extends APIService {
       });
   }
 
-  async deleteCase(workspaceSlug: string, caseId: string): Promise<any> {
-    const query = {id:caseId}
+  async deleteCase(workspaceSlug: string, caseId: string | string[]): Promise<any> {
+    const ids = Array.isArray(caseId) ? caseId.join(",") : caseId;
+    const query = { id__in: ids };
     return this.delete(`/api/workspaces/${workspaceSlug}/test/case/?${new URLSearchParams(query).toString()}`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -212,11 +213,11 @@ export class CaseService extends APIService {
   }
 
   async putAssetCaseId(workspaceSlug: string, assetId: string, data: any): Promise<Partial<ModuleCountResponse>> {
-  return this.put(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`, data)
-    .then((response) => (response?.data ?? {}) as Partial<ModuleCountResponse>)
-    .catch((error) => {
-      throw error?.response?.data;
-    });
+    return this.put(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`, data)
+      .then((response) => (response?.data ?? {}) as Partial<ModuleCountResponse>)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
 }
  async getCaseAsset(workspaceSlug: string, caseId:string,asset_id:string): Promise<any> {
     return this.get(`/api/workspaces/${workspaceSlug}/cases/${caseId}/attachments/${asset_id}/`, {}, { responseType: 'blob' })
@@ -306,4 +307,31 @@ export class CaseService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async createlabel(workspaceSlug: string, name: string, caseId: string|undefined,repositoryId:string): Promise<any[]> {
+    return this.post(`/api/workspaces/${workspaceSlug}/test/case/label/`, {name, case_id: caseId,repository_id:repositoryId})
+      .then((response) => response?.data || [])
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deletelabel(workspaceSlug: string, labelId: string,caseId: string|undefined): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/test/case/label/`, {id: labelId,case_id:caseId})
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateCaseModule(workspaceSlug: string,casesId:Array<string>,moduleId:string): Promise<Partial<ModuleCountResponse>> {
+    return this.post(`/api/workspaces/${workspaceSlug}/test/case/update-module/`, {cases_id: casesId, module_id: moduleId})
+      .then((response) => (response?.data ?? {}) as Partial<ModuleCountResponse>)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+}
+
+
+
 }

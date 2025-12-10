@@ -147,7 +147,7 @@ export default function TestManagementHomePage() {
             sessionStorage.setItem("selectedRepositoryName", record.name);
             const ws = String(workspaceSlug || "");
             const pid = String(projectId || "");
-            let target = `/${ws}/projects/${pid}/test-management/plans?repositoryId=${encodeURIComponent(String(record.id))}`;
+            let target = `/${ws}/projects/${pid}/test-management/cases/?repositoryId=${encodeURIComponent(String(record.id))}`;
             router.push(target);
           }}
           style={{ cursor: "pointer" }}

@@ -259,52 +259,52 @@ class PlanView(BaseViewSet):
     def associate_cycle(self, request, slug):
         plan_id = request.data['plan_id']
         cycle_ids: list = request.data['cycle_id']
-        
+
         # 1. 获取 Plan 对象
         plan = TestPlan.objects.get(pk=plan_id)
-        
+
         # 2. 批量关联 Cycle
         # 使用 set 运算找出需要新增的 cycle_id，减少数据库查询
         existing_cycle_ids = set(plan.cycles.filter(id__in=cycle_ids).values_list('id', flat=True))
         new_cycle_ids = set(cycle_ids) - existing_cycle_ids
-        
+
         if new_cycle_ids:
             # 批量查询并添加
             new_cycles = Cycle.objects.filter(pk__in=new_cycle_ids)
             plan.cycles.add(*new_cycles)
-            
+
         # 3. 批量导入关联的用例
         # 获取所有选中 Cycle 下 Issue 关联的 Case ID
         # 通过连表查询一次性获取所有相关的 case_id
         related_case_ids = CycleIssue.objects.filter(
             cycle_id__in=cycle_ids
         ).values_list('issue__cases__id', flat=True).distinct()
-        
+
         # 排除无效的 None 值（如果某些 Issue 没有关联 Case）
         valid_case_ids = [cid for cid in related_case_ids if cid]
-        
+
         if not valid_case_ids:
             return Response(status=status.HTTP_200_OK)
-            
+
         # 4. 批量创建 PlanCase
         # 获取该 Plan 已存在的 case_id，避免重复创建
         existing_plan_case_ids = set(
             PlanCase.objects.filter(
-                plan=plan, 
+                plan=plan,
                 case_id__in=valid_case_ids
             ).values_list('case_id', flat=True)
         )
-        
+
         # 计算需要新创建的 case_id
         new_case_ids = set(valid_case_ids) - existing_plan_case_ids
-        
+
         if new_case_ids:
             new_plan_cases = [
                 PlanCase(plan=plan, case_id=case_id)
                 for case_id in new_case_ids
             ]
             PlanCase.objects.bulk_create(new_plan_cases, batch_size=1000)
-            
+
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'], url_path='associate-modules')
@@ -319,11 +319,12 @@ class CaseAPIView(BaseAPIView):
     serializer_class = CaseListSerializer
     filterset_fields = {
         'name': ['exact', 'icontains', 'in'],
+        'labels__name': ['exact', 'icontains'],
         'repository_id': ['exact'],
         'type': ['exact', 'in'],
         'priority': ['exact', 'in'],
         'module_id': ['exact', 'in'],
-        'id': ['exact'],
+        'id': ['exact', 'in'],
         'plan_cases__plan__id': ['exact', 'in'],
     }
 
@@ -351,7 +352,7 @@ class CaseAPIView(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, slug):
-        self.filter_queryset(self.queryset).all().delete(soft=False)
+        self.filter_queryset(self.queryset).all().delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -409,15 +410,28 @@ class LabelAPIView(BaseAPIView):
         return Response(data=serializer.data)
 
     def post(self, request, slug):
-        serializer = CaseLabelCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        test_plan = serializer.save()
-        serializer = self.serializer_class(instance=test_plan)
+        name = request.data['name']
+        case_id = request.data.get('case_id')
+        repository_id = request.data['repository_id']
+        label, _ = CaseLabel.objects.get_or_create(name=name, repository_id=repository_id)
+        if case_id:
+            case = TestCase.objects.get(id=case_id)
+            case.labels.add(label)
+            case.save()
+        serializer = self.serializer_class(instance=label)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, slug):
-        ids = request.data.pop('ids')
-        self.queryset.filter(id__in=ids).delete()
+        case_id = request.data.get('case_id')
+        label_id = request.data['id']
+        label = self.queryset.get(id=label_id)
+        if case_id:
+            case = TestCase.objects.get(id=case_id)
+            case.labels.remove(label)
+            case.save()
+        if not label.cases.exists():
+            label.delete(soft=False)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
