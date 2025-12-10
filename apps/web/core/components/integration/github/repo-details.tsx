@@ -30,10 +30,10 @@ export function GithubRepoDetails({ selectedRepo, handleStepChange, setUsers, se
   const { workspaceSlug } = useParams();
 
   const { data: repoInfo } = useSWR(
-    workspaceSlug && selectedRepo ? GITHUB_REPOSITORY_INFO(workspaceSlug as string, selectedRepo.name) : null,
+    workspaceSlug && selectedRepo ? GITHUB_REPOSITORY_INFO(workspaceSlug, selectedRepo.name) : null,
     workspaceSlug && selectedRepo
       ? () =>
-          githubIntegrationService.getGithubRepoInfo(workspaceSlug as string, {
+          githubIntegrationService.getGithubRepoInfo(workspaceSlug, {
             owner: selectedRepo.owner.login,
             repo: selectedRepo.name,
           })

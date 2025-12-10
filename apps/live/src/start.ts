@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/order
 import { setupSentry } from "./instrument";
 setupSentry();
 

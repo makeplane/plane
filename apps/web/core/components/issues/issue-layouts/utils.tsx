@@ -160,7 +160,7 @@ const getCycleColumns = (): IGroupByColumn[] | undefined => {
     cycles.push({
       id: cycle.id,
       name: cycle.name,
-      icon: <CycleGroupIcon cycleGroup={cycleStatus as TCycleGroups} className="h-3.5 w-3.5" />,
+      icon: <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />,
       payload: { cycle_id: cycle.id },
       isDropDisabled,
       dropErrorMessage: isDropDisabled ? "Work item cannot be moved to completed cycles" : undefined,
@@ -486,11 +486,8 @@ const handleSortOrder = (
   return currentIssueState;
 };
 
-export const getIssueBlockId = (
-  issueId: string | undefined,
-  groupId: string | undefined,
-  subGroupId?: string | undefined
-) => `issue_${issueId}_${groupId}_${subGroupId}`;
+export const getIssueBlockId = (issueId: string | undefined, groupId: string | undefined, subGroupId?: string) =>
+  `issue_${issueId}_${groupId}_${subGroupId}`;
 
 /**
  * returns empty Array if groupId is None

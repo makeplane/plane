@@ -7,7 +7,6 @@ import { canJoin } from "@tiptap/pm/transform";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 
 declare module "@tiptap/core" {
-  // eslint-disable-next-line no-unused-vars
   interface Commands<ReturnType> {
     customKeymap: {
       /**
