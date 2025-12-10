@@ -168,7 +168,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                   <div className="w-1/2 text-13 font-medium">
                     {t("project_settings.automations.auto-close.auto_close_status")}
                   </div>
-                  <div className="w-1/2 ">
+                  <div className="w-1/2">
                     <CustomSearchSelect
                       value={currentProjectDetails?.default_state ?? defaultState}
                       label={

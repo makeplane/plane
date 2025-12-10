@@ -102,7 +102,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                     "flex w-full items-center justify-between gap-1 text-11",
                     {
                       "cursor-not-allowed text-secondary": disabled,
-                      "cursor-pointer hover:bg-layer-1": !disabled,
+                      "cursor-pointer hover:bg-layer-transparent-hover": !disabled,
                     },
                     customButtonClassName
                   )}
@@ -122,7 +122,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                       "px-3 py-2 text-13": input,
                       "px-2 py-1 text-11": !input,
                       "cursor-not-allowed text-secondary": disabled,
-                      "cursor-pointer hover:bg-layer-1": !disabled,
+                      "cursor-pointer hover:bg-layer-transparent-hover": !disabled,
                     },
                     buttonClassName
                   )}
@@ -140,14 +140,14 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                 <Combobox.Options data-prevent-outside-click static>
                   <div
                     className={cn(
-                      "my-1 overflow-y-scroll rounded-md border-[0.5px] border-strong bg-surface-1 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
+                      "my-1 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 py-2.5 text-11 focus:outline-none min-w-48 whitespace-nowrap z-30",
                       optionsClassName
                     )}
                     ref={setPopperElement}
                     style={styles.popper}
                     {...attributes.popper}
                   >
-                    <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2 mx-2">
+                    <div className="flex items-center gap-1.5 rounded-sm border border-subtle px-2 mx-2">
                       <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
                       <Combobox.Input
                         className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
@@ -177,7 +177,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                                 cn(
                                   "w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none",
                                   {
-                                    "bg-layer-1": active,
+                                    "bg-layer-transparent-hover": active,
                                     "text-placeholder opacity-60 cursor-not-allowed": option.disabled,
                                   }
                                 )
