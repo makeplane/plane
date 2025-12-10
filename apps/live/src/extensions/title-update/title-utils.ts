@@ -1,4 +1,14 @@
-import { sanitizeHTML } from "@plane/utils";
+import DOMPurify from "isomorphic-dompurify";
+
+/**
+ * Sanitizes HTML by removing all HTML tags, leaving only text content
+ * @param htmlString - The HTML string to sanitize
+ * @returns The sanitized text with all HTML tags removed
+ */
+const sanitizeHTML = (htmlString: string): string => {
+  const sanitizedText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: [] }); // sanitize the string to remove all HTML tags
+  return sanitizedText.trim(); // trim the string to remove leading and trailing whitespaces
+};
 
 /**
  * Utility function to extract text from HTML content
