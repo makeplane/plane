@@ -119,7 +119,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
       </div>
 
       <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
-        <div className="w-full line-clamp-1 text-13 text-primary">
+        <div className="w-full line-clamp-1 text-body-xs-regular text-primary">
           <span>{issue.name}</span>
         </div>
       </Tooltip>
@@ -269,7 +269,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
           href={workItemLink}
           ref={cardRef}
           className={cn(
-            "block rounded-sm border-[1px] outline-[0.5px] outline-transparent w-full border-subtle bg-surface-1 text-13 transition-all hover:border-strong-1",
+            "block rounded-sm border-[1px] outline-[0.5px] outline-transparent w-full border-subtle bg-surface-1 text-body-xs-regular transition-all hover:border-strong-1",
             { "hover:cursor-pointer": isDragAllowed },
             { "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id) },
             { "bg-layer-1 z-[100]": isCurrentBlockDragging }
