@@ -19,12 +19,13 @@ import { cn } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserProfile, useUserSettings } from "@/hooks/store/user";
+import { useUser, useUserPermissions, useUserProfile, useUserSettings } from "@/hooks/store/user";
 // plane-web imports
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 import { WorkspaceService } from "@/plane-web/services";
 // local components
 import { CommonOnboardingHeader } from "../common";
+import { getUserRoleString, trackWorkspaceCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 
 type Props = {
   user: IUser | undefined;
@@ -48,11 +49,12 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
   const { t } = useTranslation();
   // store hooks
   const { updateUserProfile } = useUserProfile();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { fetchCurrentUserSettings } = useUserSettings();
-  const { createWorkspace, fetchWorkspaces } = useWorkspace();
-
+  const { createWorkspace, fetchWorkspaces, currentWorkspace } = useWorkspace();
+  const { data: currentUser } = useUser();
   const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
-
+  const { extraWorkspaceProperties } = useEventTracker(currentWorkspace);
   // form info
   const {
     handleSubmit,
@@ -82,10 +84,12 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
             title: t("workspace_creation.toast.success.title"),
             message: t("workspace_creation.toast.success.message"),
           });
-          captureSuccess({
-            eventName: WORKSPACE_TRACKER_EVENTS.create,
-            payload: { slug: formData.slug },
-          });
+
+          if (currentUser) {
+            const role = getWorkspaceRoleByWorkspaceSlug(workspaceResponse.slug);
+            trackWorkspaceCreated(workspaceResponse, currentUser, getUserRoleString(role));
+          }
+
           await fetchWorkspaces();
           await completeStep(workspaceResponse.id);
           onComplete(formData.organization_size === "Just myself");

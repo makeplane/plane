@@ -80,7 +80,7 @@ export const identifyUser = (user: IUser, profile?: TUserProfile) => {
  *
  * @param workspace - Workspace object
  */
-export const joinWorkspaceGroup = (workspace: Partial<IWorkspace>, extraProperties?: Record<string, unknown>) => {
+export const joinWorkspaceGroup = (workspace: Partial<IWorkspace>) => {
   if (!posthog || !workspace.slug) return;
 
   posthog.group("workspace", workspace.slug, {
@@ -92,7 +92,6 @@ export const joinWorkspaceGroup = (workspace: Partial<IWorkspace>, extraProperti
     owner_user_id: workspace.owner?.id || workspace.created_by,
     is_deleted: false,
     deleted_at: null,
-    ...extraProperties,
   });
 };
 
