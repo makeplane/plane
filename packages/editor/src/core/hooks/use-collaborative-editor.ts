@@ -22,7 +22,6 @@ import type {
 // local imports
 import { useEditorNavigation } from "./use-editor-navigation";
 import { useTitleEditor } from "./use-title-editor";
-import { useRealtimeEvents } from "./use-realtime-events";
 
 type UseCollaborativeEditorArgs = Omit<TCollaborativeEditorHookProps, "realtimeConfig" | "serverHandler" | "user"> & {
   provider: HocuspocusProvider;
