@@ -942,9 +942,6 @@ importers:
       is-emoji-supported:
         specifier: ^0.0.5
         version: 0.0.5
-      isomorphic-dompurify:
-        specifier: ^1.8.0
-        version: 1.13.0
       jsx-dom-cjs:
         specifier: ^8.0.3
         version: 8.1.6
