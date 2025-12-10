@@ -67,58 +67,50 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
 
   return (
     <div className="space-y-6">
-      {Object.entries(PROJECT_FEATURES_LIST).map(([featureSectionKey, feature]) => {
-        // Filter out pro features
-        const filteredFeatureList = Object.entries(feature.featureList).filter(
-          ([_, featureItem]) => !featureItem.isPro
-        );
-        // If there are no non-pro features in the section, skip rendering the section
-        if (filteredFeatureList.length === 0) return null;
-        return (
-          <div key={featureSectionKey} className="">
-            <SettingsHeading title={t(feature.key)} description={t(`${feature.key}_description`)} />
-            {filteredFeatureList.map(([featureItemKey, featureItem]) => (
-              <div
-                key={featureItemKey}
-                className="gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 py-4"
-              >
-                <div key={featureItemKey} className="flex items-center justify-between">
-                  <div className="flex items-start gap-3">
-                    <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
-                      {featureItem.icon}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-sm font-medium leading-5">{t(featureItem.key)}</h4>
-                        {featureItem.isPro && (
-                          <Tooltip tooltipContent="Pro feature" position="top">
-                            <UpgradeBadge className="rounded" />
-                          </Tooltip>
-                        )}
-                      </div>
-                      <p className="text-sm leading-5 tracking-tight text-custom-text-300">
-                        {t(`${featureItem.key}_description`)}
-                      </p>
-                    </div>
+      {Object.entries(PROJECT_FEATURES_LIST).map(([featureSectionKey, feature]) => (
+        <div key={featureSectionKey} className="">
+          <SettingsHeading title={t(feature.key)} description={t(`${feature.key}_description`)} />
+          {Object.entries(feature.featureList).map(([featureItemKey, featureItem]) => (
+            <div
+              key={featureItemKey}
+              className="gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 py-4"
+            >
+              <div key={featureItemKey} className="flex items-center justify-between">
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
+                    {featureItem.icon}
                   </div>
-                  <ProjectFeatureToggle
-                    workspaceSlug={workspaceSlug}
-                    projectId={projectId}
-                    featureItem={featureItem}
-                    value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
-                    handleSubmit={handleSubmit}
-                    disabled={!isAdmin}
-                  />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-sm font-medium leading-5">{t(featureItem.key)}</h4>
+                      {featureItem.isPro && (
+                        <Tooltip tooltipContent="Pro feature" position="top">
+                          <UpgradeBadge className="rounded" />
+                        </Tooltip>
+                      )}
+                    </div>
+                    <p className="text-sm leading-5 tracking-tight text-custom-text-300">
+                      {t(`${featureItem.key}_description`)}
+                    </p>
+                  </div>
                 </div>
-                <div className="pl-14">
-                  {currentProjectDetails?.[featureItem.property as keyof IProject] &&
-                    featureItem.renderChildren?.(currentProjectDetails, workspaceSlug)}
-                </div>
+                <ProjectFeatureToggle
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  featureItem={featureItem}
+                  value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
+                  handleSubmit={handleSubmit}
+                  disabled={!isAdmin}
+                />
               </div>
-            ))}
-          </div>
-        );
-      })}
+              <div className="pl-14">
+                {currentProjectDetails?.[featureItem.property as keyof IProject] &&
+                  featureItem.renderChildren?.(currentProjectDetails, workspaceSlug)}
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 });
