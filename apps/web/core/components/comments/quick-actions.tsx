@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon , GlobeIcon, LockIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
+import { LinkIcon, GlobeIcon, LockIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";

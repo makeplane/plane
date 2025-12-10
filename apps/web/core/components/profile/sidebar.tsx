@@ -11,7 +11,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { EditIcon , ChevronDownIcon } from "@plane/propel/icons";
+import { EditIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui

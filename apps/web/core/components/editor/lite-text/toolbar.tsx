@@ -8,8 +8,8 @@ import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
-import { GlobeIcon , LockIcon  } from "@plane/propel/icons";
-import type {ISvgIcons} from "@plane/propel/icons";
+import { GlobeIcon, LockIcon } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // constants
 import { cn } from "@plane/utils";

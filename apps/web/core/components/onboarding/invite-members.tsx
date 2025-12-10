@@ -19,7 +19,7 @@ import { ROLE, ROLE_DETAILS, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } fr
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
-import { PlusIcon , CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { PlusIcon, CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspace } from "@plane/types";
 // ui

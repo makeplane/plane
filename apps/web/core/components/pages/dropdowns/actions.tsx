@@ -1,17 +1,12 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import {
-  ArchiveRestoreIcon,
-  FileOutput,
-  LockKeyhole,
-  LockKeyholeOpen,
-} from "lucide-react";
+import { ArchiveRestoreIcon, FileOutput, LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // constants
 import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
-import { LinkIcon , CopyIcon , LockIcon , NewTabIcon , ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
+import { LinkIcon, CopyIcon, LockIcon, NewTabIcon, ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
 // plane ui
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";

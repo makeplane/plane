@@ -8,7 +8,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PlusIcon , ChevronRightIcon } from "@plane/propel/icons";
+import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Loader } from "@plane/ui";

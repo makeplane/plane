@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 
 import { MODULE_TRACKER_ELEMENTS } from "@plane/constants";
-import { CopyIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
+import { CopyIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";

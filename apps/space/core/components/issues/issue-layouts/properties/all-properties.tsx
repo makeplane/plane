@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { Paperclip } from "lucide-react";
-import { LinkIcon , ViewsIcon } from "@plane/propel/icons";
+import { LinkIcon, ViewsIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties } from "@plane/types";

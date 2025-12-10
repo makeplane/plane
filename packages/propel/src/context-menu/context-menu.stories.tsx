@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Download, Edit, Share, Star, Archive } from "lucide-react";
-import { CopyIcon , TrashIcon } from "../icons";
+import { CopyIcon, TrashIcon } from "../icons";
 import { ChevronRightIcon } from "../icons/arrows/chevron-right";
 import { ContextMenu } from "./context-menu";
 

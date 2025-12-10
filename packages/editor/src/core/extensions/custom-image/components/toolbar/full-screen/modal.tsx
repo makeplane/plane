@@ -1,7 +1,7 @@
 import { Download, Minus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-import { NewTabIcon , PlusIcon , CloseIcon } from "@plane/propel/icons";
+import { NewTabIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 

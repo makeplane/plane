@@ -2,7 +2,7 @@ import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon , EditIcon , TrashIcon , CloseIcon } from "@plane/propel/icons";
+import { LinkIcon, EditIcon, TrashIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, TIssueServiceType } from "@plane/types";

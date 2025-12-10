@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 
-import { EditIcon , CloseIcon } from "@plane/propel/icons";
+import { EditIcon, CloseIcon } from "@plane/propel/icons";
 // Plane
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";

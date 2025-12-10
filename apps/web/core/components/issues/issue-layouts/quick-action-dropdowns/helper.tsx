@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { XCircle, ArchiveRestoreIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon , CopyIcon , NewTabIcon, EditIcon, ArchiveIcon, TrashIcon } from "@plane/propel/icons";
+import { LinkIcon, CopyIcon, NewTabIcon, EditIcon, ArchiveIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EIssuesStoreType, TIssue } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";

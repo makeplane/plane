@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { Link as Loader } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon , EditIcon , TrashIcon , CloseIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { LinkIcon, EditIcon, TrashIcon, CloseIcon, ChevronRightIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";

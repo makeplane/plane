@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { CircleCheck, CircleX, Clock, FileStack, PanelLeft, MoveRight } from "lucide-react";
-import { LinkIcon , NewTabIcon , TrashIcon , ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { LinkIcon, NewTabIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";

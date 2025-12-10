@@ -15,7 +15,7 @@ import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { LinkIcon , ArchiveIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { LinkIcon, ArchiveIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
 import { cn } from "@plane/utils";

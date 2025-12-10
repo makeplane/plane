@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon , CopyIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
+import { LinkIcon, CopyIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssueServiceType } from "@plane/types";

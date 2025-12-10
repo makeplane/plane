@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { MoveRight } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 // ui
-import { LinkIcon , CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
+import { LinkIcon, CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";

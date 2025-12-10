@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { ROLE, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon , TrashIcon , ChevronDownIcon } from "@plane/propel/icons";
+import { LinkIcon, TrashIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomSelect, CustomMenu } from "@plane/ui";

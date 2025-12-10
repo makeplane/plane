@@ -9,7 +9,7 @@ import { Paperclip } from "lucide-react";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon , StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
+import { LinkIcon, StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui

@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 // types
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { GlobeIcon , NewTabIcon , CheckIcon } from "@plane/propel/icons";
+import { GlobeIcon, NewTabIcon, CheckIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui

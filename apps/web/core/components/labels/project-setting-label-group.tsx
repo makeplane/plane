@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 
 import { Disclosure, Transition } from "@headlessui/react";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
-import { EditIcon , TrashIcon , ChevronDownIcon } from "@plane/propel/icons";
+import { EditIcon, TrashIcon, ChevronDownIcon } from "@plane/propel/icons";
 // store
 // icons
 // types

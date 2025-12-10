@@ -1,7 +1,6 @@
-
 import type { TNetworkChoiceIconKey } from "@plane/constants";
 // plane imports
-import { GlobeIcon , LockIcon } from "@plane/propel/icons";
+import { GlobeIcon, LockIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 type Props = {

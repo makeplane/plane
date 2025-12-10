@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useHashScroll } from "@plane/hooks";
-import { GlobeIcon , LockIcon } from "@plane/propel/icons";
+import { GlobeIcon, LockIcon } from "@plane/propel/icons";
 import { EIssueCommentAccessSpecifier } from "@plane/types";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { cn } from "@plane/utils";

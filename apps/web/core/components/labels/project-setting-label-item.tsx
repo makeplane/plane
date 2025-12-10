@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useParams } from "next/navigation";
 
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
-import { EditIcon , CloseIcon } from "@plane/propel/icons";
+import { EditIcon, CloseIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
 // hooks

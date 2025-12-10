@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
-import { CopyIcon , ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { CopyIcon, ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TDescriptionVersion } from "@plane/types";

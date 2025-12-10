@@ -13,7 +13,7 @@ import {
   Undo,
   Redo,
 } from "lucide-react";
-import { LinkIcon , GlobeIcon , LockIcon } from "../icons";
+import { LinkIcon, GlobeIcon, LockIcon } from "../icons";
 import { ListLayoutIcon } from "../icons/layouts/list-icon";
 import { Toolbar } from "./toolbar";
 

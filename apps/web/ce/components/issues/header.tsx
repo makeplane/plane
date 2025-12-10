@@ -12,7 +12,7 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { NewTabIcon , WorkItemsIcon } from "@plane/propel/icons";
+import { NewTabIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";

@@ -8,7 +8,7 @@ import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "
 import { useLocalStorage } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { LinkIcon , LockIcon , NewTabIcon , TrashIcon , CheckIcon } from "@plane/propel/icons";
+import { LinkIcon, LockIcon, NewTabIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";

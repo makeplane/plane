@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { SquareStackIcon } from "lucide-react";
-import { CopyIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
+import { CopyIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane utils
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TWorkspaceDraftIssue } from "@plane/types";

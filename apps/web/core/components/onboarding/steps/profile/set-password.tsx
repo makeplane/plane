@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { LockIcon , ChevronDownIcon } from "@plane/propel/icons";
+import { LockIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { PasswordInput, PasswordStrengthIndicator } from "@plane/ui";
 import { cn } from "@plane/utils";
 

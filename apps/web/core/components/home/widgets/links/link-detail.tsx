@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon , NewTabIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
+import { LinkIcon, NewTabIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { LinkItemBlock } from "@plane/ui";

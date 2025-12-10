@@ -7,7 +7,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ROLE, EUserPermissions, MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { PlusIcon , CloseIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { PlusIcon, CloseIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Avatar, CustomSelect, CustomSearchSelect } from "@plane/ui";
 // helpers

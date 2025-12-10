@@ -6,7 +6,7 @@ import { CircleCheck, CircleX, Clock, FileStack, MoveRight } from "lucide-react"
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { LinkIcon , CopyIcon , NewTabIcon , TrashIcon , ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { LinkIcon, CopyIcon, NewTabIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";

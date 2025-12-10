@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 import { GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
-import { EditIcon , TrashIcon } from "@plane/propel/icons";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
 import { CustomMenu } from "@plane/ui";
 import { truncateText } from "@plane/utils";

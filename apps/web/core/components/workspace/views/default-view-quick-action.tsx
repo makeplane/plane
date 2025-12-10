@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { LinkIcon , NewTabIcon } from "@plane/propel/icons";
+import { LinkIcon, NewTabIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
 import type { TStaticViewTypes } from "@plane/types";

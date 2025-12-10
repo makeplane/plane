@@ -6,7 +6,7 @@ import { MoveDiagonal, MoveRight } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon , CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
+import { LinkIcon, CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TNameDescriptionLoader } from "@plane/types";

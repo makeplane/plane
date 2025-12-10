@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { VIEW_ACCESS_SPECIFIERS as VIEW_ACCESS_SPECIFIERS_CONSTANTS } from "@plane/constants";
-import { GlobeIcon , LockIcon } from "@plane/propel/icons";
+import { GlobeIcon, LockIcon } from "@plane/propel/icons";
 
 import type { ISvgIcons } from "@plane/propel/icons";
 import { EViewAccess } from "@plane/types";

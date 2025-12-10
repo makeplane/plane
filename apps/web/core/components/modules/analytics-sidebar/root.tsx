@@ -14,7 +14,8 @@ import {
 } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
-import { PlusIcon ,
+import {
+  PlusIcon,
   MembersPropertyIcon,
   ModuleStatusIcon,
   WorkItemsIcon,

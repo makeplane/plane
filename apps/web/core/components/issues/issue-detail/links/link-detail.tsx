@@ -1,5 +1,4 @@
-
-import { NewTabIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
+import { NewTabIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";

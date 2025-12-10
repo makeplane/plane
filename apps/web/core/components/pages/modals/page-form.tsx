@@ -7,7 +7,7 @@ import { ETabIndices, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { GlobeIcon , LockIcon, PageIcon } from "@plane/propel/icons";
+import { GlobeIcon, LockIcon, PageIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
 import type { TPage } from "@plane/types";
 import { Input } from "@plane/ui";

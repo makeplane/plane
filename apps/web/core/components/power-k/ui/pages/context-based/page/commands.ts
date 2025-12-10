@@ -1,16 +1,9 @@
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
-import {
-  ArchiveIcon,
-  ArchiveRestoreIcon,
-  LockKeyhole,
-  LockKeyholeOpen,
-  Star,
-  StarOff,
-} from "lucide-react";
+import { ArchiveIcon, ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen, Star, StarOff } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { LinkIcon , GlobeIcon , LockIcon } from "@plane/propel/icons";
+import { LinkIcon, GlobeIcon, LockIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EPageAccess } from "@plane/types";
 import { copyTextToClipboard } from "@plane/utils";

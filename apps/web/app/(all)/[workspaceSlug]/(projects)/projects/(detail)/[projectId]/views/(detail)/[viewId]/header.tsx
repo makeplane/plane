@@ -11,7 +11,7 @@ import {
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { LockIcon , ViewsIcon } from "@plane/propel/icons";
+import { LockIcon, ViewsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EViewAccess, EIssueLayoutTypes } from "@plane/types";
