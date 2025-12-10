@@ -81,7 +81,6 @@ export class TitleSyncExtension implements Extension {
 
     // Store minimal data needed for the observer (prevents closure memory leak)
     this.titleObserverData.set(documentName, {
-      parentId: context.parentId,
       userId: context.userId,
       workspaceSlug: context.workspaceSlug,
       instance: instance,

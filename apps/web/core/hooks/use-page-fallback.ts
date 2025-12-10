@@ -32,11 +32,12 @@ export const usePageFallback = (args: TArgs) => {
 
     // Show toast notification when fallback mechanism kicks in (only once)
     if (!hasShownFallbackToast.current) {
-      setToast({
-        type: TOAST_TYPE.WARNING,
-        title: "Connection lost",
-        message: "Your changes are being saved using backup mechanism. ",
-      });
+      // setToast({
+      //   type: TOAST_TYPE.WARNING,
+      //   title: "Connection lost",
+      //   message: "Your changes are being saved using backup mechanism. ",
+      // });
+      console.log("Connection lost");
       hasShownFallbackToast.current = true;
     }
 
@@ -62,11 +63,12 @@ export const usePageFallback = (args: TArgs) => {
         description: json,
       });
     } catch (error: any) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error",
-        message: `Failed to update description using backup mechanism, ${error?.message}`,
-      });
+      console.error(error);
+      // setToast({
+      //   type: TOAST_TYPE.ERROR,
+      //   title: "Error",
+      //   message: `Failed to update description using backup mechanism, ${error?.message}`,
+      // });
     } finally {
       setIsFetchingFallbackBinary(false);
     }
