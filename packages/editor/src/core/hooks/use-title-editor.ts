@@ -10,7 +10,7 @@ import { TitleExtensions } from "@/extensions/title-extension";
 // helpers
 import { getEditorRefHelpers } from "@/helpers/editor-ref";
 // types
-import type { IEditorPropsExtended } from "@/types";
+import type { IEditorPropsExtended, IEditorProps } from "@/types";
 import type { EditorTitleRefApi, ICollaborativeDocumentEditorProps } from "@/types/editor";
 
 type Props = {
@@ -24,6 +24,7 @@ type Props = {
   updatePageProperties?: ICollaborativeDocumentEditorProps["updatePageProperties"];
   id: string;
   extendedEditorProps?: IEditorPropsExtended;
+  getEditorMetaData?: IEditorProps["getEditorMetaData"];
 };
 
 /**
@@ -31,7 +32,7 @@ type Props = {
  * Uses the same Y.Doc as the main editor but a different field
  */
 export const useTitleEditor = (props: Props) => {
-  const { editable = true, id, initialValue = "", extensions, provider, updatePageProperties, titleRef } = props;
+  const { editable = true, id, initialValue = "", extensions, provider, updatePageProperties, titleRef, getEditorMetaData } = props;
 
   // Force editor recreation when Y.Doc changes (provider.document.guid)
   const docKey = provider?.document?.guid ?? id;
@@ -62,6 +63,7 @@ export const useTitleEditor = (props: Props) => {
     ...getEditorRefHelpers({
       editor,
       provider,
+      getEditorMetaData: getEditorMetaData ?? (() => ({ file_assets: [], user_mentions: [] })),
     }),
     clearEditor: (emitUpdate = false) => {
       editor

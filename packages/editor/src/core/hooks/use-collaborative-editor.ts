@@ -15,6 +15,7 @@ import type {
   TCollaborativeEditorHookProps,
   ICollaborativeDocumentEditorProps,
   IEditorPropsExtended,
+  IEditorProps,
   TEditorHookProps,
   EditorTitleRefApi,
 } from "@/types";
@@ -124,7 +125,6 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
       onEditorFocus,
       onTransaction,
       placeholder,
-      showPlaceholderOnEmpty,
       provider,
       tabIndex,
     }),
@@ -150,6 +150,7 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
       onTransaction,
       placeholder,
       showPlaceholderOnEmpty,
+      provider,
       tabIndex,
     ]
   );
@@ -175,6 +176,7 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
     updatePageProperties?: ICollaborativeDocumentEditorProps["updatePageProperties"];
     extensions: Extensions;
     extendedEditorProps?: IEditorPropsExtended;
+    getEditorMetaData?: IEditorProps["getEditorMetaData"];
   }>(
     () => ({
       id,
@@ -184,8 +186,9 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
       updatePageProperties,
       extensions: titleExtensions,
       extendedEditorProps,
+      getEditorMetaData,
     }),
-    [provider, id, editable, titleRef, updatePageProperties, titleExtensions, extendedEditorProps]
+    [provider, id, editable, titleRef, updatePageProperties, titleExtensions, extendedEditorProps, getEditorMetaData]
   );
 
   const titleEditor = useTitleEditor(titleEditorConfig as Parameters<typeof useTitleEditor>[0]);

@@ -31,9 +31,6 @@ type Props = {
   isLoading?: boolean;
   isTouchDevice: boolean;
   tabIndex?: number;
-  extendedEditorProps?: IEditorPropsExtended;
-  flaggedExtensions: IEditorProps["flaggedExtensions"];
-  disabledExtensions: IEditorProps["disabledExtensions"];
   provider?: HocuspocusProvider;
   state?: TCollabValue["state"];
 };
@@ -53,8 +50,6 @@ export function PageRenderer(props: Props) {
     isTouchDevice,
     tabIndex,
     titleEditor,
-    flaggedExtensions,
-    disabledExtensions,
     provider,
     state,
   } = props;
@@ -98,7 +93,14 @@ export function PageRenderer(props: Props) {
             <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
             {editor.isEditable && !isTouchDevice && (
               <div>
-                {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
+                {bubbleMenuEnabled && (
+                  <EditorBubbleMenu
+                    editor={editor}
+                    disabledExtensions={disabledExtensions}
+                    extendedEditorProps={extendedEditorProps}
+                    flaggedExtensions={flaggedExtensions}
+                  />
+                )}
                 <BlockMenu
                   editor={editor}
                   flaggedExtensions={flaggedExtensions}
