@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router";
 import { PinOff } from "lucide-react";
 // plane imports
@@ -37,7 +36,7 @@ export function TabNavigationVisibleItem({
   return (
     <div className="relative h-full flex items-center transition-all duration-300">
       {isActive && (
-        <span className="absolute bottom-0 w-[80%] left-1/2 -translate-x-1/2 h-0.5 bg-layer-1 rounded-t-md transition-all duration-300" />
+        <span className="absolute bottom-0 w-[80%] left-1/2 -translate-x-1/2 h-0.5 bg-(--text-color-icon-primary) rounded-t-md transition-all duration-300" />
       )}
       <div key={`${item.key}-measure`} ref={itemRef}>
         <ContextMenu>
