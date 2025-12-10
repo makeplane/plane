@@ -1,10 +1,8 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@plane/propel/button";
 import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { getUpgradeButtonStyle, Loader } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { Loader } from "@plane/ui";
 // local imports
 import { DiscountInfo } from "./discount-info";
 
@@ -42,8 +40,6 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
     isSelfHosted,
     isTrialAllowed,
   } = props;
-  const upgradeButtonStyle =
-    getUpgradeButtonStyle(planVariant, !!upgradeLoaderType) ?? getButtonStyling("primary", "lg", !!upgradeLoaderType);
 
   return (
     <>
@@ -75,11 +71,10 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
         </Loader>
       ) : (
         <div className="flex flex-col items-center justify-center w-full space-y-4 transition-all duration-300 animate-fade-in">
-          <button
-            className={cn(
-              upgradeButtonStyle,
-              "relative inline-flex items-center justify-center w-56 px-4 py-2 text-13 font-medium rounded-lg focus:outline-none"
-            )}
+          <Button
+            variant="primary"
+            size="lg"
+            className="w-56"
             onClick={() => {
               if (product && price.id) {
                 handleCheckout({
@@ -92,7 +87,7 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
             disabled={!!upgradeLoaderType}
           >
             {upgradeLoaderType === planVariant ? "Redirecting to Stripe" : (upgradeCTA ?? `Upgrade to ${planeName}`)}
-          </button>
+          </Button>
           {isTrialAllowed && !isSelfHosted && (
             <div className="mt-4 h-4 transition-all duration-300 animate-fade-in">
               {renderTrialButton &&

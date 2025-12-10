@@ -26,22 +26,26 @@ export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: 
           getSubscriptionBackgroundColor(subscriptionType, "50")
         )}
       >
-        <div
-          key="month"
+        <button
+          type="button"
           onClick={() => setSelectedFrequency("month")}
           className={cn(
             "w-full rounded-sm px-1 py-0.5 text-11 font-medium leading-5 text-center",
-            selectedFrequency === "month" ? "bg-surface-1 text-primary shadow" : "text-tertiary hover:text-secondary"
+            selectedFrequency === "month"
+              ? "bg-layer-transparent-selected text-primary shadow"
+              : "hover:bg-layer-transparent-hover text-tertiary hover:text-secondary"
           )}
         >
           Monthly
-        </div>
-        <div
-          key="year"
+        </button>
+        <button
+          type="button"
           onClick={() => setSelectedFrequency("year")}
           className={cn(
             "w-full rounded-sm px-1 py-0.5 text-11 font-medium leading-5 text-center",
-            selectedFrequency === "year" ? "bg-surface-1 text-primary shadow" : "text-tertiary hover:text-secondary"
+            selectedFrequency === "year"
+              ? "bg-layer-transparent-selected text-primary shadow"
+              : "hover:bg-layer-transparent-hover text-tertiary hover:text-secondary"
           )}
         >
           Yearly
@@ -50,7 +54,7 @@ export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: 
               -{yearlyDiscount}%
             </span>
           )}
-        </div>
+        </button>
       </div>
     </div>
   );

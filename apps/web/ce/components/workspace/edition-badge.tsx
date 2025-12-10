@@ -2,7 +2,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -25,16 +24,16 @@ export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {
         handleClose={() => setIsPaidPlanPurchaseModalOpen(false)}
       />
       <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
-        <Button
+        <button
+          type="button"
           tabIndex={-1}
-          variant="secondary"
-          className="w-fit min-w-24 cursor-pointer rounded-2xl px-2 py-1 text-center text-13 font-medium outline-none"
+          className="w-fit min-w-24 cursor-pointer rounded-2xl px-2 py-1 text-center text-13 font-medium outline-none bg-plans-neutral-subtle text-plans-neutral-primary"
           onClick={() => setIsPaidPlanPurchaseModalOpen(true)}
           aria-haspopup="dialog"
           aria-label={t("aria_labels.projects_sidebar.edition_badge")}
         >
           Community
-        </Button>
+        </button>
       </Tooltip>
     </>
   );

@@ -42,7 +42,7 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
         <div className="h-full flex flex-col gap-y-10">
           <div
             className={cn(
-              "flex-shrink-0 sticky top-2 z-10 bg-surface-1 grid gap-3 text-13 font-medium even:bg-surface-2 transition-all duration-500 ease-out will-change-transform"
+              "flex-shrink-0 sticky top-2 z-10 bg-layer-1 grid gap-3 text-13 font-medium even:bg-layer-2 transition-all duration-500 ease-out will-change-transform"
             )}
             style={{
               gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))`,
@@ -86,7 +86,7 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
                     {section.features.map((feature, featureIdx) => (
                       <div
                         key={featureIdx}
-                        className="grid gap-3 text-13 text-secondary even:bg-surface-2 rounded-xs"
+                        className="grid gap-3 text-13 text-secondary even:bg-layer-2 rounded-xs"
                         style={{ gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))` }}
                       >
                         <div className="col-span-1 p-3 flex items-center text-14 font-medium">
@@ -128,10 +128,9 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
             onClick={() => {
               setIsCompareAllFeaturesSectionOpen(!isCompareAllFeaturesSectionOpen);
             }}
-            className="hover:bg-surface-2"
+            appendIcon={isCompareAllFeaturesSectionOpen ? <ArrowUp /> : <ArrowDown />}
           >
             {isCompareAllFeaturesSectionOpen ? "Collapse comparison" : "Compare all features"}
-            {isCompareAllFeaturesSectionOpen ? <ArrowUp className="size-4" /> : <ArrowDown className="size-4" />}
           </Button>
         </div>
       </div>
