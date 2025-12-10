@@ -107,7 +107,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
       <CommonOnboardingHeader title="What's your role?" description="Let's set up Plane for how you work." />
       {/* Role Selection */}
       <div className="flex flex-col gap-3">
-        <p className="text-13 font-medium text-placeholder">Select one</p>
+        <p className="text-body-sm-semibold text-placeholder">Select one</p>
         <Controller
           control={control}
           name="role"
@@ -136,12 +136,12 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                   >
                     <div className="flex items-center space-x-3">
                       <Icon className="size-3.5" />
-                      <span className="font-medium">{role.label}</span>
+                      <span className="text-body-sm-semibold">{role.label}</span>
                     </div>
                     {isSelected && (
                       <>
                         <button
-                          className={`size-4 rounded-sm border-2 flex items-center justify-center bg-blue-500 border-blue-500`}
+                          className={`size-4 rounded-sm border-2 flex items-center justify-center bg-accent-primary border-blue-500`}
                         >
                           <Check className="w-3 h-3 text-on-color" />
                         </button>
@@ -160,7 +160,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
         <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
           Continue
         </Button>
-        <Button variant="ghost" onClick={handleSkip} className="w-full" size="xl">
+        <Button variant="ghost" onClick={handleSkip} className="text-tertiary w-full" size="xl">
           Skip
         </Button>
       </div>

@@ -20,7 +20,13 @@ const Button = React.forwardRef(function Button(props: ButtonProps, ref: React.F
   const buttonIconStyle = getIconStyling(size ?? "base");
 
   return (
-    <button ref={ref} type={type} className={cn(buttonVariants({ variant, size }), className)} disabled={disabled || loading} {...rest}>
+    <button
+      ref={ref}
+      type={type}
+      className={cn(buttonVariants({ variant, size }), className)}
+      disabled={disabled || loading}
+      {...rest}
+    >
       {prependIcon && React.cloneElement(prependIcon, { className: cn("shrink-0", buttonIconStyle), strokeWidth: 2 })}
       {children}
       {appendIcon && React.cloneElement(appendIcon, { className: cn("shrink-0", buttonIconStyle), strokeWidth: 2 })}

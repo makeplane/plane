@@ -59,13 +59,12 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
 
   const handleCopyMarkdown = useCallback(() => {
     if (!editorRef.current) return;
-    copyTextToClipboard(editorRef.current.getMarkDown()).then(() =>
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("toast.success"),
-        message: "Markdown copied to clipboard.",
-      })
-    );
+    editorRef.current.copyMarkdownToClipboard();
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: t("toast.success"),
+      message: "Markdown copied to clipboard.",
+    });
   }, [t]);
 
   if (!workspaceId) return null;

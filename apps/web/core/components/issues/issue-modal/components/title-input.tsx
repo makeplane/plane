@@ -66,13 +66,13 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: TIssueTi
             ref={issueTitleRef || ref}
             hasError={Boolean(errors.name)}
             placeholder={t("title")}
-            className="w-full text-14"
+            className="w-full text-body-sm-regular"
             autoFocus
             tabIndex={getIndex("name")}
           />
         )}
       />
-      <span className="text-11 font-medium text-red-500">{errors?.name?.message}</span>
+      <span className="text-caption-sm-medium text-red-500">{errors?.name?.message}</span>
     </div>
   );
 });

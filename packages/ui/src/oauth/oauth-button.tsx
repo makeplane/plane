@@ -24,7 +24,9 @@ const OAuthButton = React.forwardRef(function OAuthButton(
     >
       <div className="flex flex-shrink-0 items-center justify-center">{icon}</div>
       {!compact && (
-        <div className="flex flex-grow items-center justify-center transition-opacity duration-300">{text}</div>
+        <span className="flex flex-grow items-center justify-center transition-opacity duration-300 text-body-sm-regular">
+          {text}
+        </span>
       )}
     </button>
   );

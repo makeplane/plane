@@ -47,6 +47,7 @@ type TArguments = Pick<
   | "isTouchDevice"
   | "mentionHandler"
   | "placeholder"
+  | "showPlaceholderOnEmpty"
   | "tabIndex"
   | "extendedEditorProps"
 > & {
@@ -65,6 +66,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     isTouchDevice = false,
     mentionHandler,
     placeholder,
+    showPlaceholderOnEmpty,
     tabIndex,
     editable,
     extendedEditorProps,
@@ -108,7 +110,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     TableCell,
     TableRow,
     CustomMentionExtension(mentionHandler),
-    CustomPlaceholderExtension({ placeholder }),
+    CustomPlaceholderExtension({ placeholder, showPlaceholderOnEmpty }),
     CharacterCount,
     CustomColorExtension,
     CustomTextAlignExtension,

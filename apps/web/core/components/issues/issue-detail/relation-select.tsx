@@ -124,7 +124,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                         })}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-11 font-medium"
+                        className="text-caption-sm-medium"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {`${projectDetails?.identifier}-${currentIssue?.sequence_id}`}
@@ -139,7 +139,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                             removeRelation(workspaceSlug, projectId, issueId, relationKey, relationIssueId);
                           }}
                         >
-                          <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-red-500" />
+                          <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-danger" />
                         </span>
                       </Tooltip>
                     )}
@@ -148,7 +148,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
               })}
             </div>
           ) : (
-            <span className="text-13 text-placeholder">{currRelationOption?.placeholder}</span>
+            <span className="text-body-xs-regular text-placeholder">{currRelationOption?.placeholder}</span>
           )}
           {!disabled && (
             <span

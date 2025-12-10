@@ -8,15 +8,15 @@
     /* Font size for the caption labels. */
     --rdp-caption-navigation-size: 1.25rem;
     /* Font size for the caption labels. */
-    --rdp-accent-color: rgba(var(--color-primary-100));
+    --rdp-accent-color: var(--background-color-accent-primary);
     /* Accent color for the background of selected days. */
-    --rdp-background-color: rgba(var(--color-primary-100), 0.5);
+    --rdp-background-color: --alpha(var(--background-color-accent-primary) / 50%);
     /* Background color for the hovered/focused elements. */
-    --rdp-dark-background-color: rgba(var(--color-primary-300));
+    --rdp-dark-background-color: var(--background-color-accent-primary-hover);
     /* Background color for the hovered/focused, already selected elements. */
     --rdp-outline: 2px solid var(--rdp-accent-color);
     /* Outline border for focused elements */
-    --rdp-selected-color: #ffffff;
+    --rdp-selected-color: var(--text-color-on-color);
     /* Color of selected day text */
 
     background: transparent;
@@ -160,7 +160,7 @@
   }
 
   .rdp-chevron {
-    fill: rgba(var(--color-text-200));
+    @apply fill-secondary;
     height: 0.75rem;
     width: 0.75rem;
   }
@@ -169,7 +169,7 @@
   .rdp-button_previous:hover,
   .rdp-button_next:focus-visible,
   .rdp-button_previous:focus-visible {
-    background-color: rgba(var(--color-background-80)) !important;
+    @apply bg-layer-transparent-hover!;
   }
 
   /* ---------- */
@@ -204,7 +204,7 @@
     background: transparent;
 
     &:hover {
-      background-color: rgba(var(--color-background-80)) !important;
+      @apply bg-layer-transparent-hover!;
     }
   }
 
@@ -250,7 +250,7 @@
 
     &:hover {
       & + .rdp-caption_label {
-        background-color: rgba(var(--color-background-80)) !important;
+        @apply bg-layer-transparent-hover!;
       }
     }
   }

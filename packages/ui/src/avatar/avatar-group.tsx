@@ -60,7 +60,7 @@ export function AvatarGroup(props: Props) {
   return (
     <div className={cn("flex", sizeInfo.spacing)}>
       {avatarsWithUpdatedProps.map((avatar, index) => (
-        <div key={index} className="rounded-full ring-1 ring-custom-background-100">
+        <div key={index} className="rounded-full border border-subtle-1">
           {avatar}
         </div>
       ))}
@@ -68,7 +68,7 @@ export function AvatarGroup(props: Props) {
         <Tooltip tooltipContent={`${totalAvatars} total`} disabled={!showTooltip}>
           <div
             className={cn(
-              "grid place-items-center rounded-full bg-accent-subtle text-9 text-accent-primary ring-1 ring-custom-background-100",
+              "grid place-items-center rounded-full bg-accent-subtle text-9 text-accent-primary border border-subtle-1",
               {
                 [sizeInfo.avatarSize]: !isAValidNumber(size),
               }

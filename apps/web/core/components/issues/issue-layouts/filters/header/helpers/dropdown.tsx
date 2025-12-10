@@ -68,6 +68,7 @@ export function FiltersDropdown(props: Props) {
                       }
                       tabIndex={tabIndex}
                       className="relative"
+                      size="lg"
                     >
                       <>
                         <div className={`${open ? "text-primary" : "text-secondary"}`}>
@@ -86,6 +87,7 @@ export function FiltersDropdown(props: Props) {
                       variant="secondary"
                       tabIndex={tabIndex}
                       className="relative px-2"
+                      size="lg"
                     >
                       {miniIcon || title}
                     </Button>

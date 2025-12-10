@@ -14,6 +14,8 @@
 @import "@fontsource/material-symbols-rounded/400.css";
 
 @custom-variant dark (&:where([data-theme*="dark"], [data-theme*="dark"] *));
+@custom-variant dark-high-contrast (&:where([data-theme="dark-contrast"], [data-theme="dark-contrast"] *));
+@custom-variant light-high-contrast (&:where([data-theme="light-contrast"], [data-theme="light-contrast"] *));
 
 @theme {
   --color-*: initial;
@@ -154,6 +156,12 @@
   --color-red-900: oklch(0.4446 0.1774 26.79);
   --color-red-1000: oklch(0.3967 0.1408 25.71);
   --color-red-1100: oklch(0.3493 0.1215 25.21);
+
+  /* Scrollbar colors */
+  --color-scrollbar-thumb: var(--color-alpha-black-200);
+  --color-scrollbar-thumb-surface-hover: var(--color-alpha-black-300);
+  --color-scrollbar-thumb-hover: var(--color-alpha-black-400);
+  --color-scrollbar-thumb-active: var(--color-alpha-black-500);
 
   /* --------- Extended colors ---------- */
   /* Purple colors */
@@ -495,8 +503,8 @@
 @layer theme {
   :root,
   :host {
+    /* ---------- Dark mode color tokens ---------- */
     @variant dark {
-      /* ---------- Dark mode color tokens ---------- */
       /* Neutral colors */
       --color-neutral-black: oklch(0.1689 0.0021 286.18);
       --color-neutral-100: oklch(0.2039 0.0025 247.95);
@@ -566,7 +574,13 @@
       --color-red-1000: oklch(0.9365 0.032 17.74);
       --color-red-1100: oklch(0.9705 0.0129 17.38);
 
-      /* -------------------- Dark mode custom(derived) colors -------------------- */
+      /* Scrollbar colors */
+      --color-scrollbar-thumb: var(--color-alpha-white-200);
+      --color-scrollbar-thumb-surface-hover: var(--color-alpha-white-300);
+      --color-scrollbar-thumb-hover: var(--color-alpha-white-400);
+      --color-scrollbar-thumb-active: var(--color-alpha-white-500);
+
+      /* -------------------- Dark mode derived colors -------------------- */
       /* Background colors */
       --background-color-canvas: var(--color-neutral-black);
       --background-color-surface-1: var(--color-neutral-100);
@@ -583,7 +597,7 @@
       --background-color-layer-3-hover: var(--color-alpha-white-100);
       --background-color-layer-3-active: var(--color-alpha-white-200);
       --background-color-layer-3-selected: var(--color-alpha-white-300);
-      --background-color-layer-transparent: var(--alpha-black-0);
+      --background-color-layer-transparent: var(--color-alpha-black-0);
       --background-color-layer-transparent-hover: var(--color-alpha-white-100);
       --background-color-layer-transparent-active: var(--color-alpha-white-200);
       --background-color-layer-transparent-selected: var(--color-alpha-white-300);
@@ -714,6 +728,44 @@
       --illustration-stroke-primary: var(--color-neutral-700);
       --illustration-stroke-secondary: var(--color-neutral-800);
       --illustration-stroke-tertiary: var(--color-neutral-1000);
+    }
+
+    /* -------------------- Dark high contrast mode derived colors -------------------- */
+    @variant dark-high-contrast {
+      /* Border colors */
+      --border-color-subtle: var(--color-neutral-1200);
+      --border-color-subtle-1: var(--color-neutral-1100);
+      --border-color-strong: var(--color-neutral-1000);
+      --border-color-strong-1: var(--color-neutral-900);
+      --border-color-inverse: var(--color-neutral-white);
+      --border-color-disabled: var(--color-neutral-700);
+      --border-color-accent-strong: var(--color-brand-default);
+      --border-color-accent-subtle: var(--color-brand-300);
+      --border-color-success-strong: var(--color-green-400);
+      --border-color-success-subtle: var(--color-green-200);
+      --border-color-warning-strong: var(--color-amber-400);
+      --border-color-warning-subtle: var(--color-amber-200);
+      --border-color-danger-strong: var(--color-red-400);
+      --border-color-danger-subtle: var(--color-red-200);
+    }
+
+    /* -------------------- Light high contrast mode derived colors -------------------- */
+    @variant light-high-contrast {
+      /* Border colors */
+      --border-color-subtle: var(--color-neutral-1200);
+      --border-color-subtle-1: var(--color-neutral-1100);
+      --border-color-strong: var(--color-neutral-1000);
+      --border-color-strong-1: var(--color-neutral-900);
+      --border-color-inverse: var(--color-neutral-black);
+      --border-color-disabled: var(--color-neutral-700);
+      --border-color-accent-strong: var(--color-brand-default);
+      --border-color-accent-subtle: var(--color-brand-300);
+      --border-color-success-strong: var(--color-green-700);
+      --border-color-success-subtle: var(--color-green-600);
+      --border-color-warning-strong: var(--color-amber-700);
+      --border-color-warning-subtle: var(--color-amber-400);
+      --border-color-danger-strong: var(--color-red-700);
+      --border-color-danger-subtle: var(--color-red-400);
     }
   }
 }
@@ -1004,6 +1056,10 @@
   --text-caption-xs-bold--line-height: 1;
   --text-caption-xs-bold--letter-spacing: calc(0.01 * var(--text-10));
   --text-caption-xs-bold--font-weight: var(--font-weight-bold);
+}
+
+@utility h-header {
+  height: 3.25rem;
 }
 
 @utility px-page-x {
