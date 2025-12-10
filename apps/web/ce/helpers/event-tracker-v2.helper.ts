@@ -1,4 +1,4 @@
-import posthog from "posthog-js";
+import { posthog } from "posthog-js";
 import { EUserPermissions } from "@plane/types";
 import type { EUserProjectRoles, EUserWorkspaceRoles, IUser, IWorkspace, TUserProfile } from "@plane/types";
 
@@ -80,7 +80,7 @@ export const identifyUser = (user: IUser, profile?: TUserProfile) => {
  *
  * @param workspace - Workspace object
  */
-export const joinWorkspaceGroup = (workspace: Partial<IWorkspace>) => {
+export const joinWorkspaceGroup = (workspace: Partial<IWorkspace>, extraProperties?: Record<string, unknown>) => {
   if (!posthog || !workspace.slug) return;
 
   posthog.group("workspace", workspace.slug, {
@@ -92,6 +92,7 @@ export const joinWorkspaceGroup = (workspace: Partial<IWorkspace>) => {
     owner_user_id: workspace.owner?.id || workspace.created_by,
     is_deleted: false,
     deleted_at: null,
+    ...extraProperties,
   });
 };
 
