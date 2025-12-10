@@ -1,6 +1,6 @@
 import { EditorContent } from "@tiptap/react";
 import type { Editor } from "@tiptap/react";
-import type {  ReactNode } from "react";
+import type { ReactNode } from "react";
 
 type Props = {
   className?: string;
@@ -23,4 +23,4 @@ export function EditorContentWrapper(props: Props) {
       {children}
     </div>
   );
-};
+}

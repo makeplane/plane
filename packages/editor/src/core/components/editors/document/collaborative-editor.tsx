@@ -129,7 +129,7 @@ function CollaborativeDocumentEditorInner(props: ICollaborativeDocumentEditorPro
       </div>
     </>
   );
-};
+}
 
 // Outer component that provides collaboration context
 function CollaborativeDocumentEditor(props: ICollaborativeDocumentEditorProps) {
@@ -147,7 +147,7 @@ function CollaborativeDocumentEditor(props: ICollaborativeDocumentEditorProps) {
       <CollaborativeDocumentEditorInner {...props} />
     </CollaborationProvider>
   );
-};
+}
 
 const CollaborativeDocumentEditorWithRef = React.forwardRef(function CollaborativeDocumentEditorWithRef(
   props: ICollaborativeDocumentEditorProps,

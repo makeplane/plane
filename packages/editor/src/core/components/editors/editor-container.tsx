@@ -176,4 +176,4 @@ export function EditorContainer(props: Props) {
       </div>
     </>
   );
-};
+}

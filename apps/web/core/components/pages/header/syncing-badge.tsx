@@ -69,4 +69,4 @@ export function PageSyncingBadge({ syncStatus }: Props) {
       </div>
     </Tooltip>
   );
-};
+}
