@@ -1,4 +1,3 @@
-import React from "react";
 import useFontFaceObserver from "use-font-face-observer";
 import { MATERIAL_ICONS_LIST } from "../material-icons";
 
@@ -37,7 +36,7 @@ export function MaterialIconList(props: MaterialIconListProps) {
           }}
         >
           {isMaterialSymbolsFontLoaded ? (
-            <span style={{ color: activeColor }} className="material-symbols-rounded-sm !text-20 !leading-[1.25rem]">
+            <span style={{ color: activeColor }} className="material-symbols-rounded text-20! leading-5!">
               {icon.name}
             </span>
           ) : (
