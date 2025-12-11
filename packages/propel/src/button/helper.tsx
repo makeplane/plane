@@ -1,19 +1,6 @@
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
 
-export type TButtonVariant =
-  | "primary"
-  | "accent-primary"
-  | "outline-primary"
-  | "neutral-primary"
-  | "link-primary"
-  | "danger"
-  | "accent-danger"
-  | "outline-danger"
-  | "link-danger"
-  | "tertiary-danger"
-  | "link-neutral";
-
 export interface IButtonStyling {
   [key: string]: {
     default: string;
@@ -63,20 +50,20 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
     prependIcon?: React.ReactElement;
   };
 
-const buttonIconStyling: Record<NonNullable<ButtonProps["size"]>, string> = {
+export type TButtonVariant = NonNullable<ButtonProps["variant"]>;
+export type TButtonSize = NonNullable<ButtonProps["size"]>;
+
+const buttonIconStyling: Record<TButtonSize, string> = {
   sm: "size-3.5",
   base: "size-3.5",
   lg: "size-4",
   xl: "size-4 ",
 };
 
-export function getIconStyling(size: NonNullable<ButtonProps["size"]>): string {
+export function getIconStyling(size: TButtonSize): string {
   return buttonIconStyling[size];
 }
 
-export function getButtonStyling(
-  variant: NonNullable<ButtonProps["variant"]>,
-  size: NonNullable<ButtonProps["size"]>
-): string {
+export function getButtonStyling(variant: TButtonVariant, size: TButtonSize): string {
   return buttonVariants({ variant, size });
 }

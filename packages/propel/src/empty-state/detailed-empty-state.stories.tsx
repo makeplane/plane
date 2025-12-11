@@ -122,7 +122,7 @@ export const WithMultipleActions: Story = {
       {
         label: "Import Modules",
         onClick: () => console.log("import-clicked"),
-        variant: "outline-primary",
+        variant: "secondary",
       },
     ],
   },
@@ -169,7 +169,7 @@ export const ServerErrorState: Story = {
       {
         label: "Contact Support",
         onClick: () => console.log("support-clicked"),
-        variant: "outline-primary",
+        variant: "secondary",
       },
     ],
   },

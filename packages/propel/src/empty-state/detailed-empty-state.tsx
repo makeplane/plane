@@ -1,4 +1,4 @@
-import React from "react";
+// local imports
 import { Button } from "../button/button";
 import { cn } from "../utils/classname";
 import { getDetailedAsset } from "./assets/asset-registry";

@@ -155,7 +155,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
               type="button"
               className={cn(
                 "flex-shrink-0",
-                getButtonStyling("neutral-primary", "sm"),
+                getButtonStyling("secondary", "base"),
                 "border-none grid place-items-center"
               )}
               onClick={handleCopyMarkdown}

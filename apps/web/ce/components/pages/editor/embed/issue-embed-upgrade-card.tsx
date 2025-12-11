@@ -24,7 +24,7 @@ export function IssueEmbedUpgradeCard(props: any) {
         href="https://plane.so/pro"
         target="_blank"
         rel="noopener noreferrer"
-        className={cn(getButtonStyling("primary", "md"), "no-underline")}
+        className={cn(getButtonStyling("primary", "base"), "no-underline")}
       >
         Upgrade
       </a>

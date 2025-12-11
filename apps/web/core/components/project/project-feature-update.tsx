@@ -45,7 +45,7 @@ export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props
           <Link
             href={`/${workspaceSlug}/projects/${projectId}/issues`}
             onClick={onClose}
-            className={getButtonStyling("primary", "sm")}
+            className={getButtonStyling("primary", "base")}
             tabIndex={2}
           >
             {t("open_project")}
