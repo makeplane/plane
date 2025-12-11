@@ -132,10 +132,10 @@ export function CreateUpdateModuleLinkModal(props: Props) {
           </div>
         </div>
         <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" size="lg" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="primary" type="submit" loading={isSubmitting}>
+          <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
             {data ? (isSubmitting ? "Updating link" : "Update link") : isSubmitting ? "Adding link" : "Add link"}
           </Button>
         </div>
