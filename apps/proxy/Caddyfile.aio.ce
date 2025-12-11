@@ -8,7 +8,7 @@
     }
 	
     handle /live/* {
-        reverse_proxy locahost:3005
+        reverse_proxy localhost:3005
     }
 	handle /api/* {
         reverse_proxy localhost:3004
