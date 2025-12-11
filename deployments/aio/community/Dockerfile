@@ -36,7 +36,7 @@ COPY --from=space-img /app /app/space
 COPY --from=admin-img /usr/share/nginx/html/god-mode /app/admin
 COPY --from=live-img /app /app/live
 
-RUN rm -rf /app/space/apps/space/.next/cache && \
+RUN rm -rf /app/space/apps/space/.next/cache
 
 COPY --from=proxy-img /usr/bin/caddy /usr/bin/caddy
 COPY dist/Caddyfile /app/proxy/Caddyfile
