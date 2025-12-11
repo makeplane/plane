@@ -191,5 +191,10 @@ export default {
         "Generujte bezpečné API tokeny na pripojenie vášho pracovného priestoru s externými systémami a aplikáciami.",
       cta_primary: "Pridať API token",
     },
+    webhooks: {
+      title: "Zatiaľ nebol pridaný žiadny Webhook",
+      description: "Automatizujte oznámenia externým službám pri výskyte udalostí projektu.",
+      cta_primary: "Pridať webhook",
+    },
   },
 } as const;
