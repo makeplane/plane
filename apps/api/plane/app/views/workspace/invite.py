@@ -21,7 +21,7 @@ from plane.app.serializers import (
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.bgtasks.event_tracking_task import workspace_invite_event
+from plane.bgtasks.event_tracking_task import workspace_invite_event, track_event
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
@@ -120,6 +120,18 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                 invitation.token,
                 current_site,
                 request.user.email,
+            )
+            track_event.delay(
+                user_id=request.user.id,
+                event_name="user_invited_to_workspace",
+                slug=slug,
+                event_properties={
+                    "workspace_id": workspace.id,
+                    "workspace_slug": workspace.slug,
+                    "invitee_role": invitation.role,
+                    "invited_at": str(timezone.now()),
+                    "invitee_email": invitation.email,
+                },
             )
 
         return Response({"message": "Emails sent successfully"}, status=status.HTTP_200_OK)
