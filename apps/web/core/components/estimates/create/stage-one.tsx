@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { Info } from "lucide-react";
 // plane imports
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
@@ -32,29 +31,32 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
     <div className="space-y-6">
       <div className="sm:flex sm:items-center sm:space-x-10 sm:space-y-0 gap-2 mb-2">
         <RadioInput
-          options={Object.keys(ESTIMATE_SYSTEMS).map((system) => {
-            const currentSystem = system as TEstimateSystemKeys;
-            const isEnabled = isEstimateSystemEnabled(currentSystem);
-            return {
-              label: !ESTIMATE_SYSTEMS[currentSystem]?.is_available ? (
-                <div className="relative flex items-center gap-2 cursor-no-drop text-custom-text-300">
-                  {t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}
-                  <Tooltip tooltipContent={t("common.coming_soon")}>
-                    <Info size={12} />
-                  </Tooltip>
-                </div>
-              ) : !isEnabled ? (
-                <div className="relative flex items-center gap-2 cursor-no-drop text-custom-text-300">
-                  {t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}
-                  <UpgradeBadge />
-                </div>
-              ) : (
-                <div>{t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}</div>
-              ),
-              value: system,
-              disabled: !isEnabled,
-            };
-          })}
+          options={Object.keys(ESTIMATE_SYSTEMS)
+            .map((system) => {
+              const currentSystem = system as TEstimateSystemKeys;
+              const isEnabled = isEstimateSystemEnabled(currentSystem);
+              if (!isEnabled) return null;
+              return {
+                label: !ESTIMATE_SYSTEMS[currentSystem]?.is_available ? (
+                  <div className="relative flex items-center gap-2 cursor-no-drop text-custom-text-300">
+                    {t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}
+                    <Tooltip tooltipContent={t("common.coming_soon")}>
+                      <Info size={12} />
+                    </Tooltip>
+                  </div>
+                ) : !isEnabled ? (
+                  <div className="relative flex items-center gap-2 cursor-no-drop text-custom-text-300">
+                    {t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}
+                    <UpgradeBadge />
+                  </div>
+                ) : (
+                  <div>{t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}</div>
+                ),
+                value: system,
+                disabled: !isEnabled,
+              };
+            })
+            .filter((option) => option !== null)}
           name="estimate-radio-input"
           label={t("project_settings.estimates.create.choose_estimate_system")}
           labelClassName="text-sm font-medium text-custom-text-200 mb-1.5"
@@ -99,7 +101,7 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
                     <p className="text-xs text-custom-text-300">
                       {currentEstimateSystem.templates[name]?.values
                         ?.map((template) =>
-                          estimateSystem === EEstimateSystem.TIME
+                          estimateSystem === (EEstimateSystem.TIME as TEstimateSystemKeys)
                             ? convertMinutesToHoursMinutesString(Number(template.value)).trim()
                             : template.value
                         )
