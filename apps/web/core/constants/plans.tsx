@@ -53,7 +53,7 @@ export function ComingSoonBadge({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "bg-[#3f76ff] text-on-color font-semibold text-9 py-0.5 px-1.5 w-fit whitespace-nowrap rounded-sm",
+        "bg-accent-primary text-on-color font-semibold text-9 py-0.5 px-1.5 w-fit whitespace-nowrap rounded-sm",
         className
       )}
     >
