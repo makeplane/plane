@@ -16,11 +16,12 @@ import type { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
 import { CustomSelect, Input, Spinner } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { captureError } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserProfile, useUserSettings } from "@/hooks/store/user";
+import { useUser, useUserPermissions, useUserProfile, useUserSettings } from "@/hooks/store/user";
 // services
 import { WorkspaceService } from "@/plane-web/services";
+import { getUserRoleString, trackWorkspaceCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 
 type Props = {
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
@@ -42,7 +43,10 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
   // store hooks
   const { updateUserProfile } = useUserProfile();
   const { fetchCurrentUserSettings } = useUserSettings();
-  const { createWorkspace, fetchWorkspaces } = useWorkspace();
+  const { createWorkspace, fetchWorkspaces, currentWorkspace } = useWorkspace();
+  const { data: currentUser } = useUser();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+
   // form info
   const {
     handleSubmit,
@@ -74,10 +78,16 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
                 title: t("workspace_creation.toast.success.title"),
                 message: t("workspace_creation.toast.success.message"),
               });
-              captureSuccess({
-                eventName: WORKSPACE_TRACKER_EVENTS.create,
-                payload: { slug: formData.slug },
-              });
+
+              if (currentUser) {
+                const role = getWorkspaceRoleByWorkspaceSlug(workspaceResponse.slug);
+                trackWorkspaceCreated(
+                  workspaceResponse,
+                  currentUser,
+                  getUserRoleString(role),
+                );
+              }
+
               await fetchWorkspaces();
               await completeStep(workspaceResponse.id);
             })

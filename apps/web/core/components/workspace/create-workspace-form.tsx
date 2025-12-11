@@ -20,6 +20,8 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { WorkspaceService } from "@/plane-web/services";
+import { getUserRoleString, trackWorkspaceCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -57,6 +59,9 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
   const router = useAppRouter();
   // store hooks
   const { createWorkspace } = useWorkspace();
+  const { data: currentUser } = useUser();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+
   // form info
   const {
     handleSubmit,
@@ -74,10 +79,10 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
 
         try {
           const workspaceResponse = await createWorkspace(formData);
-          captureSuccess({
-            eventName: WORKSPACE_TRACKER_EVENTS.create,
-            payload: { slug: formData.slug },
-          });
+          if (currentUser) {
+            const role = getWorkspaceRoleByWorkspaceSlug(workspaceResponse.slug);
+            trackWorkspaceCreated(workspaceResponse, currentUser, getUserRoleString(role));
+          }
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("workspace_creation.toast.success.title"),
