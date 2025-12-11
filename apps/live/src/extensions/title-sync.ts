@@ -1,18 +1,22 @@
 // hocuspocus
 import type { Extension, Hocuspocus, Document } from "@hocuspocus/server";
 import { TiptapTransformer } from "@hocuspocus/transformer";
+import type { AnyExtension, JSONContent } from "@tiptap/core";
 import type * as Y from "yjs";
 // editor extensions
-import { TITLE_EDITOR_EXTENSIONS, createRealtimeEvent } from "@plane/editor";
+import {
+  TITLE_EDITOR_EXTENSIONS,
+  createRealtimeEvent,
+  extractTextFromHTML,
+  generateTitleProsemirrorJson,
+} from "@plane/editor";
 import { logger } from "@plane/logger";
 import { AppError } from "@/lib/errors";
 // helpers
 import { getPageService } from "@/services/page/handler";
 import type { HocusPocusServerContext, OnLoadDocumentPayloadWithContext } from "@/types";
-import { generateTitleProsemirrorJson } from "@/utils";
 import { broadcastMessageToPage } from "@/utils/broadcast-message";
 import { TitleUpdateManager } from "./title-update/title-update-manager";
-import { extractTextFromHTML } from "./title-update/title-utils";
 
 /**
  * Hocuspocus extension for synchronizing document titles
@@ -41,15 +45,11 @@ export class TitleSyncExtension implements Extension {
       // in the yjs binary
       if (document.isEmpty("title")) {
         const service = getPageService(context.documentType, context);
-        // const title = await service.fe
-        const title = (await service.fetchDetails?.(documentName)).name;
+        const pageDetails = await service.fetchDetails(documentName);
+        const title = pageDetails.name;
         if (title == null) return;
-        const titleField = TiptapTransformer.toYdoc(
-          generateTitleProsemirrorJson(title),
-          "title",
-          // editor
-          TITLE_EDITOR_EXTENSIONS as any
-        );
+        const titleJson = (generateTitleProsemirrorJson as (text: string) => JSONContent)(title);
+        const titleField = TiptapTransformer.toYdoc(titleJson, "title", TITLE_EDITOR_EXTENSIONS as AnyExtension[]);
         document.merge(titleField);
       }
     } catch (error) {
