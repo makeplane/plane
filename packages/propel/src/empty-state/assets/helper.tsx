@@ -1,14 +1,14 @@
 export const ILLUSTRATION_COLOR_TOKEN_MAP = {
   fill: {
-    primary: "var(--illustration-fill-primary)",
-    secondary: "var(--illustration-fill-secondary)",
-    tertiary: "var(--illustration-fill-tertiary)",
-    quaternary: "var(--illustration-fill-quaternary)",
+    primary: "var(--illustration-fill-primary)", // #FFFFFF
+    secondary: "var(--illustration-fill-secondary)", // #F4F5F5
+    tertiary: "var(--illustration-fill-tertiary)", // #eaebeb
+    quaternary: "var(--illustration-fill-quaternary)", // #CFD2D3
   },
   stroke: {
-    primary: "var(--illustration-stroke-primary)",
-    secondary: "var(--illustration-stroke-secondary)",
-    tertiary: "var(--illustration-stroke-tertiary)",
+    primary: "var(--illustration-stroke-primary)", //#CFD2D3
+    secondary: "var(--illustration-stroke-secondary)", // #8A9093
+    tertiary: "var(--illustration-stroke-tertiary)", // #1d1f20
   },
 };
 
