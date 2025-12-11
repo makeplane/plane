@@ -43,34 +43,30 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
 
   return (
     <>
-      <div className="pb-4 text-center transition-all duration-700 animate-slide-up">
-        <div className="text-20 font-semibold h-9 transition-all duration-300">
+      <div className="pb-4 text-center">
+        <div className="text-20 font-semibold h-9">
           {isLoading ? (
             <Loader className="flex flex-col items-center justify-center">
               <Loader.Item height="36px" width="4rem" />
             </Loader>
           ) : (
-            <span className="animate-fade-in">
-              <DiscountInfo
-                currency={price.currency}
-                frequency={price.recurring}
-                price={price.price}
-                subscriptionType={planVariant}
-                className="mr-1.5"
-              />
-            </span>
+            <DiscountInfo
+              currency={price.currency}
+              frequency={price.recurring}
+              price={price.price}
+              subscriptionType={planVariant}
+              className="mr-1.5"
+            />
           )}
         </div>
-        <div className="text-13 font-medium text-tertiary transition-all duration-300 animate-fade-in">
-          per user per month
-        </div>
+        <div className="text-caption-md-medium text-tertiary">per user per month</div>
       </div>
       {isLoading ? (
         <Loader className="flex flex-col items-center justify-center">
           <Loader.Item height="38px" width="14rem" />
         </Loader>
       ) : (
-        <div className="flex flex-col items-center justify-center w-full space-y-4 transition-all duration-300 animate-fade-in">
+        <div className="flex flex-col items-center justify-center w-full space-y-4">
           <Button
             variant="primary"
             size="lg"
@@ -89,7 +85,7 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
             {upgradeLoaderType === planVariant ? "Redirecting to Stripe" : (upgradeCTA ?? `Upgrade to ${planeName}`)}
           </Button>
           {isTrialAllowed && !isSelfHosted && (
-            <div className="mt-4 h-4 transition-all duration-300 animate-fade-in">
+            <div className="mt-1 h-3">
               {renderTrialButton &&
                 renderTrialButton({
                   productId: product?.id,

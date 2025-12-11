@@ -661,7 +661,7 @@
       --background-color-danger-transparent-hover: var(--color-red-100);
       --background-color-danger-transparent-active: var(--color-red-100);
       --background-color-danger-transparent-selected: var(--color-red-100);
-      --background-color-backdrop: var(--color-alpha-white-400);
+      --background-color-backdrop: var(--color-alpha-white-200);
 
       /* Border colors */
       --border-color-subtle: var(--color-neutral-400);

@@ -28,7 +28,7 @@ export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDrop
       <ArrowDownWideNarrow className="size-3 " />
     );
   const largeButton = (
-    <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-tertiary")}>
+    <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
       {inboxSorting?.sort_by === "asc" ? (
         <ArrowUpWideNarrow className="size-3 " />
       ) : (

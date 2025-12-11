@@ -94,7 +94,7 @@ export const CycleEmptyState = observer(function CycleEmptyState() {
                 label: "Clear filters",
                 onClick: cycleWorkItemFilter?.clearFilters,
                 disabled: !canPerformEmptyStateActions || !cycleWorkItemFilter,
-                variant: "outline-primary",
+                variant: "secondary",
               },
             ]}
           />
@@ -118,7 +118,7 @@ export const CycleEmptyState = observer(function CycleEmptyState() {
                 label: t("project_empty_state.cycle_work_items.cta_secondary"),
                 onClick: () => setCycleIssuesListModal(true),
                 disabled: !canPerformEmptyStateActions,
-                variant: "outline-primary",
+                variant: "secondary",
                 "data-ph-element": WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE,
               },
             ]}

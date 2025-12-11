@@ -1,4 +1,4 @@
-import React from "react";
+// local imports
 import { Button } from "../button/button";
 import { cn } from "../utils/classname";
 import { getDetailedAsset } from "./assets/asset-registry";
@@ -53,7 +53,7 @@ export function EmptyStateDetailed({
                   {actions.map((action, index) => {
                     const { label, variant, ...rest } = action;
                     return (
-                      <Button key={index} variant={variant} {...rest}>
+                      <Button key={index} variant={variant} size="xl" {...rest}>
                         {label}
                       </Button>
                     );

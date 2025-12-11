@@ -44,10 +44,10 @@ export function TabList({
             cn(
               "flex items-center justify-center p-1 min-w-fit w-full font-medium text-primary outline-none focus:outline-none cursor-pointer transition-all rounded-sm",
               (selectedTab ? selectedTab === tab.key : selected)
-                ? "bg-surface-1 text-primary shadow-sm"
+                ? "bg-layer-transparent-active text-primary shadow-sm"
                 : tab.disabled
                   ? "text-placeholder cursor-not-allowed"
-                  : "text-placeholder hover:text-tertiary hover:bg-layer-1/60",
+                  : "text-placeholder hover:text-tertiary hover:bg-layer-transparent-hover",
               {
                 "text-11": size === "sm",
                 "text-13": size === "md",

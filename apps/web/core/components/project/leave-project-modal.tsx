@@ -203,10 +203,10 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" size="lg" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button variant="error-fill" type="submit" loading={isSubmitting}>
+                    <Button variant="error-fill" size="lg" type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Leaving..." : "Leave Project"}
                     </Button>
                   </div>

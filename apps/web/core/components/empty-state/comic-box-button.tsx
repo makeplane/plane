@@ -2,9 +2,8 @@ import type { Ref } from "react";
 import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
-// popper
-// helper
-import { getButtonStyling } from "@plane/propel/button";
+// plane imports
+import { Button } from "@plane/propel/button";
 
 type Props = {
   label: string;
@@ -44,20 +43,18 @@ export function ComicBoxButton(props: Props) {
   return (
     <Popover as="div" className="relative">
       <Popover.Button as={Fragment}>
-        <button type="button" ref={setReferenceElement} onClick={onClick} disabled={disabled}>
-          <div className={`flex items-center gap-2.5 ${getButtonStyling("primary", "lg", disabled)}`}>
-            {icon}
-            <span className="leading-4">{label}</span>
-            <span className="relative h-2 w-2">
-              <div
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                className={`absolute bg-blue-300 right-0 z-10 h-2.5 w-2.5 animate-ping rounded-full`}
-              />
-              <div className={`absolute bg-blue-400/40 right-0 h-1.5 w-1.5 mt-0.5 mr-0.5 rounded-full`} />
-            </span>
-          </div>
-        </button>
+        <Button variant="primary" size="lg" ref={setReferenceElement} onClick={onClick} disabled={disabled}>
+          {icon}
+          <span className="leading-4">{label}</span>
+          <span className="relative h-2 w-2">
+            <div
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              className={`absolute bg-blue-300 right-0 z-10 h-2.5 w-2.5 animate-ping rounded-full`}
+            />
+            <div className={`absolute bg-blue-400/40 right-0 h-1.5 w-1.5 mt-0.5 mr-0.5 rounded-full`} />
+          </span>
+        </Button>
       </Popover.Button>
       {isHovered && (
         <Popover.Panel className="fixed z-10" static>

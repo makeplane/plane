@@ -39,7 +39,7 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
       <AddFilterButton
         filter={filter}
         buttonConfig={{
-          variant: "neutral-primary",
+          variant: "secondary",
           className: COMMON_CLASSNAME,
           label: null,
         }}

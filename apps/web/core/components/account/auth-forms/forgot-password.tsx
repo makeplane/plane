@@ -137,7 +137,7 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
             ? t("auth.common.resend_in", { seconds: resendTimerCode })
             : t("auth.forgot_password.send_reset_link")}
         </Button>
-        <Link href="/" className={cn("w-full", getButtonStyling("link-neutral", "lg"))}>
+        <Link href="/" className={cn("w-full", getButtonStyling("link", "lg"))}>
           {t("auth.common.back_to_sign_in")}
         </Link>
       </form>

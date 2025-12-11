@@ -18,7 +18,7 @@ export function PageNavigationPaneOutlineTabEmptyState() {
       <div className="flex flex-col items-center gap-y-6 text-center">
         <img
           src={resolvedPath}
-          className="w-[160px] h-[160px] object-contain"
+          className="w-[160px] h-[160px]"
           alt="An image depicting the outline of a page"
         />
         <div className="space-y-2.5">

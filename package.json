@@ -69,8 +69,7 @@
       "prosemirror-view": "1.40.0",
       "@types/express": "4.17.23",
       "typescript": "catalog:",
-      "vite": "catalog:",
-      "next": "16.0.7"
+      "vite": "catalog:"
     },
     "onlyBuiltDependencies": [
       "@sentry/cli",
