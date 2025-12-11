@@ -102,11 +102,11 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
         </div>
       ) : (
         <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" size="lg" onClick={handleClose}>
             {t("cancel")}
           </Button>
           {!webhookSecretKey && (
-            <Button type="submit" variant="primary" loading={isSubmitting} className="capitalize">
+            <Button type="submit" variant="primary" size="lg" loading={isSubmitting} className="capitalize">
               {isSubmitting ? t("common.creating") : t("common.create")}
             </Button>
           )}

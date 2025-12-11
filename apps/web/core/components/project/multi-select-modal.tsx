@@ -169,12 +169,13 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
         </Combobox.Options>
       </Combobox>
       <div className="flex items-center justify-end gap-2 p-3 border-t border-subtle">
-        <Button variant="secondary" onClick={handleClose}>
+        <Button variant="secondary" size="lg" onClick={handleClose}>
           {t("cancel")}
         </Button>
         <Button
           ref={moveButtonRef}
           variant="primary"
+          size="lg"
           onClick={handleSubmit}
           loading={isSubmitting}
           disabled={!areSelectedProjectsChanged}

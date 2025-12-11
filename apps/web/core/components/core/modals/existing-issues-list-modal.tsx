@@ -339,11 +339,12 @@ export function ExistingIssuesListModal(props: Props) {
                       : t("issue.select.select_all")}
                   </Button>
                   <div className="flex items-center justify-end gap-2">
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" size="lg" onClick={handleClose}>
                       {t("common.cancel")}
                     </Button>
                     <Button
                       variant="primary"
+                      size="lg"
                       onClick={onSubmit}
                       loading={isSubmitting}
                       disabled={isSubmitting || selectedIssues.length === 0}
