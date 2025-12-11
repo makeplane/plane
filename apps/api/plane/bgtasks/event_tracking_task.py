@@ -34,7 +34,6 @@ def preprocess_data_properties(
     user_id: uuid.UUID, event_name: str, slug: str, data_properties: Dict[str, Any]
 ) -> Dict[str, Any]:
     if event_name == "user_invited_to_workspace":
-        data_properties["user_id"] = user_id
         # Check if the current user is the workspace owner
         workspace = Workspace.objects.get(slug=slug)
         if str(workspace.owner_id) == str(user_id):

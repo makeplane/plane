@@ -126,6 +126,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                 event_name="user_invited_to_workspace",
                 slug=slug,
                 event_properties={
+                    "user_id": request.user.id,
                     "workspace_id": workspace.id,
                     "workspace_slug": workspace.slug,
                     "invitee_role": invitation.role,
@@ -198,6 +199,18 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     # Set the user last_workspace_id to the accepted workspace
                     user.last_workspace_id = workspace_invite.workspace.id
                     user.save()
+                    track_event.delay(
+                        user_id=user.id,
+                        event_name="user_joined_workspace",
+                        slug=slug,
+                        event_properties={
+                            "user_id": user.id,
+                            "workspace_id": workspace_invite.workspace.id,
+                            "workspace_slug": workspace_invite.workspace.slug,
+                            "role": workspace_invite.role,
+                            "joined_at": str(timezone.now()),
+                        },
+                    )
 
                     # Delete the invitation
                     workspace_invite.delete()
