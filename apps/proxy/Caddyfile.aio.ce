@@ -4,18 +4,18 @@
 	}
 
     handle /spaces/* {
-        reverse_proxy space:3000
+        reverse_proxy space:3002
     }
 	
     handle /live/* {
-        reverse_proxy live:3000
+        reverse_proxy live:3005
     }
 	handle /api/* {
-        reverse_proxy api:8000
+        reverse_proxy api:3004
     }
 
 	handle /auth/* {
-        reverse_proxy api:8000
+        reverse_proxy api:3004
     }
 
 	handle_path /god-mode* {
