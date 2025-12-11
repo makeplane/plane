@@ -60,7 +60,7 @@ export const CalendarIssueBlock = observer(
       <div
         ref={menuActionRef}
         className={`w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
-          isMenuActive ? "bg-layer-1 text-primary" : "text-secondary"
+          isMenuActive ? "bg-layer-1-active text-primary" : "text-secondary"
         }`}
         onClick={() => setIsMenuActive(!isMenuActive)}
       >
@@ -92,7 +92,7 @@ export const CalendarIssueBlock = observer(
               id={`issue-${issue.id}`}
               href={workItemLink}
               onClick={() => handleIssuePeekOverview(issue)}
-              className="block w-full text-13 text-primary rounded-sm border-b md:border-[1px] border-subtle hover:border-strong-1"
+              className="block w-full text-13 text-primary rounded-sm border-b md:border-[1px] border-subtle hover:border-subtle-1"
               disabled={!!issue?.tempId || isMobile}
               ref={ref}
             >

@@ -32,7 +32,7 @@ export const AddFilterButton = observer(function AddFilterButton<P extends TFilt
 ) {
   const { filter, buttonConfig, onFilterSelect } = props;
   const {
-    variant = "link-neutral",
+    variant = "link",
     className,
     label,
     iconConfig = { shouldShowIcon: true },
@@ -60,7 +60,7 @@ export const AddFilterButton = observer(function AddFilterButton<P extends TFilt
       {...props}
       buttonConfig={{
         ...buttonConfig,
-        className: cn(getButtonStyling(variant, "sm"), "py-[5px]", className),
+        className: cn(getButtonStyling(variant, "base"), "py-[5px]", className),
       }}
       handleFilterSelect={handleFilterSelect}
       customButton={

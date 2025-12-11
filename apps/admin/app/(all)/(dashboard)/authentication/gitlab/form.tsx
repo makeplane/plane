@@ -186,11 +186,7 @@ export function InstanceGitlabConfigForm(props: Props) {
                 <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isDirty}>
                   {isSubmitting ? "Saving..." : "Save changes"}
                 </Button>
-                <Link
-                  href="/authentication"
-                  className={cn(getButtonStyling("neutral-primary", "md"), "font-medium")}
-                  onClick={handleGoBack}
-                >
+                <Link href="/authentication" className={getButtonStyling("secondary", "base")} onClick={handleGoBack}>
                   Go back
                 </Link>
               </div>

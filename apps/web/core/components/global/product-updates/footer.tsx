@@ -58,7 +58,7 @@ export function ProductUpdatesFooter() {
         href="https://plane.so/pages"
         target="_blank"
         className={cn(
-          getButtonStyling("accent-primary", "sm"),
+          getButtonStyling("secondary", "base"),
           "flex gap-1.5 items-center text-center font-medium hover:underline underline-offset-2 outline-none"
         )}
         rel="noreferrer"

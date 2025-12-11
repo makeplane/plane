@@ -256,7 +256,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
       })}
     >
       <Row
-        className={cn("w-full flex-shrink-0 border-b border-subtle bg-surface-2 pr-3 py-1", {
+        className={cn("w-full flex-shrink-0 border-b border-subtle bg-layer-1 hover:bg-layer-1-hover pr-3 py-1", {
           "sticky top-0 z-[2]": isExpanded && groupIssueCount > 0,
         })}
       >

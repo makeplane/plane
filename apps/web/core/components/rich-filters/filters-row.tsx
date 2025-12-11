@@ -43,13 +43,13 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
     !disabledAllOperations && (filter.canClearFilters || filter.canSaveView || filter.canUpdateView);
 
   const headerButtonConfig: Partial<TAddFilterButtonProps<K, E>["buttonConfig"]> = {
-    variant: "link-neutral",
+    variant: "link",
     className: "bg-surface-2",
     label: null,
   };
 
   const modalButtonConfig: Partial<TAddFilterButtonProps<K, E>["buttonConfig"]> = {
-    variant: "neutral-primary",
+    variant: "secondary",
     className: "bg-surface-1",
     label: !hasAnyConditions ? "Filters" : null,
   };

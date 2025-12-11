@@ -20,7 +20,7 @@ export function BulkOperationsUpgradeBanner(props: Props) {
           href={MARKETING_PLANE_ONE_PAGE_LINK}
           target="_blank"
           rel="noopener noreferrer"
-          className={cn(getButtonStyling("primary", "sm"), "flex-shrink-0")}
+          className={cn(getButtonStyling("primary", "base"), "flex-shrink-0")}
         >
           Upgrade to One
         </a>

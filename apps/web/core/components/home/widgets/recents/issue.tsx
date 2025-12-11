@@ -73,7 +73,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               projectId={issueDetails?.project_id || ""}
               projectIdentifier={issueDetails?.project_identifier || ""}
               issueSequenceId={issueDetails?.sequence_id || ""}
-             variant="tertiary"
+              variant="tertiary"
             />
           ) : (
             <div className="flex gap-2 items-center justify-center">
@@ -130,7 +130,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       }
       parentRef={ref}
       disableLink={false}
-      className="bg-layer-transparent hover:bg-layer-transparent-hover my-auto !px-2 border-none py-3"
+      className="my-auto !px-2 border-none py-3"
       itemClassName="my-auto"
       onItemClick={handlePeekOverview}
       preventDefaultProgress

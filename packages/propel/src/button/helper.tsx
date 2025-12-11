@@ -1,19 +1,6 @@
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
 
-export type TButtonVariant =
-  | "primary"
-  | "accent-primary"
-  | "outline-primary"
-  | "neutral-primary"
-  | "link-primary"
-  | "danger"
-  | "accent-danger"
-  | "outline-danger"
-  | "link-danger"
-  | "tertiary-danger"
-  | "link-neutral";
-
 export interface IButtonStyling {
   [key: string]: {
     default: string;
@@ -24,7 +11,7 @@ export interface IButtonStyling {
 }
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-1 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none disabled:pointer-events-none",
+  "inline-flex items-center justify-center gap-1 whitespace-nowrap transition-colors focus-visible:outline-none disabled:pointer-events-none",
   {
     variants: {
       variant: {
@@ -35,7 +22,7 @@ export const buttonVariants = cva(
         "error-outline":
           "bg-layer-2 hover:bg-danger-subtle active:bg-danger-subtle-hover focus:bg-danger-subtle-hover disabled:bg-layer-2 text-danger disabled:text-disabled border border-danger-strong disabled:border-subtle-1",
         secondary:
-          "bg-layer-2 hover:bg-layer-2-hover active:bg-layer-2-active focus:bg-layer-2-active disabled:bg-layer-transparent text-secondary disabled:text-disabled border border-strong disabled:border-subtle-1",
+          "bg-layer-2 hover:bg-layer-2-hover active:bg-layer-2-active focus:bg-layer-2-active disabled:bg-layer-transparent text-secondary disabled:text-disabled border border-strong disabled:border-subtle-1 shadow-raised-100",
         tertiary:
           "bg-layer-1 hover:bg-layer-1-hover active:bg-layer-1-active focus:bg-layer-1-active disabled:bg-layer-transparent text-secondary disabled:text-disabled",
         ghost:
@@ -43,10 +30,10 @@ export const buttonVariants = cva(
         link: "px-0 underline text-link-primary hover:text-link-primary-hover active:text-link-primary-hover focus:text-link-primary-hover disabled:text-disabled",
       },
       size: {
-        sm: "h-5 px-1.5 text-caption-md-medium",
-        base: "h-6 px-2 text-body-xs-medium",
-        lg: "h-7 px-2 text-body-sm-medium",
-        xl: "h-8 px-2 text-body-sm-medium",
+        sm: "h-5 px-1.5 text-caption-md-medium rounded-sm",
+        base: "h-6 px-2 text-body-xs-medium rounded-md",
+        lg: "h-7 px-2 text-body-sm-medium rounded-md",
+        xl: "h-8 px-2 text-body-sm-medium rounded-md",
       },
     },
     defaultVariants: {
@@ -63,20 +50,20 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
     prependIcon?: React.ReactElement;
   };
 
-const buttonIconStyling: Record<NonNullable<ButtonProps["size"]>, string> = {
+export type TButtonVariant = NonNullable<ButtonProps["variant"]>;
+export type TButtonSize = NonNullable<ButtonProps["size"]>;
+
+const buttonIconStyling: Record<TButtonSize, string> = {
   sm: "size-3.5",
   base: "size-3.5",
   lg: "size-4",
   xl: "size-4 ",
 };
 
-export function getIconStyling(size: NonNullable<ButtonProps["size"]>): string {
+export function getIconStyling(size: TButtonSize): string {
   return buttonIconStyling[size];
 }
 
-export function getButtonStyling(
-  variant: NonNullable<ButtonProps["variant"]>,
-  size: NonNullable<ButtonProps["size"]>
-): string {
+export function getButtonStyling(variant: TButtonVariant, size: TButtonSize): string {
   return buttonVariants({ variant, size });
 }

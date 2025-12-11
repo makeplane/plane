@@ -41,7 +41,7 @@ export const ProjectEmptyState = observer(function ProjectEmptyState() {
               label: t("project_issues.empty_state.issues_empty_filter.secondary_button.text"),
               onClick: projectWorkItemFilter?.clearFilters,
               disabled: !canPerformEmptyStateActions || !projectWorkItemFilter,
-              variant: "outline-primary",
+              variant: "secondary",
             },
           ]}
         />

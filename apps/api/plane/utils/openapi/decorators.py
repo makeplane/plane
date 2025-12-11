@@ -263,6 +263,7 @@ def state_docs(**kwargs):
 
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
+
 def sticky_docs(**kwargs):
     """Decorator for sticky management endpoints"""
     defaults = {

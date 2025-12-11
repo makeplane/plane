@@ -85,7 +85,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
           </div>
           <div className="flex items-center gap-3">
             <a
-              className={`${getButtonStyling("primary", "md")} cursor-pointer`}
+              className={`${getButtonStyling("primary", "base")} cursor-pointer`}
               href={MARKETING_PRICING_PAGE_LINK}
               target="_blank"
               rel="noreferrer"

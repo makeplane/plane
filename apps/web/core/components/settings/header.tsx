@@ -1,6 +1,5 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useTheme } from "next-themes";
 import { ChevronLeftIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -18,23 +17,19 @@ export const SettingsHeader = observer(function SettingsHeader() {
   const { t } = useTranslation();
   const { currentWorkspace } = useWorkspace();
   const { isScrolled } = useUserSettings();
-  // resolved theme
-  const { resolvedTheme } = useTheme();
-  // redirect url for normal mode
 
   return (
     <div
       className={cn("bg-surface-2 p-page-x transition-all duration-300 ease-in-out relative", {
-        "!pt-4 flex md:flex-col": isScrolled,
-        "bg-surface-2/50": resolvedTheme === "dark",
+        "pt-4! flex md:flex-col": isScrolled,
       })}
     >
       <Link
         href={`/${currentWorkspace?.slug}`}
         className={cn(
-          getButtonStyling("neutral-primary", "sm"),
-          "md:absolute left-2 top-9 group flex  gap-2 text-tertiary mb-4 border border-transparent w-fit rounded-lg ",
-          "h-6 w-6 rounded-lg p-1 bg-surface-1 border-subtle ",
+          getButtonStyling("secondary", "base"),
+          "md:absolute left-2 top-9 group flex  gap-2 text-tertiary mb-4 w-fit rounded-lg",
+          "h-6 w-6 rounded-lg p-1",
           isScrolled ? "-mt-2 " : "hidden p-0 overflow-hidden items-center pr-2 border-none"
         )}
       >
@@ -45,12 +40,12 @@ export const SettingsHeader = observer(function SettingsHeader() {
         href={`/${currentWorkspace?.slug}`}
         className={cn(
           "group flex  gap-2 text-tertiary mb-3 border border-transparent w-fit rounded-lg",
-          !isScrolled ? "hover:bg-surface-1 hover:border-subtle items-center pr-2 " : " h-0 m-0"
+          !isScrolled ? "hover:bg-layer-transparent-hover hover:border-subtle items-center pr-2 " : " h-0 m-0"
         )}
       >
         <button
           className={cn(
-            getButtonStyling("neutral-primary", "sm"),
+            getButtonStyling("secondary", "base"),
             "h-6 w-6 rounded-lg p-1 hover:bg-surface-1 hover:border-subtle",
             "group-hover:bg-surface-1 group-hover:border-transparent",
             { "h-0 hidden": isScrolled }

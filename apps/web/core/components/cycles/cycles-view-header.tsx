@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-// icons
 import { ListFilter, Search } from "lucide-react";
-// plane helpers
+// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-// types
+import { IconButton } from "@plane/propel/icon-button";
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 import type { TCycleFilters } from "@plane/types";
@@ -73,16 +72,16 @@ export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props)
   return (
     <div className="flex items-center gap-3">
       {!isSearchOpen && (
-        <button
-          type="button"
-          className="-mr-5 p-2 hover:bg-layer-1 rounded-sm text-placeholder grid place-items-center"
+        <IconButton
+          variant="ghost"
+          size="lg"
+          className="-mr-5"
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
           }}
-        >
-          <Search className="h-3.5 w-3.5" />
-        </button>
+          icon={Search}
+        />
       )}
       <div
         className={cn(
