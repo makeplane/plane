@@ -20,24 +20,32 @@ const fetchDocument = async ({ context, documentName: pageId, instance }: FetchP
   try {
     const service = getPageService(context.documentType, context);
     // fetch details
-    const response = await service.fetchDescriptionBinary(pageId);
+    const response = (await service.fetchDescriptionBinary(pageId)) as Buffer;
     const binaryData = new Uint8Array(response);
     // if binary data is empty, convert HTML to binary data
     if (binaryData.byteLength === 0) {
       const pageDetails = await service.fetchDetails(pageId);
-      const convertedBinaryData = getBinaryDataFromDocumentEditorHTMLString(pageDetails.description_html ?? "<p></p>");
+      const convertedBinaryData = getBinaryDataFromDocumentEditorHTMLString(
+        pageDetails.description_html ?? "<p></p>",
+        pageDetails.name
+      );
       if (convertedBinaryData) {
         // save the converted binary data back to the database
-        const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromDocumentEditorBinaryData(
-          convertedBinaryData,
-          true
-        );
-        const payload = {
-          description_binary: contentBinaryEncoded,
-          description_html: contentHTML,
-          description: contentJSON,
-        };
-        await service.updateDescriptionBinary(pageId, payload);
+        try {
+          const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromDocumentEditorBinaryData(
+            convertedBinaryData,
+            true
+          );
+          const payload = {
+            description_binary: contentBinaryEncoded,
+            description_html: contentHTML,
+            description: contentJSON,
+          };
+          await service.updateDescriptionBinary(pageId, payload);
+        } catch (e) {
+          const error = new AppError(e);
+          logger.error("Failed to save binary after first convertion from html:", error);
+        }
         return convertedBinaryData;
       }
     }

@@ -187,7 +187,7 @@ export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseY
 
     provider.on("close", handleClose);
 
-    setYjsSession({ provider, ydoc: provider.document });
+    setYjsSession({ provider, ydoc: provider.document as Y.Doc });
 
     // Handle page visibility changes (sleep/wake, tab switching)
     const handleVisibilityChange = (event?: Event) => {

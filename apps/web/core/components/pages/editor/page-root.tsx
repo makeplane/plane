@@ -69,6 +69,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   const { isFetchingFallbackBinary } = usePageFallback({
     editorRef,
     fetchPageDescription: handlers.fetchDescriptionBinary,
+    page,
     collaborationState,
     updatePageDescription: handlers.updateDescription,
   });
