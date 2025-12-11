@@ -82,6 +82,7 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
         className="hover:!bg-accent-primary/20"
         onClick={handleSubscription}
         disabled={!isEditable || loading}
+        size="lg"
       >
         {loading ? (
           <span>
