@@ -394,6 +394,22 @@ class IssueAPIEndpoint(BaseAPIView):
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
+            parent_id = request.data.get("parent")
+            issue_name = request.data.get("name")
+            if parent_id and issue_name:
+                existing_issue = Issue.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    parent_id=parent_id,
+                    name=issue_name,
+                ).first()
+                
+                if existing_issue:
+                    existing_serializer = IssueSerializer(existing_issue)
+                    return Response(
+                        existing_serializer.data,
+                        status=status.HTTP_200_OK,
+                    )
             serializer.save()
             # Refetch the issue
             issue = Issue.objects.filter(
