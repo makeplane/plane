@@ -311,17 +311,17 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
           </div>
           {!fetchSettingsLoader && (
             <div className="relative flex items-center gap-2">
-              <Button variant="secondary" onClick={handleClose}>
+              <Button variant="secondary" size="lg" onClick={handleClose}>
                 Cancel
               </Button>
               {isProjectPublished ? (
                 isDirty && (
-                  <Button variant="primary" type="submit" loading={isSubmitting}>
+                  <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
                     {isSubmitting ? "Updating" : "Update settings"}
                   </Button>
                 )
               ) : (
-                <Button variant="primary" type="submit" loading={isSubmitting}>
+                <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
                   {isSubmitting ? "Publishing" : "Publish"}
                 </Button>
               )}
