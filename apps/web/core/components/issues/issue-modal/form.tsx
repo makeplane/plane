@@ -376,7 +376,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   return (
     <FormProvider {...methods}>
-      <div className="flex gap-2 bg-transparent">
+      <div className="flex gap-2 bg-transparent border-custom-border-200">
         <div className="rounded-lg w-full">
           <form
             ref={formRef}

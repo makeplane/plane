@@ -15,6 +15,7 @@ import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
 // import { CycleDropdown } from "@/components/dropdowns/cycle";
+import { CategoryDropdown } from "@/components/dropdowns/category-property";
 import { DateDropdown } from "@/components/dropdowns/date";
 // import { EstimateDropdown } from "@/components/dropdowns/estimate";
 import { LevelDropdown } from "@/components/dropdowns/level-property";
@@ -24,6 +25,7 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ProgramDropdown } from "@/components/dropdowns/program-property";
  // import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 
+import SportDropdown from "@/components/dropdowns/sport-property";
 import { TimeDropdown } from "@/components/dropdowns/time-picker";
 import { YearRangeDropdown } from "@/components/dropdowns/year-property";
 // import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
@@ -37,7 +39,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 // import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
-import SportDropdown from "@/components/dropdowns/sport-property";
 
 
 type TIssueDefaultPropertiesProps = {
@@ -148,9 +149,28 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 handleFormChange();
               }}
               buttonVariant="border-with-text"
+              placeholder={t("year_field")}
             />
           </div>
         )}
+      />
+
+      <Controller
+       control={control}
+       name="category"
+       render={({ field: {value, onChange}}) => (
+        <div className="h-7">
+          <CategoryDropdown
+             value={value}
+             onChange={(category) => {
+              onChange(category);
+              handleFormChange();
+             }}
+             buttonVariant="border-with-text"
+             placeholder={t("category_field")}
+          />
+        </div>
+       )}
       />
 
       <Controller
@@ -182,12 +202,13 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           console.log("Sport Property:", value);
           return(<div className="h-7">
             <SportDropdown
-              value={value}
+              value={value ?? null}
               onChange={(sport) => {
                 console.log("sport change value:", sport)
                 onChange(sport);
                 handleFormChange();
               }}
+              placeholder={t("sport_field")}
               buttonVariant="border-with-text"
               tabIndex={getIndex("sport")}
             />
@@ -288,6 +309,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 handleFormChange();
               }}
               buttonVariant="border-with-text"
+              placeholder={t("program_field")}
             />
           </div>
         )}
@@ -305,6 +327,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
                 handleFormChange();
               }}
               buttonVariant="border-with-text"
+              placeholder={t("level_field")}
             />
           </div>
         )}

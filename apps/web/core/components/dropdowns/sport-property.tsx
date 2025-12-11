@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { Ban, CirclePlus, Search, X } from "lucide-react";
+import { Ban, Search, Volleyball, X } from "lucide-react";
 
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -32,7 +32,7 @@ export const SportDropdown: React.FC<Props> = observer((props) => {
     placeholder = "Sport",
     buttonVariant,
     renderByDefault = true,
-    icon = <CirclePlus className="h-3 w-3 flex-shrink-0" />,
+    icon = <Volleyball className="h-3 w-3 flex-shrink-0" />,
     hideIcon = false,
     showTooltip = false,
     disabled = false,
@@ -74,10 +74,11 @@ export const SportDropdown: React.FC<Props> = observer((props) => {
         const data = await res.json();
         const block = data?.["Gateway Response"]?.result?.[0] ?? [];
         const values = block.find((i: any) => i?.field === "values")?.value;
-        // Ensure we filter out any null/undefined values from API
+
         const cleanValues = Array.isArray(values)
-          ? values.filter((v: any) => typeof v === 'string').sort()
+          ? values.filter((v) => typeof v === "string").sort()
           : [];
+
         setSports(cleanValues);
       })
       .catch((e) => setLoadError(e.message))
@@ -88,22 +89,19 @@ export const SportDropdown: React.FC<Props> = observer((props) => {
     s.toLowerCase().includes(search.toLowerCase())
   );
 
-  /* ─────────────── FIXED select handler ─────────────── */
-  // Accepts the string value directly, NOT the event object
+  /* ─────────────── ✅ FIXED SELECT HANDLER ─────────────── */
   const handleSelect = (selectedVal: string | null) => {
     console.log("✅ [SportDropdown] Selected:", selectedVal);
-    // Pass the value directly to the parent
-    if (onChange) {
-      onChange(selectedVal);
-    }
+
+    onChange?.(selectedVal);
 
     setSearch("");
     handleClose();
-    // Only blur if ref exists
-    if (referenceElement) referenceElement.blur();
+    referenceElement?.blur();
   };
 
-  const displayValue = value ?? placeholder;
+  const displayValue =
+    typeof value === "string" && value.length > 0 ? value : placeholder;
 
   /* ─────────────── Button ─────────────── */
   const comboButton = (
@@ -132,7 +130,7 @@ export const SportDropdown: React.FC<Props> = observer((props) => {
         {!hideIcon && icon}
 
         {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-          <span className="flex-grow truncate text-xs min-w-0">
+          <span className="flex-grow truncate min-w-0">
             {displayValue}
           </span>
         )}
@@ -140,10 +138,9 @@ export const SportDropdown: React.FC<Props> = observer((props) => {
         {!!value && !disabled && (
           <X
             className={cn("h-2.5 w-2.5", clearIconClassName)}
-            onClick={(e) => {
-              e.stopPropagation();
+            onMouseDown={(e) => {
               e.preventDefault();
-              // Pass null explicitly for clear
+              e.stopPropagation();
               handleSelect(null);
             }}
           />
@@ -169,7 +166,7 @@ export const SportDropdown: React.FC<Props> = observer((props) => {
             style={styles.popper}
             {...attributes.popper}
             className="my-1 w-52 bg-custom-background-100 shadow-custom-shadow-rg
-                        border border-custom-border-300 rounded-md z-30"
+                       border border-custom-border-300 rounded-md z-30"
           >
             {/* Search */}
             <div className="relative p-2">
@@ -183,24 +180,31 @@ export const SportDropdown: React.FC<Props> = observer((props) => {
               />
             </div>
 
-            {/* None Option */}
+            {/* None */}
             <div
-              onClick={() => handleSelect(null)} // Explicitly pass null
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSelect(null);
+              }}
               className="flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-custom-background-80"
             >
               <Ban className="h-3.5 w-3.5 text-gray-400" />
               <span className="text-xs text-gray-400">None</span>
             </div>
 
-            {/* List of Sports */}
+            {/* Sports list */}
             <div className="max-h-44 overflow-y-auto">
               {!loading &&
                 !loadError &&
                 filteredSports.map((sport) => (
                   <div
                     key={sport}
-                    // ✅ CRITICAL: Using arrow function to pass the sport string
-                    onClick={() => handleSelect(sport)}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleSelect(sport);
+                    }}
                     className={cn(
                       "px-2 h-6 flex items-center cursor-pointer text-xs",
                       "hover:bg-custom-background-80",

@@ -9,15 +9,20 @@ import { useTranslation } from "@plane/i18n";
 // import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
+import { CategoryDropdown } from "@/components/dropdowns/category-property";
 import { DateDropdown } from "@/components/dropdowns/date";
 // import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import { LevelDropdown } from "@/components/dropdowns/level-property";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // import { PriorityDropdown } from "@/components/dropdowns/priority";
 // import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
 // import { TimeDropdown } from "@/components/dropdowns/time-picker";
+import { ProgramDropdown } from "@/components/dropdowns/program-property";
+import SportDropdown from "@/components/dropdowns/sport-property";
 import { TimeDropdown } from "@/components/dropdowns/time-picker";
+import { YearRangeDropdown } from "@/components/dropdowns/year-property";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
@@ -26,15 +31,10 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
 // import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
 
-import { CategoryDropdown } from "@/components/dropdowns/category-property";
-import { LevelDropdown } from "@/components/dropdowns/level-property";
 import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 // import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
 
-import { ProgramDropdown } from "@/components/dropdowns/program-property";
-import SportDropdown from "@/components/dropdowns/sport-property";
 // import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
-import { YearRangeDropdown } from "@/components/dropdowns/year-property";
 import type { TIssueOperations } from "../issue-detail";
 // import { IssueCycleSelect } from "../issue-detail/cycle-select";
 // import { IssueLabel } from "../issue-detail/label";
@@ -74,7 +74,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
   return (
     <div>
-      <h6 className="text-sm font-medium">{t("common.properties")}</h6>
+      {/* <h6 className="text-sm font-medium">{t("common.properties")}</h6> */}
+      {/* Change to event Propertie */}
+      <h6 className="text-sm font-medium">Event Details</h6>
       {/* TODO: render properties using a common component */}
       <div className={`w-full space-y-2 mt-3 ${disabled ? "opacity-60" : ""}`}>
         {/* state */}
