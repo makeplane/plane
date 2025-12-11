@@ -43,7 +43,7 @@ type TPageRootProps = {
   customRealtimeEventHandlers?: TCustomEventHandlers;
 };
 
-export const PageRoot = observer((props: TPageRootProps) => {
+export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   const {
     config,
     handlers,

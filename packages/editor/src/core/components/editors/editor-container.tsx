@@ -26,7 +26,7 @@ type Props = {
   state?: TCollabValue["state"];
 };
 
-export const EditorContainer: FC<Props> = (props) => {
+export function EditorContainer(props: Props) {
   const { children, displayConfig, editor, editorContainerClassName, id, isTouchDevice, provider, state } = props;
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -176,4 +176,4 @@ export const EditorContainer: FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}
