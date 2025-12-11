@@ -178,10 +178,10 @@ export function CycleForm(props: Props) {
         </div>
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
-        <Button variant="secondary" onClick={handleClose} tabIndex={getIndex("cancel")}>
+        <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
           {t("common.cancel")}
         </Button>
-        <Button variant="primary" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
+        <Button variant="primary" size="lg" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
           {data
             ? isSubmitting
               ? t("common.updating")

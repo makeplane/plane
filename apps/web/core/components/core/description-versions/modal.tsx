@@ -155,8 +155,8 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
               type="button"
               className={cn(
                 "flex-shrink-0",
-                getButtonStyling("neutral-primary", "sm"),
-                "border-none grid place-items-center"
+                getButtonStyling("ghost", "sm"),
+                "border-none grid place-items-center h-6 w-6"
               )}
               onClick={handleCopyMarkdown}
             >
@@ -164,12 +164,13 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
             </button>
           </Tooltip>
           <div className="flex items-center gap-2">
-            <Button variant="secondary" onClick={handleClose} tabIndex={1}>
+            <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={1}>
               {t("common.cancel")}
             </Button>
             {!isRestoreDisabled && (
               <Button
                 variant="primary"
+                size="lg"
                 onClick={() => {
                   handleRestore(activeVersionDescription ?? "<p></p>");
                   handleClose();

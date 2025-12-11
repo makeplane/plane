@@ -525,6 +525,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                     <div tabIndex={getIndex("discard_button")}>
                       <Button
                         variant="secondary"
+                        size="lg"
                         onClick={() => {
                           if (editorRef.current?.isEditorReadyToDiscard()) {
                             onClose();
@@ -543,6 +544,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                     <div tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}>
                       <Button
                         variant={moveToIssue ? "secondary" : "primary"}
+                        size="lg"
                         type="submit"
                         ref={submitBtnRef}
                         loading={isSubmitting}
@@ -559,6 +561,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                         loading={isMoving}
                         onClick={handleMoveToProjects}
                         disabled={isMoving}
+                        size="lg"
                       >
                         {t("add_to_project")}
                       </Button>
