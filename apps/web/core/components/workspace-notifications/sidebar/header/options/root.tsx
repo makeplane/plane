@@ -52,7 +52,7 @@ export const NotificationSidebarHeaderOptions = observer(function NotificationSi
   };
 
   return (
-    <div className="relative flex justify-center items-center gap-2 text-13">
+    <div className="relative flex justify-center items-center gap-2 text-body-xs-medium">
       {/* mark all notifications as read*/}
       <Tooltip tooltipContent={t("notification.options.mark_all_as_read")} isMobile={isMobile} position="bottom">
         <div

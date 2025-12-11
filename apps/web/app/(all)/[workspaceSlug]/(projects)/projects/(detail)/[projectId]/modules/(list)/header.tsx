@@ -65,6 +65,7 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
             onClick={() => {
               toggleCreateModuleModal(true);
             }}
+            size="lg"
           >
             <div className="sm:hidden block">{t("add")}</div>
             <div className="hidden sm:block">{t("project_module.add_module")}</div>

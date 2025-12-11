@@ -17,7 +17,7 @@ export function ProjectLogo(props: Props) {
         style={{
           color: logo.icon.color,
         }}
-        className={cn("material-symbols-rounded-sm text-14", className)}
+        className={cn("material-symbols-rounded text-14", className)}
       >
         {logo.icon.name}
       </span>

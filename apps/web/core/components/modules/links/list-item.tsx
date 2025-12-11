@@ -42,11 +42,11 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
   };
 
   return (
-    <div className="relative flex flex-col rounded-md bg-surface-2 p-2.5">
+    <div className="relative flex flex-col rounded-md bg-layer-3 p-2.5">
       <div className="flex w-full items-start justify-between gap-2">
         <div className="flex items-start gap-2 truncate">
           <span className="py-1">
-            <Icon className="size-3 stroke-2 text-tertiary group-hover:text-primary flex-shrink-0" />
+            <Icon className="size-3 stroke-2 text-tertiary group-hover:text-primary shrink-0" />
           </span>
           <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url} isMobile={isMobile}>
             <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer truncate text-11">
@@ -55,11 +55,11 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
           </Tooltip>
         </div>
 
-        <div className="z-[1] flex flex-shrink-0 items-center">
+        <div className="z-1 flex shrink-0 items-center">
           {isEditingAllowed && (
             <button
               type="button"
-              className="grid place-items-center p-1 hover:bg-layer-1"
+              className="grid place-items-center p-1 hover:bg-layer-transparent-hover text-secondary rounded-sm"
               data-ph-element={MODULE_TRACKER_ELEMENTS.LIST_ITEM}
               onClick={(e) => {
                 e.preventDefault();
@@ -67,19 +67,20 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
                 handleEditLink();
               }}
             >
-              <Pencil className="size-3 stroke-[1.5] text-secondary" />
+              <Pencil className="size-3 stroke-[1.5]" />
             </button>
           )}
-          <span
+          <button
+            type="button"
             onClick={() => copyToClipboard(link.url)}
-            className="grid place-items-center p-1 hover:bg-layer-1 cursor-pointer"
+            className="grid place-items-center p-1 hover:bg-layer-transparent-hover text-secondary rounded-sm"
           >
-            <Copy className="h-3.5 w-3.5 stroke-[1.5]" />
-          </span>
+            <Copy className="size-3 stroke-[1.5]" />
+          </button>
           {isEditingAllowed && (
             <button
               type="button"
-              className="grid place-items-center p-1 hover:bg-layer-1"
+              className="grid place-items-center p-1 hover:bg-layer-transparent-hover text-secondary rounded-sm"
               data-ph-element={MODULE_TRACKER_ELEMENTS.LIST_ITEM}
               onClick={(e) => {
                 e.preventDefault();
@@ -87,7 +88,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
                 handleDeleteLink();
               }}
             >
-              <Trash2 className="size-3 stroke-[1.5] text-secondary" />
+              <Trash2 className="size-3 stroke-[1.5]" />
             </button>
           )}
         </div>
