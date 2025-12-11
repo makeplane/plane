@@ -36,7 +36,7 @@ export const AppliedDateFilters = observer(function AppliedDateFilters(props: Pr
   return (
     <>
       {values.map((date) => (
-        <div key={date} className="flex items-center gap-1 rounded-sm bg-layer-1 py-1 px-1.5 text-11">
+        <div key={date} className="flex items-center gap-1 rounded-sm bg-layer-3 py-1 px-1.5 text-11">
           <span className="normal-case">{getDateLabel(date)}</span>
           {editable && (
             <button

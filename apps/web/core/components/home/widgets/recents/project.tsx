@@ -67,7 +67,7 @@ export function RecentProject(props: BlockProps) {
       }
       parentRef={ref}
       disableLink={false}
-      className="bg-layer-transparent hover:bg-layer-transparent-hover my-auto !px-2 border-none py-3"
+      className="my-auto !px-2 border-none py-3"
       itemClassName="my-auto"
       onItemClick={(e) => {
         e.preventDefault();
