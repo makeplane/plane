@@ -223,10 +223,10 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
                     </div>
                   )}
                   <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle py-4">
-                    <Button type="button" variant="secondary" onClick={handleClose}>
+                    <Button type="button" variant="secondary" size="lg" onClick={handleClose}>
                       {changeEmailT("actions.cancel")}
                     </Button>
-                    <Button type="submit" variant="primary" disabled={isSubmitting}>
+                    <Button type="submit" variant="primary" size="lg" disabled={isSubmitting}>
                       {isSubmitting
                         ? changeEmailT("states.sending")
                         : secondStep

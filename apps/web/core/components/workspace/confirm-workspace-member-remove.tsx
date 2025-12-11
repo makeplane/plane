@@ -95,10 +95,10 @@ export const ConfirmWorkspaceMemberRemove = observer(function ConfirmWorkspaceMe
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <Button variant="secondary" onClick={handleClose}>
+                  <Button variant="secondary" size="lg" onClick={handleClose}>
                     {t("cancel")}
                   </Button>
-                  <Button variant="error-fill" tabIndex={1} onClick={handleDeletion} loading={isRemoving}>
+                  <Button variant="error-fill" size="lg" tabIndex={1} onClick={handleDeletion} loading={isRemoving}>
                     {currentUser?.id === userDetails.id
                       ? isRemoving
                         ? t("leaving")
