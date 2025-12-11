@@ -149,6 +149,35 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     [workspaceSlug, issuesFilter, projectId, updateFilters]
   );
 
+  // 获取项目 issue types 并更新到缓存
+  const projectIssueTypeService = new ProjectIssueTypeService();
+  const [issueTypesMap, setIssueTypesMap] = useState<Record<string, TIssueType> | null>(null);
+
+  useEffect(() => {
+    if (!workspaceSlug || !projectId) return;
+
+    const fetchIssueTypes = async () => {
+      try {
+        const cachedTypes = projectIssueTypesCache.get(projectId.toString());
+        if (cachedTypes) {
+          setIssueTypesMap(cachedTypes);
+        } else {
+          const types = await projectIssueTypeService.fetchProjectIssueTypes(workspaceSlug.toString(), projectId.toString());
+          const typesMap = types.reduce((acc, type) => {
+            acc[type.id] = type;
+            return acc;
+          }, {} as Record<string, TIssueType>);
+          projectIssueTypesCache.set(projectId.toString(), typesMap);
+          setIssueTypesMap(typesMap);
+        }
+      } catch (error) {
+        console.error("Failed to fetch issue types:", error);
+      }
+    };
+
+    fetchIssueTypes();
+  }, [workspaceSlug, projectId]);
+
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
       <div className={`relative size-full bg-custom-background-90`}>
@@ -172,6 +201,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           handleCollapsedGroups={handleCollapsedGroups}
           collapsedGroups={collapsedGroups}
           isEpic={isEpic}
+          projectIssueTypesMap={issueTypesMap || undefined}
         />
       </div>
     </IssueLayoutHOC>

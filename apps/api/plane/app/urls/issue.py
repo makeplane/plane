@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import SimpleRouter
 
 from plane.app.views import (
     BulkCreateIssueLabelsEndpoint,
@@ -28,8 +29,14 @@ from plane.app.views import (
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
 )
+from plane.app.views.issue.custom import IssueAPI
+from plane.app.views.qa.review import CaseReviewView
+
+router = SimpleRouter()
+router.register('issue', IssueAPI, basename='issue')
 
 urlpatterns = [
+    path('workspaces/<str:slug>/projects/<uuid:project_id>/', include(router.urls)),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/list/",
         IssueListEndpoint.as_view(),

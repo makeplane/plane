@@ -136,7 +136,7 @@ class PlanModuleAPIView(BaseAPIView):
         serializer = PlanModuleCreateUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         plan_module = serializer.save()
-        serializer = TestPlanDetailSerializer(instance=plan_module)
+        serializer = PlanModuleListSerializer(instance=plan_module)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, slug):

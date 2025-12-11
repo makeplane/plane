@@ -1,7 +1,7 @@
 "use client";
 
 import type { Dispatch, MouseEvent, SetStateAction } from "react";
-import { useEffect, useRef,useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
@@ -89,8 +89,6 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     setPeekIssue,
     subIssues: subIssuesStore,
   } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
-  const projectIssueTypesMap = projectIssueTypesCache.get(projectId ?? "");
-
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
     issue &&
@@ -107,6 +105,8 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
 
   // derived values
   const issue = issuesMap[issueId];
+  // 优先使用 props 传入的 map，否则回退到 cache（按 issue.project_id）
+  const projectIssueTypesMap = props.projectIssueTypesMap || projectIssueTypesCache.get(issue?.project_id ?? "");
   const subIssuesCount = issue?.sub_issues_count ?? 0;
   const canEditIssueProperties = canEditProperties(issue?.project_id ?? undefined);
   const isDraggingAllowed = canDrag && canEditIssueProperties;

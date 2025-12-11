@@ -394,9 +394,22 @@ export default function TestExecutionPage() {
     syncingRef.current = true;
     const s = source === "left" ? left : right;
     const t = source === "left" ? right : left;
-    const ratio = s.scrollTop / Math.max(1, s.scrollHeight - s.clientHeight);
-    t.scrollTop = ratio * Math.max(1, t.scrollHeight - t.clientHeight);
-    syncingRef.current = false;
+    const sMax = Math.max(1, s.scrollHeight - s.clientHeight);
+    const tMax = Math.max(1, t.scrollHeight - t.clientHeight);
+    const ratio = s.scrollTop / sMax;
+    const targetTop = ratio >= 0.999 ? tMax : ratio * tMax;
+    if (Math.abs(t.scrollTop - targetTop) > 1) {
+      t.scrollTop = targetTop;
+    }
+    if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(() => {
+        syncingRef.current = false;
+      });
+    } else {
+      setTimeout(() => {
+        syncingRef.current = false;
+      }, 0);
+    }
   };
 
   type StepItem = { result: string; description: string; exec_result?: string; actual_result?: string; __key: string };
@@ -601,7 +614,7 @@ export default function TestExecutionPage() {
       </Breadcrumbs>
 
       <Transition show={mounted} enter="transition-opacity duration-200" enterFrom="opacity-0" enterTo="opacity-100">
-        <Row className="w-full rounded-md border border-custom-border-200 overflow-hidden" gutter={0}>
+        <Row className="w-full rounded-md border border-custom-border-200 overflow-hidden" gutter={0} wrap={false}>
           <Col flex="30%" className="border-r border-custom-border-200">
             <div className="p-4 flex flex-col gap-3">
               <Input.Search
@@ -635,8 +648,7 @@ export default function TestExecutionPage() {
                 <div className="flex flex-col gap-3">
                   <div
                     ref={leftRef}
-                    onScroll={() => onSyncScroll("left")}
-                    className="overflow-y-auto vertical-scrollbar scrollbar-sm flex flex-col gap-3 pr-2 pl-1 py-1 max-h-[calc(100dvh-52px-12px)]"
+                    className="overflow-y-auto vertical-scrollbar scrollbar-sm flex flex-col gap-3 pr-2 pl-1 py-1 max-h-[650px]"
                     style={{ scrollbarGutter: "stable" }}
                   >
                     {cases.length === 0 ? (
@@ -688,10 +700,9 @@ export default function TestExecutionPage() {
 
           <Col
             flex="70%"
-            className="overflow-y-auto vertical-scrollbar scrollbar-sm scroll-smooth max-h-[calc(100dvh-52px-12px)]"
+            className="overflow-y-auto vertical-scrollbar scrollbar-sm max-h-[calc(100dvh-52px-12px)]"
             style={{ scrollPaddingBottom: 16 }}
             ref={rightRef}
-            onScroll={() => onSyncScroll("right")}
           >
             <div className="p-4 pb-16" style={{ scrollPaddingBottom: 16 }}>
               {!selectedCaseId ? (

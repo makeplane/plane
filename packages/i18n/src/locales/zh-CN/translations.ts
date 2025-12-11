@@ -1578,6 +1578,9 @@ export default {
         free_plan: "您目前使用的是免费计划",
         view_plans: "查看计划",
       },
+      templates: {
+        title: "模板"
+      },
       exports: {
         title: "导出",
         exporting: "导出中",

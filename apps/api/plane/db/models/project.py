@@ -10,12 +10,17 @@ from django.db import models
 from django.db.models import Q
 
 # Module imports
-from plane.db.mixins import AuditModel
+from plane.db.mixins import AuditModel, SoftDeletionManager
 
 # Module imports
 from .base import BaseModel
 
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
+
+
+class SoftProjectManager(SoftDeletionManager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_template=False)
 
 
 class ROLE(Enum):
@@ -116,13 +121,9 @@ class Project(BaseModel):
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
 
-    template = models.ForeignKey(
-        "db.ProjectTemplate",
-        on_delete=models.SET_NULL,
-        related_name="projects",
-        null=True,
-        blank=True,
-    )
+    is_template = models.BooleanField(default=False)
+
+    objects = SoftProjectManager()
 
     @property
     def cover_image_url(self):
@@ -324,19 +325,11 @@ class ProjectPublicMember(ProjectBaseModel):
 
 
 class ProjectTemplate(models.Model):
-    NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=255, verbose_name="Project Name")
-    template_name = models.CharField(max_length=255, verbose_name="Project Template Name")
+    name = models.CharField(max_length=255, verbose_name="Project Template Name")
     description = models.TextField(verbose_name="Project Description", blank=True)
-    template_description = models.TextField(verbose_name="Project Template Description", blank=True)
-    network = models.PositiveSmallIntegerField(default=2, choices=NETWORK_CHOICES)
 
-    project_lead = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="project_template_lead",
-        null=True,
-        blank=True,
-    )
-    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="workspace_%(class)s")
+    project = models.OneToOneField(Project, null=True, on_delete=models.CASCADE, related_name="template")
+
+    class Meta:
+        db_table = "project_template"

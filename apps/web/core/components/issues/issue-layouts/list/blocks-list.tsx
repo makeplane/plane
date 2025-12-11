@@ -21,6 +21,7 @@ interface Props {
   isDragAllowed: boolean;
   canDropOverIssue: boolean;
   isEpic?: boolean;
+  projectIssueTypesMap?: Record<string, any>;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {
@@ -37,6 +38,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
     isDragAllowed,
     canDropOverIssue,
     isEpic = false,
+    projectIssueTypesMap,
   } = props;
 
   return (
@@ -61,6 +63,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
             isDragAllowed={isDragAllowed}
             canDropOverIssue={canDropOverIssue}
             isEpic={isEpic}
+            projectIssueTypesMap={projectIssueTypesMap}
           />
         ))}
     </div>

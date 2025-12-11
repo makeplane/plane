@@ -19,6 +19,7 @@ import { IssueService } from "@/services/issue";
 import type { IIssueDetail } from "./root.store";
 import type { IWorkItemSubIssueFiltersStore } from "./sub_issues_filter.store";
 import { WorkItemSubIssueFiltersStore } from "./sub_issues_filter.store";
+import { ProjectIssueTypeService, projectIssueTypesCache, type TIssueType } from "@/services/project";
 
 export interface IIssueSubIssuesStoreActions {
   fetchSubIssues: (workspaceSlug: string, projectId: string, parentIssueId: string) => Promise<TIssueSubIssues>;
@@ -363,6 +364,21 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
           workspaceSlug,
           projectId
         );
+        // fetching other project issue types
+        try {
+          const cached = projectIssueTypesCache.get(projectId);
+          if (!cached) {
+            const service = new ProjectIssueTypeService();
+            const types = await service.fetchProjectIssueTypes(workspaceSlug, projectId);
+            const map = types.reduce((acc, type) => {
+              acc[type.id] = type as TIssueType;
+              return acc;
+            }, {} as Record<string, TIssueType>);
+            projectIssueTypesCache.set(projectId, map);
+          }
+        } catch (e) {
+          // swallow
+        }
       }
     }
   };

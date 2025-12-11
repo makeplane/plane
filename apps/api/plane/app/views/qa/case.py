@@ -11,7 +11,7 @@ from plane.app.serializers.qa import CaseAttachmentSerializer, IssueListSerializ
     TestCaseCommentSerializer, PlanCaseRecordSerializer, CaseListSerializer, CaseLabelListSerializer
 from plane.app.serializers.qa.case import CaseExecuteRecordSerializer
 from plane.app.views import BaseAPIView, BaseViewSet
-from plane.app.views.qa.utils import parser_case_file
+from plane.utils.import_export import parser_case_file
 from plane.db.models import TestCase, FileAsset, TestCaseComment, PlanCase, Issue, CaseModule, CaseLabel
 from plane.utils.paginator import CustomPaginator
 from plane.utils.response import list_response

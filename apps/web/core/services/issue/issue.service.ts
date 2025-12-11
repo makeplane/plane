@@ -494,4 +494,15 @@ export class IssueService extends APIService {
         throw error?.response?.data;
       });
   }
+  async importIssue(workspaceSlug: string,projectId: string, formData: FormData): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue/issue-import/`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+      .then((response) => response)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

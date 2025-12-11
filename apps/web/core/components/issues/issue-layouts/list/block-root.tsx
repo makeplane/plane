@@ -42,6 +42,7 @@ type Props = {
   isLastChild?: boolean;
   shouldRenderByDefault?: boolean;
   isEpic?: boolean;
+  projectIssueTypesMap?: Record<string, any>;
 };
 
 export const IssueBlockRoot: FC<Props> = observer((props) => {
@@ -63,6 +64,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
     selectionHelpers,
     shouldRenderByDefault,
     isEpic = false,
+    projectIssueTypesMap,
   } = props;
   // states
   const [isExpanded, setExpanded] = useState<boolean>(false);
@@ -134,7 +136,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
         root={containerRef}
         classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-custom-border-200"}`}
         verticalOffset={100}
-        defaultValue={shouldRenderByDefault || isIssueNew(issuesMap[issueId])}
+        defaultValue={shouldRenderByDefault || isIssueNew(issuesMap[issueId]) || isSubIssue}
         placeholderChildren={<ListLoaderItemRow shouldAnimate={false} renderForPlaceHolder defaultPropertyCount={4} />}
         shouldRecordHeights={isMobile}
       >
@@ -155,6 +157,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
           isCurrentBlockDragging={isParentIssueBeingDragged || isCurrentBlockDragging}
           setIsCurrentBlockDragging={setIsCurrentBlockDragging}
           isEpic={isEpic}
+          projectIssueTypesMap={projectIssueTypesMap}
         />
       </RenderIfVisible>
 
@@ -178,6 +181,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
             canDropOverIssue={canDropOverIssue}
             isParentIssueBeingDragged={isParentIssueBeingDragged || isCurrentBlockDragging}
             shouldRenderByDefault={isExpanded}
+            projectIssueTypesMap={projectIssueTypesMap}
           />
         ))}
       {isLastChild && <DropIndicator classNames={"absolute z-[2]"} isVisible={instruction === "DRAG_BELOW"} />}

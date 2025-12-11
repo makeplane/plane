@@ -164,6 +164,7 @@ export const List: React.FC<IList> = observer((props) => {
                     handleCollapsedGroups={handleCollapsedGroups}
                     collapsedGroups={collapsedGroups}
                     isEpic={isEpic}
+                    projectIssueTypesMap={props.projectIssueTypesMap}
                   />
                 ))}
               </div>

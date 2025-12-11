@@ -308,6 +308,7 @@ export const ListGroup = observer((props: Props) => {
               isDragAllowed={isDragAllowed}
               canDropOverIssue={!isDropDisabled}
               isEpic={isEpic}
+              projectIssueTypesMap={props.projectIssueTypesMap}
             />
           )}
 
