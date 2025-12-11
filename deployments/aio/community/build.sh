@@ -109,14 +109,6 @@ build_dist_files(){
     update_env_file $DIST_DIR/plane.env "SITE_ADDRESS" ":80"
 
 
-    # in caddyfile, update `reverse_proxy /spaces/* space:3000` to `reverse_proxy /spaces/* space:3002` 
-    string_replace $DIST_DIR/Caddyfile "web:3000" "localhost:3001"
-    string_replace $DIST_DIR/Caddyfile "space:3000" "localhost:3002"
-    string_replace $DIST_DIR/Caddyfile "admin:3000" "localhost:3003"
-    string_replace $DIST_DIR/Caddyfile "api:8000" "localhost:3004"
-    string_replace $DIST_DIR/Caddyfile "live:3000" "localhost:3005"
-    
-
     # print docker build command
     echo "------------------------------------------------"
     echo "Run the following command to build the image:"
