@@ -6,6 +6,7 @@ import type { TRenderQuickActions } from "../list/list-view-types";
 import { isoToLocalHour, isoToLocalDateString, hourLabel } from "./calendar-time";
 import { CalendarEventBlock } from "./event-block";
 import { CalendarIssueBlocks } from "./issue-blocks";
+import { renderFormattedPayloadDate } from "@plane/utils";
 
 type Props = {
   date: Date;
@@ -59,6 +60,7 @@ const calculateEventPosition = (startTime: string, endTime?: string) => {
 
 export const DayView: React.FC<Props> = ({
   date,
+  groupedIssueIds,
   issues,
   loadMoreIssues,
   getPaginationData,
@@ -73,22 +75,41 @@ export const DayView: React.FC<Props> = ({
   handleDragAndDrop,
   isEpic,
 }) => {
-  const selectedDateString = isoToLocalDateString(date.toISOString())!;
+  const formattedDatePayload = renderFormattedPayloadDate(date);
   const hourRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Group issues: events (with start_time) vs all-day (without)
   const { eventIssues, allDayIssues } = React.useMemo(() => {
-    if (!issues) return { eventIssues: [], allDayIssues: [] };
+    if (!issues || !formattedDatePayload) return { eventIssues: [], allDayIssues: [] };
 
-    const allIssues = Object.values(issues).filter(
-      (issue) => isoToLocalDateString(issue.start_time || issue.target_date) === selectedDateString
-    );
+    // 1) Issues that are already grouped under the selected date (e.g. by target_date)
+    const issueIdsForDate = groupedIssueIds[formattedDatePayload] || [];
+    const issuesFromGroup = issueIdsForDate
+      .map((id) => issues[id])
+      .filter((issue): issue is TIssue => issue !== undefined);
+
+    // 2) Additionally, pull in any issues whose start_time falls on the selected day,
+    //    even if they are not grouped under this date. This ensures timed events
+    //    always appear on the day timeline once they have a start time.
+    const issuesFromStartTime = Object.values(issues).filter((issue): issue is TIssue => {
+      if (!issue || !issue.start_time) return false;
+
+      const startTimeDate = isoToLocalDateString(issue.start_time);
+      if (startTimeDate !== formattedDatePayload) return false;
+
+      // Avoid duplicating issues that are already part of the grouped list
+      return !issueIdsForDate.includes(issue.id);
+    });
+
+    const allIssuesForDay = [...issuesFromGroup, ...issuesFromStartTime];
 
     return {
-      eventIssues: allIssues.filter((issue) => issue.start_time),
-      allDayIssues: allIssues.filter((issue) => !issue.start_time),
+      eventIssues: allIssuesForDay.filter((issue) => issue.start_time),
+      allDayIssues: allIssuesForDay.filter((issue) => !issue.start_time),
     };
-  }, [issues, selectedDateString]);
+  }, [issues, groupedIssueIds, formattedDatePayload]);
+
+  console.log("allDayIssues", "eventIssues", JSON.stringify(allDayIssues), eventIssues);
 
   // Create a map of hour -> events for positioning
   const eventsByHour = React.useMemo(() => {
@@ -106,6 +127,8 @@ export const DayView: React.FC<Props> = ({
 
     return map;
   }, [eventIssues]);
+
+  console.log("eventsByHour", eventsByHour);
 
   /** Auto-scroll to current hour */
   useEffect(() => {

@@ -107,6 +107,7 @@ def issue_on_results(
         "completed_at",
         "estimate_point",
         "priority",
+        "start_time",
         "start_date",
         "target_date",
         "sequence_id",

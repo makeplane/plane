@@ -81,7 +81,11 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const groupedIssueIds = (issues.groupedIssueIds ?? {}) as TGroupedIssues;
 
   const layout = displayFilters?.calendar?.layout ?? "month";
-  const { startDate, endDate } = (layout === "month" ) ? (issueCalendarView.getStartAndEndDate(layout) ?? {}) : {};
+  // Determine the date range for fetching issues based on the current layout.
+  // For week layout we use the active week range; for day and month layouts we
+  // fall back to the month range so that day view always has data after reload.
+  const rangeLayout: "week" | "month" = layout === "week" ? "week" : "month";
+  const { startDate, endDate } = issueCalendarView.getStartAndEndDate(rangeLayout) ?? {};
 
   useEffect(() => {
     if (startDate && endDate && layout) {

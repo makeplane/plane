@@ -43,11 +43,11 @@ import { CalendarWeekHeader } from "./week-header";
 
 type Props = {
   issuesFilterStore:
-    | IProjectIssuesFilter
-    | IModuleIssuesFilter
-    | ICycleIssuesFilter
-    | IProjectViewIssuesFilter
-    | IProjectEpicsFilter;
+  | IProjectIssuesFilter
+  | IModuleIssuesFilter
+  | ICycleIssuesFilter
+  | IProjectViewIssuesFilter
+  | IProjectEpicsFilter;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   layout: "month" | "week" | "day" | undefined;
@@ -114,13 +114,6 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   const calendarPayload = issueCalendarView.calendarPayload;
   const allWeeksOfActiveMonth = issueCalendarView.allWeeksOfActiveMonth;
   const formattedDatePayload = renderFormattedPayloadDate(selectedDate) ?? undefined;
-  // console.log("LAYOUT:", layout);
-  // console.log("SELECTED DATE:", selectedDate);
-  // console.log("FORMATTED DATE:", formattedDatePayload);
-  // console.log("calendarPayload:", calendarPayload);
-  // console.log("allWeeksOfActiveMonth:", allWeeksOfActiveMonth);
-  // console.log("allDaysOfActiveWeek:", issueCalendarView.allDaysOfActiveWeek);
-  // console.log("groupedIssueIds:", groupedIssueIds);
 
   useEffect(() => {
     const element = scrollableContainerRef.current;
@@ -143,14 +136,11 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
 
   const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : [];
 
-  const [currentDate, setCurrentDate] = useState(new Date());
-
-  // This function can also trigger your calendar store update
+  // Handler for day view date changes
   const handleChangeDate = (newDate: Date) => {
-    setCurrentDate(newDate);
-
-    // Example: update your calendar store or fetch events
-    // issueCalendarView.updateCalendarPayload(newDate);
+    setSelectedDate(newDate);
+    // Keep calendar payload in sync so week/month navigation continues to work
+    issueCalendarView.updateCalendarPayload(newDate);
   };
 
   return (
@@ -173,7 +163,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
             {layout !== "day" && <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />}
 
             {/* SHOW DAY HEADER ONLY ON DAY VIEW */}
-            {layout === "day" && <CalendarDayHeader date={currentDate} isLoading={!issues} onChangeDate={handleChangeDate} />}
+            {layout === "day" && <CalendarDayHeader date={selectedDate} isLoading={!issues} onChangeDate={handleChangeDate} />}
 
             <div className="h-full w-full">
               {/* ---------------- MONTH VIEW ---------------- */}
@@ -258,9 +248,8 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
             {/* mobile view */}
             <div className="md:hidden">
               <p className="p-4 text-xl font-semibold">
-                {`${selectedDate.getDate()} ${
-                  MONTHS_LIST[selectedDate.getMonth() + 1].title
-                }, ${selectedDate.getFullYear()}`}
+                {`${selectedDate.getDate()} ${MONTHS_LIST[selectedDate.getMonth() + 1].title
+                  }, ${selectedDate.getFullYear()}`}
               </p>
               <CalendarIssueBlocks
                 date={selectedDate}
@@ -286,9 +275,8 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
         {/* mobile view */}
         <div className="md:hidden">
           <p className="p-4 text-xl font-semibold">
-            {`${selectedDate.getDate()} ${
-              MONTHS_LIST[selectedDate.getMonth() + 1].title
-            }, ${selectedDate.getFullYear()}`}
+            {`${selectedDate.getDate()} ${MONTHS_LIST[selectedDate.getMonth() + 1].title
+              }, ${selectedDate.getFullYear()}`}
           </p>
           <CalendarIssueBlocks
             date={selectedDate}
