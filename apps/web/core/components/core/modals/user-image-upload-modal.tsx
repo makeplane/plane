@@ -165,14 +165,20 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
                 </div>
                 <p className="my-4 text-13 text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
                 <div className="flex items-center justify-between">
-                  <Button variant="error-fill" onClick={handleImageRemove} disabled={!value}>
+                  <Button variant="error-fill" size="lg" onClick={handleImageRemove} disabled={!value}>
                     {isRemoving ? "Removing" : "Remove"}
                   </Button>
                   <div className="flex items-center gap-2">
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" size="lg" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button variant="primary" onClick={handleSubmit} disabled={!image} loading={isImageUploading}>
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      onClick={handleSubmit}
+                      disabled={!image}
+                      loading={isImageUploading}
+                    >
                       {isImageUploading ? "Uploading" : "Upload & Save"}
                     </Button>
                   </div>

@@ -93,10 +93,10 @@ export function ArchiveIssueModal(props: Props) {
                   </h3>
                   <p className="mt-3 text-13 text-secondary">{t("issue.archive.confirm_message")}</p>
                   <div className="mt-3 flex justify-end gap-2">
-                    <Button variant="secondary" onClick={onClose}>
+                    <Button variant="secondary" size="lg" onClick={onClose}>
                       {t("common.cancel")}
                     </Button>
-                    <Button tabIndex={1} onClick={handleArchiveIssue} loading={isArchiving}>
+                    <Button variant="primary" size="lg" tabIndex={1} onClick={handleArchiveIssue} loading={isArchiving}>
                       {isArchiving ? t("common.archiving") : t("common.archive")}
                     </Button>
                   </div>
