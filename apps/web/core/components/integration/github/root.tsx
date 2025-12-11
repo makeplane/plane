@@ -1,16 +1,15 @@
-"use client";
-
 import React, { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
-import { ArrowLeft, Check, List, Settings, UploadCloud, Users } from "lucide-react";
+import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
+import { MembersPropertyIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
-// ui
+// assets
+import GithubLogo from "@/app/assets/services/github.png?url";
 // components
 import {
   GithubImportConfigure,
@@ -23,8 +22,6 @@ import {
 import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// images
-import GithubLogo from "@/public/services/github.png";
 // services
 import { IntegrationService, GithubIntegrationService } from "@/services/integrations";
 
@@ -68,7 +65,7 @@ const integrationWorkflowData = [
   {
     title: "Users",
     key: "import-users",
-    icon: Users,
+    icon: MembersPropertyIcon,
   },
   {
     title: "Confirm",
@@ -81,7 +78,7 @@ const integrationWorkflowData = [
 const integrationService = new IntegrationService();
 const githubIntegrationService = new GithubIntegrationService();
 
-export const GithubImporterRoot: React.FC = () => {
+export function GithubImporterRoot() {
   const [currentStep, setCurrentStep] = useState<IIntegrationData>({
     state: "import-configure",
   });
@@ -99,8 +96,8 @@ export const GithubImporterRoot: React.FC = () => {
   const { data: appIntegrations } = useSWR(APP_INTEGRATIONS, () => integrationService.getAppIntegrationsList());
 
   const { data: workspaceIntegrations } = useSWR(
-    workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
-    workspaceSlug ? () => integrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null
+    workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug) : null,
+    workspaceSlug ? () => integrationService.getWorkspaceIntegrationsList(workspaceSlug) : null
   );
 
   const activeIntegrationState = () => {
@@ -141,10 +138,10 @@ export const GithubImporterRoot: React.FC = () => {
     };
 
     await githubIntegrationService
-      .createGithubServiceImport(workspaceSlug as string, payload)
+      .createGithubServiceImport(workspaceSlug, payload)
       .then(() => {
         router.push(`/${workspaceSlug}/settings/imports`);
-        mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string));
+        mutate(IMPORTER_SERVICES_LIST(workspaceSlug));
       })
       .catch(() =>
         setToast({
@@ -168,7 +165,7 @@ export const GithubImporterRoot: React.FC = () => {
         <div className="space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
           <div className="flex items-center gap-2">
             <div className="h-10 w-10 flex-shrink-0">
-              <Image src={GithubLogo} alt="GitHubLogo" />
+              <img src={GithubLogo} className="w-full h-full object-cover" alt="GitHubLogo" />
             </div>
             <div className="flex h-full w-full items-center justify-center">
               {integrationWorkflowData.map((integration, index) => (
@@ -246,4 +243,4 @@ export const GithubImporterRoot: React.FC = () => {
       </div>
     </form>
   );
-};
+}

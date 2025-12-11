@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 // plane imports
-import { TBottomSectionConfig, TContentVisibility, TTopSectionConfig } from "@plane/types";
+import type { TBottomSectionConfig, TContentVisibility, TTopSectionConfig } from "@plane/types";
 import { cn } from "../../utils/classname";
 
 const LAYOUT = {
@@ -146,7 +146,7 @@ const truncateText = (text: string | number, maxWidth: number, fontSize: number,
   return `${stringText.slice(0, maxChars - 3)}...`;
 };
 
-export const CustomTreeMapContent: React.FC<any> = ({
+export function CustomTreeMapContent({
   x,
   y,
   width,
@@ -158,7 +158,7 @@ export const CustomTreeMapContent: React.FC<any> = ({
   fillClassName,
   textClassName,
   icon,
-}) => {
+}: any) {
   const dimensions = useMemo(() => {
     const pX = x + LAYOUT.PADDING;
     const pY = y + LAYOUT.PADDING;
@@ -273,4 +273,4 @@ export const CustomTreeMapContent: React.FC<any> = ({
       {renderContent()}
     </g>
   );
-};
+}

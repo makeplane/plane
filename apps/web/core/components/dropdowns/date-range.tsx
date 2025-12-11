@@ -1,17 +1,16 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { ArrowRight, CalendarCheck2, CalendarDays, X } from "lucide-react";
+import { ArrowRight, CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // ui
 import type { DateRange, Matcher } from "@plane/propel/calendar";
 import { Calendar } from "@plane/propel/calendar";
+import { CloseIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // helpers
@@ -65,7 +64,7 @@ type Props = {
   renderInPortal?: boolean;
 };
 
-export const DateRangeDropdown: React.FC<Props> = observer((props) => {
+export const DateRangeDropdown = observer(function DateRangeDropdown(props: Props) {
   const { t } = useTranslation();
   const {
     buttonClassName,
@@ -207,7 +206,7 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
               )
             )}
             {isClearable && !disabled && hasDisplayedDates && (
-              <X
+              <CloseIcon
                 className={cn("h-2.5 w-2.5 flex-shrink-0 cursor-pointer", clearIconClassName)}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -236,11 +235,11 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
                 buttonToDateClassName
               )}
             >
-              {!hideIcon.to && <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+              {!hideIcon.to && <DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
               {dateRange.to ? renderFormattedDate(dateRange.to) : renderPlaceholder ? placeholder.to : ""}
             </span>
             {isClearable && !disabled && hasDisplayedDates && (
-              <X
+              <CloseIcon
                 className={cn("h-2.5 w-2.5 flex-shrink-0 cursor-pointer ml-1", clearIconClassName)}
                 onClick={(e) => {
                   e.stopPropagation();

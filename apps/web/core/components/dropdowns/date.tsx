@@ -1,14 +1,13 @@
-"use client";
-
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { CalendarDays, X } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
 import type { Matcher } from "@plane/propel/calendar";
 import { Calendar } from "@plane/propel/calendar";
+import { CloseIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 import { cn, renderFormattedDate, getDate } from "@plane/utils";
 // helpers
@@ -38,7 +37,7 @@ type Props = TDropdownProps & {
   renderByDefault?: boolean;
 };
 
-export const DateDropdown: React.FC<Props> = observer((props) => {
+export const DateDropdown = observer(function DateDropdown(props: Props) {
   const {
     buttonClassName = "",
     buttonContainerClassName,
@@ -142,7 +141,7 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
           <span className="flex-grow truncate">{value ? renderFormattedDate(value, formatToken) : placeholder}</span>
         )}
         {isClearable && !disabled && isDateSelected && (
-          <X
+          <CloseIcon
             className={cn("h-2.5 w-2.5 flex-shrink-0", clearIconClassName)}
             onClick={(e) => {
               e.stopPropagation();

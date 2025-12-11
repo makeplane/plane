@@ -1,4 +1,4 @@
-@import "@plane/propel/styles/fonts";
+@import "@plane/propel/styles/fonts.css";
 
 @tailwind base;
 @tailwind components;
@@ -296,6 +296,10 @@ body {
 }
 
 /* scrollbar style */
+::-webkit-scrollbar {
+  display: none;
+}
+
 @-moz-document url-prefix() {
   * {
     scrollbar-width: none;
@@ -356,6 +360,23 @@ body {
   margin-top: 44px;
 }
 
+/* scrollbar xs size */
+.scrollbar-xs::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+.scrollbar-xs::-webkit-scrollbar-thumb {
+  border: 3px solid rgba(0, 0, 0, 0);
+}
+
+.shadow-custom {
+  box-shadow: 2px 2px 8px 2px rgba(234, 231, 250, 0.3); /* Convert #EAE7FA4D to rgba */
+}
+/* backdrop filter */
+.backdrop-blur-custom {
+  @apply backdrop-filter blur-[9px];
+}
+
 /* scrollbar sm size */
 .scrollbar-sm::-webkit-scrollbar {
   height: 12px;
@@ -393,4 +414,31 @@ body {
 ::placeholder,
 :-ms-input-placeholder {
   color: rgb(var(--color-text-400));
+}
+
+/* Progress Bar Styles */
+:root {
+  --bprogress-color: rgb(var(--color-primary-100)) !important;
+  --bprogress-height: 2.5px !important;
+}
+
+.bprogress {
+  pointer-events: none;
+}
+
+.bprogress .bar {
+  background: linear-gradient(
+    90deg,
+    rgba(var(--color-primary-100), 0.8) 0%,
+    rgba(var(--color-primary-100), 1) 100%
+  ) !important;
+  will-change: width, opacity;
+}
+
+.bprogress .peg {
+  display: block;
+  box-shadow:
+    0 0 8px rgba(var(--color-primary-100), 0.6),
+    0 0 4px rgba(var(--color-primary-100), 0.4) !important;
+  will-change: transform, opacity;
 }

@@ -12,7 +12,7 @@ import {
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/core";
 import { Ellipsis } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
@@ -45,7 +45,7 @@ export type ColumnDragHandleProps = {
   editor: Editor;
 };
 
-export const ColumnDragHandle: React.FC<ColumnDragHandleProps> = (props) => {
+export function ColumnDragHandle(props: ColumnDragHandleProps) {
   const { col, editor } = props;
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -77,6 +77,17 @@ export const ColumnDragHandle: React.FC<ColumnDragHandleProps> = (props) => {
   const dismiss = useDismiss(context);
   const role = useRole(context);
   const { getReferenceProps, getFloatingProps } = useInteractions([dismiss, click, role]);
+
+  useEffect(() => {
+    if (!isDropdownOpen) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      context.onOpenChange(false);
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isDropdownOpen, context]);
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -211,4 +222,4 @@ export const ColumnDragHandle: React.FC<ColumnDragHandleProps> = (props) => {
       )}
     </>
   );
-};
+}

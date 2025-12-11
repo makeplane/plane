@@ -1,5 +1,3 @@
-"use client";
-
 import type { MutableRefObject } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -68,7 +66,7 @@ interface IKanbanGroup {
   isEpic?: boolean;
 }
 
-export const KanbanGroup = observer((props: IKanbanGroup) => {
+export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
   const {
     groupId,
     sub_group_id,
@@ -270,7 +268,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   const canDragIssuesInCurrentGrouping =
     !!group_by &&
     DRAG_ALLOWED_GROUPS.includes(group_by) &&
-    (!!sub_group_by ? DRAG_ALLOWED_GROUPS.includes(sub_group_by) : true);
+    (sub_group_by ? DRAG_ALLOWED_GROUPS.includes(sub_group_by) : true);
 
   return (
     <div

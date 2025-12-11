@@ -1,7 +1,6 @@
-"use client";
-
 import React, { useState, useCallback, useMemo } from "react";
-import { Lock, ChevronDown } from "lucide-react";
+import { Lock } from "lucide-react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { PasswordInput, PasswordStrengthIndicator } from "@plane/ui";
 import { cn } from "@plane/utils";
 
@@ -16,11 +15,7 @@ interface SetPasswordRootProps {
   disabled?: boolean;
 }
 
-export const SetPasswordRoot: React.FC<SetPasswordRootProps> = ({
-  onPasswordChange,
-  onConfirmPasswordChange,
-  disabled = false,
-}) => {
+export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, disabled = false }: SetPasswordRootProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [passwordState, setPasswordState] = useState<PasswordState>({
     password: "",
@@ -93,7 +88,7 @@ export const SetPasswordRoot: React.FC<SetPasswordRootProps> = ({
           <span>{`(Optional)`}</span>
         </div>
         <div className="flex items-center gap-2 text-custom-text-400">
-          <ChevronDown className={chevronIconClasses} />
+          <ChevronDownIcon className={chevronIconClasses} />
         </div>
       </div>
 
@@ -132,4 +127,4 @@ export const SetPasswordRoot: React.FC<SetPasswordRootProps> = ({
       </div>
     </div>
   );
-};
+}

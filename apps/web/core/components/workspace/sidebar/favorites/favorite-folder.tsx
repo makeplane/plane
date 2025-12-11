@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
@@ -15,12 +13,12 @@ import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree
 import { orderBy } from "lodash-es";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import { Star, MoreHorizontal, ChevronRight, GripVertical } from "lucide-react";
+import { Star, MoreHorizontal, GripVertical } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { DraftIcon, FavoriteFolderIcon } from "@plane/propel/icons";
+import { DraftIcon, FavoriteFolderIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IFavorite, InstructionType } from "@plane/types";
 import { CustomMenu, DropIndicator, DragHandle } from "@plane/ui";
@@ -42,10 +40,10 @@ type Props = {
   handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
-export const FavoriteFolder: React.FC<Props> = (props) => {
+export function FavoriteFolder(props: Props) {
   const { favorite, handleRemoveFromFavorites, isLastChild, handleDrop } = props;
   // store hooks
-  const { getGroupedFavorites } = useFavorite();
+  const { fetchGroupedFavorites } = useFavorite();
   const { isMobile } = usePlatformOS();
   const { workspaceSlug } = useParams();
   // states
@@ -61,9 +59,9 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (favorite.children === undefined && workspaceSlug) {
-      getGroupedFavorites(workspaceSlug.toString(), favorite.id);
+      fetchGroupedFavorites(workspaceSlug.toString(), favorite.id);
     }
-  }, [favorite.id, favorite.children, workspaceSlug, getGroupedFavorites]);
+  }, [favorite.id, favorite.children, workspaceSlug, fetchGroupedFavorites]);
 
   useEffect(() => {
     const element = elementRef.current;
@@ -250,7 +248,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                     open ? "aria_labels.projects_sidebar.close_folder" : "aria_labels.projects_sidebar.open_folder"
                   )}
                 >
-                  <ChevronRight
+                  <ChevronRightIcon
                     className={cn("size-3 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
                       "rotate-90": open,
                     })}
@@ -289,4 +287,4 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
       </Disclosure>
     </>
   );
-};
+}

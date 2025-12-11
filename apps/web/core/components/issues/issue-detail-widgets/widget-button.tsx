@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React from "react";
 // helpers
@@ -10,7 +9,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const IssueDetailWidgetButton: FC<Props> = (props) => {
+export function IssueDetailWidgetButton(props: Props) {
   const { icon, title, disabled = false } = props;
   return (
     <div
@@ -26,4 +25,4 @@ export const IssueDetailWidgetButton: FC<Props> = (props) => {
       <span className="text-sm font-medium">{title}</span>
     </div>
   );
-};
+}

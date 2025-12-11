@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -18,7 +16,7 @@ export type TReadonlyCycleProps = {
   workspaceSlug: string;
 };
 
-export const ReadonlyCycle: React.FC<TReadonlyCycleProps> = observer((props) => {
+export const ReadonlyCycle = observer(function ReadonlyCycle(props: TReadonlyCycleProps) {
   const { className, hideIcon = false, value, placeholder, projectId, workspaceSlug } = props;
 
   const { t } = useTranslation();

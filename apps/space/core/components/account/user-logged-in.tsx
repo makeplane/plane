@@ -1,17 +1,14 @@
-"use client";
-
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { PlaneLockup } from "@plane/propel/icons";
+// assets
+import UserLoggedInImage from "@/app/assets/user-logged-in.svg?url";
 // components
 import { PoweredBy } from "@/components/common/powered-by";
 import { UserAvatar } from "@/components/issues/navbar/user-avatar";
 // hooks
 import { useUser } from "@/hooks/store/use-user";
-// assets
-import UserLoggedInImage from "@/public/user-logged-in.svg";
 
-export const UserLoggedIn = observer(() => {
+export const UserLoggedIn = observer(function UserLoggedIn() {
   // store hooks
   const { data: user } = useUser();
 
@@ -28,7 +25,7 @@ export const UserLoggedIn = observer(() => {
         <div className="text-center">
           <div className="mx-auto size-32 md:size-52 grid place-items-center rounded-full bg-custom-background-80">
             <div className="size-16 md:size-32 grid place-items-center">
-              <Image src={UserLoggedInImage} alt="User already logged in" />
+              <img src={UserLoggedInImage} alt="User already logged in" className="w-full h-full object-cover" />
             </div>
           </div>
           <h1 className="mt-8 md:mt-12 text-xl md:text-3xl font-semibold">Nice! Just one more step.</h1>

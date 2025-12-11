@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { XCircle } from "lucide-react";
 // plane imports
@@ -16,7 +14,7 @@ type Props = {
   token: IApiToken;
 };
 
-export const ApiTokenListItem: React.FC<Props> = (props) => {
+export function ApiTokenListItem(props: Props) {
   const { token } = props;
   // states
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -53,7 +51,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
           <p className="mb-1 text-xs leading-6 text-custom-text-400">
             {token.is_active
               ? token.expired_at
-                ? `Expires ${renderFormattedDate(token.expired_at!)} at ${renderFormattedTime(token.expired_at!)}`
+                ? `Expires ${renderFormattedDate(token.expired_at)} at ${renderFormattedTime(token.expired_at)}`
                 : "Never expires"
               : `Expired ${calculateTimeAgo(token.expired_at)}`}
           </p>
@@ -61,4 +59,4 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

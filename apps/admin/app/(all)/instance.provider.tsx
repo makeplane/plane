@@ -1,14 +1,9 @@
-import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // hooks
 import { useInstance } from "@/hooks/store";
 
-type InstanceProviderProps = {
-  children: ReactNode;
-};
-
-export const InstanceProvider: FC<InstanceProviderProps> = observer((props) => {
+export const InstanceProvider = observer(function InstanceProvider(props: React.PropsWithChildren) {
   const { children } = props;
   // store hooks
   const { fetchInstanceInfo } = useInstance();

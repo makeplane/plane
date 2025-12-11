@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Globe2, Link, Lock, Pencil, Trash2 } from "lucide-react";
@@ -22,7 +19,7 @@ type TCommentCard = {
   showCopyLinkOption: boolean;
 };
 
-export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
+export const CommentQuickActions = observer(function CommentQuickActions(props: TCommentCard) {
   const { activityOperations, comment, setEditMode, showAccessSpecifier, showCopyLinkOption } = props;
   // store hooks
   const { data: currentUser } = useUser();
@@ -33,47 +30,49 @@ export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
   // translation
   const { t } = useTranslation();
 
-  const MENU_ITEMS: TContextMenuItem[] = useMemo(
-    () => [
-      {
-        key: "edit",
-        action: setEditMode,
-        title: t("common.actions.edit"),
-        icon: Pencil,
-        shouldRender: canEdit,
-      },
-      {
-        key: "copy_link",
-        action: () => activityOperations.copyCommentLink(comment.id),
-        title: t("common.actions.copy_link"),
-        icon: Link,
-        shouldRender: showCopyLinkOption,
-      },
-      {
-        key: "access_specifier",
-        action: () =>
-          activityOperations.updateComment(comment.id, {
-            access:
-              comment.access === EIssueCommentAccessSpecifier.INTERNAL
-                ? EIssueCommentAccessSpecifier.EXTERNAL
-                : EIssueCommentAccessSpecifier.INTERNAL,
-          }),
-        title:
-          comment.access === EIssueCommentAccessSpecifier.INTERNAL
-            ? t("issue.comments.switch.public")
-            : t("issue.comments.switch.private"),
-        icon: comment.access === EIssueCommentAccessSpecifier.INTERNAL ? Globe2 : Lock,
-        shouldRender: showAccessSpecifier,
-      },
-      {
-        key: "delete",
-        action: () => activityOperations.removeComment(comment.id),
-        title: t("common.actions.delete"),
-        icon: Trash2,
-        shouldRender: canDelete,
-      },
-    ],
-    [activityOperations, canDelete, canEdit, comment, setEditMode, showAccessSpecifier, showCopyLinkOption]
+  const MENU_ITEMS = useMemo(
+    function MENU_ITEMS(): TContextMenuItem[] {
+      return [
+        {
+          key: "edit",
+          action: setEditMode,
+          title: t("common.actions.edit"),
+          icon: Pencil,
+          shouldRender: canEdit,
+        },
+        {
+          key: "copy_link",
+          action: () => activityOperations.copyCommentLink(comment.id),
+          title: t("common.actions.copy_link"),
+          icon: Link,
+          shouldRender: showCopyLinkOption,
+        },
+        {
+          key: "access_specifier",
+          action: () =>
+            activityOperations.updateComment(comment.id, {
+              access:
+                comment.access === EIssueCommentAccessSpecifier.INTERNAL
+                  ? EIssueCommentAccessSpecifier.EXTERNAL
+                  : EIssueCommentAccessSpecifier.INTERNAL,
+            }),
+          title:
+            comment.access === EIssueCommentAccessSpecifier.INTERNAL
+              ? t("issue.comments.switch.public")
+              : t("issue.comments.switch.private"),
+          icon: comment.access === EIssueCommentAccessSpecifier.INTERNAL ? Globe2 : Lock,
+          shouldRender: showAccessSpecifier,
+        },
+        {
+          key: "delete",
+          action: () => activityOperations.removeComment(comment.id),
+          title: t("common.actions.delete"),
+          icon: Trash2,
+          shouldRender: canDelete,
+        },
+      ];
+    },
+    [t, setEditMode, canEdit, showCopyLinkOption, activityOperations, comment, showAccessSpecifier, canDelete]
   );
 
   return (

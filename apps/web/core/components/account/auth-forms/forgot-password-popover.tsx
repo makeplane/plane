@@ -1,11 +1,11 @@
 import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
-import { X } from "lucide-react";
 import { Popover } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 
-export const ForgotPasswordPopover = () => {
+export function ForgotPasswordPopover() {
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -51,11 +51,11 @@ export const ForgotPasswordPopover = () => {
               onClick={() => close()}
               aria-label={t("aria_labels.auth_forms.close_popover")}
             >
-              <X className="size-3 text-custom-text-200" />
+              <CloseIcon className="size-3 text-custom-text-200" />
             </button>
           </div>
         )}
       </Popover.Panel>
     </Popover>
   );
-};
+}

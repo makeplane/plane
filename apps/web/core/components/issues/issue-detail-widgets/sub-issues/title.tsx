@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -20,7 +18,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
+export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleTitle(props: Props) {
   const {
     isOpen,
     parentIssueId,

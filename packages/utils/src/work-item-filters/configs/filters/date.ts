@@ -1,12 +1,8 @@
 // plane imports
-import { TFilterProperty } from "@plane/types";
+import type { TFilterProperty } from "@plane/types";
 // local imports
-import {
-  createFilterConfig,
-  TCreateFilterConfig,
-  TCreateDateFilterParams,
-  getSupportedDateOperators,
-} from "../../../rich-filters";
+import type { TCreateFilterConfig, TCreateDateFilterParams } from "../../../rich-filters";
+import { createFilterConfig, getSupportedDateOperators } from "../../../rich-filters";
 
 // ------------ Date filters ------------
 

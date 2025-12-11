@@ -1,15 +1,8 @@
 import type { Connection, Extension, Hocuspocus, onConfigurePayload } from "@hocuspocus/server";
 import { logger } from "@plane/logger";
 import { Redis } from "@/extensions/redis";
-import {
-  AdminCommand,
-  CloseCode,
-  ForceCloseReason,
-  getForceCloseMessage,
-  isForceCloseCommand,
-  type ClientForceCloseMessage,
-  type ForceCloseCommandData,
-} from "@/types/admin-commands";
+import { AdminCommand, CloseCode, getForceCloseMessage, isForceCloseCommand } from "@/types/admin-commands";
+import type { ForceCloseReason, ClientForceCloseMessage, ForceCloseCommandData } from "@/types/admin-commands";
 
 /**
  * Extension to handle force close commands from other servers via Redis admin channel
@@ -19,7 +12,7 @@ export class ForceCloseHandler implements Extension {
   priority = 999;
 
   async onConfigure({ instance }: onConfigurePayload) {
-    const redisExt = instance.configuration.extensions.find((ext) => ext instanceof Redis) as Redis | undefined;
+    const redisExt = instance.configuration.extensions.find((ext) => ext instanceof Redis);
 
     if (!redisExt) {
       logger.warn("[FORCE_CLOSE_HANDLER] Redis extension not found");
@@ -156,7 +149,7 @@ export const forceCloseDocumentAcrossServers = async (
   logger.info(`[FORCE_CLOSE] Closed ${closedCount}/${connectionsBefore} local connections`);
 
   // STEP 4: BROADCAST TO OTHER SERVERS
-  const redisExt = instance.configuration.extensions.find((ext) => ext instanceof Redis) as Redis | undefined;
+  const redisExt = instance.configuration.extensions.find((ext) => ext instanceof Redis);
 
   if (redisExt) {
     const commandData: ForceCloseCommandData = {

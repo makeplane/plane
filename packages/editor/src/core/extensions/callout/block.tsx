@@ -1,4 +1,5 @@
-import { NodeViewContent, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+import type { NodeViewProps } from "@tiptap/react";
+import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
 import React, { useState } from "react";
 // constants
 import { COLORS_LIST } from "@/constants/common";
@@ -6,7 +7,8 @@ import { COLORS_LIST } from "@/constants/common";
 import { CalloutBlockColorSelector } from "./color-selector";
 import { CalloutBlockLogoSelector } from "./logo-selector";
 // types
-import { ECalloutAttributeNames, TCalloutBlockAttributes } from "./types";
+import type { TCalloutBlockAttributes } from "./types";
+import { ECalloutAttributeNames } from "./types";
 // utils
 import { updateStoredBackgroundColor } from "./utils";
 
@@ -17,7 +19,7 @@ export type CustomCalloutNodeViewProps = NodeViewProps & {
   updateAttributes: (attrs: Partial<TCalloutBlockAttributes>) => void;
 };
 
-export const CustomCalloutBlock: React.FC<CustomCalloutNodeViewProps> = (props) => {
+export function CustomCalloutBlock(props: CustomCalloutNodeViewProps) {
   const { editor, node, updateAttributes } = props;
   // states
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
@@ -53,4 +55,4 @@ export const CustomCalloutBlock: React.FC<CustomCalloutNodeViewProps> = (props) 
       <NodeViewContent as="div" className="w-full break-words" />
     </NodeViewWrapper>
   );
-};
+}

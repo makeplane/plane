@@ -59,7 +59,7 @@ def get_default_props():
 
 
 def get_default_preferences():
-    return {"pages": {"block_display": True}}
+    return {"pages": {"block_display": True}, "navigation": {"default_tab": "work_items", "hide_in_more_menu": []}}
 
 
 class Project(BaseModel):

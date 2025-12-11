@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 
 export type TBillingActionsButtonProps = {
@@ -7,4 +5,6 @@ export type TBillingActionsButtonProps = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const BillingActionsButton = observer((props: TBillingActionsButtonProps) => <></>);
+export const BillingActionsButton = observer(function BillingActionsButton(props: TBillingActionsButtonProps) {
+  return <></>;
+});

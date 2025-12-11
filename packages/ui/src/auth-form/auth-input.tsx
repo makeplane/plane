@@ -13,7 +13,7 @@ export interface AuthInputProps extends Omit<React.InputHTMLAttributes<HTMLInput
 
 const baseContainerClassName = "flex flex-col gap-1.5";
 
-export const AuthInput: React.FC<AuthInputProps> = ({
+export function AuthInput({
   label,
   error,
   showPasswordToggle = false,
@@ -21,7 +21,7 @@ export const AuthInput: React.FC<AuthInputProps> = ({
   className = "",
   type = "text",
   ...props
-}) => {
+}: AuthInputProps) {
   const { id } = props;
   const [showPassword, setShowPassword] = useState(false);
   const isPasswordType = type === "password";
@@ -63,4 +63,4 @@ export const AuthInput: React.FC<AuthInputProps> = ({
       {error && <p className={cn("text-sm text-red-500", errorClassName)}>{error}</p>}
     </div>
   );
-};
+}

@@ -24,10 +24,11 @@ type Props = {
   title: string;
   quickAdd?: React.ReactNode | undefined;
   selectionHelpers: TSelectionHelper;
+  showAllBlocks?: boolean;
   isEpic?: boolean;
 };
 
-export const GanttChartSidebar: React.FC<Props> = observer((props) => {
+export const GanttChartSidebar = observer(function GanttChartSidebar(props: Props) {
   const { t } = useTranslation();
   const {
     blockIds,
@@ -41,6 +42,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
     title,
     quickAdd,
     selectionHelpers,
+    showAllBlocks = false,
     isEpic = false,
   } = props;
 
@@ -94,6 +96,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
             ganttContainerRef,
             loadMoreBlocks,
             selectionHelpers,
+            showAllBlocks,
             isEpic,
           })}
       </Row>

@@ -1,11 +1,13 @@
-import { IUserLite } from "../users";
-import {
+import type { IUserLite } from "../users";
+import type {
   TInstanceAIConfigurationKeys,
   TInstanceEmailConfigurationKeys,
   TInstanceImageConfigurationKeys,
   TInstanceAuthenticationKeys,
   TInstanceWorkspaceConfigurationKeys,
+  TCoreLoginMediums,
 } from "./";
+import type { TExtendedLoginMediums } from "./auth-ee";
 
 export interface IInstanceInfo {
   instance: IInstance;
@@ -42,6 +44,7 @@ export interface IInstanceConfig {
   is_google_enabled: boolean;
   is_github_enabled: boolean;
   is_gitlab_enabled: boolean;
+  is_gitea_enabled: boolean;
   is_magic_login_enabled: boolean;
   is_email_password_enabled: boolean;
   github_app_name: string | undefined;
@@ -55,6 +58,7 @@ export interface IInstanceConfig {
   app_base_url: string | undefined;
   space_base_url: string | undefined;
   admin_base_url: string | undefined;
+  is_self_managed: boolean;
   // intercom
   is_intercom_enabled: boolean;
   intercom_app_id: string | undefined;
@@ -96,3 +100,5 @@ export interface IInstanceConfiguration {
 export type IFormattedInstanceConfiguration = {
   [key in TInstanceConfigurationKeys]: string;
 };
+
+export type TLoginMediums = TCoreLoginMediums | TExtendedLoginMediums;

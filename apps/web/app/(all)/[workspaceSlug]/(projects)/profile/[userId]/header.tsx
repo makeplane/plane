@@ -1,13 +1,11 @@
-"use client";
-
 // ui
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronDown, PanelRight } from "lucide-react";
+import { PanelRight } from "lucide-react";
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { YourWorkIcon } from "@plane/propel/icons";
+import { YourWorkIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs, Header, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -24,7 +22,7 @@ type TUserProfileHeader = {
   showProfileIssuesFilter?: boolean;
 };
 
-export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
+export const UserProfileHeader = observer(function UserProfileHeader(props: TUserProfileHeader) {
   const { userProjectsData, type = undefined, showProfileIssuesFilter } = props;
   // router
   const { workspaceSlug, userId } = useParams();
@@ -75,7 +73,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
             customButton={
               <div className="flex items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1.5">
                 <span className="flex flex-grow justify-center text-sm text-custom-text-200">{type}</span>
-                <ChevronDown className="h-4 w-4 text-custom-text-400" />
+                <ChevronDownIcon className="h-4 w-4 text-custom-text-400" />
               </div>
             }
             customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"

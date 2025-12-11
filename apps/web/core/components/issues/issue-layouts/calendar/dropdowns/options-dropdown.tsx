@@ -1,10 +1,8 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { Check, ChevronUp, MoreVerticalIcon } from "lucide-react";
+import { Check, MoreVerticalIcon } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
 // ui
@@ -12,6 +10,7 @@ import { Popover, Transition } from "@headlessui/react";
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
 import { EIssueFilterType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ChevronUpIcon } from "@plane/propel/icons";
 import type { TCalendarLayouts, TSupportedFilterForUpdate } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // types
@@ -26,12 +25,7 @@ import type { IProjectIssuesFilter } from "@/store/issue/project";
 import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 
 interface ICalendarHeader {
-  issuesFilterStore:
-    | IProjectIssuesFilter
-    | IModuleIssuesFilter
-    | ICycleIssuesFilter
-    | IProjectViewIssuesFilter
-    | IProjectEpicsFilter;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   updateFilters?: (
     projectId: string,
     filterType: TSupportedFilterTypeForUpdate,
@@ -39,7 +33,7 @@ interface ICalendarHeader {
   ) => Promise<void>;
 }
 
-export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((props) => {
+export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown(props: ICalendarHeader) {
   const { issuesFilterStore, updateFilters } = props;
 
   const { t } = useTranslation();
@@ -113,7 +107,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                 <div
                   className={`flex h-3.5 w-3.5 items-center justify-center transition-all ${open ? "" : "rotate-180"}`}
                 >
-                  <ChevronUp width={12} strokeWidth={2} />
+                  <ChevronUpIcon width={12} strokeWidth={2} />
                 </div>
               </div>
               <div className="md:hidden">

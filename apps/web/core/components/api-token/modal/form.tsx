@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
@@ -66,7 +64,7 @@ const getFormattedDate = (date: Date): Date => {
   return add(date, { hours, minutes, seconds });
 };
 
-export const CreateApiTokenForm: React.FC<Props> = (props) => {
+export function CreateApiTokenForm(props: Props) {
   const { handleClose, neverExpires, toggleNeverExpires, onSubmit } = props;
   // states
   const [customDate, setCustomDate] = useState<Date | null>(null);
@@ -253,4 +251,4 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+}

@@ -1,15 +1,12 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { ChevronRight } from "lucide-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // icons
 import { Row } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
-// components
-import { Logo } from "@/components/common/logo";
 import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
@@ -19,7 +16,7 @@ type Props = {
   isExpanded?: boolean;
 };
 
-export const CycleListProjectGroupHeader: FC<Props> = observer((props) => {
+export const CycleListProjectGroupHeader = observer(function CycleListProjectGroupHeader(props: Props) {
   const { projectId, count, showCount = false, isExpanded = false } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -29,7 +26,7 @@ export const CycleListProjectGroupHeader: FC<Props> = observer((props) => {
   if (!project) return null;
   return (
     <Row className="flex items-center gap-2 flex-shrink-0 py-2.5">
-      <ChevronRight
+      <ChevronRightIcon
         className={cn("h-4 w-4 text-custom-sidebar-text-300 duration-300 ", {
           "rotate-90": isExpanded,
         })}

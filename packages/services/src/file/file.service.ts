@@ -1,7 +1,7 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 // api service
-import { TDuplicateAssetData, TDuplicateAssetResponse } from "@plane/types";
+import type { TDuplicateAssetData, TDuplicateAssetResponse } from "@plane/types";
 import { APIService } from "../api.service";
 // helpers
 import { getAssetIdFromUrl } from "./helper";

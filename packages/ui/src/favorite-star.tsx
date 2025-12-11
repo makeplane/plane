@@ -10,7 +10,7 @@ type Props = {
   selected: boolean;
 };
 
-export const FavoriteStar: React.FC<Props> = (props) => {
+export function FavoriteStar(props: Props) {
   const { buttonClassName, iconClassName, onClick, selected } = props;
 
   return (
@@ -26,4 +26,4 @@ export const FavoriteStar: React.FC<Props> = (props) => {
       />
     </button>
   );
-};
+}

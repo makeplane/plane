@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { Check, CheckCircle, Clock } from "lucide-react";
@@ -23,7 +21,7 @@ export type TPopoverMenuOptions = {
   onClick?: (() => void) | undefined;
 };
 
-export const NotificationHeaderMenuOption = observer(() => {
+export const NotificationHeaderMenuOption = observer(function NotificationHeaderMenuOption() {
   // hooks
   const { filters, updateFilters, updateBulkFilters } = useWorkspaceNotifications();
   const { t } = useTranslation();

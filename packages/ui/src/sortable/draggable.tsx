@@ -1,11 +1,14 @@
+// @ts-expect-error Due to live server dependencies
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/dist/cjs/entry-point/combine.js";
 import {
   draggable,
   dropTargetForElements,
+  // @ts-expect-error Due to live server dependencies
 } from "@atlaskit/pragmatic-drag-and-drop/dist/cjs/entry-point/element/adapter.js";
 import {
   attachClosestEdge,
   extractClosestEdge,
+  // @ts-expect-error Due to live server dependencies
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/dist/cjs/closest-edge.js";
 import { isEqual } from "lodash-es";
 import React, { useEffect, useRef, useState } from "react";
@@ -17,7 +20,8 @@ type Props = {
   data: any; //@todo make this generic
   className?: string;
 };
-const Draggable = ({ children, data, className }: Props) => {
+
+function Draggable({ children, data, className }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState<boolean>(false); // NEW
   const [isDraggedOver, setIsDraggedOver] = useState(false);
@@ -36,6 +40,7 @@ const Draggable = ({ children, data, className }: Props) => {
         }),
         dropTargetForElements({
           element: el,
+          // @ts-expect-error Due to live server dependencies
           onDragEnter: (args) => {
             setIsDraggedOver(true);
             setClosestEdge(extractClosestEdge(args.self.data));
@@ -44,7 +49,9 @@ const Draggable = ({ children, data, className }: Props) => {
           onDrop: () => {
             setIsDraggedOver(false);
           },
+          // @ts-expect-error Due to live server dependencies
           canDrop: ({ source }) => !isEqual(source.data, data) && source.data.__uuid__ === data.__uuid__,
+          // @ts-expect-error Due to live server dependencies
           getData: ({ input, element }) =>
             attachClosestEdge(data, {
               input,
@@ -63,6 +70,6 @@ const Draggable = ({ children, data, className }: Props) => {
       {<DropIndicator isVisible={isDraggedOver && closestEdge === "bottom"} />}
     </div>
   );
-};
+}
 
 export { Draggable };

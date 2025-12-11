@@ -1,10 +1,9 @@
 import React from "react";
-import Image from "next/image";
 // image
-import DefaultFileIcon from "@/public/attachment/default-icon.png";
+import DefaultFileIcon from "@/app/assets/attachment/default-icon.png?url";
 // type
 import type { ImageIconPros } from "../types";
 
-export const DefaultIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <Image src={DefaultFileIcon} height={height} width={width} alt="DefaultFileIcon" />
-);
+export function DefaultIcon({ width, height }: ImageIconPros) {
+  return <img src={DefaultFileIcon} width={width} height={height} alt="DefaultFileIcon" />;
+}

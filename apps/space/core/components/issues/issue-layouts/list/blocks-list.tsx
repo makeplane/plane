@@ -1,4 +1,4 @@
-import type { FC, MutableRefObject } from "react";
+import type { MutableRefObject } from "react";
 // types
 import type { IIssueDisplayProperties } from "@plane/types";
 import { IssueBlock } from "./block";
@@ -10,7 +10,7 @@ interface Props {
   containerRef: MutableRefObject<HTMLDivElement | null>;
 }
 
-export const IssueBlocksList: FC<Props> = (props) => {
+export function IssueBlocksList(props: Props) {
   const { issueIds = [], groupId, displayProperties } = props;
 
   return (
@@ -22,4 +22,4 @@ export const IssueBlocksList: FC<Props> = (props) => {
         ))}
     </div>
   );
-};
+}

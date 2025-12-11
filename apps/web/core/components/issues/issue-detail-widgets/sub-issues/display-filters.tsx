@@ -23,7 +23,7 @@ type TSubIssueDisplayFiltersProps = {
   isEpic?: boolean;
 };
 
-export const SubIssueDisplayFilters: FC<TSubIssueDisplayFiltersProps> = observer((props) => {
+export const SubIssueDisplayFilters = observer(function SubIssueDisplayFilters(props: TSubIssueDisplayFiltersProps) {
   const {
     isEpic = false,
     displayProperties,

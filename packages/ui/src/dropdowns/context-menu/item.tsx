@@ -1,10 +1,11 @@
-import { ChevronRight } from "lucide-react";
 import React, { useState, useRef, useContext } from "react";
 import { usePopper } from "react-popper";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // helpers
 import { cn } from "../../utils";
 // types
-import { TContextMenuItem, ContextMenuContext, Portal } from "./root";
+import type { TContextMenuItem } from "./root";
+import { ContextMenuContext, Portal } from "./root";
 
 type ContextMenuItemProps = {
   handleActiveItem: () => void;
@@ -13,7 +14,7 @@ type ContextMenuItemProps = {
   item: TContextMenuItem;
 };
 
-export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
+export function ContextMenuItem(props: ContextMenuItemProps) {
   const { handleActiveItem, handleClose, isActive, item } = props;
 
   // Nested menu state
@@ -177,7 +178,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
                 </p>
               )}
             </div>
-            {hasNestedItems && <ChevronRight className="h-3 w-3 flex-shrink-0" />}
+            {hasNestedItems && <ChevronRightIcon className="h-3 w-3 flex-shrink-0" />}
           </>
         )}
       </button>
@@ -242,4 +243,4 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
       )}
     </>
   );
-};
+}

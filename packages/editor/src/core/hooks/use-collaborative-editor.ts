@@ -1,7 +1,9 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
+import type { HocuspocusProvider } from "@hocuspocus/provider";
+import type { Extensions } from "@tiptap/core";
 import Collaboration from "@tiptap/extension-collaboration";
-import { useEffect, useMemo, useState } from "react";
-import { IndexeddbPersistence } from "y-indexeddb";
+// react
+import type React from "react";
+import { useEffect, useMemo } from "react";
 // extensions
 import { HeadingListExtension, SideMenuExtension } from "@/extensions";
 // hooks
@@ -9,10 +11,29 @@ import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import { TCollaborativeEditorHookProps } from "@/types";
+import type {
+  TCollaborativeEditorHookProps,
+  ICollaborativeDocumentEditorProps,
+  IEditorPropsExtended,
+  IEditorProps,
+  TEditorHookProps,
+  EditorTitleRefApi,
+} from "@/types";
+// local imports
+import { useEditorNavigation } from "./use-editor-navigation";
+import { useTitleEditor } from "./use-title-editor";
 
-export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => {
+type UseCollaborativeEditorArgs = Omit<TCollaborativeEditorHookProps, "realtimeConfig" | "serverHandler" | "user"> & {
+  provider: HocuspocusProvider;
+  user: TCollaborativeEditorHookProps["user"];
+  actions: {
+    signalForcedClose: (value: boolean) => void;
+  };
+};
+
+export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
   const {
+    provider,
     onAssetChange,
     onChange,
     onTransaction,
@@ -25,68 +46,25 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     fileHandler,
     flaggedExtensions,
     forwardedRef,
+    getEditorMetaData,
     handleEditorReady,
     id,
+    mentionHandler,
     dragDropEnabled = true,
     isTouchDevice,
-    mentionHandler,
     onEditorFocus,
     placeholder,
-    realtimeConfig,
-    serverHandler,
     tabIndex,
+    titleRef,
+    updatePageProperties,
     user,
   } = props;
-  // states
-  const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
-  const [hasServerSynced, setHasServerSynced] = useState(false);
-  // initialize Hocuspocus provider
-  const provider = useMemo(
-    () =>
-      new HocuspocusProvider({
-        name: id,
-        // using user id as a token to verify the user on the server
-        token: JSON.stringify(user),
-        url: realtimeConfig.url,
-        onAuthenticationFailed: () => {
-          serverHandler?.onServerError?.();
-          setHasServerConnectionFailed(true);
-        },
-        onConnect: () => serverHandler?.onConnect?.(),
-        onClose: (data) => {
-          if (data.event.code === 1006) {
-            serverHandler?.onServerError?.();
-            setHasServerConnectionFailed(true);
-          }
-        },
-        onSynced: () => setHasServerSynced(true),
-      }),
-    [id, realtimeConfig, serverHandler, user]
-  );
 
-  const localProvider = useMemo(
-    () => (id ? new IndexeddbPersistence(id, provider.document) : undefined),
-    [id, provider]
-  );
+  const { mainNavigationExtension, titleNavigationExtension, setMainEditor, setTitleEditor } = useEditorNavigation();
 
-  // destroy and disconnect all providers connection on unmount
-  useEffect(
-    () => () => {
-      provider?.destroy();
-      localProvider?.destroy();
-    },
-    [provider, localProvider]
-  );
-
-  const editor = useEditor({
-    disabledExtensions,
-    extendedEditorProps,
-    id,
-    editable,
-    editorProps,
-    editorClassName,
-    enableHistory: false,
-    extensions: [
+  // Memoize extensions to avoid unnecessary editor recreations
+  const editorExtensions = useMemo(
+    () => [
       SideMenuExtension({
         aiEnabled: !disabledExtensions?.includes("ai"),
         dragDropEnabled,
@@ -94,6 +72,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
       HeadingListExtension,
       Collaboration.configure({
         document: provider.document,
+        field: "default",
       }),
       ...extensions,
       ...DocumentEditorAdditionalExtensions({
@@ -105,25 +84,120 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
         provider,
         userDetails: user,
       }),
+      mainNavigationExtension,
     ],
-    fileHandler,
-    flaggedExtensions,
-    forwardedRef,
-    handleEditorReady,
-    isTouchDevice,
-    mentionHandler,
-    onAssetChange,
-    onChange,
-    onEditorFocus,
-    onTransaction,
-    placeholder,
-    provider,
-    tabIndex,
-  });
+    [
+      provider,
+      disabledExtensions,
+      dragDropEnabled,
+      extensions,
+      extendedEditorProps,
+      fileHandler,
+      flaggedExtensions,
+      editable,
+      user,
+      mainNavigationExtension,
+    ]
+  );
+
+  // Editor configuration
+  const editorConfig = useMemo<TEditorHookProps>(
+    () => ({
+      disabledExtensions,
+      extendedEditorProps,
+      id,
+      editable,
+      editorProps,
+      editorClassName,
+      enableHistory: false,
+      extensions: editorExtensions,
+      fileHandler,
+      flaggedExtensions,
+      forwardedRef,
+      getEditorMetaData,
+      handleEditorReady,
+      isTouchDevice,
+      mentionHandler,
+      onAssetChange,
+      onChange,
+      onEditorFocus,
+      onTransaction,
+      placeholder,
+      provider,
+      tabIndex,
+    }),
+    [
+      provider,
+      disabledExtensions,
+      extendedEditorProps,
+      id,
+      editable,
+      editorProps,
+      editorClassName,
+      editorExtensions,
+      fileHandler,
+      flaggedExtensions,
+      forwardedRef,
+      getEditorMetaData,
+      handleEditorReady,
+      isTouchDevice,
+      mentionHandler,
+      onAssetChange,
+      onChange,
+      onEditorFocus,
+      onTransaction,
+      placeholder,
+      tabIndex,
+    ]
+  );
+
+  const editor = useEditor(editorConfig);
+
+  const titleExtensions = useMemo(
+    () => [
+      Collaboration.configure({
+        document: provider.document,
+        field: "title",
+      }),
+      titleNavigationExtension,
+    ],
+    [provider, titleNavigationExtension]
+  );
+
+  const titleEditorConfig = useMemo<{
+    id: string;
+    editable: boolean;
+    provider: HocuspocusProvider;
+    titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
+    updatePageProperties?: ICollaborativeDocumentEditorProps["updatePageProperties"];
+    extensions: Extensions;
+    extendedEditorProps?: IEditorPropsExtended;
+    getEditorMetaData?: IEditorProps["getEditorMetaData"];
+  }>(
+    () => ({
+      id,
+      editable,
+      provider,
+      titleRef,
+      updatePageProperties,
+      extensions: titleExtensions,
+      extendedEditorProps,
+      getEditorMetaData,
+    }),
+    [provider, id, editable, titleRef, updatePageProperties, titleExtensions, extendedEditorProps, getEditorMetaData]
+  );
+
+  const titleEditor = useTitleEditor(titleEditorConfig as Parameters<typeof useTitleEditor>[0]);
+
+  useEffect(() => {
+    if (editor && titleEditor) {
+      setMainEditor(editor);
+      setTitleEditor(titleEditor);
+    }
+  }, [editor, titleEditor, setMainEditor, setTitleEditor]);
 
   return {
     editor,
-    hasServerConnectionFailed,
-    hasServerSynced,
+    titleEditor,
   };
 };

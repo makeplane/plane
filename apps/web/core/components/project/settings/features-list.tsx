@@ -1,14 +1,10 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
+import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
 // helpers
@@ -19,6 +15,7 @@ import { useUser } from "@/hooks/store/user";
 // plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
+import { ProjectFeatureToggle } from "./helper";
 
 type Props = {
   workspaceSlug: string;
@@ -26,7 +23,7 @@ type Props = {
   isAdmin: boolean;
 };
 
-export const ProjectFeaturesList: FC<Props> = observer((props) => {
+export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: Props) {
   const { workspaceSlug, projectId, isAdmin } = props;
   // store hooks
   const { t } = useTranslation();
@@ -35,7 +32,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
   // derived values
   const currentProjectDetails = getProjectById(projectId);
 
-  const handleSubmit = async (featureKey: string, featureProperty: string) => {
+  const handleSubmit = (featureKey: string, featureProperty: string) => {
     if (!workspaceSlug || !projectId || !currentProjectDetails) return;
 
     // making the request to update the project feature
@@ -55,13 +52,14 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
         message: () => "Something went wrong while updating project feature. Please try again.",
       },
     });
-    updateProjectPromise.then(() => {
+    void updateProjectPromise.then(() => {
       captureSuccess({
         eventName: PROJECT_TRACKER_EVENTS.feature_toggled,
         payload: {
           feature_key: featureKey,
         },
       });
+      return undefined;
     });
   };
 
@@ -96,12 +94,13 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                     </p>
                   </div>
                 </div>
-                <ToggleSwitch
+                <ProjectFeatureToggle
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  featureItem={featureItem}
                   value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
-                  onChange={() => handleSubmit(featureItemKey, featureItem.property)}
-                  disabled={!featureItem.isEnabled || !isAdmin}
-                  size="sm"
-                  data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE}
+                  handleSubmit={handleSubmit}
+                  disabled={!isAdmin}
                 />
               </div>
               <div className="pl-14">

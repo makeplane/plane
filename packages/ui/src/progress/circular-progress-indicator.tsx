@@ -8,7 +8,7 @@ interface ICircularProgressIndicator {
   children?: React.ReactNode;
 }
 
-export const CircularProgressIndicator: React.FC<ICircularProgressIndicator> = (props) => {
+export function CircularProgressIndicator(props: ICircularProgressIndicator) {
   const { size = 40, percentage = 25, strokeWidth = 6, strokeColor = "stroke-custom-primary-100", children } = props;
 
   const sqSize = size;
@@ -81,4 +81,4 @@ export const CircularProgressIndicator: React.FC<ICircularProgressIndicator> = (
       </div>
     </div>
   );
-};
+}

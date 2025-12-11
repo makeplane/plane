@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 
@@ -11,4 +9,6 @@ type TUpdateEstimateModal = {
   handleClose: () => void;
 };
 
-export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer(() => <></>);
+export const UpdateEstimateModal = observer(function UpdateEstimateModal(_props: TUpdateEstimateModal) {
+  return <></>;
+});

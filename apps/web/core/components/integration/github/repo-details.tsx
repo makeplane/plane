@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect } from "react";
 
@@ -28,14 +26,14 @@ type Props = {
 // services
 const githubIntegrationService = new GithubIntegrationService();
 
-export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, setUsers, setValue }) => {
+export function GithubRepoDetails({ selectedRepo, handleStepChange, setUsers, setValue }: Props) {
   const { workspaceSlug } = useParams();
 
   const { data: repoInfo } = useSWR(
-    workspaceSlug && selectedRepo ? GITHUB_REPOSITORY_INFO(workspaceSlug as string, selectedRepo.name) : null,
+    workspaceSlug && selectedRepo ? GITHUB_REPOSITORY_INFO(workspaceSlug, selectedRepo.name) : null,
     workspaceSlug && selectedRepo
       ? () =>
-          githubIntegrationService.getGithubRepoInfo(workspaceSlug as string, {
+          githubIntegrationService.getGithubRepoInfo(workspaceSlug, {
             owner: selectedRepo.owner.login,
             repo: selectedRepo.name,
           })
@@ -103,4 +101,4 @@ export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, s
       </div>
     </div>
   );
-};
+}

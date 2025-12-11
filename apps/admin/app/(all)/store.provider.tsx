@@ -1,6 +1,3 @@
-"use client";
-
-import type { ReactNode } from "react";
 import { createContext } from "react";
 // plane admin store
 import { RootStore } from "@/plane-admin/store/root.store";
@@ -24,12 +21,12 @@ function initializeStore(initialData = {}) {
 }
 
 export type StoreProviderProps = {
-  children: ReactNode;
+  children: React.ReactNode;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialState?: any;
 };
 
-export const StoreProvider = ({ children, initialState = {} }: StoreProviderProps) => {
+export function StoreProvider({ children, initialState = {} }: StoreProviderProps) {
   const store = initializeStore(initialState);
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
-};
+}

@@ -1,18 +1,19 @@
 import { Combobox } from "@headlessui/react";
-import { Check, ChevronDown } from "lucide-react";
+import { Check } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-// plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ChevronDownIcon } from "@plane/propel/icons";
+// plane helpers
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // helpers
 import { cn } from "../utils";
 // types
-import { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
+import type { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
 
-const CustomSelect = (props: ICustomSelectProps) => {
+function CustomSelect(props: ICustomSelectProps) {
   const {
     customButtonClassName = "",
     buttonClassName = "",
@@ -97,7 +98,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
               onClick={toggleDropdown}
             >
               {label}
-              {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
+              {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
             </button>
           </Combobox.Button>
         )}
@@ -130,9 +131,9 @@ const CustomSelect = (props: ICustomSelectProps) => {
         )}
     </Combobox>
   );
-};
+}
 
-const Option = (props: ICustomSelectItemProps) => {
+function Option(props: ICustomSelectItemProps) {
   const { children, value, className } = props;
   return (
     <Combobox.Option
@@ -155,7 +156,7 @@ const Option = (props: ICustomSelectItemProps) => {
       )}
     </Combobox.Option>
   );
-};
+}
 
 CustomSelect.Option = Option;
 

@@ -1,14 +1,11 @@
-"use client";
-
-import type { FC } from "react";
 import { Fragment } from "react";
 import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
-import { X } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
 // plane imports
 import { allTimeIn30MinutesInterval12HoursFormat } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { CloseIcon } from "@plane/propel/icons";
 import { CustomSelect } from "@plane/ui";
 // components
 import { getDate } from "@plane/utils";
@@ -18,7 +15,7 @@ import { DateDropdown } from "@/components/dropdowns/date";
 type TNotificationSnoozeModal = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (dateTime?: Date | undefined) => Promise<void>;
+  onSubmit: (dateTime?: Date) => Promise<void>;
 };
 
 type FormValues = {
@@ -35,7 +32,7 @@ const defaultValues: FormValues = {
 
 const timeStamps = allTimeIn30MinutesInterval12HoursFormat;
 
-export const NotificationSnoozeModal: FC<TNotificationSnoozeModal> = (props) => {
+export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
   const { isOpen, onClose, onSubmit: handleSubmitSnooze } = props;
 
   const { workspaceSlug } = useParams();
@@ -147,7 +144,7 @@ export const NotificationSnoozeModal: FC<TNotificationSnoozeModal> = (props) => 
 
                     <div>
                       <button type="button" onClick={handleClose}>
-                        <X className="h-5 w-5 text-custom-text-100" />
+                        <CloseIcon className="h-5 w-5 text-custom-text-100" />
                       </button>
                     </div>
                   </div>
@@ -260,4 +257,4 @@ export const NotificationSnoozeModal: FC<TNotificationSnoozeModal> = (props) => 
       </Dialog>
     </Transition.Root>
   );
-};
+}

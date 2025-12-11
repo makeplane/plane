@@ -11,6 +11,7 @@ type TCoreHookProps = Pick<
   | "extendedEditorProps"
   | "extensions"
   | "flaggedExtensions"
+  | "getEditorMetaData"
   | "handleEditorReady"
   | "isTouchDevice"
   | "onEditorFocus"
@@ -54,4 +55,7 @@ export type TCollaborativeEditorHookProps = TCoreHookProps &
   Pick<
     ICollaborativeDocumentEditorProps,
     "dragDropEnabled" | "extendedDocumentEditorProps" | "realtimeConfig" | "serverHandler" | "user"
-  >;
+  > & {
+    titleRef?: ICollaborativeDocumentEditorProps["titleRef"];
+    updatePageProperties?: ICollaborativeDocumentEditorProps["updatePageProperties"];
+  };

@@ -21,7 +21,8 @@ type Props = {
   setIsChangeInIdentifierRequired: (value: boolean) => void;
   handleFormOnChange?: () => void;
 };
-const ProjectCommonAttributes: React.FC<Props> = (props) => {
+
+function ProjectCommonAttributes(props: Props) {
   const { setValue, isMobile, isChangeInIdentifierRequired, setIsChangeInIdentifierRequired, handleFormOnChange } =
     props;
   const {
@@ -38,7 +39,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
       return;
     }
     if (e.target.value === "") setValue("identifier", "");
-    else setValue("identifier", projectIdentifierSanitizer(e.target.value).substring(0, 5));
+    else setValue("identifier", projectIdentifierSanitizer(e.target.value).substring(0, 10));
     onChange(e);
     handleFormOnChange?.();
   };
@@ -90,11 +91,11 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) || t("only_alphanumeric_non_latin_characters_allowed"),
             minLength: {
               value: 1,
-              message: t("project_id_must_be_at_least_1_character"),
+              message: t("project_id_min_char"),
             },
             maxLength: {
-              value: 5,
-              message: t("project_id_must_be_at_most_5_characters"),
+              value: 10,
+              message: t("project_id_max_char"),
             },
           }}
           render={({ field: { value, onChange } }) => (
@@ -146,6 +147,6 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}
 
 export default ProjectCommonAttributes;

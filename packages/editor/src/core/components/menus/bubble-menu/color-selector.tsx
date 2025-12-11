@@ -1,6 +1,7 @@
 import type { Editor } from "@tiptap/react";
 import { ALargeSmall, Ban } from "lucide-react";
-import { useMemo, type FC } from "react";
+import { useMemo } from "react";
+import type { FC } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
@@ -9,14 +10,14 @@ import { COLORS_LIST } from "@/constants/common";
 import { FloatingMenuRoot } from "../floating-menu/root";
 import { useFloatingMenu } from "../floating-menu/use-floating-menu";
 import { BackgroundColorItem, TextColorItem } from "../menu-items";
-import { EditorStateType } from "./root";
+import type { EditorStateType } from "./root";
 
 type Props = {
   editor: Editor;
   editorState: EditorStateType;
 };
 
-export const BubbleMenuColorSelector: FC<Props> = (props) => {
+export function BubbleMenuColorSelector(props: Props) {
   const { editor, editorState } = props;
   // floating ui
   const { options, getReferenceProps, getFloatingProps } = useFloatingMenu({});
@@ -110,4 +111,4 @@ export const BubbleMenuColorSelector: FC<Props> = (props) => {
       </section>
     </FloatingMenuRoot>
   );
-};
+}

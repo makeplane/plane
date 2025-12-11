@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import useSWR from "swr";
 
@@ -20,7 +18,7 @@ import { WorkspaceService } from "@/plane-web/services";
 
 const workspaceService = new WorkspaceService();
 
-const OnboardingPage = observer(() => {
+function OnboardingPage() {
   // store hooks
   const { data: user } = useUser();
   const { fetchWorkspaces } = useWorkspace();
@@ -57,6 +55,6 @@ const OnboardingPage = observer(() => {
       </div>
     </AuthenticationWrapper>
   );
-});
+}
 
-export default OnboardingPage;
+export default observer(OnboardingPage);

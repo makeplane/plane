@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -35,7 +33,7 @@ type Props = {
   handleToggle: (workspaceSlug: string, widgetKey: string, is_enabled: boolean) => void;
 };
 
-export const WidgetItem: FC<Props> = observer((props) => {
+export const WidgetItem = observer(function WidgetItem(props: Props) {
   // props
   const { widgetId, isLastChild, handleDrop, handleToggle } = props;
   const { workspaceSlug } = useParams();
@@ -48,7 +46,7 @@ export const WidgetItem: FC<Props> = observer((props) => {
   const { widgetsMap } = useHome();
   const { t } = useTranslation();
   // derived values
-  const widget = widgetsMap[widgetId] as TWidgetEntityData;
+  const widget = widgetsMap[widgetId];
   const widgetTitle = HOME_WIDGETS_LIST[widget.key]?.title;
 
   // drag and drop

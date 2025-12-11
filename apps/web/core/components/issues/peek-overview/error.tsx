@@ -1,20 +1,18 @@
-"use client";
-
 import type { FC } from "react";
 import { MoveRight } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
+// assets
+import emptyIssue from "@/app/assets/empty-state/issue.svg?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// images
-import emptyIssue from "@/public/empty-state/issue.svg";
 
 type TIssuePeekOverviewError = {
   removeRoutePeekId: () => void;
 };
 
-export const IssuePeekOverviewError: FC<TIssuePeekOverviewError> = (props) => {
+export function IssuePeekOverviewError(props: TIssuePeekOverviewError) {
   const { removeRoutePeekId } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -38,4 +36,4 @@ export const IssuePeekOverviewError: FC<TIssuePeekOverviewError> = (props) => {
       </div>
     </div>
   );
-};
+}

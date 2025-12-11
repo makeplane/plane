@@ -2,17 +2,19 @@ import type { FC } from "react";
 import { Fragment } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { ICycle, TCycleEstimateType } from "@plane/types";
 import { Loader } from "@plane/ui";
+// assets
+import darkChartAsset from "@/app/assets/empty-state/active-cycle/chart-dark.webp?url";
+import lightChartAsset from "@/app/assets/empty-state/active-cycle/chart-light.webp?url";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-// constants
+// hooks
 import { useCycle } from "@/hooks/store/use-cycle";
-// plane web constants
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { EstimateTypeDropdown } from "../dropdowns/estimate-type-dropdown";
 
 export type ActiveCycleProductivityProps = {
@@ -21,15 +23,17 @@ export type ActiveCycleProductivityProps = {
   cycle: ICycle | null;
 };
 
-export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observer((props) => {
+export const ActiveCycleProductivity = observer(function ActiveCycleProductivity(props: ActiveCycleProductivityProps) {
   const { workspaceSlug, projectId, cycle } = props;
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // hooks
   const { getEstimateTypeByCycleId, setEstimateType } = useCycle();
   // derived values
   const estimateType: TCycleEstimateType = (cycle && getEstimateTypeByCycleId(cycle.id)) || "issues";
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/chart" });
+  const resolvedPath = resolvedTheme === "light" ? lightChartAsset : darkChartAsset;
 
   const onChange = async (value: TCycleEstimateType) => {
     if (!workspaceSlug || !projectId || !cycle || !cycle.id) return;

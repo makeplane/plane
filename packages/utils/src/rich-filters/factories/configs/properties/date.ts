@@ -1,8 +1,10 @@
 // plane imports
-import { TFilterProperty } from "@plane/types";
+import type { TFilterProperty } from "@plane/types";
 // local imports
-import { createFilterConfig, TCreateDateFilterParams, TCreateFilterConfig } from "../shared";
-import { getSupportedDateOperators, TCustomPropertyFilterParams } from "./shared";
+import type { TCreateDateFilterParams, TCreateFilterConfig } from "../shared";
+import { createFilterConfig } from "../shared";
+import type { TCustomPropertyFilterParams } from "./shared";
+import { getSupportedDateOperators } from "./shared";
 
 /**
  * Date property filter specific params

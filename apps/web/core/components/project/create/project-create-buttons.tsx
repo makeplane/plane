@@ -13,7 +13,7 @@ type Props = {
   isMobile?: boolean;
 };
 
-const ProjectCreateButtons: React.FC<Props> = (props) => {
+function ProjectCreateButtons(props: Props) {
   const { t } = useTranslation();
   const { handleClose, isMobile = false } = props;
   const {
@@ -32,6 +32,6 @@ const ProjectCreateButtons: React.FC<Props> = (props) => {
       </Button>
     </div>
   );
-};
+}
 
 export default ProjectCreateButtons;

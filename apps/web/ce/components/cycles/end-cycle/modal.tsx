@@ -10,4 +10,6 @@ interface Props {
   cycleName: string;
 }
 
-export const EndCycleModal: React.FC<Props> = () => <></>;
+export function EndCycleModal(_props: Props) {
+  return <></>;
+}

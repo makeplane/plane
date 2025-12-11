@@ -1,11 +1,9 @@
-"use client";
-
 import type { FC, MouseEvent } from "react";
 import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Eye, Users, ArrowRight, CalendarDays } from "lucide-react";
+import { Eye, ArrowRight, CalendarDays } from "lucide-react";
 // plane imports
 import {
   CYCLE_TRACKER_EVENTS,
@@ -16,7 +14,7 @@ import {
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { TransferIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { TransferIcon, WorkItemsIcon, MembersPropertyIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ICycle, TCycleGroups } from "@plane/types";
@@ -54,7 +52,7 @@ const defaultValues: Partial<ICycle> = {
   end_date: null,
 };
 
-export const CycleListItemAction: FC<Props> = observer((props) => {
+export const CycleListItemAction = observer(function CycleListItemAction(props: Props) {
   const { workspaceSlug, projectId, cycleId, cycleDetails, parentRef, isActive = false } = props;
   // router
   const { projectId: routerProjectId } = useParams();
@@ -196,9 +194,9 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
 
     const query = generateQueryParams(searchParams, ["peekCycle"]);
     if (searchParams.has("peekCycle") && searchParams.get("peekCycle") === cycleId) {
-      router.push(`${pathname}?${query}`, { showProgress: false });
+      router.push(`${pathname}?${query}`);
     } else {
-      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`, { showProgress: false });
+      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`);
     }
   };
 
@@ -314,7 +312,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
                 })}
               </AvatarGroup>
             ) : (
-              <Users className="h-4 w-4 text-custom-text-300" />
+              <MembersPropertyIcon className="h-4 w-4 text-custom-text-300" />
             )}
           </div>
         </Tooltip>

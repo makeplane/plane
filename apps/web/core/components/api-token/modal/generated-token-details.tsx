@@ -1,5 +1,3 @@
-"use client";
-
 import { Copy } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -18,7 +16,7 @@ type Props = {
   tokenDetails: IApiToken;
 };
 
-export const GeneratedTokenDetails: React.FC<Props> = (props) => {
+export function GeneratedTokenDetails(props: Props) {
   const { handleClose, tokenDetails } = props;
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
@@ -51,7 +49,7 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
       <div className="mt-6 flex items-center justify-between">
         <p className="text-xs text-custom-text-400">
           {tokenDetails.expired_at
-            ? `Expires ${renderFormattedDate(tokenDetails.expired_at!)} at ${renderFormattedTime(tokenDetails.expired_at!)}`
+            ? `Expires ${renderFormattedDate(tokenDetails.expired_at)} at ${renderFormattedTime(tokenDetails.expired_at)}`
             : "Never expires"}
         </p>
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
@@ -60,4 +58,4 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

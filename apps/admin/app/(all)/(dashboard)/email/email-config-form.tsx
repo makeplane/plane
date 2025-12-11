@@ -1,7 +1,4 @@
-"use client";
-
-import type { FC } from "react";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 // types
 import { Button } from "@plane/propel/button";
@@ -31,7 +28,7 @@ const EMAIL_SECURITY_OPTIONS: { [key in TEmailSecurityKeys]: string } = {
   NONE: "No email security",
 };
 
-export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
+export function InstanceEmailForm(props: IInstanceEmailForm) {
   const { config } = props;
   // states
   const [isSendTestEmailModalOpen, setIsSendTestEmailModalOpen] = useState(false);
@@ -166,7 +163,6 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
               label={EMAIL_SECURITY_OPTIONS[emailSecurityKey]}
               onChange={handleEmailSecurityChange}
               buttonClassName="rounded-md border-custom-border-200"
-              optionsClassName="w-full"
               input
             >
               {Object.entries(EMAIL_SECURITY_OPTIONS).map(([key, value]) => (
@@ -225,4 +221,4 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
       </div>
     </div>
   );
-};
+}

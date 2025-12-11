@@ -5,6 +5,7 @@ import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // hooks
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
 // plane web components
@@ -13,7 +14,6 @@ import { UpdateEstimateModal } from "@/plane-web/components/estimates";
 import { SettingsHeading } from "../settings/heading";
 import { CreateEstimateModal } from "./create/modal";
 import { DeleteEstimateModal } from "./delete/modal";
-import { EstimateEmptyScreen } from "./empty-screen";
 import { EstimateDisableSwitch } from "./estimate-disable-switch";
 import { EstimateList } from "./estimate-list";
 import { EstimateLoaderScreen } from "./loader-screen";
@@ -24,7 +24,7 @@ type TEstimateRoot = {
   isAdmin: boolean;
 };
 
-export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
+export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot) {
   const { workspaceSlug, projectId, isAdmin } = props;
   // hooks
   const { currentProjectDetails } = useProject();
@@ -76,7 +76,20 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
               />
             </div>
           ) : (
-            <EstimateEmptyScreen onButtonClick={() => setIsEstimateCreateModalOpen(true)} />
+            <EmptyStateCompact
+              assetKey="estimate"
+              assetClassName="size-20"
+              title={t("settings_empty_state.estimates.title")}
+              description={t("settings_empty_state.estimates.description")}
+              actions={[
+                {
+                  label: t("settings_empty_state.estimates.cta_primary"),
+                  onClick: () => setIsEstimateCreateModalOpen(true),
+                },
+              ]}
+              align="start"
+              rootClassName="py-20"
+            />
           )}
 
           {/* archived estimates section */}
@@ -91,6 +104,7 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
                     href={"https://docs.plane.so/core-concepts/projects/run-project#estimate"}
                     target="_blank"
                     className="text-custom-primary-100/80 hover:text-custom-primary-100"
+                    rel="noreferrer"
                   >
                     here.
                   </a>

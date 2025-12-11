@@ -4,10 +4,11 @@ import { Popover } from "../popover";
 import { cn } from "../utils/classname";
 import { convertPlacementToSideAndAlign } from "../utils/placement";
 import { EmojiRoot } from "./emoji/emoji";
-import { emojiToString, TCustomEmojiPicker, EmojiIconPickerTypes } from "./helper";
+import type { TCustomEmojiPicker } from "./helper";
+import { emojiToString, EmojiIconPickerTypes } from "./helper";
 import { IconRoot } from "./icon/icon-root";
 
-export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
+export function EmojiPicker(props: TCustomEmojiPicker) {
   const {
     isOpen,
     handleToggle,
@@ -106,6 +107,20 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
         side={finalSide}
         align={finalAlign}
         sideOffset={8}
+        data-prevent-outside-click="true"
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+        onFocus={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (e.key === "Tab") {
+            return;
+          }
+          if (e.key === "Escape") {
+            handleToggle(false);
+            return;
+          }
+          e.stopPropagation();
+        }}
       >
         <Tabs.Root defaultValue={defaultOpen}>
           <Tabs.List className="grid grid-cols-2 gap-1 px-3.5 pt-3">
@@ -133,4 +148,4 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
       </Popover.Panel>
     </Popover>
   );
-};
+}

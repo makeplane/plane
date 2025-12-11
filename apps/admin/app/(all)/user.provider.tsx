@@ -1,17 +1,10 @@
-"use client";
-
-import type { FC, ReactNode } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // hooks
 import { useInstance, useTheme, useUser } from "@/hooks/store";
 
-interface IUserProvider {
-  children: ReactNode;
-}
-
-export const UserProvider: FC<IUserProvider> = observer(({ children }) => {
+export const UserProvider = observer(function UserProvider({ children }: React.PropsWithChildren) {
   // hooks
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   const { currentUser, fetchCurrentUser } = useUser();

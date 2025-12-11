@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -18,7 +16,7 @@ import type { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
 import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 // components
-import { getFileURL, getPasswordStrength } from "@plane/utils";
+import { cn, getFileURL, getPasswordStrength } from "@plane/utils";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // constants
 // helpers
@@ -35,7 +33,7 @@ type TProfileSetupFormValues = {
   password?: string;
   confirm_password?: string;
   role?: string;
-  use_case?: string;
+  use_case?: string[];
 };
 
 const defaultValues: Partial<TProfileSetupFormValues> = {
@@ -45,7 +43,7 @@ const defaultValues: Partial<TProfileSetupFormValues> = {
   password: undefined,
   confirm_password: undefined,
   role: undefined,
-  use_case: undefined,
+  use_case: [],
 };
 
 type Props = {
@@ -78,7 +76,7 @@ const USER_DOMAIN = [
 
 const authService = new AuthService();
 
-export const ProfileSetup: React.FC<Props> = observer((props) => {
+export const ProfileSetup = observer(function ProfileSetup(props: Props) {
   const { user, totalSteps, stepChange, finishOnboarding } = props;
   // states
   const [profileSetupStep, setProfileSetupStep] = useState<EProfileSetupSteps>(
@@ -141,7 +139,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
       avatar_url: formData.avatar_url ?? undefined,
     };
     const profileUpdatePayload: Partial<TUserProfile> = {
-      use_case: formData.use_case,
+      use_case: formData.use_case && formData.use_case.length > 0 ? formData.use_case.join(". ") : undefined,
       role: formData.role,
     };
     try {
@@ -153,7 +151,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
       captureSuccess({
         eventName: USER_TRACKER_EVENTS.add_details,
         payload: {
-          use_case: formData.use_case,
+          use_case: profileUpdatePayload.use_case,
           role: formData.role,
         },
       });
@@ -214,7 +212,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
 
   const handleSubmitUserPersonalization = async (formData: TProfileSetupFormValues) => {
     const profileUpdatePayload: Partial<TUserProfile> = {
-      use_case: formData.use_case,
+      use_case: formData.use_case && formData.use_case.length > 0 ? formData.use_case.join(". ") : undefined,
       role: formData.role,
     };
     try {
@@ -225,7 +223,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
       captureSuccess({
         eventName: USER_TRACKER_EVENTS.add_details,
         payload: {
-          use_case: formData.use_case,
+          use_case: profileUpdatePayload.use_case,
           role: formData.role,
         },
       });
@@ -521,9 +519,13 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                       {USER_ROLE.map((userRole) => (
                         <div
                           key={userRole}
-                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
-                            value === userRole ? "border-custom-primary-100" : "border-custom-border-300"
-                          } rounded px-3 py-1.5 text-sm font-medium`}
+                          className={cn(
+                            "flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 rounded px-3 py-1.5 text-sm font-medium",
+                            {
+                              "border-custom-primary-100": value === userRole,
+                              "border-custom-border-300": value !== userRole,
+                            }
+                          )}
                           onClick={() => onChange(userRole)}
                         >
                           {userRole}
@@ -539,27 +541,38 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                   className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
                   htmlFor="use_case"
                 >
-                  What is your domain expertise? Choose one.
+                  What is your domain expertise? Choose one or more.
                 </label>
                 <Controller
                   control={control}
                   name="use_case"
                   rules={{
-                    required: "This field is required",
+                    required: "Please select at least one option",
+                    validate: (value) => (value && value.length > 0) || "Please select at least one option",
                   }}
                   render={({ field: { value, onChange } }) => (
                     <div className="flex flex-wrap gap-2 py-2 overflow-auto break-all">
-                      {USER_DOMAIN.map((userDomain) => (
-                        <div
-                          key={userDomain}
-                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
-                            value === userDomain ? "border-custom-primary-100" : "border-custom-border-300"
-                          } rounded px-3 py-1.5 text-sm font-medium`}
-                          onClick={() => onChange(userDomain)}
-                        >
-                          {userDomain}
-                        </div>
-                      ))}
+                      {USER_DOMAIN.map((userDomain) => {
+                        const isSelected = value?.includes(userDomain) || false;
+                        return (
+                          <div
+                            key={userDomain}
+                            className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
+                              isSelected ? "border-custom-primary-100" : "border-custom-border-300"
+                            } rounded px-3 py-1.5 text-sm font-medium`}
+                            onClick={() => {
+                              const currentValue = value || [];
+                              if (isSelected) {
+                                onChange(currentValue.filter((item) => item !== userDomain));
+                              } else {
+                                onChange([...currentValue, userDomain]);
+                              }
+                            }}
+                          >
+                            {userDomain}
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 />

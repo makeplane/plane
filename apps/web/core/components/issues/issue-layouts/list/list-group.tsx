@@ -1,5 +1,3 @@
-"use client";
-
 import type { MutableRefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -70,7 +68,7 @@ interface Props {
   isEpic?: boolean;
 }
 
-export const ListGroup = observer((props: Props) => {
+export const ListGroup = observer(function ListGroup(props: Props) {
   const {
     groupIssueIds = [],
     group,

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/prettierrc",
+  "overrides": [
+    {
+      "files": ["packages/codemods/**/*"],
+      "options": {
+        "printWidth": 80
+      }
+    }
+  ],
+  "plugins": ["@prettier/plugin-oxc"],
+  "printWidth": 120,
+  "tabWidth": 2,
+  "trailingComma": "es5"
+}

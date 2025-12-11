@@ -1,6 +1,8 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
+// assets
+import AllFiltersImage from "@/app/assets/empty-state/module/all-filters.svg?url";
+import NameFilterImage from "@/app/assets/empty-state/module/name-filter.svg?url";
 // components
 import { ModuleListItem, ModulePeekOverview } from "@/components/modules";
 // ui
@@ -8,16 +10,13 @@ import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
-// assets
-import AllFiltersImage from "@/public/empty-state/module/all-filters.svg";
-import NameFilterImage from "@/public/empty-state/module/name-filter.svg";
 
 export interface IArchivedModulesView {
   workspaceSlug: string;
   projectId: string;
 }
 
-export const ArchivedModulesView: FC<IArchivedModulesView> = observer((props) => {
+export const ArchivedModulesView = observer(function ArchivedModulesView(props: IArchivedModulesView) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getFilteredArchivedModuleIds, loader } = useModule();
@@ -31,7 +30,7 @@ export const ArchivedModulesView: FC<IArchivedModulesView> = observer((props) =>
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
-          <Image
+          <img
             src={archivedModulesSearchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
             className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
             alt="No matching modules"

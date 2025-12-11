@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, MutableRefObject } from "react";
 import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -44,7 +42,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const IssueBlockRoot: FC<Props> = observer((props) => {
+export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
   const {
     issueId,
     issuesMap,

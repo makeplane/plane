@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -37,7 +36,7 @@ export type TRelationObject = {
   placeholder: string;
 };
 
-export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
+export const RelationsCollapsibleContent = observer(function RelationsCollapsibleContent(props: Props) {
   const { workspaceSlug, issueId, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -187,7 +186,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
               issueCrudState.delete.issue.id &&
               issueCrudState.delete.issue.project_id
             ) {
-              const deleteOperation = !!issueCrudState.delete.issue?.is_epic
+              const deleteOperation = issueCrudState.delete.issue?.is_epic
                 ? epicOperations.remove
                 : issueOperations.remove;
               await deleteOperation(
@@ -203,7 +202,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
 
       {shouldRenderIssueUpdateModal && (
         <>
-          {!!issueCrudState?.update?.issue?.is_epic ? (
+          {issueCrudState?.update?.issue?.is_epic ? (
             <CreateUpdateEpicModal
               isOpen={issueCrudState?.update?.toggle}
               onClose={() => {

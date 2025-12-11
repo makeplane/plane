@@ -11,7 +11,7 @@ import { WidgetItem } from "./widget-item";
 import type { TargetData } from "./widget.helpers";
 import { getInstructionFromPayload } from "./widget.helpers";
 
-export const WidgetList = observer(({ workspaceSlug }: { workspaceSlug: string }) => {
+export const WidgetList = observer(function WidgetList({ workspaceSlug }: { workspaceSlug: string }) {
   const { orderedWidgets, reorderWidget, toggleWidget } = useHome();
   const { t } = useTranslation();
 

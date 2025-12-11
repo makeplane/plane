@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Código único",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Cole o código enviado para seu email",
         requesting_new_code: "Solicitando novo código",
         sending_code: "Enviando código",
@@ -340,13 +340,13 @@ export default {
   project_id_must_be_at_most_5_characters: "O ID do projeto deve ter no máximo 5 caracteres",
   project_id: "ID do projeto",
   project_id_tooltip_content:
-    "Ajuda você a identificar itens de trabalho no projeto de forma exclusiva. Máximo de 5 caracteres.",
+    "Ajuda você a identificar itens de trabalho no projeto de forma exclusiva. Máximo de 10 caracteres.",
   description_placeholder: "Descrição",
   only_alphanumeric_non_latin_characters_allowed: "Apenas caracteres alfanuméricos e não latinos são permitidos.",
   project_id_is_required: "O ID do projeto é obrigatório",
   project_id_allowed_char: "Apenas caracteres alfanuméricos e não latinos são permitidos.",
   project_id_min_char: "O ID do projeto deve ter pelo menos 1 caractere",
-  project_id_max_char: "O ID do projeto deve ter no máximo 5 caracteres",
+  project_id_max_char: "O ID do projeto deve ter no máximo 10 caracteres",
   project_description_placeholder: "Insira a descrição do projeto",
   select_network: "Selecione a rede",
   lead: "Líder",
@@ -651,6 +651,8 @@ export default {
   },
   common: {
     all: "Todos",
+    no_items_in_this_group: "Nenhum item neste grupo",
+    drop_here_to_move: "Solte aqui para mover",
     states: "Estados",
     state: "Estado",
     state_groups: "Grupos de estado",
@@ -1540,6 +1542,47 @@ export default {
         "Se você confirmar, todas as opções de classificação, filtro e exibição + o layout que você escolheu para esta visualização serão excluídos permanentemente sem nenhuma maneira de restaurá-los.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Alterar e-mail",
+        description: "Digite um novo endereço de e-mail para receber um link de verificação.",
+        toasts: {
+          success_title: "Sucesso!",
+          success_message: "E-mail atualizado com sucesso. Faça login novamente.",
+        },
+        form: {
+          email: {
+            label: "Novo e-mail",
+            placeholder: "Digite seu e-mail",
+            errors: {
+              required: "O e-mail é obrigatório",
+              invalid: "O e-mail é inválido",
+              exists: "O e-mail já existe. Use outro.",
+              validation_failed: "Falha na validação do e-mail. Tente novamente.",
+            },
+          },
+          code: {
+            label: "Código único",
+            placeholder: "123456",
+            helper_text: "Código de verificação enviado para o novo e-mail.",
+            errors: {
+              required: "O código único é obrigatório",
+              invalid: "Código de verificação inválido. Tente novamente.",
+            },
+          },
+        },
+        actions: {
+          continue: "Continuar",
+          confirm: "Confirmar",
+          cancel: "Cancelar",
+        },
+        states: {
+          sending: "Enviando…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Configurações do espaço de trabalho",
     page_label: "{workspace} - Configurações gerais",
@@ -1620,6 +1663,7 @@ export default {
         exporting: "Exportando",
         previous_exports: "Exportações anteriores",
         export_separate_files: "Exporte os dados em arquivos separados",
+        filters_info: "Aplique filtros para exportar itens de trabalho específicos com base em seus critérios.",
         modal: {
           title: "Exportar para",
           toasts: {

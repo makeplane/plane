@@ -1,5 +1,3 @@
-"use client";
-
 // react
 import React from "react";
 // react-hook-form
@@ -7,7 +5,7 @@ import type { Control, UseFormWatch } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { DoubleCircleIcon } from "@plane/propel/icons";
+import { StatePropertyIcon } from "@plane/propel/icons";
 import type { IModule } from "@plane/types";
 // ui
 import { CustomSelect } from "@plane/ui";
@@ -21,12 +19,12 @@ type Props = {
   watch: UseFormWatch<Partial<IModule>>;
 };
 
-export const SidebarStatusSelect: React.FC<Props> = ({ control, submitChanges, watch }) => {
+export function SidebarStatusSelect({ control, submitChanges, watch }: Props) {
   const { t } = useTranslation();
   return (
     <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
+        <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
         <p>Status</p>
       </div>
       <div className="sm:basis-1/2">
@@ -65,4 +63,4 @@ export const SidebarStatusSelect: React.FC<Props> = ({ control, submitChanges, w
       </div>
     </div>
   );
-};
+}

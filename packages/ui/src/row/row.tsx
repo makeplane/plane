@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "../utils";
-import { ERowVariant, rowStyle, TRowVariant } from "./helper";
+import type { TRowVariant } from "./helper";
+import { ERowVariant, rowStyle } from "./helper";
 
 export interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: TRowVariant;
@@ -8,7 +9,7 @@ export interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-const Row = React.forwardRef<HTMLDivElement, RowProps>((props, ref) => {
+const Row = React.forwardRef(function Row(props: RowProps, ref: React.ForwardedRef<HTMLDivElement>) {
   const { variant = ERowVariant.REGULAR, className = "", children, ...rest } = props;
 
   const style = rowStyle[variant];

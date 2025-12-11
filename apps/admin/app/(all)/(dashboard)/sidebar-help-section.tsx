@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -14,7 +11,7 @@ import { cn } from "@plane/utils";
 // hooks
 import { useTheme } from "@/hooks/store";
 // assets
-// eslint-disable-next-line import/order
+
 import packageJson from "package.json";
 
 const helpOptions = [
@@ -35,7 +32,7 @@ const helpOptions = [
   },
 ];
 
-export const AdminSidebarHelpSection: FC = observer(() => {
+export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection() {
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // store

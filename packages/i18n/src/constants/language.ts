@@ -1,4 +1,4 @@
-import { TLanguage, ILanguageOption } from "../types";
+import type { TLanguage, ILanguageOption } from "../types";
 
 export const FALLBACK_LANGUAGE: TLanguage = "en";
 
@@ -32,6 +32,7 @@ export enum ETranslationFiles {
   TRANSLATIONS = "translations",
   ACCESSIBILITY = "accessibility",
   EDITOR = "editor",
+  EMPTY_STATE = "empty-state",
 }
 
 export const LANGUAGE_STORAGE_KEY = "userLanguage";

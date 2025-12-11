@@ -4,15 +4,13 @@ import useSWR, { mutate } from "swr";
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IExportData } from "@plane/types";
 import { Table } from "@plane/ui";
 // components
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/import-and-export";
 // constants
 import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // services
 import { IntegrationService } from "@/services/integrations";
 // local imports
@@ -27,7 +25,7 @@ type Props = {
   setCursor: (cursor: string) => void;
 };
 type RowData = IExportData;
-export const PrevExports = observer((props: Props) => {
+export const PrevExports = observer(function PrevExports(props: Props) {
   // props
   const { workspaceSlug, cursor, per_page, setCursor } = props;
   // state
@@ -35,18 +33,15 @@ export const PrevExports = observer((props: Props) => {
   // hooks
   const { t } = useTranslation();
   const columns = useExportColumns();
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/workspace-settings/exports" });
 
   const { data: exporterServices } = useSWR(
-    workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,
-    workspaceSlug && cursor
-      ? () => integrationService.getExportsServicesList(workspaceSlug as string, cursor, per_page)
-      : null
+    workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug, cursor, `${per_page}`) : null,
+    workspaceSlug && cursor ? () => integrationService.getExportsServicesList(workspaceSlug, cursor, per_page) : null
   );
 
   const handleRefresh = () => {
     setRefreshing(true);
-    mutate(EXPORT_SERVICES_LIST(workspaceSlug as string, `${cursor}`, `${per_page}`)).then(() => setRefreshing(false));
+    mutate(EXPORT_SERVICES_LIST(workspaceSlug, `${cursor}`, `${per_page}`)).then(() => setRefreshing(false));
   };
 
   useEffect(() => {
@@ -125,12 +120,12 @@ export const PrevExports = observer((props: Props) => {
             </div>
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              <DetailedEmptyState
-                title={t("workspace_settings.empty_state.exports.title")}
-                description={t("workspace_settings.empty_state.exports.description")}
-                assetPath={resolvedPath}
-                className="w-full !px-0"
-                size="sm"
+              <EmptyStateCompact
+                assetKey="export"
+                title={t("settings_empty_state.exports.title")}
+                description={t("settings_empty_state.exports.description")}
+                align="start"
+                rootClassName="py-20"
               />
             </div>
           )

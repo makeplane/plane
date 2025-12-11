@@ -1,9 +1,6 @@
-"use client";
-
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
 // hooks
-import { ModuleIcon } from "@plane/propel/icons";
+import { CloseIcon, ModuleIcon } from "@plane/propel/icons";
 import { useModule } from "@/hooks/store/use-module";
 // ui
 
@@ -13,7 +10,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedModuleFilters: React.FC<Props> = observer((props) => {
+export const AppliedModuleFilters = observer(function AppliedModuleFilters(props: Props) {
   const { handleRemove, values, editable } = props;
   // store hooks
   const { getModuleById } = useModule();
@@ -35,7 +32,7 @@ export const AppliedModuleFilters: React.FC<Props> = observer((props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemove(moduleId)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

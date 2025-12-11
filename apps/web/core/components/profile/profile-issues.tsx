@@ -19,12 +19,9 @@ type Props = {
   type: "assigned" | "subscribed" | "created";
 };
 
-export const ProfileIssuesPage = observer((props: Props) => {
+export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Props) {
   const { type } = props;
-  const { workspaceSlug, userId } = useParams() as {
-    workspaceSlug: string;
-    userId: string;
-  };
+  const { workspaceSlug, userId } = useParams();
   // store hooks
   const {
     issues: { setViewId },

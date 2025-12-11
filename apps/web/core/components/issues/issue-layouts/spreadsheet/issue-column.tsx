@@ -19,7 +19,7 @@ type Props = {
   isEstimateEnabled: boolean;
 };
 
-export const IssueColumn = observer((props: Props) => {
+export const IssueColumn = observer(function IssueColumn(props: Props) {
   const { displayProperties, issueDetail, disableUserActions, property, updateIssue } = props;
   // router
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);

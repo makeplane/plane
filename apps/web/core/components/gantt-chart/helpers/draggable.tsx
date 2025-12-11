@@ -23,7 +23,7 @@ type Props = {
   ganttContainerRef: RefObject<HTMLDivElement>;
 };
 
-export const ChartDraggable: React.FC<Props> = observer((props) => {
+export const ChartDraggable = observer(function ChartDraggable(props: Props) {
   const {
     block,
     blockToRender,

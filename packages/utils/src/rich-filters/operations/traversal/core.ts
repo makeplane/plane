@@ -1,5 +1,5 @@
 // plane imports
-import {
+import type {
   TAllAvailableOperatorsForDisplay,
   TFilterConditionNode,
   TFilterConditionNodeForDisplay,
@@ -166,11 +166,7 @@ export const findImmediateParent = <P extends TFilterProperty>(
 export const extractConditions = <P extends TFilterProperty>(
   expression: TFilterExpression<P>
 ): TFilterConditionNode<P, TFilterValue>[] =>
-  traverseExpressionTree(
-    expression,
-    (node) => (isConditionNode(node) ? node : null),
-    TreeTraversalMode.CONDITIONS
-  ) as TFilterConditionNode<P, TFilterValue>[];
+  traverseExpressionTree(expression, (node) => (isConditionNode(node) ? node : null), TreeTraversalMode.CONDITIONS);
 
 /**
  * Extracts all conditions from a filter expression, including their display operators.

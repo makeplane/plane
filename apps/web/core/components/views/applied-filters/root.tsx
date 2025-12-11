@@ -1,6 +1,6 @@
-import { X } from "lucide-react";
-// plane imports
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
 import type { EViewAccess, TViewFilterProps } from "@plane/types";
 import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
@@ -21,7 +21,7 @@ const MEMBERS_FILTERS = ["owned_by"];
 const DATE_FILTERS = ["created_at"];
 const VIEW_ACCESS_FILTERS = ["view_type"];
 
-export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
+export function ViewAppliedFiltersList(props: Props) {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
   const { t } = useTranslation();
 
@@ -68,7 +68,7 @@ export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemoveFilter(filterKey, null)}
               >
-                <X size={12} strokeWidth={2} />
+                <CloseIcon height={12} width={12} strokeWidth={2} />
               </button>
             )}
           </Tag>
@@ -78,10 +78,10 @@ export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
         <button type="button" onClick={handleClearAllFilters}>
           <Tag>
             {t("common.clear_all")}
-            <X size={12} strokeWidth={2} />
+            <CloseIcon height={12} width={12} strokeWidth={2} />
           </Tag>
         </button>
       )}
     </div>
   );
-};
+}

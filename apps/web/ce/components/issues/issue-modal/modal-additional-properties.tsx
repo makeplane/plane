@@ -7,4 +7,6 @@ export type TWorkItemModalAdditionalPropertiesProps = {
   workspaceSlug: string;
 };
 
-export const WorkItemModalAdditionalProperties: React.FC<TWorkItemModalAdditionalPropertiesProps> = () => null;
+export function WorkItemModalAdditionalProperties(_props: TWorkItemModalAdditionalPropertiesProps) {
+  return null;
+}

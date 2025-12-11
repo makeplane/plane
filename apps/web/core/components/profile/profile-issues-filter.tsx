@@ -14,7 +14,7 @@ import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-to
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 
-export const ProfileIssuesFilter = observer(() => {
+export const ProfileIssuesFilter = observer(function ProfileIssuesFilter() {
   // i18n
   const { t } = useTranslation();
   // router

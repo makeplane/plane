@@ -1,16 +1,20 @@
-import { type Editor, Extension } from "@tiptap/core";
+import { Extension } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
-import Suggestion, { type SuggestionOptions } from "@tiptap/suggestion";
+import Suggestion from "@tiptap/suggestion";
+import type { SuggestionOptions } from "@tiptap/suggestion";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
-import { CommandListInstance, DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
+import type { CommandListInstance } from "@/helpers/tippy";
+import { DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // types
-import { IEditorProps, ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
+import type { IEditorProps, ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
 // components
 import { getSlashCommandFilteredSections } from "./command-items-list";
-import { SlashCommandsMenu, SlashCommandsMenuProps } from "./command-menu";
+import type { SlashCommandsMenuProps } from "./command-menu";
+import { SlashCommandsMenu } from "./command-menu";
 
 export type SlashCommandOptions = {
   suggestion: Omit<SuggestionOptions, "editor">;
@@ -117,9 +121,10 @@ export type TExtensionProps = Pick<IEditorProps, "disabledExtensions" | "flagged
   additionalOptions?: TSlashCommandAdditionalOption[];
 };
 
-export const SlashCommands = (props: TExtensionProps) =>
-  Command.configure({
+export function SlashCommands(props: TExtensionProps) {
+  return Command.configure({
     suggestion: {
       items: getSlashCommandFilteredSections(props),
     },
   });
+}

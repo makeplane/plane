@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Унікальний код",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Вставте код, надісланий на вашу електронну пошту",
         requesting_new_code: "Запитую новий код",
         sending_code: "Надсилаю код",
@@ -337,13 +337,13 @@ export default {
   project_id_must_be_at_least_1_character: "Ідентифікатор проєкту має містити принаймні 1 символ",
   project_id_must_be_at_most_5_characters: "Ідентифікатор проєкту може містити максимум 5 символів",
   project_id: "ID проєкту",
-  project_id_tooltip_content: "Допомагає унікально ідентифікувати робочі одиниці в проєкті. Макс. 5 символів.",
+  project_id_tooltip_content: "Допомагає унікально ідентифікувати робочі одиниці в проєкті. Макс. 10 символів.",
   description_placeholder: "Опис",
   only_alphanumeric_non_latin_characters_allowed: "Дозволені лише алфанумеричні та нелатинські символи.",
   project_id_is_required: "ID проєкту є обов’язковим",
   project_id_allowed_char: "Дозволені лише алфанумеричні та нелатинські символи.",
   project_id_min_char: "ID проєкту має містити принаймні 1 символ",
-  project_id_max_char: "ID проєкту може містити максимум 5 символів",
+  project_id_max_char: "ID проєкту може містити максимум 10 символів",
   project_description_placeholder: "Введіть опис проєкту",
   select_network: "Вибрати мережу",
   lead: "Керівник",
@@ -643,6 +643,8 @@ export default {
   },
   common: {
     all: "Усе",
+    no_items_in_this_group: "У цій групі немає елементів",
+    drop_here_to_move: "Перетягніть сюди для переміщення",
     states: "Стани",
     state: "Стан",
     state_groups: "Групи станів",
@@ -1527,6 +1529,47 @@ export default {
         "Якщо ви підтвердите, всі параметри сортування, фільтрації та відображення + макет, який ви обрали для цього подання, будуть безповоротно видалені без можливості відновлення.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Змінити email",
+        description: "Введіть нову адресу електронної пошти, щоб отримати посилання для підтвердження.",
+        toasts: {
+          success_title: "Успіх!",
+          success_message: "Email успішно оновлено. Увійдіть знову.",
+        },
+        form: {
+          email: {
+            label: "Новий email",
+            placeholder: "Введіть свій email",
+            errors: {
+              required: "Email є обов’язковим",
+              invalid: "Email недійсний",
+              exists: "Email уже існує. Використайте інший.",
+              validation_failed: "Не вдалося підтвердити email. Спробуйте ще раз.",
+            },
+          },
+          code: {
+            label: "Унікальний код",
+            placeholder: "123456",
+            helper_text: "Код підтвердження надіслано на ваш новий email.",
+            errors: {
+              required: "Унікальний код є обов’язковим",
+              invalid: "Недійсний код підтвердження. Спробуйте ще раз.",
+            },
+          },
+        },
+        actions: {
+          continue: "Продовжити",
+          confirm: "Підтвердити",
+          cancel: "Скасувати",
+        },
+        states: {
+          sending: "Надсилання…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Налаштування робочого простору",
     page_label: "{workspace} - Загальні налаштування",
@@ -1603,6 +1646,7 @@ export default {
         exporting: "Експортування",
         previous_exports: "Попередні експорти",
         export_separate_files: "Експортувати дані в окремі файли",
+        filters_info: "Застосуйте фільтри для експорту конкретних робочих елементів за вашими критеріями.",
         modal: {
           title: "Експортувати в",
           toasts: {

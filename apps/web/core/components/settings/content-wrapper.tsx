@@ -6,7 +6,7 @@ type TProps = {
   children: ReactNode;
   size?: "lg" | "md";
 };
-export const SettingsContentWrapper = observer((props: TProps) => {
+export const SettingsContentWrapper = observer(function SettingsContentWrapper(props: TProps) {
   const { children, size = "md" } = props;
 
   return (

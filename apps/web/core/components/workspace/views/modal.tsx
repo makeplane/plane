@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -25,7 +23,7 @@ type Props = {
   preLoadedData?: Partial<IWorkspaceView>;
 };
 
-export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) => {
+export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWorkspaceViewModal(props: Props) {
   const { isOpen, onClose, data, preLoadedData } = props;
   // router
   const router = useAppRouter();

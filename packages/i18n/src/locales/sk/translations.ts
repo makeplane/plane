@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Jedinečný kód",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Vložte kód zaslaný na váš e-mail",
         requesting_new_code: "Žiadam o nový kód",
         sending_code: "Odosielam kód",
@@ -337,13 +337,13 @@ export default {
   project_id_must_be_at_least_1_character: "ID projektu musí mať aspoň 1 znak",
   project_id_must_be_at_most_5_characters: "ID projektu môže mať maximálne 5 znakov",
   project_id: "ID projektu",
-  project_id_tooltip_content: "Pomáha jednoznačne identifikovať pracovné položky v projekte. Max. 5 znakov.",
+  project_id_tooltip_content: "Pomáha jednoznačne identifikovať pracovné položky v projekte. Max. 10 znakov.",
   description_placeholder: "Popis",
   only_alphanumeric_non_latin_characters_allowed: "Sú povolené iba alfanumerické a nelatinské znaky.",
   project_id_is_required: "ID projektu je povinné",
   project_id_allowed_char: "Sú povolené iba alfanumerické a nelatinské znaky.",
   project_id_min_char: "ID projektu musí mať aspoň 1 znak",
-  project_id_max_char: "ID projektu môže mať maximálne 5 znakov",
+  project_id_max_char: "ID projektu môže mať maximálne 10 znakov",
   project_description_placeholder: "Zadajte popis projektu",
   select_network: "Vybrať sieť",
   lead: "Vedúci",
@@ -641,6 +641,8 @@ export default {
   },
   common: {
     all: "Všetko",
+    no_items_in_this_group: "V tejto skupine nie sú žiadne položky",
+    drop_here_to_move: "Presuňte sem na presunutie",
     states: "Stavy",
     state: "Stav",
     state_groups: "Skupiny stavov",
@@ -1523,6 +1525,47 @@ export default {
         "Ak potvrdíte, všetky možnosti triedenia, filtrovania a zobrazenia + rozloženie, ktoré ste vybrali pre toto zobrazenie, budú natrvalo vymazané bez možnosti obnovenia.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Zmeniť e-mail",
+        description: "Zadajte novú e-mailovú adresu, aby ste dostali overovací odkaz.",
+        toasts: {
+          success_title: "Úspech!",
+          success_message: "E-mail bol úspešne aktualizovaný. Prihláste sa znova.",
+        },
+        form: {
+          email: {
+            label: "Nový e-mail",
+            placeholder: "Zadajte svoj e-mail",
+            errors: {
+              required: "E-mail je povinný",
+              invalid: "E-mail je neplatný",
+              exists: "E-mail už existuje. Použite iný.",
+              validation_failed: "Overenie e-mailu zlyhalo. Skúste znova.",
+            },
+          },
+          code: {
+            label: "Jedinečný kód",
+            placeholder: "123456",
+            helper_text: "Overovací kód bol odoslaný na váš nový e-mail.",
+            errors: {
+              required: "Jedinečný kód je povinný",
+              invalid: "Neplatný overovací kód. Skúste znova.",
+            },
+          },
+        },
+        actions: {
+          continue: "Pokračovať",
+          confirm: "Potvrdiť",
+          cancel: "Zrušiť",
+        },
+        states: {
+          sending: "Odosielanie…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Nastavenia pracovného priestoru",
     page_label: "{workspace} - Všeobecné nastavenia",
@@ -1599,6 +1642,7 @@ export default {
         exporting: "Exportovanie",
         previous_exports: "Predchádzajúce exporty",
         export_separate_files: "Exportovať dáta do samostatných súborov",
+        filters_info: "Použite filtre na export konkrétnych pracovných položiek podľa vašich kritérií.",
         modal: {
           title: "Exportovať do",
           toasts: {

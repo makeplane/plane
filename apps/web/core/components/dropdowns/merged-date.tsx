@@ -16,7 +16,7 @@ type Props = {
  * - Same year, different month: "Jan 24 - Feb 6, 2025"
  * - Different year: "Dec 28, 2024 - Jan 4, 2025"
  */
-export const MergedDateDisplay: React.FC<Props> = observer((props) => {
+export const MergedDateDisplay = observer(function MergedDateDisplay(props: Props) {
   const { startDate, endDate, className = "" } = props;
 
   // Parse dates

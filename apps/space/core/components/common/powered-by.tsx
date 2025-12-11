@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { WEBSITE_URL } from "@plane/constants";
 // assets
 import { PlaneLogo } from "@plane/propel/icons";
@@ -9,7 +6,7 @@ type TPoweredBy = {
   disabled?: boolean;
 };
 
-export const PoweredBy: FC<TPoweredBy> = (props) => {
+export function PoweredBy(props: TPoweredBy) {
   // props
   const { disabled = false } = props;
 
@@ -28,4 +25,4 @@ export const PoweredBy: FC<TPoweredBy> = (props) => {
       </div>
     </a>
   );
-};
+}

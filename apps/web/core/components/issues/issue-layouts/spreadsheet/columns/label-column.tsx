@@ -14,7 +14,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetLabelColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetLabelColumn = observer(function SpreadsheetLabelColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
   // hooks
   const { labelMap } = useLabel();

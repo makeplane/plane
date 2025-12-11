@@ -6,7 +6,6 @@ import { SPREADSHEET_SELECT_GROUP, SPREADSHEET_PROPERTY_LIST } from "@plane/cons
 import type { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -37,7 +36,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const SpreadsheetView: React.FC<Props> = observer((props) => {
+export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   const {
     displayProperties,
     displayFilters,
@@ -72,13 +71,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
         return true;
       });
 
-  if (!issueIds || issueIds.length === 0)
-    return (
-      <div className="grid h-full w-full place-items-center">
-        <LogoSpinner />
-      </div>
-    );
-
+  if (!issueIds || issueIds.length === 0) return <></>;
   return (
     <div className="relative flex h-full w-full flex-col overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
       <div ref={portalRef} className="spreadsheet-menu-portal" />

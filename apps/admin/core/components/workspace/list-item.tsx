@@ -11,7 +11,7 @@ type TWorkspaceListItemProps = {
   workspaceId: string;
 };
 
-export const WorkspaceListItem = observer(({ workspaceId }: TWorkspaceListItemProps) => {
+export const WorkspaceListItem = observer(function WorkspaceListItem({ workspaceId }: TWorkspaceListItemProps) {
   // store hooks
   const { getWorkspaceById } = useWorkspace();
   // derived values
@@ -24,6 +24,7 @@ export const WorkspaceListItem = observer(({ workspaceId }: TWorkspaceListItemPr
       href={`${WEB_BASE_URL}/${encodeURIComponent(workspace.slug)}`}
       target="_blank"
       className="group flex items-center justify-between p-4 gap-2.5 truncate border border-custom-border-200/70 hover:border-custom-border-200 hover:bg-custom-background-90 rounded-md"
+      rel="noreferrer"
     >
       <div className="flex items-start gap-4">
         <span

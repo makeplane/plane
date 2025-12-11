@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { Tooltip } from "@plane/propel/tooltip";
-import { ICustomSearchSelectOption } from "@plane/types";
+import type { ICustomSearchSelectOption } from "@plane/types";
 import { CustomSearchSelect } from "../dropdowns";
 import { cn } from "../utils";
 import { Breadcrumbs } from "./breadcrumbs";
@@ -19,7 +19,7 @@ type TBreadcrumbNavigationSearchDropdownProps = {
   shouldTruncate?: boolean;
 };
 
-export const BreadcrumbNavigationSearchDropdown: React.FC<TBreadcrumbNavigationSearchDropdownProps> = (props) => {
+export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationSearchDropdownProps) {
   const {
     icon,
     title,
@@ -102,4 +102,4 @@ export const BreadcrumbNavigationSearchDropdown: React.FC<TBreadcrumbNavigationS
       )}
     />
   );
-};
+}

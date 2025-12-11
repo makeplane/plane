@@ -10,7 +10,7 @@ type Props = {
   anchor: string;
 };
 
-export const IssueReactions: React.FC<Props> = observer((props) => {
+export const IssueReactions = observer(function IssueReactions(props: Props) {
   const { anchor } = props;
   // store hooks
   const { canVote, canReact } = usePublish(anchor);

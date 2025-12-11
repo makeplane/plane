@@ -2,7 +2,6 @@
 import io
 import zipfile
 from typing import List
-from collections import defaultdict
 import boto3
 from botocore.client import Config
 from uuid import UUID

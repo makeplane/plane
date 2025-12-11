@@ -1,11 +1,7 @@
-"use client";
-
 import { range } from "lodash-es";
 import { Loader } from "@plane/ui";
 
-export const PageLoader: React.FC = (props) => {
-  const {} = props;
-
+export function PageLoader() {
   return (
     <div className="relative w-full h-full flex flex-col">
       <div className="px-3 border-b border-custom-border-100 py-3">
@@ -32,4 +28,4 @@ export const PageLoader: React.FC = (props) => {
       </div>
     </div>
   );
-};
+}

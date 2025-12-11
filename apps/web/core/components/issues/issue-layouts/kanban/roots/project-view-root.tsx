@@ -8,7 +8,7 @@ import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
 
-export const ProjectViewKanBanLayout: React.FC = observer(() => {
+export const ProjectViewKanBanLayout = observer(function ProjectViewKanBanLayout() {
   const { viewId } = useParams();
 
   return <BaseKanBanRoot QuickActions={ProjectIssueQuickActions} viewId={viewId.toString()} />;

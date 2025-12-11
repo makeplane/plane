@@ -1,13 +1,10 @@
-"use client";
-
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
-import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CalendarLayoutIcon, BoardLayoutIcon, ListLayoutIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -21,18 +18,14 @@ import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 
 const SUPPORTED_LAYOUTS = [
-  { key: "list", i18n_title: "issue.layouts.list", icon: List },
-  { key: "kanban", i18n_title: "issue.layouts.kanban", icon: Kanban },
-  { key: "calendar", i18n_title: "issue.layouts.calendar", icon: Calendar },
+  { key: "list", i18n_title: "issue.layouts.list", icon: ListLayoutIcon },
+  { key: "kanban", i18n_title: "issue.layouts.kanban", icon: BoardLayoutIcon },
+  { key: "calendar", i18n_title: "issue.layouts.calendar", icon: CalendarLayoutIcon },
 ];
 
-export const ModuleIssuesMobileHeader = observer(() => {
+export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHeader() {
   // router
-  const { workspaceSlug, projectId, moduleId } = useParams() as {
-    workspaceSlug: string;
-    projectId: string;
-    moduleId: string;
-  };
+  const { workspaceSlug, projectId, moduleId } = useParams();
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // plane hooks
@@ -108,7 +101,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
             menuButton={
               <span className="flex items-center text-sm text-custom-text-200">
                 Display
-                <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" />
+                <ChevronDownIcon className="ml-2 h-4 w-4 text-custom-text-200" />
               </span>
             }
           >

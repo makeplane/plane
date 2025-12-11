@@ -11,4 +11,6 @@ export type TWorkItemAdditionalSidebarProperties = {
   isPeekView?: boolean;
 };
 
-export const WorkItemAdditionalSidebarProperties: FC<TWorkItemAdditionalSidebarProperties> = () => <></>;
+export function WorkItemAdditionalSidebarProperties(_props: TWorkItemAdditionalSidebarProperties) {
+  return <></>;
+}

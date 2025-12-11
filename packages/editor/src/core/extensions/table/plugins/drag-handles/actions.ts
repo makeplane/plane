@@ -1,9 +1,11 @@
 import type { Editor } from "@tiptap/core";
-import { Fragment, type Node, type Node as ProseMirrorNode } from "@tiptap/pm/model";
+import { Fragment } from "@tiptap/pm/model";
+import type { Node, Node as ProseMirrorNode } from "@tiptap/pm/model";
 import type { Transaction } from "@tiptap/pm/state";
-import { type CellSelection, TableMap } from "@tiptap/pm/tables";
+import { TableMap } from "@tiptap/pm/tables";
+import type { CellSelection } from "@tiptap/pm/tables";
 // extensions
-import { TableNodeLocation } from "@/extensions/table/table/utilities/helpers";
+import type { TableNodeLocation } from "@/extensions/table/table/utilities/helpers";
 
 type TableRow = (ProseMirrorNode | null)[];
 type TableRows = TableRow[];

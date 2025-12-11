@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Menu, Settings } from "lucide-react";
@@ -11,7 +8,7 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useTheme } from "@/hooks/store";
 
-export const HamburgerToggle: FC = observer(() => {
+export const HamburgerToggle = observer(function HamburgerToggle() {
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   return (
     <div
@@ -23,7 +20,7 @@ export const HamburgerToggle: FC = observer(() => {
   );
 });
 
-export const AdminHeader: FC = observer(() => {
+export const AdminHeader = observer(function AdminHeader() {
   const pathName = usePathname();
 
   const getHeaderTitle = (pathName: string) => {
@@ -44,6 +41,8 @@ export const AdminHeader: FC = observer(() => {
         return "GitHub";
       case "gitlab":
         return "GitLab";
+      case "gitea":
+        return "Gitea";
       case "workspace":
         return "Workspace";
       case "create":

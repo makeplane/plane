@@ -1,6 +1,6 @@
 // plane imports
-import { TWebhookConnectionQueryParams } from "@plane/types";
-import { TExtendedFileHandler } from "@/plane-editor/types/config";
+import type { TWebhookConnectionQueryParams } from "@plane/types";
+import type { TExtendedFileHandler } from "@/plane-editor/types/config";
 
 export type TFileHandler = {
   assetsUploadStatus: Record<string, number>; // blockId => progress percentage
@@ -11,6 +11,7 @@ export type TFileHandler = {
   getAssetSrc: (path: string) => Promise<string>;
   restore: (assetSrc: string) => Promise<void>;
   upload: (blockId: string, file: File) => Promise<string>;
+  duplicate: (assetId: string) => Promise<string>;
   validation: {
     /**
      * @description max file size in bytes

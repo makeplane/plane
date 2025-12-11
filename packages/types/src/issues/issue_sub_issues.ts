@@ -1,4 +1,4 @@
-import { TIssue } from "./issue";
+import type { TIssue } from "./issue";
 
 export type TSubIssuesStateDistribution = {
   backlog: string[];

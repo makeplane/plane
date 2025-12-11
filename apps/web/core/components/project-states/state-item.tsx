@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -25,7 +22,7 @@ type TStateItem = {
   stateItemClassName?: string;
 };
 
-export const StateItem: FC<TStateItem> = observer((props) => {
+export const StateItem = observer(function StateItem(props: TStateItem) {
   const {
     groupKey,
     groupedStates,
@@ -99,10 +96,10 @@ export const StateItem: FC<TStateItem> = observer((props) => {
             const destinationData = self.data as TDraggableData;
 
             if (sourceData && destinationData && sourceData.id) {
-              const destinationGroupKey = destinationData.groupKey as TStateGroups;
+              const destinationGroupKey = destinationData.groupKey;
               const edge = extractClosestEdge(destinationData) || undefined;
               const payload: Partial<IState> = {
-                id: sourceData.id as string,
+                id: sourceData.id,
                 group: destinationGroupKey,
                 sequence: getCurrentStateSequence(groupedStates[destinationGroupKey], destinationData, edge),
               };

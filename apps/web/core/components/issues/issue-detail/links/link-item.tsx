@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Pencil, Trash2, Copy, Link } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -24,7 +21,7 @@ type TIssueLinkItem = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
+export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkItem) {
   // props
   const { linkId, linkOperations, isNotAllowed, issueServiceType = EIssueServiceType.ISSUES } = props;
   // hooks

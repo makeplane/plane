@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 //hooks
 // icons
 // constants
@@ -17,14 +17,9 @@ import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 // helpers
 
 interface Props {
-  issuesFilterStore:
-    | IProjectIssuesFilter
-    | IModuleIssuesFilter
-    | ICycleIssuesFilter
-    | IProjectViewIssuesFilter
-    | IProjectEpicsFilter;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
 }
-export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) => {
+export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(props: Props) {
   const { issuesFilterStore } = props;
 
   const issueCalendarView = useCalendarView();
@@ -118,7 +113,7 @@ export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) =
                   handleDateChange(previousYear);
                 }}
               >
-                <ChevronLeft size={14} />
+                <ChevronLeftIcon height={14} width={14} />
               </button>
               <span className="text-xs">{activeMonthDate.getFullYear()}</span>
               <button
@@ -129,7 +124,7 @@ export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) =
                   handleDateChange(nextYear);
                 }}
               >
-                <ChevronRight size={14} />
+                <ChevronRightIcon height={14} width={14} />
               </button>
             </div>
             <div className="grid grid-cols-4 items-stretch justify-items-stretch gap-4 pt-3">

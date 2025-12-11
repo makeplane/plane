@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 
@@ -38,7 +36,7 @@ type Props = {
   customClassName?: string;
 };
 
-export const CycleQuickActions: React.FC<Props> = observer((props) => {
+export const CycleQuickActions = observer(function CycleQuickActions(props: Props) {
   const { parentRef, cycleId, projectId, workspaceSlug, customClassName } = props;
   // router
   const router = useAppRouter();
@@ -170,15 +168,18 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
 
   if (endCycleContextMenu) MENU_ITEMS.splice(3, 0, endCycleContextMenu);
 
-  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map((item) => ({
-    ...item,
-    action: () => {
-      captureClick({
-        elementName: CYCLE_TRACKER_ELEMENTS.CONTEXT_MENU,
-      });
-      item.action();
-    },
-  }));
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
+    return {
+      ...item,
+
+      action: () => {
+        captureClick({
+          elementName: CYCLE_TRACKER_ELEMENTS.CONTEXT_MENU,
+        });
+        item.action();
+      },
+    };
+  });
 
   return (
     <>

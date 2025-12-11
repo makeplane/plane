@@ -216,7 +216,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
       if (isEmpty(this.filters) || isEmpty(this.filters[viewId])) return;
 
       const _filters = {
-        richFilters: this.filters[viewId].richFilters as TWorkItemFilterExpression,
+        richFilters: this.filters[viewId].richFilters,
         displayFilters: this.filters[viewId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[viewId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[viewId].kanbanFilters as TIssueKanbanFilters,
@@ -257,7 +257,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
           });
 
           if (this.getShouldClearIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.projectIssues.clear(true, true); // clear issues for local store when some filters like layout changes
+            this.rootIssueStore.projectIssues.clear(true); // clear issues for local store when some filters like layout changes
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {

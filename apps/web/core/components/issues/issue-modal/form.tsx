@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
@@ -73,7 +71,7 @@ export interface IssueFormProps {
   dataResetProperties?: any[];
 }
 
-export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
+export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormProps) {
   const { t } = useTranslation();
   const {
     data,
@@ -319,6 +317,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     {
       name: watch("name"),
       description_html: getTextContent(watch("description_html")),
+      issueId: data?.id,
     }
   );
 

@@ -2,15 +2,15 @@ import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ProjectIcon } from "@plane/propel/icons";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { ProjectIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 // plane web imports
@@ -43,7 +43,7 @@ type Props = TDropdownProps & {
       }
   );
 
-export const ProjectDropdownBase: React.FC<Props> = observer((props) => {
+export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: Props) {
   const {
     button,
     buttonClassName,
@@ -207,7 +207,7 @@ export const ProjectDropdownBase: React.FC<Props> = observer((props) => {
               <span className="truncate max-w-40">{getDisplayName(value, placeholder)}</span>
             )}
             {dropdownArrow && (
-              <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
             )}
           </DropdownButton>
         </button>

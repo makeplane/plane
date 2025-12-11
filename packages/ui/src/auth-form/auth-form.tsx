@@ -35,7 +35,7 @@ export interface AuthFormProps {
   alternateModeButtonText?: string;
 }
 
-export const AuthForm: React.FC<AuthFormProps> = ({
+export function AuthForm({
   mode,
   initialData = {},
   onSubmit,
@@ -52,7 +52,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   submitButtonText,
   alternateModeText,
   alternateModeButtonText,
-}) => {
+}: AuthFormProps) {
   const [formData, setFormData] = useState<AuthFormData>({
     email: initialData.email || "",
     password: initialData.password || "",
@@ -204,4 +204,4 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       </div>
     </form>
   );
-};
+}

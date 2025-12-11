@@ -1,7 +1,5 @@
-"use client";
-
 import { observer } from "mobx-react";
-import { CalendarCheck2 } from "lucide-react";
+import { DueDatePropertyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // helpers
@@ -17,7 +15,7 @@ type Props = {
   shouldShowBorder?: boolean;
 };
 
-export const IssueBlockDate = observer((props: Props) => {
+export const IssueBlockDate = observer(function IssueBlockDate(props: Props) {
   const { due_date, stateId, shouldHighLight = true, shouldShowBorder = true } = props;
   const { getStateById } = useStates();
 
@@ -33,7 +31,7 @@ export const IssueBlockDate = observer((props: Props) => {
           "border-[0.5px] border-custom-border-300": shouldShowBorder,
         })}
       >
-        <CalendarCheck2 className="size-3 flex-shrink-0" />
+        <DueDatePropertyIcon className="size-3 flex-shrink-0" />
         {formattedDate ? formattedDate : "No Date"}
       </div>
     </Tooltip>

@@ -43,11 +43,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build Affected
+        run: pnpm turbo run build --affected
+
       - name: Lint Affected
         run: pnpm turbo run check:lint --affected
 
       - name: Check Affected format
         run: pnpm turbo run check:format --affected
 
-      - name: Build Affected
-        run: pnpm turbo run build --affected
+      - name: Check Affected types
+        run: pnpm turbo run check:types --affected

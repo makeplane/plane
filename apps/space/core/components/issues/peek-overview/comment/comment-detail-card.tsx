@@ -1,10 +1,11 @@
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
+import { Check, MessageSquare, MoreVertical } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
+import { CloseIcon } from "@plane/propel/icons";
 import type { TIssuePublicComment } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 // components
@@ -23,7 +24,7 @@ type Props = {
   comment: TIssuePublicComment;
 };
 
-export const CommentCard: React.FC<Props> = observer((props) => {
+export const CommentCard = observer(function CommentCard(props: Props) {
   const { anchor, comment } = props;
   // store hooks
   const { peekId, deleteIssueComment, updateIssueComment, uploadCommentAsset } = useIssueDetails();
@@ -41,7 +42,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
     control,
     formState: { isSubmitting },
     handleSubmit,
-  } = useForm<any>({
+  } = useForm<TIssuePublicComment>({
     defaultValues: { comment_html: comment.comment_html },
   });
 
@@ -62,7 +63,6 @@ export const CommentCard: React.FC<Props> = observer((props) => {
     <div className="relative flex items-start space-x-3">
       <div className="relative px-1">
         {comment.actor_detail.avatar_url && comment.actor_detail.avatar_url !== "" ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={getFileURL(comment.actor_detail.avatar_url)}
             alt={
@@ -119,6 +119,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                       const { asset_id } = await uploadCommentAsset(file, anchor, comment.id);
                       return asset_id;
                     }}
+                    displayConfig={{
+                      fontSize: "small-font",
+                    }}
                   />
                 )}
               />
@@ -136,7 +139,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
                 onClick={() => setIsEditing(false)}
               >
-                <X className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" strokeWidth={2} />
+                <CloseIcon className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" strokeWidth={2} />
               </button>
             </div>
           </form>
@@ -156,7 +159,6 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           </div>
         </div>
       </div>
-
       {!isInIframe && currentUser?.id === comment?.actor_detail?.id && (
         <Menu as="div" className="relative w-min text-left">
           <Menu.Button

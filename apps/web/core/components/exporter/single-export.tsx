@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 // ui
@@ -14,9 +12,9 @@ type Props = {
   refreshing: boolean;
 };
 
-export const SingleExport: FC<Props> = ({ service, refreshing }) => {
+export function SingleExport({ service, refreshing }: Props) {
   const provider = service.provider;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const [isLoading] = useState(false);
 
   const checkExpiry = (inputDateString: string) => {
@@ -75,4 +73,4 @@ export const SingleExport: FC<Props> = ({ service, refreshing }) => {
       )}
     </div>
   );
-};
+}

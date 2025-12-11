@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -20,7 +18,7 @@ import { ProfileSettingContentWrapper } from "@/components/profile/profile-setti
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 
-const ProfileAppearancePage = observer(() => {
+function ProfileAppearancePage() {
   const { t } = useTranslation();
   const { setTheme } = useTheme();
   // states
@@ -86,6 +84,6 @@ const ProfileAppearancePage = observer(() => {
       )}
     </>
   );
-});
+}
 
-export default ProfileAppearancePage;
+export default observer(ProfileAppearancePage);

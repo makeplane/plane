@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { Shapes } from "lucide-react";
 // plane imports
@@ -11,10 +9,8 @@ import { Breadcrumbs, Header } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
-// local imports
-import { StarUsOnGitHubLink } from "./star-us-link";
 
-export const WorkspaceDashboardHeader = observer(() => {
+export const WorkspaceDashboardHeader = observer(function WorkspaceDashboardHeader() {
   // plane hooks
   const { t } = useTranslation();
   // hooks
@@ -47,7 +43,6 @@ export const WorkspaceDashboardHeader = observer(() => {
             <Shapes size={16} />
             <div className="hidden text-xs font-medium sm:hidden md:block">{t("home.manage_widgets")}</div>
           </Button>
-          <StarUsOnGitHubLink />
         </Header.RightItem>
       </Header>
     </>

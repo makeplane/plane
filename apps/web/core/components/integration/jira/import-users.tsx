@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useParams } from "next/navigation";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
@@ -17,7 +15,7 @@ import { WorkspaceService } from "@/plane-web/services";
 
 const workspaceService = new WorkspaceService();
 
-export const JiraImportUsers: FC = () => {
+export function JiraImportUsers() {
   const { workspaceSlug } = useParams();
   // form info
   const {
@@ -96,7 +94,7 @@ export const JiraImportUsers: FC = () => {
                         input
                         value={value}
                         onChange={onChange}
-                        label={<span className="capitalize">{Boolean(value) ? value : ("Ignore" as any)}</span>}
+                        label={<span className="capitalize">{value ? value : ("Ignore" as any)}</span>}
                       >
                         <CustomSelect.Option value="invite">Invite by email</CustomSelect.Option>
                         <CustomSelect.Option value="map">Map to existing</CustomSelect.Option>
@@ -151,4 +149,4 @@ export const JiraImportUsers: FC = () => {
       )}
     </div>
   );
-};
+}

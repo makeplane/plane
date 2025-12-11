@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Mã duy nhất",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Dán mã xác minh đã gửi đến email của bạn",
         requesting_new_code: "Đang yêu cầu mã mới",
         sending_code: "Đang gửi mã",
@@ -338,13 +338,13 @@ export default {
   project_id_must_be_at_least_1_character: "ID dự án phải có ít nhất 1 ký tự",
   project_id_must_be_at_most_5_characters: "ID dự án chỉ được tối đa 5 ký tự",
   project_id: "ID dự án",
-  project_id_tooltip_content: "Giúp xác định duy nhất mục công việc trong dự án của bạn. Tối đa 5 ký tự.",
+  project_id_tooltip_content: "Giúp xác định duy nhất mục công việc trong dự án của bạn. Tối đa 10 ký tự.",
   description_placeholder: "Mô tả",
   only_alphanumeric_non_latin_characters_allowed: "Chỉ cho phép các ký tự chữ số và không phải Latin.",
   project_id_is_required: "ID dự án là bắt buộc",
   project_id_allowed_char: "Chỉ cho phép các ký tự chữ số và không phải Latin.",
   project_id_min_char: "ID dự án phải có ít nhất 1 ký tự",
-  project_id_max_char: "ID dự án chỉ được tối đa 5 ký tự",
+  project_id_max_char: "ID dự án chỉ được tối đa 10 ký tự",
   project_description_placeholder: "Nhập mô tả dự án",
   select_network: "Chọn mạng",
   lead: "Người phụ trách",
@@ -648,6 +648,8 @@ export default {
   },
   common: {
     all: "Tất cả",
+    no_items_in_this_group: "Không có mục nào trong nhóm này",
+    drop_here_to_move: "Thả vào đây để di chuyển",
     states: "Trạng thái",
     state: "Trạng thái",
     state_groups: "Nhóm trạng thái",
@@ -1529,6 +1531,47 @@ export default {
         "Nếu bạn xác nhận, tất cả các tùy chọn sắp xếp, lọc và hiển thị + bố cục mà bạn đã chọn cho chế độ xem này sẽ bị xóa vĩnh viễn mà không có cách nào khôi phục.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Đổi email",
+        description: "Nhập địa chỉ email mới để nhận liên kết xác minh.",
+        toasts: {
+          success_title: "Thành công!",
+          success_message: "Email đã được cập nhật. Vui lòng đăng nhập lại.",
+        },
+        form: {
+          email: {
+            label: "Email mới",
+            placeholder: "Nhập email của bạn",
+            errors: {
+              required: "Email là bắt buộc",
+              invalid: "Email không hợp lệ",
+              exists: "Email đã tồn tại. Vui lòng dùng email khác.",
+              validation_failed: "Xác thực email thất bại. Thử lại.",
+            },
+          },
+          code: {
+            label: "Mã duy nhất",
+            placeholder: "123456",
+            helper_text: "Mã xác minh đã được gửi tới email mới của bạn.",
+            errors: {
+              required: "Mã duy nhất là bắt buộc",
+              invalid: "Mã xác minh không hợp lệ. Thử lại.",
+            },
+          },
+        },
+        actions: {
+          continue: "Tiếp tục",
+          confirm: "Xác nhận",
+          cancel: "Hủy",
+        },
+        states: {
+          sending: "Đang gửi…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Cài đặt không gian làm việc",
     page_label: "{workspace} - Cài đặt chung",
@@ -1608,6 +1651,7 @@ export default {
         exporting: "Đang xuất",
         previous_exports: "Xuất trước đây",
         export_separate_files: "Xuất dữ liệu thành các tệp riêng biệt",
+        filters_info: "Áp dụng bộ lọc để xuất các mục công việc cụ thể dựa trên tiêu chí của bạn.",
         modal: {
           title: "Xuất đến",
           toasts: {

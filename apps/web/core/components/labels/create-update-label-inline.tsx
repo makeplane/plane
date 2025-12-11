@@ -1,5 +1,3 @@
-"use client";
-
 import React, { forwardRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { TwitterPicker } from "react-color";
@@ -14,6 +12,11 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IIssueLabel } from "@plane/types";
 import { Input } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+
+// error codes
+const errorCodes = {
+  LABEL_NAME_ALREADY_EXISTS: "LABEL_NAME_ALREADY_EXISTS",
+};
 
 export type TLabelOperationsCallbacks = {
   createLabel: (data: Partial<IIssueLabel>) => Promise<IIssueLabel>;
@@ -35,7 +38,10 @@ const defaultValues: Partial<IIssueLabel> = {
 };
 
 export const CreateUpdateLabelInline = observer(
-  forwardRef<HTMLDivElement, TCreateUpdateLabelInlineProps>(function CreateUpdateLabelInline(props, ref) {
+  forwardRef(function CreateUpdateLabelInline(
+    props: TCreateUpdateLabelInlineProps,
+    ref: React.ForwardedRef<HTMLDivElement>
+  ) {
     const { labelForm, setLabelForm, isUpdating, labelOperationsCallbacks, labelToUpdate, onClose } = props;
     // form info
     const {
@@ -56,6 +62,23 @@ export const CreateUpdateLabelInline = observer(
       setLabelForm(false);
       reset(defaultValues);
       if (onClose) onClose();
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const getErrorMessage = (error: any, operation: "create" | "update"): string => {
+      const errorData = error ?? {};
+
+      const labelError = errorData.name?.includes(errorCodes.LABEL_NAME_ALREADY_EXISTS);
+      if (labelError) {
+        return t("label.create.already_exists");
+      }
+
+      // Fallback to general error messages
+      if (operation === "create") {
+        return errorData?.detail ?? errorData?.error ?? t("common.something_went_wrong");
+      }
+
+      return errorData?.error ?? t("project_settings.labels.toast.error");
     };
 
     const handleLabelCreate: SubmitHandler<IIssueLabel> = async (formData) => {
@@ -82,10 +105,12 @@ export const CreateUpdateLabelInline = observer(
             },
             error,
           });
+
+          const errorMessage = getErrorMessage(error, "create");
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
-            message: error?.detail ?? error.error ?? t("common.something_went_wrong"),
+            message: errorMessage,
           });
           reset(formData);
         });
@@ -116,10 +141,11 @@ export const CreateUpdateLabelInline = observer(
             },
             error,
           });
+          const errorMessage = getErrorMessage(error, "update");
           setToast({
             title: "Oops!",
             type: TOAST_TYPE.ERROR,
-            message: error?.error ?? t("project_settings.labels.toast.error"),
+            message: errorMessage,
           });
           reset(formData);
         });

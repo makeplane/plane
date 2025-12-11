@@ -86,5 +86,10 @@ LOGGING = {
             "handlers": ["console"],
             "propagate": False,
         },
+        "plane.migrations": {
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
     },
 }

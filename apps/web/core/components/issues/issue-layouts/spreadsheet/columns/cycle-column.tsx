@@ -16,7 +16,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
+export const SpreadsheetCycleColumn = observer(function SpreadsheetCycleColumn(props: Props) {
   const { issue, disabled, onClose } = props;
   // router
   const { workspaceSlug } = useParams();

@@ -1,3 +1,5 @@
 import { observer } from "mobx-react";
 
-export const TeamViewEmptyState: React.FC = observer(() => <></>);
+export const TeamViewEmptyState = observer(function TeamViewEmptyState() {
+  return <></>;
+});

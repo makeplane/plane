@@ -142,6 +142,18 @@ class ProjectMemberSerializer(BaseSerializer):
         fields = "__all__"
 
 
+class ProjectMemberPreferenceSerializer(BaseSerializer):
+    class Meta:
+        model = ProjectMember
+        fields = ["preferences", "project_id", "member_id", "workspace_id"]
+
+    def validate_preferences(self, value):
+        preferences = self.instance.preferences
+
+        preferences.update(value)
+        return preferences
+
+
 class ProjectMemberAdminSerializer(BaseSerializer):
     workspace = WorkspaceLiteSerializer(read_only=True)
     project = ProjectLiteSerializer(read_only=True)

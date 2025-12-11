@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { range } from "lodash-es";
@@ -27,7 +25,7 @@ type Props = {
   data: Partial<IWebhook>;
 };
 
-export const WebhookSecretKey: FC<Props> = observer((props) => {
+export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props) {
   const { data } = props;
   // states
   const [isRegenerating, setIsRegenerating] = useState(false);
@@ -46,7 +44,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
       .then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: `${t("success")!}`,
+          title: `${t("success")}`,
           message: t("workspace_settings.settings.webhooks.toasts.secret_key_copied.message"),
         })
       )
@@ -68,7 +66,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: `${t("success")!}`,
+          title: `${t("success")}`,
           message: "New key regenerated successfully.",
         });
 

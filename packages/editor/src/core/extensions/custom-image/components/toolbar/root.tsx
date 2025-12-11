@@ -20,7 +20,7 @@ type Props = {
   width: string;
 };
 
-export const ImageToolbarRoot: React.FC<Props> = (props) => {
+export function ImageToolbarRoot(props: Props) {
   const { alignment, editor, downloadSrc, handleAlignmentChange, isTouchDevice } = props;
   // states
   const [shouldShowToolbar, setShouldShowToolbar] = useState(false);
@@ -54,4 +54,4 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

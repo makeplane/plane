@@ -14,12 +14,7 @@ import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarDayTile } from "./day-tile";
 
 type Props = {
-  issuesFilterStore:
-    | IProjectIssuesFilter
-    | IModuleIssuesFilter
-    | ICycleIssuesFilter
-    | IProjectViewIssuesFilter
-    | IProjectEpicsFilter;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   week: ICalendarWeek | undefined;
@@ -44,7 +39,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const CalendarWeekDays: React.FC<Props> = observer((props) => {
+export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props) {
   const {
     issuesFilterStore,
     issues,
