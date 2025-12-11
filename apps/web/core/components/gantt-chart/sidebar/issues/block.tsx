@@ -47,11 +47,14 @@ export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Pr
       onMouseLeave={() => updateActiveBlockId(null)}
     >
       <Row
-        className={cn("group w-full flex items-center gap-2 pr-4", {
-          "bg-surface-2": isBlockHoveredOn,
-          "bg-accent-primary/5 hover:bg-accent-primary/10": isIssueSelected,
-          "bg-accent-primary/10": isIssueSelected && isBlockHoveredOn,
-        })}
+        className={cn(
+          "group w-full flex items-center gap-2 pr-4 bg-layer-transparent hover:bg-layer-transparent-hover",
+          {
+            "bg-layer-transparent-hover": isBlockHoveredOn,
+            "bg-accent-primary/5 hover:bg-accent-primary/10": isIssueSelected,
+            "bg-accent-primary/10": isIssueSelected && isBlockHoveredOn,
+          }
+        )}
         style={{
           height: `${BLOCK_HEIGHT}px`,
         }}
