@@ -128,7 +128,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
 
         <DescriptionInput
           issueSequenceId={issue.sequence_id}
-          containerClassName="-ml-3 border-none"
+          containerClassName="p-0 border-none"
           disabled={isArchived || !isEditable}
           editorRef={editorRef}
           entityId={issue.id}

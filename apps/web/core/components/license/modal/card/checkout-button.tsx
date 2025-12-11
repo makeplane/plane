@@ -85,7 +85,7 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
             {upgradeLoaderType === planVariant ? "Redirecting to Stripe" : (upgradeCTA ?? `Upgrade to ${planeName}`)}
           </Button>
           {isTrialAllowed && !isSelfHosted && (
-            <div className="mt-4 h-4">
+            <div className="mt-1 h-3">
               {renderTrialButton &&
                 renderTrialButton({
                   productId: product?.id,
