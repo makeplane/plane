@@ -51,7 +51,7 @@ export const ProfileActivity = observer(function ProfileActivity() {
                         className="rounded-sm"
                       />
                     ) : (
-                      <div className="grid h-6 w-6 place-items-center rounded-sm border-2 bg-gray-700 text-11 text-on-color">
+                      <div className="grid h-6 w-6 place-items-center rounded-sm border-2 border-strong text-11 text-on-color">
                         {activity.actor_detail?.display_name?.charAt(0)}
                       </div>
                     )}
