@@ -8,6 +8,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import packageJson from "package.json";
 // local components
 import { PaidPlanUpgradeModal } from "../license";
+import { Button } from "@plane/propel/button";
 
 export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {
   // states
@@ -24,16 +25,15 @@ export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {
         handleClose={() => setIsPaidPlanPurchaseModalOpen(false)}
       />
       <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
-        <button
-          type="button"
-          tabIndex={-1}
-          className="w-fit min-w-24 cursor-pointer rounded-2xl px-2 py-1 text-center text-13 font-medium outline-none bg-plans-neutral-subtle text-plans-neutral-primary"
+        <Button
+          variant="tertiary"
+          size="lg"
           onClick={() => setIsPaidPlanPurchaseModalOpen(true)}
           aria-haspopup="dialog"
           aria-label={t("aria_labels.projects_sidebar.edition_badge")}
         >
           Community
-        </button>
+        </Button>
       </Tooltip>
     </>
   );

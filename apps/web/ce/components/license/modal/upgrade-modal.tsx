@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import {
@@ -19,7 +18,7 @@ import type { TCheckoutParams } from "@/components/license/modal/card/checkout-b
 
 // Constants
 const COMMON_CARD_CLASSNAME = "flex flex-col w-full h-full justify-end col-span-12 sm:col-span-6 xl:col-span-3";
-const COMMON_EXTRA_FEATURES_CLASSNAME = "pt-2 text-center text-11 text-accent-secondary font-medium hover:underline";
+const COMMON_EXTRA_FEATURES_CLASSNAME = "pt-2 text-center text-caption-md-medium text-accent-primary hover:underline";
 
 export type PaidPlanUpgradeModalProps = {
   isOpen: boolean;

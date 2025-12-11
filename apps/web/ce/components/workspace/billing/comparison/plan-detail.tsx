@@ -59,15 +59,17 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
     <div className="flex flex-col justify-between col-span-1 p-3 space-y-0.5">
       {/* Plan name and pricing section */}
       <div className="flex flex-col items-start">
-        <div className="flex w-full gap-2 items-center text-18 font-medium">
-          <span className="transition-all duration-300">{subscriptionName}</span>
+        <div className="flex w-full gap-2 items-center text-h4-semibold">
+          <span>{subscriptionName}</span>
           {subscriptionType === EProductSubscriptionEnum.PRO && (
-            <span className="px-2 rounded-sm text-on-color bg-accent-primary text-11">Popular</span>
+            <span className="px-2 py-0.5 rounded-sm text-on-color bg-accent-primary text-caption-sm-medium">
+              Popular
+            </span>
           )}
         </div>
-        <div className="flex gap-x-2 items-start text-tertiary pb-1 transition-all duration-300 animate-slide-up">
+        <div className="flex gap-x-2 items-start text-tertiary pb-1">
           {isSubscriptionActive && displayPrice !== undefined && (
-            <div className="flex items-center gap-1 text-20 text-primary font-semibold transition-all duration-300">
+            <div className="flex items-center gap-1 text-h3-semibold text-primary">
               <DiscountInfo
                 currency="$"
                 frequency={billingFrequency ?? "month"}
@@ -78,9 +80,9 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
             </div>
           )}
           <div className="pt-1">
-            {pricingDescription && <div className="transition-all duration-300">{pricingDescription}</div>}
+            {pricingDescription && <div>{pricingDescription}</div>}
             {pricingSecondaryDescription && (
-              <div className="text-11 text-placeholder transition-all duration-300">{pricingSecondaryDescription}</div>
+              <div className="text-caption-xs text-placeholder">{pricingSecondaryDescription}</div>
             )}
           </div>
         </div>
@@ -100,12 +102,12 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
       )}
 
       {/* Subscription button */}
-      <div className="flex flex-col gap-1 py-3 items-start transition-all duration-300">
+      <div className="flex flex-col gap-1 py-3 items-start">
         <Button
           variant="primary"
           size="lg"
           onClick={handleRedirection}
-          className="animate-slide-up w-full"
+          className="w-full"
           data-ph-element={
             isSubscriptionActive
               ? WORKSPACE_SETTINGS_TRACKER_ELEMENTS.BILLING_UPGRADE_BUTTON(subscriptionType)
