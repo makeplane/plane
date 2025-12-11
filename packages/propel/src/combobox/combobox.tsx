@@ -220,11 +220,10 @@ function ComboboxOption({ value, children, disabled, className }: ComboboxOption
   );
 }
 
-// Compound component export
-const Combobox = Object.assign(ComboboxRoot, {
-  Button: ComboboxButton,
-  Options: ComboboxOptions,
-  Option: ComboboxOption,
-});
+ComboboxRoot.displayName = "Combobox";
+ComboboxButton.displayName = "ComboboxButton";
+ComboboxOptions.displayName = "ComboboxOptions";
+ComboboxOption.displayName = "ComboboxOption";
 
-export { Combobox };
+
+export { ComboboxRoot as Combobox, ComboboxButton, ComboboxOptions, ComboboxOption };

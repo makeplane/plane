@@ -164,12 +164,5 @@ ToolbarItem.displayName = "ToolbarItem";
 ToolbarSeparator.displayName = "ToolbarSeparator";
 ToolbarSubmitButton.displayName = "ToolbarSubmitButton";
 
-// compound components
-const Toolbar = Object.assign(ToolbarRoot, {
-  Group: ToolbarGroup,
-  Item: ToolbarItem,
-  Separator: ToolbarSeparator,
-  SubmitButton: ToolbarSubmitButton,
-});
 
-export { Toolbar };
+export { ToolbarRoot as Toolbar, ToolbarGroup, ToolbarItem, ToolbarSeparator, ToolbarSubmitButton };

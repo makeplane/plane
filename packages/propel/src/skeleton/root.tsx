@@ -2,10 +2,16 @@ import React from "react";
 // helpers
 import { cn } from "../utils/classname";
 
-type SkeletonProps = {
+export type SkeletonProps = {
   children: React.ReactNode;
   className?: string;
   ariaLabel?: string;
+};
+
+export type SkeletonItemProps = {
+  height?: string;
+  width?: string;
+  className?: string;
 };
 
 function SkeletonRoot({ children, className = "", ariaLabel = "Loading content" }: SkeletonProps) {
@@ -16,13 +22,7 @@ function SkeletonRoot({ children, className = "", ariaLabel = "Loading content" 
   );
 }
 
-type ItemProps = {
-  height?: string;
-  width?: string;
-  className?: string;
-};
-
-function SkeletonItem({ height = "auto", width = "auto", className = "" }: ItemProps) {
+function SkeletonItem({ height = "auto", width = "auto", className = "" }: SkeletonItemProps) {
   return (
     <div
       data-slot="skeleton-item"
@@ -31,8 +31,6 @@ function SkeletonItem({ height = "auto", width = "auto", className = "" }: ItemP
     />
   );
 }
-
-const Skeleton = Object.assign(SkeletonRoot, { Item: SkeletonItem });
 
 SkeletonRoot.displayName = "plane-ui-skeleton";
 SkeletonItem.displayName = "plane-ui-skeleton-item";

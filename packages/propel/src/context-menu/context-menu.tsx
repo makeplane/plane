@@ -135,15 +135,13 @@ ContextMenuItem.displayName = "ContextMenuItem";
 ContextMenuSeparator.displayName = "ContextMenuSeparator";
 ContextMenuSubmenuTrigger.displayName = "ContextMenuSubmenuTrigger";
 
-// compound components
-const ContextMenu = Object.assign(ContextMenuRoot, {
-  Trigger: ContextMenuTrigger,
-  Portal: ContextMenuPortal,
-  Content: ContextMenuContent,
-  Item: ContextMenuItem,
-  Separator: ContextMenuSeparator,
-  Submenu: ContextMenuSubmenu,
-  SubmenuTrigger: ContextMenuSubmenuTrigger,
-});
-
-export { ContextMenu };
+export {
+  ContextMenuRoot as ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuPortal,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuSubmenu,
+  ContextMenuSubmenuTrigger,
+};

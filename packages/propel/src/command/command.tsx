@@ -31,11 +31,11 @@ function CommandItem({ ...props }: React.ComponentProps<typeof CommandPrimitive.
   return <CommandPrimitive.Item data-slot="command-item" {...props} />;
 }
 
-const Command = Object.assign(CommandComponent, {
-  Input: CommandInput,
-  List: CommandList,
-  Empty: CommandEmpty,
-  Item: CommandItem,
-});
+// Display names for debugging
+CommandComponent.displayName = "Command";
+CommandInput.displayName = "CommandInput";
+CommandList.displayName = "CommandList";
+CommandEmpty.displayName = "CommandEmpty";
+CommandItem.displayName = "CommandItem";
 
-export { Command };
+export { CommandComponent as Command, CommandInput, CommandList, CommandEmpty, CommandItem };

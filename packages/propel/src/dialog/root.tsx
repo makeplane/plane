@@ -34,6 +34,18 @@ export interface DialogTitleProps extends React.ComponentProps<typeof BaseDialog
   children: React.ReactNode;
 }
 
+export interface DialogPortalProps extends React.ComponentProps<typeof BaseDialog.Portal> {
+  children: React.ReactNode;
+}
+
+export interface DialogOverlayProps extends React.ComponentProps<typeof BaseDialog.Backdrop> {
+  className?: string;
+}
+
+export interface DialogTriggerProps extends React.ComponentProps<typeof BaseDialog.Trigger> {
+  children: React.ReactNode;
+}
+
 // Constants
 const OVERLAY_CLASSNAME = cn("fixed inset-0 z-backdrop bg-custom-backdrop");
 const BASE_CLASSNAME = "relative text-left bg-custom-background-100 rounded-lg shadow-md w-full z-modal";
@@ -122,14 +134,6 @@ const DialogTitle = memo(function DialogTitle({ className, children, ...props }:
 });
 
 DialogTitle.displayName = "DialogTitle";
+DialogComponent.displayName = "Dialog";
 
-// Create the compound Dialog component with proper typing
-const Dialog = Object.assign(DialogComponent, {
-  Panel: DialogPanel,
-  Title: DialogTitle,
-}) as typeof DialogComponent & {
-  Panel: typeof DialogPanel;
-  Title: typeof DialogTitle;
-};
-
-export { Dialog, DialogTitle, DialogPanel };
+export { DialogComponent as Dialog, DialogTitle, DialogPanel, DialogTrigger };

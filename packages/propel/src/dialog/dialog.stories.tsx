@@ -2,14 +2,14 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useArgs } from "storybook/preview-api";
 import { CloseIcon } from "../icons/actions/close-icon";
-import { Dialog, EDialogWidth } from "./root";
+import { Dialog, DialogPanel, DialogTitle, EDialogWidth } from "./root";
 
 const meta = {
   title: "Components/Dialog",
   component: Dialog,
   subcomponents: {
-    DialogPanel: Dialog.Panel,
-    DialogTitle: Dialog.Title,
+    DialogPanel,
+    DialogTitle,
   },
   args: {
     children: null,
@@ -31,9 +31,9 @@ const meta = {
         </button>
         {open && (
           <Dialog {...args} open={open} onOpenChange={setOpen}>
-            <Dialog.Panel>
+            <DialogPanel>
               <div className="p-6">
-                <Dialog.Title>Dialog Title</Dialog.Title>
+                <DialogTitle>Dialog Title</DialogTitle>
                 <div className="mt-4">
                   <p className="text-sm text-gray-600">This is the dialog content. You can put any content here.</p>
                 </div>
@@ -52,7 +52,7 @@ const meta = {
                   </button>
                 </div>
               </div>
-            </Dialog.Panel>
+            </DialogPanel>
           </Dialog>
         )}
       </>
@@ -79,9 +79,9 @@ export const TopPosition: Story = {
         </button>
         {open && (
           <Dialog {...args} open={open} onOpenChange={setOpen}>
-            <Dialog.Panel position="top">
+            <DialogPanel position="top">
               <div className="p-6">
-                <Dialog.Title>Top Positioned Dialog</Dialog.Title>
+                <DialogTitle>Top Positioned Dialog</DialogTitle>
                 <div className="mt-4">
                   <p className="text-sm text-gray-600">
                     This dialog appears at the top of the screen instead of centered.
@@ -96,7 +96,7 @@ export const TopPosition: Story = {
                   </button>
                 </div>
               </div>
-            </Dialog.Panel>
+            </DialogPanel>
           </Dialog>
         )}
       </>
@@ -114,9 +114,9 @@ export const SmallWidth: Story = {
         </button>
         {open && (
           <Dialog {...args} open={open} onOpenChange={setOpen}>
-            <Dialog.Panel width={EDialogWidth.SM}>
+            <DialogPanel width={EDialogWidth.SM}>
               <div className="p-6">
-                <Dialog.Title>Small Dialog</Dialog.Title>
+                <DialogTitle>Small Dialog</DialogTitle>
                 <div className="mt-4">
                   <p className="text-sm text-gray-600">This is a small dialog.</p>
                 </div>
@@ -129,7 +129,7 @@ export const SmallWidth: Story = {
                   </button>
                 </div>
               </div>
-            </Dialog.Panel>
+            </DialogPanel>
           </Dialog>
         )}
       </>
@@ -147,9 +147,9 @@ export const LargeWidth: Story = {
         </button>
         {open && (
           <Dialog {...args} open={open} onOpenChange={setOpen}>
-            <Dialog.Panel width={EDialogWidth.XXXXL}>
+            <DialogPanel width={EDialogWidth.XXXXL}>
               <div className="p-6">
-                <Dialog.Title>Large Dialog</Dialog.Title>
+                <DialogTitle>Large Dialog</DialogTitle>
                 <div className="mt-4">
                   <p className="text-sm text-gray-600">
                     This is a large dialog with more horizontal space for content.
@@ -164,7 +164,7 @@ export const LargeWidth: Story = {
                   </button>
                 </div>
               </div>
-            </Dialog.Panel>
+            </DialogPanel>
           </Dialog>
         )}
       </>
@@ -182,10 +182,10 @@ export const WithCloseButton: Story = {
         </button>
         {open && (
           <Dialog {...args} open={open} onOpenChange={setOpen}>
-            <Dialog.Panel>
+            <DialogPanel>
               <div className="p-6">
                 <div className="flex items-start justify-between">
-                  <Dialog.Title>Dialog with Close Button</Dialog.Title>
+                  <DialogTitle>Dialog with Close Button</DialogTitle>
                   <button onClick={() => setOpen(false)} className="rounded-full p-1 hover:bg-gray-100">
                     <CloseIcon className="h-4 w-4" />
                   </button>
@@ -194,7 +194,7 @@ export const WithCloseButton: Story = {
                   <p className="text-sm text-gray-600">This dialog has a close button in the header.</p>
                 </div>
               </div>
-            </Dialog.Panel>
+            </DialogPanel>
           </Dialog>
         )}
       </>
@@ -216,9 +216,9 @@ export const ConfirmationDialog: Story = {
         </button>
         {open && (
           <Dialog {...args} open={open} onOpenChange={setOpen}>
-            <Dialog.Panel width={EDialogWidth.SM}>
+            <DialogPanel width={EDialogWidth.SM}>
               <div className="p-6">
-                <Dialog.Title>Confirm Deletion</Dialog.Title>
+                <DialogTitle>Confirm Deletion</DialogTitle>
                 <div className="mt-4">
                   <p className="text-sm text-gray-600">
                     Are you sure you want to delete this item? This action cannot be undone.
@@ -239,7 +239,7 @@ export const ConfirmationDialog: Story = {
                   </button>
                 </div>
               </div>
-            </Dialog.Panel>
+            </DialogPanel>
           </Dialog>
         )}
       </>
@@ -262,9 +262,9 @@ export const FormDialog: Story = {
         </button>
         {open && (
           <Dialog {...args} open={open} onOpenChange={setOpen}>
-            <Dialog.Panel width={EDialogWidth.MD}>
+            <DialogPanel width={EDialogWidth.MD}>
               <form onSubmit={handleSubmit} className="p-6">
-                <Dialog.Title>Create New Item</Dialog.Title>
+                <DialogTitle>Create New Item</DialogTitle>
                 <div className="mt-4 space-y-4">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -302,7 +302,7 @@ export const FormDialog: Story = {
                   </button>
                 </div>
               </form>
-            </Dialog.Panel>
+            </DialogPanel>
           </Dialog>
         )}
       </>
@@ -320,9 +320,9 @@ export const ScrollableContent: Story = {
         </button>
         {open && (
           <Dialog {...args} open={open} onOpenChange={setOpen}>
-            <Dialog.Panel width={EDialogWidth.MD}>
+            <DialogPanel width={EDialogWidth.MD}>
               <div className="p-6">
-                <Dialog.Title>Scrollable Content</Dialog.Title>
+                <DialogTitle>Scrollable Content</DialogTitle>
                 <div className="mt-4 max-h-96 overflow-y-auto">
                   {Array.from({ length: 20 }, (_, i) => (
                     <p key={i} className="mb-2 text-sm text-gray-600">
@@ -340,7 +340,7 @@ export const ScrollableContent: Story = {
                   </button>
                 </div>
               </div>
-            </Dialog.Panel>
+            </DialogPanel>
           </Dialog>
         )}
       </>
@@ -375,9 +375,9 @@ export const AllWidths: Story = {
         ))}
         {widths.map(({ width, label }) => (
           <Dialog key={width} open={openWidth === width} onOpenChange={() => setOpenWidth(null)}>
-            <Dialog.Panel width={width}>
+            <DialogPanel width={width}>
               <div className="p-6">
-                <Dialog.Title>{label} Dialog</Dialog.Title>
+                <DialogTitle>{label} Dialog</DialogTitle>
                 <div className="mt-4">
                   <p className="text-sm text-gray-600">This dialog uses the {label} width variant.</p>
                 </div>
@@ -390,7 +390,7 @@ export const AllWidths: Story = {
                   </button>
                 </div>
               </div>
-            </Dialog.Panel>
+            </DialogPanel>
           </Dialog>
         ))}
       </div>

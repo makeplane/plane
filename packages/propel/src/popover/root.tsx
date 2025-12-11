@@ -45,6 +45,15 @@ const PopoverContent = memo(function PopoverContent({
 });
 
 // wrapper components
+const PopoverTrigger = React.memo(function PopoverTrigger(props: React.ComponentProps<typeof BasePopover.Trigger>) {
+  return <BasePopover.Trigger data-slot="popover-trigger" {...props} />;
+});
+
+const PopoverPortal = React.memo(function PopoverPortal(props: React.ComponentProps<typeof BasePopover.Portal>) {
+  return <BasePopover.Portal data-slot="popover-portal" {...props} />;
+});
+
+const PopoverPositioner = React.memo(function PopoverPositioner(props: React.ComponentProps<typeof BasePopover.Positioner>) {
 const PopoverTrigger = memo(function PopoverTrigger(props: React.ComponentProps<typeof BasePopover.Trigger>) {
   return <BasePopover.Trigger data-slot="popover-trigger" {...props} />;
 });
@@ -58,6 +67,9 @@ const PopoverPositioner = memo(function PopoverPositioner(props: React.Component
 });
 
 // compound components
+const PopoverRoot = React.memo<React.ComponentProps<typeof BasePopover.Root>>(function Popover(props) {
+  return <BasePopover.Root data-slot="popover" {...props} />;
+});
 const Popover = Object.assign(
   memo(function Popover(props: React.ComponentProps<typeof BasePopover.Root>) {
     return <BasePopover.Root data-slot="popover" {...props} />;
@@ -70,9 +82,9 @@ const Popover = Object.assign(
 
 // display names
 PopoverContent.displayName = "PopoverContent";
-Popover.displayName = "Popover";
+PopoverRoot.displayName = "Popover";
 PopoverPortal.displayName = "PopoverPortal";
 PopoverTrigger.displayName = "PopoverTrigger";
 PopoverPositioner.displayName = "PopoverPositioner";
 
-export { Popover };
+export { PopoverRoot as Popover, PopoverTrigger, PopoverContent };

@@ -1,4 +1,4 @@
-export { Toolbar } from "./toolbar";
+export { Toolbar, ToolbarGroup, ToolbarItem, ToolbarSeparator, ToolbarSubmitButton } from "./toolbar";
 export type {
   ToolbarProps,
   ToolbarGroupProps,
