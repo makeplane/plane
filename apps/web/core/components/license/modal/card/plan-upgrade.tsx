@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { TALK_TO_SALES_URL } from "@plane/constants";

@@ -17,7 +17,7 @@ from plane.utils.content_validator import (
 from .base import BaseSerializer
 
 
-class  ProjectCreateSerializer(BaseSerializer):
+class ProjectCreateSerializer(BaseSerializer):
     """
     Serializer for creating projects with workspace validation.
 

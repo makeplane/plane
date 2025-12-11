@@ -42,7 +42,7 @@ const createDragHandleElement = (): HTMLElement => {
   dragHandleElement.draggable = true;
   dragHandleElement.dataset.dragHandle = "";
   dragHandleElement.classList.value =
-    "hidden sm:flex items-center size-5 aspect-square rounded-xs cursor-grab outline-none hover:bg-layer-1 active:bg-layer-1 active:cursor-grabbing transition-[background-color,_opacity] duration-200 ease-linear";
+    "hidden sm:flex items-center size-5 aspect-square rounded-xs cursor-grab outline-none hover:bg-layer-1-hover active:bg-layer-1 active:cursor-grabbing transition-[background-color,_opacity] duration-200 ease-linear";
 
   const iconElement1 = document.createElement("span");
   iconElement1.classList.value = "pointer-events-none text-tertiary";

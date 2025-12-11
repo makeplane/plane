@@ -62,7 +62,7 @@ export function ComicBoxButton(props: Props) {
       {isHovered && (
         <Popover.Panel className="fixed z-10" static>
           <div
-            className="flex flex-col rounded-sm border border-subtle bg-surface-1 p-5 relative w-52 lg:w-60 xl:w-80"
+            className="flex flex-col rounded-sm border border-subtle bg-layer-1 hover:bg-layer-1-hover rounded-xl overflow-hidden p-5 relative w-52 lg:w-60 xl:w-80"
             ref={setPopperElement as Ref<HTMLDivElement>}
             style={styles.popper}
             {...attributes.popper}

@@ -119,7 +119,7 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
                   <div className="p-2 rounded-md border border-subtle bg-surface-1 space-y-1">
                     {data.snoozed_till && (
                       <button
-                        className="w-full text-left cursor-pointer px-2 p-1 transition-all hover:bg-layer-1 rounded-xs text-secondary text-13"
+                        className="w-full text-left cursor-pointer px-2 p-1 transition-all hover:bg-layer-1 rounded-xs text-secondary text-body-xs-medium"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -133,7 +133,7 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
                     {NOTIFICATION_SNOOZE_OPTIONS.map((option) => (
                       <button
                         key={option.key}
-                        className="w-full text-left cursor-pointer px-2 p-1 transition-all hover:bg-layer-1 rounded-xs text-secondary text-13"
+                        className="w-full text-left cursor-pointer px-2 p-1 transition-all hover:bg-layer-1 rounded-xs text-secondary text-body-xs-medium"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();

@@ -35,6 +35,7 @@
     "eslint-plugin-react-hooks": "7.0.1",
     "eslint-plugin-react-refresh": "0.4.24",
     "eslint-plugin-storybook": "10.1.4",
+    "eslint-plugin-turbo": "2.6.3",
     "globals": "16.5.0",
     "husky": "9.1.7",
     "lint-staged": "16.2.7",

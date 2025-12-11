@@ -36,7 +36,7 @@ const SettingsTabs = observer(function SettingsTabs() {
       : TABS.workspace;
 
   return (
-    <div className="flex w-fit min-w-fit items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-layer-1">
+    <div className="flex w-fit min-w-fit items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-layer-2">
       {Object.values(TABS).map((tab) => {
         const isActive = currentTab?.key === tab.key;
         const href = tab.key === TABS.projects.key ? `${tab.href}${joinedProjectIds[0] || ""}` : tab.href;
@@ -47,8 +47,8 @@ const SettingsTabs = observer(function SettingsTabs() {
             className={cn(
               "flex items-center justify-center p-1 min-w-fit w-full font-medium outline-none focus:outline-none cursor-pointer transition-all rounded-sm text-secondary ",
               {
-                "bg-surface-1 text-primary shadow-sm": isActive,
-                "hover:text-primary hover:bg-layer-1/60": !isActive,
+                "bg-layer-transparent-active text-primary shadow-sm": isActive,
+                "hover:text-primary hover:bg-layer-transparent-hover": !isActive,
               }
             )}
           >

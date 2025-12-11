@@ -102,7 +102,7 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
+              className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1-hover transition-colors"
               onClick={() => {
                 handleBackgroundColorChange(editor, null);
                 onSelect(null);

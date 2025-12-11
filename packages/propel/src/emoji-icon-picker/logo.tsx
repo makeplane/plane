@@ -28,7 +28,7 @@ export function Logo(props: Props) {
 
   const isMaterialSymbolsFontLoaded = useFontFaceObserver([
     {
-      family: `Material Symbols rounded-sm`,
+      family: `Material Symbols Rounded`,
       style: `normal`,
       weight: `normal`,
       stretch: `condensed`,

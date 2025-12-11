@@ -103,51 +103,6 @@ export const getSubscriptionBorderColor = (
   return subscriptionColors[planVariant]?.[shade] ?? subscriptionColors.default;
 };
 
-export const getUpgradeButtonStyle = (
-  planVariant: EProductSubscriptionEnum,
-  isDisabled: boolean
-): string | undefined => {
-  const baseClassNames = "border bg-surface-1";
-  const hoverClassNames = !isDisabled ? "hover:text-on-color hover:bg-gradient-to-br" : "";
-  const disabledClassNames = isDisabled ? "opacity-70 cursor-not-allowed" : "";
-
-  const COMMON_CLASSNAME = cn(baseClassNames, hoverClassNames, disabledClassNames);
-
-  switch (planVariant) {
-    case EProductSubscriptionEnum.ENTERPRISE:
-      return cn(
-        "text-custom-subscription-enterprise-200 from-custom-subscription-enterprise-200 to-custom-subscription-enterprise-400",
-        getSubscriptionBorderColor(planVariant, "200"),
-        COMMON_CLASSNAME
-      );
-    case EProductSubscriptionEnum.BUSINESS:
-      return cn(
-        "text-custom-subscription-business-200 from-custom-subscription-business-200 to-custom-subscription-business-400",
-        getSubscriptionBorderColor(planVariant, "200"),
-        COMMON_CLASSNAME
-      );
-    case EProductSubscriptionEnum.PRO:
-      return cn(
-        "text-custom-subscription-pro-200 from-custom-subscription-pro-200 to-custom-subscription-pro-400",
-        getSubscriptionBorderColor(planVariant, "200"),
-        COMMON_CLASSNAME
-      );
-    case EProductSubscriptionEnum.ONE:
-      return cn(
-        "text-custom-subscription-one-200 from-custom-subscription-one-200 to-custom-subscription-one-400",
-        getSubscriptionBorderColor(planVariant, "200"),
-        COMMON_CLASSNAME
-      );
-    case EProductSubscriptionEnum.FREE:
-    default:
-      return cn(
-        "text-custom-subscription-free-200 from-custom-subscription-free-200 to-custom-subscription-free-400",
-        getSubscriptionBorderColor(planVariant, "200"),
-        COMMON_CLASSNAME
-      );
-  }
-};
-
 export const getUpgradeCardVariantStyle = (planVariant: EProductSubscriptionEnum): string | undefined => {
   const COMMON_CLASSNAME = cn("bg-gradient-to-b from-0% to-40% border border-subtle-1 rounded-xl");
 
