@@ -26,7 +26,13 @@ const IconButton = React.forwardRef(function Button(
       disabled={disabled || loading}
       {...rest}
     >
-      <Icon />
+      <Icon
+        className={cn({
+          "size-3.5": size === "sm",
+          "size-4": size === "base" || size === "lg",
+          "size-5": size === "xl",
+        })}
+      />
     </button>
   );
 });
