@@ -58,7 +58,7 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
             <>Quote on request</>
           )}
         </div>
-        <div className="text-13 font-medium text-tertiary">per user per month</div>
+        <div className="text-caption-md-medium text-tertiary">per user per month</div>
       </div>
       {isLoading ? (
         <Loader className="flex flex-col items-center justify-center">
@@ -70,7 +70,7 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
             Talk to Sales
           </a>
           {isTrialAllowed && !isSelfHosted && (
-            <div className="mt-4 h-4 transition-all duration-300 animate-fade-in">
+            <div className="mt-4 h-4">
               {renderTrialButton &&
                 renderTrialButton({
                   productId: product?.id,

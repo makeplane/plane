@@ -53,7 +53,7 @@ export function EmptyStateDetailed({
                   {actions.map((action, index) => {
                     const { label, variant, ...rest } = action;
                     return (
-                      <Button key={index} variant={variant} {...rest}>
+                      <Button key={index} variant={variant} size="xl" {...rest}>
                         {label}
                       </Button>
                     );
