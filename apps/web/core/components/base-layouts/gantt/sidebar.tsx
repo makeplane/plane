@@ -102,9 +102,12 @@ export const BaseGanttSidebar = observer(function BaseGanttSidebar<T extends IBa
                         onMouseLeave={() => updateActiveBlockId(null)}
                       >
                         <Row
-                          className={cn("group w-full flex items-center gap-2 pr-4", {
-                            "bg-surface-2": isBlockHoveredOn,
-                          })}
+                          className={cn(
+                            "group w-full flex items-center gap-2 pr-4 bg-layer-transparent hover:bg-layer-transparent-hover",
+                            {
+                              "bg-layer-transparent-hover": isBlockHoveredOn,
+                            }
+                          )}
                           style={{
                             height: `${BLOCK_HEIGHT}px`,
                           }}
