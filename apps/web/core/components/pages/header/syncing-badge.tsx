@@ -6,7 +6,7 @@ type Props = {
   syncStatus: "syncing" | "synced" | "error";
 };
 
-export const PageSyncingBadge = ({ syncStatus }: Props) => {
+export function PageSyncingBadge({ syncStatus }: Props) {
   const [prevSyncStatus, setPrevSyncStatus] = useState<"syncing" | "synced" | "error" | null>(null);
   const [isVisible, setIsVisible] = useState(syncStatus !== "synced");
 
@@ -69,4 +69,4 @@ export const PageSyncingBadge = ({ syncStatus }: Props) => {
       </div>
     </Tooltip>
   );
-};
+}

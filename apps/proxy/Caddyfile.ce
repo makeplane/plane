@@ -18,6 +18,7 @@
 	reverse_proxy /static/* api:8000
 
 	reverse_proxy /{$BUCKET_NAME}/* plane-minio:9000
+	reverse_proxy /{$BUCKET_NAME} plane-minio:9000
 
 	reverse_proxy /* web:3000
 }
