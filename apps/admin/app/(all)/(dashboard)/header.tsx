@@ -12,7 +12,7 @@ export const HamburgerToggle = observer(function HamburgerToggle() {
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   return (
     <div
-      className="w-7 h-7 rounded-sm flex justify-center items-center bg-layer-1 transition-all hover:bg-surface-2 cursor-pointer group md:hidden"
+      className="w-7 h-7 rounded-sm flex justify-center items-center bg-layer-1 transition-all hover:bg-layer-1-hover cursor-pointer group md:hidden"
       onClick={() => toggleSidebar(!isSidebarCollapsed)}
     >
       <Menu size={14} className="text-secondary group-hover:text-primary transition-all" />

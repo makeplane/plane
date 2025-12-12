@@ -56,7 +56,11 @@ export const meta: Route.MetaFunction = () => [
 ];
 
 export default function Root() {
-  return <Outlet />;
+  return (
+    <div className="bg-canvas min-h-screen">
+      <Outlet />
+    </div>
+  );
 }
 
 export function HydrateFallback() {

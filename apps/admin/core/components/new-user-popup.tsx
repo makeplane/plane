@@ -27,10 +27,10 @@ export const NewUserPopup = observer(function NewUserPopup() {
             workspace.
           </div>
           <div className="flex items-center gap-4 pt-2">
-            <Link href="/workspace/create" className={getButtonStyling("primary", "base")}>
+            <Link href="/workspace/create" className={getButtonStyling("primary", "lg")}>
               Create workspace
             </Link>
-            <Button variant="secondary" onClick={toggleNewUserPopup}>
+            <Button variant="secondary" size="lg" onClick={toggleNewUserPopup}>
               Close
             </Button>
           </div>

@@ -114,8 +114,8 @@ export function InstanceAIForm(props: IInstanceAIForm) {
         </div>
       </div>
 
-      <div className="space-y-4">
-        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+      <div className="flex flex-col gap-2 items-start">
+        <Button variant="primary" size="lg" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
 

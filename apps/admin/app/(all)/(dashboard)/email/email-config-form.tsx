@@ -204,6 +204,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
       <div className="flex max-w-4xl items-center py-1 gap-4">
         <Button
           variant="primary"
+          size="lg"
           onClick={handleSubmit(onSubmit)}
           loading={isSubmitting}
           disabled={!isValid || !isDirty}
@@ -212,6 +213,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
         </Button>
         <Button
           variant="secondary"
+          size="lg"
           onClick={() => setIsSendTestEmailModalOpen(true)}
           loading={isSubmitting}
           disabled={!isValid}

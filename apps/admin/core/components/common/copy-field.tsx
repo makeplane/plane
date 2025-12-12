@@ -25,6 +25,7 @@ export function CopyField(props: Props) {
       <h4 className="text-13 text-secondary">{label}</h4>
       <Button
         variant="secondary"
+        size="lg"
         className="flex items-center justify-between py-2"
         onClick={() => {
           navigator.clipboard.writeText(url);

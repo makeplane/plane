@@ -126,7 +126,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Link href="/workspace/create" className={getButtonStyling("primary", "base")}>
+                  <Link href="/workspace/create" className={getButtonStyling("primary", "lg")}>
                     Create workspace
                   </Link>
                 </div>
@@ -140,6 +140,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                 <div className="flex justify-center">
                   <Button
                     variant="link"
+                    size="lg"
                     onClick={() => fetchNextWorkspaces()}
                     disabled={workspaceLoader === "pagination"}
                   >
