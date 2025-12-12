@@ -80,8 +80,8 @@ function CustomSelect(props: ICustomSelectProps) {
               <button
                 ref={setReferenceElement}
                 type="button"
-                className={`flex items-center justify-between gap-1 text-xs rounded ${
-                  disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
+                className={`flex items-center justify-between gap-1 text-11 rounded ${
+                  disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover"
                 } ${customButtonClassName}`}
                 onClick={toggleDropdown}
               >
@@ -94,12 +94,12 @@ function CustomSelect(props: ICustomSelectProps) {
                 ref={setReferenceElement}
                 type="button"
                 className={cn(
-                  "flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300",
+                  "flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-strong",
                   {
-                    "px-3 py-2 text-sm": input,
-                    "px-2 py-1 text-xs": !input,
-                    "cursor-not-allowed text-custom-text-200": disabled,
-                    "cursor-pointer hover:bg-custom-background-80": !disabled,
+                    "px-3 py-2 text-13": input,
+                    "px-2 py-1 text-11": !input,
+                    "cursor-not-allowed text-secondary": disabled,
+                    "cursor-pointer hover:bg-layer-transparent-hover": !disabled,
                   },
                   buttonClassName
                 )}
@@ -116,7 +116,7 @@ function CustomSelect(props: ICustomSelectProps) {
             <Combobox.Options data-prevent-outside-click>
               <div
                 className={cn(
-                  "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
+                  "my-1 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 focus:outline-none min-w-48 whitespace-nowrap z-30",
                   optionsClassName
                 )}
                 ref={setPopperElement}
@@ -160,9 +160,9 @@ function Option(props: ICustomSelectItemProps) {
       value={value}
       className={({ active }) =>
         cn(
-          "cursor-pointer select-none truncate rounded px-1 py-1.5 text-custom-text-200 flex items-center justify-between gap-2",
+          "cursor-pointer select-none truncate rounded-sm px-1 py-1.5 text-secondary flex items-center justify-between gap-2",
           {
-            "bg-custom-background-80": active,
+            "bg-layer-transparent-hover": active,
           },
           className
         )

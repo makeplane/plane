@@ -32,23 +32,23 @@ export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: 
   const stateName = stateDetails?.name ?? fallbackStateDetails?.name;
 
   return (
-    <div className="p-3 space-y-2 w-72 rounded-lg shadow-custom-shadow-rg bg-custom-background-100 border-[0.5px] border-custom-border-300">
-      <div className="flex items-center justify-between gap-3 text-custom-text-200">
+    <div className="p-3 space-y-2 w-72 rounded-lg shadow-custom-shadow-rg bg-surface-1 border-[0.5px] border-strong">
+      <div className="flex items-center justify-between gap-3 text-secondary">
         <IssueIdentifier
-          textContainerClassName="shrink-0 text-xs text-custom-text-200"
+          size="xs"
+          variant="secondary"
           projectId={projectId}
           projectIdentifier={projectIdentifier}
           issueSequenceId={workItem.sequence_id}
           issueTypeId={workItem.type_id}
-          size="xs"
         />
         <div className="shrink-0 flex items-center gap-1">
           <StateGroupIcon stateGroup={stateGroup} className="shrink-0 size-3" />
-          <p className="text-xs font-medium">{stateName}</p>
+          <p className="text-11 font-medium">{stateName}</p>
         </div>
       </div>
       <div>
-        <h6 className="text-sm">{workItem.name}</h6>
+        <h6 className="text-13">{workItem.name}</h6>
       </div>
       <div className="flex items-center gap-1 h-5">
         <PriorityIcon priority={workItem.priority} withContainer />

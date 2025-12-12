@@ -51,9 +51,9 @@ export const Basic: Story = {
           </Tabs.List>
           {tabOptions.map((option) => (
             <Tabs.Content key={option.value} value={option.value} className="p-4">
-              <div className="text-sm">
+              <div className="text-13">
                 <h3 className="font-medium mb-2">{option.label}</h3>
-                <p className="text-custom-text-300">Content for the {option.label.toLowerCase()} tab.</p>
+                <p className="text-tertiary">Content for the {option.label.toLowerCase()} tab.</p>
               </div>
             </Tabs.Content>
           ))}
@@ -75,7 +75,7 @@ export const Sizes: Story = {
       <div className="w-[400px] grid gap-4">
         {sizes.map((size) => (
           <div key={size} className="flex flex-col gap-2">
-            <div className="text-sm font-medium">{sizeLabels[size]}</div>
+            <div className="text-13 font-medium">{sizeLabels[size]}</div>
             <Tabs defaultValue={defaultValue}>
               <Tabs.List>
                 {tabOptions.map((option) => (
@@ -99,7 +99,7 @@ export const Controlled: Story = {
 
     return (
       <div className="w-[400px]">
-        <div className="mb-4 text-sm">
+        <div className="mb-4 text-13">
           Active tab: <span className="font-medium">{activeTab}</span>
         </div>
         <Tabs value={activeTab} onValueChange={(value) => value && setActiveTab(value)}>
@@ -113,7 +113,7 @@ export const Controlled: Story = {
           </Tabs.List>
           {tabOptions.map((option) => (
             <Tabs.Content key={option.value} value={option.value} className="p-4">
-              <div className="text-sm">Content for {option.label}</div>
+              <div className="text-13">Content for {option.label}</div>
             </Tabs.Content>
           ))}
         </Tabs>
@@ -136,13 +136,13 @@ export const DisabledTab: Story = {
             <Tabs.Indicator />
           </Tabs.List>
           <Tabs.Content value="account" className="p-4">
-            <div className="text-sm">Account content</div>
+            <div className="text-13">Account content</div>
           </Tabs.Content>
           <Tabs.Content value="password" className="p-4">
-            <div className="text-sm">Password content (disabled)</div>
+            <div className="text-13">Password content (disabled)</div>
           </Tabs.Content>
           <Tabs.Content value="notifications" className="p-4">
-            <div className="text-sm">Notifications content</div>
+            <div className="text-13">Notifications content</div>
           </Tabs.Content>
         </Tabs>
       </div>
@@ -173,7 +173,7 @@ export const WithIcons: Story = {
           </Tabs.List>
           {tabsWithIcons.map((tab) => (
             <Tabs.Content key={tab.value} value={tab.value} className="p-4">
-              <div className="text-sm">Content for {tab.label}</div>
+              <div className="text-13">Content for {tab.label}</div>
             </Tabs.Content>
           ))}
         </Tabs>
@@ -204,7 +204,7 @@ export const IconsOnly: Story = {
           </Tabs.List>
           {iconTabs.map((tab) => (
             <Tabs.Content key={tab.value} value={tab.value} className="p-4">
-              <div className="text-sm">Content for {tab.value}</div>
+              <div className="text-13">Content for {tab.value}</div>
             </Tabs.Content>
           ))}
         </Tabs>
@@ -237,10 +237,7 @@ export const DynamicTabs: Story = {
     return (
       <div className="w-[500px]">
         <div className="mb-4">
-          <button
-            onClick={addTab}
-            className="px-3 py-1.5 text-sm bg-custom-background-80 rounded hover:bg-custom-background-90"
-          >
+          <button onClick={addTab} className="px-3 py-1.5 text-13 bg-layer-1 rounded-sm hover:bg-surface-2">
             Add Tab
           </button>
         </div>
@@ -266,7 +263,7 @@ export const DynamicTabs: Story = {
           </Tabs.List>
           {tabs.map((tab) => (
             <Tabs.Content key={tab.value} value={tab.value} className="p-4">
-              <div className="text-sm">Content for {tab.label}</div>
+              <div className="text-13">Content for {tab.label}</div>
             </Tabs.Content>
           ))}
         </Tabs>
@@ -294,7 +291,7 @@ export const FullWidth: Story = {
           </Tabs.List>
           {tabOptions.map((option) => (
             <Tabs.Content key={option.value} value={option.value} className="p-4">
-              <div className="text-sm">Content for {option.label}</div>
+              <div className="text-13">Content for {option.label}</div>
             </Tabs.Content>
           ))}
         </Tabs>
@@ -319,35 +316,35 @@ export const WithComplexContent: Story = {
           <Tabs.Content value="account" className="p-4">
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium">Username</label>
-                <input type="text" className="mt-1 w-full px-3 py-2 bg-custom-background-80 rounded" />
+                <label className="text-13 font-medium">Username</label>
+                <input type="text" className="mt-1 w-full px-3 py-2 bg-layer-1 rounded-sm" />
               </div>
               <div>
-                <label className="text-sm font-medium">Email</label>
-                <input type="email" className="mt-1 w-full px-3 py-2 bg-custom-background-80 rounded" />
+                <label className="text-13 font-medium">Email</label>
+                <input type="email" className="mt-1 w-full px-3 py-2 bg-layer-1 rounded-sm" />
               </div>
             </div>
           </Tabs.Content>
           <Tabs.Content value="password" className="p-4">
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium">Current Password</label>
-                <input type="password" className="mt-1 w-full px-3 py-2 bg-custom-background-80 rounded" />
+                <label className="text-13 font-medium">Current Password</label>
+                <input type="password" className="mt-1 w-full px-3 py-2 bg-layer-1 rounded-sm" />
               </div>
               <div>
-                <label className="text-sm font-medium">New Password</label>
-                <input type="password" className="mt-1 w-full px-3 py-2 bg-custom-background-80 rounded" />
+                <label className="text-13 font-medium">New Password</label>
+                <input type="password" className="mt-1 w-full px-3 py-2 bg-layer-1 rounded-sm" />
               </div>
             </div>
           </Tabs.Content>
           <Tabs.Content value="notifications" className="p-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm">Email notifications</span>
+                <span className="text-13">Email notifications</span>
                 <input type="checkbox" />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm">Push notifications</span>
+                <span className="text-13">Push notifications</span>
                 <input type="checkbox" />
               </div>
             </div>

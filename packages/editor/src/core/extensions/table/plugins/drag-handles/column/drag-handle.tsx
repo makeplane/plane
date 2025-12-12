@@ -187,15 +187,12 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
           {...getReferenceProps()}
           type="button"
           onMouseDown={handleMouseDown}
-          className={cn(
-            "px-1 bg-custom-background-90 border border-custom-border-400 rounded outline-none transition-all duration-200",
-            {
-              "!opacity-100 bg-custom-primary-100 border-custom-primary-100": isDropdownOpen,
-              "hover:bg-custom-background-80": !isDropdownOpen,
-            }
-          )}
+          className={cn("px-1 bg-layer-1 border border-strong-1 rounded-sm outline-none transition-all duration-200", {
+            "!opacity-100 bg-accent-primary border-accent-strong": isDropdownOpen,
+            "hover:bg-layer-1-hover": !isDropdownOpen,
+          })}
         >
-          <Ellipsis className="size-4 text-custom-text-100" />
+          <Ellipsis className="size-4 text-primary" />
         </button>
       </div>
       {isDropdownOpen && (
@@ -208,7 +205,7 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
             lockScroll
           />
           <div
-            className="max-h-[90vh] w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg"
+            className="max-h-[90vh] w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-custom-shadow-rg"
             ref={refs.setFloating}
             {...getFloatingProps()}
             style={{

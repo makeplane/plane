@@ -32,8 +32,8 @@ export const LeftResizable = observer(function LeftResizable(props: LeftResizabl
   return (
     <>
       {(isHovering || isLeftResizing) && dateString && (
-        <div className="absolute flex text-xs font-normal text-custom-text-300 h-full w-32 -left-36 justify-end items-center">
-          <div className="px-2 py-1 bg-custom-primary-20 rounded">{dateString}</div>
+        <div className="absolute flex text-11 font-regular text-tertiary h-full w-32 -left-36 justify-end items-center">
+          <div className="px-2 py-1 bg-custom-primary-20 rounded-sm">{dateString}</div>
         </div>
       )}
       <div
@@ -50,7 +50,7 @@ export const LeftResizable = observer(function LeftResizable(props: LeftResizabl
       />
       <div
         className={cn(
-          "absolute left-1 top-1/2 -translate-y-1/2 h-7 w-1 z-[5] rounded-sm bg-custom-background-100 transition-all duration-300 opacity-0 group-hover:opacity-100",
+          "absolute left-1 top-1/2 -translate-y-1/2 h-7 w-1 z-[5] rounded-xs bg-surface-1 transition-all duration-300 opacity-0 group-hover:opacity-100",
           {
             "-left-1.5 opacity-100": isLeftResizing,
           }

@@ -15,7 +15,7 @@ interface IWebHookToggle {
 export function WebhookToggle({ control }: IWebHookToggle) {
   return (
     <div className="flex gap-6">
-      <div className="text-sm font-medium">Enable webhook</div>
+      <div className="text-13 font-medium">Enable webhook</div>
       <Controller
         control={control}
         name="is_active"

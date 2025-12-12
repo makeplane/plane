@@ -46,7 +46,7 @@ export const IssuesListLayoutRoot = observer(function IssuesListLayoutRoot(props
 
   return (
     <IssueLayoutHOC getGroupIssueCount={getGroupIssueCount} getIssueLoader={getIssueLoader}>
-      <div className={`relative size-full bg-custom-background-90`}>
+      <div className="relative size-full">
         <List
           displayProperties={displayProperties}
           groupBy={"state"}

@@ -71,7 +71,7 @@ export const WidgetItem = observer(function WidgetItem(props: Props) {
             getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
             render: ({ container }) => {
               const root = createRoot(container);
-              root.render(<div className="rounded bg-custom-background-100 text-sm p-1 pr-2">{widget.key}</div>);
+              root.render(<div className="rounded-sm bg-surface-1 text-13 p-1 pr-2">{widget.key}</div>);
               return () => root.unmount();
             },
             nativeSetDragImage,
@@ -121,9 +121,9 @@ export const WidgetItem = observer(function WidgetItem(props: Props) {
       <div
         ref={elementRef}
         className={cn(
-          "px-2 relative flex items-center py-2 font-medium text-sm group/widget-item rounded hover:bg-custom-background-80 justify-between",
+          "px-2 relative flex items-center py-2 font-medium text-13 group/widget-item rounded-sm hover:bg-layer-1 justify-between",
           {
-            "cursor-grabbing bg-custom-background-80": isDragging,
+            "cursor-grabbing bg-layer-1": isDragging,
           }
         )}
       >

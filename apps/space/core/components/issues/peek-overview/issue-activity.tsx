@@ -52,9 +52,9 @@ export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActi
               )}
             </>
           ) : (
-            <div className="mt-4 flex items-center justify-between gap-2 rounded border border-custom-border-300 bg-custom-background-80 px-2 py-2.5">
-              <p className="flex gap-2 overflow-hidden break-words text-sm text-custom-text-200">
-                <Icon iconName="lock" className="!text-sm" />
+            <div className="mt-4 flex items-center justify-between gap-2 rounded-sm border border-strong bg-layer-2 px-2 py-2.5">
+              <p className="flex gap-2 overflow-hidden break-words text-13 text-secondary">
+                <Icon iconName="lock" />
                 Sign in to add your comment
               </p>
               <Link href={`/?next_path=${pathname}`}>

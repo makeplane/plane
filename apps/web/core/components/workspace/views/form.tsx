@@ -71,9 +71,7 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">
-          {data ? t("view.update.label") : t("view.create.label")}
-        </h3>
+        <h3 className="text-18 font-medium text-secondary">{data ? t("view.update.label") : t("view.create.label")}</h3>
         <div className="space-y-3">
           <div className="space-y-1">
             <Controller
@@ -96,11 +94,11 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
                   ref={ref}
                   hasError={Boolean(errors.name)}
                   placeholder={t("common.title")}
-                  className="w-full text-base"
+                  className="w-full text-14"
                 />
               )}
             />
-            <span className="text-xs text-red-500">{errors?.name?.message}</span>
+            <span className="text-11 text-red-500">{errors?.name?.message}</span>
           </div>
           <div>
             <Controller
@@ -113,7 +111,7 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
                   value={value}
                   placeholder={t("common.description")}
                   onChange={onChange}
-                  className="w-full text-base resize-none min-h-24"
+                  className="w-full text-14 resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
                 />
               )}
@@ -181,11 +179,11 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+        <Button variant="secondary" onClick={handleClose}>
           {t("common.cancel")}
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+        <Button variant="primary" type="submit" loading={isSubmitting}>
           {data
             ? isSubmitting
               ? t("common.updating")

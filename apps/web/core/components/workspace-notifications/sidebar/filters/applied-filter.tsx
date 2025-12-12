@@ -46,8 +46,8 @@ export const AppliedFilters = observer(function AppliedFilters(props: TAppliedFi
               className="flex flex-wrap flex-start"
               onClick={() => handleFilterTypeChange(filter?.value, !isSelected)}
             >
-              <div className="whitespace-nowrap text-custom-text-200">{t(filter.i18n_label)}</div>
-              <div className="w-4 h-4 flex justify-center items-center transition-all rounded-sm text-custom-text-200 hover:text-custom-text-100">
+              <div className="whitespace-nowrap text-secondary">{t(filter.i18n_label)}</div>
+              <div className="w-4 h-4 flex justify-center items-center transition-all rounded-xs text-secondary hover:text-primary">
                 <CloseIcon className="h-3 w-3" />
               </div>
             </Tag>

@@ -22,7 +22,7 @@ export function NotificationItemOptionButton(props: TNotificationItemOptionButto
       <button
         type="button"
         className={cn(
-          "relative flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center outline-none bg-custom-background-80 hover:bg-custom-background-90",
+          "relative flex-shrink-0 w-5 h-5 rounded-xs flex justify-center items-center outline-none bg-layer-1 hover:bg-surface-2",
           buttonClassName
         )}
         onClick={(e) => {

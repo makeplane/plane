@@ -1,11 +1,11 @@
-import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
 import { Settings2 } from "lucide-react";
 // plane internal packages
+import { getButtonStyling } from "@plane/propel/button";
 import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
-import { ToggleSwitch, getButtonStyling } from "@plane/ui";
+import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store";
@@ -28,7 +28,7 @@ export const GiteaConfiguration = observer(function GiteaConfiguration(props: Pr
     <>
       {GiteaConfigured ? (
         <div className="flex items-center gap-4">
-          <Link href="/authentication/gitea" className={cn(getButtonStyling("link-primary", "md"), "font-medium")}>
+          <Link href="/authentication/gitea" className={cn(getButtonStyling("link", "base"), "font-medium")}>
             Edit
           </Link>
           <ToggleSwitch
@@ -43,11 +43,8 @@ export const GiteaConfiguration = observer(function GiteaConfiguration(props: Pr
           />
         </div>
       ) : (
-        <Link
-          href="/authentication/gitea"
-          className={cn(getButtonStyling("neutral-primary", "sm"), "text-custom-text-300")}
-        >
-          <Settings2 className="h-4 w-4 p-0.5 text-custom-text-300/80" />
+        <Link href="/authentication/gitea" className={cn(getButtonStyling("secondary", "base"), "text-tertiary")}>
+          <Settings2 className="h-4 w-4 p-0.5 text-tertiary/80" />
           Configure
         </Link>
       )}

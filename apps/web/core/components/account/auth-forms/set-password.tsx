@@ -122,10 +122,10 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
       <AuthFormHeader title="Set password" description="Create a new password." />
       <form className="space-y-4" onSubmit={(e) => handleSubmit(e)}>
         <div className="space-y-1">
-          <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
+          <label className="text-13 text-tertiary font-medium" htmlFor="email">
             {t("auth.common.email.label")}
           </label>
-          <div className="relative flex items-center rounded-md bg-custom-background-100">
+          <div className="relative flex items-center rounded-md bg-surface-1">
             <Input
               id="email"
               name="email"
@@ -133,17 +133,17 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
               value={user?.email}
               //hasError={Boolean(errors.email)}
               placeholder={t("auth.common.email.placeholder")}
-              className="h-10 w-full border border-custom-border-300 !bg-custom-background-100 pr-12 text-custom-text-400 cursor-not-allowed"
+              className="h-10 w-full border border-strong !bg-surface-1 pr-12 text-placeholder cursor-not-allowed"
               autoComplete="on"
               disabled
             />
           </div>
         </div>
         <div className="space-y-1">
-          <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
+          <label className="text-13 text-tertiary font-medium" htmlFor="password">
             {t("auth.common.password.label")}
           </label>
-          <div className="relative flex items-center rounded-md bg-custom-background-100">
+          <div className="relative flex items-center rounded-md bg-surface-1">
             <Input
               type={showPassword.password ? "text" : "password"}
               name="password"
@@ -151,7 +151,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
               onChange={(e) => handleFormChange("password", e.target.value)}
               //hasError={Boolean(errors.password)}
               placeholder={t("auth.common.password.placeholder")}
-              className="h-10 w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+              className="h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               minLength={8}
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
@@ -173,17 +173,17 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
           <PasswordStrengthIndicator password={passwordFormData.password} isFocused={isPasswordInputFocused} />
         </div>
         <div className="space-y-1">
-          <label className="text-sm text-custom-text-300 font-medium" htmlFor="confirm_password">
+          <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
             {t("auth.common.password.confirm_password.label")}
           </label>
-          <div className="relative flex items-center rounded-md bg-custom-background-100">
+          <div className="relative flex items-center rounded-md bg-surface-1">
             <Input
               type={showPassword.retypePassword ? "text" : "password"}
               name="confirm_password"
               value={passwordFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder={t("auth.common.password.confirm_password.placeholder")}
-              className="h-10 w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+              className="h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
             />
@@ -202,10 +202,10 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
           {!!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
             renderPasswordMatchError && (
-              <span className="text-sm text-red-500">{t("auth.common.password.errors.match")}</span>
+              <span className="text-13 text-red-500">{t("auth.common.password.errors.match")}</span>
             )}
         </div>
-        <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
           {t("common.continue")}
         </Button>
       </form>

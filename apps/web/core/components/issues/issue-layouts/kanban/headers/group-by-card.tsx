@@ -108,11 +108,11 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         />
       )}
       <div
-        className={`relative flex flex-shrink-0 gap-2 py-1.5 ${
+        className={`relative flex flex-shrink-0 gap-1 py-1.5 ${
           verticalAlignPosition ? `w-[44px] flex-col items-center` : `w-full flex-row items-center`
         }`}
       >
-        <div className="flex h-[25px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
+        <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center overflow-hidden rounded-xs">
           {icon ? icon : <Circle width={14} strokeWidth={2} />}
         </div>
 
@@ -122,14 +122,14 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           }`}
         >
           <div
-            className={`line-clamp-1 inline-block overflow-hidden truncate font-medium text-custom-text-100 ${
+            className={`line-clamp-1 inline-block overflow-hidden truncate font-medium text-primary ${
               verticalAlignPosition ? `vertical-lr max-h-[400px]` : ``
             }`}
           >
             {title}
           </div>
           <div
-            className={`flex-shrink-0 text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `pr-0.5` : `pl-2`}`}
+            className={`flex-shrink-0 text-13 font-medium text-tertiary ${verticalAlignPosition ? `pr-0.5` : `pl-2`}`}
           >
             {count || 0}
           </div>
@@ -138,8 +138,8 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         <WorkFlowGroupTree groupBy={group_by} groupId={column_id} />
 
         {sub_group_by === null && (
-          <div
-            className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
+          <button
+            className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-layer-transparent-hover bg-layer-transparent"
             onClick={() => handleCollapsedGroups("group_by", column_id)}
           >
             {verticalAlignPosition ? (
@@ -147,14 +147,14 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             ) : (
               <Minimize2 width={14} strokeWidth={2} />
             )}
-          </div>
+          </button>
         )}
 
         {!disableIssueCreation &&
           (renderExistingIssueModal ? (
             <CustomMenu
               customButton={
-                <span className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
+                <span className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden transition-all hover:bg-layer-transparent-hover bg-layer-transparent rounded-sm">
                   <Plus height={14} width={14} strokeWidth={2} />
                 </span>
               }
@@ -178,15 +178,15 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               </CustomMenu.MenuItem>
             </CustomMenu>
           ) : (
-            <div
-              className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
+            <button
+              className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer  overflow-hidden transition-all hover:bg-layer-transparent-hover bg-layer-transparent rounded-sm items-center justify-center"
               onClick={() => {
                 captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.create });
                 setIsOpen(true);
               }}
             >
               <Plus width={14} strokeWidth={2} />
-            </div>
+            </button>
           ))}
       </div>
     </>

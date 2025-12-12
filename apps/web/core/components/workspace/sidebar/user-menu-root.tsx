@@ -76,26 +76,26 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
       closeOnSelect
     >
       <div className="flex flex-col gap-2">
-        <span className="px-2 text-custom-sidebar-text-200 truncate">{currentUser?.email}</span>
+        <span className="px-2 text-secondary truncate">{currentUser?.email}</span>
         <CustomMenu.MenuItem onClick={() => router.push(`/${workspaceSlug}/settings/account`)}>
-          <div className="flex w-full items-center gap-2 rounded text-xs">
+          <div className="flex w-full items-center gap-2 rounded-sm text-11">
             <Settings className="h-4 w-4 stroke-[1.5]" />
             <span>{t("settings")}</span>
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem onClick={() => router.push(`/${workspaceSlug}/settings/account/preferences`)}>
-          <div className="flex w-full items-center gap-2 rounded text-xs">
+          <div className="flex w-full items-center gap-2 rounded-sm text-11">
             <Settings2 className="h-4 w-4 stroke-[1.5]" />
             <span>Preferences</span>
           </div>
         </CustomMenu.MenuItem>
       </div>
-      <div className="my-1 border-t border-custom-border-200" />
+      <div className="my-1 border-t border-subtle" />
       <div className={`${isUserInstanceAdmin ? "pb-2" : ""}`}>
         <CustomMenu.MenuItem>
           <button
             type="button"
-            className="flex w-full items-center gap-2 rounded text-xs hover:bg-custom-background-80"
+            className="flex w-full items-center gap-2 rounded-sm text-11 hover:bg-layer-1"
             onClick={handleSignOut}
           >
             <LogOut className="size-4 stroke-[1.5]" />
@@ -105,10 +105,10 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
       </div>
       {isUserInstanceAdmin && (
         <>
-          <div className="my-1 border-t border-custom-border-200" />
+          <div className="my-1 border-t border-subtle" />
           <div className="px-1">
             <CustomMenu.MenuItem onClick={() => router.push(GOD_MODE_URL)}>
-              <div className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-xs font-medium text-custom-primary-100 hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
+              <div className="flex w-full items-center justify-center rounded-sm bg-accent-primary/20 px-2 py-1 text-11 font-medium text-accent-primary hover:bg-accent-primary/30 hover:text-accent-secondary">
                 {t("enter_god_mode")}
               </div>
             </CustomMenu.MenuItem>

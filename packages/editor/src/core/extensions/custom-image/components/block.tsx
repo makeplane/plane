@@ -234,10 +234,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
         }}
       >
         {showImageLoader && (
-          <div
-            className="animate-pulse bg-custom-background-80 rounded-md"
-            style={{ width: size.width, height: size.height }}
-          />
+          <div className="animate-pulse bg-layer-2 rounded-md" style={{ width: size.width, height: size.height }} />
         )}
         <img
           ref={imageRef}
@@ -307,13 +304,13 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
           />
         )}
         {selected && displayedImageSrc === resolvedImageSrc && (
-          <div className="absolute inset-0 size-full bg-custom-primary-500/30 pointer-events-none" />
+          <div className="absolute inset-0 size-full bg-accent-primary/30 pointer-events-none" />
         )}
         {showImageResizer && (
           <>
             <div
               className={cn(
-                "absolute inset-0 border-2 border-custom-primary-100 pointer-events-none rounded-md transition-opacity duration-100 ease-in-out",
+                "absolute inset-0 border-2 border-accent-strong pointer-events-none rounded-md transition-opacity duration-100 ease-in-out",
                 {
                   "opacity-100": isResizing,
                   "opacity-0 group-hover/image-component:opacity-100": !isResizing,
@@ -322,7 +319,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
             />
             <div
               className={cn(
-                "absolute bottom-0 translate-y-1/2 size-4 rounded-full bg-custom-primary-100 border-2 border-white transition-opacity duration-100 ease-in-out",
+                "absolute bottom-0 translate-y-1/2 size-4 rounded-full bg-accent-primary border-2 border-white transition-opacity duration-100 ease-in-out",
                 {
                   "opacity-100 pointer-events-auto": isResizing,
                   "opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto":

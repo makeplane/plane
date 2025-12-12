@@ -31,7 +31,7 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
                 <BreadcrumbLink
                   label="Views"
                   href={`/${workspaceSlug}/projects/${projectId}/views/`}
-                  icon={<ViewsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -45,7 +45,7 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
             <Button
               data-ph-element={PROJECT_VIEW_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
               variant="primary"
-              size="sm"
+              size="lg"
               onClick={() => toggleCreateViewModal(true)}
             >
               Add view

@@ -41,7 +41,7 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
       <div className="flex items-center gap-1 px-1">
         {/* draggable indicator */}
         {!disabled && stateCount != 1 && (
-          <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute -left-1.5 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
+          <div className="flex-shrink-0 w-3 h-3 rounded-xs absolute -left-1.5 hidden group-hover:flex justify-center items-center transition-colors bg-surface-2 cursor-pointer text-secondary hover:text-primary">
             <GripVertical className="w-3 h-3" />
           </div>
         )}
@@ -50,15 +50,15 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
           <StateGroupIcon stateGroup={state.group} color={state.color} size={EIconSize.XL} percentage={percentage} />
         </div>
         {/* state title and description */}
-        <div className="text-sm px-2 min-h-5">
-          <h6 className="text-sm font-medium">{state.name}</h6>
-          {shouldShowDescription && <p className="text-xs text-custom-text-200">{state.description}</p>}
+        <div className="text-13 px-2 min-h-5">
+          <h6 className="text-13 font-medium">{state.name}</h6>
+          {shouldShowDescription && <p className="text-11 text-secondary">{state.description}</p>}
         </div>
       </div>
       {!disabled && (
         <div className="hidden group-hover:flex items-center gap-2">
           {/* state mark as default option */}
-          <div className="flex-shrink-0 text-xs transition-all">
+          <div className="flex-shrink-0 text-11 transition-all">
             <StateMarksAsDefault
               stateId={state.id}
               isDefault={state.default ? true : false}
@@ -68,7 +68,7 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
           {/* state edit options */}
           <div className="flex items-center gap-1 transition-all">
             <button
-              className="flex-shrink-0 w-5 h-5 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-text-200 hover:text-custom-text-100"
+              className="flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-secondary hover:text-primary"
               onClick={() => setUpdateStateModal(true)}
               data-ph-element={STATE_TRACKER_ELEMENTS.STATE_LIST_EDIT_BUTTON}
             >

@@ -69,7 +69,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
                 <BreadcrumbLink
                   label="Pages"
                   href={`/${workspaceSlug}/projects/${projectId}/pages/`}
-                  icon={<PageIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<PageIcon className="h-4 w-4 text-tertiary" />}
                 />
               }
             />

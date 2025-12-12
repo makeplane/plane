@@ -37,14 +37,14 @@ export function Logo(props: Props) {
   // if no value, return empty fragment
   if (!value) return <></>;
 
-  if (!isMaterialSymbolsFontLoaded) {
+  if (!isMaterialSymbolsFontLoaded && type === "material") {
     return (
       <span
         style={{
           height: size,
           width: size,
         }}
-        className="rounded animate-pulse bg-custom-background-80"
+        className="rounded-sm animate-pulse bg-layer-1"
       />
     );
   }

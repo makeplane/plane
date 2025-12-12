@@ -28,9 +28,9 @@ export const Stickies = observer(function Stickies(props: TProps) {
       {/* header */}
       <div className="flex items-center justify-between mb-6">
         {/* Title */}
-        <div className="text-custom-text-200 flex items-center gap-2">
+        <div className="text-secondary flex items-center gap-2">
           <RecentStickyIcon className="size-5 rotate-90 flex-shrink-0" />
-          <p className="text-xl font-medium">Your stickies</p>
+          <p className="text-18 font-medium">Your stickies</p>
         </div>
         {/* actions */}
         <div className="flex gap-2">
@@ -40,14 +40,14 @@ export const Stickies = observer(function Stickies(props: TProps) {
               toggleShowNewSticky(true);
               stickyOperations.create();
             }}
-            className="flex gap-1 text-sm font-medium text-custom-primary-100 my-auto"
+            className="flex gap-1 text-13 font-medium text-accent-primary my-auto"
             disabled={creatingSticky}
           >
             <Plus className="size-4 my-auto" /> <span>Add sticky</span>
             {creatingSticky && (
               <div className="flex items-center justify-center ml-2">
                 <div
-                  className={`w-4 h-4 border-2 border-t-transparent rounded-full animate-spin border-custom-primary-100`}
+                  className={`w-4 h-4 border-2 border-t-transparent rounded-full animate-spin border-accent-strong`}
                   role="status"
                   aria-label="loading"
                 />
@@ -58,9 +58,9 @@ export const Stickies = observer(function Stickies(props: TProps) {
             <button
               type="button"
               onClick={handleClose}
-              className="flex-shrink-0 grid place-items-center text-custom-text-300 hover:text-custom-text-100 hover:bg-custom-background-80 rounded p-1 transition-colors my-auto"
+              className="flex-shrink-0 grid place-items-center text-tertiary hover:text-primary hover:bg-layer-1 rounded-sm p-1 transition-colors my-auto"
             >
-              <CloseIcon className="text-custom-text-400 size-4" />
+              <CloseIcon className="text-placeholder size-4" />
             </button>
           )}
         </div>

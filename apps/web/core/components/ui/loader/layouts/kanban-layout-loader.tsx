@@ -12,7 +12,7 @@ export const KanbanIssueBlockLoader = forwardRef(function KanbanIssueBlockLoader
   return (
     <span
       ref={ref}
-      className={cn(`block bg-custom-background-80 rounded`, { " animate-pulse": shouldAnimate })}
+      className={cn(`block bg-layer-1 rounded-sm`, { " animate-pulse": shouldAnimate })}
       style={{ height: `${cardHeight}px` }}
     />
   );
@@ -34,8 +34,8 @@ export function KanbanColumnLoader({
       {!ignoreHeader && (
         <div className="flex items-center justify-between h-9 w-80">
           <div className="flex item-center gap-3">
-            <span className={cn("h-6 w-6 bg-custom-background-80 rounded", { " animate-pulse": shouldAnimate })} />
-            <span className={cn("h-6 w-24 bg-custom-background-80 rounded", { " animate-pulse": shouldAnimate })} />
+            <span className={cn("h-6 w-6 bg-layer-1 rounded-sm", { " animate-pulse": shouldAnimate })} />
+            <span className={cn("h-6 w-24 bg-layer-1 rounded-sm", { " animate-pulse": shouldAnimate })} />
           </div>
         </div>
       )}

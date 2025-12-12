@@ -116,7 +116,7 @@ function CloseButton({ onClick }: { onClick?: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="rounded p-1 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+      className="rounded-sm p-1 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
       aria-label="Dismiss"
     >
       <svg

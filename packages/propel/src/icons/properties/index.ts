@@ -18,3 +18,4 @@ export * from "./user-circle-icon";
 export * from "./user-icon";
 export * from "./user-square-icon";
 export * from "./workflows-icon";
+export * from "./label-filled-icon";

@@ -59,9 +59,9 @@ export function BubbleMenuNodeSelector(props: Props) {
       classNames={{
         buttonContainer: "h-full",
         button: cn(
-          "h-full flex items-center gap-1 px-3 text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded whitespace-nowrap transition-colors",
+          "h-full flex items-center gap-1 px-3 text-13 font-medium text-tertiary hover:bg-layer-1 active:bg-layer-1 rounded-sm whitespace-nowrap transition-colors",
           {
-            "bg-custom-background-80": context.open,
+            "bg-layer-1": context.open,
           }
         ),
       }}
@@ -75,7 +75,7 @@ export function BubbleMenuNodeSelector(props: Props) {
       getFloatingProps={getFloatingProps}
       getReferenceProps={getReferenceProps}
     >
-      <section className="w-48 max-h-[90vh] mt-1 flex flex-col overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg">
+      <section className="w-48 max-h-[90vh] mt-1 flex flex-col overflow-y-scroll rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-custom-shadow-rg">
         {items.map((item) => (
           <button
             key={item.name}
@@ -86,9 +86,9 @@ export function BubbleMenuNodeSelector(props: Props) {
               e.stopPropagation();
             }}
             className={cn(
-              "flex items-center justify-between rounded px-1 py-1.5 text-sm text-custom-text-200 hover:bg-custom-background-80",
+              "flex items-center justify-between rounded-sm px-1 py-1.5 text-13 text-secondary hover:bg-layer-1",
               {
-                "bg-custom-background-80": activeItem.name === item.name,
+                "bg-layer-1": activeItem.name === item.name,
               }
             )}
           >
@@ -96,7 +96,7 @@ export function BubbleMenuNodeSelector(props: Props) {
               <item.icon className="size-3 flex-shrink-0" />
               <span>{item.name}</span>
             </div>
-            {activeItem.name === item.name && <Check className="size-3 text-custom-text-300 flex-shrink-0" />}
+            {activeItem.name === item.name && <Check className="size-3 text-tertiary flex-shrink-0" />}
           </button>
         ))}
       </section>

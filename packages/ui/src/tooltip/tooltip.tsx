@@ -83,14 +83,14 @@ export function Tooltip({
       content={
         <div
           className={cn(
-            "relative block z-50 max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-xs text-custom-text-200 shadow-md",
+            "relative block z-50 max-w-xs gap-1 overflow-hidden break-words rounded-md bg-surface-1 p-2 text-11 text-secondary shadow-md",
             {
               hidden: isMobile,
             },
             className
           )}
         >
-          {tooltipHeading && <h5 className="font-medium text-custom-text-100">{tooltipHeading}</h5>}
+          {tooltipHeading && <h5 className="font-medium text-primary">{tooltipHeading}</h5>}
           {tooltipContent}
         </div>
       }

@@ -124,7 +124,7 @@ export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
       <div
         ref={dropdownContainerRef}
         className={cn(
-          "relative max-h-80 w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2 opacity-0 invisible transition-opacity",
+          "relative max-h-80 w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-custom-shadow-rg space-y-2 opacity-0 invisible transition-opacity",
           {
             "opacity-100 visible": isVisible,
           }
@@ -150,15 +150,15 @@ export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
                 id={`emoji-item-${index}`}
                 type="button"
                 className={cn(
-                  "flex items-center gap-2 w-full rounded px-2 py-1.5 text-sm text-left truncate text-custom-text-200 hover:bg-custom-background-80 transition-colors duration-150",
+                  "flex items-center gap-2 w-full rounded-sm px-2 py-1.5 text-13 text-left truncate text-secondary hover:bg-layer-1-hover transition-colors duration-150",
                   {
-                    "bg-custom-background-80": isSelected,
+                    "bg-layer-1-hover": isSelected,
                   }
                 )}
                 onClick={() => selectItem(index)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
-                <span className="size-5 grid place-items-center flex-shrink-0 text-base">{item.emoji}</span>
+                <span className="size-5 grid place-items-center flex-shrink-0 text-14">{item.emoji}</span>
                 <span className="flex-grow truncate">
                   <span className="font-medium">:{item.name}:</span>
                 </span>
@@ -166,7 +166,7 @@ export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
             );
           })
         ) : (
-          <div className="text-center text-sm text-custom-text-400 py-2">No emojis found</div>
+          <div className="text-center text-13 text-placeholder py-2">No emojis found</div>
         )}
       </div>
     </>

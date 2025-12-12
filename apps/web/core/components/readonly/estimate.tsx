@@ -42,7 +42,7 @@ export const ReadonlyEstimate = observer(function ReadonlyEstimate(props: TReado
   }, [projectId, workspaceSlug]);
 
   return (
-    <div className={cn("flex items-center gap-1 text-sm", className)}>
+    <div className={cn("flex items-center gap-1 text-13", className)}>
       {!hideIcon && <EstimatePropertyIcon className="size-4 flex-shrink-0" />}
       <span className="flex-grow truncate">{displayValue ?? placeholder ?? t("common.none")}</span>
     </div>

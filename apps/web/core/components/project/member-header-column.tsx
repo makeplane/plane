@@ -41,7 +41,7 @@ export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Pr
       customButtonTabIndex={-1}
       className="!w-full"
       customButton={
-        <div className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-sm text-custom-text-200 hover:text-custom-text-100">
+        <div className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary">
           <span>{t(propertyDetails.i18n_title)}</span>
           <div className="ml-3 flex">
             {(activeSortingProperty === propertyDetails.ascendingOrderKey ||
@@ -67,8 +67,8 @@ export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Pr
             <div
               className={`flex items-center justify-between gap-1.5 px-1 ${
                 activeSortingProperty === propertyDetails.ascendingOrderKey
-                  ? "text-custom-text-100"
-                  : "text-custom-text-200 hover:text-custom-text-100"
+                  ? "text-primary"
+                  : "text-secondary hover:text-primary"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -85,8 +85,8 @@ export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Pr
             <div
               className={`flex items-center justify-between gap-1.5 px-1 ${
                 activeSortingProperty === propertyDetails.descendingOrderKey
-                  ? "text-custom-text-100"
-                  : "text-custom-text-200 hover:text-custom-text-100"
+                  ? "text-primary"
+                  : "text-secondary hover:text-primary"
               }`}
             >
               <div className="flex items-center gap-2">

@@ -66,7 +66,7 @@ function PercentageText({
   className?: string;
 }) {
   return (
-    <text x={x} y={y} textAnchor="middle" className={cn("text-xs font-medium", className)} fill="currentColor">
+    <text x={x} y={y} textAnchor="middle" className={cn("text-11 font-medium", className)} fill="currentColor">
       {percentage}%
     </text>
   );
@@ -176,7 +176,7 @@ export const barShapeVariants: Record<
   TBarChartShapeVariant,
   (props: TShapeProps, bar: TBarItem<string>, stackKeys: string[]) => React.ReactNode
 > = {
-  bar: createShapeVariant(CustomBar), // Standard bar with rounded corners
+  bar: createShapeVariant(CustomBar), // Standard bar with rounded-sm corners
   lollipop: createShapeVariant(CustomBarLollipop), // Line with circle at top
   "lollipop-dotted": createShapeVariant(CustomBarLollipop, { dotted: true }), // Dotted line lollipop variant
 };

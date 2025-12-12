@@ -46,16 +46,16 @@ export const SubIssueDisplayFilters = observer(function SubIssueDisplayFilters(p
           menuButton={
             <div
               className={cn(
-                "p-1 rounded  relative transition-all duration-200",
+                "p-1 rounded-sm  relative transition-all duration-200",
                 isFilterApplied && "bg-custom-primary-60/20"
               )}
             >
-              {isFilterApplied && <span className="p-1 rounded-full bg-custom-primary-100 absolute -top-1 -right-1" />}
-              <SlidersHorizontal className="h-3.5 w-3.5 text-custom-text-100" />
+              {isFilterApplied && <span className="p-1 rounded-full bg-accent-primary absolute -top-1 -right-1" />}
+              <SlidersHorizontal className="h-3.5 w-3.5 text-primary" />
             </div>
           }
         >
-          <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5 max-h-[25rem] text-left">
+          <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-subtle-1 overflow-hidden overflow-y-auto px-2.5 max-h-[25rem] text-left">
             {/* display properties */}
             <div className="py-2">
               <FilterDisplayProperties

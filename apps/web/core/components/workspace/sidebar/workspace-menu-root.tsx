@@ -87,7 +87,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
             {variant === "sidebar" && (
               <Menu.Button
                 className={cn("flex w-full items-center justify-center size-8 rounded-md", {
-                  "bg-custom-sidebar-background-80": open,
+                  "bg-layer-1": open,
                 })}
               >
                 <AppSidebarItem
@@ -97,7 +97,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                       <WorkspaceLogo
                         logo={activeWorkspace?.logo_url}
                         name={activeWorkspace?.name}
-                        classNames="size-8 rounded-md border border-custom-border-200"
+                        classNames="size-8 rounded-md border border-subtle"
                       />
                     ),
                   }}
@@ -107,9 +107,9 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
             {variant === "top-navigation" && (
               <Menu.Button
                 className={cn(
-                  "group/menu-button flex items-center gap-1 p-1 truncate rounded text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none justify-between flex-grow",
+                  "group/menu-button flex items-center gap-1 p-1 truncate rounded-sm text-13 font-medium text-secondary hover:bg-layer-1 focus:outline-none justify-between flex-grow",
                   {
-                    "bg-custom-sidebar-background-80": open,
+                    "bg-layer-1": open,
                   }
                 )}
                 aria-label={t("aria_labels.projects_sidebar.open_workspace_switcher")}
@@ -118,14 +118,12 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                   <WorkspaceLogo
                     logo={activeWorkspace?.logo_url}
                     name={activeWorkspace?.name}
-                    classNames="border border-custom-border-200 rounded-md size-7"
+                    classNames="border border-subtle rounded-md size-7"
                   />
-                  <h4 className="truncate text-base font-medium text-custom-text-100">
-                    {activeWorkspace?.name ?? t("loading")}
-                  </h4>
+                  <h4 className="truncate text-14 font-medium text-primary">{activeWorkspace?.name ?? t("loading")}</h4>
                 </div>
                 <ChevronDownIcon
-                  className={cn("flex-shrink-0 size-4 text-custom-sidebar-text-400 duration-300", {
+                  className={cn("flex-shrink-0 size-4 text-placeholder duration-300", {
                     "rotate-180": open,
                   })}
                 />
@@ -143,7 +141,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
               <Menu.Items as={Fragment}>
                 <div
                   className={cn(
-                    "fixed z-[21] mt-1 flex w-[19rem] origin-top-left flex-col divide-y divide-custom-border-100 rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg outline-none",
+                    "fixed z-21 mt-1 flex w-[19rem] origin-top-left flex-col divide-y divide-subtle rounded-md border-[0.5px] border-strong bg-surface-1 shadow-custom-shadow-rg outline-none",
                     {
                       "top-11 left-14": variant === "sidebar",
                       "top-10 left-4": variant === "top-navigation",
@@ -151,7 +149,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                   )}
                 >
                   <div className="overflow-x-hidden vertical-scrollbar scrollbar-sm flex max-h-96 flex-col items-start justify-start overflow-y-scroll">
-                    <span className="rounded-md text-left px-4 sticky top-0 z-[21] h-full w-full bg-custom-sidebar-background-100 pb-1 pt-3 text-sm font-medium text-custom-text-400 truncate flex-shrink-0">
+                    <span className="rounded-md text-left px-4 sticky top-0 z-21 h-full w-full bg-surface-1 pb-1 pt-3 text-13 font-medium text-placeholder truncate flex-shrink-0">
                       {currentUser?.email}
                     </span>
                     {workspacesList ? (
@@ -182,12 +180,12 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                       </div>
                     )}
                   </div>
-                  <div className="w-full flex flex-col items-start justify-start gap-2 px-4 py-2 text-sm">
+                  <div className="w-full flex flex-col items-start justify-start gap-2 px-4 py-2 text-13">
                     {isWorkspaceCreationEnabled && (
                       <Link href="/create-workspace" className="w-full">
                         <Menu.Item
                           as="div"
-                          className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                          className="flex items-center gap-2 rounded-sm px-2 py-1 text-13 font-medium text-secondary hover:bg-layer-transparent-hover"
                         >
                           <CirclePlus className="size-4 flex-shrink-0" />
                           {t("create_workspace")}
@@ -198,7 +196,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                     <Link href="/invitations" className="w-full" onClick={handleItemClick}>
                       <Menu.Item
                         as="div"
-                        className="flex items-center gap-2 rounded px-2 py-1 text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                        className="flex items-center gap-2 rounded-sm px-2 py-1 text-13 font-medium text-secondary hover:bg-layer-transparent-hover"
                       >
                         <Mails className="h-4 w-4 flex-shrink-0" />
                         {t("workspace_invites")}
@@ -209,7 +207,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                       <Menu.Item
                         as="button"
                         type="button"
-                        className="flex w-full items-center gap-2 rounded px-2 py-1 text-sm font-medium text-red-600 hover:bg-custom-sidebar-background-80"
+                        className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-13 font-medium text-danger hover:bg-layer-transparent-hover"
                         onClick={handleSignOut}
                       >
                         <LogOut className="size-4 flex-shrink-0" />

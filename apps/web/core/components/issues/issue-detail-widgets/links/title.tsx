@@ -35,7 +35,7 @@ export const IssueLinksCollapsibleTitle = observer(function IssueLinksCollapsibl
   const indicatorElement = useMemo(
     () => (
       <span className="flex items-center justify-center ">
-        <p className="text-base text-custom-text-300 !leading-3">{linksCount}</p>
+        <p className="text-14 text-tertiary !leading-3">{linksCount}</p>
       </span>
     ),
     [linksCount]

@@ -118,7 +118,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
       className={cn(
         "clickable block h-full max-w-full outline-none",
         {
-          "cursor-not-allowed text-custom-text-200": disabled,
+          "cursor-not-allowed text-secondary": disabled,
           "cursor-pointer": !disabled,
         },
         buttonContainerClassName
@@ -174,7 +174,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
           <Combobox.Options data-prevent-outside-click static>
             <div
               className={cn(
-                "my-1 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden z-30",
+                "my-1 bg-surface-1 shadow-custom-shadow-rg border-[0.5px] border-strong rounded-md overflow-hidden z-30",
                 optionsClassName
               )}
               ref={setPopperElement}
@@ -182,7 +182,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
               {...attributes.popper}
             >
               <Calendar
-                className="rounded-md border border-custom-border-200 p-3"
+                className="rounded-md border border-subtle p-3"
                 captionLayout="dropdown"
                 selected={getDate(value)}
                 defaultMonth={getDate(value)}
