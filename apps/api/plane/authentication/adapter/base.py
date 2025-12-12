@@ -90,9 +90,9 @@ class Adapter:
         """Check if sign up is enabled or not and raise exception if not enabled"""
 
         # Get configuration value
-        (ENABLE_SIGNUP,) = get_configuration_value(
-            [{"key": "ENABLE_SIGNUP", "default": os.environ.get("ENABLE_SIGNUP", "1")}]
-        )
+        (ENABLE_SIGNUP,) = get_configuration_value([
+            {"key": "ENABLE_SIGNUP", "default": os.environ.get("ENABLE_SIGNUP", "1")}
+        ])
 
         # Check if sign up is disabled and invite is present or not
         if ENABLE_SIGNUP == "0" and not WorkspaceMemberInvite.objects.filter(email=email).exists():
@@ -107,6 +107,30 @@ class Adapter:
 
     def get_avatar_download_headers(self):
         return {}
+
+    def check_sync_enabled(self):
+        """Check if sync is enabled for the provider"""
+        if self.provider == "google":
+            (ENABLE_GOOGLE_SYNC,) = get_configuration_value([
+                {"key": "ENABLE_GOOGLE_SYNC", "default": os.environ.get("ENABLE_GOOGLE_SYNC", "0")}
+            ])
+            return ENABLE_GOOGLE_SYNC == "1"
+        elif self.provider == "github":
+            (ENABLE_GITHUB_SYNC,) = get_configuration_value([
+                {"key": "ENABLE_GITHUB_SYNC", "default": os.environ.get("ENABLE_GITHUB_SYNC", "0")}
+            ])
+            return ENABLE_GITHUB_SYNC == "1"
+        elif self.provider == "gitlab":
+            (ENABLE_GITLAB_SYNC,) = get_configuration_value([
+                {"key": "ENABLE_GITLAB_SYNC", "default": os.environ.get("ENABLE_GITLAB_SYNC", "0")}
+            ])
+            return ENABLE_GITLAB_SYNC == "1"
+        elif self.provider == "gitea":
+            (ENABLE_GITEA_SYNC,) = get_configuration_value([
+                {"key": "ENABLE_GITEA_SYNC", "default": os.environ.get("ENABLE_GITEA_SYNC", "0")}
+            ])
+            return ENABLE_GITEA_SYNC == "1"
+        return False
 
     def download_and_upload_avatar(self, avatar_url, user):
         """
@@ -208,6 +232,38 @@ class Adapter:
         user.save()
         return user
 
+    def sync_user_data(self, user):
+        # Update user details
+        first_name = self.user_data.get("user", {}).get("first_name", "")
+        last_name = self.user_data.get("user", {}).get("last_name", "")
+        user.first_name = first_name if first_name else ""
+        user.last_name = last_name if last_name else ""
+
+        # Get email
+        email = self.user_data.get("email")
+
+        # Get display name
+        display_name = self.user_data.get("user", {}).get("display_name")
+        # If display name is not provided, generate a random display name
+        if not display_name:
+            display_name = User.get_display_name(email)
+
+        # Set display name
+        user.display_name = display_name
+
+        # Download and upload avatar
+        avatar = self.user_data.get("user", {}).get("avatar", "")
+        if avatar:
+            avatar_asset = self.download_and_upload_avatar(avatar_url=avatar, user=user)
+            if avatar_asset:
+                user.avatar_asset = avatar_asset
+            # If avatar upload fails, set the avatar to the original URL
+            else:
+                user.avatar = avatar
+
+        user.save()
+        return user
+
     def complete_login_or_signup(self):
         # Get email
         email = self.user_data.get("email")
@@ -261,6 +317,10 @@ class Adapter:
 
             # Create profile
             Profile.objects.create(user=user)
+
+        # Check if IDP sync is enabled
+        if self.check_sync_enabled():
+            user = self.sync_user_data(user=user)
 
         # Save user data
         user = self.save_user_data(user=user)
