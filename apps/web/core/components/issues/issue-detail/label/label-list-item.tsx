@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, LabelFilledIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // types
 import { useLabel } from "@/hooks/store/use-label";
@@ -31,29 +31,22 @@ export const LabelListItem = observer(function LabelListItem(props: TLabelListIt
 
   if (!label) return <></>;
   return (
-    <div
+    <button
       key={labelId}
-      className={cn(
-        "transition-all relative flex items-center gap-1 truncate border border-subtle rounded-full text-caption-sm-regular p-0.5 px-1 group",
-        {
-          "cursor-pointer hover:border-danger-strong hover:bg-danger-subtle": !disabled,
-          "cursor-not-allowed": disabled,
-        }
-      )}
+      type="button"
+      className={cn("h-full w-min flex items-center gap-1.5 rounded-lg px-2 py-0.5 bg-layer-transparent-active  hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary", {
+        "cursor-pointer hover:border-danger-strong hover:bg-danger-subtle": !disabled,
+      })}
       onClick={handleLabel}
+      disabled={disabled}
     >
-      <div
-        className="rounded-full h-2 w-2 flex-shrink-0"
-        style={{
-          backgroundColor: label.color ?? "#000000",
-        }}
-      />
-      <div className="truncate">{label.name}</div>
+      <LabelFilledIcon className="size-4" color={label.color ?? "#000000"} />
+      <div className="flex-shrink-0 text-body-xs-regular">{label.name}</div>
       {!disabled && (
         <div className="flex-shrink-0">
           <CloseIcon className="transition-all h-2.5 w-2.5 group-hover:text-danger" />
         </div>
       )}
-    </div>
+    </button>
   );
 });

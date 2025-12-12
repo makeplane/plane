@@ -2,11 +2,11 @@ import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Link2, MoveDiagonal, MoveRight } from "lucide-react";
+import { MoveDiagonal, MoveRight } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
+import { CenterPanelIcon, CopyLinkIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TNameDescriptionLoader } from "@plane/types";
@@ -25,6 +25,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueSubscription } from "../issue-detail/subscription";
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
 import { NameDescriptionUpdateStatus } from "../issue-update-status";
+import { IconButton } from "@plane/propel/icon-button";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -224,9 +225,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
           <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
-            <button type="button" onClick={handleCopyText}>
-              <Link2 className="h-4 w-4 -rotate-45 text-tertiary hover:text-secondary" />
-            </button>
+            <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
           </Tooltip>
           {issueDetails && (
             <WorkItemDetailQuickActions
