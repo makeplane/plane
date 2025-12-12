@@ -65,7 +65,7 @@ export function NameColumn(props: NameProps) {
                 </Link>
               ) : (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex h-4 w-4 text-11 items-center justify-center rounded-full  capitalize text-on-color bg-gray-700">
+                  <span className="relative flex h-4 w-4 text-11 items-center justify-center rounded-full  capitalize text-tertiary bg-layer-3">
                     {(email ?? display_name ?? "?")[0]}
                   </span>
                 </Link>

@@ -10,7 +10,7 @@ type Props = {
 export function FilterHeader({ title, isPreviewEnabled, handleIsPreviewEnabled }: Props) {
   return (
     <div className="sticky top-0 flex items-center justify-between gap-2">
-      <div className="flex-grow truncate text-11 font-medium text-placeholder">{title}</div>
+      <div className="flex-grow truncate text-caption-sm-medium text-placeholder">{title}</div>
       <button
         type="button"
         className="grid h-5 w-5 flex-shrink-0 place-items-center rounded-sm hover:bg-layer-transparent-hover"
