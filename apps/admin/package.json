@@ -37,7 +37,7 @@
     "lucide-react": "catalog:",
     "mobx": "catalog:",
     "mobx-react": "catalog:",
-    "next-themes": "^0.2.1",
+    "next-themes": "0.4.6",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-hook-form": "7.51.5",
