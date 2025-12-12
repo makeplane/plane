@@ -6,7 +6,7 @@ type Props = {
   syncStatus: "syncing" | "synced" | "error";
 };
 
-export const PageSyncingBadge = ({ syncStatus }: Props) => {
+export function PageSyncingBadge({ syncStatus }: Props) {
   const [prevSyncStatus, setPrevSyncStatus] = useState<"syncing" | "synced" | "error" | null>(null);
   const [isVisible, setIsVisible] = useState(syncStatus !== "synced");
 
@@ -32,10 +32,10 @@ export const PageSyncingBadge = ({ syncStatus }: Props) => {
       label: "Syncing...",
       tooltipHeading: "Syncing...",
       tooltipContent: "Your changes are being synced with the server. You can continue making changes.",
-      bgColor: "bg-custom-primary-100/20",
-      textColor: "text-custom-primary-100",
-      pulseColor: "bg-custom-primary-100",
-      pulseBgColor: "bg-custom-primary-100/30",
+      bgColor: "bg-accent-primary/20",
+      textColor: "text-accent-primary",
+      pulseColor: "bg-accent-primary",
+      pulseBgColor: "bg-accent-primary/30",
       icon: null,
     },
     error: {
@@ -43,7 +43,7 @@ export const PageSyncingBadge = ({ syncStatus }: Props) => {
       tooltipHeading: "Connection lost",
       tooltipContent:
         "We're having trouble connecting to the websocket server. Your changes will be synced and saved every 10 seconds.",
-      bgColor: "bg-red-500/20",
+      bgColor: "bg-danger-subtle",
       textColor: "text-red-500",
       icon: <CloudOff className="size-3" />,
     },
@@ -55,18 +55,18 @@ export const PageSyncingBadge = ({ syncStatus }: Props) => {
   return (
     <Tooltip tooltipHeading={content.tooltipHeading} tooltipContent={content.tooltipContent}>
       <div
-        className={`flex-shrink-0 h-6 flex items-center gap-1.5 px-2 rounded ${content.textColor} ${content.bgColor} animate-quickFadeIn`}
+        className={`shrink-0 h-7 flex items-center gap-1.5 px-2 rounded-md ${content.textColor} ${content.bgColor} animate-quickFadeIn`}
       >
         {syncStatus === "syncing" ? (
-          <div className="relative flex-shrink-0">
-            <div className="absolute -inset-0.5 rounded-full bg-custom-primary-100/30 animate-ping" />
-            <div className="relative h-1.5 w-1.5 rounded-full bg-custom-primary-100" />
+          <div className="relative shrink-0">
+            <div className="absolute -inset-0.5 rounded-full bg-accent-primary/30 animate-ping" />
+            <div className="relative h-1.5 w-1.5 rounded-full bg-accent-primary" />
           </div>
         ) : (
           content.icon
         )}
-        <span className="text-xs font-medium">{content.label}</span>
+        <span className="text-11 font-medium">{content.label}</span>
       </div>
     </Tooltip>
   );
-};
+}

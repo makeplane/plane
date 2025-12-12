@@ -50,7 +50,7 @@ export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(pro
           )}
         >
           <div className="max-w-full w-full flex items-center justify-between">
-            {editorRef && <PageToolbar editorRef={editorRef} />}
+            <div className="flex-1">{editorRef && <PageToolbar editorRef={editorRef} />}</div>
             <div className="flex items-center gap-2">
               <PageCollaboratorsList page={page} />
               {!isNavigationPaneOpen && (

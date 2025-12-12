@@ -52,7 +52,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
   const selectedIndex = PAGE_NAVIGATION_PANE_TAB_KEYS.indexOf(activeTab);
 
   // Check if any extension is currently active based on query parameters
-  const ActiveExtension = extensions.find(function ActiveExtension(extension) {
+  const ActiveExtension = extensions.find((extension) => {
     const paneTabValue = searchParams.get(PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM);
     const hasVersionParam = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
 

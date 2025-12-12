@@ -44,15 +44,13 @@ const ToolbarButton = React.memo(function ToolbarButton(props: ToolbarButtonProp
             ...item.extraProps,
           })
         }
-        className={cn(
-          "shrink-0 grid size-7 place-items-center rounded-sm text-tertiary hover:bg-layer-transparent-hover-1",
-          {
-            "bg-layer-transparent-selected text-primary": isActive,
-          }
-        )}
+        className={cn("shrink-0 grid size-7 place-items-center rounded-sm text-tertiary", {
+          "bg-layer-transparent-selected hover:bg-layer-transparent-selected text-primary": isActive,
+          "hover:bg-layer-transparent-hover": !isActive,
+        })}
       >
         <item.icon
-          className={cn("size-4", {
+          className={cn("size-4 transition-transform duration-200", {
             "text-primary": isActive,
           })}
         />
@@ -83,6 +81,8 @@ export function PageToolbar(props: Props) {
     return initialStates;
   });
 
+  const [isTypographyMenuOpen, setIsTypographyMenuOpen] = useState(false);
+
   const updateActiveStates = useCallback(() => {
     const newActiveStates: Record<string, boolean> = {};
     Object.values(toolbarItems)
@@ -111,10 +111,18 @@ export function PageToolbar(props: Props) {
   );
 
   return (
-    <div className="flex items-center divide-x divide-subtle-1 overflow-x-scroll">
+    <div className="flex items-center divide-x divide-subtle-1 overflow-x-scroll animate-in fade-in duration-200">
       <CustomMenu
         customButton={
-          <span className="text-tertiary text-13 border-[0.5px] border-strong hover:bg-layer-transparent-hover h-7 w-24 rounded-sm px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
+          <span
+            className={cn(
+              "text-13 border-[0.5px] border-strong h-7 w-24 rounded-sm px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left",
+              {
+                "bg-layer-1-selected text-primary": isTypographyMenuOpen,
+                "text-tertiary hover:bg-layer-1-hover": !isTypographyMenuOpen,
+              }
+            )}
+          >
             {activeTypography?.name || "Text"}
             <ChevronDownIcon className="shrink-0 size-3" />
           </span>
@@ -123,17 +131,24 @@ export function PageToolbar(props: Props) {
         placement="bottom-start"
         closeOnSelect
         maxHeight="lg"
+        menuButtonOnClick={() => setIsTypographyMenuOpen((prev) => !prev)}
+        onMenuClose={() => setIsTypographyMenuOpen(false)}
       >
         {TYPOGRAPHY_ITEMS.map((item) => (
           <CustomMenu.MenuItem
             key={item.renderKey}
-            className="flex items-center justify-between gap-2"
-            onClick={() =>
-              editorRef.executeMenuItemCommand({
-                itemKey: item.itemKey,
-                ...item.extraProps,
-              })
-            }
+            className={cn("flex items-center justify-between gap-2", {
+              "bg-layer-transparent-selected text-primary": activeTypography?.itemKey === item.itemKey,
+              "hover:bg-layer-transparent-hover": !(activeTypography?.itemKey === item.itemKey),
+            })}
+            onClick={() => {
+              if (activeTypography?.itemKey !== item.itemKey) {
+                editorRef.executeMenuItemCommand({
+                  itemKey: item.itemKey,
+                  ...item.extraProps,
+                });
+              }
+            }}
           >
             <span className="flex items-center gap-2">
               <item.icon className="size-3" />

@@ -1,8 +1,7 @@
-import { useState, useRef, useMemo } from "react";
+import { useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { CloseIcon } from "@plane/propel/icons";
-// plane helpers
 // helpers
 import { cn } from "@plane/utils";
 
@@ -14,26 +13,20 @@ type Props = {
 export function PageSearchInput(props: Props) {
   const { searchQuery, updateSearchQuery } = props;
   // states
-  const [manuallyOpened, setManuallyOpened] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
-  
-  // Derive isSearchOpen from searchQuery and manual state
-  const isSearchOpen = useMemo(
-    () => searchQuery.trim() !== "" || manuallyOpened,
-    [searchQuery, manuallyOpened]
-  );
-  
+
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
-    if (isSearchOpen && searchQuery.trim() === "") setManuallyOpened(false);
+    if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
       else {
-        setManuallyOpened(false);
+        setIsSearchOpen(false);
         inputRef.current?.blur();
       }
     }
@@ -46,7 +39,7 @@ export function PageSearchInput(props: Props) {
           type="button"
           className="shrink-0 hover:bg-layer-transparent-hover rounded-sm text-placeholder relative flex justify-center items-center w-6 h-6 my-auto"
           onClick={() => {
-            setManuallyOpened(true);
+            setIsSearchOpen(true);
             inputRef.current?.focus();
           }}
         >
@@ -76,7 +69,7 @@ export function PageSearchInput(props: Props) {
             className="grid place-items-center"
             onClick={() => {
               updateSearchQuery("");
-              setManuallyOpened(false);
+              setIsSearchOpen(false);
             }}
           >
             <CloseIcon className="h-3 w-3" />

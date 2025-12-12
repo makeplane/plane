@@ -37,12 +37,10 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
       >
         {({ open }) => (
           <span
-            className={cn(
-              "h-full px-2 text-tertiary text-13 flex items-center gap-1.5 rounded-sm hover:bg-layer-transparent-hover-1",
-              {
-                "text-primary bg-layer-transparent-selected": open,
-              }
-            )}
+            className={cn("h-full px-2 text-tertiary text-13 flex items-center gap-1.5 rounded-sm", {
+              "text-primary bg-layer-transparent-selected": open,
+              " hover:bg-layer-transparent-hover": !open,
+            })}
           >
             Color
             <span
