@@ -43,7 +43,18 @@ from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
 )
-from ..views.issue.utils import is_allowed_to_add_parent
+
+
+def _is_allowed_to_add_parent(parent_issue, sub_issue):
+    p = parent_issue.type.name
+    c = sub_issue.type.name if isinstance(sub_issue, Issue) else sub_issue
+    if c == "史诗":
+        return False
+    if c == "用户故事":
+        return p == "特性"
+    if c == "特性":
+        return p == "史诗"
+    return p == "用户故事"
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -190,13 +201,10 @@ class IssueCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
 
-
-
         if parent := attrs.get('parent'):
             sub_issue = self.instance.type.name if self.instance else attrs.get('type').name
-            if not is_allowed_to_add_parent(parent_issue=parent, sub_issue=sub_issue):
+            if not _is_allowed_to_add_parent(parent_issue=parent, sub_issue=sub_issue):
                 raise serializers.ValidationError(f"{parent.type.name}不能作为{sub_issue}的父工作项")
-
 
         return attrs
 
@@ -205,23 +213,12 @@ class IssueCreateSerializer(BaseSerializer):
         labels = validated_data.pop("label_ids", None)
 
         project_id = self.context["project_id"]
-        type_id = self.context["type_id"]
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
         # 动态字段
-        dynamic_properties = self.context["dynamic_properties"]
 
         # Create Issue
         issue = Issue.objects.create(**validated_data, project_id=project_id)
-
-        # 添加动态字段
-        for property_id, issue_value in dynamic_properties.items():
-            IssuePropertyValue.objects.create(
-                issue_id=issue.id,
-                property_id=property_id,
-                value=issue_value,
-                project_id=project_id,
-            )
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -292,7 +289,6 @@ class IssueCreateSerializer(BaseSerializer):
     def update(self, instance, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
         labels = validated_data.pop("label_ids", None)
-
 
         # Related models
         project_id = instance.project_id

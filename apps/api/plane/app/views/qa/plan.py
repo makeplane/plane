@@ -314,7 +314,11 @@ class PlanView(BaseViewSet):
 
 class CaseAPIView(BaseAPIView):
     model = TestCase
-    queryset = TestCase.objects.all()
+    queryset = TestCase.objects.select_related(
+        'repository', 'module', 'assignee'
+    ).prefetch_related(
+        'labels', 'issues'
+    )
     pagination_class = CustomPaginator
     serializer_class = CaseListSerializer
     filterset_fields = {
@@ -333,13 +337,17 @@ class CaseAPIView(BaseAPIView):
         paginator = self.pagination_class()
         paginated_queryset = paginator.paginate_queryset(cases, request)
         serializer = self.serializer_class(instance=paginated_queryset, many=True)
-        return list_response(data=serializer.data, count=cases.count())
+        data = serializer.data
+
+        return list_response(data=data, count=cases.count())
 
     def post(self, request, slug):
+
         serializer = CaseCreateUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         test_plan = serializer.save()
         serializer = self.serializer_class(instance=test_plan)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def put(self, request, slug):

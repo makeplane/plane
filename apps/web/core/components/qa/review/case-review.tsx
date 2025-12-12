@@ -389,7 +389,7 @@ export default function CaseReview() {
         <Breadcrumbs.Item component={<BreadcrumbLink label="用例详情" isLast />} />
       </Breadcrumbs>
 
-      <Row className="w-full rounded-md border border-custom-border-200 overflow-hidden" gutter={0}>
+      <Row className="w-full rounded-md border border-custom-border-200 overflow-hidden" gutter={0} wrap={false}>
         <Col flex="390px" className="border-r border-custom-border-200">
           <div className="p-4 flex flex-col gap-3">
             <Input.Search
@@ -480,10 +480,10 @@ export default function CaseReview() {
 
         <Col
           flex="auto"
-          className="overflow-y-auto vertical-scrollbar scrollbar-sm scroll-smooth max-h-[calc(100dvh-52px-12px)] min-h-[300px]"
+          className="min-w-0 overflow-y-auto vertical-scrollbar scrollbar-sm scroll-smooth max-h-[calc(100dvh-52px-12px)] min-h-[300px]"
           style={{ scrollPaddingBottom: 16 }}
         >
-          <div className="p-4 pb-16" style={{ scrollPaddingBottom: 16 }}>
+          <div className="min-w-0 p-4 pb-16" style={{ scrollPaddingBottom: 16 }}>
             {!selectedCaseId ? (
               <div className="text-custom-text-300 py-12 text-center">请从左侧选择一个用例</div>
             ) : detailLoading ? (
@@ -495,7 +495,10 @@ export default function CaseReview() {
             ) : (
               <div className="flex flex-col gap-4">
                 <div className="border-b border-gray-200">
-                  <nav className="flex gap-4 overflow-x-auto">
+                  <nav
+                    className="flex gap-4 overflow-x-auto horizontal-scrollbar scrollbar-sm"
+                    style={{ scrollbarGutter: "stable" }}
+                  >
                     <button
                       type="button"
                       onClick={() => setActiveTab("basic")}

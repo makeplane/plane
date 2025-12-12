@@ -104,8 +104,34 @@ export const RichTextEditor = ({
       setOverflowing(false);
       return;
     }
-    const next = el.scrollHeight > maxH + 1;
-    setOverflowing(next);
+
+    const checkOverflow = () => {
+      if (editing) return;
+      const next = el.scrollHeight > maxH + 1;
+      setOverflowing(next);
+    };
+
+    // 立即检查一次
+    checkOverflow();
+
+    // 监听图片加载
+    const images = el.getElementsByTagName("img");
+    for (let i = 0; i < images.length; i++) {
+      images[i].addEventListener("load", checkOverflow);
+    }
+
+    // 监听容器尺寸变化
+    const resizeObserver = new ResizeObserver(() => {
+      checkOverflow();
+    });
+    resizeObserver.observe(el);
+
+    return () => {
+      resizeObserver.disconnect();
+      for (let i = 0; i < images.length; i++) {
+        images[i].removeEventListener("load", checkOverflow);
+      }
+    };
   }, [value, expanded, editing]);
   useEffect(() => {
     if (!editing) return;
@@ -146,12 +172,33 @@ export const RichTextEditor = ({
       onBlur?.();
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!editing || !wrapperRef.current) return;
+      if (wrapperRef.current.contains(e.target as Node)) {
+        // 阻止所有在编辑器内的按键事件冒泡
+        e.stopPropagation();
+
+        if (e.key === "Escape") {
+          setEditing(false);
+          onBlur?.();
+        }
+      }
+    };
+
+    if (editing) {
+      // 使用捕获阶段确保优先处理
+      document.addEventListener("keydown", handleKeyDown, true);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown, true);
+    };
+  }, [editing, onBlur]);
+
   return (
-    <div
-      ref={wrapperRef}
-      onBlur={handleWrapperBlur}
-      onKeyDown={(e) => e.key === "Escape" && editing && (setEditing(false), onBlur?.())}
-    >
+    <div ref={wrapperRef} onBlur={handleWrapperBlur}>
       <style>{`
         .qa-quill {
           --qaq-bg: #ffffff;

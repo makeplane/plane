@@ -18,3 +18,4 @@ class CaseLabelListSerializer(ModelSerializer):
     class Meta:
         model = CaseLabel
         fields = '__all__'
+

@@ -1,3 +1,5 @@
+import random
+
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import IntegrityError
 from rest_framework.decorators import action
@@ -58,7 +60,8 @@ class IssueAPI(BaseViewSet):
                 for label in data['labels']:
                     label_instance = label_dic.get(label) or \
                                      Label.objects.get_or_create(workspace=workspace, project_id=project_id,
-                                                                 name=label)[0]
+                                                                 name=label, defaults=dict(
+                                             color="#{:06x}".format(random.randint(0, 0xFFFFFF))))[0]
                     IssueLabel.objects.create(issue=story, label=label_instance, project_id=project_id,
                                               workspace=workspace)
             except IntegrityError as e:

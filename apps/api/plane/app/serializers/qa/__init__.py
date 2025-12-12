@@ -12,6 +12,37 @@ from plane.utils.qa import re_approval_case
 
 from .plan import *
 
+class CaseLabelListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CaseLabel
+        fields = '__all__'
+
+
+class CaseModuleListSerializer(serializers.ModelSerializer):
+    children = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CaseModule
+        fields = [
+            'id',
+            'name',
+            'sort_order',
+            'created_at',
+            'updated_at',
+            'children',  # 递归显示所有子节点
+            'repository'
+        ]
+
+    def get_children(self, obj):
+        """
+        递归获取所有子节点
+        """
+        # 获取直接子节点（未删除的）
+        direct_children = obj.children.filter(deleted_at__isnull=True).order_by('sort_order')
+
+        # 使用相同的序列化器递归序列化子节点
+        serializer = CaseModuleListSerializer(direct_children, many=True, context=self.context)
+        return serializer.data
 
 class TestPlanCreateUpdateSerializer(ModelSerializer):
     """
@@ -183,8 +214,12 @@ class CaseCreateUpdateSerializer(ModelSerializer):
 
 class CaseListSerializer(ModelSerializer):
     """用例查询"""
-    issues = ...
-
+    # 替换 depth=1，改为显式序列化需要的关联字段
+    module = CaseModuleListSerializer(read_only=True)
+    assignee = UserLiteSerializer(read_only=True)
+    labels = CaseLabelListSerializer(many=True, read_only=True)
+    
+    # 保持原有的 review 字段
     review = serializers.SerializerMethodField()
 
     def get_review(self, obj):
@@ -193,7 +228,8 @@ class CaseListSerializer(ModelSerializer):
     class Meta:
         model = TestCase
         fields = '__all__'
-        depth = 1
+        # 移除 depth = 1
+        # depth = 1
 
 
 class CaseModuleCreateUpdateSerializer(ModelSerializer):
@@ -204,31 +240,6 @@ class CaseModuleCreateUpdateSerializer(ModelSerializer):
         fields = ['name', 'sort_order', 'parent', 'repository']
 
 
-class CaseModuleListSerializer(serializers.ModelSerializer):
-    children = serializers.SerializerMethodField()
-
-    class Meta:
-        model = CaseModule
-        fields = [
-            'id',
-            'name',
-            'sort_order',
-            'created_at',
-            'updated_at',
-            'children',  # 递归显示所有子节点
-            'repository'
-        ]
-
-    def get_children(self, obj):
-        """
-        递归获取所有子节点
-        """
-        # 获取直接子节点（未删除的）
-        direct_children = obj.children.filter(deleted_at__isnull=True).order_by('sort_order')
-
-        # 使用相同的序列化器递归序列化子节点
-        serializer = CaseModuleListSerializer(direct_children, many=True, context=self.context)
-        return serializer.data
 
 
 class CaseLabelCreateSerializer(serializers.ModelSerializer):
@@ -239,10 +250,7 @@ class CaseLabelCreateSerializer(serializers.ModelSerializer):
         fields = ['name', 'repository']
 
 
-class CaseLabelListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CaseLabel
-        fields = '__all__'
+
 
 
 # 新增：测试用例附件序列化器（复用 FileAsset）
