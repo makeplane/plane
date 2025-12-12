@@ -1,6 +1,6 @@
 {
   "name": "@plane/propel",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
