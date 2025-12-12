@@ -4,6 +4,7 @@ import useSWR, { mutate } from "swr";
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IExportData } from "@plane/types";
 import { Table } from "@plane/ui";
@@ -63,42 +64,33 @@ export const PrevExports = observer(function PrevExports(props: Props) {
           <h3 className="flex gap-2 text-18 font-medium">
             {t("workspace_settings.settings.exports.previous_exports")}
           </h3>
-
-          <button
-            type="button"
-            className="flex flex-shrink-0 items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11 outline-none"
-            onClick={handleRefresh}
-          >
-            <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
-            {refreshing ? `${t("refreshing")}...` : t("refresh_status")}
-          </button>
+          <Button variant="tertiary" className="shrink-0" onClick={handleRefresh}>
+            <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />
+            {refreshing ? t("refreshing") : t("refresh_status")}
+          </Button>
         </div>
-        <div className="flex items-center gap-2 text-11">
-          <button
-            disabled={!exporterServices?.prev_page_results}
-            onClick={() => exporterServices?.prev_page_results && setCursor(exporterServices?.prev_cursor)}
-            className={`flex items-center rounded-sm border border-accent-strong px-1 text-accent-primary ${
-              exporterServices?.prev_page_results
-                ? "cursor-pointer hover:bg-accent-primary hover:text-on-color"
-                : "cursor-not-allowed opacity-75"
-            }`}
-          >
-            <MoveLeft className="h-4 w-4" />
-            <div className="pr-1">{t("prev")}</div>
-          </button>
-          <button
-            disabled={!exporterServices?.next_page_results}
-            onClick={() => exporterServices?.next_page_results && setCursor(exporterServices?.next_cursor)}
-            className={`flex items-center rounded-sm border border-accent-strong px-1 text-accent-primary ${
-              exporterServices?.next_page_results
-                ? "cursor-pointer hover:bg-accent-primary hover:text-on-color"
-                : "cursor-not-allowed opacity-75"
-            }`}
-          >
-            <div className="pl-1">{t("next")}</div>
-            <MoveRight className="h-4 w-4" />
-          </button>
-        </div>
+        {!!exporterServices?.results?.length && (
+          <div className="flex items-center gap-2 text-11">
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={!exporterServices?.prev_page_results}
+              onClick={() => exporterServices?.prev_page_results && setCursor(exporterServices?.prev_cursor)}
+              prependIcon={<MoveLeft />}
+            >
+              {t("prev")}
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={!exporterServices?.next_page_results}
+              onClick={() => exporterServices?.next_page_results && setCursor(exporterServices?.next_cursor)}
+              appendIcon={<MoveRight />}
+            >
+              {t("next")}
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col">

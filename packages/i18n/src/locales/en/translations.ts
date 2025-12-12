@@ -840,7 +840,7 @@ export default {
         label: "Remove parent work item",
       },
     },
-    new: "New Work item",
+    new: "New work item",
     adding: "Adding work item",
     create: {
       success: "Work item created successfully",

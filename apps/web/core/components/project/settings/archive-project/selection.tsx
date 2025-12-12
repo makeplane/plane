@@ -41,7 +41,7 @@ export function ArchiveProjectSelection(props: IArchiveProject) {
                 <div>
                   {projectDetails ? (
                     <div>
-                      <Button variant="error-outline" onClick={handleArchive}>
+                      <Button variant="error-fill" size="lg" onClick={handleArchive}>
                         Archive project
                       </Button>
                     </div>

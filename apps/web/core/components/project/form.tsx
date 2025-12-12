@@ -442,11 +442,12 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
             <Button
               data-ph-element={PROJECT_TRACKER_ELEMENTS.UPDATE_PROJECT_BUTTON}
               variant="primary"
+              size="lg"
               type="submit"
               loading={isLoading}
               disabled={!isAdmin}
             >
-              {isLoading ? `${t("updating")}...` : t("common.update_project")}
+              {isLoading ? t("updating") : t("common.update_project")}
             </Button>
             <span className="text-13 italic text-placeholder">
               {t("common.created_on")} {renderFormattedDate(project?.created_at)}

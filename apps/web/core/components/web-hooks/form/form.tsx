@@ -93,6 +93,7 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
         <div className="pt-0 space-y-5">
           <WebhookSecretKey data={data} />
           <Button
+            size="lg"
             type="submit"
             loading={isSubmitting}
             data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_UPDATE_BUTTON}

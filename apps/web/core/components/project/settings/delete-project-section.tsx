@@ -45,10 +45,11 @@ export function DeleteProjectSection(props: IDeleteProjectSection) {
                     <div>
                       <Button
                         variant="error-fill"
+                        size="lg"
                         onClick={handleDelete}
                         data-ph-element={PROJECT_TRACKER_ELEMENTS.DELETE_PROJECT_BUTTON}
                       >
-                        Delete my project
+                        Delete project
                       </Button>
                     </div>
                   ) : (

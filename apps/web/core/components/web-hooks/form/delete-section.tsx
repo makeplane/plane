@@ -37,6 +37,7 @@ export function WebhookDeleteSection(props: Props) {
                 <div>
                   <Button
                     variant="error-fill"
+                    size="lg"
                     onClick={openDeleteModal}
                     data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_DELETE_BUTTON}
                   >

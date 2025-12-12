@@ -108,7 +108,7 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
                 ) : (
                   <div className="flex items-center gap-1.5 overflow-hidden mr-2">
                     {range(30).map((index) => (
-                      <div key={index} className="h-1 w-1 rounded-full bg-layer-1 flex-shrink-0" />
+                      <div key={index} className="h-1 w-1 rounded-full bg-(--text-color-disabled) flex-shrink-0" />
                     ))}
                   </div>
                 )}
@@ -130,6 +130,7 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
                 <Button
                   onClick={handleRegenerateSecretKey}
                   variant="secondary"
+                  size="lg"
                   loading={isRegenerating}
                   prependIcon={<RefreshCw />}
                 >
