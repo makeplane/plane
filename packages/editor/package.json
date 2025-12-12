@@ -18,11 +18,11 @@
   "scripts": {
     "build": "tsc && tsdown",
     "dev": "tsdown --watch",
-    "check:lint": "eslint . --max-warnings=1435",
+    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1435",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier --check .",
-    "fix:lint": "eslint . --fix --max-warnings=1435",
-    "fix:format": "prettier --write .",
+    "check:format": "prettier . --cache --check",
+    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=1435",
+    "fix:format": "prettier . --cache --write",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
