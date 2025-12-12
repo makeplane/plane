@@ -146,9 +146,13 @@ function Option(props: ICustomSelectItemProps) {
   const { children, value, className } = props;
   const closeDropdown = useContext(DropdownContext);
 
-  const handleMouseDown = useCallback(() => {
+  const handleClick = useCallback(() => {
     // Close dropdown for both new and already-selected options.
-    requestAnimationFrame(() => closeDropdown());
+    // Use setTimeout to ensure HeadlessUI's onChange handler fires first for new selections.
+    // For already-selected options, this ensures the dropdown closes since onChange won't fire.
+    setTimeout(() => {
+      closeDropdown();
+    }, 0);
   }, [closeDropdown]);
 
   return (
@@ -163,9 +167,10 @@ function Option(props: ICustomSelectItemProps) {
           className
         )
       }
+      onClick={handleClick}
     >
       {({ selected }) => (
-        <div onMouseDown={handleMouseDown} className="flex items-center justify-between gap-2 w-full">
+        <div className="flex items-center justify-between gap-2 w-full">
           {children}
           {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
         </div>
