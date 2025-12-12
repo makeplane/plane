@@ -748,3 +748,18 @@ export const isFiltersApplied = (filters: IIssueFilterOptions): boolean =>
     if (Array.isArray(value)) return value.length > 0;
     return value !== undefined && value !== null && value !== "";
   });
+
+/**
+ * Calculates the minimum width needed for issue identifiers in list layouts
+ * @param projectIdentifierLength - Length of the project identifier (e.g., "PROJ" = 4)
+ * @param maxSequenceId - Maximum sequence ID in the project (e.g., 1234)
+ * @returns Width in pixels needed to display the identifier
+ * 
+ * @example
+ * // For "PROJ-1234"
+ * calculateIdentifierWidth(4, 1234) // Returns width for "PROJ" + "-" + "1234"
+ */
+export const calculateIdentifierWidth = (projectIdentifierLength: number, maxSequenceId: number): number => {
+  const sequenceDigits = Math.max(1, Math.floor(Math.log10(maxSequenceId)) + 1);
+  return projectIdentifierLength * 7 + 7 + sequenceDigits * 7; // project identifier chars + dash + sequence digits
+};
