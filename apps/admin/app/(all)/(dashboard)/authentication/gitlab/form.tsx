@@ -43,7 +43,7 @@ export function InstanceGitlabConfigForm(props: Props) {
       GITLAB_HOST: config["GITLAB_HOST"],
       GITLAB_CLIENT_ID: config["GITLAB_CLIENT_ID"],
       GITLAB_CLIENT_SECRET: config["GITLAB_CLIENT_SECRET"],
-      ENABLE_GITLAB_SYNC: config["ENABLE_GITLAB_SYNC"] ?? "0",
+      ENABLE_GITLAB_SYNC: config["ENABLE_GITLAB_SYNC"],
     },
   });
 
@@ -143,7 +143,7 @@ export function InstanceGitlabConfigForm(props: Props) {
     const payload: Partial<GitlabConfigFormValues> = { ...formData };
 
     try {
-      const response = (await updateInstanceConfigurations(payload)) || [];
+      const response = await updateInstanceConfigurations(payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Done!",

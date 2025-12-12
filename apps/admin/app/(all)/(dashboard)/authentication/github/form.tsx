@@ -45,7 +45,7 @@ export function InstanceGithubConfigForm(props: Props) {
       GITHUB_CLIENT_ID: config["GITHUB_CLIENT_ID"],
       GITHUB_CLIENT_SECRET: config["GITHUB_CLIENT_SECRET"],
       GITHUB_ORGANIZATION_ID: config["GITHUB_ORGANIZATION_ID"],
-      ENABLE_GITHUB_SYNC: config["ENABLE_GITHUB_SYNC"] ?? "0",
+      ENABLE_GITHUB_SYNC: config["ENABLE_GITHUB_SYNC"],
     },
   });
 
@@ -161,7 +161,7 @@ export function InstanceGithubConfigForm(props: Props) {
     const payload: Partial<GithubConfigFormValues> = { ...formData };
 
     try {
-      const response = (await updateInstanceConfigurations(payload)) || [];
+      const response = await updateInstanceConfigurations(payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Done!",

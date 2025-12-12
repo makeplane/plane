@@ -43,7 +43,7 @@ export function InstanceGiteaConfigForm(props: Props) {
       GITEA_HOST: config["GITEA_HOST"] || "https://gitea.com",
       GITEA_CLIENT_ID: config["GITEA_CLIENT_ID"],
       GITEA_CLIENT_SECRET: config["GITEA_CLIENT_SECRET"],
-      ENABLE_GITEA_SYNC: config["ENABLE_GITEA_SYNC"] ?? "0",
+      ENABLE_GITEA_SYNC: config["ENABLE_GITEA_SYNC"],
     },
   });
 
@@ -139,7 +139,7 @@ export function InstanceGiteaConfigForm(props: Props) {
     const payload: Partial<GiteaConfigFormValues> = { ...formData };
 
     try {
-      const response = (await updateInstanceConfigurations(payload)) || [];
+      const response = await updateInstanceConfigurations(payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Done!",

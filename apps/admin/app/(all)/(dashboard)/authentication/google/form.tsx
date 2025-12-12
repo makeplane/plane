@@ -43,7 +43,7 @@ export function InstanceGoogleConfigForm(props: Props) {
     defaultValues: {
       GOOGLE_CLIENT_ID: config["GOOGLE_CLIENT_ID"],
       GOOGLE_CLIENT_SECRET: config["GOOGLE_CLIENT_SECRET"],
-      ENABLE_GOOGLE_SYNC: config["ENABLE_GOOGLE_SYNC"] ?? "0",
+      ENABLE_GOOGLE_SYNC: config["ENABLE_GOOGLE_SYNC"],
     },
   });
 
@@ -149,7 +149,7 @@ export function InstanceGoogleConfigForm(props: Props) {
     const payload: Partial<GoogleConfigFormValues> = { ...formData };
 
     try {
-      const response = (await updateInstanceConfigurations(payload)) || [];
+      const response = await updateInstanceConfigurations(payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Done!",
