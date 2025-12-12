@@ -1140,6 +1140,14 @@
   padding-bottom: 1.35rem;
 }
 
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar: {
+    display: none;
+  }
+}
+
 @utility material-symbols-rounded {
   font-family: "Material Symbols Rounded";
   font-weight: normal;
