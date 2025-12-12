@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 // constants
 import { EPageAccess, PROJECT_PAGE_TRACKER_EVENTS, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 // plane types
@@ -12,15 +12,15 @@ import type { TPage } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
 // helpers
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { getUserRoleString, trackPageCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 export const PagesListHeader = observer(function PagesListHeader() {
   // states
@@ -38,41 +38,47 @@ export const PagesListHeader = observer(function PagesListHeader() {
   const { canCurrentUserCreatePage, createPage } = usePageStore(EPageStoreType.PROJECT);
   // handle page create
   const handleCreatePage = async () => {
-    setIsCreatingPage(true);
+    try {
+      setIsCreatingPage(true);
 
-    const payload: Partial<TPage> = {
-      access: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
-    };
+      const payload: Partial<TPage> = {
+        access: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
+      };
 
-    await createPage(payload)
-      .then((res) => {
-        if (currentWorkspace && currentUser) {
-          const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
-          trackPageCreated(
-            { id: res?.id ?? "", created_at: new Date().toISOString() },
-            currentWorkspace,
-            currentUser,
-            "project",
-            getUserRoleString(role)
-          );
-        }
-        const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
-        router.push(pageId);
-      })
-      .catch((err) => {
-        captureError({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            state: "ERROR",
+      const pageData = await createPage(payload);
+      if (!pageData?.id) throw new Error("Invalid response");
+      if (currentWorkspace && currentUser) {
+        const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+        trackPageCreated(
+          {
+            id: pageData.id,
+            project_id: projectId,
+            created_at: pageData.created_at ?? "",
           },
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.data?.error || "Page could not be created. Please try again.",
-        });
-      })
-      .finally(() => setIsCreatingPage(false));
+          currentWorkspace,
+          currentUser,
+          "project",
+          getUserRoleString(role)
+        );
+      }
+      const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${pageData.id}`;
+      router.push(pageId);
+    } catch (err: any) {
+      captureError({
+        eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
+        payload: {
+          state: "ERROR",
+          error: err?.data?.error,
+        },
+      });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: err?.data?.error || "Page could not be created. Please try again.",
+      });
+    } finally {
+      setIsCreatingPage(false);
+    }
   };
 
   return (

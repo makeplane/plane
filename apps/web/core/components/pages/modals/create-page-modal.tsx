@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 // constants
 import type { EPageAccess } from "@plane/constants";
@@ -7,8 +6,9 @@ import type { TPage } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
-import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
+import { captureError } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane web hooks
 import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageStore } from "@/plane-web/hooks/store";
@@ -69,12 +69,16 @@ export function CreatePageModal(props: Props) {
     if (!workspaceSlug || !projectId) return;
 
     try {
-      const pageData = await createPage(pageFormData);
+      const pageData = await createPage?.(pageFormData);
       if (pageData) {
         if (currentWorkspace && currentUser) {
           const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
           trackPageCreated(
-            { id: pageData.id ?? "", created_at: new Date().toISOString() },
+            {
+              id: pageData.id ?? "",
+              project_id: projectId,
+              created_at: pageData.created_at ?? "",
+            },
             currentWorkspace,
             currentUser,
             "project",
@@ -88,6 +92,11 @@ export function CreatePageModal(props: Props) {
       captureError({
         eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
         error,
+      });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: error?.data?.error || "Page could not be created. Please try again.",
       });
     }
   };

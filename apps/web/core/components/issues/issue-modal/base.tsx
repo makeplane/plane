@@ -249,7 +249,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       if (currentWorkspace && currentUser && response) {
         const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
         trackWorkItemCreated(
-          { id: response.id, created_at: new Date().toISOString() },
+          { id: response.id, created_at: response.created_at },
           { id: payload.project_id },
           currentWorkspace,
           currentUser,
@@ -333,14 +333,10 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       });
 
       if (currentWorkspace && currentUser) {
-        const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
-        trackWorkItemCreated(
-          { id: data.id, created_at: new Date().toISOString() },
-          { id: payload.project_id },
-          currentWorkspace,
-          currentUser,
-          getUserRoleString(role)
-        );
+        captureSuccess({
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
+          payload: { id: data.id },
+        });
       }
       handleClose();
     } catch (error: any) {

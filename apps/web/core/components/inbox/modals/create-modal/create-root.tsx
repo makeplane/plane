@@ -162,34 +162,39 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
 
     await createInboxIssue(workspaceSlug, projectId, payload)
       .then(async (res) => {
+        if (!res?.issue) return;
         if (uploadedAssetIds.length > 0) {
-          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res?.issue.id ?? "", {
+          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res.issue?.id ?? "", {
             asset_ids: uploadedAssetIds,
           });
           setUploadedAssetIds([]);
         }
         if (!createMore) {
-          router.push(`/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
+          router.push(`/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res.issue?.id}`);
           handleModalClose();
         } else {
           descriptionEditorRef?.current?.clearEditor();
           setFormData(defaultIssueData);
         }
+
         if (currentWorkspace && currentUser) {
           const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
           trackWorkItemCreated(
-            { id: res?.issue?.id ?? "", created_at: new Date().toISOString() },
+            { id: res?.issue?.id ?? "", created_at: res.issue?.created_at ?? "" },
             { id: projectId },
             currentWorkspace,
             currentUser,
             getUserRoleString(role)
           );
         }
+
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: `Success!`,
           message: "Work item created successfully.",
         });
+
+        return res;
       })
       .catch((error) => {
         console.error(error);
