@@ -2627,6 +2627,7 @@ export default {
       copy_current_page_url: "Copy current page URL",
       copy_current_page_url_toast_success: "Current page URL copied to clipboard.",
       copy_current_page_url_toast_error: "Some error occurred while copying the current page URL to clipboard.",
+      focus_top_nav_search: "Focus search input",
     },
     preferences_actions: {
       update_theme: "Change interface theme",
