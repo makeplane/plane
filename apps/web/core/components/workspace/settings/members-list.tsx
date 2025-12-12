@@ -69,7 +69,7 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
       <div className="divide-y-[0.5px] divide-subtle overflow-scroll	">
         {searchedMemberIds?.length !== 0 && <WorkspaceMembersListItem memberDetails={memberDetails ?? []} />}
         {searchedInvitationsIds?.length === 0 && searchedMemberIds?.length === 0 && (
-          <h4 className="mt-16 text-center text-13 text-placeholder">{t("no_matching_members")}</h4>
+          <h4 className="mt-16 text-center text-body-xs-regular text-placeholder">{t("no_matching_members")}</h4>
         )}
       </div>
       {isAdmin && searchedInvitationsIds && searchedInvitationsIds.length > 0 && (
@@ -81,9 +81,7 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
           title={
             <div className="flex w-full items-center justify-between pt-4">
               <div className="flex">
-                <h4 className="text-18 font-medium pt-2 pb-2">
-                  {t("workspace_settings.settings.members.pending_invites")}
-                </h4>
+                <h4 className="text-h5-medium pt-2 pb-2">{t("workspace_settings.settings.members.pending_invites")}</h4>
                 {searchedInvitationsIds && (
                   <CountChip count={searchedInvitationsIds.length} className="h-5  m-auto ml-2" />
                 )}
