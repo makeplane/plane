@@ -58,7 +58,7 @@ export function ConfirmDiscardModal(props: Props) {
                   <Button variant="secondary" onClick={handleClose}>
                     Keep editing
                   </Button>
-                  <Link href={onDiscardHref} className={getButtonStyling("primary", "sm")}>
+                  <Link href={onDiscardHref} className={getButtonStyling("primary", "base")}>
                     Go back
                   </Link>
                 </div>

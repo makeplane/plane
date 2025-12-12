@@ -45,7 +45,7 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
       <tr>
         {/* Single header column containing both identifier and workitem */}
         <th
-          className="group/list-header md:sticky min-w-60 left-0 z-[15] h-11 bg-surface-2 text-13 font-medium border-r-[0.5px] border-subtle"
+          className="group/list-header md:sticky min-w-60 left-0 z-[15] h-11 bg-layer-1 text-13 font-medium border-r-[0.5px] border-subtle"
           tabIndex={-1}
         >
           <div className="flex items-center gap-2 h-full w-full px-page-x">

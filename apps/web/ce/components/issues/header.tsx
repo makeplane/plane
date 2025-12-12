@@ -110,8 +110,10 @@ export const IssuesHeader = observer(function IssuesHeader() {
             canUserCreateIssue={canUserCreateIssue}
           />
         </div>
-        {canUserCreateIssue ? (
+        {canUserCreateIssue && (
           <Button
+            variant="primary"
+            size="lg"
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
@@ -120,8 +122,6 @@ export const IssuesHeader = observer(function IssuesHeader() {
             <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
             <div className="hidden sm:block">{t("issue.add.label")}</div>
           </Button>
-        ) : (
-          <></>
         )}
       </Header.RightItem>
     </Header>

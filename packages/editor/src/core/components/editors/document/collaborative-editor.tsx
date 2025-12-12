@@ -15,7 +15,7 @@ import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 import type { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
 // Inner component that has access to collaboration context
-const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
+function CollaborativeDocumentEditorInner(props: ICollaborativeDocumentEditorProps) {
   const {
     aiHandler,
     bubbleMenuEnabled = true,
@@ -129,10 +129,10 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
       </div>
     </>
   );
-};
+}
 
 // Outer component that provides collaboration context
-const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
+function CollaborativeDocumentEditor(props: ICollaborativeDocumentEditorProps) {
   const { id, realtimeConfig, serverHandler, user } = props;
 
   const token = useMemo(() => JSON.stringify(user), [user]);
@@ -147,13 +147,16 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       <CollaborativeDocumentEditorInner {...props} />
     </CollaborationProvider>
   );
-};
+}
 
-const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditorProps>(
-  (props, ref) => (
+const CollaborativeDocumentEditorWithRef = React.forwardRef(function CollaborativeDocumentEditorWithRef(
+  props: ICollaborativeDocumentEditorProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
+  return (
     <CollaborativeDocumentEditor key={props.id} {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi>} />
-  )
-);
+  );
+});
 
 CollaborativeDocumentEditorWithRef.displayName = "CollaborativeDocumentEditorWithRef";
 

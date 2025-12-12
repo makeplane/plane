@@ -27,7 +27,7 @@ export const SettingsHeader = observer(function SettingsHeader() {
       <Link
         href={`/${currentWorkspace?.slug}`}
         className={cn(
-          getButtonStyling("secondary", "sm"),
+          getButtonStyling("secondary", "base"),
           "md:absolute left-2 top-9 group flex  gap-2 text-tertiary mb-4 w-fit rounded-lg",
           "h-6 w-6 rounded-lg p-1",
           isScrolled ? "-mt-2 " : "hidden p-0 overflow-hidden items-center pr-2 border-none"
@@ -45,7 +45,7 @@ export const SettingsHeader = observer(function SettingsHeader() {
       >
         <button
           className={cn(
-            getButtonStyling("secondary", "sm"),
+            getButtonStyling("secondary", "base"),
             "h-6 w-6 rounded-lg p-1 hover:bg-surface-1 hover:border-subtle",
             "group-hover:bg-surface-1 group-hover:border-transparent",
             { "h-0 hidden": isScrolled }

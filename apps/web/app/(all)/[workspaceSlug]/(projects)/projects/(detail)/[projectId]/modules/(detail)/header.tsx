@@ -221,13 +221,15 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
 
           {canUserCreateIssue ? (
             <>
-              <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="secondary">
-                <div className="hidden @4xl:flex">Analytics</div>
-                <div className="flex @4xl:hidden">
+              <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
+                <span className="hidden @4xl:flex">Analytics</span>
+                <span className="@4xl:hidden">
                   <ChartNoAxesColumn className="size-3.5" />
-                </div>
+                </span>
               </Button>
               <Button
+                variant="primary"
+                size="lg"
                 className="hidden sm:flex"
                 onClick={() => {
                   toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
@@ -240,13 +242,9 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
           ) : (
             <></>
           )}
-          <button
-            type="button"
-            className="p-1.5 rounded-sm outline-none hover:bg-layer-1 bg-layer-1/70"
-            onClick={toggleSidebar}
-          >
-            <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-secondary")} />
-          </button>
+          <Button variant="ghost" size="lg" onClick={toggleSidebar}>
+            <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-accent-primary" : "text-secondary")} />
+          </Button>
           {moduleId && (
             <ModuleQuickActions
               parentRef={parentRef}

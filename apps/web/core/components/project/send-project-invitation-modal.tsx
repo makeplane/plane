@@ -343,10 +343,10 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                       {t("common.add_more")}
                     </button>
                     <div className="flex items-center gap-2">
-                      <Button variant="secondary" onClick={handleClose}>
+                      <Button variant="secondary" size="lg" onClick={handleClose}>
                         {t("cancel")}
                       </Button>
-                      <Button variant="primary" type="submit" loading={isSubmitting}>
+                      <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
                         {isSubmitting
                           ? `${fields && fields.length > 1 ? `${t("add_members")}...` : `${t("add_member")}...`}`
                           : `${fields && fields.length > 1 ? t("add_members") : t("add_member")}`}

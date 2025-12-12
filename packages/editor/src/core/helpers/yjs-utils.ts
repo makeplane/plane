@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import type { Extensions } from "@tiptap/core";
+import type { Extensions, JSONContent } from "@tiptap/core";
 import { getSchema } from "@tiptap/core";
 import { generateHTML, generateJSON } from "@tiptap/html";
 import { prosemirrorJSONToYDoc, yXmlFragmentToProseMirrorRootNode } from "y-prosemirror";
@@ -69,16 +69,49 @@ export const getBinaryDataFromRichTextEditorHTMLString = (descriptionHTML: strin
   return encodedData;
 };
 
+export const generateTitleProsemirrorJson = (text: string): JSONContent => {
+  return {
+    type: "doc",
+    content: [
+      {
+        type: "heading",
+        attrs: { level: 1 },
+        ...(text
+          ? {
+              content: [
+                {
+                  type: "text",
+                  text,
+                },
+              ],
+            }
+          : {}),
+      },
+    ],
+  };
+};
+
 /**
  * @description this function generates the binary equivalent of html content for the document editor
- * @param {string} descriptionHTML
+ * @param {string} descriptionHTML - The HTML content to convert
+ * @param {string} [title] - Optional title to append to the document
  * @returns {Uint8Array}
  */
-export const getBinaryDataFromDocumentEditorHTMLString = (descriptionHTML: string): Uint8Array => {
+export const getBinaryDataFromDocumentEditorHTMLString = (descriptionHTML: string, title?: string): Uint8Array => {
   // convert HTML to JSON
   const contentJSON = generateJSON(descriptionHTML ?? "<p></p>", DOCUMENT_EDITOR_EXTENSIONS);
   // convert JSON to Y.Doc format
   const transformedData = prosemirrorJSONToYDoc(documentEditorSchema, contentJSON, "default");
+
+  // If title is provided, merge it into the document
+  if (title != null) {
+    const titleJSON = generateTitleProsemirrorJson(title);
+    const titleField = prosemirrorJSONToYDoc(documentEditorSchema, titleJSON, "title");
+    // Encode the title YDoc to updates and apply them to the main document
+    const titleUpdates = Y.encodeStateAsUpdate(titleField);
+    Y.applyUpdate(transformedData, titleUpdates);
+  }
+
   // convert Y.Doc to Uint8Array format
   const encodedData = Y.encodeStateAsUpdate(transformedData);
   return encodedData;
@@ -207,8 +240,9 @@ export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllF
 };
 
 export const extractTextFromHTML = (html: string): string => {
-  // Use sanitizeHTML to safely extract text and remove all HTML tags
+  // Use DOMPurify to safely extract text and remove all HTML tags
   // This is more secure than regex as it handles edge cases and prevents injection
   // Note: sanitizeHTML trims whitespace, which is acceptable for title extraction
-  return sanitizeHTML(html) || "";
+  const sanitizedText = sanitizeHTML(html); // sanitize the string to remove all HTML tags
+  return sanitizedText.trim() || ""; // trim the string to remove leading and trailing whitespaces
 };

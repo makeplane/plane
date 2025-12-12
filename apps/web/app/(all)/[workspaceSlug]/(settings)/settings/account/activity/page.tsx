@@ -64,8 +64,8 @@ function ProfileActivityPage() {
           title={""}
           description={""}
           assetPath={resolvedPath}
-          className="w-full !p-0 justify-center mx-auto min-h-fit"
-          size="md"
+          className="w-full p-0! justify-center mx-auto min-h-fit"
+          size="base"
         />
       </div>
     );

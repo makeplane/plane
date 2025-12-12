@@ -13,7 +13,7 @@ import { getEditorRefHelpers } from "@/helpers/editor-ref";
 import type { IEditorPropsExtended, IEditorProps } from "@/types";
 import type { EditorTitleRefApi, ICollaborativeDocumentEditorProps } from "@/types/editor";
 
-type Props = {
+type TUseTitleEditorProps = {
   editable?: boolean;
   provider: HocuspocusProvider;
   titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
@@ -31,7 +31,7 @@ type Props = {
  * A hook that creates a title editor with collaboration features
  * Uses the same Y.Doc as the main editor but a different field
  */
-export const useTitleEditor = (props: Props) => {
+export const useTitleEditor = (props: TUseTitleEditorProps) => {
   const {
     editable = true,
     id,

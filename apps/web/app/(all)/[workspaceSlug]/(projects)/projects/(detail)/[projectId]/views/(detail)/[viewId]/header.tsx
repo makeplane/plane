@@ -190,18 +190,17 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
             </FiltersDropdown>
           )}
         </>
-        {canUserCreateIssue ? (
+        {canUserCreateIssue && (
           <Button
+            variant="primary"
+            size="lg"
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
             data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.PROJECT_VIEW}
-            size="sm"
           >
             Add work item
           </Button>
-        ) : (
-          <></>
         )}
         <div className="hidden md:block">
           <ViewQuickActions

@@ -31,7 +31,7 @@ export function CycleListGroupHeader(props: Props) {
         </div>
       </div>
       <ChevronDownIcon
-        className={cn("h-4 w-4 text-tertiary duration-300 ", {
+        className={cn("shrink-0 size-4 text-tertiary transition-transform", {
           "rotate-180": isExpanded,
         })}
       />

@@ -16,7 +16,7 @@ export const iconButtonVariants = cva(
         secondary:
           "bg-layer-2 hover:bg-layer-2-hover active:bg-layer-2-active focus:bg-layer-2-active disabled:bg-layer-transparent text-secondary disabled:text-disabled border border-strong disabled:border-subtle-1 shadow-raised-100",
         tertiary:
-          "bg-layer-1 hover:bg-layer-1-hover active:bg-layer-1-active focus:bg-layer-1-active disabled:bg-layer-transparent text-secondary disabled:text-disabled",
+          "bg-layer-3 hover:bg-layer-3-hover active:bg-layer-3-active focus:bg-layer-3-active disabled:bg-layer-transparent text-secondary disabled:text-disabled",
         ghost:
           "bg-layer-transparent hover:bg-layer-transparent-hover active:bg-layer-transparent-active focus:bg-layer-transparent-active disabled:bg-layer-transparent text-secondary disabled:text-disabled",
       },

@@ -39,7 +39,10 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
   return (
     <div className={cn("mb-3 space-y-4", className)}>
       {fields.map((field, index) => (
-        <div key={field.id} className="relative group mb-1 flex items-start justify-between gap-x-4 text-13 w-full">
+        <div
+          key={field.id}
+          className="relative group mb-1 flex items-start justify-between gap-x-4 text-body-xs-regular w-full"
+        >
           <div className="w-full">
             <Controller
               control={control}
@@ -62,16 +65,18 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
                     ref={ref}
                     hasError={Boolean(errors.emails?.[index]?.email)}
                     placeholder={t("workspace_settings.settings.members.modal.placeholder")}
-                    className="w-full text-11 sm:text-13"
+                    className="w-full text-caption-sm-regular sm:text-body-xs-regular"
                   />
                   {errors.emails?.[index]?.email && (
-                    <span className="ml-1 text-11 text-red-500">{errors.emails?.[index]?.email?.message}</span>
+                    <span className="ml-1 text-caption-sm-regular text-danger">
+                      {errors.emails?.[index]?.email?.message}
+                    </span>
                   )}
                 </>
               )}
             />
           </div>
-          <div className="flex items-center justify-between gap-2 flex-shrink-0 ">
+          <div className="flex items-center justify-between gap-2 shrink-0">
             <div className="flex flex-col gap-1">
               <Controller
                 control={control}
@@ -80,7 +85,7 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
                 render={({ field: { value, onChange } }) => (
                   <CustomSelect
                     value={value}
-                    label={<span className="text-11 sm:text-13">{ROLE[value]}</span>}
+                    label={<span className="text-caption-sm-regular sm:text-body-xs-regular">{ROLE[value]}</span>}
                     onChange={onChange}
                     className="flex-grow w-24"
                     input

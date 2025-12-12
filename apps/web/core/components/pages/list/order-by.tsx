@@ -1,12 +1,8 @@
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
-// types
+// plane imports
 import { getButtonStyling } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TPageFiltersSortBy, TPageFiltersSortKey } from "@plane/types";
-// ui
 import { CustomMenu } from "@plane/ui";
-// helpers
-import { cn } from "@plane/utils";
 
 type Props = {
   onChange: (value: { key?: TPageFiltersSortKey; order?: TPageFiltersSortBy }) => void;
@@ -32,10 +28,9 @@ export function PageOrderByDropdown(props: Props) {
   return (
     <CustomMenu
       customButton={
-        <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-tertiary ")}>
+        <div className={getButtonStyling("secondary", "lg")}>
           {!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}
           {orderByDetails?.label}
-          <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
         </div>
       }
       placement="bottom-end"

@@ -189,7 +189,6 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
                 enableSelection={enableSelection}
                 sidebarToRender={sidebarToRender}
                 title={title}
-                quickAdd={quickAdd}
                 selectionHelpers={helpers}
                 showAllBlocks={showAllBlocks}
                 isEpic={isEpic}
@@ -232,6 +231,7 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
                 )}
               </div>
             </div>
+            {quickAdd ? quickAdd : null}
             <IssueBulkOperationsRoot selectionHelpers={helpers} />
           </>
         )}

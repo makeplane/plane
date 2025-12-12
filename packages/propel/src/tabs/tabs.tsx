@@ -59,8 +59,8 @@ const TabsTrigger = React.forwardRef(function TabsTrigger(
       data-slot="tabs-trigger"
       className={cn(
         "flex items-center justify-center p-1 min-w-fit w-full font-medium text-primary outline-none focus:outline-none cursor-pointer transition-all duration-200 ease-in-out rounded-sm",
-        "data-[selected]:bg-surface-1 data-[selected]:text-primary data-[selected]:shadow-sm",
-        "text-placeholder hover:text-tertiary hover:bg-layer-1/60",
+        "data-[selected]:bg-layer-transparent-active data-[selected]:text-primary data-[selected]:shadow-sm",
+        "text-placeholder hover:text-tertiary hover:bg-layer-transparent-hover",
         "disabled:text-placeholder disabled:cursor-not-allowed",
         {
           "text-11": size === "sm",

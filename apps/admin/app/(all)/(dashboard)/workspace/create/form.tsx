@@ -201,7 +201,7 @@ export function WorkspaceCreateForm() {
         >
           {isSubmitting ? "Creating workspace" : "Create workspace"}
         </Button>
-        <Link className={getButtonStyling("neutral-primary", "sm")} href="/workspace">
+        <Link className={getButtonStyling("secondary", "base")} href="/workspace">
           Go back
         </Link>
       </div>

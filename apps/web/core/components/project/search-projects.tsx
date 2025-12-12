@@ -10,6 +10,7 @@ import { CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // hooks
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
+import { IconButton } from "@plane/propel/icon-button";
 
 export const ProjectSearch = observer(function ProjectSearch() {
   // i18n
@@ -35,16 +36,16 @@ export const ProjectSearch = observer(function ProjectSearch() {
   return (
     <div className="flex items-center">
       {!isSearchOpen && (
-        <button
-          type="button"
-          className="-mr-1 p-2 hover:bg-layer-1 rounded-sm text-placeholder grid place-items-center"
+        <IconButton
+          variant="ghost"
+          size="lg"
+          className="-mr-1"
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
           }}
-        >
-          <Search className="h-3.5 w-3.5" />
-        </button>
+          icon={Search}
+        />
       )}
       <div
         className={cn(

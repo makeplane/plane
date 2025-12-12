@@ -10,11 +10,11 @@
     "preview": "react-router build && serve -s build/client -l 3000",
     "start": "serve -s build/client -l 3000",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf .react-router && rm -rf node_modules && rm -rf dist && rm -rf build",
-    "check:lint": "eslint . --max-warnings=14367",
+    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=14367",
     "check:types": "react-router typegen && tsc --noEmit",
-    "check:format": "prettier --check .",
-    "fix:lint": "eslint . --fix --max-warnings=14367",
-    "fix:format": "prettier --write ."
+    "check:format": "prettier . --cache --check",
+    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=14367",
+    "fix:format": "prettier . --cache --write"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
@@ -52,7 +52,7 @@
     "mobx": "catalog:",
     "mobx-react": "catalog:",
     "mobx-utils": "catalog:",
-    "next-themes": "^0.2.1",
+    "next-themes": "0.4.6",
     "posthog-js": "^1.255.1",
     "react": "catalog:",
     "react-color": "^2.19.3",

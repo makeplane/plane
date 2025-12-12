@@ -97,7 +97,7 @@ export const FilterItem = observer(function FilterItem<P extends TFilterProperty
         className={COMMON_FILTER_ITEM_BORDER_CLASSNAME}
         customButtonClassName={cn(
           "h-full px-2 text-13 font-regular",
-          isOperatorSelectionDisabled && "hover:bg-surface-1"
+          isOperatorSelectionDisabled && "hover:bg-layer-2-hover"
         )}
         optionsClassName="w-48"
         maxHeight="2xl"

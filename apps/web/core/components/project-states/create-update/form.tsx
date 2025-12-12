@@ -92,10 +92,10 @@ export function StateForm(props: TStateForm) {
         />
 
         <div className="flex space-x-2 items-center">
-          <Button onClick={formSubmit} variant="primary" disabled={buttonDisabled}>
+          <Button onClick={formSubmit} variant="primary" size="lg" disabled={buttonDisabled}>
             {buttonTitle}
           </Button>
-          <Button type="button" variant="secondary" disabled={buttonDisabled} onClick={onCancel}>
+          <Button type="button" variant="secondary" size="lg" disabled={buttonDisabled} onClick={onCancel}>
             Cancel
           </Button>
         </div>
