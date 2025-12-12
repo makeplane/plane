@@ -122,7 +122,7 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                         <div>
                           <div className="relative px-1.5 mt-4">
                             <div className="mt-1.5">
-                              <div className="flex h-6 w-6 items-center justify-center">
+                              <div className="flex h-6 w-6 items-center justify-center border border-subtle rounded-lg shadow-raised-100">
                                 {activityItem.field ? (
                                   activityItem.new_value === "restore" ? (
                                     <History className="h-5 w-5 text-secondary" />
@@ -148,7 +148,7 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                           </div>
                         </div>
                         <div className="min-w-0 flex-1 border-b border-subtle py-4">
-                          <div className="break-words text-13 text-secondary">
+                          <div className="break-words text-caption-md-regular text-secondary">
                             {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                               <span className="text-gray font-medium">Plane</span>
                             ) : activityItem.actor_detail.is_bot ? (
