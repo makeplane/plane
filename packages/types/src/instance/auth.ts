@@ -16,19 +16,28 @@ export type TInstanceAuthenticationMethodKeys =
   | "IS_GITLAB_ENABLED"
   | "IS_GITEA_ENABLED";
 
-export type TInstanceGoogleAuthenticationConfigurationKeys = "GOOGLE_CLIENT_ID" | "GOOGLE_CLIENT_SECRET";
+export type TInstanceGoogleAuthenticationConfigurationKeys =
+  | "GOOGLE_CLIENT_ID"
+  | "GOOGLE_CLIENT_SECRET"
+  | "ENABLE_GOOGLE_SYNC";
 
 export type TInstanceGithubAuthenticationConfigurationKeys =
   | "GITHUB_CLIENT_ID"
   | "GITHUB_CLIENT_SECRET"
-  | "GITHUB_ORGANIZATION_ID";
+  | "GITHUB_ORGANIZATION_ID"
+  | "ENABLE_GITHUB_SYNC";
 
 export type TInstanceGitlabAuthenticationConfigurationKeys =
   | "GITLAB_HOST"
   | "GITLAB_CLIENT_ID"
-  | "GITLAB_CLIENT_SECRET";
+  | "GITLAB_CLIENT_SECRET"
+  | "ENABLE_GITLAB_SYNC";
 
-export type TInstanceGiteaAuthenticationConfigurationKeys = "GITEA_HOST" | "GITEA_CLIENT_ID" | "GITEA_CLIENT_SECRET";
+export type TInstanceGiteaAuthenticationConfigurationKeys =
+  | "GITEA_HOST"
+  | "GITEA_CLIENT_ID"
+  | "GITEA_CLIENT_SECRET"
+  | "ENABLE_GITEA_SYNC";
 
 export type TInstanceAuthenticationConfigurationKeys =
   | TInstanceGoogleAuthenticationConfigurationKeys
