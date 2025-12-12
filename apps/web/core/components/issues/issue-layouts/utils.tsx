@@ -754,7 +754,7 @@ export const isFiltersApplied = (filters: IIssueFilterOptions): boolean =>
  * @param projectIdentifierLength - Length of the project identifier (e.g., "PROJ" = 4)
  * @param maxSequenceId - Maximum sequence ID in the project (e.g., 1234)
  * @returns Width in pixels needed to display the identifier
- * 
+ *
  * @example
  * // For "PROJ-1234"
  * calculateIdentifierWidth(4, 1234) // Returns width for "PROJ" + "-" + "1234"
