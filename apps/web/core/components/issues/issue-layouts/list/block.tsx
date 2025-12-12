@@ -28,6 +28,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 // types
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { calculateIdentifierWidth } from "../utils";
 import type { TRenderQuickActions } from "./list-view-types";
 
 interface IssueBlockProps {
@@ -76,7 +77,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const projectId = routerProjectId?.toString();
   // hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
-  const { getProjectIdentifierById } = useProject();
+  const { getProjectIdentifierById, currentProjectNextSequenceId } = useProject();
   const {
     getIsIssuePeeked,
     peekIssue,
@@ -150,8 +151,12 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     }
   };
 
-  //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
-  const keyMinWidth = displayProperties?.key ? (projectIdentifier?.length ?? 0) * 7 : 0;
+  // Calculate width for: projectIdentifier + "-" + dynamic sequence number digits
+  // Use next_work_item_sequence from backend (static value from project endpoint)
+  const maxSequenceId = currentProjectNextSequenceId ?? 1;
+  const keyMinWidth = displayProperties?.key
+    ? calculateIdentifierWidth(projectIdentifier?.length ?? 0, maxSequenceId)
+    : 0;
 
   const workItemLink = generateWorkItemLink({
     workspaceSlug,

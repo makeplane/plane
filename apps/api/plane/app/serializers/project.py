@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
+from django.db.models import Max
 from plane.app.serializers.workspace import WorkspaceLiteSerializer
 from plane.app.serializers.user import UserLiteSerializer, UserAdminLiteSerializer
 from plane.db.models import (
@@ -12,6 +13,7 @@ from plane.db.models import (
     ProjectIdentifier,
     DeployBoard,
     ProjectPublicMember,
+    IssueSequence
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -105,6 +107,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
     members = serializers.SerializerMethodField()
     cover_image_url = serializers.CharField(read_only=True)
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
+    next_work_item_sequence = serializers.SerializerMethodField()
 
     def get_members(self, obj):
         project_members = getattr(obj, "members_list", None)
@@ -112,6 +115,11 @@ class ProjectListSerializer(DynamicBaseSerializer):
             # Filter members by the project ID
             return [member.member_id for member in project_members if member.is_active and not member.member.is_bot]
         return []
+
+    def get_next_work_item_sequence(self, obj):
+        """Get the next sequence ID that will be assigned to a new issue"""
+        max_sequence = IssueSequence.objects.filter(project_id=obj.id).aggregate(max_seq=Max("sequence"))["max_seq"]
+        return (max_sequence + 1) if max_sequence else 1
 
     class Meta:
         model = Project
