@@ -88,6 +88,12 @@
   --shadow-direction-left: -10px 0px 30px -5px #292f3d05, -5px 0px 80px -5px #292f3d0a;
   --shadow-direction-right: 10px 0px 30px -5px #0000000a, 5px 0px 80px -5px #0000000a;
 
+  /* --------- Height --------- */
+  --height-header: 3.25rem;
+
+  /* --------- Padding --------- */
+  --padding-page: 1.35rem;
+
   /* --------- Priority colors --------- */
   --color-priority-urgent: oklch(0.5798 0.1766 26.99);
   --color-priority-high: oklch(0.6802 0.1633 50.67);
@@ -1104,10 +1110,6 @@
   --text-caption-xs-bold--line-height: 1;
   --text-caption-xs-bold--letter-spacing: calc(0.01 * var(--text-10));
   --text-caption-xs-bold--font-weight: var(--font-weight-bold);
-}
-
-@utility h-header {
-  height: 3.25rem;
 }
 
 @utility p-page-x {
