@@ -112,7 +112,7 @@ export const AuthenticationModes = observer(function AuthenticationModes(props: 
   const { resolvedTheme } = useTheme();
 
   return (
-    <>
+    <div className="flex flex-col gap-3">
       {getAuthenticationModes({ disabled, updateConfig, resolvedTheme }).map((method) => (
         <AuthenticationMethodCard
           key={method.key}
@@ -124,6 +124,6 @@ export const AuthenticationModes = observer(function AuthenticationModes(props: 
           unavailable={method.unavailable}
         />
       ))}
-    </>
+    </div>
   );
 });

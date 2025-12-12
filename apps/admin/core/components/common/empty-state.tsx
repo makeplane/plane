@@ -28,6 +28,7 @@ export function EmptyState({ title, description, image, primaryButton, secondary
               prependIcon={primaryButton.icon}
               onClick={primaryButton.onClick}
               disabled={disabled}
+              size="lg"
             >
               {primaryButton.text}
             </Button>

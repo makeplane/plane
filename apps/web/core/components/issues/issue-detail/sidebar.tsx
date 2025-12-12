@@ -122,7 +122,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
                 disabled={!isEditable}
                 buttonVariant="border-with-text"
-                className="w-full grow"
+                className="w-full grow rounded-lg"
                 buttonContainerClassName="w-full text-left px-2 h-7.5"
                 buttonClassName="w-min h-auto whitespace-nowrap"
               />
@@ -150,7 +150,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 disabled={!isEditable}
                 buttonVariant="transparent-with-text"
                 className="group w-full grow"
-                buttonContainerClassName="w-full text-left"
+                buttonContainerClassName="w-full text-left h-7.5"
                 buttonClassName={`text-body-xs-regular ${issue?.start_date ? "" : "text-placeholder"}`}
                 hideIcon
                 clearIconClassName="h-3 w-3 hidden group-hover:inline"
@@ -171,7 +171,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   disabled={!isEditable}
                   buttonVariant="transparent-with-text"
                   className="group w-full grow"
-                  buttonContainerClassName="w-full text-left"
+                  buttonContainerClassName="w-full text-left h-7.5"
                   buttonClassName={cn("text-body-xs-regular", {
                     "text-placeholder": !issue.target_date,
                     "text-danger": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
@@ -194,7 +194,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   disabled={!isEditable}
                   buttonVariant="transparent-with-text"
                   className="group w-full grow"
-                  buttonContainerClassName="w-full text-left"
+                  buttonContainerClassName="w-full text-left h-7.5"
                   buttonClassName={`text-body-xs-regular ${issue?.estimate_point !== null ? "" : "text-placeholder"}`}
                   placeholder={t("common.none")}
                   hideIcon
@@ -224,7 +224,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 appendElement={<TransferHopInfo workItem={issue} />}
               >
                 <IssueCycleSelect
-                  className="w-full grow"
+                  className="w-full grow h-7.5"
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
                   issueId={issueId}

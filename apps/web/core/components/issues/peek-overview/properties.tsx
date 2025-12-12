@@ -85,7 +85,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             disabled={disabled}
             buttonVariant="transparent-with-text"
             className="w-full grow group"
-            buttonContainerClassName="w-full text-left"
+            buttonContainerClassName="w-full text-left h-7.5"
             buttonClassName="text-body-xs-regular"
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
@@ -102,7 +102,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             multiple
             buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
             className="w-full grow group"
-            buttonContainerClassName="w-full text-left"
+            buttonContainerClassName="w-full text-left h-7.5"
             buttonClassName={`text-body-xs-regular justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-placeholder"}`}
             hideIcon={issue.assignee_ids?.length === 0}
             dropdownArrow
@@ -116,7 +116,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
             disabled={disabled}
             buttonVariant="border-with-text"
-            className="w-full grow group"
+            className="w-full grow group rounded-lg px-2"
             buttonContainerClassName="w-full text-left"
             buttonClassName="w-min h-auto whitespace-nowrap"
           />
@@ -147,7 +147,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             maxDate={maxDate ?? undefined}
             disabled={disabled}
             className="w-full grow group"
-            buttonContainerClassName="w-full text-left"
+            buttonContainerClassName="w-full text-left h-7.5"
             buttonClassName={`text-body-xs-regular ${issue?.start_date ? "" : "text-placeholder"}`}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
@@ -168,7 +168,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               minDate={minDate ?? undefined}
               disabled={disabled}
               className="w-full grow group"
-              buttonContainerClassName="w-full text-left"
+              buttonContainerClassName="w-full text-left h-7.5"
               buttonClassName={cn("text-body-xs-regular", {
                 "text-placeholder": !issue.target_date,
                 "text-danger": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
@@ -189,7 +189,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               disabled={disabled}
               buttonVariant="transparent-with-text"
               className="w-full grow group"
-              buttonContainerClassName="w-full text-left"
+              buttonContainerClassName="w-full text-left h-7.5"
               buttonClassName={`text-body-xs-regular ${issue?.estimate_point !== undefined ? "" : "text-placeholder"}`}
               placeholder="None"
               hideIcon
@@ -219,7 +219,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             appendElement={<TransferHopInfo workItem={issue} />}
           >
             <IssueCycleSelect
-              className="w-full grow"
+              className="w-full grow h-7.5"
               workspaceSlug={workspaceSlug}
               projectId={projectId}
               issueId={issueId}

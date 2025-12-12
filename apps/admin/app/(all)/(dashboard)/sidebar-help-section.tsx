@@ -64,7 +64,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
         <Tooltip tooltipContent="Help" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
           <button
             type="button"
-            className={`ml-auto grid place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-surface-2 hover:text-primary ${
+            className={`ml-auto grid place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-layer-1-hover hover:text-primary ${
               isSidebarCollapsed ? "w-full" : ""
             }`}
             onClick={() => setIsNeedHelpOpen((prev) => !prev)}
@@ -75,7 +75,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
         <Tooltip tooltipContent="Toggle sidebar" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
           <button
             type="button"
-            className={`grid place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-surface-2 hover:text-primary ${
+            className={`grid place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-layer-1-hover hover:text-primary ${
               isSidebarCollapsed ? "w-full" : ""
             }`}
             onClick={() => toggleSidebar(!isSidebarCollapsed)}
@@ -106,7 +106,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
                 if (href)
                   return (
                     <Link href={href} key={name} target="_blank">
-                      <div className="flex items-center gap-x-2 rounded-sm px-2 py-1 text-11 hover:bg-layer-1">
+                      <div className="flex items-center gap-x-2 rounded-sm px-2 py-1 text-11 hover:bg-layer-1-hover">
                         <div className="grid flex-shrink-0 place-items-center">
                           <Icon className="h-3.5 w-3.5 text-secondary" width={14} height={14} />
                         </div>

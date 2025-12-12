@@ -201,10 +201,16 @@ export function InstanceGithubConfigForm(props: Props) {
             ))}
             <div className="flex flex-col gap-1 pt-4">
               <div className="flex items-center gap-4">
-                <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isDirty}>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={handleSubmit(onSubmit)}
+                  loading={isSubmitting}
+                  disabled={!isDirty}
+                >
                   {isSubmitting ? "Saving..." : "Save changes"}
                 </Button>
-                <Link href="/authentication" className={getButtonStyling("secondary", "base")} onClick={handleGoBack}>
+                <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
                   Go back
                 </Link>
               </div>
