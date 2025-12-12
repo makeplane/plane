@@ -37,7 +37,7 @@ export function Logo(props: Props) {
   // if no value, return empty fragment
   if (!value) return <></>;
 
-  if (!isMaterialSymbolsFontLoaded) {
+  if (!isMaterialSymbolsFontLoaded && type === "material") {
     return (
       <span
         style={{
