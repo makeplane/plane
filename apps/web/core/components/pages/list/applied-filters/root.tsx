@@ -28,7 +28,7 @@ export function PageAppliedFiltersList(props: Props) {
   const isEditingAllowed = alwaysAllowEditing;
 
   return (
-    <div className="flex flex-wrap items-stretch gap-2 bg-surface-1">
+    <div className="flex flex-wrap items-stretch gap-2">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof TPageFilterProps;
 

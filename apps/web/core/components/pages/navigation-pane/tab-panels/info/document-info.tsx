@@ -74,7 +74,7 @@ export const PageNavigationPaneInfoTabDocumentInfo = observer(function PageNavig
   return (
     <div className="grid grid-cols-2 gap-2">
       {documentInfoCards.map((card) => (
-        <div key={card.key} className="p-2 bg-surface-2 rounded-sm">
+        <div key={card.key} className="p-2 bg-layer-2 rounded-sm">
           <h6 className="text-14 font-semibold">{card.info}</h6>
           <p className="mt-1.5 text-13 text-tertiary font-medium">{card.title}</p>
         </div>

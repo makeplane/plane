@@ -42,13 +42,13 @@ const VersionHistoryItem = observer(function VersionHistoryItem(props: VersionHi
     <li className="relative flex items-center gap-x-4 text-11 font-medium">
       {/* timeline icon */}
       <div className="relative size-6 flex-none grid place-items-center">
-        <div className="size-2 rounded-full bg-layer-1" />
+        <div className="size-2 rounded-full bg-layer-3" />
       </div>
       {/* end timeline icon */}
       <Link
         href={getVersionLink(version.id)}
-        className={cn("block flex-1 hover:bg-surface-2 rounded-md py-2 px-1", {
-          "bg-layer-1 hover:bg-layer-1": isVersionActive,
+        className={cn("block flex-1 hover:bg-layer-transparent-hover rounded-md py-2 px-1", {
+          " bg-layer-transparent-selected hover:bg-layer-transparent-selected": isVersionActive,
         })}
       >
         <p className="text-tertiary">
@@ -59,7 +59,7 @@ const VersionHistoryItem = observer(function VersionHistoryItem(props: VersionHi
             size="sm"
             src={getFileURL(versionCreator?.avatar_url ?? "")}
             name={versionCreator?.display_name}
-            className="flex-shrink-0"
+            className="shrink-0"
           />
           <span>{versionCreator?.display_name ?? t("common.deactivated_user")}</span>
         </p>
@@ -106,10 +106,10 @@ export const PageNavigationPaneInfoTabVersionHistory = observer(function PageNav
     <div>
       <p className="text-11 font-medium text-secondary">{t("page_navigation_pane.tabs.info.version_history.label")}</p>
       <div className="mt-3">
-        <ul role="list" className="relative">
+        <ul className="relative">
           {/* timeline line */}
           <div className={cn("absolute left-0 top-0 h-full flex w-6 justify-center")}>
-            <div className="w-px bg-layer-1" />
+            <div className="w-px bg-layer-3" />
           </div>
           {/* end timeline line */}
           <li className="relative flex items-center gap-x-4 text-11 font-medium">
@@ -120,8 +120,8 @@ export const PageNavigationPaneInfoTabVersionHistory = observer(function PageNav
             {/* end timeline icon */}
             <Link
               href={getVersionLink()}
-              className={cn("flex-1 hover:bg-surface-2 rounded-md py-2 px-1", {
-                "bg-layer-1 hover:bg-layer-1": !activeVersion,
+              className={cn("flex-1 bg-layer-transparent hover:bg-layer-transparent-hover rounded-md py-2 px-1", {
+                "bg-layer-transparent-selected hover:bg-layer-transparent-selected": !activeVersion,
               })}
             >
               {t("page_navigation_pane.tabs.info.version_history.current_version")}

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useState } from "react";
 import { Search } from "lucide-react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -17,6 +17,7 @@ export function PageSearchInput(props: Props) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
+
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
@@ -31,10 +32,6 @@ export function PageSearchInput(props: Props) {
       }
     }
   };
-
-  useEffect(() => {
-    if (searchQuery.trim() !== "") setIsSearchOpen(true);
-  }, [searchQuery]);
 
   return (
     <div className="flex">
@@ -52,7 +49,7 @@ export function PageSearchInput(props: Props) {
       )}
       <div
         className={cn(
-          "flex items-center justify-start rounded-md border border-transparent bg-surface-1 text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+          "flex items-center justify-start rounded-md border border-transparent text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
           {
             "w-64 px-2.5 py-1.5 border-subtle opacity-100": isSearchOpen,
           }
