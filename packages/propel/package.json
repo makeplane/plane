@@ -20,6 +20,7 @@
     "./accordion": "./dist/accordion/index.js",
     "./animated-counter": "./dist/animated-counter/index.js",
     "./avatar": "./dist/avatar/index.js",
+    "./badge": "./dist/badge/index.js",
     "./banner": "./dist/banner/index.js",
     "./button": "./dist/button/index.js",
     "./calendar": "./dist/calendar/index.js",

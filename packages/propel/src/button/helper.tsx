@@ -1,15 +1,6 @@
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
 
-export interface IButtonStyling {
-  [key: string]: {
-    default: string;
-    hover: string;
-    pressed: string;
-    disabled: string;
-  };
-}
-
 export const buttonVariants = cva(
   "inline-flex items-center justify-center gap-1 whitespace-nowrap transition-colors focus-visible:outline-none disabled:pointer-events-none",
   {
@@ -32,7 +23,7 @@ export const buttonVariants = cva(
       size: {
         sm: "h-5 px-1.5 text-caption-md-medium rounded-sm",
         base: "h-6 px-2 text-body-xs-medium rounded-md",
-        lg: "h-7 px-2 text-body-sm-medium rounded-md",
+        lg: "h-7 px-2 text-body-xs-medium rounded-md",
         xl: "h-8 px-2 text-body-sm-medium rounded-md",
       },
     },

@@ -3,7 +3,7 @@ import { cn } from "../utils";
 import type { IconButtonProps } from "./helper";
 import { iconButtonVariants } from "./helper";
 
-const IconButton = React.forwardRef(function Button(
+const IconButton = React.forwardRef(function IconButton(
   props: IconButtonProps,
   ref: React.ForwardedRef<HTMLButtonElement>
 ) {
