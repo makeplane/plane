@@ -21,7 +21,7 @@ function InputView({ label, value, placeholder, onChange, autoFocus }: InputView
       <input
         placeholder={placeholder}
         onClick={(e) => e.stopPropagation()}
-        className="w-[280px] outline-none bg-layer-2 text-primary text-13 border border-strong rounded-md p-2"
+        className="w-[280px] outline-none bg-layer-1 text-primary text-13 border border-strong rounded-md p-2"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         autoFocus={autoFocus}
