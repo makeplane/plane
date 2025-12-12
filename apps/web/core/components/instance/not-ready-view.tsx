@@ -40,7 +40,7 @@ export function InstanceNotReady() {
               </div>
               <div>
                 <a href={GOD_MODE_URL}>
-                  <Button size="lg" className="w-full">
+                  <Button size="xl" className="w-full">
                     Get started
                   </Button>
                 </a>

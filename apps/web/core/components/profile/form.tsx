@@ -202,7 +202,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
         <div className="text-13 font-medium flex-1">{t("settings_moved_to_preferences")}</div>
         <Link
           href={`/${workspaceSlug}/settings/account/preferences`}
-          className={cn(getButtonStyling("neutral-primary", "sm"))}
+          className={cn(getButtonStyling("secondary", "base"))}
         >
           {t("go_to_preferences")}
         </Link>
@@ -426,7 +426,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                   <span className="text-13 tracking-tight">{t("deactivate_account_description")}</span>
                   <div>
                     <Button
-                      variant="danger"
+                      variant="error-fill"
                       onClick={() => setDeactivateAccountModal(true)}
                       data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.DEACTIVATE_ACCOUNT_BUTTON}
                     >

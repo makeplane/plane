@@ -87,10 +87,16 @@ export function ArchiveModuleModal(props: Props) {
                     Are you sure you want to archive the module? All your archives can be restored later.
                   </p>
                   <div className="mt-3 flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
+                    <Button variant="secondary" size="lg" onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button size="sm" tabIndex={1} onClick={handleArchiveModule} loading={isArchiving}>
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      tabIndex={1}
+                      onClick={handleArchiveModule}
+                      loading={isArchiving}
+                    >
                       {isArchiving ? "Archiving" : "Archive"}
                     </Button>
                   </div>

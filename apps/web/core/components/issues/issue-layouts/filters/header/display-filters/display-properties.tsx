@@ -37,7 +37,7 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
   // states
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
   // derived values
-  const projectId = !!routerProjectId ? routerProjectId?.toString() : undefined;
+  const projectId = routerProjectId ? routerProjectId?.toString() : undefined;
 
   // Filter out "cycle" and "module" keys if cycleViewDisabled or moduleViewDisabled is true
   // Also filter out display properties that should not be rendered

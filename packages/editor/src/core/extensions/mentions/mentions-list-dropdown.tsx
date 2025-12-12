@@ -150,9 +150,9 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
                     id={`mention-item-${sectionIndex}-${itemIndex}`}
                     type="button"
                     className={cn(
-                      "flex items-center gap-2 w-full rounded-sm px-1 py-1.5 text-11 text-left truncate text-secondary hover:bg-layer-1",
+                      "flex items-center gap-2 w-full rounded-sm px-1 py-1.5 text-11 text-left truncate text-secondary hover:bg-layer-1-hover",
                       {
-                        "bg-layer-1": isSelected,
+                        "bg-layer-1-hover": isSelected,
                       }
                     )}
                     onClick={(e) => {

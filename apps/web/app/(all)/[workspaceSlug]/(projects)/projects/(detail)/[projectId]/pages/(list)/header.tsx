@@ -84,11 +84,11 @@ export const PagesListHeader = observer(function PagesListHeader() {
           />
         </Breadcrumbs>
       </Header.LeftItem>
-      {canCurrentUserCreatePage ? (
+      {canCurrentUserCreatePage && (
         <Header.RightItem>
           <Button
             variant="primary"
-            size="sm"
+            size="lg"
             onClick={handleCreatePage}
             loading={isCreatingPage}
             data-ph-element={PROJECT_TRACKER_ELEMENTS.CREATE_HEADER_BUTTON}
@@ -96,8 +96,6 @@ export const PagesListHeader = observer(function PagesListHeader() {
             {isCreatingPage ? "Adding" : "Add page"}
           </Button>
         </Header.RightItem>
-      ) : (
-        <></>
       )}
     </Header>
   );

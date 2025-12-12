@@ -96,8 +96,8 @@ export function GithubImporterRoot() {
   const { data: appIntegrations } = useSWR(APP_INTEGRATIONS, () => integrationService.getAppIntegrationsList());
 
   const { data: workspaceIntegrations } = useSWR(
-    workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
-    workspaceSlug ? () => integrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null
+    workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug) : null,
+    workspaceSlug ? () => integrationService.getWorkspaceIntegrationsList(workspaceSlug) : null
   );
 
   const activeIntegrationState = () => {
@@ -138,10 +138,10 @@ export function GithubImporterRoot() {
     };
 
     await githubIntegrationService
-      .createGithubServiceImport(workspaceSlug as string, payload)
+      .createGithubServiceImport(workspaceSlug, payload)
       .then(() => {
         router.push(`/${workspaceSlug}/settings/imports`);
-        mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string));
+        mutate(IMPORTER_SERVICES_LIST(workspaceSlug));
       })
       .catch(() =>
         setToast({

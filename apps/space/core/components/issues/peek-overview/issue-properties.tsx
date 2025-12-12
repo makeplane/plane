@@ -82,16 +82,16 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
           </div>
           <div className="w-3/4">
             <div
-              className={`inline-flex items-center gap-1.5 rounded-sm px-2.5 py-0.5 text-left text-13 capitalize ${
+              className={`inline-flex items-center gap-1.5 rounded-sm px-2.5 py-0.5 text-left text-13 capitalize bg-layer-2 ${
                 priority?.key === "urgent"
-                  ? "border-red-500/20 bg-red-500/20 text-red-500"
+                  ? "border-priority-urgent text-priority-urgent"
                   : priority?.key === "high"
-                    ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
+                    ? "border-priority-high text-priority-high"
                     : priority?.key === "medium"
-                      ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
+                      ? "border-priority-medium text-priority-medium"
                       : priority?.key === "low"
-                        ? "border-green-500/20 bg-green-500/20 text-green-500"
-                        : "border-subtle bg-layer-1"
+                        ? "border-priority-low text-priority-low"
+                        : "border-priority-none text-priority-none"
               }`}
             >
               {priority && (
@@ -120,7 +120,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
                 {renderFormattedDate(issueDetails.target_date)}
               </div>
             ) : (
-              <span className="text-secondary">Empty</span>
+              <span className="text-secondary text-13">Empty</span>
             )}
           </div>
         </div>

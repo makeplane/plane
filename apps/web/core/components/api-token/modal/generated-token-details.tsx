@@ -49,10 +49,10 @@ export function GeneratedTokenDetails(props: Props) {
       <div className="mt-6 flex items-center justify-between">
         <p className="text-11 text-placeholder">
           {tokenDetails.expired_at
-            ? `Expires ${renderFormattedDate(tokenDetails.expired_at!)} at ${renderFormattedTime(tokenDetails.expired_at!)}`
+            ? `Expires ${renderFormattedDate(tokenDetails.expired_at)} at ${renderFormattedTime(tokenDetails.expired_at)}`
             : "Never expires"}
         </p>
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="secondary" onClick={handleClose}>
           {t("close")}
         </Button>
       </div>

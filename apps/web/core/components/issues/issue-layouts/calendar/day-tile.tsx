@@ -23,12 +23,7 @@ import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarIssueBlocks } from "./issue-blocks";
 
 type Props = {
-  issuesFilterStore:
-    | IProjectIssuesFilter
-    | IModuleIssuesFilter
-    | ICycleIssuesFilter
-    | IProjectViewIssuesFilter
-    | IProjectEpicsFilter;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   date: ICalendarDate;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
@@ -140,21 +135,21 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
   const isWeekend = [0, 6].includes(date.date.getDay());
   const isMonthLayout = calendarLayout === "month";
 
-  const normalBackground = isWeekend ? "bg-surface-2" : "bg-surface-1";
-  const draggingOverBackground = isWeekend ? "bg-layer-1" : "bg-surface-2";
+  const normalBackground = isWeekend ? "bg-layer-1" : "bg-layer-transparent";
+  const draggingOverBackground = isWeekend ? "bg-layer-1" : "bg-layer-transparent-hover";
 
   return (
     <>
-      <div ref={dayTileRef} className="group relative flex h-full w-full flex-col bg-surface-2">
+      <div ref={dayTileRef} className="group relative flex h-full w-full flex-col">
         {/* header */}
         <div
-          className={`hidden flex-shrink-0 items-center justify-end px-2 py-1.5 text-right text-11 md:flex ${
+          className={`hidden flex-shrink-0 justify-end px-2 py-1.5 text-right text-11 md:flex ${
             isMonthLayout // if month layout, highlight current month days
               ? date.is_current_month
                 ? "font-medium"
                 : "text-tertiary"
               : "font-medium" // if week layout, highlight all days
-          } ${isWeekend ? "bg-surface-2" : "bg-surface-1"} `}
+          } ${isWeekend ? "bg-layer-1" : "bg-layer-transparent"} `}
         >
           {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
           {isToday ? (
@@ -201,7 +196,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
           className={cn(
             "text-13 py-2.5 h-full w-full font-medium mx-auto flex flex-col justify-start items-center md:hidden cursor-pointer opacity-80",
             {
-              "bg-surface-1": !isWeekend,
+              "bg-layer-2": !isWeekend,
             }
           )}
         >

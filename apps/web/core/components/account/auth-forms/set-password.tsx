@@ -205,7 +205,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
               <span className="text-13 text-red-500">{t("auth.common.password.errors.match")}</span>
             )}
         </div>
-        <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
           {t("common.continue")}
         </Button>
       </form>

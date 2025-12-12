@@ -47,16 +47,19 @@ export function CommandMenuItem(props: Props) {
     <button
       type="button"
       id={`item-${sectionIndex}-${itemIndex}`}
-      className={cn("flex items-center gap-2 w-full rounded-sm px-1 py-1.5 text-13 text-left truncate text-secondary hover:bg-layer-1", {
-        "bg-layer-1": isSelected,
-      })}
+      className={cn(
+        "flex items-center gap-2 w-full rounded-sm px-1 py-1.5 text-13 text-left truncate text-secondary hover:bg-layer-1-hover",
+        {
+          "bg-layer-1-hover": isSelected,
+        }
+      )}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
     >
       <span className="size-5 grid place-items-center flex-shrink-0" style={item.iconContainerStyle}>
         {item.icon}
       </span>
-      <p className="flex-grow truncate">{query ? highlightMatch(item.title, query) : item.title}</p>
+      <p className="flex-grow truncate text-12">{query ? highlightMatch(item.title, query) : item.title}</p>
       {item.badge}
     </button>
   );

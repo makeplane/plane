@@ -192,7 +192,8 @@ export function ExistingIssuesListModal(props: Props) {
                               issueTypeId={issue.type_id}
                               projectIdentifier={issue.project__identifier}
                               issueSequenceId={issue.sequence_id}
-                              textContainerClassName="text-11 text-secondary"
+                              size="xs"
+                              variant="secondary"
                             />
                             <button
                               type="button"
@@ -296,7 +297,8 @@ export function ExistingIssuesListModal(props: Props) {
                                         issueTypeId={issue.type_id}
                                         projectIdentifier={issue.project__identifier}
                                         issueSequenceId={issue.sequence_id}
-                                        textContainerClassName="text-11 text-secondary"
+                                        size="xs"
+                                        variant="secondary"
                                       />
                                     </span>
                                     <span className="truncate">{issue.name}</span>
@@ -327,8 +329,7 @@ export function ExistingIssuesListModal(props: Props) {
                 </Combobox>
                 <div className="flex justify-between items-center p-3">
                   <Button
-                    variant="link-primary"
-                    size="sm"
+                    variant="link"
                     onClick={handleSelectIssues}
                     disabled={filteredIssues.length === 0}
                     className={filteredIssues.length === 0 ? "p-0" : ""}
@@ -338,12 +339,12 @@ export function ExistingIssuesListModal(props: Props) {
                       : t("issue.select.select_all")}
                   </Button>
                   <div className="flex items-center justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="secondary" size="lg" onClick={handleClose}>
                       {t("common.cancel")}
                     </Button>
                     <Button
                       variant="primary"
-                      size="sm"
+                      size="lg"
                       onClick={onSubmit}
                       loading={isSubmitting}
                       disabled={isSubmitting || selectedIssues.length === 0}

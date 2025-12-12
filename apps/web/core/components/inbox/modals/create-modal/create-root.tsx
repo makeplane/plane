@@ -253,8 +253,8 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
             </div>
             <div className="flex items-center gap-3">
               <Button
-                variant="neutral-primary"
-                size="sm"
+                variant="secondary"
+                size="lg"
                 type="button"
                 onClick={() => {
                   if (descriptionEditorRef.current?.isEditorReadyToDiscard()) {
@@ -274,11 +274,11 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
               <Button
                 variant="primary"
                 ref={submitBtnRef}
-                size="sm"
                 type="submit"
                 loading={formSubmitting}
                 disabled={isTitleLengthMoreThan255Character}
                 tabIndex={getIndex("submit_button")}
+                size="lg"
               >
                 {formSubmitting ? t("creating") : t("create_work_item")}
               </Button>

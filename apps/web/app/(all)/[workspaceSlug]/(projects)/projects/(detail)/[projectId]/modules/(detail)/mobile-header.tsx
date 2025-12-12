@@ -25,11 +25,7 @@ const SUPPORTED_LAYOUTS = [
 
 export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHeader() {
   // router
-  const { workspaceSlug, projectId, moduleId } = useParams() as {
-    workspaceSlug: string;
-    projectId: string;
-    moduleId: string;
-  };
+  const { workspaceSlug, projectId, moduleId } = useParams();
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // plane hooks

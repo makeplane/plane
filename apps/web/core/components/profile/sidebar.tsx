@@ -84,7 +84,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
   return (
     <div
       className={cn(
-        `vertical-scrollbar scrollbar-md fixed z-[5] h-full w-full flex-shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 transition-all md:relative md:w-[300px]`,
+        `vertical-scrollbar scrollbar-md fixed z-5 h-full w-full flex-shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 transition-all md:relative md:w-[300px] shadow-raised-200`,
         className
       )}
       style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}

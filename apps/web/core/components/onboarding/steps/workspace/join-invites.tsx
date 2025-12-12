@@ -110,7 +110,7 @@ export function WorkspaceJoinInvitesStep(props: Props) {
       <div className="flex flex-col gap-4">
         <Button
           variant="primary"
-          size="lg"
+          size="xl"
           className="w-full"
           onClick={submitInvitations}
           disabled={isJoiningWorkspaces || !invitationsRespond.length}
@@ -119,8 +119,8 @@ export function WorkspaceJoinInvitesStep(props: Props) {
           {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue"}
         </Button>
         <Button
-          variant="link-neutral"
-          size="lg"
+          variant="ghost"
+          size="xl"
           className="w-full"
           onClick={handleCurrentViewChange}
           disabled={isJoiningWorkspaces}

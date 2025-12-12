@@ -16,12 +16,7 @@ import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "./dropdowns";
 
 interface ICalendarHeader {
-  issuesFilterStore:
-    | IProjectIssuesFilter
-    | IModuleIssuesFilter
-    | ICycleIssuesFilter
-    | IProjectViewIssuesFilter
-    | IProjectEpicsFilter;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   updateFilters?: (
     projectId: string,
     filterType: TSupportedFilterTypeForUpdate,
@@ -114,7 +109,7 @@ export const CalendarHeader = observer(function CalendarHeader(props: ICalendarH
       <div className="flex items-center gap-1.5">
         <button
           type="button"
-          className="rounded-sm bg-layer-1 px-2.5 py-1 text-11 font-medium text-secondary hover:text-primary"
+          className="rounded-sm bg-layer-transparent hover:bg-layer-transparent-hover px-2.5 py-1 text-11 font-medium text-secondary  hover:text-primary"
           onClick={handleToday}
         >
           {t("common.today")}

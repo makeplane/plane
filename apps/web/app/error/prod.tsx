@@ -74,7 +74,7 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
           </div>
 
           <div className="flex items-center justify-start gap-6">
-            <Button variant="primary" size="md" onClick={onGoHome}>
+            <Button variant="primary" size="lg" onClick={onGoHome}>
               Go to home
             </Button>
           </div>

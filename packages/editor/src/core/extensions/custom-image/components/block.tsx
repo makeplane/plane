@@ -80,7 +80,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
     if (editorContainer) {
       closestEditorContainer = editorContainer;
     } else {
-      closestEditorContainer = img.closest(".editor-container") as HTMLDivElement | null;
+      closestEditorContainer = img.closest(".editor-container");
       if (!closestEditorContainer) {
         console.error("Editor container not found");
         return;
@@ -234,7 +234,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
         }}
       >
         {showImageLoader && (
-          <div className="animate-pulse bg-layer-1 rounded-md" style={{ width: size.width, height: size.height }} />
+          <div className="animate-pulse bg-layer-2 rounded-md" style={{ width: size.width, height: size.height }} />
         )}
         <img
           ref={imageRef}

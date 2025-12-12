@@ -40,7 +40,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
           >
             Color
             <span
-              className={cn("flex-shrink-0 size-6 grid place-items-center rounded-sm border-[0.5px] border-strong", {
+              className={cn("shrink-0 size-6 grid place-items-center rounded-sm border-[0.5px] border-strong", {
                 "bg-surface-1": !activeBackgroundColor,
               })}
               style={{

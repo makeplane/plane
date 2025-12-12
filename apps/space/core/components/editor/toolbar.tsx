@@ -48,7 +48,7 @@ export function IssueCommentToolbar(props: Props) {
   }, [editorRef, updateActiveStates]);
 
   return (
-    <div className="flex h-9 w-full items-stretch gap-1.5 bg-surface-2 overflow-x-scroll">
+    <div className="flex h-9 w-full items-stretch gap-1.5 overflow-x-scroll">
       <div className="flex w-full items-stretch justify-between gap-2 rounded-sm border-[0.5px] border-subtle p-1">
         <div className="flex items-stretch">
           {Object.keys(toolbarItems).map((key, index) => (
@@ -75,9 +75,9 @@ export function IssueCommentToolbar(props: Props) {
                       type="button"
                       onClick={() => executeCommand(item)}
                       className={cn(
-                        "grid place-items-center aspect-square rounded-xs p-0.5 text-placeholder hover:bg-layer-1",
+                        "grid place-items-center aspect-square rounded-xs p-0.5 text-placeholder hover:bg-layer-transparent-hover",
                         {
-                          "bg-layer-1 text-primary": isItemActive,
+                          "bg-layer-transparent-hover text-primary": isItemActive,
                         }
                       )}
                     >
@@ -99,7 +99,6 @@ export function IssueCommentToolbar(props: Props) {
             <Button
               type="button"
               variant="primary"
-              className="px-2.5 py-1.5 text-11"
               onClick={handleSubmit}
               disabled={isCommentEmpty}
               loading={isSubmitting}

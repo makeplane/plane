@@ -195,14 +195,13 @@ export function WorkspaceCreateForm() {
       <div className="flex max-w-4xl items-center py-1 gap-4">
         <Button
           variant="primary"
-          size="sm"
           onClick={handleSubmit(handleCreateWorkspace)}
           disabled={!isValid}
           loading={isSubmitting}
         >
           {isSubmitting ? "Creating workspace" : "Create workspace"}
         </Button>
-        <Link className={getButtonStyling("neutral-primary", "sm")} href="/workspace">
+        <Link className={getButtonStyling("secondary", "base")} href="/workspace">
           Go back
         </Link>
       </div>

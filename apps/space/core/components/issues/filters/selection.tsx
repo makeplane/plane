@@ -23,7 +23,7 @@ export const FilterSelection = observer(function FilterSelection(props: Props) {
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
-      <div className="bg-surface-1 p-2.5 pb-0">
+      <div className="p-2.5 pb-0">
         <div className="flex items-center gap-1.5 rounded-sm border-[0.5px] border-subtle bg-surface-2 px-1.5 py-1 text-11">
           <Search className="text-placeholder" size={12} strokeWidth={2} />
           <input
@@ -41,7 +41,7 @@ export const FilterSelection = observer(function FilterSelection(props: Props) {
           )}
         </div>
       </div>
-      <div className="h-full w-full divide-y divide-subtle-1  overflow-y-auto px-2.5">
+      <div className="h-full w-full divide-y divide-subtle-1 overflow-y-auto px-2.5">
         {/* priority */}
         {isFilterEnabled("priority") && (
           <div className="py-2">

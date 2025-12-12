@@ -15,7 +15,7 @@ export function FavoriteItemWrapper(props: Props) {
       <div
         ref={elementRef}
         className={cn(
-          "group/project-item cursor-pointer relative group flex items-center justify-between w-full gap-1.5 rounded-sm px-2 py-1 outline-none text-secondary hover:bg-surface-2 active:bg-surface-2",
+          "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
           {
             "bg-surface-2": isMenuActive,
           }

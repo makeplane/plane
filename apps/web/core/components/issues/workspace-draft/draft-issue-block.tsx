@@ -15,8 +15,9 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 // plane-web imports
-import { IdentifierText, IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local imports
+import { IdentifierText } from "../issue-detail/identifier-text";
 import { CreateUpdateIssueModal } from "../issue-modal/modal";
 import { WorkspaceDraftIssueDeleteIssueModal } from "./delete-modal";
 import { DraftIssueProperties } from "./draft-issue-properties";
@@ -128,7 +129,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
         <Row
           ref={issueRef}
           className={cn(
-            "group/list-block min-h-11 relative flex flex-col gap-3 bg-surface-1 hover:bg-surface-2 py-3 text-13 transition-colors border border-transparent last:border-b-transparent",
+            "group/list-block min-h-11 relative flex flex-col gap-3 bg-layer-transparent hover:bg-layer-transparent-hover py-3 text-13 transition-colors",
             {
               "md:flex-row md:items-center": isSidebarCollapsed,
               "lg:flex-row lg:items-center": !isSidebarCollapsed,
@@ -145,7 +146,8 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
                       <IdentifierText
                         identifier={projectIdentifier}
                         enableClickToCopyIdentifier
-                        textContainerClassName="text-11 font-medium text-tertiary"
+                        size="xs"
+                        variant="tertiary"
                       />
                     </div>
                   )}

@@ -45,7 +45,7 @@ export function NewEmptyState({ title, description, image, primaryButton, disabl
             {primaryButton && (
               <Button
                 className={`relative m-3 max-w-min !px-6 ${comicBox?.direction === "left" ? "flex-row-reverse" : ""}`}
-                size="lg"
+                size="xl"
                 variant="primary"
                 onClick={primaryButton.onClick}
                 disabled={disabled}

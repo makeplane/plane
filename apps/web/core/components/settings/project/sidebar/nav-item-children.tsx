@@ -58,10 +58,10 @@ export const NavItemChildren = observer(function NavItemChildren(props: { projec
                 >
                   <div
                     className={cn(
-                      "cursor-pointer relative group w-full flex items-center justify-between gap-1.5 rounded-sm p-1 px-1.5 outline-none",
+                      "cursor-pointer relative group w-full flex items-center justify-between text-secondary gap-1.5 rounded-sm p-1 px-1.5 outline-none",
                       {
-                        "text-secondary bg-layer-1/75": isActive,
-                        "text-secondary hover:bg-surface-2 active:bg-surface-2": !isActive,
+                        "bg-layer-transparent-active hover:bg-layer-transparent-active": isActive,
+                        "hover:bg-layer-transparent-hover": !isActive,
                       },
                       "text-11 font-medium"
                     )}

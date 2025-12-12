@@ -4,10 +4,9 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGiteaAuthenticationConfigurationKeys } from "@plane/types";
-import { Button, getButtonStyling } from "@plane/ui";
-import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
@@ -182,11 +181,7 @@ export function InstanceGiteaConfigForm(props: Props) {
                 <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isDirty}>
                   {isSubmitting ? "Saving..." : "Save changes"}
                 </Button>
-                <Link
-                  href="/authentication"
-                  className={cn(getButtonStyling("neutral-primary", "md"), "font-medium")}
-                  onClick={handleGoBack}
-                >
+                <Link href="/authentication" className={getButtonStyling("secondary", "base")} onClick={handleGoBack}>
                   Go back
                 </Link>
               </div>

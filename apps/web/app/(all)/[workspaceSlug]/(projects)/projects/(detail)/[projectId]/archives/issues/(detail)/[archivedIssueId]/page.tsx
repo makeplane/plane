@@ -67,8 +67,7 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
             icon={<ArchiveIcon className="size-4" />}
             action={
               <Button
-                variant="neutral-primary"
-                size="sm"
+                variant="secondary"
                 onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
               >
                 Go to archives

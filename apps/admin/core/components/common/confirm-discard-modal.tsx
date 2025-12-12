@@ -55,10 +55,10 @@ export function ConfirmDiscardModal(props: Props) {
                   </div>
                 </div>
                 <div className="flex justify-end items-center p-4 sm:px-6 gap-2">
-                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                  <Button variant="secondary" onClick={handleClose}>
                     Keep editing
                   </Button>
-                  <Link href={onDiscardHref} className={getButtonStyling("primary", "sm")}>
+                  <Link href={onDiscardHref} className={getButtonStyling("primary", "base")}>
                     Go back
                   </Link>
                 </div>

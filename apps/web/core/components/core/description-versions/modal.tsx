@@ -4,18 +4,19 @@ import { Copy } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { Button, getButtonStyling } from "@plane/propel/button";
+import { Button } from "@plane/propel/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TDescriptionVersion } from "@plane/types";
 import { Avatar, EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
-import { calculateTimeAgo, cn, copyTextToClipboard, getFileURL } from "@plane/utils";
+import { calculateTimeAgo, cn, getFileURL } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { IconButton } from "@plane/propel/icon-button";
 
 type Props = {
   activeVersionDescription: string | undefined;
@@ -59,13 +60,12 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
 
   const handleCopyMarkdown = useCallback(() => {
     if (!editorRef.current) return;
-    copyTextToClipboard(editorRef.current.getMarkDown()).then(() =>
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("toast.success"),
-        message: "Markdown copied to clipboard.",
-      })
-    );
+    editorRef.current.copyMarkdownToClipboard();
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: t("toast.success"),
+      message: "Markdown copied to clipboard.",
+    });
   }, [t]);
 
   if (!workspaceId) return null;
@@ -152,26 +152,16 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
         {/* Footer */}
         <div className="flex items-center justify-between gap-2 pt-4 border-t-[0.5px] border-subtle">
           <Tooltip tooltipContent={t("common.actions.copy_markdown")}>
-            <button
-              type="button"
-              className={cn(
-                "flex-shrink-0",
-                getButtonStyling("neutral-primary", "sm"),
-                "border-none grid place-items-center"
-              )}
-              onClick={handleCopyMarkdown}
-            >
-              <Copy className="size-4" />
-            </button>
+            <IconButton type="button" variant="ghost" size="base" onClick={handleCopyMarkdown} icon={Copy} />
           </Tooltip>
           <div className="flex items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={1}>
+            <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={1}>
               {t("common.cancel")}
             </Button>
             {!isRestoreDisabled && (
               <Button
                 variant="primary"
-                size="sm"
+                size="lg"
                 onClick={() => {
                   handleRestore(activeVersionDescription ?? "<p></p>");
                   handleClose();

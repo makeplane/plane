@@ -56,7 +56,7 @@ export const IssueFiltersDropdown = observer(function IssueFiltersDropdown(props
   );
 
   return (
-    <div className="z-10 flex h-full w-full flex-col">
+    <div className="relative">
       <FiltersDropdown title="Filters" placement="bottom-end">
         <FilterSelection
           filters={issueFilters?.filters ?? {}}

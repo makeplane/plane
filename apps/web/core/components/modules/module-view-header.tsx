@@ -24,6 +24,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { ModuleLayoutIcon } from "./module-layout-icon";
+import { IconButton } from "@plane/propel/icon-button";
 // i18n
 
 export const ModuleViewHeader = observer(function ModuleViewHeader() {
@@ -96,16 +97,16 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
     <div className="hidden h-full sm:flex items-center gap-3 self-end">
       <div className="flex items-center">
         {!isSearchOpen && (
-          <button
-            type="button"
-            className="-mr-1 p-2 hover:bg-layer-1 rounded-sm text-placeholder grid place-items-center"
+          <IconButton
+            variant="ghost"
+            size="lg"
+            className="-mr-1 p-"
             onClick={() => {
               setIsSearchOpen(true);
               inputRef.current?.focus();
             }}
-          >
-            <Search className="h-3.5 w-3.5" />
-          </button>
+            icon={Search}
+          />
         )}
         <div
           className={cn(
@@ -138,7 +139,6 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
           )}
         </div>
       </div>
-
       <ModuleOrderByDropdown
         value={displayFilters?.order_by}
         onChange={(val) => {
@@ -165,15 +165,16 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
           memberIds={workspaceMemberIds ?? undefined}
         />
       </FiltersDropdown>
-      <div className="hidden md:flex items-center gap-1 rounded-sm bg-layer-1 p-1">
+      <div className="hidden md:flex items-center gap-1 rounded-sm bg-layer-3 p-1">
         {MODULE_VIEW_LAYOUTS.map((layout) => (
           <Tooltip key={layout.key} tooltipContent={t(layout.i18n_title)} isMobile={isMobile}>
             <button
               type="button"
               className={cn(
-                "group grid h-[22px] w-7 place-items-center overflow-hidden rounded-sm transition-all hover:bg-surface-1",
+                "group grid h-5.5 w-7 place-items-center overflow-hidden rounded-sm transition-all hover:bg-layer-transparent-hover",
                 {
-                  "bg-surface-1 shadow-custom-shadow-2xs": displayFilters?.layout === layout.key,
+                  "bg-layer-transparent-active hover:bg-layer-transparent-active":
+                    displayFilters?.layout === layout.key,
                 }
               )}
               onClick={() => {

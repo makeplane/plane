@@ -31,7 +31,7 @@ export function RecentProject(props: BlockProps) {
       title={projectDetails?.name}
       prependTitleElement={
         <div className="flex-shrink-0 flex items-center gap-2">
-          <div className="flex-shrink-0 grid place-items-center rounded-sm bg-layer-1 size-8">
+          <div className="flex-shrink-0 grid place-items-center rounded-sm bg-layer-2 size-8">
             <Logo logo={projectDetails?.logo_props} size={16} />
           </div>
           <div className="font-medium text-placeholder text-13 whitespace-nowrap">{projectDetails?.identifier}</div>
@@ -67,7 +67,7 @@ export function RecentProject(props: BlockProps) {
       }
       parentRef={ref}
       disableLink={false}
-      className="bg-transparent my-auto !px-2 border-none py-3"
+      className="my-auto !px-2 border-none py-3"
       itemClassName="my-auto"
       onItemClick={(e) => {
         e.preventDefault();

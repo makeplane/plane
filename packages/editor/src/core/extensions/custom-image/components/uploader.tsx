@@ -168,9 +168,16 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
     [uploadFile, editor, getPos]
   );
 
+  const isErrorState = failedToLoadImage || hasDuplicationFailed;
+
+  const borderColor =
+    selected && editor.isEditable && !isErrorState
+      ? "color-mix(in srgb, var(--border-color-accent-strong) 20%, transparent)"
+      : undefined;
+
   const getDisplayMessage = useCallback(() => {
     const isUploading = isImageBeingUploaded;
-    if (failedToLoadImage || hasDuplicationFailed) {
+    if (isErrorState) {
       return "Error loading image";
     }
 
@@ -183,7 +190,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
     }
 
     return "Add an image";
-  }, [draggedInside, editor.isEditable, failedToLoadImage, isImageBeingUploaded, hasDuplicationFailed]);
+  }, [draggedInside, editor.isEditable, isErrorState, isImageBeingUploaded]);
 
   const handleRetryClick = useCallback(
     (e: React.MouseEvent) => {
@@ -198,18 +205,20 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
   return (
     <div
       className={cn(
-        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-tertiary bg-layer-1 border border-dashed border-strong transition-all duration-200 ease-in-out cursor-default",
+        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-tertiary bg-layer-2 border border-dashed transition-all duration-200 ease-in-out cursor-default",
         {
-          "hover:text-secondary hover:bg-layer-1 cursor-pointer": editor.isEditable,
-          "bg-layer-1-hover text-secondary": draggedInside && editor.isEditable,
-          "text-accent-secondary bg-accent-primary/10 border-accent-strong-200/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
-            selected && editor.isEditable,
-          "text-red-500 cursor-default": failedToLoadImage || hasDuplicationFailed,
-          "hover:text-red-500": (failedToLoadImage || hasDuplicationFailed) && editor.isEditable,
-          "bg-red-500/10": (failedToLoadImage || hasDuplicationFailed) && selected,
-          "hover:bg-red-500/10": (failedToLoadImage || hasDuplicationFailed) && selected && editor.isEditable,
+          "border-subtle": !(selected && editor.isEditable && !isErrorState),
+          "hover:text-secondary hover:bg-layer-2-hover cursor-pointer": editor.isEditable && !isErrorState,
+          "bg-layer-2-hover text-secondary": draggedInside && editor.isEditable && !isErrorState,
+          "text-accent-secondary bg-accent-primary/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
+            selected && editor.isEditable && !isErrorState,
+          "text-red-500 cursor-default": isErrorState,
+          "hover:text-red-500 hover:bg-red-500/10": isErrorState && editor.isEditable,
+          "bg-red-500/10": isErrorState && selected,
+          "hover:bg-red-500/20": isErrorState && selected && editor.isEditable,
         }
       )}
+      style={borderColor ? { borderColor } : undefined}
       onDrop={onDrop}
       onDragOver={onDragEnter}
       onDragLeave={onDragLeave}
@@ -227,7 +236,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
           type="button"
           onClick={handleRetryClick}
           className={cn(
-            "flex items-center gap-1 px-2 py-1 text-11 font-medium text-tertiary hover:bg-layer-1 hover:text-secondary rounded-md transition-all duration-200 ease-in-out",
+            "flex items-center gap-1 px-2 py-1 font-medium text-red-500 rounded-md transition-all duration-200 ease-in-out hover:bg-red-500/20 hover:text-red-500",
             {
               "hover:bg-red-500/20": selected,
             }
@@ -235,7 +244,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
           title="Retry duplication"
         >
           <RotateCcw className="size-3" />
-          Retry
+          <span className="text-11">Retry</span>
         </button>
       )}
       <input

@@ -186,7 +186,7 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
               issueCrudState.delete.issue.id &&
               issueCrudState.delete.issue.project_id
             ) {
-              const deleteOperation = !!issueCrudState.delete.issue?.is_epic
+              const deleteOperation = issueCrudState.delete.issue?.is_epic
                 ? epicOperations.remove
                 : issueOperations.remove;
               await deleteOperation(
@@ -202,7 +202,7 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
 
       {shouldRenderIssueUpdateModal && (
         <>
-          {!!issueCrudState?.update?.issue?.is_epic ? (
+          {issueCrudState?.update?.issue?.is_epic ? (
             <CreateUpdateEpicModal
               isOpen={issueCrudState?.update?.toggle}
               onClose={() => {

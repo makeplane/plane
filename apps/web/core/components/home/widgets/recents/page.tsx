@@ -38,7 +38,7 @@ export function RecentPage(props: BlockProps) {
       title={getPageName(pageDetails?.name)}
       prependTitleElement={
         <div className="flex-shrink-0 flex items-center gap-2">
-          <div className="flex-shrink-0 grid place-items-center rounded-sm bg-layer-1 size-8">
+          <div className="flex-shrink-0 grid place-items-center rounded-sm bg-layer-2 size-8">
             {pageDetails?.logo_props?.in_use ? (
               <Logo logo={pageDetails?.logo_props} size={16} type="lucide" />
             ) : (
@@ -64,8 +64,8 @@ export function RecentPage(props: BlockProps) {
       }
       parentRef={ref}
       disableLink={false}
-      className="bg-transparent my-auto !px-2 border-none py-3"
-      itemClassName="my-auto"
+      className="my-auto !px-2 border-none py-3"
+      itemClassName="my-auto bg-layer-transparent"
       onItemClick={(e) => {
         e.preventDefault();
         e.stopPropagation();

@@ -19,7 +19,7 @@ export function FavoriteStar(props: Props) {
         className={cn(
           "h-4 w-4 text-tertiary transition-all",
           {
-            "fill-yellow-500 stroke-yellow-500": selected,
+            "fill-(--color-label-yellow-icon) stroke-(--color-label-yellow-icon)": selected,
           },
           iconClassName
         )}

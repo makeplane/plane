@@ -82,7 +82,7 @@ function ModalContent({
           <p className="text-13 text-gray-500 mt-1">Modal demonstration</p>
         </div>
         {showCloseButton && onClose && (
-          <Button variant="link-neutral" size="sm" onClick={onClose} aria-label="Close modal">
+          <Button variant="ghost" onClick={onClose} aria-label="Close modal">
             ✕
           </Button>
         )}
@@ -115,7 +115,7 @@ export const Positions: Story = {
       <div className="flex gap-3">
         {Object.values(EPortalPosition).map((position) => (
           <React.Fragment key={position}>
-            <Button variant="outline-primary" onClick={() => setActiveModal(position)}>
+            <Button variant="secondary" onClick={() => setActiveModal(position)}>
               {position.charAt(0).toUpperCase() + position.slice(1)}
             </Button>
             <ModalPortal
@@ -146,7 +146,7 @@ export const Widths: Story = {
       <div className="flex gap-3">
         {Object.values(EPortalWidth).map((width) => (
           <React.Fragment key={width}>
-            <Button variant="neutral-primary" onClick={() => setActiveModal(width)}>
+            <Button variant="secondary" onClick={() => setActiveModal(width)}>
               {width.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
             </Button>
             <ModalPortal

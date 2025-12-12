@@ -72,6 +72,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
     placeholder = t("issue.comments.placeholder"),
     disabledExtensions: additionalDisabledExtensions = [],
     editorClassName = "",
+    showPlaceholderOnEmpty = true,
     ...rest
   } = props;
   // states
@@ -154,6 +155,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
               }),
             }}
             placeholder={placeholder}
+            showPlaceholderOnEmpty={showPlaceholderOnEmpty}
             containerClassName={cn(containerClassName, "relative", {
               "p-2": !editable,
             })}

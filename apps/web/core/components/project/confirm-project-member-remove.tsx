@@ -104,10 +104,16 @@ export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMember
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                  <Button variant="secondary" size="lg" onClick={handleClose}>
                     Cancel
                   </Button>
-                  <Button variant="danger" size="sm" tabIndex={1} onClick={handleDeletion} loading={isDeleteLoading}>
+                  <Button
+                    variant="error-fill"
+                    size="lg"
+                    tabIndex={1}
+                    onClick={handleDeletion}
+                    loading={isDeleteLoading}
+                  >
                     {isCurrentUser
                       ? isDeleteLoading
                         ? "Leaving..."

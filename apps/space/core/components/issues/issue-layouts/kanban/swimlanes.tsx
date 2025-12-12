@@ -37,7 +37,7 @@ export interface IKanBanSwimLanes {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
-  getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
+  getIssueLoader: (groupId?: string, subGroupId?: string) => TLoader;
   showEmptyGroup: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   orderBy: TIssueOrderByOptions | undefined;
@@ -71,7 +71,7 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
 
   return (
     <div className="relative">
-      <div className="sticky top-0 z-[4] h-[50px] bg-surface-2 px-2">
+      <div className="sticky top-0 z-4 h-[50px] px-2">
         <SubGroupSwimlaneHeader
           groupBy={groupBy}
           subGroupBy={subGroupBy}
@@ -163,7 +163,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
-  getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
+  getIssueLoader: (groupId?: string, subGroupId?: string) => TLoader;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
 }
@@ -220,7 +220,7 @@ interface ISubGroup {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
-  getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
+  getIssueLoader: (groupId?: string, subGroupId?: string) => TLoader;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
 }
@@ -269,7 +269,7 @@ const SubGroup = observer(function SubGroup(props: ISubGroup) {
   return (
     <>
       <div className="flex flex-shrink-0 flex-col">
-        <div className="sticky top-[50px] z-[3] py-1 flex w-full items-center bg-surface-1 border-y-[0.5px] border-subtle">
+        <div className="sticky top-[50px] z-[3] py-1 flex w-full items-center bg-layer-1 border-y-[0.5px] border-subtle">
           <div className="sticky left-0 flex-shrink-0">
             <HeaderSubGroupByCard
               icon={group.icon as any}

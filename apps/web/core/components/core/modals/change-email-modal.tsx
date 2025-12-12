@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -29,7 +27,7 @@ const defaultValues: TUniqueCodeValuesForm = { email: "", code: "" };
 // service initialization
 const authService = new AuthService();
 
-export const ChangeEmailModal: React.FC<Props> = observer((props) => {
+export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props) {
   const { isOpen, onClose } = props;
   // states
   const [currentStep, setCurrentStep] = useState<TModalStep>("EMAIL");
@@ -225,10 +223,10 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
                     </div>
                   )}
                   <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle py-4">
-                    <Button type="button" variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button type="button" variant="secondary" size="lg" onClick={handleClose}>
                       {changeEmailT("actions.cancel")}
                     </Button>
-                    <Button type="submit" variant="primary" size="sm" disabled={isSubmitting}>
+                    <Button type="submit" variant="primary" size="lg" disabled={isSubmitting}>
                       {isSubmitting
                         ? changeEmailT("states.sending")
                         : secondStep

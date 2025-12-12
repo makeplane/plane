@@ -106,7 +106,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
 
   const dateChecker = async (payload: any) => {
     try {
-      const res = await cycleService.cycleDateCheck(workspaceSlug as string, projectId as string, payload);
+      const res = await cycleService.cycleDateCheck(workspaceSlug, projectId, payload);
       return res.status;
     } catch (err) {
       return false;
@@ -156,7 +156,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
       <div className="sticky z-10 top-0 pt-2 flex items-center justify-between bg-surface-1">
         <div className="flex items-center justify-center size-5">
           <button
-            className="flex size-4 items-center justify-center rounded-full bg-subtle-1"
+            className="flex size-4 items-center justify-center rounded-full bg-layer-3"
             onClick={() => handleClose()}
           >
             <ChevronRightIcon className="h-3 w-3 stroke-2 text-on-color" />

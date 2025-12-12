@@ -1,7 +1,6 @@
 import { CheckCircle2, Minus, MinusCircle } from "lucide-react";
 import type { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { getSubscriptionTextColor } from "@plane/ui";
 import { cn } from "@plane/utils";
 // constants
 import type { TPlanFeatureData } from "@/constants/plans";
@@ -18,7 +17,7 @@ export function PlanFeatureDetail(props: TPlanFeatureDetailProps) {
     return <Minus className="size-4 text-placeholder" />;
   }
   if (data === true) {
-    return <CheckCircle2 className={cn(getSubscriptionTextColor(subscriptionType), "size-4")} />;
+    return <CheckCircle2 className="size-4 text-accent-primary" />;
   }
   if (data === false) {
     return <MinusCircle className="size-4 text-placeholder" />;

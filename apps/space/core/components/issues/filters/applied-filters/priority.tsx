@@ -11,21 +11,19 @@ export function AppliedPriorityFilters(props: Props) {
 
   return (
     <>
-      {values &&
-        values.length > 0 &&
-        values.map((priority) => (
-          <div key={priority} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
-            <PriorityIcon priority={priority} className={`h-3 w-3`} />
-            {priority}
-            <button
-              type="button"
-              className="grid place-items-center text-tertiary hover:text-secondary"
-              onClick={() => handleRemove(priority)}
-            >
-              <CloseIcon height={10} width={10} strokeWidth={2} />
-            </button>
-          </div>
-        ))}
+      {values?.map((priority) => (
+        <div key={priority} className="flex items-center gap-1 rounded-sm bg-layer-3 p-1 text-11">
+          <PriorityIcon priority={priority} className={`h-3 w-3`} />
+          {priority}
+          <button
+            type="button"
+            className="grid place-items-center text-tertiary hover:text-secondary"
+            onClick={() => handleRemove(priority)}
+          >
+            <CloseIcon height={10} width={10} strokeWidth={2} />
+          </button>
+        </div>
+      ))}
     </>
   );
 }

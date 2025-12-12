@@ -1,17 +1,28 @@
 {
   "name": "@plane/shared-state",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "AGPL-3.0",
   "description": "Shared state shared across multiple apps internally",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
-    "check:lint": "eslint . --max-warnings=191",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=191",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier --check .",
-    "fix:lint": "eslint . --fix --max-warnings=191",
-    "fix:format": "prettier --write .",
+    "check:format": "prettier . --cache --check",
+    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=191",
+    "fix:format": "prettier . --cache --write",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
@@ -28,6 +39,7 @@
     "@plane/typescript-config": "workspace:*",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:"
   }
 }

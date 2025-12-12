@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router";
 import { PinOff } from "lucide-react";
 // plane imports
@@ -23,21 +22,21 @@ export type TTabNavigationVisibleItemProps = {
  * Individual visible tab navigation item with context menu
  * Handles right-click actions for setting default and hiding tabs
  */
-export const TabNavigationVisibleItem: React.FC<TTabNavigationVisibleItemProps> = ({
+export function TabNavigationVisibleItem({
   item,
   isActive,
   tabPreferences,
   onToggleDefault,
   onHide,
   itemRef,
-}) => {
+}: TTabNavigationVisibleItemProps) {
   const { t } = useTranslation();
   const isDefault = item.key === tabPreferences.defaultTab;
 
   return (
     <div className="relative h-full flex items-center transition-all duration-300">
       {isActive && (
-        <span className="absolute bottom-0 w-[80%] left-1/2 -translate-x-1/2 h-0.5 bg-layer-1 rounded-t-md transition-all duration-300" />
+        <span className="absolute bottom-0 w-[80%] left-1/2 -translate-x-1/2 h-0.5 bg-(--text-color-icon-primary) rounded-t-md transition-all duration-300" />
       )}
       <div key={`${item.key}-measure`} ref={itemRef}>
         <ContextMenu>
@@ -76,4 +75,4 @@ export const TabNavigationVisibleItem: React.FC<TTabNavigationVisibleItemProps> 
       </div>
     </div>
   );
-};
+}

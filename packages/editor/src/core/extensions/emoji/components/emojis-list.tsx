@@ -150,9 +150,9 @@ export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
                 id={`emoji-item-${index}`}
                 type="button"
                 className={cn(
-                  "flex items-center gap-2 w-full rounded-sm px-2 py-1.5 text-13 text-left truncate text-secondary hover:bg-layer-1 transition-colors duration-150",
+                  "flex items-center gap-2 w-full rounded-sm px-2 py-1.5 text-13 text-left truncate text-secondary hover:bg-layer-1-hover transition-colors duration-150",
                   {
-                    "bg-layer-1": isSelected,
+                    "bg-layer-1-hover": isSelected,
                   }
                 )}
                 onClick={() => selectItem(index)}

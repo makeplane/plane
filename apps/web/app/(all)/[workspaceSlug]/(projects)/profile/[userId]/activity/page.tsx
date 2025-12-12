@@ -58,7 +58,7 @@ function ProfileActivityPage() {
           {activityPages}
           {pageCount < totalPages && resultsCount !== 0 && (
             <div className="flex w-full items-center justify-center text-11">
-              <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
+              <Button variant="secondary" onClick={handleLoadMore}>
                 {t("common.load_more")}
               </Button>
             </div>

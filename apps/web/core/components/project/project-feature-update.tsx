@@ -39,13 +39,13 @@ export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props
           {t("created").toLowerCase()}.
         </div>
         <div className="flex gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={1}>
+          <Button variant="secondary" size="lg" onClick={onClose} tabIndex={1}>
             {t("close")}
           </Button>
           <Link
             href={`/${workspaceSlug}/projects/${projectId}/issues`}
             onClick={onClose}
-            className={getButtonStyling("primary", "sm")}
+            className={getButtonStyling("primary", "lg")}
             tabIndex={2}
           >
             {t("open_project")}

@@ -70,7 +70,7 @@ export function ParentIssuesListModal({
     setIsLoading(true);
 
     projectService
-      .projectIssuesSearch(workspaceSlug as string, projectId as string, {
+      .projectIssuesSearch(workspaceSlug, projectId, {
         search: debouncedSearchTerm,
         parent: searchEpic ? undefined : true,
         issue_id: issueId,
@@ -189,7 +189,8 @@ export function ParentIssuesListModal({
                                       issueTypeId={issue.type_id}
                                       projectIdentifier={issue.project__identifier}
                                       issueSequenceId={issue.sequence_id}
-                                      textContainerClassName="text-11 text-secondary"
+                                      size="xs"
+                                      variant="secondary"
                                     />
                                   </span>{" "}
                                   <span className="truncate">{issue.name}</span>

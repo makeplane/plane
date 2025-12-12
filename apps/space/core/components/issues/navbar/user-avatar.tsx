@@ -68,7 +68,7 @@ export const UserAvatar = observer(function UserAvatar() {
                   size="sm"
                   showTooltip={false}
                 />
-                <h6 className="text-11 font-medium">
+                <h6 className="text-11 font-medium text-secondary">
                   {currentUser?.display_name ||
                     `${currentUser?.first_name} ${currentUser?.first_name}` ||
                     currentUser?.email ||
@@ -98,9 +98,9 @@ export const UserAvatar = observer(function UserAvatar() {
                       <input type="hidden" name="next_path" value={`${pathName}?${queryParam}`} />
                       <button
                         type="submit"
-                        className="flex items-center gap-2 rounded-sm p-2 whitespace-nowrap hover:bg-layer-1 text-13 min-w-36 cursor-pointer"
+                        className="flex items-center gap-2 rounded-sm p-2 whitespace-nowrap hover:bg-layer-transparent-hover text-13 min-w-36 cursor-pointer"
                       >
-                        <LogOut size={12} className="flex-shrink-0 text-red-500" />
+                        <LogOut size={12} className="shrink-0 text-red-500" />
                         <div>Sign out</div>
                       </button>
                     </form>
@@ -113,7 +113,7 @@ export const UserAvatar = observer(function UserAvatar() {
       ) : (
         <div className="flex-shrink-0">
           <Link href={`/?next_path=${pathName}?${queryParam}`}>
-            <Button variant="outline-primary">Sign in</Button>
+            <Button variant="secondary">Sign in</Button>
           </Link>
         </div>
       )}

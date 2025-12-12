@@ -93,12 +93,12 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
       <div className="flex flex-col gap-4 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
-            <div className="flex items-center justify-center rounded-sm bg-surface-2 p-3">
+            <div className="flex items-center justify-center rounded-sm bg-layer-3 p-3">
               <ArchiveX className="h-4 w-4 flex-shrink-0 text-red-500" />
             </div>
             <div className="">
               <h4 className="text-13 font-medium">{t("project_settings.automations.auto-close.title")}</h4>
-              <p className="text-13 tracking-tight text-secondary">
+              <p className="text-13 tracking-tight text-tertiary">
                 {t("project_settings.automations.auto-close.description")}
               </p>
             </div>
@@ -168,7 +168,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                   <div className="w-1/2 text-13 font-medium">
                     {t("project_settings.automations.auto-close.auto_close_status")}
                   </div>
-                  <div className="w-1/2 ">
+                  <div className="w-1/2">
                     <CustomSearchSelect
                       value={currentProjectDetails?.default_state ?? defaultState}
                       label={

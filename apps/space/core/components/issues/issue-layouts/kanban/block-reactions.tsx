@@ -29,7 +29,7 @@ export const BlockReactions = observer(function BlockReactions(props: Props) {
         {canVote && (
           <div
             className={cn(`flex items-center gap-2 pr-1`, {
-              "after:h-6 after:ml-1 after:w-[1px] after:bg-subtle-1": canReact,
+              "after:h-6 after:ml-1 after:w-[1px] after:bg-layer-3": canReact,
             })}
           >
             <IssueVotes anchor={anchor.toString()} issueIdFromProps={issueId} size="sm" />

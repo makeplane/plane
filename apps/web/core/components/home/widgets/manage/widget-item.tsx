@@ -46,7 +46,7 @@ export const WidgetItem = observer(function WidgetItem(props: Props) {
   const { widgetsMap } = useHome();
   const { t } = useTranslation();
   // derived values
-  const widget = widgetsMap[widgetId] as TWidgetEntityData;
+  const widget = widgetsMap[widgetId];
   const widgetTitle = HOME_WIDGETS_LIST[widget.key]?.title;
 
   // drag and drop

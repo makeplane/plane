@@ -1,7 +1,7 @@
 import type { FC } from "react";
 // Due to some weird issue with the import order, the import of useFontFaceObserver
 // should be after the imported here rather than some below helper functions as it is in the original file
-// eslint-disable-next-line import/order
+
 import useFontFaceObserver from "use-font-face-observer";
 // plane imports
 import type { TLogoProps } from "@plane/types";
@@ -28,7 +28,7 @@ export function Logo(props: Props) {
 
   const isMaterialSymbolsFontLoaded = useFontFaceObserver([
     {
-      family: `Material Symbols rounded-sm`,
+      family: `Material Symbols Rounded`,
       style: `normal`,
       weight: `normal`,
       stretch: `condensed`,
@@ -37,7 +37,7 @@ export function Logo(props: Props) {
   // if no value, return empty fragment
   if (!value) return <></>;
 
-  if (!isMaterialSymbolsFontLoaded) {
+  if (!isMaterialSymbolsFontLoaded && type === "material") {
     return (
       <span
         style={{

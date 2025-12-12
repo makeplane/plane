@@ -29,7 +29,7 @@ interface IKanbanGroup {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
-  getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
+  getIssueLoader: (groupId?: string, subGroupId?: string) => TLoader;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
@@ -90,6 +90,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     <div
       className="w-full p-3 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline cursor-pointer"
       onClick={loadMoreIssuesInThisGroup}
+      role="button"
     >
       {" "}
       Load More &darr;

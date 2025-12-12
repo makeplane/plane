@@ -105,7 +105,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
 
     if (!Array.isArray(data.delete_issue_ids)) data.delete_issue_ids = [data.delete_issue_ids];
 
-    await removeBulkIssues(workspaceSlug as string, projectId as string, data.delete_issue_ids)
+    await removeBulkIssues(workspaceSlug, projectId, data.delete_issue_ids)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -205,10 +205,15 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
 
                   {issues.length > 0 && (
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                      <Button variant="secondary" size="lg" onClick={handleClose}>
                         Cancel
                       </Button>
-                      <Button variant="danger" size="sm" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
+                      <Button
+                        variant="error-fill"
+                        size="lg"
+                        onClick={handleSubmit(handleDelete)}
+                        loading={isSubmitting}
+                      >
                         {isSubmitting ? "Deleting..." : "Delete selected work items"}
                       </Button>
                     </div>

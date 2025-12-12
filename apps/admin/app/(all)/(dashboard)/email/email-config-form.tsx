@@ -211,7 +211,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
         <Button
-          variant="outline-primary"
+          variant="secondary"
           onClick={() => setIsSendTestEmailModalOpen(true)}
           loading={isSubmitting}
           disabled={!isValid}

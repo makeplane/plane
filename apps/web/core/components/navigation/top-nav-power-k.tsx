@@ -203,24 +203,21 @@ export const TopNavPowerK = observer(() => {
   return (
     <div ref={containerRef} className="relative">
       <div
-        className={cn(
-          "relative w-[364px] flex items-center transition-all duration-300 ease-in-out z-30",
-          {
-            "w-[554px]": isOpen,
-          }
-        )}
+        className={cn("relative w-[364px] flex items-center transition-all duration-300 ease-in-out z-30", {
+          "w-[554px]": isOpen,
+        })}
       >
         <div
           className={cn(
-            "flex items-center w-full h-7 p-2 rounded-md bg-surface-1 hover:bg-surface-1 border border-transparent transition-colors duration-200",
+            "flex items-center w-full h-7 p-2 rounded-lg bg-layer-2 border border-subtle-1 transition-colors duration-200",
             {
-              "border-subtle": isOpen,
+              "bg-layer-1": isOpen,
             }
           )}
           onClick={() => inputRef.current?.focus()}
           role="button"
         >
-          <SearchIcon className="shrink-0 size-3.5 text-tertiary mr-2" />
+          <SearchIcon className="shrink-0 size-3.5 text-placeholder mr-2" />
           <input
             ref={inputRef}
             type="text"
@@ -233,7 +230,7 @@ export const TopNavPowerK = observer(() => {
             onFocus={handleFocus}
             onKeyDown={handleKeyDown}
             placeholder="Search commands..."
-            className="flex-1 bg-transparent text-13 text-primary placeholder-custom-text-350 outline-none min-w-0"
+            className="flex-1 bg-transparent text-13 text-primary placeholder-text-placeholder outline-none min-w-0"
           />
           {searchTerm && (
             <button type="button" onClick={handleClear} className="shrink-0 ml-2">

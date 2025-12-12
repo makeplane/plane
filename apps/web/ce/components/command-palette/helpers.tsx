@@ -42,7 +42,7 @@ export const commandGroups: TCommandGroups = {
           issueTypeId={issue.type_id}
           projectIdentifier={issue.project__identifier}
           issueSequenceId={issue.sequence_id}
-          textContainerClassName="text-11"
+          size="xs"
         />{" "}
         {issue.name}
       </div>

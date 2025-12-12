@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane ui
 import { StateGroupIcon } from "@plane/propel/icons";
@@ -24,7 +22,7 @@ type Props = {
     }
 );
 
-export const IssueBlockState: React.FC<Props> = observer((props) => {
+export const IssueBlockState = observer(function IssueBlockState(props: Props) {
   const { shouldShowBorder = true } = props;
   // store hooks
   const { getStateById } = useStates();

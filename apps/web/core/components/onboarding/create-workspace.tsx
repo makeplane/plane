@@ -125,8 +125,8 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
       {!!invitedWorkspaces && (
         <>
           <Button
-            variant="link-neutral"
-            size="lg"
+            variant="ghost"
+            size="xl"
             className="w-full flex items-center gap-2 text-14 bg-surface-2"
             onClick={handleCurrentViewChange}
           >
@@ -286,7 +286,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
           data-ph-element={WORKSPACE_TRACKER_ELEMENTS.ONBOARDING_CREATE_WORKSPACE_BUTTON}
           variant="primary"
           type="submit"
-          size="lg"
+          size="xl"
           className="w-full"
           disabled={isButtonDisabled}
         >

@@ -477,7 +477,7 @@ Use semantic text colors that match the hierarchy:
 <div className="bg-layer-1 p-4">
   <h2 className="text-primary font-semibold">Title</h2>
   <p className="text-secondary">Description text</p>
-  <span className="text-tertiary text-sm">Metadata</span>
+  <span className="text-tertiary text-13">Metadata</span>
   <input className="placeholder-placeholder" placeholder="Enter text..." />
 </div>
 ```

@@ -35,7 +35,7 @@ import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/com
 export const IssuesHeader = observer(function IssuesHeader() {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
     issues: { getGroupIssueCount },
@@ -110,19 +110,18 @@ export const IssuesHeader = observer(function IssuesHeader() {
             canUserCreateIssue={canUserCreateIssue}
           />
         </div>
-        {canUserCreateIssue ? (
+        {canUserCreateIssue && (
           <Button
+            variant="primary"
+            size="lg"
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
             data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
-            size="sm"
           >
             <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
             <div className="hidden sm:block">{t("issue.add.label")}</div>
           </Button>
-        ) : (
-          <></>
         )}
       </Header.RightItem>
     </Header>

@@ -98,7 +98,8 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
           <IssueIdentifier
             issueId={issue.id}
             projectId={issue.project_id}
-            textContainerClassName="line-clamp-1 text-11 text-tertiary"
+            size="xs"
+            variant="tertiary"
             displayProperties={displayProperties}
           />
         )}
@@ -118,7 +119,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
       </div>
 
       <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
-        <div className="w-full line-clamp-1 text-13 text-primary">
+        <div className="w-full line-clamp-1 text-14 text-primary">
           <span>{issue.name}</span>
         </div>
       </Tooltip>
@@ -268,7 +269,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
           href={workItemLink}
           ref={cardRef}
           className={cn(
-            "block rounded-sm border-[1px] outline-[0.5px] outline-transparent w-full border-subtle bg-surface-1 text-13 transition-all hover:border-strong-1",
+            "block rounded-lg border-[1px] outline-[0.5px] outline-transparent w-full border-strong bg-layer-2 text-13 transition-all hover:bg-layer-2-hover p-3",
             { "hover:cursor-pointer": isDragAllowed },
             { "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id) },
             { "bg-layer-1 z-[100]": isCurrentBlockDragging }
@@ -277,7 +278,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
           disabled={!!issue?.tempId}
         >
           <RenderIfVisible
-            classNames="space-y-2 px-3 py-2"
+            classNames="space-y-2"
             root={scrollableContainerRef}
             defaultHeight="100px"
             horizontalOffset={100}

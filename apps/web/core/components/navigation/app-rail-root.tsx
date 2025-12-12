@@ -49,7 +49,7 @@ export const AppRailRoot = observer(() => {
               <AppSidebarItem
                 item={{
                   label: "Settings",
-                  icon: <SettingsIcon className="size-4" />,
+                  icon: <SettingsIcon className="size-5" />,
                   href: `/${workspaceSlug}/settings`,
                   isActive: isSettingsPath,
                   showLabel,
@@ -74,7 +74,7 @@ export const AppRailRoot = observer(() => {
             </ContextMenu.Item>
             <ContextMenu.Separator />
             <ContextMenu.Item onClick={toggleAppRail}>
-              <span className="text-xs">{isCollapsed ? "Dock App Rail" : "Undock App Rail"}</span>
+              <span className="text-11">{isCollapsed ? "Dock App Rail" : "Undock App Rail"}</span>
             </ContextMenu.Item>
           </ContextMenu.Content>
         </ContextMenu.Portal>

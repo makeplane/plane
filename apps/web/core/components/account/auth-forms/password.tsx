@@ -290,7 +290,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         <div className="space-y-2.5">
           {mode === EAuthModes.SIGN_IN ? (
             <>
-              <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+              <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
                 {isSubmitting ? (
                   <Spinner height="20px" width="20px" />
                 ) : isSMTPConfigured ? (
@@ -304,16 +304,16 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                   type="button"
                   data-ph-element={AUTH_TRACKER_ELEMENTS.SIGN_IN_WITH_UNIQUE_CODE}
                   onClick={redirectToUniqueCodeSignIn}
-                  variant="outline-primary"
+                  variant="secondary"
                   className="w-full"
-                  size="lg"
+                  size="xl"
                 >
                   {t("auth.common.sign_in_with_unique_code")}
                 </Button>
               )}
             </>
           ) : (
-            <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+            <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
               {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
             </Button>
           )}

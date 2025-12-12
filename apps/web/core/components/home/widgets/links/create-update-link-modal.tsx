@@ -121,10 +121,10 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
           </div>
         </div>
         <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
-          <Button variant="neutral-primary" size="sm" onClick={onClose}>
+          <Button variant="secondary" size="lg" onClick={onClose}>
             {t("Cancel")}
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+          <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
             {preloadedData?.id ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}{" "}
             {t("home.quick_links.title")}
           </Button>

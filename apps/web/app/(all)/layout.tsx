@@ -1,8 +1,6 @@
 import { Outlet } from "react-router";
 import type { Route } from "./+types/layout";
 import { PreloadResources } from "./layout.preload";
-// styles
-import "@plane/propel/styles/react-day-picker.css";
 
 export const meta: Route.MetaFunction = () => [
   { name: "robots", content: "noindex, nofollow" },

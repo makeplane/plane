@@ -50,18 +50,18 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     <div
       ref={issueRef}
       className={cn(
-        "group/list-block min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-surface-1 hover:bg-surface-2 p-3 pl-1.5 text-13 transition-colors border-b border-b-subtle-1",
+        "group/list-block min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 hover:bg-layer-transparent-hover p-3 pl-1.5 text-13 transition-colors border border-transparent border-b-subtle",
         {
-          "border-accent-strong": getIsIssuePeeked(issue.id),
+          "border-accent-strong!": getIsIssuePeeked(issue.id),
           "last:border-b-transparent": !getIsIssuePeeked(issue.id),
         }
       )}
     >
       <div className="flex w-full truncate">
-        <div className="flex flex-grow items-center gap-0.5 truncate">
+        <div className="flex grow items-center gap-0.5 truncate">
           <div className="flex items-center gap-1">
             {displayProperties && displayProperties?.key && (
-              <div className="flex-shrink-0 text-11 font-medium text-tertiary px-4">
+              <div className="shrink-0 text-11 font-medium text-tertiary px-4">
                 {projectIdentifier}-{issue.sequence_id}
               </div>
             )}
@@ -79,9 +79,9 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           </Link>
         </div>
       </div>
-      <div className="flex flex-shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         <IssueProperties
-          className="relative flex flex-wrap md:flex-grow md:flex-shrink-0 items-center gap-2 whitespace-nowrap"
+          className="relative flex flex-wrap md:grow md:shrink-0 items-center gap-2 whitespace-nowrap"
           issue={issue}
           displayProperties={displayProperties}
         />

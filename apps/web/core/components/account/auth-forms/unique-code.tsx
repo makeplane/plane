@@ -186,7 +186,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
           type="submit"
           variant="primary"
           className="w-full"
-          size="lg"
+          size="xl"
           disabled={isButtonDisabled}
           data-ph-element={AUTH_TRACKER_ELEMENTS.VERIFY_CODE}
         >

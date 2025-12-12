@@ -18,7 +18,7 @@ import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web helpers
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 
-function CreateWorkspacePage() {
+const CreateWorkspacePage = observer(function CreateWorkspacePage() {
   const { t } = useTranslation();
   // router
   const router = useAppRouter();
@@ -83,7 +83,7 @@ function CreateWorkspacePage() {
                 <Button variant="primary" onClick={() => router.back()}>
                   {t("common.go_back")}
                 </Button>
-                <a href={getMailtoHref()} className={getButtonStyling("outline-primary", "md")}>
+                <a href={getMailtoHref()} className={getButtonStyling("secondary", "base")}>
                   {t("workspace_creation.errors.creation_disabled.request_button")}
                 </a>
               </div>
@@ -104,6 +104,6 @@ function CreateWorkspacePage() {
       </div>
     </AuthenticationWrapper>
   );
-}
+});
 
-export default observer(CreateWorkspacePage);
+export default CreateWorkspacePage;

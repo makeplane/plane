@@ -50,11 +50,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, cycleId } = useParams() as {
-    workspaceSlug: string;
-    projectId: string;
-    cycleId: string;
-  };
+  const { workspaceSlug, projectId, cycleId } = useParams();
   // i18n
   const { t } = useTranslation();
   // store hooks
@@ -230,33 +226,30 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
 
             {canUserCreateIssue && (
               <>
-                <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-                  <div className="hidden @4xl:flex">Analytics</div>
-                  <div className="flex @4xl:hidden">
+                <Button onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
+                  <span className="hidden @4xl:flex">Analytics</span>
+                  <span className="@4xl:hidden">
                     <ChartNoAxesColumn className="size-3.5" />
-                  </div>
+                  </span>
                 </Button>
                 {!isCompletedCycle && (
                   <Button
-                    className="h-full self-start"
+                    variant="primary"
+                    size="lg"
+                    className="self-start"
                     onClick={() => {
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
                     data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.CYCLE}
-                    size="sm"
                   >
                     {t("issue.add.label")}
                   </Button>
                 )}
               </>
             )}
-            <button
-              type="button"
-              className="p-1.5 rounded-sm outline-none hover:bg-layer-1 bg-layer-1/70"
-              onClick={toggleSidebar}
-            >
-              <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-secondary")} />
-            </button>
+            <Button variant="ghost" size="lg" onClick={toggleSidebar}>
+              <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-accent-primary" : "text-secondary")} />
+            </Button>
             <CycleQuickActions
               parentRef={parentRef}
               cycleId={cycleId}

@@ -246,7 +246,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
         <div className={`sticky z-10 top-0 flex items-center justify-between bg-surface-1 pb-5 pt-5`}>
           <div>
             <button
-              className="flex h-5 w-5 items-center justify-center rounded-full bg-strong"
+              className="flex h-5 w-5 items-center justify-center rounded-full bg-layer-3"
               onClick={() => handleClose()}
             >
               <ChevronRightIcon className="h-3 w-3 stroke-2 text-on-color" />
@@ -441,7 +441,6 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                     <div className="flex items-center justify-start gap-2 text-13">
                       <span className="font-medium text-secondary">{t("common.links")}</span>
                     </div>
-
                     <div className="flex items-center gap-2.5">
                       <ChevronDownIcon
                         className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`}

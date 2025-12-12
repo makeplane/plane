@@ -41,13 +41,13 @@ export function DeleteImportModal({ isOpen, handleClose, data }: Props) {
     setDeleteLoading(true);
 
     mutate<IImporterService[]>(
-      IMPORTER_SERVICES_LIST(workspaceSlug as string),
+      IMPORTER_SERVICES_LIST(workspaceSlug),
       (prevData) => (prevData ?? []).filter((i) => i.id !== data.id),
       false
     );
 
     integrationService
-      .deleteImporterService(workspaceSlug as string, data.service, data.id)
+      .deleteImporterService(workspaceSlug, data.service, data.id)
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -123,12 +123,12 @@ export function DeleteImportModal({ isOpen, handleClose, data }: Props) {
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="secondary" size="lg" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button
-                      variant="danger"
-                      size="sm"
+                      variant="error-fill"
+                      size="lg"
                       tabIndex={1}
                       onClick={handleDeletion}
                       disabled={!confirmDeleteImport}

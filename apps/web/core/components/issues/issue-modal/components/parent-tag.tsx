@@ -33,7 +33,7 @@ export const IssueParentTag = observer(function IssueParentTag(props: TIssuePare
       control={control}
       name="parent_id"
       render={({ field: { onChange } }) => (
-        <div className="flex w-min items-center gap-2 whitespace-nowrap rounded-sm bg-surface-2 p-2 text-11">
+        <div className="flex w-min items-center gap-2 whitespace-nowrap rounded-sm bg-surface-2 p-2 text-caption-sm-regular">
           <div className="flex items-center gap-2">
             <span
               className="block h-1.5 w-1.5 rounded-full"
@@ -48,7 +48,7 @@ export const IssueParentTag = observer(function IssueParentTag(props: TIssuePare
                   issueTypeId={selectedParentIssue.type_id}
                   projectIdentifier={selectedParentIssue?.project__identifier}
                   issueSequenceId={selectedParentIssue.sequence_id}
-                  textContainerClassName="text-11"
+                  size="xs"
                 />
               )}
             </span>

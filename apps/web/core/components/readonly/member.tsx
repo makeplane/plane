@@ -39,7 +39,7 @@ export const ReadonlyMember = observer(function ReadonlyMember(props: TReadonlyM
     return (
       <div className={cn("flex items-center gap-1 text-13", className)}>
         {!hideIcon && Icon && <Icon className="h-3 w-3 flex-shrink-0" />}
-        <ButtonAvatars showTooltip={false} userIds={memberIds} size="sm" />
+        <ButtonAvatars showTooltip={false} userIds={memberIds} />
       </div>
     );
   }

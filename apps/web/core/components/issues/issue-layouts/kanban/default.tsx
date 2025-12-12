@@ -152,7 +152,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
           const issueIds = isSubGroup
             ? ((groupedIssueIds as TSubGroupedIssues)?.[subList.id]?.[sub_group_id] ?? [])
             : ((groupedIssueIds as TGroupedIssues)?.[subList.id] ?? []);
-          const issueLength = issueIds?.length as number;
+          const issueLength = issueIds?.length;
           const groupHeight = issueLength * approximateCardHeight;
 
           return (

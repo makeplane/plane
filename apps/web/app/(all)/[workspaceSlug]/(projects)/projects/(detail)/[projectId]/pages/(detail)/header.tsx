@@ -10,6 +10,7 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { PageAccessIcon } from "@/components/common/page-access-icon";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
 import { PageHeaderActions } from "@/components/pages/header/actions";
+import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -95,6 +96,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
         </div>
       </Header.LeftItem>
       <Header.RightItem>
+        <PageSyncingBadge syncStatus={page.isSyncingWithServer} />
         <PageDetailsHeaderExtraActions page={page} storeType={storeType} />
         <PageHeaderActions page={page} storeType={storeType} />
       </Header.RightItem>

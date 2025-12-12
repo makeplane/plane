@@ -142,12 +142,12 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
                     </h6>
                   )}
                   <div className="flex justify-end gap-4">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="secondary" size="lg" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button
                       variant="primary"
-                      size="sm"
+                      size="lg"
                       type="button"
                       onClick={handleSubmit(handleFormSubmit)}
                       disabled={isInvalid}

@@ -35,7 +35,7 @@ export type TProfileSetupFormValues = {
   password?: string;
   confirm_password?: string;
   role?: string;
-  use_case?: string;
+  use_case?: string[];
   has_marketing_email_consent?: boolean;
 };
 
@@ -250,7 +250,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
         )}
       </div>
       {/* Continue Button */}
-      <Button variant="primary" type="submit" className="w-full" size="lg" disabled={isButtonDisabled}>
+      <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
         Continue
       </Button>
 

@@ -12,7 +12,7 @@ type TFiltersToggleProps<P extends TFilterProperty, E extends TExternalFilter> =
 };
 
 const COMMON_CLASSNAME =
-  "grid place-items-center h-7 w-full py-0.5 px-2 rounded-sm border transition-all duration-200 cursor-pointer";
+  "grid place-items-center h-7 w-full py-0.5 px-2 rounded-md border border-subtle-1 transition-all duration-200 cursor-pointer";
 
 export const FiltersToggle = observer(function FiltersToggle<P extends TFilterProperty, E extends TExternalFilter>(
   props: TFiltersToggleProps<P, E>
@@ -39,7 +39,7 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
       <AddFilterButton
         filter={filter}
         buttonConfig={{
-          variant: "neutral-primary",
+          variant: "secondary",
           className: COMMON_CLASSNAME,
           label: null,
         }}
@@ -49,10 +49,10 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
   }
 
   return (
-    <div
+    <button
       className={cn(COMMON_CLASSNAME, {
         "border-transparent bg-accent-primary/10 hover:bg-accent-primary/20": isFilterRowVisible,
-        "border-subtle hover:bg-surface-2": !isFilterRowVisible,
+        "hover:bg-surface-1": !isFilterRowVisible,
       })}
       onClick={handleToggleFilter}
     >
@@ -71,6 +71,6 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
           />
         )}
       </div>
-    </div>
+    </button>
   );
 });

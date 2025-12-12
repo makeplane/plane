@@ -77,7 +77,8 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
                 <IssueIdentifier
                   projectId={parentIssue.project_id}
                   issueId={parentIssue.id}
-                  textContainerClassName="text-11 text-secondary"
+                  size="xs"
+                  variant="secondary"
                 />
               )}
             </div>

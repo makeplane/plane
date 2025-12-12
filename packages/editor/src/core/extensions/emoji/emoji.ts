@@ -152,7 +152,7 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
 
         return {
           ...versions,
-          [version as number]: emoji ? isEmojiSupported(emoji.emoji as string) : false,
+          [version]: emoji ? isEmojiSupported(emoji.emoji as string) : false,
         };
       }, {});
 

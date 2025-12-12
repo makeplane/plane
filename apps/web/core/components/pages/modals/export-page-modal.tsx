@@ -276,10 +276,10 @@ export function ExportPageModal(props: Props) {
           </div>
         </div>
         <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+          <Button variant="secondary" size="lg" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="primary" size="sm" loading={isExporting} onClick={handleExport}>
+          <Button variant="primary" size="lg" loading={isExporting} onClick={handleExport}>
             {isExporting ? "Exporting" : "Export"}
           </Button>
         </div>

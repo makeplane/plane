@@ -42,7 +42,7 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
   // store hooks
   const workspaceStore = useWorkspace();
   // derived values
-  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug)?.id as string;
   // form info
   const {
     handleSubmit,

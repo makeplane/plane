@@ -8,14 +8,14 @@ import { Button } from "@plane/propel/button";
 import { CloseIcon } from "@plane/propel/icons";
 import { CustomSelect } from "@plane/ui";
 // components
-import { getDate } from "@plane/utils";
+import { getDate, cn } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
 // helpers
 
 type TNotificationSnoozeModal = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (dateTime?: Date | undefined) => Promise<void>;
+  onSubmit: (dateTime?: Date) => Promise<void>;
 };
 
 type FormValues = {
@@ -135,10 +135,10 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative w-full transform rounded-lg bg-surface-1 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:!max-w-2xl">
+              <Dialog.Panel className="relative w-full transform rounded-lg bg-surface-1 p-5 text-left shadow-raised-200 transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="flex items-center justify-between">
-                    <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
+                    <Dialog.Title as="h3" className="text-h5-medium leading-6 text-primary">
                       Customize Snooze Time
                     </Dialog.Title>
 
@@ -151,7 +151,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
 
                   <div className="mt-5 flex flex-col gap-3 md:!flex-row md:items-center">
                     <div className="flex-1 pb-3 md:pb-0">
-                      <h6 className="mb-2 block text-13 font-medium text-placeholder">Pick a date</h6>
+                      <h6 className="mb-2 block text-body-xs-medium text-placeholder">Pick a date</h6>
                       <Controller
                         name="date"
                         control={control}
@@ -174,7 +174,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                       />
                     </div>
                     <div className="flex-1">
-                      <h6 className="mb-2 block text-13 font-medium text-placeholder">Pick a time</h6>
+                      <h6 className="mb-2 block text-body-xs-medium text-placeholder">Pick a time</h6>
                       <Controller
                         control={control}
                         name="time"
@@ -190,20 +190,24 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                                     {value} {watch("period").toLowerCase()}
                                   </span>
                                 ) : (
-                                  <span className="text-13 text-placeholder">Select a time</span>
+                                  <span className="text-body-xs-medium text-placeholder">Select a time</span>
                                 )}
                               </div>
                             }
                             input
                           >
-                            <div className="mb-2 flex h-9 w-full overflow-hidden rounded-sm">
+                            <div className="mb-2 flex h-9 w-full overflow-hidden rounded-xs">
                               <div
                                 onClick={() => {
                                   setValue("period", "AM");
                                 }}
-                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
-                                  watch("period") === "AM" ? "bg-accent-primary/90 text-custom-primary-0" : "bg-layer-1"
-                                }`}
+                                className={cn(
+                                  "flex h-full w-1/2 cursor-pointer items-center justify-center text-center",
+                                  {
+                                    "bg-accent-primary/90 text-on-color": watch("period") === "AM",
+                                    "bg-layer-1": watch("period") !== "AM",
+                                  }
+                                )}
                               >
                                 AM
                               </div>
@@ -211,9 +215,13 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                                 onClick={() => {
                                   setValue("period", "PM");
                                 }}
-                                className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
-                                  watch("period") === "PM" ? "bg-accent-primary/90 text-custom-primary-0" : "bg-layer-1"
-                                }`}
+                                className={cn(
+                                  "flex h-full w-1/2 cursor-pointer items-center justify-center text-center",
+                                  {
+                                    "bg-accent-primary/90 text-on-color": watch("period") === "PM",
+                                    "bg-layer-1": watch("period") !== "PM",
+                                  }
+                                )}
                               >
                                 PM
                               </div>
@@ -237,10 +245,10 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
 
                   <div className="mt-5 flex items-center justify-between gap-2">
                     <div className="flex w-full items-center justify-end gap-2">
-                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                      <Button variant="secondary" size="lg" onClick={handleClose}>
                         Cancel
                       </Button>
-                      <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+                      <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
                         {isSubmitting ? "Submitting..." : "Submit"}
                       </Button>
                     </div>

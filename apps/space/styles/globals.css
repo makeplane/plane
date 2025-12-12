@@ -1,6 +1,6 @@
 @import "@plane/tailwind-config/index.css";
-@import "@plane/propel/styles/fonts";
 @import "@plane/editor/styles";
+@import "@plane/propel/styles/react-day-picker.css";
 
 /* stickies and editor colors */
 :root {
@@ -48,84 +48,6 @@
   --editor-colors-purple-background: #3d325a;
 }
 /* end background colors */
-
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-track {
-  background-color: rgba(var(--color-background-100));
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: 5px;
-  background-color: rgba(var(--color-background-80));
-}
-
-.hide-vertical-scrollbar::-webkit-scrollbar {
-  width: 0 !important;
-}
-
-.hide-horizontal-scrollbar::-webkit-scrollbar {
-  height: 0 !important;
-}
-
-.hide-both-scrollbars::-webkit-scrollbar {
-  height: 0 !important;
-  width: 0 !important;
-}
-
-@-moz-document url-prefix() {
-  * {
-    scrollbar-width: none;
-  }
-  .vertical-scrollbar,
-  .horizontal-scrollbar {
-    scrollbar-width: initial;
-    scrollbar-color: rgba(96, 100, 108, 0.1) transparent;
-  }
-  .vertical-scrollbar:hover,
-  .horizontal-scrollbar:hover {
-    scrollbar-color: rgba(96, 100, 108, 0.25) transparent;
-  }
-  .vertical-scrollbar:active,
-  .horizontal-scrollbar:active {
-    scrollbar-color: rgba(96, 100, 108, 0.7) transparent;
-  }
-}
-
-.vertical-scrollbar::-webkit-scrollbar-track,
-.horizontal-scrollbar::-webkit-scrollbar-track {
-  background-color: transparent;
-  border-radius: 9999px;
-}
-.vertical-scrollbar::-webkit-scrollbar-thumb,
-.horizontal-scrollbar::-webkit-scrollbar-thumb {
-  background-clip: padding-box;
-  background-color: rgba(96, 100, 108, 0.1);
-  border-radius: 9999px;
-}
-.vertical-scrollbar:hover::-webkit-scrollbar-thumb,
-.horizontal-scrollbar:hover::-webkit-scrollbar-thumb {
-  background-color: rgba(96, 100, 108, 0.25);
-}
-.vertical-scrollbar::-webkit-scrollbar-thumb:hover,
-.horizontal-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(96, 100, 108, 0.5);
-}
-.vertical-scrollbar::-webkit-scrollbar-thumb:active,
-.horizontal-scrollbar::-webkit-scrollbar-thumb:active {
-  background-color: rgba(96, 100, 108, 0.7);
-}
-.vertical-scrollbar::-webkit-scrollbar-corner,
-.horizontal-scrollbar::-webkit-scrollbar-corner {
-  background-color: transparent;
-}
-.vertical-scrollbar-margin-top-md::-webkit-scrollbar-track {
-  margin-top: 44px;
-}
 
 /* Progress Bar Styles */
 :root {

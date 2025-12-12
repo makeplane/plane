@@ -41,6 +41,7 @@ export function EditorWrapper(props: Props) {
     handleEditorReady,
     autofocus,
     placeholder,
+    showPlaceholderOnEmpty,
     tabIndex,
     value,
   } = props;
@@ -67,6 +68,7 @@ export function EditorWrapper(props: Props) {
     handleEditorReady,
     autofocus,
     placeholder,
+    showPlaceholderOnEmpty,
     tabIndex,
     value,
   });

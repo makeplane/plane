@@ -16,7 +16,7 @@ import type { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
 import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 // components
-import { getFileURL, getPasswordStrength } from "@plane/utils";
+import { cn, getFileURL, getPasswordStrength } from "@plane/utils";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // constants
 // helpers
@@ -33,7 +33,7 @@ type TProfileSetupFormValues = {
   password?: string;
   confirm_password?: string;
   role?: string;
-  use_case?: string;
+  use_case?: string[];
 };
 
 const defaultValues: Partial<TProfileSetupFormValues> = {
@@ -43,7 +43,7 @@ const defaultValues: Partial<TProfileSetupFormValues> = {
   password: undefined,
   confirm_password: undefined,
   role: undefined,
-  use_case: undefined,
+  use_case: [],
 };
 
 type Props = {
@@ -139,7 +139,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       avatar_url: formData.avatar_url ?? undefined,
     };
     const profileUpdatePayload: Partial<TUserProfile> = {
-      use_case: formData.use_case,
+      use_case: formData.use_case && formData.use_case.length > 0 ? formData.use_case.join(". ") : undefined,
       role: formData.role,
     };
     try {
@@ -151,7 +151,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       captureSuccess({
         eventName: USER_TRACKER_EVENTS.add_details,
         payload: {
-          use_case: formData.use_case,
+          use_case: profileUpdatePayload.use_case,
           role: formData.role,
         },
       });
@@ -212,7 +212,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
 
   const handleSubmitUserPersonalization = async (formData: TProfileSetupFormValues) => {
     const profileUpdatePayload: Partial<TUserProfile> = {
-      use_case: formData.use_case,
+      use_case: formData.use_case && formData.use_case.length > 0 ? formData.use_case.join(". ") : undefined,
       role: formData.role,
     };
     try {
@@ -223,7 +223,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       captureSuccess({
         eventName: USER_TRACKER_EVENTS.add_details,
         payload: {
-          use_case: formData.use_case,
+          use_case: profileUpdatePayload.use_case,
           role: formData.role,
         },
       });
@@ -519,9 +519,13 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       {USER_ROLE.map((userRole) => (
                         <div
                           key={userRole}
-                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 ${
-                            value === userRole ? "border-accent-strong" : "border-strong"
-                          } rounded-sm px-3 py-1.5 text-13 font-medium`}
+                          className={cn(
+                            "shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 rounded px-3 py-1.5 text-13 font-medium",
+                            {
+                              "border-accent-strong": value === userRole,
+                              "border-strong": value !== userRole,
+                            }
+                          )}
                           onClick={() => onChange(userRole)}
                         >
                           {userRole}
@@ -537,27 +541,38 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                   className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
                   htmlFor="use_case"
                 >
-                  What is your domain expertise? Choose one.
+                  What is your domain expertise? Choose one or more.
                 </label>
                 <Controller
                   control={control}
                   name="use_case"
                   rules={{
-                    required: "This field is required",
+                    required: "Please select at least one option",
+                    validate: (value) => (value && value.length > 0) || "Please select at least one option",
                   }}
                   render={({ field: { value, onChange } }) => (
                     <div className="flex flex-wrap gap-2 py-2 overflow-auto break-all">
-                      {USER_DOMAIN.map((userDomain) => (
-                        <div
-                          key={userDomain}
-                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 ${
-                            value === userDomain ? "border-accent-strong" : "border-strong"
-                          } rounded-sm px-3 py-1.5 text-13 font-medium`}
-                          onClick={() => onChange(userDomain)}
-                        >
-                          {userDomain}
-                        </div>
-                      ))}
+                      {USER_DOMAIN.map((userDomain) => {
+                        const isSelected = value?.includes(userDomain) || false;
+                        return (
+                          <div
+                            key={userDomain}
+                            className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 ${
+                              isSelected ? "border-accent-strong" : "border-strong"
+                            } rounded px-3 py-1.5 text-13 font-medium`}
+                            onClick={() => {
+                              const currentValue = value || [];
+                              if (isSelected) {
+                                onChange(currentValue.filter((item) => item !== userDomain));
+                              } else {
+                                onChange([...currentValue, userDomain]);
+                              }
+                            }}
+                          >
+                            {userDomain}
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 />
@@ -565,7 +580,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               </div>
             </>
           )}
-          <Button variant="primary" type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
+          <Button variant="primary" type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
             {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
           </Button>
         </form>

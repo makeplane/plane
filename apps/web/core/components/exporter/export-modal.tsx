@@ -74,7 +74,7 @@ export const Exporter = observer(function Exporter(props: Props) {
         multiple: multiple,
       };
       await projectExportService
-        .csvExport(workspaceSlug as string, payload)
+        .csvExport(workspaceSlug, payload)
         .then(() => {
           mutateServices();
           router.push(`/${workspaceSlug}/settings/exports`);
@@ -174,12 +174,11 @@ export const Exporter = observer(function Exporter(props: Props) {
                     </div>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="secondary" onClick={handleClose}>
                       {t("cancel")}
                     </Button>
                     <Button
                       variant="primary"
-                      size="sm"
                       onClick={ExportCSVToMail}
                       disabled={exportLoading}
                       loading={exportLoading}
