@@ -1,5 +1,6 @@
 @import "@plane/tailwind-config/index.css";
 @import "@plane/editor/styles";
+@plugin "@tailwindcss/typography";
 
 /* stickies and editor colors */
 :root {
