@@ -39,7 +39,7 @@ export const WorkspaceStickyHeader = observer(function WorkspaceStickyHeader() {
           <StickySearch />
           <Button
             variant="primary"
-            className="items-center gap-1"
+            size="lg"
             onClick={() => {
               toggleShowNewSticky(true);
               stickyOperations.create();

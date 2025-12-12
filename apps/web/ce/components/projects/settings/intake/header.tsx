@@ -72,8 +72,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
               modalState={createIssueModal}
               handleModalClose={() => setCreateIssueModal(false)}
             />
-
-            <Button variant="primary" onClick={() => setCreateIssueModal(true)}>
+            <Button variant="primary" size="lg" onClick={() => setCreateIssueModal(true)}>
               {t("add_work_item")}
             </Button>
           </div>

@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Search } from "lucide-react";
+// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
+import { IconButton } from "@plane/propel/icon-button";
 import { CloseIcon } from "@plane/propel/icons";
-// plane helpers
-// helpers
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -39,16 +39,16 @@ export function PageSearchInput(props: Props) {
   return (
     <div className="flex">
       {!isSearchOpen && (
-        <button
-          type="button"
-          className="flex-shrink-0 hover:bg-layer-1 rounded-sm text-placeholder relative flex justify-center items-center w-6 h-6 my-auto"
+        <IconButton
+          variant="ghost"
+          size="lg"
+          className="shrink-0 my-auto -mr-1"
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
           }}
-        >
-          <Search className="h-3.5 w-3.5" />
-        </button>
+          icon={Search}
+        />
       )}
       <div
         className={cn(

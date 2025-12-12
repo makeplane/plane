@@ -55,7 +55,6 @@ export function FiltersDropdown(props: Props) {
                     disabled={disabled}
                     variant="secondary"
                     prependIcon={icon}
-                    appendIcon={<ChevronUpIcon className={`transition-all ${open ? "" : "rotate-180"}`} />}
                     tabIndex={tabIndex}
                     className="relative"
                     size="lg"

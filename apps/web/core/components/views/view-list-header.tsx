@@ -13,6 +13,7 @@ import { useProjectView } from "@/hooks/store/use-project-view";
 import { FiltersDropdown } from "../issues/issue-layouts/filters";
 import { ViewFiltersSelection } from "./filters/filter-selection";
 import { ViewOrderByDropdown } from "./filters/order-by";
+import { IconButton } from "@plane/propel/icon-button";
 
 export const ViewListHeader = observer(function ViewListHeader() {
   // states
@@ -50,16 +51,16 @@ export const ViewListHeader = observer(function ViewListHeader() {
     <div className="h-full flex items-center gap-2">
       <div className="flex items-center">
         {!isSearchOpen && (
-          <button
-            type="button"
-            className="-mr-1 p-2 hover:bg-layer-1 rounded-sm text-placeholder grid place-items-center"
+          <IconButton
+            variant="ghost"
+            size="lg"
+            className="-mr-1"
             onClick={() => {
               setIsSearchOpen(true);
               inputRef.current?.focus();
             }}
-          >
-            <Search className="h-3.5 w-3.5" />
-          </button>
+            icon={Search}
+          />
         )}
         <div
           className={cn(

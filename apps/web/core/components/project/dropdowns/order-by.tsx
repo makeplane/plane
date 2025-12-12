@@ -1,15 +1,10 @@
 import { ArrowDownWideNarrow, Check } from "lucide-react";
+// plane imports
 import { PROJECT_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TProjectOrderByOptions } from "@plane/types";
-// ui
 import { CustomMenu } from "@plane/ui";
-// helpers
-import { cn } from "@plane/utils";
-// types
-// constants
 
 type Props = {
   onChange: (value: TProjectOrderByOptions) => void;
@@ -34,16 +29,14 @@ export function ProjectOrderByDropdown(props: Props) {
       customButton={
         <>
           {isMobile ? (
-            <div className="flex text-13 items-center gap-2 text-secondary">
-              <ArrowDownWideNarrow className="h-3 w-3" />
+            <div className={getButtonStyling("secondary", "lg")}>
+              <ArrowDownWideNarrow className="shrink-0 size-3.5" strokeWidth={2} />
               {orderByDetails && t(orderByDetails?.i18n_label)}
-              <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
             </div>
           ) : (
-            <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-secondary")}>
-              <ArrowDownWideNarrow className="h-3 w-3" />
+            <div className={getButtonStyling("secondary", "lg")}>
+              <ArrowDownWideNarrow className="shrink-0 size-3.5" strokeWidth={2} />
               {orderByDetails && t(orderByDetails?.i18n_label)}
-              <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
             </div>
           )}
         </>

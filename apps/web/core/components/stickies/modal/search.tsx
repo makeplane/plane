@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useCallback, useRef, useState } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
@@ -11,6 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useSticky } from "@/hooks/use-stickies";
+import { IconButton } from "@plane/propel/icon-button";
 
 export const StickySearch = observer(function StickySearch() {
   // router
@@ -50,16 +50,16 @@ export const StickySearch = observer(function StickySearch() {
   return (
     <div className="flex items-center mr-2 my-auto">
       {!isSearchOpen && (
-        <button
-          type="button"
-          className="-mr-1 p-1 hover:bg-layer-1 rounded-sm text-placeholder grid place-items-center"
+        <IconButton
+          variant="ghost"
+          size="lg"
+          className="-mr-2"
+          icon={Search}
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
           }}
-        >
-          <Search className=" size-4 " />
-        </button>
+        />
       )}
       <div
         className={cn(
@@ -69,7 +69,7 @@ export const StickySearch = observer(function StickySearch() {
           }
         )}
       >
-        <Search className="h-3.5 w-3.5" />
+        <Search className="shrink-0 size-3.5" />
         <input
           ref={inputRef}
           className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
