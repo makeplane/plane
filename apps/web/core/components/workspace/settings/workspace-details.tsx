@@ -155,7 +155,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
         )}
       />
       <div className={`w-full md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
-        <div className="flex gap-5 border-b border-custom-border-100 pb-7 items-start">
+        <div className="flex gap-5 border-b border-subtle pb-7 items-start">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
               {workspaceLogo && workspaceLogo !== "" ? (
@@ -167,20 +167,20 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                   />
                 </div>
               ) : (
-                <div className="relative flex h-14 w-14 items-center justify-center rounded bg-[#026292] p-4 uppercase text-white">
+                <div className="relative flex h-14 w-14 items-center justify-center rounded-sm bg-accent-primary p-4 uppercase text-on-color">
                   {currentWorkspace?.name?.charAt(0) ?? "N"}
                 </div>
               )}
             </button>
           </div>
           <div className="flex flex-col gap-1">
-            <div className="text-lg font-semibold leading-6 mb:-my-5">{watch("name")}</div>
-            <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight text-left">{`${
+            <div className="text-h5-semibold leading-6 mb:-my-5">{watch("name")}</div>
+            <button type="button" onClick={handleCopyUrl} className="text-body-xs-regular tracking-tight text-left">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
             }/${currentWorkspace.slug}`}</button>
             {isAdmin && (
               <button
-                className="flex items-center gap-1.5 text-left text-xs font-medium text-custom-primary-100"
+                className="flex items-center gap-1.5 text-left text-caption-sm-medium text-accent-primary"
                 onClick={() => setIsImageUploadModalOpen(true)}
               >
                 {workspaceLogo && workspaceLogo !== "" ? (
@@ -199,7 +199,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
         <div className="my-8 flex flex-col gap-8">
           <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
             <div className="flex flex-col gap-1">
-              <h4 className="text-sm">{t("workspace_settings.settings.general.name")}</h4>
+              <h4 className="text-body-xs-regular text-tertiary">{t("workspace_settings.settings.general.name")}</h4>
               <Controller
                 control={control}
                 name="name"
@@ -220,7 +220,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                     ref={ref}
                     hasError={Boolean(errors.name)}
                     placeholder={t("workspace_settings.settings.general.name")}
-                    className="w-full rounded-md font-medium"
+                    className="w-full rounded-md"
                     disabled={!isAdmin}
                   />
                 )}
@@ -228,7 +228,9 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
             </div>
 
             <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">{t("workspace_settings.settings.general.company_size")}</h4>
+              <h4 className="text-body-xs-regular text-tertiary">
+                {t("workspace_settings.settings.general.company_size")}
+              </h4>
               <Controller
                 name="organization_size"
                 control={control}
@@ -240,7 +242,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                       ORGANIZATION_SIZE.find((c) => c === value) ??
                       t("workspace_settings.settings.general.errors.company_size.select_a_range")
                     }
-                    buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
+                    buttonClassName="!border-[0.5px] !border-subtle !shadow-none"
                     input
                     disabled={!isAdmin}
                   >
@@ -255,7 +257,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
             </div>
 
             <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">{t("workspace_settings.settings.general.url")}</h4>
+              <h4 className="text-body-xs-regular text-tertiary">{t("workspace_settings.settings.general.url")}</h4>
               <Controller
                 control={control}
                 name="url"
@@ -271,7 +273,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.url)}
-                    className="w-full cursor-not-allowed rounded-md !bg-custom-background-90"
+                    className="w-full cursor-not-allowed rounded-md !bg-layer-1"
                     disabled
                   />
                 )}
@@ -279,7 +281,9 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
             </div>
 
             <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">{t("workspace_settings.settings.general.workspace_timezone")}</h4>
+              <h4 className="text-body-xs-regular text-tertiary">
+                {t("workspace_settings.settings.general.workspace_timezone")}
+              </h4>
               <Controller
                 name="timezone"
                 control={control}
@@ -302,6 +306,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
               <Button
                 data-ph-element={WORKSPACE_TRACKER_ELEMENTS.UPDATE_WORKSPACE_BUTTON}
                 variant="primary"
+                size="lg"
                 onClick={(e) => {
                   void handleSubmit(onSubmit)(e);
                 }}

@@ -63,33 +63,33 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                   <div className="relative flex items-start space-x-3">
                     <div className="relative px-1">
                       {activityItem.field ? (
-                        activityItem.new_value === "restore" && <History className="h-3.5 w-3.5 text-custom-text-200" />
+                        activityItem.new_value === "restore" && <History className="h-3.5 w-3.5 text-secondary" />
                       ) : activityItem.actor_detail.avatar_url && activityItem.actor_detail.avatar_url !== "" ? (
                         <img
                           src={getFileURL(activityItem.actor_detail.avatar_url)}
                           alt={activityItem.actor_detail.display_name}
                           height={30}
                           width={30}
-                          className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white"
+                          className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-on-color"
                         />
                       ) : (
-                        <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 capitalize text-white">
+                        <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 capitalize text-on-color">
                           {activityItem.actor_detail.display_name?.[0]}
                         </div>
                       )}
 
-                      <span className="ring-6 flex h-6 w-6 p-2 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
-                        <MessageSquare className="!text-2xl text-custom-text-200" aria-hidden="true" />
+                      <span className="ring-6 flex h-6 w-6 p-2 items-center justify-center rounded-full bg-layer-1 text-secondary ring-white">
+                        <MessageSquare className="!text-20 text-secondary" aria-hidden="true" />
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
                       <div>
-                        <div className="text-xs">
+                        <div className="text-11">
                           {activityItem.actor_detail.is_bot
                             ? activityItem.actor_detail.first_name + " Bot"
                             : activityItem.actor_detail.display_name}
                         </div>
-                        <p className="mt-0.5 text-xs text-custom-text-200">
+                        <p className="mt-0.5 text-11 text-secondary">
                           Commented {calculateTimeAgo(activityItem.created_at)}
                         </p>
                       </div>
@@ -100,7 +100,7 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                           initialValue={
                             activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value
                           }
-                          containerClassName="text-xs bg-custom-background-100"
+                          containerClassName="text-11 bg-surface-1"
                           workspaceId={activityItem?.workspace_detail?.id?.toString() ?? ""}
                           workspaceSlug={activityItem?.workspace_detail?.slug?.toString() ?? ""}
                           projectId={activityItem.project ?? ""}
@@ -122,10 +122,10 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                         <div>
                           <div className="relative px-1.5 mt-4">
                             <div className="mt-1.5">
-                              <div className="flex h-6 w-6 items-center justify-center">
+                              <div className="flex h-6 w-6 items-center justify-center border border-subtle rounded-lg shadow-raised-100">
                                 {activityItem.field ? (
                                   activityItem.new_value === "restore" ? (
-                                    <History className="h-5 w-5 text-custom-text-200" />
+                                    <History className="h-5 w-5 text-secondary" />
                                   ) : (
                                     <ActivityIcon activity={activityItem} />
                                   )
@@ -139,7 +139,7 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                                     className="h-full w-full rounded-full object-cover"
                                   />
                                 ) : (
-                                  <div className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs capitalize text-white">
+                                  <div className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-gray-700 text-11 capitalize text-on-color">
                                     {activityItem.actor_detail.display_name?.[0]}
                                   </div>
                                 )}
@@ -147,8 +147,8 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                             </div>
                           </div>
                         </div>
-                        <div className="min-w-0 flex-1 border-b border-custom-border-100 py-4">
-                          <div className="break-words text-sm text-custom-text-200">
+                        <div className="min-w-0 flex-1 border-b border-subtle py-4">
+                          <div className="break-words text-caption-md-regular text-secondary">
                             {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                               <span className="text-gray font-medium">Plane</span>
                             ) : activityItem.actor_detail.is_bot ? (

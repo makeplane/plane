@@ -48,7 +48,7 @@
 .ProseMirror blockquote {
   font-style: normal;
   font-weight: 400;
-  border-left: 3px solid rgb(var(--color-border-300));
+  @apply border-l-[3px] border-strong;
 }
 
 .ProseMirror blockquote p::before,
@@ -112,7 +112,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
 }
 
 .ProseMirror[contenteditable="true"] input[type="checkbox"]:hover {
-  background-color: rgba(var(--color-text-100), 0.1);
+  background-color: color-mix(in srgb, var(--text-color-primary) 10%, transparent);
 }
 
 .ProseMirror[contenteditable="false"] input[type="checkbox"] {
@@ -120,14 +120,14 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"]:checked {
-  background-color: rgba(var(--color-primary-100)) !important;
-  border-color: rgba(var(--color-primary-100)) !important;
+  background-color: var(--background-color-accent-primary) !important;
+  border-color: var(--border-color-accent-strong) !important;
   color: white !important;
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"]:checked:hover {
-  background-color: rgba(var(--color-primary-300)) !important;
-  border-color: rgba(var(--color-primary-300)) !important;
+  background-color: var(--background-color-accent-primary-hover) !important;
+  border-color: var(--border-color-accent-strong) !important;
 }
 
 @media screen and (max-width: 768px) {
@@ -156,7 +156,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   margin-top: 0.15rem;
 
   &:active {
-    background-color: rgb(var(--color-background-90));
+    background-color: var(--background-color-layer-1);
   }
 
   /* check sign */
@@ -257,7 +257,7 @@ div[data-type="horizontalRule"] {
   margin-bottom: 0;
 
   & > div {
-    border-bottom: 2px solid rgb(var(--color-border-200));
+    @apply border-b-lg border-subtle-1;
   }
 }
 

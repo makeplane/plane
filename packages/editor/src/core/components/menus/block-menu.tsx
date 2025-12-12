@@ -216,7 +216,7 @@ export function BlockMenu(props: Props) {
           zIndex: 100,
         }}
         className={cn(
-          "max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-custom-border-200 bg-custom-background-100 p-1.5 shadow-custom-shadow-rg",
+          "max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-subtle bg-surface-1 p-1.5 shadow-custom-shadow-rg",
           "transition-all duration-300 transform origin-top-right",
           isAnimatedIn ? "opacity-100 scale-100" : "opacity-0 scale-75"
         )}
@@ -229,7 +229,7 @@ export function BlockMenu(props: Props) {
             <button
               key={item.key}
               type="button"
-              className="flex w-full items-center gap-1.5 truncate rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-90"
+              className="flex w-full items-center gap-1.5 truncate rounded-sm px-1 py-1.5 text-11 text-secondary hover:bg-layer-1"
               onClick={(e) => {
                 item.onClick(e);
                 e.preventDefault();

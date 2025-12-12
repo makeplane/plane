@@ -28,7 +28,7 @@ export function SingleExport({ service, refreshing }: Props) {
   return (
     <div className="flex items-center justify-between gap-2 px-4 py-3">
       <div>
-        <h4 className="flex items-center gap-2 text-sm">
+        <h4 className="flex items-center gap-2 text-13">
           <span>
             Export to{" "}
             <span className="font-medium">
@@ -36,7 +36,7 @@ export function SingleExport({ service, refreshing }: Props) {
             </span>{" "}
           </span>
           <span
-            className={`rounded px-2 py-0.5 text-xs capitalize ${
+            className={`rounded-sm px-2 py-0.5 text-11 capitalize ${
               service.status === "completed"
                 ? "bg-green-500/20 text-green-500"
                 : service.status === "processing"
@@ -51,7 +51,7 @@ export function SingleExport({ service, refreshing }: Props) {
             {refreshing ? "Refreshing..." : service.status}
           </span>
         </h4>
-        <div className="mt-2 flex items-center gap-2 text-xs text-custom-text-200">
+        <div className="mt-2 flex items-center gap-2 text-11 text-secondary">
           <span>{renderFormattedDate(service.created_at)}</span>|
           <span>Exported by {service?.initiated_by_detail?.display_name}</span>
         </div>
@@ -69,7 +69,7 @@ export function SingleExport({ service, refreshing }: Props) {
           )}
         </>
       ) : (
-        <div className="text-xs text-red-500">Expired</div>
+        <div className="text-11 text-red-500">Expired</div>
       )}
     </div>
   );

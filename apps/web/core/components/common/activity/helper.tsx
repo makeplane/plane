@@ -1,9 +1,8 @@
-import type { ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import {
   RotateCcw,
   Network,
   Link as LinkIcon,
-  Calendar,
   Inbox,
   AlignLeft,
   Paperclip,
@@ -13,7 +12,6 @@ import {
   Hash,
   Clock,
   Bell,
-  LayoutGrid,
   GitBranch,
   Timer,
   ListTodo,
@@ -24,54 +22,55 @@ import {
 import {
   ArchiveIcon,
   CycleIcon,
-  StatePropertyIcon,
+  DueDatePropertyIcon,
+  EstimatePropertyIcon,
+  GridLayoutIcon,
   IntakeIcon,
+  LabelPropertyIcon,
+  MembersPropertyIcon,
   ModuleIcon,
   PriorityPropertyIcon,
   StartDatePropertyIcon,
-  DueDatePropertyIcon,
-  LabelPropertyIcon,
-  MembersPropertyIcon,
-  EstimatePropertyIcon,
+  StatePropertyIcon,
 } from "@plane/propel/icons";
 import { store } from "@/lib/store-context";
 import type { TProjectActivity } from "@/plane-web/types";
 
 type ActivityIconMap = {
-  [key: string]: ReactNode;
+  [key: string]: FC<{ className?: string }>;
 };
 export const iconsMap: ActivityIconMap = {
-  priority: <PriorityPropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />,
-  archived_at: <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-200" />,
-  restored: <RotateCcw className="h-3.5 w-3.5 text-custom-text-200" />,
-  link: <LinkIcon className="h-3.5 w-3.5 text-custom-text-200" />,
-  start_date: <StartDatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />,
-  target_date: <DueDatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />,
-  label: <LabelPropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />,
-  inbox: <Inbox className="h-3.5 w-3.5 text-custom-text-200" />,
-  description: <AlignLeft className="h-3.5 w-3.5 text-custom-text-200" />,
-  assignee: <MembersPropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />,
-  attachment: <Paperclip className="h-3.5 w-3.5 text-custom-text-200" />,
-  name: <Type className="h-3.5 w-3.5 text-custom-text-200" />,
-  state: <StatePropertyIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-  estimate: <EstimatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />,
-  cycle: <CycleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-  module: <ModuleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-  page: <FileText className="h-3.5 w-3.5 text-custom-text-200" />,
-  network: <Globe className="h-3.5 w-3.5 text-custom-text-200" />,
-  identifier: <Hash className="h-3.5 w-3.5 text-custom-text-200" />,
-  timezone: <Clock className="h-3.5 w-3.5 text-custom-text-200" />,
-  is_project_updates_enabled: <Bell className="h-3.5 w-3.5 text-custom-text-200" />,
-  is_epic_enabled: <LayoutGrid className="h-3.5 w-3.5 text-custom-text-200" />,
-  is_workflow_enabled: <GitBranch className="h-3.5 w-3.5 text-custom-text-200" />,
-  is_time_tracking_enabled: <Timer className="h-3.5 w-3.5 text-custom-text-200" />,
-  is_issue_type_enabled: <ListTodo className="h-3.5 w-3.5 text-custom-text-200" />,
-  default: <Network className="h-3.5 w-3.5 text-custom-text-200" />,
-  module_view: <ModuleIcon className="h-3.5 w-3.5 text-custom-text-200" />,
-  cycle_view: <CycleIcon className="h-3.5 w-3.5 text-custom-text-200" />,
-  issue_views_view: <Layers className="h-3.5 w-3.5 text-custom-text-200" />,
-  page_view: <FileText className="h-3.5 w-3.5 text-custom-text-200" />,
-  intake_view: <IntakeIcon className="h-3.5 w-3.5 text-custom-text-200" />,
+  priority: PriorityPropertyIcon,
+  archived_at: ArchiveIcon,
+  restored: RotateCcw,
+  link: LinkIcon,
+  start_date: StartDatePropertyIcon,
+  target_date: DueDatePropertyIcon,
+  label: LabelPropertyIcon,
+  inbox: Inbox,
+  description: AlignLeft,
+  assignee: MembersPropertyIcon,
+  attachment: Paperclip,
+  name: Type,
+  state: StatePropertyIcon,
+  estimate: EstimatePropertyIcon,
+  cycle: CycleIcon,
+  module: ModuleIcon,
+  page: FileText,
+  network: Globe,
+  identifier: Hash,
+  timezone: Clock,
+  is_project_updates_enabled: Bell,
+  is_epic_enabled: GridLayoutIcon,
+  is_workflow_enabled: GitBranch,
+  is_time_tracking_enabled: Timer,
+  is_issue_type_enabled: ListTodo,
+  default: Network,
+  module_view: ModuleIcon,
+  cycle_view: CycleIcon,
+  issue_views_view: Layers,
+  page_view: FileText,
+  intake_view: IntakeIcon,
 };
 
 export const messages = (activity: TProjectActivity): { message: string | ReactNode; customUserName?: string } => {
@@ -92,7 +91,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: (
           <>
-            set the priority to <span className="font-medium text-custom-text-100">{newValue || "none"}</span>
+            set the priority to <span className="font-medium text-primary">{newValue || "none"}</span>
           </>
         ),
       };
@@ -105,7 +104,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: (
           <>
-            renamed the project to <span className="font-medium text-custom-text-100">{newValue}</span>
+            renamed the project to <span className="font-medium text-primary">{newValue}</span>
           </>
         ),
       };
@@ -119,7 +118,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
           <>
             {newValue ? (
               <>
-                set the start date to <span className="font-medium text-custom-text-100">{newValue}</span>
+                set the start date to <span className="font-medium text-primary">{newValue}</span>
               </>
             ) : (
               "removed the start date"
@@ -133,7 +132,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
           <>
             {newValue ? (
               <>
-                set the target date to <span className="font-medium text-custom-text-100">{newValue}</span>
+                set the target date to <span className="font-medium text-primary">{newValue}</span>
               </>
             ) : (
               "removed the target date"
@@ -145,7 +144,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: (
           <>
-            set the state to <span className="font-medium text-custom-text-100">{newValue || "none"}</span>
+            set the state to <span className="font-medium text-primary">{newValue || "none"}</span>
           </>
         ),
       };
@@ -155,7 +154,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
           <>
             {newValue ? (
               <>
-                set the estimate point to <span className="font-medium text-custom-text-100">{newValue}</span>
+                set the estimate point to <span className="font-medium text-primary">{newValue}</span>
               </>
             ) : (
               <>
@@ -163,7 +162,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
                 {oldValue && (
                   <>
                     {" "}
-                    <span className="font-medium text-custom-text-100">{oldValue}</span>
+                    <span className="font-medium text-primary">{oldValue}</span>
                   </>
                 )}
               </>
@@ -183,12 +182,12 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
                 href={`/${workspaceDetail?.slug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex font-medium text-custom-text-100"
+                className="inline-flex font-medium text-primary"
               >
                 {activity.new_value}
               </a>
             ) : (
-              <span className="font-medium text-custom-text-100">{activity.old_value || "Unknown cycle"}</span>
+              <span className="font-medium text-primary">{activity.old_value || "Unknown cycle"}</span>
             )}
           </>
         ),
@@ -200,7 +199,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
             <span>
               {verb} this project {verb === "removed" ? "from" : "to"} the module{" "}
             </span>
-            <span className="font-medium text-custom-text-100">
+            <span className="font-medium text-primary">
               {verb === "removed" ? oldValue : newValue || "Unknown module"}
             </span>
           </>
@@ -211,7 +210,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
         message: (
           <>
             {verb} the label{" "}
-            <span className="font-medium text-custom-text-100">{newValue || oldValue || "Untitled label"}</span>
+            <span className="font-medium text-primary">{newValue || oldValue || "Untitled label"}</span>
           </>
         ),
       };
@@ -224,7 +223,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
         message: (
           <>
             {newValue ? "created" : "removed"} the project page{" "}
-            <span className="font-medium text-custom-text-100">{newValue || oldValue || "Untitled page"}</span>
+            <span className="font-medium text-primary">{newValue || oldValue || "Untitled page"}</span>
           </>
         ),
       };
@@ -236,7 +235,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: (
           <>
-            updated project identifier to <span className="font-medium text-custom-text-100">{newValue || "none"}</span>
+            updated project identifier to <span className="font-medium text-primary">{newValue || "none"}</span>
           </>
         ),
       };
@@ -244,8 +243,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: (
           <>
-            changed project timezone to{" "}
-            <span className="font-medium text-custom-text-100">{newValue || "default"}</span>
+            changed project timezone to <span className="font-medium text-primary">{newValue || "default"}</span>
           </>
         ),
       };

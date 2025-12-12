@@ -135,14 +135,14 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         <Tooltip tooltipHeading="Sub-work items" tooltipContent={`${issue.sub_issues_count}`}>
           <div
             className={cn(
-              "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1",
+              "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1",
               {
-                "hover:bg-custom-background-80 cursor-pointer": issue.sub_issues_count,
+                "hover:bg-layer-1 cursor-pointer": issue.sub_issues_count,
               }
             )}
           >
             <ViewsIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{issue.sub_issues_count}</div>
+            <div className="text-11">{issue.sub_issues_count}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>
@@ -154,9 +154,9 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
       >
         <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
-          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
+          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
             <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{issue.attachment_count}</div>
+            <div className="text-11">{issue.attachment_count}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>
@@ -168,9 +168,9 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
       >
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
-          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1">
+          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
             <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{issue.link_count}</div>
+            <div className="text-11">{issue.link_count}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>

@@ -47,7 +47,7 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
                 <BreadcrumbLink
                   label="Modules"
                   href={`/${workspaceSlug}/projects/${projectId}/modules/`}
-                  icon={<ModuleIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -61,11 +61,11 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
         {canUserCreateModule ? (
           <Button
             variant="primary"
-            size="sm"
             data-ph-element={MODULE_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => {
               toggleCreateModuleModal(true);
             }}
+            size="lg"
           >
             <div className="sm:hidden block">{t("add")}</div>
             <div className="hidden sm:block">{t("project_module.add_module")}</div>

@@ -40,7 +40,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
 
   return (
     <div key={linkId}>
-      <div className="relative flex flex-col rounded-md bg-custom-background-90 p-2.5">
+      <div className="relative flex flex-col rounded-md bg-surface-2 p-2.5">
         <div
           className="flex w-full cursor-pointer items-start justify-between gap-2"
           onClick={() => {
@@ -54,13 +54,13 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
         >
           <div className="flex items-start gap-2 truncate">
             <span className="py-1">
-              <Icon className="size-3 stroke-2 text-custom-text-350 group-hover:text-custom-text-100 flex-shrink-0" />
+              <Icon className="size-3 stroke-2 text-tertiary group-hover:text-primary flex-shrink-0" />
             </span>
             <Tooltip
               tooltipContent={linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
               isMobile={isMobile}
             >
-              <span className="truncate text-xs">
+              <span className="truncate text-11">
                 {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
               </span>
             </Tooltip>
@@ -70,26 +70,26 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
             <div className="z-[1] flex flex-shrink-0 items-center gap-2">
               <button
                 type="button"
-                className="flex items-center justify-center p-1 hover:bg-custom-background-80"
+                className="flex items-center justify-center p-1 hover:bg-layer-1"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   toggleIssueLinkModal(true);
                 }}
               >
-                <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+                <Pencil className="h-3 w-3 stroke-[1.5] text-secondary" />
               </button>
               <a
                 href={linkDetail.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center p-1 hover:bg-custom-background-80"
+                className="flex items-center justify-center p-1 hover:bg-layer-1"
               >
-                <ExternalLink className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+                <ExternalLink className="h-3 w-3 stroke-[1.5] text-secondary" />
               </a>
               <button
                 type="button"
-                className="flex items-center justify-center p-1 hover:bg-custom-background-80"
+                className="flex items-center justify-center p-1 hover:bg-layer-1"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -103,7 +103,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
         </div>
 
         <div className="px-5">
-          <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
+          <p className="mt-0.5 stroke-[1.5] text-11 text-tertiary">
             Added {calculateTimeAgo(linkDetail.created_at)}
             <br />
             {createdByDetails && (

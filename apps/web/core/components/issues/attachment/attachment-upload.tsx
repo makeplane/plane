@@ -45,8 +45,8 @@ export const IssueAttachmentUpload = observer(function IssueAttachmentUpload(pro
   return (
     <div
       {...getRootProps()}
-      className={`flex h-[60px] items-center justify-center rounded-md border-2 border-dashed bg-custom-primary/5 px-4 text-xs text-custom-primary ${
-        isDragActive ? "border-custom-primary bg-custom-primary/10" : "border-custom-border-200"
+      className={`flex h-[60px] items-center justify-center rounded-md border-2 border-dashed bg-custom-primary/5 px-4 text-11 text-accent-primary ${
+        isDragActive ? "border-accent-strong bg-accent-primary/10" : "border-subtle"
       } ${isDragReject ? "bg-red-100" : ""} ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
     >
       <input {...getInputProps()} />

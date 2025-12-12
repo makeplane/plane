@@ -186,15 +186,15 @@ export const CreateUpdateLabelInline = observer(
       <>
         <div
           ref={ref}
-          className={`flex w-full scroll-m-8 items-center gap-2 bg-custom-background-100 ${labelForm ? "" : "hidden"}`}
+          className={`flex w-full scroll-m-8 items-center gap-2 bg-surface-1 ${labelForm ? "" : "hidden"}`}
         >
           <div className="flex-shrink-0">
             <Popover className="relative z-10 flex h-full w-full items-center justify-center">
               {({ open }) => (
                 <>
                   <Popover.Button
-                    className={`group inline-flex items-center text-base font-medium focus:outline-none ${
-                      open ? "text-custom-text-100" : "text-custom-text-200"
+                    className={`group inline-flex items-center text-14 font-medium focus:outline-none ${
+                      open ? "text-primary" : "text-secondary"
                     }`}
                   >
                     <span
@@ -259,7 +259,7 @@ export const CreateUpdateLabelInline = observer(
               )}
             />
           </div>
-          <Button variant="neutral-primary" onClick={() => handleClose()} size="sm">
+          <Button variant="secondary" onClick={() => handleClose()}>
             {t("cancel")}
           </Button>
           <Button
@@ -268,13 +268,12 @@ export const CreateUpdateLabelInline = observer(
               e.preventDefault();
               handleSubmit(handleFormSubmit)();
             }}
-            size="sm"
             loading={isSubmitting}
           >
             {isUpdating ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}
           </Button>
         </div>
-        {errors.name?.message && <p className="p-0.5 pl-8 text-sm text-red-500">{errors.name?.message}</p>}
+        {errors.name?.message && <p className="p-0.5 pl-8 text-13 text-red-500">{errors.name?.message}</p>}
       </>
     );
   })

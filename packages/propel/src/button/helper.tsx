@@ -1,126 +1,60 @@
-export type TButtonVariant =
-  | "primary"
-  | "accent-primary"
-  | "outline-primary"
-  | "neutral-primary"
-  | "link-primary"
-  | "danger"
-  | "accent-danger"
-  | "outline-danger"
-  | "link-danger"
-  | "tertiary-danger"
-  | "link-neutral";
+import type { VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 
-export type TButtonSizes = "sm" | "md" | "lg" | "xl";
+export const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-1 whitespace-nowrap transition-colors focus-visible:outline-none disabled:pointer-events-none",
+  {
+    variants: {
+      variant: {
+        primary:
+          "bg-accent-primary hover:bg-accent-primary-hover active:bg-accent-primary-active focus:bg-accent-primary-active disabled:bg-layer-disabled text-on-color disabled:text-disabled",
+        "error-fill":
+          "bg-danger-primary hover:bg-danger-primary-hover active:bg-danger-primary-active focus:bg-danger-primary-active disabled:bg-layer-disabled text-on-color disabled:text-disabled",
+        "error-outline":
+          "bg-layer-2 hover:bg-danger-subtle active:bg-danger-subtle-hover focus:bg-danger-subtle-hover disabled:bg-layer-2 text-danger disabled:text-disabled border border-danger-strong disabled:border-subtle-1",
+        secondary:
+          "bg-layer-2 hover:bg-layer-2-hover active:bg-layer-2-active focus:bg-layer-2-active disabled:bg-layer-transparent text-secondary disabled:text-disabled border border-strong disabled:border-subtle-1 shadow-raised-100",
+        tertiary:
+          "bg-layer-3 hover:bg-layer-3-hover active:bg-layer-3-active focus:bg-layer-3-active disabled:bg-layer-transparent text-secondary disabled:text-disabled",
+        ghost:
+          "bg-layer-transparent hover:bg-layer-transparent-hover active:bg-layer-transparent-active focus:bg-layer-transparent-active disabled:bg-layer-transparent text-secondary disabled:text-disabled",
+        link: "px-0 underline text-link-primary hover:text-link-primary-hover active:text-link-primary-hover focus:text-link-primary-hover disabled:text-disabled",
+      },
+      size: {
+        sm: "h-5 px-1.5 text-caption-md-medium rounded-sm",
+        base: "h-6 px-2 text-body-xs-medium rounded-md",
+        lg: "h-7 px-2 text-body-xs-medium rounded-md",
+        xl: "h-8 px-2 text-body-sm-medium rounded-md",
+      },
+    },
+    defaultVariants: {
+      variant: "primary",
+      size: "base",
+    },
+  }
+);
 
-export interface IButtonStyling {
-  [key: string]: {
-    default: string;
-    hover: string;
-    pressed: string;
-    disabled: string;
+export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
+  VariantProps<typeof buttonVariants> & {
+    appendIcon?: React.ReactElement;
+    loading?: boolean;
+    prependIcon?: React.ReactElement;
   };
-}
 
-enum buttonSizeStyling {
-  sm = `px-3 py-1.5 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
-  md = `px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
-  lg = `px-5 py-2 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
-  xl = `px-5 py-3.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
-}
+export type TButtonVariant = NonNullable<ButtonProps["variant"]>;
+export type TButtonSize = NonNullable<ButtonProps["size"]>;
 
-enum buttonIconStyling {
-  sm = "h-3 w-3 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0",
-  md = "h-3.5 w-3.5 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0",
-  lg = "h-4 w-4 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0",
-  xl = "h-4 w-4 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0 ",
-}
-
-export const buttonStyling: IButtonStyling = {
-  primary: {
-    default: `text-white bg-custom-primary-100`,
-    hover: `hover:bg-custom-primary-200`,
-    pressed: `focus:text-custom-brand-40 focus:bg-custom-primary-200`,
-    disabled: `cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60`,
-  },
-  "accent-primary": {
-    default: `bg-custom-primary-100/20 text-custom-primary-100`,
-    hover: `hover:bg-custom-primary-100/10 hover:text-custom-primary-200`,
-    pressed: `focus:bg-custom-primary-100/10`,
-    disabled: `cursor-not-allowed !text-custom-primary-60`,
-  },
-  "outline-primary": {
-    default: `text-custom-primary-100 bg-transparent border border-custom-primary-100`,
-    hover: `hover:bg-custom-primary-100/20`,
-    pressed: `focus:text-custom-primary-100 focus:bg-custom-primary-100/30`,
-    disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
-  },
-  "neutral-primary": {
-    default: `text-custom-text-200 bg-custom-background-100 border border-custom-border-200`,
-    hover: `hover:bg-custom-background-90`,
-    pressed: `focus:text-custom-text-300 focus:bg-custom-background-90`,
-    disabled: `cursor-not-allowed !text-custom-text-400`,
-  },
-  "link-primary": {
-    default: `text-custom-primary-100 bg-custom-background-100`,
-    hover: `hover:text-custom-primary-200`,
-    pressed: `focus:text-custom-primary-80 `,
-    disabled: `cursor-not-allowed !text-custom-primary-60`,
-  },
-
-  danger: {
-    default: `text-white bg-red-500`,
-    hover: ` hover:bg-red-600`,
-    pressed: `focus:text-red-200 focus:bg-red-600`,
-    disabled: `cursor-not-allowed !bg-red-300`,
-  },
-  "accent-danger": {
-    default: `text-red-500 bg-red-50`,
-    hover: `hover:text-red-600 hover:bg-red-100`,
-    pressed: `focus:text-red-500 focus:bg-red-100`,
-    disabled: `cursor-not-allowed !text-red-300`,
-  },
-  "outline-danger": {
-    default: `text-red-500 bg-transparent border border-red-500`,
-    hover: `hover:text-red-400 hover:border-red-400`,
-    pressed: `focus:text-red-400 focus:border-red-400`,
-    disabled: `cursor-not-allowed !text-red-300 !border-red-300`,
-  },
-  "link-danger": {
-    default: `text-red-500 bg-custom-background-100`,
-    hover: `hover:text-red-400`,
-    pressed: `focus:text-red-400`,
-    disabled: `cursor-not-allowed !text-red-300`,
-  },
-  "tertiary-danger": {
-    default: `text-red-500 bg-custom-background-100 border border-red-200`,
-    hover: `hover:bg-red-50 hover:border-red-300`,
-    pressed: `focus:text-red-400`,
-    disabled: `cursor-not-allowed !text-red-300`,
-  },
-  "link-neutral": {
-    default: `text-custom-text-300`,
-    hover: `hover:text-custom-text-200`,
-    pressed: `focus:text-custom-text-100`,
-    disabled: `cursor-not-allowed !text-custom-text-400`,
-  },
+const buttonIconStyling: Record<TButtonSize, string> = {
+  sm: "size-3.5",
+  base: "size-3.5",
+  lg: "size-4",
+  xl: "size-4 ",
 };
 
-export const getButtonStyling = (variant: TButtonVariant, size: TButtonSizes, disabled: boolean = false): string => {
-  let tempVariant: string = ``;
-  const currentVariant = buttonStyling[variant];
+export function getIconStyling(size: TButtonSize): string {
+  return buttonIconStyling[size];
+}
 
-  tempVariant = `${currentVariant.default} ${disabled ? currentVariant.disabled : currentVariant.hover} ${
-    currentVariant.pressed
-  }`;
-
-  let tempSize: string = ``;
-  if (size) tempSize = buttonSizeStyling[size];
-  return `${tempVariant} ${tempSize}`;
-};
-
-export const getIconStyling = (size: TButtonSizes): string => {
-  let icon: string = ``;
-  if (size) icon = buttonIconStyling[size];
-  return icon;
-};
+export function getButtonStyling(variant: TButtonVariant, size: TButtonSize): string {
+  return buttonVariants({ variant, size });
+}

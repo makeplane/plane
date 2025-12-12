@@ -79,7 +79,7 @@ export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props)
 
   return (
     <div
-      className={cn("grid divide-custom-border-200 md:divide-x-[0.5px]", {
+      className={cn("grid divide-subtle-1 md:divide-x-[0.5px]", {
         "grid-cols-7": showWeekends,
         "grid-cols-5": !showWeekends,
         "h-full": calendarLayout !== "month",

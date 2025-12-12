@@ -39,7 +39,7 @@ export function DateFilterSelect({ title, value, onChange }: Props) {
     <CustomSelect
       value={value}
       label={
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-2 text-11">
           {dueDateRange.find((item) => item.value === value)?.icon}
           <span>
             {title} {dueDateRange.find((item) => item.value === value)?.name}

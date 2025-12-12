@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
+import { Star } from "lucide-react";
 // constants
 import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // ui
-import { FavoriteStar } from "@plane/ui";
+import { IconButton } from "@plane/propel/icon-button";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
@@ -25,16 +26,18 @@ export const PageFavoriteControl = observer(function PageFavoriteControl({ page 
   if (!canCurrentUserFavoritePage) return null;
 
   return (
-    <FavoriteStar
-      selected={is_favorite}
+    <IconButton
+      variant="ghost"
+      size="lg"
+      icon={Star}
       onClick={() => {
         captureClick({
           elementName: PROJECT_PAGE_TRACKER_ELEMENTS.FAVORITE_BUTTON,
         });
         pageOperations.toggleFavorite();
       }}
-      buttonClassName="flex-shrink-0 size-6 group rounded hover:bg-custom-background-80 transition-colors"
-      iconClassName="size-3.5 text-custom-text-200 group-hover:text-custom-text-10"
+      aria-label={is_favorite ? "Remove favorite" : "Add to favorites"}
+      className={is_favorite ? "*:fill-(--color-label-yellow-icon) *:stroke-(--color-label-yellow-icon)" : ""}
     />
   );
 });

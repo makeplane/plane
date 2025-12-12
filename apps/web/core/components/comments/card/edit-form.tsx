@@ -111,24 +111,24 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
             type="button"
             onClick={handleSubmit(onEnter)}
             disabled={isDisabled}
-            className={`group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300  ${
+            className={`group rounded-sm border border-green-500 bg-green-500/20 p-2 shadow-md duration-300  ${
               isEmpty ? "cursor-not-allowed bg-gray-200" : "hover:bg-green-500"
             }`}
           >
             <Check
-              className={`h-3 w-3 text-green-500 duration-300 ${isEmpty ? "text-black" : "group-hover:text-white"}`}
+              className={`h-3 w-3 text-green-500 duration-300 ${isEmpty ? "text-black" : "group-hover:text-on-color"}`}
             />
           </button>
         )}
         <button
           type="button"
-          className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
+          className="group rounded-sm border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
           onClick={() => {
             setIsEditing(false);
             editorRef.current?.setEditorValue(comment.comment_html ?? "<p></p>");
           }}
         >
-          <CloseIcon className="size-3 text-red-500 duration-300 group-hover:text-white" />
+          <CloseIcon className="size-3 text-red-500 duration-300 group-hover:text-on-color" />
         </button>
       </div>
     </form>

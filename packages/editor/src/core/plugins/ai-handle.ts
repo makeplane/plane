@@ -88,7 +88,7 @@ export const AIHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOpti
   const view = (view: EditorView, sideMenu: HTMLDivElement | null) => {
     // create handle element
     const className =
-      "grid place-items-center font-medium size-5 aspect-square text-xs text-custom-text-300 hover:bg-custom-background-80 rounded-sm opacity-100 !outline-none z-[5] transition-[background-color,_opacity] duration-200 ease-linear";
+      "grid place-items-center font-medium size-5 aspect-square text-11 text-tertiary hover:bg-layer-1 rounded-xs opacity-100 !outline-none z-[5] transition-[background-color,_opacity] duration-200 ease-linear";
     aiHandleElement = document.createElement("button");
     aiHandleElement.type = "button";
     aiHandleElement.id = "ai-handle";

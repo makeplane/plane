@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+import { cn } from "@plane/utils";
 
 export type TStateOptionProps = {
   projectId: string | null | undefined;
@@ -24,7 +25,7 @@ export const StateOption = observer(function StateOption(props: TStateOptionProp
       key={option.value}
       value={option.value}
       className={({ active, selected }) =>
-        `${className} ${active ? "bg-custom-background-80" : ""} ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+        cn(`${className} ${active ? "bg-layer-transparent-hover" : ""} ${selected ? "text-primary" : "text-secondary"}`)
       }
     >
       {({ selected }) => (

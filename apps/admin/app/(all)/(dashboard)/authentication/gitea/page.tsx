@@ -58,7 +58,7 @@ const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthentic
   return (
     <>
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
-        <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
+        <div className="border-b border-subtle mx-4 py-4 space-y-1 flex-shrink-0">
           <AuthenticationMethodCard
             name="Gitea"
             description="Allow members to login or sign up to plane with their Gitea accounts."

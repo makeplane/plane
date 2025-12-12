@@ -54,43 +54,43 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
     <AuthenticationWrapper>
       <div className="flex h-full flex-col gap-y-2 overflow-hidden sm:flex-row sm:gap-y-0">
         <div className="relative h-1/6 flex-shrink-0 sm:w-2/12 md:w-3/12 lg:w-1/5">
-          <div className="absolute left-0 top-1/2 h-[0.5px] w-full -translate-y-1/2 border-b-[0.5px] border-custom-border-200 sm:left-1/2 sm:top-0 sm:h-screen sm:w-[0.5px] sm:-translate-x-1/2 sm:translate-y-0 sm:border-r-[0.5px] md:left-1/3" />
+          <div className="absolute left-0 top-1/2 h-[0.5px] w-full -translate-y-1/2 border-b-[0.5px] border-subtle sm:left-1/2 sm:top-0 sm:h-screen sm:w-[0.5px] sm:-translate-x-1/2 sm:translate-y-0 sm:border-r-[0.5px] md:left-1/3" />
           <Link
-            className="absolute left-5 top-1/2 grid -translate-y-1/2 place-items-center bg-custom-background-100 px-3 sm:left-1/2 sm:top-12 sm:-translate-x-[15px] sm:translate-y-0 sm:px-0 sm:py-5 md:left-1/3"
+            className="absolute left-5 top-1/2 grid -translate-y-1/2 place-items-center bg-surface-1 px-3 sm:left-1/2 sm:top-12 sm:-translate-x-[15px] sm:translate-y-0 sm:px-0 sm:py-5 md:left-1/3"
             href="/"
           >
-            <PlaneLogo className="h-9 w-auto text-custom-text-100" />
+            <PlaneLogo className="h-9 w-auto text-primary" />
           </Link>
-          <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-custom-text-100 sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
+          <div className="absolute right-4 top-1/4 -translate-y-1/2 text-13 text-primary sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
             {currentUser?.email}
           </div>
         </div>
         <div className="relative flex h-full justify-center px-8 pb-8 sm:w-10/12 sm:items-center sm:justify-start sm:p-0 sm:pr-[8.33%] md:w-9/12 lg:w-4/5">
           {isWorkspaceCreationDisabled ? (
-            <div className="w-4/5 h-full flex flex-col items-center justify-center text-lg font-medium gap-1">
+            <div className="w-4/5 h-full flex flex-col items-center justify-center text-16 font-medium gap-1">
               <img
                 src={WorkspaceCreationDisabled}
                 className="w-full h-full object-contain mb-4"
                 alt="Workspace creation disabled"
               />
-              <div className="text-lg font-medium text-center">
+              <div className="text-16 font-medium text-center">
                 {t("workspace_creation.errors.creation_disabled.title")}
               </div>
-              <p className="text-sm text-custom-text-300 break-words text-center">
+              <p className="text-13 text-tertiary break-words text-center">
                 {t("workspace_creation.errors.creation_disabled.description")}
               </p>
               <div className="flex gap-4 mt-6">
                 <Button variant="primary" onClick={() => router.back()}>
                   {t("common.go_back")}
                 </Button>
-                <a href={getMailtoHref()} className={getButtonStyling("outline-primary", "md")}>
+                <a href={getMailtoHref()} className={getButtonStyling("secondary", "base")}>
                   {t("workspace_creation.errors.creation_disabled.request_button")}
                 </a>
               </div>
             </div>
           ) : (
             <div className="w-full space-y-7 sm:space-y-10">
-              <h4 className="text-2xl font-semibold">{t("workspace_creation.heading")}</h4>
+              <h4 className="text-20 font-semibold">{t("workspace_creation.heading")}</h4>
               <div className="sm:w-3/4 md:w-2/5">
                 <CreateWorkspaceForm
                   onSubmit={onSubmit}

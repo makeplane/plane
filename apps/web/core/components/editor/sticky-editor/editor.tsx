@@ -15,10 +15,11 @@ import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { StickyEditorToolbar } from "./toolbar";
 
-interface StickyEditorWrapperProps extends Omit<
-  Omit<ILiteTextEditorProps, "extendedEditorProps">,
-  "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "getEditorMetaData"
-> {
+interface StickyEditorWrapperProps
+  extends Omit<
+    Omit<ILiteTextEditorProps, "extendedEditorProps">,
+    "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "getEditorMetaData"
+  > {
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
@@ -76,7 +77,7 @@ export const StickyEditor = React.forwardRef(function StickyEditor(
 
   return (
     <div
-      className={cn("relative border border-custom-border-200 rounded", parentClassName)}
+      className={cn("relative border border-subtle rounded-sm", parentClassName)}
       onFocus={() => !showToolbarInitially && setIsFocused(true)}
       onBlur={() => !showToolbarInitially && setIsFocused(false)}
     >

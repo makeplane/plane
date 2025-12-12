@@ -4,6 +4,7 @@ import useSWR, { mutate } from "swr";
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IExportData } from "@plane/types";
 import { Table } from "@plane/ui";
@@ -58,62 +59,53 @@ export const PrevExports = observer(function PrevExports(props: Props) {
 
   return (
     <div>
-      <div className="flex items-center justify-between border-b border-custom-border-100 pb-3.5 pt-7">
+      <div className="flex items-center justify-between border-b border-subtle pb-3.5 pt-7">
         <div className="flex items-center gap-2">
-          <h3 className="flex gap-2 text-xl font-medium">
+          <h3 className="flex gap-2 text-18 font-medium">
             {t("workspace_settings.settings.exports.previous_exports")}
           </h3>
-
-          <button
-            type="button"
-            className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs outline-none"
-            onClick={handleRefresh}
-          >
-            <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
-            {refreshing ? `${t("refreshing")}...` : t("refresh_status")}
-          </button>
+          <Button variant="tertiary" className="shrink-0" onClick={handleRefresh}>
+            <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />
+            {refreshing ? t("refreshing") : t("refresh_status")}
+          </Button>
         </div>
-        <div className="flex items-center gap-2 text-xs">
-          <button
-            disabled={!exporterServices?.prev_page_results}
-            onClick={() => exporterServices?.prev_page_results && setCursor(exporterServices?.prev_cursor)}
-            className={`flex items-center rounded border border-custom-primary-100 px-1 text-custom-primary-100 ${
-              exporterServices?.prev_page_results
-                ? "cursor-pointer hover:bg-custom-primary-100 hover:text-white"
-                : "cursor-not-allowed opacity-75"
-            }`}
-          >
-            <MoveLeft className="h-4 w-4" />
-            <div className="pr-1">{t("prev")}</div>
-          </button>
-          <button
-            disabled={!exporterServices?.next_page_results}
-            onClick={() => exporterServices?.next_page_results && setCursor(exporterServices?.next_cursor)}
-            className={`flex items-center rounded border border-custom-primary-100 px-1 text-custom-primary-100 ${
-              exporterServices?.next_page_results
-                ? "cursor-pointer hover:bg-custom-primary-100 hover:text-white"
-                : "cursor-not-allowed opacity-75"
-            }`}
-          >
-            <div className="pl-1">{t("next")}</div>
-            <MoveRight className="h-4 w-4" />
-          </button>
-        </div>
+        {!!exporterServices?.results?.length && (
+          <div className="flex items-center gap-2 text-11">
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={!exporterServices?.prev_page_results}
+              onClick={() => exporterServices?.prev_page_results && setCursor(exporterServices?.prev_cursor)}
+              prependIcon={<MoveLeft />}
+            >
+              {t("prev")}
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={!exporterServices?.next_page_results}
+              onClick={() => exporterServices?.next_page_results && setCursor(exporterServices?.next_cursor)}
+              appendIcon={<MoveRight />}
+            >
+              {t("next")}
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col">
         {exporterServices && exporterServices?.results ? (
           exporterServices?.results?.length > 0 ? (
             <div>
-              <div className="divide-y divide-custom-border-200">
+              <div className="divide-y divide-subtle-1">
                 <Table
                   columns={columns}
                   data={exporterServices?.results ?? []}
                   keyExtractor={(rowData: RowData) => rowData?.id ?? ""}
-                  tHeadClassName="border-b border-custom-border-100"
-                  thClassName="text-left font-medium divide-x-0 text-custom-text-400"
+                  tHeadClassName="border-b border-subtle"
+                  thClassName="text-left font-medium divide-x-0 text-placeholder"
                   tBodyClassName="divide-y-0"
-                  tBodyTrClassName="divide-x-0 p-4 h-[40px] text-custom-text-200"
+                  tBodyTrClassName="divide-x-0 p-4 h-[40px] text-secondary"
                   tHeadTrClassName="divide-x-0"
                 />
               </div>

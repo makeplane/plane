@@ -23,11 +23,11 @@ export const NotAuthorizedView = observer(function NotAuthorizedView(props: Prop
 
   return (
     <DefaultLayout className={className}>
-      <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-custom-background-100 text-center">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-surface-1 text-center">
         <div className="h-44 w-72">
           <img src={asset} className="h-[176px] w-[288px] object-contain" alt="ProjectSettingImg" />
         </div>
-        <h1 className="text-xl font-medium text-custom-text-100">Oops! You are not authorized to view this page</h1>
+        <h1 className="text-18 font-medium text-primary">Oops! You are not authorized to view this page</h1>
         {actionButton}
       </div>
     </DefaultLayout>

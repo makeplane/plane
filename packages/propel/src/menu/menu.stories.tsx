@@ -142,7 +142,7 @@ export const CustomButton: Story = {
     return (
       <Menu
         customButton={
-          <button className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">Custom Button</button>
+          <button className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">Custom Button</button>
         }
       >
         <Menu.MenuItem onClick={() => alert("Option 1")}>Option 1</Menu.MenuItem>
@@ -161,7 +161,7 @@ export const WithSubmenu: Story = {
         <Menu.MenuItem onClick={() => alert("Open")}>Open</Menu.MenuItem>
         <Menu.SubMenu
           trigger="Export"
-          className="min-w-[12rem] rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg"
+          className="min-w-[12rem] rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-rg"
         >
           <Menu.MenuItem onClick={() => alert("Export as PDF")}>Export as PDF</Menu.MenuItem>
           <Menu.MenuItem onClick={() => alert("Export as CSV")}>Export as CSV</Menu.MenuItem>
@@ -209,7 +209,7 @@ export const ComplexMenu: Story = {
           <div className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
             <span>Notifications</span>
-            <span className="ml-auto rounded bg-red-500 px-2 py-0.5 text-xs text-white">3</span>
+            <span className="ml-auto rounded-sm bg-red-500 px-2 py-0.5 text-11 text-on-color">3</span>
           </div>
         </Menu.MenuItem>
         <Menu.MenuItem onClick={() => alert("Help")}>
@@ -220,7 +220,7 @@ export const ComplexMenu: Story = {
         </Menu.MenuItem>
         <Menu.SubMenu
           trigger="Settings"
-          className="min-w-[12rem] rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg"
+          className="min-w-[12rem] rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-rg"
         >
           <Menu.MenuItem onClick={() => alert("General Settings")}>General</Menu.MenuItem>
           <Menu.MenuItem onClick={() => alert("Privacy Settings")}>Privacy</Menu.MenuItem>
@@ -243,7 +243,7 @@ export const CustomStyles: Story = {
     return (
       <Menu
         label="Styled Menu"
-        buttonClassName="bg-purple-500 text-white hover:bg-purple-600"
+        buttonClassName="bg-purple-500 text-on-color hover:bg-purple-600"
         optionsClassName="bg-purple-50 border-purple-300"
       >
         <Menu.MenuItem onClick={() => alert("Item 1")} className="hover:bg-purple-200">

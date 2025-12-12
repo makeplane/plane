@@ -127,9 +127,9 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
     issues.length > 0 ? (
       <li className="p-2">
         {query === "" && (
-          <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select work items to delete</h2>
+          <h2 className="mb-2 mt-4 px-3 text-11 font-semibold text-primary">Select work items to delete</h2>
         )}
-        <ul className="text-sm text-custom-text-200">
+        <ul className="text-13 text-secondary">
           {issues.map((issue) => (
             <BulkDeleteIssuesModalItem
               issue={issue}
@@ -152,7 +152,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
   return (
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <div className="fixed inset-0 z-20 overflow-y-auto bg-custom-backdrop p-4 transition-opacity sm:p-6 md:p-20">
+        <div className="fixed inset-0 z-20 overflow-y-auto bg-backdrop p-4 transition-opacity sm:p-6 md:p-20">
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -163,7 +163,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
             leaveTo="opacity-0 scale-95"
           >
             <Dialog.Panel className="relative flex w-full items-center justify-center ">
-              <div className="w-full max-w-2xl transform divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <div className="w-full max-w-2xl transform divide-y divide-subtle-1 divide-opacity-10 rounded-lg bg-surface-1 shadow-custom-shadow-md transition-all">
                 <form>
                   <Combobox
                     onChange={(val: string) => {
@@ -178,21 +178,18 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
                   >
                     <div className="relative m-1">
                       <Search
-                        className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
+                        className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
                         aria-hidden="true"
                       />
                       <input
                         type="text"
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
+                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none focus:ring-0 sm:text-13"
                         placeholder="Search..."
                         onChange={(event) => setQuery(event.target.value)}
                       />
                     </div>
 
-                    <Combobox.Options
-                      static
-                      className="max-h-80 scroll-py-2 divide-y divide-custom-border-200 overflow-y-auto"
-                    >
+                    <Combobox.Options static className="max-h-80 scroll-py-2 divide-y divide-subtle-1 overflow-y-auto">
                       {isSearching ? (
                         <Loader className="space-y-3 p-3">
                           <Loader.Item height="40px" />
@@ -208,10 +205,15 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
 
                   {issues.length > 0 && (
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                      <Button variant="secondary" size="lg" onClick={handleClose}>
                         Cancel
                       </Button>
-                      <Button variant="danger" size="sm" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
+                      <Button
+                        variant="error-fill"
+                        size="lg"
+                        onClick={handleSubmit(handleDelete)}
+                        loading={isSubmitting}
+                      >
                         {isSubmitting ? "Deleting..." : "Delete selected work items"}
                       </Button>
                     </div>

@@ -32,7 +32,7 @@ function ProjectCreateHeader(props: Props) {
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
 
   return (
-    <div className="group relative h-44 w-full rounded-lg bg-custom-background-80">
+    <div className="group relative h-44 w-full rounded-lg bg-layer-1">
       {coverImage && (
         <img
           src={getCoverImageDisplayURL(coverImage, DEFAULT_COVER_IMAGE_URL)}
@@ -45,7 +45,7 @@ function ProjectCreateHeader(props: Props) {
       </div>
       <div className="absolute right-2 top-2 p-2">
         <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={getIndex("close")}>
-          <CloseIcon className="h-5 w-5 text-white" />
+          <CloseIcon className="h-5 w-5 text-on-color" />
         </button>
       </div>
       <div className="absolute bottom-2 right-2">
@@ -75,7 +75,7 @@ function ProjectCreateHeader(props: Props) {
               className="flex items-center justify-center"
               buttonClassName="flex items-center justify-center"
               label={
-                <span className="grid h-11 w-11 place-items-center rounded-md bg-custom-background-80">
+                <span className="grid h-11 w-11 place-items-center rounded-md bg-layer-1">
                   <Logo logo={value} size={20} />
                 </span>
               }

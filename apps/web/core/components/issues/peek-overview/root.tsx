@@ -81,6 +81,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
                 eventName: WORK_ITEM_TRACKER_EVENTS.update,
                 payload: { id: issueId },
               });
+              return
             })
             .catch((error) => {
               captureError({
@@ -104,6 +105,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
               payload: { id: issueId },
             });
             removeRoutePeekId();
+            return
           });
         } catch (error) {
           setToast({

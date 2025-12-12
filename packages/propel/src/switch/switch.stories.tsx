@@ -33,7 +33,7 @@ export const WithLabel: Story = {
     return (
       <div className="flex items-center gap-2">
         <Switch {...args} value={value} onChange={setValue} label="Enable notifications" />
-        <label className="text-sm">Enable notifications</label>
+        <label className="text-13">Enable notifications</label>
       </div>
     );
   },
@@ -69,15 +69,15 @@ export const AllSizes: Story = {
       <div className="flex items-center gap-6">
         <div className="text-center">
           <Switch value={small} onChange={setSmall} size="sm" />
-          <p className="mt-2 text-xs text-gray-600">Small</p>
+          <p className="mt-2 text-11 text-gray-600">Small</p>
         </div>
         <div className="text-center">
           <Switch value={medium} onChange={setMedium} size="md" />
-          <p className="mt-2 text-xs text-gray-600">Medium</p>
+          <p className="mt-2 text-11 text-gray-600">Medium</p>
         </div>
         <div className="text-center">
           <Switch value={large} onChange={setLarge} size="lg" />
-          <p className="mt-2 text-xs text-gray-600">Large</p>
+          <p className="mt-2 text-11 text-gray-600">Large</p>
         </div>
       </div>
     );
@@ -95,19 +95,19 @@ export const AllStates: Story = {
       <div className="space-y-4">
         <div className="flex items-center gap-4">
           <Switch value={unchecked} onChange={setUnchecked} />
-          <span className="text-sm text-gray-600">Unchecked</span>
+          <span className="text-13 text-gray-600">Unchecked</span>
         </div>
         <div className="flex items-center gap-4">
           <Switch value={checked} onChange={setChecked} />
-          <span className="text-sm text-gray-600">Checked</span>
+          <span className="text-13 text-gray-600">Checked</span>
         </div>
         <div className="flex items-center gap-4">
           <Switch value={disabledUnchecked} onChange={() => {}} disabled />
-          <span className="text-sm text-gray-600">Disabled Unchecked</span>
+          <span className="text-13 text-gray-600">Disabled Unchecked</span>
         </div>
         <div className="flex items-center gap-4">
           <Switch value={disabledChecked} onChange={() => {}} disabled />
-          <span className="text-sm text-gray-600">Disabled Checked</span>
+          <span className="text-13 text-gray-600">Disabled Checked</span>
         </div>
       </div>
     );
@@ -122,26 +122,26 @@ export const InForm: Story = {
 
     return (
       <div className="w-80 rounded-lg border border-gray-200 bg-white p-6 shadow-md">
-        <h3 className="text-lg font-semibold">Notification Settings</h3>
+        <h3 className="text-16 font-semibold">Notification Settings</h3>
         <div className="mt-4 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium">Push Notifications</p>
-              <p className="text-xs text-gray-500">Receive push notifications on your device</p>
+              <p className="text-13 font-medium">Push Notifications</p>
+              <p className="text-11 text-gray-500">Receive push notifications on your device</p>
             </div>
             <Switch value={notifications} onChange={setNotifications} size="md" />
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium">Marketing Emails</p>
-              <p className="text-xs text-gray-500">Receive emails about new features</p>
+              <p className="text-13 font-medium">Marketing Emails</p>
+              <p className="text-11 text-gray-500">Receive emails about new features</p>
             </div>
             <Switch value={marketing} onChange={setMarketing} size="md" />
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium">Product Updates</p>
-              <p className="text-xs text-gray-500">Get notified about product updates</p>
+              <p className="text-13 font-medium">Product Updates</p>
+              <p className="text-11 text-gray-500">Get notified about product updates</p>
             </div>
             <Switch value={updates} onChange={setUpdates} size="md" />
           </div>
@@ -159,8 +159,8 @@ export const WithDescription: Story = {
       <div className="w-96 rounded-lg border border-gray-200 bg-white p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <h4 className="text-sm font-semibold">Enable Two-Factor Authentication</h4>
-            <p className="mt-1 text-xs text-gray-500">
+            <h4 className="text-13 font-semibold">Enable Two-Factor Authentication</h4>
+            <p className="mt-1 text-11 text-gray-500">
               Add an extra layer of security to your account by enabling two-factor authentication.
             </p>
           </div>
@@ -178,14 +178,14 @@ export const Interactive: Story = {
     return (
       <div className="w-80 space-y-4 rounded-lg border border-gray-200 bg-white p-6">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Feature Toggle</span>
+          <span className="text-13 font-medium">Feature Toggle</span>
           <Switch value={enabled} onChange={setEnabled} size="md" />
         </div>
-        <div className="rounded bg-gray-50 p-4">
-          <p className="text-sm text-gray-700">
+        <div className="rounded-sm bg-gray-50 p-4">
+          <p className="text-13 text-gray-700">
             Status: <span className="font-semibold">{enabled ? "Enabled" : "Disabled"}</span>
           </p>
-          {enabled && <p className="mt-2 text-xs text-green-600">Feature is now active and ready to use!</p>}
+          {enabled && <p className="mt-2 text-11 text-green-600">Feature is now active and ready to use!</p>}
         </div>
       </div>
     );
@@ -204,7 +204,7 @@ export const CustomStyles: Story = {
           size="lg"
           className="border-2 border-purple-300 data-[state=checked]:bg-purple-500"
         />
-        <span className="text-sm">Custom styled switch</span>
+        <span className="text-13">Custom styled switch</span>
       </div>
     );
   },
@@ -226,11 +226,11 @@ export const MultipleControls: Story = {
 
     return (
       <div className="w-96 rounded-lg border border-gray-200 bg-white p-6">
-        <h3 className="mb-4 text-lg font-semibold">Feature Flags</h3>
+        <h3 className="mb-4 text-16 font-semibold">Feature Flags</h3>
         <div className="space-y-3">
           {Object.entries(settings).map(([key, value]) => (
             <div key={key} className="flex items-center justify-between">
-              <span className="text-sm capitalize">{key.replace(/([A-Z])/g, " $1").trim()}</span>
+              <span className="text-13 capitalize">{key.replace(/([A-Z])/g, " $1").trim()}</span>
               <Switch value={value} onChange={() => toggleSetting(key as keyof typeof settings)} size="sm" />
             </div>
           ))}

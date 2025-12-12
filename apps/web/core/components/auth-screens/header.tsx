@@ -38,15 +38,15 @@ export const AuthHeader = observer(function AuthHeader({ type }: AuthHeaderProps
       <PageHead title={t(authContentMap[type].pageTitle) + " - Plane"} />
       <div className="flex items-center justify-between gap-6 w-full flex-shrink-0 sticky top-0">
         <Link href="/">
-          <PlaneLockup height={20} width={95} className="text-custom-text-100" />
+          <PlaneLockup height={20} width={95} className="text-primary" />
         </Link>
         {enableSignUpConfig && (
-          <div className="flex flex-col items-end text-sm font-medium text-center sm:items-center sm:gap-2 sm:flex-row text-custom-text-300">
-            {t(authContentMap[type].text)}
+          <div className="flex flex-col items-end text-13 font-medium text-center sm:items-center sm:gap-2 sm:flex-row text-tertiary">
+            <span className="text-body-sm-regular text-tertiary">{t(authContentMap[type].text)}</span>
             <Link
               data-ph-element={AUTH_TRACKER_ELEMENTS.NAVIGATE_TO_SIGN_UP}
               href={authContentMap[type].linkHref}
-              className="font-semibold text-custom-primary-100 hover:underline"
+              className="text-body-sm-semibold text-accent-primary hover:underline"
             >
               {t(authContentMap[type].linkText)}
             </Link>

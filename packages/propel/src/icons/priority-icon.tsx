@@ -16,11 +16,11 @@ export function PriorityIcon(props: IPriorityIcon) {
   const { priority, className = "", containerClassName = "", size = 14, withContainer = false } = props;
 
   const priorityClasses = {
-    urgent: "bg-red-600/20 text-red-600 border-red-600",
-    high: "bg-orange-500/20 text-orange-500 border-orange-500",
-    medium: "bg-yellow-500/20 text-yellow-500 border-yellow-500",
-    low: "bg-custom-primary-100/20 text-custom-primary-100 border-custom-primary-100",
-    none: "bg-custom-background-80 text-custom-text-200 border-custom-border-300",
+    urgent: "bg-layer-2 text-priority-urgent border-priority-urgent",
+    high: "bg-layer-2 text-priority-high border-priority-high",
+    medium: "bg-layer-2 text-priority-medium border-priority-medium",
+    low: "bg-layer-2 text-priority-low border-priority-low",
+    none: "bg-layer-2 text-priority-none border-priority-none",
   };
 
   // get priority icon
@@ -40,7 +40,7 @@ export function PriorityIcon(props: IPriorityIcon) {
       {withContainer ? (
         <div
           className={cn(
-            "flex items-center justify-center border rounded p-0.5 flex-shrink-0",
+            "flex items-center justify-center border rounded-sm p-0.5 flex-shrink-0",
             priorityClasses[priority ?? "none"],
             containerClassName
           )}
@@ -63,11 +63,11 @@ export function PriorityIcon(props: IPriorityIcon) {
           className={cn(
             "flex-shrink-0",
             {
-              "text-red-600": priority === "urgent",
-              "text-orange-500": priority === "high",
-              "text-yellow-500": priority === "medium",
-              "text-custom-primary-100": priority === "low",
-              "text-custom-text-200": priority === "none",
+              "text-priority-urgent": priority === "urgent",
+              "text-priority-high": priority === "high",
+              "text-priority-medium": priority === "medium",
+              "text-priority-low": priority === "low",
+              "text-priority-none": priority === "none",
             },
             className
           )}

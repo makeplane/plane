@@ -171,7 +171,7 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
               // DO NOT REMOVE THE ID
               id="gantt-container"
               className={cn(
-                "h-full w-full overflow-auto vertical-scrollbar horizontal-scrollbar scrollbar-lg flex border-t-[0.5px] border-custom-border-200",
+                "h-full w-full overflow-auto vertical-scrollbar horizontal-scrollbar scrollbar-lg flex border-t-[0.5px] border-subtle",
                 {
                   "mb-8": bottomSpacing,
                 }
@@ -189,7 +189,6 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
                 enableSelection={enableSelection}
                 sidebarToRender={sidebarToRender}
                 title={title}
-                quickAdd={quickAdd}
                 selectionHelpers={helpers}
                 showAllBlocks={showAllBlocks}
                 isEpic={isEpic}
@@ -232,6 +231,7 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
                 )}
               </div>
             </div>
+            {quickAdd ? quickAdd : null}
             <IssueBulkOperationsRoot selectionHelpers={helpers} />
           </>
         )}

@@ -22,7 +22,6 @@ type Props = {
   enableSelection: boolean | ((blockId: string) => boolean);
   sidebarToRender: (props: any) => React.ReactNode;
   title: string;
-  quickAdd?: React.ReactNode | undefined;
   selectionHelpers: TSelectionHelper;
   showAllBlocks?: boolean;
   isEpic?: boolean;
@@ -40,7 +39,6 @@ export const GanttChartSidebar = observer(function GanttChartSidebar(props: Prop
     canLoadMoreBlocks,
     ganttContainerRef,
     title,
-    quickAdd,
     selectionHelpers,
     showAllBlocks = false,
     isEpic = false,
@@ -52,14 +50,14 @@ export const GanttChartSidebar = observer(function GanttChartSidebar(props: Prop
     <Row
       // DO NOT REMOVE THE ID
       id="gantt-sidebar"
-      className="sticky left-0 z-10 min-h-full h-max flex-shrink-0 border-r-[0.5px] border-custom-border-200 bg-custom-background-100"
+      className="sticky left-0 z-10 min-h-full h-max flex-shrink-0 border-r-[0.5px] border-subtle-1 bg-surface-1"
       style={{
         width: `${SIDEBAR_WIDTH}px`,
       }}
       variant={ERowVariant.HUGGING}
     >
       <Row
-        className="group/list-header box-border flex-shrink-0 flex items-end justify-between gap-2 border-b-[0.5px] border-custom-border-200 pb-2 pr-4 text-sm font-medium text-custom-text-300 sticky top-0 z-10 bg-custom-background-100"
+        className="group/list-header box-border flex-shrink-0 flex items-end justify-between gap-2 border-b-[0.5px] border-subtle-1 pb-2 pr-4 text-13 font-medium text-tertiary sticky top-0 z-10 bg-surface-1"
         style={{
           height: `${HEADER_HEIGHT}px`,
         }}
@@ -84,7 +82,7 @@ export const GanttChartSidebar = observer(function GanttChartSidebar(props: Prop
         <h6>{t("common.duration")}</h6>
       </Row>
 
-      <Row variant={ERowVariant.HUGGING} className="min-h-full h-max bg-custom-background-100">
+      <Row variant={ERowVariant.HUGGING} className="min-h-full h-max bg-surface-1">
         {sidebarToRender &&
           sidebarToRender({
             title,
@@ -100,7 +98,6 @@ export const GanttChartSidebar = observer(function GanttChartSidebar(props: Prop
             isEpic,
           })}
       </Row>
-      {quickAdd ? quickAdd : null}
     </Row>
   );
 });

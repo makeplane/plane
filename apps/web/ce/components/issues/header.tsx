@@ -69,7 +69,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
                 <BreadcrumbLink
                   label="Work Items"
                   href={`/${workspaceSlug}/projects/${projectId}/issues/`}
-                  icon={<WorkItemsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -89,7 +89,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
         {currentProjectDetails?.anchor ? (
           <a
             href={publishedURL}
-            className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
+            className="group flex items-center gap-1.5 rounded-sm bg-accent-primary/10 px-2.5 py-1 text-11 font-medium text-accent-primary"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -110,19 +110,18 @@ export const IssuesHeader = observer(function IssuesHeader() {
             canUserCreateIssue={canUserCreateIssue}
           />
         </div>
-        {canUserCreateIssue ? (
+        {canUserCreateIssue && (
           <Button
+            variant="primary"
+            size="lg"
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
             data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
-            size="sm"
           >
             <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
             <div className="hidden sm:block">{t("issue.add.label")}</div>
           </Button>
-        ) : (
-          <></>
         )}
       </Header.RightItem>
     </Header>

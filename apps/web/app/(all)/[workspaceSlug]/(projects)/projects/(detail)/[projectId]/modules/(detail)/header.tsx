@@ -134,7 +134,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                   <BreadcrumbLink
                     label="Modules"
                     href={`/${workspaceSlug}/projects/${projectId}/modules/`}
-                    icon={<ModuleIcon className="h-4 w-4 text-custom-text-300" />}
+                    icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
                     isLast
                   />
                 }
@@ -149,7 +149,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                       router.push(`/${workspaceSlug}/projects/${projectId}/modules/${value}`);
                     }}
                     title={moduleDetails?.name}
-                    icon={<ModuleIcon className="size-3.5 flex-shrink-0 text-custom-text-300" />}
+                    icon={<ModuleIcon className="size-3.5 flex-shrink-0 text-tertiary" />}
                     isLast
                   />
                 }
@@ -163,7 +163,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                 } in this module`}
                 position="bottom"
               >
-                <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
+                <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2 text-center text-11 font-semibold text-accent-primary">
                   {workItemsCount}
                 </span>
               </Tooltip>
@@ -221,24 +221,20 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
 
           {canUserCreateIssue ? (
             <>
-              <Button
-                className="hidden md:block"
-                onClick={() => setAnalyticsModal(true)}
-                variant="neutral-primary"
-                size="sm"
-              >
-                <div className="hidden @4xl:flex">Analytics</div>
-                <div className="flex @4xl:hidden">
+              <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
+                <span className="hidden @4xl:flex">Analytics</span>
+                <span className="@4xl:hidden">
                   <ChartNoAxesColumn className="size-3.5" />
-                </div>
+                </span>
               </Button>
               <Button
+                variant="primary"
+                size="lg"
                 className="hidden sm:flex"
                 onClick={() => {
                   toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }}
                 data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.MODULE}
-                size="sm"
               >
                 Add work item
               </Button>
@@ -246,20 +242,16 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
           ) : (
             <></>
           )}
-          <button
-            type="button"
-            className="p-1.5 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
-            onClick={toggleSidebar}
-          >
-            <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
-          </button>
+          <Button variant="ghost" size="lg" onClick={toggleSidebar}>
+            <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-accent-primary" : "text-secondary")} />
+          </Button>
           {moduleId && (
             <ModuleQuickActions
               parentRef={parentRef}
               moduleId={moduleId}
               projectId={projectId.toString()}
               workspaceSlug={workspaceSlug.toString()}
-              customClassName="flex-shrink-0 flex items-center justify-center bg-custom-background-80/70 rounded size-[26px]"
+              customClassName="flex-shrink-0 flex items-center justify-center bg-layer-1/70 rounded-sm size-[26px]"
             />
           )}
         </Header.RightItem>

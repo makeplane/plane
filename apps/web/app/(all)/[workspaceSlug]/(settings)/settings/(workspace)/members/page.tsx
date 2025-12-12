@@ -128,17 +128,17 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
         })}
       >
         <div className="flex justify-between gap-4 pb-3.5 items-start">
-          <h4 className="flex items-center gap-2.5 text-xl font-medium">
+          <h4 className="flex items-center gap-2.5 text-h5-medium">
             {t("workspace_settings.settings.members.title")}
             {workspaceMemberIds && workspaceMemberIds.length > 0 && (
               <CountChip count={workspaceMemberIds.length} className="h-5 m-auto" />
             )}
           </h4>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" />
+            <div className="flex items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5">
+              <Search className="h-3.5 w-3.5 text-placeholder" />
               <input
-                className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
+                className="w-full max-w-[234px] border-none bg-transparent text-body-xs-regular outline-none placeholder:text-placeholder"
                 placeholder={`${t("search")}...`}
                 value={searchQuery}
                 // eslint-disable-next-line jsx-a11y/no-autofocus
@@ -155,7 +155,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
             {canPerformWorkspaceAdminActions && (
               <Button
                 variant="primary"
-                size="sm"
+                size="lg"
                 onClick={() => setInviteModal(true)}
                 data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
               >

@@ -55,7 +55,7 @@ export const InboxIssueDescription = observer(function InboxIssueDescription(pro
 
   if (loader === "issue-loading")
     return (
-      <Loader className="min-h-[6rem] rounded-md border border-custom-border-200">
+      <Loader className="min-h-[6rem] rounded-md border border-subtle">
         <Loader.Item width="100%" height="140px" />
       </Loader>
     );

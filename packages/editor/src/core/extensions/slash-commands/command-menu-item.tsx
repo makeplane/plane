@@ -30,7 +30,7 @@ const highlightMatch = (text: string, query: string): React.ReactNode => {
     return (
       <>
         {before}
-        <span className="font-medium text-custom-text-100">{match}</span>
+        <span className="font-medium text-primary">{match}</span>
         {after}
       </>
     );
@@ -48,9 +48,9 @@ export function CommandMenuItem(props: Props) {
       type="button"
       id={`item-${sectionIndex}-${itemIndex}`}
       className={cn(
-        "flex items-center gap-2 w-full rounded px-1 py-1.5 text-sm text-left truncate text-custom-text-200",
+        "flex items-center gap-2 w-full rounded-sm px-1 py-1.5 text-13 text-left truncate text-secondary hover:bg-layer-1-hover",
         {
-          "bg-custom-background-80": isSelected,
+          "bg-layer-1-hover": isSelected,
         }
       )}
       onClick={onClick}
@@ -59,7 +59,7 @@ export function CommandMenuItem(props: Props) {
       <span className="size-5 grid place-items-center flex-shrink-0" style={item.iconContainerStyle}>
         {item.icon}
       </span>
-      <p className="flex-grow truncate">{query ? highlightMatch(item.title, query) : item.title}</p>
+      <p className="flex-grow truncate text-12">{query ? highlightMatch(item.title, query) : item.title}</p>
       {item.badge}
     </button>
   );

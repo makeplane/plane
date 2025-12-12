@@ -93,7 +93,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
       icon:
         currentUser?.avatar_url && currentUser?.avatar_url.trim() !== "" ? (
           <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
-            <span className="relative flex size-4 items-center justify-center rounded-full p-4 capitalize text-white">
+            <span className="relative flex size-4 items-center justify-center rounded-full p-4 capitalize text-on-color">
               <img
                 src={getFileURL(currentUser?.avatar_url)}
                 className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
@@ -103,7 +103,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
           </Link>
         ) : (
           <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
-            <span className="relative flex size-4 items-center justify-center rounded-full bg-gray-700 p-4 capitalize text-white text-sm">
+            <span className="relative flex size-4 items-center justify-center rounded-full bg-gray-700 p-4 capitalize text-on-color text-13">
               {(currentUser?.email ?? currentUser?.display_name ?? "?")[0]}
             </span>
           </Link>
@@ -134,9 +134,9 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <div className="text-base font-semibold text-custom-text-350">{t("home.empty.quickstart_guide")}</div>
+        <div className="text-14 font-semibold text-tertiary">{t("home.empty.quickstart_guide")}</div>
         <button
-          className="text-custom-text-300 font-medium text-sm flex items-center gap-1"
+          className="text-tertiary font-medium text-13 flex items-center gap-1"
           onClick={() => {
             if (!storedValue) return;
             setValue({ ...storedValue, hide: true });
@@ -150,25 +150,19 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
         {EMPTY_STATE_DATA.map((item) => {
           const isStateComplete = isComplete(item.flag);
           return (
-            <div
-              key={item.id}
-              className="flex flex-col p-4 bg-custom-background-100 rounded-xl border border-custom-border-200/40"
-            >
+            <div key={item.id} className="flex flex-col p-4 bg-surface-1 rounded-xl border border-subtle/40">
               <div
-                className={cn(
-                  "grid place-items-center bg-custom-background-90 rounded-full size-9 mb-3 text-custom-text-400",
-                  {
-                    "text-custom-primary-100 bg-custom-primary-100/10": !isStateComplete,
-                  }
-                )}
+                className={cn("grid place-items-center bg-surface-2 rounded-full size-9 mb-3 text-placeholder", {
+                  "text-accent-primary bg-accent-primary/10": !isStateComplete,
+                })}
               >
-                <span className="text-3xl my-auto">{item.icon}</span>
+                <span className="text-24 my-auto">{item.icon}</span>
               </div>
-              <h3 className="text-sm font-medium text-custom-text-100 mb-2">{t(item.title)}</h3>
-              <p className="text-[11px] text-custom-text-300 mb-2">{t(item.description)}</p>
+              <h3 className="text-13 font-medium text-primary mb-2">{t(item.title)}</h3>
+              <p className="text-11 text-tertiary mb-2">{t(item.description)}</p>
               {isStateComplete ? (
                 <div className="flex items-center gap-2 bg-[#17a34a] rounded-full p-1 w-fit">
-                  <Check className="size-3 text-custom-primary-100 text-white" />
+                  <Check className="size-3 text-accent-primary text-on-color" />
                 </div>
               ) : (
                 !item.cta.disabled &&
@@ -186,14 +180,14 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
                         [item.flag]: true,
                       });
                     }}
-                    className={cn("text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium", {})}
+                    className={cn("text-accent-primary hover:text-accent-secondary text-13 font-medium", {})}
                   >
                     {t(item.cta.text)}
                   </Link>
                 ) : (
                   <button
                     type="button"
-                    className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
+                    className="text-accent-primary hover:text-accent-secondary text-13 font-medium"
                     onClick={item.cta.onClick}
                   >
                     {t(item.cta.text)}

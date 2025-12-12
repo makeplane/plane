@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { CloudOff } from "lucide-react";
+import { CloudOff, Dot } from "lucide-react";
 import { Tooltip } from "@plane/ui";
+import { Badge } from "@plane/propel/badge";
 
 type Props = {
   syncStatus: "syncing" | "synced" | "error";
@@ -32,20 +33,12 @@ export function PageSyncingBadge({ syncStatus }: Props) {
       label: "Syncing...",
       tooltipHeading: "Syncing...",
       tooltipContent: "Your changes are being synced with the server. You can continue making changes.",
-      bgColor: "bg-custom-primary-100/20",
-      textColor: "text-custom-primary-100",
-      pulseColor: "bg-custom-primary-100",
-      pulseBgColor: "bg-custom-primary-100/30",
-      icon: null,
     },
     error: {
       label: "Connection lost",
       tooltipHeading: "Connection lost",
       tooltipContent:
         "We're having trouble connecting to the websocket server. Your changes will be synced and saved every 10 seconds.",
-      bgColor: "bg-red-500/20",
-      textColor: "text-red-500",
-      icon: <CloudOff className="size-3" />,
     },
   };
 
@@ -54,19 +47,15 @@ export function PageSyncingBadge({ syncStatus }: Props) {
 
   return (
     <Tooltip tooltipHeading={content.tooltipHeading} tooltipContent={content.tooltipContent}>
-      <div
-        className={`flex-shrink-0 h-6 flex items-center gap-1.5 px-2 rounded ${content.textColor} ${content.bgColor} animate-quickFadeIn`}
-      >
-        {syncStatus === "syncing" ? (
-          <div className="relative flex-shrink-0">
-            <div className="absolute -inset-0.5 rounded-full bg-custom-primary-100/30 animate-ping" />
-            <div className="relative h-1.5 w-1.5 rounded-full bg-custom-primary-100" />
-          </div>
-        ) : (
-          content.icon
-        )}
-        <span className="text-xs font-medium">{content.label}</span>
-      </div>
+      <span className="animate-quickFadeIn">
+        <Badge
+          variant={syncStatus === "syncing" ? "brand" : "danger"}
+          size="lg"
+          prependIcon={syncStatus === "syncing" ? <Dot /> : <CloudOff />}
+        >
+          {content.label}
+        </Badge>
+      </span>
     </Tooltip>
   );
 }

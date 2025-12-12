@@ -23,7 +23,7 @@ export function Banner(props: TBanner) {
           )}
         </div>
         <div className="ml-1">
-          <p className={`text-sm font-medium ${type === "error" ? "text-red-600" : "text-green-600"}`}>{message}</p>
+          <p className={`text-13 font-medium ${type === "error" ? "text-red-600" : "text-green-600"}`}>{message}</p>
         </div>
       </div>
     </div>

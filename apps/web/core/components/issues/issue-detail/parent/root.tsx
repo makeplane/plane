@@ -68,7 +68,7 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
 
   return (
     <>
-      <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-80 px-2.5 py-1 text-xs">
+      <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md border border-strong bg-layer-1 px-2.5 py-1 text-11">
         <ControlLink href={workItemLink} onClick={handleParentIssueClick}>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2.5">
@@ -77,18 +77,17 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
                 <IssueIdentifier
                   projectId={parentIssue.project_id}
                   issueId={parentIssue.id}
-                  textContainerClassName="text-xs text-custom-text-200"
+                  size="xs"
+                  variant="secondary"
                 />
               )}
             </div>
-            <span className="truncate text-custom-text-100">{(parentIssue?.name ?? "").substring(0, 50)}</span>
+            <span className="truncate text-primary">{(parentIssue?.name ?? "").substring(0, 50)}</span>
           </div>
         </ControlLink>
 
         <CustomMenu ellipsis optionsClassName="p-1.5">
-          <div className="border-b border-custom-border-300 text-xs font-medium text-custom-text-200">
-            {t("issue.sibling.label")}
-          </div>
+          <div className="border-b border-strong text-11 font-medium text-secondary">{t("issue.sibling.label")}</div>
 
           <IssueParentSiblings workspaceSlug={workspaceSlug} currentIssue={issue} parentIssue={parentIssue} />
 

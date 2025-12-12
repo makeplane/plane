@@ -40,6 +40,8 @@ import { UserCirclePropertyIcon } from "./properties/user-circle-icon";
 import { UserPropertyIcon } from "./properties/user-icon";
 import { UserSquarePropertyIcon } from "./properties/user-square-icon";
 import { WorkflowsPropertyIcon } from "./properties/workflows-icon";
+import { CopyLinkIcon } from "./actions/copy-link";
+import { LabelFilledIcon } from "./properties/label-filled-icon";
 import { PiChatLogo } from "./sub-brand/pi-chat";
 import { PlaneNewIcon } from "./sub-brand/plane-icon";
 import { WikiIcon } from "./sub-brand/wiki-icon";
@@ -112,6 +114,7 @@ export const ICON_REGISTRY = {
   "property.user": UserPropertyIcon,
   "property.user-square": UserSquarePropertyIcon,
   "property.workflows": WorkflowsPropertyIcon,
+  "property.label-filled": LabelFilledIcon,
 
   // Action icons
   "action.add": AddIcon,
@@ -120,6 +123,7 @@ export const ICON_REGISTRY = {
   "action.close": CloseIcon,
   "action.search": SearchIcon,
   "action.preferences": PreferencesIcon,
+  "action.copy-link": CopyLinkIcon,
 
   // Arrow icons
   "arrow.chevron-down": ChevronDownIcon,

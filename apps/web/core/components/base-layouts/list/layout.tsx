@@ -37,7 +37,7 @@ export const BaseListLayout = observer(function BaseListLayout<T extends IBaseLa
   );
 
   return (
-    <div ref={containerRef} className={cn("relative size-full overflow-auto bg-custom-background-90", className)}>
+    <div ref={containerRef} className={cn("relative size-full overflow-auto bg-surface-2", className)}>
       <div className="relative size-full flex flex-col">
         {groups.map((group) => {
           const itemIds = groupedItemIds[group.id] || [];

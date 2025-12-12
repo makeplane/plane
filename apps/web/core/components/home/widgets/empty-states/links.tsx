@@ -4,7 +4,7 @@ import { EmptyStateCompact } from "@plane/propel/empty-state";
 export function LinksEmptyState() {
   const { t } = useTranslation();
   return (
-    <div className="flex items-center justify-center py-10 bg-custom-background-90 w-full">
+    <div className="flex items-center justify-center py-10 bg-layer-1 w-full">
       <EmptyStateCompact
         assetKey="link"
         assetClassName="w-20 h-20"

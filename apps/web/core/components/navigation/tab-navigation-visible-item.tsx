@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router";
 import { PinOff } from "lucide-react";
 // plane imports
@@ -37,7 +36,7 @@ export function TabNavigationVisibleItem({
   return (
     <div className="relative h-full flex items-center transition-all duration-300">
       {isActive && (
-        <span className="absolute bottom-0 w-[80%] left-1/2 -translate-x-1/2 h-0.5 bg-custom-text-300 rounded-t-md transition-all duration-300" />
+        <span className="absolute bottom-0 w-[80%] left-1/2 -translate-x-1/2 h-0.5 bg-(--text-color-icon-primary) rounded-t-md transition-all duration-300" />
       )}
       <div key={`${item.key}-measure`} ref={itemRef}>
         <ContextMenu>
@@ -55,20 +54,20 @@ export function TabNavigationVisibleItem({
                   e.stopPropagation();
                   onToggleDefault(item.key);
                 }}
-                className="flex items-center gap-2 text-custom-text-200 transition-colors cursor-pointer"
+                className="flex items-center gap-2 text-secondary transition-colors cursor-pointer"
               >
                 <SetAsDefaultIcon className="shrink-0 size-3" />
-                <span className="text-xs">{isDefault ? "Clear default" : "Set as default"}</span>
+                <span className="text-11">{isDefault ? "Clear default" : "Set as default"}</span>
               </ContextMenu.Item>
               <ContextMenu.Item
                 onClick={(e) => {
                   e.stopPropagation();
                   onHide(item.key);
                 }}
-                className="flex items-center gap-2 text-custom-text-200 transition-colors cursor-pointer"
+                className="flex items-center gap-2 text-secondary transition-colors cursor-pointer"
               >
                 <PinOff className="shrink-0 size-3" />
-                <span className="text-xs">Hide in more menu</span>
+                <span className="text-11">Hide in more menu</span>
               </ContextMenu.Item>
             </ContextMenu.Content>
           </ContextMenu.Portal>

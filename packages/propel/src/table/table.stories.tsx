@@ -173,30 +173,30 @@ export const WithBadges: Story = {
           <TableRow>
             <TableCell>Website Redesign</TableCell>
             <TableCell>
-              <span className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-800">In Progress</span>
+              <span className="rounded-full bg-green-100 px-2 py-1 text-11 text-green-800">In Progress</span>
             </TableCell>
             <TableCell>
-              <span className="rounded-full bg-red-100 px-2 py-1 text-xs text-red-800">High</span>
+              <span className="rounded-full bg-red-100 px-2 py-1 text-11 text-red-800">High</span>
             </TableCell>
             <TableCell>John Doe</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Mobile App</TableCell>
             <TableCell>
-              <span className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">Planned</span>
+              <span className="rounded-full bg-blue-100 px-2 py-1 text-11 text-blue-800">Planned</span>
             </TableCell>
             <TableCell>
-              <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs text-yellow-800">Medium</span>
+              <span className="rounded-full bg-yellow-100 px-2 py-1 text-11 text-yellow-800">Medium</span>
             </TableCell>
             <TableCell>Jane Smith</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>API Integration</TableCell>
             <TableCell>
-              <span className="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-800">Completed</span>
+              <span className="rounded-full bg-gray-100 px-2 py-1 text-11 text-gray-800">Completed</span>
             </TableCell>
             <TableCell>
-              <span className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-800">Low</span>
+              <span className="rounded-full bg-green-100 px-2 py-1 text-11 text-green-800">Low</span>
             </TableCell>
             <TableCell>Bob Wilson</TableCell>
           </TableRow>
@@ -296,7 +296,7 @@ export const LargeDataset: Story = {
               <TableCell>{["Engineering", "Sales", "Marketing", "Support"][i % 4]}</TableCell>
               <TableCell>
                 <span
-                  className={`rounded-full px-2 py-1 text-xs ${
+                  className={`rounded-full px-2 py-1 text-11 ${
                     i % 2 === 0 ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
                   }`}
                 >

@@ -126,7 +126,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   // if list of workspaces are not there then we have to render the spinner
   if (isParentLoading || allWorkspaces === undefined || loader) {
     return (
-      <div className="grid h-full place-items-center bg-custom-background-100 p-4 rounded-lg border border-custom-border-200">
+      <div className="grid h-full place-items-center bg-surface-1 p-4 rounded-lg border border-subtle">
         <div className="flex flex-col items-center gap-3 text-center">
           <LogoSpinner />
         </div>
@@ -137,16 +137,16 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   // if workspaces are there and we are trying to access the workspace that we are not part of then show the existing workspaces
   if (currentWorkspace === undefined && !currentWorkspaceInfo) {
     return (
-      <div className="relative flex h-full w-full flex-col items-center justify-center bg-custom-background-90 ">
+      <div className="relative flex h-full w-full flex-col items-center justify-center bg-surface-2 ">
         <div className="container relative mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
           <div className="relative flex flex-shrink-0 items-center justify-between gap-4">
-            <div className="z-10 flex-shrink-0 bg-custom-background-90 py-4">
-              <PlaneLogo className="h-9 w-auto text-custom-text-100" />
+            <div className="z-10 flex-shrink-0 bg-surface-2 py-4">
+              <PlaneLogo className="h-9 w-auto text-primary" />
             </div>
             <div className="relative flex items-center gap-2">
-              <div className="text-sm font-medium">{currentUser?.email}</div>
+              <div className="text-13 font-medium">{currentUser?.email}</div>
               <div
-                className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded hover:bg-custom-background-80"
+                className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm hover:bg-layer-1"
                 onClick={handleSignOut}
               >
                 <Tooltip tooltipContent={"Sign out"} position="top" className="ml-2" isMobile={isMobile}>
@@ -159,33 +159,33 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             <div className="relative flex-shrink-0">
               <img src={WorkSpaceNotAvailable} className="h-[220px] object-cover object-center" alt="Plane logo" />
             </div>
-            <h3 className="text-center text-lg font-semibold">Workspace not found</h3>
-            <p className="text-center text-sm text-custom-text-200">
+            <h3 className="text-center text-16 font-semibold">Workspace not found</h3>
+            <p className="text-center text-13 text-secondary">
               No workspace found with the URL. It may not exist or you lack authorization to view it.
             </p>
             <div className="flex items-center justify-center gap-2 pt-4">
               {allWorkspaces && allWorkspaces.length > 0 && (
-                <Link href="/" className={cn(getButtonStyling("primary", "md"))}>
+                <Link href="/" className={cn(getButtonStyling("primary", "base"))}>
                   Go Home
                 </Link>
               )}
               {allWorkspaces?.length > 0 && (
                 <Link
                   href={`/${allWorkspaces[0].slug}/settings/account`}
-                  className={cn(getButtonStyling("neutral-primary", "md"))}
+                  className={cn(getButtonStyling("secondary", "base"))}
                 >
                   Visit Profile
                 </Link>
               )}
               {allWorkspaces && allWorkspaces.length === 0 && (
-                <Link href={`/`} className={cn(getButtonStyling("neutral-primary", "md"))}>
+                <Link href={`/`} className={cn(getButtonStyling("secondary", "base"))}>
                   Create new workspace
                 </Link>
               )}
             </div>
           </div>
 
-          <div className="absolute bottom-0 left-4 top-0 w-0 bg-custom-background-80 md:w-0.5" />
+          <div className="absolute bottom-0 left-4 top-0 w-0 bg-layer-1 md:w-0.5" />
         </div>
       </div>
     );
@@ -194,12 +194,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   // while user does not have access to view that workspace
   if (currentWorkspaceInfo === undefined) {
     return (
-      <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>
+      <div className={`h-screen w-full overflow-hidden bg-surface-1`}>
         <div className="grid h-full place-items-center p-4">
           <div className="space-y-8 text-center">
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold">Not Authorized!</h3>
-              <p className="mx-auto w-1/2 text-sm text-custom-text-200">
+              <h3 className="text-16 font-semibold">Not Authorized!</h3>
+              <p className="mx-auto w-1/2 text-13 text-secondary">
                 You{"'"}re not a member of this workspace. Please contact the workspace admin to get an invitation or
                 check your pending invitations.
               </p>
@@ -207,16 +207,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             <div className="flex items-center justify-center gap-2">
               <Link href="/invitations">
                 <span>
-                  <Button variant="neutral-primary" size="sm">
-                    Check pending invites
-                  </Button>
+                  <Button variant="secondary">Check pending invites</Button>
                 </span>
               </Link>
               <Link href="/create-workspace">
                 <span>
-                  <Button variant="primary" size="sm">
-                    Create new workspace
-                  </Button>
+                  <Button variant="primary">Create new workspace</Button>
                 </span>
               </Link>
             </div>

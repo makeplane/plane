@@ -14,12 +14,6 @@
   color: rgba(var(--color-sidebar-background-100));
 }
 
-::-webkit-input-placeholder,
-::placeholder,
-:-ms-input-placeholder {
-  color: rgb(var(--color-text-400));
-}
-
 /* Progress Bar Styles */
 :root {
   --bprogress-color: rgb(var(--color-primary-100)) !important;

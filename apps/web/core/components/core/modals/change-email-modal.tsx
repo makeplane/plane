@@ -138,7 +138,7 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 transition-opacity bg-custom-backdrop" />
+          <div className="fixed inset-0 transition-opacity bg-backdrop" />
         </Transition.Child>
 
         <div className="overflow-y-auto fixed inset-0 z-30">
@@ -152,17 +152,17 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-4 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[30rem]">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 px-4 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[30rem]">
                 <div className="py-4 space-y-0">
-                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+                  <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
                     {changeEmailT("title")}
                   </Dialog.Title>
-                  <p className="my-4 text-sm text-custom-text-200">{changeEmailT("description")}</p>
+                  <p className="my-4 text-13 text-secondary">{changeEmailT("description")}</p>
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
                   <div className="flex flex-col gap-1">
                     {secondStep && (
-                      <h4 className="text-sm font-medium text-custom-text-200">{changeEmailT("form.email.label")}</h4>
+                      <h4 className="text-13 font-medium text-secondary">{changeEmailT("form.email.label")}</h4>
                     )}
                     <Controller
                       control={control}
@@ -186,18 +186,18 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
                           placeholder={changeEmailT("form.email.placeholder")}
                           className={cn(
                             { "border-red-500": errors.email },
-                            { "cursor-not-allowed !bg-custom-background-90": secondStep }
+                            { "cursor-not-allowed !bg-surface-2": secondStep }
                           )}
                           disabled={secondStep}
                         />
                       )}
                     />
-                    {errors?.email && <span className="text-xs text-red-500">{errors?.email?.message}</span>}
+                    {errors?.email && <span className="text-11 text-red-500">{errors?.email?.message}</span>}
                   </div>
 
                   {secondStep && (
                     <div className="flex flex-col gap-1">
-                      <h4 className="text-sm font-medium text-custom-text-200">{changeEmailT("form.code.label")}</h4>
+                      <h4 className="text-13 font-medium text-secondary">{changeEmailT("form.code.label")}</h4>
                       <Controller
                         control={control}
                         name="code"
@@ -216,17 +216,17 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
                         )}
                       />
                       {errors?.code ? (
-                        <span className="text-xs text-red-500">{errors?.code?.message}</span>
+                        <span className="text-11 text-red-500">{errors?.code?.message}</span>
                       ) : (
-                        <span className="text-xs text-green-700">{changeEmailT("form.code.helper_text")}</span>
+                        <span className="text-11 text-green-700">{changeEmailT("form.code.helper_text")}</span>
                       )}
                     </div>
                   )}
-                  <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200 py-4">
-                    <Button type="button" variant="neutral-primary" size="sm" onClick={handleClose}>
+                  <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle py-4">
+                    <Button type="button" variant="secondary" size="lg" onClick={handleClose}>
                       {changeEmailT("actions.cancel")}
                     </Button>
-                    <Button type="submit" variant="primary" size="sm" disabled={isSubmitting}>
+                    <Button type="submit" variant="primary" size="lg" disabled={isSubmitting}>
                       {isSubmitting
                         ? changeEmailT("states.sending")
                         : secondStep
