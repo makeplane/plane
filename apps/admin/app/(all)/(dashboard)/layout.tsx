@@ -36,7 +36,7 @@ function AdminLayout(_props: Route.ComponentProps) {
         <AdminSidebar />
         <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">
           <AdminHeader />
-          <div className="h-full w-full overflow-hidden">
+          <div className="h-full w-full overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md">
             <Outlet />
           </div>
         </main>

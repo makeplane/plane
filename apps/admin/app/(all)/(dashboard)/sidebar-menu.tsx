@@ -73,7 +73,7 @@ export const AdminSidebarMenu = observer(function AdminSidebarMenu() {
                     `group flex w-full items-center gap-3 rounded-md px-3 py-2 outline-none transition-colors`,
                     isActive
                       ? "bg-accent-primary/10 text-accent-primary"
-                      : "text-secondary hover:bg-layer-1 focus:bg-layer-1",
+                      : "text-secondary hover:bg-layer-1-hover focus:bg-layer-1-hover",
                     isSidebarCollapsed ? "justify-center" : "w-[260px]"
                   )}
                 >

@@ -70,7 +70,7 @@ export function InstanceImageConfigForm(props: IInstanceImageConfigForm) {
       </div>
 
       <div>
-        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+        <Button variant="primary" size="lg" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
       </div>

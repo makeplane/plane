@@ -63,8 +63,8 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
 
   return (
     <div className="space-y-8">
-      <div className="space-y-3">
-        <div className="text-16 font-medium">Instance details</div>
+      <div className="space-y-4">
+        <div className="text-16 font-medium text-primary">Instance details</div>
         <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-8 md:grid-cols-2 lg:grid-cols-3">
           <ControllerInput
             key="instance_name"
@@ -105,8 +105,8 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
         </div>
       </div>
 
-      <div className="space-y-3">
-        <div className="text-16 font-medium">Chat + telemetry</div>
+      <div className="space-y-4">
+        <div className="text-16 font-medium text-primary">Chat + telemetry</div>
         <IntercomConfig isTelemetryEnabled={watch("is_telemetry_enabled") ?? false} />
         <div className="flex items-center gap-14 px-4 py-3 border border-subtle rounded-sm">
           <div className="grow flex items-center gap-4">
@@ -144,7 +144,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
       </div>
 
       <div>
-        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+        <Button variant="primary" size="lg" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
       </div>
