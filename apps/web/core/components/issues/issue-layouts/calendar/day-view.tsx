@@ -3,8 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import type { TIssueMap, TGroupedIssues, TPaginationData, TIssue } from "@plane/types";
 import type { TRenderQuickActions } from "../list/list-view-types";
-import { isoToLocalHour, isoToLocalDateString, hourLabel } from "./calendar-time";
-import { CalendarEventBlock } from "./event-block";
+import { isoToLocalDateString, hourLabel } from "./calendar-time";
 import { CalendarIssueBlocks } from "./issue-blocks";
 import { renderFormattedPayloadDate } from "@plane/utils";
 
@@ -66,13 +65,11 @@ export const DayView: React.FC<Props> = ({
   getPaginationData,
   getGroupIssueCount,
   quickActions,
-  enableQuickIssueCreate,
   disableIssueCreation,
   quickAddCallback,
   addIssuesToView,
   readOnly,
   canEditProperties,
-  handleDragAndDrop,
   isEpic,
 }) => {
   const formattedDatePayload = renderFormattedPayloadDate(date);
@@ -109,9 +106,7 @@ export const DayView: React.FC<Props> = ({
     };
   }, [issues, groupedIssueIds, formattedDatePayload]);
 
-  console.log("allDayIssues", "eventIssues", JSON.stringify(allDayIssues), eventIssues);
-
-  // Create a map of hour -> events for positioning
+  // Group events by hour for positioning
   const eventsByHour = React.useMemo(() => {
     const map: Record<number, Array<{ issue: TIssue; position: ReturnType<typeof calculateEventPosition> }>> = {};
 
@@ -127,8 +122,6 @@ export const DayView: React.FC<Props> = ({
 
     return map;
   }, [eventIssues]);
-
-  console.log("eventsByHour", eventsByHour);
 
   /** Auto-scroll to current hour */
   useEffect(() => {
@@ -161,6 +154,7 @@ export const DayView: React.FC<Props> = ({
               canEditProperties={canEditProperties}
               isEpic={isEpic}
               isDragDisabled={false}
+              showLoadMore={false}
             />
           </div>
         </div>
@@ -190,52 +184,45 @@ export const DayView: React.FC<Props> = ({
 
               {/* Event area */}
               <div className="flex-1 relative border-l border-custom-border-200">
-                {/* Render events positioned within this hour */}
+                {/* Render each event with CalendarIssueBlocks positioned absolutely */}
                 {eventsForHour.map(({ issue, position }) => (
-                  <CalendarEventBlock
+                  <div
                     key={issue.id}
-                    issue={issue}
-                    quickActions={quickActions}
-                    canEditProperties={canEditProperties}
-                    isEpic={isEpic}
+                    className="absolute left-1 right-1 z-1-"
                     style={{
                       top: `${position.topOffset}px`,
                       height: `${position.height}px`,
                     }}
-                  />
+                  >
+                    <CalendarIssueBlocks
+                      date={date}
+                      issueIdList={[issue.id]}
+                      loadMoreIssues={loadMoreIssues}
+                      getPaginationData={getPaginationData}
+                      getGroupIssueCount={getGroupIssueCount}
+                      quickActions={quickActions}
+                      enableQuickIssueCreate={false}
+                      disableIssueCreation={disableIssueCreation}
+                      quickAddCallback={quickAddCallback}
+                      addIssuesToView={addIssuesToView}
+                      readOnly={readOnly}
+                      canEditProperties={canEditProperties}
+                      isEpic={isEpic}
+                      isDragDisabled={false}
+                      showLoadMore={false}
+                    />
+                  </div>
                 ))}
               </div>
             </div>
           );
         })}
       </div>
-
-      {/* Quick add at bottom */}
-      {enableQuickIssueCreate && !disableIssueCreation && !readOnly && (
-        <div className="border-t border-custom-border-200 p-2 bg-custom-background-100">
-          <CalendarIssueBlocks
-            date={date}
-            issueIdList={[]}
-            loadMoreIssues={loadMoreIssues}
-            getPaginationData={getPaginationData}
-            getGroupIssueCount={getGroupIssueCount}
-            quickActions={quickActions}
-            enableQuickIssueCreate={true}
-            disableIssueCreation={disableIssueCreation}
-            quickAddCallback={quickAddCallback}
-            addIssuesToView={addIssuesToView}
-            readOnly={readOnly}
-            canEditProperties={canEditProperties}
-            isEpic={isEpic}
-            isDragDisabled={false}
-          />
-        </div>
-      )}
     </div>
   );
 };
 
-// Current time indicator component
+// Current time indicator component (unchanged)
 const CurrentTimeIndicator: React.FC<{ selectedDate: Date }> = ({ selectedDate }) => {
   const [position, setPosition] = React.useState<number | null>(null);
 

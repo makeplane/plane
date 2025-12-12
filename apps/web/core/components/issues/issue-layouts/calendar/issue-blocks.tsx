@@ -26,6 +26,7 @@ type Props = {
   isMobileView?: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
+  showLoadMore?: boolean;
 };
 
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
@@ -43,6 +44,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
     isMobileView = false,
     canEditProperties,
     isEpic = false,
+    showLoadMore = true,
   } = props;
   const formattedDatePayload = renderFormattedPayloadDate(date);
   const { t } = useTranslation();
@@ -95,7 +97,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
         </div>
       )}
 
-      {shouldLoadMore && !isPaginating && (
+      {showLoadMore && shouldLoadMore && !isPaginating && (
         <div className="flex items-center px-2.5 py-1">
           <button
             type="button"
