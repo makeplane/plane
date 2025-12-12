@@ -91,7 +91,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 disabled={!isEditable}
                 buttonVariant="transparent-with-text"
                 className="group w-full grow"
-                buttonContainerClassName="w-full text-left"
+                buttonContainerClassName="w-full text-left h-7.5"
                 buttonClassName="text-body-xs-regular"
                 dropdownArrow
                 dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
@@ -108,7 +108,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 multiple
                 buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
                 className="group w-full grow"
-                buttonContainerClassName="w-full text-left"
+                buttonContainerClassName="w-full text-left h-7.5"
                 buttonClassName={`text-body-xs-regular justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-placeholder"}`}
                 hideIcon={issue.assignee_ids?.length === 0}
                 dropdownArrow
@@ -123,15 +123,17 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 disabled={!isEditable}
                 buttonVariant="border-with-text"
                 className="w-full grow"
-                buttonContainerClassName="w-full text-left"
+                buttonContainerClassName="w-full text-left px-2 h-7.5"
                 buttonClassName="w-min h-auto whitespace-nowrap"
               />
             </SidebarPropertyListItem>
 
             {createdByDetails && (
               <SidebarPropertyListItem icon={UserCirclePropertyIcon} label={t("common.created_by")}>
-                <ButtonAvatars showTooltip userIds={createdByDetails.id} />
-                <span className="grow truncate text-body-xs-regular leading-5">{createdByDetails?.display_name}</span>
+                <div className="px-2 flex gap-2">
+                  <ButtonAvatars showTooltip userIds={createdByDetails.id} />
+                  <span className="grow truncate text-body-xs-regular leading-5">{createdByDetails?.display_name}</span>
+                </div>
               </SidebarPropertyListItem>
             )}
 
@@ -156,7 +158,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             </SidebarPropertyListItem>
 
             <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full">
                 <DateDropdown
                   placeholder={t("issue.add.due_date")}
                   value={issue.target_date}

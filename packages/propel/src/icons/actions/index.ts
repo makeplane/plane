@@ -5,3 +5,4 @@ export * from "./add-reaction-icon";
 export * from "./close-icon";
 export * from "./search-icon";
 export * from "./preferences-icon";
+export * from "./copy-link";

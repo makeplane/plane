@@ -26,21 +26,17 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
 
   return (
     <Popover as="div" className="h-7 px-2">
-      <Popover.Button
-        as="button"
-        type="button"
-        className={({ open }) =>
-          cn("h-full", {
-            "outline-none": open,
-          })
-        }
-      >
-        {({ open }) => (
-          <span
-            className={cn("h-full px-2 text-tertiary text-13 flex items-center gap-1.5 rounded-sm", {
-              "text-primary bg-layer-transparent-selected": open,
-              " hover:bg-layer-transparent-hover": !open,
-            })}
+      {({ open }) => (
+        <>
+          <Popover.Button
+            type="button"
+            className={cn(
+              "h-7 px-2 text-13 flex items-center gap-1.5 rounded-sm outline-none",
+              "text-tertiary hover:bg-layer-1",
+              {
+                "text-primary bg-layer-1": open,
+              }
+            )}
           >
             Color
             <span
@@ -60,60 +56,60 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
                 }}
               />
             </span>
-          </span>
-        )}
-      </Popover.Button>
-      <Popover.Panel
-        as="div"
-        className="fixed z-20 mt-1 rounded-md border-[0.5px] border-strong bg-surface-1 shadow-custom-shadow-rg p-2 space-y-2"
-      >
-        <div className="space-y-1.5">
-          <p className="text-11 text-tertiary font-semibold">Text colors</p>
-          <div className="flex items-center gap-2">
-            {COLORS_LIST.map((color) => (
-              <button
-                key={color.key}
-                type="button"
-                className="shrink-0 size-6 rounded-sm border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
-                style={{
-                  backgroundColor: color.textColor,
-                }}
-                onClick={() => handleColorSelect("text-color", color.key)}
-              />
-            ))}
-            <button
-              type="button"
-              className="shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-transparent-hover transition-colors"
-              onClick={() => handleColorSelect("text-color", undefined)}
-            >
-              <Ban className="size-4" />
-            </button>
-          </div>
-        </div>
-        <div className="space-y-1.5">
-          <p className="text-11 text-tertiary font-semibold">Background colors</p>
-          <div className="flex items-center gap-2">
-            {COLORS_LIST.map((color) => (
-              <button
-                key={color.key}
-                type="button"
-                className="shrink-0 size-6 rounded-sm border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
-                style={{
-                  backgroundColor: color.backgroundColor,
-                }}
-                onClick={() => handleColorSelect("background-color", color.key)}
-              />
-            ))}
-            <button
-              type="button"
-              className="shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-transparent-hover transition-colors"
-              onClick={() => handleColorSelect("background-color", undefined)}
-            >
-              <Ban className="size-4" />
-            </button>
-          </div>
-        </div>
-      </Popover.Panel>
+          </Popover.Button>
+          <Popover.Panel
+            as="div"
+            className="fixed z-20 mt-1 rounded-md border-[0.5px] border-strong bg-surface-1 shadow-custom-shadow-rg p-2 space-y-2"
+          >
+            <div className="space-y-1.5">
+              <p className="text-11 text-tertiary font-semibold">Text colors</p>
+              <div className="flex items-center gap-2">
+                {COLORS_LIST.map((color) => (
+                  <button
+                    key={color.key}
+                    type="button"
+                    className="flex-shrink-0 size-6 rounded-sm border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
+                    style={{
+                      backgroundColor: color.textColor,
+                    }}
+                    onClick={() => handleColorSelect("text-color", color.key)}
+                  />
+                ))}
+                <button
+                  type="button"
+                  className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
+                  onClick={() => handleColorSelect("text-color", undefined)}
+                >
+                  <Ban className="size-4" />
+                </button>
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <p className="text-11 text-tertiary font-semibold">Background colors</p>
+              <div className="flex items-center gap-2">
+                {COLORS_LIST.map((color) => (
+                  <button
+                    key={color.key}
+                    type="button"
+                    className="flex-shrink-0 size-6 rounded-sm border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
+                    style={{
+                      backgroundColor: color.backgroundColor,
+                    }}
+                    onClick={() => handleColorSelect("background-color", color.key)}
+                  />
+                ))}
+                <button
+                  type="button"
+                  className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
+                  onClick={() => handleColorSelect("background-color", undefined)}
+                >
+                  <Ban className="size-4" />
+                </button>
+              </div>
+            </div>
+          </Popover.Panel>
+        </>
+      )}
     </Popover>
   );
 });

@@ -6,7 +6,7 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LabelPropertyIcon } from "@plane/propel/icons";
+import { LabelFilledIcon, LabelPropertyIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // helpers
@@ -86,14 +86,15 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
   const issueLabels = values ?? [];
 
   const label = (
-    <div
-      className={`relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-subtle p-0.5 px-2 py-0.5 text-11 text-tertiary transition-all hover:bg-surface-2 hover:text-secondary`}
+    <button
+      type="button"
+      className="h-full w-full flex items-center gap-1.5 rounded-lg px-2 py-0.5 bg-layer-transparent-active  hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary"
     >
       <div className="flex-shrink-0">
-        <LabelPropertyIcon className="h-2.5 w-2.5" />
+        <LabelFilledIcon className="size-3.5" />
       </div>
       <div className="flex-shrink-0">{t("label.select")}</div>
-    </div>
+    </button>
   );
 
   const searchInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -132,7 +133,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
           <button
             ref={setReferenceElement}
             type="button"
-            className="cursor-pointer rounded-sm"
+            className="cursor-pointer"
             onClick={() => !projectLabels && fetchLabels()}
           >
             {label}

@@ -188,7 +188,7 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
           type="button"
           onMouseDown={handleMouseDown}
           className={cn(
-            "px-1 bg-surface-2 border border-strong-1 rounded-sm outline-none transition-all duration-200",
+            "px-1 bg-layer-1 border border-strong-1 rounded-sm outline-none transition-all duration-200",
             {
               "!opacity-100 bg-accent-primary border-accent-strong": isDropdownOpen,
               "hover:bg-layer-1-hover": !isDropdownOpen,

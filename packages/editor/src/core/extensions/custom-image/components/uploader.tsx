@@ -238,7 +238,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
           className={cn(
             "flex items-center gap-1 px-2 py-1 font-medium text-red-500 rounded-md transition-all duration-200 ease-in-out hover:bg-red-500/20 hover:text-red-500",
             {
-              "bg-red-500/10": selected,
+              "hover:bg-red-500/20": selected,
             }
           )}
           title="Retry duplication"

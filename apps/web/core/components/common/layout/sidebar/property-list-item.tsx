@@ -1,14 +1,16 @@
 import type { ReactNode } from "react";
+import { cn } from "@plane/utils";
 
 type TSidebarPropertyListItemProps = {
   icon: React.FC<{ className?: string }>;
   label: string;
   children: ReactNode;
   appendElement?: ReactNode;
+  childrenClassName?: string;
 };
 
 export function SidebarPropertyListItem(props: TSidebarPropertyListItemProps) {
-  const { icon: Icon, label, children, appendElement } = props;
+  const { icon: Icon, label, children, appendElement, childrenClassName } = props;
 
   return (
     <div className="flex items-center gap-2">
@@ -17,7 +19,7 @@ export function SidebarPropertyListItem(props: TSidebarPropertyListItemProps) {
         <span>{label}</span>
         {appendElement}
       </div>
-      <div className="grow flex items-center flex-wrap gap-2">{children}</div>
+      <div className={cn("grow flex items-center flex-wrap gap-2", childrenClassName)}>{children}</div>
     </div>
   );
 }
