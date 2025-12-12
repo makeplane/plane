@@ -215,16 +215,6 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     # Delete the invitation
                     workspace_invite.delete()
 
-                # Send event
-                workspace_invite_event.delay(
-                    user=user.id if user is not None else None,
-                    email=email,
-                    user_agent=request.META.get("HTTP_USER_AGENT"),
-                    ip=get_client_ip(request=request),
-                    event_name="MEMBER_ACCEPTED",
-                    accepted_from="EMAIL",
-                )
-
                 return Response(
                     {"message": "Workspace Invitation Accepted"},
                     status=status.HTTP_200_OK,
@@ -275,6 +265,20 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             # Update the WorkspaceMember for this specific invitation
             WorkspaceMember.objects.filter(workspace_id=invitation.workspace_id, member=request.user).update(
                 is_active=True, role=invitation.role
+            )
+
+            # Track event
+            track_event.delay(
+                user_id=request.user.id,
+                event_name="user_joined_workspace",
+                slug=invitation.workspace.slug,
+                event_properties={
+                    "user_id": request.user.id,
+                    "workspace_id": invitation.workspace.id,
+                    "workspace_slug": invitation.workspace.slug,
+                    "role": invitation.role,
+                    "joined_at": str(timezone.now()),
+                },
             )
 
         # Bulk create the user for all the workspaces
