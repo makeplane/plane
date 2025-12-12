@@ -1,16 +1,9 @@
-import type { FC } from "react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
-import { API_BASE_URL } from "@plane/constants";
 import { OAuthOptions } from "@plane/ui";
-// assets
-import GithubLightLogo from "@/app/assets/logos/github-black.png?url";
-import GithubDarkLogo from "@/app/assets/logos/github-dark.svg?url";
-import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
-import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import {
@@ -27,6 +20,8 @@ import { TermsAndConditions } from "../terms-and-conditions";
 import { AuthBanner } from "./auth-banner";
 import { AuthHeader } from "./auth-header";
 import { AuthFormRoot } from "./form-root";
+// plane web imports
+import { OAUTH_CONFIG, isOAuthEnabled as isOAuthEnabledHelper } from "@/plane-web/helpers/oauth-config";
 
 type TAuthRoot = {
   authMode: EAuthModes;
@@ -54,8 +49,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   const { config } = useInstance();
 
   // derived values
-  const isOAuthEnabled =
-    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
+  const isOAuthEnabled = isOAuthEnabledHelper(config);
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
@@ -107,41 +101,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
 
   const OauthButtonContent = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
 
-  const OAuthConfig = [
-    {
-      id: "google",
-      text: `${OauthButtonContent} with Google`,
-      icon: <img src={GoogleLogo} className="h-4 w-4 object-contain" alt="Google Logo" />,
-      onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/google/${next_path ? `?next_path=${next_path}` : ``}`);
-      },
-      enabled: config?.is_google_enabled,
-    },
-    {
-      id: "github",
-      text: `${OauthButtonContent} with GitHub`,
-      icon: (
-        <img
-          src={resolvedTheme === "dark" ? GithubDarkLogo : GithubLightLogo}
-          className="h-4 w-4 object-contain"
-          alt="GitHub Logo"
-        />
-      ),
-      onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/github/${next_path ? `?next_path=${next_path}` : ``}`);
-      },
-      enabled: config?.is_github_enabled,
-    },
-    {
-      id: "gitlab",
-      text: `${OauthButtonContent} with GitLab`,
-      icon: <img src={GitlabLogo} className="h-4 w-4 object-contain" alt="GitLab Logo" />,
-      onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
-      },
-      enabled: config?.is_gitlab_enabled,
-    },
-  ];
+  const OAuthConfig = OAUTH_CONFIG({ OauthButtonContent, next_path, config, resolvedTheme });
 
   return (
     <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
