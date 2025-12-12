@@ -241,6 +241,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
           beforeFormSubmit={handleInboxIssueAccept}
           withDraftIssueWrapper={false}
           fetchIssueDetails={false}
+          showActionItemsOnUpdate
           modalTitle={t("inbox_issue.actions.move", {
             value: `${currentProjectDetails?.identifier}-${issue?.sequence_id}`,
           })}
