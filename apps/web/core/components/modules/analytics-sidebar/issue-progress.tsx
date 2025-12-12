@@ -114,7 +114,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
 
   if (!moduleDetails) return <></>;
   return (
-    <div className="border-t border-custom-border-200 space-y-4 py-4 px-3">
+    <div className="border-t border-custom-border-200 space-y-4 py-4">
       <Disclosure defaultOpen={isModuleDateValid ? true : false}>
         {({ open }) => (
           <div className="space-y-6">

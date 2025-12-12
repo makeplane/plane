@@ -69,13 +69,11 @@ export const WorkItemsModalMainContent = observer(function WorkItemsModalMainCon
     );
 
   return (
-    <Tab.Group as={React.Fragment}>
-      <div className="flex flex-col gap-14 overflow-y-auto p-6">
-        <TotalInsights analyticsType="work-items" peekView={!fullScreen} />
-        <CreatedVsResolved />
-        <CustomizedInsights peekView={!fullScreen} isEpic={isEpic} />
-        <WorkItemsInsightTable />
-      </div>
-    </Tab.Group>
+    <div className="flex flex-col gap-14 overflow-y-auto p-6">
+      <TotalInsights analyticsType="work-items" peekView={!fullScreen} />
+      <CreatedVsResolved />
+      <CustomizedInsights peekView={!fullScreen} isEpic={isEpic} />
+      <WorkItemsInsightTable />
+    </div>
   );
 });
