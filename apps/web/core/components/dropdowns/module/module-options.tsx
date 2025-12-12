@@ -136,7 +136,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
                     cn(
                       "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5",
                       {
-                        "bg-layer-1": active,
+                        "bg-layer-transparent-hover": active,
                         "text-primary": selected,
                         "text-secondary": !selected,
                       }

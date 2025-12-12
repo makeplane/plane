@@ -116,7 +116,6 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
             }
             disabled={!canEdit}
             buttonVariant="border-without-text"
-            buttonClassName="border"
             showTooltip
           />
         </div>

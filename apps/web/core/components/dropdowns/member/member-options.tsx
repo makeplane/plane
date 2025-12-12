@@ -153,7 +153,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
                       className={({ active, selected }) =>
                         cn(
                           "flex w-full select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5",
-                          active && "bg-layer-1",
+                          active && "bg-layer-transparent-hover",
                           selected ? "text-primary" : "text-secondary",
                           isUserSuspended(option.value, workspaceSlug?.toString())
                             ? "cursor-not-allowed"

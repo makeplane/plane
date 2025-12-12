@@ -270,7 +270,6 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onChange={handlePriority}
             disabled={isReadOnly}
             buttonVariant="border-without-text"
-            buttonClassName="border"
             renderByDefault={isMobile}
             showTooltip
           />

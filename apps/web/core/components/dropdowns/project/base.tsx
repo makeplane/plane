@@ -261,7 +261,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
                         value={option.value}
                         className={({ active, selected }) =>
                           `w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none ${
-                            active ? "bg-layer-1" : ""
+                            active ? "bg-layer-transparent-hover" : ""
                           } ${selected ? "text-primary" : "text-secondary"}`
                         }
                       >

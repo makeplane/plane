@@ -64,11 +64,11 @@ function BorderButton(props: ButtonProps) {
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
   const priorityClasses = {
-    urgent: "bg-layer-2 text-priority-urgent border-priority-urgent px-1",
-    high: "bg-layer-2 text-priority-high border-priority-high",
-    medium: "bg-layer-2 text-priority-medium border-priority-medium",
-    low: "bg-layer-2 text-priority-low border-priority-low",
-    none: "bg-layer-2 text-priority-none border-priority-none",
+    urgent: "bg-layer-2 border-priority-urgent px-1",
+    high: "bg-layer-2 border-priority-high",
+    medium: "bg-layer-2 border-priority-medium",
+    low: "bg-layer-2 border-priority-low",
+    none: "bg-layer-2 border-strong",
   };
 
   const { isMobile } = usePlatformOS();
@@ -84,7 +84,7 @@ function BorderButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] rounded-sm px-2  py-0.5",
+          "h-full flex items-center gap-1.5 border-[0.5px] rounded-sm px-2 py-0.5",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
@@ -121,7 +121,7 @@ function BorderButton(props: ButtonProps) {
             <SignalHigh className="size-3" />
           ))}
         {!hideText && (
-          <span className="flex-grow truncate text-caption-sm-medium">{priorityDetails?.title ?? placeholder}</span>
+          <span className="flex-grow truncate text-caption-sm-regular">{priorityDetails?.title ?? placeholder}</span>
         )}
         {dropdownArrow && (
           <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
@@ -148,10 +148,10 @@ function BackgroundButton(props: ButtonProps) {
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
   const priorityClasses = {
-    urgent: "bg-layer-2 text-priority-urgent",
-    high: "bg-layer-2 text-priority-high",
-    medium: "bg-layer-2 text-priority-medium",
-    low: "bg-layer-2 text-priority-low",
+    urgent: "bg-layer-2",
+    high: "bg-layer-2",
+    medium: "bg-layer-2",
+    low: "bg-layer-2",
     none: "bg-layer-2",
   };
 
@@ -168,7 +168,7 @@ function BackgroundButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 rounded-sm  px-2 py-0.5",
+          "h-full flex items-center gap-1.5 rounded-sm px-2 py-0.5",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
@@ -205,7 +205,7 @@ function BackgroundButton(props: ButtonProps) {
             <SignalHigh className="size-3" />
           ))}
         {!hideText && (
-          <span className="flex-grow truncate text-caption-sm-medium">
+          <span className="flex-grow truncate text-caption-sm-regular">
             {priorityDetails?.title ?? t("common.priority") ?? placeholder}
           </span>
         )}
@@ -234,14 +234,6 @@ function TransparentButton(props: ButtonProps) {
 
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
 
-  const priorityClasses = {
-    urgent: "text-priority-urgent",
-    high: "text-priority-high",
-    medium: "text-priority-medium",
-    low: "text-priority-low",
-    none: "text-priority-none",
-  };
-
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
 
@@ -255,8 +247,7 @@ function TransparentButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full w-full flex items-center gap-1.5 rounded-sm  px-2 py-0.5 hover:bg-layer-1",
-          priorityClasses[priority ?? "none"],
+          "h-full w-full flex items-center gap-1.5 rounded-sm px-2 py-0.5 hover:bg-layer-transparent-hover",
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
@@ -293,7 +284,7 @@ function TransparentButton(props: ButtonProps) {
             <SignalHigh className="size-3" />
           ))}
         {!hideText && (
-          <span className="flex-grow truncate text-caption-sm-medium">
+          <span className="flex-grow truncate text-caption-sm-regular">
             {priorityDetails?.title ?? t("common.priority") ?? placeholder}
           </span>
         )}
@@ -420,9 +411,7 @@ export function PriorityDropdown(props: Props) {
         >
           <ButtonToRender
             priority={value ?? undefined}
-            className={cn(buttonClassName, {
-              "text-secondary": resolvedTheme?.includes("dark") || resolvedTheme === "custom",
-            })}
+            className={buttonClassName}
             highlightUrgent={highlightUrgent}
             dropdownArrow={dropdownArrow && !disabled}
             dropdownArrowClassName={dropdownArrowClassName}
@@ -483,9 +472,11 @@ export function PriorityDropdown(props: Props) {
                     key={option.value}
                     value={option.value}
                     className={({ active, selected }) =>
-                      `w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none ${
-                        active ? "bg-layer-1" : ""
-                      } ${selected ? "text-primary" : "text-secondary"}`
+                      cn(
+                        `w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none ${
+                          active ? "bg-layer-transparent-hover" : ""
+                        } ${selected ? "text-primary" : "text-secondary"}`
+                      )
                     }
                   >
                     {({ selected }) => (

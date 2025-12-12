@@ -159,7 +159,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
       <button
         type="button"
         ref={setReferenceElement}
-        className={cn("h-full flex cursor-pointer items-center gap-2 text-11 text-secondary", buttonContainerClassName)}
+        className={cn("h-full flex cursor-pointer items-center gap-2 text-11", buttonContainerClassName)}
         onClick={handleOnClick}
       >
         {label ? (

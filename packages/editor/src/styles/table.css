@@ -3,11 +3,10 @@
   padding-bottom: 26px;
 
   table {
-    position: relative;
     border-collapse: collapse;
     table-layout: fixed;
     margin: 0.5rem 0 0 0;
-    @apply border border-subtle-1;
+    @apply relative border border-subtle;
     width: 100%;
 
     td,
@@ -81,34 +80,31 @@
     }
 
     th {
-      font-weight: 500;
-      text-align: left;
+      @apply font-medium text-left;
     }
 
     tr[background="none"],
     tr:not([background]) {
       th {
-        background-color: var(--background-color-layer-1);
+        @apply bg-layer-2;
       }
     }
 
     .table-drop-marker {
       background-color: var(--border-color-accent-strong);
-      position: absolute;
-      z-index: 10;
+      @apply absolute z-10;
 
       &.hidden {
-        display: none;
+        @apply hidden;
       }
     }
 
     .table-col-drag-marker,
     .table-row-drag-marker {
-      position: absolute;
-      z-index: 10;
+      @apply absolute z-10;
 
       &.hidden {
-        display: none;
+        @apply hidden;
       }
     }
 
