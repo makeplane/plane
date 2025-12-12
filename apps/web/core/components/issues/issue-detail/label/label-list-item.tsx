@@ -34,9 +34,12 @@ export const LabelListItem = observer(function LabelListItem(props: TLabelListIt
     <button
       key={labelId}
       type="button"
-      className={cn("h-full w-min flex items-center gap-1.5 rounded-lg px-2 py-0.5 bg-layer-transparent-active  hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary", {
-        "cursor-pointer hover:border-danger-strong hover:bg-danger-subtle": !disabled,
-      })}
+      className={cn(
+        "h-full w-min flex items-center gap-1.5 rounded-lg px-2 py-0.5 bg-layer-transparent-active  hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary",
+        {
+          "cursor-pointer hover:border-danger-strong hover:bg-danger-subtle": !disabled,
+        }
+      )}
       onClick={handleLabel}
       disabled={disabled}
     >

@@ -107,12 +107,7 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               </span>
             </div>
             {restoreEnabled && (
-              <Button
-                variant="primary"
-                className="flex-shrink-0"
-                onClick={handleRestoreVersion}
-                loading={isRestoring}
-              >
+              <Button variant="primary" className="flex-shrink-0" onClick={handleRestoreVersion} loading={isRestoring}>
                 {isRestoring ? "Restoring" : "Restore"}
               </Button>
             )}

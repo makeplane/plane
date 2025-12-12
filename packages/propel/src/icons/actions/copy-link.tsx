@@ -11,4 +11,3 @@ export function CopyLinkIcon({ color = "currentColor", ...rest }: ISvgIcons) {
     </IconWrapper>
   );
 }
-

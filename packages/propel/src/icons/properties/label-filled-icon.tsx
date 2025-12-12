@@ -15,4 +15,3 @@ export function LabelFilledIcon({ color = "currentColor", ...rest }: ISvgIcons) 
     </IconWrapper>
   );
 }
-

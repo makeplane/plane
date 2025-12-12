@@ -91,14 +91,7 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
         setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", "");
       }
     }
-  }, [
-    parentIssueId,
-    projectId,
-    setSubIssueHelpers,
-    subIssueHelpersByIssueId,
-    subIssueOperations,
-    workspaceSlug,
-  ]);
+  }, [parentIssueId, projectId, setSubIssueHelpers, subIssueHelpersByIssueId, subIssueOperations, workspaceSlug]);
 
   useEffect(() => {
     handleFetchSubIssues();
