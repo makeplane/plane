@@ -6,6 +6,7 @@ export const ActionsIconsMap = [
   { icon: <Icon name="action.close" />, title: "CloseIcon" },
   { icon: <Icon name="action.search" />, title: "SearchIcon" },
   { icon: <Icon name="action.preferences" />, title: "PreferencesIcon" },
+  { icon: <Icon name="action.copy-link" />, title: "CopyLinkIcon" },
 ];
 
 export const ArrowsIconsMap = [
@@ -74,4 +75,5 @@ export const PropertyIconsMap = [
   { icon: <Icon name="property.user" />, title: "UserPropertyIcon" },
   { icon: <Icon name="property.user-square" />, title: "UserSquarePropertyIcon" },
   { icon: <Icon name="property.workflows" />, title: "WorkflowsPropertyIcon" },
+  { icon: <Icon name="property.label-filled" />, title: "LabelFilledIcon" },
 ];

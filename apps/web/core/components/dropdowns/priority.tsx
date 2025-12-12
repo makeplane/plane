@@ -84,7 +84,7 @@ function BorderButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] rounded-sm px-2  py-0.5",
+          "h-full flex items-center gap-1.5 border-[0.5px]  px-2  py-0.5",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden

@@ -1,10 +1,9 @@
-import type { FC } from "react";
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
-import { LinkIcon } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CopyLinkIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -156,7 +155,12 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
           )}
           <div className="flex flex-wrap items-center gap-2 text-tertiary">
             <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
-              <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={LinkIcon} />
+              <IconButton
+                variant="secondary"
+                size="lg"
+                onClick={handleCopyText}
+                icon={CopyLinkIcon}
+              />
             </Tooltip>
             <WorkItemDetailQuickActions
               parentRef={parentRef}
