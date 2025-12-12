@@ -27,7 +27,7 @@ export const PageFavoriteControl = observer(function PageFavoriteControl({ page 
 
   return (
     <IconButton
-      variant={is_favorite ? "tertiary" : "ghost"}
+      variant="ghost"
       size="lg"
       icon={Star}
       onClick={() => {
@@ -37,7 +37,7 @@ export const PageFavoriteControl = observer(function PageFavoriteControl({ page 
         pageOperations.toggleFavorite();
       }}
       aria-label={is_favorite ? "Remove favorite" : "Add to favorites"}
-      className={is_favorite ? "text-amber-500" : ""}
+      className={is_favorite ? "*:fill-(--color-label-yellow-icon) *:stroke-(--color-label-yellow-icon)" : ""}
     />
   );
 });
