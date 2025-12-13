@@ -72,6 +72,7 @@ export const DayView: React.FC<Props> = ({
   canEditProperties,
   isEpic,
 }) => {
+
   const formattedDatePayload = renderFormattedPayloadDate(date);
   const hourRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -79,26 +80,32 @@ export const DayView: React.FC<Props> = ({
   const { eventIssues, allDayIssues } = React.useMemo(() => {
     if (!issues || !formattedDatePayload) return { eventIssues: [], allDayIssues: [] };
 
-    // 1) Issues that are already grouped under the selected date (e.g. by target_date)
-    const issueIdsForDate = groupedIssueIds[formattedDatePayload] || [];
-    const issuesFromGroup = issueIdsForDate
-      .map((id) => issues[id])
-      .filter((issue): issue is TIssue => issue !== undefined);
+    // Get issues that have their start_date matching the selected date
+    const allIssuesForDay = Object.values(issues).filter((issue): issue is TIssue => {
+      if (!issue) return false;
 
-    // 2) Additionally, pull in any issues whose start_time falls on the selected day,
-    //    even if they are not grouped under this date. This ensures timed events
-    //    always appear on the day timeline once they have a start time.
-    const issuesFromStartTime = Object.values(issues).filter((issue): issue is TIssue => {
-      if (!issue || !issue.start_time) return false;
+      const selectedDate = formattedDatePayload;
 
-      const startTimeDate = isoToLocalDateString(issue.start_time);
-      if (startTimeDate !== formattedDatePayload) return false;
+      // const startDate = issue.start_date;
+      // const targetDate = issue.target_date;
 
-      // Avoid duplicating issues that are already part of the grouped list
-      return !issueIdsForDate.includes(issue.id);
+      // // If issue has start_date, check if selected date falls within the range
+      // if (startDate) {
+      //   const endDate = targetDate || startDate;
+      //   return selectedDate >= startDate && selectedDate <= endDate;
+      // }
+
+      // Only show issues on their start_date
+      if (issue.start_date) {
+        return issue.start_date === selectedDate;
+      }
+
+      // Fallback: check if issue is in the grouped list for this date
+      const issueIdsForDate = groupedIssueIds[formattedDatePayload] || [];
+      return issueIdsForDate.includes(issue.id);
     });
 
-    const allIssuesForDay = [...issuesFromGroup, ...issuesFromStartTime];
+    console.log("DayView issues for date", JSON.parse(JSON.stringify(allIssuesForDay)));
 
     return {
       eventIssues: allIssuesForDay.filter((issue) => issue.start_time),
@@ -106,9 +113,9 @@ export const DayView: React.FC<Props> = ({
     };
   }, [issues, groupedIssueIds, formattedDatePayload]);
 
-  // Group events by hour for positioning
+  // Group events by hour for positioning with overlap handling
   const eventsByHour = React.useMemo(() => {
-    const map: Record<number, Array<{ issue: TIssue; position: ReturnType<typeof calculateEventPosition> }>> = {};
+    const map: Record<number, Array<{ issue: TIssue; position: ReturnType<typeof calculateEventPosition>; column: number; totalColumns: number }>> = {};
 
     eventIssues.forEach((issue) => {
       if (!issue.start_time) return;
@@ -117,7 +124,46 @@ export const DayView: React.FC<Props> = ({
       if (!map[position.hourIndex]) {
         map[position.hourIndex] = [];
       }
-      map[position.hourIndex].push({ issue, position });
+      map[position.hourIndex].push({ issue, position, column: 0, totalColumns: 1 });
+    });
+
+    // Calculate columns for overlapping events
+    Object.keys(map).forEach((hourKey) => {
+      const hour = parseInt(hourKey);
+      const events = map[hour];
+
+      // Sort events by start time
+      events.sort((a, b) => a.position.topOffset - b.position.topOffset);
+
+      // Detect overlaps and assign columns
+      for (let i = 0; i < events.length; i++) {
+        const currentEvent = events[i];
+        const currentEnd = currentEvent.position.topOffset + currentEvent.position.height;
+
+        let column = 0;
+        const overlappingEvents = [currentEvent];
+
+        // Find all overlapping events
+        for (let j = 0; j < events.length; j++) {
+          if (i === j) continue;
+
+          const otherEvent = events[j];
+          const otherEnd = otherEvent.position.topOffset + otherEvent.position.height;
+
+          // Check if events overlap
+          if (
+            (currentEvent.position.topOffset < otherEnd && currentEnd > otherEvent.position.topOffset)
+          ) {
+            overlappingEvents.push(otherEvent);
+          }
+        }
+
+        // Assign columns to overlapping events
+        overlappingEvents.forEach((event, index) => {
+          event.column = index;
+          event.totalColumns = overlappingEvents.length;
+        });
+      }
     });
 
     return map;
@@ -185,34 +231,41 @@ export const DayView: React.FC<Props> = ({
               {/* Event area */}
               <div className="flex-1 relative border-l border-custom-border-200">
                 {/* Render each event with CalendarIssueBlocks positioned absolutely */}
-                {eventsForHour.map(({ issue, position }) => (
-                  <div
-                    key={issue.id}
-                    className="absolute left-1 right-1 z-1-"
-                    style={{
-                      top: `${position.topOffset}px`,
-                      height: `${position.height}px`,
-                    }}
-                  >
-                    <CalendarIssueBlocks
-                      date={date}
-                      issueIdList={[issue.id]}
-                      loadMoreIssues={loadMoreIssues}
-                      getPaginationData={getPaginationData}
-                      getGroupIssueCount={getGroupIssueCount}
-                      quickActions={quickActions}
-                      enableQuickIssueCreate={false}
-                      disableIssueCreation={disableIssueCreation}
-                      quickAddCallback={quickAddCallback}
-                      addIssuesToView={addIssuesToView}
-                      readOnly={readOnly}
-                      canEditProperties={canEditProperties}
-                      isEpic={isEpic}
-                      isDragDisabled={false}
-                      showLoadMore={false}
-                    />
-                  </div>
-                ))}
+                {eventsForHour.map(({ issue, position, column, totalColumns }) => {
+                  const columnWidth = totalColumns > 1 ? `${100 / totalColumns}%` : '100%';
+                  const leftOffset = totalColumns > 1 ? `${(column * 100) / totalColumns}%` : '0%';
+
+                  return (
+                    <div
+                      key={issue.id}
+                      className="absolute z-1-"
+                      style={{
+                        top: `${position.topOffset}px`,
+                        height: `${position.height}px`,
+                        left: `calc(4px + ${leftOffset})`,
+                        width: `calc(${columnWidth} - 4px)`,
+                      }}
+                    >
+                      <CalendarIssueBlocks
+                        date={date}
+                        issueIdList={[issue.id]}
+                        loadMoreIssues={loadMoreIssues}
+                        getPaginationData={getPaginationData}
+                        getGroupIssueCount={getGroupIssueCount}
+                        quickActions={quickActions}
+                        enableQuickIssueCreate={false}
+                        disableIssueCreation={disableIssueCreation}
+                        quickAddCallback={quickAddCallback}
+                        addIssuesToView={addIssuesToView}
+                        readOnly={readOnly}
+                        canEditProperties={canEditProperties}
+                        isEpic={isEpic}
+                        isDragDisabled={false}
+                        showLoadMore={false}
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );
