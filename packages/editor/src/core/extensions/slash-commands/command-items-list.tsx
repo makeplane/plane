@@ -9,6 +9,7 @@ import {
   Heading5,
   Heading6,
   ImageIcon,
+  Link as LinkIcon,
   List,
   ListOrdered,
   ListTodo,
@@ -189,6 +190,22 @@ export const getSlashCommandFilteredSections =
             searchTerms: ["line", "divider", "horizontal", "rule", "separate"],
             icon: <MinusSquare className="size-3.5" />,
             command: ({ editor, range }) => editor.chain().focus().deleteRange(range).setHorizontalRule().run(),
+          },
+          {
+            commandKey: "link",
+            key: "link",
+            title: "Embed",
+            description: "Insert a URL",
+            searchTerms: ["url", "hyperlink", "website"],
+            icon: <LinkIcon className="size-3.5" />,
+            command: ({ editor, range }) =>
+              editor
+                .chain()
+                .focus()
+                .deleteRange(range)
+                .insertContentAt(range.from, "https://")
+                .setTextSelection(range.from + 8)
+                .run(),
           },
           {
             commandKey: "emoji",
