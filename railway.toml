@@ -1,0 +1,16 @@
+# Railway deployment configuration for FamilyFlow
+# This file configures Railway services for the monorepo
+# 
+# Note: Railway typically uses the UI to configure services, but this file documents
+# the expected service structure. Services should be configured in Railway dashboard:
+# 1. api service: Python 3.12, source: apps/api
+# 2. web service: Node.js 22, source: apps/web  
+# 3. live service: Node.js 22, source: apps/live (optional)
+#
+# Required environment variables (set in Railway dashboard):
+# - DATABASE_URL or SUPABASE_DB_URL
+# - SECRET_KEY
+# - REDIS_URL
+# - VITE_API_BASE_URL
+# - SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY (optional, for Realtime)
+

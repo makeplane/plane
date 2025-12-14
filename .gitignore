@@ -48,16 +48,38 @@ pnpm-debug.log*
 .turbo
 
 ## Django ##
-venv
-.venv
+venv/
+.venv/
+env/
+ENV/
 *.pyc
-staticfiles
-mediafiles
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+staticfiles/
+mediafiles/
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
 .env
+.env.*
+!.env.example
+.env.example.backup
 .DS_Store
 logs/
 htmlcov/
 .coverage
+.coverage.*
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+db.sqlite3
+db.sqlite3-journal
 
 node_modules/
 assets/dist/
@@ -98,6 +120,13 @@ dev-editor
 # Redis
 *.rdb
 *.rdb.gz
+dump.rdb
+
+# PM2
+.pm2/
+~/.pm2/
+*.pm2.log
+pm2.log
 
 storybook-static
 
@@ -105,8 +134,75 @@ CLAUDE.md
 
 build/
 .react-router/
-
-build/
-.react-router/
 temp/
 scripts/
+
+# SSL Certificates and Keys
+*.key
+*.crt
+*.pem
+*.cert
+*.csr
+ssl/
+nginx/ssl/
+/etc/nginx/ssl/
+/etc/letsencrypt/
+*.p12
+*.pfx
+
+# Nginx
+nginx/logs/
+/var/log/nginx/
+*.nginx.log
+
+# Let's Encrypt
+.well-known/acme-challenge/
+
+# Python
+*.egg
+*.egg-info/
+dist/
+eggs/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.nox/
+.hypothesis/
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*~
+.#*
+#*#
+
+.specstory

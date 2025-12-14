@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 import os
 import sys
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load .env file from apps/api directory
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / '.env')
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")

@@ -61,6 +61,8 @@ from .workspace.invite import (
     WorkspaceJoinEndpoint,
     UserWorkspaceInvitationsViewSet,
 )
+
+from .family import FamilyViewSet, FamilyMemberViewSet
 from .workspace.label import WorkspaceLabelsEndpoint
 from .workspace.state import WorkspaceStatesEndpoint
 from .workspace.user import (

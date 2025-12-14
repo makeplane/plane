@@ -9,6 +9,8 @@ export * from "./module";
 export * from "./user";
 export * from "./project";
 export * from "./workspace";
+export * from "./family";
+export * from "./backlog";
 export * from "./file";
 export * from "./label";
 export * from "./state";

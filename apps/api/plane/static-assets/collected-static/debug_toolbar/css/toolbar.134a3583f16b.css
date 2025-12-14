@@ -1,0 +1,656 @@
+/* Variable definitions */
+:root {
+    /* Font families are the same as in Django admin/css/base.css */
+    --djdt-font-family-primary: "Segoe UI", system-ui, Roboto, "Helvetica Neue",
+        Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol", "Noto Color Emoji";
+    --djdt-font-family-monospace: ui-monospace, Menlo, Monaco, "Cascadia Mono",
+        "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace",
+        "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New",
+        monospace, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+}
+
+/* Debug Toolbar CSS Reset, adapted from Eric Meyer's CSS Reset */
+#djDebug {
+    color: #000;
+    background: #fff;
+}
+#djDebug,
+#djDebug div,
+#djDebug span,
+#djDebug applet,
+#djDebug object,
+#djDebug iframe,
+#djDebug h1,
+#djDebug h2,
+#djDebug h3,
+#djDebug h4,
+#djDebug h5,
+#djDebug h6,
+#djDebug p,
+#djDebug blockquote,
+#djDebug pre,
+#djDebug a,
+#djDebug abbr,
+#djDebug acronym,
+#djDebug address,
+#djDebug big,
+#djDebug cite,
+#djDebug code,
+#djDebug del,
+#djDebug dfn,
+#djDebug em,
+#djDebug font,
+#djDebug img,
+#djDebug ins,
+#djDebug kbd,
+#djDebug q,
+#djDebug s,
+#djDebug samp,
+#djDebug small,
+#djDebug strike,
+#djDebug strong,
+#djDebug sub,
+#djDebug sup,
+#djDebug tt,
+#djDebug var,
+#djDebug b,
+#djDebug u,
+#djDebug i,
+#djDebug center,
+#djDebug dl,
+#djDebug dt,
+#djDebug dd,
+#djDebug ol,
+#djDebug ul,
+#djDebug li,
+#djDebug fieldset,
+#djDebug form,
+#djDebug label,
+#djDebug legend,
+#djDebug table,
+#djDebug caption,
+#djDebug tbody,
+#djDebug tfoot,
+#djDebug thead,
+#djDebug tr,
+#djDebug th,
+#djDebug td,
+#djDebug summary,
+#djDebug button {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    width: auto;
+    border: 0;
+    outline: 0;
+    font-size: 12px;
+    line-height: 1.5em;
+    color: #000;
+    vertical-align: baseline;
+    background-color: transparent;
+    font-family: var(--djdt-font-family-primary);
+    text-align: left;
+    text-shadow: none;
+    white-space: normal;
+    transition: none;
+}
+
+#djDebug button {
+    background-color: #eee;
+    background-image: linear-gradient(to bottom, #eee, #cccccc);
+    border: 1px solid #ccc;
+    border-bottom: 1px solid #bbb;
+    border-radius: 3px;
+    color: #333;
+    line-height: 1;
+    padding: 0 8px;
+    text-align: center;
+    text-shadow: 0 1px 0 #eee;
+}
+
+#djDebug button:hover {
+    background-color: #ddd;
+    background-image: linear-gradient(to bottom, #ddd, #bbb);
+    border-color: #bbb;
+    border-bottom-color: #999;
+    cursor: pointer;
+    text-shadow: 0 1px 0 #ddd;
+}
+
+#djDebug button:active {
+    border: 1px solid #aaa;
+    border-bottom: 1px solid #888;
+    box-shadow:
+        inset 0 0 5px 2px #aaa,
+        0 1px 0 0 #eee;
+}
+
+#djDebug #djDebugToolbar {
+    background-color: #111;
+    width: 220px;
+    z-index: 100000000;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    opacity: 0.9;
+    overflow-y: auto;
+}
+
+#djDebug #djDebugToolbar small {
+    color: #999;
+}
+
+#djDebug #djDebugToolbar ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#djDebug #djDebugToolbar li {
+    border-bottom: 1px solid #222;
+    color: #fff;
+    display: block;
+    font-weight: bold;
+    float: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    width: auto;
+}
+
+#djDebug #djDebugToolbar input[type="checkbox"] {
+    float: right;
+    margin: 10px;
+}
+
+#djDebug #djDebugToolbar li > a,
+#djDebug #djDebugToolbar li > div.djdt-contentless {
+    font-weight: normal;
+    font-style: normal;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+    padding: 7px 10px 8px 25px;
+    color: #fff;
+}
+#djDebug #djDebugToolbar li > div.djdt-disabled {
+    font-style: italic;
+    color: #999;
+}
+
+#djDebug #djDebugToolbar li a:hover {
+    color: #111;
+    background-color: #ffc;
+}
+
+#djDebug #djDebugToolbar li.djdt-active {
+    background: #333;
+}
+
+#djDebug #djDebugToolbar li.djdt-active:before {
+    content: "▶";
+    font-family: var(--djdt-font-family-primary);
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #eee;
+    font-size: 150%;
+}
+
+#djDebug #djDebugToolbar li.djdt-active a:hover {
+    color: #b36a60;
+    background-color: transparent;
+}
+
+#djDebug #djDebugToolbar li small {
+    font-size: 12px;
+    color: #999;
+    font-style: normal;
+    text-decoration: none;
+}
+
+#djDebug #djDebugToolbarHandle {
+    position: fixed;
+    transform: translateY(-100%) rotate(-90deg);
+    transform-origin: right bottom;
+    background-color: #fff;
+    border: 1px solid #111;
+    border-bottom: 0;
+    top: 0;
+    right: 0;
+    z-index: 100000000;
+    opacity: 0.75;
+}
+
+#djDebug #djShowToolBarButton {
+    padding: 0 5px;
+    border: 4px solid #fff;
+    border-bottom-width: 0;
+    color: #fff;
+    font-size: 22px;
+    font-weight: bold;
+    background: #000;
+    opacity: 0.5;
+}
+
+#djDebug #djShowToolBarButton:hover {
+    background-color: #111;
+    border-color: #ffe761;
+    cursor: move;
+    opacity: 1;
+}
+
+#djDebug #djShowToolBarD {
+    color: #cf9;
+    font-size: 22px;
+}
+
+#djDebug #djShowToolBarJ {
+    color: #cf9;
+    font-size: 16px;
+}
+
+#djDebug pre,
+#djDebug code {
+    display: block;
+    font-family: var(--djdt-font-family-monospace);
+    overflow: auto;
+}
+
+#djDebug code {
+    font-size: 12px;
+    white-space: pre;
+}
+
+#djDebug pre {
+    white-space: pre-wrap;
+    color: #555;
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    background-color: #fff;
+    padding: 2px 3px;
+    margin-bottom: 3px;
+}
+
+#djDebug .djdt-panelContent {
+    position: fixed;
+    margin: 0;
+    top: 0;
+    right: 220px;
+    bottom: 0;
+    left: 0px;
+    background-color: #eee;
+    color: #666;
+    z-index: 100000000;
+}
+
+#djDebug .djdt-panelContent > div {
+    border-bottom: 1px solid #ddd;
+}
+
+#djDebug .djDebugPanelTitle {
+    position: absolute;
+    background-color: #ffc;
+    color: #666;
+    padding-left: 20px;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 50px;
+}
+
+#djDebug .djDebugPanelTitle code {
+    display: inline;
+    font-size: inherit;
+}
+
+#djDebug .djDebugPanelContent {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: auto;
+    padding: 5px 0 0 20px;
+}
+
+#djDebug .djDebugPanelContent .djdt-loader {
+    margin: 80px auto;
+    border: 6px solid white;
+    border-radius: 50%;
+    border-top: 6px solid #ffe761;
+    width: 38px;
+    height: 38px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#djDebug .djDebugPanelContent .djdt-scroll {
+    height: 100%;
+    overflow: auto;
+    display: block;
+    padding: 0 10px 0 0;
+}
+
+#djDebug h3 {
+    font-size: 24px;
+    font-weight: normal;
+    line-height: 50px;
+}
+
+#djDebug h4 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 0.8em;
+}
+
+#djDebug .djdt-panelContent table {
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    width: 100%;
+    background-color: #fff;
+    display: table;
+    margin-top: 0.8em;
+    overflow: auto;
+}
+#djDebug .djdt-panelContent tbody > tr:nth-child(odd):not(.djdt-highlighted) {
+    background-color: #f5f5f5;
+}
+#djDebug .djdt-panelContent tbody td,
+#djDebug .djdt-panelContent tbody th {
+    vertical-align: top;
+    padding: 2px 3px;
+}
+#djDebug .djdt-panelContent tbody td.djdt-time {
+    text-align: center;
+}
+
+#djDebug .djdt-panelContent thead th {
+    padding: 1px 6px 1px 3px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 14px;
+    white-space: nowrap;
+}
+#djDebug .djdt-panelContent tbody th {
+    width: 12em;
+    text-align: right;
+    color: #666;
+    padding-right: 0.5em;
+}
+
+#djDebug .djTemplateContext {
+    background-color: #fff;
+}
+
+#djDebug .djdt-panelContent .djDebugClose {
+    position: absolute;
+    top: 4px;
+    right: 15px;
+    line-height: 16px;
+    border: 6px solid #ddd;
+    border-radius: 50%;
+    background: #fff;
+    color: #ddd;
+    font-weight: 900;
+    font-size: 20px;
+    height: 36px;
+    width: 36px;
+    padding: 0 0 5px;
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+}
+
+#djDebug .djdt-panelContent .djDebugClose:hover {
+    background: #c0695d;
+}
+
+#djDebug .djdt-panelContent dt,
+#djDebug .djdt-panelContent dd {
+    display: block;
+}
+
+#djDebug .djdt-panelContent dt {
+    margin-top: 0.75em;
+}
+
+#djDebug .djdt-panelContent dd {
+    margin-left: 10px;
+}
+
+#djDebug a.toggleTemplate {
+    padding: 4px;
+    background-color: #bbb;
+    border-radius: 3px;
+}
+
+#djDebug a.toggleTemplate:hover {
+    padding: 4px;
+    background-color: #444;
+    color: #ffe761;
+    border-radius: 3px;
+}
+
+#djDebug .djDebugCollapsed {
+    color: #333;
+}
+
+#djDebug .djDebugUncollapsed {
+    color: #333;
+}
+
+#djDebug .djUnselected {
+    display: none;
+}
+
+#djDebug tr.djSelected {
+    display: table-row;
+}
+
+#djDebug .djDebugSql {
+    overflow-wrap: anywhere;
+}
+
+#djDebug .djSQLDetailsDiv tbody th {
+    text-align: left;
+}
+
+#djDebug span.djDebugLineChart {
+    background-color: #777;
+    height: 3px;
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    display: block;
+    z-index: 1000000001;
+}
+#djDebug span.djDebugLineChartWarning {
+    background-color: #900;
+}
+
+#djDebug .highlight {
+    color: #000;
+}
+#djDebug .highlight .err {
+    color: #000;
+} /* Error */
+#djDebug .highlight .g {
+    color: #000;
+} /* Generic */
+#djDebug .highlight .k {
+    color: #000;
+    font-weight: bold;
+} /* Keyword */
+#djDebug .highlight .o {
+    color: #000;
+} /* Operator */
+#djDebug .highlight .n {
+    color: #000;
+} /* Name */
+#djDebug .highlight .mi {
+    color: #000;
+    font-weight: bold;
+} /* Literal.Number.Integer */
+#djDebug .highlight .l {
+    color: #000;
+} /* Literal */
+#djDebug .highlight .x {
+    color: #000;
+} /* Other */
+#djDebug .highlight .p {
+    color: #000;
+} /* Punctuation */
+#djDebug .highlight .m {
+    color: #000;
+    font-weight: bold;
+} /* Literal.Number */
+#djDebug .highlight .s {
+    color: #333;
+} /* Literal.String */
+#djDebug .highlight .w {
+    color: #888888;
+} /* Text.Whitespace */
+#djDebug .highlight .il {
+    color: #000;
+    font-weight: bold;
+} /* Literal.Number.Integer.Long */
+#djDebug .highlight .na {
+    color: #333;
+} /* Name.Attribute */
+#djDebug .highlight .nt {
+    color: #000;
+    font-weight: bold;
+} /* Name.Tag */
+#djDebug .highlight .nv {
+    color: #333;
+} /* Name.Variable */
+#djDebug .highlight .s2 {
+    color: #333;
+} /* Literal.String.Double */
+#djDebug .highlight .cp {
+    color: #333;
+} /* Comment.Preproc */
+
+#djDebug svg.djDebugLineChart {
+    width: 100%;
+    height: 1.5em;
+}
+
+#djDebug svg.djDebugLineChartWarning rect {
+    fill: #900;
+}
+
+#djDebug svg.djDebugLineChartInTransaction rect {
+    fill: #d3ff82;
+}
+#djDebug svg.djDebugLineChart line {
+    stroke: #94b24d;
+}
+
+#djDebug .djDebugRowWarning .djdt-time {
+    color: red;
+}
+#djDebug .djdt-panelContent table .djdt-toggle {
+    width: 14px;
+    padding-top: 3px;
+}
+#djDebug .djdt-panelContent table .djdt-actions {
+    min-width: 70px;
+    white-space: nowrap;
+}
+#djDebug .djdt-color:after {
+    content: "\00a0";
+}
+#djDebug .djToggleSwitch {
+    box-sizing: content-box;
+    padding: 0;
+    border: 1px solid #999;
+    border-radius: 0;
+    width: 12px;
+    color: #777;
+    background: linear-gradient(to bottom, #fff, #dcdcdc);
+}
+#djDebug .djNoToggleSwitch {
+    height: 14px;
+    width: 14px;
+    display: inline-block;
+}
+
+#djDebug .djSQLDetailsDiv {
+    margin-top: 0.8em;
+}
+
+#djDebug .djdt-stack span {
+    color: #000;
+    font-weight: bold;
+}
+#djDebug .djdt-stack span.djdt-path,
+#djDebug .djdt-stack pre.djdt-locals,
+#djDebug .djdt-stack pre.djdt-locals span {
+    color: #777;
+    font-weight: normal;
+}
+#djDebug .djdt-stack span.djdt-code {
+    font-weight: normal;
+}
+#djDebug .djdt-stack pre.djdt-locals {
+    margin: 0 27px 27px 27px;
+}
+#djDebug .djdt-raw {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    margin-top: 0.8em;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+
+#djDebug .djdt-width-20 {
+    width: 20%;
+}
+#djDebug .djdt-width-30 {
+    width: 30%;
+}
+#djDebug .djdt-width-60 {
+    width: 60%;
+}
+#djDebug .djdt-max-height-100 {
+    max-height: 100%;
+}
+#djDebug .djdt-highlighted {
+    background-color: lightgrey;
+}
+#djDebug tr.djdt-highlighted.djdt-profile-row {
+    background-color: #ffc;
+}
+#djDebug tr.djdt-highlighted.djdt-profile-row:nth-child(2n + 1) {
+    background-color: #dd9;
+}
+@keyframes djdt-flash-new {
+    from {
+        background-color: green;
+    }
+    to {
+        background-color: inherit;
+    }
+}
+#djDebug .flash-new {
+    animation: djdt-flash-new 1s;
+}
+
+.djdt-hidden {
+    display: none;
+}

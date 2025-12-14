@@ -1,6 +1,7 @@
 # Python imports
 import os
 import logging
+import ssl
 
 # Third party imports
 from celery import Celery
@@ -21,6 +22,30 @@ app = Celery("plane")
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
 app.config_from_object("django.conf:settings", namespace="CELERY")
+
+# Configure SSL for Redis connections if using rediss://
+# This must be done after config_from_object to ensure settings are loaded
+from django.conf import settings
+if hasattr(settings, "CELERY_RESULT_BACKEND") and settings.CELERY_RESULT_BACKEND and "rediss://" in settings.CELERY_RESULT_BACKEND:
+    # Explicitly set result backend transport options for SSL
+    app.conf.result_backend_transport_options = {
+        "ssl_cert_reqs": ssl.CERT_NONE,
+    }
+    # Also ensure it's set at the app level
+    app.conf.update(
+        result_backend_transport_options={
+            "ssl_cert_reqs": ssl.CERT_NONE,
+        }
+    )
+if hasattr(settings, "CELERY_BROKER_URL") and settings.CELERY_BROKER_URL and "rediss://" in settings.CELERY_BROKER_URL:
+    app.conf.broker_transport_options = {
+        "ssl_cert_reqs": ssl.CERT_NONE,
+    }
+    app.conf.update(
+        broker_transport_options={
+            "ssl_cert_reqs": ssl.CERT_NONE,
+        }
+    )
 
 app.conf.beat_schedule = {
     # Intra day recurring jobs

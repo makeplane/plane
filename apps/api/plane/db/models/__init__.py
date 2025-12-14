@@ -86,3 +86,7 @@ from .device import Device, DeviceSession
 from .sticky import Sticky
 
 from .description import Description, DescriptionVersion
+
+from .family import Family, FamilyRole
+from .family_member import FamilyMember
+from .backlog_item import BacklogItem, BacklogItemStatus

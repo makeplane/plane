@@ -62,6 +62,8 @@ import type { IUserStore } from "./user";
 import { UserStore } from "./user";
 import type { IWorkspaceRootStore } from "./workspace";
 import { WorkspaceRootStore } from "./workspace";
+import type { IBacklogStore } from "./backlog.store";
+import { BacklogStore } from "./backlog.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -92,6 +94,7 @@ export class CoreRootStore {
   workspaceNotification: IWorkspaceNotificationStore;
   favorite: IFavoriteStore;
   stickyStore: IStickyStore;
+  backlog: IBacklogStore;
   editorAssetStore: IEditorAssetStore;
   workItemFilters: IWorkItemFilterStore;
   powerK: IPowerKStore;
@@ -122,6 +125,7 @@ export class CoreRootStore {
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
     this.stickyStore = new StickyStore();
+    this.backlog = new BacklogStore(this);
     this.editorAssetStore = new EditorAssetStore();
     this.analytics = new AnalyticsStore();
     this.workItemFilters = new WorkItemFilterStore();
@@ -156,6 +160,7 @@ export class CoreRootStore {
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
     this.stickyStore = new StickyStore();
+    this.backlog = new BacklogStore(this);
     this.editorAssetStore = new EditorAssetStore();
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();

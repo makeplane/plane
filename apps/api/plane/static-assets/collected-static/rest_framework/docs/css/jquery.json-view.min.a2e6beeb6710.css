@@ -1,0 +1,11 @@
+.json-view{position:relative}
+.json-view .collapser{width:20px;height:18px;display:block;position:absolute;left:-1.7em;top:-.2em;z-index:5;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAD1JREFUeNpiYGBgOADE%2F3Hgw0DM4IRHgSsDFOzFInmMAQnY49ONzZRjDFiADT7dMLALiE8y4AGW6LoBAgwAuIkf%2F%2FB7O9sAAAAASUVORK5CYII%3D);background-repeat:no-repeat;background-position:center center;opacity:.5;cursor:pointer}
+.json-view .collapsed{-ms-transform:rotate(-90deg);-moz-transform:rotate(-90deg);-khtml-transform:rotate(-90deg);-webkit-transform:rotate(-90deg);-o-transform:rotate(-90deg);transform:rotate(-90deg)}
+.json-view .bl{display:block;padding-left:20px;margin-left:-20px;position:relative}
+.json-view{font-family:monospace}
+.json-view ul{list-style-type:none;padding-left:2em;border-left:1px dotted;margin:.3em}
+.json-view ul li{position:relative}
+.json-view .comments,.json-view .dots{display:none;-moz-user-select:none;-ms-user-select:none;-khtml-user-select:none;-webkit-user-select:none;-o-user-select:none;user-select:none}
+.json-view .comments{padding-left:.8em;font-style:italic;color:#888}
+.json-view .bool,.json-view .null,.json-view .num,.json-view .undef{font-weight:700;color:#1A01CC}
+.json-view .str{color:#800}

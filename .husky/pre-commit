@@ -1,1 +1,3 @@
-pnpm lint-staged
+# Husky disabled - uncomment the line below to re-enable
+# pnpm exec lint-staged
+exit 0

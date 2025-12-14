@@ -4,7 +4,9 @@ export const API_URL = encodeURI(`${API_BASE_URL}${API_BASE_PATH}`);
 // God Mode Admin App Base Url
 export const ADMIN_BASE_URL = process.env.VITE_ADMIN_BASE_URL || "";
 export const ADMIN_BASE_PATH = process.env.VITE_ADMIN_BASE_PATH || "";
-export const GOD_MODE_URL = encodeURI(`${ADMIN_BASE_URL}${ADMIN_BASE_PATH}`);
+// Ensure GOD_MODE_URL ends with a trailing slash for proper routing
+const godModePath = ADMIN_BASE_PATH.endsWith("/") ? ADMIN_BASE_PATH : `${ADMIN_BASE_PATH}/`;
+export const GOD_MODE_URL = encodeURI(`${ADMIN_BASE_URL}${godModePath}`);
 // Publish App Base Url
 export const SPACE_BASE_URL = process.env.VITE_SPACE_BASE_URL || "";
 export const SPACE_BASE_PATH = process.env.VITE_SPACE_BASE_PATH || "";

@@ -1,0 +1,359 @@
+h1 {
+    font-size: 45px;
+}
+
+.intro-code {
+    margin-top: 20px;
+}
+
+pre.highlight code * {
+  white-space: nowrap;    /* this sets all children inside to nowrap */
+}
+
+pre.highlight {
+  overflow-x: auto;       /* this sets the scrolling in x */
+}
+
+pre.highlight code {
+  white-space: pre;       /* forces <code> to respect <pre> formatting */
+}
+
+.main-container {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.btn:focus,
+.btn:focus:active {
+  outline: none;
+}
+
+.sidebar {
+  overflow: auto;
+  font-family: verdana, sans-serif;
+  font-size: 12px;
+  font-weight: 200;
+  background-color: #2e353d;
+  position: fixed;
+  top: 0px;
+  width: 225px;
+  height: 100%;
+  color: #FFF;
+}
+
+.sidebar .brand {
+    background-color: #23282e;
+    display: block;
+    text-align: center;
+    padding: 25px 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.sidebar .brand a {
+    color: #FFF;
+}
+
+.sidebar .brand a:hover,
+.sidebar .brand a:active,
+.sidebar .brand a:focus {
+  text-decoration: none;
+}
+
+.sidebar .toggle-btn {
+  display: none;
+}
+
+.sidebar .menu-list {
+  width: inherit;
+}
+
+.sidebar .menu-list ul,
+.sidebar .menu-list li {
+  background: #2e353d;
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+  line-height: 35px;
+  cursor: pointer;
+}
+
+.sidebar .menu-list ul :not(collapsed) .arrow:before,
+.sidebar .menu-list li :not(collapsed) .arrow:before {
+  font-family: FontAwesome;
+  content: "\f078";
+  display: inline-block;
+  padding-left: 10px;
+  padding-right: 10px;
+  vertical-align: middle;
+  float: right;
+}
+
+.sidebar .menu-list ul .active,
+.sidebar .menu-list li .active {
+  border-left: 3px solid #d19b3d;
+  background-color: #4f5b69;
+}
+
+.sidebar .menu-list ul .sub-menu li.active,
+.sidebar .menu-list li .sub-menu li.active {
+  color: #d19b3d;
+}
+
+.sidebar .menu-list ul .sub-menu li.active a,
+.sidebar .menu-list li .sub-menu li.active a {
+  color: #d19b3d;
+}
+
+.sidebar .menu-list ul .sub-menu li,
+.sidebar .menu-list li .sub-menu li {
+  background-color: #181c20;
+  border: none;
+  border-bottom: 1px solid #23282e;
+  margin-left: 0px;
+  line-height: 1.4;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+  padding-left: 25px;
+}
+
+.sidebar .menu-list ul .sub-menu li:hover,
+.sidebar .menu-list li .sub-menu li:hover {
+  background-color: #020203;
+}
+
+
+.sidebar .menu-list ul .sub-menu li a,
+.sidebar .menu-list li .sub-menu li a {
+  display: block;
+}
+
+.sidebar .menu-list ul .sub-menu li a:before,
+.sidebar .menu-list li .sub-menu li a:before {
+  font-family: FontAwesome;
+  font-size: 14px;
+  font-weight: bold;
+  content: "\f105";
+  display: inline;
+  vertical-align: middle;
+  padding-left: 0;
+  padding-right: 7px;
+  margin-left: -12px;
+}
+
+.sidebar .menu-list li {
+  padding-left: 0px;
+  border-left: 3px solid #2e353d;
+  border-bottom: 1px solid #23282e;
+}
+
+.sidebar .menu-list li a {
+  text-decoration: none;
+  color: white;
+}
+
+.sidebar .menu-list li a i {
+  padding-left: 10px;
+  width: 20px;
+  padding-right: 20px;
+}
+
+.sidebar .menu-list li:hover {
+  border-left: 3px solid #d19b3d;
+  background-color: #4f5b69;
+  -webkit-transition: all 1s ease;
+  -moz-transition: all 1s ease;
+  -o-transition: all 1s ease;
+  -ms-transition: all 1s ease;
+  transition: all 1s ease;
+}
+
+.sidebar #menu-content {
+  padding-bottom: 70px;
+}
+
+body {
+  margin: 0px;
+  padding: 0px;
+}
+
+.coredocs-section-title {
+    margin-top: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid lightgrey;
+}
+
+.coredocs-link-title a,
+.coredocs-section-title a {
+  display: none;
+}
+
+.coredocs-link-title a,
+.coredocs-section-title a {
+  text-decoration: none;
+}
+
+.coredocs-link-title:hover a,
+.coredocs-section-title:hover a {
+  display: inline;
+  font-size: 20px;
+}
+
+.coredocs-section-title:last-child {
+    margin-top: 0;
+}
+
+
+/* @group Language Switcher */
+
+.sidebar .menu-list.menu-list-bottom {
+    margin-bottom: 0;
+    position: fixed;
+    width: inherit;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid #23282e;
+}
+
+.sidebar .menu-list-bottom li span {
+  float: right;
+  margin-right: 20px;
+  color: #d19b3d;
+}
+
+/* @end Language Switcher */
+
+
+/* @group Docs Content */
+
+.docs-content .meta .label {
+    vertical-align: middle;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.docs-content .meta code {
+    vertical-align: middle;
+    padding: .2em .6em .3em;
+    font-size: 14px;
+}
+
+.docs-content .btn {
+  font-size: inherit;
+}
+
+.code-samples pre {
+  margin-top: 20px;
+}
+
+/* @end Docs Content */
+
+
+@media (max-width: 767px) {
+  .main-container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .sidebar {
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+    overflow: visible;
+  }
+
+  .sidebar .toggle-btn {
+    display: block;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 10 !important;
+    padding: 3px;
+    width: 40px;
+    text-align: center;
+  }
+
+  .sidebar .menu-list.menu-list-bottom {
+    position: static;
+  }
+
+  .sidebar .brand {
+    margin-top: 0;
+    margin-bottom: 0;
+
+    text-align: left !important;
+    font-size: 22px;
+    padding: 0;
+    padding-left: 20px;
+    line-height: 50px !important;
+  }
+}
+
+@media (min-width: 767px) {
+  .sidebar .menu-list .menu-content {
+    display: block;
+  }
+  #main {
+    width:calc(100% - 225px);
+    float: right;
+  }
+}
+
+@media (min-width: 992px) {
+  .modal-lg {
+      width: 980px;
+  }
+}
+
+.api-modal .modal-title .fa {
+  color: #93c54b;
+}
+
+.api-modal .modal-body .request-awaiting {
+  padding: 35px 10px;
+  color: #7F8177;
+  text-align: center;
+}
+
+.api-modal .modal-body .meta {
+  margin-bottom: 20px;
+}
+
+.api-modal .modal-body .meta .label {
+    vertical-align: middle;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.api-modal .modal-body .meta code {
+    vertical-align: middle;
+    padding: .2em .6em .3em;
+    font-size: 14px;
+}
+
+.api-modal .modal-content .toggle-view {
+  text-align: right;
+  float: right;
+}
+
+.api-modal .modal-content .response .well {
+  margin: 0;
+  max-height: 550px;
+}
+
+.highlight {
+    background-color: #f7f7f9
+}
+
+.checkbox label.control-label {
+    font-weight: bold
+}
+
+@media (min-width: 768px) {
+    .navbar-nav.navbar-right:last-child {
+        margin-right: 0 !important;
+    }
+}

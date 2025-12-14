@@ -1,0 +1,828 @@
+openapi: 3.0.3
+info:
+  title: FamilyFlow API
+  version: 1.0.0
+  description: REST API for FamilyFlow - Agile Home Management Application
+servers:
+  - url: /api/v1
+    description: API v1
+
+paths:
+  # Family Management
+  /families/:
+    get:
+      summary: List user's families
+      responses:
+        '200':
+          description: List of families
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Family'
+    post:
+      summary: Create a new family
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  maxLength: 200
+                sprint_duration:
+                  type: integer
+                  enum: [7, 14]
+                  default: 7
+      responses:
+        '201':
+          description: Family created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Family'
+
+  /families/{family_id}/:
+    get:
+      summary: Get family details
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Family details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Family'
+        '404':
+          description: Family not found
+
+  /families/{family_id}/members/:
+    get:
+      summary: List family members
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of family members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FamilyMember'
+    post:
+      summary: Add family member
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - name
+                - role
+              properties:
+                user_id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                  maxLength: 200
+                age:
+                  type: integer
+                  minimum: 0
+                  maximum: 120
+                role:
+                  type: string
+                  enum: [parent, child]
+      responses:
+        '201':
+          description: Family member added
+
+  # Backlog Management
+  /families/{family_id}/backlog/:
+    get:
+      summary: List backlog items
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [backlog, sprint, archived]
+      responses:
+        '200':
+          description: List of backlog items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BacklogItem'
+    post:
+      summary: Create backlog item
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - category
+              properties:
+                title:
+                  type: string
+                  maxLength: 500
+                description:
+                  type: string
+                category:
+                  type: string
+                priority:
+                  type: integer
+                  minimum: 0
+                  default: 0
+                story_points:
+                  type: integer
+                  minimum: 0
+      responses:
+        '201':
+          description: Backlog item created
+
+  /families/{family_id}/backlog/{item_id}/:
+    get:
+      summary: Get backlog item
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: item_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Backlog item details
+        '404':
+          description: Not found
+    patch:
+      summary: Update backlog item
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: item_id
+          in: path
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BacklogItem'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete backlog item
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: item_id
+          in: path
+          required: true
+      responses:
+        '204':
+          description: Deleted
+
+  # Sprint Management
+  /families/{family_id}/sprints/:
+    get:
+      summary: List sprints
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [planning, active, completed, paused]
+      responses:
+        '200':
+          description: List of sprints
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sprint'
+    post:
+      summary: Create sprint
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - start_date
+                - end_date
+              properties:
+                name:
+                  type: string
+                  maxLength: 200
+                start_date:
+                  type: string
+                  format: date
+                end_date:
+                  type: string
+                  format: date
+      responses:
+        '201':
+          description: Sprint created
+
+  /families/{family_id}/sprints/{sprint_id}/:
+    get:
+      summary: Get sprint details
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: sprint_id
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Sprint details
+    patch:
+      summary: Update sprint
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: sprint_id
+          in: path
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [planning, active, completed, paused]
+      responses:
+        '200':
+          description: Updated
+
+  /families/{family_id}/sprints/{sprint_id}/tasks/:
+    get:
+      summary: List sprint tasks
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: sprint_id
+          in: path
+          required: true
+        - name: workflow_state
+          in: query
+          schema:
+            type: string
+            enum: [to_do, in_progress, blocked, done]
+        - name: assigned_to
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+    post:
+      summary: Add backlog item to sprint
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: sprint_id
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - backlog_item_id
+                - story_points
+              properties:
+                backlog_item_id:
+                  type: string
+                  format: uuid
+                story_points:
+                  type: integer
+                  minimum: 0
+                assigned_to_id:
+                  type: string
+                  format: uuid
+      responses:
+        '201':
+          description: Task created
+
+  /families/{family_id}/sprints/{sprint_id}/tasks/{task_id}/:
+    get:
+      summary: Get task details
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: sprint_id
+          in: path
+          required: true
+        - name: task_id
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Task details
+    patch:
+      summary: Update task
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: sprint_id
+          in: path
+          required: true
+        - name: task_id
+          in: path
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                workflow_state:
+                  type: string
+                  enum: [to_do, in_progress, blocked, done]
+                assigned_to_id:
+                  type: string
+                  format: uuid
+                  nullable: true
+                blocker_reason:
+                  type: string
+      responses:
+        '200':
+          description: Updated
+
+  # Standups
+  /families/{family_id}/sprints/{sprint_id}/standups/:
+    get:
+      summary: List standup entries
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: sprint_id
+          in: path
+          required: true
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of standup entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StandupEntry'
+    post:
+      summary: Create standup entry
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: sprint_id
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - date
+              properties:
+                date:
+                  type: string
+                  format: date
+                accomplishments_yesterday:
+                  type: string
+                plans_today:
+                  type: string
+                blockers:
+                  type: string
+      responses:
+        '201':
+          description: Standup entry created
+
+  # Retrospectives
+  /families/{family_id}/sprints/{sprint_id}/retrospective/:
+    get:
+      summary: Get sprint retrospective
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: sprint_id
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Retrospective details
+        '404':
+          description: Retrospective not found
+    post:
+      summary: Create retrospective
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: sprint_id
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                what_went_well:
+                  type: array
+                  items:
+                    type: string
+                what_didnt_work:
+                  type: array
+                  items:
+                    type: string
+                what_to_change:
+                  type: array
+                  items:
+                    type: string
+                action_items:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Retrospective created
+
+  # Achievements
+  /families/{family_id}/members/{member_id}/achievements/:
+    get:
+      summary: List member achievements
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: member_id
+          in: path
+          required: true
+      responses:
+        '200':
+          description: List of achievements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Achievement'
+
+  # Burndown Data
+  /families/{family_id}/sprints/{sprint_id}/burndown/:
+    get:
+      summary: Get burndown chart data
+      parameters:
+        - name: family_id
+          in: path
+          required: true
+        - name: sprint_id
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Burndown data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  days:
+                    type: array
+                    items:
+                      type: string
+                      format: date
+                  remaining_points:
+                    type: array
+                    items:
+                      type: integer
+                  ideal_burndown:
+                    type: array
+                    items:
+                      type: integer
+
+components:
+  schemas:
+    Family:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        sprint_duration:
+          type: integer
+        default_swim_lanes:
+          type: array
+          items:
+            type: string
+        gamification_enabled:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    FamilyMember:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        family_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        age:
+          type: integer
+          nullable: true
+        role:
+          type: string
+          enum: [parent, child]
+        avatar_url:
+          type: string
+          nullable: true
+        joined_at:
+          type: string
+          format: date-time
+
+    BacklogItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        family_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        category:
+          type: string
+        priority:
+          type: integer
+        story_points:
+          type: integer
+          nullable: true
+        creator_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [backlog, sprint, archived]
+        created_at:
+          type: string
+          format: date-time
+
+    Sprint:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        family_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [planning, active, completed, paused]
+        total_story_points:
+          type: integer
+        completed_story_points:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        backlog_item_id:
+          type: string
+          format: uuid
+        sprint_id:
+          type: string
+          format: uuid
+        assigned_to_id:
+          type: string
+          format: uuid
+          nullable: true
+        workflow_state:
+          type: string
+          enum: [to_do, in_progress, blocked, done]
+        story_points:
+          type: integer
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    StandupEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        family_member_id:
+          type: string
+          format: uuid
+        sprint_id:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date
+        accomplishments_yesterday:
+          type: string
+          nullable: true
+        plans_today:
+          type: string
+          nullable: true
+        blockers:
+          type: string
+          nullable: true
+
+    Retrospective:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        sprint_id:
+          type: string
+          format: uuid
+        conducted_at:
+          type: string
+          format: date-time
+        what_went_well:
+          type: array
+          items:
+            type: string
+        what_didnt_work:
+          type: array
+          items:
+            type: string
+        what_to_change:
+          type: array
+          items:
+            type: string
+        action_items:
+          type: array
+          items:
+            type: string
+
+    Achievement:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        family_member_id:
+          type: string
+          format: uuid
+        achievement_type:
+          type: string
+          enum: [points, badge, streak]
+        achievement_name:
+          type: string
+        points:
+          type: integer
+          nullable: true
+        badge_icon:
+          type: string
+          nullable: true
+        earned_at:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
+

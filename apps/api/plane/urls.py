@@ -7,6 +7,7 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+from plane.web.urls import god_mode_urlpatterns
 
 handler404 = "plane.app.views.error_404.custom_404_view"
 
@@ -16,6 +17,11 @@ urlpatterns = [
     path("api/instances/", include("plane.license.urls")),
     path("api/v1/", include("plane.api.urls")),
     path("auth/", include("plane.authentication.urls")),
+    # Proxy /god-mode to admin app
+    path("god-mode/", include(god_mode_urlpatterns)),
+    path("god-mode", include(god_mode_urlpatterns)),  # Without trailing slash
+    # Health check and robots.txt at root
+    path("robots.txt", include("plane.web.urls")),
     path("", include("plane.web.urls")),
 ]
 

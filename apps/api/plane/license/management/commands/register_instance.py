@@ -83,6 +83,17 @@ class Command(BaseCommand):
             instance.save()
 
         # Call the instance traces task
-        instance_traces.delay()
+        # Wrap in try-except to handle cases where Celery backend isn't configured yet
+        try:
+            instance_traces.delay()
+        except Exception as e:
+            # Log the error but don't fail the registration
+            # This allows the API to start even if Celery backend has configuration issues
+            self.stdout.write(
+                self.style.WARNING(
+                    f"Warning: Could not queue instance trace task: {str(e)}. "
+                    "Instance registration completed, but background task was not queued."
+                )
+            )
 
         return

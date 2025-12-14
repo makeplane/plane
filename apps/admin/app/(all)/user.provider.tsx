@@ -12,6 +12,12 @@ export const UserProvider = observer(function UserProvider({ children }: React.P
 
   useSWR("CURRENT_USER", () => fetchCurrentUser(), {
     shouldRetryOnError: false,
+    onError: (error) => {
+      // Authentication errors are handled by the user store
+      // The store sets isUserLoggedIn = false and userStatus
+      // This ensures the state is updated even if the error is caught
+      console.error("Failed to fetch current user:", error);
+    },
   });
 
   useSWR("INSTANCE_ADMINS", () => fetchInstanceAdmins());

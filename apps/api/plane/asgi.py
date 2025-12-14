@@ -1,4 +1,10 @@
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load .env file before Django setup
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 from channels.routing import ProtocolTypeRouter
 from django.core.asgi import get_asgi_application

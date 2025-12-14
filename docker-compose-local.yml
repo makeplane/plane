@@ -227,3 +227,12 @@ volumes:
 networks:
   dev_env:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+          gateway: 172.25.0.1
+    driver_opts:
+      com.docker.network.bridge.enable_icc: "true"
+      com.docker.network.bridge.enable_ip_masquerade: "true"
+      com.docker.network.bridge.name: "dev_env"
+      com.docker.network.driver.mtu: "1500"

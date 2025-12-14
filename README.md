@@ -1,174 +1,264 @@
-<br /><br />
-
 <p align="center">
-<a href="https://plane.so">
-  <img src="https://media.docs.plane.so/logo/plane_github_readme.png" alt="Plane Logo" width="400">
-</a>
-</p>
-<p align="center"><b>Modern project management for all teams</b></p>
-
-<p align="center">
-<a href="https://discord.com/invite/A92xrEGCge">
-<img alt="Discord online members" src="https://img.shields.io/discord/1031547764020084846?color=5865F2&label=Discord&style=for-the-badge" />
-</a>
-<img alt="Commit activity per month" src="https://img.shields.io/github/commit-activity/m/makeplane/plane?style=for-the-badge" />
+  <h1 align="center">🤠 Scrumdidly</h1>
+  <p align="center"><b>Agile Home Management</b></p>
 </p>
 
 <p align="center">
-    <a href="https://plane.so/"><b>Website</b></a> •
-    <a href="https://github.com/makeplane/plane/releases"><b>Releases</b></a> •
-    <a href="https://twitter.com/planepowers"><b>Twitter</b></a> •
-    <a href="https://docs.plane.so/"><b>Documentation</b></a>
+  <a href="https://scrumdidly.com"><b>Live App</b></a> •
+  <a href="#-installation">Installation</a> •
+  <a href="#-features">Features</a> •
+  <a href="#-local-development">Development</a>
 </p>
 
-<p>
-    <a href="https://app.plane.so/#gh-light-mode-only" target="_blank">
-      <img
-        src="https://media.docs.plane.so/GitHub-readme/github-top.webp"
-        alt="Plane Screens"
-        width="100%"
-      />
-    </a>
-</p>
+---
 
-Meet [Plane](https://plane.so/), an open-source project management tool to track issues, run ~sprints~ cycles, and manage product roadmaps without the chaos of managing the tool itself. 🧘‍♀️
+## About Scrumdidly
 
-> Plane is evolving every day. Your suggestions, ideas, and reported bugs help us immensely. Do not hesitate to join in the conversation on [Discord](https://discord.com/invite/A92xrEGCge) or raise a GitHub issue. We read everything and respond to most.
+**Scrumdidly** is a household management application that adapts enterprise-grade SCRUM methodology for modern families juggling busy schedules, shared responsibilities, and collaborative goals. Unlike traditional productivity tools, Scrumdidly recognizes that running a household is a complex team endeavor requiring coordination, transparency, and iterative planning.
+
+With an easy-going cowboy spirit and family-friendly style, the application transforms family life into manageable weeks—where family members collectively plan, prioritize, and execute household tasks, missions, and goals. Parents and older children participate in **"family standups"** (brief daily check-ins), **week planning sessions** (weekly family meetings), and **retrospectives** (reflection on what worked and what didn't).
+
+Scrumdidly helps families move from reactive chaos to proactive planning, fostering accountability, teaching project management skills to children, and ensuring everyone has visibility into the family's shared workload. **It's SCRUM for the home—because families are teams too.**
+
+🌐 **Live Application**: [https://scrumdidly.com](https://scrumdidly.com)
+
+---
+
+## 🌟 Key Features
+
+### Family Backlog
+A prioritized list of household tasks, chores, missions, events, and goals that need attention. Everything your family needs to accomplish lives in one organized, transparent place.
+
+### Week Planning
+Visual boards where families allocate tasks for the upcoming week, assign effort ratings (1-5 scale based on difficulty), and set realistic commitments. See your week at a glance and adjust as needed.
+
+### Missions
+Parent-created overarching projects that organize related tasks and goals under meaningful themes. Whether it's "Kitchen Renovation," "Summer Vacation Planning," or "School Year Prep," missions help families tackle big goals together.
+
+### Swim Lanes
+Customizable categories like "Chores," "School/Activities," "Home Projects," "Family Time," and "Individual Goals." Organize your family's work in ways that make sense for your unique household.
+
+### Kid-Friendly Interface
+Age-appropriate views with gamification elements, progress trackers, and reward systems. Make household management engaging and educational for children while teaching valuable life skills.
+
+### Burndown Charts
+Visual progress tracking that shows family momentum and helps adjust workload. See how your family is progressing through the week and identify when you might be overcommitted.
+
+### Family History
+Inactive family members remain visible in historical records, preserving continuity as family dynamics change. Your family's journey is always accessible, even as kids grow up and move out.
+
+### Retrospective Tools
+Guided prompts for families to reflect and improve their collaboration. Learn what worked, what didn't, and how to make next week even better.
+
+---
 
 ## 🚀 Installation
 
-Getting started with Plane is simple. Choose the setup that works best for you:
+Scrumdidly can be deployed on your own infrastructure for complete control over your family's data.
 
-- **Plane Cloud**
-  Sign up for a free account on [Plane Cloud](https://app.plane.so)—it's the fastest way to get up and running without worrying about infrastructure.
+### Quick Start (Digital Ocean)
 
-- **Self-host Plane**
-  Prefer full control over your data and infrastructure? Install and run Plane on your own servers. Follow our detailed [deployment guides](https://developers.plane.so/self-hosting/overview) to get started.
+The easiest way to get started is with a single-command deployment on Digital Ocean:
 
-| Installation methods | Docs link                                                                                                                                                                               |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Docker               | [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://developers.plane.so/self-hosting/methods/docker-compose)         |
-| Kubernetes           | [![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://developers.plane.so/self-hosting/methods/kubernetes) |
+1. **Provision Digital Ocean Droplet** (Ubuntu 22.04 LTS recommended)
+2. **Run Initial Setup**:
+   ```bash
+   ./setup-server.sh
+   ```
+3. **Deploy Application**:
+   ```bash
+   ./deploy.sh production
+   ```
+4. **Start Services**:
+   ```bash
+   make start ENV=production
+   # or
+   pm2 start ecosystem.config.js --env production
+   pm2 save
+   pm2 startup  # Follow instructions to enable auto-start
+   ```
 
-`Instance admins` can configure instance settings with [God mode](https://developers.plane.so/self-hosting/govern/instance-admin).
+### Detailed Deployment Guide
 
-## 🌟 Features
+For complete deployment instructions, see:
+- [Deployment Guide](specs/001-family-management/DEPLOYMENT.md) - Comprehensive deployment documentation
+- [Quickstart Guide](specs/001-family-management/quickstart.md) - Quick setup instructions
 
-- **Issues**
-  Efficiently create and manage tasks with a robust rich text editor that supports file uploads. Enhance organization and tracking by adding sub-properties and referencing related issues.
+### Key Deployment Features
 
-- **Cycles**
-  Maintain your team’s momentum with Cycles. Track progress effortlessly using burn-down charts and other insightful tools.
+- **Single Command Startup**: `make start` or `pm2 start ecosystem.config.js --env production`
+- **Process Management**: PM2 handles API, workers, and frontend
+- **Auto-Restart**: Processes automatically restart on failure
+- **Systemd Integration**: Auto-start on server reboot
+- **Zero-Downtime Reloads**: Graceful process reloads
+- **SSL Support**: Built-in nginx reverse proxy with SSL/TLS support
 
-- **Modules**
-  Simplify complex projects by dividing them into smaller, manageable modules.
+### Prerequisites
 
-- **Views**
-  Customize your workflow by creating filters to display only the most relevant issues. Save and share these views with ease.
+**Production Deployment**:
+- Digital Ocean droplet (Ubuntu 22.04 LTS recommended)
+- Supabase account and project (for database and storage)
+- Domain name (optional, for SSL certificates)
+- SSH access to droplet
 
-- **Pages**
-  Capture and organize ideas using Plane Pages, complete with AI capabilities and a rich text editor. Format text, insert images, add hyperlinks, or convert your notes into actionable items.
+**Local Development**:
+- Node.js >= 22.18.0
+- Python 3.12
+- pnpm 10.24.0+
+- Redis (for caching and task queue)
+- PM2 (for process management)
 
-- **Analytics**
-  Access real-time insights across all your Plane data. Visualize trends, remove blockers, and keep your projects moving forward.
+---
 
-- **Drive** (_coming soon_): The drive helps you share documents, images, videos, or any other files that make sense to you or your team and align on the problem/solution.
+## 🛠️ Local Development
 
-## 🛠️ Local development
+### Prerequisites
 
-See [CONTRIBUTING](./CONTRIBUTING.md)
+- Node.js >= 22.18.0
+- Python 3.12
+- pnpm 10.24.0+
+- Redis
+- PM2
 
-## ⚙️ Built with
+### Setup
 
-[![Next JS](https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd scrumfamily
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   pnpm install
+   ```
+
+3. **Set up environment variables**:
+   ```bash
+   cp apps/api/.env.example apps/api/.env
+   cp apps/web/.env.example apps/web/.env
+   # Edit .env files with your configuration
+   ```
+
+4. **Set up Supabase**:
+   - Create a Supabase project
+   - Get your database connection string
+   - Configure environment variables (see [Quickstart Guide](specs/001-family-management/quickstart.md))
+
+5. **Start Redis**:
+   ```bash
+   # macOS
+   brew services start redis
+   
+   # Linux
+   sudo systemctl start redis
+   ```
+
+6. **Run database migrations**:
+   ```bash
+   cd apps/api
+   source venv/bin/activate  # or your virtual environment
+   python manage.py migrate
+   ```
+
+7. **Start the application**:
+   ```bash
+   # From project root
+   make start
+   # or
+   pm2 start ecosystem.config.js --env development
+   ```
+
+8. **Access the application**:
+   - Web app: http://localhost:3000
+   - Admin interface: http://localhost:8000/god-mode/
+   - API: http://localhost:8000/api/
+
+### Development Commands
+
+```bash
+# Start all services
+make start
+
+# Stop all services
+make stop
+
+# Restart all services
+make restart
+
+# View logs
+make logs
+make logs LOGS=api  # View specific service logs
+
+# Run migrations
+make migrate
+
+# Build frontend
+make build
+
+# Check service health
+make health
+```
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for more development guidelines.
+
+---
+
+## ⚙️ Built With
+
 [![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green)](https://www.djangoproject.com/)
-[![Node JS](https://img.shields.io/badge/node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white)](https://nodejs.org/en)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white)](https://nodejs.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
+[![PM2](https://img.shields.io/badge/PM2-2B037A?style=for-the-badge&logo=pm2&logoColor=white)](https://pm2.keymetrics.io/)
 
-## 📸 Screenshots
+---
 
-  <p>
-    <a href="https://plane.so" target="_blank">
-      <img
-        src="https://media.docs.plane.so/GitHub-readme/github-work-items.webp"
-        alt="Plane Views"
-        width="100%"
-      />
-    </a>
-  </p>
-  <p>
-    <a href="https://plane.so" target="_blank">
-      <img
-        src="https://media.docs.plane.so/GitHub-readme/github-cycles.webp"
-        width="100%"
-      />
-    </a>
-  </p>
-  <p>
-    <a href="https://plane.so" target="_blank">
-      <img
-        src="https://media.docs.plane.so/GitHub-readme/github-modules.webp"
-        alt="Plane Cycles and Modules"
-        width="100%"
-      />
-    </a>
-  </p>
-  <p>
-    <a href="https://plane.so" target="_blank">
-      <img
-        src="https://media.docs.plane.so/GitHub-readme/github-views.webp"
-        alt="Plane Analytics"
-        width="100%"
-      />
-    </a>
-  </p>
-   <p>
-    <a href="https://plane.so" target="_blank">
-      <img
-        src="https://media.docs.plane.so/GitHub-readme/github-analytics.webp"
-        alt="Plane Pages"
-        width="100%"
-      />
-    </a>
-  </p>
-</p>
+## 📖 Documentation
 
-## 📝 Documentation
+- [Deployment Guide](specs/001-family-management/DEPLOYMENT.md) - Complete deployment instructions
+- [Quickstart Guide](specs/001-family-management/quickstart.md) - Quick setup guide
+- [Task Management](specs/001-family-management/tasks.md) - Feature implementation tasks
 
-Explore Plane's [product documentation](https://docs.plane.so/) and [developer documentation](https://developers.plane.so/) to learn about features, setup, and usage.
-
-## ❤️ Community
-
-Join the Plane community on [GitHub Discussions](https://github.com/orgs/makeplane/discussions) and our [Discord server](https://discord.com/invite/A92xrEGCge). We follow a [Code of conduct](https://github.com/makeplane/plane/blob/master/CODE_OF_CONDUCT.md) in all our community channels.
-
-Feel free to ask questions, report bugs, participate in discussions, share ideas, request features, or showcase your projects. We’d love to hear from you!
-
-## 🛡️ Security
-
-If you discover a security vulnerability in Plane, please report it responsibly instead of opening a public issue. We take all legitimate reports seriously and will investigate them promptly. See [Security policy](https://github.com/makeplane/plane/blob/master/SECURITY.md) for more info.
-
-To disclose any security issues, please email us at security@plane.so.
+---
 
 ## 🤝 Contributing
 
-There are many ways you can contribute to Plane:
+We welcome contributions! Whether you're fixing bugs, adding features, or improving documentation, your help makes Scrumdidly better for families everywhere.
 
-- Report [bugs](https://github.com/makeplane/plane/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%F0%9F%90%9Bbug&projects=&template=--bug-report.yaml&title=%5Bbug%5D%3A+) or submit [feature requests](https://github.com/makeplane/plane/issues/new?assignees=srinivaspendem%2Cpushya22&labels=%E2%9C%A8feature&projects=&template=--feature-request.yaml&title=%5Bfeature%5D%3A+).
-- Review the [documentation](https://docs.plane.so/) and submit [pull requests](https://github.com/makeplane/docs) to improve it—whether it's fixing typos or adding new content.
-- Talk or write about Plane or any other ecosystem integration and [let us know](https://discord.com/invite/A92xrEGCge)!
-- Show your support by upvoting [popular feature requests](https://github.com/makeplane/plane/issues).
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
-Please read [CONTRIBUTING.md](https://github.com/makeplane/plane/blob/master/CONTRIBUTING.md) for details on the process for submitting pull requests to us.
+### Ways to Contribute
 
-### Repo activity
+- Report bugs or submit feature requests
+- Improve documentation
+- Submit pull requests
+- Share feedback and ideas
 
-![Plane Repo Activity](https://repobeats.axiom.co/api/embed/2523c6ed2f77c082b7908c33e2ab208981d76c39.svg "Repobeats analytics image")
+---
 
-### We couldn't have done this without you.
+## 🛡️ Security
 
-<a href="https://github.com/makeplane/plane/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=makeplane/plane" />
-</a>
+If you discover a security vulnerability, please report it responsibly. We take all legitimate reports seriously and will investigate them promptly.
 
-## License
+See [SECURITY.md](./SECURITY.md) for more information.
 
-This project is licensed under the [GNU Affero General Public License v3.0](https://github.com/makeplane/plane/blob/master/LICENSE.txt).
+---
+
+## 📝 License
+
+This project is licensed under the [GNU Affero General Public License v3.0](./LICENSE.txt).
+
+---
+
+## 🙏 Acknowledgments
+
+Scrumdidly is built on the foundation of [Plane](https://plane.so), an open-source project management tool. We've adapted and extended it to serve the unique needs of families managing their homes together.
+
+---
+
+<p align="center">
+  <b>Happy planning, families! 🤠</b>
+</p>

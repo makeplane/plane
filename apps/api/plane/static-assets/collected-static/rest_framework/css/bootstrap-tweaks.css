@@ -1,0 +1,237 @@
+/*
+
+This CSS file contains some tweaks specific to the included Bootstrap theme.
+It's separate from `style.css` so that it can be easily overridden by replacing
+a single block in the template.
+
+*/
+
+.form-actions {
+  background: transparent;
+  border-top-color: transparent;
+  padding-top: 0;
+  text-align: right;
+}
+
+#generic-content-form textarea {
+  font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+  font-size: 80%;
+}
+
+.navbar-inverse .brand a {
+  color: #999999;
+}
+.navbar-inverse .brand:hover a {
+  color: white;
+  text-decoration: none;
+}
+
+/* custom navigation styles */
+.navbar {
+  width: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.navbar {
+  background: #2C2C2C;
+  color: white;
+  border: none;
+  border-top: 5px solid #A30000;
+  border-radius: 0px;
+}
+
+.navbar .nav li, .navbar .nav li a, .navbar .brand:hover {
+  color: white;
+}
+
+.nav-list > .active > a, .nav-list > .active > a:hover {
+  background: #2C2C2C;
+}
+
+.navbar .dropdown-menu li a, .navbar .dropdown-menu li {
+  color: #A30000;
+}
+
+.navbar .dropdown-menu li a:hover {
+  background: #EEEEEE;
+  color: #C20000;
+}
+
+ul.breadcrumb {
+  margin: 70px 0 0 0;
+}
+
+.breadcrumb li.active a {
+  color: #777;
+}
+
+.pagination>.disabled>a,
+.pagination>.disabled>a:hover,
+.pagination>.disabled>a:focus {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.pager>.disabled>a,
+.pager>.disabled>a:hover,
+.pager>.disabled>a:focus {
+  pointer-events: none;
+}
+
+.pager .next {
+  margin-left: 10px;
+}
+
+/*=== dabapps bootstrap styles ====*/
+
+html {
+  width:100%;
+  background: none;
+}
+
+/*body, .navbar .container-fluid {
+  max-width: 1150px;
+  margin: 0 auto;
+}*/
+
+body {
+  background: url("../img/grid.png") repeat-x;
+  background-attachment: fixed;
+}
+
+#content {
+  margin: 0;
+  padding-bottom: 60px;
+}
+
+/* sticky footer and footer */
+html, body {
+  height: 100%;
+}
+
+.wrapper {
+  position: relative;
+  top: 0;
+  left: 0;
+  padding-top: 60px;
+  margin: -60px 0;
+  min-height: 100%;
+}
+
+.form-switcher {
+  margin-bottom: 0;
+}
+
+.well {
+  -webkit-box-shadow: none;
+     -moz-box-shadow: none;
+          box-shadow: none;
+}
+
+.well .form-actions {
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.well form {
+  margin-bottom: 0;
+}
+
+.nav-tabs {
+  border: 0;
+}
+
+.nav-tabs > li {
+  float: right;
+}
+
+.nav-tabs li a {
+  margin-right: 0;
+}
+
+.nav-tabs > .active > a {
+  background: #F5F5F5;
+}
+
+.nav-tabs > .active > a:hover {
+  background: #F5F5F5;
+}
+
+.tabbable.first-tab-active .tab-content {
+  border-top-right-radius: 0;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  clear: both;
+  z-index: 10;
+  height: 60px;
+  width: 95%;
+  margin: 0 2.5%;
+}
+
+footer p {
+  text-align: center;
+  color: gray;
+  border-top: 1px solid #DDDDDD;
+  padding-top: 10px;
+}
+
+footer a {
+  color: gray !important;
+  font-weight: bold;
+}
+
+footer a:hover {
+  color: gray;
+}
+
+.page-header {
+  border-bottom: none;
+  padding-bottom: 0px;
+  margin: 0;
+}
+
+/* custom general page styles */
+.hero-unit h1, .hero-unit h2 {
+  color: #A30000;
+}
+
+body a {
+  color: #A30000;
+}
+
+body a:hover {
+  color: #c20000;
+}
+
+.request-info {
+  clear:both;
+}
+
+.horizontal-checkbox label {
+  padding-top: 0;
+}
+
+.horizontal-checkbox label {
+  padding-top: 0 !important;
+}
+
+.horizontal-checkbox input {
+  float: left;
+  width: 20px;
+  margin-top: 3px;
+}
+
+.modal-footer form {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.pagination {
+  margin: 5px 0 10px 0;
+}

@@ -16,6 +16,8 @@ from .user import urlpatterns as user_urls
 from .views import urlpatterns as view_urls
 from .webhook import urlpatterns as webhook_urls
 from .workspace import urlpatterns as workspace_urls
+from .family import urlpatterns as family_urls
+from .backlog import urlpatterns as backlog_urls
 from .timezone import urlpatterns as timezone_urls
 from .exporter import urlpatterns as exporter_urls
 
@@ -36,6 +38,8 @@ urlpatterns = [
     *user_urls,
     *view_urls,
     *workspace_urls,
+    *family_urls,
+    *backlog_urls,
     *api_urls,
     *webhook_urls,
     *timezone_urls,

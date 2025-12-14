@@ -137,9 +137,17 @@ SITE_ID = 1
 AUTH_USER_MODEL = "db.User"
 
 # Database
-if bool(os.environ.get("DATABASE_URL")):
-    # Parse database configuration from $DATABASE_URL
-    DATABASES = {"default": dj_database_url.config()}
+# Supabase integration: Use SUPABASE_DB_URL if available, fallback to DATABASE_URL
+# This works in any deployment environment (native, Docker, Railway, etc.)
+# Priority: SUPABASE_DB_URL > DATABASE_URL
+# For native deployment and local development, use SUPABASE_DB_URL
+# Some platforms automatically provide DATABASE_URL when connected to Supabase
+database_url = os.environ.get("SUPABASE_DB_URL") or os.environ.get("DATABASE_URL")
+
+if bool(database_url):
+    # Parse database configuration from URL (works with both Supabase and standard PostgreSQL)
+    # Supabase connection string format: postgresql://postgres:[PASSWORD]@[HOST]:[PORT]/postgres?sslmode=require
+    DATABASES = {"default": dj_database_url.config(default=database_url)}
 else:
     DATABASES = {
         "default": {
@@ -251,19 +259,28 @@ if AWS_S3_ENDPOINT_URL and USE_MINIO:
     AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
     AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
 
-# RabbitMQ connection settings
-RABBITMQ_HOST = os.environ.get("RABBITMQ_HOST", "localhost")
-RABBITMQ_PORT = os.environ.get("RABBITMQ_PORT", "5672")
-RABBITMQ_USER = os.environ.get("RABBITMQ_USER", "guest")
-RABBITMQ_PASSWORD = os.environ.get("RABBITMQ_PASSWORD", "guest")
-RABBITMQ_VHOST = os.environ.get("RABBITMQ_VHOST", "/")
-AMQP_URL = os.environ.get("AMQP_URL")
+# Celery Configuration - Using Redis as message broker
+# Celery can use Redis as both broker and result backend
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL") or REDIS_URL or "redis://localhost:6379/0"
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND") or REDIS_URL or "redis://localhost:6379/0"
 
-# Celery Configuration
-if AMQP_URL:
-    CELERY_BROKER_URL = AMQP_URL
-else:
-    CELERY_BROKER_URL = f"amqp://{RABBITMQ_USER}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST}:{RABBITMQ_PORT}/{RABBITMQ_VHOST}"
+# Configure Celery for SSL Redis connections (if using rediss://)
+# The Celery Redis backend requires ssl_cert_reqs to be explicitly set
+import ssl
+if CELERY_BROKER_URL and "rediss://" in CELERY_BROKER_URL:
+    CELERY_BROKER_TRANSPORT_OPTIONS = {
+        "ssl_cert_reqs": ssl.CERT_NONE,  # For Upstash and other cloud Redis providers
+    }
+if CELERY_RESULT_BACKEND and "rediss://" in CELERY_RESULT_BACKEND:
+    # For Redis result backend with SSL, configure transport options
+    # This must be set before Celery initializes the backend
+    CELERY_RESULT_BACKEND_TRANSPORT_OPTIONS = {
+        "ssl_cert_reqs": ssl.CERT_NONE,  # For Upstash and other cloud Redis providers
+    }
+    # Also set connection_pool_kwargs for the Redis connection pool
+    CELERY_RESULT_BACKEND_TRANSPORT_OPTIONS["connection_pool_kwargs"] = {
+        "ssl_cert_reqs": ssl.CERT_NONE,
+    }
 
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = "json"

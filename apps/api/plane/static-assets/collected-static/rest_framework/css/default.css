@@ -1,0 +1,82 @@
+/* The navbar is fixed at >= 980px wide, so add padding to the body to prevent
+content running up underneath it. */
+
+h1 {
+  font-weight: 300;
+}
+
+h2, h3 {
+  font-weight: 300;
+}
+
+.resource-description, .response-info {
+  margin-bottom: 2em;
+}
+
+.version:before {
+  content: "v";
+  opacity: 0.6;
+  padding-right: 0.25em;
+}
+
+.version {
+  font-size: 70%;
+}
+
+.format-option {
+  font-family: Menlo, Consolas, "Andale Mono", "Lucida Console", monospace;
+}
+
+.button-form {
+  float: right;
+  margin-right: 1em;
+}
+
+td.nested {
+  padding: 0 !important;
+}
+
+td.nested > table {
+  margin: 0;
+}
+
+form select, form input:not([type=checkbox]), form textarea {
+  width: 90%;
+}
+
+form select[multiple] {
+  height: 150px;
+}
+
+/* To allow tooltips to work on disabled elements */
+.disabled-tooltip-shield {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.errorlist {
+  margin-top: 0.5em;
+}
+
+pre {
+  overflow: auto;
+  word-wrap: normal;
+  white-space: pre;
+  font-size: 12px;
+}
+
+.page-header {
+  border-bottom: none;
+  padding-bottom: 0px;
+}
+
+#filtersModal form input[type=submit] {
+    width: auto;
+}
+
+#filtersModal .modal-body h2 {
+    margin-top: 0
+}
