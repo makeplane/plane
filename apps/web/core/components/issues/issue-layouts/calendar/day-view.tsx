@@ -78,26 +78,15 @@ export const DayView: React.FC<Props> = observer(({
   const hourRefs = useRef<(HTMLDivElement | null)[]>([]);
   const { issue: issueStore } = useIssueDetail();
 
-  // Group issues: events (with start_time) vs all-day (without) - using direct computation for MobX reactivity
+  // Group issues: events (with start_time) vs all-day (without) - using filtered issues from groupedIssueIds
   const getIssuesForDay = () => {
     if (!issues || !formattedDatePayload) return { eventIssues: [], allDayIssues: [] };
 
-    // Get issues that have their start_date matching the selected date
-    const allIssuesForDay = Object.values(issues).filter((issue): issue is TIssue => {
-      if (!issue) return false;
-
-      const selectedDate = formattedDatePayload;
-      const latestIssue = issueStore.getIssueById(issue.id) || issue;
-
-      // Only show issues on their start_date
-      if (latestIssue.start_date) {
-        return latestIssue.start_date === selectedDate;
-      }
-
-      // Fallback: check if issue is in the grouped list for this date
-      const issueIdsForDate = groupedIssueIds[formattedDatePayload] || [];
-      return issueIdsForDate.includes(issue.id);
-    });
+    // Get only the issues that are in the filtered groupedIssueIds for this date
+    const issueIdsForDate = groupedIssueIds[formattedDatePayload] || [];
+    const allIssuesForDay = issueIdsForDate
+      .map(issueId => issues[issueId])
+      .filter((issue): issue is TIssue => !!issue);
 
     return {
       eventIssues: allIssuesForDay.filter((issue) => {
