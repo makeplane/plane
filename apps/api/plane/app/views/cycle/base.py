@@ -194,10 +194,10 @@ class CycleViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
-        cycle_status = request.query_params.get('status')
+        cycle_status = request.query_params.getlist('status')
         queryset = self.get_queryset().filter(archived_at__isnull=True)
         if cycle_status:
-            queryset = queryset.filter(status=cycle_status)
+            queryset = queryset.filter(status__in=cycle_status)
         cycle_view = request.GET.get("cycle_view", "all")
 
         # Update the order by

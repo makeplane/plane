@@ -99,6 +99,15 @@ export class CycleService extends APIService {
         throw error?.response?.data;
       });
   }
+  async getCyclesWithStatus(workspaceSlug: string, projectId: string, status: Array<string>): Promise<ICycle[]> {
+    const query = Array.isArray(status) && status.length > 0 ? status.map((s) => `status=${encodeURIComponent(s)}`).join("&") : "";
+    const url = `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${query ? `?${query}` : ""}`;
+    return this.get(url)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 
   async getCycleDetails(workspaceSlug: string, projectId: string, cycleId: string): Promise<ICycle> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`)

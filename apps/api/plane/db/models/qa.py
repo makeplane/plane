@@ -59,12 +59,13 @@ class CaseModule(BaseModel):
     @property
     def get_all_children(self) -> list:
         """获取当前模块及其所有子模块的ID（包括多层嵌套的子模块）"""
+
         def get_children_ids(module):
             ids = [module.id]
             for child in module.children.all():
                 ids.extend(get_children_ids(child))
             return ids
-        
+
         return get_children_ids(self)
 
     class Meta:
@@ -172,7 +173,7 @@ class TestPlan(BaseModel):
     cases = models.ManyToManyField(TestCase, blank=True, related_name="plans", through="PlanCase",
                                    through_fields=("plan", "case"))
 
-    cycles = models.ManyToManyField("db.Cycle", blank=True, related_name="plans")
+    cycle = models.ForeignKey("db.Cycle", null=True, blank=True, related_name="plans", on_delete=models.DO_NOTHING)
     modules = models.ManyToManyField("db.Module", blank=True, related_name="plans", db_table="plan_modules_relations")
 
     @property
