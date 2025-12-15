@@ -6,7 +6,7 @@ import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { CalendarCheck2, CalendarClock, Link, Paperclip, Clock } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Link, Paperclip, Clock, SignalIcon, Volleyball, Calendar, User } from "lucide-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
@@ -48,6 +48,10 @@ import { WorkItemLayoutAdditionalProperties } from "@/plane-web/components/issue
 // local components
 import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
+import LevelDropdown from "@/components/dropdowns/level-property";
+import SportDropdown from "@/components/dropdowns/sport-property";
+import { YearRangeDropdown } from "@/components/dropdowns/year-property";
+import { ProgramDropdown } from "@/components/dropdowns/program-property";
 
 export interface IIssueProperties {
   issue: TIssue;
@@ -216,6 +220,36 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
          })
       })
   }
+  const handleYear = (year: string | null) => {
+    if (updateIssue)
+      updateIssue(issue.project_id, issue.id, { year: year ?? null}).then(() => {
+         captureSuccess({
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
+          payload: { id: issue.id },
+         })
+      })
+  }
+
+
+  const handleLevel = (level: string | null) => {
+    if(updateIssue)
+      updateIssue(issue.project_id, issue.id, {level: level ?? null}).then(() => {
+         captureSuccess({
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
+          payload:{ id: issue.id },
+         })
+    })
+  }
+
+   const handleProgram = (program: string | null) => {
+    if(updateIssue)
+      updateIssue(issue.project_id, issue.id, {program: program ?? null}).then(() => {
+         captureSuccess({
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
+          payload:{ id: issue.id },
+         })
+    })
+  }
 
   const handleTargetDate = (date: Date | null) => {
     if (updateIssue)
@@ -260,13 +294,47 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
   const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
 
-  const minDate = getDate(issue.start_date);
+  const minDate = new Date();
+  // const minDate = getDate(issue.start_date);
   const maxDate = getDate(issue.target_date);
 
   const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
   };
+
+const isStartTimeReadOnly = (dateValue: string | null, timeValue: string | null): boolean => {
+  const now = new Date();
+
+  // If no date → editable
+  if (!dateValue) return false;
+
+  const fieldDate = new Date(dateValue);
+  fieldDate.setHours(0, 0, 0, 0);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // 1. If the field’s date is NOT today → editable
+  if (fieldDate.getTime() !== today.getTime()) return false;
+
+  // 2. If field date is today AND has past time → editable for that past time
+  if (timeValue) {
+    const [h, m] = timeValue.split(":").map(Number);
+    const fieldDateWithTime = new Date(dateValue);
+    fieldDateWithTime.setHours(h, m, 0, 0);
+
+    if (fieldDateWithTime < now) return false; // editable
+  }
+
+  // 3. Otherwise → read-only (past time is blocked)
+  return true;
+};
+
+// Usage:
+ const disabled = isStartTimeReadOnly(issue.start_date, issue.start_time);
+
+  // {console.log("Render all display propertie:",  JSON.stringify(displayProperties) )}
 
   return (
     <div className={className}>
@@ -287,8 +355,26 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         </div>
       </WithDisplayPropertiesHOC>
 
+      {/* Season field */}
+       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <YearRangeDropdown
+             value={issue?.year ?? null}
+             onChange={handleLevel}
+             placeholder={t("year_field")}
+             icon={<Calendar className="h-3 w-3 flex-shrink-0" />}
+             buttonVariant={issue?.year ? "border-with-text": "border-without-text"}
+             clearIconClassName="!text-custom-text-100"
+             disabled={disabled}
+             renderByDefault={isMobile}
+             showTooltip
+              />
+        </div>
+      </WithDisplayPropertiesHOC>
+
+
       {/* priority */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
+      {/* <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <PriorityDropdown
             value={issue?.priority}
@@ -300,10 +386,10 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             showTooltip
           />
         </div>
-      </WithDisplayPropertiesHOC>
+      </WithDisplayPropertiesHOC> */}
 
       {/* merged dates */}
-      <WithDisplayPropertiesHOC
+      {/* <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey={["start_date", "due_date"]}
         shouldRenderProperty={() => isDateRangeEnabled}
@@ -333,19 +419,18 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             customTooltipHeading="Date Range"
           />
         </div>
-      </WithDisplayPropertiesHOC>
+      </WithDisplayPropertiesHOC> */}
 
       {/* start date */}
       <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey="start_date"
-        shouldRenderProperty={() => !isDateRangeEnabled}
       >
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <DateDropdown
             value={issue.start_date ?? null}
             onChange={handleStartDate}
-            maxDate={maxDate}
+            minDate={minDate}
             placeholder={t("common.order_by.start_date")}
             icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
@@ -363,7 +448,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           <TimeDropdown
             value={issue?.start_time ?? null}
             onChange={handleStartTime}
-            placeholder={t("common.start_time")}
+            placeholder={t("starting_time")}
             icon={<Clock className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue?.start_time ? "border-with-text" : "border-without-text"}
             clearIconClassName="!text-custom-text-100"
@@ -373,6 +458,59 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           />
         </div>
       </WithDisplayPropertiesHOC>
+
+       {/* level field */}
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <LevelDropdown
+             value={issue?.level ?? null}
+             onChange={handleLevel}
+             placeholder={t("level_field")}
+             icon={<SignalIcon className="h-3 w-3 flex-shrink-0" />}
+             buttonVariant={issue?.level ? "border-with-text": "border-without-text"}
+             clearIconClassName="!text-custom-text-100"
+             disabled={disabled}
+             renderByDefault={isMobile}
+             showTooltip
+              />
+        </div>
+      </WithDisplayPropertiesHOC>
+
+
+      {/* sport field */}
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <SportDropdown
+             value={issue?.sport ?? null}
+             onChange={handleSport}
+             placeholder={t("sport_field")}
+             icon={<Volleyball className="h-3 w-3 flex-shrink-0" />}
+             buttonVariant={issue?.sport ? "border-with-text": "border-without-text"}
+             clearIconClassName="!text-custom-text-100"
+             disabled={disabled}
+             renderByDefault={isMobile}
+             showTooltip
+              />
+        </div>
+      </WithDisplayPropertiesHOC>
+
+        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <ProgramDropdown
+             value={issue?.program ?? null}
+             onChange={handleProgram}
+             placeholder={t("program_field")}
+             icon={<User className="h-3 w-3 flex-shrink-0" />}
+             buttonVariant={issue?.program ? "border-with-text": "border-without-text"}
+             clearIconClassName="!text-custom-text-100"
+             disabled={disabled}
+             renderByDefault={isMobile}
+             showTooltip
+              />
+        </div>
+      </WithDisplayPropertiesHOC>
+
+
 
       {/* assignee */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
@@ -540,7 +678,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WorkItemLayoutAdditionalProperties displayProperties={displayProperties} issue={issue} />
 
       {/* label */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
+      {/* <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
         <IssuePropertyLabels
           projectId={issue?.project_id || null}
           value={issue?.label_ids || []}
@@ -551,7 +689,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           hideDropdownArrow
           maxRender={3}
         />
-      </WithDisplayPropertiesHOC>
+      </WithDisplayPropertiesHOC> */}
     </div>
   );
 });

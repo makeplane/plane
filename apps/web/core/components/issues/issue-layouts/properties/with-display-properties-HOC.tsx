@@ -11,10 +11,22 @@ interface IWithDisplayPropertiesHOC {
 
 export const WithDisplayPropertiesHOC = observer(
   ({ displayProperties, shouldRenderProperty, displayPropertyKey, children }: IWithDisplayPropertiesHOC) => {
+
+    const getDisplayFlag = (key: keyof IIssueDisplayProperties) => {
+      // If the backend does NOT return the key → default to true (show it)
+      if (!(key in displayProperties)) return true;
+
+      // Otherwise use the backend value
+      return !!displayProperties[key];
+    };
+
     let shouldDisplayPropertyFromFilters = false;
-    if (Array.isArray(displayPropertyKey))
-      shouldDisplayPropertyFromFilters = displayPropertyKey.every((key) => !!displayProperties[key]);
-    else shouldDisplayPropertyFromFilters = !!displayProperties[displayPropertyKey];
+
+    if (Array.isArray(displayPropertyKey)) {
+      shouldDisplayPropertyFromFilters = displayPropertyKey.every((key) => getDisplayFlag(key));
+    } else {
+      shouldDisplayPropertyFromFilters = getDisplayFlag(displayPropertyKey);
+    }
 
     const renderProperty =
       shouldDisplayPropertyFromFilters && (shouldRenderProperty ? shouldRenderProperty(displayProperties) : true);
@@ -24,3 +36,4 @@ export const WithDisplayPropertiesHOC = observer(
     return <>{children}</>;
   }
 );
+
