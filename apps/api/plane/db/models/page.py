@@ -132,7 +132,7 @@ class ProjectPage(BaseModel):
     project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="project_pages")
     page = models.ForeignKey("db.Page", on_delete=models.CASCADE, related_name="project_pages")
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="project_pages")
-    sort_order = models.FloatField(default=65535)
+    sort_order = models.FloatField(default=Page.DEFAULT_SORT_ORDER)
 
     class Meta:
         unique_together = ["project", "page", "deleted_at"]
