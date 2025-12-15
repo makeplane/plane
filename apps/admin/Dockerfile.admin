@@ -73,16 +73,26 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store CI=true pnpm install --o
 # Build only the admin package
 RUN pnpm turbo run build --filter=admin
 
-# =========================================================================== #
+# *****************************************************************************
+# STAGE 3: Serve with Caddy
+# *****************************************************************************
 
-FROM nginx:1.29-alpine AS production
+FROM caddy:2.11-builder-alpine AS caddy-builder
 
-COPY apps/admin/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY --from=installer /app/apps/admin/build/client /usr/share/nginx/html/god-mode
+RUN xcaddy build \
+    --with github.com/mholt/caddy-ratelimit
+
+FROM caddy:2.11-alpine AS production
+
+COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
+
+COPY apps/admin/caddy/Caddyfile /etc/caddy/Caddyfile
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -fsS http://127.0.0.1:3000/god-mode >/dev/null || exit 1
+
+COPY --from=installer /app/apps/admin/build/client /usr/share/caddy/html/god-mode
 
 EXPOSE 3000
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -fsS http://127.0.0.1:3000/ >/dev/null || exit 1
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]
