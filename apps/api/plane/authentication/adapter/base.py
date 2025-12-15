@@ -21,6 +21,7 @@ from plane.bgtasks.user_activation_email_task import user_activation_email
 from plane.utils.host import base_host
 from plane.utils.ip_address import get_client_ip
 from plane.utils.exception_logger import log_exception
+from plane.settings.storage import S3Storage
 
 
 class Adapter:
@@ -180,9 +181,6 @@ class Adapter:
             # Generate unique filename
             filename = f"{uuid.uuid4().hex}-user-avatar.{extension}"
 
-            # Upload to S3/MinIO storage
-            from plane.settings.storage import S3Storage
-
             storage = S3Storage(request=self.request)
 
             # Create file-like object
@@ -232,6 +230,22 @@ class Adapter:
         user.save()
         return user
 
+    def delete_old_avatar(self, user):
+        """Delete the old avatar if it exists"""
+        try:
+            if user.avatar_asset:
+                asset = FileAsset.objects.get(pk=user.avatar_asset_id)
+                storage = S3Storage(request=self.request)
+                storage.delete_files(object_names=[asset.asset.name])
+                user.avatar_asset = None
+                asset.delete()
+                user.save()
+        except FileAsset.DoesNotExist:
+            pass
+        except Exception as e:
+            log_exception(e)
+            return False
+
     def sync_user_data(self, user):
         # Update user details
         first_name = self.user_data.get("user", {}).get("first_name", "")
@@ -251,15 +265,16 @@ class Adapter:
         # Set display name
         user.display_name = display_name
 
-        # Download and upload avatar
+        # Download and upload avatar only if the avatar is different from the one in the storage
         avatar = self.user_data.get("user", {}).get("avatar", "")
-        if avatar:
-            avatar_asset = self.download_and_upload_avatar(avatar_url=avatar, user=user)
-            if avatar_asset:
-                user.avatar_asset = avatar_asset
-            # If avatar upload fails, set the avatar to the original URL
-            else:
-                user.avatar = avatar
+        # Delete the old avatar if it exists
+        self.delete_old_avatar(user=user)
+        avatar_asset = self.download_and_upload_avatar(avatar_url=avatar, user=user)
+        if avatar_asset:
+            user.avatar_asset = avatar_asset
+        # If avatar upload fails, set the avatar to the original URL
+        else:
+            user.avatar = avatar
 
         user.save()
         return user
@@ -311,6 +326,7 @@ class Adapter:
                 avatar_asset = self.download_and_upload_avatar(avatar_url=avatar, user=user)
                 if avatar_asset:
                     user.avatar_asset = avatar_asset
+                    user.avatar = avatar
                 # If avatar upload fails, set the avatar to the original URL
                 else:
                     user.avatar = avatar
