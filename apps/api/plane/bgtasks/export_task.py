@@ -15,11 +15,10 @@ from django.utils import timezone
 from django.db.models import Prefetch
 
 # Module imports
-from plane.db.models import ExporterHistory, Issue, IssueRelation
+from plane.db.models import ExporterHistory, Issue, IssueComment, IssueRelation, IssueSubscriber
 from plane.utils.exception_logger import log_exception
 from plane.utils.porters.exporter import DataExporter
 from plane.utils.porters.serializers.issue import IssueExportSerializer
-from plane.utils.porters.formatters import CSVFormatter, JSONFormatter, XLSXFormatter
 
 
 def create_zip_file(files: List[tuple[str, str | bytes]]) -> io.BytesIO:
@@ -161,10 +160,16 @@ def issue_export_task(
                 "labels",
                 "issue_cycle__cycle",
                 "issue_module__module",
-                "issue_comments",
                 "assignees",
-                "issue_subscribers",
                 "issue_link",
+                Prefetch(
+                    "issue_subscribers",
+                    queryset=IssueSubscriber.objects.select_related("subscriber"),
+                ),
+                Prefetch(
+                    "issue_comments",
+                    queryset=IssueComment.objects.select_related("actor").order_by("created_at"),
+                ),
                 Prefetch(
                     "issue_relation",
                     queryset=IssueRelation.objects.select_related("related_issue", "related_issue__project"),
@@ -180,20 +185,9 @@ def issue_export_task(
             )
         )
 
-        # Map provider to formatter
-        formatter_map = {
-            "csv": CSVFormatter(),
-            "json": JSONFormatter(),
-            "xlsx": XLSXFormatter(list_joiner=", "),
-        }
-
         # Create exporter for the specified format
         try:
-            if provider not in formatter_map:
-                raise ValueError(f"Unsupported format: {provider}. Available: csv, json, xlsx")
-
-            formatter = formatter_map[provider]
-            exporter = DataExporter(IssueExportSerializer)
+            exporter = DataExporter(IssueExportSerializer, format_type=provider)
         except ValueError as e:
             # Invalid format type
             exporter_instance = ExporterHistory.objects.get(token=token_id)
@@ -208,14 +202,12 @@ def issue_export_task(
             for project_id in project_ids:
                 project_issues = workspace_issues.filter(project_id=project_id)
                 export_filename = f"{slug}-{project_id}"
-                content = exporter.to_string(project_issues, formatter)
-                filename = f"{export_filename}.{formatter.extension}"
+                filename, content = exporter.export(export_filename, project_issues)
                 files.append((filename, content))
         else:
             # Export all issues in a single file
             export_filename = f"{slug}-{workspace_id}"
-            content = exporter.to_string(workspace_issues, formatter)
-            filename = f"{export_filename}.{formatter.extension}"
+            filename, content = exporter.export(export_filename, workspace_issues)
             files.append((filename, content))
 
         zip_buffer = create_zip_file(files)
