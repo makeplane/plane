@@ -3,7 +3,7 @@ import random
 from rest_framework import serializers
 
 # Module imports
-from plane.db.models import Project, ProjectIdentifier, WorkspaceMember, State, Estimate, Workspace
+from plane.db.models import Project, ProjectIdentifier, WorkspaceMember, State, Estimate
 
 from plane.utils.content_validator import (
     validate_html_content,

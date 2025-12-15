@@ -14,7 +14,6 @@ from plane.db.models import (
     DeployBoard,
     ProjectPublicMember,
     IssueSequence,
-    Workspace,
 )
 from plane.utils.content_validator import (
     validate_html_content,
