@@ -17,7 +17,7 @@ export const TreeMapChart = React.memo(function TreeMapChart(props: TreeMapChart
           nameKey="name"
           dataKey="value"
           stroke="currentColor"
-          className="text-custom-background-100 bg-surface-1"
+          className="bg-layer-1 cursor-pointer"
           content={<CustomTreeMapContent />}
           animationEasing="ease-out"
           isUpdateAnimationActive={isAnimationActive}
@@ -29,7 +29,7 @@ export const TreeMapChart = React.memo(function TreeMapChart(props: TreeMapChart
               content={({ active, payload }) => <TreeMapTooltip active={active} payload={payload} />}
               cursor={{
                 fill: "currentColor",
-                className: "text-custom-background-90/80 cursor-pointer",
+                className: "bg-layer-1 cursor-pointer",
               }}
               wrapperStyle={{
                 pointerEvents: "auto",
