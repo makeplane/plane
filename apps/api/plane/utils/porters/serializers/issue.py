@@ -13,9 +13,10 @@ class IssueExportSerializer(IssueSerializer):
     """
 
     identifier = serializers.SerializerMethodField()
-    project_name = serializers.SerializerMethodField()
-    project_identifier = serializers.SerializerMethodField()
-    state_name = serializers.SerializerMethodField()
+    project_name = serializers.CharField(source='project.name', read_only=True, default="")
+    project_identifier = serializers.CharField(source='project.identifier', read_only=True, default="")
+    state_name = serializers.CharField(source='state.name', read_only=True, default="")
+
     created_by_name = serializers.SerializerMethodField()
     assignees = serializers.SerializerMethodField()
     parent = serializers.SerializerMethodField()
@@ -52,15 +53,6 @@ class IssueExportSerializer(IssueSerializer):
 
     def get_identifier(self, obj):
         return f"{obj.project.identifier}-{obj.sequence_id}"
-
-    def get_project_name(self, obj):
-        return obj.project.name if obj.project else ""
-
-    def get_project_identifier(self, obj):
-        return obj.project.identifier if obj.project else ""
-
-    def get_state_name(self, obj):
-        return obj.state.name if obj.state else ""
 
     def get_created_by_name(self, obj):
         if not obj.created_by:
