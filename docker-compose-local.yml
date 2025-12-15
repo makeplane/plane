@@ -158,6 +158,25 @@ services:
       - plane-db
       - plane-mq
 
+  webhook-consumer:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: "no"
+    networks:
+      - dev_env
+    volumes:
+      - ./apps/api:/code
+    command: ./bin/docker-entrypoint-webhook-consumer.sh --settings=plane.settings.local
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - plane-db
+      - plane-redis
+      - plane-mq
+
 volumes:
   redisdata:
   uploads:
