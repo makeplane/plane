@@ -41,6 +41,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
   // refs
@@ -49,11 +50,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, cycleId } = useParams() as {
-    workspaceSlug: string;
-    projectId: string;
-    cycleId: string;
-  };
+  const { workspaceSlug, projectId, cycleId } = useParams();
   // i18n
   const { t } = useTranslation();
   // store hooks
@@ -134,12 +131,13 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
         <Header.LeftItem>
           <div className="flex items-center gap-2">
             <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+              <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink
                     label="Cycles"
                     href={`/${workspaceSlug}/projects/${projectId}/cycles/`}
-                    icon={<CycleIcon className="h-4 w-4 text-custom-text-300" />}
+                    icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
                   />
                 }
               />
@@ -154,7 +152,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                     title={cycleDetails?.name}
                     icon={
                       <Breadcrumbs.Icon>
-                        <CycleIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                        <CycleIcon className="size-4 flex-shrink-0 text-tertiary" />
                       </Breadcrumbs.Icon>
                     }
                     isLast
@@ -171,7 +169,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                 } in this cycle`}
                 position="bottom"
               >
-                <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
+                <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2 text-center text-11 font-semibold text-accent-primary">
                   {workItemsCount}
                 </span>
               </Tooltip>
@@ -228,39 +226,36 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
 
             {canUserCreateIssue && (
               <>
-                <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-                  <div className="hidden @4xl:flex">Analytics</div>
-                  <div className="flex @4xl:hidden">
+                <Button onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
+                  <span className="hidden @4xl:flex">Analytics</span>
+                  <span className="@4xl:hidden">
                     <ChartNoAxesColumn className="size-3.5" />
-                  </div>
+                  </span>
                 </Button>
                 {!isCompletedCycle && (
                   <Button
-                    className="h-full self-start"
+                    variant="primary"
+                    size="lg"
+                    className="self-start"
                     onClick={() => {
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
                     data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.CYCLE}
-                    size="sm"
                   >
                     {t("issue.add.label")}
                   </Button>
                 )}
               </>
             )}
-            <button
-              type="button"
-              className="p-1.5 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
-              onClick={toggleSidebar}
-            >
-              <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
-            </button>
+            <Button variant="ghost" size="lg" onClick={toggleSidebar}>
+              <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-accent-primary" : "text-secondary")} />
+            </Button>
             <CycleQuickActions
               parentRef={parentRef}
               cycleId={cycleId}
               projectId={projectId}
               workspaceSlug={workspaceSlug}
-              customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+              customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
             />
           </div>
         </Header.RightItem>

@@ -24,10 +24,10 @@ function WorkspaceViewsPage() {
     <>
       <PageHead title={pageTitle} />
       <div className="flex flex-col h-full w-full overflow-hidden">
-        <div className="flex h-11 w-full items-center gap-2.5  px-5 py-3 overflow-hidden border-b border-custom-border-200">
-          <Search className="text-custom-text-200" size={14} strokeWidth={2} />
+        <div className="flex h-11 w-full items-center gap-2.5  px-5 py-3 overflow-hidden border-b border-subtle">
+          <Search className="text-secondary" size={14} strokeWidth={2} />
           <Input
-            className="w-full bg-transparent !p-0 text-xs leading-5 text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+            className="w-full bg-transparent !p-0 text-11 leading-5 text-secondary placeholder:text-placeholder focus:outline-none"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search"

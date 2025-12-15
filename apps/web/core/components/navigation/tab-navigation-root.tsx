@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -44,7 +42,7 @@ type TTabNavigationRootProps = {
   projectId: string;
 };
 
-export const TabNavigationRoot: FC<TTabNavigationRootProps> = observer((props) => {
+export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTabNavigationRootProps) {
   const { workspaceSlug, projectId } = props;
   const { workItem: workItemIdentifierFromRoute } = useParams();
   const location = useLocation();
@@ -115,7 +113,7 @@ export const TabNavigationRoot: FC<TTabNavigationRootProps> = observer((props) =
   const hiddenNavigationItems = allNavigationItems.filter((item) => tabPreferences.hiddenTabs.includes(item.key));
 
   // Responsive tab layout hook
-  const { visibleItems, overflowItems, hasOverflow, containerRef, itemRefs } = useResponsiveTabLayout({
+  const { visibleItems, overflowItems, hasOverflow, itemRefs, containerRef } = useResponsiveTabLayout({
     visibleNavigationItems,
     hiddenNavigationItems,
     isActive,
@@ -167,9 +165,9 @@ export const TabNavigationRoot: FC<TTabNavigationRootProps> = observer((props) =
       />
 
       {/* container for the tab navigation */}
-      <div className="flex items-center gap-3 overflow-hidden pl-1.5 size-full">
+      <div className="flex items-center gap-3 overflow-hidden size-full">
         <div className="flex items-center gap-2 shrink-0">
-          <ProjectHeader project={project} />
+          <ProjectHeader workspaceSlug={workspaceSlug} projectId={projectId} />
           <div className="shrink-0">
             <ProjectActionsMenu
               workspaceSlug={workspaceSlug}
@@ -183,7 +181,7 @@ export const TabNavigationRoot: FC<TTabNavigationRootProps> = observer((props) =
           </div>
         </div>
 
-        <div className="shrink-0 h-5 w-1 border-l border-custom-border-200" />
+        <div className="shrink-0 h-5 w-1 border-l border-subtle" />
 
         <div ref={containerRef} className="flex items-center h-full flex-1 min-w-0 overflow-hidden">
           <TabNavigationList className="h-full">

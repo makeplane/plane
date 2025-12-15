@@ -29,13 +29,13 @@ export function StarUsOnGitHubLink() {
           },
         })
       }
-      className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5"
+      className="flex flex-shrink-0 items-center gap-1.5 rounded-sm bg-layer-1 px-3 py-1.5"
       href="https://github.com/makeplane/plane"
       target="_blank"
       rel="noopener noreferrer"
     >
       <img src={imageSrc} className="h-4 w-4 object-contain" alt="GitHub Logo" aria-hidden="true" />
-      <span className="hidden text-xs font-medium sm:hidden md:block">{t("home.star_us_on_github")}</span>
+      <span className="hidden text-11 font-medium sm:hidden md:block">{t("home.star_us_on_github")}</span>
     </a>
   );
 }

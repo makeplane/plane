@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Código único",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Cole o código enviado para seu email",
         requesting_new_code: "Solicitando novo código",
         sending_code: "Enviando código",
@@ -340,13 +340,13 @@ export default {
   project_id_must_be_at_most_5_characters: "O ID do projeto deve ter no máximo 5 caracteres",
   project_id: "ID do projeto",
   project_id_tooltip_content:
-    "Ajuda você a identificar itens de trabalho no projeto de forma exclusiva. Máximo de 5 caracteres.",
+    "Ajuda você a identificar itens de trabalho no projeto de forma exclusiva. Máximo de 10 caracteres.",
   description_placeholder: "Descrição",
   only_alphanumeric_non_latin_characters_allowed: "Apenas caracteres alfanuméricos e não latinos são permitidos.",
   project_id_is_required: "O ID do projeto é obrigatório",
   project_id_allowed_char: "Apenas caracteres alfanuméricos e não latinos são permitidos.",
   project_id_min_char: "O ID do projeto deve ter pelo menos 1 caractere",
-  project_id_max_char: "O ID do projeto deve ter no máximo 5 caracteres",
+  project_id_max_char: "O ID do projeto deve ter no máximo 10 caracteres",
   project_description_placeholder: "Insira a descrição do projeto",
   select_network: "Selecione a rede",
   lead: "Líder",
@@ -1564,7 +1564,7 @@ export default {
           },
           code: {
             label: "Código único",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Código de verificação enviado para o novo e-mail.",
             errors: {
               required: "O código único é obrigatório",
@@ -1598,6 +1598,7 @@ export default {
         name: "Nome do espaço de trabalho",
         company_size: "Tamanho da empresa",
         url: "URL do espaço de trabalho",
+        workspace_timezone: "Fuso horário do espaço de trabalho",
         update_workspace: "Atualizar espaço de trabalho",
         delete_workspace: "Excluir este espaço de trabalho",
         delete_workspace_description:

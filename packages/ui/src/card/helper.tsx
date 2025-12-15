@@ -18,8 +18,7 @@ export interface ICardProperties {
   [key: string]: string;
 }
 
-const DEFAULT_STYLE =
-  "bg-custom-background-100 rounded-lg border-[0.5px] border-custom-border-200 w-full flex flex-col";
+const DEFAULT_STYLE = "bg-surface-1 rounded-lg border-[0.5px] border-subtle w-full flex flex-col";
 export const containerStyle: ICardProperties = {
   [ECardVariant.WITHOUT_SHADOW]: "",
   [ECardVariant.WITH_SHADOW]: "hover:shadow-custom-shadow-4xl duration-300",

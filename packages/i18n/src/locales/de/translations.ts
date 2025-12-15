@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Einmaliger Code",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Fügen Sie den an Ihre E-Mail gesendeten Code ein",
         requesting_new_code: "Neuen Code anfordern",
         sending_code: "Code wird gesendet",
@@ -344,13 +344,13 @@ export default {
   project_id_must_be_at_least_1_character: "Projekt-ID muss mindestens 1 Zeichen lang sein",
   project_id_must_be_at_most_5_characters: "Projekt-ID darf maximal 5 Zeichen lang sein",
   project_id: "Projekt-ID",
-  project_id_tooltip_content: "Hilft, Arbeitselemente im Projekt eindeutig zu identifizieren. Max. 5 Zeichen.",
+  project_id_tooltip_content: "Hilft, Arbeitselemente im Projekt eindeutig zu identifizieren. Max. 10 Zeichen.",
   description_placeholder: "Beschreibung",
   only_alphanumeric_non_latin_characters_allowed: "Es sind nur alphanumerische und nicht-lateinische Zeichen erlaubt.",
   project_id_is_required: "Projekt-ID ist erforderlich",
   project_id_allowed_char: "Es sind nur alphanumerische und nicht-lateinische Zeichen erlaubt.",
   project_id_min_char: "Projekt-ID muss mindestens 1 Zeichen lang sein",
-  project_id_max_char: "Projekt-ID darf maximal 5 Zeichen lang sein",
+  project_id_max_char: "Projekt-ID darf maximal 10 Zeichen lang sein",
   project_description_placeholder: "Geben Sie eine Projektbeschreibung ein",
   select_network: "Netzwerk auswählen",
   lead: "Leitung",
@@ -1562,7 +1562,7 @@ export default {
           },
           code: {
             label: "Einmaliger Code",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Verifizierungscode wurde an deine neue E-Mail gesendet.",
             errors: {
               required: "Einmaliger Code ist erforderlich",
@@ -1596,6 +1596,7 @@ export default {
         name: "Name des Arbeitsbereichs",
         company_size: "Unternehmensgröße",
         url: "URL des Arbeitsbereichs",
+        workspace_timezone: "Zeitzone des Arbeitsbereichs",
         update_workspace: "Arbeitsbereich aktualisieren",
         delete_workspace: "Diesen Arbeitsbereich löschen",
         delete_workspace_description:

@@ -21,23 +21,21 @@ export function LayoutSwitcher(props: Props) {
   };
 
   return (
-    <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
+    <div className="flex items-center gap-1 rounded-sm bg-layer-1 p-1">
       {BASE_LAYOUTS.filter((l) => (layouts ? layouts.includes(l.key) : true)).map((layout) => {
         const Icon = layout.icon;
         return (
           <Tooltip key={layout.key} tooltipContent={layout.label} isMobile={isMobile}>
             <button
               type="button"
-              className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
-                selectedLayout === layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+              className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded-sm transition-all hover:bg-surface-1 ${
+                selectedLayout === layout.key ? "bg-surface-1 shadow-custom-shadow-2xs" : ""
               }`}
               onClick={() => handleOnChange(layout.key)}
             >
               <Icon
                 strokeWidth={2}
-                className={`h-3.5 w-3.5 ${
-                  selectedLayout === layout.key ? "text-custom-text-100" : "text-custom-text-200"
-                }`}
+                className={`h-3.5 w-3.5 ${selectedLayout === layout.key ? "text-primary" : "text-secondary"}`}
               />
             </button>
           </Tooltip>

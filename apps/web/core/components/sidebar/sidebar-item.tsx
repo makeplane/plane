@@ -48,13 +48,13 @@ interface AppSidebarButtonItemProps {
 // ============================================================================
 
 const styles = {
-  base: "group flex flex-col gap-0.5 items-center justify-center text-custom-text-300",
-  icon: "flex items-center justify-center gap-2 size-8 rounded-md text-custom-text-300",
-  iconActive: "bg-custom-background-80 text-custom-text-200",
-  iconInactive: "group-hover:text-custom-text-200 group-hover:bg-custom-background-80",
-  label: "text-xs font-medium",
-  labelActive: "text-custom-text-200",
-  labelInactive: "group-hover:text-custom-text-200 text-custom-text-300",
+  base: "group flex flex-col gap-0.5 items-center justify-center text-tertiary",
+  icon: "flex items-center justify-center gap-2 size-8 rounded-md text-tertiary",
+  iconActive: "bg-layer-transparent-selected text-secondary !text-icon-primary",
+  iconInactive: "group-hover:text-icon-secondary group-hover:bg-layer-transparent-hover !text-icon-tertiary",
+  label: "text-11 font-medium",
+  labelActive: "text-secondary",
+  labelInactive: "group-hover:text-secondary text-tertiary",
 } as const;
 
 // ============================================================================

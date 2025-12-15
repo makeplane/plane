@@ -16,10 +16,10 @@ export const PowerKModalFooter = observer(function PowerKModalFooter(props: Prop
   const { t } = useTranslation();
 
   return (
-    <div className="w-full flex items-center justify-between px-4 py-2 border-t border-custom-border-200 bg-custom-background-90/80 rounded-b-lg">
+    <div className="w-full flex items-center justify-between px-4 py-2 border-t border-subtle bg-surface-2/80 rounded-b-lg">
       <div />
       <div className="flex items-center gap-2">
-        <span className="text-xs text-custom-text-300">{t("power_k.footer.workspace_level")}</span>
+        <span className="text-11 text-tertiary">{t("power_k.footer.workspace_level")}</span>
         <ToggleSwitch
           value={isWorkspaceLevel}
           onChange={() => onWorkspaceLevelChange(!isWorkspaceLevel)}

@@ -72,11 +72,11 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
       <button
         type="button"
         className={cn(
-          "group flex items-center justify-between gap-2 px-2 py-0.5 rounded outline-none",
+          "group flex items-center justify-between gap-2 px-2 py-0.5 rounded-sm outline-none",
           {
             "cursor-not-allowed": disabled,
-            "hover:bg-custom-background-80": !disabled,
-            "bg-custom-background-80": isParentIssueModalOpen,
+            "hover:bg-layer-1": !disabled,
+            "bg-layer-1": isParentIssueModalOpen,
           },
           className
         )}
@@ -84,7 +84,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
         disabled={disabled}
       >
         {issue.parent_id && parentIssue ? (
-          <div className="flex items-center gap-1 bg-green-500/20 rounded px-1.5 py-1">
+          <div className="flex items-center gap-1 bg-success-subtle rounded-sm px-1.5 py-1">
             <Tooltip tooltipHeading="Title" tooltipContent={parentIssue.name} isMobile={isMobile}>
               <Link href={workItemLink} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
                 {parentIssue?.project_id && parentIssueProjectDetails && (
@@ -93,7 +93,8 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
                     issueTypeId={parentIssue.type_id}
                     projectIdentifier={parentIssueProjectDetails?.identifier}
                     issueSequenceId={parentIssue.sequence_id}
-                    textContainerClassName="text-xs font-medium text-green-700"
+                    size="xs"
+                    variant="success"
                   />
                 )}
               </Link>
@@ -108,18 +109,18 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
                     handleRemoveSubIssue(workspaceSlug, projectId, parentIssue.id, issueId);
                   }}
                 >
-                  <CloseIcon className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                  <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-danger" />
                 </span>
               </Tooltip>
             )}
           </div>
         ) : (
-          <span className="text-sm text-custom-text-400">{t("issue.add.parent")}</span>
+          <span className="text-body-xs-regular text-placeholder">{t("issue.add.parent")}</span>
         )}
         {!disabled && (
           <span
             className={cn("p-1 flex-shrink-0 opacity-0 group-hover:opacity-100", {
-              "text-custom-text-400": !issue.parent_id && !parentIssue,
+              "text-placeholder": !issue.parent_id && !parentIssue,
             })}
           >
             <Pencil className="h-2.5 w-2.5 flex-shrink-0" />

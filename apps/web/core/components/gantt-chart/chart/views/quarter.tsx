@@ -21,11 +21,11 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
         quarterBlocks?.map((quarterBlock, rootIndex) => (
           <div
             key={`month-${quarterBlock.quarterNumber}-${quarterBlock.year}`}
-            className="relative flex flex-col outline-[0.25px] outline outline-custom-border-200"
+            className="relative flex flex-col outline-[0.25px] outline outline-subtle-1"
           >
             {/** Header Div */}
             <div
-              className="w-full sticky top-0 z-[5] bg-custom-background-100 flex-shrink-0 outline-[1px] outline outline-custom-border-200"
+              className="w-full sticky top-0 z-[5] bg-surface-1 flex-shrink-0 outline-[1px] outline outline-subtle-1"
               style={{
                 height: `${HEADER_HEIGHT}px`,
               }}
@@ -33,19 +33,19 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
               {/** Main Quarter Title */}
               <div className="w-full inline-flex h-7 justify-between">
                 <div
-                  className="sticky flex items-center font-normal z-[1] my-1 whitespace-nowrap px-3 py-1 text-base capitalize bg-custom-background-100 text-custom-text-200"
+                  className="sticky flex items-center font-regular z-[1] my-1 whitespace-nowrap px-3 py-1 text-14 capitalize bg-surface-1 text-secondary"
                   style={{
                     left: `${SIDEBAR_WIDTH}px`,
                   }}
                 >
                   {quarterBlock?.title}
                   {quarterBlock.today && (
-                    <span className={cn("rounded ml-2 font-medium  bg-custom-primary-100 px-1 text-2xs text-white")}>
+                    <span className={cn("rounded-sm ml-2 font-medium  bg-accent-primary px-1 text-9 text-on-color")}>
                       Current
                     </span>
                   )}
                 </div>
-                <div className="sticky whitespace-nowrap px-3 py-2 text-xs capitalize text-custom-text-400">
+                <div className="sticky whitespace-nowrap px-3 py-2 text-11 capitalize text-placeholder">
                   {quarterBlock.shortTitle}
                 </div>
               </div>
@@ -55,17 +55,17 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
                   <div
                     key={`sub-title-${rootIndex}-${index}`}
                     className={cn(
-                      "flex flex-shrink-0 text-center capitalize justify-center outline-[0.25px] outline outline-custom-border-200",
+                      "flex flex-shrink-0 text-center capitalize justify-center outline-[0.25px] outline outline-subtle-1",
                       {
-                        "bg-custom-primary-100/20": monthBlock.today,
+                        "bg-accent-primary/20": monthBlock.today,
                       }
                     )}
                     style={{ width: `${currentViewData?.data.dayWidth * monthBlock.days}px` }}
                   >
-                    <div className="space-x-1 flex items-center justify-center text-xs font-medium h-full">
+                    <div className="space-x-1 flex items-center justify-center text-11 font-medium h-full">
                       <span
                         className={cn({
-                          "rounded-lg bg-custom-primary-100 px-2 text-white": monthBlock.today,
+                          "rounded-lg bg-accent-primary px-2 text-on-color": monthBlock.today,
                         })}
                       >
                         {monthBlock.monthData.shortTitle}
@@ -80,8 +80,8 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
               {quarterBlock?.children?.map((monthBlock, index) => (
                 <div
                   key={`column-${rootIndex}-${index}`}
-                  className={cn("h-full overflow-hidden outline-[0.25px] outline outline-custom-border-100", {
-                    "bg-custom-primary-100/20": monthBlock.today,
+                  className={cn("h-full overflow-hidden outline-[0.25px] outline outline-subtle", {
+                    "bg-accent-primary/20": monthBlock.today,
                   })}
                   style={{ width: `${currentViewData?.data.dayWidth * monthBlock.days}px` }}
                 />

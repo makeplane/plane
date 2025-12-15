@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { InboxIcon, RefreshCcw } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 // ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -14,6 +14,9 @@ import { InboxIssueCreateModalRoot } from "@/components/inbox/modals/create-moda
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { IntakeIcon } from "@plane/propel/icons";
 
 export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   // states
@@ -38,12 +41,13 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
       <Header.LeftItem>
         <div className="flex items-center gap-4 flex-grow">
           <Breadcrumbs isLoading={currentProjectDetailsLoader === "init-loader"}>
+            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
                   label="Intake"
                   href={`/${workspaceSlug}/projects/${projectId}/intake/`}
-                  icon={<InboxIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<IntakeIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -52,9 +56,9 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
           </Breadcrumbs>
 
           {loader === "pagination-loading" && (
-            <div className="flex items-center gap-1.5 text-custom-text-300">
+            <div className="flex items-center gap-1.5 text-tertiary">
               <RefreshCcw className="h-3.5 w-3.5 animate-spin" />
-              <p className="text-sm">{t("syncing")}...</p>
+              <p className="text-13">{t("syncing")}...</p>
             </div>
           )}
         </div>
@@ -68,8 +72,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
               modalState={createIssueModal}
               handleModalClose={() => setCreateIssueModal(false)}
             />
-
-            <Button variant="primary" size="sm" onClick={() => setCreateIssueModal(true)}>
+            <Button variant="primary" size="lg" onClick={() => setCreateIssueModal(true)}>
               {t("add_work_item")}
             </Button>
           </div>

@@ -1,8 +1,7 @@
 import pytest
 from rest_framework import status
-from django.db import IntegrityError
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import timedelta
 from uuid import uuid4
 
 from plane.db.models import Cycle, Project, ProjectMember
@@ -58,8 +57,6 @@ def create_cycle(db, project, create_user):
     )
 
 
-
-
 @pytest.mark.contract
 class TestCycleListCreateAPIEndpoint:
     """Test Cycle List and Create API Endpoint"""
@@ -84,7 +81,6 @@ class TestCycleListCreateAPIEndpoint:
         assert created_cycle.description == cycle_data["description"]
         assert created_cycle.project == project
         assert created_cycle.owned_by_id is not None
-
 
     @pytest.mark.django_db
     def test_create_cycle_invalid_data(self, api_key_client, workspace, project):
@@ -197,7 +193,7 @@ class TestCycleListCreateAPIEndpoint:
 
         # Create cycles in different states
         now = timezone.now()
-        
+
         # Current cycle (started but not ended)
         Cycle.objects.create(
             name="Current Cycle",
@@ -207,7 +203,7 @@ class TestCycleListCreateAPIEndpoint:
             end_date=now + timedelta(days=6),
             owned_by=create_user,
         )
-        
+
         # Upcoming cycle
         Cycle.objects.create(
             name="Upcoming Cycle",
@@ -217,7 +213,7 @@ class TestCycleListCreateAPIEndpoint:
             end_date=now + timedelta(days=8),
             owned_by=create_user,
         )
-        
+
         # Completed cycle
         Cycle.objects.create(
             name="Completed Cycle",
@@ -227,7 +223,7 @@ class TestCycleListCreateAPIEndpoint:
             end_date=now - timedelta(days=3),
             owned_by=create_user,
         )
-        
+
         # Draft cycle
         Cycle.objects.create(
             name="Draft Cycle",
@@ -320,7 +316,9 @@ class TestCycleDetailAPIEndpoint:
         assert response.status_code in [status.HTTP_400_BAD_REQUEST, status.HTTP_200_OK]
 
     @pytest.mark.django_db
-    def test_update_cycle_with_external_id_conflict(self, api_key_client, workspace, project, create_cycle, create_user ):
+    def test_update_cycle_with_external_id_conflict(
+        self, api_key_client, workspace, project, create_cycle, create_user
+    ):
         """Test cycle update with conflicting external ID"""
         url = self.get_cycle_detail_url(workspace.slug, project.id, create_cycle.id)
 
@@ -363,7 +361,7 @@ class TestCycleDetailAPIEndpoint:
         response = api_key_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
-        
+
         # Check that metrics are included in response
         cycle_data = response.data
         assert "total_issues" in cycle_data
@@ -372,7 +370,7 @@ class TestCycleDetailAPIEndpoint:
         assert "started_issues" in cycle_data
         assert "unstarted_issues" in cycle_data
         assert "backlog_issues" in cycle_data
-        
+
         # All should be 0 for a new cycle
         assert cycle_data["total_issues"] == 0
         assert cycle_data["completed_issues"] == 0

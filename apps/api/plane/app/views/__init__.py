@@ -3,7 +3,6 @@ from .project.base import (
     ProjectIdentifierEndpoint,
     ProjectUserViewsEndpoint,
     ProjectFavoritesViewSet,
-    ProjectPublicCoverImagesEndpoint,
     DeployBoardViewSet,
     ProjectArchiveUnarchiveEndpoint,
 )
@@ -80,7 +79,7 @@ from .workspace.cycle import WorkspaceCyclesEndpoint
 from .workspace.quick_link import QuickLinkViewSet
 from .workspace.sticky import WorkspaceStickyViewSet
 
-from .state.base import StateViewSet
+from .state.base import StateViewSet, IntakeStateEndpoint
 from .view.base import (
     WorkspaceViewViewSet,
     WorkspaceViewIssuesViewSet,

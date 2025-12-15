@@ -49,7 +49,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
 
   useEffect(() => {
     if (!isHashMatch) return;
-    setHighlightClassName("border-custom-primary-100");
+    setHighlightClassName("border-accent-strong");
     const timeout = setTimeout(() => {
       setHighlightClassName("");
     }, 8000);
@@ -60,7 +60,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
   return (
     <div id={commentBlockId} className="relative flex flex-col gap-2">
       {showAccessSpecifier && (
-        <div className="absolute right-2.5 top-2.5 z-[1] text-custom-text-300">
+        <div className="absolute right-2.5 top-2.5 z-[1] text-tertiary">
           {comment.access === EIssueCommentAccessSpecifier.INTERNAL ? (
             <Lock className="size-3" />
           ) : (

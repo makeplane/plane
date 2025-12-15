@@ -172,13 +172,13 @@ export default {
   project_id_must_be_at_least_1_character: "Project ID must at least be of 1 character",
   project_id_must_be_at_most_5_characters: "Project ID must at most be of 5 characters",
   project_id: "Project ID",
-  project_id_tooltip_content: "Helps you identify work items in the project uniquely. Max 5 characters.",
+  project_id_tooltip_content: "Helps you identify work items in the project uniquely. Max 10 characters.",
   description_placeholder: "Description",
   only_alphanumeric_non_latin_characters_allowed: "Only Alphanumeric & Non-latin characters are allowed.",
   project_id_is_required: "Project ID is required",
   project_id_allowed_char: "Only Alphanumeric & Non-latin characters are allowed.",
   project_id_min_char: "Project ID must at least be of 1 character",
-  project_id_max_char: "Project ID must at most be of 5 characters",
+  project_id_max_char: "Project ID must at most be of 10 characters",
   project_description_placeholder: "Enter project description",
   select_network: "Select network",
   lead: "Lead",
@@ -840,7 +840,7 @@ export default {
         label: "Remove parent work item",
       },
     },
-    new: "New Work item",
+    new: "New work item",
     adding: "Adding work item",
     create: {
       success: "Work item created successfully",
@@ -1378,7 +1378,7 @@ export default {
           },
           code: {
             label: "Unique code",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Verification code sent to your new email.",
             errors: {
               required: "Unique code is required",
@@ -1431,6 +1431,7 @@ export default {
         name: "Workspace name",
         company_size: "Company size",
         url: "Workspace URL",
+        workspace_timezone: "Workspace Timezone",
         update_workspace: "Update workspace",
         delete_workspace: "Delete this workspace",
         delete_workspace_description:
@@ -2626,6 +2627,7 @@ export default {
       copy_current_page_url: "Copy current page URL",
       copy_current_page_url_toast_success: "Current page URL copied to clipboard.",
       copy_current_page_url_toast_error: "Some error occurred while copying the current page URL to clipboard.",
+      focus_top_nav_search: "Focus search input",
     },
     preferences_actions: {
       update_theme: "Change interface theme",
@@ -2699,8 +2701,8 @@ export default {
   // Navigation customization
   customize_navigation: "Customize navigation",
   personal: "Personal",
-  accordion_navigation_control: "Accordion navigation control",
-  horizontal_navigation_bar: "Horizontal navigation bar",
+  accordion_navigation_control: "Accordion sidebar navigation",
+  horizontal_navigation_bar: "Tabbed Navigation",
   show_limited_projects_on_sidebar: "Show limited projects on sidebar",
   enter_number_of_projects: "Enter number of projects",
   pin: "Pin",

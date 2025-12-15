@@ -96,6 +96,9 @@ export const AddComment = observer(function AddComment(props: Props) {
                 setUploadAssetIds((prev) => [...prev, asset_id]);
                 return asset_id;
               }}
+              displayConfig={{
+                fontSize: "small-font",
+              }}
             />
           )}
         />

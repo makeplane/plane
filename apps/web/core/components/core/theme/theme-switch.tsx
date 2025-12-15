@@ -22,7 +22,7 @@ export function ThemeSwitch(props: Props) {
         value ? (
           <div className="flex items-center gap-2">
             <div
-              className="border-1 relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full border"
+              className="border-1 relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full"
               style={{
                 borderColor: value.icon.border,
               }}

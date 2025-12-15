@@ -78,11 +78,11 @@ function ModalContent({
     <div className="flex flex-col h-full bg-white">
       <div className="flex items-center justify-between p-6 border-b border-gray-200">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-          <p className="text-sm text-gray-500 mt-1">Modal demonstration</p>
+          <h2 className="text-18 font-semibold text-gray-900">{title}</h2>
+          <p className="text-13 text-gray-500 mt-1">Modal demonstration</p>
         </div>
         {showCloseButton && onClose && (
-          <Button variant="link-neutral" size="sm" onClick={onClose} aria-label="Close modal">
+          <Button variant="ghost" onClick={onClose} aria-label="Close modal">
             ✕
           </Button>
         )}
@@ -93,7 +93,7 @@ function ModalContent({
         <div className="space-y-4">
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-medium text-gray-900 mb-2">Feature Highlights</h3>
-            <ul className="text-sm text-gray-600 space-y-1">
+            <ul className="text-13 text-gray-600 space-y-1">
               <li>• ESC key closes the modal</li>
               <li>• Click outside overlay to close</li>
             </ul>
@@ -115,7 +115,7 @@ export const Positions: Story = {
       <div className="flex gap-3">
         {Object.values(EPortalPosition).map((position) => (
           <React.Fragment key={position}>
-            <Button variant="outline-primary" onClick={() => setActiveModal(position)}>
+            <Button variant="secondary" onClick={() => setActiveModal(position)}>
               {position.charAt(0).toUpperCase() + position.slice(1)}
             </Button>
             <ModalPortal
@@ -146,7 +146,7 @@ export const Widths: Story = {
       <div className="flex gap-3">
         {Object.values(EPortalWidth).map((width) => (
           <React.Fragment key={width}>
-            <Button variant="neutral-primary" onClick={() => setActiveModal(width)}>
+            <Button variant="secondary" onClick={() => setActiveModal(width)}>
               {width.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
             </Button>
             <ModalPortal
@@ -174,7 +174,7 @@ export const BasicPortal: Story = {
       <div className="relative">
         <p>This content renders in the normal document flow.</p>
         <PortalWrapper portalId="storybook-portal">
-          <div className="fixed top-4 right-4 p-4 bg-blue-500 text-white rounded shadow-lg z-50">
+          <div className="fixed top-4 right-4 p-4 bg-blue-500 text-on-color rounded-sm shadow-lg z-50">
             This content is rendered in a portal!
           </div>
         </PortalWrapper>

@@ -47,9 +47,9 @@ export function HeaderColumn(props: Props) {
       customButtonTabIndex={-1}
       className="!w-full"
       customButton={
-        <Row className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-sm text-custom-text-200 hover:text-custom-text-100">
+        <Row className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary">
           <div className="flex items-center gap-1.5">
-            {<SpreadSheetPropertyIcon iconKey={propertyDetails.icon} className="h-4 w-4 text-custom-text-400" />}
+            {<SpreadSheetPropertyIcon iconKey={propertyDetails.icon} className="h-4 w-4 text-placeholder" />}
             {property === "sub_issue_count" && isEpic ? t("issue.label", { count: 2 }) : t(propertyDetails.i18n_title)}
           </div>
           <div className="ml-3 flex">
@@ -74,8 +74,8 @@ export function HeaderColumn(props: Props) {
         <div
           className={`flex items-center justify-between gap-1.5 px-1 ${
             selectedMenuItem === `${propertyDetails.ascendingOrderKey}_${property}`
-              ? "text-custom-text-100"
-              : "text-custom-text-200 hover:text-custom-text-100"
+              ? "text-primary"
+              : "text-secondary hover:text-primary"
           }`}
         >
           <div className="flex items-center gap-2">
@@ -92,8 +92,8 @@ export function HeaderColumn(props: Props) {
         <div
           className={`flex items-center justify-between gap-1.5 px-1 ${
             selectedMenuItem === `${propertyDetails.descendingOrderKey}_${property}`
-              ? "text-custom-text-100"
-              : "text-custom-text-200 hover:text-custom-text-100"
+              ? "text-primary"
+              : "text-secondary hover:text-primary"
           }`}
         >
           <div className="flex items-center gap-2">
@@ -113,7 +113,7 @@ export function HeaderColumn(props: Props) {
         displayFilters?.order_by !== "-created_at" &&
         selectedMenuItem.includes(property) && (
           <CustomMenu.MenuItem
-            className={`mt-0.5 ${selectedMenuItem === `-created_at_${property}` ? "bg-custom-background-80" : ""}`}
+            className={`mt-0.5 ${selectedMenuItem === `-created_at_${property}` ? "bg-layer-1" : ""}`}
             key={property}
             onClick={() => handleOrderBy("-created_at", property)}
           >

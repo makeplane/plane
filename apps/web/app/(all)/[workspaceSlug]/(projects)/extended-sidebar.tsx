@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -107,7 +107,7 @@ export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
     if (updatedSortOrder != undefined) updateWorkspaceItemSortOrder(sourceId, updatedSortOrder);
   };
 
-  const handleClose = () => toggleExtendedSidebar(false);
+  const handleClose = useCallback(() => toggleExtendedSidebar(false), [toggleExtendedSidebar]);
 
   return (
     <ExtendedSidebarWrapper

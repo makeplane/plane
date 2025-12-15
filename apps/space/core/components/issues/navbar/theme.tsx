@@ -1,13 +1,11 @@
-// next theme
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 
-// mobx react lite
-
 export const NavbarTheme = observer(function NavbarTheme() {
+  // states
   const [appTheme, setAppTheme] = useState("light");
-
+  // theme
   const { setTheme, theme } = useTheme();
 
   const handleTheme = () => {
@@ -23,9 +21,9 @@ export const NavbarTheme = observer(function NavbarTheme() {
     <button
       type="button"
       onClick={handleTheme}
-      className="relative grid h-7 w-7 place-items-center rounded bg-custom-background-100 text-custom-text-100 hover:bg-custom-background-80"
+      className="relative grid size-7 place-items-center rounded-sm bg-layer-transparent hover:bg-layer-transparent-hover text-primary"
     >
-      <span className="material-symbols-rounded text-sm">{appTheme === "light" ? "dark_mode" : "light_mode"}</span>
+      <span className="material-symbols-rounded text-13">{appTheme === "light" ? "dark_mode" : "light_mode"}</span>
     </button>
   );
 });

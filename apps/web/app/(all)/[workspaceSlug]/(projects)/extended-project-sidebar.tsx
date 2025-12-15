@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -76,7 +76,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
     EUserPermissionsLevel.WORKSPACE
   );
 
-  const handleClose = () => toggleExtendedProjectSidebar(false);
+  const handleClose = useCallback(() => toggleExtendedProjectSidebar(false), [toggleExtendedProjectSidebar]);
 
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
@@ -102,16 +102,17 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
         extendedSidebarRef={extendedProjectSidebarRef}
         handleClose={handleClose}
         excludedElementId="extended-project-sidebar-toggle"
+        className="px-0"
       >
-        <div className="flex flex-col gap-1 w-full sticky top-4 pt-0">
+        <div className="flex flex-col gap-1 w-full sticky top-4 px-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-custom-text-300 py-1.5">Projects</span>
+            <span className="text-13 font-semibold text-tertiary py-1.5">Projects</span>
             {isAuthorizedUser && (
               <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
                 <button
                   type="button"
                   data-ph-element={PROJECT_TRACKER_ELEMENTS.EXTENDED_SIDEBAR_ADD_BUTTON}
-                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                  className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0 text-tertiary hover:text-secondary transition-colors"
                   onClick={() => {
                     setIsProjectModalOpen(true);
                   }}
@@ -121,10 +122,10 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
               </Tooltip>
             )}
           </div>
-          <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1 w-full">
-            <Search className="h-3.5 w-3.5 text-custom-text-400" />
+          <div className="ml-auto flex items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1 w-full">
+            <Search className="h-3.5 w-3.5 text-placeholder" />
             <input
-              className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
+              className="w-full max-w-[234px] border-none bg-transparent text-13 outline-none placeholder:text-placeholder"
               placeholder={t("search")}
               value={searchQuery}
               autoFocus
@@ -133,7 +134,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
           </div>
         </div>
         {filteredProjects.length === 0 ? (
-          <div className="flex flex-col items-center mt-4 px-6 pt-10">
+          <div className="flex flex-col items-center mt-4 p-10">
             <EmptyStateCompact
               title={t("common_empty_state.search.title")}
               description={t("common_empty_state.search.description")}
@@ -143,7 +144,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
             />
           </div>
         ) : (
-          <div className="flex flex-col gap-0.5 overflow-x-hidden overflow-y-auto vertical-scrollbar scrollbar-sm flex-grow mt-4 pl-4">
+          <div className="flex flex-col gap-0.5 overflow-x-hidden overflow-y-auto vertical-scrollbar scrollbar-sm flex-grow mt-4 pl-9 pr-2">
             {filteredProjects.map((projectId, index) => (
               <SidebarProjectsListItem
                 key={projectId}

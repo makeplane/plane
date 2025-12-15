@@ -87,7 +87,7 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
       <>
         <PageHead title={pageTitle} />
         <div className="mt-10 flex h-full w-full justify-center p-4">
-          <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+          <p className="text-13 text-tertiary">You are not authorized to access this page.</p>
         </div>
       </>
     );

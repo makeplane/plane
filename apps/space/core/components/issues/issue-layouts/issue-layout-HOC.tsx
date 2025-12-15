@@ -11,7 +11,7 @@ interface Props {
     subGroupId: string | undefined,
     isSubGroupCumulative: boolean
   ) => number | undefined;
-  getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
+  getIssueLoader: (groupId?: string, subGroupId?: string) => TLoader;
 }
 
 export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
@@ -21,14 +21,14 @@ export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
 
   if (getIssueLoader() === "init-loader" || issueCount === undefined) {
     return (
-      <div className="relative flex h-screen w-full items-center justify-center">
+      <div className="relative size-full grid place-items-center">
         <LogoSpinner />
       </div>
     );
   }
 
   if (getGroupIssueCount(undefined, undefined, false) === 0) {
-    return <div className="flex w-full h-full items-center justify-center">No work items Found</div>;
+    return <div className="size-full grid place-items-center text-secondary">No work items found</div>;
   }
 
   return <>{props.children}</>;

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Tooltip as BaseTooltip } from "@base-ui-components/react/tooltip";
-import { cn } from "../utils/classname";
+import { cn } from "../utils";
 import type { TPlacement, TSide, TAlign } from "../utils/placement";
 import { convertPlacementToSideAndAlign } from "../utils/placement";
 
@@ -50,7 +50,7 @@ export function Tooltip(props: ITooltipProps) {
         <BaseTooltip.Portal>
           <BaseTooltip.Positioner
             className={cn(
-              "z-tooltip max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-xs text-custom-text-200 shadow-custom-shadow-xs",
+              "z-50 max-w-xs gap-1 overflow-hidden break-words rounded-lg border border-subtle-1 bg-layer-2 px-2 py-1.5 shadow-overlay-200",
               {
                 hidden: isMobile,
               },
@@ -61,8 +61,8 @@ export function Tooltip(props: ITooltipProps) {
             align={finalAlign}
             render={
               <BaseTooltip.Popup>
-                {tooltipHeading && <h5 className="font-medium text-custom-text-100">{tooltipHeading}</h5>}
-                {tooltipContent && tooltipContent}
+                {tooltipHeading && <div className="text-caption-md-medium text-primary">{tooltipHeading}</div>}
+                {tooltipContent && <div className="mt-1 text-caption-sm-regular text-secondary">{tooltipContent}</div>}
               </BaseTooltip.Popup>
             }
           />

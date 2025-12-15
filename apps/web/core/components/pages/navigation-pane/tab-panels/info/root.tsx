@@ -20,7 +20,7 @@ export const PageNavigationPaneInfoTabPanel = observer(function PageNavigationPa
     <div className="mt-5">
       <PageNavigationPaneInfoTabDocumentInfo page={page} />
       <PageNavigationPaneInfoTabActorsInfo page={page} />
-      <div className="flex-shrink-0 h-px bg-custom-background-80 my-3" />
+      <div className="flex-shrink-0 h-px bg-layer-1 my-3" />
       <PageNavigationPaneInfoTabVersionHistory page={page} versionHistory={versionHistory} />
     </div>
   );

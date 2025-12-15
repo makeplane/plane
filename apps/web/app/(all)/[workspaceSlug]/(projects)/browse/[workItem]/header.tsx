@@ -2,9 +2,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { Header, Row } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { AppHeader } from "@/components/core/app-header";
 import { TabNavigationRoot } from "@/components/navigation";
+import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
+// hooks
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // local components
@@ -14,6 +18,7 @@ export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDet
   // router
   const { workspaceSlug, workItem } = useParams();
   // store hooks
+  const { sidebarCollapsed } = useAppTheme();
   const {
     issue: { getIssueById, getIssueIdByIdentifier },
   } = useIssueDetail();
@@ -27,10 +32,15 @@ export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDet
     <>
       {projectPreferences.navigationMode === "horizontal" && (
         <div className="z-20">
-          <Row className="h-header flex gap-2 w-full items-center border-b border-custom-border-200 bg-custom-sidebar-background-100">
-            <div className="flex items-center gap-2 divide-x divide-custom-border-100 h-full w-full">
-              <div className="flex items-center h-full w-full flex-1">
-                <Header className="h-full">
+          <Row className="h-header flex gap-2 w-full items-center border-b border-subtle bg-surface-1">
+            <div className="flex items-center gap-2 divide-x divide-subtle h-full w-full">
+              <div className="flex items-center gap-2 size-full flex-1">
+                {sidebarCollapsed && (
+                  <div className="shrink-0">
+                    <AppSidebarToggleButton />
+                  </div>
+                )}
+                <Header className={cn("h-full", { "pl-1.5": !sidebarCollapsed })}>
                   <Header.LeftItem className="h-full max-w-full">
                     <TabNavigationRoot
                       workspaceSlug={workspaceSlug}

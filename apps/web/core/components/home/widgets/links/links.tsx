@@ -35,7 +35,7 @@ export const ProjectLinkList = observer(function ProjectLinkList(props: TProject
         maxHeight={150}
         containerClassName="box-border min-h-[30px] flex flex-col"
         fallback={<></>}
-        buttonClassName="bg-custom-background-90/20"
+        buttonClassName="bg-surface-2/20"
       >
         <div className="flex gap-2 mb-2 flex-wrap flex-1">
           {links.map((linkId) => (

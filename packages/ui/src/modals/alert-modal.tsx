@@ -42,7 +42,7 @@ const BUTTON_VARIANTS: Record<TModalVariant, TButtonVariant> = {
 
 const VARIANT_CLASSES: Record<TModalVariant, string> = {
   danger: "bg-red-500/20 text-red-500",
-  primary: "bg-custom-primary-100/20 text-custom-primary-100",
+  primary: "bg-accent-primary/20 text-accent-primary",
 };
 
 export function AlertModalCore(props: Props) {
@@ -80,15 +80,15 @@ export function AlertModalCore(props: Props) {
           </span>
         )}
         <div className="text-center sm:text-left">
-          <h3 className="text-lg font-medium">{title}</h3>
-          <p className="mt-1 text-sm text-custom-text-200">{content}</p>
+          <h3 className="text-16 font-medium">{title}</h3>
+          <p className="mt-1 text-13 text-secondary">{content}</p>
         </div>
       </div>
-      <div className="px-5 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+      <div className="px-5 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t-[0.5px] border-subtle">
+        <Button variant="neutral-primary" onClick={handleClose}>
           {secondaryButtonText}
         </Button>
-        <Button variant={BUTTON_VARIANTS[variant]} size="sm" tabIndex={1} onClick={handleSubmit} loading={isSubmitting}>
+        <Button variant={BUTTON_VARIANTS[variant]} tabIndex={1} onClick={handleSubmit} loading={isSubmitting}>
           {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
         </Button>
       </div>

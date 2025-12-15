@@ -15,11 +15,13 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ModulesListHeader = observer(function ModulesListHeader() {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
@@ -39,12 +41,13 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
       <Header.LeftItem>
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
                   label="Modules"
                   href={`/${workspaceSlug}/projects/${projectId}/modules/`}
-                  icon={<ModuleIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -58,11 +61,11 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
         {canUserCreateModule ? (
           <Button
             variant="primary"
-            size="sm"
             data-ph-element={MODULE_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => {
               toggleCreateModuleModal(true);
             }}
+            size="lg"
           >
             <div className="sm:hidden block">{t("add")}</div>
             <div className="hidden sm:block">{t("project_module.add_module")}</div>

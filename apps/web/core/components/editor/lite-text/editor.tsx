@@ -72,6 +72,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
     placeholder = t("issue.comments.placeholder"),
     disabledExtensions: additionalDisabledExtensions = [],
     editorClassName = "",
+    showPlaceholderOnEmpty = true,
     ...rest
   } = props;
   // states
@@ -111,7 +112,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
   return (
     <div
       className={cn(
-        "relative border border-custom-border-200 rounded",
+        "relative border border-subtle rounded-sm",
         {
           "p-3": editable && !isLiteVariant,
         },
@@ -154,6 +155,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
               }),
             }}
             placeholder={placeholder}
+            showPlaceholderOnEmpty={showPlaceholderOnEmpty}
             containerClassName={cn(containerClassName, "relative", {
               "p-2": !editable,
             })}

@@ -21,7 +21,7 @@ export const NameDescriptionUpdateStatus = observer(function NameDescriptionUpda
         {isSubmitting !== "submitted" && isSubmitting !== "saved" && (
           <RefreshCw className="animate-spin size-3.5 stroke-custom-text-300" />
         )}
-        <span className="text-sm text-custom-text-300">{isSubmitting === "submitting" ? "Saving..." : "Saved"}</span>
+        <span className="text-13 text-tertiary">{isSubmitting === "submitting" ? "Saving..." : "Saved"}</span>
       </div>
     </>
   );

@@ -24,6 +24,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "このプロジェクトへのアクセス権がないようです",
+      restricted_description: "管理者に連絡してアクセス権をリクエストすると、ここで作業を続けられます。",
+      join_description: "下のボタンをクリックして参加してください。",
+      cta_primary: "プロジェクトに参加",
+      cta_loading: "プロジェクトに参加中",
+    },
+    invalid_project: {
+      title: "プロジェクトが見つかりません",
+      description: "お探しのプロジェクトは存在しません。",
+    },
     work_items: {
       title: "最初の作業項目から始めましょう。",
       description:
@@ -170,6 +181,11 @@ export default {
       title: "まだ個人トークンはありません",
       description: "ワークスペースを外部システムおよびアプリケーションと接続するための安全なAPIトークンを生成します。",
       cta_primary: "APIトークンを追加",
+    },
+    webhooks: {
+      title: "まだWebhookが追加されていません",
+      description: "プロジェクトイベントが発生したときに外部サービスへの通知を自動化します。",
+      cta_primary: "Webhookを追加",
     },
   },
 } as const;

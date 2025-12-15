@@ -25,6 +25,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "Se pare că nu aveți acces la acest proiect",
+      restricted_description: "Contactați administratorul pentru a solicita accesul și veți putea continua aici.",
+      join_description: "Faceți clic pe butonul de mai jos pentru a vă alătura.",
+      cta_primary: "Alăturați-vă proiectului",
+      cta_loading: "Se alătură proiectului",
+    },
+    invalid_project: {
+      title: "Proiect negăsit",
+      description: "Proiectul pe care îl căutați nu există.",
+    },
     work_items: {
       title: "Începeți cu primul dvs. element de lucru.",
       description:
@@ -179,6 +190,11 @@ export default {
       description:
         "Generați token-uri API sigure pentru a conecta spațiul dvs. de lucru cu sisteme și aplicații externe.",
       cta_primary: "Adăugați token API",
+    },
+    webhooks: {
+      title: "Încă nu s-a adăugat niciun Webhook",
+      description: "Automatizați notificările către servicii externe când apar evenimente ale proiectului.",
+      cta_primary: "Adăugați webhook",
     },
   },
 } as const;

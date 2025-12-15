@@ -5,7 +5,7 @@ export function StickiesLoader() {
   return (
     <div className="overflow-scroll pb-2 grid grid-cols-4 gap-4">
       {Array.from({ length: 4 }).map((_, index) => (
-        <Loader key={index} className="space-y-5 border border-custom-border-200 p-3 rounded">
+        <Loader key={index} className="space-y-5 border border-subtle p-3 rounded-sm">
           <div className="space-y-2">
             <Loader.Item height="20px" />
             <Loader.Item height="15px" width="75%" />

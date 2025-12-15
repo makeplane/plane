@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Kode unik",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Tempelkan kode yang dikirim ke email anda",
         requesting_new_code: "Meminta kode baru",
         sending_code: "Mengirim kode",
@@ -340,13 +340,13 @@ export default {
   project_id_must_be_at_most_5_characters: "ID proyek maksimal 5 karakter",
   project_id: "ID proyek",
   project_id_tooltip_content:
-    "Membantu Anda mengidentifikasi item kerja dalam proyek secara unik. Maksimal 5 karakter.",
+    "Membantu Anda mengidentifikasi item kerja dalam proyek secara unik. Maksimal 10 karakter.",
   description_placeholder: "Deskripsi",
   only_alphanumeric_non_latin_characters_allowed: "Hanya karakter alfanumerik & Non-latin yang diizinkan.",
   project_id_is_required: "ID proyek diperlukan",
   project_id_allowed_char: "Hanya karakter alfanumerik & Non-latin yang diizinkan.",
   project_id_min_char: "ID proyek harus minimal 1 karakter",
-  project_id_max_char: "ID proyek maksimal 5 karakter",
+  project_id_max_char: "ID proyek maksimal 10 karakter",
   project_description_placeholder: "Masukkan deskripsi proyek",
   select_network: "Pilih jaringan",
   lead: "Pemimpin",
@@ -1552,7 +1552,7 @@ export default {
           },
           code: {
             label: "Kode unik",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Kode verifikasi dikirim ke email baru Anda.",
             errors: {
               required: "Kode unik wajib diisi",
@@ -1586,6 +1586,7 @@ export default {
         name: "Nama ruang kerja",
         company_size: "Ukuran perusahaan",
         url: "URL ruang kerja",
+        workspace_timezone: "Zona waktu ruang kerja",
         update_workspace: "Perbarui ruang kerja",
         delete_workspace: "Hapus ruang kerja ini",
         delete_workspace_description:

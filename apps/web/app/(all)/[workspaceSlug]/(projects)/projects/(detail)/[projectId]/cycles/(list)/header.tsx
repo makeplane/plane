@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
@@ -15,11 +14,13 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const CyclesListHeader = observer(function CyclesListHeader() {
   // router
   const router = useAppRouter();
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId } = useParams();
 
   // store hooks
   const { toggleCreateCycleModal } = useCommandPalette();
@@ -36,12 +37,13 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
                 label="Cycles"
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/cycles/`}
-                icon={<CycleIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
                 isLast
               />
             }
@@ -54,7 +56,7 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
           <CyclesViewHeader projectId={currentProjectDetails.id} />
           <Button
             variant="primary"
-            size="sm"
+            size="lg"
             data-ph-element={CYCLE_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => {
               toggleCreateCycleModal(true);

@@ -107,19 +107,14 @@ const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
 
     return {
       date: p,
-      scope: p! < today ? scope(cycle, isTypeIssue) : null,
+      scope: p < today ? scope(cycle, isTypeIssue) : null,
       completed,
       backlog: isTypeIssue ? cycle.backlog_issues : cycle.backlog_estimate_points,
       started: p === today ? cycle[isTypeIssue ? "started_issues" : "started_estimate_points"] : undefined,
       unstarted: p === today ? cycle[isTypeIssue ? "unstarted_issues" : "unstarted_estimate_points"] : undefined,
       cancelled: p === today ? cycle[isTypeIssue ? "cancelled_issues" : "cancelled_estimate_points"] : undefined,
       pending: Math.abs(pending || 0),
-      ideal:
-        p < today
-          ? ideal(p, total || 0, cycle)
-          : p <= cycle.end_date!
-            ? ideal(today as string, total || 0, cycle)
-            : null,
+      ideal: p < today ? ideal(p, total || 0, cycle) : p <= cycle.end_date! ? ideal(today, total || 0, cycle) : null,
       actual: p <= today ? (isBurnDown ? Math.abs(pending) : completed) : undefined,
     };
   });
@@ -139,7 +134,7 @@ const formatV2Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
   if (!cycle.progress) return [];
   let today: Date | string = startOfToday();
 
-  const extendedArray = endDate > today ? generateDateArray(today as Date, endDate) : [];
+  const extendedArray = endDate > today ? generateDateArray(today, endDate) : [];
   if (isEmpty(cycle.progress)) return extendedArray;
   today = format(startOfToday(), "yyyy-MM-dd");
   const todaysData = cycle?.progress[cycle?.progress.length - 1];

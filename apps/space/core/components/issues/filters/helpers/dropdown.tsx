@@ -29,8 +29,8 @@ export function FiltersDropdown(props: Props) {
         return (
           <>
             <Popover.Button as={React.Fragment}>
-              <Button ref={setReferenceElement} variant="neutral-primary" size="sm">
-                <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
+              <Button ref={setReferenceElement} variant="secondary">
+                <div className={`${open ? "text-primary" : "text-secondary"}`}>
                   <span>{title}</span>
                 </div>
               </Button>
@@ -46,7 +46,7 @@ export function FiltersDropdown(props: Props) {
             >
               <Popover.Panel>
                 <div
-                  className="z-10 overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg"
+                  className="z-10 overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-custom-shadow-rg"
                   ref={setPopperElement}
                   style={styles.popper}
                   {...attributes.popper}

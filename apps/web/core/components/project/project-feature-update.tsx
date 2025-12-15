@@ -32,20 +32,20 @@ export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props
       <Row className="py-6">
         <ProjectFeaturesList workspaceSlug={workspaceSlug} projectId={projectId} isAdmin />
       </Row>
-      <div className="flex items-center justify-between gap-2 mt-4 px-6 py-4 border-t border-custom-border-100">
-        <div className="flex gap-1 text-sm text-custom-text-300 font-medium">
+      <div className="flex items-center justify-between gap-2 mt-4 px-6 py-4 border-t border-subtle">
+        <div className="flex gap-1 text-13 text-tertiary font-medium">
           {t("congrats")}
           <Logo logo={currentProjectDetails.logo_props} /> <p className="break-all">{currentProjectDetails.name}</p>{" "}
           {t("created").toLowerCase()}.
         </div>
         <div className="flex gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={1}>
+          <Button variant="secondary" size="lg" onClick={onClose} tabIndex={1}>
             {t("close")}
           </Button>
           <Link
             href={`/${workspaceSlug}/projects/${projectId}/issues`}
             onClick={onClose}
-            className={getButtonStyling("primary", "sm")}
+            className={getButtonStyling("primary", "lg")}
             tabIndex={2}
           >
             {t("open_project")}

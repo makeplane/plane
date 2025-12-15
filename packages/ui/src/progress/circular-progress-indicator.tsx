@@ -9,7 +9,7 @@ interface ICircularProgressIndicator {
 }
 
 export function CircularProgressIndicator(props: ICircularProgressIndicator) {
-  const { size = 40, percentage = 25, strokeWidth = 6, strokeColor = "stroke-custom-primary-100", children } = props;
+  const { size = 40, percentage = 25, strokeWidth = 6, strokeColor = "stroke-accent-primary", children } = props;
 
   const sqSize = size;
   const radius = (size - strokeWidth) / 2;
@@ -20,7 +20,7 @@ export function CircularProgressIndicator(props: ICircularProgressIndicator) {
     <div className="relative">
       <svg width={size} height={size} viewBox={viewBox} fill="none">
         <circle
-          className="fill-none stroke-custom-background-80"
+          className="fill-none stroke-(--border-color-strong)"
           cx={size / 2}
           cy={size / 2}
           r={radius}

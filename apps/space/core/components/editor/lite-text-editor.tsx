@@ -59,7 +59,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
   });
 
   return (
-    <div className="border border-custom-border-200 rounded p-3 space-y-3">
+    <div className="border border-subtle rounded-sm p-3 space-y-3">
       <LiteTextEditorWithRef
         ref={ref}
         disabledExtensions={[...liteTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
@@ -79,21 +79,23 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
         // overriding the containerClassName to add relative class passed
         containerClassName={cn(containerClassName, "relative")}
       />
-      <IssueCommentToolbar
-        executeCommand={(item) => {
-          // TODO: update this while toolbar homogenization
-          // @ts-expect-error type mismatch here
-          editorRef?.executeMenuItemCommand({
-            itemKey: item.itemKey,
-            ...item.extraProps,
-          });
-        }}
-        isSubmitting={isSubmitting}
-        showSubmitButton={showSubmitButton}
-        handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
-        isCommentEmpty={isEmpty}
-        editorRef={editorRef}
-      />
+      {editable && (
+        <IssueCommentToolbar
+          executeCommand={(item) => {
+            // TODO: update this while toolbar homogenization
+            // @ts-expect-error type mismatch here
+            editorRef?.executeMenuItemCommand({
+              itemKey: item.itemKey,
+              ...item.extraProps,
+            });
+          }}
+          isSubmitting={isSubmitting}
+          showSubmitButton={showSubmitButton}
+          handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
+          isCommentEmpty={isEmpty}
+          editorRef={editorRef}
+        />
+      )}
     </div>
   );
 });

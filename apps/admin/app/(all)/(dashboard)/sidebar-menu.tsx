@@ -72,8 +72,8 @@ export const AdminSidebarMenu = observer(function AdminSidebarMenu() {
                   className={cn(
                     `group flex w-full items-center gap-3 rounded-md px-3 py-2 outline-none transition-colors`,
                     isActive
-                      ? "bg-custom-primary-100/10 text-custom-primary-100"
-                      : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80",
+                      ? "bg-accent-primary/10 text-accent-primary"
+                      : "text-secondary hover:bg-layer-1-hover focus:bg-layer-1-hover",
                     isSidebarCollapsed ? "justify-center" : "w-[260px]"
                   )}
                 >
@@ -82,16 +82,16 @@ export const AdminSidebarMenu = observer(function AdminSidebarMenu() {
                     <div className="w-full ">
                       <div
                         className={cn(
-                          `text-sm font-medium transition-colors`,
-                          isActive ? "text-custom-primary-100" : "text-custom-sidebar-text-200"
+                          `text-13 font-medium transition-colors`,
+                          isActive ? "text-accent-primary" : "text-secondary"
                         )}
                       >
                         {item.name}
                       </div>
                       <div
                         className={cn(
-                          `text-[10px] transition-colors`,
-                          isActive ? "text-custom-primary-90" : "text-custom-sidebar-text-400"
+                          `text-10 transition-colors`,
+                          isActive ? "text-accent-secondary" : "text-placeholder"
                         )}
                       >
                         {item.description}

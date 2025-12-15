@@ -18,7 +18,7 @@ export function ProfileStateDistribution({ stateDistribution, userProfile }: Pro
 
   return (
     <div className="flex flex-col space-y-2">
-      <h3 className="text-lg font-medium">{t("profile.stats.state_distribution.title")}</h3>
+      <h3 className="text-16 font-medium">{t("profile.stats.state_distribution.title")}</h3>
       <Card className="h-full">
         {userProfile.state_distribution.length > 0 ? (
           <div className="grid grid-cols-1 gap-x-6 md:grid-cols-2 w-full  h-[300px]">
@@ -54,10 +54,10 @@ export function ProfileStateDistribution({ stateDistribution, userProfile }: Pro
             <div className="flex items-center">
               <div className="w-full space-y-4">
                 {stateDistribution.map((group) => (
-                  <div key={group.state_group} className="flex items-center justify-between gap-2 text-xs">
+                  <div key={group.state_group} className="flex items-center justify-between gap-2 text-11">
                     <div className="flex items-center gap-1.5">
                       <div
-                        className="h-2.5 w-2.5 rounded-sm"
+                        className="h-2.5 w-2.5 rounded-xs"
                         style={{
                           backgroundColor: STATE_GROUPS[group.state_group]?.color ?? "rgb(var(--color-primary-100))",
                         }}

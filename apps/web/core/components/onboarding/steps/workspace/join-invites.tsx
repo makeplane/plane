@@ -86,7 +86,7 @@ export function WorkspaceJoinInvitesStep(props: Props) {
             return (
               <div
                 key={invitation.id}
-                className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 border-custom-border-200 hover:bg-custom-background-90`}
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 border-subtle hover:bg-surface-2`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
                 <div className="flex-shrink-0">
@@ -97,8 +97,8 @@ export function WorkspaceJoinInvitesStep(props: Props) {
                   />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
-                  <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
+                  <div className="text-13 font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
+                  <p className="text-11 text-secondary">{ROLE[invitation.role]}</p>
                 </div>
                 <span className={`flex-shrink-0`}>
                   <Checkbox checked={isSelected} />
@@ -110,7 +110,7 @@ export function WorkspaceJoinInvitesStep(props: Props) {
       <div className="flex flex-col gap-4">
         <Button
           variant="primary"
-          size="lg"
+          size="xl"
           className="w-full"
           onClick={submitInvitations}
           disabled={isJoiningWorkspaces || !invitationsRespond.length}
@@ -119,8 +119,8 @@ export function WorkspaceJoinInvitesStep(props: Props) {
           {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue"}
         </Button>
         <Button
-          variant="link-neutral"
-          size="lg"
+          variant="ghost"
+          size="xl"
           className="w-full"
           onClick={handleCurrentViewChange}
           disabled={isJoiningWorkspaces}

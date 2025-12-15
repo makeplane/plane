@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Codice unico",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Incolla il codice inviato alla tua email",
         requesting_new_code: "Richiesta di nuovo codice",
         sending_code: "Invio codice",
@@ -340,13 +340,13 @@ export default {
   project_id_must_be_at_most_5_characters: "L'ID del progetto deve contenere al massimo 5 caratteri",
   project_id: "ID del progetto",
   project_id_tooltip_content:
-    "Ti aiuta a identificare in modo univoco gli elementi di lavoro nel progetto. Massimo 5 caratteri.",
+    "Ti aiuta a identificare in modo univoco gli elementi di lavoro nel progetto. Massimo 10 caratteri.",
   description_placeholder: "Descrizione",
   only_alphanumeric_non_latin_characters_allowed: "Sono ammessi solo caratteri alfanumerici e non latini.",
   project_id_is_required: "L'ID del progetto è obbligatorio",
   project_id_allowed_char: "Sono ammessi solo caratteri alfanumerici e non latini.",
   project_id_min_char: "L'ID del progetto deve contenere almeno 1 carattere",
-  project_id_max_char: "L'ID del progetto deve contenere al massimo 5 caratteri",
+  project_id_max_char: "L'ID del progetto deve contenere al massimo 10 caratteri",
   project_description_placeholder: "Inserisci la descrizione del progetto",
   select_network: "Seleziona rete",
   lead: "Responsabile",
@@ -1556,7 +1556,7 @@ export default {
           },
           code: {
             label: "Codice univoco",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Codice di verifica inviato alla tua nuova email.",
             errors: {
               required: "Il codice univoco è obbligatorio",
@@ -1590,6 +1590,7 @@ export default {
         name: "Nome dello spazio di lavoro",
         company_size: "Dimensione aziendale",
         url: "URL dello spazio di lavoro",
+        workspace_timezone: "Fuso orario dello spazio di lavoro",
         update_workspace: "Aggiorna spazio di lavoro",
         delete_workspace: "Elimina questo spazio di lavoro",
         delete_workspace_description:

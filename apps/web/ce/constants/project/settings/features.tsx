@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { Timer } from "lucide-react";
 // plane imports
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
 import type { IProject } from "@plane/types";
@@ -17,7 +16,6 @@ export type TProperties = {
 };
 
 type TProjectBaseFeatureKeys = "cycles" | "modules" | "views" | "pages" | "inbox";
-type TProjectOtherFeatureKeys = "is_time_tracking_enabled";
 
 type TBaseFeatureList = {
   [key in TProjectBaseFeatureKeys]: TProperties;
@@ -29,7 +27,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     property: "cycle_view",
     title: "Cycles",
     description: "Timebox work as you see fit per project and change frequency from one period to the next.",
-    icon: <CycleIcon className="h-5 w-5 flex-shrink-0 rotate-180 text-custom-text-300" />,
+    icon: <CycleIcon className="h-5 w-5 flex-shrink-0 rotate-180 text-tertiary" />,
     isPro: false,
     isEnabled: true,
   },
@@ -38,7 +36,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     property: "module_view",
     title: "Modules",
     description: "Group work into sub-project-like set-ups with their own leads and assignees.",
-    icon: <ModuleIcon width={20} height={20} className="flex-shrink-0 text-custom-text-300" />,
+    icon: <ModuleIcon width={20} height={20} className="flex-shrink-0 text-tertiary" />,
     isPro: false,
     isEnabled: true,
   },
@@ -47,7 +45,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     property: "issue_views_view",
     title: "Views",
     description: "Save sorts, filters, and display options for later or share them.",
-    icon: <ViewsIcon className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
+    icon: <ViewsIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isPro: false,
     isEnabled: true,
   },
@@ -56,7 +54,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     property: "page_view",
     title: "Pages",
     description: "Write anything like you write anything.",
-    icon: <PageIcon className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
+    icon: <PageIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isPro: false,
     isEnabled: true,
   },
@@ -65,25 +63,9 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     property: "inbox_view",
     title: "Intake",
     description: "Consider and discuss work items before you add them to your project.",
-    icon: <IntakeIcon className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
+    icon: <IntakeIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
     isPro: false,
     isEnabled: true,
-  },
-};
-
-type TOtherFeatureList = {
-  [key in TProjectOtherFeatureKeys]: TProperties;
-};
-
-export const PROJECT_OTHER_FEATURES_LIST: TOtherFeatureList = {
-  is_time_tracking_enabled: {
-    key: "time_tracking",
-    property: "is_time_tracking_enabled",
-    title: "Time Tracking",
-    description: "Log time, see timesheets, and download full CSVs for your entire workspace.",
-    icon: <Timer className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
-    isPro: true,
-    isEnabled: false,
   },
 };
 
@@ -94,12 +76,6 @@ type TProjectFeatures = {
     description: string;
     featureList: TBaseFeatureList;
   };
-  project_others: {
-    key: string;
-    title: string;
-    description: string;
-    featureList: TOtherFeatureList;
-  };
 };
 
 export const PROJECT_FEATURES_LIST: TProjectFeatures = {
@@ -108,11 +84,5 @@ export const PROJECT_FEATURES_LIST: TProjectFeatures = {
     title: "Projects and work items",
     description: "Toggle these on or off this project.",
     featureList: PROJECT_BASE_FEATURES_LIST,
-  },
-  project_others: {
-    key: "work_management",
-    title: "Work management",
-    description: "Available only on some plans as indicated by the label next to the feature below.",
-    featureList: PROJECT_OTHER_FEATURES_LIST,
   },
 };

@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "ユニークコード",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "メールで送信されたコードを貼り付けてください",
         requesting_new_code: "新しいコードをリクエスト中",
         sending_code: "コードを送信中",
@@ -335,13 +335,13 @@ export default {
   project_id_must_be_at_least_1_character: "プロジェクトIDは最低1文字必要です",
   project_id_must_be_at_most_5_characters: "プロジェクトIDは最大5文字までです",
   project_id: "プロジェクトID",
-  project_id_tooltip_content: "プロジェクト内の作業項目を一意に識別するのに役立ちます。最大5文字。",
+  project_id_tooltip_content: "プロジェクト内の作業項目を一意に識別するのに役立ちます。最大10文字。",
   description_placeholder: "説明",
   only_alphanumeric_non_latin_characters_allowed: "英数字と非ラテン文字のみ使用できます。",
   project_id_is_required: "プロジェクトIDは必須です",
   project_id_allowed_char: "英数字と非ラテン文字のみ使用できます。",
   project_id_min_char: "プロジェクトIDは最低1文字必要です",
-  project_id_max_char: "プロジェクトIDは最大5文字までです",
+  project_id_max_char: "プロジェクトIDは最大10文字までです",
   project_description_placeholder: "プロジェクトの説明を入力",
   select_network: "ネットワークを選択",
   lead: "リード",
@@ -1543,7 +1543,7 @@ export default {
           },
           code: {
             label: "認証コード",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "認証コードを新しいメールに送信しました。",
             errors: {
               required: "認証コードは必須です",
@@ -1577,6 +1577,7 @@ export default {
         name: "ワークスペース名",
         company_size: "会社の規模",
         url: "ワークスペースURL",
+        workspace_timezone: "ワークスペースのタイムゾーン",
         update_workspace: "ワークスペースを更新",
         delete_workspace: "このワークスペースを削除",
         delete_workspace_description:

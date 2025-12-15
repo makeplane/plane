@@ -93,23 +93,23 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
         <span
           className={cn(
-            "flex-shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-red-500/20 text-red-100"
+            "shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-danger-subtle text-danger"
           )}
         >
-          <AlertTriangle className="size-5 text-red-600" aria-hidden="true" />
+          <AlertTriangle className="size-5 text-danger-primary" aria-hidden="true" />
         </span>
         <div>
           <div className="text-center sm:text-left">
-            <h3 className="text-lg font-medium">{t("workspace_settings.settings.general.delete_modal.title")}</h3>
-            <p className="mt-1 text-sm text-custom-text-200">
-              You are about to delete the workspace <span className="break-words font-semibold">{data?.name}</span>. If
-              you confirm, you will lose access to all your work data in this workspace without any way to restore it.
-              Tread very carefully.
+            <h3 className="text-h5-medium">{t("workspace_settings.settings.general.delete_modal.title")}</h3>
+            <p className="mt-1 text-body-xs-regular text-secondary">
+              You are about to delete the workspace{" "}
+              <span className="break-words text-body-xs-semibold">{data?.name}</span>. If you confirm, you will lose
+              access to all your work data in this workspace without any way to restore it. Tread very carefully.
             </p>
           </div>
 
-          <div className="text-custom-text-200 mt-4">
-            <p className="break-words text-sm ">Type in this workspace&apos;s name to continue.</p>
+          <div className="text-secondary mt-4">
+            <p className="break-words text-body-xs-regular ">Type in this workspace&apos;s name to continue.</p>
             <Controller
               control={control}
               name="workspaceName"
@@ -130,10 +130,10 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
             />
           </div>
 
-          <div className="text-custom-text-200 mt-4">
-            <p className="text-sm">
+          <div className="text-secondary mt-4">
+            <p className="text-body-xs-regular">
               For final confirmation, type{" "}
-              <span className="font-medium text-custom-text-100">delete my workspace </span>
+              <span className="text-body-xs-medium text-primary">delete my workspace </span>
               below.
             </p>
             <Controller
@@ -159,10 +159,10 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
       </div>
 
       <div className="flex justify-end gap-2">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="secondary" size="lg" onClick={handleClose}>
           {t("cancel")}
         </Button>
-        <Button variant="danger" size="sm" type="submit" disabled={!canDelete} loading={isSubmitting}>
+        <Button variant="error-fill" size="lg" type="submit" disabled={!canDelete} loading={isSubmitting}>
           {isSubmitting ? t("deleting") : t("confirm")}
         </Button>
       </div>

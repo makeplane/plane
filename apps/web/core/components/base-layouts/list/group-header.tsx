@@ -4,11 +4,11 @@ export function GroupHeader({ group, itemCount, onToggleGroup }: IGroupHeaderPro
   return (
     <button
       onClick={() => onToggleGroup(group.id)}
-      className="flex w-full items-center gap-2 py-2 text-sm font-medium text-custom-text-200"
+      className="flex w-full items-center gap-2 py-2 text-13 font-medium text-secondary"
     >
       {group.icon}
       <span>{group.name}</span>
-      <span className="text-xs text-custom-text-300">{itemCount}</span>
+      <span className="text-11 text-tertiary">{itemCount}</span>
     </button>
   );
 }

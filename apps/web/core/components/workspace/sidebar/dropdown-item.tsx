@@ -39,21 +39,21 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
       <Menu.Item
         as="div"
         className={cn("px-4 py-2", {
-          "bg-custom-sidebar-background-90": workspace.id === activeWorkspace?.id,
-          "hover:bg-custom-sidebar-background-90": workspace.id !== activeWorkspace?.id,
+          "bg-layer-transparent-active": workspace.id === activeWorkspace?.id,
+          "hover:bg-layer-transparent-hover": workspace.id !== activeWorkspace?.id,
         })}
       >
-        <div className="flex items-center justify-between gap-1 rounded p-1 text-sm text-custom-sidebar-text-100 ">
+        <div className="flex items-center justify-between gap-1 rounded-sm p-1 text-13 text-primary ">
           <div className="flex items-center justify-start gap-2.5 w-[80%] relative">
             <span
-              className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-base uppercase font-medium border-custom-border-200 ${
-                !workspace?.logo_url && "rounded-md bg-[#026292] text-white"
+              className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-14 uppercase font-medium border-subtle ${
+                !workspace?.logo_url && "rounded-md bg-[#026292] text-on-color"
               }`}
             >
               {workspace?.logo_url && workspace.logo_url !== "" ? (
                 <img
                   src={getFileURL(workspace.logo_url)}
-                  className="absolute left-0 top-0 h-full w-full rounded object-cover"
+                  className="absolute left-0 top-0 h-full w-full rounded-sm object-cover"
                   alt={t("workspace_logo")}
                 />
               ) : (
@@ -62,20 +62,20 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
             </span>
             <div className="w-[inherit]">
               <div
-                className={`truncate text-left text-ellipsis text-sm font-medium ${workspaceSlug === workspace.slug ? "" : "text-custom-text-200"}`}
+                className={`truncate text-left text-ellipsis text-13 font-medium ${workspaceSlug === workspace.slug ? "" : "text-secondary"}`}
               >
                 {workspace.name}
               </div>
-              <div className="text-sm text-custom-text-300 flex gap-2 capitalize w-fit">
+              <div className="text-13 text-tertiary flex gap-2 capitalize w-fit">
                 <span>{getUserRole(workspace.role)?.toLowerCase() || "guest"}</span>
-                <div className="w-1 h-1 bg-custom-text-300/50 rounded-full m-auto" />
+                <div className="w-1 h-1 bg-layer-1/50 rounded-full m-auto" />
                 <span className="capitalize">{t("member", { count: workspace.total_members || 0 })}</span>
               </div>
             </div>
           </div>
           {workspace.id === activeWorkspace?.id ? (
             <span className="flex-shrink-0 p-1">
-              <Check className="h-5 w-5 text-custom-sidebar-text-100" />
+              <Check className="h-5 w-5 text-primary" />
             </span>
           ) : (
             <SubscriptionPill workspace={workspace} />
@@ -88,20 +88,20 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
                 <Link
                   href={`/${workspace.slug}/settings`}
                   onClick={handleClose}
-                  className="flex border border-custom-border-200 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100 hover:shadow-sm hover:text-custom-text-200 text-custom-text-300 hover:border-custom-border-300 "
+                  className="flex border border-subtle rounded-md py-1 px-2 gap-1 hover:text-secondary text-tertiary hover:border-strong bg-layer-3 hover:bg-layer-3-hover"
                 >
                   <Settings className="h-4 w-4 my-auto" />
-                  <span className="text-sm font-medium my-auto">{t("settings")}</span>
+                  <span className="text-13 font-medium my-auto">{t("settings")}</span>
                 </Link>
               )}
               {[EUserPermissions.ADMIN].includes(workspace?.role) && (
                 <Link
                   href={`/${workspace.slug}/settings/members`}
                   onClick={handleClose}
-                  className="flex border border-custom-border-200 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100 hover:shadow-sm hover:text-custom-text-200 text-custom-text-300 hover:border-custom-border-300 "
+                  className="flex border border-subtle rounded-md py-1 px-2 gap-1 hover:text-secondary text-tertiary hover:border-strong bg-layer-3 hover:bg-layer-3-hover"
                 >
                   <UserPlus className="h-4 w-4 my-auto" />
-                  <span className="text-sm font-medium my-auto">
+                  <span className="text-13 font-medium my-auto">
                     {t("project_settings.members.invite_members.title")}
                   </span>
                 </Link>

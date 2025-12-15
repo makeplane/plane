@@ -43,7 +43,7 @@ export const GithubImportData = observer(function GithubImportData(props: Props)
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Select Repository</h4>
-            <p className="text-xs text-custom-text-200">
+            <p className="text-11 text-secondary">
               Select the repository that you want the work items to be imported from.
             </p>
           </div>
@@ -56,9 +56,7 @@ export const GithubImportData = observer(function GithubImportData(props: Props)
                   <SelectRepository
                     integration={integration}
                     value={value ? value.id : null}
-                    label={
-                      value ? `${value.full_name}` : <span className="text-custom-text-200">Select Repository</span>
-                    }
+                    label={value ? `${value.full_name}` : <span className="text-secondary">Select Repository</span>}
                     onChange={onChange}
                     characterLimit={50}
                   />
@@ -70,7 +68,7 @@ export const GithubImportData = observer(function GithubImportData(props: Props)
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Select Project</h4>
-            <p className="text-xs text-custom-text-200">Select the project to import the work item to.</p>
+            <p className="text-11 text-secondary">Select the project to import the work item to.</p>
           </div>
           <div className="col-span-12 sm:col-span-4">
             {workspaceProjectIds && (
@@ -80,9 +78,7 @@ export const GithubImportData = observer(function GithubImportData(props: Props)
                 render={({ field: { value, onChange } }) => (
                   <CustomSearchSelect
                     value={value}
-                    label={
-                      value ? getProjectById(value)?.name : <span className="text-custom-text-200">Select Project</span>
-                    }
+                    label={value ? getProjectById(value)?.name : <span className="text-secondary">Select Project</span>}
                     onChange={onChange}
                     options={options}
                     optionsClassName="w-48"
@@ -95,7 +91,7 @@ export const GithubImportData = observer(function GithubImportData(props: Props)
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Sync work item</h4>
-            <p className="text-xs text-custom-text-200">Set whether you want to sync the work items or not.</p>
+            <p className="text-11 text-secondary">Set whether you want to sync the work items or not.</p>
           </div>
           <div className="col-span-12 sm:col-span-4">
             <Controller
@@ -109,7 +105,7 @@ export const GithubImportData = observer(function GithubImportData(props: Props)
         </div>
       </div>
       <div className="mt-6 flex items-center justify-end gap-2">
-        <Button variant="neutral-primary" onClick={() => handleStepChange("import-configure")}>
+        <Button variant="secondary" onClick={() => handleStepChange("import-configure")}>
           Back
         </Button>
         <Button

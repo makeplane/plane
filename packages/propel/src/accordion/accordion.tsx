@@ -32,7 +32,7 @@ export interface AccordionContentProps {
 
 function AccordionRoot({ defaultValue = [], allowMultiple = false, className = "", children }: AccordionRootProps) {
   return (
-    <BaseAccordion.Root defaultValue={defaultValue} openMultiple={allowMultiple} className={`text-base ${className}`}>
+    <BaseAccordion.Root defaultValue={defaultValue} openMultiple={allowMultiple} className={`text-14 ${className}`}>
       {children}
     </BaseAccordion.Root>
   );

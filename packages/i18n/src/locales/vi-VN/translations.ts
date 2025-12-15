@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Mã duy nhất",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Dán mã xác minh đã gửi đến email của bạn",
         requesting_new_code: "Đang yêu cầu mã mới",
         sending_code: "Đang gửi mã",
@@ -338,13 +338,13 @@ export default {
   project_id_must_be_at_least_1_character: "ID dự án phải có ít nhất 1 ký tự",
   project_id_must_be_at_most_5_characters: "ID dự án chỉ được tối đa 5 ký tự",
   project_id: "ID dự án",
-  project_id_tooltip_content: "Giúp xác định duy nhất mục công việc trong dự án của bạn. Tối đa 5 ký tự.",
+  project_id_tooltip_content: "Giúp xác định duy nhất mục công việc trong dự án của bạn. Tối đa 10 ký tự.",
   description_placeholder: "Mô tả",
   only_alphanumeric_non_latin_characters_allowed: "Chỉ cho phép các ký tự chữ số và không phải Latin.",
   project_id_is_required: "ID dự án là bắt buộc",
   project_id_allowed_char: "Chỉ cho phép các ký tự chữ số và không phải Latin.",
   project_id_min_char: "ID dự án phải có ít nhất 1 ký tự",
-  project_id_max_char: "ID dự án chỉ được tối đa 5 ký tự",
+  project_id_max_char: "ID dự án chỉ được tối đa 10 ký tự",
   project_description_placeholder: "Nhập mô tả dự án",
   select_network: "Chọn mạng",
   lead: "Người phụ trách",
@@ -1553,7 +1553,7 @@ export default {
           },
           code: {
             label: "Mã duy nhất",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Mã xác minh đã được gửi tới email mới của bạn.",
             errors: {
               required: "Mã duy nhất là bắt buộc",
@@ -1587,6 +1587,7 @@ export default {
         name: "Tên không gian làm việc",
         company_size: "Quy mô công ty",
         url: "URL không gian làm việc",
+        workspace_timezone: "Múi giờ không gian làm việc",
         update_workspace: "Cập nhật không gian làm việc",
         delete_workspace: "Xóa không gian làm việc này",
         delete_workspace_description:

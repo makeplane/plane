@@ -105,8 +105,8 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
       title: t("common.remove"),
       icon: Trash2,
       shouldRender: isAdmin,
-      className: "text-red-500",
-      iconClassName: "text-red-500",
+      className: "text-danger",
+      iconClassName: "text-danger",
     },
   ];
 
@@ -121,25 +121,25 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
         }}
         onSubmit={handleRemoveInvitation}
       />
-      <div className="group flex items-center justify-between px-3 py-4 hover:bg-custom-background-90 w-full h-full">
+      <div className="group flex items-center justify-between px-3 py-4 hover:bg-layer-transparent-hover w-full h-full">
         <div className="flex items-center gap-x-4 gap-y-2">
-          <span className="relative flex h-10 w-10 items-center justify-center rounded bg-gray-700 p-4 capitalize text-white">
+          <span className="relative flex h-10 w-10 items-center justify-center rounded-sm bg-layer-3 p-4 capitalize text-tertiary">
             {(invitationDetails.email ?? "?")[0]}
           </span>
           <div>
-            <h4 className="cursor-default text-sm">{invitationDetails.email}</h4>
+            <h4 className="cursor-default text-body-xs-regular">{invitationDetails.email}</h4>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-xs">
-          <div className="flex items-center justify-center rounded bg-yellow-500/20 px-2.5 py-1 text-center text-xs font-medium text-yellow-500">
+        <div className="flex items-center gap-2 text-11">
+          <div className="flex items-center justify-center rounded-sm bg-label-yellow-bg-strong/20 px-2.5 py-1 text-center text-caption-sm-medium text-label-yellow-text">
             <p>{t("common.pending")}</p>
           </div>
           <CustomSelect
             customButton={
-              <div className="item-center flex gap-1 rounded px-2 py-0.5">
+              <div className="item-center flex gap-1 rounded-sm px-2 py-0.5">
                 <span
-                  className={`flex items-center rounded text-xs font-medium ${
-                    hasRoleChangeAccess ? "" : "text-custom-sidebar-text-400"
+                  className={`flex items-center rounded-sm text-caption-sm-medium ${
+                    hasRoleChangeAccess ? "" : "text-placeholder"
                   }`}
                 >
                   {ROLE[invitationDetails.role]}
@@ -192,7 +192,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
                     className={cn(
                       "flex items-center gap-2",
                       {
-                        "text-custom-text-400": item.disabled,
+                        "text-placeholder": item.disabled,
                       },
                       item.className
                     )}
@@ -203,8 +203,8 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
                       <h5>{item.title}</h5>
                       {item.description && (
                         <p
-                          className={cn("text-custom-text-300 whitespace-pre-line", {
-                            "text-custom-text-400": item.disabled,
+                          className={cn("text-tertiary whitespace-pre-line", {
+                            "text-placeholder": item.disabled,
                           })}
                         >
                           {item.description}

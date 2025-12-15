@@ -138,7 +138,7 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
               title={
                 <div className={`flex items-center gap-1 px-2.5 py-1 h-9  w-full ${relation.className}`}>
                   <span>{relation.icon ? relation.icon(14) : null}</span>
-                  <span className="text-sm font-medium leading-5">{relation.label}</span>
+                  <span className="text-13 font-medium leading-5">{relation.label}</span>
                 </div>
               }
               defaultOpen
@@ -186,7 +186,7 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
               issueCrudState.delete.issue.id &&
               issueCrudState.delete.issue.project_id
             ) {
-              const deleteOperation = !!issueCrudState.delete.issue?.is_epic
+              const deleteOperation = issueCrudState.delete.issue?.is_epic
                 ? epicOperations.remove
                 : issueOperations.remove;
               await deleteOperation(
@@ -202,7 +202,7 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
 
       {shouldRenderIssueUpdateModal && (
         <>
-          {!!issueCrudState?.update?.issue?.is_epic ? (
+          {issueCrudState?.update?.issue?.is_epic ? (
             <CreateUpdateEpicModal
               isOpen={issueCrudState?.update?.toggle}
               onClose={() => {

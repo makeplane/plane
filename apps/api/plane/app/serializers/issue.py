@@ -78,7 +78,7 @@ class IssueProjectLiteSerializer(BaseSerializer):
 class IssueCreateSerializer(BaseSerializer):
     # ids
     state_id = serializers.PrimaryKeyRelatedField(
-        source="state", queryset=State.objects.all(), required=False, allow_null=True
+        source="state", queryset=State.all_state_objects.all(), required=False, allow_null=True
     )
     parent_id = serializers.PrimaryKeyRelatedField(
         source="parent", queryset=Issue.objects.all(), required=False, allow_null=True
@@ -117,6 +117,9 @@ class IssueCreateSerializer(BaseSerializer):
         return data
 
     def validate(self, attrs):
+        allow_triage = self.context.get("allow_triage_state", False)
+        state_manager = State.triage_objects if allow_triage else State.objects
+
         if (
             attrs.get("start_date", None) is not None
             and attrs.get("target_date", None) is not None
@@ -160,7 +163,7 @@ class IssueCreateSerializer(BaseSerializer):
         # Check state is from the project only else raise validation error
         if (
             attrs.get("state")
-            and not State.objects.filter(
+            and not state_manager.filter(
                 project_id=self.context.get("project_id"),
                 pk=attrs.get("state").id,
             ).exists()
@@ -794,6 +797,14 @@ class IssueSerializer(DynamicBaseSerializer):
             "archived_at",
         ]
         read_only_fields = fields
+
+    def validate(self, data):
+        if (
+            data.get("state_id")
+            and not State.objects.filter(project_id=self.context.get("project_id"), pk=data.get("state_id")).exists()
+        ):
+            raise serializers.ValidationError("State is not valid please pass a valid state_id")
+        return data
 
 
 class IssueListDetailSerializer(serializers.Serializer):

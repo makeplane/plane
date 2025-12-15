@@ -1,9 +1,8 @@
-import { useState, useRef, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
-import { useOutsideClickDetector } from "@plane/hooks";
 import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // power-k
@@ -14,6 +13,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePowerK } from "@/hooks/store/use-power-k";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useExpandableSearch } from "@/hooks/use-expandable-search";
 
 export const TopNavPowerK = observer(() => {
   // router
@@ -22,7 +22,6 @@ export const TopNavPowerK = observer(() => {
   const { projectId: routerProjectId, workItem: workItemIdentifier } = params;
 
   // states
-  const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCommand, setActiveCommand] = useState<TPowerKCommandConfig | null>(null);
   const [shouldShowContextBasedActions, setShouldShowContextBasedActions] = useState(true);
@@ -31,6 +30,25 @@ export const TopNavPowerK = observer(() => {
   // store hooks
   const { activeContext, setActivePage, activePage, setTopNavInputRef } = usePowerK();
   const { data: currentUser } = useUser();
+
+  const handleOnClose = useCallback(() => {
+    setSearchTerm("");
+    setActivePage(null);
+    setActiveCommand(null);
+  }, [setSearchTerm, setActivePage, setActiveCommand]);
+
+  // expandable search hook
+  const {
+    isOpen,
+    containerRef,
+    inputRef,
+    handleClose: closePanel,
+    handleMouseDown,
+    handleFocus,
+    openPanel,
+  } = useExpandableSearch({
+    onClose: handleOnClose,
+  });
 
   // derived values
   const {
@@ -54,12 +72,7 @@ export const TopNavPowerK = observer(() => {
         projectId,
       },
       router,
-      closePalette: () => {
-        setIsOpen(false);
-        setSearchTerm("");
-        setActivePage(null);
-        setActiveCommand(null);
-      },
+      closePalette: closePanel,
       setActiveCommand,
       setActivePage,
     }),
@@ -72,11 +85,9 @@ export const TopNavPowerK = observer(() => {
       projectId,
       router,
       setActivePage,
+      closePanel,
     ]
   );
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   // Register input ref with PowerK store for keyboard shortcut access
   useEffect(() => {
@@ -85,18 +96,6 @@ export const TopNavPowerK = observer(() => {
       setTopNavInputRef(null);
     };
   }, [setTopNavInputRef]);
-
-  useOutsideClickDetector(containerRef, () => {
-    if (isOpen) {
-      setIsOpen(false);
-      setActivePage(null);
-      setActiveCommand(null);
-    }
-  });
-
-  const handleFocus = () => {
-    setIsOpen(true);
-  };
 
   const handleClear = () => {
     setSearchTerm("");
@@ -136,10 +135,7 @@ export const TopNavPowerK = observer(() => {
       // Cmd/Ctrl+K closes the search dropdown
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        setIsOpen(false);
-        setSearchTerm("");
-        setActivePage(null);
-        context.setActiveCommand(null);
+        closePanel();
         return;
       }
 
@@ -148,9 +144,7 @@ export const TopNavPowerK = observer(() => {
         if (searchTerm) {
           setSearchTerm("");
         }
-        setIsOpen(false);
-        inputRef.current?.blur();
-
+        closePanel();
         return;
       }
 
@@ -203,7 +197,7 @@ export const TopNavPowerK = observer(() => {
         return;
       }
     },
-    [searchTerm, activePage, context, shouldShowContextBasedActions, setActivePage, isOpen]
+    [searchTerm, activePage, context, shouldShowContextBasedActions, setActivePage, closePanel]
   );
 
   return (
@@ -215,35 +209,39 @@ export const TopNavPowerK = observer(() => {
       >
         <div
           className={cn(
-            "flex items-center w-full h-7 p-2 rounded-md bg-custom-sidebar-background-80 hover:bg-custom-background-80 border border-transparent transition-colors duration-200",
+            "flex items-center w-full h-7 p-2 rounded-lg bg-layer-2 border border-subtle-1 transition-colors duration-200",
             {
-              "border-custom-border-200": isOpen,
+              "bg-layer-1": isOpen,
             }
           )}
           onClick={() => inputRef.current?.focus()}
           role="button"
         >
-          <SearchIcon className="shrink-0 size-3.5 text-custom-text-350 mr-2" />
+          <SearchIcon className="shrink-0 size-3.5 text-placeholder mr-2" />
           <input
             ref={inputRef}
             type="text"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              if (!isOpen) openPanel();
+            }}
+            onMouseDown={handleMouseDown}
             onFocus={handleFocus}
             onKeyDown={handleKeyDown}
             placeholder="Search commands..."
-            className="flex-1 bg-transparent text-sm text-custom-text-100 placeholder-custom-text-350 outline-none min-w-0"
+            className="flex-1 bg-transparent text-13 text-primary placeholder-text-placeholder outline-none min-w-0"
           />
           {searchTerm && (
             <button type="button" onClick={handleClear} className="shrink-0 ml-2">
-              <CloseIcon className="size-3.5 text-custom-text-400 hover:text-custom-text-100" />
+              <CloseIcon className="size-3.5 text-placeholder hover:text-primary" />
             </button>
           )}
         </div>
       </div>
       <div
         className={cn(
-          "absolute -top-[6px] left-1/2 -translate-x-1/2  bg-custom-background-100 border border-custom-border-200 rounded-md shadow-lg overflow-hidden z-20  transition-all duration-300 ease-in-out flex flex-col px-0 pt-10",
+          "absolute -top-[6px] left-1/2 -translate-x-1/2  bg-surface-1 border border-subtle rounded-md shadow-lg overflow-hidden z-20  transition-all duration-300 ease-in-out flex flex-col px-0 pt-10",
           {
             "opacity-100 w-[574px] max-h-[80vh]": isOpen,
             "opacity-0 w-0 h-0": !isOpen,
@@ -274,6 +272,7 @@ export const TopNavPowerK = observer(() => {
                 isWorkspaceLevel={isWorkspaceLevel}
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
+                handleSearchMenuClose={() => closePanel()}
               />
             </Command.List>
             <PowerKModalFooter

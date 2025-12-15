@@ -2,6 +2,7 @@ export * from "./404-error";
 export * from "./archived-cycle";
 export * from "./archived-module";
 export * from "./archived-work-item";
+export * from "./changelog";
 export * from "./customer";
 export * from "./cycle";
 export * from "./dashboard";

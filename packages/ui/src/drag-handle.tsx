@@ -21,10 +21,7 @@ export const DragHandle = forwardRef(function DragHandle(
   return (
     <button
       type="button"
-      className={cn(
-        "p-0.5 flex flex-shrink-0 rounded bg-custom-background-90 text-custom-sidebar-text-200 cursor-grab",
-        className
-      )}
+      className={cn("p-0.5 flex flex-shrink-0 rounded-sm bg-surface-2 text-secondary cursor-grab", className)}
       onContextMenu={(e) => {
         e.preventDefault();
         e.stopPropagation();

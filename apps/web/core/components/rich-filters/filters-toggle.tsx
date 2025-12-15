@@ -12,7 +12,7 @@ type TFiltersToggleProps<P extends TFilterProperty, E extends TExternalFilter> =
 };
 
 const COMMON_CLASSNAME =
-  "grid place-items-center h-7 w-full py-0.5 px-2 rounded border transition-all duration-200 cursor-pointer";
+  "grid place-items-center h-7 w-full py-0.5 px-2 rounded-md border border-subtle-1 transition-all duration-200 cursor-pointer";
 
 export const FiltersToggle = observer(function FiltersToggle<P extends TFilterProperty, E extends TExternalFilter>(
   props: TFiltersToggleProps<P, E>
@@ -39,7 +39,7 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
       <AddFilterButton
         filter={filter}
         buttonConfig={{
-          variant: "neutral-primary",
+          variant: "secondary",
           className: COMMON_CLASSNAME,
           label: null,
         }}
@@ -49,28 +49,28 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
   }
 
   return (
-    <div
+    <button
       className={cn(COMMON_CLASSNAME, {
-        "border-transparent bg-custom-primary-100/10 hover:bg-custom-primary-100/20": isFilterRowVisible,
-        "border-custom-border-200 hover:bg-custom-background-90": !isFilterRowVisible,
+        "border-transparent bg-accent-primary/10 hover:bg-accent-primary/20": isFilterRowVisible,
+        "hover:bg-surface-1": !isFilterRowVisible,
       })}
       onClick={handleToggleFilter}
     >
       <div className="relative">
         <ListFilter
           className={cn("size-4", {
-            "text-custom-primary-100": isFilterRowVisible,
-            "text-custom-text-300": !isFilterRowVisible,
+            "text-accent-primary": isFilterRowVisible,
+            "text-tertiary": !isFilterRowVisible,
           })}
         />
         {showFilterRowChangesPill && (
           <span
-            className={cn("p-[3px] rounded-full bg-custom-primary-100 absolute top-[0.2px] -right-[0.4px]", {
-              "bg-custom-text-300": hasAnyConditions === false && filter?.hasChanges === true, // If there are no conditions and there are changes, show the pill in the background color
+            className={cn("p-[3px] rounded-full bg-accent-primary absolute top-[0.2px] -right-[0.4px]", {
+              "bg-layer-1": hasAnyConditions === false && filter?.hasChanges === true, // If there are no conditions and there are changes, show the pill in the background color
             })}
           />
         )}
       </div>
-    </div>
+    </button>
   );
 });

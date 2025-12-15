@@ -25,73 +25,45 @@ export const Primary: Story = {
   },
 };
 
-export const AccentPrimary: Story = {
+export const ErrorFill: Story = {
   args: {
-    variant: "accent-primary",
-    children: "Accent Primary Button",
+    variant: "error-fill",
+    children: "Error Button",
   },
 };
 
-export const OutlinePrimary: Story = {
+export const ErrorOutline: Story = {
   args: {
-    variant: "outline-primary",
-    children: "Outline Primary Button",
+    variant: "error-outline",
+    children: "Error Outline Button",
   },
 };
 
-export const NeutralPrimary: Story = {
+export const Secondary: Story = {
   args: {
-    variant: "neutral-primary",
-    children: "Neutral Primary Button",
+    variant: "secondary",
+    children: "Secondary Button",
   },
 };
 
-export const LinkPrimary: Story = {
+export const Tertiary: Story = {
   args: {
-    variant: "link-primary",
-    children: "Link Primary Button",
+    variant: "tertiary",
+    children: "Tertiary Button",
   },
 };
 
-export const Danger: Story = {
+export const Ghost: Story = {
   args: {
-    variant: "danger",
-    children: "Danger Button",
+    variant: "ghost",
+    children: "Ghost Button",
   },
 };
 
-export const AccentDanger: Story = {
+export const Link: Story = {
   args: {
-    variant: "accent-danger",
-    children: "Accent Danger Button",
-  },
-};
-
-export const OutlineDanger: Story = {
-  args: {
-    variant: "outline-danger",
-    children: "Outline Danger Button",
-  },
-};
-
-export const LinkDanger: Story = {
-  args: {
-    variant: "link-danger",
-    children: "Link Danger Button",
-  },
-};
-
-export const TertiaryDanger: Story = {
-  args: {
-    variant: "tertiary-danger",
-    children: "Tertiary Danger Button",
-  },
-};
-
-export const LinkNeutral: Story = {
-  args: {
-    variant: "link-neutral",
-    children: "Link Neutral Button",
+    variant: "link",
+    children: "Link Button",
   },
 };
 
@@ -102,10 +74,10 @@ export const Small: Story = {
   },
 };
 
-export const Medium: Story = {
+export const Base: Story = {
   args: {
-    size: "md",
-    children: "Medium Button",
+    size: "base",
+    children: "Base Button",
   },
 };
 
@@ -182,29 +154,15 @@ export const AllVariants: Story = {
     return (
       <div className="space-y-4">
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Primary Variants</h3>
+          <h3 className="text-16 font-semibold">Primary Variants</h3>
           <div className="flex flex-wrap gap-2">
             <Button variant="primary">Primary</Button>
-            <Button variant="accent-primary">Accent Primary</Button>
-            <Button variant="outline-primary">Outline Primary</Button>
-            <Button variant="neutral-primary">Neutral Primary</Button>
-            <Button variant="link-primary">Link Primary</Button>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Danger Variants</h3>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="danger">Danger</Button>
-            <Button variant="accent-danger">Accent Danger</Button>
-            <Button variant="outline-danger">Outline Danger</Button>
-            <Button variant="link-danger">Link Danger</Button>
-            <Button variant="tertiary-danger">Tertiary Danger</Button>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Other Variants</h3>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="link-neutral">Link Neutral</Button>
+            <Button variant="error-fill">Error Fill</Button>
+            <Button variant="error-outline">Error Outline</Button>
+            <Button variant="secondary">Secondary</Button>
+            <Button variant="tertiary">Tertiary</Button>
+            <Button variant="ghost">Ghost</Button>
+            <Button variant="link">Link</Button>
           </div>
         </div>
       </div>
@@ -218,7 +176,7 @@ export const AllSizes: Story = {
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Button size="sm">Small</Button>
-          <Button size="md">Medium</Button>
+          <Button size="base">Base</Button>
           <Button size="lg">Large</Button>
           <Button size="xl">Extra Large</Button>
         </div>
@@ -232,7 +190,7 @@ export const AllStates: Story = {
     return (
       <div className="space-y-4">
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Button States</h3>
+          <h3 className="text-16 font-semibold">Button States</h3>
           <div className="flex flex-wrap gap-2">
             <Button>Default</Button>
             <Button loading>Loading</Button>

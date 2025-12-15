@@ -66,7 +66,7 @@ export function ArchiveModuleModal(props: Props) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -80,17 +80,23 @@ export function ArchiveModuleModal(props: Props) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-lg">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="px-5 py-4">
-                  <h3 className="text-xl font-medium 2xl:text-2xl">Archive module {moduleName}</h3>
-                  <p className="mt-3 text-sm text-custom-text-200">
+                  <h3 className="text-18 font-medium 2xl:text-20">Archive module {moduleName}</h3>
+                  <p className="mt-3 text-13 text-secondary">
                     Are you sure you want to archive the module? All your archives can be restored later.
                   </p>
                   <div className="mt-3 flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
+                    <Button variant="secondary" size="lg" onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button size="sm" tabIndex={1} onClick={handleArchiveModule} loading={isArchiving}>
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      tabIndex={1}
+                      onClick={handleArchiveModule}
+                      loading={isArchiving}
+                    >
                       {isArchiving ? "Archiving" : "Archive"}
                     </Button>
                   </div>

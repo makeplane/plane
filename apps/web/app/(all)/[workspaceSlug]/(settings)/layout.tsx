@@ -8,13 +8,13 @@ export default function SettingsLayout() {
   return (
     <>
       <ProjectsAppPowerKProvider />
-      <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
-        <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
+      <div className="relative flex size-full overflow-hidden rounded-lg border border-subtle">
+        <main className="relative flex size-full flex-col overflow-hidden">
           {/* Header */}
           <SettingsHeader />
           {/* Content */}
-          <ContentWrapper className="p-page-x md:flex w-full">
-            <div className="w-full h-full overflow-hidden">
+          <ContentWrapper className="p-page-x md:flex w-full bg-surface-1">
+            <div className="size-full overflow-hidden">
               <Outlet />
             </div>
           </ContentWrapper>

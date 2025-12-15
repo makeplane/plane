@@ -15,7 +15,7 @@ export function Spinner({ height = "32px", width = "32px", className = "" }: ISp
         aria-hidden="true"
         height={height}
         width={width}
-        className={clsx("animate-spin text-custom-text-200", className)}
+        className={clsx("animate-spin text-secondary", className)}
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
