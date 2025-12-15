@@ -38,6 +38,13 @@ export class ProfileStore implements IUserProfileStore {
       theme: undefined,
       text: undefined,
       palette: undefined,
+      // New custom theme fields
+      neutral: undefined,
+      isDarkModeToggled: undefined,
+      brandColor: undefined,
+      neutralColor: undefined,
+      themeMode: undefined,
+      darkModeLightnessOffset: undefined,
       primary: undefined,
       background: undefined,
       darkPalette: undefined,

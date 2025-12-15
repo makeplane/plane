@@ -7,7 +7,7 @@ import { THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { IUserTheme } from "@plane/types";
-import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
+import { applyTheme, applyCustomTheme, unsetCustomCssVariables } from "@plane/utils";
 // components
 import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
 import { ThemeSwitch } from "@/components/core/theme/theme-switch";
@@ -43,16 +43,59 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
     }
   }, [userProfile?.theme?.theme]);
 
+  // Load custom theme from profile when theme is custom
+  useEffect(() => {
+    const loadCustomTheme = async () => {
+      if (currentTheme?.value === "custom" && userProfile?.theme) {
+        try {
+          const theme = userProfile.theme;
+          if (theme.brandColor && theme.neutralColor && theme.themeMode) {
+            await applyCustomTheme(
+              theme.brandColor,
+              theme.neutralColor,
+              theme.themeMode,
+              theme.darkModeLightnessOffset
+            );
+          } else if (theme.palette) {
+            // Legacy support
+            const defaultPalette = "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5";
+            const palette = theme.palette !== ",,,," ? theme.palette : defaultPalette;
+            applyTheme(palette, false);
+          }
+        } catch (error) {
+          console.error("Failed to load custom theme from profile:", error);
+        }
+      }
+    };
+    loadCustomTheme();
+  }, [currentTheme, userProfile?.theme]);
+
   // handlers
   const applyThemeChange = useCallback(
-    (theme: Partial<IUserTheme>) => {
+    async (theme: Partial<IUserTheme> & {
+      brandColor?: string;
+      neutralColor?: string;
+      themeMode?: "light" | "dark";
+      darkModeLightnessOffset?: number;
+    }) => {
       const themeValue = theme?.theme || "system";
       setTheme(themeValue);
 
-      if (theme?.theme === "custom" && theme?.palette) {
-        const defaultPalette = "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5";
-        const palette = theme.palette !== ",,,," ? theme.palette : defaultPalette;
-        applyTheme(palette, false);
+      if (theme?.theme === "custom") {
+        // New 2-color palette system loaded from profile
+        if (theme?.brandColor && theme?.neutralColor && theme?.themeMode) {
+          await applyCustomTheme(
+            theme.brandColor,
+            theme.neutralColor,
+            theme.themeMode,
+            theme.darkModeLightnessOffset
+          );
+        } else if (theme?.palette) {
+          // Legacy 5-color system (backward compatibility)
+          const defaultPalette = "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5";
+          const palette = theme.palette !== ",,,," ? theme.palette : defaultPalette;
+          applyTheme(palette, false);
+        }
       } else {
         unsetCustomCssVariables();
       }

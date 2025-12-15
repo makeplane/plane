@@ -1,272 +1,487 @@
-import { useMemo } from "react";
+import { useState, useEffect as React_useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // types
-import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { setPromiseToast } from "@plane/propel/toast";
-import type { IUserTheme } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
-import { InputColorPicker } from "@plane/ui";
+import { InputColorPicker, ToggleSwitch } from "@plane/ui";
+import { applyCustomTheme, generateThemePalettes, invertPalette } from "@plane/utils";
 // hooks
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useUserProfile } from "@/hooks/store/user";
 
+interface CustomThemeFormData {
+  brandColor: string;
+  neutralColor: string;
+  themeMode: "light" | "dark";
+  darkModeLightnessOffset: number;
+}
+
 type TCustomThemeSelector = {
-  applyThemeChange: (theme: Partial<IUserTheme>) => void;
+  applyThemeChange: (themeData: CustomThemeFormData & { theme: "custom" }) => void;
 };
 
 export const CustomThemeSelector = observer(function CustomThemeSelector(props: TCustomThemeSelector) {
   const { applyThemeChange } = props;
-  // hooks
-  const { data: userProfile, updateUserTheme } = useUserProfile();
   const { t } = useTranslation();
+  const { data: userProfile, updateUserTheme } = useUserProfile();
+
+  // Loading state for async palette generation
+  const [isLoadingPalette, setIsLoadingPalette] = useState(false);
+
+  // File input ref for upload
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Load saved theme from userProfile (fallback to defaults)
+  const getSavedTheme = (): CustomThemeFormData => {
+    if (userProfile?.theme) {
+      const theme = userProfile.theme;
+      if (theme.brandColor && theme.neutralColor) {
+        return {
+          brandColor: theme.brandColor,
+          neutralColor: theme.neutralColor,
+          themeMode: theme.themeMode || (theme.isDarkModeToggled ? "dark" : "light"),
+          darkModeLightnessOffset: theme.darkModeLightnessOffset || -0.15,
+        };
+      }
+    }
+    // Fallback to defaults
+    return {
+      brandColor: "#3f76ff",
+      neutralColor: "#1a1a1a",
+      themeMode: "light",
+      darkModeLightnessOffset: -0.15,
+    };
+  };
+
   const {
     control,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
     handleSubmit,
     watch,
-  } = useForm<IUserTheme>({
-    defaultValues: {
-      background: userProfile?.theme?.background !== "" ? userProfile?.theme?.background : "#0d101b",
-      text: userProfile?.theme?.text !== "" ? userProfile?.theme?.text : "#c5c5c5",
-      primary: userProfile?.theme?.primary !== "" ? userProfile?.theme?.primary : "#3f76ff",
-      sidebarBackground:
-        userProfile?.theme?.sidebarBackground !== "" ? userProfile?.theme?.sidebarBackground : "#0d101b",
-      sidebarText: userProfile?.theme?.sidebarText !== "" ? userProfile?.theme?.sidebarText : "#c5c5c5",
-      darkPalette: userProfile?.theme?.darkPalette || false,
-      palette: userProfile?.theme?.palette !== "" ? userProfile?.theme?.palette : "",
-    },
+    setValue,
+  } = useForm<CustomThemeFormData>({
+    defaultValues: getSavedTheme(),
   });
 
-  const inputRules = useMemo(
-    () => ({
-      minLength: {
-        value: 7,
-        message: t("enter_a_valid_hex_code_of_6_characters"),
-      },
-      maxLength: {
-        value: 7,
-        message: t("enter_a_valid_hex_code_of_6_characters"),
-      },
-      pattern: {
-        value: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
-        message: t("enter_a_valid_hex_code_of_6_characters"),
-      },
-    }),
-    [t] // Empty dependency array since these rules never change
-  );
-
-  const handleUpdateTheme = async (formData: Partial<IUserTheme>) => {
-    const payload: IUserTheme = {
-      background: formData.background,
-      text: formData.text,
-      primary: formData.primary,
-      sidebarBackground: formData.sidebarBackground,
-      sidebarText: formData.sidebarText,
-      darkPalette: false,
-      palette: `${formData.background},${formData.text},${formData.primary},${formData.sidebarBackground},${formData.sidebarText}`,
-      theme: "custom",
+  const [previewPalettes, setPreviewPalettes] = useState<{
+    brandPalette: any;
+    neutralPalette: any;
+    neutralPaletteDark: any;
+  }>(() => {
+    const values = getSavedTheme();
+    // Initialize with empty palettes, will be loaded async
+    return {
+      brandPalette: {},
+      neutralPalette: {},
+      neutralPaletteDark: {},
     };
-    applyThemeChange(payload);
+  });
 
-    const updateCurrentUserThemePromise = updateUserTheme(payload);
-    setPromiseToast(updateCurrentUserThemePromise, {
-      loading: t("updating_theme"),
-      success: {
-        title: t("success"),
-        message: () => t("theme_updated_successfully"),
-      },
-      error: {
-        title: t("error"),
-        message: () => t("failed_to_update_the_theme"),
-      },
-    });
-    updateCurrentUserThemePromise
-      .then(() => {
-        captureElementAndEvent({
-          element: {
-            elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.THEME_DROPDOWN,
-          },
-          event: {
-            eventName: PROFILE_SETTINGS_TRACKER_EVENTS.theme_updated,
-            payload: {
-              theme: payload.theme,
-            },
-            state: "SUCCESS",
-          },
+  // No need for local invertPalette - using the one from @plane/utils
+
+  // Load initial palettes on mount
+  React_useEffect(() => {
+    const loadInitialPalettes = () => {
+      const values = getSavedTheme();
+      setIsLoadingPalette(true);
+      try {
+        const palettes = generateThemePalettes(values.brandColor, values.neutralColor);
+        setPreviewPalettes({
+          brandPalette: palettes.brandPalette,
+          neutralPalette: palettes.neutralPalette,
+          neutralPaletteDark: palettes.neutralPalette, // Will be inverted in display
         });
-      })
-      .catch(() => {
-        captureElementAndEvent({
-          element: {
-            elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.THEME_DROPDOWN,
-          },
-          event: {
-            eventName: PROFILE_SETTINGS_TRACKER_EVENTS.theme_updated,
-            payload: {
-              theme: payload.theme,
-            },
-            state: "ERROR",
-          },
-        });
+      } catch (error) {
+        console.error("Failed to load initial palettes:", error);
+      } finally {
+        setIsLoadingPalette(false);
+      }
+    };
+    loadInitialPalettes();
+  }, []);
+
+  // Watch colors and theme mode for live preview
+  const brandColor = watch("brandColor");
+  const neutralColor = watch("neutralColor");
+  const themeMode = watch("themeMode");
+  const darkModeLightnessOffset = watch("darkModeLightnessOffset");
+
+  // Update preview when colors change (no longer depends on themeMode or darkModeLightnessOffset)
+  React_useEffect(() => {
+    const updatePreview = () => {
+      if (brandColor && neutralColor) {
+        setIsLoadingPalette(true);
+        try {
+          const palettes = generateThemePalettes(brandColor, neutralColor);
+          setPreviewPalettes({
+            brandPalette: palettes.brandPalette,
+            neutralPalette: palettes.neutralPalette,
+            neutralPaletteDark: palettes.neutralPalette, // Will be inverted in display
+          });
+        } catch (error) {
+          console.error("Failed to generate preview:", error);
+        } finally {
+          setIsLoadingPalette(false);
+        }
+      }
+    };
+
+    // Debounce the update
+    const timeoutId = setTimeout(updatePreview, 300);
+    return () => clearTimeout(timeoutId);
+  }, [brandColor, neutralColor]);
+
+  const handleUpdateTheme = async (formData: CustomThemeFormData) => {
+    try {
+      setIsLoadingPalette(true);
+
+      // Apply theme immediately (now synchronous)
+      applyCustomTheme(formData.brandColor, formData.neutralColor, formData.themeMode);
+
+      // Generate palettes to save
+      const palettes = generateThemePalettes(formData.brandColor, formData.neutralColor);
+
+      // Generate light mode palette (brand + neutral combined)
+      const lightModePalette = {
+        brand: palettes.brandPalette,
+        neutral: palettes.neutralPalette,
+      };
+
+      // Generate dark mode palette (inverted neutral palette)
+      const darkModeNeutralPalette = invertPalette(palettes.neutralPalette);
+      const darkModeBrandPalette = invertPalette(palettes.brandPalette);
+      const darkModePalette = {
+        brand: darkModeBrandPalette,
+        neutral: darkModeNeutralPalette,
+      };
+
+      // Save to profile endpoint
+      await updateUserTheme({
+        theme: "custom",
+        brandColor: formData.brandColor,
+        neutralColor: formData.neutralColor,
+        themeMode: formData.themeMode,
+        isDarkModeToggled: formData.themeMode === "dark",
+        darkModeLightnessOffset: formData.darkModeLightnessOffset,
+        // New palette fields
+        brand: JSON.stringify(palettes.brandPalette),
+        neutral: JSON.stringify(palettes.neutralPalette),
+        // Save light and dark mode full palettes
+        palette: JSON.stringify(lightModePalette),
+        darkPalette: JSON.stringify(darkModePalette),
       });
 
-    return;
+      // Notify parent component
+      applyThemeChange({ ...formData, theme: "custom" });
+
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("success"),
+        message: t("theme_updated_successfully"),
+      });
+    } catch (error) {
+      console.error("Failed to apply theme:", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("error"),
+        message: t("failed_to_update_the_theme"),
+      });
+    } finally {
+      setIsLoadingPalette(false);
+    }
   };
 
   const handleValueChange = (val: string | undefined, onChange: any) => {
     let hex = val;
     // prepend a hashtag if it doesn't exist
     if (val && val[0] !== "#") hex = `#${val}`;
-
     onChange(hex);
+    // useEffect will handle preview update with debouncing
+  };
+
+  const handleDownloadConfig = () => {
+    try {
+      const currentValues = watch();
+      const config = {
+        version: "1.0",
+        themeName: "Custom Theme",
+        brandColor: currentValues.brandColor,
+        neutralColor: currentValues.neutralColor,
+        themeMode: currentValues.themeMode,
+        darkModeLightnessOffset: currentValues.darkModeLightnessOffset,
+      };
+
+      const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `plane-theme-${Date.now()}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("success"),
+        message: "Theme configuration downloaded successfully",
+      });
+    } catch (error) {
+      console.error("Failed to download config:", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("error"),
+        message: "Failed to download theme configuration",
+      });
+    }
+  };
+
+  const handleUploadConfig = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const config = JSON.parse(text);
+
+      // Validate required fields
+      if (!config.brandColor || !config.neutralColor) {
+        throw new Error("Missing required fields: brandColor and neutralColor");
+      }
+
+      // Validate hex color format
+      const hexPattern = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+      if (!hexPattern.test(config.brandColor)) {
+        throw new Error("Invalid brand color hex format");
+      }
+      if (!hexPattern.test(config.neutralColor)) {
+        throw new Error("Invalid neutral color hex format");
+      }
+
+      // Validate theme mode
+      const themeMode = config.themeMode || "light";
+      if (themeMode !== "light" && themeMode !== "dark") {
+        throw new Error("Invalid theme mode. Must be 'light' or 'dark'");
+      }
+
+      // Validate darkModeLightnessOffset
+      const offset = config.darkModeLightnessOffset ?? -0.15;
+      if (typeof offset !== "number" || offset < -0.4 || offset > -0.05) {
+        throw new Error("Invalid darkModeLightnessOffset. Must be a number between -0.4 and -0.05");
+      }
+
+      // Apply the configuration to form
+      const formData: CustomThemeFormData = {
+        brandColor: config.brandColor,
+        neutralColor: config.neutralColor,
+        themeMode,
+        darkModeLightnessOffset: offset,
+      };
+
+      // Update form values
+      setValue("brandColor", formData.brandColor);
+      setValue("neutralColor", formData.neutralColor);
+      setValue("themeMode", formData.themeMode);
+      setValue("darkModeLightnessOffset", formData.darkModeLightnessOffset);
+
+      // Apply the theme
+      await handleUpdateTheme(formData);
+
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("success"),
+        message: "Theme configuration imported successfully",
+      });
+    } catch (error) {
+      console.error("Failed to upload config:", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("error"),
+        message: error instanceof Error ? error.message : "Failed to import theme configuration",
+      });
+    } finally {
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(handleUpdateTheme)}>
       <div className="space-y-5">
         <h3 className="text-16 font-semibold text-primary">{t("customize_your_theme")}</h3>
+
         <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
+          {/* Color Inputs */}
+          <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
+            {/* Brand Color */}
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-13 font-medium text-secondary">{t("background_color")}</h3>
+              <h3 className="text-left text-13 font-medium text-secondary">Brand Color</h3>
               <div className="w-full">
                 <Controller
                   control={control}
-                  name="background"
-                  rules={{ ...inputRules, required: t("background_color_is_required") }}
+                  name="brandColor"
+                  rules={{
+                    required: "Brand color is required",
+                    pattern: {
+                      value: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
+                      message: "Enter a valid hex code",
+                    },
+                  }}
                   render={({ field: { value, onChange } }) => (
                     <InputColorPicker
-                      name="background"
-                      value={value}
-                      onChange={(val) => handleValueChange(val, onChange)}
-                      placeholder="#0d101b"
-                      className="w-full placeholder:text-placeholder/60"
-                      style={{
-                        backgroundColor: watch("background"),
-                        color: watch("text"),
-                      }}
-                      hasError={Boolean(errors?.background)}
-                    />
-                  )}
-                />
-                {errors.background && <p className="mt-1 text-11 text-red-500">{errors.background.message}</p>}
-              </div>
-            </div>
-
-            <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-13 font-medium text-secondary">{t("text_color")}</h3>
-              <div className="w-full">
-                <Controller
-                  control={control}
-                  name="text"
-                  rules={{ ...inputRules, required: t("text_color_is_required") }}
-                  render={({ field: { value, onChange } }) => (
-                    <InputColorPicker
-                      name="text"
-                      value={value}
-                      onChange={(val) => handleValueChange(val, onChange)}
-                      placeholder="#c5c5c5"
-                      className="w-full placeholder:text-placeholder/60"
-                      style={{
-                        backgroundColor: watch("text"),
-                        color: watch("background"),
-                      }}
-                      hasError={Boolean(errors?.text)}
-                    />
-                  )}
-                />
-                {errors.text && <p className="mt-1 text-11 text-red-500">{errors.text.message}</p>}
-              </div>
-            </div>
-
-            <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-13 font-medium text-secondary">{t("primary_color")}</h3>
-              <div className="w-full">
-                <Controller
-                  control={control}
-                  name="primary"
-                  rules={{ ...inputRules, required: t("primary_color_is_required") }}
-                  render={({ field: { value, onChange } }) => (
-                    <InputColorPicker
-                      name="primary"
+                      name="brandColor"
                       value={value}
                       onChange={(val) => handleValueChange(val, onChange)}
                       placeholder="#3f76ff"
                       className="w-full placeholder:text-placeholder/60"
                       style={{
-                        backgroundColor: watch("primary"),
-                        color: watch("text"),
+                        backgroundColor: value,
+                        color: "#ffffff",
                       }}
-                      hasError={Boolean(errors?.primary)}
+                      hasError={false}
                     />
                   )}
                 />
-                {errors.primary && <p className="mt-1 text-11 text-red-500">{errors.primary.message}</p>}
               </div>
             </div>
 
+            {/* Neutral Color */}
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-13 font-medium text-secondary">{t("sidebar_background_color")}</h3>
+              <h3 className="text-left text-13 font-medium text-secondary">Neutral Color</h3>
               <div className="w-full">
                 <Controller
                   control={control}
-                  name="sidebarBackground"
-                  rules={{ ...inputRules, required: t("sidebar_background_color_is_required") }}
+                  name="neutralColor"
+                  rules={{
+                    required: "Neutral color is required",
+                    pattern: {
+                      value: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
+                      message: "Enter a valid hex code",
+                    },
+                  }}
                   render={({ field: { value, onChange } }) => (
                     <InputColorPicker
-                      name="sidebarBackground"
+                      name="neutralColor"
                       value={value}
                       onChange={(val) => handleValueChange(val, onChange)}
-                      placeholder="#0d101b"
+                      placeholder="#1a1a1a"
                       className="w-full placeholder:text-placeholder/60"
                       style={{
-                        backgroundColor: watch("sidebarBackground"),
-                        color: watch("sidebarText"),
+                        backgroundColor: value,
+                        color: "#ffffff",
                       }}
-                      hasError={Boolean(errors?.sidebarBackground)}
+                      hasError={false}
                     />
                   )}
                 />
-                {errors.sidebarBackground && (
-                  <p className="mt-1 text-11 text-red-500">{errors.sidebarBackground.message}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-13 font-medium text-secondary">{t("sidebar_text_color")}</h3>
-              <div className="w-full">
-                <Controller
-                  control={control}
-                  name="sidebarText"
-                  rules={{ ...inputRules, required: t("sidebar_text_color_is_required") }}
-                  render={({ field: { value, onChange } }) => (
-                    <InputColorPicker
-                      name="sidebarText"
-                      value={value}
-                      onChange={(val) => handleValueChange(val, onChange)}
-                      placeholder="#c5c5c5"
-                      className="w-full placeholder:text-placeholder/60"
-                      style={{
-                        backgroundColor: watch("sidebarText"),
-                        color: watch("sidebarBackground"),
-                      }}
-                      hasError={Boolean(errors?.sidebarText)}
-                    />
-                  )}
-                />
-                {errors.sidebarText && <p className="mt-1 text-11 text-red-500">{errors.sidebarText.message}</p>}
               </div>
             </div>
           </div>
+
+          {/* Theme Mode Toggle */}
+          <div className="flex flex-col items-start gap-2">
+            <h3 className="text-left text-13 font-medium text-secondary">Theme Mode</h3>
+            <Controller
+              control={control}
+              name="themeMode"
+              render={({ field: { value, onChange } }) => (
+                <ToggleSwitch
+                  value={value === "dark"}
+                  onChange={(checked) => onChange(checked ? "dark" : "light")}
+                  size="sm"
+                />
+              )}
+            />
+            <span className="text-12 text-tertiary">{watch("themeMode") === "light" ? "Light Mode" : "Dark Mode"}</span>
+          </div>
+
+          {/* Preview Section */}
+          <div className="flex flex-col items-start gap-2">
+            <h3 className="text-left text-13 font-medium text-secondary">Palette Preview</h3>
+
+            {isLoadingPalette ? (
+              <div className="w-full h-24 flex items-center justify-center bg-layer-1 rounded-md">
+                <span className="text-13 text-tertiary">Generating palette...</span>
+              </div>
+            ) : (
+              <div className="w-full space-y-3">
+                {/* Brand Palette */}
+                <div>
+                  <p className="text-11 text-tertiary mb-1">Brand Colors</p>
+                  <div className="flex gap-1 overflow-x-auto">
+                    {Object.entries(previewPalettes.brandPalette).map(([shade, color]) => (
+                      <div
+                        key={shade}
+                        className="flex-shrink-0 h-8 w-8 rounded border border-subtle"
+                        style={{ background: String(color) }}
+                        title={`${shade}: ${color}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Neutral Palette */}
+                <div>
+                  <p className="text-11 text-tertiary mb-1">
+                    Neutral Colors {themeMode === "dark" && "(Inverted for Dark Mode)"}
+                  </p>
+                  <div className="flex gap-1 overflow-x-auto">
+                    {Object.entries(
+                      themeMode === "dark"
+                        ? invertPalette(previewPalettes.neutralPalette)
+                        : previewPalettes.neutralPalette
+                    ).map(([shade, color]) => (
+                      <div
+                        key={shade}
+                        className="flex-shrink-0 h-8 w-8 rounded border border-subtle"
+                        style={{ background: String(color) }}
+                        title={`${shade}: ${color}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Brand Palette (also show inverted in dark mode) */}
+                {themeMode === "dark" && (
+                  <div>
+                    <p className="text-11 text-tertiary mb-1">Brand Colors (Inverted for Dark Mode)</p>
+                    <div className="flex gap-1 overflow-x-auto">
+                      {Object.entries(invertPalette(previewPalettes.brandPalette)).map(([shade, color]) => (
+                        <div
+                          key={shade}
+                          className="flex-shrink-0 h-8 w-8 rounded border border-subtle"
+                          style={{ background: String(color) }}
+                          title={`${shade}: ${color}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      <div className="mt-5 flex justify-end gap-2">
-        <Button variant="primary" type="submit" loading={isSubmitting}>
-          {isSubmitting ? t("creating_theme") : t("set_theme")}
+
+      <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+        {/* Import/Export Section */}
+        <div className="flex gap-2">
+          <input ref={fileInputRef} type="file" accept=".json" onChange={handleUploadConfig} className="hidden" />
+          <Button variant="neutral-primary" type="button" onClick={() => fileInputRef.current?.click()} size="sm">
+            Upload Config
+          </Button>
+          <Button variant="neutral-primary" type="button" onClick={handleDownloadConfig} size="sm">
+            Download Config
+          </Button>
+        </div>
+
+        {/* Save Theme Button */}
+        <Button variant="primary" type="submit" loading={isSubmitting || isLoadingPalette}>
+          {isSubmitting ? t("creating_theme") : isLoadingPalette ? "Generating..." : t("set_theme")}
         </Button>
       </div>
     </form>

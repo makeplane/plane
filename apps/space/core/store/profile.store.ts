@@ -32,11 +32,20 @@ export class ProfileStore implements IProfileStore {
     last_workspace_id: undefined,
     theme: {
       theme: undefined,
-      text: undefined,
       palette: undefined,
+      darkPalette: undefined,
+      // New custom theme fields
+      brand: undefined,
+      neutral: undefined,
+      isDarkModeToggled: undefined,
+      brandColor: undefined,
+      neutralColor: undefined,
+      themeMode: undefined,
+      darkModeLightnessOffset: undefined,
+      // Legacy fields
+      text: undefined,
       primary: undefined,
       background: undefined,
-      darkPalette: undefined,
       sidebarText: undefined,
       sidebarBackground: undefined,
     },

@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { IUserTheme } from "@plane/types";
 // components
-import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
+import { applyTheme, applyCustomTheme, unsetCustomCssVariables } from "@plane/utils";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
 import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
@@ -35,6 +35,28 @@ function ProfileAppearancePage() {
     }
   }, [userProfile?.theme?.theme]);
 
+  // Load custom theme from profile on mount
+  useEffect(() => {
+    const loadCustomTheme = async () => {
+      if (currentTheme?.value === "custom" && userProfile?.theme) {
+        try {
+          const theme = userProfile.theme;
+          if (theme.brandColor && theme.neutralColor && theme.themeMode) {
+            await applyCustomTheme(
+              theme.brandColor,
+              theme.neutralColor,
+              theme.themeMode,
+              theme.darkModeLightnessOffset
+            );
+          }
+        } catch (error) {
+          console.error("Failed to load custom theme from profile:", error);
+        }
+      }
+    };
+    loadCustomTheme();
+  }, [currentTheme, userProfile?.theme]);
+
   const handleThemeChange = (themeOption: I_THEME_OPTION) => {
     applyThemeChange({ theme: themeOption.value });
 
@@ -52,12 +74,28 @@ function ProfileAppearancePage() {
     });
   };
 
-  const applyThemeChange = (theme: Partial<IUserTheme>) => {
+  const applyThemeChange = async (
+    theme: Partial<IUserTheme> & {
+      brandColor?: string;
+      neutralColor?: string;
+      themeMode?: "light" | "dark";
+      darkModeLightnessOffset?: number;
+    }
+  ) => {
     setTheme(theme?.theme || "system");
 
-    if (theme?.theme === "custom" && theme?.palette) {
-      applyTheme(theme?.palette !== ",,,," ? theme?.palette : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5", false);
-    } else unsetCustomCssVariables();
+    if (theme?.theme === "custom") {
+      // New 2-color palette system loaded from profile
+      if (theme?.brandColor && theme?.neutralColor && theme?.themeMode) {
+        await applyCustomTheme(theme.brandColor, theme.neutralColor, theme.themeMode, theme.darkModeLightnessOffset);
+      } else if (theme?.palette) {
+        // Legacy 5-color system (backward compatibility)
+        applyTheme(theme?.palette !== ",,,," ? theme?.palette : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5", false);
+      }
+    } else {
+      // Clear custom theme when switching away
+      unsetCustomCssVariables();
+    }
   };
 
   return (
