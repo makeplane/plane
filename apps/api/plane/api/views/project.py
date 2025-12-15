@@ -210,6 +210,9 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
         """
         try:
             workspace = Workspace.objects.get(slug=slug)
+
+            request.data["timezone"] = workspace.timezone
+
             serializer = ProjectCreateSerializer(data={**request.data}, context={"workspace_id": workspace.id})
             if serializer.is_valid():
                 serializer.save()
