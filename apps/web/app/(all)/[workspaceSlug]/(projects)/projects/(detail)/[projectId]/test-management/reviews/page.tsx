@@ -517,27 +517,6 @@ export default function ReviewsPage() {
         />
       ),
     },
-    {
-      title: "创建人",
-      dataIndex: "created_by",
-      key: "created_by",
-      width: 200,
-      render: (uid: string | null) => (
-        <MemberDropdown
-          multiple={false}
-          value={uid ?? null}
-          onChange={() => {}}
-          disabled={true}
-          placeholder={""}
-          className="w-full text-sm"
-          buttonContainerClassName="w-full text-left p-0 cursor-default"
-          buttonVariant="transparent-with-text"
-          buttonClassName="text-sm p-0 hover:bg-transparent hover:bg-inherit"
-          showUserDetails={true}
-          optionsClassName="z-[60]"
-        />
-      ),
-    },
     { title: "所属模块", dataIndex: "module_name", key: "module_name", width: 200 },
     {
       title: "评审周期",

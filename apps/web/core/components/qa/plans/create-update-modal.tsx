@@ -9,6 +9,7 @@ import { renderFormattedPayloadDate } from "@plane/utils";
 import { PlanService } from "@/services/qa/plan.service";
 import { RepositoryService } from "@/services/qa/repository.service";
 import { CaseService } from "@/services/qa/case.service";
+import { CycleService } from "@/services/cycle.service";
 
 type TMode = "create" | "edit";
 
@@ -16,6 +17,7 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   workspaceSlug: string;
+  projectId: string;
   // 只读展示字段
   repositoryId: string;
   repositoryName: string;
@@ -27,6 +29,7 @@ type Props = {
     assignees?: string[];
     description?: string;
     module?: string | null;
+    cycle?: string | null;
     begin_time?: string | Date | null;
     end_time?: string | Date | null;
     threshold?: number | null;
@@ -36,12 +39,14 @@ type Props = {
 };
 
 const planService = new PlanService();
+const cycleService = new CycleService();
 
 export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
   const {
     isOpen,
     handleClose,
     workspaceSlug,
+    projectId,
     repositoryId,
     repositoryName,
     mode = "create",
@@ -54,6 +59,7 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
   const [name, setName] = useState<string>(initialData?.name ?? "");
   const [description, setDescription] = useState<string>(initialData?.description ?? "");
   const [moduleId, setModuleId] = useState<string | null>(initialData?.module ?? null);
+  const [cycleId, setCycleId] = useState<string | null>(initialData?.cycle ?? null);
   console.log("🚀 ~ CreateUpdatePlanModal ~ initialData:", initialData);
 
   const [beginTime, setBeginTime] = useState<Date | null>(
@@ -66,6 +72,9 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
   const [moduleOptions, setModuleOptions] = useState<Array<{ value: string; query: string; content: React.ReactNode }>>(
     []
   );
+  const [cycleOptions, setCycleOptions] = useState<Array<{ value: string; query: string; content: React.ReactNode }>>(
+    []
+  );
   const [stateValue] = useState<number>(0);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ name?: string; time?: string; module?: string; threshold?: string }>({});
@@ -75,6 +84,7 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
     setName(initialData?.name ?? "");
     setDescription(initialData?.description ?? "");
     setModuleId(initialData?.module ?? null);
+    setCycleId(initialData?.cycle ?? null);
     if (mode === "create") {
       setBeginTime(null);
       setEndTime(null);
@@ -99,12 +109,14 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
       setName(initialData?.name ?? "");
       setDescription(initialData?.description ?? "");
       setModuleId(initialData?.module ?? null);
+      setCycleId(initialData?.cycle ?? null);
       setBeginTime(initialData?.begin_time ? new Date(initialData?.begin_time as any) : null);
       setEndTime(initialData?.end_time ? new Date(initialData?.end_time as any) : null);
     } else {
       setName("");
       setDescription("");
       setModuleId(null);
+      setCycleId(null);
       setBeginTime(null);
       setEndTime(null);
     }
@@ -135,7 +147,22 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
         }
       })
       .catch(() => setModuleOptions([]));
-  }, [isOpen, workspaceSlug, repositoryId]);
+
+    if (workspaceSlug && projectId) {
+      cycleService
+        .getCyclesWithStatus(workspaceSlug, projectId, ["CURRENT", "UPCOMING"])
+        .then((data) => {
+          const list = Array.isArray(data) ? data : [];
+          const opts = list.map((c: any) => ({
+            value: String(c.id),
+            query: String(c.name),
+            content: <span className="flex-grow truncate">{String(c.name)}</span>,
+          }));
+          setCycleOptions(opts);
+        })
+        .catch(() => setCycleOptions([]));
+    }
+  }, [isOpen, workspaceSlug, repositoryId, projectId]);
 
   const title = useMemo(() => (mode === "edit" ? "编辑测试计划" : "新建测试计划"), [mode]);
 
@@ -171,6 +198,7 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
         end_time: endTime ? renderFormattedPayloadDate(endTime) : null,
         threshold,
         module: moduleId,
+        cycle: cycleId,
       };
 
       if (mode === "create") {
@@ -184,6 +212,7 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
           begin_time: payload.begin_time,
           end_time: payload.end_time,
           module: payload.module,
+          cycle: payload.cycle,
         });
       }
 
@@ -264,6 +293,28 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
             {errors.module && <p className="text-xs text-red-500 mt-1">{errors.module}</p>}
           </div>
 
+          {/* 关联迭代（下拉选择，可搜索，单选） */}
+          <div className="col-span-1">
+            <label className="text-sm text-custom-text-300 mb-1 block">关联迭代</label>
+            <CustomSearchSelect
+              className="w-[320px]"
+              value={cycleId ?? undefined}
+              onChange={(val: string | null) => setCycleId(val ?? null)}
+              options={cycleOptions}
+              multiple={false}
+              customButtonClassName="w-full hover:bg-transparent focus:bg-transparent active:bg-transparent"
+              customButton={
+                <div className="flex w-full max-w-[320px] items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-3 py-2 text-sm">
+                  <span className="flex-grow truncate">
+                    {cycleOptions.find((o) => o.value === cycleId)?.content || (
+                      <span className="text-custom-text-400">请选择关联迭代</span>
+                    )}
+                  </span>
+                </div>
+              }
+            />
+          </div>
+
           {/* 计划起止时间样式参照 CreateReviewModal.tsx L177-200 */}
           <div className="col-span-1">
             <label className="text-sm text-custom-text-300 mb-1 block">计划周期</label>
@@ -331,7 +382,7 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
               >
                 +
               </Button>
-              <span className="text-sm text-custom-text-400">范围 0 - 100</span>
+              <span className="text-sm text-custom-text-400">范围 0 - 100%</span>
             </div>
             {errors.threshold && <p className="text-xs text-red-500 mt-1">{errors.threshold}</p>}
           </div>

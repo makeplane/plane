@@ -265,13 +265,13 @@ class PlanView(BaseViewSet):
 
         # 2. 批量关联 Cycle
         # 使用 set 运算找出需要新增的 cycle_id，减少数据库查询
-        existing_cycle_ids = set(plan.cycles.filter(id__in=cycle_ids).values_list('id', flat=True))
-        new_cycle_ids = set(cycle_ids) - existing_cycle_ids
-
-        if new_cycle_ids:
-            # 批量查询并添加
-            new_cycles = Cycle.objects.filter(pk__in=new_cycle_ids)
-            plan.cycles.add(*new_cycles)
+        # existing_cycle_ids = set(plan.cycles.filter(id__in=cycle_ids).values_list('id', flat=True))
+        # new_cycle_ids = set(cycle_ids) - existing_cycle_ids
+        #
+        # if new_cycle_ids:
+        #     # 批量查询并添加
+        #     new_cycles = Cycle.objects.filter(pk__in=new_cycle_ids)
+        #     plan.cycles.add(*new_cycles)
 
         # 3. 批量导入关联的用例
         # 获取所有选中 Cycle 下 Issue 关联的 Case ID

@@ -695,6 +695,7 @@ export default function TestPlanDetailPage() {
           refreshAll();
         }}
         workspaceSlug={workspaceSlug as string}
+        projectId={projectId as string}
         repositoryId={repositoryId as string}
         repositoryName={decodedRepositoryName}
         mode="create"
@@ -710,6 +711,7 @@ export default function TestPlanDetailPage() {
           refreshAll();
         }}
         workspaceSlug={workspaceSlug as string}
+        projectId={projectId as string}
         repositoryId={repositoryId as string}
         repositoryName={decodedRepositoryName}
         mode="edit"
