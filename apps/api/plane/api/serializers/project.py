@@ -3,13 +3,7 @@ import random
 from rest_framework import serializers
 
 # Module imports
-from plane.db.models import (
-    Project,
-    ProjectIdentifier,
-    WorkspaceMember,
-    State,
-    Estimate,
-)
+from plane.db.models import Project, ProjectIdentifier, WorkspaceMember, State, Estimate, Workspace
 
 from plane.utils.content_validator import (
     validate_html_content,
@@ -123,6 +117,7 @@ class ProjectCreateSerializer(BaseSerializer):
 
     def create(self, validated_data):
         identifier = validated_data.get("identifier", "").strip().upper()
+
         if identifier == "":
             raise serializers.ValidationError(detail="Project Identifier is required")
 
@@ -138,6 +133,11 @@ class ProjectCreateSerializer(BaseSerializer):
                     "color": random.choice(self.PROJECT_ICON_DEFAULT_COLORS),
                 },
             }
+
+        workspace = Workspace.objects.get(id=self.context["workspace_id"])
+
+        if "timezone" not in validated_data:
+            validated_data["timezone"] = workspace.timezone
 
         project = Project.objects.create(**validated_data, workspace_id=self.context["workspace_id"])
         return project

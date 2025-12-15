@@ -13,7 +13,8 @@ from plane.db.models import (
     ProjectIdentifier,
     DeployBoard,
     ProjectPublicMember,
-    IssueSequence
+    IssueSequence,
+    Workspace,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -76,6 +77,10 @@ class ProjectSerializer(BaseSerializer):
 
     def create(self, validated_data):
         workspace_id = self.context["workspace_id"]
+        workspace = Workspace.objects.get(id=workspace_id)
+
+        if "timezone" not in validated_data:
+            validated_data["timezone"] = workspace.timezone
 
         project = Project.objects.create(**validated_data, workspace_id=workspace_id)
 

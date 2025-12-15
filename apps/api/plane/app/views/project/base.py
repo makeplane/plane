@@ -240,8 +240,6 @@ class ProjectViewSet(BaseViewSet):
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
 
-        request.data["timezone"] = workspace.timezone
-
         serializer = ProjectSerializer(data={**request.data}, context={"workspace_id": workspace.id})
         if serializer.is_valid():
             serializer.save()
