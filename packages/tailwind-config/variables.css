@@ -21,7 +21,11 @@
   --color-*: initial;
 
   /* ---------- Alpha colors ---------- */
-  /* White alpha */
+  /* NOTE: These are DEFAULT fallback values. For custom themes, these are dynamically
+     generated from the neutral palette (neutral-black shade 950) via JavaScript.
+     This ensures alpha colors adapt to the user's chosen neutral color. */
+
+  /* White alpha - derived from neutral-black (shade 950) */
   --color-alpha-white-0: oklch(1 0 0 / 0%);
   --color-alpha-white-100: oklch(1 0 0 / 5%);
   --color-alpha-white-200: oklch(1 0 0 / 10%);
@@ -36,7 +40,7 @@
   --color-alpha-white-1100: oklch(1 0 0 / 90%);
   --color-alpha-white-1200: oklch(1 0 0 / 95%);
 
-  /* Black alpha */
+  /* Black alpha - derived from neutral-black (shade 950) */
   --color-alpha-black-0: oklch(0.1482 0.0034 196.79 / 0%);
   --color-alpha-black-100: oklch(0.1482 0.0034 196.79 / 5%);
   --color-alpha-black-200: oklch(0.1482 0.0034 196.79 / 10%);
@@ -231,7 +235,8 @@
 
 /* -------------------- Light mode color tokens -------------------- */
 @theme {
-  /* Neutral colors */
+  /* Neutral colors - 13-shade system (0-1000) */
+  --color-neutral-0: oklch(1 0 0); /* Pure white anchor */
   --color-neutral-white: oklch(1 0 0);
   --color-neutral-100: oklch(0.9851 0 129.63);
   --color-neutral-200: oklch(0.9694 0.0011 197.14);
@@ -247,7 +252,8 @@
   --color-neutral-1200: oklch(0.2376 0.0036 228.95);
   --color-neutral-black: oklch(0.1472 0.0034 196.79);
 
-  /* Brand colors */
+  /* Brand colors - 13-shade system (0-1000) */
+  --color-brand-0: oklch(1 0 0); /* Pure white anchor */
   --color-brand-100: oklch(0.9847 0.0083 236.56);
   --color-brand-200: oklch(0.9715 0.0167 230.9);
   --color-brand-300: oklch(0.9428 0.0341 230.22);
@@ -260,6 +266,10 @@
   --color-brand-1100: oklch(0.2626 0.0578 237.5);
   --color-brand-1200: oklch(0.2093 0.0438 234.02);
   --color-brand-default: oklch(0.4799 0.1158 242.91);
+
+  /* Note: For custom themes, shades 0-1000 are dynamically generated using
+     the new 13-shade palette generator (tints.dev algorithm with chroma-js + HSLuv).
+     Above values are defaults that can be overridden via applyCustomTheme(). */
 
   /* Green/Success colors */
   --color-green-100: oklch(0.9819 0.0181 155.83);
@@ -554,7 +564,8 @@
   :host {
     /* ---------- Dark mode color tokens ---------- */
     @variant dark {
-      /* Neutral colors */
+      /* Neutral colors - 13-shade system (0-1000) */
+      --color-neutral-0: oklch(0.1689 0.0021 286.18); /* Dark mode anchor */
       --color-neutral-black: oklch(0.1689 0.0021 286.18);
       --color-neutral-100: oklch(0.2039 0.0025 247.95);
       --color-neutral-200: oklch(0.216 0.0037 228.98);
@@ -570,7 +581,8 @@
       --color-neutral-1200: oklch(0.9237 0.0026 228.79);
       --color-neutral-white: oklch(0.9702 0 0);
 
-      /* Brand colors */
+      /* Brand colors - 13-shade system (0-1000) */
+      --color-brand-0: oklch(0.1689 0.0021 286.18); /* Dark mode anchor */
       --color-brand-100: oklch(0.2029 0.03 232.24);
       --color-brand-200: oklch(0.2513 0.0418 234.6);
       --color-brand-300: oklch(0.3208 0.05806 236.44);

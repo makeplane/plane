@@ -59,12 +59,19 @@ export type TUserProfile = {
   role: string | undefined;
   last_workspace_id: string | undefined;
   theme: {
-    text: string | undefined;
     theme: string | undefined;
     palette: string | undefined;
+    darkPalette: string | boolean | undefined;
+    // New custom theme fields
+    isDarkModeToggled?: boolean | undefined;
+    brandColor?: string | undefined;
+    neutralColor?: string | undefined;
+    themeMode?: "light" | "dark" | undefined;
+    darkModeLightnessOffset?: number | undefined;
+    // Legacy fields
+    text: string | undefined;
     primary: string | undefined;
     background: string | undefined;
-    darkPalette: boolean | undefined;
     sidebarText: string | undefined;
     sidebarBackground: string | undefined;
   };
@@ -101,14 +108,25 @@ export interface IUserSettings {
 }
 
 export interface IUserTheme {
-  text: string | undefined;
-  theme: string | undefined;
-  palette: string | undefined;
-  primary: string | undefined;
-  background: string | undefined;
-  darkPalette: boolean | undefined;
-  sidebarText: string | undefined;
-  sidebarBackground: string | undefined;
+  theme: string | undefined; // 'light', 'dark', 'custom', etc.
+  palette: string | undefined; // Light mode palette (serialized JSON or legacy format)
+  darkPalette?: string | boolean | undefined; // Dark mode palette (serialized JSON) or legacy boolean
+
+  // New fields for 2-color custom theme
+  brand?: string; // Serialized brand palette JSON
+  neutral?: string; // Serialized neutral palette JSON
+  isDarkModeToggled?: boolean; // Whether dark mode is enabled for custom theme
+  brandColor?: string; // e.g., "#3f76ff" - base brand color
+  neutralColor?: string; // e.g., "#1a1a1a" - base neutral color
+  themeMode?: "light" | "dark"; // For custom theme mode
+  darkModeLightnessOffset?: number; // Dark mode lightness adjustment (-0.05 to -0.4)
+
+  // Legacy fields (deprecated but kept for backward compatibility)
+  text?: string | undefined;
+  primary?: string | undefined;
+  background?: string | undefined;
+  sidebarText?: string | undefined;
+  sidebarBackground?: string | undefined;
 }
 
 export interface IUserMemberLite extends IUserLite {
