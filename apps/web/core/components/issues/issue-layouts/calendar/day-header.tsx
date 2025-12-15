@@ -28,7 +28,7 @@ export const CalendarDayHeader: React.FC<Props> = ({ date, isLoading, onChangeDa
   };
 
   return (
-    <div className="relative sticky top-0 z-[1] bg-custom-background-90 border-b border-custom-border-200 px-4 py-3 flex items-center justify-between">
+    <div className="sticky top-0 z-[1] bg-custom-background-90 border-b border-custom-border-200 px-4 py-3 flex items-center justify-between">
       {isLoading && (
         <div className="absolute h-[1.5px] w-3/4 animate-[bar-loader_2s_linear_infinite] bg-custom-primary-100" />
       )}

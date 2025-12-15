@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { observer } from "mobx-react";
 import type { TIssueMap, TGroupedIssues, TPaginationData, TIssue } from "@plane/types";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { isoToLocalDateString, hourLabel } from "./calendar-time";
 import { CalendarIssueBlocks } from "./issue-blocks";
 import { renderFormattedPayloadDate } from "@plane/utils";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type Props = {
   date: Date;
@@ -57,7 +59,7 @@ const calculateEventPosition = (startTime: string, endTime?: string) => {
   };
 };
 
-export const DayView: React.FC<Props> = ({
+export const DayView: React.FC<Props> = observer(({
   date,
   groupedIssueIds,
   issues,
@@ -72,12 +74,12 @@ export const DayView: React.FC<Props> = ({
   canEditProperties,
   isEpic,
 }) => {
-
   const formattedDatePayload = renderFormattedPayloadDate(date);
   const hourRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const { issue: issueStore } = useIssueDetail();
 
-  // Group issues: events (with start_time) vs all-day (without)
-  const { eventIssues, allDayIssues } = React.useMemo(() => {
+  // Group issues: events (with start_time) vs all-day (without) - using direct computation for MobX reactivity
+  const getIssuesForDay = () => {
     if (!issues || !formattedDatePayload) return { eventIssues: [], allDayIssues: [] };
 
     // Get issues that have their start_date matching the selected date
@@ -85,19 +87,11 @@ export const DayView: React.FC<Props> = ({
       if (!issue) return false;
 
       const selectedDate = formattedDatePayload;
-
-      // const startDate = issue.start_date;
-      // const targetDate = issue.target_date;
-
-      // // If issue has start_date, check if selected date falls within the range
-      // if (startDate) {
-      //   const endDate = targetDate || startDate;
-      //   return selectedDate >= startDate && selectedDate <= endDate;
-      // }
+      const latestIssue = issueStore.getIssueById(issue.id) || issue;
 
       // Only show issues on their start_date
-      if (issue.start_date) {
-        return issue.start_date === selectedDate;
+      if (latestIssue.start_date) {
+        return latestIssue.start_date === selectedDate;
       }
 
       // Fallback: check if issue is in the grouped list for this date
@@ -105,26 +99,33 @@ export const DayView: React.FC<Props> = ({
       return issueIdsForDate.includes(issue.id);
     });
 
-    console.log("DayView issues for date", JSON.parse(JSON.stringify(allIssuesForDay)));
-
     return {
-      eventIssues: allIssuesForDay.filter((issue) => issue.start_time),
-      allDayIssues: allIssuesForDay.filter((issue) => !issue.start_time),
+      eventIssues: allIssuesForDay.filter((issue) => {
+        const latestIssue = issueStore.getIssueById(issue.id) || issue;
+        return latestIssue.start_time;
+      }),
+      allDayIssues: allIssuesForDay.filter((issue) => {
+        const latestIssue = issueStore.getIssueById(issue.id) || issue;
+        return !latestIssue.start_time;
+      }),
     };
-  }, [issues, groupedIssueIds, formattedDatePayload]);
+  };
+
+  const { eventIssues, allDayIssues } = getIssuesForDay();
 
   // Group events by hour for positioning with overlap handling
-  const eventsByHour = React.useMemo(() => {
+  const getEventsByHour = () => {
     const map: Record<number, Array<{ issue: TIssue; position: ReturnType<typeof calculateEventPosition>; column: number; totalColumns: number }>> = {};
 
     eventIssues.forEach((issue) => {
-      if (!issue.start_time) return;
+      const latestIssue = issueStore.getIssueById(issue.id) || issue;
+      if (!latestIssue.start_time) return;
 
-      const position = calculateEventPosition(issue.start_time, issue.end_time);
+      const position = calculateEventPosition(latestIssue.start_time, latestIssue.end_time);
       if (!map[position.hourIndex]) {
         map[position.hourIndex] = [];
       }
-      map[position.hourIndex].push({ issue, position, column: 0, totalColumns: 1 });
+      map[position.hourIndex].push({ issue: latestIssue, position, column: 0, totalColumns: 1 });
     });
 
     // Calculate columns for overlapping events
@@ -167,7 +168,9 @@ export const DayView: React.FC<Props> = ({
     });
 
     return map;
-  }, [eventIssues]);
+  };
+
+  const eventsByHour = getEventsByHour();
 
   /** Auto-scroll to current hour */
   useEffect(() => {
@@ -237,7 +240,7 @@ export const DayView: React.FC<Props> = ({
 
                   return (
                     <div
-                      key={issue.id}
+                      key={`${issue.id}-${issueStore.getIssueById(issue.id)?.start_time}-${issueStore.getIssueById(issue.id)?.end_time}`}
                       className="absolute z-1-"
                       style={{
                         top: `${position.topOffset}px`,
@@ -273,7 +276,7 @@ export const DayView: React.FC<Props> = ({
       </div>
     </div>
   );
-};
+});
 
 // Current time indicator component (unchanged)
 const CurrentTimeIndicator: React.FC<{ selectedDate: Date }> = ({ selectedDate }) => {
