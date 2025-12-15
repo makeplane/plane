@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile.dev
+    networks:
+      - dev_env
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+    env_file:
+      - ./.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+  admin:
+    build:
+      context: ./apps/admin
+      dockerfile: Dockerfile.dev
+    networks:
+      - dev_env
+    volumes:
+      - ./apps/admin:/app
+      - /app/node_modules
+    env_file:
+      - ./.env
+    ports:
+      - "3001:3000"
+    depends_on:
+      - api
+
+networks:
+  dev_env:
+    external: true

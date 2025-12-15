@@ -38,13 +38,23 @@ def contains_url(value: str) -> bool:
     if len(value) > 1000:  # Reasonable limit for URL detection
         return False
 
-    # Additional safety: truncate very long lines that might contain URLs
+    # Additional safety: process lines carefully to avoid ReDoS while
+    # still allowing detection of URLs that appear near the end of long lines.
+    # Strategy:
+    # - If a line is short, search it entirely.
+    # - If a line is long, search both the first and last 500 characters
+    #   so URLs at either end are detected while avoiding scanning huge
+    #   middle sections that could cause excessive work.
     lines = value.split("\n")
     for line in lines:
-        if len(line) > 500:  # Process only reasonable length lines
-            line = line[:500]
-        if URL_PATTERN.search(line):
-            return True
+        if len(line) <= 500:
+            candidates = [line]
+        else:
+            candidates = [line[:500], line[-500:]]
+
+        for part in candidates:
+            if URL_PATTERN.search(part):
+                return True
 
     return False
 
