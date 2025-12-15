@@ -45,33 +45,33 @@ enum badgeIconStyling {
 export const badgeStyling: IBadgeStyling = {
   primary: {
     default: `text-on-color bg-accent-primary`,
-    hover: `hover:bg-accent-primary-hover`,
-    disabled: `cursor-not-allowed !bg-layer-disabled hover:!bg-layer-disabled`,
+    hover: `hover:bg-accent-primary/80`,
+    disabled: `cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60`,
   },
   "accent-primary": {
     default: `bg-accent-subtle text-accent-primary`,
-    hover: `hover:bg-accent-subtle-hover hover:text-accent-secondary`,
+    hover: `hover:bg-custom-primary-20 hover:text-accent-secondary`,
     disabled: `cursor-not-allowed !text-accent-primary/60`,
   },
   "outline-primary": {
     default: `text-accent-primary bg-surface-1 border border-accent-strong`,
-    hover: `hover:border-accent-strong hover:bg-accent-subtle`,
-    disabled: `cursor-not-allowed !text-accent-primary/60 !border-accent-strong/60`,
+    hover: `hover:border-accent-strong-80 hover:bg-accent-subtle`,
+    disabled: `cursor-not-allowed !text-accent-primary/60 !border-accent-strong-60 `,
   },
 
   neutral: {
-    default: `text-on-color bg-layer-1 border border-subtle`,
-    hover: `hover:bg-layer-1-hover`,
-    disabled: `cursor-not-allowed !bg-layer-disabled !text-placeholder`,
+    default: `text-custom-background-100 bg-layer-1 border border-subtle`,
+    hover: `hover:bg-layer-1`,
+    disabled: `cursor-not-allowed bg-subtle-1 !text-placeholder`,
   },
   "accent-neutral": {
     default: `text-secondary bg-layer-1`,
-    hover: `hover:bg-layer-1-hover hover:text-primary`,
+    hover: `hover:bg-subtle-1 hover:text-primary`,
     disabled: `cursor-not-allowed !text-placeholder`,
   },
   "outline-neutral": {
     default: `text-secondary bg-surface-1 border border-subtle`,
-    hover: `hover:text-primary hover:bg-layer-1-hover`,
+    hover: `hover:text-primary hover:bg-subtle-1`,
     disabled: `cursor-not-allowed !text-placeholder`,
   },
 
@@ -81,13 +81,13 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !bg-green-300`,
   },
   "accent-success": {
-    default: `text-green-500 bg-success-subtle`,
-    hover: `hover:bg-success-subtle-1 hover:text-green-600`,
+    default: `text-green-500 bg-green-50`,
+    hover: `hover:bg-green-100 hover:text-green-600`,
     disabled: `cursor-not-allowed !text-green-300`,
   },
   "outline-success": {
     default: `text-green-500 bg-surface-1 border border-green-500`,
-    hover: `hover:text-green-600 hover:bg-success-subtle`,
+    hover: `hover:text-green-600 hover:bg-green-50`,
     disabled: `cursor-not-allowed !text-green-300 border-green-300`,
   },
 
@@ -97,13 +97,13 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !bg-amber-300`,
   },
   "accent-warning": {
-    default: `text-amber-500 bg-warning-subtle`,
-    hover: `hover:bg-amber-200 hover:text-amber-600`,
+    default: `text-amber-500 bg-amber-50`,
+    hover: `hover:bg-amber-100 hover:text-amber-600`,
     disabled: `cursor-not-allowed !text-amber-300`,
   },
   "outline-warning": {
     default: `text-amber-500 bg-surface-1 border border-amber-500`,
-    hover: `hover:text-amber-600 hover:bg-warning-subtle`,
+    hover: `hover:text-amber-600 hover:bg-amber-50`,
     disabled: `cursor-not-allowed !text-amber-300 border-amber-300`,
   },
 
@@ -113,13 +113,13 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !bg-red-300`,
   },
   "accent-destructive": {
-    default: `text-red-500 bg-danger-subtle`,
-    hover: `hover:bg-danger-subtle-hover hover:text-red-600`,
+    default: `text-red-500 bg-red-50`,
+    hover: `hover:bg-red-100 hover:text-red-600`,
     disabled: `cursor-not-allowed !text-red-300`,
   },
   "outline-destructive": {
     default: `text-red-500 bg-surface-1 border border-red-500`,
-    hover: `hover:text-red-600 hover:bg-danger-subtle`,
+    hover: `hover:text-red-600 hover:bg-red-50`,
     disabled: `cursor-not-allowed !text-red-300 border-red-300`,
   },
 };
