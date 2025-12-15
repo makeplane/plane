@@ -11,12 +11,14 @@ import {
   ImageIcon,
   List,
   ListOrdered,
+  Link,
   ListTodo,
   MessageSquareText,
   MinusSquare,
   Smile,
   Table,
   TextQuote,
+  Link2,
 } from "lucide-react";
 // constants
 import { COLORS_LIST } from "@/constants/common";
@@ -33,6 +35,7 @@ import {
   insertImage,
   insertCallout,
   setText,
+  setLinkEditor,
 } from "@/helpers/editor-commands";
 // plane editor extensions
 import { coreEditorAdditionalSlashCommandOptions } from "@/plane-editor/extensions";
@@ -162,6 +165,26 @@ export const getSlashCommandFilteredSections =
             searchTerms: ["blockquote"],
             icon: <TextQuote className="size-3.5" />,
             command: ({ editor, range }) => toggleBlockquote(editor, range),
+          },
+          {
+            commandKey: "link",
+            key: "link",
+            title: "Link",
+            description: "Embed an issue link preview.",
+            searchTerms: ["url", "link"],
+            icon: <Link2 className="size-3.5" />,
+            command: ({ editor, range }) => {
+              // Get the typed text inside the command
+              const text = editor.state.doc.textBetween(range.from, range.to).trim();
+
+              // Extract URL (remove slash command prefix)
+              const url = text.replace(/^\/?(issue-embed|embed)\s+/i, "");
+
+              if (!url) return;
+
+              // Insert link
+              setLinkEditor(editor, url);
+            },
           },
           {
             commandKey: "code",

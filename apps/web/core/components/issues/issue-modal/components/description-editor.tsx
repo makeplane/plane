@@ -177,6 +177,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
             name="description_html"
             control={control}
             render={({ field: { value, onChange } }) => (
+              // <></>
               <RichTextEditor
                 editable
                 id="issue-modal-editor"

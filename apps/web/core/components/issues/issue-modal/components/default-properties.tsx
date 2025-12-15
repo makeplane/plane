@@ -92,10 +92,38 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
     projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
   const minDate = getDate(startDate);
+  // const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());
 
-  const maxDate = getDate(targetDate);
+  const maxDate = new Date();
+  // const maxDate = getDate(targetDate);
   maxDate?.setDate(maxDate.getDate());
+
+  // --- LOCK PROPERTIES IF START DATE + START TIME IS IN THE PAST ----------------
+const eventDateTime = (() => {
+  const sd = control._formValues?.start_date;
+  const st = control._formValues?.start_time;
+
+  if (!sd || !st) return null;
+
+  // st is ISO: "2025-12-08T14:46:00Z"
+  const time = new Date(st);
+
+  // sd is "YYYY-MM-DD"
+  const date = new Date(sd);
+
+  date.setUTCHours(time.getUTCHours());
+  date.setUTCMinutes(time.getUTCMinutes());
+  date.setUTCSeconds(time.getUTCSeconds());
+
+  return date;
+})();
+
+const isPastEvent = eventDateTime ? eventDateTime < new Date() : false;
+
+// final disabled flag for all fields
+const isLocked = isPastEvent;
+
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -143,6 +171,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <YearRangeDropdown
+              disabled={isLocked}
               value={value}
               onChange={(year) => {
                 onChange(year);
@@ -161,6 +190,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
        render={({ field: {value, onChange}}) => (
         <div className="h-7">
           <CategoryDropdown
+             disabled={isLocked}
              value={value}
              onChange={(category) => {
               onChange(category);
@@ -179,6 +209,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <MemberDropdown
+              disabled={isLocked}
               projectId={projectId ?? undefined}
               value={value}
               onChange={(assigneeIds) => {
@@ -202,9 +233,9 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           console.log("Sport Property:", value);
           return(<div className="h-7">
             <SportDropdown
+              disabled={isLocked}
               value={value ?? null}
               onChange={(sport) => {
-                console.log("sport change value:", sport)
                 onChange(sport);
                 handleFormChange();
               }}
@@ -242,13 +273,14 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <DateDropdown
+              disabled={isLocked}
               value={value}
               onChange={(date) => {
                 onChange(date ? renderFormattedPayloadDate(date) : null);
                 handleFormChange();
               }}
               buttonVariant="border-with-text"
-              maxDate={maxDate ?? undefined}
+              minDate={minDate ?? undefined}
               placeholder={t("start_date")}
               tabIndex={getIndex("start_date")}
             />
@@ -261,6 +293,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <DateDropdown
+              disabled={isLocked}
               value={value}
               onChange={(date) => {
                 onChange(date ? renderFormattedPayloadDate(date) : null);
@@ -283,6 +316,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           return (
             <div className="h-7">
               <TimeDropdown
+                disabled={isLocked}
                 value={value ?? null}
                 onChange={(time) => {
                   onChange(time);
@@ -303,6 +337,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <ProgramDropdown
+              disabled={isLocked}
               value={value}
               onChange={(program) => {
                 onChange(program);
@@ -321,6 +356,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <LevelDropdown
+              disabled={isLocked}
               value={value}
               onChange={(level) => {
                 onChange(level);
@@ -486,6 +522,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           >
             <OppositionTeamProperty
               storageKey={`opp-team-${id}`}
+              disabled={isLocked}
               value={value}
               onChange={(team) => {
                 onChange(team);
