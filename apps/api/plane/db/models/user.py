@@ -168,7 +168,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         super(User, self).save(*args, **kwargs)
 
     @classmethod
-    def get_display_name(self, email):
+    def get_display_name(cls, email):
         return (
             email.split("@")[0]
             if len(email.split("@")) == 2
