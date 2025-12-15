@@ -12,6 +12,7 @@ import {
   CodeItem,
   EditorMenuItem,
   ItalicItem,
+  LinkItem,
   StrikeThroughItem,
   TextAlignItem,
   TextColorItem,
@@ -31,6 +32,7 @@ import { BubbleMenuLinkSelector } from "./link-selector";
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
 export type EditorStateType = {
+  link: boolean;
   code: boolean;
   bold: boolean;
   italic: boolean;
@@ -69,6 +71,7 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
   const formattingItems = {
+    link: LinkItem(editor),
     code: CodeItem(editor),
     bold: BoldItem(editor),
     italic: ItalicItem(editor),
@@ -83,6 +86,7 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
     editor,
     selector: ({ editor }) => ({
       code: formattingItems.code.isActive(),
+      link: formattingItems.link.isActive(),
       bold: formattingItems.bold.isActive(),
       italic: formattingItems.italic.isActive(),
       underline: formattingItems.underline.isActive(),

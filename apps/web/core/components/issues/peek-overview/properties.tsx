@@ -2,43 +2,47 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Signal, Tag, CalendarClock, Users, UserCircle2, Handshake, Volleyball, Calendar, Clock } from "lucide-react";
+import {
+  Signal,
+  Tag,
+  CalendarClock,
+  Users,
+  UserCircle2,
+  Handshake,
+  Volleyball,
+  Calendar,
+  Clock,
+} from "lucide-react";
+
 // i18n
 import { useTranslation } from "@plane/i18n";
-// ui icons
-// import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
-import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
+
+// utils
+import {
+  cn,
+  getDate,
+  renderFormattedPayloadDate,
+  shouldHighlightIssueDueDate,
+} from "@plane/utils";
+
 // components
 import { CategoryDropdown } from "@/components/dropdowns/category-property";
 import { DateDropdown } from "@/components/dropdowns/date";
-// import { EstimateDropdown } from "@/components/dropdowns/estimate";
 import { LevelDropdown } from "@/components/dropdowns/level-property";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-// import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-// import { PriorityDropdown } from "@/components/dropdowns/priority";
-// import { StateDropdown } from "@/components/dropdowns/state/dropdown";
-// helpers
-// import { TimeDropdown } from "@/components/dropdowns/time-picker";
 import { ProgramDropdown } from "@/components/dropdowns/program-property";
 import SportDropdown from "@/components/dropdowns/sport-property";
 import { TimeDropdown } from "@/components/dropdowns/time-picker";
 import { YearRangeDropdown } from "@/components/dropdowns/year-property";
+
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 
-// plane web components
-// import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
-
 import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
-// import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
 
-// import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 import type { TIssueOperations } from "../issue-detail";
-// import { IssueCycleSelect } from "../issue-detail/cycle-select";
-// import { IssueLabel } from "../issue-detail/label";
-// import { IssueModuleSelect } from "../issue-detail/module-select";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -48,422 +52,305 @@ interface IPeekOverviewProperties {
   issueOperations: TIssueOperations;
 }
 
-export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
-  const { t } = useTranslation();
-  // store hooks
-  const { getProjectById } = useProject();
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
-  const { getStateById } = useProjectState();
-  const { getUserDetails } = useMember();
-  // derived values
-  const issue = getIssueById(issueId);
-  if (!issue) return <></>;
-  const createdByDetails = getUserDetails(issue?.created_by);
-  const projectDetails = getProjectById(issue.project_id);
-  const isEstimateEnabled = projectDetails?.estimate;
-  const stateDetails = getStateById(issue.state_id);
+export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer(
+  (props) => {
+    const { workspaceSlug, projectId, issueId, issueOperations, disabled } =
+      props;
+    const { t } = useTranslation();
 
-  const minDate = getDate(issue.start_date);
-  minDate?.setDate(minDate.getDate());
+    // store hooks
+    const { getProjectById } = useProject();
+    const {
+      issue: { getIssueById },
+    } = useIssueDetail();
+    const { getStateById } = useProjectState();
+    const { getUserDetails } = useMember();
 
-  const maxDate = getDate(issue.target_date);
-  maxDate?.setDate(maxDate.getDate());
+    // derived values
+    const issue = getIssueById(issueId);
+    if (!issue) return <></>;
 
-  return (
-    <div>
-      {/* <h6 className="text-sm font-medium">{t("common.properties")}</h6> */}
-      {/* Change to event Propertie */}
-      <h6 className="text-sm font-medium">Event Details</h6>
-      {/* TODO: render properties using a common component */}
-      <div className={`w-full space-y-2 mt-3 ${disabled ? "opacity-60" : ""}`}>
-        {/* state */}
-        {/* <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
-            <span>{t("common.state")}</span>
-          </div>
-          <StateDropdown
-            value={issue?.state_id}
-            onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
-            projectId={projectId}
-            disabled={disabled}
-            buttonVariant="transparent-with-text"
-            className="w-3/4 flex-grow group"
-            buttonContainerClassName="w-full text-left"
-            buttonClassName="text-sm"
-            dropdownArrow
-            dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-          />
-        </div> */}
+    const createdByDetails = getUserDetails(issue?.created_by);
+    const projectDetails = getProjectById(issue.project_id);
+    const stateDetails = getStateById(issue.state_id);
 
-        {/* assignee */}
-        {/* <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Users className="h-4 w-4 flex-shrink-0" />
-            <span>{t("common.assignees")}</span>
-          </div>
-          <MemberDropdown
-            value={issue?.assignee_ids ?? undefined}
-            onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
-            disabled={disabled}
-            projectId={projectId}
-            placeholder={t("issue.add.assignee")}
-            multiple
-            buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
-            className="w-3/4 flex-grow group"
-            buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-custom-text-400"}`}
-            hideIcon={issue.assignee_ids?.length === 0}
-            dropdownArrow
-            dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-          />
-        </div> */}
+    const minDate = new Date();
+    // const minDate = getDate(issue.start_date);
+    minDate?.setDate(minDate.getDate());
 
-        {/* priority */}
-        {/* <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Signal className="h-4 w-4 flex-shrink-0" />
-            <span>{t("common.priority")}</span>
-          </div>
-          <PriorityDropdown
-            value={issue?.priority}
-            onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
-            disabled={disabled}
-            buttonVariant="border-with-text"
-            className="w-3/4 flex-grow rounded px-2 hover:bg-custom-background-80 group"
-            buttonContainerClassName="w-full text-left"
-            buttonClassName="w-min h-auto whitespace-nowrap"
-          />
-        </div> */}
+    const maxDate = getDate(issue.target_date);
+    maxDate?.setDate(maxDate.getDate());
 
-        {/* created by */}
-        {createdByDetails && (
+    // ⭐ NEW: Detect if event start date + time is in the past
+  const eventDateTime = (() => {
+  if (!issue?.start_date || !issue?.start_time) return null;
+
+  // start_time is ISO timestamp: "2025-12-08T14:46:00Z"
+  const time = new Date(issue.start_time);
+
+  // start_date is "YYYY-MM-DD"
+  const date = new Date(issue.start_date);
+
+  // apply time (using UTC to avoid timezone mismatch)
+  date.setUTCHours(time.getUTCHours());
+  date.setUTCMinutes(time.getUTCMinutes());
+  date.setUTCSeconds(time.getUTCSeconds());
+
+  return date;
+})();
+
+const isPastEvent = eventDateTime ? eventDateTime < new Date() : false;
+
+// final disabled flag
+const isLocked = disabled || isPastEvent;
+
+
+    return (
+      <div>
+        <h6 className="text-sm font-medium">Event Details</h6>
+
+        <div
+          className={`w-full space-y-2 mt-3 ${isLocked ? "opacity-60" : ""}`}
+        >
+          {/* created by */}
+          {createdByDetails && (
+            <div className="flex w-full items-center gap-3 h-8">
+              <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+                <UserCircle2 className="h-4 w-4 flex-shrink-0" />
+                <span>{t("common.created_by")}</span>
+              </div>
+              <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
+                <ButtonAvatars
+                  showTooltip
+                  userIds={
+                    createdByDetails?.display_name.includes("-intake")
+                      ? null
+                      : createdByDetails?.id
+                  }
+                />
+                <span className="flex-grow truncate leading-5">
+                  {createdByDetails?.display_name.includes("-intake")
+                    ? "Plane"
+                    : createdByDetails?.display_name}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* start date */}
           <div className="flex w-full items-center gap-3 h-8">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-              <UserCircle2 className="h-4 w-4 flex-shrink-0" />
-              <span>{t("common.created_by")}</span>
+              <CalendarClock className="h-4 w-4 flex-shrink-0" />
+              <span>{t("common.order_by.start_date")}</span>
             </div>
-            <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
-              <ButtonAvatars
-                showTooltip
-                userIds={createdByDetails?.display_name.includes("-intake") ? null : createdByDetails?.id}
-              />
-              <span className="flex-grow truncate  leading-5">
-                {createdByDetails?.display_name.includes("-intake") ? "Plane" : createdByDetails?.display_name}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* due date */}
-        {/* <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
-            <span>{t("common.order_by.due_date")}</span>
-          </div>
-          <DateDropdown
-            value={issue.target_date}
-            onChange={(val) =>
-              issueOperations.update(workspaceSlug, projectId, issueId, {
-                target_date: val ? renderFormattedPayloadDate(val) : null,
-              })
-            }
-            placeholder={t("issue.add.due_date")}
-            buttonVariant="transparent-with-text"
-            minDate={minDate ?? undefined}
-            disabled={disabled}
-            className="w-3/4 flex-grow group"
-            buttonContainerClassName="w-full text-left"
-            buttonClassName={cn("text-sm", {
-              "text-custom-text-400": !issue.target_date,
-              "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
-            })}
-            hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
-          // TODO: add this logic
-          // showPlaceholderIcon
-          />
-        </div> */}
-
-        {/* estimate */}
-        {/* {isEstimateEnabled && (
-          <div className="flex w-full items-center gap-3 h-8">
-            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-              <Triangle className="h-4 w-4 flex-shrink-0" />
-              <span>{t("common.estimate")}</span>
-            </div>
-            <EstimateDropdown
-              value={issue.estimate_point ?? undefined}
-              onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })}
-              projectId={projectId}
-              disabled={disabled}
+            <DateDropdown
+              value={issue.start_date}
+              onChange={(val) =>
+                issueOperations.update(workspaceSlug, projectId, issueId, {
+                  start_date: val ? renderFormattedPayloadDate(val) : null,
+                })
+              }
+              placeholder={t("issue.add.start_date")}
               buttonVariant="transparent-with-text"
+              minDate={minDate ?? undefined}
+              disabled={isLocked}
               className="w-3/4 flex-grow group"
               buttonContainerClassName="w-full text-left"
-              buttonClassName={`text-sm ${issue?.estimate_point !== undefined ? "" : "text-custom-text-400"}`}
-              placeholder="None"
+              buttonClassName={`text-sm ${
+                issue?.start_date ? "" : "text-custom-text-400"
+              }`}
               hideIcon
-              dropdownArrow
-              dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+              clearIconClassName="h-3 w-3 hidden group-hover:inline"
             />
           </div>
-        )} */}
-        {/*
-        {projectDetails?.module_view && (
-          <div className="flex w-full items-center gap-3 min-h-8 h-full">
-            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-              <ModuleIcon className="h-4 w-4 flex-shrink-0" />
-              <span>{t("common.modules")}</span>
-            </div>
-            <IssueModuleSelect
-              className="w-3/4 flex-grow"
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              issueOperations={issueOperations}
-              disabled={disabled}
-            />
-          </div>
-        )}
 
-        {projectDetails?.cycle_view && (
+          {/* start time */}
+          <div className="flex h-8 items-center gap-3 w-full">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+              <Clock className="h-4 w-4 flex-shrink-0" />
+              <span>{t("starting_time")}</span>
+            </div>
+            <TimeDropdown
+              value={issue.start_time}
+              onChange={(val) => {
+                if (!val) return;
+                issueOperations.update(workspaceSlug, projectId, issueId, {
+                  start_time: val,
+                });
+              }}
+              placeholder={t("add_start_time")}
+              buttonVariant="transparent-with-text"
+              className="w-3/4 flex-grow group"
+              disabled={isLocked}
+              buttonContainerClassName="w-full text-left"
+              buttonClassName={`text-sm ${
+                issue?.start_time ? "" : "text-custom-text-400"
+              }`}
+              hideIcon
+              clearIconClassName="h-3 w-3 hidden group-hover:inline"
+            />
+          </div>
+
+          {/* Level */}
           <div className="flex w-full items-center gap-3 h-8">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-              <CycleIcon className="h-4 w-4 flex-shrink-0" />
-              <span>{t("common.cycle")}</span>
+              <Signal className="h-4 w-4 flex-shrink-0" />
+              <p>{t("level_field")}</p>
             </div>
-            <IssueCycleSelect
-              className="w-3/4 flex-grow"
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              issueOperations={issueOperations}
-              disabled={disabled}
+
+            <LevelDropdown
+              value={issue?.level}
+              onChange={(level) => {
+                if (!level) return;
+                issueOperations.update(workspaceSlug, projectId, issueId, {
+                  level: level,
+                });
+              }}
+              placeholder={t("add_level")}
+              buttonVariant="transparent-with-text"
+              className="w-3/4 flex-grow group"
+              disabled={isLocked}
+              buttonContainerClassName="w-full text-left"
+              buttonClassName={`text-sm ${
+                issue?.level ? "" : "text-custom-text-400"
+              }`}
+              hideIcon
+              clearIconClassName="h-3 w-3 hidden group-hover:inline"
             />
           </div>
-        )} */}
 
-        {/* parent */}
-        {/* <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
-            <p>{t("common.parent")}</p>
-          </div>
-          <IssueParentSelectRoot
-            className="w-3/4 flex-grow h-full"
-            disabled={disabled}
-            issueId={issueId}
-            issueOperations={issueOperations}
-            projectId={projectId}
-            workspaceSlug={workspaceSlug}
-          />
-        </div> */}
+          {/* Program */}
+          <div className="flex w-full items-center gap-3 h-8">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+              <Users className="h-4 w-4 flex-shrink-0" />
+              <p>Program</p>
+            </div>
 
-        {/* label */}
-        {/* <div className="flex w-full items-center gap-3 min-h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Tag className="h-4 w-4 flex-shrink-0" />
-            <span>{t("common.labels")}</span>
-          </div>
-          <div className="flex w-full flex-col gap-3 truncate">
-            <IssueLabel workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
-          </div>
-        </div> */}
-
-        {/* start date */}
-        <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CalendarClock className="h-4 w-4 flex-shrink-0" />
-            <span>{t("common.order_by.start_date")}</span>
-          </div>
-          <DateDropdown
-            value={issue.start_date}
-            onChange={(val) =>
-              issueOperations.update(workspaceSlug, projectId, issueId, {
-                start_date: val ? renderFormattedPayloadDate(val) : null,
-              })
-            }
-            placeholder={t("issue.add.start_date")}
-            buttonVariant="transparent-with-text"
-            maxDate={maxDate ?? undefined}
-            disabled={disabled}
-            className="w-3/4 flex-grow group"
-            buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.start_date ? "" : "text-custom-text-400"}`}
-            hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline"
-          />
-        </div>
-
-        {/* start time */}
-        <div className="flex h-8 items-center gap-3 w-full">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Clock className="h-4 w-4 flex-shrink-0" />
-            <span>{t("starting_time")}</span>
-          </div>
-          <TimeDropdown
-            value={issue.start_time}
-            onChange={(val) => {
-              if (!val) return;
-              issueOperations.update(workspaceSlug, projectId, issueId, {
-                start_time: val,
-              });
-            }}
-            placeholder={t("add_start_time")}
-            buttonVariant="transparent-with-text"
-            className="w-3/4 flex-grow group"
-            disabled={disabled}
-            buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.start_time ? "" : "text-custom-text-400"}`}
-            hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline"
-          />
-        </div>
-
-        {/* Level */}
-        <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Signal className="h-4 w-4 flex-shrink-0" />
-            <p>{t("level_field")}</p>
+            <ProgramDropdown
+              value={issue?.program}
+              onChange={(program) => {
+                if (!program) return;
+                issueOperations.update(workspaceSlug, projectId, issueId, {
+                  program: program,
+                });
+              }}
+              placeholder={t("add_program")}
+              buttonVariant="transparent-with-text"
+              className="w-3/4 flex-grow group"
+              disabled={isLocked}
+              buttonContainerClassName="w-full text-left"
+              buttonClassName={`text-sm ${
+                issue?.program ? "" : "text-custom-text-400"
+              }`}
+              hideIcon
+              clearIconClassName="h-3 w-3 hidden group-hover:inline"
+            />
           </div>
 
-          <LevelDropdown
-            value={issue?.level}
-            onChange={(level) => {
-              if (!level) return;
-              issueOperations.update(workspaceSlug, projectId, issueId, {
-                level: level,
-              });
-            }}
-            placeholder={t("add_level")}
-            buttonVariant="transparent-with-text"
-            className="w-3/4 flex-grow group"
-            disabled={disabled}
-            buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.level ? "" : "text-custom-text-400"}`}
-            hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline"
-          />
-        </div>
-        {/* Program */}
-        <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Users className="h-4 w-4 flex-shrink-0" />
-            <p>Program</p>
+          {/* Sport */}
+          <div className="flex w-full items-center gap-3 h-8">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+              <Volleyball className="h-4 w-4 flex-shrink-0" />
+              <p>Sport</p>
+            </div>
+
+            <SportDropdown
+              value={issue?.sport}
+              onChange={(sport) => {
+                if (!sport) return;
+                issueOperations.update(workspaceSlug, projectId, issueId, {
+                  sport: sport,
+                });
+              }}
+              placeholder={t("add_sport")}
+              buttonVariant="transparent-with-text"
+              className="w-3/4 flex-grow group"
+              disabled={isLocked}
+              buttonContainerClassName="w-full text-left"
+              buttonClassName={`text-sm ${
+                issue?.sport ? "" : "text-custom-text-400"
+              }`}
+              hideIcon
+              clearIconClassName="h-3 w-3 hidden group-hover:inline"
+            />
           </div>
 
-          <ProgramDropdown
-            value={issue?.program}
-            onChange={(program) => {
-              if (!program) return;
-              issueOperations.update(workspaceSlug, projectId, issueId, {
-                program: program,
-              });
-            }}
-            placeholder={t("add_program")}
-            buttonVariant="transparent-with-text"
-            className="w-3/4 flex-grow group"
-            disabled={disabled}
-            buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.program ? "" : "text-custom-text-400"}`}
-            hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline"
-          />
-        </div>
-        {/* Sport */}
-        <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Volleyball className="h-4 w-4 flex-shrink-0" />
-            <p>Sport</p>
+          {/* Opposition */}
+          <div className="flex w-full items-center gap-3 h-8">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+              <Handshake className="h-4 w-4 flex-shrink-0" />
+              <p>Opposition</p>
+            </div>
+
+            <OppositionTeamProperty
+              storageKey={`opp-team-${issueId}`}
+              value={issue?.opposition_team}
+              onChange={(team) =>
+                issueOperations.update(workspaceSlug, projectId, issueId, {
+                  opposition_team: team,
+                })
+              }
+              disabled={isLocked}
+            />
           </div>
 
-          <SportDropdown
-            value={issue?.sport}
-            onChange={(sport) => {
-              if (!sport) return;
-              issueOperations.update(workspaceSlug, projectId, issueId, {
-                sport: sport,
-              });
-            }}
-            placeholder={t("add_sport")}
-            buttonVariant="transparent-with-text"
-            className="w-3/4 flex-grow group"
-            disabled={disabled}
-            buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.sport ? "" : "text-custom-text-400"}`}
-            hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline"
-          />
-        </div>
-        {/* opposition team */}
-        <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Handshake className="h-4 w-4 flex-shrink-0" />
-            <p>Opposition</p>
-          </div>
-          <OppositionTeamProperty
-            storageKey={`opp-team-${issueId}`} // unique key for each card ✔
-            value={issue?.opposition_team}
-            onChange={(team) =>
-              issueOperations.update(workspaceSlug, projectId, issueId, {
-                opposition_team: team,
-              })
-            }
-            disabled={disabled}
-          />
-        </div>
-        {/* category */}
-        <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Tag className="h-4 w-4 flex-shrink-0" />
-            <p>Category</p>
+          {/* Category */}
+          <div className="flex w-full items-center gap-3 h-8">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+              <Tag className="h-4 w-4 flex-shrink-0" />
+              <p>Category</p>
+            </div>
+
+            <CategoryDropdown
+              value={issue?.category}
+              onChange={(category) => {
+                if (!category) return;
+                issueOperations.update(workspaceSlug, projectId, issueId, {
+                  category: category,
+                });
+              }}
+              placeholder={t("add_category")}
+              buttonVariant="transparent-with-text"
+              className="w-3/4 flex-grow group"
+              disabled={isLocked}
+              buttonContainerClassName="w-full text-left"
+              buttonClassName={`text-sm ${
+                issue?.category ? "" : "text-custom-text-400"
+              }`}
+              hideIcon
+              clearIconClassName="h-3 w-3 hidden group-hover:inline"
+            />
           </div>
 
-          <CategoryDropdown
-            value={issue?.category}
-            onChange={(category) => {
-              if (!category) return;
-              issueOperations.update(workspaceSlug, projectId, issueId, {
-                category: category,
-              });
-            }}
-            placeholder={t("add_category")}
-            buttonVariant="transparent-with-text"
-            className="w-3/4 flex-grow group"
-            disabled={disabled}
-            buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.category ? "" : "text-custom-text-400"}`}
-            hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline"
-          />
-        </div>
-        {/* year */}
-        <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Calendar className="h-4 w-4 flex-shrink-0" />
-            <p>Year</p>
-          </div>
+          {/* Year */}
+          <div className="flex w-full items-center gap-3 h-8">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+              <Calendar className="h-4 w-4 flex-shrink-0" />
+              <p>Season</p>
+            </div>
 
-          <YearRangeDropdown
-            value={issue?.year}
-            onChange={(year) => {
-              if (!year) return;
-              issueOperations.update(workspaceSlug, projectId, issueId, { year: year });
-            }}
-            placeholder={t("add_year")}
-            buttonVariant="transparent-with-text"
-            className="w-3/4 flex-grow group"
-            disabled={disabled}
-            buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.year ? "" : "text-custom-text-400"}`}
-            hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline"
-          />
+            <YearRangeDropdown
+              value={issue?.year}
+              onChange={(year) => {
+                if (!year) return;
+                issueOperations.update(workspaceSlug, projectId, issueId, {
+                  year: year,
+                });
+              }}
+              placeholder={t("add_year")}
+              buttonVariant="transparent-with-text"
+              className="w-3/4 flex-grow group"
+              disabled={isLocked}
+              buttonContainerClassName="w-full text-left"
+              buttonClassName={`text-sm ${
+                issue?.year ? "" : "text-custom-text-400"
+              }`}
+              hideIcon
+              clearIconClassName="h-3 w-3 hidden group-hover:inline"
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);
