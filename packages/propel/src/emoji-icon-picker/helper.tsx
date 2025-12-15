@@ -1,4 +1,4 @@
-import { TPlacement, TSide, TAlign } from "../utils/placement";
+import type { TPlacement, TSide, TAlign } from "../utils/placement";
 
 export const EmojiIconPickerTypes = {
   EMOJI: "emoji",

@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { Fragment } from "react";
 // react-form
@@ -33,7 +32,7 @@ type Props = {
   register: UseFormRegister<any>;
 };
 
-export const ColorPickerInput: FC<Props> = (props) => {
+export function ColorPickerInput(props: Props) {
   const { name, position = "left", watch, setValue, error, control } = props;
 
   const handleColorChange = (newColor: ColorResult) => {
@@ -89,19 +88,17 @@ export const ColorPickerInput: FC<Props> = (props) => {
             <>
               <Popover.Button
                 type="button"
-                className={`group inline-flex items-center outline-none ${
-                  open ? "text-custom-text-100" : "text-custom-text-200"
-                }`}
+                className={`group inline-flex items-center outline-none ${open ? "text-primary" : "text-secondary"}`}
               >
                 {watch(name) && watch(name) !== "" ? (
                   <span
-                    className="h-4 w-4 rounded border border-custom-border-200"
+                    className="h-4 w-4 rounded-sm border border-subtle"
                     style={{
                       backgroundColor: `${watch(name)}`,
                     }}
                   />
                 ) : (
-                  <Palette className="h-3.5 w-3.5 text-custom-text-100" />
+                  <Palette className="h-3.5 w-3.5 text-primary" />
                 )}
               </Popover.Button>
 
@@ -128,4 +125,4 @@ export const ColorPickerInput: FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

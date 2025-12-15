@@ -1,9 +1,10 @@
-"use client";
-
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // ui
+import { Banner } from "@plane/propel/banner";
+import { Button } from "@plane/propel/button";
+import { ArchiveIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core/page-title";
@@ -12,10 +13,12 @@ import { IssueDetailRoot } from "@/components/issues/issue-detail";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
+import type { Route } from "./+types/page";
 
-const ArchivedIssueDetailsPage = observer(() => {
+function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, projectId, archivedIssueId } = useParams();
+  const { workspaceSlug, projectId, archivedIssueId } = params;
+  const router = useRouter();
   // states
   // hooks
   const {
@@ -25,17 +28,12 @@ const ArchivedIssueDetailsPage = observer(() => {
 
   const { getProjectById } = useProject();
 
-  const { isLoading } = useSWR(
-    workspaceSlug && projectId && archivedIssueId
-      ? `ARCHIVED_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${archivedIssueId}`
-      : null,
-    workspaceSlug && projectId && archivedIssueId
-      ? () => fetchIssue(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString())
-      : null
+  const { isLoading } = useSWR(`ARCHIVED_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${archivedIssueId}`, () =>
+    fetchIssue(workspaceSlug, projectId, archivedIssueId)
   );
 
   // derived values
-  const issue = archivedIssueId ? getIssueById(archivedIssueId.toString()) : undefined;
+  const issue = getIssueById(archivedIssueId);
   const project = issue ? getProjectById(issue?.project_id ?? "") : undefined;
   const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
 
@@ -62,21 +60,35 @@ const ArchivedIssueDetailsPage = observer(() => {
           </div>
         </Loader>
       ) : (
-        <div className="flex h-full overflow-hidden">
-          <div className="h-full w-full space-y-3 divide-y-2 divide-custom-border-200 overflow-y-auto">
-            {workspaceSlug && projectId && archivedIssueId && (
+        <>
+          <Banner
+            variant="warning"
+            title="This work item has been archived. Visit the Archives section to restore it."
+            icon={<ArchiveIcon className="size-4" />}
+            action={
+              <Button
+                variant="secondary"
+                onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
+              >
+                Go to archives
+              </Button>
+            }
+            className="border-b border-subtle"
+          />
+          <div className="flex h-full overflow-hidden">
+            <div className="h-full w-full space-y-3 divide-y-2 divide-subtle-1 overflow-y-auto">
               <IssueDetailRoot
-                workspaceSlug={workspaceSlug.toString()}
-                projectId={projectId.toString()}
-                issueId={archivedIssueId.toString()}
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={archivedIssueId}
                 is_archived
               />
-            )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );
-});
+}
 
-export default ArchivedIssueDetailsPage;
+export default observer(ArchivedIssueDetailsPage);

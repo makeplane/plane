@@ -11,6 +11,7 @@ import type {
   IUserEmailNotificationSettings,
   TIssuesResponse,
   TUserProfile,
+  IEmailCheckResponse,
 } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // types
@@ -253,6 +254,38 @@ export class UserService extends APIService {
 
   async leaveProject(workspaceSlug: string, projectId: string) {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/leave/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async checkEmail(token: string, email: string): Promise<IEmailCheckResponse> {
+    return this.post(
+      "/auth/email-check/",
+      { email },
+      {
+        headers: {
+          "X-CSRFTOKEN": token,
+        },
+      }
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async generateEmailCode(data: { email: string }): Promise<any> {
+    return this.post("/api/users/me/email/generate-code/", data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async verifyEmailCode(data: { email: string; code: string }): Promise<any> {
+    return this.patch("/api/users/me/email/", data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -1,12 +1,10 @@
-"use client";
-
 import type { Dispatch, MouseEvent, SetStateAction } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight } from "lucide-react";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -30,6 +28,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 // types
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { calculateIdentifierWidth } from "../utils";
 import type { TRenderQuickActions } from "./list-view-types";
 import * as LucideIcons from "lucide-react";
 import { projectIssueTypesCache, type TIssueType } from "@/services/project";
@@ -55,7 +54,7 @@ interface IssueBlockProps {
   projectIssueTypesMap?: Record<string, TIssueType>;
 }
 
-export const IssueBlock = observer((props: IssueBlockProps) => {
+export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const {
     issuesMap,
     issueId,
@@ -82,7 +81,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   const projectId = routerProjectId?.toString();
   // hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
-  const { getProjectIdentifierById } = useProject();
+  const { getProjectIdentifierById, currentProjectNextSequenceId } = useProject();
   const {
     getIsIssuePeeked,
     peekIssue,
@@ -161,8 +160,12 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     }
   };
 
-  //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
-  const keyMinWidth = displayProperties?.key ? (projectIdentifier?.length ?? 0) * 7 : 0;
+  // Calculate width for: projectIdentifier + "-" + dynamic sequence number digits
+  // Use next_work_item_sequence from backend (static value from project endpoint)
+  const maxSequenceId = currentProjectNextSequenceId ?? 1;
+  const keyMinWidth = displayProperties?.key
+    ? calculateIdentifierWidth(projectIdentifier?.length ?? 0, maxSequenceId)
+    : 0;
 
   const workItemLink = generateWorkItemLink({
     workspaceSlug,
@@ -184,13 +187,13 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
       <Row
         ref={issueRef}
         className={cn(
-          "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-sm transition-colors border border-transparent",
+          "group/list-block min-h-11 relative flex flex-col gap-3 bg-layer-transparent hover:bg-layer-transparent-hover py-3 text-13 transition-colors",
           {
-            "border-custom-primary-70": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
-            "border-custom-border-400": isIssueActive,
+            "border-accent-strong": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
+            "border-strong-1": isIssueActive,
             "last:border-b-transparent": !getIsIssuePeeked(issue.id) && !isIssueActive,
-            "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
-            "bg-custom-background-80": isCurrentBlockDragging,
+            "bg-accent-primary/5 hover:bg-accent-primary/10": isIssueSelected,
+            "bg-layer-1": isCurrentBlockDragging,
             "md:flex-row md:items-center": isSidebarCollapsed,
             "lg:flex-row lg:items-center": !isSidebarCollapsed,
           }
@@ -270,7 +273,8 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                     <IssueIdentifier
                       issueId={issueId}
                       projectId={issue.project_id}
-                      textContainerClassName="text-xs font-medium text-custom-text-300"
+                      size="xs"
+                      variant="tertiary"
                       displayProperties={displayProperties}
                     />
                   )}
@@ -282,10 +286,10 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 {subIssuesCount > 0 && !isEpic && (
                   <button
                     type="button"
-                    className="size-4 grid place-items-center rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                    className="size-4 grid place-items-center rounded-xs text-placeholder hover:text-tertiary"
                     onClick={handleToggleExpand}
                   >
-                    <ChevronRight
+                    <ChevronRightIcon
                       className={cn("size-4", {
                         "rotate-90": isExpanded,
                       })}
@@ -296,7 +300,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               </div>
 
               {issue?.tempId !== undefined && (
-                <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+                <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-surface-1/20" />
               )}
             </div>
 
@@ -307,7 +311,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               disabled={isCurrentBlockDragging}
               renderByDefault={false}
             >
-              <p className="truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
+              <p className="truncate cursor-pointer text-body-xs-regular text-primary">{issue.name}</p>
             </Tooltip>
             {isEpic && displayProperties && (
               <WithDisplayPropertiesHOC
@@ -315,13 +319,13 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 displayPropertyKey="sub_issue_count"
                 shouldRenderProperty={(properties) => !!properties.sub_issue_count}
               >
-                <IssueStats issueId={issue.id} className="ml-2 font-medium text-custom-text-350" />
+                <IssueStats issueId={issue.id} className="ml-2 font-medium text-tertiary" />
               </WithDisplayPropertiesHOC>
             )}
           </div>
           {!issue?.tempId && (
             <div
-              className={cn("block border border-custom-border-300 rounded", {
+              className={cn("block border border-strong rounded-sm", {
                 "md:hidden": isSidebarCollapsed,
                 "lg:hidden": !isSidebarCollapsed,
               })}

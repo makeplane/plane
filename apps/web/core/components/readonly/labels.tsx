@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -18,7 +16,7 @@ export type TReadonlyLabelsProps = {
   workspaceSlug: string;
 };
 
-export const ReadonlyLabels: React.FC<TReadonlyLabelsProps> = observer((props) => {
+export const ReadonlyLabels = observer(function ReadonlyLabels(props: TReadonlyLabelsProps) {
   const { className, value, projectId, workspaceSlug } = props;
 
   const { getLabelById, fetchProjectLabels } = useLabel();
@@ -34,7 +32,7 @@ export const ReadonlyLabels: React.FC<TReadonlyLabelsProps> = observer((props) =
   }, [projectId, workspaceSlug]);
 
   return (
-    <div className={cn("flex items-center gap-2 text-sm", className)}>
+    <div className={cn("flex items-center gap-2 text-13", className)}>
       {labels && (
         <>
           <Tooltip
@@ -44,8 +42,8 @@ export const ReadonlyLabels: React.FC<TReadonlyLabelsProps> = observer((props) =
             isMobile={isMobile}
             disabled={labels.length === 0}
           >
-            <div className="h-full flex items-center gap-1 rounded py-1 text-sm">
-              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+            <div className="h-full flex items-center gap-1 rounded-sm py-1 text-13">
+              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
               <span>{value.length}</span>
               <span>Labels</span>
             </div>

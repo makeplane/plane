@@ -1,12 +1,13 @@
 import type { Dispatch, SetStateAction } from "react";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
+import { ChevronDownIcon } from "@plane/propel/icons";
 // store
 // icons
 // types
-import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import type { IIssueLabel } from "@plane/types";
 // components
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -34,7 +35,7 @@ type Props = {
   isEditable?: boolean;
 };
 
-export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
+export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGroup(props: Props) {
   const {
     label,
     labelChildren,
@@ -82,13 +83,13 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
     <LabelDndHOC label={label} isGroup isChild={false} isLastChild={isLastChild} onDrop={onDrop}>
       {(isDragging, isDroppingInLabel, dragHandleRef) => (
         <div
-          className={`rounded ${isDroppingInLabel ? "border-[2px] border-custom-primary-100" : "border-[1.5px] border-transparent"}`}
+          className={`rounded-sm ${isDroppingInLabel ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
         >
           <Disclosure
             as="div"
-            className={`rounded  text-custom-text-100 ${
-              !isDroppingInLabel ? "border-[0.5px] border-custom-border-200" : ""
-            } ${isDragging ? "bg-custom-background-80" : "bg-custom-background-100"}`}
+            className={`rounded-sm  text-primary ${
+              !isDroppingInLabel ? "border-[0.5px] border-subtle" : ""
+            } ${isDragging ? "bg-layer-1" : "bg-surface-1"}`}
             defaultOpen
           >
             {({ open }) => (
@@ -121,8 +122,8 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
 
                       <Disclosure.Button>
                         <span>
-                          <ChevronDown
-                            className={`h-4 w-4 text-custom-sidebar-text-400 ${!open ? "rotate-90 transform" : ""}`}
+                          <ChevronDownIcon
+                            className={`h-4 w-4 text-placeholder ${!open ? "rotate-90 transform" : ""}`}
                           />
                         </span>
                       </Disclosure.Button>
@@ -139,7 +140,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                       <Disclosure.Panel>
                         <div className="ml-6">
                           {labelChildren.map((child, index) => (
-                            <div key={child.id} className={`group flex w-full items-center text-sm`}>
+                            <div key={child.id} className={`group flex w-full items-center text-13`}>
                               <div className="w-full">
                                 <ProjectSettingLabelItem
                                   label={child}

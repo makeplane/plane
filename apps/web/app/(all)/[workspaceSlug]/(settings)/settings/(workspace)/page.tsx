@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -10,7 +8,7 @@ import { WorkspaceDetails } from "@/components/workspace/settings/workspace-deta
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 
-const WorkspaceSettingsPage = observer(() => {
+function WorkspaceSettingsPage() {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
@@ -25,6 +23,6 @@ const WorkspaceSettingsPage = observer(() => {
       <WorkspaceDetails />
     </SettingsContentWrapper>
   );
-});
+}
 
-export default WorkspaceSettingsPage;
+export default observer(WorkspaceSettingsPage);

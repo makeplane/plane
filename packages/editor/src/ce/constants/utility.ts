@@ -1,5 +1,6 @@
 // plane imports
-import { ADDITIONAL_EXTENSIONS, CORE_EXTENSIONS } from "@plane/utils";
+import type { ADDITIONAL_EXTENSIONS } from "@plane/utils";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // plane editor imports
 import type { ExtensionFileSetStorageKey } from "@/plane-editor/types/storage";
 

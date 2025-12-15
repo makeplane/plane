@@ -1,4 +1,3 @@
-import type { FC } from "react";
 // plane imports
 import type { TNotification } from "@plane/types";
 import {
@@ -11,13 +10,19 @@ import {
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
 
-export const NotificationContent: FC<{
+export function NotificationContent({
+  notification,
+  workspaceId,
+  workspaceSlug,
+  projectId,
+  renderCommentBox = false,
+}: {
   notification: TNotification;
   workspaceId: string;
   workspaceSlug: string;
   projectId: string;
   renderCommentBox?: boolean;
-}> = ({ notification, workspaceId, workspaceSlug, projectId, renderCommentBox = false }) => {
+}) {
   const { data, triggered_by_details: triggeredBy } = notification;
   const notificationField = data?.issue_activity.field;
   const newValue = data?.issue_activity.new_value;
@@ -25,7 +30,7 @@ export const NotificationContent: FC<{
   const verb = data?.issue_activity.verb;
 
   const renderTriggerName = () => (
-    <span className="text-custom-text-100 font-medium">
+    <span className="text-primary font-medium">
       {triggeredBy?.is_bot ? triggeredBy.first_name : triggeredBy?.display_name}{" "}
     </span>
   );
@@ -93,11 +98,11 @@ export const NotificationContent: FC<{
   return (
     <>
       {renderTriggerName()}
-      <span className="text-custom-text-300">{renderAction()} </span>
+      <span className="text-tertiary">{renderAction()} </span>
       {verb !== "deleted" && (
         <>
-          {shouldShowConnector && <span className="text-custom-text-300">to </span>}
-          <span className="text-custom-text-100 font-medium">{renderValue()}</span>
+          {shouldShowConnector && <span className="text-tertiary">to </span>}
+          <span className="text-primary font-medium">{renderValue()}</span>
           {notificationField === "comment" && renderCommentBox && (
             <div className="scale-75 origin-left">
               <LiteTextEditor
@@ -118,4 +123,4 @@ export const NotificationContent: FC<{
       )}
     </>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -15,7 +13,7 @@ type TNotificationCardListRoot = {
   workspaceId: string;
 };
 
-export const NotificationCardListRoot: FC<TNotificationCardListRoot> = observer((props) => {
+export const NotificationCardListRoot = observer(function NotificationCardListRoot(props: TNotificationCardListRoot) {
   const { workspaceSlug, workspaceId } = props;
   // hooks
   const { loader, paginationInfo, getNotifications, notificationIdsByWorkspaceId } = useWorkspaceNotifications();
@@ -41,12 +39,12 @@ export const NotificationCardListRoot: FC<TNotificationCardListRoot> = observer(
       {paginationInfo && paginationInfo?.next_page_results && (
         <>
           {loader === ENotificationLoader.PAGINATION_LOADER ? (
-            <div className="py-4 flex justify-center items-center text-sm font-medium">
-              <div className="text-custom-primary-90">{t("loading")}...</div>
+            <div className="py-4 flex justify-center items-center text-13 font-medium">
+              <div className="text-accent-secondary">{t("loading")}...</div>
             </div>
           ) : (
-            <div className="py-4 flex justify-center items-center text-sm font-medium" onClick={getNextNotifications}>
-              <div className="text-custom-primary-90 hover:text-custom-primary-100 transition-all cursor-pointer">
+            <div className="py-4 flex justify-center items-center text-13 font-medium" onClick={getNextNotifications}>
+              <div className="text-accent-secondary hover:text-accent-primary transition-all cursor-pointer">
                 {t("load_more")}
               </div>
             </div>

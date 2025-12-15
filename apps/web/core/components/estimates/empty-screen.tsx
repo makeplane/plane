@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useTheme } from "next-themes";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
@@ -14,7 +12,7 @@ type TEstimateEmptyScreen = {
   onButtonClick: () => void;
 };
 
-export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
+export function EstimateEmptyScreen(props: TEstimateEmptyScreen) {
   // props
   const { onButtonClick } = props;
   const { resolvedTheme } = useTheme();
@@ -27,7 +25,7 @@ export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
       title={""}
       description={""}
       assetPath={resolvedPath}
-      className="w-full !px-0 !py-0"
+      className="w-full p-0!"
       primaryButton={{
         text: t("project_settings.empty_state.estimates.primary_button"),
         onClick: () => {
@@ -45,4 +43,4 @@ export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
       }}
     />
   );
-};
+}

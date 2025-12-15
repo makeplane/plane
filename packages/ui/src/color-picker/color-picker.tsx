@@ -6,7 +6,7 @@ interface ColorPickerProps {
   className?: string;
 }
 
-export const ColorPicker: React.FC<ColorPickerProps> = (props) => {
+export function ColorPicker(props: ColorPickerProps) {
   const { value, onChange, className = "" } = props;
   // refs
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -35,4 +35,4 @@ export const ColorPicker: React.FC<ColorPickerProps> = (props) => {
       />
     </div>
   );
-};
+}

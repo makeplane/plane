@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { isNil } from "lodash-es";
@@ -24,7 +22,7 @@ export type TIssueSubscription = {
   serviceType?: EIssueServiceType;
 };
 
-export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
+export const IssueSubscription = observer(function IssueSubscription(props: TIssueSubscription) {
   const { workspaceSlug, projectId, issueId, serviceType = EIssueServiceType.ISSUES } = props;
   const { t } = useTranslation();
   // hooks
@@ -79,12 +77,12 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
   return (
     <div>
       <Button
-        size="sm"
         prependIcon={isSubscribed ? <BellOff /> : <Bell className="h-3 w-3" />}
-        variant="outline-primary"
-        className="hover:!bg-custom-primary-100/20"
+        variant="secondary"
+        className="hover:!bg-accent-primary/20"
         onClick={handleSubscription}
         disabled={!isEditable || loading}
+        size="lg"
       >
         {loading ? (
           <span>

@@ -1,16 +1,16 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { Area, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Line, ComposedChart, CartesianGrid } from "recharts";
 // plane imports
 import { AXIS_LABEL_CLASSNAME } from "@plane/constants";
-import { TAreaChartProps } from "@plane/types";
+import type { TAreaChartProps } from "@plane/types";
 // local components
 import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
 
-export const AreaChart = React.memo(<K extends string, T extends string>(props: TAreaChartProps<K, T>) => {
+export const AreaChart = React.memo(function AreaChart<K extends string, T extends string>(
+  props: TAreaChartProps<K, T>
+) {
   const {
     data,
     areas,
@@ -112,7 +112,7 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
             left: margin?.left === undefined ? 20 : margin.left,
           }}
         >
-          <CartesianGrid stroke="rgba(var(--color-border-100), 0.8)" vertical={false} />
+          <CartesianGrid stroke="--alpha(var(--border-color-subtle) / 80%)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
             tick={(props) => {
@@ -163,7 +163,7 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
           {showTooltip && (
             <Tooltip
               cursor={{
-                stroke: "rgba(var(--color-text-300))",
+                stroke: "var(--text-color-tertiary)",
                 strokeDasharray: "4 4",
               }}
               wrapperStyle={{

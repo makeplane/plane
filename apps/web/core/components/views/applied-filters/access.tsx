@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 // icons
-import { X } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 // constants
 // helpers
-import { useTranslation } from "@plane/i18n";
 import type { EViewAccess } from "@plane/types";
 import { VIEW_ACCESS_SPECIFIERS } from "@/helpers/views.helper";
 
@@ -13,7 +13,7 @@ type Props = {
   values: EViewAccess[];
 };
 
-export const AppliedAccessFilters: React.FC<Props> = observer((props) => {
+export const AppliedAccessFilters = observer(function AppliedAccessFilters(props: Props) {
   const { editable, handleRemove, values } = props;
   const { t } = useTranslation();
 
@@ -30,15 +30,15 @@ export const AppliedAccessFilters: React.FC<Props> = observer((props) => {
         if (!label) return null;
 
         return (
-          <div key={access} className="flex items-center gap-1 rounded bg-custom-background-80 py-1 px-1.5 text-xs">
+          <div key={access} className="flex items-center gap-1 rounded-sm bg-layer-1 py-1 px-1.5 text-11">
             <span className="normal-case">{t(label)}</span>
             {editable && (
               <button
                 type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(access)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
-import { Check, X } from "lucide-react";
-// plane imports
+import { Check } from "lucide-react";
 import type { EditorRefApi } from "@plane/editor";
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { isCommentEmpty } from "@plane/utils";
 // components
@@ -20,7 +21,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const CommentCardEditForm: React.FC<Props> = observer((props) => {
+export const CommentCardEditForm = observer(function CommentCardEditForm(props: Props) {
   const {
     activityOperations,
     comment,
@@ -93,6 +94,10 @@ export const CommentCardEditForm: React.FC<Props> = observer((props) => {
             const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file, comment.id);
             return asset_id;
           }}
+          duplicateFile={async (assetId: string) => {
+            const { asset_id } = await activityOperations.duplicateCommentAsset(assetId, comment.id);
+            return asset_id;
+          }}
           projectId={projectId}
           parentClassName="p-2"
           displayConfig={{
@@ -106,24 +111,24 @@ export const CommentCardEditForm: React.FC<Props> = observer((props) => {
             type="button"
             onClick={handleSubmit(onEnter)}
             disabled={isDisabled}
-            className={`group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300  ${
+            className={`group rounded-sm border border-green-500 bg-green-500/20 p-2 shadow-md duration-300  ${
               isEmpty ? "cursor-not-allowed bg-gray-200" : "hover:bg-green-500"
             }`}
           >
             <Check
-              className={`h-3 w-3 text-green-500 duration-300 ${isEmpty ? "text-black" : "group-hover:text-white"}`}
+              className={`h-3 w-3 text-green-500 duration-300 ${isEmpty ? "text-black" : "group-hover:text-on-color"}`}
             />
           </button>
         )}
         <button
           type="button"
-          className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
+          className="group rounded-sm border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
           onClick={() => {
             setIsEditing(false);
             editorRef.current?.setEditorValue(comment.comment_html ?? "<p></p>");
           }}
         >
-          <X className="size-3 text-red-500 duration-300 group-hover:text-white" />
+          <CloseIcon className="size-3 text-red-500 duration-300 group-hover:text-on-color" />
         </button>
       </div>
     </form>

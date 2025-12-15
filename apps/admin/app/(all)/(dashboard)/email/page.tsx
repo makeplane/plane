@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -8,9 +6,10 @@ import { Loader, ToggleSwitch } from "@plane/ui";
 // hooks
 import { useInstance } from "@/hooks/store";
 // components
+import type { Route } from "./+types/page";
 import { InstanceEmailForm } from "./email-config-form";
 
-const InstanceEmailPage: React.FC = observer(() => {
+const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.ComponentProps) {
   // store
   const { fetchInstanceConfigurations, formattedConfig, disableEmail } = useInstance();
 
@@ -52,14 +51,14 @@ const InstanceEmailPage: React.FC = observer(() => {
   return (
     <>
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
-        <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
+        <div className="flex items-center justify-between gap-4 border-b border-subtle mx-4 py-4 space-y-1 flex-shrink-0">
           <div className="py-4 space-y-1 flex-shrink-0">
-            <div className="text-xl font-medium text-custom-text-100">Secure emails from your own instance</div>
-            <div className="text-sm font-normal text-custom-text-300">
+            <div className="text-18 font-medium text-primary">Secure emails from your own instance</div>
+            <div className="text-13 font-regular text-tertiary">
               Plane can send useful emails to you and your users from your own instance without talking to the Internet.
-              <div className="text-sm font-normal text-custom-text-300">
+              <div className="text-13 font-regular text-tertiary">
                 Set it up below and please test your settings before you save them.&nbsp;
-                <span className="text-red-400">Misconfigs can lead to email bounces and errors.</span>
+                <span className="text-danger">Misconfigs can lead to email bounces and errors.</span>
               </div>
             </div>
           </div>
@@ -90,5 +89,7 @@ const InstanceEmailPage: React.FC = observer(() => {
     </>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "Email Settings - God Mode" }];
 
 export default InstanceEmailPage;

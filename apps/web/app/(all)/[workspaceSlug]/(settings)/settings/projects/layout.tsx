@@ -1,27 +1,17 @@
-"use client";
-
-import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
-// components
-import { getProjectActivePath } from "@/components/settings/helper";
-import { SettingsMobileNav } from "@/components/settings/mobile";
-import { ProjectSettingsSidebar } from "@/components/settings/project/sidebar";
+import { Outlet } from "react-router";
+// hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
+// types
+import type { Route } from "./+types/layout";
 
-type Props = {
-  children: ReactNode;
-};
-
-const ProjectSettingsLayout = observer((props: Props) => {
-  const { children } = props;
+function ProjectSettingsLayout({ params }: Route.ComponentProps) {
+  const { workspaceSlug, projectId } = params;
   // router
   const router = useAppRouter();
-  const pathname = usePathname();
-  const { workspaceSlug, projectId } = useParams();
+  // store hooks
   const { joinedProjectIds } = useProject();
 
   useEffect(() => {
@@ -31,17 +21,7 @@ const ProjectSettingsLayout = observer((props: Props) => {
     }
   }, [joinedProjectIds, router, workspaceSlug, projectId]);
 
-  return (
-    <>
-      <SettingsMobileNav hamburgerContent={ProjectSettingsSidebar} activePath={getProjectActivePath(pathname) || ""} />
-      <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()}>
-        <div className="relative flex h-full w-full">
-          <div className="hidden md:block">{projectId && <ProjectSettingsSidebar />}</div>
-          <div className="w-full h-full overflow-y-scroll md:pt-page-y">{children}</div>
-        </div>
-      </ProjectAuthWrapper>
-    </>
-  );
-});
+  return <Outlet />;
+}
 
-export default ProjectSettingsLayout;
+export default observer(ProjectSettingsLayout);

@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { CalendarClock } from "lucide-react";
+import { StartDatePropertyIcon } from "@plane/propel/icons";
 // types
 import type { TIssue } from "@plane/types";
 // components
@@ -15,11 +15,11 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetStartDateColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetStartDateColumn = observer(function SpreadsheetStartDateColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle">
       <DateDropdown
         value={issue.start_date}
         maxDate={getDate(issue.target_date)}
@@ -36,9 +36,9 @@ export const SpreadsheetStartDateColumn: React.FC<Props> = observer((props: Prop
         }}
         disabled={disabled}
         placeholder="Start date"
-        icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+        icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="transparent-with-text"
-        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10 px-page-x"
+        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x"
         buttonContainerClassName="w-full"
         optionsClassName="z-[9]"
         onClose={onClose}

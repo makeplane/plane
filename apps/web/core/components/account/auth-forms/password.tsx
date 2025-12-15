@@ -1,14 +1,13 @@
-"use client";
-
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { Eye, EyeOff, Info, X, XCircle } from "lucide-react";
+import { Eye, EyeOff, Info, XCircle } from "lucide-react";
 // plane imports
 import { API_BASE_URL, E_PASSWORD_STRENGTH, AUTH_TRACKER_EVENTS, AUTH_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { CloseIcon } from "@plane/propel/icons";
 import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
@@ -43,7 +42,7 @@ const defaultValues: TPasswordFormValues = {
 
 const authService = new AuthService();
 
-export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
+export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props) {
   const { email, isSMTPConfigured, handleAuthStep, handleEmailClear, mode, nextPath } = props;
   // plane imports
   const { t } = useTranslation();
@@ -85,7 +84,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
           <Link
             data-ph-element={AUTH_TRACKER_ELEMENTS.FORGOT_PASSWORD_FROM_SIGNIN}
             href={`/accounts/forgot-password?email=${encodeURIComponent(email)}`}
-            className="text-xs font-medium text-custom-primary-100"
+            className="text-11 font-medium text-accent-primary"
           >
             {t("auth.common.forgot_password")}
           </Link>
@@ -129,12 +128,12 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
           <div className="w-4 h-4 flex-shrink-0 relative flex justify-center items-center">
             <Info size={16} className="text-red-500" />
           </div>
-          <div className="w-full text-sm font-medium text-red-500">{t("auth.sign_up.errors.password.strength")}</div>
+          <div className="w-full text-13 font-medium text-red-500">{t("auth.sign_up.errors.password.strength")}</div>
           <div
-            className="relative ml-auto w-6 h-6 rounded-sm flex justify-center items-center transition-all cursor-pointer hover:bg-red-500/20 text-custom-primary-100/80"
+            className="relative ml-auto w-6 h-6 rounded-xs flex justify-center items-center transition-all cursor-pointer hover:bg-red-500/20 text-accent-primary/80"
             onClick={() => setBannerMessage(false)}
           >
-            <X className="w-4 h-4 flex-shrink-0 text-red-500" />
+            <CloseIcon className="w-4 h-4 flex-shrink-0 text-red-500" />
           </div>
         </div>
       )}
@@ -183,12 +182,10 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         <input type="hidden" value={passwordFormData.email} name="email" />
         {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
         <div className="space-y-1">
-          <label htmlFor="email" className="text-sm font-medium text-custom-text-300">
+          <label htmlFor="email" className="text-13 font-medium text-tertiary">
             {t("auth.common.email.label")}
           </label>
-          <div
-            className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-300`}
-          >
+          <div className={`relative flex items-center rounded-md bg-surface-1 border border-strong`}>
             <Input
               id="email"
               name="email"
@@ -196,7 +193,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               value={passwordFormData.email}
               onChange={(e) => handleFormChange("email", e.target.value)}
               placeholder={t("auth.common.email.placeholder")}
-              className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 border-0`}
+              className={`disable-autofill-style h-10 w-full placeholder:text-placeholder border-0`}
               disabled
             />
             {passwordFormData.email.length > 0 && (
@@ -213,10 +210,10 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="password" className="text-sm text-custom-text-300 font-medium">
+          <label htmlFor="password" className="text-13 text-tertiary font-medium">
             {mode === EAuthModes.SIGN_IN ? t("auth.common.password.label") : t("auth.common.password.set_password")}
           </label>
-          <div className="relative flex items-center rounded-md bg-custom-background-100">
+          <div className="relative flex items-center rounded-md bg-surface-1">
             <Input
               type={showPassword?.password ? "text" : "password"}
               id="password"
@@ -224,7 +221,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               value={passwordFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
               placeholder={t("auth.common.password.placeholder")}
-              className="disable-autofill-style h-10 w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+              className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
               autoComplete="on"
@@ -250,10 +247,10 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
 
         {mode === EAuthModes.SIGN_UP && (
           <div className="space-y-1">
-            <label htmlFor="confirm-password" className="text-sm text-custom-text-300 font-medium">
+            <label htmlFor="confirm-password" className="text-13 text-tertiary font-medium">
               {t("auth.common.password.confirm_password.label")}
             </label>
-            <div className="relative flex items-center rounded-md bg-custom-background-100">
+            <div className="relative flex items-center rounded-md bg-surface-1">
               <Input
                 type={showPassword?.retypePassword ? "text" : "password"}
                 id="confirm-password"
@@ -261,7 +258,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
                 value={passwordFormData.confirm_password}
                 onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                 placeholder={t("auth.common.password.confirm_password.placeholder")}
-                className="disable-autofill-style h-10 w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+                className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
               />
@@ -285,7 +282,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
             {!!passwordFormData.confirm_password &&
               passwordFormData.password !== passwordFormData.confirm_password &&
               renderPasswordMatchError && (
-                <span className="text-sm text-red-500">{t("auth.common.password.errors.match")}</span>
+                <span className="text-13 text-red-500">{t("auth.common.password.errors.match")}</span>
               )}
           </div>
         )}
@@ -293,7 +290,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         <div className="space-y-2.5">
           {mode === EAuthModes.SIGN_IN ? (
             <>
-              <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+              <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
                 {isSubmitting ? (
                   <Spinner height="20px" width="20px" />
                 ) : isSMTPConfigured ? (
@@ -307,16 +304,16 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
                   type="button"
                   data-ph-element={AUTH_TRACKER_ELEMENTS.SIGN_IN_WITH_UNIQUE_CODE}
                   onClick={redirectToUniqueCodeSignIn}
-                  variant="outline-primary"
+                  variant="secondary"
                   className="w-full"
-                  size="lg"
+                  size="xl"
                 >
                   {t("auth.common.sign_in_with_unique_code")}
                 </Button>
               )}
             </>
           ) : (
-            <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+            <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
               {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
             </Button>
           )}

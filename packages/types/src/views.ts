@@ -1,5 +1,5 @@
-import { TLogoProps } from "./common";
-import {
+import type { TLogoProps } from "./common";
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,

@@ -1,5 +1,5 @@
-import { KeyboardShortcutCommand } from "@tiptap/core";
-import { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import type { KeyboardShortcutCommand } from "@tiptap/core";
+import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 

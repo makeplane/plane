@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Layers } from "lucide-react";
@@ -20,7 +18,7 @@ export type TReadonlyModuleProps = {
   workspaceSlug: string;
 };
 
-export const ReadonlyModule: React.FC<TReadonlyModuleProps> = observer((props) => {
+export const ReadonlyModule = observer(function ReadonlyModule(props: TReadonlyModuleProps) {
   const {
     className,
     hideIcon = false,
@@ -46,7 +44,7 @@ export const ReadonlyModule: React.FC<TReadonlyModuleProps> = observer((props) =
 
   if (modules.length === 0) {
     return (
-      <div className={cn("flex items-center gap-1 text-sm", className)}>
+      <div className={cn("flex items-center gap-1 text-13", className)}>
         {!hideIcon && <Layers className="size-4 flex-shrink-0" />}
         <span className="flex-grow truncate">{placeholder ?? t("common.none")}</span>
       </div>
@@ -58,7 +56,7 @@ export const ReadonlyModule: React.FC<TReadonlyModuleProps> = observer((props) =
       showCount && modules.length > 1 ? `${modules[0]?.name} +${modules.length - 1}` : modules[0]?.name;
 
     return (
-      <div className={cn("flex items-center gap-1 text-sm", className)}>
+      <div className={cn("flex items-center gap-1 text-13", className)}>
         {!hideIcon && <Layers className="size-4 flex-shrink-0" />}
         <span className="flex-grow truncate">{displayText}</span>
       </div>
@@ -67,7 +65,7 @@ export const ReadonlyModule: React.FC<TReadonlyModuleProps> = observer((props) =
 
   const moduleItem = modules[0];
   return (
-    <div className={cn("flex items-center gap-2 text-sm", className)}>
+    <div className={cn("flex items-center gap-2 text-13", className)}>
       {!hideIcon && <Layers className="size-4 flex-shrink-0" />}
       <span className="flex-grow truncate">{moduleItem?.name}</span>
     </div>

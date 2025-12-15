@@ -1,15 +1,12 @@
-"use client";
-
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Tooltip } from "@plane/propel/tooltip";
 // plane imports
-import { cn } from "@plane/utils";
-// ui
-import { ReactionSelector } from "@/components/ui";
+import { stringToEmoji } from "@plane/propel/emoji-icon-picker";
+import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
+import type { EmojiReactionType } from "@plane/propel/emoji-reaction";
 // helpers
-import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
+import { groupReactions } from "@/helpers/emoji.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
@@ -21,8 +18,10 @@ type Props = {
   commentId: string;
 };
 
-export const CommentReactions: React.FC<Props> = observer((props) => {
+export const CommentReactions = observer(function CommentReactions(props: Props) {
   const { anchor, commentId } = props;
+  // state
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   const router = useRouter();
   const pathName = usePathname();
   const searchParams = useSearchParams();
@@ -37,8 +36,18 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
   const { data: user } = useUser();
   const isInIframe = useIsInIframe();
 
-  const commentReactions = peekId ? details[peekId].comments.find((c) => c.id === commentId)?.comment_reactions : [];
-  const groupedReactions = peekId ? groupReactions(commentReactions ?? [], "reaction") : {};
+  const commentReactions = useMemo(() => {
+    if (!peekId) return [];
+    const peekDetails = details[peekId];
+    if (!peekDetails) return [];
+    const comment = peekDetails.comments?.find((c) => c.id === commentId);
+    return comment?.comment_reactions ?? [];
+  }, [peekId, details, commentId]);
+
+  const groupedReactions = useMemo(() => {
+    if (!peekId) return {};
+    return groupReactions(commentReactions ?? [], "reaction");
+  }, [peekId, commentReactions]);
 
   const userReactions = commentReactions?.filter((r) => r?.actor_detail?.id === user?.id);
 
@@ -62,70 +71,68 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
   // derived values
   const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });
 
+  // Transform reactions data to Propel EmojiReactionType format
+  const propelReactions: EmojiReactionType[] = useMemo(() => {
+    const REACTIONS_LIMIT = 1000;
+
+    return Object.keys(groupedReactions || {})
+      .filter((reaction) => groupedReactions?.[reaction]?.length > 0)
+      .map((reaction) => {
+        const reactionList = groupedReactions?.[reaction] ?? [];
+        const userNames = reactionList
+          .map((r) => r?.actor_detail?.display_name)
+          .filter((name): name is string => !!name)
+          .slice(0, REACTIONS_LIMIT);
+
+        return {
+          emoji: stringToEmoji(reaction),
+          count: reactionList.length,
+          reacted: commentReactions?.some((r) => r?.actor_detail?.id === user?.id && r.reaction === reaction) || false,
+          users: userNames,
+        };
+      });
+  }, [groupedReactions, commentReactions, user?.id]);
+
+  const handleEmojiClick = (emoji: string) => {
+    if (isInIframe) return;
+    if (!user) {
+      router.push(`/?next_path=${pathName}?${queryParam}`);
+      return;
+    }
+    // Convert emoji back to decimal string format for the API
+    const emojiCodePoints = Array.from(emoji)
+      .map((char) => char.codePointAt(0))
+      .filter((cp): cp is number => cp !== undefined);
+    const reactionString = emojiCodePoints.join("-");
+    handleReactionClick(reactionString);
+  };
+
+  const handleEmojiSelect = (emoji: string) => {
+    if (!user) {
+      router.push(`/?next_path=${pathName}?${queryParam}`);
+      return;
+    }
+    // emoji is already in decimal string format from EmojiReactionPicker
+    handleReactionClick(emoji);
+  };
+
   return (
-    <div className="mt-2 flex items-center gap-1.5">
-      {!isInIframe && (
-        <ReactionSelector
-          onSelect={(value) => {
-            if (user) handleReactionClick(value);
-            else router.push(`/?next_path=${pathName}?${queryParam}`);
-          }}
-          position="top"
-          selected={userReactions?.map((r) => r.reaction)}
-          size="md"
-        />
-      )}
-
-      {Object.keys(groupedReactions || {}).map((reaction) => {
-        const reactions = groupedReactions?.[reaction] ?? [];
-        const REACTIONS_LIMIT = 1000;
-
-        if (reactions.length > 0)
-          return (
-            <Tooltip
-              key={reaction}
-              tooltipContent={
-                <div>
-                  {reactions
-                    .map((r) => r?.actor_detail?.display_name)
-                    .splice(0, REACTIONS_LIMIT)
-                    .join(", ")}
-                  {reactions.length > REACTIONS_LIMIT && " and " + (reactions.length - REACTIONS_LIMIT) + " more"}
-                </div>
-              }
-            >
-              <button
-                type="button"
-                onClick={() => {
-                  if (isInIframe) return;
-                  if (user) handleReactionClick(reaction);
-                  else router.push(`/?next_path=${pathName}?${queryParam}`);
-                }}
-                className={cn(
-                  `flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
-                    commentReactions?.some((r) => r?.actor_detail?.id === user?.id && r.reaction === reaction)
-                      ? "bg-custom-primary-100/10"
-                      : "bg-custom-background-80"
-                  }`,
-                  {
-                    "cursor-default": isInIframe,
-                  }
-                )}
-              >
-                <span>{renderEmoji(reaction)}</span>
-                <span
-                  className={
-                    commentReactions?.some((r) => r?.actor_detail?.id === user?.id && r.reaction === reaction)
-                      ? "text-custom-primary-100"
-                      : ""
-                  }
-                >
-                  {groupedReactions?.[reaction].length}{" "}
-                </span>
-              </button>
-            </Tooltip>
-          );
-      })}
+    <div className="mt-2">
+      <EmojiReactionPicker
+        isOpen={isPickerOpen}
+        handleToggle={setIsPickerOpen}
+        onChange={handleEmojiSelect}
+        disabled={isInIframe}
+        label={
+          <EmojiReactionGroup
+            reactions={propelReactions}
+            onReactionClick={handleEmojiClick}
+            showAddButton={!isInIframe}
+            onAddReaction={() => setIsPickerOpen(true)}
+          />
+        }
+        placement="bottom-start"
+      />
     </div>
   );
 });

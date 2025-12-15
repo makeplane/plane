@@ -7,7 +7,7 @@ type LucideIconsListProps = {
   query: string;
 };
 
-export const LucideIconsList: React.FC<LucideIconsListProps> = (props) => {
+export function LucideIconsList(props: LucideIconsListProps) {
   const { query, onChange, activeColor } = props;
 
   const filteredArray = LUCIDE_ICONS_LIST.filter((icon) => icon.name.toLowerCase().includes(query.toLowerCase()));
@@ -18,7 +18,7 @@ export const LucideIconsList: React.FC<LucideIconsListProps> = (props) => {
         <button
           key={icon.name}
           type="button"
-          className="h-9 w-9 select-none text-lg grid place-items-center rounded hover:bg-custom-background-80"
+          className="h-9 w-9 select-none text-16 grid place-items-center rounded-sm hover:bg-layer-1"
           onClick={() => {
             onChange({
               name: icon.name,
@@ -31,4 +31,4 @@ export const LucideIconsList: React.FC<LucideIconsListProps> = (props) => {
       ))}
     </>
   );
-};
+}

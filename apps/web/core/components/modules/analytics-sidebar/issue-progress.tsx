@@ -1,13 +1,12 @@
-"use client";
-
 import type { FC } from "react";
 import { Fragment, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
-import { AlertCircle, ChevronUp, ChevronDown } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ChevronUpIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TModulePlotType } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { CustomSelect, Spinner } from "@plane/ui";
@@ -33,7 +32,7 @@ const moduleBurnDownChartOptions = [
   { value: "points", i18n_label: "points" },
 ];
 
-export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((props) => {
+export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress(props: TModuleAnalyticsProgress) {
   // props
   const { workspaceSlug, projectId, moduleId } = props;
   // router
@@ -115,7 +114,7 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
 
   if (!moduleDetails) return <></>;
   return (
-    <div className="border-t border-custom-border-200 space-y-4 py-4 px-3">
+    <div className="border-t border-subtle space-y-4 py-4 px-3">
       <Disclosure defaultOpen={isModuleDateValid ? true : false}>
         {({ open }) => (
           <div className="space-y-6">
@@ -123,9 +122,9 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
             {isModuleDateValid ? (
               <div className="relative w-full flex justify-between items-center gap-2">
                 <Disclosure.Button className="relative flex items-center gap-2 w-full">
-                  <div className="font-medium text-custom-text-200 text-sm">{t("progress")}</div>
+                  <div className="font-medium text-secondary text-13">{t("progress")}</div>
                   {progressHeaderPercentage > 0 && (
-                    <div className="flex h-5 w-9 items-center justify-center rounded bg-amber-500/20 text-xs font-medium text-amber-500">{`${progressHeaderPercentage}%`}</div>
+                    <div className="flex h-5 w-9 items-center justify-center rounded-sm bg-amber-500/20 text-11 font-medium text-amber-500">{`${progressHeaderPercentage}%`}</div>
                   )}
                 </Disclosure.Button>
                 {isCurrentEstimateTypeIsPoints && (
@@ -153,18 +152,18 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                 )}
                 <Disclosure.Button className="ml-auto">
                   {open ? (
-                    <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" />
+                    <ChevronUpIcon className="h-3.5 w-3.5" aria-hidden="true" />
                   ) : (
-                    <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+                    <ChevronDownIcon className="h-3.5 w-3.5" aria-hidden="true" />
                   )}
                 </Disclosure.Button>
               </div>
             ) : (
               <div className="relative w-full flex justify-between items-center gap-2">
-                <div className="font-medium text-custom-text-200 text-sm">Progress</div>
+                <div className="font-medium text-secondary text-13">Progress</div>
                 <div className="flex items-center gap-1">
-                  <AlertCircle height={14} width={14} className="text-custom-text-200" />
-                  <span className="text-xs italic text-custom-text-200">
+                  <AlertCircle height={14} width={14} className="text-secondary" />
+                  <span className="text-11 italic text-secondary">
                     {moduleDetails?.start_date && moduleDetails?.target_date
                       ? t("project_module.empty_state.sidebar.in_active")
                       : t("project_module.empty_state.sidebar.invalid_date")}
@@ -198,7 +197,7 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
 
                 {/* progress detailed view */}
                 {chartDistributionData && (
-                  <div className="w-full border-t border-custom-border-200 pt-5">
+                  <div className="w-full border-t border-subtle pt-5">
                     <ModuleProgressStats
                       distribution={chartDistributionData}
                       groupedIssues={groupedIssues}

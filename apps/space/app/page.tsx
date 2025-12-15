@@ -1,4 +1,3 @@
-"use client";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -10,8 +9,13 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { AuthView } from "@/components/views";
 // hooks
 import { useUser } from "@/hooks/store/use-user";
+import type { Route } from "./+types/page";
 
-const HomePage = observer(() => {
+export const headers: Route.HeadersFunction = () => ({
+  "X-Frame-Options": "SAMEORIGIN",
+});
+
+const HomePage = observer(function HomePage() {
   const { data: currentUser, isAuthenticated, isInitializing } = useUser();
   const searchParams = useSearchParams();
   const router = useRouter();

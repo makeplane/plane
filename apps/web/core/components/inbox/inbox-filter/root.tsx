@@ -1,7 +1,8 @@
 import type { FC } from "react";
-import { ChevronDown, ListFilter } from "lucide-react";
-// plane imports
+import { ListFilter } from "lucide-react";
 import { getButtonStyling } from "@plane/propel/button";
+// plane imports
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
@@ -14,13 +15,13 @@ import { InboxIssueOrderByDropdown } from "./sorting/order-by";
 const smallButton = <ListFilter className="size-3 " />;
 
 const largeButton = (
-  <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
+  <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
     <ListFilter className="size-3 " />
     <span>Filters</span>
-    <ChevronDown className="size-3" strokeWidth={2} />
+    <ChevronDownIcon className="size-3" strokeWidth={2} />
   </div>
 );
-export const FiltersRoot: FC = () => {
+export function FiltersRoot() {
   const windowSize = useSize();
 
   return (
@@ -35,4 +36,4 @@ export const FiltersRoot: FC = () => {
       </div>
     </div>
   );
-};
+}

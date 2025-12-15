@@ -1,21 +1,21 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import useSWR from "swr";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
 // components
+import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 // hooks
 import { useInstance } from "@/hooks/store";
 // icons
-import GoogleLogo from "@/public/logos/google-logo.svg";
 // local components
+import type { Route } from "./+types/page";
 import { InstanceGoogleConfigForm } from "./form";
 
-const InstanceGoogleAuthenticationPage = observer(() => {
+const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthenticationPage(
+  _props: Route.ComponentProps
+) {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
@@ -38,7 +38,7 @@ const InstanceGoogleAuthenticationPage = observer(() => {
       loading: "Saving Configuration...",
       success: {
         title: "Configuration saved",
-        message: () => `Google authentication is now ${value ? "active" : "disabled"}.`,
+        message: () => `Google authentication is now ${value === "1" ? "active" : "disabled"}.`,
       },
       error: {
         title: "Error",
@@ -58,12 +58,12 @@ const InstanceGoogleAuthenticationPage = observer(() => {
   return (
     <>
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
-        <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
+        <div className="border-b border-subtle mx-4 py-4 space-y-1 flex-shrink-0">
           <AuthenticationMethodCard
             name="Google"
             description="Allow members to login or sign up to plane with their Google
             accounts."
-            icon={<Image src={GoogleLogo} height={24} width={24} alt="Google Logo" />}
+            icon={<img src={GoogleLogo} height={24} width={24} alt="Google Logo" />}
             config={
               <ToggleSwitch
                 value={Boolean(parseInt(enableGoogleConfig))}
@@ -99,5 +99,7 @@ const InstanceGoogleAuthenticationPage = observer(() => {
     </>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "Google Authentication - God Mode" }];
 
 export default InstanceGoogleAuthenticationPage;

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // components
 import { ProjectNavigation } from "@/components/workspace/sidebar/project-navigation";
@@ -9,7 +7,7 @@ type TProjectItemsRootProps = {
   projectId: string;
 };
 
-export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = (props) => {
+export function ProjectNavigationRoot(props: TProjectItemsRootProps) {
   const { workspaceSlug, projectId } = props;
   if (typeof window !== "undefined") {
     try {
@@ -17,4 +15,4 @@ export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = (props) => {
     } catch {}
   }
   return <ProjectNavigation workspaceSlug={workspaceSlug} projectId={projectId} />;
-};
+}

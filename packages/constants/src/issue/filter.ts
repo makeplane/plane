@@ -1,17 +1,14 @@
-import {
-  EIssuesStoreType,
+import type {
   IIssueFilterOptions,
   ILayoutDisplayFiltersOptions,
   TIssueActivityComment,
   TWorkItemFilterProperty,
 } from "@plane/types";
-import {
-  TIssueFilterPriorityObject,
-  ISSUE_DISPLAY_PROPERTIES_KEYS,
-  SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
-} from "./common";
+import { EIssuesStoreType } from "@plane/types";
+import type { TIssueFilterPriorityObject } from "./common";
+import { ISSUE_DISPLAY_PROPERTIES_KEYS, SUB_ISSUES_DISPLAY_PROPERTIES_KEYS } from "./common";
 
-import { TIssueLayout } from "./layout";
+import type { TIssueLayout } from "./layout";
 
 export type TIssueFilterKeys = "priority" | "state" | "labels";
 
@@ -64,31 +61,31 @@ export const ISSUE_PRIORITY_FILTERS: TIssueFilterPriorityObject[] = [
   {
     key: "urgent",
     titleTranslationKey: "issue.priority.urgent",
-    className: "bg-red-500 border-red-500 text-white",
+    className: "bg-layer-2 text-priority-urgent border-strong",
     icon: "error",
   },
   {
     key: "high",
     titleTranslationKey: "issue.priority.high",
-    className: "text-orange-500 border-custom-border-300",
+    className: "bg-layer-2 text-priority-high border-strong",
     icon: "signal_cellular_alt",
   },
   {
     key: "medium",
     titleTranslationKey: "issue.priority.medium",
-    className: "text-yellow-500 border-custom-border-300",
+    className: "bg-layer-2 text-priority-medium border-strong",
     icon: "signal_cellular_alt_2_bar",
   },
   {
     key: "low",
     titleTranslationKey: "issue.priority.low",
-    className: "text-green-500 border-custom-border-300",
+    className: "bg-layer-2 text-priority-low border-strong",
     icon: "signal_cellular_alt_1_bar",
   },
   {
     key: "none",
     titleTranslationKey: "common.none",
-    className: "text-gray-500 border-custom-border-300",
+    className: "bg-layer-2 text-priority-none border-strong",
     icon: "block",
   },
 ];

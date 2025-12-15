@@ -19,6 +19,7 @@ export type TEditorFlaggingHookReturnType = {
 
 export type TEditorFlaggingHookProps = {
   workspaceSlug: string;
+  projectId?: string;
   storeType?: EPageStoreType;
 };
 

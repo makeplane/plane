@@ -1,17 +1,26 @@
 import { useState } from "react";
 import { intersection } from "lodash-es";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+// import { Info } from "lucide-react";
 import {
   EUserPermissions,
   EUserPermissionsLevel,
   EXPORTERS_LIST,
+  // ISSUE_DISPLAY_FILTERS_BY_PAGE,
   WORKSPACE_SETTINGS_TRACKER_EVENTS,
   WORKSPACE_SETTINGS_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+// import { Tooltip } from "@plane/propel/tooltip";
+// import { EIssuesStoreType } from "@plane/types";
+import type { TWorkItemFilterExpression } from "@plane/types";
 import { CustomSearchSelect, CustomSelect } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+// import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
+// import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
@@ -26,14 +35,27 @@ type FormData = {
   provider: (typeof EXPORTERS_LIST)[0];
   project: string[];
   multiple: boolean;
+  filters: TWorkItemFilterExpression;
 };
+
+// const initialWorkItemFilters = {
+//   richFilters: {},
+//   displayFilters: {},
+//   displayProperties: {},
+//   kanbanFilters: {
+//     group_by: [],
+//     sub_group_by: [],
+//   },
+// };
+
 const projectExportService = new ProjectExportService();
 
-export const ExportForm = (props: Props) => {
+export const ExportForm = observer(function ExportForm(props: Props) {
   // props
   const { workspaceSlug, mutateServices } = props;
   // states
   const [exportLoading, setExportLoading] = useState(false);
+
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { data: user, canPerformAnyCreateAction, projectsWithCreatePermissions } = useUser();
@@ -45,11 +67,13 @@ export const ExportForm = (props: Props) => {
       provider: EXPORTERS_LIST[0],
       project: [],
       multiple: false,
+      filters: {},
     },
   });
+
   // derived values
   const hasProjects = workspaceProjectIds && workspaceProjectIds.length > 0;
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const isMember = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.WORKSPACE);
   const wsProjectIdsWithCreatePermisisons = projectsWithCreatePermissions
     ? intersection(workspaceProjectIds, Object.keys(projectsWithCreatePermissions))
     : [];
@@ -61,7 +85,7 @@ export const ExportForm = (props: Props) => {
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
         <div className="flex items-center gap-2">
-          <span className="text-[0.65rem] text-custom-text-200 flex-shrink-0">{projectDetails?.identifier}</span>
+          <span className="text-10 text-secondary flex-shrink-0">{projectDetails?.identifier}</span>
           <span className="truncate">{projectDetails?.name}</span>
         </div>
       ),
@@ -69,69 +93,76 @@ export const ExportForm = (props: Props) => {
   });
 
   // handlers
-  const ExportCSVToMail = async (formData: FormData) => {
+  async function ExportCSVToMail(formData: FormData) {
     setExportLoading(true);
     if (workspaceSlug && user) {
       const payload = {
         provider: formData.provider.provider,
         project: formData.project,
         multiple: formData.project.length > 1,
+        rich_filters: formData.filters,
       };
-      await projectExportService
-        .csvExport(workspaceSlug as string, payload)
-        .then(() => {
-          mutateServices();
-          setExportLoading(false);
-          captureSuccess({
-            eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.csv_exported,
-            payload: {
-              provider: formData.provider.provider,
-            },
-          });
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: t("workspace_settings.settings.exports.modal.toasts.success.title"),
-            message: t("workspace_settings.settings.exports.modal.toasts.success.message", {
-              entity:
-                formData.provider.provider === "csv"
-                  ? "CSV"
-                  : formData.provider.provider === "xlsx"
-                    ? "Excel"
-                    : formData.provider.provider === "json"
-                      ? "JSON"
-                      : "",
-            }),
-          });
-        })
-        .catch((error) => {
-          setExportLoading(false);
-          captureError({
-            eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.csv_exported,
-            payload: {
-              provider: formData.provider.provider,
-            },
-            error: error as Error,
-          });
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: t("error"),
-            message: t("workspace_settings.settings.exports.modal.toasts.error.message"),
-          });
+      try {
+        await projectExportService.csvExport(workspaceSlug, payload);
+        mutateServices();
+        setExportLoading(false);
+        captureSuccess({
+          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.csv_exported,
+          payload: {
+            provider: formData.provider.provider,
+          },
         });
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("workspace_settings.settings.exports.modal.toasts.success.title"),
+          message: t("workspace_settings.settings.exports.modal.toasts.success.message", {
+            entity:
+              formData.provider.provider === "csv"
+                ? "CSV"
+                : formData.provider.provider === "xlsx"
+                  ? "Excel"
+                  : formData.provider.provider === "json"
+                    ? "JSON"
+                    : "",
+          }),
+        });
+      } catch (error) {
+        setExportLoading(false);
+        captureError({
+          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.csv_exported,
+          payload: {
+            provider: formData.provider.provider,
+          },
+          error: error as Error,
+        });
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("error"),
+          message: t("workspace_settings.settings.exports.modal.toasts.error.message"),
+        });
+      }
+    } else {
+      setExportLoading(false);
     }
-  };
+  }
+
   return (
-    <form onSubmit={handleSubmit(ExportCSVToMail)} className="flex flex-col gap-4 mt-4">
+    <form
+      onSubmit={(e) => {
+        void handleSubmit(ExportCSVToMail)(e);
+      }}
+      className="flex flex-col gap-4 mt-4"
+    >
       <div className="flex gap-4">
         {/* Project Selector */}
         <div className="w-1/2">
-          <div className="text-sm font-medium text-custom-text-200 mb-2">
+          <div className="text-13 font-medium text-secondary mb-2">
             {t("workspace_settings.settings.exports.exporting_projects")}
           </div>
           <Controller
             control={control}
             name="project"
-            disabled={!isAdmin && (!hasProjects || !canPerformAnyCreateAction)}
+            disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
             render={({ field: { value, onChange } }) => (
               <CustomSearchSelect
                 value={value ?? []}
@@ -158,13 +189,13 @@ export const ExportForm = (props: Props) => {
         </div>
         {/* Format Selector */}
         <div className="w-1/2">
-          <div className="text-sm font-medium text-custom-text-200 mb-2">
+          <div className="text-13 font-medium text-secondary mb-2">
             {t("workspace_settings.settings.exports.format")}
           </div>
           <Controller
             control={control}
             name="provider"
-            disabled={!isAdmin && (!hasProjects || !canPerformAnyCreateAction)}
+            disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
             render={({ field: { value, onChange } }) => (
               <CustomSelect
                 value={value}
@@ -172,7 +203,7 @@ export const ExportForm = (props: Props) => {
                 label={t(value.i18n_title)}
                 optionsClassName="max-w-48 sm:max-w-[532px]"
                 placement="bottom-end"
-                buttonClassName="py-2 text-sm"
+                buttonClassName="py-2 text-13"
               >
                 {EXPORTERS_LIST.map((service) => (
                   <CustomSelect.Option key={service.provider} className="flex items-center gap-2" value={service}>
@@ -184,7 +215,50 @@ export const ExportForm = (props: Props) => {
           />
         </div>
       </div>
-      <div className="flex items-center justify-between ">
+      {/* Rich Filters */}
+      {/* <div className="w-full">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="text-13 font-medium text-secondary leading-tight">{t("common.filters")}</div>
+          <Tooltip
+            tooltipContent={
+              <div className="max-w-[238px] flex gap-2">
+                <div className=" rounded-sm bg-layer-1 flex items-center justify-center p-1 h-5 aspect-square">
+                  <Info className="h-3 w-3" />
+                </div>
+                {t("workspace_settings.settings.exports.filters_info")}
+              </div>
+            }
+            position="top"
+          >
+            <button type="button" className="flex items-center justify-center">
+              <Info className="h-3 w-3 text-tertiary" />
+            </button>
+          </Tooltip>
+        </div>
+        <Controller
+          control={control}
+          name="filters"
+          render={({ field: { onChange } }) => (
+            <WorkspaceLevelWorkItemFiltersHOC
+              entityId={workspaceSlug}
+              entityType={EIssuesStoreType.GLOBAL}
+              filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.filters}
+              initialWorkItemFilters={initialWorkItemFilters}
+              isTemporary
+              updateFilters={(updatedFilters) => onChange(updatedFilters)}
+              showOnMount
+              workspaceSlug={workspaceSlug}
+            >
+              {({ filter: workspaceExportWorkItemsFilter }) =>
+                workspaceExportWorkItemsFilter && (
+                  <WorkItemFiltersRow filter={workspaceExportWorkItemsFilter} variant="modal" />
+                )
+              }
+            </WorkspaceLevelWorkItemFiltersHOC>
+          )}
+        />
+      </div> */}
+      <div className="flex items-center justify-between">
         <Button
           variant="primary"
           type="submit"
@@ -196,4 +270,4 @@ export const ExportForm = (props: Props) => {
       </div>
     </form>
   );
-};
+});

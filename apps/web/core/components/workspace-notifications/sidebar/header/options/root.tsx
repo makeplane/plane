@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { CheckCheck, RefreshCw } from "lucide-react";
 // plane imports
@@ -24,7 +23,9 @@ type TNotificationSidebarHeaderOptions = {
   workspaceSlug: string;
 };
 
-export const NotificationSidebarHeaderOptions: FC<TNotificationSidebarHeaderOptions> = observer((props) => {
+export const NotificationSidebarHeaderOptions = observer(function NotificationSidebarHeaderOptions(
+  props: TNotificationSidebarHeaderOptions
+) {
   const { workspaceSlug } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -51,11 +52,11 @@ export const NotificationSidebarHeaderOptions: FC<TNotificationSidebarHeaderOpti
   };
 
   return (
-    <div className="relative flex justify-center items-center gap-2 text-sm">
+    <div className="relative flex justify-center items-center gap-2 text-body-xs-medium">
       {/* mark all notifications as read*/}
       <Tooltip tooltipContent={t("notification.options.mark_all_as_read")} isMobile={isMobile} position="bottom">
         <div
-          className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm"
+          className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-layer-1 rounded-xs"
           data-ph-element={NOTIFICATION_TRACKER_ELEMENTS.MARK_ALL_AS_READ_BUTTON}
           onClick={() => {
             captureSuccess({
@@ -75,7 +76,7 @@ export const NotificationSidebarHeaderOptions: FC<TNotificationSidebarHeaderOpti
       {/* refetch current notifications */}
       <Tooltip tooltipContent={t("notification.options.refresh")} isMobile={isMobile} position="bottom">
         <div
-          className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm"
+          className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-layer-1 rounded-xs"
           onClick={refreshNotifications}
         >
           <RefreshCw className={`h-3 w-3 ${loader === ENotificationLoader.MUTATION_LOADER ? "animate-spin" : ""}`} />

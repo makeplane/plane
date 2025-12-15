@@ -1,8 +1,7 @@
-"use client";
-
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 // plane imports
-import { E_PASSWORD_STRENGTH, EErrorAlertType, EAuthErrorCodes, TAuthErrorInfo } from "@plane/constants";
+import type { TAuthErrorInfo } from "@plane/constants";
+import { E_PASSWORD_STRENGTH, EErrorAlertType, EAuthErrorCodes } from "@plane/constants";
 
 /**
  * @description Password strength levels
@@ -79,7 +78,7 @@ export const getPasswordCriteria = (password: string): PasswordCriteria[] => [
 
 // Error code messages
 const errorCodeMessages: {
-  [key in EAuthErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in EAuthErrorCodes]: { title: string; message: (email?: string) => ReactNode };
 } = {
   // global
   [EAuthErrorCodes.INSTANCE_NOT_CONFIGURED]: {
@@ -294,10 +293,7 @@ const errorCodeMessages: {
 };
 
 // Error handler
-export const authErrorHandler = (
-  errorCode: EAuthErrorCodes,
-  email?: string | undefined
-): TAuthErrorInfo | undefined => {
+export const authErrorHandler = (errorCode: EAuthErrorCodes, email?: string): TAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
     EAuthErrorCodes.INSTANCE_NOT_CONFIGURED,
     EAuthErrorCodes.INVALID_EMAIL,

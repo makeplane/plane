@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { useParams } from "next/navigation";
 import useSWRInfinite from "swr/infinite";
@@ -22,7 +20,7 @@ type Props = {
 
 const projectService = new ProjectService();
 
-export const SelectRepository: React.FC<Props> = (props) => {
+export function SelectRepository(props: Props) {
   const { integration, value, label, onChange, characterLimit = 25 } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -30,7 +28,7 @@ export const SelectRepository: React.FC<Props> = (props) => {
   const getKey = (pageIndex: number) => {
     if (!workspaceSlug || !integration) return;
 
-    return `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/workspaces/${workspaceSlug}/workspace-integrations/${
+    return `${process.env.VITE_API_BASE_URL}/api/workspaces/${workspaceSlug}/workspace-integrations/${
       integration.id
     }/github-repositories/?page=${++pageIndex}`;
   };
@@ -72,7 +70,7 @@ export const SelectRepository: React.FC<Props> = (props) => {
           {userRepositories && options.length < totalCount && (
             <button
               type="button"
-              className="w-full p-1 text-center text-[0.6rem] text-custom-text-200 hover:bg-custom-background-80"
+              className="w-full p-1 text-center text-10 text-secondary hover:bg-layer-1"
               onClick={() => setSize(size + 1)}
               disabled={isValidating}
             >
@@ -84,4 +82,4 @@ export const SelectRepository: React.FC<Props> = (props) => {
       optionsClassName="w-48"
     />
   );
-};
+}

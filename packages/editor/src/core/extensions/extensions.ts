@@ -1,4 +1,5 @@
-import { Extensions } from "@tiptap/core";
+import type { HocuspocusProvider } from "@hocuspocus/provider";
+import type { Extensions } from "@tiptap/core";
 import { CharacterCount } from "@tiptap/extension-character-count";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
@@ -35,20 +36,24 @@ import { CustomImageExtension } from "./custom-image/extension";
 import { EmojiExtension } from "./emoji/extension";
 import { CustomPlaceholderExtension } from "./placeholder";
 import { CustomStarterKitExtension } from "./starter-kit";
+import { UniqueID } from "./unique-id/extension";
 
 type TArguments = Pick<
   IEditorProps,
   | "disabledExtensions"
   | "flaggedExtensions"
   | "fileHandler"
+  | "getEditorMetaData"
   | "isTouchDevice"
   | "mentionHandler"
   | "placeholder"
+  | "showPlaceholderOnEmpty"
   | "tabIndex"
   | "extendedEditorProps"
 > & {
   enableHistory: boolean;
   editable: boolean;
+  provider: HocuspocusProvider | undefined;
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
@@ -57,12 +62,15 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     enableHistory,
     fileHandler,
     flaggedExtensions,
+    getEditorMetaData,
     isTouchDevice = false,
     mentionHandler,
     placeholder,
+    showPlaceholderOnEmpty,
     tabIndex,
     editable,
     extendedEditorProps,
+    provider,
   } = args;
 
   const extensions = [
@@ -102,14 +110,16 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     TableCell,
     TableRow,
     CustomMentionExtension(mentionHandler),
-    CustomPlaceholderExtension({ placeholder }),
+    CustomPlaceholderExtension({ placeholder, showPlaceholderOnEmpty }),
     CharacterCount,
     CustomColorExtension,
     CustomTextAlignExtension,
     CustomCalloutExtension,
     UtilityExtension({
       disabledExtensions,
+      flaggedExtensions,
       fileHandler,
+      getEditorMetaData,
       isEditable: editable,
       isTouchDevice,
     }),
@@ -118,6 +128,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       flaggedExtensions,
       fileHandler,
       extendedEditorProps,
+    }),
+    UniqueID.configure({
+      provider,
     }),
   ];
 

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
@@ -23,7 +21,7 @@ type TCommentsWrapper = {
   showCopyLinkOption?: boolean;
 };
 
-export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
+export const CommentsWrapper = observer(function CommentsWrapper(props: TCommentsWrapper) {
   const {
     entityId,
     activityOperations,
@@ -67,7 +65,7 @@ export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
             <CommentCard
               key={comment.id}
               workspaceSlug={workspaceSlug}
-              comment={comment as TIssueComment}
+              comment={comment}
               activityOperations={activityOperations}
               disabled={!isEditingAllowed}
               ends={index === 0 ? "top" : index === comments.length - 1 ? "bottom" : undefined}

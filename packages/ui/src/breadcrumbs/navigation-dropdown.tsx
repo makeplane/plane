@@ -1,10 +1,9 @@
-"use client";
-
 import { CheckIcon } from "lucide-react";
 import * as React from "react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
-import { CustomMenu, TContextMenuItem } from "../dropdowns";
+import type { TContextMenuItem } from "../dropdowns";
+import { CustomMenu } from "../dropdowns";
 import { cn } from "../utils";
 import { Breadcrumbs } from "./breadcrumbs";
 
@@ -16,7 +15,7 @@ type TBreadcrumbNavigationDropdownProps = {
   isLast?: boolean;
 };
 
-export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdownProps) => {
+export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdownProps) {
   const { selectedItemKey, navigationItems, navigationDisabled = false, handleOnClick, isLast = false } = props;
   const [isOpen, setIsOpen] = React.useState(false);
   // derived values
@@ -28,31 +27,33 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
   // if no selected item, return null
   if (!selectedItem) return null;
 
-  const NavigationButton = () => (
-    <Tooltip tooltipContent={selectedItem.title} position="bottom" disabled={isOpen}>
-      <button
-        onClick={(e) => {
-          if (!isLast) {
-            e.preventDefault();
-            e.stopPropagation();
-            handleOnClick?.();
-          }
-        }}
-        className={cn(
-          "group h-full flex items-center gap-2 px-1.5 py-1 text-sm font-medium text-custom-text-300 cursor-pointer rounded rounded-r-none",
-          {
-            "hover:bg-custom-background-80 hover:text-custom-text-100": !isLast,
-          }
-        )}
-      >
-        <div className="flex @4xl:hidden text-custom-text-300">...</div>
-        <div className="hidden @4xl:flex gap-2">
-          {selectedItemIcon && <Breadcrumbs.Icon>{selectedItemIcon}</Breadcrumbs.Icon>}
-          <Breadcrumbs.Label>{selectedItem.title}</Breadcrumbs.Label>
-        </div>
-      </button>
-    </Tooltip>
-  );
+  function NavigationButton() {
+    return (
+      <Tooltip tooltipContent={selectedItem?.title} position="bottom" disabled={isOpen}>
+        <button
+          onClick={(e) => {
+            if (!isLast) {
+              e.preventDefault();
+              e.stopPropagation();
+              handleOnClick?.();
+            }
+          }}
+          className={cn(
+            "group h-full flex items-center gap-2 px-1.5 py-1 text-13 font-medium text-tertiary cursor-pointer rounded-sm rounded-r-none",
+            {
+              "hover:bg-layer-1 hover:text-primary": !isLast,
+            }
+          )}
+        >
+          <div className="flex @4xl:hidden text-tertiary">...</div>
+          <div className="hidden @4xl:flex gap-2">
+            {selectedItemIcon && <Breadcrumbs.Icon>{selectedItemIcon}</Breadcrumbs.Icon>}
+            <Breadcrumbs.Label>{selectedItem?.title}</Breadcrumbs.Label>
+          </div>
+        </button>
+      </Tooltip>
+    );
+  }
 
   if (navigationDisabled) {
     return <NavigationButton />;
@@ -64,13 +65,13 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
         <>
           <NavigationButton />
           <Breadcrumbs.Separator
-            className={cn("rounded-r", {
-              "bg-custom-background-80": isOpen && !isLast,
-              "hover:bg-custom-background-80": !isLast,
+            className={cn("rounded-r-sm", {
+              "bg-layer-1": isOpen && !isLast,
+              "hover:bg-layer-1": !isLast,
             })}
             containerClassName="p-0"
-            iconClassName={cn("group-hover:rotate-90 hover:text-custom-text-100", {
-              "text-custom-text-100": isOpen,
+            iconClassName={cn("group-hover:rotate-90 hover:text-primary", {
+              "text-primary": isOpen,
               "rotate-90": isOpen || isLast,
             })}
             showDivider={!isLast}
@@ -78,11 +79,11 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
         </>
       }
       placement="bottom-start"
-      className="h-full rounded"
+      className="h-full rounded-sm"
       customButtonClassName={cn(
-        "group flex items-center gap-0.5 rounded hover:bg-custom-background-90 outline-none cursor-pointer h-full rounded",
+        "group flex items-center gap-0.5 rounded-sm hover:bg-surface-2 outline-none cursor-pointer h-full rounded-sm",
         {
-          "bg-custom-background-90": isOpen,
+          "bg-surface-2": isOpen,
         }
       )}
       closeOnSelect
@@ -107,7 +108,7 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
             className={cn(
               "flex items-center gap-2",
               {
-                "text-custom-text-400": item.disabled,
+                "text-placeholder": item.disabled,
               },
               item.className
             )}
@@ -118,8 +119,8 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
               <h5>{item.title}</h5>
               {item.description && (
                 <p
-                  className={cn("text-custom-text-300 whitespace-pre-line", {
-                    "text-custom-text-400": item.disabled,
+                  className={cn("text-tertiary whitespace-pre-line", {
+                    "text-placeholder": item.disabled,
                   })}
                 >
                   {item.description}
@@ -132,4 +133,4 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
       })}
     </CustomMenu>
   );
-};
+}

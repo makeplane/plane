@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
+// plane imports
 import { CYCLE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedStatusFilters: React.FC<Props> = observer((props) => {
+export const AppliedStatusFilters = observer(function AppliedStatusFilters(props: Props) {
   const { handleRemove, values, editable } = props;
   const { t } = useTranslation();
 
@@ -22,7 +23,7 @@ export const AppliedStatusFilters: React.FC<Props> = observer((props) => {
           <div
             key={status}
             className={cn(
-              "flex items-center gap-1 rounded py-1 px-1.5 text-xs",
+              "flex items-center gap-1 rounded-sm py-1 px-1.5 text-11",
               statusDetails?.bgColor,
               statusDetails?.textColor
             )}
@@ -31,10 +32,10 @@ export const AppliedStatusFilters: React.FC<Props> = observer((props) => {
             {editable && (
               <button
                 type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(status)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

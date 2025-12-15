@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 
 type TBanner = {
@@ -6,7 +5,7 @@ type TBanner = {
   message: string;
 };
 
-export const Banner: FC<TBanner> = (props) => {
+export function Banner(props: TBanner) {
   const { type, message } = props;
 
   return (
@@ -24,9 +23,9 @@ export const Banner: FC<TBanner> = (props) => {
           )}
         </div>
         <div className="ml-1">
-          <p className={`text-sm font-medium ${type === "error" ? "text-red-600" : "text-green-600"}`}>{message}</p>
+          <p className={`text-13 font-medium ${type === "error" ? "text-red-600" : "text-green-600"}`}>{message}</p>
         </div>
       </div>
     </div>
   );
-};
+}

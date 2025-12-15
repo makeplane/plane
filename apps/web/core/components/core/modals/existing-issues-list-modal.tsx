@@ -1,12 +1,12 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { Rocket, Search, X } from "lucide-react";
+import React, { useEffect, useState, useRef } from "react";
+import { Rocket, Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
+import { CloseIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
@@ -39,7 +39,7 @@ type Props = {
 
 const projectService = new ProjectService();
 
-export const ExistingIssuesListModal: React.FC<Props> = (props) => {
+export function ExistingIssuesListModal(props: Props) {
   const { t } = useTranslation();
 
   const {
@@ -65,12 +65,14 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   const { isMobile } = usePlatformOS();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
+  const hasInitializedSelection = useRef(false);
 
   const handleClose = () => {
     onClose();
     setSearchTerm("");
     setSelectedIssues([]);
     setIsWorkspaceLevel(false);
+    hasInitializedSelection.current = false;
   };
 
   const onSubmit = async () => {
@@ -117,10 +119,11 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (selectedWorkItemIds) {
+    if (isOpen && !hasInitializedSelection.current && selectedWorkItemIds && issues.length > 0) {
       setSelectedIssues(issues.filter((issue) => selectedWorkItemIds.includes(issue.id)));
+      hasInitializedSelection.current = true;
     }
-  }, [isOpen, selectedWorkItemIds]);
+  }, [isOpen, issues, selectedWorkItemIds]);
 
   useEffect(() => {
     handleSearch();
@@ -141,7 +144,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+            <div className="fixed inset-0 bg-backdrop transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -154,7 +157,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-surface-1 shadow-custom-shadow-md transition-all">
                 <Combobox
                   as="div"
                   onChange={(val: ISearchIssueResponse) => {
@@ -165,11 +168,11 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                 >
                   <div className="relative m-1">
                     <Search
-                      className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
+                      className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
                       aria-hidden="true"
                     />
                     <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
                       placeholder={t("common.search.placeholder")}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -177,41 +180,42 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     />
                   </div>
 
-                  <div className="flex flex-col-reverse gap-4 p-2 text-[0.825rem] text-custom-text-200 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-col-reverse gap-4 p-2 text-13 text-secondary sm:flex-row sm:items-center sm:justify-between">
                     {selectedIssues.length > 0 ? (
                       <div className="mt-1 flex flex-wrap items-center gap-2">
                         {selectedIssues.map((issue) => (
                           <div
                             key={issue.id}
-                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 py-1 pl-2 text-xs text-custom-text-100"
+                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-subtle bg-layer-1 py-1 pl-2 text-11 text-primary"
                           >
                             <IssueIdentifier
                               projectId={issue.project_id}
                               issueTypeId={issue.type_id}
                               projectIdentifier={issue.project__identifier}
                               issueSequenceId={issue.sequence_id}
-                              textContainerClassName="text-xs text-custom-text-200"
+                              size="xs"
+                              variant="secondary"
                             />
                             <button
                               type="button"
                               className="group p-1"
                               onClick={() => setSelectedIssues((prevData) => prevData.filter((i) => i.id !== issue.id))}
                             >
-                              <X className="h-3 w-3 text-custom-text-200 group-hover:text-custom-text-100" />
+                              <CloseIcon className="h-3 w-3 text-secondary group-hover:text-primary" />
                             </button>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="w-min whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
+                      <div className="w-min whitespace-nowrap rounded-md border border-subtle bg-layer-1 p-2 text-11">
                         {t("issue.select.empty")}
                       </div>
                     )}
                     {workspaceLevelToggle && (
                       <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
                         <div
-                          className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-xs ${
-                            isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
+                          className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-11 ${
+                            isWorkspaceLevel ? "text-primary" : "text-secondary"
                           }`}
                         >
                           <ToggleSwitch
@@ -236,9 +240,9 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                   >
                     {/* TODO: Translate here */}
                     {searchTerm !== "" && (
-                      <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
+                      <h5 className="mx-2 text-13 text-secondary">
                         Search results for{" "}
-                        <span className="text-custom-text-100">
+                        <span className="text-primary">
                           {'"'}
                           {searchTerm}
                           {'"'}
@@ -264,7 +268,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                             searchTerm={searchTerm}
                           />
                         ) : (
-                          <ul className={`text-sm text-custom-text-100 ${filteredIssues.length > 0 ? "p-2" : ""}`}>
+                          <ul className={`text-13 text-primary ${filteredIssues.length > 0 ? "p-2" : ""}`}>
                             {filteredIssues.map((issue) => {
                               const selected = selectedIssues.some((i) => i.id === issue.id);
 
@@ -275,9 +279,9 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                   htmlFor={`issue-${issue.id}`}
                                   value={issue}
                                   className={({ active }) =>
-                                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
-                                      active ? "bg-custom-background-80 text-custom-text-100" : ""
-                                    } ${selected ? "text-custom-text-100" : ""}`
+                                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${
+                                      active ? "bg-layer-1 text-primary" : ""
+                                    } ${selected ? "text-primary" : ""}`
                                   }
                                 >
                                   <div className="flex items-center gap-2 truncate">
@@ -294,7 +298,8 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                         issueTypeId={issue.type_id}
                                         projectIdentifier={issue.project__identifier}
                                         issueSequenceId={issue.sequence_id}
-                                        textContainerClassName="text-xs text-custom-text-200"
+                                        size="xs"
+                                        variant="secondary"
                                       />
                                     </span>
                                     <span className="truncate">{issue.name}</span>
@@ -308,7 +313,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                       sequenceId: issue?.sequence_id,
                                     })}
                                     target="_blank"
-                                    className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
+                                    className="z-1 relative hidden flex-shrink-0 text-secondary hover:text-primary group-hover:block"
                                     rel="noopener noreferrer"
                                     onClick={(e) => e.stopPropagation()}
                                   >
@@ -325,8 +330,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                 </Combobox>
                 <div className="flex justify-between items-center p-3">
                   <Button
-                    variant="link-primary"
-                    size="sm"
+                    variant="link"
                     onClick={handleSelectIssues}
                     disabled={filteredIssues.length === 0}
                     className={filteredIssues.length === 0 ? "p-0" : ""}
@@ -336,12 +340,12 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                       : t("issue.select.select_all")}
                   </Button>
                   <div className="flex items-center justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="secondary" size="lg" onClick={handleClose}>
                       {t("common.cancel")}
                     </Button>
                     <Button
                       variant="primary"
-                      size="sm"
+                      size="lg"
                       onClick={onSubmit}
                       loading={isSubmitting}
                       disabled={isSubmitting || selectedIssues.length === 0}
@@ -357,4 +361,4 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
       </Transition.Root>
     </>
   );
-};
+}

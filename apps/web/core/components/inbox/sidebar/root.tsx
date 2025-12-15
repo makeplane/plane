@@ -1,23 +1,19 @@
-"use client";
-
-import type { FC } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TInboxIssueCurrentTab } from "@plane/types";
 import { EInboxIssueCurrentTab } from "@plane/types";
 // plane imports
 import { Header, Loader, EHeaderVariant } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { InboxSidebarLoader } from "@/components/ui/loader/layouts/project-inbox/inbox-sidebar-loader";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // local imports
 import { FiltersRoot } from "../inbox-filter";
 import { InboxIssueAppliedFilters } from "../inbox-filter/applied-filters/root";
@@ -41,7 +37,7 @@ const tabNavigationOptions: { key: TInboxIssueCurrentTab; i18n_label: string }[]
   },
 ];
 
-export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
+export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarProps) {
   const { workspaceSlug, projectId, inboxIssueId, setIsMobileSidebar } = props;
   // router
   const router = useAppRouter();
@@ -62,11 +58,6 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     getAppliedFiltersCount,
   } = useProjectInbox();
   // derived values
-  const sidebarAssetPath = useResolvedAssetPath({ basePath: "/empty-state/intake/intake-issue" });
-  const sidebarFilterAssetPath = useResolvedAssetPath({
-    basePath: "/empty-state/intake/filter-issue",
-  });
-
   const fetchNextPages = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
     fetchInboxPaginationIssues(workspaceSlug.toString(), projectId.toString());
@@ -86,15 +77,15 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
   }, [currentTab, filteredInboxIssueIds, inboxIssueId, projectId, router, workspaceSlug]);
 
   return (
-    <div className="bg-custom-background-100 flex-shrink-0 w-full h-full border-r border-custom-border-300 ">
+    <div className="bg-surface-1 flex-shrink-0 w-full h-full border-r border-strong ">
       <div className="relative w-full h-full flex flex-col overflow-hidden">
         <Header variant={EHeaderVariant.SECONDARY}>
           {tabNavigationOptions.map((option) => (
             <div
               key={option?.key}
               className={cn(
-                `text-sm relative flex items-center gap-1 h-full px-3 cursor-pointer transition-all font-medium`,
-                currentTab === option?.key ? `text-custom-primary-100` : `hover:text-custom-text-200`
+                `text-13 relative flex items-center gap-1 h-full px-3 cursor-pointer transition-all font-medium`,
+                currentTab === option?.key ? `text-accent-primary` : `hover:text-secondary`
               )}
               onClick={() => {
                 if (currentTab != option?.key) {
@@ -105,14 +96,14 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
             >
               <div>{t(option?.i18n_label)}</div>
               {option?.key === "open" && currentTab === option?.key && (
-                <div className="rounded-full p-1.5 py-0.5 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold">
+                <div className="rounded-full p-1.5 py-0.5 bg-accent-primary/20 text-accent-primary text-11 font-semibold">
                   {inboxIssuePaginationInfo?.total_results || 0}
                 </div>
               )}
               <div
                 className={cn(
                   `border absolute bottom-0 right-0 left-0 rounded-t-md`,
-                  currentTab === option?.key ? `border-custom-primary-100` : `border-transparent`
+                  currentTab === option?.key ? `border-accent-strong` : `border-transparent`
                 )}
               />
             </div>
@@ -141,22 +132,36 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
             ) : (
               <div className="flex items-center justify-center h-full w-full">
                 {getAppliedFiltersCount > 0 ? (
-                  <SimpleEmptyState
-                    title={t("inbox_issue.empty_state.sidebar_filter.title")}
-                    description={t("inbox_issue.empty_state.sidebar_filter.description")}
-                    assetPath={sidebarFilterAssetPath}
+                  <EmptyStateDetailed
+                    assetKey="search"
+                    title={t("common_empty_state.search.title")}
+                    description={t("common_empty_state.search.description")}
+                    assetClassName="size-20"
+                    rootClassName="px-page-x"
                   />
                 ) : currentTab === EInboxIssueCurrentTab.OPEN ? (
-                  <SimpleEmptyState
-                    title={t("inbox_issue.empty_state.sidebar_open_tab.title")}
-                    description={t("inbox_issue.empty_state.sidebar_open_tab.description")}
-                    assetPath={sidebarAssetPath}
+                  <EmptyStateDetailed
+                    assetKey="inbox"
+                    title={t("project_empty_state.intake_sidebar.title")}
+                    description={t("project_empty_state.intake_sidebar.description")}
+                    assetClassName="size-20"
+                    actions={[
+                      {
+                        label: t("project_empty_state.intake_sidebar.cta_primary"),
+                        onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/intake`),
+                        variant: "primary",
+                      },
+                    ]}
+                    rootClassName="px-page-x"
                   />
                 ) : (
-                  <SimpleEmptyState
-                    title={t("inbox_issue.empty_state.sidebar_closed_tab.title")}
-                    description={t("inbox_issue.empty_state.sidebar_closed_tab.description")}
-                    assetPath={sidebarAssetPath}
+                  // TODO: Add translation
+                  <EmptyStateDetailed
+                    assetKey="inbox"
+                    title="No request closed yet"
+                    description="All the work items whether accepted or declined can be found here."
+                    assetClassName="size-20"
+                    className="px-10"
                   />
                 )}
               </div>

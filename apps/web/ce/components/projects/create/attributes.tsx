@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
@@ -15,7 +14,7 @@ type Props = {
   isMobile?: boolean;
 };
 
-const ProjectAttributes: FC<Props> = (props) => {
+function ProjectAttributes(props: Props) {
   const { isMobile = false } = props;
   const { t } = useTranslation();
   const { control } = useFormContext<IProject>();
@@ -41,7 +40,7 @@ const ProjectAttributes: FC<Props> = (props) => {
                         {t(currentNetwork.i18n_label)}
                       </>
                     ) : (
-                      <span className="text-custom-text-400">{t("select_network")}</span>
+                      <span className="text-placeholder">{t("select_network")}</span>
                     )}
                   </div>
                 }
@@ -57,7 +56,7 @@ const ProjectAttributes: FC<Props> = (props) => {
                       <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
                       <div className="-mt-1">
                         <p>{t(network.i18n_label)}</p>
-                        <p className="text-xs text-custom-text-400">{t(network.description)}</p>
+                        <p className="text-11 text-placeholder">{t(network.description)}</p>
                       </div>
                     </div>
                   </CustomSelect.Option>
@@ -89,6 +88,8 @@ const ProjectAttributes: FC<Props> = (props) => {
       />
     </div>
   );
-};
+}
 
 export default ProjectAttributes;
+
+export { ProjectAttributes };

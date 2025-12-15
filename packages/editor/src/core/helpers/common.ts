@@ -1,5 +1,5 @@
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
-import { EditorState, Selection } from "@tiptap/pm/state";
+import type { EditorState, Selection } from "@tiptap/pm/state";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
@@ -15,8 +15,8 @@ export const getEditorClassNames = ({ noBorder, borderOnFocus, containerClassNam
   cn(
     "w-full max-w-full sm:rounded-lg focus:outline-none focus:border-0",
     {
-      "border border-custom-border-200": !noBorder,
-      "focus:border border-custom-border-300": borderOnFocus,
+      "border border-subtle-1": !noBorder,
+      "focus:border border-strong": borderOnFocus,
     },
     containerClassName
   );

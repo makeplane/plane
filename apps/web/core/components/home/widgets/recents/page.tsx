@@ -1,11 +1,10 @@
 import { useRouter } from "next/navigation";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 // plane import
 import type { TActivityEntityData, TPageEntityData } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { calculateTimeAgo, getFileURL, getPageName } from "@plane/utils";
-// components
-import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -16,7 +15,7 @@ type BlockProps = {
   workspaceSlug: string;
 };
 
-export const RecentPage = (props: BlockProps) => {
+export function RecentPage(props: BlockProps) {
   const { activity, ref, workspaceSlug } = props;
   // router
   const router = useRouter();
@@ -39,22 +38,22 @@ export const RecentPage = (props: BlockProps) => {
       title={getPageName(pageDetails?.name)}
       prependTitleElement={
         <div className="flex-shrink-0 flex items-center gap-2">
-          <div className="flex-shrink-0 grid place-items-center rounded bg-custom-background-80 size-8">
+          <div className="flex-shrink-0 grid place-items-center rounded-sm bg-layer-2 size-8">
             {pageDetails?.logo_props?.in_use ? (
               <Logo logo={pageDetails?.logo_props} size={16} type="lucide" />
             ) : (
-              <PageIcon className="size-4 text-custom-text-350" />
+              <PageIcon className="size-4 text-tertiary" />
             )}
           </div>
           {pageDetails?.project_identifier && (
-            <div className="font-medium text-custom-text-400 text-sm whitespace-nowrap">
+            <div className="font-medium text-placeholder text-13 whitespace-nowrap">
               {pageDetails?.project_identifier}
             </div>
           )}
         </div>
       }
       appendTitleElement={
-        <div className="flex-shrink-0 font-medium text-xs text-custom-text-400">
+        <div className="flex-shrink-0 font-medium text-11 text-placeholder">
           {calculateTimeAgo(activity.visited_at)}
         </div>
       }
@@ -65,8 +64,8 @@ export const RecentPage = (props: BlockProps) => {
       }
       parentRef={ref}
       disableLink={false}
-      className="bg-transparent my-auto !px-2 border-none py-3"
-      itemClassName="my-auto"
+      className="my-auto !px-2 border-none py-3"
+      itemClassName="my-auto bg-layer-transparent"
       onItemClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -74,4 +73,4 @@ export const RecentPage = (props: BlockProps) => {
       }}
     />
   );
-};
+}

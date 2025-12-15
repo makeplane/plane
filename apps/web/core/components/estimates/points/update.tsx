@@ -1,11 +1,10 @@
-"use client";
-
 import type { FC, FormEvent } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { Check, Info, X } from "lucide-react";
+import { Check, Info } from "lucide-react";
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
@@ -31,7 +30,7 @@ type TEstimatePointUpdate = {
   handleEstimatePointError?: (newValue: string, message: string | undefined, mode?: "add" | "delete") => void;
 };
 
-export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) => {
+export const EstimatePointUpdate = observer(function EstimatePointUpdate(props: TEstimatePointUpdate) {
   const {
     workspaceSlug,
     projectId,
@@ -88,7 +87,7 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
 
       const currentEstimatePointValues = estimatePoints
         .map((point) => (point?.key != estimatePoint?.key ? point?.value : undefined))
-        .filter((value) => value != undefined) as string[];
+        .filter((value) => value != undefined);
       const isRepeated =
         (estimateType && isEstimatePointValuesRepeated(currentEstimatePointValues, estimateType, estimateInputValue)) ||
         false;
@@ -167,11 +166,11 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
   };
 
   return (
-    <form onSubmit={handleUpdate} className="relative flex items-center gap-2 text-base pr-2.5">
+    <form onSubmit={handleUpdate} className="relative flex items-center gap-2 text-14 pr-2.5">
       <div
         className={cn(
-          "relative w-full border rounded flex items-center my-1",
-          estimatePointError?.message ? `border-red-500` : `border-custom-border-200`
+          "relative w-full border rounded-sm flex items-center my-1",
+          estimatePointError?.message ? `border-red-500` : `border-subtle`
         )}
       >
         <EstimateInputRoot
@@ -200,7 +199,7 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
       {estimateInputValue && estimateInputValue.length > 0 && (
         <button
           type="submit"
-          className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer text-green-500"
+          className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer text-green-500"
           disabled={loader}
         >
           {loader ? <Spinner className="w-4 h-4" /> : <Check size={14} />}
@@ -208,11 +207,11 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
       )}
       <button
         type="button"
-        className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
+        className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer"
         onClick={handleClose}
         disabled={loader}
       >
-        <X size={14} className="text-custom-text-200" />
+        <CloseIcon height={14} width={14} className="text-secondary" />
       </button>
     </form>
   );

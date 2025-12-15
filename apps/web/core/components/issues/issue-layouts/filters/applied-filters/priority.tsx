@@ -1,10 +1,7 @@
-"use client";
-
 import { observer } from "mobx-react";
 
 // icons
-import { X } from "lucide-react";
-import { PriorityIcon } from "@plane/propel/icons";
+import { CloseIcon, PriorityIcon } from "@plane/propel/icons";
 import type { TIssuePriorities } from "@plane/types";
 // types
 
@@ -14,22 +11,22 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedPriorityFilters: React.FC<Props> = observer((props) => {
+export const AppliedPriorityFilters = observer(function AppliedPriorityFilters(props: Props) {
   const { handleRemove, values, editable } = props;
 
   return (
     <>
       {values.map((priority) => (
-        <div key={priority} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+        <div key={priority} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
           <PriorityIcon priority={priority as TIssuePriorities} className={`h-3 w-3`} />
           {priority}
           {editable && (
             <button
               type="button"
-              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+              className="grid place-items-center text-tertiary hover:text-secondary"
               onClick={() => handleRemove(priority)}
             >
-              <X size={10} strokeWidth={2} />
+              <CloseIcon height={10} width={10} strokeWidth={2} />
             </button>
           )}
         </div>

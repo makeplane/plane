@@ -1,4 +1,3 @@
-"use client";
 import { useMemo } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";

@@ -1,10 +1,9 @@
 import React from "react";
-import Image from "next/image";
 // image
-import SheetFileIcon from "@/public/attachment/excel-icon.png";
+import SheetFileIcon from "@/app/assets/attachment/excel-icon.png?url";
 // type
 import type { ImageIconPros } from "../types";
 
-export const SheetIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <Image src={SheetFileIcon} height={height} width={width} alt="SheetFileIcon" />
-);
+export function SheetIcon({ width, height }: ImageIconPros) {
+  return <img src={SheetFileIcon} width={width} height={height} alt="SheetFileIcon" />;
+}

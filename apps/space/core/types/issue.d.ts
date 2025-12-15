@@ -33,31 +33,30 @@ export type TIssueQueryFilters = Partial<TFilters>;
 
 export type TIssueQueryFiltersParams = Partial<Record<keyof TFilters, string>>;
 
-export interface IIssue
-  extends Pick<
-    TIssue,
-    | "description_html"
-    | "created_at"
-    | "updated_at"
-    | "created_by"
-    | "id"
-    | "name"
-    | "priority"
-    | "state_id"
-    | "project_id"
-    | "sequence_id"
-    | "sort_order"
-    | "start_date"
-    | "target_date"
-    | "cycle_id"
-    | "module_ids"
-    | "label_ids"
-    | "assignee_ids"
-    | "attachment_count"
-    | "sub_issues_count"
-    | "link_count"
-    | "estimate_point"
-  > {
+export interface IIssue extends Pick<
+  TIssue,
+  | "description_html"
+  | "created_at"
+  | "updated_at"
+  | "created_by"
+  | "id"
+  | "name"
+  | "priority"
+  | "state_id"
+  | "project_id"
+  | "sequence_id"
+  | "sort_order"
+  | "start_date"
+  | "target_date"
+  | "cycle_id"
+  | "module_ids"
+  | "label_ids"
+  | "assignee_ids"
+  | "attachment_count"
+  | "sub_issues_count"
+  | "link_count"
+  | "estimate_point"
+> {
   comments: TIssuePublicComment[];
   reaction_items: IIssueReaction[];
   vote_items: IVote[];

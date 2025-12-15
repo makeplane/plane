@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -17,6 +15,7 @@ import { UserImageUploadModal } from "@/components/core/modals/user-image-upload
 // helpers
 import { captureError, captureView } from "@/helpers/event-tracker.helper";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -36,7 +35,7 @@ export type TProfileSetupFormValues = {
   password?: string;
   confirm_password?: string;
   role?: string;
-  use_case?: string;
+  use_case?: string[];
   has_marketing_email_consent?: boolean;
 };
 
@@ -51,12 +50,13 @@ const defaultValues: Partial<TProfileSetupFormValues> = {
   has_marketing_email_consent: true,
 };
 
-export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
+export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepChange }: Props) {
   // states
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
   const { data: user, updateCurrentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
+  const { config: instanceConfig } = useInstance();
   // form info
   const {
     getValues,
@@ -172,7 +172,7 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
       />
       <div className="flex items-center gap-4">
         <button
-          className="size-12 rounded-full bg-[#028375] flex items-center justify-center text-white font-semibold text-xl"
+          className="size-12 rounded-full bg-[#028375] flex items-center justify-center text-on-color font-semibold text-18"
           type="button"
           onClick={() => setIsImageUploadModalOpen(true)}
         >
@@ -189,12 +189,12 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
         </button>
         <input type="file" className="hidden" id="profile-image-input" />
         <button
-          className="flex items-center gap-1.5 text-custom-text-300 hover:text-custom-text-200 text-sm px-2 py-1"
+          className="flex items-center gap-1.5 text-tertiary hover:text-secondary text-13 px-2 py-1"
           type="button"
           onClick={() => setIsImageUploadModalOpen(true)}
         >
           <ImageIcon className="size-4" />
-          <span className="text-sm">{userAvatar ? "Change image" : "Upload image"}</span>
+          <span className="text-13">{userAvatar ? "Change image" : "Upload image"}</span>
         </button>
       </div>
 
@@ -202,7 +202,7 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
         {/* Name Input */}
         <div className="flex flex-col gap-2">
           <label
-            className="block text-sm font-medium text-custom-text-300 after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="block text-13 font-medium text-tertiary after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="first_name"
           >
             Name
@@ -227,9 +227,9 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
                 onChange={(e) => onChange(e.target.value)}
                 autoFocus
                 className={cn(
-                  "w-full px-3 py-2 text-custom-text-200 border border-custom-border-300 rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-custom-text-400 focus:border-transparent transition-all duration-200",
+                  "w-full px-3 py-2 text-secondary border border-strong rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-placeholder focus:border-transparent transition-all duration-200",
                   {
-                    "border-custom-border-300": !errors.first_name,
+                    "border-strong": !errors.first_name,
                     "border-red-500": errors.first_name,
                   }
                 )}
@@ -238,7 +238,7 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
               />
             )}
           />
-          {errors.first_name && <span className="text-sm text-red-500">{errors.first_name.message}</span>}
+          {errors.first_name && <span className="text-13 text-red-500">{errors.first_name.message}</span>}
         </div>
 
         {/* setting up password for the first time */}
@@ -250,17 +250,19 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
         )}
       </div>
       {/* Continue Button */}
-      <Button variant="primary" type="submit" className="w-full" size="lg" disabled={isButtonDisabled}>
+      <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
         Continue
       </Button>
 
       {/* Marketing Consent */}
-      <MarketingConsent
-        isChecked={!!watch("has_marketing_email_consent")}
-        handleChange={(has_marketing_email_consent) =>
-          setValue("has_marketing_email_consent", has_marketing_email_consent)
-        }
-      />
+      {!instanceConfig?.is_self_managed && (
+        <MarketingConsent
+          isChecked={!!watch("has_marketing_email_consent")}
+          handleChange={(has_marketing_email_consent) =>
+            setValue("has_marketing_email_consent", has_marketing_email_consent)
+          }
+        />
+      )}
     </form>
   );
 });

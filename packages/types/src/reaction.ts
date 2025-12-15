@@ -1,4 +1,4 @@
-import { IUserLite } from "./users";
+import type { IUserLite } from "./users";
 
 export interface IIssueReaction {
   actor: string;

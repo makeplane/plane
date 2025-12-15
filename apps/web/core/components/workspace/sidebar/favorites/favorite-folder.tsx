@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
@@ -15,12 +13,12 @@ import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree
 import { orderBy } from "lodash-es";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import { Star, MoreHorizontal, ChevronRight, GripVertical } from "lucide-react";
+import { Star, MoreHorizontal, GripVertical } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { DraftIcon, FavoriteFolderIcon } from "@plane/propel/icons";
+import { DraftIcon, FavoriteFolderIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IFavorite, InstructionType } from "@plane/types";
 import { CustomMenu, DropIndicator, DragHandle } from "@plane/ui";
@@ -42,10 +40,10 @@ type Props = {
   handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
-export const FavoriteFolder: React.FC<Props> = (props) => {
+export function FavoriteFolder(props: Props) {
   const { favorite, handleRemoveFromFavorites, isLastChild, handleDrop } = props;
   // store hooks
-  const { getGroupedFavorites } = useFavorite();
+  const { fetchGroupedFavorites } = useFavorite();
   const { isMobile } = usePlatformOS();
   const { workspaceSlug } = useParams();
   // states
@@ -61,9 +59,9 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (favorite.children === undefined && workspaceSlug) {
-      getGroupedFavorites(workspaceSlug.toString(), favorite.id);
+      fetchGroupedFavorites(workspaceSlug.toString(), favorite.id);
     }
-  }, [favorite.id, favorite.children, workspaceSlug, getGroupedFavorites]);
+  }, [favorite.id, favorite.children, workspaceSlug, fetchGroupedFavorites]);
 
   useEffect(() => {
     const element = elementRef.current;
@@ -82,11 +80,11 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded flex gap-1 bg-custom-background-100 text-sm p-1 pr-2">
+                <div className="rounded-sm flex gap-1 bg-surface-1 text-13 p-1 pr-2">
                   <div className="size-5 grid place-items-center flex-shrink-0">
                     <FavoriteFolderIcon />
                   </div>
-                  <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{favorite.name}</p>
+                  <p className="truncate text-13 font-medium text-secondary">{favorite.name}</p>
                 </div>
               );
               return () => root.unmount();
@@ -148,23 +146,23 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
           <div
             // id={`sidebar-${projectId}-${projectListType}`}
             className={cn("relative", {
-              "bg-custom-sidebar-background-80 opacity-60": isDragging,
-              "border-[2px] border-custom-primary-100": instruction === "make-child",
+              "bg-layer-1 opacity-60": isDragging,
+              "border-[2px] border-accent-strong": instruction === "make-child",
             })}
           >
             {/* draggable drop top indicator */}
             <DropIndicator isVisible={instruction === "reorder-above"} />
             <div
               className={cn(
-                "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-90",
+                "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-1-hover",
                 {
-                  "bg-custom-sidebar-background-90": isMenuActive,
+                  "bg-surface-2": isMenuActive,
                 }
               )}
             >
               {/* draggable indicator */}
 
-              <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
+              <div className="flex-shrink-0 w-3 h-3 rounded-xs absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-surface-2 cursor-pointer text-secondary hover:text-primary">
                 <GripVertical className="w-3 h-3" />
               </div>
 
@@ -187,7 +185,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                         <button
                           type="button"
                           className={cn(
-                            "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
+                            "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded-sm text-placeholder cursor-grab",
                             {
                               "cursor-not-allowed opacity-60": favorite.sort_order === null,
                               "cursor-grabbing": isDragging,
@@ -200,7 +198,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                       <div className="size-5 grid place-items-center flex-shrink-0">
                         <FavoriteFolderIcon />
                       </div>
-                      <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{favorite.name}</p>
+                      <p className="truncate text-13 font-medium text-secondary">{favorite.name}</p>
                     </Disclosure.Button>
                   </div>
                 </Tooltip>
@@ -208,7 +206,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                   customButton={
                     <span
                       ref={actionSectionRef}
-                      className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
+                      className="grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm"
                     >
                       <MoreHorizontal className="size-3" />
                     </span>
@@ -232,7 +230,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem onClick={() => setFolderToRename(favorite.id)}>
                     <div className="flex items-center justify-start gap-2">
-                      <DraftIcon className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
+                      <DraftIcon className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
                       <span>Rename Folder</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -240,18 +238,15 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                 <Disclosure.Button
                   as="button"
                   type="button"
-                  className={cn(
-                    "hidden group-hover/project-item:inline-block p-0.5 rounded hover:bg-custom-sidebar-background-80",
-                    {
-                      "inline-block": isMenuActive,
-                    }
-                  )}
+                  className={cn("hidden group-hover/project-item:inline-block p-0.5 rounded-sm hover:bg-layer-1", {
+                    "inline-block": isMenuActive,
+                  })}
                   aria-label={t(
                     open ? "aria_labels.projects_sidebar.close_folder" : "aria_labels.projects_sidebar.open_folder"
                   )}
                 >
-                  <ChevronRight
-                    className={cn("size-3 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                  <ChevronRightIcon
+                    className={cn("size-3 flex-shrink-0 text-placeholder transition-transform", {
                       "rotate-90": open,
                     })}
                   />
@@ -289,4 +284,4 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
       </Disclosure>
     </>
   );
-};
+}

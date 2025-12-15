@@ -4,6 +4,7 @@ import type { FC } from "react";
 import { Fragment, useCallback, useRef, useState, useEffect } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { CalendarCheck } from "lucide-react";
 // headless ui
@@ -19,18 +20,24 @@ import { Loader, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
 // antd
 import { Tag, Tooltip } from "antd";
+// assets
+import darkAssigneeAsset from "@/app/assets/empty-state/active-cycle/assignee-dark.webp?url";
+import lightAssigneeAsset from "@/app/assets/empty-state/active-cycle/assignee-light.webp?url";
+import darkLabelAsset from "@/app/assets/empty-state/active-cycle/label-dark.webp?url";
+import lightLabelAsset from "@/app/assets/empty-state/active-cycle/label-light.webp?url";
+import darkPriorityAsset from "@/app/assets/empty-state/active-cycle/priority-dark.webp?url";
+import lightPriorityAsset from "@/app/assets/empty-state/active-cycle/priority-light.webp?url";
+import userImage from "@/app/assets/user.png?url";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-// helpers
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // services
 // store
@@ -43,10 +50,10 @@ export type ActiveCycleStatsProps = {
   cycle: ICycle | null;
   cycleId?: string | null;
   handleFiltersUpdate: (conditions: TWorkItemFilterCondition[]) => void;
-  cycleIssueDetails: ActiveCycleIssueDetails;
+  cycleIssueDetails?: ActiveCycleIssueDetails | { nextPageResults: boolean };
 };
 
-export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
+export const ActiveCycleStats = observer(function ActiveCycleStats(props: ActiveCycleStatsProps) {
   const { workspaceSlug, projectId, cycle, cycleId, handleFiltersUpdate, cycleIssueDetails } = props;
   const router = useRouter();
   // local storage
@@ -55,15 +62,17 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const issuesContainerRef = useRef<HTMLDivElement | null>(null);
   // states
   const [issuesLoaderElement, setIssueLoaderElement] = useState<HTMLDivElement | null>(null);
+  // theme hook
+  const { resolvedTheme } = useTheme();
   const [testPlans, setTestPlans] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   // plane hooks
   const { t } = useTranslation();
   // derived values
-  const priorityResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/priority" });
-  const assigneesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/assignee" });
-  const labelsResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/label" });
+  const priorityResolvedPath = resolvedTheme === "light" ? lightPriorityAsset : darkPriorityAsset;
+  const assigneesResolvedPath = resolvedTheme === "light" ? lightAssigneeAsset : darkAssigneeAsset;
+  const labelsResolvedPath = resolvedTheme === "light" ? lightLabelAsset : darkLabelAsset;
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
@@ -204,7 +213,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   );
 
   return cycleId ? (
-    <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
+    <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-surface-1 col-span-1 lg:col-span-2 xl:col-span-1 border border-subtle rounded-lg">
       <Tab.Group
         as={Fragment}
         defaultIndex={currentValue(tab)}
@@ -224,7 +233,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
       >
         <Tab.List
           as="div"
-          className="relative border-[0.5px] border-custom-border-200 rounded bg-custom-background-80 p-[1px] grid"
+          className="relative border-[0.5px] border-subtle rounded-sm bg-layer-1 p-[1px] grid"
           style={{
             gridTemplateColumns: `repeat(3, 1fr)`,
           }}
@@ -232,10 +241,10 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
+                "relative z-[1] font-semibold text-11 rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
+                  "text-tertiary bg-surface-1": selected,
+                  "hover:text-tertiary": !selected,
                 }
               )
             }
@@ -246,10 +255,10 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
+                "relative z-[1] font-semibold text-11 rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
+                  "text-tertiary bg-surface-1": selected,
+                  "hover:text-tertiary": !selected,
                 }
               )
             }
@@ -259,10 +268,10 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
+                "relative z-[1] font-semibold text-11 rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
+                  "text-tertiary bg-surface-1": selected,
+                  "hover:text-tertiary": !selected,
                 }
               )
             }
@@ -332,7 +341,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
 
           <Tab.Panel
             as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm"
+            className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-secondary vertical-scrollbar scrollbar-sm"
           >
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
@@ -368,8 +377,8 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                         key={`unassigned-${index}`}
                         title={
                           <div className="flex items-center gap-2">
-                            <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
-                              <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
+                            <div className="h-5 w-5 rounded-full border-2 border-subtle bg-layer-1">
+                              <img src={userImage} height="100%" width="100%" className="rounded-full" alt="User" />
                             </div>
                             <span>{t("no_assignee")}</span>
                           </div>
@@ -394,7 +403,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
 
           <Tab.Panel
             as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
+            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-secondary vertical-scrollbar scrollbar-sm"
           >
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (
@@ -409,7 +418,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                             backgroundColor: label.color ?? "#000000",
                           }}
                         />
-                        <span className="text-xs text-ellipsis truncate">{label.label_name ?? "No labels"}</span>
+                        <span className="text-11 text-ellipsis truncate">{label.label_name ?? "No labels"}</span>
                       </div>
                     }
                     completed={label.completed_issues}
@@ -438,7 +447,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
       </Tab.Group>
     </div>
   ) : (
-    <Loader className="flex flex-col gap-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1">
+    <Loader className="flex flex-col gap-4 min-h-[17rem] overflow-hidden bg-surface-1 col-span-1 lg:col-span-2 xl:col-span-1">
       <Loader.Item width="100%" height="17rem" />
     </Loader>
   );

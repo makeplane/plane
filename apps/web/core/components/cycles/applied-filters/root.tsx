@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 import type { TCycleFilters } from "@plane/types";
 import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
@@ -21,7 +21,7 @@ type Props = {
 
 const DATE_FILTERS = ["start_date", "end_date"];
 
-export const CycleAppliedFiltersList: React.FC<Props> = observer((props) => {
+export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList(props: Props) {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
   // store hooks
   const { allowPermissions } = useUserPermissions();
@@ -36,7 +36,7 @@ export const CycleAppliedFiltersList: React.FC<Props> = observer((props) => {
     allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
 
   return (
-    <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
+    <div className="flex flex-wrap items-stretch gap-2 bg-surface-1">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof TCycleFilters;
 
@@ -45,7 +45,7 @@ export const CycleAppliedFiltersList: React.FC<Props> = observer((props) => {
 
         return (
           <Tag key={filterKey}>
-            <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+            <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             <div className="flex flex-wrap items-center gap-1">
               {filterKey === "status" && (
                 <AppliedStatusFilters
@@ -64,10 +64,10 @@ export const CycleAppliedFiltersList: React.FC<Props> = observer((props) => {
               {isEditingAllowed && (
                 <button
                   type="button"
-                  className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                  className="grid place-items-center text-tertiary hover:text-secondary"
                   onClick={() => handleRemoveFilter(filterKey, null)}
                 >
-                  <X size={12} strokeWidth={2} />
+                  <CloseIcon height={12} width={12} strokeWidth={2} />
                 </button>
               )}
             </div>
@@ -78,7 +78,7 @@ export const CycleAppliedFiltersList: React.FC<Props> = observer((props) => {
         <button type="button" onClick={handleClearAllFilters}>
           <Tag>
             {t("common.clear_all")}
-            <X size={12} strokeWidth={2} />
+            <CloseIcon height={12} width={12} strokeWidth={2} />
           </Tag>
         </button>
       )}

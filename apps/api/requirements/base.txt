@@ -1,13 +1,13 @@
 # base requirements
 
 # django
-Django==4.2.25
+Django==4.2.27
 # rest framework
 djangorestframework==3.15.2
 # postgres
-psycopg==3.2.9
-psycopg-binary==3.2.9
-psycopg-c==3.2.9
+psycopg==3.3.0
+psycopg-binary==3.3.0
+psycopg-c==3.3.0
 dj-database-url==2.1.0
 # mongo
 pymongo==4.6.3
@@ -21,7 +21,7 @@ celery==5.4.0
 django_celery_beat==2.6.0
 django-celery-results==2.5.1
 # file serve
-whitenoise==6.6.0
+whitenoise==6.11.0
 # fake data
 faker==25.0.0
 # filters

@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestore } from "lucide-react";
 // plane imports
@@ -22,7 +19,9 @@ type TNotificationItemArchiveOption = {
   notification: INotification;
 };
 
-export const NotificationItemArchiveOption: FC<TNotificationItemArchiveOption> = observer((props) => {
+export const NotificationItemArchiveOption = observer(function NotificationItemArchiveOption(
+  props: TNotificationItemArchiveOption
+) {
   const { workspaceSlug, notification } = props;
   // hooks
   const { currentNotificationTab } = useWorkspaceNotifications();
@@ -65,9 +64,9 @@ export const NotificationItemArchiveOption: FC<TNotificationItemArchiveOption> =
       callBack={handleNotificationUpdate}
     >
       {data.archived_at ? (
-        <ArchiveRestore className="h-3 w-3 text-custom-text-300" />
+        <ArchiveRestore className="h-3 w-3 text-tertiary" />
       ) : (
-        <ArchiveIcon className="h-3 w-3 text-custom-text-300" />
+        <ArchiveIcon className="h-3 w-3 text-tertiary" />
       )}
     </NotificationItemOptionButton>
   );

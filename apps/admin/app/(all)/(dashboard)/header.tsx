@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Menu, Settings } from "lucide-react";
@@ -11,19 +8,19 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useTheme } from "@/hooks/store";
 
-export const HamburgerToggle: FC = observer(() => {
+export const HamburgerToggle = observer(function HamburgerToggle() {
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   return (
     <div
-      className="w-7 h-7 rounded flex justify-center items-center bg-custom-background-80 transition-all hover:bg-custom-background-90 cursor-pointer group md:hidden"
+      className="w-7 h-7 rounded-sm flex justify-center items-center bg-layer-1 transition-all hover:bg-layer-1-hover cursor-pointer group md:hidden"
       onClick={() => toggleSidebar(!isSidebarCollapsed)}
     >
-      <Menu size={14} className="text-custom-text-200 group-hover:text-custom-text-100 transition-all" />
+      <Menu size={14} className="text-secondary group-hover:text-primary transition-all" />
     </div>
   );
 });
 
-export const AdminHeader: FC = observer(() => {
+export const AdminHeader = observer(function AdminHeader() {
   const pathName = usePathname();
 
   const getHeaderTitle = (pathName: string) => {
@@ -44,6 +41,8 @@ export const AdminHeader: FC = observer(() => {
         return "GitHub";
       case "gitlab":
         return "GitLab";
+      case "gitea":
+        return "Gitea";
       case "workspace":
         return "Workspace";
       case "create":
@@ -72,7 +71,7 @@ export const AdminHeader: FC = observer(() => {
   const breadcrumbItems = generateBreadcrumbItems(pathName);
 
   return (
-    <div className="relative z-10 flex h-header w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-sidebar-border-200 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-10 flex h-header w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-subtle bg-surface-1 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <HamburgerToggle />
         {breadcrumbItems.length >= 0 && (
@@ -83,7 +82,7 @@ export const AdminHeader: FC = observer(() => {
                   <BreadcrumbLink
                     href="/general/"
                     label="Settings"
-                    icon={<Settings className="h-4 w-4 text-custom-text-300" />}
+                    icon={<Settings className="h-4 w-4 text-tertiary" />}
                   />
                 }
               />

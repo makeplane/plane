@@ -32,7 +32,7 @@ type AccountTypeProps = {
   projectId: string;
 };
 
-export const NameColumn: React.FC<NameProps> = (props) => {
+export function NameColumn(props: NameProps) {
   const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
   // derived values
   const { avatar_url, display_name, email, first_name, id, last_name } = rowData.member;
@@ -45,7 +45,7 @@ export const NameColumn: React.FC<NameProps> = (props) => {
             <div className="flex items-center gap-x-2 gap-y-2 flex-1">
               {avatar_url && avatar_url.trim() !== "" ? (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex size-4 items-center justify-center rounded-full capitalize text-white">
+                  <span className="relative flex size-4 items-center justify-center rounded-full capitalize text-on-color">
                     <img
                       src={getFileURL(avatar_url)}
                       className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
@@ -55,7 +55,7 @@ export const NameColumn: React.FC<NameProps> = (props) => {
                 </Link>
               ) : (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex size-4 items-center justify-center rounded-full bg-gray-700 capitalize text-white text-xs">
+                  <span className="relative flex size-4 items-center justify-center rounded-full bg-gray-700 capitalize text-on-color text-11">
                     {(email ?? display_name ?? "?")[0]}
                   </span>
                 </Link>
@@ -86,9 +86,9 @@ export const NameColumn: React.FC<NameProps> = (props) => {
       )}
     </Disclosure>
   );
-};
+}
 
-export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) => {
+export const AccountTypeColumn = observer(function AccountTypeColumn(props: AccountTypeProps) {
   const { rowData, projectId, workspaceSlug } = props;
   // store hooks
   const {
@@ -167,7 +167,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
                   <span>{roleLabel}</span>
                 </div>
               }
-              buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-red-500" : "border-none"}`}
+              buttonClassName={`!px-0 !justify-start hover:bg-surface-1 ${errors.role ? "border-red-500" : "border-none"}`}
               className="rounded-md p-0 w-32"
               input
             >

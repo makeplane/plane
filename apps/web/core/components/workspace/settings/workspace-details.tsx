@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -20,9 +17,9 @@ import type { IWorkspace } from "@plane/types";
 import { CustomSelect, Input } from "@plane/ui";
 import { copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
 // helpers
+import { TimezoneSelect } from "@/components/global/timezone-select";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -34,9 +31,10 @@ const defaultValues: Partial<IWorkspace> = {
   url: "",
   organization_size: "2-10",
   logo_url: null,
+  timezone: "UTC",
 };
 
-export const WorkspaceDetails: FC = observer(() => {
+export const WorkspaceDetails = observer(function WorkspaceDetails() {
   // states
   const [isLoading, setIsLoading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
@@ -66,64 +64,69 @@ export const WorkspaceDetails: FC = observer(() => {
     const payload: Partial<IWorkspace> = {
       name: formData.name,
       organization_size: formData.organization_size,
+      timezone: formData.timezone,
     };
 
-    await updateWorkspace(currentWorkspace.slug, payload)
-      .then(() => {
-        captureSuccess({
-          eventName: WORKSPACE_TRACKER_EVENTS.update,
-          payload: { slug: currentWorkspace.slug },
-        });
-        setToast({
-          title: "Success!",
-          type: TOAST_TYPE.SUCCESS,
-          message: "Workspace updated successfully",
-        });
-      })
-      .catch((err) => {
-        captureError({
-          eventName: WORKSPACE_TRACKER_EVENTS.update,
-          payload: { slug: currentWorkspace.slug },
-          error: err,
-        });
-        console.error(err);
+    try {
+      await updateWorkspace(currentWorkspace.slug, payload);
+      captureSuccess({
+        eventName: WORKSPACE_TRACKER_EVENTS.update,
+        payload: { slug: currentWorkspace.slug },
       });
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
+      setToast({
+        title: "Success!",
+        type: TOAST_TYPE.SUCCESS,
+        message: "Workspace updated successfully",
+      });
+    } catch (err: unknown) {
+      captureError({
+        eventName: WORKSPACE_TRACKER_EVENTS.update,
+        payload: { slug: currentWorkspace.slug },
+        error: err instanceof Error ? err : new Error(String(err)),
+      });
+      console.error(err);
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300);
+    }
   };
 
   const handleRemoveLogo = async () => {
     if (!currentWorkspace) return;
 
-    await updateWorkspace(currentWorkspace.slug, {
-      logo_url: "",
-    })
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Workspace picture removed successfully.",
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "There was some error in deleting your profile picture. Please try again.",
-        });
+    try {
+      await updateWorkspace(currentWorkspace.slug, {
+        logo_url: "",
       });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Workspace picture removed successfully.",
+      });
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "There was some error in deleting your profile picture. Please try again.",
+      });
+    }
   };
 
   const handleCopyUrl = () => {
     if (!currentWorkspace) return;
 
-    copyUrlToClipboard(`${currentWorkspace.slug}`).then(() => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Workspace URL copied to the clipboard.",
+    void copyUrlToClipboard(`${currentWorkspace.slug}`)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Workspace URL copied to the clipboard.",
+        });
+        return undefined;
+      })
+      .catch(() => {
+        // Silently handle clipboard errors
       });
-    });
   };
 
   useEffect(() => {
@@ -132,13 +135,7 @@ export const WorkspaceDetails: FC = observer(() => {
 
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
-  if (!currentWorkspace)
-    return (
-      <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-        <LogoSpinner />
-      </div>
-    );
-
+  if (!currentWorkspace) return <></>;
   return (
     <>
       <Controller
@@ -158,7 +155,7 @@ export const WorkspaceDetails: FC = observer(() => {
         )}
       />
       <div className={`w-full md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
-        <div className="flex gap-5 border-b border-custom-border-100 pb-7 items-start">
+        <div className="flex gap-5 border-b border-subtle pb-7 items-start">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
               {workspaceLogo && workspaceLogo !== "" ? (
@@ -170,20 +167,20 @@ export const WorkspaceDetails: FC = observer(() => {
                   />
                 </div>
               ) : (
-                <div className="relative flex h-14 w-14 items-center justify-center rounded bg-[#026292] p-4 uppercase text-white">
+                <div className="relative flex h-14 w-14 items-center justify-center rounded-sm bg-accent-primary p-4 uppercase text-on-color">
                   {currentWorkspace?.name?.charAt(0) ?? "N"}
                 </div>
               )}
             </button>
           </div>
           <div className="flex flex-col gap-1">
-            <div className="text-lg font-semibold leading-6 mb:-my-5">{watch("name")}</div>
-            <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight text-left">{`${
+            <div className="text-h5-semibold leading-6 mb:-my-5">{watch("name")}</div>
+            <button type="button" onClick={handleCopyUrl} className="text-body-xs-regular tracking-tight text-left">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
             }/${currentWorkspace.slug}`}</button>
             {isAdmin && (
               <button
-                className="flex items-center gap-1.5 text-left text-xs font-medium text-custom-primary-100"
+                className="flex items-center gap-1.5 text-left text-caption-sm-medium text-accent-primary"
                 onClick={() => setIsImageUploadModalOpen(true)}
               >
                 {workspaceLogo && workspaceLogo !== "" ? (
@@ -202,7 +199,7 @@ export const WorkspaceDetails: FC = observer(() => {
         <div className="my-8 flex flex-col gap-8">
           <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
             <div className="flex flex-col gap-1">
-              <h4 className="text-sm">{t("workspace_settings.settings.general.name")}</h4>
+              <h4 className="text-body-xs-regular text-tertiary">{t("workspace_settings.settings.general.name")}</h4>
               <Controller
                 control={control}
                 name="name"
@@ -223,7 +220,7 @@ export const WorkspaceDetails: FC = observer(() => {
                     ref={ref}
                     hasError={Boolean(errors.name)}
                     placeholder={t("workspace_settings.settings.general.name")}
-                    className="w-full rounded-md font-medium"
+                    className="w-full rounded-md"
                     disabled={!isAdmin}
                   />
                 )}
@@ -231,7 +228,9 @@ export const WorkspaceDetails: FC = observer(() => {
             </div>
 
             <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">{t("workspace_settings.settings.general.company_size")}</h4>
+              <h4 className="text-body-xs-regular text-tertiary">
+                {t("workspace_settings.settings.general.company_size")}
+              </h4>
               <Controller
                 name="organization_size"
                 control={control}
@@ -243,7 +242,7 @@ export const WorkspaceDetails: FC = observer(() => {
                       ORGANIZATION_SIZE.find((c) => c === value) ??
                       t("workspace_settings.settings.general.errors.company_size.select_a_range")
                     }
-                    buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
+                    buttonClassName="!border-[0.5px] !border-subtle !shadow-none"
                     input
                     disabled={!isAdmin}
                   >
@@ -258,7 +257,7 @@ export const WorkspaceDetails: FC = observer(() => {
             </div>
 
             <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">{t("workspace_settings.settings.general.url")}</h4>
+              <h4 className="text-body-xs-regular text-tertiary">{t("workspace_settings.settings.general.url")}</h4>
               <Controller
                 control={control}
                 name="url"
@@ -274,9 +273,29 @@ export const WorkspaceDetails: FC = observer(() => {
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.url)}
-                    className="w-full"
+                    className="w-full cursor-not-allowed rounded-md !bg-layer-1"
                     disabled
                   />
+                )}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1 ">
+              <h4 className="text-body-xs-regular text-tertiary">
+                {t("workspace_settings.settings.general.workspace_timezone")}
+              </h4>
+              <Controller
+                name="timezone"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <>
+                    <TimezoneSelect
+                      value={value}
+                      onChange={onChange}
+                      buttonClassName="border-none"
+                      disabled={!isAdmin}
+                    />
+                  </>
                 )}
               />
             </div>
@@ -287,7 +306,10 @@ export const WorkspaceDetails: FC = observer(() => {
               <Button
                 data-ph-element={WORKSPACE_TRACKER_ELEMENTS.UPDATE_WORKSPACE_BUTTON}
                 variant="primary"
-                onClick={handleSubmit(onSubmit)}
+                size="lg"
+                onClick={(e) => {
+                  void handleSubmit(onSubmit)(e);
+                }}
                 loading={isLoading}
               >
                 {isLoading ? t("updating") : t("workspace_settings.settings.general.update_workspace")}

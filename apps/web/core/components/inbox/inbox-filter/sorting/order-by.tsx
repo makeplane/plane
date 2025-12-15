@@ -1,11 +1,10 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check, ChevronDown } from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
 import { INBOX_ISSUE_ORDER_BY_OPTIONS, INBOX_ISSUE_SORT_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TInboxIssueSortingOrderByKeys, TInboxIssueSortingSortByKeys } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // constants
@@ -15,7 +14,7 @@ import { cn } from "@plane/utils";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import useSize from "@/hooks/use-window-size";
 
-export const InboxIssueOrderByDropdown: FC = observer(() => {
+export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDropdown() {
   // hooks
   const { t } = useTranslation();
   const windowSize = useSize();
@@ -29,14 +28,14 @@ export const InboxIssueOrderByDropdown: FC = observer(() => {
       <ArrowDownWideNarrow className="size-3 " />
     );
   const largeButton = (
-    <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
+    <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
       {inboxSorting?.sort_by === "asc" ? (
         <ArrowUpWideNarrow className="size-3 " />
       ) : (
         <ArrowDownWideNarrow className="size-3 " />
       )}
       {t(orderByDetails?.i18n_label || "inbox_issue.order_by.created_at")}
-      <ChevronDown className="size-3" strokeWidth={2} />
+      <ChevronDownIcon className="size-3" strokeWidth={2} />
     </div>
   );
   return (
@@ -56,7 +55,7 @@ export const InboxIssueOrderByDropdown: FC = observer(() => {
           {inboxSorting?.order_by?.includes(option.key) && <Check className="size-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2 border-custom-border-200" />
+      <hr className="my-2 border-subtle" />
       {INBOX_ISSUE_SORT_BY_OPTIONS.map((option) => (
         <CustomMenu.MenuItem
           key={option.key}

@@ -1,4 +1,4 @@
-import {
+import type {
   FILTER_FIELD_TYPE,
   TBaseFilterFieldConfig,
   TDateFilterFieldConfig,

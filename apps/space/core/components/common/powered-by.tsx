@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { WEBSITE_URL } from "@plane/constants";
 // assets
 import { PlaneLogo } from "@plane/propel/icons";
@@ -9,7 +6,7 @@ type TPoweredBy = {
   disabled?: boolean;
 };
 
-export const PoweredBy: FC<TPoweredBy> = (props) => {
+export function PoweredBy(props: TPoweredBy) {
   // props
   const { disabled = false } = props;
 
@@ -18,14 +15,14 @@ export const PoweredBy: FC<TPoweredBy> = (props) => {
   return (
     <a
       href={WEBSITE_URL}
-      className="fixed bottom-2.5 right-5 !z-[999999] flex items-center gap-1 rounded border border-custom-border-200 bg-custom-background-100 px-2 py-1 shadow-custom-shadow-2xs"
+      className="fixed bottom-2.5 right-5 !z-[999999] flex items-center gap-1 rounded-sm border border-subtle bg-surface-1 px-2 py-1 shadow-custom-shadow-2xs"
       target="_blank"
       rel="noreferrer noopener"
     >
-      <PlaneLogo className="h-3 w-auto text-custom-text-100" />
-      <div className="text-xs">
+      <PlaneLogo className="h-3 w-auto text-primary" />
+      <div className="text-11">
         Powered by <span className="font-semibold">Plane Publish</span>
       </div>
     </a>
   );
-};
+}

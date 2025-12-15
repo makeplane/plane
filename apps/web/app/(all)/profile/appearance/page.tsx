@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -20,7 +18,7 @@ import { ProfileSettingContentWrapper } from "@/components/profile/profile-setti
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 
-const ProfileAppearancePage = observer(() => {
+function ProfileAppearancePage() {
   const { t } = useTranslation();
   const { setTheme } = useTheme();
   // states
@@ -70,8 +68,8 @@ const ProfileAppearancePage = observer(() => {
           <ProfileSettingContentHeader title={t("appearance")} />
           <div className="grid grid-cols-12 gap-4 py-6 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold text-custom-text-100">{t("theme")}</h4>
-              <p className="text-sm text-custom-text-200">{t("select_or_customize_your_interface_color_scheme")}</p>
+              <h4 className="text-16 font-semibold text-primary">{t("theme")}</h4>
+              <p className="text-13 text-secondary">{t("select_or_customize_your_interface_color_scheme")}</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
@@ -86,6 +84,6 @@ const ProfileAppearancePage = observer(() => {
       )}
     </>
   );
-});
+}
 
-export default ProfileAppearancePage;
+export default observer(ProfileAppearancePage);

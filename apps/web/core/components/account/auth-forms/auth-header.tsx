@@ -52,7 +52,7 @@ const Titles = {
 
 const workSpaceService = new WorkspaceService();
 
-export const AuthHeader: FC<TAuthHeader> = observer((props) => {
+export const AuthHeader = observer(function AuthHeader(props: TAuthHeader) {
   const { workspaceSlug, invitationId, invitationEmail, authMode, currentAuthStep } = props;
   // plane imports
   const { t } = useTranslation();
@@ -103,10 +103,8 @@ export const AuthHeader: FC<TAuthHeader> = observer((props) => {
 
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-2xl font-semibold text-custom-text-100 leading-7">
-        {typeof header === "string" ? t(header) : header}
-      </span>
-      <span className="text-2xl font-semibold text-custom-text-400 leading-7">{subHeader}</span>
+      <span className="text-h4-semibold text-primary">{typeof header === "string" ? t(header) : header}</span>
+      <span className="text-h4-semibold text-placeholder">{subHeader}</span>
     </div>
   );
 });

@@ -1,6 +1,3 @@
-"use client";
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 // ui
 import { DragHandle } from "@plane/ui";
@@ -11,13 +8,13 @@ type Props = {
   isDragging: boolean;
 };
 
-export const StickyItemDragHandle: FC<Props> = observer((props) => {
+export const StickyItemDragHandle = observer(function StickyItemDragHandle(props: Props) {
   const { isDragging } = props;
 
   return (
     <div
       className={cn(
-        "hidden group-hover/sticky:flex absolute top-3 left-1/2 -translate-x-1/2 items-center justify-center rounded text-custom-sidebar-text-400 cursor-grab mr-2 rotate-90",
+        "hidden group-hover/sticky:flex absolute top-3 left-1/2 -translate-x-1/2 items-center justify-center rounded-sm text-placeholder cursor-grab mr-2 rotate-90",
         {
           "cursor-grabbing": isDragging,
         }

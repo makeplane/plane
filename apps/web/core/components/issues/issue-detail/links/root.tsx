@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useCallback, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 // plane imports
@@ -26,7 +23,7 @@ export type TIssueLinkRoot = {
   disabled?: boolean;
 };
 
-export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
+export function IssueLinkRoot(props: TIssueLinkRoot) {
   // props
   const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
@@ -116,13 +113,13 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
         issueServiceType={EIssueServiceType.ISSUES}
       />
 
-      <div className="py-1 text-xs">
+      <div className="py-1 text-11">
         <div className="flex items-center justify-between gap-2">
           <h4>Links</h4>
           {!disabled && (
             <button
               type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${
+              className={`grid h-7 w-7 place-items-center rounded-sm p-1 outline-none duration-300 hover:bg-surface-2 ${
                 disabled ? "cursor-not-allowed" : "cursor-pointer"
               }`}
               onClick={() => toggleIssueLinkModal(true)}
@@ -139,4 +136,4 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
       </div>
     </>
   );
-};
+}

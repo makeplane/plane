@@ -1,8 +1,4 @@
-"use client";
-
-import React from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search } from "lucide-react";
 // plane imports
 import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
@@ -10,6 +6,13 @@ import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
 import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
+// assets
+import ctaL1Dark from "@/app/assets/workspace-active-cycles/cta-l-1-dark.webp?url";
+import ctaL1Light from "@/app/assets/workspace-active-cycles/cta-l-1-light.webp?url";
+import ctaR1Dark from "@/app/assets/workspace-active-cycles/cta-r-1-dark.webp?url";
+import ctaR1Light from "@/app/assets/workspace-active-cycles/cta-r-1-light.webp?url";
+import ctaR2Dark from "@/app/assets/workspace-active-cycles/cta-r-2-dark.webp?url";
+import ctaR2Light from "@/app/assets/workspace-active-cycles/cta-r-2-light.webp?url";
 // components
 import { ProIcon } from "@/components/common/pro-icon";
 // hooks
@@ -58,7 +61,7 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
   },
 ];
 
-export const WorkspaceActiveCyclesUpgrade = observer(() => {
+export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyclesUpgrade() {
   const { t } = useTranslation();
   // store hooks
   const {
@@ -77,57 +80,45 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
       >
         <div className="relative flex flex-col justify-center gap-7 px-14 lg:w-1/2">
           <div className="flex max-w-64 flex-col gap-2">
-            <h2 className="text-2xl font-semibold">{t("on_demand_snapshots_of_all_your_cycles")}</h2>
-            <p className="text-base font-medium text-custom-text-300">{t("active_cycles_description")}</p>
+            <h2 className="text-20 font-semibold">{t("on_demand_snapshots_of_all_your_cycles")}</h2>
+            <p className="text-14 font-medium text-tertiary">{t("active_cycles_description")}</p>
           </div>
           <div className="flex items-center gap-3">
             <a
-              className={`${getButtonStyling("primary", "md")} cursor-pointer`}
+              className={`${getButtonStyling("primary", "base")} cursor-pointer`}
               href={MARKETING_PRICING_PAGE_LINK}
               target="_blank"
               rel="noreferrer"
             >
-              <ProIcon className="h-3.5 w-3.5 text-white" />
+              <ProIcon className="h-3.5 w-3.5 text-on-color" />
               {t("upgrade")}
             </a>
           </div>
           <span className="absolute left-0 top-0">
-            <Image
-              src={`/workspace-active-cycles/cta-l-1-${isDarkMode ? "dark" : "light"}.webp`}
-              height={125}
-              width={125}
-              className="rounded-xl"
+            <img
+              src={isDarkMode ? ctaL1Dark : ctaL1Light}
+              className="w-[125px] h-[125px] object-contain rounded-xl"
               alt="l-1"
             />
           </span>
         </div>
         <div className="relative hidden w-1/2 lg:block">
           <span className="absolute bottom-0 right-0">
-            <Image
-              src={`/workspace-active-cycles/cta-r-1-${isDarkMode ? "dark" : "light"}.webp`}
-              height={420}
-              width={500}
-              alt="r-1"
-            />
+            <img src={isDarkMode ? ctaR1Dark : ctaR1Light} className="w-full h-full object-contain" alt="r-1" />
           </span>
           <span className="absolute -bottom-16 right-1/2 rounded-xl">
-            <Image
-              src={`/workspace-active-cycles/cta-r-2-${isDarkMode ? "dark" : "light"}.webp`}
-              height={210}
-              width={280}
-              alt="r-2"
-            />
+            <img src={isDarkMode ? ctaR2Dark : ctaR2Light} className="w-full h-full object-contain" alt="r-2" />
           </span>
         </div>
       </div>
       <div className="grid h-full grid-cols-1 gap-5 pb-8 lg:grid-cols-2 xl:grid-cols-3">
         {WORKSPACE_ACTIVE_CYCLES_DETAILS.map((item) => (
-          <div key={item.title} className="flex min-h-32 w-full flex-col gap-2 rounded-md bg-custom-background-80 p-4">
+          <div key={item.title} className="flex min-h-32 w-full flex-col gap-2 rounded-md bg-layer-1 p-4">
             <div className="flex gap-2 justify-between">
               <h3 className="font-medium">{t(item.key)}</h3>
               <item.icon className="mt-1 h-4 w-4 text-blue-500" />
             </div>
-            <span className="text-sm text-custom-text-300">{t(`${item.key}_description`)}</span>
+            <span className="text-13 text-tertiary">{t(`${item.key}_description`)}</span>
           </div>
         ))}
       </div>

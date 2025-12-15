@@ -1,9 +1,16 @@
+# Python imports
 import json
 
-from django.core.exceptions import ValidationError
+# Django imports
+from django.db.models import Q
 from django.http import QueryDict
-from django_filters.rest_framework import DjangoFilterBackend
+
+# Third party imports
+from django_filters.utils import translate_validation
 from rest_framework import filters
+from rest_framework.exceptions import ValidationError as DRFValidationError
+
+from plane.utils.exception_logger import log_exception
 
 
 class ComplexFilterBackend(filters.BaseFilterBackend):
@@ -34,13 +41,12 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
 
             normalized = self._normalize_filter_data(filter_string, "filter")
             return self._apply_json_filter(queryset, normalized, view)
-        except ValidationError:
+        except DRFValidationError:
             # Propagate validation errors unchanged
             raise
         except Exception as e:
+            log_exception(e)
             raise
-            # Convert unexpected errors to ValidationError to keep response consistent
-            raise ValidationError(f"Filter error: {str(e)}")
 
     def _normalize_filter_data(self, raw_filter, source_label):
         """Return a dict from raw filter input or raise a ValidationError.
@@ -53,12 +59,22 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                 return json.loads(raw_filter)
             if isinstance(raw_filter, dict):
                 return raw_filter
-            raise ValidationError(f"'{source_label}' must be a dict or a JSON string.")
+            raise DRFValidationError(
+                {
+                    "message": f"'{source_label}' must be a dict or a JSON string.",
+                    "code": "invalid_filter_type",
+                }
+            )
         except json.JSONDecodeError:
-            raise ValidationError(f"Invalid JSON for '{source_label}'. Expected a valid JSON object.")
+            raise DRFValidationError(
+                {
+                    "message": (f"Invalid JSON for '{source_label}'. Expected a valid JSON object."),
+                    "code": "invalid_json",
+                }
+            )
 
     def _apply_json_filter(self, queryset, filter_data, view):
-        """Process a JSON filter structure using OR/AND/NOT set operations."""
+        """Process a JSON filter structure using Q object composition."""
         if not filter_data:
             return queryset
 
@@ -69,11 +85,13 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         # Validate against the view's FilterSet (only declared filters are allowed)
         self._validate_fields(filter_data, view)
 
-        # Build combined queryset using FilterSet-driven leaf evaluation
-        combined_qs = self._evaluate_node(filter_data, queryset, view)
-        if combined_qs is None:
+        # Build combined Q object from the filter tree
+        combined_q = self._evaluate_node(filter_data, view, queryset)
+        if combined_q is None:
             return queryset
-        return combined_qs
+
+        # Apply the combined Q object to the queryset once
+        return queryset.filter(combined_q)
 
     def _validate_fields(self, filter_data, view):
         """Validate that filtered fields are defined in the view's FilterSet."""
@@ -81,7 +99,12 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         allowed_fields = set(filterset_class.base_filters.keys()) if filterset_class else None
         if not allowed_fields:
             # If no FilterSet is configured, reject filtering to avoid unintended exposure # noqa: E501
-            raise ValidationError("Filtering is not enabled for this endpoint (missing filterset_class)")
+            raise DRFValidationError(
+                {
+                    "message": ("Filtering is not enabled for this endpoint (missing filterset_class)"),
+                    "code": "filtering_not_enabled",
+                }
+            )
 
         # Extract field names from the filter data
         fields = self._extract_field_names(filter_data)
@@ -92,7 +115,25 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
             # Example: 'sequence_id__gte' should be declared in base_filters
             # Special-case __range: require the '<base>__range' filter itself
             if field not in allowed_fields:
-                raise ValidationError(f"Filtering on field '{field}' is not allowed")
+                raise DRFValidationError(
+                    {
+                        "message": f"Filtering on field '{field}' is not allowed",
+                        "code": "invalid_filter_field",
+                    }
+                )
+
+    def _transform_field_name_for_validation(self, field_name):
+        """Hook: Transform a field name before validation.
+
+        Override this in subclasses to handle special field naming conventions.
+
+        Args:
+            field_name: The original field name from the filter data
+
+        Returns:
+            The transformed field name to validate against the FilterSet
+        """
+        return field_name
 
     def _extract_field_names(self, filter_data):
         """Extract all field names from a nested filter structure"""
@@ -110,117 +151,111 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                         for item in value:
                             fields.extend(self._extract_field_names(item))
                 else:
-                    # This is a field name
-                    fields.append(key)
+                    # This is a field name - apply transformation hook
+                    transformed_field = self._transform_field_name_for_validation(key)
+                    fields.append(transformed_field)
             return fields
         return []
 
-    def _evaluate_node(self, node, base_queryset, view):
+    def _evaluate_node(self, node, view, queryset):
         """
-        Recursively evaluate a JSON node into a combined queryset using branch-based filtering.
+        Recursively evaluate a JSON node into a combined Q object.
 
         Rules:
-        - leaf dict → evaluated through DjangoFilterBackend as a mini-querystring
-        - {"or": [...]} → union (|) of children
-        - {"and": [...]} → collect field conditions per branch and apply together
-        - {"not": {...}} → exclude child's rows from the base queryset
-          (complement within base scope)
+        - leaf dict → evaluated through FilterSet to produce a Q object
+        - {"or": [...]} → Q() | Q() | ... (OR of children)
+        - {"and": [...]} → Q() & Q() & ... (AND of children)
+        - {"not": {...}} → ~Q() (negation of child)
+
+        Returns a Q object that can be applied to a queryset.
         """
         if not isinstance(node, dict):
             return None
 
-        # 'or' combination - requires set operations between children
+        # 'or' combination - OR of child Q objects
         if "or" in node:
             children = node["or"]
             if not isinstance(children, list) or not children:
                 return None
-            combined = None
+            combined_q = Q()
             for child in children:
-                child_qs = self._evaluate_node(child, base_queryset, view)
-                if child_qs is None:
+                child_q = self._evaluate_node(child, view, queryset)
+                if child_q is None:
                     continue
-                combined = child_qs if combined is None else (combined | child_qs)
-            return combined
+                combined_q |= child_q
+            return combined_q
 
-        # 'and' combination - collect field conditions per branch
+        # 'and' combination - AND of child Q objects
         if "and" in node:
             children = node["and"]
             if not isinstance(children, list) or not children:
                 return None
-            return self._evaluate_and_branch(children, base_queryset, view)
+            combined_q = Q()
+            for child in children:
+                child_q = self._evaluate_node(child, view, queryset)
+                if child_q is None:
+                    continue
+                combined_q &= child_q
+            return combined_q
 
-        # 'not' negation
+        # 'not' negation - negate the child Q object
         if "not" in node:
             child = node["not"]
             if not isinstance(child, dict):
                 return None
-            child_qs = self._evaluate_node(child, base_queryset, view)
-            if child_qs is None:
+            child_q = self._evaluate_node(child, view, queryset)
+            if child_q is None:
                 return None
-            # Use subquery instead of pk__in for better performance
-            # This avoids evaluating child_qs and creating large IN clauses
-            return base_queryset.exclude(pk__in=child_qs.values("pk"))
+            return ~child_q
 
-        # Leaf dict: evaluate via DjangoFilterBackend using FilterSet
-        return self._filter_leaf_via_backend(node, base_queryset, view)
+        # Leaf dict: evaluate via FilterSet to get a Q object
+        return self._build_leaf_q(node, view, queryset)
 
-    def _evaluate_and_branch(self, children, base_queryset, view):
+    def _preprocess_leaf_conditions(self, leaf_conditions, view, queryset):
+        """Hook: Preprocess leaf conditions before building Q object.
+
+        Override this in subclasses to transform filter keys/values.
+        For example, custom property filters might need to be transformed
+        from 'customproperty_<id>__<lookup>' to 'customproperty_value__<lookup>'.
+
+        Args:
+            leaf_conditions: Dict of field filters
+            view: The view instance
+            queryset: The queryset being filtered
+
+        Returns:
+            Dict of transformed field filters
         """
-        Evaluate an AND branch by collecting field conditions and applying them together.
+        return leaf_conditions
 
-        This approach is more efficient than individual leaf evaluation because:
-        - Field conditions within the same AND branch are collected and applied together
-        - Only logical operation children require separate evaluation and set intersection
-        - Reduces the number of intermediate querysets and database queries
-        """
-        collected_conditions = {}
-        logical_querysets = []
+    def _build_leaf_q(self, leaf_conditions, view, queryset):
+        """Build a Q object from leaf filter conditions using the view's FilterSet.
 
-        # Separate field conditions from logical operations
-        for child in children:
-            if not isinstance(child, dict):
-                continue
+        We serialize the leaf dict into a QueryDict and let the view's
+        filterset_class perform validation and build a combined Q object
+        from all the field filters.
 
-            # Check if this child contains logical operators
-            has_logical = any(k.lower() in ("or", "and", "not") for k in child.keys() if isinstance(k, str))
-
-            if has_logical:
-                # This child has logical operators, evaluate separately
-                child_qs = self._evaluate_node(child, base_queryset, view)
-                if child_qs is not None:
-                    logical_querysets.append(child_qs)
-            else:
-                # This is a leaf with field conditions, collect them
-                collected_conditions.update(child)
-
-        # Start with base queryset
-        result_qs = base_queryset
-
-        # Apply collected field conditions together if any exist
-        if collected_conditions:
-            result_qs = self._filter_leaf_via_backend(collected_conditions, result_qs, view)
-            if result_qs is None:
-                return None
-
-        # Intersect with any logical operation results
-        for logical_qs in logical_querysets:
-            result_qs = result_qs & logical_qs
-
-        return result_qs
-
-    def _filter_leaf_via_backend(self, leaf_conditions, base_queryset, view):
-        """Evaluate a leaf dict by delegating to DjangoFilterBackend once.
-
-        We serialize the leaf dict into a mini querystring and let the view's
-        filterset_class perform validation, conversion, and filtering. This returns
-        a lazy queryset suitable for set-operations with siblings.
+        Returns a Q object representing all the field conditions in the leaf.
         """
         if not leaf_conditions:
-            return None
+            return Q()
+
+        # Get the filterset class from the view
+        filterset_class = getattr(view, "filterset_class", None)
+        if not filterset_class:
+            raise DRFValidationError(
+                {
+                    "message": ("Filtering requires a filterset_class to be defined on the view"),
+                    "code": "filterset_missing",
+                }
+            )
+
+        # Apply preprocessing hook
+        processed_conditions = self._preprocess_leaf_conditions(leaf_conditions, view, queryset)
 
         # Build a QueryDict from the leaf conditions
         qd = QueryDict(mutable=True)
-        for key, value in leaf_conditions.items():
+        for key, value in processed_conditions.items():
             # Default serialization to string; QueryDict expects strings
             if isinstance(value, list):
                 # Repeat key for list values (e.g., __in)
@@ -231,17 +266,30 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         qd = qd.copy()
         qd._mutable = False
 
-        # Temporarily patch request.GET and delegate to DjangoFilterBackend
-        backend = DjangoFilterBackend()
-        request = view.request
-        original_get = request._request.GET if hasattr(request, "_request") else None
-        try:
-            if hasattr(request, "_request"):
-                request._request.GET = qd
-            return backend.filter_queryset(request, base_queryset, view)
-        finally:
-            if hasattr(request, "_request") and original_get is not None:
-                request._request.GET = original_get
+        # Instantiate the filterset with the actual queryset
+        # Custom filter methods may need access to the queryset for filtering
+        fs = filterset_class(data=qd, queryset=queryset)
+
+        if not fs.is_valid():
+            ve = translate_validation(fs.errors)
+            raise DRFValidationError(
+                {
+                    "message": "Invalid filter parameters",
+                    "code": "invalid_filterset",
+                    "errors": ve.detail,
+                }
+            )
+
+        # Build and return the combined Q object
+        if not hasattr(fs, "build_combined_q"):
+            raise DRFValidationError(
+                {
+                    "message": ("FilterSet must have build_combined_q method for complex filtering"),
+                    "code": "missing_build_combined_q",
+                }
+            )
+
+        return fs.build_combined_q()
 
     def _get_max_depth(self, view):
         """Return the maximum allowed nesting depth for complex filters.
@@ -272,34 +320,69 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         - Depth must not exceed max_depth
         """
         if current_depth > max_depth:
-            raise ValidationError(f"Filter nesting is too deep (max {max_depth}); found depth {current_depth}")
+            raise DRFValidationError(
+                {
+                    "message": (f"Filter nesting is too deep (max {max_depth}); found depth {current_depth}"),
+                    "code": "max_depth_exceeded",
+                }
+            )
 
         if not isinstance(node, dict):
-            raise ValidationError("Each filter node must be a JSON object")
+            raise DRFValidationError(
+                {
+                    "message": "Each filter node must be a JSON object",
+                    "code": "invalid_filter_node",
+                }
+            )
 
         if not node:
-            raise ValidationError("Filter objects must not be empty")
+            raise DRFValidationError(
+                {
+                    "message": "Filter objects must not be empty",
+                    "code": "empty_filter_object",
+                }
+            )
 
         logical_keys = [k for k in node.keys() if isinstance(k, str) and k.lower() in ("or", "and", "not")]
 
         if len(logical_keys) > 1:
-            raise ValidationError("A filter object cannot contain multiple logical operators at the same level")
+            raise DRFValidationError(
+                {
+                    "message": ("A filter object cannot contain multiple logical operators at the same level"),
+                    "code": "multiple_logical_operators",
+                }
+            )
 
         if len(logical_keys) == 1:
             op_key = logical_keys[0]
             # must not mix operator with other keys
             if len(node) != 1:
-                raise ValidationError(f"Cannot mix logical operator '{op_key}' with field keys at the same level")
+                raise DRFValidationError(
+                    {
+                        "message": (f"Cannot mix logical operator '{op_key}' with field keys at the same level"),
+                        "code": "mixed_operator_and_fields",
+                    }
+                )
 
             op = op_key.lower()
             value = node[op_key]
 
             if op in ("or", "and"):
                 if not isinstance(value, list) or len(value) == 0:
-                    raise ValidationError(f"'{op}' must be a non-empty list of filter objects")
+                    raise DRFValidationError(
+                        {
+                            "message": f"'{op}' must be a non-empty list of filter objects",
+                            "code": "invalid_operator_children",
+                        }
+                    )
                 for child in value:
                     if not isinstance(child, dict):
-                        raise ValidationError(f"All children of '{op}' must be JSON objects")
+                        raise DRFValidationError(
+                            {
+                                "message": f"All children of '{op}' must be JSON objects",
+                                "code": "invalid_operator_child_type",
+                            }
+                        )
                     self._validate_structure(
                         child,
                         max_depth=max_depth,
@@ -309,7 +392,12 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
 
             if op == "not":
                 if not isinstance(value, dict):
-                    raise ValidationError("'not' must be a single JSON object")
+                    raise DRFValidationError(
+                        {
+                            "message": "'not' must be a single JSON object",
+                            "code": "invalid_not_child",
+                        }
+                    )
                 self._validate_structure(value, max_depth=max_depth, current_depth=current_depth + 1)
                 return
 
@@ -319,24 +407,49 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
     def _validate_leaf(self, leaf):
         """Validate a leaf dict containing field lookups and values."""
         if not isinstance(leaf, dict) or not leaf:
-            raise ValidationError("Leaf filter must be a non-empty JSON object")
+            raise DRFValidationError(
+                {
+                    "message": "Leaf filter must be a non-empty JSON object",
+                    "code": "invalid_leaf",
+                }
+            )
 
         for key, value in leaf.items():
             if isinstance(key, str) and key.lower() in ("or", "and", "not"):
-                raise ValidationError("Logical operators cannot appear in a leaf filter object")
+                raise DRFValidationError(
+                    {
+                        "message": "Logical operators cannot appear in a leaf filter object",
+                        "code": "operator_in_leaf",
+                    }
+                )
 
             # Lists/Tuples must contain only scalar values
             if isinstance(value, (list, tuple)):
                 if len(value) == 0:
-                    raise ValidationError(f"List value for '{key}' must not be empty")
+                    raise DRFValidationError(
+                        {
+                            "message": f"List value for '{key}' must not be empty",
+                            "code": "empty_list_value",
+                        }
+                    )
                 for item in value:
                     if not self._is_scalar(item):
-                        raise ValidationError(f"List value for '{key}' must contain only scalar items")
+                        raise DRFValidationError(
+                            {
+                                "message": f"List value for '{key}' must contain only scalar items",
+                                "code": "non_scalar_list_item",
+                            }
+                        )
                 continue
 
             # Scalars and None are allowed
             if not self._is_scalar(value):
-                raise ValidationError(f"Value for '{key}' must be a scalar, null, or list/tuple of scalars")
+                raise DRFValidationError(
+                    {
+                        "message": (f"Value for '{key}' must be a scalar, null, or list/tuple of scalars"),
+                        "code": "invalid_value_type",
+                    }
+                )
 
     def _is_scalar(self, value):
         return value is None or isinstance(value, (str, int, float, bool))

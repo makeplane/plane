@@ -1,10 +1,8 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { CalendarClock, ChevronDown, ChevronRight, Info, Plus, SquareUser, Users } from "lucide-react";
+import { Info, Plus, SquareUser } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import {
   MODULE_STATUS,
@@ -16,7 +14,14 @@ import {
 } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon, WorkItemsIcon } from "@plane/propel/icons";
+import {
+  MembersPropertyIcon,
+  ModuleStatusIcon,
+  WorkItemsIcon,
+  StartDatePropertyIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
@@ -48,7 +53,7 @@ type Props = {
 };
 
 // TODO: refactor this component
-export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
+export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(props: Props) {
   const { moduleId, handleClose, isArchived } = props;
   // states
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
@@ -119,7 +124,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   };
 
   const handleUpdateLink = async (formData: ModuleLink, linkId: string) => {
-    if (!workspaceSlug || !projectId || !module) return;
+    if (!workspaceSlug || !projectId) return;
 
     const payload = { metadata: {}, ...formData };
 
@@ -140,7 +145,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   };
 
   const handleDeleteLink = async (linkId: string) => {
-    if (!workspaceSlug || !projectId || !module) return;
+    if (!workspaceSlug || !projectId) return;
 
     deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
       .then(() => {
@@ -238,15 +243,13 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
         updateLink={handleUpdateLink}
       />
       <>
-        <div
-          className={`sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 pb-5 pt-5`}
-        >
+        <div className={`sticky z-10 top-0 flex items-center justify-between bg-surface-1 pb-5 pt-5`}>
           <div>
             <button
-              className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-border-300"
+              className="flex h-5 w-5 items-center justify-center rounded-full bg-layer-3"
               onClick={() => handleClose()}
             >
-              <ChevronRight className="h-3 w-3 stroke-2 text-white" />
+              <ChevronRightIcon className="h-3 w-3 stroke-2 text-on-color" />
             </button>
           </div>
         </div>
@@ -260,7 +263,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                 <CustomSelect
                   customButton={
                     <span
-                      className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${
+                      className={`flex h-6 w-20 items-center justify-center rounded-xs text-center text-11 ${
                         isEditingAllowed && !isArchived ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       style={{
@@ -289,12 +292,12 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
               )}
             />
           </div>
-          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{moduleDetails.name}</h4>
+          <h4 className="w-full break-words text-18 font-semibold text-primary">{moduleDetails.name}</h4>
         </div>
 
         {moduleDetails.description && (
           <TextArea
-            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-sm leading-5 text-custom-text-200"
+            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-13 leading-5 text-secondary"
             value={moduleDetails.description}
             disabled
           />
@@ -302,9 +305,9 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <CalendarClock className="h-4 w-4" />
-              <span className="text-base">{t("date_range")}</span>
+            <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
+              <StartDatePropertyIcon className="h-4 w-4" />
+              <span className="text-14">{t("date_range")}</span>
             </div>
             <div className="h-7">
               <Controller
@@ -344,9 +347,9 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
             </div>
           </div>
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <SquareUser className="h-4 w-4" />
-              <span className="text-base">{t("lead")}</span>
+              <span className="text-14">{t("lead")}</span>
             </div>
             <Controller
               control={control}
@@ -370,9 +373,9 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
             />
           </div>
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <Users className="h-4 w-4" />
-              <span className="text-base">{t("members")}</span>
+            <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
+              <MembersPropertyIcon className="h-4 w-4" />
+              <span className="text-14">{t("members")}</span>
             </div>
             <Controller
               control={control}
@@ -395,12 +398,12 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
             />
           </div>
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <WorkItemsIcon className="h-4 w-4" />
-              <span className="text-base">{t("issues")}</span>
+              <span className="text-14">{t("issues")}</span>
             </div>
             <div className="flex h-7 w-3/5 items-center">
-              <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
+              <span className="px-1.5 text-13 text-tertiary">{issueCount}</span>
             </div>
           </div>
 
@@ -409,12 +412,12 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
            */}
           {isEstimatePointValid && (
             <div className="flex items-center justify-start gap-1">
-              <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+              <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
                 <WorkItemsIcon className="h-4 w-4" />
-                <span className="text-base">{t("points")}</span>
+                <span className="text-14">{t("points")}</span>
               </div>
               <div className="flex h-7 w-3/5 items-center">
-                <span className="px-1.5 text-sm text-custom-text-300">{issueEstimatePointCount}</span>
+                <span className="px-1.5 text-13 text-tertiary">{issueEstimatePointCount}</span>
               </div>
             </div>
           )}
@@ -429,18 +432,20 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
         )}
 
         <div className="flex flex-col">
-          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 px-1.5 py-5">
+          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-subtle px-1.5 py-5">
             {/* Accessing link outside the disclosure as mobx is not  considering the children inside Disclosure as part of the component hence not observing their state change*/}
             <Disclosure defaultOpen={!!moduleDetails?.link_module?.length}>
               {({ open }) => (
                 <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                   <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
-                    <div className="flex items-center justify-start gap-2 text-sm">
-                      <span className="font-medium text-custom-text-200">{t("common.links")}</span>
+                    <div className="flex items-center justify-start gap-2 text-13">
+                      <span className="font-medium text-secondary">{t("common.links")}</span>
                     </div>
-
                     <div className="flex items-center gap-2.5">
-                      <ChevronDown className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
+                      <ChevronDownIcon
+                        className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`}
+                        aria-hidden="true"
+                      />
                     </div>
                   </Disclosure.Button>
                   <Transition show={open}>
@@ -451,7 +456,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                             {isEditingAllowed && !isArchived && (
                               <div className="flex w-full items-center justify-end">
                                 <button
-                                  className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
+                                  className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
                                   onClick={() => setModuleLinkModal(true)}
                                 >
                                   <Plus className="h-3 w-3" />
@@ -472,14 +477,12 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                         ) : (
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
-                              <Info className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
-                              <span className="p-0.5 text-xs text-custom-text-300">
-                                {t("common.no_links_added_yet")}
-                              </span>
+                              <Info className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
+                              <span className="p-0.5 text-11 text-tertiary">{t("common.no_links_added_yet")}</span>
                             </div>
                             {isEditingAllowed && !isArchived && (
                               <button
-                                className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
+                                className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
                                 onClick={() => setModuleLinkModal(true)}
                               >
                                 <Plus className="h-3 w-3" />

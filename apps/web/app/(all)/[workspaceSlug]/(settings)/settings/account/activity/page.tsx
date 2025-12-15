@@ -1,30 +1,34 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
+// assets
+import darkActivityAsset from "@/app/assets/empty-state/profile/activity-dark.webp?url";
+import lightActivityAsset from "@/app/assets/empty-state/profile/activity-light.webp?url";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ProfileActivityListPage } from "@/components/profile/activity/profile-activity-list";
 // hooks
 import { SettingsHeading } from "@/components/settings/heading";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { ChevronDown } from "lucide-react";
 
 const PER_PAGE = 100;
 
-const ProfileActivityPage = observer(() => {
+function ProfileActivityPage() {
   // states
   const [pageCount, setPageCount] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [resultsCount, setResultsCount] = useState(0);
   const [isEmpty, setIsEmpty] = useState(false);
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // derived values
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/profile/activity" });
+  const resolvedPath = resolvedTheme === "light" ? lightActivityAsset : darkActivityAsset;
 
   const updateTotalPages = (count: number) => setTotalPages(count);
 
@@ -60,8 +64,8 @@ const ProfileActivityPage = observer(() => {
           title={""}
           description={""}
           assetPath={resolvedPath}
-          className="w-full !p-0 justify-center mx-auto min-h-fit"
-          size="md"
+          className="w-full p-0! justify-center mx-auto min-h-fit"
+          size="base"
         />
       </div>
     );
@@ -76,14 +80,14 @@ const ProfileActivityPage = observer(() => {
       />
       <div className="w-full">{activityPages}</div>
       {isLoadMoreVisible && (
-        <div className="flex w-full items-center justify-center text-xs">
-          <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
+        <div className="flex w-full items-center justify-center mt-4">
+          <Button variant="ghost" onClick={handleLoadMore} appendIcon={<ChevronDown />}>
             {t("load_more")}
           </Button>
         </div>
       )}
     </>
   );
-});
+}
 
-export default ProfileActivityPage;
+export default observer(ProfileActivityPage);

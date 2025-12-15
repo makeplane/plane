@@ -1,7 +1,4 @@
-"use client";
-
-import type { FC } from "react";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 // types
 import { Button } from "@plane/propel/button";
@@ -31,7 +28,7 @@ const EMAIL_SECURITY_OPTIONS: { [key in TEmailSecurityKeys]: string } = {
   NONE: "No email security",
 };
 
-export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
+export function InstanceEmailForm(props: IInstanceEmailForm) {
   const { config } = props;
   // states
   const [isSendTestEmailModalOpen, setIsSendTestEmailModalOpen] = useState(false);
@@ -160,13 +157,12 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
             />
           ))}
           <div className="flex flex-col gap-1">
-            <h4 className="text-sm text-custom-text-300">Email security</h4>
+            <h4 className="text-13 text-tertiary">Email security</h4>
             <CustomSelect
               value={emailSecurityKey}
               label={EMAIL_SECURITY_OPTIONS[emailSecurityKey]}
               onChange={handleEmailSecurityChange}
-              buttonClassName="rounded-md border-custom-border-200"
-              optionsClassName="w-full"
+              buttonClassName="rounded-md border-subtle"
               input
             >
               {Object.entries(EMAIL_SECURITY_OPTIONS).map(([key, value]) => (
@@ -177,12 +173,12 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
             </CustomSelect>
           </div>
         </div>
-        <div className="flex flex-col gap-6 my-6 pt-4 border-t border-custom-border-100">
+        <div className="flex flex-col gap-6 my-6 pt-4 border-t border-subtle">
           <div className="flex w-full max-w-xl flex-col gap-y-10 px-1">
             <div className="mr-8 flex items-center gap-10 pt-4">
               <div className="grow">
-                <div className="text-sm font-medium text-custom-text-100">Authentication</div>
-                <div className="text-xs font-normal text-custom-text-300">
+                <div className="text-13 font-medium text-primary">Authentication</div>
+                <div className="text-11 font-regular text-tertiary">
                   This is optional, but we recommend setting up a username and a password for your SMTP server.
                 </div>
               </div>
@@ -208,6 +204,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
       <div className="flex max-w-4xl items-center py-1 gap-4">
         <Button
           variant="primary"
+          size="lg"
           onClick={handleSubmit(onSubmit)}
           loading={isSubmitting}
           disabled={!isValid || !isDirty}
@@ -215,7 +212,8 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
         <Button
-          variant="outline-primary"
+          variant="secondary"
+          size="lg"
           onClick={() => setIsSendTestEmailModalOpen(true)}
           loading={isSubmitting}
           disabled={!isValid}
@@ -225,4 +223,4 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
       </div>
     </div>
   );
-};
+}

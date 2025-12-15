@@ -77,7 +77,7 @@ export default {
       },
       unique_code: {
         label: "唯一码",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "粘贴发送到您邮箱的验证码",
         requesting_new_code: "正在请求新验证码",
         sending_code: "正在发送验证码",
@@ -331,13 +331,13 @@ export default {
   project_id_must_be_at_least_1_character: "项目ID至少需要1个字符",
   project_id_must_be_at_most_5_characters: "项目ID最多只能有5个字符",
   project_id: "项目ID",
-  project_id_tooltip_content: "帮助您唯一标识项目中的工作项。最多5个字符。",
+  project_id_tooltip_content: "帮助您唯一标识项目中的工作项。最多10个字符。",
   description_placeholder: "描述",
   only_alphanumeric_non_latin_characters_allowed: "仅允许字母数字和非拉丁字符。",
   project_id_is_required: "项目ID为必填项",
   project_id_allowed_char: "仅允许字母数字和非拉丁字符。",
   project_id_min_char: "项目ID至少需要1个字符",
-  project_id_max_char: "项目ID最多只能有5个字符",
+  project_id_max_char: "项目ID最多只能有10个字符",
   project_description_placeholder: "输入项目描述",
   select_network: "选择网络",
   lead: "负责人",
@@ -632,6 +632,8 @@ export default {
   },
   common: {
     all: "全部",
+    no_items_in_this_group: "此组中没有项目",
+    drop_here_to_move: "拖放到此处以移动",
     states: "状态",
     state: "状态",
     state_groups: "状态组",
@@ -1507,6 +1509,47 @@ export default {
       content: "如果您确认，您为此视图选择的所有排序、筛选和显示选项 + 布局将被永久删除，无法恢复。",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "更改邮箱",
+        description: "请输入新的邮箱地址以接收验证链接。",
+        toasts: {
+          success_title: "成功！",
+          success_message: "邮箱已更新，请重新登录。",
+        },
+        form: {
+          email: {
+            label: "新邮箱",
+            placeholder: "请输入邮箱",
+            errors: {
+              required: "邮箱为必填项",
+              invalid: "邮箱格式无效",
+              exists: "邮箱已存在，请使用其他邮箱。",
+              validation_failed: "邮箱验证失败，请重试。",
+            },
+          },
+          code: {
+            label: "验证码",
+            placeholder: "123456",
+            helper_text: "验证码已发送至你的新邮箱。",
+            errors: {
+              required: "验证码为必填项",
+              invalid: "验证码无效，请重试。",
+            },
+          },
+        },
+        actions: {
+          continue: "继续",
+          confirm: "确认",
+          cancel: "取消",
+        },
+        states: {
+          sending: "发送中…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "工作区设置",
     page_label: "{workspace} - 常规设置",
@@ -1521,6 +1564,7 @@ export default {
         name: "工作区名称",
         company_size: "公司规模",
         url: "工作区网址",
+        workspace_timezone: "工作区时区",
         update_workspace: "更新工作区",
         delete_workspace: "删除此工作区",
         delete_workspace_description: "删除工作区时，该工作区内的所有数据和资源将被永久删除，且无法恢复。",
@@ -1586,6 +1630,7 @@ export default {
         exporting: "导出中",
         previous_exports: "以前的导出",
         export_separate_files: "将数据导出为单独的文件",
+        filters_info: "应用筛选器以根据您的条件导出特定工作项。",
         modal: {
           title: "导出到",
           toasts: {

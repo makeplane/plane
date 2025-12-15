@@ -1,11 +1,8 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { CalendarCheck2, Signal } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { DoubleCircleIcon, StateGroupIcon } from "@plane/propel/icons";
+import { StatePropertyIcon, StateGroupIcon, PriorityPropertyIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { cn, getIssuePriorityFilters } from "@plane/utils";
 // components
@@ -25,7 +22,10 @@ type Props = {
   mode?: IPeekMode;
 };
 
-export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDetails, mode }) => {
+export const PeekOverviewIssueProperties = observer(function PeekOverviewIssueProperties({
+  issueDetails,
+  mode,
+}: Props) {
   // hooks
   const { t } = useTranslation();
   const { getStateById } = useStates();
@@ -50,7 +50,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDet
   };
 
   return (
-    <div className={mode === "full" ? "divide-y divide-custom-border-200" : ""}>
+    <div className={mode === "full" ? "divide-y divide-subtle-1" : ""}>
       {mode === "full" && (
         <div className="flex justify-between gap-2 pb-3">
           <h6 className="flex items-center gap-2 font-medium">
@@ -65,33 +65,33 @@ export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDet
       )}
       <div className={`space-y-2 ${mode === "full" ? "pt-3" : ""}`}>
         <div className="flex items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <DoubleCircleIcon className="size-4 flex-shrink-0" />
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-13 text-tertiary">
+            <StatePropertyIcon className="size-4 flex-shrink-0" />
             <span>State</span>
           </div>
-          <div className="w-3/4 flex items-center gap-1.5 py-0.5 text-sm">
+          <div className="w-3/4 flex items-center gap-1.5 py-0.5 text-13">
             <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} />
             {addSpaceIfCamelCase(state?.name ?? "")}
           </div>
         </div>
 
         <div className="flex items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Signal className="size-4 flex-shrink-0" />
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-13 text-tertiary">
+            <PriorityPropertyIcon className="size-4 flex-shrink-0" />
             <span>Priority</span>
           </div>
           <div className="w-3/4">
             <div
-              className={`inline-flex items-center gap-1.5 rounded px-2.5 py-0.5 text-left text-sm capitalize ${
+              className={`inline-flex items-center gap-1.5 rounded-sm px-2.5 py-0.5 text-left text-13 capitalize bg-layer-2 ${
                 priority?.key === "urgent"
-                  ? "border-red-500/20 bg-red-500/20 text-red-500"
+                  ? "border-priority-urgent text-priority-urgent"
                   : priority?.key === "high"
-                    ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
+                    ? "border-priority-high text-priority-high"
                     : priority?.key === "medium"
-                      ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
+                      ? "border-priority-medium text-priority-medium"
                       : priority?.key === "low"
-                        ? "border-green-500/20 bg-green-500/20 text-green-500"
-                        : "border-custom-border-200 bg-custom-background-80"
+                        ? "border-priority-low text-priority-low"
+                        : "border-priority-none text-priority-none"
               }`}
             >
               {priority && (
@@ -105,22 +105,22 @@ export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDet
         </div>
 
         <div className="flex items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CalendarCheck2 className="size-4 flex-shrink-0" />
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-13 text-tertiary">
+            <DueDatePropertyIcon className="size-4 flex-shrink-0" />
             <span>Due date</span>
           </div>
           <div>
             {issueDetails.target_date ? (
               <div
-                className={cn("flex items-center gap-1.5 rounded py-0.5 text-xs text-custom-text-100", {
+                className={cn("flex items-center gap-1.5 rounded-sm py-0.5 text-11 text-primary", {
                   "text-red-500": shouldHighlightIssueDueDate(issueDetails.target_date, state?.group),
                 })}
               >
-                <CalendarCheck2 className="size-3" />
+                <DueDatePropertyIcon className="size-3" />
                 {renderFormattedDate(issueDetails.target_date)}
               </div>
             ) : (
-              <span className="text-custom-text-200">Empty</span>
+              <span className="text-secondary text-13">Empty</span>
             )}
           </div>
         </div>

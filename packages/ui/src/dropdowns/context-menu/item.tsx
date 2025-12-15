@@ -1,10 +1,11 @@
-import { ChevronRight } from "lucide-react";
 import React, { useState, useRef, useContext } from "react";
 import { usePopper } from "react-popper";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // helpers
 import { cn } from "../../utils";
 // types
-import { TContextMenuItem, ContextMenuContext, Portal } from "./root";
+import type { TContextMenuItem } from "./root";
+import { ContextMenuContext, Portal } from "./root";
 
 type ContextMenuItemProps = {
   handleActiveItem: () => void;
@@ -13,7 +14,7 @@ type ContextMenuItemProps = {
   item: TContextMenuItem;
 };
 
-export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
+export function ContextMenuItem(props: ContextMenuItemProps) {
   const { handleActiveItem, handleClose, isActive, item } = props;
 
   // Nested menu state
@@ -151,10 +152,10 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
         ref={setReferenceElement}
         type="button"
         className={cn(
-          "w-full flex items-center gap-2 px-1 py-1.5 text-left text-custom-text-200 rounded text-xs select-none",
+          "w-full flex items-center gap-2 px-1 py-1.5 text-left text-secondary rounded-sm text-11 select-none",
           {
-            "bg-custom-background-90": isActive,
-            "text-custom-text-400": item.disabled,
+            "bg-layer-transparent-hover": isActive,
+            "text-placeholder": item.disabled,
           },
           item.className
         )}
@@ -169,15 +170,15 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
               <h5>{item.title}</h5>
               {item.description && (
                 <p
-                  className={cn("text-custom-text-300 whitespace-pre-line", {
-                    "text-custom-text-400": item.disabled,
+                  className={cn("text-tertiary whitespace-pre-line", {
+                    "text-placeholder": item.disabled,
                   })}
                 >
                   {item.description}
                 </p>
               )}
             </div>
-            {hasNestedItems && <ChevronRight className="h-3 w-3 flex-shrink-0" />}
+            {hasNestedItems && <ChevronRightIcon className="h-3 w-3 flex-shrink-0" />}
           </>
         )}
       </button>
@@ -190,7 +191,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
             style={styles.popper}
             {...attributes.popper}
             className={cn(
-              "fixed z-[35] min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-lg",
+              "fixed z-[35] min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11",
               "ring-1 ring-black ring-opacity-5"
             )}
             data-context-submenu="true"
@@ -201,10 +202,10 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
                   key={nestedItem.key}
                   type="button"
                   className={cn(
-                    "w-full flex items-center gap-2 px-1 py-1.5 text-left text-custom-text-200 rounded text-xs select-none",
+                    "w-full flex items-center gap-2 px-1 py-1.5 text-left text-secondary rounded-sm text-11 select-none",
                     {
-                      "bg-custom-background-90": index === activeNestedIndex,
-                      "text-custom-text-400": nestedItem.disabled,
+                      "bg-layer-transparent-hover": index === activeNestedIndex,
+                      "text-placeholder": nestedItem.disabled,
                     },
                     nestedItem.className
                   )}
@@ -224,8 +225,8 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
                         <h5>{nestedItem.title}</h5>
                         {nestedItem.description && (
                           <p
-                            className={cn("text-custom-text-300 whitespace-pre-line", {
-                              "text-custom-text-400": nestedItem.disabled,
+                            className={cn("text-tertiary whitespace-pre-line", {
+                              "text-placeholder": nestedItem.disabled,
                             })}
                           >
                             {nestedItem.description}
@@ -242,4 +243,4 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
       )}
     </>
   );
-};
+}

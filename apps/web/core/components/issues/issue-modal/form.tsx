@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
@@ -81,7 +79,7 @@ export interface IssueFormProps {
   storeType: EIssuesStoreType;
 }
 
-export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
+export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormProps) {
   const { t } = useTranslation();
   const {
     data,
@@ -415,8 +413,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             onSubmit={handleSubmit((data) => handleFormSubmit(data))}
             className="flex flex-col w-full"
           >
-            <div className="p-5 rounded-t-lg bg-custom-background-100">
-              <h3 className="text-xl font-medium text-custom-text-200 pb-2">{modalTitle}</h3>
+            <div className="p-5 rounded-t-lg bg-surface-1">
+              <h3 className="text-h4-medium text-secondary pb-2">{modalTitle}</h3>
               <div className="flex items-center justify-between pt-2 pb-4">
                 <div className="flex items-center gap-x-1">
                   <IssueProjectSelect
@@ -485,7 +483,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             </div>
             <div
               className={cn(
-                "pb-4 space-y-3 bg-custom-background-100",
+                "pb-4 space-y-3 bg-surface-1",
                 activeAdditionalPropertiesLength > 4 &&
                   "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
               )}
@@ -533,7 +531,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             </div>
             <div
               className={cn(
-                "px-4 py-3 border-t-[0.5px] border-custom-border-200 rounded-b-lg bg-custom-background-100",
+                "px-4 py-3 border-t-[0.5px] border-subtle rounded-b-lg bg-surface-1",
                 activeAdditionalPropertiesLength > 0 && "shadow-custom-shadow-xs"
               )}
             >
@@ -554,7 +552,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
               </div>
               {showActionButtons && (
                 <div
-                  className="flex items-center justify-end gap-4 pb-3 pt-6 border-t-[0.5px] border-custom-border-200"
+                  className="flex items-center justify-end gap-4 pb-3 pt-6 border-t-[0.5px] border-subtle"
                   tabIndex={getIndex("create_more")}
                 >
                   {!data?.id && (
@@ -567,14 +565,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       role="button"
                     >
                       <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
-                      <span className="text-xs">{t("create_more")}</span>
+                      <span className="text-caption-sm-regular">{t("create_more")}</span>
                     </div>
                   )}
                   <div className="flex items-center gap-2">
                     <div tabIndex={getIndex("discard_button")}>
                       <Button
-                        variant="neutral-primary"
-                        size="sm"
+                        variant="secondary"
+                        size="lg"
                         onClick={() => {
                           if (editorRef.current?.isEditorReadyToDiscard()) {
                             onClose();
@@ -592,9 +590,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     </div>
                     <div tabIndex={isDraft ? getIndex("submit_button") : getIndex("draft_button")}>
                       <Button
-                        variant={moveToIssue ? "neutral-primary" : "primary"}
+                        variant={moveToIssue ? "secondary" : "primary"}
+                        size="lg"
                         type="submit"
-                        size="sm"
                         ref={submitBtnRef}
                         loading={isSubmitting}
                         disabled={isDisabled}
@@ -607,10 +605,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       <Button
                         variant="primary"
                         type="button"
-                        size="sm"
                         loading={isMoving}
                         onClick={handleMoveToProjects}
                         disabled={isMoving}
+                        size="lg"
                       >
                         {t("add_to_project")}
                       </Button>

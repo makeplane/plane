@@ -41,7 +41,7 @@ export type TIssueTypeSelectProps<T extends Partial<TIssueFields>> = {
   isRequired?: boolean;
   renderChevron?: boolean;
   dropDownContainerClassName?: string;
-  showMandatoryFieldInfo?: boolean;
+  showMandatoryFieldInfo?: boolean; // Show info about mandatory fields
   handleFormChange?: () => void;
   buttonVariant?:
     | "border-with-text"
@@ -58,7 +58,7 @@ export type TIssueTypeSelectProps<T extends Partial<TIssueFields>> = {
   tabIndex?: number;
 };
 
-export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props: TIssueTypeSelectProps<T>) => {
+export function IssueTypeSelect<T extends Partial<TIssueFields>>(props: TIssueTypeSelectProps<T>) {
   const {
     control,
     projectId,
@@ -346,4 +346,4 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
       }}
     />
   );
-});
+};

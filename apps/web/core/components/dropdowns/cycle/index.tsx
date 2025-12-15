@@ -1,12 +1,9 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { CycleIcon } from "@plane/propel/icons";
+import { CycleIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
@@ -32,7 +29,7 @@ type Props = TDropdownProps & {
   currentCycleId?: string;
 };
 
-export const CycleDropdown: React.FC<Props> = observer((props) => {
+export const CycleDropdown = observer(function CycleDropdown(props: Props) {
   const {
     button,
     buttonClassName,
@@ -86,10 +83,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
         <button
           ref={setReferenceElement}
           type="button"
-          className={cn(
-            "clickable block h-full w-full outline-none hover:bg-custom-background-80",
-            buttonContainerClassName
-          )}
+          className={cn("clickable block h-full w-full outline-none hover:bg-layer-1", buttonContainerClassName)}
           onClick={handleOnClick}
           disabled={disabled}
           tabIndex={tabIndex}
@@ -101,9 +95,9 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
           ref={setReferenceElement}
           type="button"
           className={cn(
-            "clickable block h-full max-w-full outline-none hover:bg-custom-background-80",
+            "clickable block h-full max-w-full outline-none hover:bg-layer-1",
             {
-              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-not-allowed text-secondary": disabled,
               "cursor-pointer": !disabled,
             },
             buttonContainerClassName
@@ -126,7 +120,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
               <span className="max-w-40 flex-grow truncate">{selectedName ?? placeholder}</span>
             )}
             {dropdownArrow && (
-              <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
             )}
           </DropdownButton>
         </button>

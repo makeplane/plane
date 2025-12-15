@@ -1,17 +1,16 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { ArrowRight, CalendarCheck2, CalendarDays, X } from "lucide-react";
+import { ArrowRight, CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // ui
 import type { DateRange, Matcher } from "@plane/propel/calendar";
 import { Calendar } from "@plane/propel/calendar";
+import { CloseIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // helpers
@@ -65,7 +64,7 @@ type Props = {
   renderInPortal?: boolean;
 };
 
-export const DateRangeDropdown: React.FC<Props> = observer((props) => {
+export const DateRangeDropdown = observer(function DateRangeDropdown(props: Props) {
   const { t } = useTranslation();
   const {
     buttonClassName,
@@ -158,7 +157,7 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
       className={cn(
         "clickable block h-full max-w-full outline-none",
         {
-          "cursor-not-allowed text-custom-text-200": disabled,
+          "cursor-not-allowed text-secondary": disabled,
           "cursor-pointer": !disabled,
         },
         buttonContainerClassName
@@ -193,21 +192,21 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
               <MergedDateDisplay
                 startDate={dateRange.from}
                 endDate={dateRange.to}
-                className="flex-grow truncate text-xs"
+                className="flex-grow truncate text-11"
               />
             ) : (
               renderPlaceholder && (
                 <>
-                  <span className="text-custom-text-400">{placeholder.from}</span>
+                  <span className="text-placeholder">{placeholder.from}</span>
                   {placeholder.from && placeholder.to && (
-                    <ArrowRight className="h-3 w-3 flex-shrink-0 text-custom-text-400" />
+                    <ArrowRight className="h-3 w-3 flex-shrink-0 text-placeholder" />
                   )}
-                  <span className="text-custom-text-400">{placeholder.to}</span>
+                  <span className="text-placeholder">{placeholder.to}</span>
                 </>
               )
             )}
             {isClearable && !disabled && hasDisplayedDates && (
-              <X
+              <CloseIcon
                 className={cn("h-2.5 w-2.5 flex-shrink-0 cursor-pointer", clearIconClassName)}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -222,7 +221,7 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
           <>
             <span
               className={cn(
-                "h-full flex items-center justify-center gap-1 rounded-sm flex-grow",
+                "h-full flex items-center justify-center gap-1 rounded-xs flex-grow",
                 buttonFromDateClassName
               )}
             >
@@ -232,15 +231,15 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
             <ArrowRight className="h-3 w-3 flex-shrink-0" />
             <span
               className={cn(
-                "h-full flex items-center justify-center gap-1 rounded-sm flex-grow",
+                "h-full flex items-center justify-center gap-1 rounded-xs flex-grow",
                 buttonToDateClassName
               )}
             >
-              {!hideIcon.to && <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+              {!hideIcon.to && <DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
               {dateRange.to ? renderFormattedDate(dateRange.to) : renderPlaceholder ? placeholder.to : ""}
             </span>
             {isClearable && !disabled && hasDisplayedDates && (
-              <X
+              <CloseIcon
                 className={cn("h-2.5 w-2.5 flex-shrink-0 cursor-pointer ml-1", clearIconClassName)}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -258,13 +257,13 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
   const comboOptions = (
     <Combobox.Options data-prevent-outside-click static>
       <div
-        className="my-1 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden z-30"
+        className="my-1 bg-surface-1 shadow-custom-shadow-rg border-[0.5px] border-strong rounded-md overflow-hidden z-30"
         ref={setPopperElement}
         style={styles.popper}
         {...attributes.popper}
       >
         <Calendar
-          className="rounded-md border border-custom-border-200 p-3"
+          className="rounded-md border border-subtle p-3"
           captionLayout="dropdown"
           selected={dateRange}
           onSelect={(val: DateRange | undefined) => {

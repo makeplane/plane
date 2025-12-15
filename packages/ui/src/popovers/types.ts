@@ -1,5 +1,5 @@
-import { Placement } from "@popperjs/core";
-import { MutableRefObject, ReactNode } from "react";
+import type { Placement } from "@popperjs/core";
+import type { MutableRefObject, ReactNode } from "react";
 
 export type TPopoverButtonDefaultOptions = {
   // button and button styling

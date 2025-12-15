@@ -1,7 +1,7 @@
 import React from "react";
-import { LegendProps } from "recharts";
+import type { LegendProps } from "recharts";
 // plane imports
-import { TChartLegend } from "@plane/types";
+import type { TChartLegend } from "@plane/types";
 import { cn } from "../../utils/classname";
 
 export const getLegendProps = (args: TChartLegend): LegendProps => {
@@ -31,12 +31,12 @@ export const getLegendProps = (args: TChartLegend): LegendProps => {
   };
 };
 
-const CustomLegend = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div"> &
+const CustomLegend = React.forwardRef(function CustomLegend(
+  props: React.ComponentProps<"div"> &
     Pick<LegendProps, "payload" | "formatter" | "onClick" | "onMouseEnter" | "onMouseLeave"> &
-    TChartLegend
->((props, ref) => {
+    TChartLegend,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
   const { formatter, layout, onClick, onMouseEnter, onMouseLeave, payload } = props;
 
   if (!payload?.length) return null;
@@ -51,7 +51,7 @@ const CustomLegend = React.forwardRef<
       {payload.map((item, index) => (
         <div
           key={item.value}
-          className={cn("flex items-center gap-1.5 text-custom-text-300 text-sm font-medium whitespace-nowrap", {
+          className={cn("flex items-center gap-1.5 text-tertiary text-13 font-medium whitespace-nowrap", {
             "px-2": layout === "horizontal",
             "py-2": layout === "vertical",
             "pl-0 pt-0": index === 0,
@@ -63,7 +63,7 @@ const CustomLegend = React.forwardRef<
           onMouseLeave={(e) => onMouseLeave?.(item, index, e)}
         >
           <div
-            className="flex-shrink-0 size-2 rounded-sm"
+            className="flex-shrink-0 size-2 rounded-xs"
             style={{
               backgroundColor: item.color,
             }}

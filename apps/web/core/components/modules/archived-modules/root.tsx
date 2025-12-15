@@ -4,19 +4,18 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TModuleFilters } from "@plane/types";
 // components
 import { calculateTotalFilters } from "@plane/utils";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ArchivedModulesView, ModuleAppliedFiltersList } from "@/components/modules";
 import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // helpers
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
-export const ArchivedModuleLayoutRoot: React.FC = observer(() => {
+export const ArchivedModuleLayoutRoot = observer(function ArchivedModuleLayoutRoot() {
   // router
   const { workspaceSlug, projectId } = useParams();
   // plane hooks
@@ -26,7 +25,6 @@ export const ArchivedModuleLayoutRoot: React.FC = observer(() => {
   const { clearAllFilters, currentProjectArchivedFilters, updateFilters } = useModuleFilter();
   // derived values
   const totalArchivedModules = projectArchivedModuleIds?.length ?? 0;
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/archived/empty-modules" });
 
   useSWR(
     workspaceSlug && projectId ? `ARCHIVED_MODULES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
@@ -60,7 +58,7 @@ export const ArchivedModuleLayoutRoot: React.FC = observer(() => {
   return (
     <>
       {calculateTotalFilters(currentProjectArchivedFilters ?? {}) !== 0 && (
-        <div className="border-b border-custom-border-200 px-5 py-3">
+        <div className="border-b border-subtle px-5 py-3">
           <ModuleAppliedFiltersList
             appliedFilters={currentProjectArchivedFilters ?? {}}
             handleClearAllFilters={() => clearAllFilters(projectId.toString(), "archived")}
@@ -72,10 +70,10 @@ export const ArchivedModuleLayoutRoot: React.FC = observer(() => {
       )}
       {totalArchivedModules === 0 ? (
         <div className="h-full place-items-center">
-          <DetailedEmptyState
-            title={t("project_module.empty_state.archived.title")}
-            description={t("project_module.empty_state.archived.description")}
-            assetPath={resolvedPath}
+          <EmptyStateDetailed
+            assetKey="archived-module"
+            title={t("workspace_empty_state.archive_modules.title")}
+            description={t("workspace_empty_state.archive_modules.description")}
           />
         </div>
       ) : (

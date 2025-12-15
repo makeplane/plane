@@ -105,3 +105,12 @@ venv
 .venv_bak
 .gitignore
 .trae/rules/project_rules.md
+
+CLAUDE.md
+build/
+.react-router/
+
+build/
+.react-router/
+temp/
+scripts/

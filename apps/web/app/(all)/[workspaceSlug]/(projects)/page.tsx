@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // components
 import { useTranslation } from "@plane/i18n";
@@ -14,7 +12,7 @@ import { WorkspaceDashboardHeader } from "./header";
 import { ProjectIssueTypeService } from "@/services/project/project-issue-type.service";
 import { useEffect } from "react";
 
-const WorkspaceDashboardPage = observer(() => {
+function WorkspaceDashboardPage() {
   const { currentWorkspace } = useWorkspace();
 
   const { t } = useTranslation();
@@ -41,6 +39,6 @@ const WorkspaceDashboardPage = observer(() => {
       </ContentWrapper>
     </>
   );
-});
+}
 
-export default WorkspaceDashboardPage;
+export default observer(WorkspaceDashboardPage);

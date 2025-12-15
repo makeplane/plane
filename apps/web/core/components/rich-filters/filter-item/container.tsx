@@ -13,7 +13,7 @@ interface FilterItemContainerProps {
   tooltipContent?: React.ReactNode;
 }
 
-export const FilterItemContainer: React.FC<FilterItemContainerProps> = (props) => {
+export function FilterItemContainer(props: FilterItemContainerProps) {
   const { children, conditionValue, showTransition, variant = "default", tooltipContent } = props;
   // refs
   const itemRef = useRef<HTMLDivElement>(null);
@@ -52,13 +52,13 @@ export const FilterItemContainer: React.FC<FilterItemContainerProps> = (props) =
     <Tooltip tooltipContent={tooltipContent} position="bottom" disabled={!tooltipContent}>
       <div
         ref={itemRef}
-        className={cn("flex h-7 items-stretch rounded overflow-hidden border transition-all duration-200", {
-          "border-custom-border-200 bg-custom-background-100": variant === "default",
-          "border-red-500 bg-custom-background-90": variant === "error",
+        className={cn("flex h-7 items-stretch rounded-sm overflow-hidden border transition-all duration-200", {
+          "border-subtle bg-surface-1": variant === "default",
+          "border-red-500 bg-surface-2": variant === "error",
         })}
       >
         {children}
       </div>
     </Tooltip>
   );
-};
+}

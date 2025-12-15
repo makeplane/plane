@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, Fragment } from "react";
 
 import { Transition, Dialog } from "@headlessui/react";
@@ -20,7 +18,7 @@ type TJoinProjectModalProps = {
   handleClose: () => void;
 };
 
-export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
+export function JoinProjectModal(props: TJoinProjectModalProps) {
   const { handleClose, isOpen, project, workspaceSlug } = props;
   // states
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
@@ -56,7 +54,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -70,9 +68,9 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-xl sm:p-6">
                 <div className="space-y-5">
-                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+                  <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
                     Join Project?
                   </Dialog.Title>
                   <p>
@@ -83,12 +81,12 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
                   <div className="space-y-3" />
                 </div>
                 <div className="mt-5 flex justify-end gap-2">
-                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                  <Button variant="secondary" size="lg" onClick={handleClose}>
                     Cancel
                   </Button>
                   <Button
                     variant="primary"
-                    size="sm"
+                    size="lg"
                     tabIndex={1}
                     type="submit"
                     onClick={handleJoin}
@@ -104,4 +102,4 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

@@ -1,6 +1,7 @@
-import { Download, ExternalLink, Minus, Plus, X } from "lucide-react";
+import { Download, ExternalLink, Minus, Plus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
+import { CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 
@@ -19,7 +20,7 @@ type Props = {
   width: string;
 };
 
-const ImageFullScreenModalWithoutPortal = (props: Props) => {
+function ImageFullScreenModalWithoutPortal(props: Props) {
   const { aspectRatio, isFullScreenEnabled, isTouchDevice, downloadSrc, src, toggleFullScreenMode, width } = props;
   // refs
   const dragStart = useRef({ x: 0, y: 0 });
@@ -212,7 +213,7 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
           className="absolute top-10 right-10 size-8 grid place-items-center"
           aria-label="Close image viewer"
         >
-          <X className="size-8 text-white/60 hover:text-white transition-colors" />
+          <CloseIcon className="size-8 text-on-color/60 hover:text-on-color transition-colors" />
         </button>
         <img
           ref={setImageRef}
@@ -241,13 +242,13 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
                 }
                 handleMagnification("decrease");
               }}
-              className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
+              className="size-6 grid place-items-center text-on-color/60 hover:text-on-color disabled:text-on-color/30 transition-colors duration-200"
               disabled={magnification <= MIN_ZOOM}
               aria-label="Zoom out"
             >
               <Minus className="size-4" />
             </button>
-            <span className="text-sm w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
+            <span className="text-13 w-12 text-center text-on-color">{Math.round(100 * magnification)}%</span>
             <button
               type="button"
               onClick={(e) => {
@@ -257,7 +258,7 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
                 }
                 handleMagnification("increase");
               }}
-              className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
+              className="size-6 grid place-items-center text-on-color/60 hover:text-on-color disabled:text-on-color/30 transition-colors duration-200"
               disabled={magnification >= MAX_ZOOM}
               aria-label="Zoom in"
             >
@@ -268,7 +269,7 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
             <button
               type="button"
               onClick={() => window.open(downloadSrc, "_blank")}
-              className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
+              className="flex-shrink-0 size-8 grid place-items-center text-on-color/60 hover:text-on-color transition-colors duration-200"
               aria-label="Download image"
             >
               <Download className="size-4" />
@@ -278,7 +279,7 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
             <button
               type="button"
               onClick={() => window.open(src, "_blank")}
-              className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
+              className="flex-shrink-0 size-8 grid place-items-center text-on-color/60 hover:text-on-color transition-colors duration-200"
               aria-label="Open image in new tab"
             >
               <ExternalLink className="size-4" />
@@ -288,9 +289,9 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
       </div>
     </div>
   );
-};
+}
 
-export const ImageFullScreenModal: React.FC<Props> = (props) => {
+export function ImageFullScreenModal(props: Props) {
   let modal = <ImageFullScreenModalWithoutPortal {...props} />;
   const portal = document.querySelector("#editor-portal");
   if (portal) {
@@ -302,4 +303,4 @@ export const ImageFullScreenModal: React.FC<Props> = (props) => {
     }
   }
   return modal;
-};
+}

@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -44,7 +41,7 @@ type TProjectItemsProps = {
   additionalNavigationItems?: (workspaceSlug: string, projectId: string) => TNavigationItem[];
 };
 
-export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
+export const ProjectNavigation = observer(function ProjectNavigation(props: TProjectItemsProps) {
   const { workspaceSlug, projectId, additionalNavigationItems } = props;
   const { workItem: workItemIdentifierFromRoute } = useParams();
   // store hooks
@@ -69,8 +66,6 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
       toggleSidebar();
     }
   };
-
-  if (!project) return null;
 
   const baseNavigation = useCallback(
     (workspaceSlug: string, projectId: string): TNavigationItem[] => [
@@ -101,7 +96,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
         href: `/${workspaceSlug}/projects/${projectId}/cycles`,
         icon: CycleIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-        shouldRender: project.cycle_view,
+        shouldRender: project?.cycle_view ?? false,
         sortOrder: 2,
       },
       {
@@ -111,7 +106,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
         href: `/${workspaceSlug}/projects/${projectId}/modules`,
         icon: ModuleIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-        shouldRender: project.module_view,
+        shouldRender: project?.module_view ?? false,
         sortOrder: 3,
       },
       {
@@ -121,7 +116,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
         href: `/${workspaceSlug}/projects/${projectId}/views`,
         icon: ViewsIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-        shouldRender: project.issue_views_view,
+        shouldRender: project?.issue_views_view ?? false,
         sortOrder: 4,
       },
       {
@@ -131,7 +126,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
         href: `/${workspaceSlug}/projects/${projectId}/pages`,
         icon: PageIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-        shouldRender: project.page_view,
+        shouldRender: project?.page_view ?? false,
         sortOrder: 5,
       },
       {
@@ -141,7 +136,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
         href: `/${workspaceSlug}/projects/${projectId}/intake`,
         icon: IntakeIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-        shouldRender: project.inbox_view,
+        shouldRender: project?.inbox_view ?? false,
         sortOrder: 6,
       },
       {
@@ -195,6 +190,8 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
     [pathname, workItem, workItemId, projectId]
   );
 
+  if (!project) return null;
+
   return (
     <>
       {navigationItemsMemo.map((item) => {
@@ -208,7 +205,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
             <SidebarNavItem isActive={!!isActive(item)}>
               <div className="flex items-center gap-1.5 py-[1px]">
                 <item.icon className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`} />
-                <span className="text-xs font-medium">{t(item.i18n_key)}</span>
+                <span className="text-11 font-medium">{t(item.i18n_key)}</span>
               </div>
             </SidebarNavItem>
           </Link>

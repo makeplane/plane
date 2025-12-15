@@ -2,7 +2,8 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { SmilePlus } from "lucide-react";
 import { stringToEmoji } from "../emoji-icon-picker";
-import { EmojiReactionGroup, EmojiReactionType } from "./emoji-reaction";
+import type { EmojiReactionType } from "./emoji-reaction";
+import { EmojiReactionGroup } from "./emoji-reaction";
 import { EmojiReactionPicker } from "./emoji-reaction-picker";
 
 const meta = {
@@ -18,6 +19,12 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Pick Emoji",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
@@ -30,15 +37,13 @@ export const Default: Story = {
           onChange={setSelectedEmoji}
           closeOnSelect
           label={
-            <span className="flex items-center justify-center rounded-md px-2 size-8 text-xl">
-              {selectedEmoji ? stringToEmoji(selectedEmoji) : <SmilePlus className="h-6 text-custom-text-100" />}
+            <span className="flex items-center justify-center rounded-md px-2 size-8 text-18">
+              {selectedEmoji ? stringToEmoji(selectedEmoji) : <SmilePlus className="h-6 text-primary" />}
             </span>
           }
         />
         {selectedEmoji && (
-          <div className="text-sm p-4 bg-custom-background-80 rounded border border-custom-border-200">
-            Selected: {selectedEmoji}
-          </div>
+          <div className="text-13 p-4 bg-layer-1 rounded-sm border border-subtle">Selected: {selectedEmoji}</div>
         )}
       </div>
     );
@@ -46,6 +51,12 @@ export const Default: Story = {
 };
 
 export const WithCustomLabel: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Add Reaction",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
@@ -58,19 +69,25 @@ export const WithCustomLabel: Story = {
           onChange={setSelectedEmoji}
           closeOnSelect
           label={
-            <button className="px-4 py-2 bg-custom-background-80 border border-custom-border-200 rounded hover:bg-custom-background-90 flex items-center gap-2">
+            <button className="px-4 py-2 bg-layer-1 border border-subtle rounded-sm hover:bg-surface-2 flex items-center gap-2">
               {selectedEmoji ? stringToEmoji(selectedEmoji) : <SmilePlus className="h-4 w-4" />}
-              <span className="text-sm">Add Reaction</span>
+              <span className="text-13">Add Reaction</span>
             </button>
           }
         />
-        {selectedEmoji && <div className="text-sm">Selected: {selectedEmoji}</div>}
+        {selectedEmoji && <div className="text-13">Selected: {selectedEmoji}</div>}
       </div>
     );
   },
 };
 
 export const InlineReactions: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Add",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [reactions, setReactions] = useState<EmojiReactionType[]>([
@@ -117,7 +134,7 @@ export const InlineReactions: Story = {
           onChange={handleReactionAdd}
           closeOnSelect
           label={
-            <button className="inline-flex items-center justify-center rounded-full border border-dashed border-custom-border-300 bg-custom-background-100 text-custom-text-400 transition-all duration-200 hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5 h-7 w-7">
+            <button className="inline-flex items-center justify-center rounded-full border border-dashed border-strong bg-surface-1 text-placeholder transition-all duration-200 hover:border-accent-strong hover:text-accent-primary hover:bg-accent-primary/5 h-7 w-7">
               <SmilePlus className="h-3.5 w-3.5" />
             </button>
           }
@@ -128,6 +145,12 @@ export const InlineReactions: Story = {
 };
 
 export const DifferentPlacements: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Placements",
+  },
   render() {
     const [isOpen1, setIsOpen1] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
@@ -137,7 +160,7 @@ export const DifferentPlacements: Story = {
     return (
       <div className="p-8 space-y-8">
         <div className="flex gap-4 items-center">
-          <span className="text-sm w-32">Bottom Start:</span>
+          <span className="text-13 w-32">Bottom Start:</span>
           <EmojiReactionPicker
             isOpen={isOpen1}
             handleToggle={setIsOpen1}
@@ -147,7 +170,7 @@ export const DifferentPlacements: Story = {
           />
         </div>
         <div className="flex gap-4 items-center">
-          <span className="text-sm w-32">Bottom End:</span>
+          <span className="text-13 w-32">Bottom End:</span>
           <EmojiReactionPicker
             isOpen={isOpen2}
             handleToggle={setIsOpen2}
@@ -157,7 +180,7 @@ export const DifferentPlacements: Story = {
           />
         </div>
         <div className="flex gap-4 items-center">
-          <span className="text-sm w-32">Top Start:</span>
+          <span className="text-13 w-32">Top Start:</span>
           <EmojiReactionPicker
             isOpen={isOpen3}
             handleToggle={setIsOpen3}
@@ -167,7 +190,7 @@ export const DifferentPlacements: Story = {
           />
         </div>
         <div className="flex gap-4 items-center">
-          <span className="text-sm w-32">Top End:</span>
+          <span className="text-13 w-32">Top End:</span>
           <EmojiReactionPicker
             isOpen={isOpen4}
             handleToggle={setIsOpen4}
@@ -182,6 +205,12 @@ export const DifferentPlacements: Story = {
 };
 
 export const SearchDisabled: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "No Search",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
@@ -195,18 +224,24 @@ export const SearchDisabled: Story = {
           closeOnSelect
           searchDisabled
           label={
-            <button className="px-4 py-2 bg-custom-background-80 border border-custom-border-200 rounded hover:bg-custom-background-90">
+            <button className="px-4 py-2 bg-layer-1 border border-subtle rounded-sm hover:bg-surface-2">
               No Search
             </button>
           }
         />
-        {selectedEmoji && <div className="text-sm">Selected: {selectedEmoji}</div>}
+        {selectedEmoji && <div className="text-13">Selected: {selectedEmoji}</div>}
       </div>
     );
   },
 };
 
 export const CustomSearchPlaceholder: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Custom Search",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
@@ -220,18 +255,24 @@ export const CustomSearchPlaceholder: Story = {
           closeOnSelect
           searchPlaceholder="Find your emoji..."
           label={
-            <button className="px-4 py-2 bg-custom-background-80 border border-custom-border-200 rounded hover:bg-custom-background-90">
+            <button className="px-4 py-2 bg-layer-1 border border-subtle rounded-sm hover:bg-surface-2">
               Custom Search
             </button>
           }
         />
-        {selectedEmoji && <div className="text-sm">Selected: {selectedEmoji}</div>}
+        {selectedEmoji && <div className="text-13">Selected: {selectedEmoji}</div>}
       </div>
     );
   },
 };
 
 export const CloseOnSelectDisabled: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Select Multiple",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEmojis, setSelectedEmojis] = useState<string[]>([]);
@@ -249,24 +290,24 @@ export const CloseOnSelectDisabled: Story = {
             onChange={handleChange}
             closeOnSelect={false}
             label={
-              <button className="px-4 py-2 bg-custom-background-80 border border-custom-border-200 rounded hover:bg-custom-background-90">
+              <button className="px-4 py-2 bg-layer-1 border border-subtle rounded-sm hover:bg-surface-2">
                 Select Multiple (Stays Open)
               </button>
             }
           />
           <button
-            className="px-3 py-1.5 text-sm bg-custom-background-80 rounded hover:bg-custom-background-90"
+            className="px-3 py-1.5 text-13 bg-layer-1 rounded-sm hover:bg-surface-2"
             onClick={() => setSelectedEmojis([])}
           >
             Clear
           </button>
         </div>
         {selectedEmojis.length > 0 && (
-          <div className="text-sm p-4 bg-custom-background-80 rounded border border-custom-border-200">
+          <div className="text-13 p-4 bg-layer-1 rounded-sm border border-subtle">
             <div className="font-medium mb-2">Selected ({selectedEmojis.length}):</div>
             <div className="flex gap-2 flex-wrap">
               {selectedEmojis.map((emoji, idx) => (
-                <span key={idx} className="text-xl">
+                <span key={idx} className="text-18">
                   {emoji}
                 </span>
               ))}
@@ -279,6 +320,12 @@ export const CloseOnSelectDisabled: Story = {
 };
 
 export const InMessageContext: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Message",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [reactions, setReactions] = useState<EmojiReactionType[]>([
@@ -311,14 +358,14 @@ export const InMessageContext: Story = {
     };
 
     return (
-      <div className="max-w-md border border-custom-border-200 rounded-lg p-4 space-y-3">
+      <div className="max-w-md border border-subtle rounded-lg p-4 space-y-3">
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-custom-primary-100 flex items-center justify-center text-white text-sm">
+          <div className="w-8 h-8 rounded-full bg-accent-primary flex items-center justify-center text-on-color text-13">
             AB
           </div>
           <div className="flex-1">
-            <div className="font-medium text-sm">Alice Brown</div>
-            <div className="text-sm text-custom-text-300 mt-1">
+            <div className="font-medium text-13">Alice Brown</div>
+            <div className="text-13 text-tertiary mt-1">
               Just finished the design for the new dashboard! Would love to hear your thoughts.
             </div>
           </div>
@@ -331,7 +378,7 @@ export const InMessageContext: Story = {
             onChange={handleReactionAdd}
             closeOnSelect
             label={
-              <button className="inline-flex items-center justify-center rounded-full border border-dashed border-custom-border-300 bg-custom-background-100 text-custom-text-400 transition-all duration-200 hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5 h-7 w-7">
+              <button className="inline-flex items-center justify-center rounded-full border border-dashed border-strong bg-surface-1 text-placeholder transition-all duration-200 hover:border-accent-strong hover:text-accent-primary hover:bg-accent-primary/5 h-7 w-7">
                 <SmilePlus className="h-3.5 w-3.5" />
               </button>
             }

@@ -1,13 +1,10 @@
-"use client";
-
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
-import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CalendarLayoutIcon, BoardLayoutIcon, ListLayoutIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -21,18 +18,14 @@ import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 
 const SUPPORTED_LAYOUTS = [
-  { key: "list", i18n_title: "issue.layouts.list", icon: List },
-  { key: "kanban", i18n_title: "issue.layouts.kanban", icon: Kanban },
-  { key: "calendar", i18n_title: "issue.layouts.calendar", icon: Calendar },
+  { key: "list", i18n_title: "issue.layouts.list", icon: ListLayoutIcon },
+  { key: "kanban", i18n_title: "issue.layouts.kanban", icon: BoardLayoutIcon },
+  { key: "calendar", i18n_title: "issue.layouts.calendar", icon: CalendarLayoutIcon },
 ];
 
-export const ModuleIssuesMobileHeader = observer(() => {
+export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHeader() {
   // router
-  const { workspaceSlug, projectId, moduleId } = useParams() as {
-    workspaceSlug: string;
-    projectId: string;
-    moduleId: string;
-  };
+  const { workspaceSlug, projectId, moduleId } = useParams();
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // plane hooks
@@ -79,13 +72,13 @@ export const ModuleIssuesMobileHeader = observer(() => {
         moduleDetails={moduleDetails ?? undefined}
         projectDetails={currentProjectDetails}
       />
-      <div className="flex justify-evenly border-b border-custom-border-200 bg-custom-background-100 py-2">
+      <div className="flex justify-evenly border-b border-subtle bg-surface-1 py-2">
         <CustomMenu
           maxHeight={"md"}
-          className="flex flex-grow justify-center text-sm text-custom-text-200"
+          className="flex flex-grow justify-center text-13 text-secondary"
           placement="bottom-start"
-          customButton={<span className="flex flex-grow justify-center text-sm text-custom-text-200">Layout</span>}
-          customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
+          customButton={<span className="flex flex-grow justify-center text-13 text-secondary">Layout</span>}
+          customButtonClassName="flex flex-grow justify-center text-secondary text-13"
           closeOnSelect
         >
           {SUPPORTED_LAYOUTS.map((layout, index) => (
@@ -97,18 +90,18 @@ export const ModuleIssuesMobileHeader = observer(() => {
               className="flex items-center gap-2"
             >
               <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="h-3 w-3" />
-              <div className="text-custom-text-300">{t(layout.i18n_title)}</div>
+              <div className="text-tertiary">{t(layout.i18n_title)}</div>
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
+        <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
           <FiltersDropdown
             title="Display"
             placement="bottom-end"
             menuButton={
-              <span className="flex items-center text-sm text-custom-text-200">
+              <span className="flex items-center text-13 text-secondary">
                 Display
-                <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" />
+                <ChevronDownIcon className="ml-2 h-4 w-4 text-secondary" />
               </span>
             }
           >
@@ -129,7 +122,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
 
         <button
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center border-l border-custom-border-200 text-sm text-custom-text-200"
+          className="flex flex-grow justify-center border-l border-subtle text-13 text-secondary"
         >
           Analytics
         </button>

@@ -1,6 +1,6 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { TPublicMember } from "@plane/types";
+import type { TPublicMember } from "@plane/types";
 // api service
 import { APIService } from "../api.service";
 

@@ -12,7 +12,7 @@ type Props = {
   version: TDescriptionVersion;
 };
 
-export const DescriptionVersionsDropdownItem: React.FC<Props> = observer((props) => {
+export const DescriptionVersionsDropdownItem = observer(function DescriptionVersionsDropdownItem(props: Props) {
   const { onClick, version } = props;
   // store hooks
   const { getUserDetails } = useMember();
@@ -30,7 +30,7 @@ export const DescriptionVersionsDropdownItem: React.FC<Props> = observer((props)
           src={getFileURL(versionCreator?.avatar_url ?? "")}
         />
       </span>
-      <p className="text-xs text-custom-text-200 flex items-center gap-1.5">
+      <p className="text-11 text-secondary flex items-center gap-1.5">
         <span className="font-medium">{versionCreator?.display_name ?? t("common.deactivated_user")}</span>
         <span>{calculateTimeAgo(version.last_saved_at)}</span>
       </p>

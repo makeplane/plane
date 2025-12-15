@@ -1,4 +1,4 @@
-import { TAllAvailableOperatorsForDisplay, TSupportedOperators } from "@plane/types";
+import type { TAllAvailableOperatorsForDisplay, TSupportedOperators } from "@plane/types";
 
 /**
  * Result type for operator conversion

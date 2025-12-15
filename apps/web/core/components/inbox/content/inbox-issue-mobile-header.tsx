@@ -1,20 +1,7 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
-import {
-  CircleCheck,
-  CircleX,
-  ChevronDown,
-  ChevronUp,
-  Clock,
-  ExternalLink,
-  FileStack,
-  Link,
-  Trash2,
-  PanelLeft,
-  MoveRight,
-} from "lucide-react";
+import { CircleCheck, CircleX, Clock, ExternalLink, FileStack, Link, Trash2, PanelLeft, MoveRight } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
@@ -52,7 +39,7 @@ type Props = {
   handleActionWithPermission: (isAdmin: boolean, action: () => void, errorMessage: string) => void;
 };
 
-export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) => {
+export const InboxIssueActionsMobileHeader = observer(function InboxIssueActionsMobileHeader(props: Props) {
   const {
     inboxIssue,
     isSubmitting,
@@ -100,31 +87,28 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
     <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
       {isNotificationEmbed && (
         <button onClick={embedRemoveCurrentNotification}>
-          <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200 mr-2" />
+          <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary mr-2" />
         </button>
       )}
       <PanelLeft
         onClick={() => setIsMobileSidebar(!isMobileSidebar)}
-        className={cn(
-          "w-4 h-4 flex-shrink-0 mr-2 my-auto",
-          isMobileSidebar ? "text-custom-primary-100" : "text-custom-text-200"
-        )}
+        className={cn("w-4 h-4 flex-shrink-0 mr-2 my-auto", isMobileSidebar ? "text-accent-primary" : "text-secondary")}
       />
-      <div className="flex items-center gap-2 w-full bg-custom-background-100 z-[15]">
+      <div className="flex items-center gap-2 w-full bg-surface-1 z-[15]">
         <div className="flex items-center gap-x-2">
           <button
             type="button"
-            className="rounded border border-custom-border-200 p-1.5"
+            className="rounded-sm border border-subtle p-1.5"
             onClick={() => handleInboxIssueNavigation("prev")}
           >
-            <ChevronUp size={14} strokeWidth={2} />
+            <ChevronUpIcon height={14} width={14} strokeWidth={2} />
           </button>
           <button
             type="button"
-            className="rounded border border-custom-border-200 p-1.5"
+            className="rounded-sm border border-subtle p-1.5"
             onClick={() => handleInboxIssueNavigation("next")}
           >
-            <ChevronDown size={14} strokeWidth={2} />
+            <ChevronDownIcon height={14} width={14} strokeWidth={2} />
           </button>
         </div>
         <div className="flex items-center gap-4">

@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useMemo, useRef } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
@@ -15,7 +13,7 @@ import { KanBan } from "./default";
 type Props = {
   anchor: string;
 };
-export const IssueKanbanLayoutRoot: React.FC<Props> = observer((props: Props) => {
+export const IssueKanbanLayoutRoot = observer(function IssueKanbanLayoutRoot(props: Props) {
   const { anchor } = props;
   // store hooks
   const { groupedIssueIds, getIssueLoader, fetchNextPublicIssues, getGroupIssueCount, getPaginationData } = useIssue();
@@ -51,10 +49,10 @@ export const IssueKanbanLayoutRoot: React.FC<Props> = observer((props: Props) =>
   return (
     <IssueLayoutHOC getGroupIssueCount={getGroupIssueCount} getIssueLoader={getIssueLoader}>
       <div
-        className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-custom-background-90 overflow-x-auto overflow-y-hidden`}
+        className="horizontal-scrollbar scrollbar-lg relative flex size-ful overflow-x-auto overflow-y-hidden"
         ref={scrollableContainerRef}
       >
-        <div className="relative h-full w-max min-w-full bg-custom-background-90">
+        <div className="relative h-full w-max min-w-full">
           <div className="h-full w-max">
             <KanBan
               groupedIssueIds={groupedIssueIds ?? {}}

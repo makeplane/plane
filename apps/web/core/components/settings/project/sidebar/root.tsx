@@ -2,9 +2,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { PROJECT_SETTINGS_CATEGORIES, PROJECT_SETTINGS_CATEGORY } from "@plane/constants";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { getUserRole } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // local imports
@@ -15,7 +15,7 @@ type TProjectSettingsSidebarProps = {
   isMobile?: boolean;
 };
 
-export const ProjectSettingsSidebar = observer((props: TProjectSettingsSidebarProps) => {
+export const ProjectSettingsSidebar = observer(function ProjectSettingsSidebar(props: TProjectSettingsSidebarProps) {
   const { isMobile = false } = props;
   const { workspaceSlug } = useParams();
   // store hooks
@@ -40,7 +40,7 @@ export const ProjectSettingsSidebar = observer((props: TProjectSettingsSidebarPr
       appendItemsToTitle={(key: string) => {
         const role = projectMap[key].member_role;
         return (
-          <div className="text-xs font-medium text-custom-text-200 capitalize bg-custom-background-90 rounded-md px-1 py-0.5">
+          <div className="text-11 font-medium text-secondary capitalize rounded-md px-1 py-0.5">
             {role ? getUserRole(role)?.toLowerCase() : "Guest"}
           </div>
         );

@@ -1,10 +1,8 @@
-"use client";
-
 import React from "react";
-import { ChevronRight, ChevronUp } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { Button } from "@plane/propel/button";
+import { ChevronRightIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { IProject } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
@@ -14,16 +12,16 @@ export interface IArchiveProject {
   handleArchive: () => void;
 }
 
-export const ArchiveProjectSelection: React.FC<IArchiveProject> = (props) => {
+export function ArchiveProjectSelection(props: IArchiveProject) {
   const { projectDetails, handleArchive } = props;
 
   return (
-    <Disclosure as="div" className="border-t border-custom-border-100 py-4">
+    <Disclosure as="div" className="border-t border-subtle py-4">
       {({ open }) => (
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between">
-            <span className="text-xl tracking-tight">Archive project</span>
-            {open ? <ChevronUp className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+            <span className="text-18 tracking-tight">Archive project</span>
+            {open ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronRightIcon className="h-5 w-5" />}
           </Disclosure.Button>
           <Transition
             show={open}
@@ -36,14 +34,14 @@ export const ArchiveProjectSelection: React.FC<IArchiveProject> = (props) => {
           >
             <Disclosure.Panel>
               <div className="flex flex-col gap-8 pt-4">
-                <span className="text-sm tracking-tight">
+                <span className="text-13 tracking-tight">
                   Archiving a project will unlist your project from your side navigation although you will still be able
                   to access it from your projects page. You can restore the project or delete it whenever you want.
                 </span>
                 <div>
                   {projectDetails ? (
                     <div>
-                      <Button variant="outline-danger" onClick={handleArchive}>
+                      <Button variant="error-fill" size="lg" onClick={handleArchive}>
                         Archive project
                       </Button>
                     </div>
@@ -60,4 +58,4 @@ export const ArchiveProjectSelection: React.FC<IArchiveProject> = (props) => {
       )}
     </Disclosure>
   );
-};
+}

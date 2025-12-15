@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -18,7 +16,7 @@ type TInboxIssueTitle = {
   isTitleLengthMoreThan255Character?: boolean;
 };
 
-export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
+export const InboxIssueTitle = observer(function InboxIssueTitle(props: TInboxIssueTitle) {
   const { data, handleData, isTitleLengthMoreThan255Character } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -34,12 +32,12 @@ export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
         value={data?.name}
         onChange={(e) => handleData("name", e.target.value)}
         placeholder={t("title")}
-        className="w-full text-base"
+        className="w-full text-14"
         tabIndex={getIndex("name")}
         required
       />
       {isTitleLengthMoreThan255Character && (
-        <span className="text-xs text-red-500">{t("title_should_be_less_than_255_characters")}</span>
+        <span className="text-11 text-red-500">{t("title_should_be_less_than_255_characters")}</span>
       )}
     </div>
   );

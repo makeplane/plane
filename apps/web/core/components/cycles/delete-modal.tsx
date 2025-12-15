@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
@@ -24,7 +22,7 @@ interface ICycleDelete {
   projectId: string;
 }
 
-export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
+export const CycleDeleteModal = observer(function CycleDeleteModal(props: ICycleDelete) {
   const { isOpen, handleClose, cycle, workspaceSlug, projectId } = props;
   // states
   const [loader, setLoader] = useState(false);
@@ -97,7 +95,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
       content={
         <>
           Are you sure you want to delete cycle{' "'}
-          <span className="break-words font-medium text-custom-text-100">{cycle?.name}</span>
+          <span className="break-words font-medium text-primary">{cycle?.name}</span>
           {'"'}? All of the data related to the cycle will be permanently removed. This action cannot be undone.
         </>
       }

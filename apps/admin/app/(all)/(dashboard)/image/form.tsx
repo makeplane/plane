@@ -1,5 +1,3 @@
-"use client";
-import type { FC } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -15,7 +13,7 @@ type IInstanceImageConfigForm = {
 
 type ImageConfigFormValues = Record<TInstanceImageConfigurationKeys, string>;
 
-export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => {
+export function InstanceImageConfigForm(props: IInstanceImageConfigForm) {
   const { config } = props;
   // store hooks
   const { updateInstanceConfigurations } = useInstance();
@@ -58,7 +56,7 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
               <a
                 href="https://unsplash.com/documentation#creating-a-developer-account"
                 target="_blank"
-                className="text-custom-primary-100 hover:underline"
+                className="text-accent-primary hover:underline"
                 rel="noreferrer"
               >
                 Learn more.
@@ -72,10 +70,10 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
       </div>
 
       <div>
-        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+        <Button variant="primary" size="lg" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
       </div>
     </div>
   );
-};
+}

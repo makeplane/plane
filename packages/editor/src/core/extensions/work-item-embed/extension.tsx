@@ -1,4 +1,5 @@
-import { ReactNodeViewRenderer, NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
+import { ReactNodeViewRenderer, NodeViewWrapper } from "@tiptap/react";
+import type { NodeViewProps } from "@tiptap/react";
 // local imports
 import { WorkItemEmbedExtensionConfig } from "./extension-config";
 
@@ -14,8 +15,8 @@ type Props = {
   }) => React.ReactNode;
 };
 
-export const WorkItemEmbedExtension = (props: Props) =>
-  WorkItemEmbedExtensionConfig.extend({
+export function WorkItemEmbedExtension(props: Props) {
+  return WorkItemEmbedExtensionConfig.extend({
     addNodeView() {
       return ReactNodeViewRenderer((issueProps: NodeViewProps) => (
         <NodeViewWrapper>
@@ -28,3 +29,4 @@ export const WorkItemEmbedExtension = (props: Props) =>
       ));
     },
   });
+}

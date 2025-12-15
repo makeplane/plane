@@ -1,5 +1,3 @@
-"use client";
-
 import { Copy } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -18,7 +16,7 @@ type Props = {
   tokenDetails: IApiToken;
 };
 
-export const GeneratedTokenDetails: React.FC<Props> = (props) => {
+export function GeneratedTokenDetails(props: Props) {
   const { handleClose, tokenDetails } = props;
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
@@ -35,29 +33,29 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
   return (
     <div className="w-full p-5">
       <div className="w-full space-y-3 text-wrap">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{t("workspace_settings.key_created")}</h3>
-        <p className="text-sm text-custom-text-400">{t("workspace_settings.copy_key")}</p>
+        <h3 className="text-16 font-medium leading-6 text-primary">{t("workspace_settings.key_created")}</h3>
+        <p className="text-13 text-placeholder">{t("workspace_settings.copy_key")}</p>
       </div>
       <button
         type="button"
         onClick={() => copyApiToken(tokenDetails.token ?? "")}
-        className="mt-4 flex truncate w-full items-center justify-between rounded-md border-[0.5px] border-custom-border-200 px-3 py-2 text-sm font-medium outline-none"
+        className="mt-4 flex truncate w-full items-center justify-between rounded-md border-[0.5px] border-subtle px-3 py-2 text-13 font-medium outline-none"
       >
         <span className="truncate pr-2">{tokenDetails.token}</span>
         <Tooltip tooltipContent="Copy secret key" isMobile={isMobile}>
-          <Copy className="h-4 w-4 text-custom-text-400 flex-shrink-0" />
+          <Copy className="h-4 w-4 text-placeholder flex-shrink-0" />
         </Tooltip>
       </button>
       <div className="mt-6 flex items-center justify-between">
-        <p className="text-xs text-custom-text-400">
+        <p className="text-11 text-placeholder">
           {tokenDetails.expired_at
-            ? `Expires ${renderFormattedDate(tokenDetails.expired_at!)} at ${renderFormattedTime(tokenDetails.expired_at!)}`
+            ? `Expires ${renderFormattedDate(tokenDetails.expired_at)} at ${renderFormattedTime(tokenDetails.expired_at)}`
             : "Never expires"}
         </p>
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="secondary" onClick={handleClose}>
           {t("close")}
         </Button>
       </div>
     </div>
   );
-};
+}

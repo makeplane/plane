@@ -1,4 +1,4 @@
-import { AxiosError } from "axios";
+import type { AxiosError } from "axios";
 
 /**
  * Application error class that sanitizes and standardizes errors across the app.

@@ -4,28 +4,25 @@ import useSWR from "swr";
 // plane imports
 import { PRODUCT_TOUR_TRACKER_EVENTS } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
-import { cn } from "@plane/utils";
-// components
-import { TourRoot } from "@/components/onboarding/tour";
 // helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 import { useUserProfile, useUser } from "@/hooks/store/user";
-// plane web components
+// plane web imports
 import { HomePeekOverviewsRoot } from "@/plane-web/components/home";
+import { TourRoot } from "@/plane-web/components/onboarding/tour/root";
 // local imports
 import { DashboardWidgets } from "./home-dashboard-widgets";
 import { UserGreetingsView } from "./user-greetings";
 
-export const WorkspaceHomeView = observer(() => {
+export const WorkspaceHomeView = observer(function WorkspaceHomeView() {
   // store hooks
   const { workspaceSlug } = useParams();
   const { data: currentUser } = useUser();
   const { data: currentUserProfile, updateTourCompleted } = useUserProfile();
   const { fetchWidgets } = useHome();
-  
-  
+
   useSWR(
     workspaceSlug ? `HOME_DASHBOARD_WIDGETS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchWidgets(workspaceSlug?.toString()) : null,
@@ -55,18 +52,15 @@ export const WorkspaceHomeView = observer(() => {
   return (
     <>
       {currentUserProfile && !currentUserProfile.is_tour_completed && (
-        <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-custom-backdrop bg-opacity-50 transition-opacity">
-          {/* 新手教程 */}
-          <TourRoot onComplete={handleTourCompleted} /> 
+        <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-backdrop bg-opacity-50 transition-opacity overflow-y-auto">
+          <TourRoot onComplete={handleTourCompleted} />
         </div>
       )}
       <>
         <HomePeekOverviewsRoot />
-        <ContentWrapper className={cn("gap-6 bg-custom-background-100 mx-auto scrollbar-hide px-page-x lg:px-0")}>
+        <ContentWrapper className="gap-6 bg-surface-1 mx-auto scrollbar-hide px-page-x">
           <div className="max-w-[800px] mx-auto w-full">
-            {/* 展示用户名和时间 */}
             {currentUser && <UserGreetingsView user={currentUser} />}
-            {/* 小部件和首页小部件展示 */}
             <DashboardWidgets />
           </div>
         </ContentWrapper>

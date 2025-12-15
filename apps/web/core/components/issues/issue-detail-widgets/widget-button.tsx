@@ -1,31 +1,1 @@
-"use client";
-import type { FC } from "react";
-import React from "react";
-// helpers
-import { cn } from "@plane/utils";
-
-type Props = {
-  icon: React.ReactNode;
-  title: string;
-  disabled?: boolean;
-  onClick?: () => void;
-};
-
-export const IssueDetailWidgetButton: FC<Props> = (props) => {
-  const { icon, title, disabled = false, onClick } = props;
-  return (
-    <div
-      className={cn(
-        "h-full w-min whitespace-nowrap flex items-center gap-2 border border-custom-border-200 rounded px-3 py-1.5",
-        {
-          "cursor-not-allowed text-custom-text-400 bg-custom-background-90": disabled,
-          "cursor-pointer text-custom-text-300 hover:bg-custom-background-80": !disabled,
-        }
-      )}
-      onClick={disabled ? undefined : onClick}
-    >
-      {icon && icon}
-      <span className="text-sm font-medium">{title}</span>
-    </div>
-  );
-};
+import type { FC } from "react";import React from "react";// helpersimport { Button } from "@plane/propel/button";type Props = {  icon: React.ReactNode;  title: string;  disabled?: boolean;  onClick?: () => void;};export function IssueDetailWidgetButton(props: Props) {  const { icon, title, disabled = false,onClick } = props;  return (    <div      className={cn(        "h-full w-min whitespace-nowrap flex items-center gap-2 border border-custom-border-200 rounded px-3 py-1.5",        {          "cursor-not-allowed text-custom-text-400 bg-custom-background-90": disabled,          "cursor-pointer text-custom-text-300 hover:bg-custom-background-80": !disabled,        }      )}      onClick={disabled ? undefined : onClick}    >      {icon && icon}      <span className="text-body-xs-medium">{title}</span>    </div>  );}

@@ -1,8 +1,7 @@
-"use client";
-
 import { observer } from "mobx-react";
 // icons
-import { ChevronDown, ListFilter } from "lucide-react";
+import { ListFilter } from "lucide-react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 // components
 import { Row } from "@plane/ui";
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
@@ -12,7 +11,7 @@ import { ViewOrderByDropdown } from "@/components/views/filters/order-by";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectView } from "@/hooks/store/use-project-view";
 
-export const ViewMobileHeader = observer(() => {
+export const ViewMobileHeader = observer(function ViewMobileHeader() {
   // store hooks
   const { filters, updateFilters } = useProjectView();
   const {
@@ -21,8 +20,8 @@ export const ViewMobileHeader = observer(() => {
 
   return (
     <>
-      <div className="md:hidden flex justify-evenly border-b border-custom-border-200 py-2 z-[13] bg-custom-background-100">
-        <Row className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
+      <div className="md:hidden flex justify-evenly border-b border-subtle py-2 z-[13] bg-surface-1">
+        <Row className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
           <ViewOrderByDropdown
             sortBy={filters.sortBy}
             sortKey={filters.sortKey}
@@ -33,16 +32,16 @@ export const ViewMobileHeader = observer(() => {
             isMobile
           />
         </Row>
-        <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
+        <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
           <FiltersDropdown
             icon={<ListFilter className="h-3 w-3" />}
             title="Filters"
             placement="bottom-end"
             isFiltersApplied={false}
             menuButton={
-              <Row className="flex items-center text-sm text-custom-text-200">
+              <Row className="flex items-center text-13 text-secondary">
                 Filters
-                <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" strokeWidth={2} />
+                <ChevronDownIcon className="ml-2 h-4 w-4 text-secondary" strokeWidth={2} />
               </Row>
             }
           >

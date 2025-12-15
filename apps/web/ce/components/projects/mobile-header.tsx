@@ -1,10 +1,10 @@
-"use client";
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronDown, ListFilter } from "lucide-react";
+import { ListFilter } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TProjectFilters } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
 // components
@@ -15,7 +15,7 @@ import { ProjectOrderByDropdown } from "@/components/project/dropdowns/order-by"
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
 
-export const ProjectsListMobileHeader = observer(() => {
+export const ProjectsListMobileHeader = observer(function ProjectsListMobileHeader() {
   // i18n
   const { t } = useTranslation();
   // router
@@ -52,7 +52,7 @@ export const ProjectsListMobileHeader = observer(() => {
   const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0;
 
   return (
-    <div className="flex py-2 border-b border-custom-border-200 md:hidden bg-custom-background-100 w-full">
+    <div className="flex py-2 border-b border-subtle md:hidden bg-surface-1 w-full">
       <ProjectOrderByDropdown
         value={displayFilters?.order_by}
         onChange={(val) => {
@@ -63,16 +63,16 @@ export const ProjectsListMobileHeader = observer(() => {
         }}
         isMobile
       />
-      <div className="border-l border-custom-border-200 flex justify-around w-full">
+      <div className="border-l border-subtle flex justify-around w-full">
         <FiltersDropdown
           icon={<ListFilter className="h-3 w-3" />}
           title={t("common.filters")}
           placement="bottom-end"
           menuButton={
-            <div className="flex text-sm items-center gap-2 neutral-primary text-custom-text-200">
+            <div className="flex text-13 items-center gap-2 text-secondary">
               <ListFilter className="h-3 w-3" />
               {t("common.filters")}
-              <ChevronDown className="h-3 w-3" strokeWidth={2} />
+              <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
             </div>
           }
           isFiltersApplied={isFiltersApplied}

@@ -1,17 +1,18 @@
-import { Editor } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 // constants
 import { ACCEPTED_ATTACHMENT_MIME_TYPES, ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 // types
-import { TEditorCommands, TExtensions } from "@/types";
+import type { TEditorCommands, TExtensions } from "@/types";
 
 type Props = {
   disabledExtensions?: TExtensions[];
+  flaggedExtensions?: TExtensions[];
   editor: Editor;
 };
 
 export const DropHandlerPlugin = (props: Props): Plugin => {
-  const { disabledExtensions, editor } = props;
+  const { disabledExtensions, flaggedExtensions, editor } = props;
 
   return new Plugin({
     key: new PluginKey("drop-handler-plugin"),
@@ -33,6 +34,7 @@ export const DropHandlerPlugin = (props: Props): Plugin => {
             const pos = view.state.selection.from;
             insertFilesSafely({
               disabledExtensions,
+              flaggedExtensions,
               editor,
               files: acceptedFiles,
               initialPos: pos,
@@ -84,6 +86,7 @@ export const DropHandlerPlugin = (props: Props): Plugin => {
 
 type InsertFilesSafelyArgs = {
   disabledExtensions?: TExtensions[];
+  flaggedExtensions?: TExtensions[];
   editor: Editor;
   event: "insert" | "drop";
   files: File[];

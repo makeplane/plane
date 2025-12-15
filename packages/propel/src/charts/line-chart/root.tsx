@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-
 import React, { useMemo, useState } from "react";
 import {
   CartesianGrid,
@@ -14,13 +11,15 @@ import {
 } from "recharts";
 // plane imports
 import { AXIS_LABEL_CLASSNAME } from "@plane/constants";
-import { TLineChartProps } from "@plane/types";
+import type { TLineChartProps } from "@plane/types";
 // local components
 import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
 
-export const LineChart = React.memo(<K extends string, T extends string>(props: TLineChartProps<K, T>) => {
+export const LineChart = React.memo(function LineChart<K extends string, T extends string>(
+  props: TLineChartProps<K, T>
+) {
   const {
     data,
     lines,
@@ -99,7 +98,7 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
             left: margin?.left === undefined ? 20 : margin.left,
           }}
         >
-          <CartesianGrid stroke="rgba(var(--color-border-100), 0.8)" vertical={false} />
+          <CartesianGrid stroke="--alpha(var(--border-color-subtle) / 80%)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
             tick={(props) => {
@@ -150,7 +149,7 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
           {showTooltip && (
             <Tooltip
               cursor={{
-                stroke: "rgba(var(--color-text-300))",
+                stroke: "var(--text-color-tertiary)",
                 strokeDasharray: "4 4",
               }}
               wrapperStyle={{

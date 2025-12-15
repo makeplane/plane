@@ -14,11 +14,11 @@ interface IContentOverflowWrapper {
   customButton?: ReactNode;
 }
 
-export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) => {
+export const ContentOverflowWrapper = observer(function ContentOverflowWrapper(props: IContentOverflowWrapper) {
   const {
     children,
     maxHeight = 625,
-    buttonClassName = "text-sm font-medium text-custom-primary-100",
+    buttonClassName = "text-13 font-medium text-accent-primary",
     containerClassName,
     fallback = null,
     customButton,
@@ -77,19 +77,20 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
       resizeObserver.disconnect();
       mutationObserver.disconnect();
     };
-  }, [contentRef?.current]);
+  }, []);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
     const handleTransitionEnd = () => {
       setIsTransitioning(false);
     };
 
-    containerRef.current.addEventListener("transitionend", handleTransitionEnd);
+    container.addEventListener("transitionend", handleTransitionEnd);
 
     return () => {
-      containerRef.current?.removeEventListener("transitionend", handleTransitionEnd);
+      container.removeEventListener("transitionend", handleTransitionEnd);
     };
   }, []);
 
@@ -141,7 +142,7 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
           {customButton || (
             <button
               className={cn(
-                "gap-1 w-full text-custom-primary-100 text-sm font-medium transition-opacity duration-300",
+                "gap-1 w-full text-accent-primary text-13 font-medium transition-opacity duration-300",
                 buttonClassName
               )}
               onClick={handleToggle}

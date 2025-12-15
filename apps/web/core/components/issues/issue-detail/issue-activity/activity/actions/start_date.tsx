@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { CalendarDays } from "lucide-react";
 // hooks
@@ -10,7 +9,7 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 
 type TIssueStartDateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueStartDateActivity: FC<TIssueStartDateActivity> = observer((props) => {
+export const IssueStartDateActivity = observer(function IssueStartDateActivity(props: TIssueStartDateActivity) {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {
@@ -22,7 +21,7 @@ export const IssueStartDateActivity: FC<TIssueStartDateActivity> = observer((pro
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<CalendarDays size={14} className="text-secondary" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >
@@ -30,7 +29,7 @@ export const IssueStartDateActivity: FC<TIssueStartDateActivity> = observer((pro
         {activity.new_value ? `set the start date to ` : `removed the start date `}
         {activity.new_value && (
           <>
-            <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
+            <span className="font-medium text-primary">{renderFormattedDate(activity.new_value)}</span>
           </>
         )}
         {showIssue && (activity.new_value ? ` for ` : ` from `)}

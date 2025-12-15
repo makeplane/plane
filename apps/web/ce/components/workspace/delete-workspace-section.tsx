@@ -1,11 +1,10 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, ChevronUp } from "lucide-react";
 // types
 import { WORKSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { IWorkspace } from "@plane/types";
 // ui
 import { Collapsible } from "@plane/ui";
@@ -16,7 +15,7 @@ type TDeleteWorkspace = {
   workspace: IWorkspace | null;
 };
 
-export const DeleteWorkspaceSection: FC<TDeleteWorkspace> = observer((props) => {
+export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(props: TDeleteWorkspace) {
   const { workspace } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -30,7 +29,7 @@ export const DeleteWorkspaceSection: FC<TDeleteWorkspace> = observer((props) => 
         isOpen={deleteWorkspaceModal}
         onClose={() => setDeleteWorkspaceModal(false)}
       />
-      <div className="border-t border-custom-border-100">
+      <div className="border-t border-subtle">
         <div className="w-full">
           <Collapsible
             isOpen={isOpen}
@@ -39,20 +38,21 @@ export const DeleteWorkspaceSection: FC<TDeleteWorkspace> = observer((props) => 
             buttonClassName="flex w-full items-center justify-between py-4"
             title={
               <>
-                <span className="text-lg tracking-tight">
+                <span className="text-body-md-medium tracking-tight">
                   {t("workspace_settings.settings.general.delete_workspace")}
                 </span>
-                {isOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                {isOpen ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronDownIcon className="h-5 w-5" />}
               </>
             }
           >
             <div className="flex flex-col gap-4">
-              <span className="text-base tracking-tight">
+              <span className="text-body-sm-regular tracking-tight">
                 {t("workspace_settings.settings.general.delete_workspace_description")}
               </span>
               <div>
                 <Button
-                  variant="danger"
+                  variant="error-fill"
+                  size="lg"
                   onClick={() => setDeleteWorkspaceModal(true)}
                   data-ph-element={WORKSPACE_TRACKER_ELEMENTS.DELETE_WORKSPACE_BUTTON}
                 >

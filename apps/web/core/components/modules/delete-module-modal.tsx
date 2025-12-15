@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -23,7 +21,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const DeleteModuleModal: React.FC<Props> = observer((props) => {
+export const DeleteModuleModal = observer(function DeleteModuleModal(props: Props) {
   const { data, isOpen, onClose } = props;
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -87,8 +85,8 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
       content={
         <>
           Are you sure you want to delete module-{" "}
-          <span className="break-all font-medium text-custom-text-100">{data?.name}</span>? All of the data related to
-          the module will be permanently removed. This action cannot be undone.
+          <span className="break-all font-medium text-primary">{data?.name}</span>? All of the data related to the
+          module will be permanently removed. This action cannot be undone.
         </>
       }
     />

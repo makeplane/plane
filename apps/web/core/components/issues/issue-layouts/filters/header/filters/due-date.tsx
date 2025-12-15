@@ -12,7 +12,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterDueDate: React.FC<Props> = observer((props) => {
+export const FilterDueDate = observer(function FilterDueDate(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -66,7 +66,7 @@ export const FilterDueDate: React.FC<Props> = observer((props) => {
               <FilterOption isChecked={isCustomDateSelected()} onClick={handleCustomDate} title="Custom" multiple />
             </>
           ) : (
-            <p className="text-xs italic text-custom-text-400">No matches found</p>
+            <p className="text-11 italic text-placeholder">No matches found</p>
           )}
         </div>
       )}

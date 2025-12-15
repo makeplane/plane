@@ -1,8 +1,6 @@
-"use client";
-
-import { X } from "lucide-react";
-// plane imports
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 import { EHeaderVariant, Header, Tag } from "@plane/ui";
@@ -27,7 +25,7 @@ type Props = {
 const MEMBERS_FILTERS = ["lead", "members"];
 const DATE_FILTERS = ["created_at"];
 
-export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
+export function ProjectAppliedFiltersList(props: Props) {
   const { t } = useTranslation();
   const {
     appliedFilters,
@@ -57,7 +55,7 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
 
           return (
             <Tag key={filterKey}>
-              <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+              <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
               {filterKey === "access" && (
                 <AppliedAccessFilters
                   editable={isEditingAllowed}
@@ -82,10 +80,10 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
               {isEditingAllowed && (
                 <button
                   type="button"
-                  className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                  className="grid place-items-center text-tertiary hover:text-secondary"
                   onClick={() => handleRemoveFilter(filterKey, null)}
                 >
-                  <X size={12} strokeWidth={2} />
+                  <CloseIcon height={12} width={12} strokeWidth={2} />
                 </button>
               )}
             </Tag>
@@ -94,7 +92,7 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
         {/* Applied display filters */}
         {appliedDisplayFilters.length > 0 && (
           <Tag key="project_display_filters">
-            <span className="text-xs text-custom-text-300">{t("projects.label", { count: 2 })}</span>
+            <span className="text-11 text-tertiary">{t("projects.label", { count: 2 })}</span>
             <AppliedProjectDisplayFilters
               editable={isEditingAllowed}
               values={appliedDisplayFilters}
@@ -106,7 +104,7 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
           <button type="button" onClick={handleClearAllFilters}>
             <Tag>
               {t("common.clear_all")}
-              <X size={12} strokeWidth={2} />
+              <CloseIcon height={12} width={12} strokeWidth={2} />
             </Tag>
           </button>
         )}
@@ -120,11 +118,11 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
             </p>
           }
         >
-          <span className="bg-custom-background-80 rounded-full text-sm font-medium py-1 px-2.5">
+          <span className="bg-layer-1 rounded-full text-13 font-medium py-1 px-2.5">
             {filteredProjects}/{totalProjects}
           </span>
         </Tooltip>
       </Header.RightItem>
     </Header>
   );
-};
+}

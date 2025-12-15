@@ -1,14 +1,7 @@
 import * as React from "react";
 import { cn } from "../utils/classname";
-import {
-  ECardDirection,
-  ECardSpacing,
-  ECardVariant,
-  getCardStyle,
-  TCardDirection,
-  TCardSpacing,
-  TCardVariant,
-} from "./helper";
+import type { TCardDirection, TCardSpacing, TCardVariant } from "./helper";
+import { ECardDirection, ECardSpacing, ECardVariant, getCardStyle } from "./helper";
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: TCardVariant;
@@ -18,7 +11,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>((props, ref) => {
+const Card = React.forwardRef(function Card(props: CardProps, ref: React.ForwardedRef<HTMLDivElement>) {
   const {
     variant = ECardVariant.WITH_SHADOW,
     direction = ECardDirection.COLUMN,

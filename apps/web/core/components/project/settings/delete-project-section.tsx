@@ -1,11 +1,9 @@
-"use client";
-
 import React from "react";
-import { ChevronRight, ChevronUp } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { ChevronRightIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { IProject } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
@@ -15,16 +13,16 @@ export interface IDeleteProjectSection {
   handleDelete: () => void;
 }
 
-export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => {
+export function DeleteProjectSection(props: IDeleteProjectSection) {
   const { projectDetails, handleDelete } = props;
 
   return (
-    <Disclosure as="div" className="border-t border-custom-border-100 py-4">
+    <Disclosure as="div" className="border-t border-subtle py-4">
       {({ open }) => (
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between">
-            <span className="text-xl tracking-tight">Delete project</span>
-            {open ? <ChevronUp className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+            <span className="text-18 tracking-tight">Delete project</span>
+            {open ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronRightIcon className="h-5 w-5" />}
           </Disclosure.Button>
 
           <Transition
@@ -38,7 +36,7 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
           >
             <Disclosure.Panel>
               <div className="flex flex-col gap-8 pt-4">
-                <span className="text-sm tracking-tight">
+                <span className="text-13 tracking-tight">
                   When deleting a project, all of the data and resources within that project will be permanently removed
                   and cannot be recovered.
                 </span>
@@ -46,11 +44,12 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
                   {projectDetails ? (
                     <div>
                       <Button
-                        variant="danger"
+                        variant="error-fill"
+                        size="lg"
                         onClick={handleDelete}
                         data-ph-element={PROJECT_TRACKER_ELEMENTS.DELETE_PROJECT_BUTTON}
                       >
-                        Delete my project
+                        Delete project
                       </Button>
                     </div>
                   ) : (
@@ -66,4 +65,4 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
       )}
     </Disclosure>
   );
-};
+}

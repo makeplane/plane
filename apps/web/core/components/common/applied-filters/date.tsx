@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
 // icons
-import { X } from "lucide-react";
-// plane constants
 import { DATE_BEFORE_FILTER_OPTIONS } from "@plane/constants";
+import { CloseIcon } from "@plane/propel/icons";
+// plane constants
 import { renderFormattedDate, capitalizeFirstLetter } from "@plane/utils";
 // helpers
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
   values: string[];
 };
 
-export const AppliedDateFilters: React.FC<Props> = observer((props) => {
+export const AppliedDateFilters = observer(function AppliedDateFilters(props: Props) {
   const { editable, handleRemove, values } = props;
 
   const getDateLabel = (value: string): string => {
@@ -36,15 +36,15 @@ export const AppliedDateFilters: React.FC<Props> = observer((props) => {
   return (
     <>
       {values.map((date) => (
-        <div key={date} className="flex items-center gap-1 rounded bg-custom-background-80 py-1 px-1.5 text-xs">
+        <div key={date} className="flex items-center gap-1 rounded-sm bg-layer-1 py-1 px-1.5 text-11">
           <span className="normal-case">{getDateLabel(date)}</span>
           {editable && (
             <button
               type="button"
-              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+              className="grid place-items-center text-tertiary hover:text-secondary"
               onClick={() => handleRemove(date)}
             >
-              <X size={10} strokeWidth={2} />
+              <CloseIcon height={10} width={10} strokeWidth={2} />
             </button>
           )}
         </div>

@@ -13,7 +13,7 @@ type Props = {
   anchor: string;
 };
 
-export const IssuesListLayoutRoot = observer((props: Props) => {
+export const IssuesListLayoutRoot = observer(function IssuesListLayoutRoot(props: Props) {
   const { anchor } = props;
   // store hooks
   const {
@@ -46,7 +46,7 @@ export const IssuesListLayoutRoot = observer((props: Props) => {
 
   return (
     <IssueLayoutHOC getGroupIssueCount={getGroupIssueCount} getIssueLoader={getIssueLoader}>
-      <div className={`relative size-full bg-custom-background-90`}>
+      <div className="relative size-full">
         <List
           displayProperties={displayProperties}
           groupBy={"state"}

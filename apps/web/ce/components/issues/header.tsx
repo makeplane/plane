@@ -1,192 +1,1 @@
-"use client";
-
-import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-// icons
-import { Circle, ExternalLink } from "lucide-react";
-// plane imports
-import {
-  EUserPermissions,
-  EUserPermissionsLevel,
-  SPACE_BASE_PATH,
-  SPACE_BASE_URL,
-  WORK_ITEM_TRACKER_ELEMENTS,
-  EProjectFeatureKey,
-} from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { Tooltip } from "@plane/propel/tooltip";
-import { EIssuesStoreType } from "@plane/types";
-import { Breadcrumbs, Header } from "@plane/ui";
-// components
-import { CountChip } from "@/components/common/count-chip";
-// constants
-import { HeaderFilters } from "@/components/issues/filters";
-import { IssueService } from "@/services/issue";
-import { message } from "antd";
-import { useRef } from "react";
-// helpers
-// hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useIssues } from "@/hooks/store/use-issues";
-import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
-import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web
-import { CommonProjectBreadcrumbs } from "../breadcrumbs/common";
-
-export const IssuesHeader = observer(() => {
-  // router
-  const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
-  // store hooks
-  const { issues } = useIssues(EIssuesStoreType.PROJECT);
-  // i18n
-  const { t } = useTranslation();
-
-  const { currentProjectDetails, loader } = useProject();
-
-  const { toggleCreateIssueModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
-  const { isMobile } = usePlatformOS();
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const issueService = new IssueService();
-
-  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const res = await issueService.importIssue(workspaceSlug, projectId, formData);
-
-      // 如果有失败的记录，生成CSV并下载
-      if (res.data?.fail && res.data.fail.length > 0) {
-        message.warning(`导入完成，有 ${res.data.fail.length} 条数据导入失败，详情请查看下载的文件`);
-
-        // 创建CSV内容
-        const headers = ["用例名称", "失败原因"];
-        const csvContent = [
-          headers.join(","),
-          ...res.data.fail.map(
-            (item: any) =>
-              // 处理字段中可能包含的逗号，用引号包裹
-              `"${item.name || ""}","${item.error || ""}"`
-          ),
-        ].join("\n");
-
-        // 创建Blob并下载
-        const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-
-        link.setAttribute("href", url);
-        link.setAttribute("download", `导入失败记录_${new Date().getTime()}.csv`);
-        link.style.visibility = "hidden";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } else {
-        message.success("导入成功");
-      }
-
-      await issues.fetchIssuesWithExistingPagination(workspaceSlug?.toString(), projectId?.toString(), "mutation");
-    } catch (err: any) {
-      console.error(err);
-      message.error(err?.error || "导入失败");
-    } finally {
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    }
-  };
-
-  const SPACE_APP_URL = (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
-  const publishedURL = `${SPACE_APP_URL}/issues/${currentProjectDetails?.anchor}`;
-
-  const issuesCount = issues.getGroupIssueCount(undefined, undefined, false);
-  const canUserCreateIssue = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
-
-  return (
-    <Header>
-      <Header.LeftItem>
-        <div className="flex items-center gap-2.5">
-          <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"} className="flex-grow-0">
-            <CommonProjectBreadcrumbs
-              workspaceSlug={workspaceSlug?.toString()}
-              projectId={projectId?.toString()}
-              featureKey={EProjectFeatureKey.WORK_ITEMS}
-              isLast
-            />
-          </Breadcrumbs>
-          {issuesCount && issuesCount > 0 ? (
-            <Tooltip
-              isMobile={isMobile}
-              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "work items" : "work item"} in this project`}
-              position="bottom"
-            >
-              <CountChip count={issuesCount} />
-            </Tooltip>
-          ) : null}
-        </div>
-        {currentProjectDetails?.anchor ? (
-          <a
-            href={publishedURL}
-            className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
-            {t("workspace_projects.network.public.title")}
-            <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
-          </a>
-        ) : (
-          <></>
-        )}
-      </Header.LeftItem>
-      <Header.RightItem>
-        <div className="hidden gap-3 md:flex">
-          <HeaderFilters
-            projectId={projectId}
-            currentProjectDetails={currentProjectDetails}
-            workspaceSlug={workspaceSlug}
-            canUserCreateIssue={canUserCreateIssue}
-          />
-        </div>
-        {canUserCreateIssue ? (
-          <>
-            <Button
-              onClick={() => {
-                toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
-              }}
-              data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
-              size="sm"
-            >
-              <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
-              <div className="hidden sm:block">{t("issue.add.label")}</div>
-            </Button>
-            <Button onClick={() => fileInputRef.current?.click()} size="sm" variant="outline-primary">
-              导入
-            </Button>
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              accept=".xlsx,.xls"
-              onChange={handleImport}
-            />
-          </>
-        ) : (
-          <></>
-        )}
-      </Header.RightItem>
-    </Header>
-  );
-});
+import { observer } from "mobx-react";import { useParams } from "next/navigation";// iconsimport { Circle, ExternalLink } from "lucide-react";// plane importsimport {  EUserPermissions,  EUserPermissionsLevel,  SPACE_BASE_PATH,  SPACE_BASE_URL,  WORK_ITEM_TRACKER_ELEMENTS,} from "@plane/constants";import { useTranslation } from "@plane/i18n";import { Button } from "@plane/propel/button";import { WorkItemsIcon } from "@plane/propel/icons";import { Tooltip } from "@plane/propel/tooltip";import { EIssuesStoreType } from "@plane/types";import { Breadcrumbs, Header } from "@plane/ui";// componentsimport { BreadcrumbLink } from "@/components/common/breadcrumb-link";import { CountChip } from "@/components/common/count-chip";// constantsimport { HeaderFilters } from "@/components/issues/filters";import { IssueService } from "@/services/issue";import { message } from "antd";import { useRef } from "react";// helpers// hooksimport { useCommandPalette } from "@/hooks/store/use-command-palette";import { useIssues } from "@/hooks/store/use-issues";import { useProject } from "@/hooks/store/use-project";import { useUserPermissions } from "@/hooks/store/user";import { useAppRouter } from "@/hooks/use-app-router";import { usePlatformOS } from "@/hooks/use-platform-os";// plane web importsimport { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";export const IssuesHeader = observer(function IssuesHeader() {  // router  const router = useAppRouter();  const { workspaceSlug, projectId } = useParams();  // store hooks  const { issues } = useIssues(EIssuesStoreType.PROJECT);  // i18n  const { t } = useTranslation();  const { currentProjectDetails, loader } = useProject();  const { toggleCreateIssueModal } = useCommandPalette();  const { allowPermissions } = useUserPermissions();  const { isMobile } = usePlatformOS();  const fileInputRef = useRef<HTMLInputElement>(null);  const issueService = new IssueService();  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {    const file = e.target.files?.[0];    if (!file) return;    const formData = new FormData();    formData.append("file", file);    try {      const res = await issueService.importIssue(workspaceSlug, projectId, formData);      // 如果有失败的记录，生成CSV并下载      if (res.data?.fail && res.data.fail.length > 0) {        message.warning(`导入完成，有 ${res.data.fail.length} 条数据导入失败，详情请查看下载的文件`);        // 创建CSV内容        const headers = ["用例名称", "失败原因"];        const csvContent = [          headers.join(","),          ...res.data.fail.map(            (item: any) =>              // 处理字段中可能包含的逗号，用引号包裹              `"${item.name || ""}","${item.error || ""}"`          ),        ].join("\n");        // 创建Blob并下载        const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });        const link = document.createElement("a");        const url = URL.createObjectURL(blob);        link.setAttribute("href", url);        link.setAttribute("download", `导入失败记录_${new Date().getTime()}.csv`);        link.style.visibility = "hidden";        document.body.appendChild(link);        link.click();        document.body.removeChild(link);      } else {        message.success("导入成功");      }      await issues.fetchIssuesWithExistingPagination(workspaceSlug?.toString(), projectId?.toString(), "mutation");    } catch (err: any) {      console.error(err);      message.error(err?.error || "导入失败");    } finally {      if (fileInputRef.current) {        fileInputRef.current.value = "";      }    }  };  const SPACE_APP_URL = (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;  const publishedURL = `${SPACE_APP_URL}/issues/${currentProjectDetails?.anchor}`;  const issuesCount = issues.getGroupIssueCount(undefined, undefined, false);  const canUserCreateIssue = allowPermissions(    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],    EUserPermissionsLevel.PROJECT  );  return (    <Header>      <Header.LeftItem>        <div className="flex items-center gap-2.5">          <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"} className="flex-grow-0">            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />            <Breadcrumbs.Item              component={                <BreadcrumbLink                  label="Work Items"                  href={`/${workspaceSlug}/projects/${projectId}/issues/`}                  icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}                  isLast                />              }              isLast            />          </Breadcrumbs>          {issuesCount && issuesCount > 0 ? (            <Tooltip              isMobile={isMobile}              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "work items" : "work item"} in this project`}              position="bottom"            >              <CountChip count={issuesCount} />            </Tooltip>          ) : null}        </div>        {currentProjectDetails?.anchor ? (          <a            href={publishedURL}            className="group flex items-center gap-1.5 rounded-sm bg-accent-primary/10 px-2.5 py-1 text-11 font-medium text-accent-primary"            target="_blank"            rel="noopener noreferrer"          >            <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />            {t("workspace_projects.network.public.title")}            <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />          </a>        ) : (          <></>        )}      </Header.LeftItem>      <Header.RightItem>        <div className="hidden gap-3 md:flex">          <HeaderFilters            projectId={projectId}            currentProjectDetails={currentProjectDetails}            workspaceSlug={workspaceSlug}            canUserCreateIssue={canUserCreateIssue}          />        </div>        {canUserCreateIssue && (          <>            <Button              variant="primary"              size="lg"              onClick={() => {                toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);              }}              data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}            >              <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>              <div className="hidden sm:block">{t("issue.add.label")}</div>            </Button>            <Button onClick={() => fileInputRef.current?.click()} size="sm" variant="outline-primary">              导入            </Button>            <input              type="file"              ref={fileInputRef}              style={{ display: "none" }}              accept=".xlsx,.xls"              onChange={handleImport}            />          </>        )}      </Header.RightItem>    </Header>  );});

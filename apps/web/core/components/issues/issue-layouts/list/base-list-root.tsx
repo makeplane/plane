@@ -20,6 +20,8 @@ import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { List } from "./default";
 // types
 import type { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
+import { ProjectIssueTypeService, type TIssueType, projectIssueTypesCache } from "@/services/project";
+import React from "react";
 
 type ListStoreType =
   | EIssuesStoreType.PROJECT
@@ -41,10 +43,7 @@ interface IBaseListRoot {
   isCompletedCycle?: boolean;
   isEpic?: boolean;
 }
-import { ProjectIssueTypeService, type TIssueType, projectIssueTypesCache } from "@/services/project";
-import React from "react";
-
-export const BaseListRoot = observer((props: IBaseListRoot) => {
+export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot) {
   const {
     QuickActions,
     viewId,
@@ -180,7 +179,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
-      <div className={`relative size-full bg-custom-background-90`}>
+      <div className={`relative size-full bg-surface-2`}>
         <List
           issuesMap={issueMap}
           displayProperties={displayProperties}

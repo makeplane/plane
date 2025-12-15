@@ -54,7 +54,7 @@ export interface IList {
   projectIssueTypesMap?: Record<string, any>;
 }
 
-export const List: React.FC<IList> = observer((props) => {
+export const List = observer(function List(props: IList) {
   const {
     groupedIssueIds,
     issuesMap,

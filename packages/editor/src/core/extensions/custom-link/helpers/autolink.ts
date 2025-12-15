@@ -1,11 +1,6 @@
-import {
-  combineTransactionSteps,
-  findChildrenInRange,
-  getChangedRanges,
-  getMarksBetween,
-  NodeWithPos,
-} from "@tiptap/core";
-import { MarkType } from "@tiptap/pm/model";
+import type { NodeWithPos } from "@tiptap/core";
+import { combineTransactionSteps, findChildrenInRange, getChangedRanges, getMarksBetween } from "@tiptap/core";
+import type { MarkType } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { find } from "linkifyjs";
 

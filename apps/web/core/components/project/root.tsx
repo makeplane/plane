@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
@@ -17,7 +15,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { ProjectAppliedFiltersList } from "./applied-filters";
 import { ProjectCardList } from "./card-list";
 
-export const ProjectRoot = observer(() => {
+export const ProjectRoot = observer(function ProjectRoot() {
   const { currentWorkspace } = useWorkspace();
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
@@ -71,9 +69,7 @@ export const ProjectRoot = observer(() => {
   }, [clearAllFilters, clearAllAppliedDisplayFilters, workspaceSlug]);
 
   useEffect(() => {
-    isArchived
-      ? updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true })
-      : updateDisplayFilters(workspaceSlug.toString(), { archived_projects: false });
+    updateDisplayFilters(workspaceSlug.toString(), { archived_projects: isArchived });
   }, [pathname]);
 
   return (

@@ -1,8 +1,9 @@
 import type { TPaginationInfo } from "./common";
 import type { ICycle } from "./cycle";
-import { TUserPermissions } from "./enums";
-import { TProjectMembership } from "./project";
+import type { TUserPermissions } from "./enums";
+import type { TProjectMembership } from "./project";
 import type { IUser, IUserLite } from "./users";
+import type { TLoginMediums } from "./instance";
 import type { IWorkspaceViewProps } from "./view-props";
 
 export enum EUserWorkspaceRoles {
@@ -26,6 +27,7 @@ export interface IWorkspace {
   organization_size: string;
   total_projects?: number;
   role: number;
+  timezone: string;
 }
 
 export interface IWorkspaceLite {
@@ -82,7 +84,7 @@ export interface IWorkspaceMember {
   last_name?: string;
   joining_date?: string;
   display_name?: string;
-  last_login_medium?: string;
+  last_login_medium?: TLoginMediums;
   is_active?: boolean;
 }
 
@@ -227,7 +229,7 @@ export interface IWorkspaceProgressResponse {
   unstarted_issues: number;
 }
 export interface IWorkspaceAnalyticsResponse {
-  completion_chart: any;
+  completion_chart: Record<string, unknown>;
 }
 
 export type TWorkspacePaginationInfo = TPaginationInfo & {

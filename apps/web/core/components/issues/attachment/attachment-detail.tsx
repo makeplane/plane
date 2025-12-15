@@ -1,10 +1,9 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { AlertCircle, X } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
 import {
@@ -36,7 +35,7 @@ type TIssueAttachmentsDetail = {
   disabled?: boolean;
 };
 
-export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((props) => {
+export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(props: TIssueAttachmentsDetail) {
   // props
   const { attachmentId, attachmentHelpers, disabled } = props;
   // store hooks
@@ -67,14 +66,14 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
           attachmentId={attachmentId}
         />
       )}
-      <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-custom-border-200 bg-custom-background-100 px-4 py-2 text-sm">
+      <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-subtle bg-surface-1 px-4 py-2 text-13">
         <Link href={fileURL ?? ""} target="_blank" rel="noopener noreferrer">
           <div className="flex items-center gap-3">
             <div className="h-7 w-7">{fileIcon}</div>
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
                 <Tooltip tooltipContent={fileName} isMobile={isMobile}>
-                  <span className="text-sm">{truncateText(`${fileName}`, 10)}</span>
+                  <span className="text-13">{truncateText(`${fileName}`, 10)}</span>
                 </Tooltip>
                 <Tooltip
                   isMobile={isMobile}
@@ -88,7 +87,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
                 </Tooltip>
               </div>
 
-              <div className="flex items-center gap-3 text-xs text-custom-text-200">
+              <div className="flex items-center gap-3 text-11 text-secondary">
                 <span>{fileExtension.toUpperCase()}</span>
                 <span>{convertBytesToSize(attachment.attributes.size)}</span>
               </div>
@@ -98,7 +97,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
 
         {!disabled && (
           <button type="button" onClick={() => setIsDeleteIssueAttachmentModalOpen(true)}>
-            <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
+            <CloseIcon className="h-4 w-4 text-secondary hover:text-primary" />
           </button>
         )}
       </div>

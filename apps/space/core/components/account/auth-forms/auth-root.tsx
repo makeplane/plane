@@ -1,9 +1,5 @@
-"use client";
-
-import type { FC } from "react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
@@ -11,7 +7,12 @@ import { API_BASE_URL } from "@plane/constants";
 import { SitesAuthService } from "@plane/services";
 import type { IEmailCheckData } from "@plane/types";
 import { OAuthOptions } from "@plane/ui";
-// components
+// assets
+import GiteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
+import GithubLightLogo from "@/app/assets/logos/github-black.png?url";
+import GithubDarkLogo from "@/app/assets/logos/github-dark.svg?url";
+import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
+import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import { EErrorAlertType, authErrorHandler, EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
@@ -19,11 +20,6 @@ import { EErrorAlertType, authErrorHandler, EAuthenticationErrorCodes } from "@/
 import { useInstance } from "@/hooks/store/use-instance";
 // types
 import { EAuthModes, EAuthSteps } from "@/types/auth";
-// assets
-import GithubLightLogo from "/public/logos/github-black.png";
-import GithubDarkLogo from "/public/logos/github-dark.svg";
-import GitlabLogo from "/public/logos/gitlab-logo.svg";
-import GoogleLogo from "/public/logos/google-logo.svg";
 // local imports
 import { TermsAndConditions } from "../terms-and-conditions";
 import { AuthBanner } from "./auth-banner";
@@ -34,7 +30,7 @@ import { AuthUniqueCodeForm } from "./unique-code";
 
 const authService = new SitesAuthService();
 
-export const AuthRoot: FC = observer(() => {
+export const AuthRoot = observer(function AuthRoot() {
   // router params
   const searchParams = useSearchParams();
   const emailParam = searchParams.get("email") || undefined;
@@ -92,7 +88,12 @@ export const AuthRoot: FC = observer(() => {
   const isMagicLoginEnabled = config?.is_magic_login_enabled || false;
   const isEmailPasswordEnabled = config?.is_email_password_enabled || false;
   const isOAuthEnabled =
-    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
+    (config &&
+      (config?.is_google_enabled ||
+        config?.is_github_enabled ||
+        config?.is_gitlab_enabled ||
+        config?.is_gitea_enabled)) ||
+    false;
 
   // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
@@ -158,7 +159,7 @@ export const AuthRoot: FC = observer(() => {
     {
       id: "google",
       text: `${content} with Google`,
-      icon: <Image src={GoogleLogo} height={18} width={18} alt="Google Logo" />,
+      icon: <img src={GoogleLogo} height={18} width={18} alt="Google Logo" />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/google/${next_path ? `?next_path=${next_path}` : ``}`);
       },
@@ -168,7 +169,7 @@ export const AuthRoot: FC = observer(() => {
       id: "github",
       text: `${content} with GitHub`,
       icon: (
-        <Image
+        <img
           src={resolvedTheme === "dark" ? GithubLightLogo : GithubDarkLogo}
           height={18}
           width={18}
@@ -183,11 +184,20 @@ export const AuthRoot: FC = observer(() => {
     {
       id: "gitlab",
       text: `${content} with GitLab`,
-      icon: <Image src={GitlabLogo} height={18} width={18} alt="GitLab Logo" />,
+      icon: <img src={GitlabLogo} height={18} width={18} alt="GitLab Logo" />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
       },
       enabled: config?.is_gitlab_enabled,
+    },
+    {
+      id: "gitea",
+      text: `${content} with Gitea`,
+      icon: <img src={GiteaLogo} height={18} width={18} alt="Gitea Logo" />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/gitea/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_gitea_enabled,
     },
   ];
 

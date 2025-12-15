@@ -12,9 +12,9 @@ from plane.app.views import (
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
     UserProjectInvitationsViewset,
-    ProjectPublicCoverImagesEndpoint,
     UserProjectRolesEndpoint,
     ProjectArchiveUnarchiveEndpoint,
+    ProjectMemberPreferenceEndpoint,
 )
 from plane.app.views.project.base import ProjectAPI
 from plane.app.views.project.template import ProjectTemplateAPIView
@@ -112,11 +112,6 @@ urlpatterns = [
         name="project-favorite",
     ),
     path(
-        "project-covers/",
-        ProjectPublicCoverImagesEndpoint.as_view(),
-        name="project-covers",
-    ),
-    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/",
         DeployBoardViewSet.as_view({"get": "list", "post": "create"}),
         name="project-deploy-board",
@@ -130,6 +125,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/archive/",
         ProjectArchiveUnarchiveEndpoint.as_view(),
         name="project-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/preferences/member/<uuid:member_id>/",
+        ProjectMemberPreferenceEndpoint.as_view(),
+        name="project-member-preference",
     ),
     path('workspaces/<str:slug>/projects/template/', ProjectTemplateAPIView.as_view(), name='project-template'),
 

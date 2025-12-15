@@ -1,11 +1,9 @@
-"use client";
-
 import type { FC, MouseEvent } from "react";
 import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Eye, Users, ArrowRight, CalendarDays } from "lucide-react";
+import { Eye, ArrowRight, CalendarDays } from "lucide-react";
 // plane imports
 import {
   CYCLE_TRACKER_EVENTS,
@@ -16,7 +14,7 @@ import {
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { TransferIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { TransferIcon, WorkItemsIcon, MembersPropertyIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ICycle, TCycleGroups } from "@plane/types";
@@ -54,7 +52,7 @@ const defaultValues: Partial<ICycle> = {
   end_date: null,
 };
 
-export const CycleListItemAction: FC<Props> = observer((props) => {
+export const CycleListItemAction = observer(function CycleListItemAction(props: Props) {
   const { workspaceSlug, projectId, cycleId, cycleDetails, parentRef, isActive = false } = props;
   // router
   const { projectId: routerProjectId } = useParams();
@@ -196,9 +194,9 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
 
     const query = generateQueryParams(searchParams, ["peekCycle"]);
     if (searchParams.has("peekCycle") && searchParams.get("peekCycle") === cycleId) {
-      router.push(`${pathname}?${query}`, { showProgress: false });
+      router.push(`${pathname}?${query}`);
     } else {
-      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`, { showProgress: false });
+      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`);
     }
   };
 
@@ -211,21 +209,21 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
       />
       <button
         onClick={openCycleOverview}
-        className={`z-[1] flex text-custom-primary-200 text-xs gap-1 flex-shrink-0 ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-hover:flex"}`}
+        className={`z-[1] flex text-accent-secondary text-11 gap-1 flex-shrink-0 ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-hover:flex"}`}
       >
-        <Eye className="h-4 w-4 my-auto  text-custom-primary-200" />
+        <Eye className="h-4 w-4 my-auto  text-accent-secondary" />
         <span>{t("project_cycles.more_details")}</span>
       </button>
       {showIssueCount && (
         <div className="flex items-center gap-1">
-          <WorkItemsIcon className="h-4 w-4 text-custom-text-300" />
-          <span className="text-xs text-custom-text-300">{cycleDetails.total_issues}</span>
+          <WorkItemsIcon className="h-4 w-4 text-tertiary" />
+          <span className="text-11 text-tertiary">{cycleDetails.total_issues}</span>
         </div>
       )}
       <CycleAdditionalActions cycleId={cycleId} projectId={projectId} />
       {showTransferIssues && (
         <div
-          className="px-2 h-6  text-custom-primary-200 flex items-center gap-1 cursor-pointer"
+          className="px-2 h-6  text-accent-secondary flex items-center gap-1 cursor-pointer"
           onClick={() => {
             setTransferIssuesModal(true);
           }}
@@ -249,13 +247,13 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
               disabled={!isProjectTimeZoneDifferent()}
               tooltipHeading={t("project_cycles.in_your_timezone")}
             >
-              <div className="flex gap-1 text-xs text-custom-text-300 font-medium items-center">
+              <div className="flex gap-1 text-11 text-tertiary font-medium items-center">
                 <CalendarDays className="h-3 w-3 flex-shrink-0 my-auto" />
                 <MergedDateDisplay startDate={cycleDetails.start_date} endDate={cycleDetails.end_date} />
               </div>
             </Tooltip>
             {projectUTCOffset && (
-              <span className="rounded-md text-xs px-2 cursor-default  py-1 bg-custom-background-80 text-custom-text-300">
+              <span className="rounded-md text-11 px-2 cursor-default  py-1 bg-layer-1 text-tertiary">
                 {projectUTCOffset}
               </span>
             )}
@@ -268,7 +266,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
           <>
             <DateRangeDropdown
               buttonVariant={"transparent-with-text"}
-              buttonContainerClassName={`h-6 w-full cursor-auto flex items-center gap-1.5 text-custom-text-300 rounded text-xs [&>div]:hover:bg-transparent`}
+              buttonContainerClassName={`h-6 w-full cursor-auto flex items-center gap-1.5 text-tertiary rounded-sm text-11 [&>div]:hover:bg-transparent`}
               buttonClassName="p-0"
               minDate={new Date()}
               value={{
@@ -314,7 +312,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
                 })}
               </AvatarGroup>
             ) : (
-              <Users className="h-4 w-4 text-custom-text-300" />
+              <MembersPropertyIcon className="h-4 w-4 text-tertiary" />
             )}
           </div>
         </Tooltip>

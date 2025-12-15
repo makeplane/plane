@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 // helpers
 import { Tooltip } from "@plane/propel/tooltip";
@@ -29,7 +28,7 @@ type ButtonProps = {
   renderToolTipByDefault?: boolean;
 };
 
-export const DropdownButton: React.FC<DropdownButtonProps> = (props) => {
+export function DropdownButton(props: DropdownButtonProps) {
   const {
     children,
     className,
@@ -58,9 +57,9 @@ export const DropdownButton: React.FC<DropdownButtonProps> = (props) => {
       {children}
     </ButtonToRender>
   );
-};
+}
 
-const BorderButton: React.FC<ButtonProps> = (props) => {
+function BorderButton(props: ButtonProps) {
   const { children, className, isActive, tooltipContent, renderToolTipByDefault, tooltipHeading, showTooltip } = props;
   const { isMobile } = usePlatformOS();
 
@@ -74,8 +73,10 @@ const BorderButton: React.FC<ButtonProps> = (props) => {
     >
       <div
         className={cn(
-          "h-full w-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
-          { "bg-custom-background-80": isActive },
+          "h-full w-full flex items-center gap-1.5 border-[0.5px] border-strong hover:bg-layer-transparent-hover-lg text-11 px-2 py-0.5 rounded-sm",
+          {
+            "bg-layer-transparent-active": isActive,
+          },
           className
         )}
       >
@@ -83,9 +84,9 @@ const BorderButton: React.FC<ButtonProps> = (props) => {
       </div>
     </Tooltip>
   );
-};
+}
 
-const BackgroundButton: React.FC<ButtonProps> = (props) => {
+function BackgroundButton(props: ButtonProps) {
   const { children, className, tooltipContent, tooltipHeading, renderToolTipByDefault, showTooltip } = props;
   const { isMobile } = usePlatformOS();
   return (
@@ -97,18 +98,15 @@ const BackgroundButton: React.FC<ButtonProps> = (props) => {
       renderByDefault={renderToolTipByDefault}
     >
       <div
-        className={cn(
-          "h-full w-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80",
-          className
-        )}
+        className={cn("h-full w-full flex items-center gap-1.5 rounded-sm text-11 px-2 py-0.5 bg-layer-3", className)}
       >
         {children}
       </div>
     </Tooltip>
   );
-};
+}
 
-const TransparentButton: React.FC<ButtonProps> = (props) => {
+function TransparentButton(props: ButtonProps) {
   const { children, className, isActive, tooltipContent, tooltipHeading, renderToolTipByDefault, showTooltip } = props;
   const { isMobile } = usePlatformOS();
   return (
@@ -121,8 +119,10 @@ const TransparentButton: React.FC<ButtonProps> = (props) => {
     >
       <div
         className={cn(
-          "h-full w-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
-          { "bg-custom-background-80": isActive },
+          "h-full w-full flex items-center gap-1.5 rounded-sm text-11 px-2 py-0.5 hover:bg-layer-transparent-hover",
+          {
+            "bg-layer-transparent-active": isActive,
+          },
           className
         )}
       >
@@ -130,4 +130,4 @@ const TransparentButton: React.FC<ButtonProps> = (props) => {
       </div>
     </Tooltip>
   );
-};
+}

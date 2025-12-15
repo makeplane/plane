@@ -1,5 +1,3 @@
-"use client";
-
 import type { FormEvent } from "react";
 import { useState } from "react";
 import type { LucideIcon } from "lucide-react";
@@ -8,13 +6,13 @@ import { Globe2, Lock } from "lucide-react";
 import { ETabIndices, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 import type { TPage } from "@plane/types";
-import { EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
-import { convertHexEmojiToDecimal, getTabIndex } from "@plane/utils";
+import { Input } from "@plane/ui";
+import { getTabIndex } from "@plane/utils";
 // components
 import { AccessField } from "@/components/common/access-field";
-import { Logo } from "@/components/common/logo";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -34,7 +32,7 @@ const PAGE_ACCESS_SPECIFIERS: {
   { key: EPageAccess.PRIVATE, i18n_label: "common.access.private", icon: Lock },
 ];
 
-export const PageForm: React.FC<Props> = (props) => {
+export function PageForm(props: Props) {
   const { formData, handleFormData, handleModalClose, handleFormSubmit } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -63,20 +61,20 @@ export const PageForm: React.FC<Props> = (props) => {
   return (
     <form onSubmit={handlePageFormSubmit}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">Create page</h3>
+        <h3 className="text-18 font-medium text-secondary">Create page</h3>
         <div className="flex items-start gap-2 h-9 w-full">
-          <EmojiIconPicker
+          <EmojiPicker
             isOpen={isOpen}
             handleToggle={(val: boolean) => setIsOpen(val)}
             className="flex items-center justify-center flex-shrink0"
             buttonClassName="flex items-center justify-center"
             label={
-              <span className="grid h-9 w-9 place-items-center rounded-md bg-custom-background-90">
+              <span className="grid h-9 w-9 place-items-center rounded-md bg-surface-2">
                 <>
                   {formData?.logo_props?.in_use ? (
                     <Logo logo={formData?.logo_props} size={18} type="lucide" />
                   ) : (
-                    <PageIcon className="h-4 w-4 text-custom-text-300" />
+                    <PageIcon className="h-4 w-4 text-tertiary" />
                   )}
                 </>
               </span>
@@ -86,8 +84,8 @@ export const PageForm: React.FC<Props> = (props) => {
 
               if (val?.type === "emoji")
                 logoValue = {
-                  value: convertHexEmojiToDecimal(val.value.unified),
-                  url: val.value.imageUrl,
+                  value: val.value,
+                  url: undefined,
                 };
               else if (val?.type === "icon") logoValue = val.value;
 
@@ -115,18 +113,18 @@ export const PageForm: React.FC<Props> = (props) => {
               value={formData.name}
               onChange={(e) => handleFormData("name", e.target.value)}
               placeholder="Title"
-              className="w-full resize-none text-base"
+              className="w-full resize-none text-14"
               tabIndex={getIndex("name")}
               required
               autoFocus
             />
             {isTitleLengthMoreThan255Character && (
-              <span className="text-xs text-red-500">Max length of the name should be less than 255 characters</span>
+              <span className="text-11 text-red-500">Max length of the name should be less than 255 characters</span>
             )}
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200">
+      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle">
         <div className="flex items-center gap-2">
           <AccessField
             onChange={(access) => handleFormData("access", access)}
@@ -134,15 +132,15 @@ export const PageForm: React.FC<Props> = (props) => {
             accessSpecifiers={PAGE_ACCESS_SPECIFIERS}
             isMobile={isMobile}
           />
-          <h6 className="text-xs font-medium">{t(i18n_access_label || "")}</h6>
+          <h6 className="text-11 font-medium">{t(i18n_access_label || "")}</h6>
         </div>
         <div className="flex items-center justify-end gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
+          <Button variant="secondary" size="lg" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
             Cancel
           </Button>
           <Button
             variant="primary"
-            size="sm"
+            size="lg"
             type="submit"
             loading={isSubmitting}
             disabled={isTitleLengthMoreThan255Character}
@@ -154,4 +152,4 @@ export const PageForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+}

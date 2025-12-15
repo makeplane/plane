@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 // plane imports
@@ -14,7 +11,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { NotificationFilterOptionItem } from "./menu-option-item";
 
-export const NotificationFilter: FC = observer(() => {
+export const NotificationFilter = observer(function NotificationFilter() {
   // hooks
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
@@ -29,7 +26,7 @@ export const NotificationFilter: FC = observer(() => {
       data={translatedFilterTypeOptions}
       button={
         <Tooltip tooltipContent={t("notification.options.filters")} isMobile={isMobile} position="bottom">
-          <div className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm outline-none">
+          <div className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-layer-1 rounded-xs outline-none">
             <ListFilter className="h-3 w-3" />
           </div>
         </Tooltip>

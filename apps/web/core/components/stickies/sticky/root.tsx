@@ -22,7 +22,7 @@ type TProps = {
   showToolbar?: boolean;
   handleLayout?: () => void;
 };
-export const StickyNote = observer((props: TProps) => {
+export const StickyNote = observer(function StickyNote(props: TProps) {
   const { onClose, workspaceSlug, className = "", stickyId, showToolbar, handleLayout } = props;
   // navigation
   // const pathName = usePathname();
@@ -74,7 +74,7 @@ export const StickyNote = observer((props: TProps) => {
         handleClose={() => setIsDeleteModalOpen(false)}
       />
       <div
-        className={cn("w-full h-fit flex flex-col rounded group/sticky overflow-y-scroll", className)}
+        className={cn("w-full h-fit flex flex-col rounded-sm group/sticky overflow-y-scroll", className)}
         style={{
           backgroundColor,
         }}

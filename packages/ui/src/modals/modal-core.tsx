@@ -13,7 +13,7 @@ type Props = {
   width?: EModalWidth;
   className?: string;
 };
-export const ModalCore: React.FC<Props> = (props) => {
+export function ModalCore(props: Props) {
   const {
     children,
     handleClose,
@@ -35,7 +35,7 @@ export const ModalCore: React.FC<Props> = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-30 overflow-y-auto">
@@ -51,7 +51,7 @@ export const ModalCore: React.FC<Props> = (props) => {
             >
               <Dialog.Panel
                 className={cn(
-                  "relative transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all w-full",
+                  "relative transform rounded-lg bg-surface-1 text-left shadow-custom-shadow-md transition-all w-full",
                   width,
                   className
                 )}
@@ -64,4 +64,4 @@ export const ModalCore: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

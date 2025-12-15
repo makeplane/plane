@@ -1,5 +1,3 @@
-"use client";
-
 // components
 import { AuthBase } from "@/components/auth-screens/auth-base";
 // helpers
@@ -8,12 +6,14 @@ import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 import DefaultLayout from "@/layouts/default-layout";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 
-const SignUpPage = () => (
-  <DefaultLayout>
-    <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
-      <AuthBase authType={EAuthModes.SIGN_UP} />
-    </AuthenticationWrapper>
-  </DefaultLayout>
-);
+function SignUpPage() {
+  return (
+    <DefaultLayout>
+      <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
+        <AuthBase authType={EAuthModes.SIGN_UP} />
+      </AuthenticationWrapper>
+    </DefaultLayout>
+  );
+}
 
 export default SignUpPage;

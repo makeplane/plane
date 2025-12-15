@@ -1,13 +1,8 @@
-"use client";
-
-import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check, ChevronDown } from "lucide-react";
-// types
+import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
+// plane imports
 import { getButtonStyling } from "@plane/propel/button";
 import type { TPageFiltersSortBy, TPageFiltersSortKey } from "@plane/types";
-// ui
 import { CustomMenu } from "@plane/ui";
-// helpers
-import { cn } from "@plane/utils";
 
 type Props = {
   onChange: (value: { key?: TPageFiltersSortKey; order?: TPageFiltersSortBy }) => void;
@@ -24,7 +19,7 @@ const PAGE_SORTING_KEY_OPTIONS: {
   { key: "updated_at", label: "Date modified" },
 ];
 
-export const PageOrderByDropdown: React.FC<Props> = (props) => {
+export function PageOrderByDropdown(props: Props) {
   const { onChange, sortBy, sortKey } = props;
 
   const orderByDetails = PAGE_SORTING_KEY_OPTIONS.find((option) => sortKey === option.key);
@@ -33,10 +28,9 @@ export const PageOrderByDropdown: React.FC<Props> = (props) => {
   return (
     <CustomMenu
       customButton={
-        <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
+        <div className={getButtonStyling("secondary", "lg")}>
           {!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}
           {orderByDetails?.label}
-          <ChevronDown className="h-3 w-3" strokeWidth={2} />
         </div>
       }
       placement="bottom-end"
@@ -57,7 +51,7 @@ export const PageOrderByDropdown: React.FC<Props> = (props) => {
           {sortKey === option.key && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2 border-custom-border-200" />
+      <hr className="my-2 border-subtle" />
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
         onClick={() => {
@@ -84,4 +78,4 @@ export const PageOrderByDropdown: React.FC<Props> = (props) => {
       </CustomMenu.MenuItem>
     </CustomMenu>
   );
-};
+}

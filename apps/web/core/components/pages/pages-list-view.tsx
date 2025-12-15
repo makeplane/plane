@@ -16,7 +16,7 @@ type TPageView = {
   workspaceSlug: string;
 };
 
-export const PagesListView: React.FC<TPageView> = observer((props) => {
+export const PagesListView = observer(function PagesListView(props: TPageView) {
   const { children, pageType, projectId, storeType, workspaceSlug } = props;
   // store hooks
   const { isAnyPageAvailable, fetchPagesList } = usePageStore(storeType);

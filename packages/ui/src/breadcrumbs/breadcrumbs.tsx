@@ -1,5 +1,5 @@
-import { ChevronRight } from "lucide-react";
 import * as React from "react";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "../utils";
 
@@ -10,16 +10,18 @@ type BreadcrumbsProps = {
   isLoading?: boolean;
 };
 
-export const BreadcrumbItemLoader = () => (
-  <div className="flex items-center gap-2 h-7 animate-pulse">
-    <div className="group h-full flex items-center gap-2 rounded px-2 py-1 text-sm font-medium">
-      <span className="h-full w-5 bg-custom-background-80 rounded" />
-      <span className="h-full w-16 bg-custom-background-80 rounded" />
+export function BreadcrumbItemLoader() {
+  return (
+    <div className="flex items-center gap-2 h-7 animate-pulse">
+      <div className="group h-full flex items-center gap-2 rounded-sm px-2 py-1 text-13 font-medium">
+        <span className="h-full w-5 bg-layer-1 rounded-sm" />
+        <span className="h-full w-16 bg-layer-1 rounded-sm" />
+      </div>
     </div>
-  </div>
-);
+  );
+}
 
-const Breadcrumbs = ({ className, children, onBack, isLoading = false }: BreadcrumbsProps) => {
+function Breadcrumbs({ className, children, onBack, isLoading = false }: BreadcrumbsProps) {
   const [isSmallScreen, setIsSmallScreen] = React.useState(false);
 
   React.useEffect(() => {
@@ -60,11 +62,11 @@ const Breadcrumbs = ({ className, children, onBack, isLoading = false }: Breadcr
         <>
           <div className="flex items-center gap-2.5 p-1">
             {onBack && (
-              <span onClick={onBack} className="text-custom-text-200">
+              <span onClick={onBack} className="text-secondary">
                 ...
               </span>
             )}
-            <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-400" aria-hidden="true" />
+            <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0 text-placeholder" aria-hidden="true" />
           </div>
           <div className="flex items-center gap-2.5 p-1">
             {isLoading ? (
@@ -82,7 +84,7 @@ const Breadcrumbs = ({ className, children, onBack, isLoading = false }: Breadcr
       {isSmallScreen && childrenArray.length === 1 && childrenArray}
     </div>
   );
-};
+}
 
 // breadcrumb item
 type BreadcrumbItemProps = {
@@ -91,7 +93,7 @@ type BreadcrumbItemProps = {
   isLast?: boolean;
 };
 
-const BreadcrumbItem: React.FC<BreadcrumbItemProps> = (props) => {
+function BreadcrumbItem(props: BreadcrumbItemProps) {
   const { component, showSeparator = true, isLast = false } = props;
   return (
     <div className="flex items-center gap-0.5 h-6">
@@ -99,7 +101,7 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = (props) => {
       {showSeparator && !isLast && <BreadcrumbSeparator />}
     </div>
   );
-};
+}
 
 // breadcrumb icon
 type BreadcrumbIconProps = {
@@ -107,10 +109,10 @@ type BreadcrumbIconProps = {
   className?: string;
 };
 
-const BreadcrumbIcon: React.FC<BreadcrumbIconProps> = (props) => {
+function BreadcrumbIcon(props: BreadcrumbIconProps) {
   const { children, className } = props;
   return <div className={cn("flex size-4 items-center justify-start overflow-hidden", className)}>{children}</div>;
-};
+}
 
 // breadcrumb label
 type BreadcrumbLabelProps = {
@@ -118,14 +120,14 @@ type BreadcrumbLabelProps = {
   className?: string;
 };
 
-const BreadcrumbLabel: React.FC<BreadcrumbLabelProps> = (props) => {
+function BreadcrumbLabel(props: BreadcrumbLabelProps) {
   const { children, className } = props;
   return (
     <div className={cn("relative line-clamp-1 block max-w-[150px] overflow-hidden truncate", className)}>
       {children}
     </div>
   );
-};
+}
 
 // breadcrumb separator
 type BreadcrumbSeparatorProps = {
@@ -135,22 +137,22 @@ type BreadcrumbSeparatorProps = {
   showDivider?: boolean;
 };
 
-const BreadcrumbSeparator: React.FC<BreadcrumbSeparatorProps> = (props) => {
+function BreadcrumbSeparator(props: BreadcrumbSeparatorProps) {
   const { className, containerClassName, iconClassName, showDivider = false } = props;
   return (
     <div className={cn("relative flex items-center justify-center h-full px-1.5 py-1", className)}>
-      {showDivider && <span className="absolute -left-0.5 top-0 h-full w-[1.8px] bg-custom-background-100" />}
+      {showDivider && <span className="absolute -left-0.5 top-0 h-full w-[1.8px] bg-surface-1" />}
       <div
         className={cn(
-          "flex items-center justify-center flex-shrink-0 rounded text-custom-text-400 transition-all",
+          "flex items-center justify-center flex-shrink-0 rounded-sm text-placeholder transition-all",
           containerClassName
         )}
       >
-        <ChevronRight className={cn("h-3.5 w-3.5 flex-shrink-0", iconClassName)} />
+        <ChevronRightIcon className={cn("h-3.5 w-3.5 flex-shrink-0", iconClassName)} />
       </div>
     </div>
   );
-};
+}
 
 // breadcrumb wrapper
 type BreadcrumbItemWrapperProps = {
@@ -162,15 +164,15 @@ type BreadcrumbItemWrapperProps = {
   isLast?: boolean;
 };
 
-const BreadcrumbItemWrapper: React.FC<BreadcrumbItemWrapperProps> = (props) => {
+function BreadcrumbItemWrapper(props: BreadcrumbItemWrapperProps) {
   const { label, disableTooltip = false, children, className, type = "link", isLast = false } = props;
   return (
     <Tooltip tooltipContent={label} position="bottom" disabled={!label || label === "" || disableTooltip}>
       <div
         className={cn(
-          "group h-full flex items-center gap-2 rounded px-1.5 py-1 text-sm font-medium text-custom-text-300 cursor-default",
+          "group h-full flex items-center gap-2 rounded-sm px-1.5 py-1 text-13 font-medium text-tertiary cursor-default",
           {
-            "hover:text-custom-text-100 hover:bg-custom-background-90 cursor-pointer": type === "link" && !isLast,
+            "hover:text-primary hover:bg-surface-2 cursor-pointer": type === "link" && !isLast,
           },
           className
         )}
@@ -179,7 +181,7 @@ const BreadcrumbItemWrapper: React.FC<BreadcrumbItemWrapperProps> = (props) => {
       </div>
     </Tooltip>
   );
-};
+}
 
 Breadcrumbs.Item = BreadcrumbItem;
 Breadcrumbs.Icon = BreadcrumbIcon;

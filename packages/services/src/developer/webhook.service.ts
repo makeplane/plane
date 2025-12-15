@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { IWebhook } from "@plane/types";
+import type { IWebhook } from "@plane/types";
 import { APIService } from "../api.service";
 
 /**
@@ -102,3 +102,5 @@ export default class WebhookService extends APIService {
       });
   }
 }
+
+export { WebhookService };

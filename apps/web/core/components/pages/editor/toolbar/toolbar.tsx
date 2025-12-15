@@ -1,9 +1,8 @@
-"use client";
-
 import React, { useEffect, useState, useCallback } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { Check } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -23,15 +22,15 @@ type ToolbarButtonProps = {
   executeCommand: EditorRefApi["executeMenuItemCommand"];
 };
 
-const ToolbarButton: React.FC<ToolbarButtonProps> = React.memo((props) => {
+const ToolbarButton = React.memo(function ToolbarButton(props: ToolbarButtonProps) {
   const { item, isActive, executeCommand } = props;
 
   return (
     <Tooltip
       tooltipContent={
-        <p className="flex flex-col gap-1 text-center text-xs">
+        <p className="flex flex-col gap-1 text-center text-11">
           <span className="font-medium">{item.name}</span>
-          {item.shortcut && <kbd className="text-custom-text-400">{item.shortcut.join(" + ")}</kbd>}
+          {item.shortcut && <kbd className="text-placeholder">{item.shortcut.join(" + ")}</kbd>}
         </p>
       }
     >
@@ -45,13 +44,14 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = React.memo((props) => {
             ...item.extraProps,
           })
         }
-        className={cn("grid size-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80", {
-          "bg-custom-background-80 text-custom-text-100": isActive,
+        className={cn("shrink-0 grid size-7 place-items-center rounded-sm text-tertiary", {
+          "bg-layer-transparent-selected hover:bg-layer-transparent-selected text-primary": isActive,
+          "hover:bg-layer-transparent-hover": !isActive,
         })}
       >
         <item.icon
-          className={cn("size-4", {
-            "text-custom-text-100": isActive,
+          className={cn("size-4 transition-transform duration-200", {
+            "text-primary": isActive,
           })}
         />
       </button>
@@ -63,10 +63,25 @@ ToolbarButton.displayName = "ToolbarButton";
 
 const toolbarItems = TOOLBAR_ITEMS.document;
 
-export const PageToolbar: React.FC<Props> = (props) => {
+export function PageToolbar(props: Props) {
   const { editorRef } = props;
   // states
-  const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
+  const [activeStates, setActiveStates] = useState<Record<string, boolean>>(() => {
+    const initialStates: Record<string, boolean> = {};
+    Object.values(toolbarItems)
+      .flat()
+      .forEach((item) => {
+        // TODO: update this while toolbar homogenization
+        // @ts-expect-error type mismatch here
+        initialStates[item.renderKey] = editorRef.isMenuItemActive({
+          itemKey: item.itemKey,
+          ...item.extraProps,
+        });
+      });
+    return initialStates;
+  });
+
+  const [isTypographyMenuOpen, setIsTypographyMenuOpen] = useState(false);
 
   const updateActiveStates = useCallback(() => {
     const newActiveStates: Record<string, boolean> = {};
@@ -85,7 +100,6 @@ export const PageToolbar: React.FC<Props> = (props) => {
 
   useEffect(() => {
     const unsubscribe = editorRef.onStateChange(updateActiveStates);
-    updateActiveStates();
     return () => unsubscribe();
   }, [editorRef, updateActiveStates]);
 
@@ -97,41 +111,54 @@ export const PageToolbar: React.FC<Props> = (props) => {
   );
 
   return (
-    <div className="flex items-center divide-x divide-custom-border-200 overflow-x-scroll">
+    <div className="flex items-center divide-x divide-subtle-1 overflow-x-scroll animate-in fade-in duration-200">
       <CustomMenu
         customButton={
-          <span className="text-custom-text-300 text-sm border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
+          <span
+            className={cn(
+              "text-13 border-[0.5px] border-strong h-7 w-24 rounded-sm px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left",
+              {
+                "bg-layer-1-selected text-primary": isTypographyMenuOpen,
+                "text-tertiary hover:bg-layer-1-hover": !isTypographyMenuOpen,
+              }
+            )}
+          >
             {activeTypography?.name || "Text"}
-            <ChevronDown className="flex-shrink-0 size-3" />
+            <ChevronDownIcon className="shrink-0 size-3" />
           </span>
         }
         className="pr-2"
         placement="bottom-start"
         closeOnSelect
         maxHeight="lg"
+        menuButtonOnClick={() => setIsTypographyMenuOpen((prev) => !prev)}
+        onMenuClose={() => setIsTypographyMenuOpen(false)}
       >
         {TYPOGRAPHY_ITEMS.map((item) => (
           <CustomMenu.MenuItem
             key={item.renderKey}
-            className="flex items-center justify-between gap-2"
-            onClick={() =>
-              editorRef.executeMenuItemCommand({
-                itemKey: item.itemKey,
-                ...item.extraProps,
-              })
-            }
+            className={cn("flex items-center justify-between gap-2", {
+              "bg-layer-transparent-selected text-primary": activeTypography?.itemKey === item.itemKey,
+              "hover:bg-layer-transparent-hover": !(activeTypography?.itemKey === item.itemKey),
+            })}
+            onClick={() => {
+              if (activeTypography?.itemKey !== item.itemKey) {
+                editorRef.executeMenuItemCommand({
+                  itemKey: item.itemKey,
+                  ...item.extraProps,
+                });
+              }
+            }}
           >
             <span className="flex items-center gap-2">
               <item.icon className="size-3" />
               {item.name}
             </span>
-            {activeTypography?.itemKey === item.itemKey && (
-              <Check className="size-3 text-custom-text-300 flex-shrink-0" />
-            )}
+            {activeTypography?.itemKey === item.itemKey && <Check className="size-3 text-tertiary shrink-0" />}
           </CustomMenu.MenuItem>
         ))}
       </CustomMenu>
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         <ColorDropdown
           handleColorSelect={(key, color) =>
             editorRef.executeMenuItemCommand({
@@ -161,4 +188,4 @@ export const PageToolbar: React.FC<Props> = (props) => {
       ))}
     </div>
   );
-};
+}

@@ -1,10 +1,12 @@
-import { findParentNodeClosestToPos, type Predicate, ReactNodeViewRenderer } from "@tiptap/react";
+import { findParentNodeClosestToPos, ReactNodeViewRenderer } from "@tiptap/react";
+import type { Predicate } from "@tiptap/react";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // local imports
-import { CustomCalloutBlock, type CustomCalloutNodeViewProps } from "./block";
+import { CustomCalloutBlock } from "./block";
+import type { CustomCalloutNodeViewProps } from "./block";
 import { CustomCalloutExtensionConfig } from "./extension-config";
 import type { CustomCalloutExtensionOptions, CustomCalloutExtensionStorage } from "./types";
 import { getStoredBackgroundColor, getStoredLogo } from "./utils";

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -20,7 +18,7 @@ type TStateDeleteModal = {
   data: IState | null;
 };
 
-export const StateDeleteModal: React.FC<TStateDeleteModal> = observer((props) => {
+export const StateDeleteModal = observer(function StateDeleteModal(props: TStateDeleteModal) {
   const { isOpen, onClose, data } = props;
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -83,8 +81,8 @@ export const StateDeleteModal: React.FC<TStateDeleteModal> = observer((props) =>
       title="Delete State"
       content={
         <>
-          Are you sure you want to delete state- <span className="font-medium text-custom-text-100">{data?.name}</span>?
-          All of the data related to the state will be permanently removed. This action cannot be undone.
+          Are you sure you want to delete state- <span className="font-medium text-primary">{data?.name}</span>? All of
+          the data related to the state will be permanently removed. This action cannot be undone.
         </>
       }
     />

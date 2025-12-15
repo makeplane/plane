@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import type { LucideIcon } from "lucide-react";
-import { ChevronDown } from "lucide-react";
-// plane imports
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
+// plane imports
 import type { IUserLite } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 // helpers
@@ -27,7 +27,7 @@ type TMemberDropdownBaseProps = {
   renderByDefault?: boolean;
 } & MemberDropdownProps;
 
-export const MemberDropdownBase: React.FC<TMemberDropdownBaseProps> = observer((props) => {
+export const MemberDropdownBase = observer(function MemberDropdownBase(props: TMemberDropdownBaseProps) {
   const { t } = useTranslation();
   const {
     button,
@@ -122,7 +122,7 @@ export const MemberDropdownBase: React.FC<TMemberDropdownBaseProps> = observer((
           className={cn(
             "clickable block h-full max-w-full outline-none",
             {
-              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-not-allowed text-secondary": disabled,
               "cursor-pointer": !disabled,
             },
             buttonContainerClassName
@@ -132,7 +132,7 @@ export const MemberDropdownBase: React.FC<TMemberDropdownBaseProps> = observer((
           tabIndex={tabIndex}
         >
           <DropdownButton
-            className={cn("text-xs", buttonClassName)}
+            className={cn("text-11", buttonClassName)}
             isActive={isOpen}
             tooltipHeading={placeholder}
             tooltipContent={
@@ -149,7 +149,7 @@ export const MemberDropdownBase: React.FC<TMemberDropdownBaseProps> = observer((
               </span>
             )}
             {dropdownArrow && (
-              <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
             )}
           </DropdownButton>
         </button>

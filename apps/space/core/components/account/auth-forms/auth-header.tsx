@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 // helpers
 import { EAuthModes } from "@/types/auth";
 
@@ -28,7 +25,7 @@ const Titles: TAuthHeaderDetails = {
   },
 };
 
-export const AuthHeader: FC<TAuthHeader> = (props) => {
+export function AuthHeader(props: TAuthHeader) {
   const { authMode } = props;
 
   const getHeaderSubHeader = (mode: EAuthModes | null): TAuthHeaderContent => {
@@ -47,9 +44,9 @@ export const AuthHeader: FC<TAuthHeader> = (props) => {
   return (
     <>
       <div className="flex flex-col gap-1">
-        <span className="text-2xl font-semibold text-custom-text-100 leading-7">{header}</span>
-        <span className="text-2xl font-semibold text-custom-text-400 leading-7">{subHeader}</span>
+        <span className="text-20 font-semibold text-primary leading-7">{header}</span>
+        <span className="text-20 font-semibold text-placeholder leading-7">{subHeader}</span>
       </div>
     </>
   );
-};
+}

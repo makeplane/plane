@@ -1,7 +1,10 @@
 import type { Editor } from "@tiptap/core";
 import { TableMap } from "@tiptap/pm/tables";
-import { ArrowDown, ArrowUp, Copy, ToggleRight, Trash2, X, type LucideIcon } from "lucide-react";
+import { ArrowDown, ArrowUp, Copy, ToggleRight, Trash2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 // extensions
+import type { ISvgIcons } from "@plane/propel/icons";
+import { CloseIcon } from "@plane/propel/icons";
 import { findTable, getSelectedRows } from "@/extensions/table/table/utilities/helpers";
 // local imports
 import { duplicateRows } from "../actions";
@@ -10,7 +13,7 @@ import { TableDragHandleDropdownColorSelector } from "../color-selector";
 const DROPDOWN_ITEMS: {
   key: string;
   label: string;
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   action: (editor: Editor) => void;
 }[] = [
   {
@@ -43,7 +46,7 @@ const DROPDOWN_ITEMS: {
   {
     key: "clear-contents",
     label: "Clear contents",
-    icon: X,
+    icon: CloseIcon,
     action: (editor) => editor.chain().focus().clearSelectedCells().run(),
   },
   {
@@ -59,14 +62,14 @@ type Props = {
   onClose: () => void;
 };
 
-export const RowOptionsDropdown: React.FC<Props> = (props) => {
+export function RowOptionsDropdown(props: Props) {
   const { editor, onClose } = props;
 
   return (
     <>
       <button
         type="button"
-        className="flex items-center justify-between gap-2 w-full rounded px-1 py-1.5 text-xs text-left truncate text-custom-text-200 hover:bg-custom-background-80"
+        className="flex items-center justify-between gap-2 w-full rounded-sm px-1 py-1.5 text-11 text-left truncate text-secondary hover:bg-layer-1"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -77,13 +80,13 @@ export const RowOptionsDropdown: React.FC<Props> = (props) => {
         <div className="flex-grow truncate">Header row</div>
         <ToggleRight className="shrink-0 size-3" />
       </button>
-      <hr className="my-2 border-custom-border-200" />
+      <hr className="my-2 border-subtle" />
       <TableDragHandleDropdownColorSelector editor={editor} onSelect={onClose} />
       {DROPDOWN_ITEMS.map((item) => (
         <button
           key={item.key}
           type="button"
-          className="flex items-center gap-2 w-full rounded px-1 py-1.5 text-xs text-left truncate text-custom-text-200 hover:bg-custom-background-80"
+          className="flex items-center gap-2 w-full rounded-sm px-1 py-1.5 text-11 text-left truncate text-secondary hover:bg-layer-1"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -97,4 +100,4 @@ export const RowOptionsDropdown: React.FC<Props> = (props) => {
       ))}
     </>
   );
-};
+}

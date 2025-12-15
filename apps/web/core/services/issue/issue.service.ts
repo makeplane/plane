@@ -12,7 +12,6 @@ import type {
   TIssuesResponse,
   TIssueSubIssues,
 } from "@plane/types";
-import { getIssuesShouldFallbackToServer } from "@plane/utils";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -78,12 +77,7 @@ export class IssueService extends APIService {
     queries?: Partial<Record<TIssueParams, string | boolean>>,
     config = {}
   ): Promise<TIssuesResponse> {
-    if (getIssuesShouldFallbackToServer(queries) || this.serviceType !== EIssueServiceType.ISSUES) {
-      return await this.getIssuesFromServer(workspaceSlug, projectId, queries, config);
-    }
-    const { persistence } = await import("@/local-db/storage.sqlite");
-    const response = await persistence.getIssues(workspaceSlug, projectId, queries, config);
-    return response as TIssuesResponse;
+    return this.getIssuesFromServer(workspaceSlug, projectId, queries, config);
   }
 
   async getDeletedIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<TIssuesResponse> {
@@ -115,11 +109,6 @@ export class IssueService extends APIService {
       params: queries,
     })
       .then(async (response) => {
-        // skip issue update when the service type is epic
-        if (response.data && this.serviceType === EIssueServiceType.ISSUES) {
-          const { updateIssue } = await import("@/local-db/utils/load-issues");
-          updateIssue({ ...response.data, is_local_update: 1 });
-        }
         // add is_epic flag when the service type is epic
         if (response.data && this.serviceType === EIssueServiceType.EPICS) {
           response.data.is_epic = true;
@@ -135,13 +124,7 @@ export class IssueService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/list/`, {
       params: { issues: issueIds.join(",") },
     })
-      .then(async (response) => {
-        if (response?.data && Array.isArray(response?.data) && this.serviceType === EIssueServiceType.ISSUES) {
-          const { addIssuesBulk } = await import("@/local-db/utils/load-issues");
-          addIssuesBulk(response.data);
-        }
-        return response?.data;
-      })
+      .then(async (response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -243,10 +226,6 @@ export class IssueService extends APIService {
   }
 
   async deleteIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any> {
-    if (this.serviceType === EIssueServiceType.ISSUES) {
-      const { deleteIssueFromLocal } = await import("@/local-db/utils/load-issues");
-      deleteIssueFromLocal(issuesId);
-    }
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issuesId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -353,13 +332,7 @@ export class IssueService extends APIService {
 
   async bulkOperations(workspaceSlug: string, projectId: string, data: TBulkOperationsPayload): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-operation-issues/`, data)
-      .then(async (response) => {
-        if (this.serviceType === EIssueServiceType.ISSUES) {
-          const { persistence } = await import("@/local-db/storage.sqlite");
-          persistence.syncIssues(projectId);
-        }
-        return response?.data;
-      })
+      .then(async (response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -373,13 +346,7 @@ export class IssueService extends APIService {
     }
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-delete-issues/`, data)
-      .then(async (response) => {
-        if (this.serviceType === EIssueServiceType.ISSUES) {
-          const { persistence } = await import("@/local-db/storage.sqlite");
-          persistence.syncIssues(projectId);
-        }
-        return response?.data;
-      })
+      .then(async (response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -395,13 +362,7 @@ export class IssueService extends APIService {
     archived_at: string;
   }> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-archive-issues/`, data)
-      .then(async (response) => {
-        if (this.serviceType === EIssueServiceType.ISSUES) {
-          const { persistence } = await import("@/local-db/storage.sqlite");
-          persistence.syncIssues(projectId);
-        }
-        return response?.data;
-      })
+      .then(async (response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -479,11 +440,6 @@ export class IssueService extends APIService {
       params: queries,
     })
       .then(async (response) => {
-        // skip issue update when the service type is epic
-        if (response.data && this.serviceType === EIssueServiceType.ISSUES) {
-          const { updateIssue } = await import("@/local-db/utils/load-issues");
-          updateIssue({ ...response.data, is_local_update: 1 });
-        }
         // add is_epic flag when the service type is epic
         if (response.data && this.serviceType === EIssueServiceType.EPICS) {
           response.data.is_epic = true;

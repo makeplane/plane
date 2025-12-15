@@ -1,6 +1,7 @@
 import { Combobox } from "@headlessui/react";
 import { sortBy } from "lodash-es";
-import React, { FC, useMemo, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -9,9 +10,9 @@ import { useDropdownKeyPressed } from "../hooks/use-dropdown-key-pressed";
 import { cn } from "../utils";
 import { DropdownButton } from "./common";
 import { DropdownOptions } from "./common/options";
-import { ISingleSelectDropdown } from "./dropdown";
+import type { ISingleSelectDropdown } from "./dropdown";
 
-export const Dropdown: FC<ISingleSelectDropdown> = (props) => {
+export function Dropdown(props: ISingleSelectDropdown) {
   const {
     value,
     onChange,
@@ -136,7 +137,7 @@ export const Dropdown: FC<ISingleSelectDropdown> = (props) => {
         <Combobox.Options className="fixed z-10" static>
           <div
             className={cn(
-              "my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2 text-xs shadow-custom-shadow-rg focus:outline-none",
+              "my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2 text-11 shadow-custom-shadow-rg focus:outline-none",
               optionsContainerClassName
             )}
             ref={setPopperElement}
@@ -164,4 +165,4 @@ export const Dropdown: FC<ISingleSelectDropdown> = (props) => {
       )}
     </Combobox>
   );
-};
+}

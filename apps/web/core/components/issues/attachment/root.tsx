@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
@@ -15,7 +13,7 @@ export type TIssueAttachmentRoot = {
   disabled?: boolean;
 };
 
-export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = observer((props) => {
+export const IssueAttachmentRoot = observer(function IssueAttachmentRoot(props: TIssueAttachmentRoot) {
   // props
   const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
@@ -23,7 +21,7 @@ export const IssueAttachmentRoot: FC<TIssueAttachmentRoot> = observer((props) =>
 
   return (
     <div className="relative py-3 space-y-3">
-      <h3 className="text-lg">Attachments</h3>
+      <h3 className="text-16">Attachments</h3>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         <IssueAttachmentUpload
           workspaceSlug={workspaceSlug}

@@ -1,9 +1,8 @@
-"use client";
-
-import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check, ChevronDown } from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
 import { MODULE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TModuleOrderByOptions } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
@@ -17,7 +16,7 @@ type Props = {
   value: TModuleOrderByOptions | undefined;
 };
 
-export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
+export function ModuleOrderByDropdown(props: Props) {
   const { onChange, value } = props;
   // hooks
   const { t } = useTranslation();
@@ -30,10 +29,10 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
   return (
     <CustomMenu
       customButton={
-        <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
-          {!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}
+        <div className={cn(getButtonStyling("secondary", "lg"), "px-2 text-tertiary")}>
+          {!isDescending ? <ArrowUpWideNarrow className="size-3" /> : <ArrowDownWideNarrow className="size-3" />}
           {orderByDetails && t(orderByDetails?.i18n_label)}
-          <ChevronDown className="size-3" strokeWidth={2} />
+          <ChevronDownIcon className="size-3" strokeWidth={2} />
         </div>
       }
       placement="bottom-end"
@@ -55,7 +54,7 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
       ))}
       {!isManual && (
         <>
-          <hr className="my-2 border-custom-border-200" />
+          <hr className="my-2 border-subtle" />
           <CustomMenu.MenuItem
             className="flex items-center justify-between gap-2"
             onClick={() => {
@@ -78,4 +77,4 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
       )}
     </CustomMenu>
   );
-};
+}

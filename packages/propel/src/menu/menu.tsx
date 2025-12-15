@@ -1,8 +1,9 @@
 import * as React from "react";
 import { Menu as BaseMenu } from "@base-ui-components/react/menu";
-import { ChevronDown, ChevronRight, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
+import { ChevronDownIcon, ChevronRightIcon } from "../icons";
 import { cn } from "../utils/classname";
-import { TMenuProps, TSubMenuProps, TMenuItemProps } from "./types";
+import type { TMenuProps, TSubMenuProps, TMenuItemProps } from "./types";
 
 // Context for main menu to communicate with submenus
 const MenuContext = React.createContext<{
@@ -17,14 +18,14 @@ const SubMenuContext = React.createContext<{ closeSubmenu: () => void } | null>(
 const useSubMenu = () => React.useContext(SubMenuContext);
 
 // SubMenu implementation
-const SubMenu: React.FC<TSubMenuProps> = (props) => {
+function SubMenu(props: TSubMenuProps) {
   const { children, trigger, disabled = false, className = "" } = props;
 
   return (
     <BaseMenu.SubmenuRoot disabled={disabled}>
       <BaseMenu.SubmenuTrigger className={""}>
         <span className="flex-1">{trigger}</span>
-        <ChevronRight />
+        <ChevronRightIcon />
       </BaseMenu.SubmenuTrigger>
       <BaseMenu.Portal>
         <BaseMenu.Positioner className={""} alignOffset={-4} sideOffset={-4}>
@@ -33,9 +34,9 @@ const SubMenu: React.FC<TSubMenuProps> = (props) => {
       </BaseMenu.Portal>
     </BaseMenu.SubmenuRoot>
   );
-};
+}
 
-const MenuItem: React.FC<TMenuItemProps> = (props) => {
+function MenuItem(props: TMenuItemProps) {
   const { children, disabled = false, onClick, className } = props;
   const submenuContext = useSubMenu();
 
@@ -43,9 +44,9 @@ const MenuItem: React.FC<TMenuItemProps> = (props) => {
     <BaseMenu.Item
       disabled={disabled}
       className={cn(
-        "w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 cursor-pointer outline-none focus:bg-custom-background-80",
+        "w-full select-none truncate rounded-sm px-1 py-1.5 text-left text-secondary hover:bg-layer-1 cursor-pointer outline-none",
         {
-          "text-custom-text-400": disabled,
+          "text-placeholder": disabled,
         },
         className
       )}
@@ -58,7 +59,7 @@ const MenuItem: React.FC<TMenuItemProps> = (props) => {
       {children}
     </BaseMenu.Item>
   );
-};
+}
 
 function Menu(props: TMenuProps) {
   const {
@@ -141,8 +142,8 @@ function Menu(props: TMenuProps) {
               type="button"
               onClick={handleMenuButtonClick}
               disabled={disabled}
-              className={`relative grid place-items-center rounded p-1 text-custom-text-200 outline-none hover:text-custom-text-100 ${
-                disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
+              className={`relative grid place-items-center rounded-sm p-1 text-secondary outline-none hover:text-primary ${
+                disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-layer-1"
               } ${buttonClassName}`}
               tabIndex={customButtonTabIndex}
               aria-label={ariaLabel}
@@ -152,10 +153,10 @@ function Menu(props: TMenuProps) {
           ) : (
             <BaseMenu.Trigger
               type="button"
-              className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-xs duration-300 outline-none ${
-                isOpen ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
-              } ${noBorder ? "" : "border border-custom-border-300 shadow-sm focus:outline-none"} ${
-                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
+              className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-11 duration-300 outline-none ${
+                isOpen ? "bg-surface-2 text-primary" : "text-secondary"
+              } ${noBorder ? "" : "border border-strong shadow-sm focus:outline-none"} ${
+                disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-1"
               } ${buttonClassName}`}
               onClick={handleMenuButtonClick}
               tabIndex={customButtonTabIndex}
@@ -163,7 +164,7 @@ function Menu(props: TMenuProps) {
               aria-label={ariaLabel}
             >
               {label}
-              {!noChevron && <ChevronDown className="h-3.5 w-3.5" />}
+              {!noChevron && <ChevronDownIcon className="h-3.5 w-3.5" />}
             </BaseMenu.Trigger>
           )}
         </>
@@ -179,7 +180,7 @@ function Menu(props: TMenuProps) {
           <BaseMenu.Popup
             tabIndex={tabIndex}
             className={cn(
-              "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
+              "my-1 overflow-y-scroll rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
               {
                 "max-h-60": maxHeight === "lg",
                 "max-h-48": maxHeight === "md",

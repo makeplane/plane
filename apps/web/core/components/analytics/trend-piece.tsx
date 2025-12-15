@@ -14,19 +14,19 @@ type Props = {
 
 const sizeConfig = {
   xs: {
-    text: "text-xs",
+    text: "text-11",
     icon: "w-3 h-3",
   },
   sm: {
-    text: "text-sm",
+    text: "text-13",
     icon: "w-4 h-4",
   },
   md: {
-    text: "text-base",
+    text: "text-14",
     icon: "w-5 h-5",
   },
   lg: {
-    text: "text-lg",
+    text: "text-16",
     icon: "w-6 h-6",
   },
 } as const;
@@ -49,7 +49,7 @@ const variants: Record<NonNullable<Props["variant"]>, Record<"ontrack" | "offtra
   },
 } as const;
 
-const TrendPiece = (props: Props) => {
+function TrendPiece(props: Props) {
   const { percentage, className, trendIconVisible = true, size = "sm", variant = "simple" } = props;
   const isOnTrack = percentage >= 66;
   const isOffTrack = percentage >= 33 && percentage < 66;
@@ -75,6 +75,6 @@ const TrendPiece = (props: Props) => {
       {Math.round(Math.abs(percentage))}%
     </div>
   );
-};
+}
 
 export default TrendPiece;

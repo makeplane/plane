@@ -1,11 +1,11 @@
-import { TFilterValue } from "../expression";
-import {
+import type { TFilterValue } from "../expression";
+import type {
   TCoreAllAvailableDateFilterOperatorsForDisplay,
   TCoreAllAvailableSelectFilterOperatorsForDisplay,
   TCoreSupportedDateFilterOperators,
   TCoreSupportedSelectFilterOperators,
 } from "./core";
-import {
+import type {
   TExtendedAllAvailableDateFilterOperatorsForDisplay,
   TExtendedAllAvailableSelectFilterOperatorsForDisplay,
   TExtendedSupportedDateFilterOperators,

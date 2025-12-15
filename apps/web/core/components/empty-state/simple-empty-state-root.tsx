@@ -1,8 +1,4 @@
-"use client";
-
-import React from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 // utils
 import { cn } from "@plane/utils";
 
@@ -28,31 +24,24 @@ const sizeConfig = {
 
 const getTitleClassName = (hasDescription: boolean) =>
   cn("font-medium whitespace-pre-line", {
-    "text-sm text-custom-text-400": !hasDescription,
-    "text-lg text-custom-text-300": hasDescription,
+    "text-13 text-placeholder": !hasDescription,
+    "text-16 text-tertiary": hasDescription,
   });
 
-export const SimpleEmptyState = observer((props: Props) => {
+export const SimpleEmptyState = observer(function SimpleEmptyState(props: Props) {
   const { title, description, size = "sm", assetPath } = props;
 
   return (
     <div className="text-center flex flex-col gap-2.5 items-center">
       {assetPath && (
         <div className={sizeConfig[size].container}>
-          <Image
-            src={assetPath}
-            alt={title}
-            height={sizeConfig[size].dimensions}
-            width={sizeConfig[size].dimensions}
-            layout="responsive"
-            lazyBoundary="100%"
-          />
+          <img src={assetPath} alt={title} className="h-full w-full object-contain" />
         </div>
       )}
 
       <h3 className={getTitleClassName(!!description)}>{title}</h3>
 
-      {description && <p className="text-base font-medium text-custom-text-400 whitespace-pre-line">{description}</p>}
+      {description && <p className="text-14 font-medium text-placeholder whitespace-pre-line">{description}</p>}
     </div>
   );
 });

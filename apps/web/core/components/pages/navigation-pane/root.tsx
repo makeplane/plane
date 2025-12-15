@@ -36,7 +36,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
+export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(props: Props) {
   const { handleClose, isNavigationPaneOpen, page, versionHistory, extensions = [], storeType } = props;
 
   // navigation
@@ -83,7 +83,7 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
 
   return (
     <aside
-      className="flex-shrink-0 h-full flex flex-col bg-custom-background-100 pt-3.5 border-l border-custom-border-200 transition-all duration-300 ease-out"
+      className="shrink-0 h-full flex flex-col bg-surface-1 pt-3.5 border-l border-subtle transition-all duration-300 ease-out"
       style={{
         width: `${paneWidth}px`,
         marginRight: isNavigationPaneOpen ? "0px" : `-${paneWidth}px`,
@@ -93,7 +93,7 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
         <Tooltip tooltipContent={t("page_navigation_pane.close_button")}>
           <button
             type="button"
-            className="size-3.5 grid place-items-center text-custom-text-200 hover:text-custom-text-100 transition-colors"
+            className="size-3.5 grid place-items-center text-secondary hover:text-primary transition-colors"
             onClick={handleClose}
             aria-label={t("page_navigation_pane.close_button")}
           >

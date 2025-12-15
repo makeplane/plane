@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -9,6 +7,7 @@ import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Tras
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
@@ -16,7 +15,6 @@ import type { TContextMenuItem } from "@plane/ui";
 import { Avatar, AvatarGroup, ContextMenu, FavoriteStar } from "@plane/ui";
 import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
@@ -27,12 +25,13 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { DeleteProjectModal } from "./delete-project-modal";
 import { JoinProjectModal } from "./join-project-modal";
 import { ArchiveRestoreProjectModal } from "./settings/archive-project/archive-restore-modal";
+import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 
 type Props = {
   project: IProject;
 };
 
-export const ProjectCard: React.FC<Props> = observer((props) => {
+export const ProjectCard = observer(function ProjectCard(props: Props) {
   const { project } = props;
   // states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
@@ -119,7 +118,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "settings",
-      action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`, { showProgress: false }),
+      action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`),
       title: "Settings",
       icon: Settings,
       shouldRender: !isArchived && (hasAdminRole || hasMemberRole),
@@ -199,32 +198,29 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
           }
         }}
         data-prevent-progress={!isMemberOfProject || isArchived}
-        className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
+        className="flex flex-col rounded-sm border border-subtle bg-layer-1 hover:bg-layer-1-hover rounded-xl overflow-hidden"
       >
         <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
         <div className="relative h-[118px] w-full rounded-t ">
           <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />
 
           <img
-            src={getFileURL(
-              project.cover_image_url ??
-                "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-            )}
+            src={getCoverImageDisplayURL(project.cover_image_url, DEFAULT_COVER_IMAGE_URL)}
             alt={project.name}
             className="absolute left-0 top-0 h-full w-full rounded-t object-cover"
           />
 
           <div className="absolute bottom-4 z-[1] flex h-10 w-full items-center justify-between gap-3 px-4">
             <div className="flex flex-grow items-center gap-2.5 truncate">
-              <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded bg-white/10">
+              <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded-sm bg-white/10">
                 <Logo logo={project.logo_props} size={18} />
               </div>
 
               <div className="flex w-full flex-col justify-between gap-0.5 truncate">
-                <h3 className="truncate font-semibold text-white">{project.name}</h3>
+                <h3 className="truncate font-semibold text-on-color">{project.name}</h3>
                 <span className="flex items-center gap-1.5">
-                  <p className="text-xs font-medium text-white">{project.identifier} </p>
-                  {project.network === 0 && <Lock className="h-2.5 w-2.5 text-white " />}
+                  <p className="text-11 font-medium text-on-color">{project.identifier} </p>
+                  {project.network === 0 && <Lock className="h-2.5 w-2.5 text-on-color " />}
                 </span>
               </div>
             </div>
@@ -232,20 +228,20 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             {!isArchived && (
               <div data-prevent-progress className="flex h-full flex-shrink-0 items-center gap-2">
                 <button
-                  className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
+                  className="flex h-6 w-6 items-center justify-center rounded-sm bg-white/10"
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
                     handleCopyText();
                   }}
                 >
-                  <LinkIcon className="h-3 w-3 text-white" />
+                  <LinkIcon className="h-3 w-3 text-on-color" />
                 </button>
                 {shouldRenderFavorite && (
                   <FavoriteStar
-                    buttonClassName="h-6 w-6 bg-white/10 rounded"
+                    buttonClassName="h-6 w-6 bg-white/10 rounded-sm"
                     iconClassName={cn("h-3 w-3", {
-                      "text-white": !project.is_favorite,
+                      "text-on-color": !project.is_favorite,
                     })}
                     onClick={(e) => {
                       e.preventDefault();
@@ -262,11 +258,11 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
         </div>
 
         <div
-          className={cn("flex h-[104px] w-full flex-col justify-between rounded-b p-4", {
+          className={cn("flex h-[104px] w-full flex-col justify-between rounded-b-sm p-4", {
             "opacity-90": isArchived,
           })}
         >
-          <p className="line-clamp-2 break-words text-sm text-custom-text-300">
+          <p className="line-clamp-2 break-words text-13 text-tertiary">
             {project.description && project.description.trim() !== ""
               ? project.description
               : `Created on ${renderFormattedDate(project.created_at)}`}
@@ -282,7 +278,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                 position="top"
               >
                 {projectMembersIds && projectMembersIds.length > 0 ? (
-                  <div className="flex cursor-pointer items-center gap-2 text-custom-text-200">
+                  <div className="flex cursor-pointer items-center gap-2 text-secondary">
                     <AvatarGroup showTooltip={false}>
                       {projectMembersIds.map((memberId) => {
                         const member = getUserDetails(memberId);
@@ -294,16 +290,16 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                     </AvatarGroup>
                   </div>
                 ) : (
-                  <span className="text-sm italic text-custom-text-400">No Member Yet</span>
+                  <span className="text-13 italic text-placeholder">No Member Yet</span>
                 )}
               </Tooltip>
-              {isArchived && <div className="text-xs text-custom-text-400 font-medium">Archived</div>}
+              {isArchived && <div className="text-11 text-placeholder font-medium">Archived</div>}
             </div>
             {isArchived ? (
               hasAdminRole && (
                 <div className="flex items-center justify-center gap-2">
                   <div
-                    className="flex items-center justify-center text-xs text-custom-text-400 font-medium hover:text-custom-text-200"
+                    className="flex items-center justify-center text-11 text-placeholder font-medium hover:text-secondary"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -316,7 +312,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                     </div>
                   </div>
                   <div
-                    className="flex items-center justify-center text-xs text-custom-text-400 font-medium hover:text-custom-text-200"
+                    className="flex items-center justify-center text-11 text-placeholder font-medium hover:text-secondary"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -332,7 +328,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                 {isMemberOfProject &&
                   (hasAdminRole || hasMemberRole ? (
                     <Link
-                      className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
+                      className="flex items-center justify-center rounded-sm p-1 text-placeholder hover:bg-layer-1 hover:text-secondary"
                       onClick={(e) => {
                         e.stopPropagation();
                       }}
@@ -341,7 +337,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                       <Settings className="h-3.5 w-3.5" />
                     </Link>
                   ) : (
-                    <span className="flex items-center gap-1 text-custom-text-400 text-sm">
+                    <span className="flex items-center gap-1 text-placeholder text-13">
                       <Check className="h-3.5 w-3.5" />
                       Joined
                     </span>
@@ -349,7 +345,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                 {!isMemberOfProject && (
                   <div className="flex items-center">
                     <Button
-                      variant="link-primary"
+                      variant="link"
                       className="!p-0 font-semibold"
                       onClick={(e) => {
                         e.preventDefault();

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -42,7 +40,7 @@ type Props = {
   parentRef: React.RefObject<HTMLDivElement>;
 };
 
-export const ModuleListItemAction: FC<Props> = observer((props) => {
+export const ModuleListItemAction = observer(function ModuleListItemAction(props: Props) {
   const { moduleId, moduleDetails, parentRef } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -175,7 +173,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
   return (
     <>
       <DateRangeDropdown
-        buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
+        buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-tertiary border-[0.5px] border-strong rounded-sm text-11`}
         buttonVariant="transparent-with-text"
         className="h-7"
         value={{
@@ -211,7 +209,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
         </span>
       ) : (
         <Tooltip tooltipContent="No lead">
-          <SquareUser className="h-4 w-4 text-custom-text-300" />
+          <SquareUser className="h-4 w-4 text-tertiary" />
         </Tooltip>
       )}
 

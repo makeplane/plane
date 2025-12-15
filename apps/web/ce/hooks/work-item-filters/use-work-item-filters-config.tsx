@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { AtSign, Briefcase, Calendar } from "lucide-react";
 import {
   AtSign,
   Briefcase,
@@ -12,14 +13,22 @@ import {
 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 // plane imports
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
   CycleGroupIcon,
   CycleIcon,
   ModuleIcon,
+  StatePropertyIcon,
   DoubleCircleIcon,
   LayersIcon,
   PriorityIcon,
   StateGroupIcon,
+  MembersPropertyIcon,
+  LabelPropertyIcon,
+  StartDatePropertyIcon,
+  DueDatePropertyIcon,
+  UserCirclePropertyIcon,
+  PriorityPropertyIcon,
 } from "@plane/propel/icons";
 import type {
   ICycle,
@@ -32,7 +41,7 @@ import type {
   IProject,
   TWorkItemFilterProperty,
 } from "@plane/types";
-import { Avatar, Logo } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 import {
   getAssigneeFilterConfig,
   getCreatedAtFilterConfig,
@@ -156,7 +165,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getStateGroupFilterConfig<TWorkItemFilterProperty>("state_group")({
         isEnabled: isFilterEnabled("state_group"),
-        filterIcon: DoubleCircleIcon,
+        filterIcon: StatePropertyIcon,
         getOptionIcon: (stateGroupKey) => <StateGroupIcon stateGroup={stateGroupKey} />,
         ...operatorConfigs,
       }),
@@ -168,7 +177,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getStateFilterConfig<TWorkItemFilterProperty>("state_id")({
         isEnabled: isFilterEnabled("state_id") && workItemStates !== undefined,
-        filterIcon: DoubleCircleIcon,
+        filterIcon: StatePropertyIcon,
         getOptionIcon: (state) => <StateGroupIcon stateGroup={state.group} color={state.color} />,
         states: workItemStates ?? [],
         ...operatorConfigs,
@@ -181,7 +190,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getLabelFilterConfig<TWorkItemFilterProperty>("label_id")({
         isEnabled: isFilterEnabled("label_id") && workItemLabels !== undefined,
-        filterIcon: Tag,
+        filterIcon: LabelPropertyIcon,
         labels: workItemLabels ?? [],
         getOptionIcon: (color) => (
           <span className="flex flex-shrink-0 size-2.5 rounded-full" style={{ backgroundColor: color }} />
@@ -222,7 +231,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getAssigneeFilterConfig<TWorkItemFilterProperty>("assignee_id")({
         isEnabled: isFilterEnabled("assignee_id") && members !== undefined,
-        filterIcon: Users,
+        filterIcon: MembersPropertyIcon,
         members: members ?? [],
         getOptionIcon: (memberDetails) => (
           <Avatar
@@ -262,7 +271,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getCreatedByFilterConfig<TWorkItemFilterProperty>("created_by_id")({
         isEnabled: isFilterEnabled("created_by_id") && members !== undefined,
-        filterIcon: CircleUserRound,
+        filterIcon: UserCirclePropertyIcon,
         members: members ?? [],
         getOptionIcon: (memberDetails) => (
           <Avatar
@@ -282,7 +291,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getSubscriberFilterConfig<TWorkItemFilterProperty>("subscriber_id")({
         isEnabled: isFilterEnabled("subscriber_id") && members !== undefined,
-        filterIcon: Users,
+        filterIcon: MembersPropertyIcon,
         members: members ?? [],
         getOptionIcon: (memberDetails) => (
           <Avatar
@@ -302,7 +311,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getPriorityFilterConfig<TWorkItemFilterProperty>("priority")({
         isEnabled: isFilterEnabled("priority"),
-        filterIcon: SignalHigh,
+        filterIcon: PriorityPropertyIcon,
         getOptionIcon: (priority) => <PriorityIcon priority={priority} />,
         ...operatorConfigs,
       }),
@@ -314,7 +323,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getStartDateFilterConfig<TWorkItemFilterProperty>("start_date")({
         isEnabled: true,
-        filterIcon: CalendarClock,
+        filterIcon: StartDatePropertyIcon,
         ...operatorConfigs,
       }),
     [operatorConfigs]
@@ -325,7 +334,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getTargetDateFilterConfig<TWorkItemFilterProperty>("target_date")({
         isEnabled: true,
-        filterIcon: CalendarCheck2,
+        filterIcon: DueDatePropertyIcon,
         ...operatorConfigs,
       }),
     [operatorConfigs]

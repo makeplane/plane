@@ -1,11 +1,9 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { AlertCircle, Search, X } from "lucide-react";
+import { AlertCircle, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import { CycleIcon, TransferIcon } from "@plane/propel/icons";
+import { CycleIcon, TransferIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -19,7 +17,7 @@ type Props = {
   cycleId: string;
 };
 
-export const TransferIssuesModal: React.FC<Props> = observer((props) => {
+export const TransferIssuesModal = observer(function TransferIssuesModal(props: Props) {
   const { isOpen, handleClose, cycleId } = props;
   // states
   const [query, setQuery] = useState("");
@@ -94,7 +92,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10">
@@ -108,21 +106,21 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 py-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-surface-1 py-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center justify-between px-5">
                     <div className="flex items-center gap-1">
                       <TransferIcon className="w-5 fill-custom-text-100" />
-                      <h4 className="text-xl font-medium text-custom-text-100">Transfer work items</h4>
+                      <h4 className="text-18 font-medium text-primary">Transfer work items</h4>
                     </div>
                     <button onClick={handleClose}>
-                      <X className="h-4 w-4" />
+                      <CloseIcon className="h-4 w-4" />
                     </button>
                   </div>
-                  <div className="flex items-center gap-2 border-b border-custom-border-200 px-5 pb-3">
-                    <Search className="h-4 w-4 text-custom-text-200" />
+                  <div className="flex items-center gap-2 border-b border-subtle px-5 pb-3">
+                    <Search className="h-4 w-4 text-secondary" />
                     <input
-                      className="outline-none text-sm"
+                      className="outline-none text-13"
                       placeholder="Search for a cycle..."
                       onChange={(e) => setQuery(e.target.value)}
                       value={query}
@@ -139,7 +137,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
                           return (
                             <button
                               key={optionId}
-                              className="flex w-full items-center gap-4 rounded px-4 py-3 text-sm text-custom-text-200 hover:bg-custom-background-90"
+                              className="flex w-full items-center gap-4 rounded-sm px-4 py-3 text-13 text-secondary hover:bg-surface-2"
                               onClick={() => {
                                 transferIssue({
                                   new_cycle_id: optionId,
@@ -151,7 +149,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
                               <div className="flex w-full justify-between truncate">
                                 <span className="truncate">{cycleDetails?.name}</span>
                                 {cycleDetails.status && (
-                                  <span className="flex-shrink-0 flex items-center rounded-full bg-custom-background-80  px-2 capitalize">
+                                  <span className="flex-shrink-0 flex items-center rounded-full bg-layer-1  px-2 capitalize">
                                     {cycleDetails.status.toLocaleLowerCase()}
                                   </span>
                                 )}
@@ -160,15 +158,15 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
                           );
                         })
                       ) : (
-                        <div className="flex w-full items-center justify-center gap-4 p-5 text-sm">
-                          <AlertCircle className="h-3.5 w-3.5 text-custom-text-200" />
-                          <span className="text-center text-custom-text-200">
+                        <div className="flex w-full items-center justify-center gap-4 p-5 text-13">
+                          <AlertCircle className="h-3.5 w-3.5 text-secondary" />
+                          <span className="text-center text-secondary">
                             You don’t have any current cycle. Please create one to transfer the work items.
                           </span>
                         </div>
                       )
                     ) : (
-                      <p className="text-center text-custom-text-200">Loading...</p>
+                      <p className="text-center text-secondary">Loading...</p>
                     )}
                   </div>
                 </div>

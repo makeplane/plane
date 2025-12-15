@@ -1,23 +1,20 @@
-"use client";
-
 import React, { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { mutate } from "swr";
 // icons
-import { ArrowLeft, Check, List, Settings, Users } from "lucide-react";
-// types
+import { ArrowLeft, Check, List, Settings } from "lucide-react";
 import { Button } from "@plane/propel/button";
+import { MembersPropertyIcon } from "@plane/propel/icons";
+// types
 import type { IJiraImporterForm } from "@plane/types";
-// ui
+// assets
+import JiraLogo from "@/app/assets/services/jira.svg?url";
 // fetch keys
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// assets
-import JiraLogo from "@/public/services/jira.svg";
 // services
 import { JiraImporterService } from "@/services/integrations";
 // components
@@ -42,7 +39,7 @@ const integrationWorkflowData: Array<{
   {
     title: "Users",
     key: "import-users",
-    icon: Users,
+    icon: MembersPropertyIcon,
   },
   {
     title: "Confirm",
@@ -54,7 +51,7 @@ const integrationWorkflowData: Array<{
 // services
 const jiraImporterService = new JiraImporterService();
 
-export const JiraImporterRoot: React.FC = () => {
+export function JiraImporterRoot() {
   const [currentStep, setCurrentStep] = useState<IJiraIntegrationData>({
     state: "import-configure",
   });
@@ -94,7 +91,7 @@ export const JiraImporterRoot: React.FC = () => {
   return (
     <div className="mt-4 flex h-full flex-col space-y-2">
       <Link href={`/${workspaceSlug}/settings/imports`}>
-        <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
+        <span className="inline-flex cursor-pointer items-center gap-2 text-13 font-medium text-secondary hover:text-primary">
           <div>
             <ArrowLeft className="h-3 w-3" />
           </div>
@@ -102,10 +99,10 @@ export const JiraImporterRoot: React.FC = () => {
         </span>
       </Link>
 
-      <div className="flex h-full flex-col space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
+      <div className="flex h-full flex-col space-y-4 rounded-[10px] border border-subtle bg-surface-1 p-4">
         <div className="flex items-center gap-2">
           <div className="h-10 w-10 flex-shrink-0">
-            <Image src={JiraLogo} alt="jira logo" />
+            <img src={JiraLogo} className="w-full h-full object-cover" alt="jira logo" />
           </div>
           <div className="flex h-full w-full items-center justify-center">
             {integrationWorkflowData.map((integration, index) => (
@@ -119,25 +116,25 @@ export const JiraImporterRoot: React.FC = () => {
                     index > activeIntegrationState() + 1 ||
                     Boolean(index === activeIntegrationState() + 1 && disableTopBarAfter)
                   }
-                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-custom-border-200 ${
+                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-subtle ${
                     index <= activeIntegrationState()
-                      ? `border-custom-primary bg-custom-primary ${
+                      ? `border-accent-strong bg-accent-primary ${
                           index === activeIntegrationState()
                             ? "border-opacity-100 bg-opacity-100"
                             : "border-opacity-80 bg-opacity-80"
                         }`
-                      : "border-custom-border-200"
+                      : "border-subtle"
                   }`}
                 >
                   <integration.icon
-                    className={`h-5 w-5 ${index <= activeIntegrationState() ? "text-white" : "text-custom-text-400"}`}
+                    className={`h-5 w-5 ${index <= activeIntegrationState() ? "text-on-color" : "text-placeholder"}`}
                   />
                 </button>
                 {index < integrationWorkflowData.length - 1 && (
                   <div
                     key={index}
                     className={`border-b px-7 ${
-                      index <= activeIntegrationState() - 1 ? `border-custom-primary` : `border-custom-border-200`
+                      index <= activeIntegrationState() - 1 ? `border-accent-strong` : `border-subtle`
                     }`}
                   >
                     {" "}
@@ -160,10 +157,10 @@ export const JiraImporterRoot: React.FC = () => {
                 {currentStep?.state === "import-confirmation" && <JiraConfirmImport />}
               </div>
 
-              <div className="-mx-4 mt-4 flex justify-end gap-4 border-t border-custom-border-200 p-4 pb-0">
+              <div className="-mx-4 mt-4 flex justify-end gap-4 border-t border-subtle p-4 pb-0">
                 {currentStep?.state !== "import-configure" && (
                   <Button
-                    variant="neutral-primary"
+                    variant="secondary"
                     onClick={() => {
                       const currentElementIndex = integrationWorkflowData.findIndex(
                         (i) => i?.key === currentStep?.state
@@ -200,4 +197,4 @@ export const JiraImporterRoot: React.FC = () => {
       </div>
     </div>
   );
-};
+}
