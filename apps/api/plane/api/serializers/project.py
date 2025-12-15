@@ -134,11 +134,6 @@ class ProjectCreateSerializer(BaseSerializer):
                 },
             }
 
-        workspace = Workspace.objects.get(id=self.context["workspace_id"])
-
-        if "timezone" not in validated_data:
-            validated_data["timezone"] = workspace.timezone
-
         project = Project.objects.create(**validated_data, workspace_id=self.context["workspace_id"])
         return project
 

@@ -155,7 +155,16 @@ class Project(BaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
+        from plane.db.models import Workspace
+
         self.identifier = self.identifier.strip().upper()
+        is_creating = self._state.adding
+
+        if is_creating:
+            workspace = Workspace.objects.get(id=self.workspace_id)
+
+            self.timezone = workspace.timezone
+
         return super().save(*args, **kwargs)
 
 
