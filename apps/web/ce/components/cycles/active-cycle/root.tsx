@@ -59,7 +59,7 @@ const ActiveCyclesComponent = observer(function ActiveCyclesComponent({
   }
 
   return (
-    <div className="flex flex-col border-b border-custom-border-200">
+    <div className="flex flex-col border-b border-subtle">
       <CyclesListItem
         key={cycleId}
         cycleId={cycleId}
@@ -67,8 +67,8 @@ const ActiveCyclesComponent = observer(function ActiveCyclesComponent({
         projectId={projectId}
         className="!border-b-transparent"
       />
-      <Row className="bg-custom-background-100 pt-3 pb-6">
-        <div className="grid grid-cols-1 bg-custom-background-100 gap-3 lg:grid-cols-2 xl:grid-cols-3">
+      <Row className="bg-surface-1 pt-3 pb-6">
+        <div className="grid grid-cols-1 bg-surface-1 gap-3 lg:grid-cols-2 xl:grid-cols-3">
           <ActiveCycleProgress
             handleFiltersUpdate={handleFiltersUpdate}
             projectId={projectId}
@@ -114,7 +114,7 @@ export const ActiveCycleRoot = observer(function ActiveCycleRoot(props: IActiveC
         <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
           {({ open }) => (
             <>
-              <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
+              <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle bg-layer-2 cursor-pointer">
                 <CycleListGroupHeader title={t("project_cycles.active_cycle.label")} type="current" isExpanded={open} />
               </Disclosure.Button>
               <Disclosure.Panel>

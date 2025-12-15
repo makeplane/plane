@@ -60,7 +60,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
         <div className="fixed inset-0 z-20 flex w-full justify-center overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
@@ -73,7 +73,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative flex transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative flex transform rounded-lg bg-surface-1 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form className="space-y-4">
                   <div className="flex w-full justify-between">
                     <Controller
@@ -94,7 +94,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
                         const date2Value = getDate(watch("date2"));
                         return (
                           <Calendar
-                            className="rounded-md border border-custom-border-200 p-3"
+                            className="rounded-md border border-subtle p-3"
                             captionLayout="dropdown"
                             selected={dateValue}
                             defaultMonth={dateValue}
@@ -117,7 +117,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
                           const date1Value = getDate(watch("date1"));
                           return (
                             <Calendar
-                              className="rounded-md border border-custom-border-200 p-3"
+                              className="rounded-md border border-subtle p-3"
                               captionLayout="dropdown"
                               selected={dateValue}
                               defaultMonth={dateValue}
@@ -134,20 +134,20 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
                     )}
                   </div>
                   {watch("filterType") === "range" && (
-                    <h6 className="flex items-center gap-1 text-xs">
-                      <span className="text-custom-text-200">After:</span>
+                    <h6 className="flex items-center gap-1 text-11">
+                      <span className="text-secondary">After:</span>
                       <span>{renderFormattedDate(watch("date1"))}</span>
-                      <span className="ml-1 text-custom-text-200">Before:</span>
+                      <span className="ml-1 text-secondary">Before:</span>
                       {!isInvalid && <span>{renderFormattedDate(watch("date2"))}</span>}
                     </h6>
                   )}
                   <div className="flex justify-end gap-4">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="secondary" size="lg" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button
                       variant="primary"
-                      size="sm"
+                      size="lg"
                       type="button"
                       onClick={handleSubmit(handleFormSubmit)}
                       disabled={isInvalid}

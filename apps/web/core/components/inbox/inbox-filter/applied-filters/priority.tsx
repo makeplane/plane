@@ -25,18 +25,18 @@ export const InboxIssueAppliedFiltersPriority = observer(function InboxIssueAppl
   if (filteredValues.length === 0) return <></>;
   return (
     <Tag>
-      <div className="text-xs text-custom-text-200">{t("common.priority")}</div>
+      <div className="text-11 text-secondary">{t("common.priority")}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
         return (
-          <div key={value} className="relative flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+          <div key={value} className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
             <div className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden">
               <PriorityIcon priority={optionDetail.key} className="h-3 w-3" />
             </div>
-            <div className="text-xs truncate">{optionDetail?.title}</div>
+            <div className="text-11 truncate">{optionDetail?.title}</div>
             <div
-              className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
+              className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
               onClick={() => handleInboxIssueFilters("priority", handleFilterValue(optionDetail?.key))}
             >
               <CloseIcon className={`w-3 h-3`} />
@@ -46,7 +46,7 @@ export const InboxIssueAppliedFiltersPriority = observer(function InboxIssueAppl
       })}
 
       <div
-        className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
+        className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
         onClick={clearFilter}
       >
         <CloseIcon className={`w-3 h-3`} />

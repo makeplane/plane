@@ -61,7 +61,7 @@ export function PageForm(props: Props) {
   return (
     <form onSubmit={handlePageFormSubmit}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">Create page</h3>
+        <h3 className="text-18 font-medium text-secondary">Create page</h3>
         <div className="flex items-start gap-2 h-9 w-full">
           <EmojiPicker
             isOpen={isOpen}
@@ -69,12 +69,12 @@ export function PageForm(props: Props) {
             className="flex items-center justify-center flex-shrink0"
             buttonClassName="flex items-center justify-center"
             label={
-              <span className="grid h-9 w-9 place-items-center rounded-md bg-custom-background-90">
+              <span className="grid h-9 w-9 place-items-center rounded-md bg-surface-2">
                 <>
                   {formData?.logo_props?.in_use ? (
                     <Logo logo={formData?.logo_props} size={18} type="lucide" />
                   ) : (
-                    <PageIcon className="h-4 w-4 text-custom-text-300" />
+                    <PageIcon className="h-4 w-4 text-tertiary" />
                   )}
                 </>
               </span>
@@ -113,18 +113,18 @@ export function PageForm(props: Props) {
               value={formData.name}
               onChange={(e) => handleFormData("name", e.target.value)}
               placeholder="Title"
-              className="w-full resize-none text-base"
+              className="w-full resize-none text-14"
               tabIndex={getIndex("name")}
               required
               autoFocus
             />
             {isTitleLengthMoreThan255Character && (
-              <span className="text-xs text-red-500">Max length of the name should be less than 255 characters</span>
+              <span className="text-11 text-red-500">Max length of the name should be less than 255 characters</span>
             )}
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200">
+      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle">
         <div className="flex items-center gap-2">
           <AccessField
             onChange={(access) => handleFormData("access", access)}
@@ -132,15 +132,15 @@ export function PageForm(props: Props) {
             accessSpecifiers={PAGE_ACCESS_SPECIFIERS}
             isMobile={isMobile}
           />
-          <h6 className="text-xs font-medium">{t(i18n_access_label || "")}</h6>
+          <h6 className="text-11 font-medium">{t(i18n_access_label || "")}</h6>
         </div>
         <div className="flex items-center justify-end gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
+          <Button variant="secondary" size="lg" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
             Cancel
           </Button>
           <Button
             variant="primary"
-            size="sm"
+            size="lg"
             type="submit"
             loading={isSubmitting}
             disabled={isTitleLengthMoreThan255Character}

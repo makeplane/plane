@@ -35,35 +35,31 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
   const getSubscriptionType = (planKey: TPlanePlans) => planDetails[planKey].id;
 
   return (
-    <div
-      className={`size-full px-2 overflow-x-auto horizontal-scrollbar scrollbar-sm transition-all duration-500 ease-out will-change-transform`}
-    >
+    <div className="size-full px-2 overflow-x-auto horizontal-scrollbar scrollbar-sm">
       <div className="max-w-full" style={{ minWidth: `${numberOfPlansToRender * 280}px` }}>
         <div className="h-full flex flex-col gap-y-10">
           <div
-            className={cn(
-              "flex-shrink-0 sticky top-2 z-10 bg-custom-background-100 grid gap-3 text-sm font-medium even:bg-custom-background-90 transition-all duration-500 ease-out will-change-transform"
-            )}
+            className={cn("flex-shrink-0 sticky top-2 z-10 bg-layer-1 grid gap-3 text-caption-md-medium")}
             style={{
               gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))`,
             }}
           >
-            <div className="col-span-1 p-3 space-y-0.5 text-base font-medium" />
+            <div className="col-span-1 p-3 space-y-0.5 text-body-sm-medium" />
             {planeDetails}
           </div>
           {/* Plan Headers */}
           <section className="flex-shrink-0">
             {/* Plan Highlights */}
             <div
-              className="grid gap-3 py-1 text-sm text-custom-text-200 even:bg-custom-background-90 rounded-sm"
+              className="grid gap-3 py-1 text-caption-md text-secondary even:bg-surface-2 rounded-xs"
               style={{ gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))` }}
             >
-              <div className="col-span-1 p-3 text-base font-medium">Highlights</div>
+              <div className="col-span-1 p-3 text-body-sm-medium">Highlights</div>
               {Object.entries(planHighlights).map(
                 ([planKey, highlights]) =>
                   shouldRenderPlanDetail(planKey as TPlanePlans) && (
                     <div key={planKey} className="col-span-1 p-3">
-                      <ul className="list-disc space-y-1">
+                      <ul className="list-disc space-y-1 text-body-xs-regular">
                         {highlights.map((highlight, index) => (
                           <li key={index}>{highlight}</li>
                         ))}
@@ -79,17 +75,17 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
             <>
               {planComparison.map((section, sectionIdx) => (
                 <section key={sectionIdx} className="flex-shrink-0">
-                  <h2 className="flex gap-2 items-start text-lg font-semibold text-custom-text-300 mb-2 pl-2">
+                  <h2 className="flex gap-2 items-start text-h5-semibold text-secondary mb-2 pl-2">
                     {section.title} {section.comingSoon && <ComingSoonBadge />}
                   </h2>
-                  <div className="border-t border-custom-border-200">
+                  <div className="border-t border-subtle">
                     {section.features.map((feature, featureIdx) => (
                       <div
                         key={featureIdx}
-                        className="grid gap-3 text-sm text-custom-text-200 even:bg-custom-background-90 rounded-sm"
+                        className="grid gap-3 text-caption-md text-secondary bg-layer-transparent even:bg-layer-1 rounded-xs"
                         style={{ gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))` }}
                       >
-                        <div className="col-span-1 p-3 flex items-center text-base font-medium">
+                        <div className="col-span-1 p-3 flex items-center text-body-sm-medium">
                           <div className="w-full flex gap-2 items-start justify-between">
                             {feature.title} {feature.comingSoon && <ComingSoonBadge />}
                           </div>
@@ -99,7 +95,7 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
                             shouldRenderPlanDetail(planKey) && (
                               <div
                                 key={planKey}
-                                className="col-span-1 p-3 flex items-center justify-center text-center"
+                                className="col-span-1 p-3 flex items-center justify-center text-center text-body-xs-regular"
                               >
                                 <PlanFeatureDetail
                                   subscriptionType={getSubscriptionType(planKey)}
@@ -124,14 +120,13 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
         {/* Toggle Button */}
         <div className="flex items-center justify-center gap-1 my-4 pb-2">
           <Button
-            variant="link-neutral"
+            variant="ghost"
             onClick={() => {
               setIsCompareAllFeaturesSectionOpen(!isCompareAllFeaturesSectionOpen);
             }}
-            className="hover:bg-custom-background-90"
+            appendIcon={isCompareAllFeaturesSectionOpen ? <ArrowUp /> : <ArrowDown />}
           >
             {isCompareAllFeaturesSectionOpen ? "Collapse comparison" : "Compare all features"}
-            {isCompareAllFeaturesSectionOpen ? <ArrowUp className="size-4" /> : <ArrowDown className="size-4" />}
           </Button>
         </div>
       </div>

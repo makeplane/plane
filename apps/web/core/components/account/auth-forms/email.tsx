@@ -45,13 +45,13 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
   return (
     <form onSubmit={handleFormSubmit} className="space-y-4">
       <div className="space-y-1">
-        <label htmlFor="email" className="text-sm text-custom-text-300 font-medium">
+        <label htmlFor="email" className="text-13 text-tertiary font-medium">
           {t("auth.common.email.label")}
         </label>
         <div
           className={cn(
-            `relative flex items-center rounded-md bg-custom-background-100 border`,
-            !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-custom-border-300`
+            `relative flex items-center rounded-md bg-surface-1 border`,
+            !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-strong`
           )}
           onFocus={() => {
             setIsFocused(true);
@@ -67,7 +67,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t("auth.common.email.placeholder")}
-            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
+            className={`disable-autofill-style h-10 w-full placeholder:text-placeholder autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
             autoComplete="on"
             autoFocus
             ref={inputRef}
@@ -88,13 +88,13 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
           )}
         </div>
         {emailError?.email && !isFocused && (
-          <p className="flex items-center gap-1 text-xs text-red-600 px-0.5">
+          <p className="flex items-center gap-1 text-11 text-red-600 px-0.5">
             <CircleAlert height={12} width={12} />
             {t(emailError.email)}
           </p>
         )}
       </div>
-      <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+      <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
         {isSubmitting ? <Spinner height="20px" width="20px" /> : t("common.continue")}
       </Button>
     </form>

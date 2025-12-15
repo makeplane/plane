@@ -93,12 +93,12 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
       <div className="flex flex-col gap-4 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
-            <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
+            <div className="flex items-center justify-center rounded-sm bg-layer-3 p-3">
               <ArchiveX className="h-4 w-4 flex-shrink-0 text-red-500" />
             </div>
             <div className="">
-              <h4 className="text-sm font-medium">{t("project_settings.automations.auto-close.title")}</h4>
-              <p className="text-sm tracking-tight text-custom-text-200">
+              <h4 className="text-13 font-medium">{t("project_settings.automations.auto-close.title")}</h4>
+              <p className="text-13 tracking-tight text-tertiary">
                 {t("project_settings.automations.auto-close.description")}
               </p>
             </div>
@@ -129,9 +129,9 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
         {currentProjectDetails ? (
           autoCloseStatus && (
             <div className="mx-6">
-              <div className="flex flex-col rounded border border-custom-border-200 bg-custom-background-90">
+              <div className="flex flex-col rounded-sm border border-subtle bg-surface-2">
                 <div className="flex w-full items-center justify-between gap-2 px-5 py-4">
-                  <div className="w-1/2 text-sm font-medium">
+                  <div className="w-1/2 text-13 font-medium">
                     {t("project_settings.automations.auto-close.duration")}
                   </div>
                   <div className="w-1/2">
@@ -154,7 +154,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                         ))}
                         <button
                           type="button"
-                          className="flex w-full select-none items-center rounded px-1 py-1.5 text-custom-text-200 hover:bg-custom-background-80"
+                          className="flex w-full select-none items-center rounded-sm px-1 py-1.5 text-secondary hover:bg-layer-1"
                           onClick={() => setmonthModal(true)}
                         >
                           {t("common.customize_time_range")}
@@ -165,10 +165,10 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                 </div>
 
                 <div className="ppy sm:py-10 flex w-full items-center justify-between gap-2 px-5 py-4">
-                  <div className="w-1/2 text-sm font-medium">
+                  <div className="w-1/2 text-13 font-medium">
                     {t("project_settings.automations.auto-close.auto_close_status")}
                   </div>
-                  <div className="w-1/2 ">
+                  <div className="w-1/2">
                     <CustomSearchSelect
                       value={currentProjectDetails?.default_state ?? defaultState}
                       label={
@@ -186,11 +186,11 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                               size={EIconSize.LG}
                             />
                           ) : (
-                            <StatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />
+                            <StatePropertyIcon className="h-3.5 w-3.5 text-secondary" />
                           )}
                           {selectedOption?.name
                             ? selectedOption.name
-                            : (currentDefaultState?.name ?? <span className="text-custom-text-200">{t("state")}</span>)}
+                            : (currentDefaultState?.name ?? <span className="text-secondary">{t("state")}</span>)}
                         </div>
                       }
                       onChange={(val: string) => {

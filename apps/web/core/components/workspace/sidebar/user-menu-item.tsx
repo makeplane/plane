@@ -61,7 +61,7 @@ export const SidebarUserMenuItem = observer(function SidebarUserMenuItem(props: 
       <SidebarNavItem isActive={isActive}>
         <div className="flex items-center gap-1.5 py-[1px]">
           <item.Icon className="size-4 flex-shrink-0" />
-          <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>
+          <p className="text-13 leading-5 font-medium">{t(item.labelTranslationKey)}</p>
         </div>
         {item.key === "notifications" && <NotificationAppSidebarOption workspaceSlug={workspaceSlug.toString()} />}
       </SidebarNavItem>

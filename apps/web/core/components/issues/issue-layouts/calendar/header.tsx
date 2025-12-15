@@ -109,7 +109,7 @@ export const CalendarHeader = observer(function CalendarHeader(props: ICalendarH
       <div className="flex items-center gap-1.5">
         <button
           type="button"
-          className="rounded bg-custom-background-80 px-2.5 py-1 text-xs font-medium text-custom-text-200 hover:text-custom-text-100"
+          className="rounded-sm bg-layer-transparent hover:bg-layer-transparent-hover px-2.5 py-1 text-11 font-medium text-secondary  hover:text-primary"
           onClick={handleToday}
         >
           {t("common.today")}

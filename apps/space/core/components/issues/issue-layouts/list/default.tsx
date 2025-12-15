@@ -6,7 +6,6 @@ import type {
   TGroupedIssues,
   IIssueDisplayProperties,
   TIssueGroupByOptions,
-  IGroupByColumn,
   TPaginationData,
   TLoader,
 } from "@plane/types";
@@ -67,7 +66,7 @@ export const List = observer(function List(props: IList) {
             ref={containerRef}
             className="size-full vertical-scrollbar scrollbar-lg relative overflow-auto vertical-scrollbar-margin-top-md"
           >
-            {groupList.map((group: IGroupByColumn) => (
+            {groupList.map((group) => (
               <ListGroup
                 key={group.id}
                 groupIssueIds={groupedIssueIds?.[group.id]}

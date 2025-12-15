@@ -25,7 +25,7 @@ export const SingleImport = observer(function SingleImport({ service, refreshing
   return (
     <div className="flex items-center justify-between gap-2 px-4 py-3">
       <div>
-        <h4 className="flex items-center gap-2 text-sm">
+        <h4 className="flex items-center gap-2 text-13">
           {importer && (
             <span>
               Import from <span className="font-medium">{t(importer.i18n_title)}</span> to{" "}
@@ -33,7 +33,7 @@ export const SingleImport = observer(function SingleImport({ service, refreshing
           )}
           <span className="font-medium">{service.project_detail.name}</span>
           <span
-            className={`rounded px-2 py-0.5 text-xs capitalize ${
+            className={`rounded-sm px-2 py-0.5 text-11 capitalize ${
               service.status === "completed"
                 ? "bg-green-500/20 text-green-500"
                 : service.status === "processing"
@@ -46,7 +46,7 @@ export const SingleImport = observer(function SingleImport({ service, refreshing
             {refreshing ? "Refreshing..." : service.status}
           </span>
         </h4>
-        <div className="mt-2 flex items-center gap-2 text-xs text-custom-text-200">
+        <div className="mt-2 flex items-center gap-2 text-11 text-secondary">
           <span>{renderFormattedDate(service.created_at)}</span>|
           <span>Imported by {service.initiated_by_detail?.display_name}</span>
         </div>

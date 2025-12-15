@@ -12,7 +12,7 @@ export function WebhookInput(props: Props) {
 
   return (
     <>
-      <h6 className="text-sm font-medium">{t("workspace_settings.settings.webhooks.modal.payload")}</h6>
+      <h6 className="text-13 font-medium">{t("workspace_settings.settings.webhooks.modal.payload")}</h6>
       <Input
         type="url"
         className="h-11 w-full"

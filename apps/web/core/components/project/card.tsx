@@ -198,7 +198,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
           }
         }}
         data-prevent-progress={!isMemberOfProject || isArchived}
-        className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
+        className="flex flex-col rounded-sm border border-subtle bg-layer-1 hover:bg-layer-1-hover rounded-xl overflow-hidden"
       >
         <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
         <div className="relative h-[118px] w-full rounded-t ">
@@ -212,15 +212,15 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
 
           <div className="absolute bottom-4 z-[1] flex h-10 w-full items-center justify-between gap-3 px-4">
             <div className="flex flex-grow items-center gap-2.5 truncate">
-              <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded bg-white/10">
+              <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded-sm bg-white/10">
                 <Logo logo={project.logo_props} size={18} />
               </div>
 
               <div className="flex w-full flex-col justify-between gap-0.5 truncate">
-                <h3 className="truncate font-semibold text-white">{project.name}</h3>
+                <h3 className="truncate font-semibold text-on-color">{project.name}</h3>
                 <span className="flex items-center gap-1.5">
-                  <p className="text-xs font-medium text-white">{project.identifier} </p>
-                  {project.network === 0 && <Lock className="h-2.5 w-2.5 text-white " />}
+                  <p className="text-11 font-medium text-on-color">{project.identifier} </p>
+                  {project.network === 0 && <Lock className="h-2.5 w-2.5 text-on-color " />}
                 </span>
               </div>
             </div>
@@ -228,20 +228,20 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
             {!isArchived && (
               <div data-prevent-progress className="flex h-full flex-shrink-0 items-center gap-2">
                 <button
-                  className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
+                  className="flex h-6 w-6 items-center justify-center rounded-sm bg-white/10"
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
                     handleCopyText();
                   }}
                 >
-                  <LinkIcon className="h-3 w-3 text-white" />
+                  <LinkIcon className="h-3 w-3 text-on-color" />
                 </button>
                 {shouldRenderFavorite && (
                   <FavoriteStar
-                    buttonClassName="h-6 w-6 bg-white/10 rounded"
+                    buttonClassName="h-6 w-6 bg-white/10 rounded-sm"
                     iconClassName={cn("h-3 w-3", {
-                      "text-white": !project.is_favorite,
+                      "text-on-color": !project.is_favorite,
                     })}
                     onClick={(e) => {
                       e.preventDefault();
@@ -258,11 +258,11 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
         </div>
 
         <div
-          className={cn("flex h-[104px] w-full flex-col justify-between rounded-b p-4", {
+          className={cn("flex h-[104px] w-full flex-col justify-between rounded-b-sm p-4", {
             "opacity-90": isArchived,
           })}
         >
-          <p className="line-clamp-2 break-words text-sm text-custom-text-300">
+          <p className="line-clamp-2 break-words text-13 text-tertiary">
             {project.description && project.description.trim() !== ""
               ? project.description
               : `Created on ${renderFormattedDate(project.created_at)}`}
@@ -278,7 +278,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 position="top"
               >
                 {projectMembersIds && projectMembersIds.length > 0 ? (
-                  <div className="flex cursor-pointer items-center gap-2 text-custom-text-200">
+                  <div className="flex cursor-pointer items-center gap-2 text-secondary">
                     <AvatarGroup showTooltip={false}>
                       {projectMembersIds.map((memberId) => {
                         const member = getUserDetails(memberId);
@@ -290,16 +290,16 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </AvatarGroup>
                   </div>
                 ) : (
-                  <span className="text-sm italic text-custom-text-400">No Member Yet</span>
+                  <span className="text-13 italic text-placeholder">No Member Yet</span>
                 )}
               </Tooltip>
-              {isArchived && <div className="text-xs text-custom-text-400 font-medium">Archived</div>}
+              {isArchived && <div className="text-11 text-placeholder font-medium">Archived</div>}
             </div>
             {isArchived ? (
               hasAdminRole && (
                 <div className="flex items-center justify-center gap-2">
                   <div
-                    className="flex items-center justify-center text-xs text-custom-text-400 font-medium hover:text-custom-text-200"
+                    className="flex items-center justify-center text-11 text-placeholder font-medium hover:text-secondary"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -312,7 +312,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </div>
                   </div>
                   <div
-                    className="flex items-center justify-center text-xs text-custom-text-400 font-medium hover:text-custom-text-200"
+                    className="flex items-center justify-center text-11 text-placeholder font-medium hover:text-secondary"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -328,7 +328,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 {isMemberOfProject &&
                   (hasAdminRole || hasMemberRole ? (
                     <Link
-                      className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
+                      className="flex items-center justify-center rounded-sm p-1 text-placeholder hover:bg-layer-1 hover:text-secondary"
                       onClick={(e) => {
                         e.stopPropagation();
                       }}
@@ -337,7 +337,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                       <Settings className="h-3.5 w-3.5" />
                     </Link>
                   ) : (
-                    <span className="flex items-center gap-1 text-custom-text-400 text-sm">
+                    <span className="flex items-center gap-1 text-placeholder text-13">
                       <Check className="h-3.5 w-3.5" />
                       Joined
                     </span>
@@ -345,7 +345,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 {!isMemberOfProject && (
                   <div className="flex items-center">
                     <Button
-                      variant="link-primary"
+                      variant="link"
                       className="!p-0 font-semibold"
                       onClick={(e) => {
                         e.preventDefault();

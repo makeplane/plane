@@ -88,13 +88,13 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
         placeholderChildren={
           <td
             colSpan={100}
-            className="border-[0.5px] border-transparent border-b-custom-border-200"
+            className="border-[0.5px] border-transparent border-b-subtle-1"
             style={{ height: "calc(2.75rem - 1px)" }}
           />
         }
-        classNames={cn("bg-custom-background-100 transition-[background-color]", {
+        classNames={cn("bg-surface-1 transition-[background-color]", {
           "group selected-issue-row": isIssueSelected,
-          "border-[0.5px] border-custom-border-400": isIssueActive,
+          "border-[0.5px] border-strong-1": isIssueActive,
         })}
         verticalOffset={100}
         shouldRecordHeights={false}
@@ -208,8 +208,8 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
   const customActionButton = (
     <div
       ref={menuActionRef}
-      className={`flex items-center h-full w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-custom-background-80 ${
-        isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
+      className={`flex items-center h-full w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
+        isMenuActive ? "bg-layer-1 text-primary" : "text-secondary"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
@@ -255,7 +255,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
         id={`issue-${issueId}`}
         ref={cellRef}
         tabIndex={0}
-        className="relative md:sticky left-0 z-10 group/list-block bg-custom-background-100 max-w-lg"
+        className="relative md:sticky left-0 z-10 group/list-block bg-surface-1 max-w-lg"
       >
         <ControlLink
           href={workItemLink}
@@ -265,10 +265,10 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
         >
           <Row
             className={cn(
-              "group clickable cursor-pointer h-11 w-full flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
+              "group clickable cursor-pointer h-11 w-full flex items-center text-13 after:absolute border-r-[0.5px] z-10 border-subtle bg-transparent group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10",
               {
                 "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
-                "border border-custom-primary-70 hover:border-custom-primary-70":
+                "border border-accent-strong hover:border-accent-strong":
                   getIsIssuePeeked(issueDetail.id) && nestingLevel === peekIssue?.nestingLevel,
                 "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,
               }
@@ -277,12 +277,13 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
             {/* Identifier section - conditionally rendered */}
             {displayProperties?.key && (
               <div className="flex-shrink-0 flex items-center h-full min-w-24">
-                <div className="relative flex cursor-pointer items-center text-xs hover:text-custom-text-100">
+                <div className="relative flex cursor-pointer items-center text-11 hover:text-custom-text-100">
                   {issueDetail.project_id && (
                     <IssueIdentifier
                       issueId={issueDetail.id}
                       projectId={issueDetail.project_id}
-                      textContainerClassName="text-sm md:text-xs text-custom-text-300"
+                      size="xs"
+                      variant="tertiary"
                       displayProperties={displayProperties}
                     />
                   )}
@@ -334,7 +335,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
                 {subIssuesCount > 0 && !isEpic && (
                   <button
                     type="button"
-                    className="grid place-items-center size-4 rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                    className="grid place-items-center size-4 rounded-xs text-placeholder hover:text-tertiary"
                     onClick={handleToggleExpand}
                   >
                     <ChevronRightIcon
@@ -348,11 +349,11 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
               </div>
 
               <div className="flex items-center gap-2 justify-between h-full w-full truncate my-auto">
-                <div className="w-full line-clamp-1 text-sm text-custom-text-100">
+                <div className="w-full line-clamp-1 text-14 text-primary">
                   <div className="w-full overflow-hidden">
                     <Tooltip tooltipContent={issueDetail.name} isMobile={isMobile}>
                       <div
-                        className="h-full w-full cursor-pointer truncate pr-4 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
+                        className="h-full w-full cursor-pointer truncate pr-4 text-left text-13 text-primary focus:outline-none"
                         tabIndex={-1}
                       >
                         {issueDetail.name}

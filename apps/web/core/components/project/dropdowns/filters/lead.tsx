@@ -85,7 +85,7 @@ export const FilterLead = observer(function FilterLead(props: Props) {
                 {sortedOptions.length > 5 && (
                   <button
                     type="button"
-                    className="ml-8 text-xs font-medium text-custom-primary-100"
+                    className="ml-8 text-11 font-medium text-accent-primary"
                     onClick={handleViewToggle}
                   >
                     {itemsToRender === sortedOptions.length ? "View less" : "View all"}
@@ -93,7 +93,7 @@ export const FilterLead = observer(function FilterLead(props: Props) {
                 )}
               </>
             ) : (
-              <p className="text-xs italic text-custom-text-400">No matches found</p>
+              <p className="text-11 italic text-placeholder">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

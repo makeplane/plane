@@ -177,7 +177,7 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
           if (subGroupByVisibilityToggle.showGroup === false) return <></>;
           return (
             <div key={_list.id} className="flex flex-shrink-0 flex-col">
-              <div className="sticky top-[50px] z-[3] py-1 flex w-full items-center bg-custom-background-100 border-y-[0.5px] border-custom-border-200">
+              <div className="sticky top-[50px] z-[3] py-1 flex w-full items-center bg-layer-1 border-y-[0.5px] border-subtle">
                 <Row className="sticky left-0 flex-shrink-0">
                   <HeaderSubGroupByCard
                     column_id={_list.id}
@@ -301,7 +301,7 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
 
   return (
     <div className="relative">
-      <Row className="sticky top-0 z-[4] h-[50px] bg-custom-background-90">
+      <Row className="sticky top-0 z-[4] h-[50px] bg-surface-2">
         <SubGroupSwimlaneHeader
           getGroupIssueCount={getGroupIssueCount}
           group_by={group_by}

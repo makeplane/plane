@@ -19,7 +19,7 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
 
   if (!userDetails) {
     return (
-      <div className="not-prose inline px-1 py-0.5 rounded bg-custom-background-80 text-custom-text-300 no-underline">
+      <div className="not-prose inline px-1 py-0.5 rounded-sm bg-layer-1 text-tertiary no-underline">
         @deactivated user
       </div>
     );
@@ -27,12 +27,9 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
 
   return (
     <div
-      className={cn(
-        "not-prose inline px-1 py-0.5 rounded bg-custom-primary-100/20 text-custom-primary-100 no-underline",
-        {
-          "bg-yellow-500/20 text-yellow-500": id === currentUser?.id,
-        }
-      )}
+      className={cn("not-prose inline px-1 py-0.5 rounded-sm bg-accent-primary/20 text-accent-primary no-underline", {
+        "bg-yellow-500/20 text-yellow-500": id === currentUser?.id,
+      })}
     >
       @{userDetails?.member__display_name}
     </div>

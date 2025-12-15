@@ -34,7 +34,7 @@ export function PasswordStrengthIndicator({
             <div
               key={fragmentIndex}
               className={cn(
-                "h-1 flex-1 rounded-sm transition-all duration-300 ease-in-out",
+                "h-1 flex-1 rounded-xs transition-all duration-300 ease-in-out",
                 getFragmentColor(fragmentIndex, strengthInfo.activeFragments)
               )}
             />
@@ -42,7 +42,7 @@ export function PasswordStrengthIndicator({
         </div>
 
         {/* Strength Message */}
-        {password && <p className={cn("text-sm font-medium", strengthInfo.textColor)}>{strengthInfo.message}</p>}
+        {password && <p className={cn("!text-13 font-medium", strengthInfo.textColor)}>{strengthInfo.message}</p>}
       </div>
 
       {/* Criteria list */}
@@ -54,14 +54,14 @@ export function PasswordStrengthIndicator({
                 <CircleCheck
                   className={cn("h-3 w-3 flex-shrink-0", {
                     "text-green-500": criterion.isValid,
-                    "text-custom-text-100": !criterion.isValid,
+                    "text-primary": !criterion.isValid,
                   })}
                 />
               </div>
               <span
-                className={cn("text-xs", {
+                className={cn("!text-11", {
                   "text-green-500": criterion.isValid,
-                  "text-custom-text-100": !criterion.isValid,
+                  "text-primary": !criterion.isValid,
                 })}
               >
                 {criterion.label}

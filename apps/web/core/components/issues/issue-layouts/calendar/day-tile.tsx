@@ -135,25 +135,25 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
   const isWeekend = [0, 6].includes(date.date.getDay());
   const isMonthLayout = calendarLayout === "month";
 
-  const normalBackground = isWeekend ? "bg-custom-background-90" : "bg-custom-background-100";
-  const draggingOverBackground = isWeekend ? "bg-custom-background-80" : "bg-custom-background-90";
+  const normalBackground = isWeekend ? "bg-layer-1" : "bg-layer-transparent";
+  const draggingOverBackground = isWeekend ? "bg-layer-1" : "bg-layer-transparent-hover";
 
   return (
     <>
-      <div ref={dayTileRef} className="group relative flex h-full w-full flex-col bg-custom-background-90">
+      <div ref={dayTileRef} className="group relative flex h-full w-full flex-col">
         {/* header */}
         <div
-          className={`hidden flex-shrink-0 items-center justify-end px-2 py-1.5 text-right text-xs md:flex ${
+          className={`hidden flex-shrink-0 justify-end px-2 py-1.5 text-right text-11 md:flex ${
             isMonthLayout // if month layout, highlight current month days
               ? date.is_current_month
                 ? "font-medium"
-                : "text-custom-text-300"
+                : "text-tertiary"
               : "font-medium" // if week layout, highlight all days
-          } ${isWeekend ? "bg-custom-background-90" : "bg-custom-background-100"} `}
+          } ${isWeekend ? "bg-layer-1" : "bg-layer-transparent"} `}
         >
           {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
           {isToday ? (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-primary-100 text-white">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent-primary text-on-color">
               {date.date.getDate()}
             </span>
           ) : (
@@ -194,16 +194,16 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
         <div
           onClick={() => setSelectedDate(date.date)}
           className={cn(
-            "text-sm py-2.5 h-full w-full font-medium mx-auto flex flex-col justify-start items-center md:hidden cursor-pointer opacity-80",
+            "text-13 py-2.5 h-full w-full font-medium mx-auto flex flex-col justify-start items-center md:hidden cursor-pointer opacity-80",
             {
-              "bg-custom-background-100": !isWeekend,
+              "bg-layer-2": !isWeekend,
             }
           )}
         >
           <div
             className={cn("size-6 flex items-center justify-center rounded-full", {
-              "bg-custom-primary-100 text-white": isSelectedDate,
-              "bg-custom-primary-100/10 text-custom-primary-100 ": isToday && !isSelectedDate,
+              "bg-accent-primary text-on-color": isSelectedDate,
+              "bg-accent-primary/10 text-accent-primary ": isToday && !isSelectedDate,
             })}
           >
             {date.date.getDate()}

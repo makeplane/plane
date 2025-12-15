@@ -72,7 +72,7 @@ export function SendTestEmailModal(props: Props) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="my-10 flex justify-center p-4 text-center sm:p-0 md:my-20">
@@ -85,8 +85,8 @@ export function SendTestEmailModal(props: Props) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 px-4 text-left shadow-custom-shadow-md transition-all w-full sm:max-w-xl">
-                <h3 className="text-lg font-medium leading-6 text-custom-text-100">
+              <Dialog.Panel className="relative transform rounded-lg bg-surface-1 p-5 px-4 text-left shadow-custom-shadow-md transition-all w-full sm:max-w-xl">
+                <h3 className="text-16 font-medium leading-6 text-primary">
                   {sendEmailStep === ESendEmailSteps.SEND_EMAIL
                     ? "Send test email"
                     : sendEmailStep === ESendEmailSteps.SUCCESS
@@ -101,12 +101,12 @@ export function SendTestEmailModal(props: Props) {
                       value={receiverEmail}
                       onChange={(e) => setReceiverEmail(e.target.value)}
                       placeholder="Receiver email"
-                      className="w-full resize-none text-lg"
+                      className="w-full resize-none text-16"
                       tabIndex={1}
                     />
                   )}
                   {sendEmailStep === ESendEmailSteps.SUCCESS && (
-                    <div className="flex flex-col gap-y-4 text-sm">
+                    <div className="flex flex-col gap-y-4 text-13">
                       <p>
                         We have sent the test email to {receiverEmail}. Please check your spam folder if you cannot find
                         it.
@@ -114,13 +114,13 @@ export function SendTestEmailModal(props: Props) {
                       <p>If you still cannot find it, recheck your SMTP configuration and trigger a new test email.</p>
                     </div>
                   )}
-                  {sendEmailStep === ESendEmailSteps.FAILED && <div className="text-sm">{error}</div>}
+                  {sendEmailStep === ESendEmailSteps.FAILED && <div className="text-13">{error}</div>}
                   <div className="flex items-center gap-2 justify-end mt-5">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={2}>
+                    <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={2}>
                       {sendEmailStep === ESendEmailSteps.SEND_EMAIL ? "Cancel" : "Close"}
                     </Button>
                     {sendEmailStep === ESendEmailSteps.SEND_EMAIL && (
-                      <Button variant="primary" size="sm" loading={isLoading} onClick={handleSubmit} tabIndex={3}>
+                      <Button variant="primary" size="lg" loading={isLoading} onClick={handleSubmit} tabIndex={3}>
                         {isLoading ? "Sending email..." : "Send email"}
                       </Button>
                     )}

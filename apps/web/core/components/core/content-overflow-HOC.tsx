@@ -18,7 +18,7 @@ export const ContentOverflowWrapper = observer(function ContentOverflowWrapper(p
   const {
     children,
     maxHeight = 625,
-    buttonClassName = "text-sm font-medium text-custom-primary-100",
+    buttonClassName = "text-13 font-medium text-accent-primary",
     containerClassName,
     fallback = null,
     customButton,
@@ -142,7 +142,7 @@ export const ContentOverflowWrapper = observer(function ContentOverflowWrapper(p
           {customButton || (
             <button
               className={cn(
-                "gap-1 w-full text-custom-primary-100 text-sm font-medium transition-opacity duration-300",
+                "gap-1 w-full text-accent-primary text-13 font-medium transition-opacity duration-300",
                 buttonClassName
               )}
               onClick={handleToggle}

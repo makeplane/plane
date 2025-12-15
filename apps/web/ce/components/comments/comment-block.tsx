@@ -41,7 +41,7 @@ export const CommentBlock = observer(function CommentBlock(props: TCommentBlock)
       ref={commentBlockRef}
     >
       <div
-        className="absolute left-[13px] top-0 bottom-0 w-0.5 transition-border duration-1000 bg-custom-background-80"
+        className="absolute left-[13px] top-0 bottom-0 w-0.5 transition-border duration-1000 bg-layer-1"
         aria-hidden
       />
       <div
@@ -55,15 +55,15 @@ export const CommentBlock = observer(function CommentBlock(props: TCommentBlock)
         <div className="flex w-full gap-2">
           <div className="flex-1 flex flex-wrap items-center gap-1">
             <div className="flex items-center gap-1">
-              <span className="text-xs font-medium">{displayName}</span>
+              <span className="text-11 font-medium">{displayName}</span>
             </div>
-            <div className="text-xs text-custom-text-300">
+            <div className="text-11 text-tertiary">
               commented{" "}
               <Tooltip
                 tooltipContent={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
                 position="bottom"
               >
-                <span className="text-custom-text-350">
+                <span className="text-tertiary">
                   {calculateTimeAgo(comment.created_at)}
                   {comment.edited_at && ` (${t("edited")})`}
                 </span>
@@ -72,7 +72,7 @@ export const CommentBlock = observer(function CommentBlock(props: TCommentBlock)
           </div>
           <div className="flex-shrink-0 ">{quickActions}</div>
         </div>
-        <div className="text-base mb-2">{children}</div>
+        <div className="text-14 mb-2">{children}</div>
       </div>
     </div>
   );

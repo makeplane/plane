@@ -100,7 +100,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
 
       {/* Use Case Selection */}
       <div className="flex flex-col gap-3">
-        <p className="text-sm font-medium text-custom-text-400">Select one or more</p>
+        <p className="text-body-sm-semibold text-placeholder">Select one or more</p>
 
         <Controller
           control={control}
@@ -130,40 +130,40 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
                     }}
                     className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center gap-2 ${
                       isSelected
-                        ? "border-custom-primary-100 bg-custom-primary-10 text-custom-primary-100"
-                        : "border-custom-border-200 hover:border-custom-border-300 text-custom-text-300"
+                        ? "border-accent-strong bg-accent-subtle text-accent-primary"
+                        : "border-subtle hover:border-strong text-tertiary"
                     }`}
                   >
                     <span
-                      className={cn(`size-4 rounded border-2 flex items-center justify-center`, {
-                        "bg-custom-primary-100 border-custom-primary-100": isSelected,
-                        "border-custom-border-300": !isSelected,
+                      className={cn(`size-4 rounded-sm border-2 flex items-center justify-center`, {
+                        "bg-accent-primary border-accent-strong": isSelected,
+                        "border-strong": !isSelected,
                       })}
                     >
                       <Check
-                        className={cn("w-3 h-3 text-white", {
+                        className={cn("w-3 h-3 text-on-color", {
                           "opacity-100": isSelected,
                           "opacity-0": !isSelected,
                         })}
                       />
                     </span>
 
-                    <span className="font-medium">{useCase}</span>
+                    <span className="text-body-sm-regular">{useCase}</span>
                   </button>
                 );
               })}
             </div>
           )}
         />
-        {errors.use_case && <span className="text-sm text-red-500">{errors.use_case.message}</span>}
+        {errors.use_case && <span className="text-13 text-red-500">{errors.use_case.message}</span>}
       </div>
 
       {/* Action Buttons */}
       <div className="space-y-3">
-        <Button variant="primary" type="submit" className="w-full" size="lg" disabled={isButtonDisabled}>
+        <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
           Continue
         </Button>
-        <Button variant="link-neutral" onClick={handleSkip} className="w-full" size="lg">
+        <Button variant="ghost" onClick={handleSkip} className="w-full" size="xl">
           Skip
         </Button>
       </div>

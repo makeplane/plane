@@ -42,7 +42,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
           <a
             href="https://platform.openai.com/docs/models/overview"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             Learn more
@@ -63,7 +63,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
           <a
             href="https://platform.openai.com/api-keys"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             here.
@@ -94,8 +94,8 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     <div className="space-y-8">
       <div className="space-y-3">
         <div>
-          <div className="pb-1 text-xl font-medium text-custom-text-100">OpenAI</div>
-          <div className="text-sm font-normal text-custom-text-300">If you use ChatGPT, this is for you.</div>
+          <div className="pb-1 text-18 font-medium text-primary">OpenAI</div>
+          <div className="text-13 font-regular text-tertiary">If you use ChatGPT, this is for you.</div>
         </div>
         <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-x-12 gap-y-8 lg:grid-cols-3">
           {aiFormFields.map((field) => (
@@ -114,12 +114,12 @@ export function InstanceAIForm(props: IInstanceAIForm) {
         </div>
       </div>
 
-      <div className="space-y-4">
-        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+      <div className="flex flex-col gap-2 items-start">
+        <Button variant="primary" size="lg" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
 
-        <div className="relative inline-flex items-center gap-2 rounded border border-custom-primary-100/20 bg-custom-primary-100/10 px-4 py-2 text-xs text-custom-primary-200">
+        <div className="relative inline-flex items-center gap-2 rounded-sm border border-accent-strong/20 bg-accent-primary/10 px-4 py-2 text-11 text-accent-secondary">
           <Lightbulb height="14" width="14" />
           <div>
             If you have a preferred AI models vendor, please get in{" "}

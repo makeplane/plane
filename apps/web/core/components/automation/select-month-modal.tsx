@@ -54,7 +54,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -68,10 +68,10 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-4 pb-4 pt-5 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform rounded-lg bg-surface-1 px-4 pb-4 pt-5 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+                    <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
                       Customize time range
                     </Dialog.Title>
                     <div className="mt-8 flex items-center gap-2">
@@ -97,17 +97,17 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                                     ref={ref}
                                     hasError={Boolean(errors.close_in)}
                                     placeholder="Enter Months"
-                                    className="w-full border-custom-border-200"
+                                    className="w-full border-subtle"
                                     min={1}
                                     max={12}
                                   />
-                                  <span className="absolute right-8 top-2.5 text-sm text-custom-text-200">Months</span>
+                                  <span className="absolute right-8 top-2.5 text-13 text-secondary">Months</span>
                                 </div>
                               )}
                             />
 
                             {errors.close_in && (
-                              <span className="px-1 text-sm text-red-500">Select a month between 1 and 12.</span>
+                              <span className="px-1 text-13 text-red-500">Select a month between 1 and 12.</span>
                             )}
                           </>
                         ) : (
@@ -131,16 +131,16 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                                     ref={ref}
                                     hasError={Boolean(errors.archive_in)}
                                     placeholder="Enter Months"
-                                    className="w-full border-custom-border-200"
+                                    className="w-full border-subtle"
                                     min={1}
                                     max={12}
                                   />
-                                  <span className="absolute right-8 top-2.5 text-sm text-custom-text-200">Months</span>
+                                  <span className="absolute right-8 top-2.5 text-13 text-secondary">Months</span>
                                 </div>
                               )}
                             />
                             {errors.archive_in && (
-                              <span className="px-1 text-sm text-red-500">Select a month between 1 and 12.</span>
+                              <span className="px-1 text-13 text-red-500">Select a month between 1 and 12.</span>
                             )}
                           </>
                         )}
@@ -148,10 +148,10 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
+                    <Button variant="secondary" size="lg" onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+                    <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Submitting..." : "Submit"}
                     </Button>
                   </div>

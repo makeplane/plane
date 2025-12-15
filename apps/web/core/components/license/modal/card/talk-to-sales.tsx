@@ -1,10 +1,9 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // types
 // plane imports
 import { getButtonStyling } from "@plane/propel/button";
 import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { getUpgradeButtonStyle, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // local imports
 import { BasePaidPlanCard } from "./base-paid-plan-card";
@@ -47,55 +46,42 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
     </>
   );
 
-  const renderActionButton = (price: TSubscriptionPrice) => {
-    const upgradeButtonStyle =
-      getUpgradeButtonStyle(planVariant, !!upgradeLoaderType) ?? getButtonStyling("primary", "lg", !!upgradeLoaderType);
-
-    return (
-      <>
-        <div className="pb-4 text-center">
-          <div className="text-2xl font-semibold h-9 flex justify-center items-center">
-            {isLoading ? (
-              <Loader className="flex flex-col items-center justify-center">
-                <Loader.Item height="36px" width="4rem" />
-              </Loader>
-            ) : (
-              <>Quote on request</>
-            )}
-          </div>
-          <div className="text-sm font-medium text-custom-text-300">per user per month</div>
+  const renderActionButton = (price: TSubscriptionPrice) => (
+    <>
+      <div className="pb-4 text-center">
+        <div className="text-20 font-semibold h-9 flex justify-center items-center">
+          {isLoading ? (
+            <Loader className="flex flex-col items-center justify-center">
+              <Loader.Item height="36px" width="4rem" />
+            </Loader>
+          ) : (
+            <>Quote on request</>
+          )}
         </div>
-        {isLoading ? (
-          <Loader className="flex flex-col items-center justify-center">
-            <Loader.Item height="38px" width="14rem" />
-          </Loader>
-        ) : (
-          <div className="flex flex-col items-center justify-center w-full">
-            <a
-              href={href}
-              target="_blank"
-              className={cn(
-                upgradeButtonStyle,
-                "relative inline-flex items-center justify-center w-56 px-4 py-2 text-sm font-medium rounded-lg focus:outline-none"
-              )}
-              rel="noreferrer"
-            >
-              Talk to Sales
-            </a>
-            {isTrialAllowed && !isSelfHosted && (
-              <div className="mt-4 h-4 transition-all duration-300 animate-fade-in">
-                {renderTrialButton &&
-                  renderTrialButton({
-                    productId: product?.id,
-                    priceId: price.id,
-                  })}
-              </div>
-            )}
-          </div>
-        )}
-      </>
-    );
-  };
+        <div className="text-caption-md-medium text-tertiary">per user per month</div>
+      </div>
+      {isLoading ? (
+        <Loader className="flex flex-col items-center justify-center">
+          <Loader.Item height="38px" width="14rem" />
+        </Loader>
+      ) : (
+        <div className="flex flex-col items-center justify-center w-full">
+          <a href={href} target="_blank" className={cn(getButtonStyling("primary", "lg"), "w-56")} rel="noreferrer">
+            Talk to Sales
+          </a>
+          {isTrialAllowed && !isSelfHosted && (
+            <div className="mt-4 h-4">
+              {renderTrialButton &&
+                renderTrialButton({
+                  productId: product?.id,
+                  priceId: price.id,
+                })}
+            </div>
+          )}
+        </div>
+      )}
+    </>
+  );
 
   return (
     <BasePaidPlanCard

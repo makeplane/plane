@@ -125,7 +125,7 @@ export const StatusExamples: Story = {
     return (
       <div className="space-y-4">
         <div className="space-y-2">
-          <h3 className="text-sm font-medium">Task Status</h3>
+          <h3 className="text-13 font-medium">Task Status</h3>
           <div className="flex flex-wrap gap-2">
             <Pill variant={EPillVariant.DEFAULT}>Draft</Pill>
             <Pill variant={EPillVariant.WARNING}>In Progress</Pill>

@@ -129,7 +129,7 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
       <div
         ref={draggableElementRef}
         className={cn(
-          "relative border border-custom-border-100 bg-custom-background-100 py-3 px-3.5 rounded group",
+          "relative border border-subtle bg-surface-1 py-3 px-3.5 rounded-sm group",
           isDragging ? `opacity-50` : `opacity-100`,
           totalStates === 1 ? `cursor-auto` : `cursor-grab`,
           stateItemClassName

@@ -5,8 +5,6 @@ import { DEFAULT_PRODUCT_BILLING_FREQUENCY, SUBSCRIPTION_WITH_BILLING_FREQUENCY 
 import { useTranslation } from "@plane/i18n";
 import type { TBillingFrequency, TProductBillingFrequency } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { getSubscriptionTextColor } from "@plane/ui";
-import { cn } from "@plane/utils";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
 // local imports
@@ -44,24 +42,20 @@ export const BillingRoot = observer(function BillingRoot() {
         title={t("workspace_settings.settings.billing_and_plans.heading")}
         description={t("workspace_settings.settings.billing_and_plans.description")}
       />
-      <div className={cn("transition-all duration-500 ease-in-out will-change-[height,opacity]")}>
+      <div>
         <div className="py-6">
-          <div className={cn("px-6 py-4 border border-custom-border-200 rounded-lg")}>
-            <div className="flex gap-2 font-medium items-center justify-between">
+          <div className="px-6 py-4 rounded-lg bg-layer-1">
+            <div className="flex gap-2 items-center justify-between">
               <div className="flex flex-col gap-1">
-                <h4
-                  className={cn("text-xl leading-6 font-bold", getSubscriptionTextColor(EProductSubscriptionEnum.FREE))}
-                >
-                  Community
-                </h4>
-                <div className="text-sm text-custom-text-200 font-medium">
+                <h4 className="text-h4-bold text-primary">Community</h4>
+                <div className="text-caption-md-medium text-secondary">
                   Unlimited projects, issues, cycles, modules, pages, and storage
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="text-xl font-semibold mt-3">All plans</div>
+        <div className="text-h4-semibold mt-3">All plans</div>
       </div>
       <PlansComparison
         isCompareAllFeaturesSectionOpen={isCompareAllFeaturesSectionOpen}

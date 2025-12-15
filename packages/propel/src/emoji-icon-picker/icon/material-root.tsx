@@ -1,4 +1,3 @@
-import React from "react";
 import useFontFaceObserver from "use-font-face-observer";
 import { MATERIAL_ICONS_LIST } from "../material-icons";
 
@@ -28,7 +27,7 @@ export function MaterialIconList(props: MaterialIconListProps) {
         <button
           key={icon.name}
           type="button"
-          className="h-9 w-9 select-none text-lg grid place-items-center rounded hover:bg-custom-background-80"
+          className="h-9 w-9 select-none text-16 grid place-items-center rounded-sm hover:bg-layer-1"
           onClick={() => {
             onChange({
               name: icon.name,
@@ -37,14 +36,11 @@ export function MaterialIconList(props: MaterialIconListProps) {
           }}
         >
           {isMaterialSymbolsFontLoaded ? (
-            <span
-              style={{ color: activeColor }}
-              className="material-symbols-rounded !text-[1.25rem] !leading-[1.25rem]"
-            >
+            <span style={{ color: activeColor }} className="material-symbols-rounded text-20! leading-5!">
               {icon.name}
             </span>
           ) : (
-            <span className="size-5 rounded animate-pulse bg-custom-background-80" />
+            <span className="size-5 rounded-sm animate-pulse bg-layer-1" />
           )}
         </button>
       ))}

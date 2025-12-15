@@ -27,7 +27,7 @@ export const CycleListProjectGroupHeader = observer(function CycleListProjectGro
   return (
     <Row className="flex items-center gap-2 flex-shrink-0 py-2.5">
       <ChevronRightIcon
-        className={cn("h-4 w-4 text-custom-sidebar-text-300 duration-300 ", {
+        className={cn("h-4 w-4 text-tertiary duration-300 ", {
           "rotate-90": isExpanded,
         })}
         strokeWidth={2}
@@ -36,8 +36,8 @@ export const CycleListProjectGroupHeader = observer(function CycleListProjectGro
         <Logo logo={project.logo_props} size={16} />
       </div>
       <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden">
-        <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{project.name}</div>
-        {showCount && <div className="pl-2 text-sm font-medium text-custom-text-300">{`${count ?? "0"}`}</div>}
+        <div className="inline-block line-clamp-1 truncate font-medium text-primary">{project.name}</div>
+        {showCount && <div className="pl-2 text-13 font-medium text-tertiary">{`${count ?? "0"}`}</div>}
       </div>
     </Row>
   );

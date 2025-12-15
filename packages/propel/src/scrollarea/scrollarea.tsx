@@ -76,7 +76,7 @@ const ScrollBar = React.memo(function ScrollBar({
       data-slot="scroll-area-scrollbar"
       orientation={orientation}
       className={cn(
-        "group/track mr-1 flex justify-center rounded bg-transparent opacity-0 transition-opacity delay-300 ",
+        "group/track mr-1 flex justify-center rounded-sm bg-transparent opacity-0 transition-opacity delay-300 ",
         orientation === "vertical" && verticalSizeStyles[size],
         orientation === "horizontal" && horizontalSizeStyles[size],
         scrollType === "always" && "opacity-100",

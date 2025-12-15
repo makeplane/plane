@@ -56,11 +56,11 @@ export function WebhookIndividualEventOptions({ control }: Props) {
                   name="selectIndividualEvents"
                   checked={value === true}
                 />
-                <label className="text-sm" htmlFor={option.key}>
+                <label className="text-13" htmlFor={option.key}>
                   {option.label}
                 </label>
               </div>
-              <p className="ml-6 mt-0.5 text-xs text-custom-text-300">{option.description}</p>
+              <p className="ml-6 mt-0.5 text-11 text-tertiary">{option.description}</p>
             </div>
           )}
         />

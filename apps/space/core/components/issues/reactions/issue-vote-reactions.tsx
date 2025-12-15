@@ -99,17 +99,17 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
           className={cn(
-            "flex items-center justify-center gap-x-1 overflow-hidden rounded border focus:outline-none bg-custom-background-100",
+            "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border focus:outline-none hover:bg-layer-transparent-hover",
             votingDimensions,
             {
-              "border-custom-primary-200 text-custom-primary-200": isUpVotedByUser,
-              "border-custom-border-300": !isUpVotedByUser,
+              "border-accent-strong-200 text-accent-secondary": isUpVotedByUser,
+              "border-strong": !isUpVotedByUser,
               "cursor-default": isInIframe,
             }
           )}
         >
-          <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_upward_alt</span>
-          <span className="text-sm font-normal transition-opacity ease-in-out">{allUpVotes.length}</span>
+          <span className="material-symbols-rounded !m-0 !p-0 text-14">arrow_upward_alt</span>
+          <span className="text-13 font-regular transition-opacity ease-in-out">{allUpVotes.length}</span>
         </button>
       </Tooltip>
 
@@ -140,17 +140,17 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
           className={cn(
-            "flex items-center justify-center gap-x-1 overflow-hidden rounded border focus:outline-none bg-custom-background-100",
+            "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border focus:outline-none hover:bg-layer-transparent-hover",
             votingDimensions,
             {
               "border-red-600 text-red-600": isDownVotedByUser,
-              "border-custom-border-300": !isDownVotedByUser,
+              "border-strong": !isDownVotedByUser,
               "cursor-default": isInIframe,
             }
           )}
         >
-          <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_downward_alt</span>
-          <span className="text-sm font-normal transition-opacity ease-in-out">{allDownVotes.length}</span>
+          <span className="material-symbols-rounded !m-0 !p-0 text-14">arrow_downward_alt</span>
+          <span className="text-13 font-regular transition-opacity ease-in-out">{allDownVotes.length}</span>
         </button>
       </Tooltip>
     </div>

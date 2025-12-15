@@ -43,14 +43,10 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
     !disabledAllOperations && (filter.canClearFilters || filter.canSaveView || filter.canUpdateView);
 
   const headerButtonConfig: Partial<TAddFilterButtonProps<K, E>["buttonConfig"]> = {
-    variant: "link-neutral",
-    className: "bg-custom-background-90",
     label: null,
   };
 
   const modalButtonConfig: Partial<TAddFilterButtonProps<K, E>["buttonConfig"]> = {
-    variant: "neutral-primary",
-    className: "bg-custom-background-100",
     label: !hasAnyConditions ? "Filters" : null,
   };
 
@@ -73,6 +69,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
         buttonConfig={{
           label: null,
           ...(variant === "modal" ? modalButtonConfig : headerButtonConfig),
+          size: "lg",
           iconConfig: {
             shouldShowIcon: true,
             iconComponent: ListFilterPlus,
@@ -88,8 +85,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
     <>
       <ElementTransition show={filter.canClearFilters}>
         <Button
-          variant="neutral-primary"
-          size="sm"
+          variant="secondary"
           className={COMMON_OPERATION_BUTTON_CLASSNAME}
           onClick={filter.clearFilters}
           data-ph-element={trackerElements?.clearFilter}
@@ -99,8 +95,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
       </ElementTransition>
       <ElementTransition show={filter.canSaveView}>
         <Button
-          variant="accent-primary"
-          size="sm"
+          variant="secondary"
           className={COMMON_OPERATION_BUTTON_CLASSNAME}
           onClick={filter.saveView}
           data-ph-element={trackerElements?.saveView}
@@ -110,8 +105,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
       </ElementTransition>
       <ElementTransition show={filter.canUpdateView}>
         <Button
-          variant="accent-primary"
-          size="sm"
+          variant="secondary"
           className={COMMON_OPERATION_BUTTON_CLASSNAME}
           onClick={handleUpdate}
           loading={isUpdating}
@@ -128,7 +122,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
     <div className="w-full flex items-start gap-2">
       <div className="w-full flex flex-wrap items-center gap-2">{leftContent}</div>
       <div
-        className={cn("flex items-center gap-2 border-l border-custom-border-200 pl-4", {
+        className={cn("flex items-center gap-2 border-l border-subtle pl-4", {
           "border-l-transparent pl-0": !hasAvailableOperations,
         })}
       >
@@ -138,13 +132,11 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   );
 
   const ModalVariant = (
-    <div className="w-full flex flex-wrap items-center gap-2 min-h-11 bg-custom-background-90 rounded-lg p-2">
-      {mainContent}
-    </div>
+    <div className="w-full flex flex-wrap items-center gap-2 min-h-11 bg-layer-1 rounded-lg p-2">{mainContent}</div>
   );
 
   const HeaderVariant = (
-    <Header variant={EHeaderVariant.TERNARY} className="min-h-11">
+    <Header variant={EHeaderVariant.TERNARY} className="min-h-11 bg-layer-1">
       {mainContent}
     </Header>
   );

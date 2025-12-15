@@ -120,12 +120,7 @@ export const HeaderFilters = observer(function HeaderFilters(props: Props) {
         />
       </FiltersDropdown>
       {canUserCreateIssue ? (
-        <Button
-          className="hidden md:block px-2"
-          onClick={() => setAnalyticsModal(true)}
-          variant="neutral-primary"
-          size="sm"
-        >
+        <Button className="hidden md:block px-2" onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
           <div className="hidden @4xl:flex">{t("common.analytics")}</div>
           <div className="flex @4xl:hidden">
             <ChartNoAxesColumn className="size-3.5" />

@@ -78,7 +78,7 @@ function ProjectCommonAttributes(props: Props) {
             />
           )}
         />
-        <span className="text-xs text-red-500">{errors?.name?.message}</span>
+        <span className="text-11 text-red-500">{errors?.name?.message}</span>
       </div>
       <div className="relative">
         <Controller
@@ -107,7 +107,7 @@ function ProjectCommonAttributes(props: Props) {
               onChange={handleIdentifierChange(onChange)}
               hasError={Boolean(errors.identifier)}
               placeholder={t("project_id")}
-              className={cn("w-full text-xs focus:border-blue-400 pr-7", {
+              className={cn("w-full text-11 focus:border-blue-400 pr-7", {
                 uppercase: value,
               })}
               tabIndex={getIndex("identifier")}
@@ -117,12 +117,12 @@ function ProjectCommonAttributes(props: Props) {
         <Tooltip
           isMobile={isMobile}
           tooltipContent={t("project_id_tooltip_content")}
-          className="text-sm"
+          className="text-13"
           position="right-start"
         >
-          <Info className="absolute right-2 top-2.5 h-3 w-3 text-custom-text-400" />
+          <Info className="absolute right-2 top-2.5 h-3 w-3 text-placeholder" />
         </Tooltip>
-        <span className="text-xs text-red-500">{errors?.identifier?.message}</span>
+        <span className="text-11 text-red-500">{errors?.identifier?.message}</span>
       </div>
       <div className="md:col-span-4">
         <Controller
@@ -138,7 +138,7 @@ function ProjectCommonAttributes(props: Props) {
                 onChange(e);
                 handleFormOnChange?.();
               }}
-              className="!h-24 text-sm focus:border-blue-400"
+              className="!h-24 text-13 focus:border-blue-400"
               hasError={Boolean(errors?.description)}
               tabIndex={getIndex("description")}
             />

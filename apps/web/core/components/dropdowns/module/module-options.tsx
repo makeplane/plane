@@ -107,17 +107,17 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
   return (
     <Combobox.Options className="fixed z-10" static>
       <div
-        className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+        className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none"
         ref={setPopperElement}
         style={styles.popper}
         {...attributes.popper}
       >
-        <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-          <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+        <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
+          <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
           <Combobox.Input
             as="input"
             ref={inputRef}
-            className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+            className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("common.search.label")}
@@ -134,11 +134,11 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
                   value={option.value}
                   className={({ active, selected }) =>
                     cn(
-                      "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
+                      "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5",
                       {
-                        "bg-custom-background-80": active,
-                        "text-custom-text-100": selected,
-                        "text-custom-text-200": !selected,
+                        "bg-layer-transparent-hover": active,
+                        "text-primary": selected,
+                        "text-secondary": !selected,
                       }
                     )
                   }
@@ -152,10 +152,10 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.search.no_matching_results")}</p>
+              <p className="px-1.5 py-1 italic text-placeholder">{t("common.search.no_matching_results")}</p>
             )
           ) : (
-            <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.loading")}</p>
+            <p className="px-1.5 py-1 italic text-placeholder">{t("common.loading")}</p>
           )}
         </div>
       </div>

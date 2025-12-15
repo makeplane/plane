@@ -60,10 +60,7 @@ export const UserAvatar = observer(function UserAvatar() {
         <div>
           <Popover as="div">
             <Popover.Button as={Fragment}>
-              <button
-                ref={setReferenceElement}
-                className="flex items-center gap-2 rounded border border-custom-border-200 p-2"
-              >
+              <button ref={setReferenceElement} className="flex items-center gap-2 rounded-sm border border-subtle p-2">
                 <Avatar
                   name={currentUser?.display_name}
                   src={getFileURL(currentUser?.avatar_url)}
@@ -71,7 +68,7 @@ export const UserAvatar = observer(function UserAvatar() {
                   size="sm"
                   showTooltip={false}
                 />
-                <h6 className="text-xs font-medium">
+                <h6 className="text-11 font-medium text-secondary">
                   {currentUser?.display_name ||
                     `${currentUser?.first_name} ${currentUser?.first_name}` ||
                     currentUser?.email ||
@@ -90,7 +87,7 @@ export const UserAvatar = observer(function UserAvatar() {
             >
               <Popover.Panel>
                 <div
-                  className="z-10 overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg p-1"
+                  className="z-10 overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-custom-shadow-rg p-1"
                   ref={setPopperElement}
                   style={styles.popper}
                   {...attributes.popper}
@@ -101,9 +98,9 @@ export const UserAvatar = observer(function UserAvatar() {
                       <input type="hidden" name="next_path" value={`${pathName}?${queryParam}`} />
                       <button
                         type="submit"
-                        className="flex items-center gap-2 rounded p-2 whitespace-nowrap hover:bg-custom-background-80 text-sm min-w-36 cursor-pointer"
+                        className="flex items-center gap-2 rounded-sm p-2 whitespace-nowrap hover:bg-layer-transparent-hover text-13 min-w-36 cursor-pointer"
                       >
-                        <LogOut size={12} className="flex-shrink-0 text-red-500" />
+                        <LogOut size={12} className="shrink-0 text-red-500" />
                         <div>Sign out</div>
                       </button>
                     </form>
@@ -116,7 +113,7 @@ export const UserAvatar = observer(function UserAvatar() {
       ) : (
         <div className="flex-shrink-0">
           <Link href={`/?next_path=${pathName}?${queryParam}`}>
-            <Button variant="outline-primary">Sign in</Button>
+            <Button variant="secondary">Sign in</Button>
           </Link>
         </div>
       )}

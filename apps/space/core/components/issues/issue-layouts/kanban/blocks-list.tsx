@@ -18,9 +18,8 @@ export const KanbanIssueBlocksList = observer(function KanbanIssueBlocksList(pro
 
   return (
     <>
-      {issueIds && issueIds.length > 0 ? (
-        <>
-          {issueIds.map((issueId) => {
+      {issueIds && issueIds.length > 0
+        ? issueIds.map((issueId) => {
             if (!issueId) return null;
 
             let draggableId = issueId;
@@ -37,9 +36,8 @@ export const KanbanIssueBlocksList = observer(function KanbanIssueBlocksList(pro
                 scrollableContainerRef={scrollableContainerRef}
               />
             );
-          })}
-        </>
-      ) : null}
+          })
+        : null}
     </>
   );
 });

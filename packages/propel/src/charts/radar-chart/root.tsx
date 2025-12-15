@@ -37,12 +37,12 @@ function RadarChart<T extends string, K extends string>(props: TRadarChartProps<
     <div className={className}>
       <ResponsiveContainer width="100%" height="100%">
         <CoreRadarChart cx="50%" cy="50%" outerRadius="80%" data={data} margin={margin}>
-          <PolarGrid stroke="rgba(var(--color-border-100), 0.9)" />
+          <PolarGrid stroke="--alpha(var(--border-color-subtle) / 90%)" />
           <PolarAngleAxis dataKey={angleAxis.key} tick={(props) => <CustomRadarAxisTick {...props} />} />
           {showTooltip && (
             <Tooltip
               cursor={{
-                stroke: "rgba(var(--color-text-300))",
+                stroke: "var(--text-color-tertiary)",
                 strokeDasharray: "4 4",
               }}
               wrapperStyle={{

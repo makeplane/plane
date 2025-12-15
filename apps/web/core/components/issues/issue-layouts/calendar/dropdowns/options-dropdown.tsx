@@ -99,8 +99,8 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
           <Popover.Button as={React.Fragment}>
             <button type="button" ref={setReferenceElement}>
               <div
-                className={`hidden md:flex items-center gap-1.5 rounded bg-custom-background-80 px-2.5 py-1 text-xs outline-none hover:bg-custom-background-80 ${
-                  open ? "text-custom-text-100" : "text-custom-text-200"
+                className={`hidden md:flex items-center gap-1.5 rounded-sm bg-layer-1 px-2.5 py-1 text-11 outline-none hover:bg-layer-1 ${
+                  open ? "text-primary" : "text-secondary"
                 }`}
               >
                 <div className="font-medium">{t("common.options")}</div>
@@ -111,7 +111,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                 </div>
               </div>
               <div className="md:hidden">
-                <MoreVerticalIcon className="h-4 text-custom-text-200" strokeWidth={2} />
+                <MoreVerticalIcon className="h-4 text-secondary" strokeWidth={2} />
               </div>
             </button>
           </Popover.Button>
@@ -129,14 +129,14 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                 ref={setPopperElement}
                 style={styles.popper}
                 {...attributes.popper}
-                className="absolute right-0 z-10 mt-1 min-w-[12rem] overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 p-1 shadow-custom-shadow-sm"
+                className="absolute right-0 z-10 mt-1 min-w-[12rem] overflow-hidden rounded-sm border border-subtle bg-surface-1 p-1 shadow-custom-shadow-sm"
               >
                 <div>
                   {Object.entries(CALENDAR_LAYOUTS).map(([layout, layoutDetails]) => (
                     <button
                       key={layout}
                       type="button"
-                      className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
+                      className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-left text-11 hover:bg-layer-1"
                       onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
                     >
                       {layoutDetails.title}
@@ -145,7 +145,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                   ))}
                   <button
                     type="button"
-                    className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
+                    className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-left text-11 hover:bg-layer-1"
                     onClick={handleToggleWeekends}
                   >
                     {t("common.actions.show_weekends")}

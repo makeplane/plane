@@ -120,7 +120,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -134,29 +134,29 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
                       <AlertTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Leave Project</h3>
+                      <h3 className="text-18 font-medium 2xl:text-20">Leave Project</h3>
                     </span>
                   </div>
 
                   <span>
-                    <p className="text-sm leading-7 text-custom-text-200">
+                    <p className="text-13 leading-7 text-secondary">
                       Are you sure you want to leave the project -
-                      <span className="font-medium text-custom-text-100">{` "${project?.name}" `}</span>? All of the
-                      work items associated with you will become inaccessible.
+                      <span className="font-medium text-primary">{` "${project?.name}" `}</span>? All of the work items
+                      associated with you will become inaccessible.
                     </p>
                   </span>
 
-                  <div className="text-custom-text-200">
-                    <p className="break-words text-sm ">
-                      Enter the project name <span className="font-medium text-custom-text-100">{project?.name}</span>{" "}
-                      to continue:
+                  <div className="text-secondary">
+                    <p className="break-words text-13 ">
+                      Enter the project name <span className="font-medium text-primary">{project?.name}</span> to
+                      continue:
                     </p>
                     <Controller
                       control={control}
@@ -180,9 +180,9 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                     />
                   </div>
 
-                  <div className="text-custom-text-200">
-                    <p className="text-sm">
-                      To confirm, type <span className="font-medium text-custom-text-100">Leave Project</span> below:
+                  <div className="text-secondary">
+                    <p className="text-13">
+                      To confirm, type <span className="font-medium text-primary">Leave Project</span> below:
                     </p>
                     <Controller
                       control={control}
@@ -203,10 +203,10 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="secondary" size="lg" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button variant="danger" size="sm" type="submit" loading={isSubmitting}>
+                    <Button variant="error-fill" size="lg" type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Leaving..." : "Leave Project"}
                     </Button>
                   </div>

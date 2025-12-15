@@ -35,8 +35,8 @@ export interface DialogTitleProps extends React.ComponentProps<typeof BaseDialog
 }
 
 // Constants
-const OVERLAY_CLASSNAME = cn("fixed inset-0 z-backdrop bg-custom-backdrop");
-const BASE_CLASSNAME = "relative text-left bg-custom-background-100 rounded-lg shadow-md w-full z-modal";
+const OVERLAY_CLASSNAME = cn("fixed inset-0 z-backdrop bg-backdrop");
+const BASE_CLASSNAME = "relative text-left bg-surface-1 rounded-lg shadow-md w-full z-modal";
 
 // Utility functions
 const getPositionClassNames = (position: DialogPosition) =>
@@ -113,7 +113,7 @@ const DialogTitle = memo(function DialogTitle({ className, children, ...props }:
   return (
     <BaseDialog.Title
       data-slot="dialog-title"
-      className={cn("text-lg leading-none font-semibold", className)}
+      className={cn("text-16 leading-none font-semibold", className)}
       {...props}
     >
       {children}

@@ -33,7 +33,7 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
 
   if (!userDetails) {
     return (
-      <div className="not-prose inline px-1 py-0.5 rounded bg-custom-background-80 text-custom-text-300 no-underline">
+      <div className="not-prose inline px-1 py-0.5 rounded-sm bg-layer-1 text-tertiary no-underline">
         @suspended user
       </div>
     );
@@ -41,34 +41,31 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
 
   return (
     <div
-      className={cn(
-        "not-prose inline px-1 py-0.5 rounded bg-custom-primary-100/20 text-custom-primary-100 no-underline",
-        {
-          "bg-yellow-500/20 text-yellow-500": id === currentUser?.id,
-        }
-      )}
+      className={cn("not-prose inline px-1 py-0.5 rounded-sm bg-accent-primary/20 text-accent-primary no-underline", {
+        "bg-yellow-500/20 text-yellow-500": id === currentUser?.id,
+      })}
     >
       <Popover delay={100} openOnHover>
         <Popover.Button>
           <Link to={profileLink}>@{userDetails?.display_name}</Link>
         </Popover.Button>
         <Popover.Panel side="bottom" align="start">
-          <div className="w-60 bg-custom-background-100 shadow-custom-shadow-rg rounded-lg p-3 border-[0.5px] border-custom-border-300">
+          <div className="w-60 bg-surface-1 shadow-custom-shadow-rg rounded-lg p-3 border-[0.5px] border-strong">
             <div className="flex items-center gap-3">
               <div className="flex-shrink-0 size-10 grid place-items-center">
                 <Avatar
                   src={getFileURL(userDetails?.avatar_url ?? "")}
                   name={userDetails?.display_name}
                   size={40}
-                  className="text-xl"
+                  className="text-18"
                   showTooltip={false}
                 />
               </div>
               <div>
-                <Link to={profileLink} className="not-prose font-medium text-custom-text-100 text-sm hover:underline">
+                <Link to={profileLink} className="not-prose font-medium text-primary text-13 hover:underline">
                   {userDetails?.first_name} {userDetails?.last_name}
                 </Link>
-                {roleDetails && <p className="text-custom-text-200 text-xs">{ROLE[roleDetails]}</p>}
+                {roleDetails && <p className="text-secondary text-11">{ROLE[roleDetails]}</p>}
               </div>
             </div>
           </div>

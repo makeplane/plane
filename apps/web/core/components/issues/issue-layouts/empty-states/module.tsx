@@ -81,7 +81,7 @@ export const ModuleEmptyState = observer(function ModuleEmptyState() {
                 label: "Clear filters",
                 onClick: moduleWorkItemFilter?.clearFilters,
                 disabled: !canPerformEmptyStateActions || !moduleWorkItemFilter,
-                variant: "outline-primary",
+                variant: "secondary",
               },
             ]}
           />
@@ -104,7 +104,7 @@ export const ModuleEmptyState = observer(function ModuleEmptyState() {
                 label: t("project_empty_state.module_work_items.cta_secondary"),
                 onClick: () => setModuleIssuesListModal(true),
                 disabled: !canPerformEmptyStateActions,
-                variant: "outline-primary",
+                variant: "secondary",
               },
             ]}
           />

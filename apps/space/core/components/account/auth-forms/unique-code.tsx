@@ -80,12 +80,10 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       <input type="hidden" value={uniqueCodeFormData.email} name="email" />
       <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
-        <label className="text-sm font-medium text-custom-text-300" htmlFor="email">
+        <label className="text-13 font-medium text-tertiary" htmlFor="email">
           Email
         </label>
-        <div
-          className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-100`}
-        >
+        <div className={`relative flex items-center rounded-md bg-surface-1 border border-subtle`}>
           <Input
             id="email"
             name="email"
@@ -93,7 +91,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             value={uniqueCodeFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 border-0`}
+            className={`disable-autofill-style h-10 w-full placeholder:text-placeholder border-0`}
             disabled
           />
           {uniqueCodeFormData.email.length > 0 && (
@@ -106,7 +104,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-custom-text-300" htmlFor="code">
+        <label className="text-13 font-medium text-tertiary" htmlFor="code">
           Unique code
         </label>
         <Input
@@ -114,10 +112,10 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
           value={uniqueCodeFormData.code}
           onChange={(e) => handleFormChange("code", e.target.value)}
           placeholder="123456"
-          className="disable-autofill-style h-10 w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+          className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
           autoFocus
         />
-        <div className="flex w-full items-center justify-between px-1 text-xs pt-1">
+        <div className="flex w-full items-center justify-between px-1 text-11 pt-1">
           <p className="flex items-center gap-1 font-medium text-green-700">
             <CircleCheck height={12} width={12} />
             Paste the code sent to your email
@@ -127,8 +125,8 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             onClick={() => generateNewCode(uniqueCodeFormData.email)}
             className={`${
               isRequestNewCodeDisabled
-                ? "text-custom-text-400"
-                : "font-medium text-custom-primary-300 hover:text-custom-primary-200"
+                ? "text-placeholder"
+                : "font-medium text-accent-secondary hover:text-accent-secondary"
             }`}
             disabled={isRequestNewCodeDisabled}
           >
@@ -142,7 +140,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       </div>
 
       <div className="space-y-2.5">
-        <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
           {isRequestingNewCode ? "Sending code" : isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
         </Button>
       </div>

@@ -27,7 +27,7 @@ export const WorkspaceStickyHeader = observer(function WorkspaceStickyHeader() {
                 component={
                   <BreadcrumbLink
                     label={`Stickies`}
-                    icon={<RecentStickyIcon className="size-5 rotate-90 text-custom-text-200" />}
+                    icon={<RecentStickyIcon className="size-5 rotate-90 text-secondary" />}
                   />
                 }
               />
@@ -39,8 +39,7 @@ export const WorkspaceStickyHeader = observer(function WorkspaceStickyHeader() {
           <StickySearch />
           <Button
             variant="primary"
-            size="sm"
-            className="items-center gap-1"
+            size="lg"
             onClick={() => {
               toggleShowNewSticky(true);
               stickyOperations.create();

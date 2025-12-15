@@ -97,7 +97,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
   if (isEmpty(columns)) return <MembersLayoutLoader />;
 
   return (
-    <div className="border-t border-custom-border-100 grid">
+    <div className="border-t border-subtle grid">
       {removeMemberModal && (
         <ConfirmWorkspaceMemberRemove
           isOpen={removeMemberModal.member.id.length > 0}
@@ -113,10 +113,10 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
         columns={columns ?? []}
         data={(memberDetails?.filter((member): member is IWorkspaceMember => member !== null) ?? []) as any}
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
-        tHeadClassName="border-b border-custom-border-100"
-        thClassName="text-left font-medium divide-x-0 text-custom-text-400"
+        tHeadClassName="border-b border-subtle"
+        thClassName="text-left font-medium divide-x-0 text-placeholder"
         tBodyClassName="divide-y-0"
-        tBodyTrClassName="divide-x-0 p-4 h-[40px] text-custom-text-200"
+        tBodyTrClassName="divide-x-0 p-4 h-[40px] text-secondary"
         tHeadTrClassName="divide-x-0"
       />
     </div>
