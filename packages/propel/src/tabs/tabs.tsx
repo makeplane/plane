@@ -2,11 +2,15 @@ import * as React from "react";
 import { Tabs as TabsPrimitive } from "@base-ui-components/react/tabs";
 import { cn } from "../utils/classname";
 
+type BackgroundVariant = "layer-1" | "layer-2" | "layer-3" | "layer-transparent";
+
 type TabsCompound = React.ForwardRefExoticComponent<
   React.ComponentProps<typeof TabsPrimitive.Root> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Root>>
 > & {
   List: React.ForwardRefExoticComponent<
-    React.ComponentProps<typeof TabsPrimitive.List> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.List>>
+    React.ComponentProps<typeof TabsPrimitive.List> & {
+      background?: BackgroundVariant;
+    } & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.List>>
   >;
   Trigger: React.ForwardRefExoticComponent<
     React.ComponentProps<typeof TabsPrimitive.Tab> & { size?: "sm" | "md" | "lg" } & React.RefAttributes<
@@ -34,14 +38,26 @@ const TabsRoot = React.forwardRef(function TabsRoot(
 });
 
 const TabsList = React.forwardRef(function TabsList(
-  { className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>,
+  {
+    className,
+    background = "layer-1",
+    ...props
+  }: React.ComponentProps<typeof TabsPrimitive.List> & {
+    background?: BackgroundVariant;
+  },
   ref: React.ForwardedRef<React.ElementRef<typeof TabsPrimitive.List>>
 ) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        "flex w-full items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-layer-1/60 relative overflow-auto",
+        "flex w-full items-center justify-between gap-1.5 rounded-md text-13 p-0.5 relative overflow-auto",
+        {
+          "bg-layer-1": background === "layer-1",
+          "bg-layer-2": background === "layer-2",
+          "bg-layer-3": background === "layer-3",
+          "bg-layer-transparent": background === "layer-transparent",
+        },
         className
       )}
       {...props}
