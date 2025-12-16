@@ -287,7 +287,7 @@ const isLocked = isPastEvent;
           </div>
         )}
       />
-      <Controller
+      {/* <Controller
         control={control}
         name="target_date"
         render={({ field: { value, onChange } }) => (
@@ -306,7 +306,7 @@ const isLocked = isPastEvent;
             />
           </div>
         )}
-      />
+      /> */}
 
       <Controller
         control={control}
