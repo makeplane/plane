@@ -14,7 +14,7 @@
 }
 
 body {
-  @apply font-body text-primary;
+  @apply font-body bg-canvas text-primary;
 }
 
 /* emoji icon picker */
