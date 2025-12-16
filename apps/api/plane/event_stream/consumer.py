@@ -135,12 +135,12 @@ class BaseConsumer:
 
         logger.info(f"Queue '{self.queue_name}' bound to exchange '{self.exchange_name}'")
 
-    def process_message(self, body):
+    def process_message(self, properties, body):
         """
         Process a message from the queue.
         Implement this method in the subclass.
         """
-        pass
+        raise NotImplementedError("process_message must be implemented in the subclass")
 
     def start_consuming(self):
         """Start consuming automation events."""
@@ -158,7 +158,7 @@ class BaseConsumer:
 
                         # Setup message consumer
                         def message_callback(ch, method, properties, body):
-                            success = self.process_message(ch, method, properties, body)
+                            success = self.process_message(properties, body)
                             if success:
                                 ch.basic_ack(delivery_tag=method.delivery_tag)
                             else:

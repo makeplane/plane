@@ -11,11 +11,11 @@ class WebhookConsumer(BaseConsumer):
 
     def __init__(self, queue_name: str = None, prefetch_count: int = 10):
         """Initialize the automation consumer."""
-        logger.info(f"WebhookConsumer initialized for queue '{self.queue_name}'")
         super().__init__(queue_name, prefetch_count)
+        logger.info(f"WebhookConsumer initialized for queue '{self.queue_name}'")
 
-    def process_message(self, body):
+    def process_message(self, properties, body):
         """Process a message from the queue."""
-        logger.info(f"Processing message: {body}")
+        logger.info(f"WebhookConsumer processing message: {body}")
 
         return True
