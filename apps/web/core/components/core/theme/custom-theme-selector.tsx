@@ -9,6 +9,7 @@ import type { IUserTheme } from "@plane/types";
 import { InputColorPicker, ToggleSwitch } from "@plane/ui";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
+import { applyCustomTheme } from "@plane/utils";
 
 export const CustomThemeSelector = observer(function CustomThemeSelector() {
   // store hooks
@@ -60,7 +61,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
 
     try {
       setIsLoadingPalette(true);
-
+      applyCustomTheme(formData.primary, formData.background, formData.darkPalette ? "dark" : "light");
       // Save to profile endpoint
       await updateUserTheme({
         theme: "custom",
