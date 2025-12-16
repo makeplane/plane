@@ -286,7 +286,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
               control={control}
               name="darkPalette"
               render={({ field: { value, onChange } }) => (
-                <ToggleSwitch value={!!value} onChange={(checked) => onChange(checked ? "dark" : "light")} size="sm" />
+                <ToggleSwitch value={!!value} onChange={onChange} size="sm" />
               )}
             />
             <span className="text-12 text-tertiary">{watch("darkPalette") ? "Dark mode" : "Light mode"}</span>
