@@ -81,6 +81,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
   };
 
   const sortedWeekDays = getOrderedDays(Object.values(week), (item) => item.date.getDay(), startOfWeek);
+  const isDragDisabled = calendarLayout === "month";
 
   return (
     <div
@@ -114,6 +115,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
             handleDragAndDrop={handleDragAndDrop}
             canEditProperties={canEditProperties}
             isEpic={isEpic}
+            isDragDisabled={isDragDisabled}
           />
         );
       })}

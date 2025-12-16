@@ -53,6 +53,7 @@ type Props = {
   setSelectedDate: (date: Date) => void;
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
+  isDragDisabled?: boolean;
 };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
@@ -75,6 +76,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     setSelectedDate,
     canEditProperties,
     isEpic = false,
+    isDragDisabled = false,
   } = props;
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -185,7 +187,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               loadMoreIssues={loadMoreIssues}
               getPaginationData={getPaginationData}
               getGroupIssueCount={getGroupIssueCount}
-              isDragDisabled={readOnly}
+              isDragDisabled={readOnly || isDragDisabled}
               addIssuesToView={addIssuesToView}
               disableIssueCreation={disableIssueCreation}
               enableQuickIssueCreate={enableQuickIssueCreate}
