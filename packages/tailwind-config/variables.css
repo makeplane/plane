@@ -20,6 +20,7 @@
 @theme {
   --color-*: initial;
 
+  /* ---------- Alpha colors ---------- */
   /* White alpha */
   --color-alpha-white-0: oklch(1 0 0 / 0%);
   --color-alpha-white-100: oklch(1 0 0 / 5%);
@@ -231,7 +232,6 @@
 /* -------------------- Light mode color tokens -------------------- */
 @theme {
   /* Neutral colors */
-  --color-neutral-0: oklch(1 0 0);
   --color-neutral-white: oklch(1 0 0);
   --color-neutral-100: oklch(0.9851 0 129.63);
   --color-neutral-200: oklch(0.9694 0.0011 197.14);
@@ -248,7 +248,6 @@
   --color-neutral-black: oklch(0.1472 0.0034 196.79);
 
   /* Brand colors */
-  --color-brand-0: oklch(1 0 0);
   --color-brand-100: oklch(0.9847 0.0083 236.56);
   --color-brand-200: oklch(0.9715 0.0167 230.9);
   --color-brand-300: oklch(0.9428 0.0341 230.22);
@@ -556,7 +555,6 @@
     /* ---------- Dark mode color tokens ---------- */
     @variant dark {
       /* Neutral colors */
-      --color-neutral-0: oklch(0.1689 0.0021 286.18);
       --color-neutral-black: oklch(0.1689 0.0021 286.18);
       --color-neutral-100: oklch(0.2039 0.0025 247.95);
       --color-neutral-200: oklch(0.216 0.0037 228.98);
@@ -573,7 +571,6 @@
       --color-neutral-white: oklch(0.9702 0 0);
 
       /* Brand colors */
-      --color-brand-0: oklch(0.1689 0.0021 286.18);
       --color-brand-100: oklch(0.2029 0.03 232.24);
       --color-brand-200: oklch(0.2513 0.0418 234.6);
       --color-brand-300: oklch(0.3208 0.05806 236.44);
