@@ -269,7 +269,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
           href={workItemLink}
           ref={cardRef}
           className={cn(
-            "block rounded-lg border-[1px] outline-[0.5px] outline-transparent w-full border-strong bg-layer-2 text-13 transition-all hover:bg-layer-2-hover p-3",
+            "block rounded-lg border outline-[0.5px] outline-transparent shadow-raised-100 w-full border-subtle bg-layer-2 text-13 transition-all p-3 hover:shadow-raised-200 hover:border-strong",
             { "hover:cursor-pointer": isDragAllowed },
             { "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id) },
             { "bg-layer-1 z-[100]": isCurrentBlockDragging }
