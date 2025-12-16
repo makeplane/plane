@@ -32,13 +32,9 @@ export class ProfileStore implements IProfileStore {
     last_workspace_id: undefined,
     theme: {
       theme: undefined,
-      text: undefined,
-      palette: undefined,
       primary: undefined,
       background: undefined,
       darkPalette: undefined,
-      sidebarText: undefined,
-      sidebarBackground: undefined,
     },
     onboarding_step: {
       workspace_join: false,

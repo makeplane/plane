@@ -14,7 +14,9 @@ type Props = {
 
 export function ThemeSwitch(props: Props) {
   const { value, onChange } = props;
+  // translation
   const { t } = useTranslation();
+
   return (
     <CustomSelect
       value={value}
@@ -48,6 +50,7 @@ export function ThemeSwitch(props: Props) {
         )
       }
       onChange={onChange}
+      placement="bottom-end"
       input
     >
       {THEME_OPTIONS.map((themeOption) => (

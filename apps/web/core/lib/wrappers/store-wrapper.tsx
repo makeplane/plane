@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import type { TLanguage } from "@plane/i18n";
 import { useTranslation } from "@plane/i18n";
 // helpers
-import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
+import { applyCustomTheme, clearCustomTheme } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useRouterParams } from "@/hooks/store/use-router-params";
@@ -16,7 +16,7 @@ type TStoreWrapper = {
   children: ReactNode;
 };
 
-const StoreWrapper = observer(function StoreWrapper(props: TStoreWrapper) {
+function StoreWrapper(props: TStoreWrapper) {
   const { children } = props;
   // theme
   const { setTheme } = useTheme();
@@ -38,22 +38,25 @@ const StoreWrapper = observer(function StoreWrapper(props: TStoreWrapper) {
   }, [sidebarCollapsed, setTheme, toggleSidebar]);
 
   /**
-   * Setting up the theme of the user by fetching it from local storage
+   * Setting up the theme of the user by fetching it from profile
    */
   useEffect(() => {
     if (!userProfile?.theme?.theme) return;
     const currentTheme = userProfile?.theme?.theme || "system";
-    const currentThemePalette = userProfile?.theme?.palette;
+    const theme = userProfile?.theme;
+
     if (currentTheme) {
       setTheme(currentTheme);
-      if (currentTheme === "custom" && currentThemePalette) {
-        applyTheme(
-          currentThemePalette !== ",,,," ? currentThemePalette : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
-          false
-        );
-      } else unsetCustomCssVariables();
+      if (currentTheme === "custom") {
+        // New 2-color palette system
+        if (theme.primary && theme.background && theme.darkPalette !== undefined) {
+          applyCustomTheme(theme.primary, theme.background, theme.darkPalette ? "dark" : "light");
+        }
+      } else {
+        clearCustomTheme();
+      }
     }
-  }, [userProfile?.theme?.theme, userProfile?.theme?.palette, setTheme]);
+  }, [userProfile?.theme, setTheme]);
 
   useEffect(() => {
     if (!userProfile?.language) return;
@@ -66,6 +69,6 @@ const StoreWrapper = observer(function StoreWrapper(props: TStoreWrapper) {
   }, [params, setQuery]);
 
   return <>{children}</>;
-});
+}
 
-export default StoreWrapper;
+export default observer(StoreWrapper);
