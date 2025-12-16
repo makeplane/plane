@@ -67,7 +67,7 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
         if (currentWorkspace && currentUser && res?.id) {
           const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
           trackPageCreated(
-            { id: res.id, created_at: new Date().toISOString() },
+            { id: res.id, created_at: res.created_at ?? "" },
             currentWorkspace,
             currentUser,
             "project",
