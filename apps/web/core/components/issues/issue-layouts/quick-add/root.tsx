@@ -12,7 +12,7 @@ import { setPromiseToast } from "@plane/propel/toast";
 import type { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";
 import { cn, createIssuePayload } from "@plane/utils";
 // helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { captureError } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { QuickAddIssueFormRoot } from "@/plane-web/components/issues/quick-add";
 // local imports
@@ -142,7 +142,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
         if (currentWorkspace && currentUser && quickAddRes) {
           const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
           trackWorkItemCreated(
-            { id: quickAddRes.id, created_at: new Date().toISOString() },
+            { id: quickAddRes.id, created_at: quickAddRes.created_at ?? "" },
             { id: projectId.toString() },
             currentWorkspace,
             currentUser,

@@ -1,7 +1,6 @@
-import React from "react";
+import { AlertTriangle } from "lucide-react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { AlertTriangle } from "lucide-react";
 // types
 import { WORKSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -11,12 +10,12 @@ import type { IWorkspace } from "@plane/types";
 // ui
 import { Input } from "@plane/ui";
 // hooks
-import { cn } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { captureError } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions, useUserSettings } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { getUserRoleString, trackWorkspaceDeleted } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { cn } from "@plane/utils";
 
 type Props = {
   data: IWorkspace | null;
@@ -69,8 +68,9 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
         handleClose();
         router.push(getWorkspaceRedirectionUrl());
 
-        if (currentUser && data) {
-          const role = getWorkspaceRoleByWorkspaceSlug(data.slug);
+        const role = getWorkspaceRoleByWorkspaceSlug(data.slug);
+
+        if (currentUser) {
           trackWorkspaceDeleted(data, currentUser, getUserRoleString(role));
         }
 

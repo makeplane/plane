@@ -72,7 +72,7 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
         if (currentWorkspace && currentUser) {
           const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
           trackCycleCreated(
-            { id: res.id, created_at: new Date().toISOString() },
+            { id: res.id, created_at: res?.created_at ?? "" },
             { id: projectId },
             currentWorkspace,
             currentUser,

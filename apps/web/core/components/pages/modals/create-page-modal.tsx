@@ -13,10 +13,10 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageStore } from "@/plane-web/hooks/store";
 // local imports
-import { PageForm } from "./page-form";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { getUserRoleString, trackPageCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { PageForm } from "./page-form";
 
 type Props = {
   workspaceSlug: string;
@@ -69,7 +69,7 @@ export function CreatePageModal(props: Props) {
     if (!workspaceSlug || !projectId) return;
 
     try {
-      const pageData = await createPage?.(pageFormData);
+      const pageData = await createPage(pageFormData);
       if (pageData) {
         if (currentWorkspace && currentUser) {
           const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
