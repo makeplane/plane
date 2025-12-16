@@ -67,7 +67,7 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
       {workspaceProjectIds && (
         <>
           {workspaceProjectIds.length > 0 || loader === "init-loader" ? (
-            <div className="flex h-full overflow-hidden bg-surface-1 ">
+            <div className="flex h-full overflow-hidden ">
               <Tabs value={selectedTab} onValueChange={handleTabChange} className="w-full h-full">
                 <div className={"flex flex-col w-full h-full"}>
                   <div
@@ -75,7 +75,7 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
                       "px-6 py-2 border-b border-subtle flex items-center gap-4 overflow-hidden w-full justify-between"
                     )}
                   >
-                    <Tabs.List className={"my-2 overflow-x-auto flex w-fit"}>
+                    <Tabs.List background="layer-2" className={"my-2 overflow-x-auto flex w-fit"}>
                       {ANALYTICS_TABS.map((tab) => (
                         <Tabs.Trigger
                           key={tab.key}
@@ -83,6 +83,11 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
                           disabled={tab.isDisabled}
                           size="md"
                           className="px-3"
+                          onClick={() => {
+                            if (!tab.isDisabled) {
+                              handleTabChange(tab.key);
+                            }
+                          }}
                         >
                           {tab.label}
                         </Tabs.Trigger>

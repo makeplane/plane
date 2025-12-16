@@ -77,7 +77,7 @@ export const PieChart = React.memo(function PieChart<K extends string, T extends
               showLabel
                 ? ({ payload, ...props }) => (
                     <text
-                      className="text-13 font-medium transition-opacity duration-200"
+                      className="text-sm font-medium transition-opacity duration-200"
                       cx={props.cx}
                       cy={props.cy}
                       x={props.x}
@@ -123,7 +123,7 @@ export const PieChart = React.memo(function PieChart<K extends string, T extends
             <Tooltip
               cursor={{
                 fill: "currentColor",
-                className: "text-custom-background-90/80 cursor-pointer",
+                className: "bg-layer-1-hover cursor-pointer",
               }}
               wrapperStyle={{
                 pointerEvents: "none",
