@@ -10,7 +10,7 @@ import { getBrandMapping, getNeutralMapping, invertPalette } from "./theme-inver
 
 /**
  * Apply custom theme using 2-color palette system
- * Generates full 13-shade palettes from brand and neutral colors
+ * Generates full palettes from brand and neutral colors
  * and maps them to CSS variables
  *
  * @param brandColor - Brand accent color (hex with or without #)
@@ -29,7 +29,7 @@ export function applyCustomTheme(brandColor: string, neutralColor: string, mode:
     return;
   }
 
-  // Generate 13-shade palettes directly in OKLCH color space
+  // Generate palettes directly in OKLCH color space
   const { brandPalette, neutralPalette } = generateThemePalettes(brandColor, neutralColor, mode);
   const neutralOKLCH = hexToOKLCH(neutralColor);
   const brandOKLCH = hexToOKLCH(brandColor);

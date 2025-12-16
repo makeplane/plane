@@ -16,7 +16,7 @@ type TStoreWrapper = {
   children: ReactNode;
 };
 
-const StoreWrapper = observer(function StoreWrapper(props: TStoreWrapper) {
+function StoreWrapper(props: TStoreWrapper) {
   const { children } = props;
   // theme
   const { setTheme } = useTheme();
@@ -69,6 +69,6 @@ const StoreWrapper = observer(function StoreWrapper(props: TStoreWrapper) {
   }, [params, setQuery]);
 
   return <>{children}</>;
-});
+}
 
-export default StoreWrapper;
+export default observer(StoreWrapper);

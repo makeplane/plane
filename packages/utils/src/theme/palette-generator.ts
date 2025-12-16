@@ -25,7 +25,7 @@ export type ShadeStop = (typeof SHADE_STOPS)[number];
 
 /**
  * 14-shade color palette
- * Keys: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1250
+ * Keys: 50, 100, 200, 300, 400, 500, 600, 700, 750, 800, 850, 900, 950, 1000
  * Values: OKLCH CSS strings (e.g., "oklch(0.5840 0.1200 250.00)")
  */
 export interface ColorPalette {
@@ -162,7 +162,7 @@ export function generateColorPalette(
         rightAnchor = distributionAnchors[1]; // anchorStop
       } else {
         leftAnchor = distributionAnchors[1]; // anchorStop
-        rightAnchor = distributionAnchors[2]; // stop 1250
+        rightAnchor = distributionAnchors[2]; // stop 1000
       }
 
       // Linear interpolation

@@ -23,8 +23,8 @@ export const ALPHA_MAPPING = {
 
 /**
  * All shade stops for 14-shade palette system
- * 50 = white, 1250 = black
- * Extended range: 50-1250 for more granular control
+ * 50 = white, 1000 = black
+ * Extended range: 50-1000 for more granular control
  */
 export const SHADE_STOPS = [50, 100, 200, 300, 400, 500, 600, 700, 750, 800, 850, 900, 950, 1000] as const;
 
@@ -49,12 +49,12 @@ export const BASELINE_LIGHTNESS_MAP: Record<number, number> = {
   500: 0.58, // Medium (typical input)
   600: 0.48, // Medium-dark
   700: 0.38, // Dark
-  800: 0.28, // Very dark
-  900: 0.18, // Darkest
-  1000: 0.12, // Near black
-  1100: 0.08, // Almost black
-  1200: 0.04, // Nearly black
-  1250: 0.02, // Black
+  750: 0.28, // Very dark
+  800: 0.18, // Darkest
+  850: 0.12, // Near black
+  900: 0.08, // Almost black
+  950: 0.04, // Nearly black
+  1000: 0.02, // Black
 };
 
 /**

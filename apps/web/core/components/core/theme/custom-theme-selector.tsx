@@ -1,25 +1,20 @@
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-// types
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-// ui
+import type { IUserTheme } from "@plane/types";
 import { InputColorPicker, ToggleSwitch } from "@plane/ui";
-import { applyCustomTheme } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
-import type { IUserTheme } from "@plane/types";
 
-type TCustomThemeSelector = {
-  applyThemeChange: (themeData: IUserTheme & { theme: "custom" }) => void;
-};
-
-export const CustomThemeSelector = observer(function CustomThemeSelector(props: TCustomThemeSelector) {
-  const { applyThemeChange } = props;
-  const { t } = useTranslation();
+export const CustomThemeSelector = observer(function CustomThemeSelector() {
+  // store hooks
   const { data: userProfile, updateUserTheme } = useUserProfile();
+  // translation
+  const { t } = useTranslation();
 
   // Loading state for async palette generation
   const [isLoadingPalette, setIsLoadingPalette] = useState(false);
@@ -66,9 +61,6 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
     try {
       setIsLoadingPalette(true);
 
-      // Apply theme immediately (now synchronous)
-      applyCustomTheme(formData.primary, formData.background, formData.darkPalette ? "dark" : "light");
-
       // Save to profile endpoint
       await updateUserTheme({
         theme: "custom",
@@ -76,9 +68,6 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
         background: formData.background,
         darkPalette: formData.darkPalette,
       });
-
-      // Notify parent component
-      applyThemeChange({ ...formData, theme: "custom" });
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -102,7 +91,6 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
     // prepend a hashtag if it doesn't exist
     if (val && val[0] !== "#") hex = `#${val}`;
     onChange(hex);
-    // useEffect will handle preview update with debouncing
   };
 
   const handleDownloadConfig = () => {
@@ -166,7 +154,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
       // Validate theme mode
       const themeMode = config.darkPalette ?? false;
       if (typeof themeMode !== "boolean") {
-        throw new Error("Invalid theme mode. Must be 'light' or 'dark'");
+        throw new Error("Invalid theme mode. Must be a boolean");
       }
 
       // Apply the configuration to form

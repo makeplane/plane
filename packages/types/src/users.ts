@@ -62,7 +62,7 @@ export type TUserProfile = {
     theme: string | undefined;
     primary: string | undefined;
     background: string | undefined;
-    darkPalette: string | boolean | undefined;
+    darkPalette: boolean | undefined;
   };
   onboarding_step: TOnboardingSteps;
   is_onboarded: boolean;
@@ -100,7 +100,7 @@ export interface IUserTheme {
   theme: string | undefined; // 'light', 'dark', 'custom', etc.
   primary?: string | undefined;
   background?: string | undefined;
-  darkPalette?: string | boolean | undefined; // Dark mode palette (serialized JSON) or legacy boolean
+  darkPalette?: boolean | undefined;
 }
 
 export interface IUserMemberLite extends IUserLite {

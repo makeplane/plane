@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
@@ -6,8 +6,6 @@ import type { I_THEME_OPTION } from "@plane/constants";
 import { THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
-import type { IUserTheme } from "@plane/types";
-import { applyCustomTheme, clearCustomTheme } from "@plane/utils";
 // components
 import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
 import { ThemeSwitch } from "@/components/core/theme/theme-switch";
@@ -23,65 +21,22 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
     description: string;
   };
 }) {
-  // hooks
-  const { setTheme } = useTheme();
+  // store hooks
   const { data: userProfile, updateUserTheme } = useUserProfile();
-
-  // states
-  const [currentTheme, setCurrentTheme] = useState<I_THEME_OPTION | null>(null);
-
+  // theme
+  const { setTheme } = useTheme();
+  // translation
   const { t } = useTranslation();
-
-  // initialize theme
-  useEffect(() => {
-    if (!userProfile?.theme?.theme) return;
-
-    const userThemeOption = THEME_OPTIONS.find((t) => t.value === userProfile.theme.theme);
-
-    if (userThemeOption) {
-      setCurrentTheme(userThemeOption);
-    }
+  // derived values
+  const currentTheme = useMemo(() => {
+    const userThemeOption = THEME_OPTIONS.find((t) => t.value === userProfile?.theme?.theme);
+    return userThemeOption || null;
   }, [userProfile?.theme?.theme]);
 
-  // Load custom theme from profile when theme is custom
-  useEffect(() => {
-    const loadCustomTheme = () => {
-      if (currentTheme?.value === "custom" && userProfile?.theme) {
-        try {
-          const theme = userProfile.theme;
-          if (theme.primary && theme.background && theme.darkPalette !== undefined) {
-            applyCustomTheme(theme.primary, theme.background, theme.darkPalette ? "dark" : "light");
-          }
-        } catch (error) {
-          console.error("Failed to load custom theme from profile:", error);
-        }
-      }
-    };
-    loadCustomTheme();
-  }, [currentTheme, userProfile?.theme]);
-
-  // handlers
-  const applyThemeChange = useCallback(
-    (theme: Partial<IUserTheme>) => {
-      const themeValue = theme?.theme || "system";
-      setTheme(themeValue);
-
-      if (theme?.theme === "custom") {
-        if (theme?.primary && theme?.background && theme?.darkPalette !== undefined) {
-          applyCustomTheme(theme.primary, theme.background, theme.darkPalette ? "dark" : "light");
-        }
-      } else {
-        clearCustomTheme();
-      }
-    },
-    [setTheme]
-  );
-
   const handleThemeChange = useCallback(
-    async (themeOption: I_THEME_OPTION) => {
+    (themeOption: I_THEME_OPTION) => {
       try {
-        applyThemeChange({ theme: themeOption.value });
-
+        setTheme(themeOption.value);
         const updatePromise = updateUserTheme({ theme: themeOption.value });
         setPromiseToast(updatePromise, {
           loading: "Updating theme...",
@@ -98,7 +53,7 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
         console.error("Error updating theme:", error);
       }
     },
-    [applyThemeChange, updateUserTheme]
+    [updateUserTheme]
   );
 
   if (!userProfile) return null;
@@ -114,7 +69,7 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
           </div>
         }
       />
-      {userProfile.theme?.theme === "custom" && <CustomThemeSelector applyThemeChange={applyThemeChange} />}
+      {userProfile.theme?.theme === "custom" && <CustomThemeSelector />}
     </>
   );
 });

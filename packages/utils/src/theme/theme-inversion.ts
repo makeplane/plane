@@ -39,7 +39,7 @@ export function invertPalette(palette: ColorPalette): ColorPalette {
  *
  * For light mode:
  * - Uses lighter shades for backgrounds (50-100-200)
- * - Uses darker shades for text (1000, 1100, 1200)
+ * - Uses darker shades for text (900, 950, 1000)
  *
  * For dark mode:
  * - Uses inverted palette
