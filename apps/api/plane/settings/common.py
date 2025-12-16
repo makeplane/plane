@@ -50,10 +50,12 @@ INSTALLED_APPS = [
     "plane.api",
     "plane.authentication",
     "plane.event_stream",
+    "plane.webhook",
     # Third-party things
     "rest_framework",
     "corsheaders",
     "django_celery_beat",
+    "pgtrigger",
 ]
 
 # Middlewares

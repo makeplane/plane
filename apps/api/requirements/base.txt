@@ -9,6 +9,7 @@ psycopg==3.3.0
 psycopg-binary==3.3.0
 psycopg-c==3.3.0
 dj-database-url==2.1.0
+psycopg-pool==3.2.6
 # mongo
 pymongo==4.6.3
 # redis
@@ -71,3 +72,7 @@ opentelemetry-exporter-otlp==1.28.1
 drf-spectacular==0.28.0
 # html sanitizer
 nh3==0.2.18
+# pgtriggers
+django-pgtrigger==4.15.3
+# pika for rabbitmq
+pika==1.3.2

@@ -3,13 +3,15 @@ import time
 import os
 import pika
 import signal
+import logging
 
 from django.conf import settings
 from django.db import close_old_connections, connection
 from django.db.utils import OperationalError
 
-from plane.utils.logging import logger
 from plane.utils.exception_logger import log_exception
+
+logger = logging.getLogger(__name__)
 
 
 class BaseConsumer:
@@ -29,6 +31,7 @@ class BaseConsumer:
             raise ValueError("queue_name must be provided")
 
         self.exchange_name = "plane.event_stream"
+        self.dlq_exchange_name = "plane.event_stream.dlq"
 
         self.queue_message_ttl = os.environ.get("EVENT_STREAM_QUEUE_MESSAGE_TTL", 3600000)
         self.dlq_message_ttl = os.environ.get("EVENT_STREAM_DLQ_MESSAGE_TTL", 604800000)
@@ -99,6 +102,14 @@ class BaseConsumer:
             passive=False,  # Declare/create if it doesn't exist
         )
 
+        # Ensure the DLQ exchange exists
+        channel.exchange_declare(
+            exchange=self.dlq_exchange_name,
+            exchange_type="fanout",
+            durable=True,
+            passive=False,
+        )
+
         # DLQ with 7-day TTL to match existing configuration
         channel.queue_declare(
             queue=self.dlq_name,
@@ -124,7 +135,7 @@ class BaseConsumer:
 
         logger.info(f"Queue '{self.queue_name}' bound to exchange '{self.exchange_name}'")
 
-    def process_message(self, ch, method, properties, body):
+    def process_message(self, body):
         """
         Process a message from the queue.
         Implement this method in the subclass.
