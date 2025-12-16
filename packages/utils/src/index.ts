@@ -28,7 +28,7 @@ export * from "./string";
 export * from "./subscription";
 export * from "./tab-indices";
 export * from "./theme";
-export { applyTheme, unsetCustomCssVariables, resolveGeneralTheme } from "./theme-legacy";
+export { resolveGeneralTheme } from "./theme-legacy";
 export * from "./url";
 export * from "./work-item-filters";
 export * from "./work-item";

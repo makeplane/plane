@@ -7,7 +7,7 @@ import { THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { IUserTheme } from "@plane/types";
-import { applyTheme, applyCustomTheme, unsetCustomCssVariables } from "@plane/utils";
+import { applyCustomTheme, clearCustomTheme } from "@plane/utils";
 // components
 import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
 import { ThemeSwitch } from "@/components/core/theme/theme-switch";
@@ -45,22 +45,12 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
 
   // Load custom theme from profile when theme is custom
   useEffect(() => {
-    const loadCustomTheme = async () => {
+    const loadCustomTheme = () => {
       if (currentTheme?.value === "custom" && userProfile?.theme) {
         try {
           const theme = userProfile.theme;
-          if (theme.brandColor && theme.neutralColor && theme.themeMode) {
-            await applyCustomTheme(
-              theme.brandColor,
-              theme.neutralColor,
-              theme.themeMode,
-              theme.darkModeLightnessOffset
-            );
-          } else if (theme.palette) {
-            // Legacy support
-            const defaultPalette = "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5";
-            const palette = theme.palette !== ",,,," ? theme.palette : defaultPalette;
-            applyTheme(palette, false);
+          if (theme.primary && theme.background && theme.darkPalette !== undefined) {
+            applyCustomTheme(theme.primary, theme.background, theme.darkPalette ? "dark" : "light");
           }
         } catch (error) {
           console.error("Failed to load custom theme from profile:", error);
@@ -72,32 +62,16 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
 
   // handlers
   const applyThemeChange = useCallback(
-    async (theme: Partial<IUserTheme> & {
-      brandColor?: string;
-      neutralColor?: string;
-      themeMode?: "light" | "dark";
-      darkModeLightnessOffset?: number;
-    }) => {
+    (theme: Partial<IUserTheme>) => {
       const themeValue = theme?.theme || "system";
       setTheme(themeValue);
 
       if (theme?.theme === "custom") {
-        // New 2-color palette system loaded from profile
-        if (theme?.brandColor && theme?.neutralColor && theme?.themeMode) {
-          await applyCustomTheme(
-            theme.brandColor,
-            theme.neutralColor,
-            theme.themeMode,
-            theme.darkModeLightnessOffset
-          );
-        } else if (theme?.palette) {
-          // Legacy 5-color system (backward compatibility)
-          const defaultPalette = "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5";
-          const palette = theme.palette !== ",,,," ? theme.palette : defaultPalette;
-          applyTheme(palette, false);
+        if (theme?.primary && theme?.background && theme?.darkPalette !== undefined) {
+          applyCustomTheme(theme.primary, theme.background, theme.darkPalette ? "dark" : "light");
         }
       } else {
-        unsetCustomCssVariables();
+        clearCustomTheme();
       }
     },
     [setTheme]
@@ -135,7 +109,7 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
         title={t(props.option.title)}
         description={t(props.option.description)}
         control={
-          <div className="">
+          <div>
             <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
           </div>
         }

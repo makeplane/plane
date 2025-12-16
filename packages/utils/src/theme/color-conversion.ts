@@ -50,9 +50,9 @@ export function hexToOKLCH(hex: string): OKLCH {
  * Convert OKLCH to CSS string format
  * Example: oklch(0.5840 0.1200 250.00)
  */
-export function oklchToCSS(oklch: OKLCH): string {
+export function oklchToCSS(oklch: OKLCH, alpha?: number): string {
   const { l, c, h } = oklch;
-  return `oklch(${l.toFixed(4)} ${c.toFixed(4)} ${h.toFixed(2)})`;
+  return `oklch(${l.toFixed(4)} ${c.toFixed(4)} ${h.toFixed(2)}${alpha ? ` / ${alpha.toFixed(2)}%` : ""})`;
 }
 
 /**
@@ -78,19 +78,6 @@ export function parseOKLCH(oklchString: string): OKLCH | null {
     };
   }
   return null;
-}
-
-/**
- * Add alpha channel to OKLCH CSS string
- * Example: oklch(0.5840 0.1200 250.00) + 0.5 -> oklch(0.5840 0.1200 250.00 / 50%)
- */
-export function addAlphaToOKLCH(oklchString: string, alpha: number): string {
-  const parsed = parseOKLCH(oklchString);
-  if (!parsed) return oklchString;
-
-  const { l, c, h } = parsed;
-  const alphaPercent = Math.round(alpha * 100);
-  return `oklch(${l.toFixed(4)} ${c.toFixed(4)} ${h.toFixed(2)} / ${alphaPercent}%)`;
 }
 
 /**

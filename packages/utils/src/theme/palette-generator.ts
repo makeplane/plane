@@ -10,8 +10,10 @@ import { hexToOKLCH, oklchToCSS } from "./color-conversion";
 import { normalizeHexColor, validateHexColor } from "./color-validation";
 import {
   BASELINE_LIGHTNESS_MAP,
-  DEFAULT_LIGHTNESS_MAX,
-  DEFAULT_LIGHTNESS_MIN,
+  DEFAULT_LIGHT_MODE_LIGHTNESS_MIN,
+  DEFAULT_LIGHT_MODE_LIGHTNESS_MAX,
+  DEFAULT_DARK_MODE_LIGHTNESS_MIN,
+  DEFAULT_DARK_MODE_LIGHTNESS_MAX,
   DEFAULT_VALUE_STOP,
   SHADE_STOPS,
 } from "./constants";
@@ -35,12 +37,12 @@ export interface ColorPalette {
   500: string;
   600: string;
   700: string;
+  750: string;
   800: string;
+  850: string;
   900: string;
+  950: string;
   1000: string;
-  1100: string;
-  1200: string;
-  1250: string;
 }
 
 /**
@@ -96,10 +98,15 @@ function isValidShadeStop(value: number): value is ShadeStop {
  * Works directly in OKLCH space, keeping C and H constant, only varying L
  *
  * @param baseColor - Hex color (with or without #)
+ * @param mode - "light" or "dark"
  * @param options - Palette generation options
  * @returns ColorPalette with 14 OKLCH CSS strings
  */
-export function generateColorPalette(baseColor: string, options: PaletteOptions = {}): ColorPalette {
+export function generateColorPalette(
+  baseColor: string,
+  mode: "light" | "dark",
+  options: PaletteOptions = {}
+): ColorPalette {
   // Validate and normalize input
   if (!validateHexColor(baseColor)) {
     throw new Error(`Invalid hex color: ${baseColor}`);
@@ -111,11 +118,14 @@ export function generateColorPalette(baseColor: string, options: PaletteOptions 
   const inputOKLCH = hexToOKLCH(normalizedHex);
   const { l: inputL, c: inputC, h: inputH } = inputOKLCH;
 
+  const DEFAULT_LIGHTNESS_MIN = mode === "light" ? DEFAULT_LIGHT_MODE_LIGHTNESS_MIN : DEFAULT_DARK_MODE_LIGHTNESS_MIN;
+  const DEFAULT_LIGHTNESS_MAX = mode === "light" ? DEFAULT_LIGHT_MODE_LIGHTNESS_MAX : DEFAULT_DARK_MODE_LIGHTNESS_MAX;
+
   // Extract options with defaults
   const {
     lightnessMin = DEFAULT_LIGHTNESS_MIN / 100, // Convert to 0-1 scale
     lightnessMax = DEFAULT_LIGHTNESS_MAX / 100, // Convert to 0-1 scale
-    valueStop = "auto",
+    valueStop = options.valueStop ?? DEFAULT_VALUE_STOP,
   } = options;
 
   // Calculate or use provided valueStop
@@ -128,9 +138,9 @@ export function generateColorPalette(baseColor: string, options: PaletteOptions 
 
   // Create lightness distribution with three anchor points
   const distributionAnchors = [
-    { stop: 50, lightness: lightnessMax }, // Lightest
+    { stop: SHADE_STOPS[0], lightness: lightnessMax }, // Lightest
     { stop: anchorStop, lightness: inputL }, // Input color
-    { stop: 1250, lightness: lightnessMin }, // Darkest
+    { stop: SHADE_STOPS[SHADE_STOPS.length - 1], lightness: lightnessMin }, // Darkest
   ];
 
   // Generate palette by interpolating lightness for each stop
@@ -186,16 +196,19 @@ export function generateColorPalette(baseColor: string, options: PaletteOptions 
  * @param neutralColor - Neutral/background color (hex)
  * @returns Object with brandPalette and neutralPalette
  */
-export function generateThemePalettes(brandColor: string, neutralColor: string) {
+export function generateThemePalettes(
+  brandColor: string,
+  neutralColor: string,
+  mode: "light" | "dark"
+): {
+  brandPalette: ColorPalette;
+  neutralPalette: ColorPalette;
+} {
   // Brand palette - auto-calculate value stop based on color lightness
-  const brandPalette = generateColorPalette(brandColor, {
-    valueStop: "auto",
-  });
+  const brandPalette = generateColorPalette(brandColor, mode);
 
   // Neutral palette - auto-calculate value stop based on color lightness
-  const neutralPalette = generateColorPalette(neutralColor, {
-    valueStop: "auto",
-  });
+  const neutralPalette = generateColorPalette(neutralColor, mode);
 
   return { brandPalette, neutralPalette };
 }

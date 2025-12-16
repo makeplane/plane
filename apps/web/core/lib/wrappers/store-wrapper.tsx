@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import type { TLanguage } from "@plane/i18n";
 import { useTranslation } from "@plane/i18n";
 // helpers
-import { applyTheme, applyCustomTheme, unsetCustomCssVariables } from "@plane/utils";
+import { applyCustomTheme, clearCustomTheme } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useRouterParams } from "@/hooks/store/use-router-params";
@@ -49,25 +49,14 @@ const StoreWrapper = observer(function StoreWrapper(props: TStoreWrapper) {
       setTheme(currentTheme);
       if (currentTheme === "custom") {
         // New 2-color palette system
-        if (theme.brandColor && theme.neutralColor && theme.themeMode) {
-          applyCustomTheme(theme.brandColor, theme.neutralColor, theme.themeMode, theme.darkModeLightnessOffset);
-        } else if (theme.palette) {
-          // Legacy 5-color system (backward compatibility)
-          applyTheme(theme.palette !== ",,,," ? theme.palette : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5", false);
+        if (theme.primary && theme.background && theme.darkPalette !== undefined) {
+          applyCustomTheme(theme.primary, theme.background, theme.darkPalette ? "dark" : "light");
         }
       } else {
-        unsetCustomCssVariables();
+        clearCustomTheme();
       }
     }
-  }, [
-    userProfile?.theme?.theme,
-    userProfile?.theme?.brandColor,
-    userProfile?.theme?.neutralColor,
-    userProfile?.theme?.themeMode,
-    userProfile?.theme?.darkModeLightnessOffset,
-    userProfile?.theme?.palette,
-    setTheme,
-  ]);
+  }, [userProfile?.theme, setTheme]);
 
   useEffect(() => {
     if (!userProfile?.language) return;

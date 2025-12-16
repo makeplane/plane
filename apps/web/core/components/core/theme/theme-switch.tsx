@@ -48,6 +48,7 @@ export function ThemeSwitch(props: Props) {
         )
       }
       onChange={onChange}
+      placement="bottom-end"
       input
     >
       {THEME_OPTIONS.map((themeOption) => (

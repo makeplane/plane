@@ -3,6 +3,8 @@
  * Applies generated palettes to CSS variables for Plane's theme system
  */
 
+import { hexToOKLCH, oklchToCSS } from "./color-conversion";
+import { ALPHA_MAPPING } from "./constants";
 import { generateThemePalettes } from "./palette-generator";
 import { getBrandMapping, getNeutralMapping, invertPalette } from "./theme-inversion";
 
@@ -28,14 +30,16 @@ export function applyCustomTheme(brandColor: string, neutralColor: string, mode:
   }
 
   // Generate 13-shade palettes directly in OKLCH color space
-  const { brandPalette, neutralPalette } = generateThemePalettes(brandColor, neutralColor);
+  const { brandPalette, neutralPalette } = generateThemePalettes(brandColor, neutralColor, mode);
+  const neutralOKLCH = hexToOKLCH(neutralColor);
+  const brandOKLCH = hexToOKLCH(brandColor);
 
   // For dark mode, invert the palettes
   const activeBrandPalette = mode === "dark" ? invertPalette(brandPalette) : brandPalette;
   const activeNeutralPalette = mode === "dark" ? invertPalette(neutralPalette) : neutralPalette;
 
   // Get CSS variable mappings
-  const neutralMapping = getNeutralMapping(activeNeutralPalette, mode);
+  const neutralMapping = getNeutralMapping(activeNeutralPalette);
   const brandMapping = getBrandMapping(activeBrandPalette);
 
   // Apply base palette colors
@@ -47,6 +51,20 @@ export function applyCustomTheme(brandColor: string, neutralColor: string, mode:
   Object.entries(brandMapping).forEach(([key, value]) => {
     themeElement.style.setProperty(`--color-brand-${key}`, value);
   });
+
+  Object.entries(ALPHA_MAPPING).forEach(([key, value]) => {
+    themeElement.style.setProperty(`--color-alpha-white-${key}`, oklchToCSS(neutralOKLCH, value * 100));
+    themeElement.style.setProperty(`--color-alpha-black-${key}`, oklchToCSS(neutralOKLCH, value * 100));
+  });
+
+  const isBrandColorDark = brandOKLCH.l < 0.2;
+  const whiteInOKLCH = { l: 1, c: 0, h: 0 };
+  const blackInOKLCH = { l: 0, c: 0, h: 0 };
+  themeElement.style.setProperty(`--text-color-on-color`, oklchToCSS(isBrandColorDark ? whiteInOKLCH : blackInOKLCH));
+  themeElement.style.setProperty(
+    `--text-color-icon-on-color`,
+    oklchToCSS(isBrandColorDark ? blackInOKLCH : whiteInOKLCH)
+  );
 }
 
 /**
@@ -83,4 +101,12 @@ export function clearCustomTheme(): void {
   brandKeys.forEach((key) => {
     themeElement.style.removeProperty(`--color-brand-${key}`);
   });
+
+  Object.keys(ALPHA_MAPPING).forEach((key) => {
+    themeElement.style.removeProperty(`--color-alpha-white-${key}`);
+    themeElement.style.removeProperty(`--color-alpha-black-${key}`);
+  });
+
+  themeElement.style.removeProperty(`--text-color-on-color`);
+  themeElement.style.removeProperty(`--text-color-icon-on-color`);
 }

@@ -17,7 +17,6 @@ export { applyCustomTheme, clearCustomTheme } from "./theme-application";
 
 // Color conversion utilities
 export {
-  addAlphaToOKLCH,
   hexToHSL,
   hexToOKLCH,
   hexToOKLCHString,
@@ -43,8 +42,10 @@ export {
   DEFAULT_COLOR_MODE,
   DEFAULT_HUE_SHIFT_BRAND,
   DEFAULT_HUE_SHIFT_NEUTRAL,
-  DEFAULT_LIGHTNESS_MAX,
-  DEFAULT_LIGHTNESS_MIN,
+  DEFAULT_LIGHT_MODE_LIGHTNESS_MAX,
+  DEFAULT_LIGHT_MODE_LIGHTNESS_MIN,
+  DEFAULT_DARK_MODE_LIGHTNESS_MAX,
+  DEFAULT_DARK_MODE_LIGHTNESS_MIN,
   DEFAULT_SATURATION_CURVE,
   DEFAULT_VALUE_STOP,
   type SaturationCurve,

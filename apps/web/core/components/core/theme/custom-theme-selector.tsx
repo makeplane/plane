@@ -1,4 +1,4 @@
-import { useState, useEffect as React_useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // types
@@ -7,19 +7,13 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
 import { InputColorPicker, ToggleSwitch } from "@plane/ui";
-import { applyCustomTheme, generateThemePalettes, invertPalette } from "@plane/utils";
+import { applyCustomTheme } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
-
-interface CustomThemeFormData {
-  brandColor: string;
-  neutralColor: string;
-  themeMode: "light" | "dark";
-  darkModeLightnessOffset: number;
-}
+import type { IUserTheme } from "@plane/types";
 
 type TCustomThemeSelector = {
-  applyThemeChange: (themeData: CustomThemeFormData & { theme: "custom" }) => void;
+  applyThemeChange: (themeData: IUserTheme & { theme: "custom" }) => void;
 };
 
 export const CustomThemeSelector = observer(function CustomThemeSelector(props: TCustomThemeSelector) {
@@ -34,24 +28,24 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load saved theme from userProfile (fallback to defaults)
-  const getSavedTheme = (): CustomThemeFormData => {
+  const getSavedTheme = (): IUserTheme => {
     if (userProfile?.theme) {
       const theme = userProfile.theme;
-      if (theme.brandColor && theme.neutralColor) {
+      if (theme.primary && theme.background && theme.darkPalette !== undefined) {
         return {
-          brandColor: theme.brandColor,
-          neutralColor: theme.neutralColor,
-          themeMode: theme.themeMode || (theme.isDarkModeToggled ? "dark" : "light"),
-          darkModeLightnessOffset: theme.darkModeLightnessOffset || -0.15,
+          theme: "custom",
+          primary: theme.primary,
+          background: theme.background,
+          darkPalette: theme.darkPalette,
         };
       }
     }
     // Fallback to defaults
     return {
-      brandColor: "#3f76ff",
-      neutralColor: "#1a1a1a",
-      themeMode: "light",
-      darkModeLightnessOffset: -0.15,
+      theme: "custom",
+      primary: "#3f76ff",
+      background: "#1a1a1a",
+      darkPalette: false,
     };
   };
 
@@ -59,118 +53,28 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
     control,
     formState: { isSubmitting },
     handleSubmit,
+    getValues,
     watch,
     setValue,
-  } = useForm<CustomThemeFormData>({
+  } = useForm<IUserTheme>({
     defaultValues: getSavedTheme(),
   });
 
-  const [previewPalettes, setPreviewPalettes] = useState<{
-    brandPalette: any;
-    neutralPalette: any;
-    neutralPaletteDark: any;
-  }>(() => {
-    const values = getSavedTheme();
-    // Initialize with empty palettes, will be loaded async
-    return {
-      brandPalette: {},
-      neutralPalette: {},
-      neutralPaletteDark: {},
-    };
-  });
+  const handleUpdateTheme = async (formData: IUserTheme) => {
+    if (!formData.primary || !formData.background || formData.darkPalette === undefined) return;
 
-  // No need for local invertPalette - using the one from @plane/utils
-
-  // Load initial palettes on mount
-  React_useEffect(() => {
-    const loadInitialPalettes = () => {
-      const values = getSavedTheme();
-      setIsLoadingPalette(true);
-      try {
-        const palettes = generateThemePalettes(values.brandColor, values.neutralColor);
-        setPreviewPalettes({
-          brandPalette: palettes.brandPalette,
-          neutralPalette: palettes.neutralPalette,
-          neutralPaletteDark: palettes.neutralPalette, // Will be inverted in display
-        });
-      } catch (error) {
-        console.error("Failed to load initial palettes:", error);
-      } finally {
-        setIsLoadingPalette(false);
-      }
-    };
-    loadInitialPalettes();
-  }, []);
-
-  // Watch colors and theme mode for live preview
-  const brandColor = watch("brandColor");
-  const neutralColor = watch("neutralColor");
-  const themeMode = watch("themeMode");
-  const darkModeLightnessOffset = watch("darkModeLightnessOffset");
-
-  // Update preview when colors change (no longer depends on themeMode or darkModeLightnessOffset)
-  React_useEffect(() => {
-    const updatePreview = () => {
-      if (brandColor && neutralColor) {
-        setIsLoadingPalette(true);
-        try {
-          const palettes = generateThemePalettes(brandColor, neutralColor);
-          setPreviewPalettes({
-            brandPalette: palettes.brandPalette,
-            neutralPalette: palettes.neutralPalette,
-            neutralPaletteDark: palettes.neutralPalette, // Will be inverted in display
-          });
-        } catch (error) {
-          console.error("Failed to generate preview:", error);
-        } finally {
-          setIsLoadingPalette(false);
-        }
-      }
-    };
-
-    // Debounce the update
-    const timeoutId = setTimeout(updatePreview, 300);
-    return () => clearTimeout(timeoutId);
-  }, [brandColor, neutralColor]);
-
-  const handleUpdateTheme = async (formData: CustomThemeFormData) => {
     try {
       setIsLoadingPalette(true);
 
       // Apply theme immediately (now synchronous)
-      applyCustomTheme(formData.brandColor, formData.neutralColor, formData.themeMode);
-
-      // Generate palettes to save
-      const palettes = generateThemePalettes(formData.brandColor, formData.neutralColor);
-
-      // Generate light mode palette (brand + neutral combined)
-      const lightModePalette = {
-        brand: palettes.brandPalette,
-        neutral: palettes.neutralPalette,
-      };
-
-      // Generate dark mode palette (inverted neutral palette)
-      const darkModeNeutralPalette = invertPalette(palettes.neutralPalette);
-      const darkModeBrandPalette = invertPalette(palettes.brandPalette);
-      const darkModePalette = {
-        brand: darkModeBrandPalette,
-        neutral: darkModeNeutralPalette,
-      };
+      applyCustomTheme(formData.primary, formData.background, formData.darkPalette ? "dark" : "light");
 
       // Save to profile endpoint
       await updateUserTheme({
         theme: "custom",
-        brandColor: formData.brandColor,
-        neutralColor: formData.neutralColor,
-        themeMode: formData.themeMode,
-        isDarkModeToggled: formData.themeMode === "dark",
-        darkModeLightnessOffset: formData.darkModeLightnessOffset,
-        // New palette fields
-        brand: JSON.stringify(palettes.brandPalette),
-        neutral: JSON.stringify(palettes.neutralPalette),
-        // Save light and dark mode full palettes
-        palette: JSON.stringify(lightModePalette),
-        darkPalette: JSON.stringify(darkModePalette),
+        primary: formData.primary,
+        background: formData.background,
+        darkPalette: formData.darkPalette,
       });
 
       // Notify parent component
@@ -193,7 +97,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
     }
   };
 
-  const handleValueChange = (val: string | undefined, onChange: any) => {
+  const handleValueChange = (val: string | undefined, onChange: (...args: unknown[]) => void) => {
     let hex = val;
     // prepend a hashtag if it doesn't exist
     if (val && val[0] !== "#") hex = `#${val}`;
@@ -203,14 +107,13 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
 
   const handleDownloadConfig = () => {
     try {
-      const currentValues = watch();
+      const currentValues = getValues();
       const config = {
         version: "1.0",
         themeName: "Custom Theme",
-        brandColor: currentValues.brandColor,
-        neutralColor: currentValues.neutralColor,
-        themeMode: currentValues.themeMode,
-        darkModeLightnessOffset: currentValues.darkModeLightnessOffset,
+        primary: currentValues.primary,
+        background: currentValues.background,
+        darkPalette: currentValues.darkPalette,
       };
 
       const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
@@ -226,14 +129,14 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("success"),
-        message: "Theme configuration downloaded successfully",
+        message: "Theme configuration downloaded successfully.",
       });
     } catch (error) {
       console.error("Failed to download config:", error);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("error"),
-        message: "Failed to download theme configuration",
+        message: "Failed to download theme configuration.",
       });
     }
   };
@@ -244,47 +147,41 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
 
     try {
       const text = await file.text();
-      const config = JSON.parse(text);
+      const config = JSON.parse(text) as IUserTheme;
 
       // Validate required fields
-      if (!config.brandColor || !config.neutralColor) {
-        throw new Error("Missing required fields: brandColor and neutralColor");
+      if (!config.primary || !config.background) {
+        throw new Error("Missing required fields: primary and background");
       }
 
       // Validate hex color format
       const hexPattern = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
-      if (!hexPattern.test(config.brandColor)) {
+      if (!hexPattern.test(config.primary)) {
         throw new Error("Invalid brand color hex format");
       }
-      if (!hexPattern.test(config.neutralColor)) {
+      if (!hexPattern.test(config.background)) {
         throw new Error("Invalid neutral color hex format");
       }
 
       // Validate theme mode
-      const themeMode = config.themeMode || "light";
-      if (themeMode !== "light" && themeMode !== "dark") {
+      const themeMode = config.darkPalette ?? false;
+      if (typeof themeMode !== "boolean") {
         throw new Error("Invalid theme mode. Must be 'light' or 'dark'");
       }
 
-      // Validate darkModeLightnessOffset
-      const offset = config.darkModeLightnessOffset ?? -0.15;
-      if (typeof offset !== "number" || offset < -0.4 || offset > -0.05) {
-        throw new Error("Invalid darkModeLightnessOffset. Must be a number between -0.4 and -0.05");
-      }
-
       // Apply the configuration to form
-      const formData: CustomThemeFormData = {
-        brandColor: config.brandColor,
-        neutralColor: config.neutralColor,
-        themeMode,
-        darkModeLightnessOffset: offset,
+      const formData: IUserTheme = {
+        theme: "custom",
+        primary: config.primary,
+        background: config.background,
+        darkPalette: themeMode,
       };
 
       // Update form values
-      setValue("brandColor", formData.brandColor);
-      setValue("neutralColor", formData.neutralColor);
-      setValue("themeMode", formData.themeMode);
-      setValue("darkModeLightnessOffset", formData.darkModeLightnessOffset);
+      setValue("primary", formData.primary);
+      setValue("background", formData.background);
+      setValue("darkPalette", formData.darkPalette);
+      setValue("theme", "custom");
 
       // Apply the theme
       await handleUpdateTheme(formData);
@@ -323,7 +220,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
               <div className="w-full">
                 <Controller
                   control={control}
-                  name="brandColor"
+                  name="primary"
                   rules={{
                     required: "Brand color is required",
                     pattern: {
@@ -333,7 +230,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
                   }}
                   render={({ field: { value, onChange } }) => (
                     <InputColorPicker
-                      name="brandColor"
+                      name="primary"
                       value={value}
                       onChange={(val) => handleValueChange(val, onChange)}
                       placeholder="#3f76ff"
@@ -355,7 +252,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
               <div className="w-full">
                 <Controller
                   control={control}
-                  name="neutralColor"
+                  name="background"
                   rules={{
                     required: "Neutral color is required",
                     pattern: {
@@ -365,7 +262,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
                   }}
                   render={({ field: { value, onChange } }) => (
                     <InputColorPicker
-                      name="neutralColor"
+                      name="background"
                       value={value}
                       onChange={(val) => handleValueChange(val, onChange)}
                       placeholder="#1a1a1a"
@@ -387,82 +284,12 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
             <h3 className="text-left text-13 font-medium text-secondary">Theme Mode</h3>
             <Controller
               control={control}
-              name="themeMode"
+              name="darkPalette"
               render={({ field: { value, onChange } }) => (
-                <ToggleSwitch
-                  value={value === "dark"}
-                  onChange={(checked) => onChange(checked ? "dark" : "light")}
-                  size="sm"
-                />
+                <ToggleSwitch value={!!value} onChange={(checked) => onChange(checked ? "dark" : "light")} size="sm" />
               )}
             />
-            <span className="text-12 text-tertiary">{watch("themeMode") === "light" ? "Light Mode" : "Dark Mode"}</span>
-          </div>
-
-          {/* Preview Section */}
-          <div className="flex flex-col items-start gap-2">
-            <h3 className="text-left text-13 font-medium text-secondary">Palette Preview</h3>
-
-            {isLoadingPalette ? (
-              <div className="w-full h-24 flex items-center justify-center bg-layer-1 rounded-md">
-                <span className="text-13 text-tertiary">Generating palette...</span>
-              </div>
-            ) : (
-              <div className="w-full space-y-3">
-                {/* Brand Palette */}
-                <div>
-                  <p className="text-11 text-tertiary mb-1">Brand Colors</p>
-                  <div className="flex gap-1 overflow-x-auto">
-                    {Object.entries(previewPalettes.brandPalette).map(([shade, color]) => (
-                      <div
-                        key={shade}
-                        className="flex-shrink-0 h-8 w-8 rounded border border-subtle"
-                        style={{ background: String(color) }}
-                        title={`${shade}: ${color}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Neutral Palette */}
-                <div>
-                  <p className="text-11 text-tertiary mb-1">
-                    Neutral Colors {themeMode === "dark" && "(Inverted for Dark Mode)"}
-                  </p>
-                  <div className="flex gap-1 overflow-x-auto">
-                    {Object.entries(
-                      themeMode === "dark"
-                        ? invertPalette(previewPalettes.neutralPalette)
-                        : previewPalettes.neutralPalette
-                    ).map(([shade, color]) => (
-                      <div
-                        key={shade}
-                        className="flex-shrink-0 h-8 w-8 rounded border border-subtle"
-                        style={{ background: String(color) }}
-                        title={`${shade}: ${color}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Brand Palette (also show inverted in dark mode) */}
-                {themeMode === "dark" && (
-                  <div>
-                    <p className="text-11 text-tertiary mb-1">Brand Colors (Inverted for Dark Mode)</p>
-                    <div className="flex gap-1 overflow-x-auto">
-                      {Object.entries(invertPalette(previewPalettes.brandPalette)).map(([shade, color]) => (
-                        <div
-                          key={shade}
-                          className="flex-shrink-0 h-8 w-8 rounded border border-subtle"
-                          style={{ background: String(color) }}
-                          title={`${shade}: ${color}`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
+            <span className="text-12 text-tertiary">{watch("darkPalette") ? "Dark mode" : "Light mode"}</span>
           </div>
         </div>
       </div>
@@ -471,11 +298,11 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
         {/* Import/Export Section */}
         <div className="flex gap-2">
           <input ref={fileInputRef} type="file" accept=".json" onChange={handleUploadConfig} className="hidden" />
-          <Button variant="neutral-primary" type="button" onClick={() => fileInputRef.current?.click()} size="sm">
-            Upload Config
+          <Button variant="secondary" type="button" onClick={() => fileInputRef.current?.click()} size="sm">
+            Upload config
           </Button>
-          <Button variant="neutral-primary" type="button" onClick={handleDownloadConfig} size="sm">
-            Download Config
+          <Button variant="secondary" type="button" onClick={handleDownloadConfig} size="sm">
+            Download config
           </Button>
         </div>
 

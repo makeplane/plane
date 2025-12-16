@@ -4,11 +4,29 @@
  */
 
 /**
+ * Alpha mapping for 14-shade palette system
+ */
+export const ALPHA_MAPPING = {
+  100: 0.05,
+  200: 0.1,
+  300: 0.15,
+  400: 0.2,
+  500: 0.3,
+  600: 0.4,
+  700: 0.5,
+  800: 0.6,
+  900: 0.7,
+  1000: 0.8,
+  1100: 0.9,
+  1200: 0.95,
+};
+
+/**
  * All shade stops for 14-shade palette system
  * 50 = white, 1250 = black
  * Extended range: 50-1250 for more granular control
  */
-export const SHADE_STOPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1250] as const;
+export const SHADE_STOPS = [50, 100, 200, 300, 400, 500, 600, 700, 750, 800, 850, 900, 950, 1000] as const;
 
 /**
  * Default stop where user input color is anchored
@@ -52,16 +70,24 @@ export const DEFAULT_HUE_SHIFT_BRAND = 10;
 export const DEFAULT_HUE_SHIFT_NEUTRAL = 0;
 
 /**
- * Default minimum lightness (0-100 scale)
- * Used for darkest shade (1250)
+ * Default minimum lightness for light mode (0-100 scale)
  */
-export const DEFAULT_LIGHTNESS_MIN = 0;
+export const DEFAULT_LIGHT_MODE_LIGHTNESS_MIN = 0;
 
 /**
- * Default maximum lightness (0-100 scale)
- * Used for lightest shade (50)
+ * Default maximum lightness for light mode (0-100 scale)
  */
-export const DEFAULT_LIGHTNESS_MAX = 100;
+export const DEFAULT_LIGHT_MODE_LIGHTNESS_MAX = 100;
+
+/**
+ * Default minimum lightness for dark mode (0-100 scale)
+ */
+export const DEFAULT_DARK_MODE_LIGHTNESS_MIN = 10;
+
+/**
+ * Default maximum lightness for dark mode (0-100 scale)
+ */
+export const DEFAULT_DARK_MODE_LIGHTNESS_MAX = 80;
 
 /**
  * Color generation modes

@@ -3,6 +3,7 @@
  * Handles dark mode palette inversion and mapping
  */
 
+import { DEFAULT_VALUE_STOP } from "./constants";
 import type { ColorPalette } from "./palette-generator";
 
 /**
@@ -15,20 +16,20 @@ import type { ColorPalette } from "./palette-generator";
  */
 export function invertPalette(palette: ColorPalette): ColorPalette {
   return {
-    50: palette[1250],
-    100: palette[1200],
-    200: palette[1100],
-    300: palette[1000],
-    400: palette[900],
-    500: palette[800],
+    50: palette[1000],
+    100: palette[950],
+    200: palette[900],
+    300: palette[850],
+    400: palette[800],
+    500: palette[750],
     600: palette[700],
     700: palette[600],
-    800: palette[500],
-    900: palette[400],
-    1000: palette[300],
-    1100: palette[200],
-    1200: palette[100],
-    1250: palette[50],
+    750: palette[500],
+    800: palette[400],
+    850: palette[300],
+    900: palette[200],
+    950: palette[100],
+    1000: palette[50],
   };
 }
 
@@ -45,46 +46,25 @@ export function invertPalette(palette: ColorPalette): ColorPalette {
  * - Shifts mapping to lighter shades to avoid cave-like darkness
  *
  * @param palette - 14-shade palette (already inverted for dark mode)
- * @param mode - 'light' or 'dark'
  * @returns Mapping object for neutral color CSS variables
  */
-export function getNeutralMapping(palette: ColorPalette, mode: "light" | "dark"): Record<string, string> {
-  if (mode === "light") {
-    return {
-      white: palette["50"],
-      "100": palette["100"],
-      "200": palette["200"],
-      "300": palette["300"],
-      "400": palette["400"],
-      "500": palette["500"],
-      "600": palette["600"],
-      "700": palette["700"],
-      "800": palette["800"],
-      "900": palette["900"],
-      "1000": palette["1000"],
-      "1100": palette["1100"],
-      "1200": palette["1200"],
-      black: palette["1250"],
-    };
-  } else {
-    // Dark mode: use lighter shades to avoid cave-like appearance
-    return {
-      white: palette["50"],
-      "100": palette["100"],
-      "200": palette["200"],
-      "300": palette["300"],
-      "400": palette["400"],
-      "500": palette["500"],
-      "600": palette["600"],
-      "700": palette["700"],
-      "800": palette["800"],
-      "900": palette["900"],
-      "1000": palette["1000"],
-      "1100": palette["1100"],
-      "1200": palette["1200"],
-      black: palette["1250"],
-    };
-  }
+export function getNeutralMapping(palette: ColorPalette): Record<string, string> {
+  return {
+    white: palette["50"],
+    "100": palette["100"],
+    "200": palette["200"],
+    "300": palette["300"],
+    "400": palette["400"],
+    "500": palette["500"],
+    "600": palette["600"],
+    "700": palette["700"],
+    "800": palette["750"],
+    "900": palette["800"],
+    "1000": palette["850"],
+    "1100": palette["900"],
+    "1200": palette["950"],
+    black: palette["1000"],
+  };
 }
 
 /**
@@ -103,11 +83,11 @@ export function getBrandMapping(palette: ColorPalette): Record<string, string> {
     "500": palette["500"],
     "600": palette["600"],
     "700": palette["700"],
-    "800": palette["800"],
-    "900": palette["900"],
-    "1000": palette["1000"],
-    "1100": palette["1100"],
-    "1200": palette["1200"],
-    default: palette["700"], // Default brand color (middle-ish)
+    "800": palette["750"],
+    "900": palette["800"],
+    "1000": palette["850"],
+    "1100": palette["900"],
+    "1200": palette["950"],
+    default: palette[DEFAULT_VALUE_STOP], // Default brand color (middle-ish)
   };
 }
