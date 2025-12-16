@@ -83,7 +83,7 @@ RUN pnpm turbo run build --filter=web
 
 FROM caddy:2.11-alpine AS production
 
-COPY --from=builder /usr/bin/caddy /usr/bin/caddy
+COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 
 COPY apps/web/caddy/Caddyfile /etc/caddy/Caddyfile
 
