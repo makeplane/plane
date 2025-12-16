@@ -13,6 +13,7 @@ import type { IPowerKStore } from "@/plane-web/store/power-k.store";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IStateStore } from "@/plane-web/store/state.store";
 import { StateStore } from "@/plane-web/store/state.store";
+import { WorkspaceRootStore } from "@/plane-web/store/workspace";
 // stores
 import type { ICycleStore } from "./cycle.store";
 import { CycleStore } from "./cycle.store";
@@ -61,7 +62,6 @@ import { ThemeStore } from "./theme.store";
 import type { IUserStore } from "./user";
 import { UserStore } from "./user";
 import type { IWorkspaceRootStore } from "./workspace";
-import { WorkspaceRootStore } from "./workspace";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -102,7 +102,7 @@ export class CoreRootStore {
     this.instance = new InstanceStore();
     this.user = new UserStore(this as unknown as RootStore);
     this.theme = new ThemeStore();
-    this.workspaceRoot = new WorkspaceRootStore(this);
+    this.workspaceRoot = new WorkspaceRootStore(this as unknown as RootStore);
     this.projectRoot = new ProjectRootStore(this);
     this.memberRoot = new MemberRootStore(this as unknown as RootStore);
     this.cycle = new CycleStore(this);
@@ -136,7 +136,7 @@ export class CoreRootStore {
     this.commandPalette = new CommandPaletteStore();
     this.instance = new InstanceStore();
     this.user = new UserStore(this as unknown as RootStore);
-    this.workspaceRoot = new WorkspaceRootStore(this);
+    this.workspaceRoot = new WorkspaceRootStore(this as unknown as RootStore);
     this.projectRoot = new ProjectRootStore(this);
     this.memberRoot = new MemberRootStore(this as unknown as RootStore);
     this.cycle = new CycleStore(this);
