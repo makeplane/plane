@@ -96,7 +96,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           perPageCount: layout === "month" ? 4 : 30,
           before: endDate,
           after: startDate,
-          groupedBy: EIssueGroupByToServerOptions["target_date"],
+          groupedBy: EIssueGroupByToServerOptions["start_date"],
         },
         viewId
       );

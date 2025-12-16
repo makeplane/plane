@@ -14,7 +14,7 @@ export const handleDragDrop = async (
 
   const updatedIssue = {
     id: issueId,
-    target_date: destinationDate,
+    start_date: destinationDate,
   };
 
   return await updateIssue(projectId, updatedIssue.id, updatedIssue);

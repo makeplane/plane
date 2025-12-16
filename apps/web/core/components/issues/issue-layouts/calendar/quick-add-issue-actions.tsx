@@ -40,9 +40,9 @@ export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = o
   // derived values
   const ExistingIssuesListModalPayload = addIssuesToView
     ? moduleId
-      ? { module: moduleId.toString(), target_date: "none" }
-      : { cycle: true, target_date: "none" }
-    : { target_date: "none" };
+      ? { module: moduleId.toString(), start_date: "none" }
+      : { cycle: true, start_date: "none" }
+    : { start_date: "none" };
 
   const handleAddIssuesToView = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
@@ -86,10 +86,10 @@ export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = o
           searchParams={ExistingIssuesListModalPayload}
           handleOnSubmit={handleAddIssuesToView}
           shouldHideIssue={(issue) => {
-            if (issue.start_date && prePopulatedData?.target_date) {
-              const issueStartDate = new Date(issue.start_date);
-              const targetDate = new Date(prePopulatedData.target_date);
-              const diffInDays = differenceInCalendarDays(targetDate, issueStartDate);
+            if (issue.target_date && prePopulatedData?.start_date) {
+              const issueTargetDate = new Date(issue.target_date);
+              const startDate = new Date(prePopulatedData.start_date);
+              const diffInDays = differenceInCalendarDays(issueTargetDate, startDate);
               if (diffInDays < 0) return true;
             }
             return false;

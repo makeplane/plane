@@ -43,7 +43,7 @@ import {
 } from "./base-issues-utils";
 import type { IBaseIssueFilterStore } from "./issue-filter-helper.store";
 
-export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
+export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date" | "start_date";
 
 export enum EIssueGroupedAction {
   ADD = "ADD",
@@ -118,6 +118,7 @@ export const ISSUE_GROUP_BY_KEY: Record<TIssueDisplayFilterOptions, keyof TIssue
   created_by: "created_by",
   assignees: "assignee_ids",
   target_date: "target_date",
+  start_date: "start_date",
   cycle: "cycle_id",
   module: "module_ids",
   team_project: "project_id",
@@ -134,6 +135,7 @@ export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof
   created_by: "created_by",
   assignees: "assignee_ids",
   target_date: "target_date",
+  start_date: "start_date",
   team_project: "project_id",
 };
 
@@ -314,7 +316,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const layout = displayFilters?.layout;
 
     return layout === EIssueLayoutTypes.CALENDAR
-      ? "target_date"
+      ? "start_date"
       : [EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN]?.includes(layout)
         ? displayFilters?.group_by
         : undefined;

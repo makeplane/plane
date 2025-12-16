@@ -88,7 +88,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
         <div className="border-b border-custom-border-200 px-1 py-1 md:border-none md:px-2">
           <CalendarQuickAddIssueActions
             prePopulatedData={{
-              target_date: formattedDatePayload,
+              start_date: formattedDatePayload,
             }}
             quickAddCallback={quickAddCallback}
             addIssuesToView={addIssuesToView}
