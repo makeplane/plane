@@ -124,7 +124,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 buttonVariant="border-with-text"
                 className="w-full grow rounded-lg"
                 buttonContainerClassName="w-full text-left px-2 h-7.5"
-                buttonClassName="w-min h-auto whitespace-nowrap"
+                buttonClassName="w-min h-6 whitespace-nowrap"
               />
             </SidebarPropertyListItem>
 
