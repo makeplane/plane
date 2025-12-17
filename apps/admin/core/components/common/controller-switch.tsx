@@ -29,7 +29,7 @@ export function ControllerSwitch<T extends FieldValues>(props: Props<T>) {
           render={({ field: { value, onChange } }) => (
             <ToggleSwitch
               value={Boolean(parseInt(value))}
-              onChange={() => (Boolean(parseInt(value)) === true ? onChange("0") : onChange("1"))}
+              onChange={() => (parseInt(value) ? onChange("0") : onChange("1"))}
               size="sm"
             />
           )}
