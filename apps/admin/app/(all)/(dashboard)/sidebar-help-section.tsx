@@ -98,7 +98,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
           <div
             className={`absolute bottom-2 min-w-[10rem] z-[15] ${
               isSidebarCollapsed ? "left-full" : "-left-[75px]"
-            } divide-y divide-subtle-1 whitespace-nowrap rounded-sm bg-surface-1 p-1 shadow-custom-shadow-xs`}
+            } divide-y divide-subtle-1 whitespace-nowrap rounded-sm bg-surface-1 p-1 shadow-raised-100`}
             ref={helpOptionsRef}
           >
             <div className="space-y-1 pb-2">

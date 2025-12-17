@@ -385,7 +385,7 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
         </div>
         <button
           type="button"
-          className="flex items-center mx-8 gap-1.5 bg-transparent text-13 font-medium text-accent-primary outline-custom-primary-100"
+          className="flex items-center mx-8 gap-1.5 bg-transparent text-13 font-medium text-accent-primary outline-accent-strong"
           onClick={appendField}
         >
           <Plus className="h-4 w-4" strokeWidth={2} />

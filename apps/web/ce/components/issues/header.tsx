@@ -93,7 +93,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
+            <Circle className="h-1.5 w-1.5 fill-accent-primary" strokeWidth={2} />
             {t("workspace_projects.network.public.title")}
             <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
           </a>

@@ -174,7 +174,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
           <Combobox.Options data-prevent-outside-click static>
             <div
               className={cn(
-                "my-1 bg-surface-1 shadow-custom-shadow-rg border-[0.5px] border-strong rounded-md overflow-hidden z-30",
+                "my-1 bg-surface-1 shadow-raised-200 border-[0.5px] border-strong rounded-md overflow-hidden z-30",
                 optionsClassName
               )}
               ref={setPopperElement}
