@@ -82,7 +82,7 @@ export const CyclesListItem = observer(function CyclesListItem(props: TCyclesLis
       prependTitleElement={
         <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
           {progress === 100 ? (
-            <Check className="h-3 w-3 stroke-2 text-accent-primary" />
+            <Check className="h-3 w-3 stroke-2" />
           ) : (
             <span className="text-9 text-primary">{`${progress}%`}</span>
           )}
