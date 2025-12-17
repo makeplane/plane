@@ -13,7 +13,7 @@ from plane.db.models import (
     ProjectIdentifier,
     DeployBoard,
     ProjectPublicMember,
-    IssueSequence
+    IssueSequence,
 )
 from plane.utils.content_validator import (
     validate_html_content,
