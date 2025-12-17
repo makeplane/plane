@@ -41,9 +41,12 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
 
   return (
     <div
-      className={cn("not-prose inline px-1 py-0.5 rounded-sm bg-accent-primary/20 text-accent-primary no-underline", {
-        "bg-yellow-500/20 text-yellow-500": id === currentUser?.id,
-      })}
+      className={cn(
+        "not-prose inline px-1 py-0.5 rounded-sm bg-accent-subtle-active text-accent-primary no-underline",
+        {
+          "bg-label-yellow-bg text-label-yellow-text": id === currentUser?.id,
+        }
+      )}
     >
       <Popover delay={100} openOnHover>
         <Popover.Button>
