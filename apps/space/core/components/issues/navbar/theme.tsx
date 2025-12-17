@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
 
 export const NavbarTheme = observer(function NavbarTheme() {
   // states
@@ -23,7 +24,7 @@ export const NavbarTheme = observer(function NavbarTheme() {
       onClick={handleTheme}
       className="relative grid size-7 place-items-center rounded-sm bg-layer-transparent hover:bg-layer-transparent-hover text-primary"
     >
-      <span className="material-symbols-rounded text-13">{appTheme === "light" ? "dark_mode" : "light_mode"}</span>
+      {appTheme === "light" ? <Moon className="shrink-0 size-3.5" /> : <Sun className="shrink-0 size-3.5" />}
     </button>
   );
 });

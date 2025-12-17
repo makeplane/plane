@@ -156,10 +156,10 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
       <div className="sticky z-10 top-0 pt-2 flex items-center justify-between bg-surface-1">
         <div className="flex items-center justify-center size-5">
           <button
-            className="flex size-4 items-center justify-center rounded-full bg-layer-3"
+            className="flex size-6 items-center justify-center rounded-full bg-layer-3 hover:bg-layer-3-hover flex-shrink-0"
             onClick={() => handleClose()}
           >
-            <ChevronRightIcon className="h-3 w-3 stroke-2 text-on-color" />
+            <ChevronRightIcon className="size-4 stroke-2 text-secondary" />
           </button>
         </div>
       </div>
@@ -168,7 +168,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
           <h4 className="w-full break-words text-18 font-semibold text-primary">{cycleDetails.name}</h4>
           {currentCycle && (
             <span
-              className="flex h-6 min-w-20 px-3 items-center justify-center rounded-sm text-center text-11 font-medium"
+              className="flex h-6 min-w-20 px-3 items-center justify-center rounded-sm text-center text-11 font-medium whitespace-nowrap truncate"
               style={{
                 color: currentCycle.color,
                 backgroundColor: `${currentCycle.color}20`,

@@ -61,8 +61,16 @@ export function Tooltip(props: ITooltipProps) {
             align={finalAlign}
             render={
               <BaseTooltip.Popup>
-                {tooltipHeading && <div className="text-caption-md-medium text-primary">{tooltipHeading}</div>}
-                {tooltipContent && <div className="mt-1 text-caption-sm-regular text-secondary">{tooltipContent}</div>}
+                {tooltipHeading && <p className="text-caption-md-medium text-primary">{tooltipHeading}</p>}
+                {tooltipContent && (
+                  <p
+                    className={cn("text-caption-sm-regular text-secondary", {
+                      "mt-1": tooltipHeading && tooltipHeading !== "",
+                    })}
+                  >
+                    {tooltipContent}
+                  </p>
+                )}
               </BaseTooltip.Popup>
             }
           />

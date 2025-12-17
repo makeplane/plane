@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // plane imports
@@ -108,7 +109,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             }
           )}
         >
-          <span className="material-symbols-rounded !m-0 !p-0 text-14">arrow_upward_alt</span>
+          <ArrowUp className="shrink-0 size-3.5" />
           <span className="text-13 font-regular transition-opacity ease-in-out">{allUpVotes.length}</span>
         </button>
       </Tooltip>
@@ -149,7 +150,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             }
           )}
         >
-          <span className="material-symbols-rounded !m-0 !p-0 text-14">arrow_downward_alt</span>
+          <ArrowDown className="shrink-0 size-3.5" />
           <span className="text-13 font-regular transition-opacity ease-in-out">{allDownVotes.length}</span>
         </button>
       </Tooltip>

@@ -147,6 +147,11 @@ class User(AbstractBaseUser, PermissionsMixin):
             return self.cover_image
         return None
 
+    @property
+    def full_name(self):
+        """Return user's full name (first + last)."""
+        return f"{self.first_name} {self.last_name}".strip()
+
     def save(self, *args, **kwargs):
         self.email = self.email.lower().strip()
         self.mobile_number = self.mobile_number

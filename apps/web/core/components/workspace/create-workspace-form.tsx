@@ -170,8 +170,8 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
             {t("workspace_creation.form.url.label")}
             <span className="ml-0.5 text-red-500">*</span>
           </label>
-          <div className="flex w-full items-center rounded-md border-[0.5px] border-subtle px-3">
-            <span className="whitespace-nowrap text-13 text-secondary">{window && window.location.host}/</span>
+          <div className="flex w-full items-center rounded-md border-[0.5px] border-subtle px-3 bg-layer-1">
+            <span className="whitespace-nowrap text-12 text-secondary">{window && window.location.host}/</span>
             <Controller
               control={control}
               name="slug"
@@ -195,7 +195,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
                   ref={ref}
                   hasError={Boolean(errors.slug)}
                   placeholder={t("workspace_creation.form.url.placeholder")}
-                  className="block w-full rounded-md border-none bg-transparent !px-0 py-2 text-13"
+                  className="block w-full rounded-md border-none bg-transparent !px-0 py-2 text-12"
                 />
               )}
             />
@@ -229,7 +229,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
                       </span>
                     )
                   }
-                  buttonClassName="!border-[0.5px] !border-subtle !shadow-none"
+                  buttonClassName="!border-[0.5px] !border-subtle !shadow-none bg-layer-1 text-12"
                   input
                 >
                   {ORGANIZATION_SIZE.map((item) => (

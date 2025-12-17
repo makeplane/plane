@@ -1,13 +1,12 @@
-import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Lock } from "lucide-react";
 // plane imports
 import { Button } from "@plane/propel/button";
 // components
 import { AddComment } from "@/components/issues/peek-overview/comment/add-comment";
 import { CommentCard } from "@/components/issues/peek-overview/comment/comment-detail-card";
-import { Icon } from "@/components/ui";
 // hooks
 import { usePublish } from "@/hooks/store/publish";
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
@@ -53,8 +52,8 @@ export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActi
             </>
           ) : (
             <div className="mt-4 flex items-center justify-between gap-2 rounded-sm border border-strong bg-layer-2 px-2 py-2.5">
-              <p className="flex gap-2 overflow-hidden break-words text-13 text-secondary">
-                <Icon iconName="lock" />
+              <p className="flex items-center gap-2 overflow-hidden break-words text-13 text-secondary">
+                <Lock className="shrink-0 size-3" />
                 Sign in to add your comment
               </p>
               <Link href={`/?next_path=${pathname}`}>

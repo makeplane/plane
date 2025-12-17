@@ -9,7 +9,7 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IImporterService } from "@plane/types";
 // ui
-import { CustomSearchSelect } from "@plane/ui";
+import { Checkbox, CustomSearchSelect } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
@@ -168,7 +168,7 @@ export const Exporter = observer(function Exporter(props: Props) {
                     onClick={() => setMultiple(!multiple)}
                     className="flex max-w-min cursor-pointer items-center gap-2"
                   >
-                    <input type="checkbox" checked={multiple} onChange={() => setMultiple(!multiple)} />
+                    <Checkbox checked={multiple} onChange={() => setMultiple(!multiple)} />
                     <div className="whitespace-nowrap text-13">
                       {t("workspace_settings.settings.exports.export_separate_files")}
                     </div>

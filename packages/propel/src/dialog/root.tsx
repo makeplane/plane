@@ -36,7 +36,7 @@ export interface DialogTitleProps extends React.ComponentProps<typeof BaseDialog
 
 // Constants
 const OVERLAY_CLASSNAME = cn("fixed inset-0 z-backdrop bg-backdrop");
-const BASE_CLASSNAME = "relative text-left bg-surface-1 rounded-lg shadow-md w-full z-modal";
+const BASE_CLASSNAME = "relative text-left bg-surface-1 rounded-lg shadow-md w-full z-modal border border-subtle";
 
 // Utility functions
 const getPositionClassNames = (position: DialogPosition) =>
