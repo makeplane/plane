@@ -111,26 +111,16 @@ class Adapter:
 
     def check_sync_enabled(self):
         """Check if sync is enabled for the provider"""
-        if self.provider == "google":
-            (ENABLE_GOOGLE_SYNC,) = get_configuration_value([
-                {"key": "ENABLE_GOOGLE_SYNC", "default": os.environ.get("ENABLE_GOOGLE_SYNC", "0")}
-            ])
-            return ENABLE_GOOGLE_SYNC == "1"
-        elif self.provider == "github":
-            (ENABLE_GITHUB_SYNC,) = get_configuration_value([
-                {"key": "ENABLE_GITHUB_SYNC", "default": os.environ.get("ENABLE_GITHUB_SYNC", "0")}
-            ])
-            return ENABLE_GITHUB_SYNC == "1"
-        elif self.provider == "gitlab":
-            (ENABLE_GITLAB_SYNC,) = get_configuration_value([
-                {"key": "ENABLE_GITLAB_SYNC", "default": os.environ.get("ENABLE_GITLAB_SYNC", "0")}
-            ])
-            return ENABLE_GITLAB_SYNC == "1"
-        elif self.provider == "gitea":
-            (ENABLE_GITEA_SYNC,) = get_configuration_value([
-                {"key": "ENABLE_GITEA_SYNC", "default": os.environ.get("ENABLE_GITEA_SYNC", "0")}
-            ])
-            return ENABLE_GITEA_SYNC == "1"
+        provider_config_map = {
+            "google": "ENABLE_GOOGLE_SYNC",
+            "github": "ENABLE_GITHUB_SYNC",
+            "gitlab": "ENABLE_GITLAB_SYNC",
+            "gitea": "ENABLE_GITEA_SYNC",
+        }
+        config_key = provider_config_map.get(self.provider)
+        if config_key:
+            (enabled,) = get_configuration_value([{"key": config_key, "default": os.environ.get(config_key, "0")}])
+            return enabled == "1"
         return False
 
     def download_and_upload_avatar(self, avatar_url, user):
@@ -237,14 +227,18 @@ class Adapter:
                 asset = FileAsset.objects.get(pk=user.avatar_asset_id)
                 storage = S3Storage(request=self.request)
                 storage.delete_files(object_names=[asset.asset.name])
-                user.avatar_asset = None
+
+                # Delete the user avatar
                 asset.delete()
+                user.avatar_asset = None
+                user.avatar = ""
                 user.save()
+            return
         except FileAsset.DoesNotExist:
             pass
         except Exception as e:
             log_exception(e)
-            return False
+            return
 
     def sync_user_data(self, user):
         # Update user details
@@ -334,8 +328,8 @@ class Adapter:
             # Create profile
             Profile.objects.create(user=user)
 
-        # Check if IDP sync is enabled
-        if self.check_sync_enabled():
+        # Check if IDP sync is enabled and user is not signing up
+        if self.check_sync_enabled() and not is_signup:
             user = self.sync_user_data(user=user)
 
         # Save user data
