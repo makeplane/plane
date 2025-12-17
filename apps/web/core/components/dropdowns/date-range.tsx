@@ -257,13 +257,13 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
   const comboOptions = (
     <Combobox.Options data-prevent-outside-click static>
       <div
-        className="my-1 bg-surface-1 shadow-custom-shadow-rg border-[0.5px] border-strong rounded-md overflow-hidden z-30"
+        className="my-1 bg-surface-1 border-[0.5px] border-subtle-1 rounded-md overflow-hidden z-30"
         ref={setPopperElement}
         style={styles.popper}
         {...attributes.popper}
       >
         <Calendar
-          className="rounded-md border border-subtle p-3"
+          className="rounded-md border border-subtle p-3 text-12"
           captionLayout="dropdown"
           selected={dateRange}
           onSelect={(val: DateRange | undefined) => {

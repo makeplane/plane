@@ -36,7 +36,7 @@ export function SettingsHeading({
       </div>
       {showButton && customButton}
       {button && showButton && (
-        <Button variant="primary" onClick={button.onClick} className="w-fit">
+        <Button variant="primary" size="lg" onClick={button.onClick} className="w-fit">
           {button.label}
         </Button>
       )}

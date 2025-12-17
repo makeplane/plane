@@ -18,7 +18,7 @@ const buildDecorations = (doc: Parameters<typeof DecorationSet.create>[0], highl
   }
 
   const decorations: Decoration[] = [];
-  const highlightClassNames = ["bg-custom-primary-100/20", "transition-all", "duration-300", "rounded"];
+  const highlightClassNames = ["bg-accent-primary/20", "transition-all", "duration-300", "rounded"];
 
   doc.descendants((node, pos) => {
     // Check if this node has the id we're looking for

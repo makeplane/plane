@@ -172,7 +172,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
       />
       <div className="flex items-center gap-4">
         <button
-          className="size-12 rounded-full bg-[#028375] flex items-center justify-center text-on-color font-semibold text-18"
+          className="size-12 rounded-full bg-accent-primary flex items-center justify-center text-on-color font-semibold text-18"
           type="button"
           onClick={() => setIsImageUploadModalOpen(true)}
         >

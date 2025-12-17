@@ -305,7 +305,7 @@ export const TextColorHierarchy: Story = {
           <p className="text-secondary mb-3">Secondary text for descriptions and supporting content</p>
           <p className="text-tertiary mb-3 text-13">Tertiary text for labels and metadata</p>
           <input
-            className="placeholder-placeholder border-subtle rounded border px-3 py-2"
+            className="placeholder-(--text-color-placeholder) border-subtle rounded border px-3 py-2"
             placeholder="Placeholder text for inputs"
           />
         </div>

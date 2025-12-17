@@ -228,7 +228,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
             setTransferIssuesModal(true);
           }}
         >
-          <TransferIcon className="fill-custom-primary-200 w-4" />
+          <TransferIcon className="fill-accent-primary w-4" />
           <span>{t("project_cycles.transfer_work_items", { count: transferableIssuesCount })}</span>
         </div>
       )}

@@ -265,7 +265,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
         >
           <Row
             className={cn(
-              "group clickable cursor-pointer h-11 w-full flex items-center text-13 after:absolute border-r-[0.5px] z-10 border-subtle bg-transparent group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10",
+              "group clickable cursor-pointer h-11 w-full flex items-center text-13 after:absolute border-r-[0.5px] z-10 border-subtle-1 bg-transparent group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10",
               {
                 "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
                 "border border-accent-strong hover:border-accent-strong":
@@ -277,7 +277,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
             {/* Identifier section - conditionally rendered */}
             {displayProperties?.key && (
               <div className="flex-shrink-0 flex items-center h-full min-w-24">
-                <div className="relative flex cursor-pointer items-center text-11 hover:text-custom-text-100">
+                <div className="relative flex cursor-pointer items-center text-11 hover:text-primary">
                   {issueDetail.project_id && (
                     <IssueIdentifier
                       issueId={issueDetail.id}

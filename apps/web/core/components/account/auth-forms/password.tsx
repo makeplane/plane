@@ -203,7 +203,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 onClick={handleEmailClear}
                 aria-label={t("aria_labels.auth_forms.clear_email")}
               >
-                <XCircle className="size-5 stroke-custom-text-400" />
+                <XCircle className="size-5 stroke-placeholder" />
               </button>
             )}
           </div>
@@ -236,9 +236,9 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               )}
             >
               {showPassword?.password ? (
-                <EyeOff className="size-5 stroke-custom-text-400" />
+                <EyeOff className="size-5 stroke-placeholder" />
               ) : (
-                <Eye className="size-5 stroke-custom-text-400" />
+                <Eye className="size-5 stroke-placeholder" />
               )}
             </button>
           </div>
@@ -273,9 +273,9 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 onClick={() => handleShowPassword("retypePassword")}
               >
                 {showPassword?.retypePassword ? (
-                  <EyeOff className="size-5 stroke-custom-text-400" />
+                  <EyeOff className="size-5 stroke-placeholder" />
                 ) : (
-                  <Eye className="size-5 stroke-custom-text-400" />
+                  <Eye className="size-5 stroke-placeholder" />
                 )}
               </button>
             </div>

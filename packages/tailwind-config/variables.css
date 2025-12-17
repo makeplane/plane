@@ -1140,6 +1140,10 @@
   padding-bottom: 1.35rem;
 }
 
+@utility pt-page-y {
+  padding-top: 1.35rem;
+}
+
 @utility scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;

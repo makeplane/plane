@@ -75,8 +75,8 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
           "group flex items-center justify-between gap-2 px-2 py-0.5 rounded-sm outline-none",
           {
             "cursor-not-allowed": disabled,
-            "hover:bg-layer-1": !disabled,
-            "bg-layer-1": isParentIssueModalOpen,
+            "hover:bg-layer-transparent-hover": !disabled,
+            "bg-layer-transparent-selected": isParentIssueModalOpen,
           },
           className
         )}

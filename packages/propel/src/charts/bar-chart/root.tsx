@@ -127,7 +127,7 @@ export const BarChart = React.memo(function BarChart<K extends string, T extends
           barSize={barSize}
           className="recharts-wrapper"
         >
-          <CartesianGrid stroke="rgba(var(--color-border-100), 0.8)" vertical={false} />
+          <CartesianGrid stroke="--alpha(var(--border-color-subtle) / 80%)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
             tick={(props) => {

@@ -67,7 +67,7 @@ const Checkbox = React.forwardRef(function Checkbox(props: CheckboxProps, ref: R
         className={cn(
           "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-4 p-0.5 pointer-events-none outline-none stroke-white hidden",
           {
-            "stroke-custom-text-400 opacity-40": disabled,
+            "stroke-placeholder opacity-40": disabled,
             block: indeterminate && !checked,
           },
           iconClassName

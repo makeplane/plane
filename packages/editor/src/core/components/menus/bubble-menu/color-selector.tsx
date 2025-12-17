@@ -58,7 +58,7 @@ export function BubbleMenuColorSelector(props: Props) {
       getFloatingProps={getFloatingProps}
       getReferenceProps={getReferenceProps}
     >
-      <section className="mt-1 rounded-md border-[0.5px] border-strong bg-surface-1 p-2 space-y-2 shadow-custom-shadow-rg">
+      <section className="mt-1 rounded-md border-[0.5px] border-strong bg-surface-1 p-2 space-y-2 shadow-raised-200">
         <div className="space-y-1.5">
           <p className="text-11 text-tertiary font-semibold">Text colors</p>
           <div className="flex items-center gap-2">

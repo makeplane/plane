@@ -136,3 +136,35 @@ export function isGrayscale(hex: string): boolean {
     return false;
   }
 }
+
+/**
+ * Calculate relative luminance using WCAG standard
+ * Returns a value between 0 (black) and 1 (white)
+ * Based on: https://www.w3.org/TR/WCAG20/#relativeluminancedef
+ */
+export function getRelativeLuminance(hex: string): number {
+  try {
+    const cleanHex = hex.replace("#", "");
+    const color = chroma(`#${cleanHex}`);
+    return color.luminance();
+  } catch (error) {
+    console.error("Error calculating luminance:", error);
+    return 0.5; // Safe default
+  }
+}
+
+/**
+ * Calculate perceptual brightness using weighted RGB formula
+ * Returns a value between 0 (dark) and 255 (bright)
+ * Uses ITU-R BT.709 coefficients for better perceptual accuracy
+ */
+export function getPerceptualBrightness(hex: string): number {
+  try {
+    const { r, g, b } = hexToRgb(hex);
+    // ITU-R BT.709 coefficients
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  } catch (error) {
+    console.error("Error calculating brightness:", error);
+    return 128; // Safe default (mid-gray)
+  }
+}

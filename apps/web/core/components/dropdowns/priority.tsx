@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
-import { Fragment, useRef, useState } from "react";
-import { useTheme } from "next-themes";
+import { useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { Check, Search, SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -341,10 +340,6 @@ export function PriorityDropdown(props: Props) {
     ],
   });
 
-  // next-themes
-  // TODO: remove this after new theming implementation
-  const { resolvedTheme } = useTheme();
-
   const options = ISSUE_PRIORITIES.map((priority) => ({
     value: priority.key,
     query: priority.key,
@@ -447,7 +442,7 @@ export function PriorityDropdown(props: Props) {
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none"
+            className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}

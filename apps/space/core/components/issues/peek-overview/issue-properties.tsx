@@ -1,12 +1,17 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { LinkIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { StatePropertyIcon, StateGroupIcon, PriorityPropertyIcon, DueDatePropertyIcon } from "@plane/propel/icons";
+import {
+  StatePropertyIcon,
+  StateGroupIcon,
+  PriorityPropertyIcon,
+  DueDatePropertyIcon,
+  PriorityIcon,
+} from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { cn, getIssuePriorityFilters } from "@plane/utils";
-// components
-import { Icon } from "@/components/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
@@ -58,7 +63,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
           </h6>
           <div className="flex items-center gap-2">
             <button type="button" onClick={handleCopyLink} className="-rotate-45">
-              <Icon iconName="link" />
+              <LinkIcon className="shrink-0 size-3.5" />
             </button>
           </div>
         </div>
@@ -94,11 +99,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
                         : "border-priority-none text-priority-none"
               }`}
             >
-              {priority && (
-                <span className="-my-1 grid place-items-center">
-                  <Icon iconName={priority?.icon} />
-                </span>
-              )}
+              {priority && <PriorityIcon priority={priority?.key} size={12} className="flex-shrink-0" />}
               <span>{t(priority?.titleTranslationKey || "common.none")}</span>
             </div>
           </div>

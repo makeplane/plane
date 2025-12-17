@@ -59,7 +59,8 @@ export function ProfileStateDistribution({ stateDistribution, userProfile }: Pro
                       <div
                         className="h-2.5 w-2.5 rounded-xs"
                         style={{
-                          backgroundColor: STATE_GROUPS[group.state_group]?.color ?? "rgb(var(--color-primary-100))",
+                          backgroundColor:
+                            STATE_GROUPS[group.state_group]?.color ?? "var(--background-color-accent-primary)",
                         }}
                       />
                       <div className="whitespace-nowrap">{STATE_GROUPS[group.state_group].label}</div>

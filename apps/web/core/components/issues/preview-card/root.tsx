@@ -32,7 +32,7 @@ export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: 
   const stateName = stateDetails?.name ?? fallbackStateDetails?.name;
 
   return (
-    <div className="p-3 space-y-2 w-72 rounded-lg shadow-custom-shadow-rg bg-surface-1 border-[0.5px] border-strong">
+    <div className="p-3 space-y-2 w-72 rounded-lg shadow-raised-200 bg-surface-1 border-[0.5px] border-strong">
       <div className="flex items-center justify-between gap-3 text-secondary">
         <IssueIdentifier
           size="xs"

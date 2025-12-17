@@ -8,7 +8,7 @@ export function IssueEmbedUpgradeCard(props: any) {
   return (
     <div
       className={cn(
-        "w-full bg-layer-1 rounded-md border-[0.5px] border-subtle shadow-custom-shadow-2xs flex items-center justify-between gap-5 px-5 py-2 max-md:flex-wrap",
+        "w-full bg-layer-1 rounded-md border-[0.5px] border-subtle shadow-raised-100 flex items-center justify-between gap-5 px-5 py-2 max-md:flex-wrap",
         {
           "border-2": props.selected,
         }

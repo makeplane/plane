@@ -131,7 +131,7 @@ export const SlashCommandsMenu = forwardRef(function SlashCommandsMenu(props: Sl
       <div
         id="slash-command"
         ref={commandListContainer}
-        className="relative max-h-80 min-w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
+        className="relative max-h-80 min-w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-raised-200 space-y-2"
         style={{
           zIndex: 100,
         }}

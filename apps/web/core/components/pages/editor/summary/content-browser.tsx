@@ -63,7 +63,7 @@ export function PageContentBrowser(props: Props) {
           return (
             <div
               key={`${marking.level}-${marking.sequence}`}
-              className="flex-shrink-0 h-0.5 bg-custom-border-400 self-end rounded-xs"
+              className="flex-shrink-0 h-0.5 bg-layer-3 self-end rounded-xs"
               style={{
                 width: marking.level === 1 ? "20px" : marking.level === 2 ? "18px" : "14px",
               }}
