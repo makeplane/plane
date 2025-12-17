@@ -50,7 +50,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
         </div>
       </WithDisplayPropertiesHOC>
 
-      <div className="w-full line-clamp-1 text-13 text-14 text-primary mb-1.5">
+      <div className="w-full line-clamp-1 text-13 text-primary mb-1.5">
         <Tooltip tooltipContent={issue.name}>
           <span>{issue.name}</span>
         </Tooltip>
