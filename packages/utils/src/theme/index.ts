@@ -13,7 +13,13 @@ export {
 } from "./palette-generator";
 
 // Theme application
-export { applyCustomTheme, clearCustomTheme } from "./theme-application";
+export {
+  applyCustomTheme,
+  clearCustomTheme,
+  isColorDark,
+  getOnColorTextColors,
+  type DarknessDetectionMethod,
+} from "./theme-application";
 
 // Color conversion utilities
 export {
@@ -24,6 +30,8 @@ export {
   isGrayscale,
   oklchToCSS,
   parseOKLCH,
+  getRelativeLuminance,
+  getPerceptualBrightness,
   // rgbToHex,
   type OKLCH,
   type RGB,
