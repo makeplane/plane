@@ -73,7 +73,7 @@ function BorderButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full w-full flex items-center gap-1.5 border-[0.5px] border-strong hover:bg-layer-transparent-hover-lg text-11 px-2 py-0.5 rounded-sm",
+          "h-full w-full flex items-center gap-1.5 border-[0.5px] border-strong hover:bg-layer-transparent-hover text-11 px-2 py-0.5 rounded-sm",
           {
             "bg-layer-transparent-active": isActive,
           },
@@ -98,7 +98,10 @@ function BackgroundButton(props: ButtonProps) {
       renderByDefault={renderToolTipByDefault}
     >
       <div
-        className={cn("h-full w-full flex items-center gap-1.5 rounded-sm text-11 px-2 py-0.5 bg-layer-3", className)}
+        className={cn(
+          "h-full w-full flex items-center gap-1.5 rounded-sm text-11 px-2 py-0.5 bg-layer-3 hover:bg-layer-1-hover",
+          className
+        )}
       >
         {children}
       </div>
