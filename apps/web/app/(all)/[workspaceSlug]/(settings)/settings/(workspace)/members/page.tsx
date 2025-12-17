@@ -128,7 +128,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >
-        <div className="flex justify-between gap-4 pb-3.5 items-start">
+        <div className="flex justify-between gap-4 pb-3.5 items-center">
           <h4 className="flex items-center gap-2.5 text-h5-medium">
             {t("workspace_settings.settings.members.title")}
             {workspaceMemberIds && workspaceMemberIds.length > 0 && (
