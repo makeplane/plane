@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { cn } from "@plane/utils";
 
 type TSidebarPropertyListItemProps = {
-  icon: React.FC<{ className?: string }>;
+  icon: React.FC<{ className?: string }> | React.ReactNode;
   label: string;
   children: ReactNode;
   appendElement?: ReactNode;
@@ -14,8 +14,8 @@ export function SidebarPropertyListItem(props: TSidebarPropertyListItemProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex shrink-0 items-center gap-1 w-30 text-body-xs-regular text-tertiary h-7.5">
-        <Icon className="h-4 w-4 shrink-0" />
+      <div className="flex shrink-0 items-center gap-1.5 w-30 text-body-xs-regular text-tertiary h-7.5">
+        {typeof Icon === "function" ? <Icon className="size-4 shrink-0" /> : Icon}
         <span>{label}</span>
         {appendElement}
       </div>

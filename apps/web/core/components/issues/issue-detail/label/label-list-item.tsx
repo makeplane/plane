@@ -35,7 +35,7 @@ export const LabelListItem = observer(function LabelListItem(props: TLabelListIt
       key={labelId}
       type="button"
       className={cn(
-        "h-full w-min flex items-center gap-1.5 rounded-lg px-2 py-0.5 bg-layer-transparent-active  group text-body-xs-regular text-tertiary",
+        "h-full w-min flex items-center gap-1.5 rounded-sm px-2 py-0.5 bg-layer-transparent-active group text-body-xs-regular text-tertiary",
         {
           "cursor-pointer": !disabled,
         }
@@ -43,7 +43,7 @@ export const LabelListItem = observer(function LabelListItem(props: TLabelListIt
       onClick={handleLabel}
       disabled={disabled}
     >
-      <LabelFilledIcon className="size-4" color={label.color ?? "#000000"} />
+      <LabelFilledIcon className="size-3" color={label.color ?? "#000000"} />
       <div className="flex-shrink-0 text-body-xs-regular">{label.name}</div>
       {!disabled && (
         <div className="flex-shrink-0">

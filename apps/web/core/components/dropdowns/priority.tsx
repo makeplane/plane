@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
-import { Fragment, useRef, useState } from "react";
-import { useTheme } from "next-themes";
+import { useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { Check, Search, SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
@@ -340,10 +339,6 @@ export function PriorityDropdown(props: Props) {
       },
     ],
   });
-
-  // next-themes
-  // TODO: remove this after new theming implementation
-  const { resolvedTheme } = useTheme();
 
   const options = ISSUE_PRIORITIES.map((priority) => ({
     value: priority.key,
