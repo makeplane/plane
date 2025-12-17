@@ -83,7 +83,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
               aria-label={t("aria_labels.auth_forms.clear_email")}
               tabIndex={-1}
             >
-              <XCircle className="size-5 stroke-custom-text-400" />
+              <XCircle className="size-5 stroke-placeholder" />
             </button>
           )}
         </div>

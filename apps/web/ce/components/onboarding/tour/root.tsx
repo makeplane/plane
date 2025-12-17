@@ -117,7 +117,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                   </Button>
                   <button
                     type="button"
-                    className="bg-transparent text-11 font-medium text-accent-primary outline-custom-text-100"
+                    className="bg-transparent text-11 font-medium text-accent-primary outline-subtle-1"
                     onClick={() => {
                       captureClick({
                         elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.SKIP_BUTTON,

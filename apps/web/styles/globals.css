@@ -5,62 +5,6 @@
 @import "./emoji.css";
 @plugin "@tailwindcss/typography";
 
-:root {
-  /* Plane subscriptions */
-  --color-subscription-free-200: 69, 80, 104;
-  --color-subscription-free-400: 51, 59, 77;
-
-  --color-subscription-one-200: 101, 42, 14;
-  --color-subscription-one-400: 90, 37, 12;
-
-  --color-subscription-pro-200: 32, 128, 138;
-  --color-subscription-pro-400: 24, 96, 104;
-
-  --color-subscription-business-200: 142, 33, 87;
-  --color-subscription-business-400: 103, 24, 63;
-
-  --color-subscription-enterprise-200: 86, 5, 145;
-  --color-subscription-enterprise-400: 73, 4, 123;
-}
-
-[data-theme="light"],
-[data-theme="light-contrast"] {
-  /* Plane subscriptions */
-  --color-subscription-free-200: 69, 80, 104;
-  --color-subscription-free-400: 51, 59, 77;
-
-  --color-subscription-one-200: 101, 42, 14;
-  --color-subscription-one-400: 90, 37, 12;
-
-  --color-subscription-pro-200: 32, 128, 138;
-  --color-subscription-pro-400: 24, 96, 104;
-
-  --color-subscription-business-200: 142, 33, 87;
-  --color-subscription-business-400: 103, 24, 63;
-
-  --color-subscription-enterprise-200: 86, 5, 145;
-  --color-subscription-enterprise-400: 73, 4, 123;
-}
-
-[data-theme="dark"],
-[data-theme="dark-contrast"] {
-  /* Plane subscriptions */
-  --color-subscription-free-200: 206, 213, 232;
-  --color-subscription-free-400: 152, 166, 206;
-
-  --color-subscription-one-200: 255, 148, 153;
-  --color-subscription-one-400: 200, 118, 121;
-
-  --color-subscription-pro-200: 12, 170, 192;
-  --color-subscription-pro-400: 9, 130, 154;
-
-  --color-subscription-business-200: 206, 34, 119;
-  --color-subscription-business-400: 140, 23, 81;
-
-  --color-subscription-enterprise-200: 182, 71, 255;
-  --color-subscription-enterprise-400: 134, 11, 203;
-}
-
 /* stickies and editor colors */
 :root {
   /* text colors */
@@ -219,7 +163,7 @@
 
 @keyframes highlight {
   0% {
-    background-color: rgba(var(--color-background-90), 1);
+    background-color: var(--background-color-layer-2);
     border-radius: 4px;
   }
   100% {
@@ -230,7 +174,7 @@
 
 /* Progress Bar Styles */
 :root {
-  --bprogress-color: rgb(var(--color-primary-100)) !important;
+  --bprogress-color: var(--background-color-accent-primary);
   --bprogress-height: 2.5px !important;
 }
 
@@ -241,8 +185,8 @@
 .bprogress .bar {
   background: linear-gradient(
     90deg,
-    rgba(var(--color-primary-100), 0.8) 0%,
-    rgba(var(--color-primary-100), 1) 100%
+    --alpha(var(--background-color-accent-primary) / 80%) 0%,
+    --alpha(var(--background-color-accent-primary) / 100%) 100%
   ) !important;
   will-change: width, opacity;
 }
@@ -250,7 +194,7 @@
 .bprogress .peg {
   display: block;
   box-shadow:
-    0 0 8px rgba(var(--color-primary-100), 0.6),
-    0 0 4px rgba(var(--color-primary-100), 0.4) !important;
+    0 0 8px --alpha(var(--background-color-accent-primary) / 60%),
+    0 0 4px --alpha(var(--background-color-accent-primary) / 40%) !important;
   will-change: transform, opacity;
 }

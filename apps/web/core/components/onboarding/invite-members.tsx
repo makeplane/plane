@@ -197,9 +197,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
 
                   <ChevronDownIcon
                     className={`size-3 ${
-                      !getValues(`emails.${index}.role_active`)
-                        ? "stroke-onboarding-text-400"
-                        : "stroke-onboarding-text-100"
+                      !getValues(`emails.${index}.role_active`) ? "stroke-placeholder" : "stroke-primary"
                     }`}
                   />
                 </Listbox.Button>

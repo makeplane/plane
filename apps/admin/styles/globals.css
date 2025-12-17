@@ -11,12 +11,12 @@
 /* progress bar */
 .progress-bar {
   fill: currentColor;
-  color: rgba(var(--color-sidebar-background-100));
+  color: var(--background-color-surface-1);
 }
 
 /* Progress Bar Styles */
 :root {
-  --bprogress-color: rgb(var(--color-primary-100)) !important;
+  --bprogress-color: var(--background-color-accent-primary);
   --bprogress-height: 2.5px !important;
 }
 
@@ -27,8 +27,8 @@
 .bprogress .bar {
   background: linear-gradient(
     90deg,
-    rgba(var(--color-primary-100), 0.8) 0%,
-    rgba(var(--color-primary-100), 1) 100%
+    --alpha(var(--background-color-accent-primary) / 80%) 0%,
+    --alpha(var(--background-color-accent-primary) / 100%) 100%
   ) !important;
   will-change: width, opacity;
 }
@@ -36,7 +36,7 @@
 .bprogress .peg {
   display: block;
   box-shadow:
-    0 0 8px rgba(var(--color-primary-100), 0.6),
-    0 0 4px rgba(var(--color-primary-100), 0.4) !important;
+    0 0 8px --alpha(var(--background-color-accent-primary) / 60%),
+    0 0 4px --alpha(var(--background-color-accent-primary) / 40%) !important;
   will-change: transform, opacity;
 }
