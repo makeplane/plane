@@ -131,10 +131,9 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
           {label}
         </button>
       </Combobox.Button>
-
       <Combobox.Options className="fixed z-10">
         <div
-          className={`z-10 my-1 w-48 whitespace-nowrap rounded-sm border border-strong bg-surface-1 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none`}
+          className={`z-10 my-1 w-48 whitespace-nowrap rounded-sm border border-strong bg-surface-1 py-2.5 text-11 shadow-raised-200 focus:outline-none`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
@@ -205,6 +204,57 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
               <p className="text-left text-secondary ">{t("common.search.no_matching_results")}</p>
             )}
           </div>
+        </div>
+        <div className={`vertical-scrollbar scrollbar-sm mt-2 max-h-48 space-y-1 overflow-y-scroll px-2 pr-0`}>
+          {isLoading ? (
+            <p className="text-center text-secondary">{t("common.loading")}</p>
+          ) : filteredOptions.length > 0 ? (
+            filteredOptions.map((option) => (
+              <Combobox.Option
+                key={option.value}
+                value={option.value}
+                className={({ selected }) =>
+                  `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 hover:bg-layer-1 ${
+                    selected ? "text-primary" : "text-secondary"
+                  }`
+                }
+              >
+                {({ selected }) => (
+                  <>
+                    {option.content}
+                    {selected && (
+                      <div className="flex-shrink-0">
+                        <Check className={`h-3.5 w-3.5`} />
+                      </div>
+                    )}
+                  </>
+                )}
+              </Combobox.Option>
+            ))
+          ) : submitting ? (
+            <Loader className="spin  h-3.5 w-3.5" />
+          ) : canCreateLabel ? (
+            <Combobox.Option
+              value={query}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!query.length) return;
+                handleAddLabel(query);
+              }}
+              className={`text-left text-secondary ${query.length ? "cursor-pointer" : "cursor-default"}`}
+            >
+              {query.length ? (
+                <>
+                  {/* TODO: Translate here */}+ Add <span className="text-primary">&quot;{query}&quot;</span> to labels
+                </>
+              ) : (
+                t("label.create.type")
+              )}
+            </Combobox.Option>
+          ) : (
+            <p className="text-left text-secondary ">{t("common.search.no_matching_results")}</p>
+          )}
         </div>
       </Combobox.Options>
     </Combobox>

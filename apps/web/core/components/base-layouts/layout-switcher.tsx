@@ -29,7 +29,7 @@ export function LayoutSwitcher(props: Props) {
             <button
               type="button"
               className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded-sm transition-all hover:bg-surface-1 ${
-                selectedLayout === layout.key ? "bg-surface-1 shadow-custom-shadow-2xs" : ""
+                selectedLayout === layout.key ? "bg-surface-1 shadow-raised-100" : ""
               }`}
               onClick={() => handleOnChange(layout.key)}
             >

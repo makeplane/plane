@@ -138,7 +138,7 @@ export function EditorAIMenu(props: Props) {
   return (
     <div
       className={cn(
-        "w-[210px] flex flex-col rounded-md border-[0.5px] border-strong bg-surface-1 shadow-custom-shadow-rg transition-all",
+        "w-[210px] flex flex-col rounded-md border-[0.5px] border-strong bg-surface-1 shadow-raised-200 transition-all",
         {
           "w-[700px]": activeTask,
         }

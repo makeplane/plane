@@ -128,7 +128,7 @@ export const ContentOverflowWrapper = observer(function ContentOverflowWrapper(p
         <div
           className={cn(
             "bottom-0 left-0 w-full transition-all duration-300 ease-in-out",
-            `bg-gradient-to-t from-custom-background-100 to-transparent flex flex-col items-center justify-end`,
+            `bg-gradient-to-t from-surface-1 to-transparent flex flex-col items-center justify-end`,
             "text-center",
             {
               "absolute h-[100px] opacity-100": !showAll,
