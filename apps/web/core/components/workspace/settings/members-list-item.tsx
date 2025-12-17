@@ -9,6 +9,7 @@ import { Table } from "@plane/ui";
 // components
 import { MembersLayoutLoader } from "@/components/ui/loader/layouts/members-layout-loader";
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
+import type { RowData } from "@/components/workspace/settings/member-columns";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
@@ -34,7 +35,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
     workspace: { removeMemberFromWorkspace },
   } = useMember();
   const { leaveWorkspace } = useUserPermissions();
-  const { getWorkspaceRedirectionUrl } = useWorkspace();
+  const { getWorkspaceRedirectionUrl, mutateWorkspaceMembersActivity } = useWorkspace();
   const { fetchCurrentUserSettings } = useUserSettings();
   const { t } = useTranslation();
   // derived values
@@ -42,43 +43,48 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
   const handleLeaveWorkspace = async () => {
     if (!workspaceSlug || !currentUser) return;
 
-    await leaveWorkspace(workspaceSlug.toString())
-      .then(async () => {
-        await fetchCurrentUserSettings();
-        router.push(getWorkspaceRedirectionUrl());
-        captureSuccess({
-          eventName: MEMBER_TRACKER_EVENTS.workspace.leave,
-          payload: {
-            workspace: workspaceSlug,
-          },
-        });
-      })
-      .catch((err: any) => {
-        captureError({
-          eventName: MEMBER_TRACKER_EVENTS.workspace.leave,
-          payload: {
-            workspace: workspaceSlug,
-          },
-          error: err,
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.error || t("something_went_wrong_please_try_again"),
-        });
+    try {
+      await leaveWorkspace(workspaceSlug.toString());
+      await fetchCurrentUserSettings();
+      router.push(getWorkspaceRedirectionUrl());
+      captureSuccess({
+        eventName: MEMBER_TRACKER_EVENTS.workspace.leave,
+        payload: {
+          workspace: workspaceSlug,
+        },
       });
+    } catch (err: unknown) {
+      const error = err as { error?: string };
+      const errorForCapture: Error | string = err instanceof Error ? err : String(err);
+      captureError({
+        eventName: MEMBER_TRACKER_EVENTS.workspace.leave,
+        payload: {
+          workspace: workspaceSlug,
+        },
+        error: errorForCapture,
+      });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: error?.error || t("something_went_wrong_please_try_again"),
+      });
+    }
   };
 
   const handleRemoveMember = async (memberId: string) => {
     if (!workspaceSlug || !memberId) return;
 
-    await removeMemberFromWorkspace(workspaceSlug.toString(), memberId).catch((err) =>
+    try {
+      await removeMemberFromWorkspace(workspaceSlug.toString(), memberId);
+      void mutateWorkspaceMembersActivity(workspaceSlug);
+    } catch (err: unknown) {
+      const error = err as { error?: string };
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: err?.error || t("something_went_wrong_please_try_again"),
-      })
-    );
+        message: error?.error || t("something_went_wrong_please_try_again"),
+      });
+    }
   };
 
   const handleRemove = async (memberId: string) => {
@@ -109,9 +115,11 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
           onSubmit={() => handleRemove(removeMemberModal.member.id)}
         />
       )}
-      <Table
+      <Table<RowData>
         columns={columns ?? []}
-        data={(memberDetails?.filter((member): member is IWorkspaceMember => member !== null) ?? []) as any}
+        data={
+          (memberDetails?.filter((member): member is IWorkspaceMember => member !== null) ?? []) as unknown as RowData[]
+        }
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
         tHeadClassName="border-b border-subtle"
         thClassName="text-left font-medium divide-x-0 text-placeholder"

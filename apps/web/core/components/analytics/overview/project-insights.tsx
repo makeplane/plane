@@ -65,15 +65,15 @@ const ProjectInsights = observer(function ProjectInsights() {
           {projectInsightsData && (
             <Suspense fallback={<ProjectInsightsLoader />}>
               <RadarChart
-                className="h-[350px] w-full lg:w-3/5"
+                className="h-[350px] w-full lg:w-3/5 text-accent-primary"
                 data={projectInsightsData}
                 dataKey="key"
                 radars={[
                   {
                     key: "count",
                     name: "Count",
-                    fill: "rgba(var(--color-primary-300))",
-                    stroke: "rgba(var(--color-primary-300))",
+                    fill: "var(--color-brand-default)",
+                    stroke: "var(--color-brand-default)",
                     fillOpacity: 0.6,
                     dot: {
                       r: 4,

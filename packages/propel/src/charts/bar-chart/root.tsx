@@ -17,9 +17,7 @@ import type { TBarChartProps } from "@plane/types";
 import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
-import { barShapeVariants } from "./bar";
-
-const DEFAULT_BAR_FILL_COLOR = "#000000";
+import { barShapeVariants, DEFAULT_BAR_FILL_COLOR } from "./bar";
 
 export const BarChart = React.memo(function BarChart<K extends string, T extends string>(props: TBarChartProps<K, T>) {
   const {
@@ -129,7 +127,7 @@ export const BarChart = React.memo(function BarChart<K extends string, T extends
           barSize={barSize}
           className="recharts-wrapper"
         >
-          <CartesianGrid stroke="--alpha(var(--border-color-subtle) / 80%)" vertical={false} />
+          <CartesianGrid stroke="rgba(var(--color-border-100), 0.8)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
             tick={(props) => {
@@ -176,8 +174,8 @@ export const BarChart = React.memo(function BarChart<K extends string, T extends
           {showTooltip && (
             <Tooltip
               cursor={{
-                fill: "currentColor",
-                className: "text-custom-background-90/80 cursor-pointer",
+                fill: "var(--color-alpha-black-300)",
+                className: "bg-layer-1 cursor-pointer",
               }}
               wrapperStyle={{
                 pointerEvents: "auto",

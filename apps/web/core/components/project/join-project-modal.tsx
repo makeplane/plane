@@ -6,7 +6,6 @@ import { Button } from "@plane/propel/button";
 import type { IProject } from "@plane/types";
 // ui
 // hooks
-import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 
@@ -24,7 +23,6 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
   // store hooks
   const { joinProject } = useUserPermissions();
-  const { fetchProjectDetails } = useProject();
   // router
   const router = useAppRouter();
 
@@ -34,7 +32,6 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
     joinProject(workspaceSlug, project.id)
       .then(() => {
         router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
-        fetchProjectDetails(workspaceSlug, project.id);
         handleClose();
       })
       .finally(() => {

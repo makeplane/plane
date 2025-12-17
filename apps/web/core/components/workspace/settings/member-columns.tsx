@@ -16,6 +16,7 @@ import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web constants
 
 export interface RowData {
@@ -45,7 +46,7 @@ export function NameColumn(props: NameProps) {
 
   return (
     <Disclosure>
-      {({}) => (
+      {() => (
         <div className="relative group">
           <div className="flex items-center gap-x-4 gap-y-2 w-72 justify-between">
             <div className="flex items-center gap-x-2 gap-y-2 flex-1">
@@ -83,8 +84,16 @@ export function NameColumn(props: NameProps) {
                 buttonClassName="outline-none	origin-center rotate-90 size-8 aspect-square flex-shrink-0 grid place-items-center opacity-0 group-hover:opacity-100 transition-opacity"
                 render={() => (
                   <div
+                    role="button"
+                    tabIndex={0}
                     className="flex items-center gap-x-3 cursor-pointer"
                     onClick={() => setRemoveMemberModal(rowData)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setRemoveMemberModal(rowData);
+                      }
+                    }}
                     data-ph-element={MEMBER_TRACKER_ELEMENTS.WORKSPACE_MEMBER_TABLE_CONTEXT_MENU}
                   >
                     <Trash2 className="size-3.5 align-middle" /> {id === currentUser?.id ? "Leave " : "Remove "}
@@ -112,6 +121,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
   const {
     workspace: { updateMember },
   } = useMember();
+  const { mutateWorkspaceMembersActivity } = useWorkspace();
   const { data: currentUser } = useUser();
 
   // derived values
@@ -139,22 +149,24 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
           rules={{ required: "Role is required." }}
           render={({ field: { value } }) => (
             <CustomSelect
-              value={value}
-              onChange={(value: EUserPermissions) => {
+              value={value as EUserPermissions}
+              onChange={async (value: EUserPermissions) => {
                 if (!workspaceSlug) return;
-                updateMember(workspaceSlug.toString(), rowData.member.id, {
-                  role: value as unknown as EUserPermissions, // Cast value to unknown first, then to EUserPermissions
-                }).catch((err) => {
-                  console.log(err, "err");
-                  const error = err.error;
-                  const errorString = Array.isArray(error) ? error[0] : error;
+                try {
+                  await updateMember(workspaceSlug.toString(), rowData.member.id, {
+                    role: value as unknown as EUserPermissions,
+                  });
+                  void mutateWorkspaceMembersActivity(workspaceSlug);
+                } catch (err: unknown) {
+                  const error = err as { error?: string | string[] };
+                  const errorString = Array.isArray(error?.error) ? error.error[0] : error?.error;
 
                   setToast({
                     type: TOAST_TYPE.ERROR,
                     title: "Error!",
                     message: errorString ?? "An error occurred while updating member role. Please try again.",
                   });
-                });
+                }
               }}
               label={
                 <div className="flex ">
