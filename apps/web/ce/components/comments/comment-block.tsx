@@ -41,7 +41,7 @@ export const CommentBlock = observer(function CommentBlock(props: TCommentBlock)
       ref={commentBlockRef}
     >
       <div
-        className="absolute left-[13px] top-0 bottom-0 w-0.5 transition-border duration-1000 bg-layer-1"
+        className="absolute left-[13px] top-0 bottom-0 w-px transition-border duration-1000 bg-layer-1"
         aria-hidden
       />
       <div

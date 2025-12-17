@@ -1,6 +1,7 @@
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import type { IWebhook } from "@plane/types";
+import { Checkbox } from "@plane/ui";
 
 export const INDIVIDUAL_WEBHOOK_OPTIONS: {
   key: keyof IWebhook;
@@ -49,13 +50,7 @@ export function WebhookIndividualEventOptions({ control }: Props) {
           render={({ field: { onChange, value } }) => (
             <div>
               <div className="flex items-center gap-2">
-                <input
-                  id={option.key}
-                  onChange={() => onChange(!value)}
-                  type="checkbox"
-                  name="selectIndividualEvents"
-                  checked={value === true}
-                />
+                <Checkbox id={option.key} onChange={() => onChange(!value)} checked={value === true} />
                 <label className="text-13" htmlFor={option.key}>
                   {option.label}
                 </label>

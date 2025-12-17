@@ -20,7 +20,7 @@ function ToggleSwitch(props: IToggleSwitchProps) {
       disabled={disabled}
       onChange={onChange}
       className={cn(
-        "relative inline-flex flex-shrink-0 h-6 w-10 cursor-pointer rounded-full border-0 transition-colors duration-200 ease-in-out focus:outline-none",
+        "relative inline-flex flex-shrink-0 h-6 w-10 cursor-pointer rounded-full border border-subtle transition-colors duration-200 ease-in-out focus:outline-none bg-layer-1",
         {
           "h-4 w-7": size === "sm",
           "h-5 w-9": size === "md",
