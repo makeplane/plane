@@ -9,7 +9,7 @@ interface ICircularProgressIndicator {
 }
 
 export function CircularProgressIndicator(props: ICircularProgressIndicator) {
-  const { size = 40, percentage = 25, strokeWidth = 6, strokeColor = "stroke-accent-primary", children } = props;
+  const { size = 40, percentage = 25, strokeWidth = 6, strokeColor = "stroke-success", children } = props;
 
   const sqSize = size;
   const radius = (size - strokeWidth) / 2;
