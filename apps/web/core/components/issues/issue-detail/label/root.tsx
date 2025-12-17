@@ -92,7 +92,7 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
   );
 
   return (
-    <div className="relative flex flex-wrap items-center gap-1 px-2">
+    <div className="relative flex flex-wrap items-center gap-1 min-h-7.5 w-full">
       <LabelList
         workspaceSlug={workspaceSlug}
         projectId={projectId}

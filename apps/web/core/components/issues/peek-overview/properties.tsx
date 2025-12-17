@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
@@ -115,10 +114,10 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             value={issue?.priority}
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
             disabled={disabled}
-            buttonVariant="border-with-text"
-            className="w-full grow group rounded-lg px-2"
-            buttonContainerClassName="w-full text-left"
-            buttonClassName="w-min h-auto whitespace-nowrap"
+            buttonVariant="transparent-with-text"
+            className="w-full h-7.5 grow rounded-sm"
+            buttonContainerClassName="size-full text-left"
+            buttonClassName="size-full px-2 py-0.5 whitespace-nowrap [&_svg]:size-3.5"
           />
         </SidebarPropertyListItem>
 
@@ -155,7 +154,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         </SidebarPropertyListItem>
 
         <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full">
             <DateDropdown
               value={issue.target_date}
               onChange={(val) =>
@@ -231,7 +230,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
         <SidebarPropertyListItem icon={ParentPropertyIcon} label={t("common.parent")}>
           <IssueParentSelectRoot
-            className="w-full grow h-full"
+            className="w-full h-7.5 grow"
             disabled={disabled}
             issueId={issueId}
             issueOperations={issueOperations}
