@@ -20,11 +20,7 @@ export const BlockReactions = observer(function BlockReactions(props: Props) {
   if (!canVote && !canReact) return <></>;
 
   return (
-    <div
-      className={cn(
-        "flex flex-wrap border-t-[1px] outline-transparent w-full border-t-subtle-1 bg-surface-2 rounded-b-sm"
-      )}
-    >
+    <div className="flex flex-wrap border-t-[1px] outline-transparent w-full border-t-subtle-1 bg-surface-2 rounded-b-lg">
       <div className="py-2 px-3 flex flex-wrap items-center gap-2">
         {canVote && (
           <div

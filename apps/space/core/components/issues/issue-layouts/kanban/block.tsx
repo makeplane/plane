@@ -41,7 +41,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
   const { project_details } = usePublish(anchor.toString());
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 px-3 py-2">
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
         <div className="relative">
           <div className="line-clamp-1 text-11 text-tertiary">
