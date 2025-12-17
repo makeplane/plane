@@ -315,7 +315,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                   {!userAvatar || userAvatar === "" ? (
                     <div className="flex flex-col items-center justify-between">
                       <div className="relative h-14 w-14 overflow-hidden">
-                        <div className="absolute left-0 top-0 flex items-center justify-center h-full w-full rounded-full text-on-color text-24 font-medium bg-[#9747FF] uppercase">
+                        <div className="absolute left-0 top-0 flex items-center justify-center h-full w-full rounded-full text-on-color text-24 font-medium bg-accent-primary uppercase">
                           {watch("first_name")[0] ?? "R"}
                         </div>
                       </div>
