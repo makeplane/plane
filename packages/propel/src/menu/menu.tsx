@@ -180,7 +180,7 @@ function Menu(props: TMenuProps) {
           <BaseMenu.Popup
             tabIndex={tabIndex}
             className={cn(
-              "my-1 overflow-y-scroll rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
+              "my-1 overflow-y-scroll rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none min-w-[12rem] whitespace-nowrap",
               {
                 "max-h-60": maxHeight === "lg",
                 "max-h-48": maxHeight === "md",

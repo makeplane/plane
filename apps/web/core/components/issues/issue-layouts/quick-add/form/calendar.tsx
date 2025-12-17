@@ -14,7 +14,7 @@ export const CalendarQuickAddIssueForm = observer(function CalendarQuickAddIssue
       <form
         ref={ref}
         onSubmit={onSubmit}
-        className="z-50 flex w-full items-center gap-x-2 rounded-sm md:border-[0.5px] border-subtle bg-surface-1 px-2 md:shadow-custom-shadow-2xs transition-opacity"
+        className="z-50 flex w-full items-center gap-x-2 rounded-sm md:border-[0.5px] border-subtle bg-surface-1 px-2 md:shadow-raised-100 transition-opacity"
       >
         <h4 className="text-13 md:text-11 leading-5 text-placeholder">{projectDetail?.identifier ?? "..."}</h4>
         <input

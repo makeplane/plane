@@ -252,7 +252,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
       ref={groupRef}
       className={cn(`relative flex flex-shrink-0 flex-col`, {
         "border-accent-strong": isDraggingOverColumn,
-        "border-custom-error-200": isDraggingOverColumn && isDropDisabled,
+        "border-danger-subtle": isDraggingOverColumn && isDropDisabled,
       })}
     >
       <Row

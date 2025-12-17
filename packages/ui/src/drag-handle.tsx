@@ -28,8 +28,8 @@ export const DragHandle = forwardRef(function DragHandle(
       }}
       ref={ref}
     >
-      <MoreVertical className="h-3.5 w-3.5 stroke-custom-text-400" />
-      <MoreVertical className="-ml-5 h-3.5 w-3.5 stroke-custom-text-400" />
+      <MoreVertical className="h-3.5 w-3.5 stroke-placeholder" />
+      <MoreVertical className="-ml-5 h-3.5 w-3.5 stroke-placeholder" />
     </button>
   );
 });

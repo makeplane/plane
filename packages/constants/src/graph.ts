@@ -6,14 +6,14 @@ export const CHARTS_THEME = {
   axis: {
     domain: {
       line: {
-        stroke: "rgb(var(--color-background-80))",
+        stroke: "var(--background-color-layer-2)",
         strokeWidth: 0.5,
       },
     },
   },
   tooltip: {
     container: {
-      background: "rgb(var(--color-background-80))",
+      background: "var(--background-color-layer-2)",
       color: "var(--text-color-secondary)",
       fontSize: "0.8rem",
       border: "1px solid var(--border-color-strong)",

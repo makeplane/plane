@@ -21,7 +21,7 @@ export interface ICardProperties {
 const DEFAULT_STYLE = "bg-surface-1 rounded-lg border-[0.5px] border-subtle w-full flex flex-col";
 export const containerStyle: ICardProperties = {
   [ECardVariant.WITHOUT_SHADOW]: "",
-  [ECardVariant.WITH_SHADOW]: "hover:shadow-custom-shadow-4xl duration-300",
+  [ECardVariant.WITH_SHADOW]: "hover:shadow-raised-200 duration-300",
 };
 export const spacings = {
   [ECardSpacing.SM]: "p-4",

@@ -34,13 +34,13 @@ body {
 /* progress bar */
 @utility progress-bar {
   fill: currentColor;
-  color: rgba(var(--color-sidebar-background-100));
+  color: var(--text-color-secondary);
 }
 
 ::-webkit-input-placeholder,
 ::placeholder,
 :-ms-input-placeholder {
-  color: rgb(var(--color-text-400));
+  @apply text-placeholder;
 }
 
 @utility vertical-lr {
@@ -172,12 +172,12 @@ body {
 
 /* highlight class */
 @utility highlight {
-  border: 1px solid rgb(var(--color-primary-100)) !important;
+  border: 1px solid var(--border-color-accent-strong) !important;
 }
 
 @utility highlight-with-line {
-  border-left: 5px solid rgb(var(--color-primary-100)) !important;
-  background: rgb(var(--color-background-80));
+  border-left: 5px solid var(--border-color-accent-strong) !important;
+  background: var(--background-color-layer-2);
 }
 
 /* By applying below class, the autofilled text in form fields will not have the default autofill background color and styles applied by WebKit browsers  */

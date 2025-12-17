@@ -7,7 +7,7 @@ export const ListQuickAddIssueForm = observer(function ListQuickAddIssueForm(pro
   const { ref, projectDetail, register, onSubmit, isEpic } = props;
   const { t } = useTranslation();
   return (
-    <div className="shadow-custom-shadow-sm">
+    <div className="shadow-raised-200">
       <form
         ref={ref}
         onSubmit={onSubmit}

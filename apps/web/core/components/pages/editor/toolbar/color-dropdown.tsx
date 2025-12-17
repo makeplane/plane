@@ -59,7 +59,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
           </Popover.Button>
           <Popover.Panel
             as="div"
-            className="fixed z-20 mt-1 rounded-md border-[0.5px] border-strong bg-surface-1 shadow-custom-shadow-rg p-2 space-y-2"
+            className="fixed z-20 mt-1 rounded-md border-[0.5px] border-strong bg-surface-1 shadow-raised-200 p-2 space-y-2"
           >
             <div className="space-y-1.5">
               <p className="text-11 text-tertiary font-semibold">Text colors</p>
