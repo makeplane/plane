@@ -11,7 +11,6 @@
 @import "@fontsource/ibm-plex-mono/500.css";
 @import "@fontsource/ibm-plex-mono/600.css";
 @import "@fontsource/ibm-plex-mono/700.css";
-@import "@fontsource/material-symbols-rounded/400.css";
 
 @custom-variant dark (&:where([data-theme*="dark"], [data-theme*="dark"] *));
 @custom-variant dark-high-contrast (&:where([data-theme="dark-contrast"], [data-theme="dark-contrast"] *));
@@ -1150,6 +1149,15 @@
   &::-webkit-scrollbar: {
     display: none;
   }
+}
+
+/* material-symbols-rounded-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "Material Symbols Rounded";
+  font-style: normal;
+  font-weight: 400;
+  src: url("./fonts/material-symbols-rounded-v168-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 @utility material-symbols-rounded {
