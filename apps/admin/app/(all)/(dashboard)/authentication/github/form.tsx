@@ -8,8 +8,6 @@ import { API_BASE_URL } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGithubAuthenticationConfigurationKeys } from "@plane/types";
-
-import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
@@ -45,7 +43,7 @@ export function InstanceGithubConfigForm(props: Props) {
       GITHUB_CLIENT_ID: config["GITHUB_CLIENT_ID"],
       GITHUB_CLIENT_SECRET: config["GITHUB_CLIENT_SECRET"],
       GITHUB_ORGANIZATION_ID: config["GITHUB_ORGANIZATION_ID"],
-      ENABLE_GITHUB_SYNC: config["ENABLE_GITHUB_SYNC"],
+      ENABLE_GITHUB_SYNC: config["ENABLE_GITHUB_SYNC"] || "0",
     },
   });
 

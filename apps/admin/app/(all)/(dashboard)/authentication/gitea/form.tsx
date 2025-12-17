@@ -42,7 +42,7 @@ export function InstanceGiteaConfigForm(props: Props) {
       GITEA_HOST: config["GITEA_HOST"] || "https://gitea.com",
       GITEA_CLIENT_ID: config["GITEA_CLIENT_ID"],
       GITEA_CLIENT_SECRET: config["GITEA_CLIENT_SECRET"],
-      ENABLE_GITEA_SYNC: config["ENABLE_GITEA_SYNC"],
+      ENABLE_GITEA_SYNC: config["ENABLE_GITEA_SYNC"] || "0",
     },
   });
 
@@ -191,6 +191,7 @@ export function InstanceGiteaConfigForm(props: Props) {
               <div className="flex items-center gap-4">
                 <Button
                   variant="primary"
+                  size="lg"
                   onClick={(e) => void handleSubmit(onSubmit)(e)}
                   loading={isSubmitting}
                   disabled={!isDirty}

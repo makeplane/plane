@@ -8,7 +8,6 @@ import { API_BASE_URL } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGoogleAuthenticationConfigurationKeys } from "@plane/types";
-import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
@@ -43,7 +42,7 @@ export function InstanceGoogleConfigForm(props: Props) {
     defaultValues: {
       GOOGLE_CLIENT_ID: config["GOOGLE_CLIENT_ID"],
       GOOGLE_CLIENT_SECRET: config["GOOGLE_CLIENT_SECRET"],
-      ENABLE_GOOGLE_SYNC: config["ENABLE_GOOGLE_SYNC"],
+      ENABLE_GOOGLE_SYNC: config["ENABLE_GOOGLE_SYNC"] || "0",
     },
   });
 

@@ -7,7 +7,6 @@ import { API_BASE_URL } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGitlabAuthenticationConfigurationKeys } from "@plane/types";
-import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
@@ -43,7 +42,7 @@ export function InstanceGitlabConfigForm(props: Props) {
       GITLAB_HOST: config["GITLAB_HOST"],
       GITLAB_CLIENT_ID: config["GITLAB_CLIENT_ID"],
       GITLAB_CLIENT_SECRET: config["GITLAB_CLIENT_SECRET"],
-      ENABLE_GITLAB_SYNC: config["ENABLE_GITLAB_SYNC"],
+      ENABLE_GITLAB_SYNC: config["ENABLE_GITLAB_SYNC"] || "0",
     },
   });
 
