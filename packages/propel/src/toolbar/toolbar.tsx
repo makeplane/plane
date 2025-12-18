@@ -142,7 +142,7 @@ const ToolbarSubmitButton = React.forwardRef(function ToolbarSubmitButton(
         ref={ref}
         className={cn(
           "inline-flex items-center justify-center gap-2 rounded-md px-2.5 py-1.5 text-11 font-medium transition-colors duration-200",
-          "focus:outline-none focus:ring-2 focus:ring-custom-primary-100/20 focus:ring-offset-2",
+          "focus:outline-none focus:ring-2 focus:ring-accent-strong/20 focus:ring-offset-2",
           "disabled:opacity-50 disabled:pointer-events-none",
           buttonVariants[variant],
           className

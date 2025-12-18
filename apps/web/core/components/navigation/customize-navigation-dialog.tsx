@@ -268,7 +268,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                       value="accordion"
                       checked={projectPreferences.navigationMode === "accordion"}
                       onChange={() => updateNavigationMode("accordion")}
-                      className="size-4 text-accent-primary focus:ring-custom-primary-100 mt-1"
+                      className="size-4 text-accent-primary focus:ring-accent-strong mt-1"
                     />
                     <div className="flex-1">
                       <div className="text-13 text-secondary">{t("accordion_navigation_control")}</div>
@@ -285,7 +285,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                       value="horizontal"
                       checked={projectPreferences.navigationMode === "horizontal"}
                       onChange={() => updateNavigationMode("horizontal")}
-                      className="size-4 text-accent-primary focus:ring-custom-primary-100 mt-1"
+                      className="size-4 text-accent-primary focus:ring-accent-strong mt-1"
                     />
                     <div className="flex-1">
                       <div className="text-13 text-secondary">{t("horizontal_navigation_bar")}</div>
@@ -323,7 +323,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                               "bg-surface-2 border",
                               "text-secondary",
                               parseInt(projectCountInput) >= 1
-                                ? "border-strong focus:border-accent-strong focus:ring-1 focus:ring-custom-primary-100"
+                                ? "border-strong focus:border-accent-strong focus:ring-1 focus:ring-accent-strong"
                                 : "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
                             )}
                           />

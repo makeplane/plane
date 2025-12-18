@@ -303,7 +303,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                     <div className="flex w-full flex-1 items-center gap-3">
                       <div
                         {...getRootProps()}
-                        className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
+                        className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
                             ? "border-2 border-dashed border-subtle hover:bg-surface-2"
                             : ""

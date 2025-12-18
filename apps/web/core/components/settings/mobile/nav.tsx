@@ -30,7 +30,7 @@ export const SettingsMobileNav = observer(function SettingsMobileNav(props: Prop
           {!sidebarCollapsed && <HamburgerContent isMobile />}
           <button
             type="button"
-            className="z-50  group flex-shrink-0 size-6 grid place-items-center rounded-sm border border-subtle transition-all bg-custom-background md:hidden"
+            className="z-50  group flex-shrink-0 size-6 grid place-items-center rounded-sm border border-subtle transition-all md:hidden"
             onClick={() => toggleSidebar()}
           >
             <Menu className="size-3.5 text-secondary transition-all group-hover:text-primary" />
