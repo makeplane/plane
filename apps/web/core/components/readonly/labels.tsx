@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
