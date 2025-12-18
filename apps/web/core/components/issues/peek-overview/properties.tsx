@@ -6,7 +6,7 @@ import {
   Signal,
   Tag,
   CalendarClock,
-  Users,
+  User,
   UserCircle2,
   Handshake,
   Volleyball,
@@ -222,7 +222,7 @@ const isLocked = disabled || isPastEvent;
           {/* Program */}
           <div className="flex w-full items-center gap-3 h-8">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-              <Users className="h-4 w-4 flex-shrink-0" />
+              <User className="h-4 w-4 flex-shrink-0" />
               <p>Program</p>
             </div>
 

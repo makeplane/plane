@@ -12,6 +12,7 @@ import {
   Triangle,
   UserCircle2,
   Users,
+  User,
   Volleyball,
 } from "lucide-react";
 // i18n
@@ -303,7 +304,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             {/* program field */}
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                <Users className="h-4 w-4 flex-shrink-0" />
+                <User className="h-4 w-4 flex-shrink-0" />
                 <span>{t("program_field")}</span>
               </div>
               <ProgramDropdown value={issue.program} onChange={(val: string | null) => {

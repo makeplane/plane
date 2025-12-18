@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { Ban, Search, Users, X } from "lucide-react";
+import { Ban, Search, User, X } from "lucide-react";
 
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -32,7 +32,7 @@ export const ProgramDropdown: React.FC<Props> = observer((props) => {
     placeholder = "Program",
     buttonVariant,
     renderByDefault = true,
-    icon = <Users className="h-3 w-3 flex-shrink-0" />,
+    icon = <User className="h-3 w-3 flex-shrink-0" />,
     hideIcon = false,
     showTooltip = false,
     disabled = false,

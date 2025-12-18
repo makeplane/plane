@@ -12,7 +12,7 @@ import {
   Link as LinkIcon,
   List,
   ListOrdered,
-  Link,
+  FileCodeIcon,
   ListTodo,
   MessageSquareText,
   MinusSquare,
@@ -36,7 +36,6 @@ import {
   insertImage,
   insertCallout,
   setText,
-  setLinkEditor,
 } from "@/helpers/editor-commands";
 // plane editor extensions
 import { coreEditorAdditionalSlashCommandOptions } from "@/plane-editor/extensions";
@@ -167,26 +166,27 @@ export const getSlashCommandFilteredSections =
             icon: <TextQuote className="size-3.5" />,
             command: ({ editor, range }) => toggleBlockquote(editor, range),
           },
-          {
-            commandKey: "link",
-            key: "link",
-            title: "Link",
-            description: "Embed an issue link preview.",
-            searchTerms: ["url", "link"],
-            icon: <Link2 className="size-3.5" />,
-            command: ({ editor, range }) => {
-              // Get the typed text inside the command
-              const text = editor.state.doc.textBetween(range.from, range.to).trim();
+          // {
+          //   commandKey: "link",
+          //   key: "link",
+          //   title: "Link",
+          //   description: "Embed an issue link preview.",
+          //   searchTerms: ["url", "link"],
+          //   icon: <Link2 className="size-3.5" />,
+          //   command: ({ editor, range }) => {
+          //     // Get full command text
+          //     const text = editor.state.doc.textBetween(range.from, range.to, " ").trim();
 
-              // Extract URL (remove slash command prefix)
-              const url = text.replace(/^\/?(issue-embed|embed)\s+/i, "");
+          //     // Remove slash command keyword
+          //     const url = text.replace(/^\/?(issue-embed|embed|link)\s*/i, "");
 
-              if (!url) return;
+          //     if (!url) return;
 
-              // Insert link
-              setLinkEditor(editor, url);
-            },
-          },
+          //     // Delete the slash command text
+          //     editor.chain().focus().deleteRange(range).setLink({ href: url }).insertContent(url).unsetLink().run();
+          //   },
+          // },
+
           {
             commandKey: "code",
             key: "code",
@@ -215,18 +215,18 @@ export const getSlashCommandFilteredSections =
             command: ({ editor, range }) => editor.chain().focus().deleteRange(range).setHorizontalRule().run(),
           },
           {
-            commandKey: "link",
+            commandKey: "embed",
             key: "link",
             title: "Embed",
             description: "Insert a URL",
             searchTerms: ["url", "hyperlink", "website"],
-            icon: <LinkIcon className="size-3.5" />,
+            icon: <FileCodeIcon className="size-3.5" />,
             command: ({ editor, range }) =>
               editor
                 .chain()
                 .focus()
                 .deleteRange(range)
-                .insertContentAt(range.from, "https://")
+                .insertContentAt(range.from, "rtmp://")
                 .setTextSelection(range.from + 8)
                 .run(),
           },
