@@ -1256,16 +1256,6 @@ importers:
         version: 5.8.3
 
   packages/tailwind-config:
-    dependencies:
-      '@fontsource/ibm-plex-mono':
-        specifier: 5.2.7
-        version: 5.2.7
-      '@fontsource/inter':
-        specifier: 5.2.8
-        version: 5.2.8
-      '@fontsource/material-symbols-rounded':
-        specifier: 5.2.30
-        version: 5.2.30
     devDependencies:
       '@tailwindcss/postcss':
         specifier: 4.1.17
@@ -2098,15 +2088,6 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
-
-  '@fontsource/ibm-plex-mono@5.2.7':
-    resolution: {integrity: sha512-MKAb8qV+CaiMQn2B0dIi1OV3565NYzp3WN5b4oT6LTkk+F0jR6j0ZN+5BKJiIhffDC3rtBULsYZE65+0018z9w==}
-
-  '@fontsource/inter@5.2.8':
-    resolution: {integrity: sha512-P6r5WnJoKiNVV+zvW2xM13gNdFhAEpQ9dQJHt3naLvfg+LkF2ldgSLiF4T41lf1SQCM9QmkqPTn4TH568IRagg==}
-
-  '@fontsource/material-symbols-rounded@5.2.30':
-    resolution: {integrity: sha512-svIEPUzsJGdBMr0PwLH3wKndh7ZNB8IVlyKZPKvbGEX0f36gpGPzE2EZiXppb4UJgDUnyjphWzjJ28StuK6NCg==}
 
   '@formatjs/ecma402-abstract@2.3.4':
     resolution: {integrity: sha512-qrycXDeaORzIqNhBOx0btnhpD1c+/qFIHAN9znofuMJX6QBwtbrmlpWfD4oiUUD2vJUOIYFA/gYtg2KAMGG7sA==}
@@ -10166,12 +10147,6 @@ snapshots:
       tabbable: 6.2.0
 
   '@floating-ui/utils@0.2.10': {}
-
-  '@fontsource/ibm-plex-mono@5.2.7': {}
-
-  '@fontsource/inter@5.2.8': {}
-
-  '@fontsource/material-symbols-rounded@5.2.30': {}
 
   '@formatjs/ecma402-abstract@2.3.4':
     dependencies:

@@ -15,11 +15,7 @@
   },
   "exports": {
     "./index.css": "./index.css",
+    "./fonts.css": "./fonts/index.css",
     "./postcss.config.js": "./postcss.config.js"
-  },
-  "dependencies": {
-    "@fontsource/ibm-plex-mono": "5.2.7",
-    "@fontsource/inter": "5.2.8",
-    "@fontsource/material-symbols-rounded": "5.2.30"
   }
 }

@@ -1,2 +1,3 @@
 @import "@plane/tailwind-config/index.css";
+@import "@plane/tailwind-config/fonts.css";
 @import "../src/styles/react-day-picker.css";
