@@ -234,7 +234,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
                 data={formData}
                 handleData={handleFormData}
                 editorRef={descriptionEditorRef}
-                containerClassName="border-[0.5px] border-subtle py-3 min-h-[150px]"
+                containerClassName="bg-layer-2 border-[0.5px] border-subtle-1 py-3 min-h-[150px]"
                 onEnterKeyPress={() => submitBtnRef?.current?.click()}
                 onAssetUpload={(assetId) => setUploadedAssetIds((prev) => [...prev, assetId])}
               />
