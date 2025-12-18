@@ -212,7 +212,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                 <Tab.Panel className="mt-4 h-full w-full space-y-4">
                   {(unsplashImages || !unsplashError) && (
                     <>
-                      <div className="flex gap-x-2">
+                      <div className="flex items-center gap-x-2">
                         <Controller
                           control={control}
                           name="search"
@@ -235,7 +235,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                             />
                           )}
                         />
-                        <Button variant="primary" onClick={() => setSearchParams(formData.search)}>
+                        <Button variant="primary" size="xl" onClick={() => setSearchParams(formData.search)}>
                           Search
                         </Button>
                       </div>
