@@ -418,7 +418,6 @@ function SubMenu(props: ICustomSubMenuProps) {
             {...attributes.popper}
             className={cn(
               "fixed z-30 min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-subtle-1 bg-surface-1 p-1 text-11",
-              "ring-1 ring-black ring-opacity-5", // Additional styling to make it stand out
               contentClassName
             )}
             data-prevent-outside-click="true"
