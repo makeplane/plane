@@ -1,7 +1,17 @@
 import { FloatingOverlay } from "@floating-ui/react";
 import type { SuggestionProps } from "@tiptap/suggestion";
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { v4 as uuidv4 } from "uuid";
+import { debounce } from "lodash-es";
 // plane utils
 import { useOutsideClickDetector } from "@plane/hooks";
 import { cn } from "@plane/utils";
@@ -75,23 +85,34 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
     });
   }, [sections]);
 
-  // fetch mention sections based on query
-  useEffect(() => {
-    const fetchSuggestions = async () => {
-      setIsLoading(true);
-      try {
-        const sectionsResponse = await searchCallback?.(query);
-        if (sectionsResponse) {
-          setSections(sectionsResponse);
+  // create debounced search callback
+  const debouncedSearchCallback = useMemo(
+    () =>
+      debounce(async (searchQuery: string) => {
+        setIsLoading(true);
+        try {
+          const sectionsResponse = await searchCallback?.(searchQuery);
+          if (sectionsResponse) {
+            setSections(sectionsResponse);
+          }
+        } catch (error) {
+          console.error("Failed to fetch suggestions:", error);
+        } finally {
+          setIsLoading(false);
         }
-      } catch (error) {
-        console.error("Failed to fetch suggestions:", error);
-      } finally {
-        setIsLoading(false);
-      }
+      }, 300),
+    [searchCallback]
+  );
+
+  useEffect(() => {
+    if (query) {
+      void debouncedSearchCallback(query);
+    }
+
+    return () => {
+      debouncedSearchCallback.cancel();
     };
-    fetchSuggestions();
-  }, [query, searchCallback]);
+  }, [query, debouncedSearchCallback]);
 
   // scroll to the dropdown item when navigating via keyboard
   useLayoutEffect(() => {
