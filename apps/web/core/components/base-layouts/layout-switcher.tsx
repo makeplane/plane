@@ -27,7 +27,7 @@ export function LayoutSwitcher(props: Props) {
       {BASE_LAYOUTS.filter((l) => (layouts ? layouts.includes(l.key) : true)).map((layout) => {
         const Icon = layout.icon;
         return (
-          <Tooltip key={layout.key} tooltipContent={t(layout.i18n_title)} isMobile={isMobile}>
+          <Tooltip key={layout.key} tooltipContent={t(layout.label)} isMobile={isMobile}>
             <button
               type="button"
               className={cn(
