@@ -10,7 +10,7 @@ import { CenterPanelIcon, CopyLinkIcon, FullScreenPanelIcon, SidePanelIcon } fro
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TNameDescriptionLoader } from "@plane/types";
-import { EIssuesStoreType } from "@plane/types";
+import { EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // helpers
@@ -21,6 +21,9 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web imports
+import { ConvertWorkItemAction } from "@/plane-web/components/epics/conversions";
+import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 // local imports
 import { IssueSubscription } from "../issue-detail/subscription";
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
@@ -220,10 +223,17 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
       </div>
       <div className="flex items-center gap-x-4">
         <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           {currentUser && !isArchived && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
+          <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
+            <ConvertWorkItemAction
+              workItemId={issueId}
+              conversionType={EWorkItemConversionType.EPIC}
+              disabled={disabled || isArchived}
+            />
+          </WithFeatureFlagHOC>
           <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
             <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
           </Tooltip>
