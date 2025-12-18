@@ -15,7 +15,6 @@
   },
   "exports": {
     "./index.css": "./index.css",
-    "./fonts.css": "./fonts/index.css",
     "./postcss.config.js": "./postcss.config.js"
   }
 }

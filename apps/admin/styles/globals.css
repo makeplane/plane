@@ -1,5 +1,5 @@
 @import "@plane/tailwind-config/index.css";
-@import "@plane/tailwind-config/fonts.css";
+@import "@plane/propel/styles/fonts";
 
 .shadow-custom {
   box-shadow: 2px 2px 8px 2px rgba(234, 231, 250, 0.3); /* Convert #EAE7FA4D to rgba */
