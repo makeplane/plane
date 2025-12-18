@@ -441,8 +441,10 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                     size="sm"
                     icon={ChevronRightIcon}
                     onClick={() => setIsProjectListOpen(!isProjectListOpen)}
-                    className={cn("hidden group-hover/project-item:inline-flex text-placeholder transition-transform", {
+                    className={cn("hidden group-hover/project-item:inline-flex text-placeholder", {
                       "inline-flex": isMenuActive,
+                    })}
+                    iconClassName={cn("transition-transform", {
                       "rotate-90": isProjectListOpen,
                     })}
                     aria-label={t(

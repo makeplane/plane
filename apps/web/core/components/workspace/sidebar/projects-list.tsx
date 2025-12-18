@@ -9,6 +9,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
+import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Loader } from "@plane/ui";
@@ -178,39 +179,37 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
               >
                 <span className="text-13 font-semibold">{t("projects")}</span>
               </Disclosure.Button>
-              <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+              <div className="flex items-center gap-1">
                 {isAuthorizedUser && (
                   <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
-                    <button
-                      type="button"
-                      data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_TOOLTIP}
-                      className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0"
+                    <IconButton
+                      variant="ghost"
+                      size="sm"
+                      icon={Plus}
                       onClick={() => {
                         setIsProjectModalOpen(true);
                       }}
+                      data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_TOOLTIP}
+                      className="hidden group-hover:inline-flex text-placeholder"
                       aria-label={t("aria_labels.projects_sidebar.create_new_project")}
-                    >
-                      <Plus className="size-3" />
-                    </button>
+                    />
                   </Tooltip>
                 )}
-                <Disclosure.Button
-                  as="button"
-                  type="button"
-                  className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0"
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  icon={ChevronRightIcon}
                   onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
+                  className="text-placeholder"
+                  iconClassName={cn("transition-transform", {
+                    "rotate-90": isAllProjectsListOpen,
+                  })}
                   aria-label={t(
                     isAllProjectsListOpen
                       ? "aria_labels.projects_sidebar.close_projects_menu"
                       : "aria_labels.projects_sidebar.open_projects_menu"
                   )}
-                >
-                  <ChevronRightIcon
-                    className={cn("flex-shrink-0 size-3 transition-all", {
-                      "rotate-90": isAllProjectsListOpen,
-                    })}
-                  />
-                </Disclosure.Button>
+                />
               </div>
             </div>
             <Transition
