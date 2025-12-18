@@ -3,12 +3,12 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Check, Hotel, Users } from "lucide-react";
+import { Check, Hotel } from "lucide-react";
 // plane ui
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ProjectIcon, CloseIcon } from "@plane/propel/icons";
+import { MembersPropertyIcon, ProjectIcon, CloseIcon } from "@plane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
 // helpers
 // hooks
@@ -66,7 +66,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
       id: "invite-team",
       title: "home.empty.invite_team.title",
       description: "home.empty.invite_team.description",
-      icon: <Users className="size-4" />,
+      icon: <MembersPropertyIcon className="size-4" />,
       flag: "visited_members",
       cta: {
         text: "home.empty.invite_team.cta",
@@ -103,7 +103,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
           </Link>
         ) : (
           <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
-            <span className="relative flex size-4 items-center justify-center rounded-full bg-gray-700 p-4 capitalize text-on-color text-13">
+            <span className="relative flex size-4 items-center justify-center rounded-full bg-[#028375] p-4 capitalize text-on-color text-13">
               {(currentUser?.email ?? currentUser?.display_name ?? "?")[0]}
             </span>
           </Link>
@@ -150,7 +150,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
         {EMPTY_STATE_DATA.map((item) => {
           const isStateComplete = isComplete(item.flag);
           return (
-            <div key={item.id} className="flex flex-col p-4 bg-surface-1 rounded-xl border border-subtle/40">
+            <div key={item.id} className="flex flex-col p-4 bg-layer-2 rounded-xl border border-subtle">
               <div
                 className={cn("grid place-items-center bg-surface-2 rounded-full size-9 mb-3 text-placeholder", {
                   "text-accent-primary bg-accent-primary/10": !isStateComplete,
@@ -187,7 +187,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
                 ) : (
                   <button
                     type="button"
-                    className="text-accent-primary hover:text-accent-secondary text-13 font-medium"
+                    className="text-accent-primary hover:text-accent-secondary text-13 font-medium text-left"
                     onClick={item.cta.onClick}
                   >
                     {t(item.cta.text)}

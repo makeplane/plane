@@ -12,6 +12,7 @@ import useSize from "@/hooks/use-window-size";
 // plane web components
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace/edition-badge";
 import { AppSidebarToggleButton } from "./sidebar-toggle-button";
+import { IconButton } from "@plane/propel/icon-button";
 
 type TSidebarWrapperProps = {
   title: string;
@@ -51,13 +52,12 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
             <span className="text-16 text-primary font-medium pt-1">{title}</span>
             {title === "Projects" && (
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  className="flex items-center justify-center size-6 rounded-md text-secondary hover:text-accent-primary hover:bg-surface-2"
+                <IconButton
+                  size="base"
+                  variant="ghost"
+                  icon={PreferencesIcon}
                   onClick={() => setIsCustomizeNavDialogOpen(true)}
-                >
-                  <PreferencesIcon className="size-4" />
-                </button>
+                />
                 <AppSidebarToggleButton />
               </div>
             )}

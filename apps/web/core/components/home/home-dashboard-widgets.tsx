@@ -86,7 +86,7 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
       {!isWikiApp && <NoProjectsEmptyState />}
 
       {isAnyWidgetEnabled ? (
-        <div className="flex flex-col divide-y-[1px] divide-subtle">
+        <div className="flex flex-col">
           {orderedWidgets.map((key) => {
             const WidgetComponent = HOME_WIDGETS_LIST[key]?.component;
             const isEnabled = widgetsMap[key]?.is_enabled;
