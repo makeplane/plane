@@ -112,7 +112,7 @@ export const AreaChart = React.memo(function AreaChart<K extends string, T exten
             left: margin?.left === undefined ? 20 : margin.left,
           }}
         >
-          <CartesianGrid stroke="--alpha(var(--border-color-subtle) / 80%)" vertical={false} />
+          <CartesianGrid stroke="var(--border-color-subtle)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
             tick={(props) => {

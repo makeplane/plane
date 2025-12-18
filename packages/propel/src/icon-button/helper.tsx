@@ -38,6 +38,7 @@ type IconButtonPropsWithChildren = React.ButtonHTMLAttributes<HTMLButtonElement>
   VariantProps<typeof iconButtonVariants> & {
     icon: React.FC<{ className?: string }>;
     loading?: boolean;
+    iconClassName?: string;
   };
 export type IconButtonProps = Omit<IconButtonPropsWithChildren, "children">;
 
