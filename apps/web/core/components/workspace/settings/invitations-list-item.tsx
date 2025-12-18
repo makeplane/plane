@@ -16,7 +16,6 @@ import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-wor
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   invitationId: string;
@@ -32,7 +31,6 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
   const { t } = useTranslation();
   // store hooks
   const { allowPermissions, workspaceInfoBySlug } = useUserPermissions();
-  const { mutateWorkspaceMembersActivity } = useWorkspace();
   const {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
   } = useMember();
@@ -61,7 +59,6 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
         title: "Success!",
         message: "Invitation removed successfully.",
       });
-      void mutateWorkspaceMembersActivity(workspaceSlug);
     } catch (err: unknown) {
       const error = err as { error?: string };
       setToast({

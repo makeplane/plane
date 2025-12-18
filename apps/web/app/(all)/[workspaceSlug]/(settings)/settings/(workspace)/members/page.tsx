@@ -42,7 +42,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   const {
     workspace: { workspaceMemberIds, inviteMembersToWorkspace, filtersStore },
   } = useMember();
-  const { currentWorkspace, mutateWorkspaceMembersActivity } = useWorkspace();
+  const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
 
   // derived values
@@ -55,7 +55,6 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   const handleWorkspaceInvite = async (data: IWorkspaceBulkInviteFormData) => {
     try {
       await inviteMembersToWorkspace(workspaceSlug, data);
-      void mutateWorkspaceMembersActivity(workspaceSlug);
 
       setInviteModal(false);
 
