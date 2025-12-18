@@ -17,7 +17,6 @@ import {
 } from "@/hooks/use-navigation-preferences";
 // helpers
 import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/sidebar/helper";
-import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 // types
 import type { TPersonalNavigationItemKey } from "@/types/navigation-preferences";
 
@@ -71,10 +70,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
   const [projectCountInput, setProjectCountInput] = useState(projectPreferences.limitedProjectsCount.toString());
 
   // Filter personal items by feature flags
-  const filteredPersonalItems = useMemo(
-    () => PERSONAL_ITEMS.filter((item) => isSidebarFeatureEnabled(item.key, workspaceSlug?.toString() || "")),
-    [workspaceSlug]
-  );
+  const filteredPersonalItems = PERSONAL_ITEMS;
 
   // Filter workspace items by permissions and feature flags, then get pinned/unpinned items
   const workspaceItems = useMemo(() => {
@@ -85,10 +81,8 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
         EUserPermissionsLevel.WORKSPACE,
         workspaceSlug?.toString() || ""
       );
-      // Feature flag check
-      const isFeatureEnabled = isSidebarFeatureEnabled(item.key, workspaceSlug?.toString() || "");
-      return hasPermission && isFeatureEnabled;
-    };).map((item) => {
+      return hasPermission;
+    }).map((item) => {
       // Get pinned status and sort order from localStorage
       const preference = workspacePreferences.items[item.key];
       const isPinned = preference?.is_pinned ?? false;
@@ -303,7 +297,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                 </div>
 
                 {/* Limited Projects Checkbox */}
-                <div className="1">
+                <div className="space-y-1">
                   <label className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2 cursor-pointer">
                     <Checkbox
                       checked={projectPreferences.showLimitedProjects}
