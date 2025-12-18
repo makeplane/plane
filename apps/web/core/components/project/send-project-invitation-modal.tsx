@@ -208,7 +208,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-surface-1 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-surface-1 p-5 text-left shadow-raised-200 transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
                     <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
@@ -336,7 +336,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                   <div className="mt-5 flex items-center justify-between gap-2">
                     <button
                       type="button"
-                      className="flex items-center gap-2 bg-transparent py-2 pr-3 text-13 font-medium text-accent-primary outline-custom-primary"
+                      className="flex items-center gap-2 bg-transparent py-2 pr-3 text-13 font-medium text-accent-primary outline-accent-strong"
                       onClick={appendField}
                     >
                       <Plus className="h-4 w-4" />

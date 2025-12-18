@@ -16,7 +16,7 @@ export function IssueEmbedUpgradeCard(props: any) {
     >
       <div className="flex items-center gap-4">
         <ProIcon className="flex-shrink-0 size-4" />
-        <p className="text-custom-text !text-14">
+        <p className="text-secondary !text-14">
           Embed and access issues in pages seamlessly, upgrade to Plane Pro now.
         </p>
       </div>

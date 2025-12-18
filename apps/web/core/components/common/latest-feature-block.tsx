@@ -21,16 +21,14 @@ export function LatestFeatureBlock() {
       </div>
       <div
         className={`mx-auto mt-8 overflow-hidden rounded-md border border-subtle object-cover sm:h-52 sm:w-96 ${
-          resolvedTheme === "dark" ? "bg-surface-1" : "bg-custom-primary-70"
+          resolvedTheme === "dark" ? "bg-surface-1" : "bg-layer-2"
         }`}
       >
         <div className="h-[90%]">
           <img
             src={latestFeatures}
             alt="Plane Work items"
-            className={`-mt-2 ml-10 h-full rounded-md ${
-              resolvedTheme === "dark" ? "bg-surface-1" : "bg-custom-primary-70"
-            }`}
+            className={`-mt-2 ml-10 h-full rounded-md ${resolvedTheme === "dark" ? "bg-surface-1" : "bg-layer-2"}`}
           />
         </div>
       </div>

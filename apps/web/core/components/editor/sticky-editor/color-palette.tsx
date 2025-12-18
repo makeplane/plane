@@ -66,7 +66,7 @@ export function ColorPalette(props: TProps) {
                 background_color: color.key,
               });
             }}
-            className="h-6 w-6 rounded-md hover:ring-2 hover:ring-custom-primary focus:outline-none focus:ring-2 focus:ring-custom-primary transition-all"
+            className="h-6 w-6 rounded-md hover:ring-2 hover:ring-accent-strong focus:outline-none focus:ring-2 focus:ring-accent-strong transition-all"
             style={{
               backgroundColor: color.backgroundColor,
             }}

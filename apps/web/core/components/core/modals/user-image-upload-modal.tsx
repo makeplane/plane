@@ -113,7 +113,7 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 px-5 py-8 text-left shadow-raised-200 transition-all sm:w-full sm:max-w-xl sm:p-6">
                 <div className="space-y-5">
                   <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
                     Upload Image
@@ -122,7 +122,7 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
                     <div className="flex items-center justify-center gap-3">
                       <div
                         {...getRootProps()}
-                        className={`relative grid h-80 w-80 cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
+                        className={`relative grid h-80 w-80 cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
                             ? "border-2 border-dashed border-subtle hover:bg-surface-2"
                             : ""

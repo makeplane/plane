@@ -45,7 +45,7 @@ export const SubIssueFilters = observer(function SubIssueFilters(props: TSubIssu
           <div
             className={cn(
               "p-1 rounded-sm  relative transition-all duration-200",
-              isFilterApplied && "bg-custom-primary-60/20"
+              isFilterApplied && "bg-accent-primary/20"
             )}
           >
             {isFilterApplied && <span className="p-1 rounded-full bg-accent-primary absolute -top-1 -right-1" />}
