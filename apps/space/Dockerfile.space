@@ -1,5 +1,7 @@
 FROM node:22-alpine AS base
 
+RUN apk add --no-cache curl libc6-compat
+
 WORKDIR /app
 
 ENV TURBO_TELEMETRY_DISABLED=1
@@ -87,6 +89,6 @@ WORKDIR /app/apps/space
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -fsS http://127.0.0.1:3000/ >/dev/null || exit 1
+  CMD curl -fsS http://127.0.0.1:3000/spaces/ >/dev/null || exit 1
 
 CMD ["npx", "react-router-serve", "./build/server/index.js"]
