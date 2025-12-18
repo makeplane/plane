@@ -14,6 +14,7 @@ import {
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { IconButton } from "@plane/propel/icon-button";
 import { CycleIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
@@ -236,7 +237,6 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                   <Button
                     variant="primary"
                     size="lg"
-                    className="self-start"
                     onClick={() => {
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
@@ -247,9 +247,15 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                 )}
               </>
             )}
-            <Button variant="ghost" size="lg" onClick={toggleSidebar}>
-              <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-accent-primary" : "text-secondary")} />
-            </Button>
+            <IconButton
+              variant="tertiary"
+              size="lg"
+              icon={PanelRight}
+              onClick={toggleSidebar}
+              className={cn({
+                "text-accent-primary bg-accent-subtle": !isSidebarCollapsed,
+              })}
+            />
             <CycleQuickActions
               parentRef={parentRef}
               cycleId={cycleId}

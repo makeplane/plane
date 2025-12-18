@@ -42,6 +42,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { IconButton } from "@plane/propel/icon-button";
 
 export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
   // refs
@@ -242,9 +243,15 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
           ) : (
             <></>
           )}
-          <Button variant="ghost" size="lg" onClick={toggleSidebar}>
-            <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-accent-primary" : "text-secondary")} />
-          </Button>
+          <IconButton
+            variant="tertiary"
+            size="lg"
+            icon={PanelRight}
+            onClick={toggleSidebar}
+            className={cn({
+              "text-accent-primary bg-accent-subtle": !isSidebarCollapsed,
+            })}
+          />
           {moduleId && (
             <ModuleQuickActions
               parentRef={parentRef}
