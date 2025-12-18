@@ -162,7 +162,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           issues={issueMap}
           groupedIssueIds={groupedIssueIds}
           layout={displayFilters?.calendar?.layout}
-          showWeekends={displayFilters?.calendar?.show_weekends ?? true}
+          showWeekends={true}
           issueCalendarView={issueCalendarView}
           quickActions={({ issue, parentRef, customActionButton, placement }) => (
             <QuickActions
