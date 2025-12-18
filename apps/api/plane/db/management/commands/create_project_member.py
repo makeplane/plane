@@ -47,24 +47,15 @@ class Command(BaseCommand):
             if not WorkspaceMember.objects.filter(workspace=project.workspace, member=user, is_active=True).exists():
                 raise CommandError("User not member in workspace")
 
-            # Get the smallest sort order
-            smallest_sort_order = (
-                ProjectMember.objects.filter(workspace_id=project.workspace_id).order_by("sort_order").first()
-            )
-
-            if smallest_sort_order:
-                sort_order = smallest_sort_order.sort_order - 1000
-            else:
-                sort_order = 65535
 
             if ProjectMember.objects.filter(project=project, member=user).exists():
                 # Update the project member
                 ProjectMember.objects.filter(project=project, member=user).update(
-                    is_active=True, sort_order=sort_order, role=role
+                    is_active=True, role=role
                 )
             else:
                 # Create the project member
-                ProjectMember.objects.create(project=project, member=user, role=role, sort_order=sort_order)
+                ProjectMember.objects.create(project=project, member=user, role=role)
 
             # Issue Property
             ProjectUserProperty.objects.get_or_create(user=user, project=project)

@@ -266,11 +266,6 @@ class ProjectViewSet(BaseViewSet):
                     member_id=serializer.data["project_lead"],
                     role=ROLE.ADMIN.value,
                 )
-                # Also create the issue property for the user
-                ProjectUserProperty.objects.create(
-                    project_id=serializer.data["id"],
-                    user_id=serializer.data["project_lead"],
-                )
 
             State.objects.bulk_create(
                 [

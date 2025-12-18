@@ -1,6 +1,7 @@
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Min
 
 # Module imports
 from .base import BaseViewSet, BaseAPIView
@@ -89,24 +90,23 @@ class ProjectMemberViewSet(BaseViewSet):
         # Update the roles of the existing members
         ProjectMember.objects.bulk_update(bulk_project_members, ["is_active", "role"], batch_size=100)
 
-        # Get the list of project members of the requested workspace with the given slug
-        project_members = (
-            ProjectMember.objects.filter(
+        # Get the minimum sort_order for each member in the workspace
+        member_sort_orders = (
+            ProjectUserProperty.objects.filter(
                 workspace__slug=slug,
-                member_id__in=[member.get("member_id") for member in members],
+                user_id__in=[member.get("member_id") for member in members],
             )
-            .values("member_id", "sort_order")
-            .order_by("sort_order")
+            .values("user_id")
+            .annotate(min_sort_order=Min("sort_order"))
         )
+        # Convert to dictionary for easy lookup: {user_id: min_sort_order}
+        sort_order_map = {str(item["user_id"]): item["min_sort_order"] for item in member_sort_orders}
 
         # Loop through requested members
         for member in members:
-            # Get the sort orders of the member
-            sort_order = [
-                project_member.get("sort_order")
-                for project_member in project_members
-                if str(project_member.get("member_id")) == str(member.get("member_id"))
-            ]
+            member_id = str(member.get("member_id"))
+            # Get the minimum sort_order for this member, or use default
+            min_sort_order = sort_order_map.get(member_id)
             # Create a new project member
             bulk_project_members.append(
                 ProjectMember(
@@ -114,7 +114,6 @@ class ProjectMemberViewSet(BaseViewSet):
                     role=member.get("role", 5),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
-                    sort_order=(sort_order[0] - 10000 if len(sort_order) else 65535),
                 )
             )
             # Create a new issue property
@@ -123,6 +122,7 @@ class ProjectMemberViewSet(BaseViewSet):
                     user_id=member.get("member_id"),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
+                    sort_order=(min_sort_order - 10000 if min_sort_order is not None else 65535),
                 )
             )
 

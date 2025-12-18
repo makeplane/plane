@@ -220,7 +220,7 @@ class ProjectJoinEndpoint(BaseAPIView):
                 if project_member is None:
                     # Create a Project Member
                     _ = ProjectMember.objects.create(
-                        workspace_id=project_invite.workspace_id,
+                        project_id=project_id,
                         member=user,
                         role=project_invite.role,
                     )

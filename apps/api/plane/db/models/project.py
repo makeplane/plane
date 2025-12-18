@@ -205,14 +205,20 @@ class ProjectMember(ProjectBaseModel):
     is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        if self._state.adding:
-            smallest_sort_order = ProjectMember.objects.filter(
-                workspace_id=self.project.workspace_id, member=self.member
-            ).aggregate(smallest=models.Min("sort_order"))["smallest"]
+        if self._state.adding and self.member:
+            # Get the minimum sort_order for this member in the workspace
+            min_sort_order_result = ProjectUserProperty.objects.filter(
+                workspace_id=self.project.workspace_id, user=self.member
+            ).aggregate(min_sort_order=models.Min("sort_order"))
+            min_sort_order = min_sort_order_result.get("min_sort_order")
 
-            # Project ordering
-            if smallest_sort_order is not None:
-                self.sort_order = smallest_sort_order - 10000
+            # create project user property with project sort order
+            ProjectUserProperty.objects.create(
+                workspace_id=self.project.workspace_id,
+                project=self.project,
+                user=self.member,
+                sort_order=(min_sort_order - 10000 if min_sort_order is not None else 65535),
+            )
 
         super(ProjectMember, self).save(*args, **kwargs)
 
@@ -315,8 +321,8 @@ class ProjectPublicMember(ProjectBaseModel):
 
 
 class ProjectUserProperty(ProjectBaseModel):
-
     from .issue import get_default_filters, get_default_display_filters, get_default_display_properties
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
