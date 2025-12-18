@@ -1,9 +1,10 @@
 import { observer } from "mobx-react";
-import { ListFilter } from "lucide-react";
 // plane imports
+import { IconButton } from "@plane/propel/icon-button";
+import { FilterIcon, FilterAppliedIcon } from "@plane/propel/icons";
+import { cn } from "@plane/utils";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty } from "@plane/types";
-import { cn } from "@plane/ui";
 // components
 import { AddFilterButton } from "@/components/rich-filters/add-filters/button";
 
@@ -49,28 +50,14 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
   }
 
   return (
-    <button
-      className={cn(COMMON_CLASSNAME, {
-        "border-transparent bg-accent-primary/10 hover:bg-accent-primary/20": isFilterRowVisible,
-        "hover:bg-surface-1": !isFilterRowVisible,
-      })}
+    <IconButton
+      size="lg"
+      variant="secondary"
+      icon={showFilterRowChangesPill ? FilterAppliedIcon : FilterIcon}
       onClick={handleToggleFilter}
-    >
-      <div className="relative">
-        <ListFilter
-          className={cn("size-4", {
-            "text-accent-primary": isFilterRowVisible,
-            "text-tertiary": !isFilterRowVisible,
-          })}
-        />
-        {showFilterRowChangesPill && (
-          <span
-            className={cn("p-[3px] rounded-full bg-accent-primary absolute top-[0.2px] -right-[0.4px]", {
-              "bg-layer-1": hasAnyConditions === false && filter?.hasChanges === true, // If there are no conditions and there are changes, show the pill in the background color
-            })}
-          />
-        )}
-      </div>
-    </button>
+      className={cn({
+        "text-accent-primary bg-accent-subtle border border-accent-subtle-1": showFilterRowChangesPill,
+      })}
+    />
   );
 });
