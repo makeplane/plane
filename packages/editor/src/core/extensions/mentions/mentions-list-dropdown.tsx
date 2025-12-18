@@ -1,15 +1,6 @@
 import { FloatingOverlay } from "@floating-ui/react";
 import type { SuggestionProps } from "@tiptap/suggestion";
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { debounce } from "lodash-es";
 // plane utils
@@ -85,34 +76,38 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
     });
   }, [sections]);
 
-  // create debounced search callback
-  const debouncedSearchCallback = useMemo(
-    () =>
-      debounce(async (searchQuery: string) => {
-        setIsLoading(true);
-        try {
-          const sectionsResponse = await searchCallback?.(searchQuery);
-          if (sectionsResponse) {
-            setSections(sectionsResponse);
-          }
-        } catch (error) {
-          console.error("Failed to fetch suggestions:", error);
-        } finally {
-          setIsLoading(false);
+  // debounced search callback
+  const debouncedSearchCallback = useCallback(
+    debounce(async (searchQuery: string) => {
+      setIsLoading(true);
+      try {
+        const sectionsResponse = await searchCallback?.(searchQuery);
+        if (sectionsResponse) {
+          setSections(sectionsResponse);
         }
-      }, 300),
+      } catch (error) {
+        console.error("Failed to fetch suggestions:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }, 300),
     [searchCallback]
   );
 
+  // trigger debounced search when query changes
   useEffect(() => {
     if (query) {
       void debouncedSearchCallback(query);
     }
-
-    return () => {
-      debouncedSearchCallback.cancel();
-    };
   }, [query, debouncedSearchCallback]);
+
+  // cancel pending debounced calls on unmount
+  useEffect(
+    () => () => {
+      debouncedSearchCallback.cancel();
+    },
+    [debouncedSearchCallback]
+  );
 
   // scroll to the dropdown item when navigating via keyboard
   useLayoutEffect(() => {
