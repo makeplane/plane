@@ -2,6 +2,7 @@ import { FloatingOverlay } from "@floating-ui/react";
 import type { SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { debounce } from "lodash-es";
 // plane utils
 import { useOutsideClickDetector } from "@plane/hooks";
 import { cn } from "@plane/utils";
@@ -75,12 +76,12 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
     });
   }, [sections]);
 
-  // fetch mention sections based on query
-  useEffect(() => {
-    const fetchSuggestions = async () => {
+  // debounced search callback
+  const debouncedSearchCallback = useCallback(
+    debounce(async (searchQuery: string) => {
       setIsLoading(true);
       try {
-        const sectionsResponse = await searchCallback?.(query);
+        const sectionsResponse = await searchCallback?.(searchQuery);
         if (sectionsResponse) {
           setSections(sectionsResponse);
         }
@@ -89,9 +90,24 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
       } finally {
         setIsLoading(false);
       }
-    };
-    fetchSuggestions();
-  }, [query, searchCallback]);
+    }, 300),
+    [searchCallback]
+  );
+
+  // trigger debounced search when query changes
+  useEffect(() => {
+    if (query) {
+      void debouncedSearchCallback(query);
+    }
+  }, [query, debouncedSearchCallback]);
+
+  // cancel pending debounced calls on unmount
+  useEffect(
+    () => () => {
+      debouncedSearchCallback.cancel();
+    },
+    [debouncedSearchCallback]
+  );
 
   // scroll to the dropdown item when navigating via keyboard
   useLayoutEffect(() => {
