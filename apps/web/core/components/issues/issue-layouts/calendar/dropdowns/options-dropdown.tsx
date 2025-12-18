@@ -86,16 +86,17 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   };
 
   const handleToggleWeekends = () => {
-    const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
+    // const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? true;
 
     if (!updateFilters) return;
 
     updateFilters(projectId?.toString(), EIssueFilterType.DISPLAY_FILTERS, {
-      calendar: {
-        ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
-        show_weekends: !showWeekends,
-      },
-    });
+  calendar: {
+    ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
+    show_weekends: true,
+  },
+});
+
   };
 
   return (
@@ -149,7 +150,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                       {calendarLayout === layout && <Check size={12} strokeWidth={2} />}
                     </button>
                   ))}
-                  <button
+                  {/* <button
                     type="button"
                     className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
                     onClick={handleToggleWeekends}
@@ -161,7 +162,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                         if (windowWidth <= 768) closePopover(); // close the popover on mobile
                       }}
                     />
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </Popover.Panel>

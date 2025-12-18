@@ -216,20 +216,24 @@ export const getSlashCommandFilteredSections =
           },
           {
             commandKey: "embed",
-            key: "link",
+            key: "embed",
             title: "Embed",
             description: "Insert a URL",
             searchTerms: ["url", "hyperlink", "website"],
             icon: <FileCodeIcon className="size-3.5" />,
-            command: ({ editor, range }) =>
-              editor
-                .chain()
-                .focus()
-                .deleteRange(range)
-                .insertContentAt(range.from, "rtmp://")
-                .setTextSelection(range.from + 8)
-                .run(),
+            command: ({ editor, range }) => {
+              // Remove /embed text
+              editor.chain().focus().deleteRange(range).run();
+
+              // Open embed dialog
+              window.dispatchEvent(
+                new CustomEvent("open-embed-dialog", {
+                  detail: { editor },
+                })
+              );
+            },
           },
+
           {
             commandKey: "emoji",
             key: "emoji",

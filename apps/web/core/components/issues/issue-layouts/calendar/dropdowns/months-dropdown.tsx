@@ -86,7 +86,7 @@ export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) =
           type="button"
           ref={setReferenceElement}
           className="text-xl font-semibold outline-none"
-          disabled={calendarLayout === "week"}
+          disabled={calendarLayout === "day"}
         >
           {calendarLayout === "month"
             ? `${MONTHS_LIST[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`

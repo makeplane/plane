@@ -274,7 +274,7 @@ export const getComputedDisplayFilters = (
 
   return {
     calendar: {
-      show_weekends: filters?.calendar?.show_weekends || false,
+      show_weekends: filters?.calendar?.show_weekends || true,
       layout: filters?.calendar?.layout || "month",
     },
     layout: filters?.layout || EIssueLayoutTypes.LIST,
