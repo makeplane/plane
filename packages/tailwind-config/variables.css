@@ -311,17 +311,17 @@
   --background-color-surface-1: var(--color-neutral-white);
   --background-color-surface-2: var(--color-neutral-100);
   --background-color-layer-1: var(--color-neutral-200);
-  --background-color-layer-1-hover: var(--color-alpha-black-100);
-  --background-color-layer-1-active: var(--color-alpha-black-200);
-  --background-color-layer-1-selected: var(--color-alpha-black-300);
+  --background-color-layer-1-hover: var(--color-neutral-300);
+  --background-color-layer-1-active: var(--color-neutral-400);
+  --background-color-layer-1-selected: var(--color-neutral-400);
   --background-color-layer-2: var(--color-neutral-white);
-  --background-color-layer-2-hover: var(--color-alpha-black-100);
-  --background-color-layer-2-active: var(--color-alpha-black-200);
-  --background-color-layer-2-selected: var(--color-alpha-black-300);
+  --background-color-layer-2-hover: var(--color-neutral-100);
+  --background-color-layer-2-active: var(--color-neutral-200);
+  --background-color-layer-2-selected: var(--color-neutral-200);
   --background-color-layer-3: var(--color-neutral-300);
-  --background-color-layer-3-hover: var(--color-alpha-black-100);
-  --background-color-layer-3-active: var(--color-alpha-black-200);
-  --background-color-layer-3-selected: var(--color-alpha-black-300);
+  --background-color-layer-3-hover: var(--color-neutral-400);
+  --background-color-layer-3-active: var(--color-neutral-500);
+  --background-color-layer-3-selected: var(--color-neutral-500);
   --background-color-layer-transparent: var(--color-alpha-white-0);
   --background-color-layer-transparent-hover: var(--color-alpha-black-100);
   --background-color-layer-transparent-active: var(--color-alpha-black-200);
@@ -351,6 +351,7 @@
   --background-color-danger-transparent-active: var(--color-red-100);
   --background-color-danger-transparent-selected: var(--color-red-100);
   --background-color-backdrop: var(--color-alpha-black-500);
+  --background-color-inverse: var(--color-alpha-black-1000);
 
   /* Border colors */
   --border-color-subtle: var(--color-neutral-400);
@@ -634,17 +635,17 @@
       --background-color-surface-1: var(--color-neutral-100);
       --background-color-surface-2: var(--color-neutral-100);
       --background-color-layer-1: var(--color-neutral-200);
-      --background-color-layer-1-hover: var(--color-alpha-white-100);
-      --background-color-layer-1-active: var(--color-alpha-white-200);
-      --background-color-layer-1-selected: var(--color-alpha-white-300);
+      --background-color-layer-1-hover: var(--color-neutral-300);
+      --background-color-layer-1-active: var(--color-neutral-400);
+      --background-color-layer-1-selected: var(--color-neutral-400);
       --background-color-layer-2: var(--color-neutral-300);
-      --background-color-layer-2-hover: var(--color-alpha-white-100);
-      --background-color-layer-2-active: var(--color-alpha-white-200);
-      --background-color-layer-2-selected: var(--color-alpha-white-300);
+      --background-color-layer-2-hover: var(--color-neutral-400);
+      --background-color-layer-2-active: var(--color-neutral-500);
+      --background-color-layer-2-selected: var(--color-neutral-500);
       --background-color-layer-3: var(--color-neutral-400);
-      --background-color-layer-3-hover: var(--color-alpha-white-100);
-      --background-color-layer-3-active: var(--color-alpha-white-200);
-      --background-color-layer-3-selected: var(--color-alpha-white-300);
+      --background-color-layer-3-hover: var(---color-neutral-500);
+      --background-color-layer-3-active: var(--color-neutral-600);
+      --background-color-layer-3-selected: var(--color-neutral-600);
       --background-color-layer-transparent: var(--color-alpha-black-0);
       --background-color-layer-transparent-hover: var(--color-alpha-white-100);
       --background-color-layer-transparent-active: var(--color-alpha-white-200);
@@ -674,6 +675,8 @@
       --background-color-danger-transparent-active: var(--color-red-100);
       --background-color-danger-transparent-selected: var(--color-red-100);
       --background-color-backdrop: var(--color-alpha-black-1000);
+      --background-color-inverse: var(--color-alpha-white-1000);
+
 
       /* Border colors */
       --border-color-subtle: var(--color-neutral-400);
