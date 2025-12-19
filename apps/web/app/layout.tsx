@@ -2,8 +2,6 @@ import Script from "next/script";
 
 // styles
 import "@/styles/globals.css";
-import "@/styles/power-k.css";
-import "@/styles/emoji.css";
 
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
 

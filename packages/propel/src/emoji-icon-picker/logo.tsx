@@ -34,7 +34,6 @@ export function Logo({ logo, size = 16, type = "material" }: Props) {
   const value = in_use === "emoji" ? emoji?.value : icon?.name;
 
   if (!value) return loadingSkeleton;
-  if (!isMaterialSymbolsFontLoaded && type === "material") return loadingSkeleton;
 
   // Emoji rendering
   if (in_use === "emoji") {
@@ -65,6 +64,8 @@ export function Logo({ logo, size = 16, type = "material" }: Props) {
       const LucideIconElement = lucideIcon.element;
       return <LucideIconElement style={{ color, height: size, width: size }} />;
     }
+
+    if (!isMaterialSymbolsFontLoaded) return loadingSkeleton;
 
     // Material icon
     return (
