@@ -67,5 +67,4 @@ EXPOSE 8000
 # Set working directory to Django project
 WORKDIR /app/plane
 
-# Run Django development server (replace with gunicorn/uwsgi for production)
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["./bin/docker-entrypoint-api.sh"]
