@@ -50,17 +50,17 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
 
           <div className="flex items-center justify-between gap-2 px-2">
             <span className="text-16 text-primary font-medium pt-1">{title}</span>
-            {title === "Projects" && (
-              <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              {title === "Projects" && (
                 <IconButton
                   size="base"
                   variant="ghost"
                   icon={PreferencesIcon}
                   onClick={() => setIsCustomizeNavDialogOpen(true)}
                 />
-                <AppSidebarToggleButton />
-              </div>
-            )}
+              )}
+              <AppSidebarToggleButton />
+            </div>
           </div>
           {/* Quick actions */}
           {quickActions}
