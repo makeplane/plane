@@ -202,7 +202,6 @@ export interface IIssueDisplayProperties {
   cycle?: boolean;
   issue_type?: boolean;
 
-  // Sport App Fields
   level?: boolean;
   sport?: boolean;
   program?: boolean;

@@ -1,28 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { AlertModalCore } from "@plane/ui";
+import { validateUrl } from "@/helpers/urls";
 import EmbedInput from "./embed";
 
-
-const overlayStyle = {
-  position: "fixed" as const,
-  inset: 0,
-  background: "rgba(0,0,0,0.6)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 10000,
-};
-
-const dialogStyle = {
-  width: "100%",
-  maxWidth: 520,
-};
 
 
 export function EmbedDialog() {
   const [editor, setEditor] = useState<any>(null);
   const [open, setOpen] = useState(false);
+  const [showInvalidUrlAlert, setShowInvalidUrlAlert] = useState(false);
 
   useEffect(() => {
     const handler = (e: any) => {
@@ -31,21 +20,59 @@ export function EmbedDialog() {
     };
 
     window.addEventListener("open-embed-dialog", handler);
-    return () =>
-      window.removeEventListener("open-embed-dialog", handler);
+    return () => window.removeEventListener("open-embed-dialog", handler);
   }, []);
 
-  if (!open) return null;
+  if (!open || !editor) return null;
 
-  const handleEmbed = (url: string) => {
+  const insertFallbackLink = (url: string) => {
     editor
       .chain()
       .focus()
-      .insertContent({
-        type: "externalEmbed",
-        attrs: { url },
-      })
+      .setLink({ href: url })
+      .insertContent(url)
+      .unsetLink()
       .run();
+  };
+
+  const handleEmbed = async (rawUrl: string) => {
+    const url = validateUrl(rawUrl);
+
+    if (!url) {
+      setShowInvalidUrlAlert(true);
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/link-preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+
+      const data = await res.json();
+
+      if (!data?.error) {
+        editor
+          .chain()
+          .focus()
+          .insertContent({
+            type: "issueEmbed",
+            attrs: {
+              url,
+              title: data.title ?? url,
+              description: data.description ?? "",
+              image: data.image ?? null,
+              favicon: data.favicon ?? null,
+            },
+          })
+          .run();
+      } else {
+        insertFallbackLink(url);
+      }
+    } catch {
+      insertFallbackLink(url);
+    }
 
     close();
   };
@@ -55,11 +82,21 @@ export function EmbedDialog() {
     setEditor(null);
   };
 
-  return (
-    <div style={overlayStyle}>
-      <div style={dialogStyle}>
-        <EmbedInput onEmbed={handleEmbed} onCancel={close} />
-      </div>
+  return createPortal(
+    <>
+    <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-24">
+      <EmbedInput onEmbed={handleEmbed} onCancel={close} />
     </div>
+     <AlertModalCore
+        isOpen={showInvalidUrlAlert}
+        title="Invalid URL"
+        content={<p>Your URL is not valid. Please enter a valid URL.</p>}
+        handleClose={() => setShowInvalidUrlAlert(false)}
+        handleSubmit={() => setShowInvalidUrlAlert(false)}
+        isSubmitting={false}
+        variant="danger"
+      />
+      </>,
+    document.body
   );
 }

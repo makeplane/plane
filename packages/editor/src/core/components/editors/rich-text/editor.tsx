@@ -5,6 +5,7 @@ import { BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // extensions
 import { SideMenuExtension } from "@/extensions";
 // plane editor imports
+import { EmbedDialog } from "@/extensions/slash-commands/embed-dialog-wrapper";
 import { RichTextEditorAdditionalExtensions } from "@/plane-editor/extensions/rich-text-extensions";
 // types
 import { EditorRefApi, IRichTextEditorProps } from "@/types";
@@ -44,6 +45,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
         <>
           {editor && bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
           <BlockMenu editor={editor} flaggedExtensions={flaggedExtensions} disabledExtensions={disabledExtensions} />
+          <EmbedDialog />
         </>
       )}
     </EditorWrapper>

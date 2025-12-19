@@ -231,8 +231,8 @@ export const BlockMenu = (props: Props) => {
               }}
               disabled={item.isDisabled}
             >
-              {/* <item.icon className="h-3 w-3" />
-              {item.label} */}
+              <item.icon className="h-3 w-3" />
+              {item.label}
             </button>
           );
         })}
