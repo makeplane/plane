@@ -27,12 +27,16 @@ import { CycleDropdown } from "@/components/dropdowns/cycle";
 import { DateDropdown } from "@/components/dropdowns/date";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import LevelDropdown from "@/components/dropdowns/level-property";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { ProgramDropdown } from "@/components/dropdowns/program-property";
+import SportDropdown from "@/components/dropdowns/sport-property";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
 import { TimeDropdown } from "@/components/dropdowns/time-picker";
+import { YearRangeDropdown } from "@/components/dropdowns/year-property";
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
@@ -48,10 +52,6 @@ import { WorkItemLayoutAdditionalProperties } from "@/plane-web/components/issue
 // local components
 import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
-import LevelDropdown from "@/components/dropdowns/level-property";
-import SportDropdown from "@/components/dropdowns/sport-property";
-import { YearRangeDropdown } from "@/components/dropdowns/year-property";
-import { ProgramDropdown } from "@/components/dropdowns/program-property";
 
 export interface IIssueProperties {
   issue: TIssue;
@@ -303,33 +303,21 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     e.preventDefault();
   };
 
-const isStartTimeReadOnly = (dateValue: string | null, timeValue: string | null): boolean => {
-  const now = new Date();
+const isStartTimeReadOnly = (
+  _dateValue: string | null,
+  timeValue: string | null
+): boolean => {
+  if (!timeValue) return false;
 
-  // If no date → editable
-  if (!dateValue) return false;
+  const eventDateTime = new Date(timeValue);
 
-  const fieldDate = new Date(dateValue);
-  fieldDate.setHours(0, 0, 0, 0);
+  console.log("Event datetime:", eventDateTime.toString());
+  console.log("System datetime:", new Date().toString());
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  // 1. If the field’s date is NOT today → editable
-  if (fieldDate.getTime() !== today.getTime()) return false;
-
-  // 2. If field date is today AND has past time → editable for that past time
-  if (timeValue) {
-    const [h, m] = timeValue.split(":").map(Number);
-    const fieldDateWithTime = new Date(dateValue);
-    fieldDateWithTime.setHours(h, m, 0, 0);
-
-    if (fieldDateWithTime < now) return false; // editable
-  }
-
-  // 3. Otherwise → read-only (past time is blocked)
-  return true;
+  return eventDateTime.getTime() >= Date.now();
 };
+
+
 
 // Usage:
  const disabled = isStartTimeReadOnly(issue.start_date, issue.start_time);
@@ -360,7 +348,7 @@ const isStartTimeReadOnly = (dateValue: string | null, timeValue: string | null)
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <YearRangeDropdown
              value={issue?.year ?? null}
-             onChange={handleLevel}
+             onChange={handleYear}
              placeholder={t("year_field")}
              icon={<Calendar className="h-3 w-3 flex-shrink-0" />}
              buttonVariant={issue?.year ? "border-with-text": "border-without-text"}
