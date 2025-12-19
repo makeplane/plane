@@ -1,58 +1,52 @@
-FROM python:3.12.10-alpine
+# Stage 1: Builder - Install dependencies with uv
+FROM python:3.12.10-alpine AS builder
 
-# set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
-ENV INSTANCE_CHANGELOG_URL=https://sites.plane.so/pages/691ef037bcfe416a902e48cb55f59891/
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-# Update system packages for security
-RUN apk update && apk upgrade
+# Set working directory
+WORKDIR /app
 
-WORKDIR /code
+# Set environment variables for uv
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
 
-RUN apk add --no-cache --upgrade \
-    "libpq" \
-    "libxslt" \
-    "xmlsec" \
-    "ca-certificates" \
-    "openssl"
+# Install dependencies
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project
 
-COPY requirements.txt ./
-COPY requirements ./requirements
-RUN apk add --no-cache libffi-dev
-RUN apk add --no-cache --virtual .build-deps \
-    "bash~=5.2" \
-    "g++" \
-    "gcc" \
-    "cargo" \
-    "git" \
-    "make" \
-    "postgresql-dev" \
-    "libc-dev" \
-    "linux-headers" \
-    && \
-    pip install -r requirements.txt --compile --no-cache-dir \
-    && \
-    apk del .build-deps \
-    && \
-    rm -rf /var/cache/apk/*
+# Copy the project into the image
+COPY . /app/
+
+# Sync the project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked
 
 
-# Add in Django deps and generate Django's static files
-COPY manage.py manage.py
-COPY plane plane/
-COPY templates templates/
-COPY package.json package.json
+# Stage 2: Production - Lean runtime image
+FROM python:3.12.10-alpine AS production
 
-RUN apk --no-cache add "bash~=5.2"
-COPY ./bin ./bin/
+# Set working directory
+WORKDIR /app
 
-RUN mkdir -p /code/plane/logs
-RUN chmod +x ./bin/*
-RUN chmod -R 777 /code
+# Copy the virtual environment from builder
+COPY --from=builder /app/.venv /app/.venv
 
-# Expose container port and run entry point script
+# Copy application source code
+COPY . ./src
+
+# Set environment variables
+ENV PATH="/app/.venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+# Expose Django default port
 EXPOSE 8000
 
-CMD ["./bin/docker-entrypoint-api.sh"]
+# Set working directory to Django project
+WORKDIR /app/src/django_project
+
+# Run Django development server (replace with gunicorn/uwsgi for production)
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
