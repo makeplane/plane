@@ -4,6 +4,7 @@ import { stringToEmoji } from "../emoji-icon-picker";
 import { AddReactionIcon } from "../icons";
 import { Tooltip } from "../tooltip";
 import { cn } from "../utils";
+import { IconButton } from "../icon-button";
 
 export interface EmojiReactionType {
   emoji: string;
@@ -100,22 +101,17 @@ const EmojiReactionButton = React.forwardRef(function EmojiReactionButton(
   ref: React.ForwardedRef<HTMLButtonElement>
 ) {
   return (
-    <button
-      ref={ref}
-      onClick={onAddReaction}
-      className={cn(
-        "inline-flex items-center justify-center rounded-full border border-dashed border-strong",
-        "bg-surface-1 text-placeholder transition-all duration-200",
-        "hover:border-accent-strong hover:text-accent-primary hover:bg-accent-primary/5",
-        "focus:outline-none focus:ring-2 focus:ring-accent-strong/20 focus:ring-offset-1",
-        "h-6 w-6",
-        className
-      )}
-      title="Add reaction"
-      {...props}
-    >
-      <AddReactionIcon className="h-3 w-3" />
-    </button>
+    <Tooltip tooltipContent="Add reaction">
+      <IconButton
+        ref={ref}
+        icon={AddReactionIcon}
+        variant="ghost"
+        size="sm"
+        onClick={onAddReaction}
+        className={className}
+        {...props}
+      />
+    </Tooltip>
   );
 });
 

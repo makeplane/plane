@@ -16,6 +16,7 @@ export const ArrowsIconsMap = [
   { icon: <Icon name="arrow.chevron-left" />, title: "ChevronLeftIcon" },
   { icon: <Icon name="arrow.chevron-right" />, title: "ChevronRightIcon" },
   { icon: <Icon name="arrow.chevron-up" />, title: "ChevronUpIcon" },
+  { icon: <Icon name="arrow.reply" />, title: "ReplyIcon" },
 ];
 
 export const WorkspaceIconsMap = [
