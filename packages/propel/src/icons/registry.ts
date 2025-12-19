@@ -12,6 +12,7 @@ import { ChevronDownIcon } from "./arrows/chevron-down";
 import { ChevronLeftIcon } from "./arrows/chevron-left";
 import { ChevronRightIcon } from "./arrows/chevron-right";
 import { ChevronUpIcon } from "./arrows/chevron-up";
+import { ReplyIcon } from "./arrows/reply-icon";
 import { DefaultIcon } from "./default-icon";
 import { BoardLayoutIcon } from "./layouts/board-icon";
 import { CalendarLayoutIcon } from "./layouts/calendar-icon";
@@ -139,6 +140,7 @@ export const ICON_REGISTRY = {
   "arrow.chevron-left": ChevronLeftIcon,
   "arrow.chevron-right": ChevronRightIcon,
   "arrow.chevron-up": ChevronUpIcon,
+  "arrow.reply": ReplyIcon,
 
   // Default fallback
   default: DefaultIcon,
