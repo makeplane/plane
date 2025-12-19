@@ -199,17 +199,19 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       );
   };
 
-  const handleStartTime = (data: string | null) => {
-    if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { start_time: data ? renderFormattedPayloadDate(data) : null }).then(
-        () => {
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issue.id },
-          });
-        }
-      );
-  };
+ const handleStartTime = (time: string | null) => {
+  if (!updateIssue) return;
+
+  updateIssue(issue.project_id, issue.id, {
+    start_time: time ?? null, // time only (HH:mm)
+  }).then(() => {
+    captureSuccess({
+      eventName: WORK_ITEM_TRACKER_EVENTS.update,
+      payload: { id: issue.id },
+    });
+  });
+};
+
 
   const handleSport = (sport: string | null) => {
     if (updateIssue)
@@ -314,7 +316,7 @@ const isStartTimeReadOnly = (
   console.log("Event datetime:", eventDateTime.toString());
   console.log("System datetime:", new Date().toString());
 
-  return eventDateTime.getTime() >= Date.now();
+  return eventDateTime.getTime() <= Date.now();
 };
 
 
@@ -335,7 +337,7 @@ const isStartTimeReadOnly = (
             value={issue.state_id}
             onChange={handleState}
             projectId={issue.project_id}
-            disabled={isReadOnly}
+            disabled={disabled}
             buttonVariant="border-with-text"
             renderByDefault={isMobile}
             showTooltip
@@ -423,7 +425,7 @@ const isStartTimeReadOnly = (
             icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-10"
-            disabled={isReadOnly}
+            disabled={disabled}
             renderByDefault={isMobile}
             showTooltip
           />
@@ -431,24 +433,27 @@ const isStartTimeReadOnly = (
       </WithDisplayPropertiesHOC>
 
       {/* start time */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_time">
-        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-          <TimeDropdown
-            value={issue?.start_time ?? null}
-            onChange={handleStartTime}
-            placeholder={t("starting_time")}
-            icon={<Clock className="h-3 w-3 flex-shrink-0" />}
-            buttonVariant={issue?.start_time ? "border-with-text" : "border-without-text"}
-            clearIconClassName="!text-custom-text-100"
-            disabled={isReadOnly}
-            renderByDefault={isMobile}
-            showTooltip
-          />
-        </div>
-      </WithDisplayPropertiesHOC>
+  <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_time">
+  <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+    <TimeDropdown
+      value={issue.start_time ?? null}
+      onChange={handleStartTime}
+      placeholder={t("starting_time")}
+      icon={<Clock className="h-3 w-3 flex-shrink-0" />}
+      buttonVariant={issue.start_time ? "border-with-text" : "border-without-text"}
+      clearIconClassName="!text-custom-text-100"
+      disabled={disabled || !issue.start_date}
+      renderByDefault={isMobile}
+      showTooltip
+    />
+  </div>
+</WithDisplayPropertiesHOC>
+
 
        {/* level field */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
+ 
+        {/* Level */}
+<WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <LevelDropdown
              value={issue?.level ?? null}
@@ -507,7 +512,7 @@ const isStartTimeReadOnly = (
             projectId={issue?.project_id}
             value={issue?.assignee_ids}
             onChange={handleAssignee}
-            disabled={isReadOnly}
+            disabled={disabled}
             multiple
             buttonVariant={issue.assignee_ids?.length > 0 ? "transparent-without-text" : "border-without-text"}
             buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
@@ -532,7 +537,7 @@ const isStartTimeReadOnly = (
                     projectId={issue?.project_id}
                     value={issue?.module_ids ?? []}
                     onChange={handleModule}
-                    disabled={isReadOnly}
+                    disabled={disabled}
                     renderByDefault={isMobile}
                     multiple
                     buttonVariant="border-with-text"
@@ -552,7 +557,7 @@ const isStartTimeReadOnly = (
                     projectId={issue?.project_id}
                     value={issue?.cycle_id}
                     onChange={handleCycle}
-                    disabled={isReadOnly}
+                    disabled={disabled}
                     buttonVariant="border-with-text"
                     renderByDefault={isMobile}
                     showTooltip
