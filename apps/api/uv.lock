@@ -1231,9 +1231,7 @@ dependencies = [
     { name = "opentelemetry-instrumentation-django" },
     { name = "opentelemetry-sdk" },
     { name = "posthog" },
-    { name = "psycopg" },
     { name = "psycopg-binary" },
-    { name = "psycopg-c" },
     { name = "pyjwt" },
     { name = "pymongo" },
     { name = "python-json-logger" },
@@ -1294,9 +1292,7 @@ requires-dist = [
     { name = "opentelemetry-instrumentation-django", specifier = "==0.49b1" },
     { name = "opentelemetry-sdk", specifier = "==1.28.1" },
     { name = "posthog", specifier = "==3.5.0" },
-    { name = "psycopg", specifier = "==3.3.0" },
     { name = "psycopg-binary", specifier = "==3.3.0" },
-    { name = "psycopg-c", specifier = "==3.3.0" },
     { name = "pyjwt", specifier = "==2.8.0" },
     { name = "pymongo", specifier = "==4.6.3" },
     { name = "python-json-logger", specifier = "==3.3.0" },
@@ -1393,19 +1389,6 @@ wheels = [
 ]
 
 [[package]]
-name = "psycopg"
-version = "3.3.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
-    { name = "tzdata", marker = "sys_platform == 'win32'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/96/bd/06dc36aeda16ffff129d03d90e75fd5e24222a719adcef37cd07f1926b06/psycopg-3.3.0.tar.gz", hash = "sha256:68950107fb8979d34bfc16b61560a26afe5d8dab96617881c87dfff58221df09", size = 165593, upload-time = "2025-12-01T11:35:07.076Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d8/5d/3569bab5a92f33e4a1b3c3c16816718ef5cc306f55f3965a8cb630c496ac/psycopg-3.3.0-py3-none-any.whl", hash = "sha256:c9f070afeda682f6364f86cd77145f43feaf60648b2ce1f6e883e594d04cbea8", size = 212759, upload-time = "2025-12-01T11:21:15.91Z" },
-]
-
-[[package]]
 name = "psycopg-binary"
 version = "3.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1444,12 +1427,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/4b/4c/722363a201c2737aed0a95541bb71ad26f3d79033ce6cf190181023d86dc/psycopg_binary-3.3.0-cp314-cp314-musllinux_1_2_x86_64.whl", hash = "sha256:f3038029fff5105193ffe02352529925cb4ad5a5426b1d56d24b3654b062684e", size = 4239167, upload-time = "2025-12-01T11:34:23.423Z" },
     { url = "https://files.pythonhosted.org/packages/cc/a8/2b1000ba0fca0ee6216a24a9540c47c001543f27f2760baa30321031f5ff/psycopg_binary-3.3.0-cp314-cp314-win_amd64.whl", hash = "sha256:3681effab211f3e7bbde651f6eb7552b60289cd039a1a2058c674743a72d15d4", size = 3642102, upload-time = "2025-12-01T11:34:27.89Z" },
 ]
-
-[[package]]
-name = "psycopg-c"
-version = "3.3.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/e3/96/5a86ed5c23911ca62b4745529a6ead68f504f6ae717f98527c979290e823/psycopg_c-3.3.0.tar.gz", hash = "sha256:07372de01bf18b3ebec726d6bbeed73be1af40b342c364695e80e11ff75607e3", size = 623980, upload-time = "2025-12-01T11:34:31.923Z" }
 
 [[package]]
 name = "pycparser"
