@@ -84,7 +84,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
         disabled={disabled}
       >
         {issue.parent_id && parentIssue ? (
-          <div className="flex items-center gap-1 bg-success-subtle rounded-sm px-1.5 py-1">
+          <div className="flex items-center gap-1.5">
             <Tooltip tooltipHeading="Title" tooltipContent={parentIssue.name} isMobile={isMobile}>
               <Link href={workItemLink} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
                 {parentIssue?.project_id && parentIssueProjectDetails && (
@@ -94,7 +94,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
                     projectIdentifier={parentIssueProjectDetails?.identifier}
                     issueSequenceId={parentIssue.sequence_id}
                     size="xs"
-                    variant="success"
+                    variant="secondary"
                   />
                 )}
               </Link>
@@ -115,7 +115,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
             )}
           </div>
         ) : (
-          <span className="text-body-xs-regular text-placeholder">{t("issue.add.parent")}</span>
+          <span className="text-body-xs-medium text-placeholder">{t("issue.add.parent")}</span>
         )}
         {!disabled && (
           <span

@@ -34,6 +34,28 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
     filter.toggleVisibility();
   };
 
+  // Base classes when filter is active
+  const activeFilterBaseClasses =
+    "text-accent-primary border border-accent-subtle-1 hover:border-accent-subtle-1 active:border-accent-subtle-1 focus:border-accent-subtle-1";
+
+  // State classes that prevent hover/active/focus color changes
+  const noHoverStateClasses = "hover:text-accent-primary active:text-accent-primary focus:text-accent-primary";
+
+  // Background classes based on toggle state (darker when open, lighter when closed)
+  const backgroundClasses = isFilterRowVisible
+    ? "bg-accent-subtle-hover hover:bg-accent-subtle-hover active:bg-accent-subtle-hover focus:bg-accent-subtle-hover"
+    : "bg-accent-subtle hover:bg-accent-subtle active:bg-accent-subtle focus:bg-accent-subtle";
+
+  const buttonClassName = cn({
+    [activeFilterBaseClasses]: showFilterRowChangesPill,
+    [backgroundClasses]: showFilterRowChangesPill,
+    [noHoverStateClasses]: showFilterRowChangesPill,
+  });
+
+  const iconClassName = cn({
+    "text-accent-primary [&_path]:fill-current": showFilterRowChangesPill,
+  });
+
   // Show the add filter button when there are no active conditions, the filter row is hidden, and no unsaved changes exist
   if (filter && showAddFilterButton) {
     return (
@@ -55,9 +77,8 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
       variant="secondary"
       icon={showFilterRowChangesPill ? FilterAppliedIcon : FilterIcon}
       onClick={handleToggleFilter}
-      className={cn({
-        "text-accent-primary bg-accent-subtle border border-accent-subtle-1": showFilterRowChangesPill,
-      })}
+      className={buttonClassName}
+      iconClassName={iconClassName}
     />
   );
 });
