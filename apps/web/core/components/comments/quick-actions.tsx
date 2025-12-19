@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Globe2, Link, Lock, Pencil, Trash2 } from "lucide-react";
+import { Globe2, Link, Lock, Pencil, Trash2, MoreHorizontal } from "lucide-react";
 // plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@plane/propel/icon-button";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
@@ -76,7 +77,7 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
   );
 
   return (
-    <CustomMenu ellipsis closeOnSelect>
+    <CustomMenu customButton={<IconButton icon={MoreHorizontal} variant="ghost" size="sm" />} closeOnSelect>
       {MENU_ITEMS.map((item) => {
         if (item.shouldRender === false) return null;
 
