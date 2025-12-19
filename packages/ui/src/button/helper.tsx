@@ -41,7 +41,7 @@ export const buttonStyling: IButtonStyling = {
     default: `text-on-color bg-accent-primary`,
     hover: `hover:bg-accent-primary/80`,
     pressed: `focus:text-custom-brand-40 focus:bg-accent-primary/80`,
-    disabled: `cursor-not-allowed !bg-layer-1 !text-placeholder`,
+    disabled: `cursor-not-allowed !bg-layer-1 !text-on-color-disabled`,
   },
   "accent-primary": {
     default: `bg-accent-primary/20 text-accent-primary`,
