@@ -30,6 +30,7 @@ FROM python:3.12.10-alpine AS production
 
 # Set working directory
 WORKDIR /app
+RUN apk add bash
 
 # Copy the virtual environment from builder
 COPY --from=builder /app/.venv /app/.venv
