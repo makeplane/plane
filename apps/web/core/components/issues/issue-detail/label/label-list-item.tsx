@@ -31,14 +31,10 @@ export const LabelListItem = observer(function LabelListItem(props: TLabelListIt
 
   if (!label) return <></>;
   return (
-    <Button key={labelId} type="button" variant="tertiary" onClick={() => void handleLabel()} disabled={disabled}>
+    <Button variant="tertiary" size="sm" key={labelId} onClick={handleLabel} disabled={disabled}>
       <LabelFilledIcon className="size-3" color={label.color ?? "#000000"} />
-      <div className="flex-shrink-0">{label.name}</div>
-      {!disabled && (
-        <div className="flex-shrink-0">
-          <CloseIcon className="transition-all h-2.5 w-2.5 group-hover:text-danger" />
-        </div>
-      )}
+      <span className="text-body-xs-regular">{label.name}</span>
+      {!disabled && <CloseIcon className="transition-all h-2.5 w-2.5 group-hover:text-danger" />}
     </Button>
   );
 });
