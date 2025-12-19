@@ -25,6 +25,24 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked
 
 
+# Optional dev environment
+FROM builder AS dev
+# Copy application source code
+COPY . ./plane
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --group local
+
+CMD [ "./bin/docker-entrypoint-api-local.sh" ]
+
+
+# Optional test environment
+FROM builder AS test
+# Copy application source code
+COPY . ./plane
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --group test
+
+
 # Stage 2: Production - Lean runtime image
 FROM python:3.12.10-alpine AS production
 
