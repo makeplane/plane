@@ -13,8 +13,6 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import APIException
 from rest_framework.generics import GenericAPIView
@@ -22,7 +20,7 @@ from rest_framework.generics import GenericAPIView
 # Module imports
 from plane.db.models.api import APIToken
 from plane.api.middleware.api_authentication import APIKeyAuthentication
-from plane.api.rate_limit import ApiKeyRateThrottle, ServiceTokenRateThrottle
+from plane.api.rate_limit import ApiKeyRateThrottle, ServiceTokenRateThrottle, WorkspaceTokenRateThrottle
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 from plane.utils.core.mixins import ReadReplicaControlMixin
@@ -62,10 +60,18 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
         api_key = self.request.headers.get("X-Api-Key")
 
         if api_key:
-            service_token = APIToken.objects.filter(token=api_key, is_service=True).first()
+            api_token = APIToken.objects.filter(token=api_key)
+
+            service_token = api_token.filter(is_service=True).first()
+
+            workspace_token = api_token.filter(workspace_id__isnull=False).first()
 
             if service_token:
                 throttle_classes.append(ServiceTokenRateThrottle())
+                return throttle_classes
+
+            if workspace_token:
+                throttle_classes.append(WorkspaceTokenRateThrottle())
                 return throttle_classes
 
         throttle_classes.append(ApiKeyRateThrottle())
