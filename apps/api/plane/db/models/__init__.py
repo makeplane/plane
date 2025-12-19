@@ -34,7 +34,6 @@ from .issue import (
     IssueLabel,
     IssueLink,
     IssueMention,
-    IssueUserProperty,
     IssueReaction,
     IssueRelation,
     IssueSequence,
@@ -54,6 +53,7 @@ from .project import (
     ProjectMemberInvite,
     ProjectNetwork,
     ProjectPublicMember,
+    ProjectUserProperty,
 )
 from .session import Session
 from .social_connection import SocialLoginConnection

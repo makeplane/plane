@@ -18,7 +18,7 @@ from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 from plane.db.models import (
     Cycle,
     Intake,
-    IssueUserProperty,
+    ProjectUserProperty,
     Module,
     Project,
     DeployBoard,
@@ -216,8 +216,6 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
 
                 # Add the user as Administrator to the project
                 _ = ProjectMember.objects.create(project_id=serializer.instance.id, member=request.user, role=20)
-                # Also create the issue property for the user
-                _ = IssueUserProperty.objects.create(project_id=serializer.instance.id, user=request.user)
 
                 if serializer.instance.project_lead is not None and str(serializer.instance.project_lead) != str(
                     request.user.id
@@ -226,11 +224,6 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                         project_id=serializer.instance.id,
                         member_id=serializer.instance.project_lead,
                         role=20,
-                    )
-                    # Also create the issue property for the user
-                    IssueUserProperty.objects.create(
-                        project_id=serializer.instance.id,
-                        user_id=serializer.instance.project_lead,
                     )
 
                 State.objects.bulk_create(
