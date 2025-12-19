@@ -19,7 +19,7 @@ export function SidebarPropertyListItem(props: TSidebarPropertyListItemProps) {
         <span>{label}</span>
         {appendElement}
       </div>
-      <div className={cn("grow flex items-center flex-wrap gap-2", childrenClassName)}>{children}</div>
+      <div className={cn("grow flex items-center flex-wrap gap-1", childrenClassName)}>{children}</div>
     </div>
   );
 }

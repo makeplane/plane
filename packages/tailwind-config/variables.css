@@ -295,7 +295,7 @@
   /* Background colors */
   --background-color-canvas: var(--color-neutral-300);
   --background-color-surface-1: var(--color-neutral-white);
-  --background-color-surface-2: var(--color-neutral-100);
+  --background-color-surface-2: var(--color-neutral-200);
   --background-color-layer-1: var(--color-neutral-200);
   --background-color-layer-1-hover: var(--color-neutral-300);
   --background-color-layer-1-active: var(--color-neutral-400);

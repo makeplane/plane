@@ -1,4 +1,5 @@
 import { observer } from "mobx-react";
+import { Button } from "@plane/propel/button";
 import { CloseIcon, LabelFilledIcon } from "@plane/propel/icons";
 // types
 import { useLabel } from "@/hooks/store/use-label";
