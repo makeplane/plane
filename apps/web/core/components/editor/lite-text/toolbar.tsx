@@ -25,6 +25,7 @@ type Props = {
   showAccessSpecifier: boolean;
   showSubmitButton: boolean;
   editorRef: EditorRefApi | null;
+  submitButtonText?: string;
 };
 
 type TCommentAccessType = {
@@ -60,6 +61,7 @@ export function IssueCommentToolbar(props: Props) {
     showAccessSpecifier,
     showSubmitButton,
     editorRef,
+    submitButtonText = "common.comment",
   } = props;
   // State to manage active states of toolbar items
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
@@ -175,7 +177,7 @@ export function IssueCommentToolbar(props: Props) {
               disabled={isSubmitButtonDisabled}
               loading={isSubmitting}
             >
-              {t("common.comment")}
+              {t(submitButtonText)}
             </Button>
           </div>
         )}
