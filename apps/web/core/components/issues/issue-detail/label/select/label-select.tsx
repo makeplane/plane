@@ -1,11 +1,12 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Loader, Search } from "lucide-react";
+import { Check, Loader, Plus, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // helpers
@@ -84,11 +85,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
 
   const issueLabels = values ?? [];
 
-  const label = (
-    <span className="size-full flex items-center rounded-sm px-2 py-0.5 bg-layer-transparent hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary">
-      {t("label.select")}
-    </span>
-  );
+  const label = <span className="text-body-xs-medium text-placeholder">{t("label.select")}</span>;
 
   const searchInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (query !== "" && e.key === "Escape") {
@@ -123,14 +120,16 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
         multiple
       >
         <Combobox.Button as={Fragment}>
-          <button
+          <Button
             ref={setReferenceElement}
             type="button"
-            className="cursor-pointer size-full"
+            variant="tertiary"
+            size="sm"
+            prependIcon={<Plus />}
             onClick={() => !projectLabels && fetchLabels()}
           >
             {label}
-          </button>
+          </Button>
         </Combobox.Button>
 
         <Combobox.Options className="fixed z-10">

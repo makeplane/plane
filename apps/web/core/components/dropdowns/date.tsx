@@ -138,7 +138,9 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
       >
         {!hideIcon && icon}
         {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-          <span className="flex-grow truncate">{value ? renderFormattedDate(value, formatToken) : placeholder}</span>
+          <span className="flex-grow truncate text-left text-body-xs-medium">
+            {value ? renderFormattedDate(value, formatToken) : placeholder}
+          </span>
         )}
         {isClearable && !disabled && isDateSelected && (
           <CloseIcon
