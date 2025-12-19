@@ -49,9 +49,11 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
 
         soup = None
         title = None
+        final_url = url  # Use final URL after redirects for favicon resolution
 
         try:
             response = requests.get(url, headers=headers, timeout=1)
+            final_url = response.url  # Get the final URL after any redirects
 
             soup = BeautifulSoup(response.content, "html.parser")
             title_tag = soup.find("title")
@@ -60,8 +62,8 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         except requests.RequestException as e:
             logger.warning(f"Failed to fetch HTML for title: {str(e)}")
 
-        # Fetch and encode favicon
-        favicon_base64 = fetch_and_encode_favicon(headers, soup, url)
+        # Fetch and encode favicon using final URL (after redirects)
+        favicon_base64 = fetch_and_encode_favicon(headers, soup, final_url)
 
         # Prepare result
         result = {
