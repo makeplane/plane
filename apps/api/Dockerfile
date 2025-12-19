@@ -35,7 +35,7 @@ WORKDIR /app
 COPY --from=builder /app/.venv /app/.venv
 
 # Copy application source code
-COPY . ./src
+COPY . ./plane
 
 # Set environment variables
 ENV PATH="/app/.venv/bin:$PATH" \
