@@ -1,6 +1,5 @@
 @import "@plane/tailwind-config/index.css";
 @import "@plane/editor/styles";
-@import "@plane/propel/styles/fonts";
 @import "@plane/propel/styles/react-day-picker.css";
 @plugin "@tailwindcss/typography";
 
