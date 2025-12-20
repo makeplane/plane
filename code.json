@@ -1,0 +1,54 @@
+{
+  "version": "2.0.0",
+  "agency": "Department of the Treasury",
+  "measurementType": {
+    "method": "modules"
+  },
+  "releases": [
+    {
+      "name": "plane",
+      "description": "Treasury fork of Plane - open source project management tool with federal authentication support (PIV/CAC, OIDC)",
+      "repositoryURL": "https://github.com/US-Department-of-the-Treasury/plane",
+      "homepageURL": "https://github.com/US-Department-of-the-Treasury/plane",
+      "permissions": {
+        "licenses": [
+          {
+            "URL": "https://github.com/US-Department-of-the-Treasury/plane/blob/main/LICENSE.txt",
+            "name": "AGPL-3.0"
+          }
+        ],
+        "usageType": "openSource"
+      },
+      "laborHours": 0,
+      "tags": [
+        "project-management",
+        "issue-tracking",
+        "agile",
+        "kanban",
+        "piv-authentication",
+        "federal",
+        "government"
+      ],
+      "contact": {
+        "email": "opensource@treasury.gov"
+      },
+      "vcs": "git",
+      "languages": [
+        "TypeScript",
+        "Python",
+        "JavaScript"
+      ],
+      "status": "Development",
+      "date": {
+        "created": "2024-12-20",
+        "lastModified": "2024-12-20"
+      },
+      "relatedCode": [
+        {
+          "name": "Plane (upstream)",
+          "URL": "https://github.com/makeplane/plane"
+        }
+      ]
+    }
+  ]
+}
