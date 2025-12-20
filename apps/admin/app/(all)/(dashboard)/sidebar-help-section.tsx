@@ -5,7 +5,6 @@ import { ExternalLink, HelpCircle, MoveLeft } from "lucide-react";
 import { Transition } from "@headlessui/react";
 // plane internal packages
 import { WEB_BASE_URL } from "@plane/constants";
-import { DiscordIcon, GithubIcon, PageIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
@@ -14,23 +13,9 @@ import { useTheme } from "@/hooks/store";
 
 import packageJson from "package.json";
 
-const helpOptions = [
-  {
-    name: "Documentation",
-    href: "https://docs.plane.so/",
-    Icon: PageIcon,
-  },
-  {
-    name: "Join our Discord",
-    href: "https://discord.com/invite/A92xrEGCge",
-    Icon: DiscordIcon,
-  },
-  {
-    name: "Report a bug",
-    href: "https://github.com/makeplane/plane/issues/new/choose",
-    Icon: GithubIcon,
-  },
-];
+// External help links removed for government deployment
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const helpOptions: { name: string; href?: string; Icon: React.ComponentType<any> }[] = [];
 
 export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection() {
   // states

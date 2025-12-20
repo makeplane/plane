@@ -149,9 +149,9 @@ class InstanceEndpoint(BaseAPIView):
         # Slack client
         data["slack_client_id"] = SLACK_CLIENT_ID
 
-        # Posthog
-        data["posthog_api_key"] = POSTHOG_API_KEY
-        data["posthog_host"] = POSTHOG_HOST
+        # Posthog - disabled for government deployment (never expose to frontend)
+        data["posthog_api_key"] = None
+        data["posthog_host"] = None
 
         # Unsplash
         data["has_unsplash_configured"] = bool(UNSPLASH_ACCESS_KEY)
@@ -165,9 +165,9 @@ class InstanceEndpoint(BaseAPIView):
         # is smtp configured
         data["is_smtp_configured"] = bool(EMAIL_HOST)
 
-        # Intercom settings
-        data["is_intercom_enabled"] = IS_INTERCOM_ENABLED == "1"
-        data["intercom_app_id"] = INTERCOM_APP_ID
+        # Intercom settings - disabled for government deployment
+        data["is_intercom_enabled"] = False
+        data["intercom_app_id"] = ""
 
         # Base URL
         data["admin_base_url"] = settings.ADMIN_BASE_URL

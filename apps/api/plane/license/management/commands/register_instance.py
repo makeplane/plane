@@ -2,7 +2,6 @@
 import json
 import secrets
 import os
-import requests
 
 # Django imports
 from django.core.management.base import BaseCommand, CommandError
@@ -11,7 +10,6 @@ from django.utils import timezone
 
 # Module imports
 from plane.license.models import Instance, InstanceEdition
-from plane.license.bgtasks.tracer import instance_traces
 
 
 class Command(BaseCommand):
@@ -34,17 +32,9 @@ class Command(BaseCommand):
             return "v0.1.0"
 
     def check_for_latest_version(self, fallback_version):
-        try:
-            response = requests.get(
-                "https://api.github.com/repos/makeplane/plane/releases/latest",
-                timeout=10,
-            )
-            response.raise_for_status()
-            data = response.json()
-            return data.get("tag_name", fallback_version)
-        except Exception:
-            self.stdout.write("Error checking for latest version")
-            return fallback_version
+        # GitHub API call removed for government deployment
+        # Original implementation called api.github.com/repos/makeplane/plane/releases/latest
+        return fallback_version
 
     def handle(self, *args, **options):
         # Check if the instance is registered
@@ -82,7 +72,5 @@ class Command(BaseCommand):
             instance.edition = InstanceEdition.PLANE_COMMUNITY.value
             instance.save()
 
-        # Call the instance traces task
-        instance_traces.delay()
-
+        # NOTE: instance_traces.delay() removed for government deployment
         return

@@ -42,13 +42,14 @@ type TFormData = {
   is_telemetry_enabled: boolean;
 };
 
+// Telemetry disabled by default for government deployment
 const defaultFromData: TFormData = {
   first_name: "",
   last_name: "",
   email: "",
   company_name: "",
   password: "",
-  is_telemetry_enabled: true,
+  is_telemetry_enabled: false,
 };
 
 export function InstanceSetupForm() {
@@ -314,6 +315,7 @@ export function InstanceSetupForm() {
                 renderPasswordMatchError && <span className="text-13 text-red-500">Passwords don{"'"}t match</span>}
             </div>
 
+            {/* Telemetry option - external link removed for government deployment */}
             <div className="relative flex gap-2">
               <div>
                 <Checkbox
@@ -325,16 +327,7 @@ export function InstanceSetupForm() {
                 />
               </div>
               <label className="text-13 text-tertiary font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
-                Allow Plane to anonymously collect usage events.{" "}
-                <a
-                  tabIndex={-1}
-                  href="https://developers.plane.so/self-hosting/telemetry"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-13 font-medium text-blue-500 hover:text-blue-600 flex-shrink-0"
-                >
-                  See More
-                </a>
+                Allow Plane to anonymously collect usage events.
               </label>
             </div>
 

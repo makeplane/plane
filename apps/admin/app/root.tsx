@@ -53,18 +53,17 @@ export function Layout({ children }: { children: ReactNode }) {
   );
 }
 
+// Meta tags cleaned for government deployment - removed external URLs and social media references
 export const meta: Route.MetaFunction = () => [
   { title: APP_TITLE },
   { name: "description", content: APP_DESCRIPTION },
   { property: "og:title", content: APP_TITLE },
   { property: "og:description", content: APP_DESCRIPTION },
-  { property: "og:url", content: "https://plane.so/" },
   {
     name: "keywords",
     content:
       "software development, customer feedback, software, accelerate, code management, release management, project management, work items tracking, agile, scrum, kanban, collaboration",
   },
-  { name: "twitter:site", content: "@planepowers" },
 ];
 
 export default function Root() {

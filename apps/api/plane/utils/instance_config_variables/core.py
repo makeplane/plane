@@ -204,10 +204,11 @@ unsplash_config_variables = [
     },
 ]
 
+# Intercom disabled by default for government deployment
 intercom_config_variables = [
     {
         "key": "IS_INTERCOM_ENABLED",
-        "value": os.environ.get("IS_INTERCOM_ENABLED", "1"),
+        "value": os.environ.get("IS_INTERCOM_ENABLED", "0"),
         "category": "INTERCOM",
         "is_encrypted": False,
     },
