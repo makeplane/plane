@@ -173,7 +173,7 @@ const isLocked = disabled || isPastEvent;
             <TimeDropdown
               value={issue.start_time}
               onChange={(val) => {
-                if (!val) return;
+               
                 issueOperations.update(workspaceSlug, projectId, issueId, {
                   start_time: val,
                 });
@@ -201,7 +201,7 @@ const isLocked = disabled || isPastEvent;
             <LevelDropdown
               value={issue?.level}
               onChange={(level) => {
-                if (!level) return;
+                
                 issueOperations.update(workspaceSlug, projectId, issueId, {
                   level: level,
                 });
@@ -228,8 +228,7 @@ const isLocked = disabled || isPastEvent;
 
             <ProgramDropdown
               value={issue?.program}
-              onChange={(program) => {
-                if (!program) return;
+              onChange={(program) => {              
                 issueOperations.update(workspaceSlug, projectId, issueId, {
                   program: program,
                 });
@@ -257,7 +256,7 @@ const isLocked = disabled || isPastEvent;
             <SportDropdown
               value={issue?.sport}
               onChange={(sport) => {
-                if (!sport) return;
+              
                 issueOperations.update(workspaceSlug, projectId, issueId, {
                   sport: sport,
                 });
@@ -304,7 +303,7 @@ const isLocked = disabled || isPastEvent;
             <CategoryDropdown
               value={issue?.category}
               onChange={(category) => {
-                if (!category) return;
+               
                 issueOperations.update(workspaceSlug, projectId, issueId, {
                   category: category,
                 });
@@ -332,7 +331,6 @@ const isLocked = disabled || isPastEvent;
             <YearRangeDropdown
               value={issue?.year}
               onChange={(year) => {
-                if (!year) return;
                 issueOperations.update(workspaceSlug, projectId, issueId, {
                   year: year,
                 });
