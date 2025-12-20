@@ -55,7 +55,6 @@ function ProjectCreateHeader(props: Props) {
           render={({ field: { value, onChange } }) => (
             <ImagePickerPopover
               label={t("change_cover")}
-              control={control}
               onChange={onChange}
               value={value ?? null}
               tabIndex={getIndex("cover_image")}

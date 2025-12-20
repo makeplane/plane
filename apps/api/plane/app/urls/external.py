@@ -1,12 +1,11 @@
 from django.urls import path
 
-
-from plane.app.views import UnsplashEndpoint
+# Unsplash endpoint removed for government deployment - no external API calls
 from plane.app.views import GPTIntegrationEndpoint, WorkspaceGPTIntegrationEndpoint
 
 
 urlpatterns = [
-    path("unsplash/", UnsplashEndpoint.as_view(), name="unsplash"),
+    # Unsplash endpoint removed for government deployment
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/ai-assistant/",
         GPTIntegrationEndpoint.as_view(),

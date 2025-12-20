@@ -195,14 +195,8 @@ llm_config_variables = [
     },
 ]
 
-unsplash_config_variables = [
-    {
-        "key": "UNSPLASH_ACCESS_KEY",
-        "value": os.environ.get("UNSPLASH_ACCESS_KEY", ""),
-        "category": "UNSPLASH",
-        "is_encrypted": True,
-    },
-]
+# Unsplash integration removed for government deployment - no external API calls
+unsplash_config_variables = []
 
 # Intercom disabled by default for government deployment
 intercom_config_variables = [

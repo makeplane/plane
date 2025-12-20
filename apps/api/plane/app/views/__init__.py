@@ -177,9 +177,9 @@ from .search.issue import IssueSearchEndpoint
 
 from .external.base import (
     GPTIntegrationEndpoint,
-    UnsplashEndpoint,
     WorkspaceGPTIntegrationEndpoint,
 )
+# Unsplash integration removed for government deployment
 from .estimate.base import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,

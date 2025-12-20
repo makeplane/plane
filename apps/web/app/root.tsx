@@ -1,6 +1,5 @@
+// Sentry disabled for government deployment - no external error reporting
 import type { ReactNode } from "react";
-import * as Sentry from "@sentry/react-router";
-import Script from "next/script";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
 // plane imports
@@ -47,7 +46,7 @@ export const links: LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
-  const isSessionRecorderEnabled = parseInt(process.env.VITE_ENABLE_SESSION_RECORDER || "0");
+  // Microsoft Clarity session recorder removed for government deployment - no external session tracking
 
   return (
     <html lang="en">
@@ -76,15 +75,6 @@ export function Layout({ children }: { children: ReactNode }) {
           </div>
         </AppProvider>
         <Scripts />
-        {!!isSessionRecorderEnabled && process.env.VITE_SESSION_RECORDER_KEY && (
-          <Script id="clarity-tracking">
-            {`(function(c,l,a,r,i,t,y){
-              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-              y=l.getElementsByTagName(r)[0];if(y){y.parentNode.insertBefore(t,y);}
-          })(window, document, "clarity", "script", "${process.env.VITE_SESSION_RECORDER_KEY}");`}
-          </Script>
-        )}
       </body>
     </html>
   );
@@ -118,8 +108,10 @@ export function HydrateFallback() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  // Sentry.captureException removed for government deployment - no external error reporting
+  // Errors are logged to console for local debugging
   if (error) {
-    Sentry.captureException(error);
+    console.error("Application error:", error);
   }
 
   return <CustomErrorComponent error={error} />;

@@ -1,10 +1,8 @@
+// Unsplash integration removed for government deployment - no external API calls
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
-import type { Control } from "react-hook-form";
-import { Controller } from "react-hook-form";
-import useSWR from "swr";
 import { Tab, Popover } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
@@ -12,11 +10,9 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
-import { Input, Loader } from "@plane/ui";
 // helpers
 import { STATIC_COVER_IMAGES, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 // hooks
-import { useInstance } from "@/hooks/store/use-instance";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services
 import { FileService } from "@/services/file.service";
@@ -30,7 +26,6 @@ type TTabOption = {
 type Props = {
   label: string | React.ReactNode;
   value: string | null;
-  control: Control<any>;
   onChange: (data: string) => void;
   disabled?: boolean;
   tabIndex?: number;
@@ -42,30 +37,18 @@ type Props = {
 const fileService = new FileService();
 
 export const ImagePickerPopover = observer(function ImagePickerPopover(props: Props) {
-  const { label, value, control, onChange, disabled = false, tabIndex, isProfileCover = false, projectId } = props;
+  const { label, value, onChange, disabled = false, tabIndex, isProfileCover = false, projectId } = props;
   // states
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [searchParams, setSearchParams] = useState("");
-  const [formData, setFormData] = useState({
-    search: "",
-  });
   // refs
   const ref = useRef<HTMLDivElement>(null);
   // router params
   const { workspaceSlug } = useParams();
-  // store hooks
-  const { config } = useInstance();
-  // derived values
-  const hasUnsplashConfigured = config?.has_unsplash_configured || false;
+  // Unsplash integration removed for government deployment - only static images and upload
   const tabOptions: TTabOption[] = useMemo(
     () => [
-      {
-        key: "unsplash",
-        title: "Unsplash",
-        isEnabled: hasUnsplashConfigured,
-      },
       {
         key: "images",
         title: "Images",
@@ -77,16 +60,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
         isEnabled: true,
       },
     ],
-    [hasUnsplashConfigured]
-  );
-
-  const { data: unsplashImages, error: unsplashError } = useSWR(
-    `UNSPLASH_IMAGES_${searchParams}`,
-    () => fileService.getUnsplashImages(searchParams),
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
+    []
   );
 
   const imagePickerRef = useRef<HTMLDivElement>(null);
@@ -209,74 +183,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                 ))}
               </Tab.List>
               <Tab.Panels className="vertical-scrollbar scrollbar-md h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
-                <Tab.Panel className="mt-4 h-full w-full space-y-4">
-                  {(unsplashImages || !unsplashError) && (
-                    <>
-                      <div className="flex items-center gap-x-2">
-                        <Controller
-                          control={control}
-                          name="search"
-                          render={({ field: { value, ref } }) => (
-                            <Input
-                              id="search"
-                              name="search"
-                              type="text"
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                  e.preventDefault();
-                                  setSearchParams(formData.search);
-                                }
-                              }}
-                              value={value}
-                              onChange={(e) => setFormData({ ...formData, search: e.target.value })}
-                              ref={ref}
-                              placeholder="Search for images"
-                              className="w-full text-13"
-                            />
-                          )}
-                        />
-                        <Button variant="primary" size="xl" onClick={() => setSearchParams(formData.search)}>
-                          Search
-                        </Button>
-                      </div>
-                      {unsplashImages ? (
-                        unsplashImages.length > 0 ? (
-                          <div className="grid grid-cols-4 gap-4">
-                            {unsplashImages.map((image) => (
-                              <div
-                                key={image.id}
-                                className="relative col-span-2 aspect-video md:col-span-1"
-                                onClick={() => {
-                                  setIsOpen(false);
-                                  onChange(image.urls.regular);
-                                }}
-                              >
-                                <img
-                                  src={image.urls.small}
-                                  alt={image.alt_description}
-                                  className="absolute left-0 top-0 h-full w-full cursor-pointer rounded-sm object-cover"
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="pt-7 text-center text-11 text-secondary">No images found.</p>
-                        )
-                      ) : (
-                        <Loader className="grid grid-cols-4 gap-4">
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                        </Loader>
-                      )}
-                    </>
-                  )}
-                </Tab.Panel>
+                {/* Unsplash tab panel removed for government deployment */}
                 <Tab.Panel className="mt-4 h-full w-full space-y-4">
                   <div className="grid grid-cols-4 gap-4">
                     {Object.values(STATIC_COVER_IMAGES).map((imageUrl, index) => (

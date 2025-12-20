@@ -245,7 +245,6 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                 render={({ field: { value, onChange } }) => (
                   <ImagePickerPopover
                     label={t("change_cover")}
-                    control={control}
                     onChange={(imageUrl) => onChange(imageUrl)}
                     value={value}
                     isProfileCover

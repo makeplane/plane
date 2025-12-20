@@ -10,7 +10,8 @@ export const DEFAULT_CALLOUT_BLOCK_ATTRIBUTES: TCalloutBlockAttributes = {
   [ECalloutAttributeNames.ICON_COLOR]: undefined,
   [ECalloutAttributeNames.ICON_NAME]: undefined,
   [ECalloutAttributeNames.EMOJI_UNICODE]: "128161",
-  [ECalloutAttributeNames.EMOJI_URL]: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a1.png",
+  // External CDN URL removed for government deployment - using icon fallback
+  [ECalloutAttributeNames.EMOJI_URL]: undefined,
   [ECalloutAttributeNames.BACKGROUND]: undefined,
   [ECalloutAttributeNames.BLOCK_TYPE]: "callout-component",
 };
