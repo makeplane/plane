@@ -1,28 +1,21 @@
 # Python imports
+import json
 import os
 import secrets
-from datetime import timedelta
 
-# Django imports
-from django.utils import timezone
 
 # Module imports
 from plane.authentication.adapter.credential import CredentialAdapter
 from plane.license.utils.instance_value import get_configuration_value
+from plane.settings.redis import redis_instance
 from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
 )
-from plane.db.models import User, MagicLink
+from plane.db.models import User
 
 
 class MagicCodeProvider(CredentialAdapter):
-    """
-    Magic code authentication provider using PostgreSQL storage.
-
-    This replaces Redis-based magic link storage for simplified infrastructure.
-    """
-
     provider = "magic-code"
 
     def __init__(self, request, key, code=None, callback=None):
@@ -55,18 +48,21 @@ class MagicCodeProvider(CredentialAdapter):
         self.code = code
 
     def initiate(self):
-        """Generate and store a magic link token."""
-        # Generate a random 6-digit token
+        ## Generate a random token
         token = str(secrets.randbelow(900000) + 100000)
+
+        ri = redis_instance()
+
         key = "magic_" + str(self.key)
-        email = str(self.key)
 
-        # Check for existing magic link
-        existing_link = MagicLink.objects.filter(key=key).first()
+        # Check if the key already exists in python
+        if ri.exists(key):
+            data = json.loads(ri.get(key))
 
-        if existing_link:
-            # Check if too many attempts
-            if existing_link.current_attempt > 2:
+            current_attempt = data["current_attempt"] + 1
+
+            if data["current_attempt"] > 2:
+                email = str(self.key).replace("magic_", "", 1)
                 if User.objects.filter(email=email).exists():
                     raise AuthenticationException(
                         error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN"],
@@ -77,92 +73,71 @@ class MagicCodeProvider(CredentialAdapter):
                     raise AuthenticationException(
                         error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP"],
                         error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP",
-                        payload={"email": email},
+                        payload={"email": self.key},
                     )
 
-            # Update existing link with new token and increment attempt
-            existing_link.token = token
-            existing_link.current_attempt += 1
-            existing_link.expires_at = timezone.now() + timedelta(minutes=10)
-            existing_link.save()
+            value = {
+                "current_attempt": current_attempt,
+                "email": str(self.key),
+                "token": token,
+            }
+            expiry = 600
+            ri.set(key, json.dumps(value), ex=expiry)
         else:
-            # Create new magic link
-            MagicLink.objects.create(
-                key=key,
-                email=email,
-                token=token,
-                current_attempt=0,
-                expires_at=timezone.now() + timedelta(minutes=10),
-            )
+            value = {"current_attempt": 0, "email": self.key, "token": token}
+            expiry = 600
 
+            ri.set(key, json.dumps(value), ex=expiry)
         return key, token
 
     def set_user_data(self):
-        """Verify the magic code and set user data."""
-        try:
-            link = MagicLink.objects.get(key=self.key)
-        except MagicLink.DoesNotExist:
-            # Link doesn't exist - expired or never created
-            email = str(self.key).replace("magic_", "", 1)
-            if User.objects.filter(email=email).exists():
-                raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_MAGIC_CODE_SIGN_IN"],
-                    error_message="EXPIRED_MAGIC_CODE_SIGN_IN",
-                    payload={"email": str(email)},
-                )
-            else:
-                raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_MAGIC_CODE_SIGN_UP"],
-                    error_message="EXPIRED_MAGIC_CODE_SIGN_UP",
-                    payload={"email": str(email)},
-                )
+        ri = redis_instance()
+        if ri.exists(self.key):
+            data = json.loads(ri.get(self.key))
+            token = data["token"]
+            email = data["email"]
 
-        # Check if expired
-        if link.is_expired:
-            link.delete()
-            email = str(self.key).replace("magic_", "", 1)
-            if User.objects.filter(email=email).exists():
-                raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_MAGIC_CODE_SIGN_IN"],
-                    error_message="EXPIRED_MAGIC_CODE_SIGN_IN",
-                    payload={"email": str(email)},
+            if str(token) == str(self.code):
+                super().set_user_data(
+                    {
+                        "email": email,
+                        "user": {
+                            "avatar": "",
+                            "first_name": "",
+                            "last_name": "",
+                            "provider_id": "",
+                            "is_password_autoset": True,
+                        },
+                    }
                 )
+                # Delete the token from redis if the code match is successful
+                ri.delete(self.key)
+                return
             else:
-                raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_MAGIC_CODE_SIGN_UP"],
-                    error_message="EXPIRED_MAGIC_CODE_SIGN_UP",
-                    payload={"email": str(email)},
-                )
-
-        # Verify token
-        if str(link.token) == str(self.code):
-            super().set_user_data(
-                {
-                    "email": link.email,
-                    "user": {
-                        "avatar": "",
-                        "first_name": "",
-                        "last_name": "",
-                        "provider_id": "",
-                        "is_password_autoset": True,
-                    },
-                }
-            )
-            # Delete the token after successful verification
-            link.delete()
-            return
+                email = str(self.key).replace("magic_", "", 1)
+                if User.objects.filter(email=email).exists():
+                    raise AuthenticationException(
+                        error_code=AUTHENTICATION_ERROR_CODES["INVALID_MAGIC_CODE_SIGN_IN"],
+                        error_message="INVALID_MAGIC_CODE_SIGN_IN",
+                        payload={"email": str(email)},
+                    )
+                else:
+                    raise AuthenticationException(
+                        error_code=AUTHENTICATION_ERROR_CODES["INVALID_MAGIC_CODE_SIGN_UP"],
+                        error_message="INVALID_MAGIC_CODE_SIGN_UP",
+                        payload={"email": str(email)},
+                    )
         else:
-            # Invalid code
             email = str(self.key).replace("magic_", "", 1)
             if User.objects.filter(email=email).exists():
                 raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_MAGIC_CODE_SIGN_IN"],
-                    error_message="INVALID_MAGIC_CODE_SIGN_IN",
+                    error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_MAGIC_CODE_SIGN_IN"],
+                    error_message="EXPIRED_MAGIC_CODE_SIGN_IN",
                     payload={"email": str(email)},
                 )
             else:
                 raise AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_MAGIC_CODE_SIGN_UP"],
-                    error_message="INVALID_MAGIC_CODE_SIGN_UP",
+                    error_code=AUTHENTICATION_ERROR_CODES["EXPIRED_MAGIC_CODE_SIGN_UP"],
+                    error_message="EXPIRED_MAGIC_CODE_SIGN_UP",
                     payload={"email": str(email)},
                 )
