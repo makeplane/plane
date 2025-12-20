@@ -22,6 +22,7 @@ import { GiteaConfiguration } from "@/components/authentication/gitea-config";
 import { GithubConfiguration } from "@/components/authentication/github-config";
 import { GitlabConfiguration } from "@/components/authentication/gitlab-config";
 import { GoogleConfiguration } from "@/components/authentication/google-config";
+import { OIDCConfiguration } from "@/components/authentication/oidc-config";
 import { PasswordLoginConfiguration } from "@/components/authentication/password-config-switch";
 // plane admin components
 import { UpgradeButton } from "@/plane-admin/components/common";
@@ -91,10 +92,9 @@ export const getAuthenticationModes: (props: TGetBaseAuthenticationModeProps) =>
   {
     key: "oidc",
     name: "OIDC",
-    description: "Authenticate your users via the OpenID Connect protocol.",
+    description: "Authenticate your users via OpenID Connect (Login.gov, Azure AD, Okta).",
     icon: <img src={OIDCLogo} height={22} width={22} alt="OIDC Logo" />,
-    config: <UpgradeButton />,
-    unavailable: true,
+    config: <OIDCConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   {
     key: "saml",
