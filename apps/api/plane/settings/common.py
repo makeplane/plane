@@ -233,37 +233,69 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 # Storage Settings
-# Use Minio settings
+# Supports: LocalStack (local dev), real AWS S3 (production), or Minio (legacy)
 USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
+USE_LOCALSTACK = int(os.environ.get("USE_LOCALSTACK", 0)) == 1
 
 STORAGES = {"staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"}}
 STORAGES["default"] = {"BACKEND": "plane.settings.storage.S3Storage"}
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
-AWS_REGION = os.environ.get("AWS_REGION", "")
+AWS_REGION = os.environ.get("AWS_REGION", "us-east-1")
 AWS_DEFAULT_ACL = "public-read"
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_FILE_OVERWRITE = False
-AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", None) or os.environ.get("MINIO_ENDPOINT_URL", None)
-if AWS_S3_ENDPOINT_URL and USE_MINIO:
-    parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
-    AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
-    AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
 
-# RabbitMQ connection settings
-RABBITMQ_HOST = os.environ.get("RABBITMQ_HOST", "localhost")
-RABBITMQ_PORT = os.environ.get("RABBITMQ_PORT", "5672")
-RABBITMQ_USER = os.environ.get("RABBITMQ_USER", "guest")
-RABBITMQ_PASSWORD = os.environ.get("RABBITMQ_PASSWORD", "guest")
-RABBITMQ_VHOST = os.environ.get("RABBITMQ_VHOST", "/")
-AMQP_URL = os.environ.get("AMQP_URL")
+if USE_LOCALSTACK:
+    # LocalStack configuration (local development)
+    AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", "http://localhost:4566")
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "test")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "test")
+elif USE_MINIO:
+    # Legacy Minio configuration (backward compatible)
+    AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", None) or os.environ.get("MINIO_ENDPOINT_URL", None)
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
+    if AWS_S3_ENDPOINT_URL:
+        parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
+        AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
+        AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
+else:
+    # Production AWS S3 (use IAM roles when available, fall back to env vars)
+    AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", None)
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", None)
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", None)
 
 # Celery Configuration
-if AMQP_URL:
-    CELERY_BROKER_URL = AMQP_URL
-else:
-    CELERY_BROKER_URL = f"amqp://{RABBITMQ_USER}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST}:{RABBITMQ_PORT}/{RABBITMQ_VHOST}"
+# Use PostgreSQL as the message broker via SQLAlchemy transport (no RabbitMQ needed)
+# This uses the same DATABASE_URL/POSTGRES_* settings as Django
+def _get_celery_broker_url():
+    """Build Celery broker URL from database settings."""
+    # Allow explicit override via CELERY_BROKER_URL env var
+    explicit_broker = os.environ.get("CELERY_BROKER_URL")
+    if explicit_broker:
+        return explicit_broker
+
+    # Build from DATABASE_URL if available
+    database_url = os.environ.get("DATABASE_URL")
+    if database_url:
+        # Convert postgres:// or postgresql:// to sqla+postgresql+psycopg://
+        # Using postgresql+psycopg to use psycopg v3 driver (not psycopg2)
+        if database_url.startswith("postgres://"):
+            return database_url.replace("postgres://", "sqla+postgresql+psycopg://", 1)
+        elif database_url.startswith("postgresql://"):
+            return database_url.replace("postgresql://", "sqla+postgresql+psycopg://", 1)
+        return f"sqla+{database_url}"
+
+    # Build from individual POSTGRES_* settings
+    # Using postgresql+psycopg to use psycopg v3 driver (not psycopg2)
+    db_user = os.environ.get("POSTGRES_USER", "plane")
+    db_password = os.environ.get("POSTGRES_PASSWORD", "plane")
+    db_host = os.environ.get("POSTGRES_HOST", "localhost")
+    db_port = os.environ.get("POSTGRES_PORT", "5432")
+    db_name = os.environ.get("POSTGRES_DB", "plane")
+    return f"sqla+postgresql+psycopg://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+
+CELERY_BROKER_URL = _get_celery_broker_url()
 
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = "json"
@@ -459,6 +491,7 @@ if ENABLE_DRF_SPECTACULAR:
     INSTALLED_APPS.append("drf_spectacular")
     from .openapi import SPECTACULAR_SETTINGS  # noqa: F401
 
-# MongoDB Settings
-MONGO_DB_URL = os.environ.get("MONGO_DB_URL", False)
-MONGO_DB_DATABASE = os.environ.get("MONGO_DB_DATABASE", False)
+# MongoDB Settings (DEPRECATED - MongoDB removed in Treasury fork)
+# These settings are kept for backward compatibility but MongoDB is disabled
+MONGO_DB_URL = None
+MONGO_DB_DATABASE = None

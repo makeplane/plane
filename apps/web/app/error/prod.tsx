@@ -7,24 +7,6 @@ import maintenanceModeLightModeImage from "@/app/assets/instance/maintenance-mod
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 
-const linkMap = [
-  {
-    key: "mail_to",
-    label: "Contact Support",
-    value: "mailto:support@plane.so",
-  },
-  {
-    key: "status",
-    label: "Status Page",
-    value: "https://status.plane.so/",
-  },
-  {
-    key: "twitter_handle",
-    label: "@planepowers",
-    value: "https://x.com/planepowers",
-  },
-];
-
 // Production Error Component
 interface ProdErrorComponentProps {
   onGoHome: () => void;
@@ -53,24 +35,8 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
           <div className="flex flex-col gap-2.5">
             <h1 className="text-18 font-semibold text-primary text-left">&#x1F6A7; Looks like something went wrong!</h1>
             <span className="text-14 font-medium text-secondary text-left">
-              We track these errors automatically and working on getting things back up and running. If the problem
-              persists feel free to contact us. In the meantime, try refreshing.
+              Something unexpected happened. Please try refreshing the page.
             </span>
-          </div>
-
-          <div className="flex items-center justify-start gap-6 mt-1">
-            {linkMap.map((link) => (
-              <div key={link.key}>
-                <a
-                  href={link.value}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-accent-primary hover:underline text-13"
-                >
-                  {link.label}
-                </a>
-              </div>
-            ))}
           </div>
 
           <div className="flex items-center justify-start gap-6">

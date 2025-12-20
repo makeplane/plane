@@ -1,39 +1,29 @@
-import React from "react";
-import Link from "next/link";
-import { EAuthModes } from "@plane/constants";
+// Check if running in local development
+const isLocalDev = typeof window !== "undefined" &&
+  (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
 
-interface TermsAndConditionsProps {
-  authType?: EAuthModes;
-}
+// For self-hosted government deployments, we don't show external legal links
+export function TermsAndConditions() {
+  // Only show dev credentials hint in local development
+  if (!isLocalDev) {
+    return null;
+  }
 
-// Constants for better maintainability
-const LEGAL_LINKS = {
-  termsOfService: "https://plane.so/legals/terms-and-conditions",
-  privacyPolicy: "https://plane.so/legals/privacy-policy",
-} as const;
-
-const MESSAGES = {
-  [EAuthModes.SIGN_UP]: "By creating an account",
-  [EAuthModes.SIGN_IN]: "By signing in",
-} as const;
-
-// Reusable link component to reduce duplication
-function LegalLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <Link href={href} className="text-secondary" target="_blank" rel="noopener noreferrer">
-      <span className="text-13 font-medium underline hover:cursor-pointer">{children}</span>
-    </Link>
-  );
-}
-
-export function TermsAndConditions({ authType = EAuthModes.SIGN_IN }: TermsAndConditionsProps) {
-  return (
-    <div className="flex items-center justify-center">
-      <p className="text-center text-13 text-tertiary whitespace-pre-line">
-        {`${MESSAGES[authType]}, you understand and agree to \n our `}
-        <LegalLink href={LEGAL_LINKS.termsOfService}>Terms of Service</LegalLink> and{" "}
-        <LegalLink href={LEGAL_LINKS.privacyPolicy}>Privacy Policy</LegalLink>.
-      </p>
+    <div className="flex flex-col items-center justify-center">
+      <div className="border-2 border-amber-400 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 rounded-lg">
+        <p className="text-center text-13 font-semibold text-amber-700 dark:text-amber-400 mb-1">
+          Local Development Only
+        </p>
+        <p className="text-center text-13 text-amber-600 dark:text-amber-300">
+          <span className="font-mono font-semibold">admin@admin.gov</span>
+          <span className="mx-2">/</span>
+          <span className="font-mono font-semibold">admin123</span>
+        </p>
+        <p className="text-center text-11 text-amber-500 dark:text-amber-400/70 mt-1">
+          These credentials do not work in production
+        </p>
+      </div>
     </div>
   );
 }

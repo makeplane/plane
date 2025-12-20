@@ -21,14 +21,6 @@ const StoreWrapper = lazy(function StoreWrapper() {
   return import("@/lib/wrappers/store-wrapper");
 });
 
-const PostHogProvider = lazy(function PostHogProvider() {
-  return import("@/lib/posthog-provider");
-});
-
-const ChatSupportModal = lazy(function ChatSupportModal() {
-  return import("@/components/global/chat-support-modal");
-});
-
 export interface IAppProvider {
   children: React.ReactNode;
 }
@@ -50,10 +42,7 @@ export function AppProvider(props: IAppProvider) {
           <StoreWrapper>
             <InstanceWrapper>
               <Suspense>
-                <ChatSupportModal />
-                <PostHogProvider>
-                  <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
-                </PostHogProvider>
+                <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
               </Suspense>
             </InstanceWrapper>
           </StoreWrapper>

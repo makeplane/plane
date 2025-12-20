@@ -73,6 +73,11 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.exporter_expired_task.delete_old_s3_link",
         "schedule": crontab(hour=3, minute=45),  # UTC 03:45
     },
+    # Magic link cleanup (every 5 minutes)
+    "cleanup-expired-magic-links": {
+        "task": "plane.bgtasks.cleanup_task.cleanup_expired_magic_links",
+        "schedule": crontab(minute="*/5"),  # Every 5 minutes
+    },
 }
 
 

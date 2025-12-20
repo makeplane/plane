@@ -11,9 +11,18 @@ from django.db.models.functions import RowNumber
 
 # Third party imports
 from celery import shared_task
-from pymongo.errors import BulkWriteError
-from pymongo.collection import Collection
-from pymongo.operations import InsertOne
+
+# Optional MongoDB imports (MongoDB removed in Treasury fork)
+try:
+    from pymongo.errors import BulkWriteError
+    from pymongo.collection import Collection
+    from pymongo.operations import InsertOne
+    PYMONGO_AVAILABLE = True
+except ImportError:
+    PYMONGO_AVAILABLE = False
+    BulkWriteError = Exception
+    Collection = None
+    InsertOne = None
 
 # Module imports
 from plane.db.models import (
@@ -22,6 +31,7 @@ from plane.db.models import (
     APIActivityLog,
     IssueDescriptionVersion,
     WebhookLog,
+    MagicLink,
 )
 from plane.settings.mongo import MongoConnection
 from plane.utils.exception_logger import log_exception
@@ -48,7 +58,7 @@ def get_mongo_collection(collection_name: str) -> Optional[Collection]:
 
 
 def flush_to_mongo_and_delete(
-    mongo_collection: Optional[Collection],
+    mongo_collection,
     buffer: List[Dict[str, Any]],
     ids_to_delete: List[int],
     model,
@@ -56,6 +66,8 @@ def flush_to_mongo_and_delete(
 ) -> None:
     """
     Inserts a batch of records into MongoDB and deletes the corresponding rows from PostgreSQL.
+
+    If MongoDB is not available (Treasury fork), records are simply deleted from PostgreSQL.
     """
     if not buffer:
         logger.debug("No records to flush - buffer is empty")
@@ -65,8 +77,8 @@ def flush_to_mongo_and_delete(
 
     mongo_archival_failed = False
 
-    # Try to insert into MongoDB if available
-    if mongo_collection is not None and mongo_available:
+    # Try to insert into MongoDB if available and pymongo is installed
+    if mongo_collection is not None and mongo_available and PYMONGO_AVAILABLE:
         try:
             mongo_collection.bulk_write([InsertOne(doc) for doc in buffer])
         except BulkWriteError as bwe:
@@ -473,3 +485,15 @@ def delete_webhook_logs():
         task_name="Webhook Log",
         collection_name="webhook_logs",
     )
+
+
+@shared_task
+def cleanup_expired_magic_links():
+    """
+    Delete expired magic links from PostgreSQL.
+
+    Magic links are used for passwordless authentication and expire after 10 minutes.
+    This task runs periodically to clean up expired entries.
+    """
+    deleted_count, _ = MagicLink.cleanup_expired()
+    logger.info(f"Cleaned up {deleted_count} expired magic links")

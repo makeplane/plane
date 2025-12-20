@@ -9,8 +9,8 @@ psycopg==3.3.0
 psycopg-binary==3.3.0
 psycopg-c==3.3.0
 dj-database-url==2.1.0
-# mongo
-pymongo==4.6.3
+# mongo (optional, only needed for legacy MongoDB archival)
+# pymongo==4.6.3
 # redis
 redis==5.0.4
 django-redis==5.4.0
@@ -18,6 +18,8 @@ django-redis==5.4.0
 django-cors-headers==4.3.1
 # celery
 celery==5.4.0
+kombu[sqlalchemy]==5.4.2
+sqlalchemy==2.0.36
 django_celery_beat==2.6.0
 django-celery-results==2.5.1
 # file serve
