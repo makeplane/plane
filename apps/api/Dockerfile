@@ -19,6 +19,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 # Copy the project into the image
 COPY . /app/
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Sync the project
 RUN --mount=type=cache,target=/root/.cache/uv \
@@ -32,6 +33,8 @@ COPY . ./plane
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --group local
 
+RUN apk add bash
+
 CMD [ "./bin/docker-entrypoint-api-local.sh" ]
 
 
@@ -42,6 +45,7 @@ COPY . ./plane
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --group test
 
+RUN apk add bash
 
 # Stage 2: Production - Lean runtime image
 FROM python:3.12.10-alpine AS production
