@@ -1,3 +1,25 @@
+# U.S. Department of the Treasury Fork
+
+> **This is the U.S. Department of the Treasury's fork of [Plane](https://github.com/makeplane/plane).**
+>
+> This fork adds federal authentication support (PIV/CAC) and other Treasury-specific features while tracking upstream development.
+
+| | |
+|---|---|
+| **Upstream** | [github.com/makeplane/plane](https://github.com/makeplane/plane) |
+| **License** | AGPL-3.0 (same as upstream) |
+| **Treasury Docs** | [TREASURY.md](./TREASURY.md) |
+
+## What's Different in This Fork
+
+- **PIV/CAC Authentication** - Federal smart card authentication via client certificates
+- **OIDC Integration** - OpenID Connect for Login.gov and other federal identity providers
+- **Federal Compliance** - Audit logging and configuration for government deployments
+
+For Treasury-specific setup and deployment instructions, see [TREASURY.md](./TREASURY.md).
+
+---
+
 <br /><br />
 
 <p align="center">

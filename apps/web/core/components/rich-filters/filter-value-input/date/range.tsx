@@ -48,7 +48,7 @@ export const DateRangeFilterValueInput = observer(function DateRangeFilterValueI
       buttonClassName={cn("rounded-none", {
         [COMMON_FILTER_ITEM_BORDER_CLASSNAME]: !isDisabled,
         "text-red-500": isIncomplete,
-        "hover:bg-custom-background-100": isDisabled,
+        "hover:bg-surface-1": isDisabled,
       })}
       renderPlaceholder
       renderInPortal

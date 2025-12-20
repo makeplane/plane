@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Toast as BaseToast } from "@base-ui-components/react/toast";
-import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
-import { CloseIcon } from "../icons";
+import { AlertTriangle, CheckIcon, InfoIcon, XIcon } from "lucide-react";
+import { CloseIcon } from "../icons/actions/close-icon";
 // spinner
 import { CircularBarSpinner } from "../spinners/circular-bar-spinner";
 import { cn } from "../utils/classname";
@@ -63,40 +63,40 @@ export function Toast(props: ToastProps) {
 
 const TOAST_DATA = {
   [TOAST_TYPE.SUCCESS]: {
-    icon: <CheckCircle2 width={24} height={24} strokeWidth={1.5} className="text-toast-text-success" />,
-    textColorClassName: "text-toast-text-success",
-    backgroundColorClassName: "bg-toast-background-success",
-    borderColorClassName: "border-toast-border-success",
+    icon: <CheckIcon width={12} height={12} className="text-on-color" />,
+    iconBgClassName: "bg-success-primary",
+    backgroundColorClassName: "!bg-surface-1",
+    borderColorClassName: "border-subtle",
   },
   [TOAST_TYPE.ERROR]: {
-    icon: <XCircle width={24} height={24} strokeWidth={1.5} className="text-toast-text-error" />,
-    textColorClassName: "text-toast-text-error",
-    backgroundColorClassName: "bg-toast-background-error",
-    borderColorClassName: "border-toast-border-error",
+    icon: <XIcon width={12} height={12} className="text-on-color" />,
+    iconBgClassName: "bg-danger-primary",
+    backgroundColorClassName: "bg-surface-1",
+    borderColorClassName: "border-subtle",
   },
   [TOAST_TYPE.WARNING]: {
-    icon: <AlertTriangle width={24} height={24} strokeWidth={1.5} className="text-toast-text-warning" />,
-    textColorClassName: "text-toast-text-warning",
-    backgroundColorClassName: "bg-toast-background-warning",
-    borderColorClassName: "border-toast-border-warning",
+    icon: <AlertTriangle width={12} height={12} className="text-on-color" />,
+    iconBgClassName: "bg-warning-primary",
+    backgroundColorClassName: "bg-surface-1",
+    borderColorClassName: "border-subtle",
   },
   [TOAST_TYPE.INFO]: {
-    icon: <></>,
-    textColorClassName: "text-toast-text-info",
-    backgroundColorClassName: "bg-toast-background-info",
-    borderColorClassName: "border-toast-border-info",
+    icon: <InfoIcon width={12} height={12} className="text-on-color" />,
+    iconBgClassName: "bg-accent-primary",
+    backgroundColorClassName: "bg-surface-1",
+    borderColorClassName: "border-subtle",
   },
   [TOAST_TYPE.LOADING]: {
-    icon: <CircularBarSpinner className="text-toast-text-tertiary" />,
-    textColorClassName: "text-toast-text-loading",
-    backgroundColorClassName: "bg-toast-background-loading",
-    borderColorClassName: "border-toast-border-loading",
+    icon: <CircularBarSpinner className="text-on-color" />,
+    iconBgClassName: "bg-layer-2",
+    backgroundColorClassName: "bg-surface-1",
+    borderColorClassName: "border-subtle",
   },
   [TOAST_TYPE.LOADING_TOAST]: {
-    icon: <CircularBarSpinner className="text-toast-text-tertiary" />,
-    textColorClassName: "text-toast-text-loading",
-    backgroundColorClassName: "bg-toast-background-loading",
-    borderColorClassName: "border-toast-border-loading",
+    icon: <CircularBarSpinner className="text-on-color" />,
+    iconBgClassName: "bg-layer-2",
+    backgroundColorClassName: "bg-surface-1",
+    borderColorClassName: "border-subtle",
   },
 };
 
@@ -116,7 +116,7 @@ function ToastRender({ id, toast }: { id: React.Key; toast: BaseToast.Root.Toast
       key={id}
       className={cn(
         // Base layout and positioning
-        "flex group items-center rounded-lg border shadow-sm p-2 w-[350px]",
+        "flex group items-center rounded-lg border shadow-raised-200 w-[350px]",
         "absolute right-3 bottom-3 z-[calc(1000-var(--toast-index))]",
         "select-none transition-[opacity,transform] duration-500 ease-&lsqb;cubic-bezier(0.22,1,0.36,1)&rsqb;",
 
@@ -157,45 +157,88 @@ function ToastRender({ id, toast }: { id: React.Key; toast: BaseToast.Root.Toast
         e.preventDefault();
       }}
     >
-      {toastData.type === TOAST_TYPE.LOADING ? (
-        <div className="w-full h-full flex items-center justify-center px-4 py-2">
-          {data.icon && <div className="flex items-center justify-center">{data.icon}</div>}
-          <div className={cn("w-full flex items-center gap-0.5 pr-1", data.icon ? "pl-4" : "pl-1")}>
-            <div className={cn("grow text-sm font-semibold", data.textColorClassName)}>
-              {toastData.title ?? "Loading..."}
-            </div>
-            <BaseToast.Close
-              className="absolute top-2 right-2.5 text-toast-text-secondary hover:text-toast-text-tertiary cursor-pointer"
-              aria-label="Close"
+      <BaseToast.Close className="absolute top-3 right-3 text-icon-secondary hover:text-icon-tertiary cursor-pointer">
+        <CloseIcon strokeWidth={1.5} width={16} height={16} />
+      </BaseToast.Close>
+      <div className="flex items-start gap-2 w-full p-4">
+        <div className="py-1">
+          {data.icon && (
+            <div
+              className={cn("flex items-center justify-center rounded-full size-4 flex-shrink-0", data.iconBgClassName)}
             >
-              <CloseIcon strokeWidth={1.5} width={14} height={14} />
-            </BaseToast.Close>
+              {data.icon}
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col gap-1 flex-1 min-w-0">
+          <BaseToast.Title className="text-h6-medium text-primary">
+            {toastData.type === TOAST_TYPE.LOADING ? (toastData.title ?? "Loading...") : toastData.title}
+          </BaseToast.Title>
+          {toastData.type !== TOAST_TYPE.LOADING && toastData.message && (
+            <BaseToast.Description className="text-body-xs-regular text-tertiary">
+              {toastData.message}
+            </BaseToast.Description>
+          )}
+          {toastData.type !== TOAST_TYPE.LOADING && toastData.actionItems && (
+            <div className="flex items-center gap-2">{toastData.actionItems}</div>
+          )}
+        </div>
+      </div>
+    </BaseToast.Root>
+  );
+}
+
+// Static toast component for Storybook and documentation
+export type ToastStaticProps = {
+  type: TOAST_TYPE;
+  title: string;
+  message?: string;
+  actionItems?: React.ReactNode;
+  theme?: "light" | "dark";
+};
+
+export function ToastStatic({ type, title, message, actionItems, theme = "light" }: ToastStaticProps) {
+  const data = TOAST_DATA[type];
+
+  return (
+    <div data-theme={theme} className="inline-block">
+      <div
+        className={cn(
+          // Base layout and positioning
+          "flex group items-start rounded-lg border border-subtle-1 rounded-lg shadow-overlay-100 w-[350px]",
+          "relative",
+          data.backgroundColorClassName,
+          data.borderColorClassName
+        )}
+      >
+        <div className="absolute top-1 right-1 text-icon-tertiary cursor-default">
+          <CloseIcon strokeWidth={1.5} width={14} height={14} />
+        </div>
+        <div className="flex items-start gap-3 w-full p-4">
+          <div className="py-1">
+            {data.icon && (
+              <div
+                className={cn(
+                  "flex items-center justify-center rounded-full size-4 flex-shrink-0",
+                  data.iconBgClassName
+                )}
+              >
+                {data.icon}
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col gap-1 flex-1 min-w-0">
+            <div className="text-h6-medium text-primary">
+              {type === TOAST_TYPE.LOADING ? (title ?? "Loading...") : title}
+            </div>
+            {type !== TOAST_TYPE.LOADING && message && (
+              <div className="text-body-xs-regular text-tertiary">{message}</div>
+            )}
+            {type !== TOAST_TYPE.LOADING && actionItems && <div className="flex items-center gap-2">{actionItems}</div>}
           </div>
         </div>
-      ) : (
-        <>
-          <BaseToast.Close className="absolute top-2 right-2.5 text-toast-text-secondary hover:text-toast-text-tertiary cursor-pointer">
-            <CloseIcon strokeWidth={1.5} width={14} height={14} />
-          </BaseToast.Close>
-          <div className="w-full flex flex-col gap-2 p-2">
-            <div className="flex items-center w-full">
-              {data.icon && <div className="flex items-center justify-center">{data.icon}</div>}
-              <div className={cn("flex flex-col gap-0.5 pr-1", data.icon ? "pl-4" : "pl-1")}>
-                <BaseToast.Title className={cn("text-sm font-semibold", data.textColorClassName)}>
-                  {toastData.title}
-                </BaseToast.Title>
-                {toastData.message && (
-                  <BaseToast.Description className="text-toast-text-secondary text-xs font-medium">
-                    {toastData.message}
-                  </BaseToast.Description>
-                )}
-              </div>
-            </div>
-            {toastData.actionItems && <div className="flex items-center pl-[32px]">{toastData.actionItems}</div>}
-          </div>
-        </>
-      )}
-    </BaseToast.Root>
+      </div>
+    </div>
   );
 }
 

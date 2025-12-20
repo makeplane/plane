@@ -84,7 +84,7 @@ export const PieChart = React.memo(function PieChart<K extends string, T extends
                       y={props.y}
                       textAnchor={props.textAnchor}
                       dominantBaseline={props.dominantBaseline}
-                      fill="rgba(var(--color-text-200))"
+                      fill="var(--text-color-secondary)"
                       opacity={!!activeLegend && activeLegend !== payload.key ? 0.1 : 1}
                     >
                       {customLabel?.(payload.count) ?? payload.count}
@@ -123,7 +123,7 @@ export const PieChart = React.memo(function PieChart<K extends string, T extends
             <Tooltip
               cursor={{
                 fill: "currentColor",
-                className: "text-custom-background-90/80 cursor-pointer",
+                className: "bg-layer-1-hover cursor-pointer",
               }}
               wrapperStyle={{
                 pointerEvents: "none",

@@ -209,9 +209,9 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
     <div className="flex gap-2 bg-transparent w-full">
       <div className="rounded-lg w-full">
         <form ref={formRef} onSubmit={handleFormSubmit} className="flex flex-col w-full">
-          <div className="space-y-5 p-5 rounded-t-lg bg-custom-background-100">
+          <div className="space-y-5 p-5 rounded-t-lg bg-surface-1">
             <div className="flex items-center justify-between gap-2">
-              <h3 className="text-xl font-medium text-custom-text-200">{t("inbox_issue.modal.title")}</h3>
+              <h3 className="text-18 font-medium text-secondary">{t("inbox_issue.modal.title")}</h3>
               {duplicateIssues?.length > 0 && (
                 <DeDupeButtonRoot
                   workspaceSlug={workspaceSlug}
@@ -234,14 +234,14 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
                 data={formData}
                 handleData={handleFormData}
                 editorRef={descriptionEditorRef}
-                containerClassName="border-[0.5px] border-custom-border-200 py-3 min-h-[150px]"
+                containerClassName="bg-layer-2 border-[0.5px] border-subtle-1 py-3 min-h-[150px]"
                 onEnterKeyPress={() => submitBtnRef?.current?.click()}
                 onAssetUpload={(assetId) => setUploadedAssetIds((prev) => [...prev, assetId])}
               />
               <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
             </div>
           </div>
-          <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200 rounded-b-lg bg-custom-background-100">
+          <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle rounded-b-lg bg-surface-1">
             <div
               className="inline-flex items-center gap-1.5 cursor-pointer"
               onClick={() => setCreateMore((prevData) => !prevData)}
@@ -249,12 +249,12 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
               tabIndex={getIndex("create_more")}
             >
               <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
-              <span className="text-xs">{t("create_more")}</span>
+              <span className="text-11">{t("create_more")}</span>
             </div>
             <div className="flex items-center gap-3">
               <Button
-                variant="neutral-primary"
-                size="sm"
+                variant="secondary"
+                size="lg"
                 type="button"
                 onClick={() => {
                   if (descriptionEditorRef.current?.isEditorReadyToDiscard()) {
@@ -274,11 +274,11 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
               <Button
                 variant="primary"
                 ref={submitBtnRef}
-                size="sm"
                 type="submit"
                 loading={formSubmitting}
                 disabled={isTitleLengthMoreThan255Character}
                 tabIndex={getIndex("submit_button")}
+                size="lg"
               >
                 {formSubmitting ? t("creating") : t("create_work_item")}
               </Button>

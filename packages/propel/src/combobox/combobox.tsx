@@ -168,13 +168,13 @@ function ComboboxOptions({
     <BaseCombobox.Portal>
       <BaseCombobox.Positioner sideOffset={8} className={positionerClassName}>
         <BaseCombobox.Popup
-          className={cn("rounded-md border border-custom-border-200 bg-custom-background-100 p-1 shadow-lg", className)}
+          className={cn("rounded-md border border-subtle bg-surface-1 p-1 shadow-lg", className)}
           data-prevent-outside-click={dataPreventOutsideClick}
         >
           <div className="flex flex-col gap-1">
             {showSearch && (
               <div className="relative">
-                <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-400" />
+                <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-placeholder" />
                 <input
                   type="text"
                   placeholder={searchPlaceholder}
@@ -182,7 +182,7 @@ function ComboboxOptions({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={onSearchQueryKeyDown}
                   className={cn(
-                    "w-full rounded border border-custom-border-100 bg-custom-background-90 py-1.5 pl-8 pr-2 text-sm outline-none placeholder:text-custom-text-400",
+                    "w-full rounded-sm border border-subtle bg-surface-2 py-1.5 pl-8 pr-2 text-13 outline-none placeholder:text-placeholder",
                     inputClassName
                   )}
                 />
@@ -198,7 +198,7 @@ function ComboboxOptions({
                   React.Children.toArray(filteredChildren).filter(
                     (child) => React.isValidElement(child) && child.type === ComboboxOption
                   )
-                ) === 0 && <div className="px-2 py-1.5 text-sm text-custom-text-400">{emptyMessage}</div>}
+                ) === 0 && <div className="px-2 py-1.5 text-13 text-placeholder">{emptyMessage}</div>}
             </BaseCombobox.List>
           </div>
         </BaseCombobox.Popup>
@@ -213,7 +213,7 @@ function ComboboxOption({ value, children, disabled, className }: ComboboxOption
     <BaseCombobox.Item
       value={value}
       disabled={disabled}
-      className={cn("cursor-pointer rounded px-2 py-1.5 text-sm outline-none transition-colors", className)}
+      className={cn("cursor-pointer rounded-sm px-2 py-1.5 text-13 outline-none transition-colors", className)}
     >
       {children}
     </BaseCombobox.Item>

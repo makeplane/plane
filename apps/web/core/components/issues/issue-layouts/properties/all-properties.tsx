@@ -270,7 +270,6 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onChange={handlePriority}
             disabled={isReadOnly}
             buttonVariant="border-without-text"
-            buttonClassName="border"
             renderByDefault={isMobile}
             showTooltip
           />
@@ -299,8 +298,8 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             isClearable
             mergeDates
             buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
-            clearIconClassName="!text-custom-text-100"
+            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger" : ""}
+            clearIconClassName="!text-primary"
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip
@@ -346,8 +345,8 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             placeholder={t("common.order_by.due_date")}
             icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
-            clearIconClassName="!text-custom-text-100"
+            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger" : ""}
+            clearIconClassName="!text-primary"
             optionsClassName="z-10"
             disabled={isReadOnly}
             renderByDefault={isMobile}
@@ -459,14 +458,14 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
                 if (subIssueCount) redirectToIssueDetail();
               }}
               className={cn(
-                "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1",
+                "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1",
                 {
-                  "hover:bg-custom-background-80 cursor-pointer": subIssueCount,
+                  "hover:bg-layer-1 cursor-pointer": subIssueCount,
                 }
               )}
             >
               <ViewsIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-              <div className="text-xs">{subIssueCount}</div>
+              <div className="text-caption-sm-regular">{subIssueCount}</div>
             </div>
           </Tooltip>
         </WithDisplayPropertiesHOC>
@@ -485,12 +484,12 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           renderByDefault={false}
         >
           <div
-            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
+            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1"
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
             <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{issue.attachment_count}</div>
+            <div className="text-caption-sm-regular">{issue.attachment_count}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>
@@ -508,12 +507,12 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           renderByDefault={false}
         >
           <div
-            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
+            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1"
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
             <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{issue.link_count}</div>
+            <div className="text-caption-sm-regular">{issue.link_count}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>

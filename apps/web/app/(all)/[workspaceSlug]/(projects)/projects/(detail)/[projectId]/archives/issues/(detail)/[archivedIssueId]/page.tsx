@@ -67,17 +67,16 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
             icon={<ArchiveIcon className="size-4" />}
             action={
               <Button
-                variant="neutral-primary"
-                size="sm"
+                variant="secondary"
                 onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
               >
                 Go to archives
               </Button>
             }
-            className="border-b border-custom-border-200"
+            className="border-b border-subtle"
           />
           <div className="flex h-full overflow-hidden">
-            <div className="h-full w-full space-y-3 divide-y-2 divide-custom-border-200 overflow-y-auto">
+            <div className="h-full w-full space-y-3 divide-y-2 divide-subtle-1 overflow-y-auto">
               <IssueDetailRoot
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}

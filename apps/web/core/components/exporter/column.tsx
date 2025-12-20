@@ -21,7 +21,7 @@ export const useExportColumns = () => {
           <div className="flex items-center gap-x-2">
             <div>
               {avatar_url && avatar_url.trim() !== "" ? (
-                <span className="relative flex h-4 w-4 items-center justify-center rounded-full capitalize text-white">
+                <span className="relative flex h-4 w-4 items-center justify-center rounded-full capitalize text-on-color">
                   <img
                     src={getFileURL(avatar_url)}
                     className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
@@ -29,7 +29,7 @@ export const useExportColumns = () => {
                   />
                 </span>
               ) : (
-                <span className="relative flex h-4 w-4 items-center justify-center rounded-full bg-gray-700 capitalize text-white text-xs">
+                <span className="relative flex h-4 w-4 items-center justify-center rounded-full bg-gray-700 capitalize text-on-color text-11">
                   {(email ?? display_name ?? "?")[0]}
                 </span>
               )}
@@ -48,13 +48,13 @@ export const useExportColumns = () => {
     {
       key: "Exported projects",
       content: "Exported projects",
-      tdRender: (rowData: RowData) => <div className="text-sm">{rowData.project.length} project(s)</div>,
+      tdRender: (rowData: RowData) => <div className="text-13">{rowData.project.length} project(s)</div>,
     },
     {
       key: "Format",
       content: "Format",
       tdRender: (rowData: RowData) => (
-        <span className="text-sm">
+        <span className="text-13">
           {rowData.provider === "csv"
             ? "CSV"
             : rowData.provider === "xlsx"
@@ -70,7 +70,7 @@ export const useExportColumns = () => {
       content: "Status",
       tdRender: (rowData: RowData) => (
         <span
-          className={`rounded text-xs px-2 py-1 capitalize ${
+          className={`rounded-sm text-11 px-2 py-1 capitalize ${
             rowData.status === "completed"
               ? "bg-green-500/20 text-green-500"
               : rowData.status === "processing"
@@ -94,7 +94,7 @@ export const useExportColumns = () => {
           <>
             {rowData.status == "completed" ? (
               <a target="_blank" href={rowData?.url} rel="noopener noreferrer">
-                <button className="w-full flex items-center gap-1 text-custom-primary-100 font-medium">
+                <button className="w-full flex items-center gap-1 text-accent-primary font-medium">
                   <Download className="h-4 w-4" />
                   <div>Download</div>
                 </button>
@@ -104,7 +104,7 @@ export const useExportColumns = () => {
             )}
           </>
         ) : (
-          <div className="text-xs text-red-500">Expired</div>
+          <div className="text-11 text-red-500">Expired</div>
         ),
     },
   ];

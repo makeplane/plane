@@ -36,7 +36,7 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(self.style.WARNING(f"{obj.key} configuration already exists"))
 
-        keys = ["IS_GOOGLE_ENABLED", "IS_GITHUB_ENABLED", "IS_GITLAB_ENABLED", "IS_GITEA_ENABLED"]
+        keys = ["IS_GOOGLE_ENABLED", "IS_GITHUB_ENABLED", "IS_GITLAB_ENABLED", "IS_GITEA_ENABLED", "IS_OIDC_ENABLED"]
         if not InstanceConfiguration.objects.filter(key__in=keys).exists():
             for key in keys:
                 if key == "IS_GOOGLE_ENABLED":
@@ -138,6 +138,34 @@ class Command(BaseCommand):
                         value = "0"
                     InstanceConfiguration.objects.create(
                         key="IS_GITEA_ENABLED",
+                        value=value,
+                        category="AUTHENTICATION",
+                        is_encrypted=False,
+                    )
+                    self.stdout.write(self.style.SUCCESS(f"{key} loaded with value from environment variable."))
+                if key == "IS_OIDC_ENABLED":
+                    OIDC_CLIENT_ID, OIDC_AUTHORIZATION_URL, OIDC_TOKEN_URL = get_configuration_value(
+                        [
+                            {
+                                "key": "OIDC_CLIENT_ID",
+                                "default": os.environ.get("OIDC_CLIENT_ID", ""),
+                            },
+                            {
+                                "key": "OIDC_AUTHORIZATION_URL",
+                                "default": os.environ.get("OIDC_AUTHORIZATION_URL", ""),
+                            },
+                            {
+                                "key": "OIDC_TOKEN_URL",
+                                "default": os.environ.get("OIDC_TOKEN_URL", ""),
+                            },
+                        ]
+                    )
+                    if bool(OIDC_CLIENT_ID) and bool(OIDC_AUTHORIZATION_URL) and bool(OIDC_TOKEN_URL):
+                        value = "1"
+                    else:
+                        value = "0"
+                    InstanceConfiguration.objects.create(
+                        key="IS_OIDC_ENABLED",
                         value=value,
                         category="AUTHENTICATION",
                         is_encrypted=False,

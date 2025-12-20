@@ -33,8 +33,8 @@ export function TabNavigationOverflowMenu({ overflowItems, isActive, tabPreferen
       buttonClassName="!p-1.5"
       optionsClassName="min-w-[200px] space-y-1"
       customButton={
-        <div className="flex items-center justify-center rounded-md p-1 hover:bg-custom-background-80 transition-colors">
-          <MoreHorizontal className="h-4 w-4 text-custom-text-200" />
+        <div className="flex items-center justify-center rounded-md p-1 hover:bg-layer-1 transition-colors">
+          <MoreHorizontal className="h-4 w-4 text-secondary" />
         </div>
       }
     >
@@ -48,7 +48,7 @@ export function TabNavigationOverflowMenu({ overflowItems, isActive, tabPreferen
           <Menu.MenuItem key={`${item.key}-overflow-${itemIsActive ? "active" : "inactive"}`} className="p-0 w-full">
             <div className="flex items-center justify-between w-full group/menu-item">
               <Link to={item.href} className="flex-1 min-w-0 w-full p-1">
-                <span className="text-xs">{t(item.i18n_key)}</span>
+                <span className="text-11">{t(item.i18n_key)}</span>
               </Link>
               <div className="flex items-center">
                 {/* Show Eye icon ONLY for user-hidden items */}
@@ -60,7 +60,7 @@ export function TabNavigationOverflowMenu({ overflowItems, isActive, tabPreferen
                       e.preventDefault();
                       onShow(item.key);
                     }}
-                    className="invisible group-hover/menu-item:visible p-1 rounded text-custom-text-300 hover:text-custom-text-100 transition-colors"
+                    className="invisible group-hover/menu-item:visible p-1 rounded-sm text-tertiary hover:text-primary transition-colors"
                     title="Show"
                   >
                     <Pin className="size-3" />
@@ -74,7 +74,7 @@ export function TabNavigationOverflowMenu({ overflowItems, isActive, tabPreferen
                       onToggleDefault(item.key);
                     }}
                     className={cn(
-                      "invisible group-hover/menu-item:visible p-1 rounded text-custom-text-300 hover:text-custom-text-100 transition-colors",
+                      "invisible group-hover/menu-item:visible p-1 rounded-sm text-tertiary hover:text-primary transition-colors",
                       {
                         visible: isDefault,
                       }

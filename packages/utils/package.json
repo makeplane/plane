@@ -15,16 +15,17 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "check:lint": "eslint . --max-warnings=1062",
+    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1062",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier --check .",
-    "fix:lint": "eslint . --fix --max-warnings=1062",
-    "fix:format": "prettier --write .",
+    "check:format": "prettier . --cache --check",
+    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=1062",
+    "fix:format": "prettier . --cache --write",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
     "@plane/constants": "workspace:*",
     "@plane/types": "workspace:*",
+    "chroma-js": "^3.2.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "hast": "^1.0.0",
@@ -38,12 +39,13 @@
     "remark-gfm": "^4.0.1",
     "remark-stringify": "^11.0.0",
     "sanitize-html": "2.17.0",
-    "tailwind-merge": "^2.5.5",
+    "tailwind-merge": "3.4.0",
     "unified": "^11.0.5",
     "uuid": "catalog:"
   },
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",
+    "@types/chroma-js": "^3.1.2",
     "@types/hast": "^3.0.4",
     "@types/lodash-es": "catalog:",
     "@types/mdast": "^4.0.4",

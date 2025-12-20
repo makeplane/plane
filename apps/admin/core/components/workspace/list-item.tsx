@@ -23,19 +23,19 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
       key={workspaceId}
       href={`${WEB_BASE_URL}/${encodeURIComponent(workspace.slug)}`}
       target="_blank"
-      className="group flex items-center justify-between p-4 gap-2.5 truncate border border-custom-border-200/70 hover:border-custom-border-200 hover:bg-custom-background-90 rounded-md"
+      className="group flex items-center justify-between p-4 gap-2.5 truncate border border-subtle/70 hover:border-subtle bg-layer-1 hover:bg-layer-1-hover rounded-md"
       rel="noreferrer"
     >
       <div className="flex items-start gap-4">
         <span
-          className={`relative flex h-8 w-8 flex-shrink-0 items-center justify-center p-2 mt-1 text-xs uppercase ${
-            !workspace?.logo_url && "rounded bg-custom-primary-500 text-white"
+          className={`relative flex h-8 w-8 flex-shrink-0 items-center justify-center p-2 mt-1 text-11 uppercase ${
+            !workspace?.logo_url && "rounded-sm bg-accent-primary text-on-color"
           }`}
         >
           {workspace?.logo_url && workspace.logo_url !== "" ? (
             <img
               src={getFileURL(workspace.logo_url)}
-              className="absolute left-0 top-0 h-full w-full rounded object-cover"
+              className="absolute left-0 top-0 h-full w-full rounded-sm object-cover"
               alt="Workspace Logo"
             />
           ) : (
@@ -44,30 +44,30 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
         </span>
         <div className="flex flex-col items-start gap-1">
           <div className="flex flex-wrap w-full items-center gap-2.5">
-            <h3 className={`text-base font-medium capitalize`}>{workspace.name}</h3>/
+            <h3 className={`text-14 font-medium capitalize`}>{workspace.name}</h3>/
             <Tooltip tooltipContent="The unique URL of your workspace">
-              <h4 className="text-sm text-custom-text-300">[{workspace.slug}]</h4>
+              <h4 className="text-13 text-tertiary">[{workspace.slug}]</h4>
             </Tooltip>
           </div>
           {workspace.owner.email && (
-            <div className="flex items-center gap-1 text-xs">
-              <h3 className="text-custom-text-200 font-medium">Owned by:</h3>
-              <h4 className="text-custom-text-300">{workspace.owner.email}</h4>
+            <div className="flex items-center gap-1 text-11">
+              <h3 className="text-secondary font-medium">Owned by:</h3>
+              <h4 className="text-tertiary">{workspace.owner.email}</h4>
             </div>
           )}
-          <div className="flex items-center gap-2.5 text-xs">
+          <div className="flex items-center gap-2.5 text-11">
             {workspace.total_projects !== null && (
               <span className="flex items-center gap-1">
-                <h3 className="text-custom-text-200 font-medium">Total projects:</h3>
-                <h4 className="text-custom-text-300">{workspace.total_projects}</h4>
+                <h3 className="text-secondary font-medium">Total projects:</h3>
+                <h4 className="text-tertiary">{workspace.total_projects}</h4>
               </span>
             )}
             {workspace.total_members !== null && (
               <>
                 •
                 <span className="flex items-center gap-1">
-                  <h3 className="text-custom-text-200 font-medium">Total members:</h3>
-                  <h4 className="text-custom-text-300">{workspace.total_members}</h4>
+                  <h3 className="text-secondary font-medium">Total members:</h3>
+                  <h4 className="text-tertiary">{workspace.total_members}</h4>
                 </span>
               </>
             )}
@@ -75,7 +75,7 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
         </div>
       </div>
       <div className="flex-shrink-0">
-        <ExternalLink size={14} className="text-custom-text-400 group-hover:text-custom-text-200" />
+        <ExternalLink size={14} className="text-placeholder group-hover:text-secondary" />
       </div>
     </a>
   );

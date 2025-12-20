@@ -1583,6 +1583,7 @@ export default {
         name: "Название пространства",
         company_size: "Размер компании",
         url: "URL пространства",
+        workspace_timezone: "Часовой пояс рабочего пространства",
         update_workspace: "Обновить пространство",
         delete_workspace: "Удалить пространство",
         delete_workspace_description: "Все данные будут безвозвратно удалены.",

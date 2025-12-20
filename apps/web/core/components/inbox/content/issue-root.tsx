@@ -166,7 +166,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
 
   return (
     <>
-      <div className="rounded-lg space-y-4">
+      <div className="space-y-4 pb-4">
         {duplicateIssues.length > 0 && (
           <DeDupeIssuePopoverRoot
             workspaceSlug={workspaceSlug}
@@ -249,24 +249,30 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
         </div>
       </div>
 
-      <IssueAttachmentRoot
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issue.id}
-        disabled={!isEditable}
-      />
+      <div className="py-4">
+        <IssueAttachmentRoot
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issue.id}
+          disabled={!isEditable}
+        />
+      </div>
 
-      <InboxIssueContentProperties
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issue={issue}
-        issueOperations={issueOperations}
-        isEditable={isEditable}
-        duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
-        isIntakeAccepted={isIntakeAccepted}
-      />
+      <div className="py-4">
+        <InboxIssueContentProperties
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issue={issue}
+          issueOperations={issueOperations}
+          isEditable={isEditable}
+          duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
+          isIntakeAccepted={isIntakeAccepted}
+        />
+      </div>
 
-      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} isIntakeIssue />
+      <div className="pt-4">
+        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} isIntakeIssue />
+      </div>
     </>
   );
 });

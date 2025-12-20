@@ -43,7 +43,7 @@
 
 /* font size and style */
 .editor-container {
-  --color-placeholder: rgba(var(--color-text-100), 0.5);
+  --color-placeholder: --alpha(var(--text-color-primary) / 50%);
 
   /* font sizes and line heights */
   &.large-font {

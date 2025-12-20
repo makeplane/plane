@@ -21,7 +21,7 @@ export const IssueStartDateActivity = observer(function IssueStartDateActivity(p
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<CalendarDays size={14} className="text-secondary" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >
@@ -29,7 +29,7 @@ export const IssueStartDateActivity = observer(function IssueStartDateActivity(p
         {activity.new_value ? `set the start date to ` : `removed the start date `}
         {activity.new_value && (
           <>
-            <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
+            <span className="font-medium text-primary">{renderFormattedDate(activity.new_value)}</span>
           </>
         )}
         {showIssue && (activity.new_value ? ` for ` : ` from `)}

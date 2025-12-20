@@ -19,7 +19,7 @@ export const IssueNameActivity = observer(function IssueNameActivity(props: TIss
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<Type size={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<Type size={14} className="text-secondary" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

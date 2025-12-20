@@ -42,13 +42,13 @@ const createDragHandleElement = (): HTMLElement => {
   dragHandleElement.draggable = true;
   dragHandleElement.dataset.dragHandle = "";
   dragHandleElement.classList.value =
-    "hidden sm:flex items-center size-5 aspect-square rounded-sm cursor-grab outline-none hover:bg-custom-background-80 active:bg-custom-background-80 active:cursor-grabbing transition-[background-color,_opacity] duration-200 ease-linear";
+    "hidden sm:flex items-center size-5 aspect-square rounded-xs cursor-grab outline-none hover:bg-layer-1-hover active:bg-layer-1 active:cursor-grabbing transition-[background-color,_opacity] duration-200 ease-linear";
 
   const iconElement1 = document.createElement("span");
-  iconElement1.classList.value = "pointer-events-none text-custom-text-300";
+  iconElement1.classList.value = "pointer-events-none text-tertiary";
   iconElement1.innerHTML = verticalEllipsisIcon;
   const iconElement2 = document.createElement("span");
-  iconElement2.classList.value = "pointer-events-none text-custom-text-300 -ml-2.5";
+  iconElement2.classList.value = "pointer-events-none text-tertiary -ml-2.5";
   iconElement2.innerHTML = verticalEllipsisIcon;
 
   dragHandleElement.appendChild(iconElement1);

@@ -96,7 +96,7 @@ export const SubIssuesListRoot = observer(function SubIssuesListRoot(props: Prop
           icon={<ListFilter />}
           customClassName={storeType !== EIssuesStoreType.EPIC ? "border-none" : ""}
           actionElement={
-            <Button variant="neutral-primary" size="sm" onClick={() => resetFilters(rootIssueId)}>
+            <Button variant="secondary" onClick={() => resetFilters(rootIssueId)}>
               {t("sub_work_item.empty_state.list_filters.action")}
             </Button>
           }

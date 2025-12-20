@@ -41,7 +41,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
                 label="Archives"
-                icon={<ArchiveIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<ArchiveIcon className="h-4 w-4 text-tertiary" />}
               />
             }
           />
@@ -50,7 +50,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
                 label="Work items"
-                icon={<WorkItemsIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
               />
             }
           />

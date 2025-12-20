@@ -54,10 +54,12 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
     isTouchDevice,
     onEditorFocus,
     placeholder,
+    showPlaceholderOnEmpty,
     tabIndex,
     titleRef,
     updatePageProperties,
     user,
+    actions,
   } = props;
 
   const { mainNavigationExtension, titleNavigationExtension, setMainEditor, setTitleEditor } = useEditorNavigation();
@@ -123,6 +125,7 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
       onEditorFocus,
       onTransaction,
       placeholder,
+      showPlaceholderOnEmpty,
       provider,
       tabIndex,
     }),
@@ -147,6 +150,7 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
       onEditorFocus,
       onTransaction,
       placeholder,
+      showPlaceholderOnEmpty,
       tabIndex,
     ]
   );

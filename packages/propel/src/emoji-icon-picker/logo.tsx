@@ -1,4 +1,3 @@
-import type { FC } from "react";
 // Due to some weird issue with the import order, the import of useFontFaceObserver
 // should be after the imported here rather than some below helper functions as it is in the original file
 
@@ -10,46 +9,33 @@ import { getEmojiSize, stringToEmoji } from "./helper";
 import { LUCIDE_ICONS_LIST } from "./lucide-icons";
 
 type Props = {
-  logo: TLogoProps;
+  logo?: TLogoProps;
   size?: number;
   type?: "lucide" | "material";
 };
 
-export function Logo(props: Props) {
-  const { logo, size = 16, type = "material" } = props;
-
-  // destructuring the logo object
-  const { in_use, emoji, icon } = logo;
-
-  // derived values
-  const value = in_use === "emoji" ? emoji?.value : icon?.name;
-  const color = icon?.color;
-  const lucideIcon = LUCIDE_ICONS_LIST.find((item) => item.name === value);
-
+export function Logo({ logo, size = 16, type = "material" }: Props) {
   const isMaterialSymbolsFontLoaded = useFontFaceObserver([
     {
-      family: `Material Symbols Rounded`,
-      style: `normal`,
-      weight: `normal`,
-      stretch: `condensed`,
+      family: "Material Symbols Rounded",
+      style: "normal",
+      weight: "normal",
+      stretch: "condensed",
     },
   ]);
-  // if no value, return empty fragment
-  if (!value) return <></>;
 
-  if (!isMaterialSymbolsFontLoaded) {
-    return (
-      <span
-        style={{
-          height: size,
-          width: size,
-        }}
-        className="rounded animate-pulse bg-custom-background-80"
-      />
-    );
-  }
+  // Reusable loading skeleton
+  const loadingSkeleton = <span style={{ height: size, width: size }} className="rounded-sm bg-layer-1" />;
 
-  // emoji
+  // Early returns for loading/empty states
+  if (!logo || !logo.in_use) return loadingSkeleton;
+
+  const { in_use, emoji, icon } = logo;
+  const value = in_use === "emoji" ? emoji?.value : icon?.name;
+
+  if (!value) return loadingSkeleton;
+
+  // Emoji rendering
   if (in_use === "emoji") {
     return (
       <span
@@ -66,38 +52,35 @@ export function Logo(props: Props) {
     );
   }
 
-  // icon
+  // Icon rendering
   if (in_use === "icon") {
+    const color = icon?.color;
+
+    // Lucide icon
+    if (type === "lucide") {
+      const lucideIcon = LUCIDE_ICONS_LIST.find((item) => item.name === value);
+      if (!lucideIcon) return null;
+
+      const LucideIconElement = lucideIcon.element;
+      return <LucideIconElement style={{ color, height: size, width: size }} />;
+    }
+
+    if (!isMaterialSymbolsFontLoaded) return loadingSkeleton;
+
+    // Material icon
     return (
-      <>
-        {type === "lucide" ? (
-          <>
-            {lucideIcon && (
-              <lucideIcon.element
-                style={{
-                  color: color,
-                  height: size,
-                  width: size,
-                }}
-              />
-            )}
-          </>
-        ) : (
-          <span
-            className="material-symbols-rounded"
-            style={{
-              fontSize: size,
-              color: color,
-              scale: "115%",
-            }}
-          >
-            {value}
-          </span>
-        )}
-      </>
+      <span
+        className="material-symbols-rounded"
+        style={{
+          fontSize: size,
+          color,
+          scale: "115%",
+        }}
+      >
+        {value}
+      </span>
     );
   }
 
-  // if no value, return empty fragment
-  return <></>;
+  return null;
 }

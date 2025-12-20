@@ -153,9 +153,9 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
                 <ChevronLeftIcon className="w-4 h-4" />
               </div>
             )}
-            <div className="text-xl font-medium text-custom-text-100">{t("project_settings.estimates.new")}</div>
+            <div className="text-18 font-medium text-primary">{t("project_settings.estimates.new")}</div>
           </div>
-          <div className="text-xs text-gray-400">
+          <div className="text-11 text-gray-400">
             {t("project_settings.estimates.create.step", {
               step: renderEstimateStepsCount,
               total: 2,
@@ -187,19 +187,19 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
             />
           )}
           {/* {isEstimatePointError && (
-            <div className="pt-5 text-sm text-red-500">
+            <div className="pt-5 text-13 text-red-500">
               Estimate points can&apos;t be empty. Enter a value in each field or remove those you don&apos;t have
               values for.
             </div>
           )} */}
         </div>
 
-        <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose} disabled={buttonLoader}>
+        <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-subtle">
+          <Button variant="secondary" size="lg" onClick={handleClose} disabled={buttonLoader}>
             {t("common.cancel")}
           </Button>
           {estimatePoints && (
-            <Button variant="primary" size="sm" onClick={handleCreateEstimate} disabled={buttonLoader}>
+            <Button variant="primary" size="lg" onClick={handleCreateEstimate} disabled={buttonLoader}>
               {buttonLoader ? t("common.creating") : t("project_settings.estimates.create.label")}
             </Button>
           )}

@@ -66,14 +66,14 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
     <ModalCore isOpen={isModalOpen} handleClose={onClose}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-18 font-medium text-secondary">
             {preloadedData?.id ? t("update") : t("add")} {t("home.quick_links.title")}
           </h3>
           <div className="mt-2 space-y-3">
             <div>
-              <label htmlFor="url" className="mb-2 text-custom-text-200 text-base font-medium">
+              <label htmlFor="url" className="mb-2 text-secondary text-14 font-medium">
                 {t("link.modal.url.text")}
-                <span className="text-[10px] block">{t("required")}</span>
+                <span className="text-10 block">{t("required")}</span>
               </label>
               <Controller
                 control={control}
@@ -94,12 +94,12 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
                   />
                 )}
               />
-              {errors.url && <span className="text-xs text-red-500">{t("link.modal.url.required")}</span>}
+              {errors.url && <span className="text-11 text-red-500">{t("link.modal.url.required")}</span>}
             </div>
             <div>
-              <label htmlFor="title" className="mb-2 text-custom-text-200 text-base font-medium">
+              <label htmlFor="title" className="mb-2 text-secondary text-14 font-medium">
                 {t("link.modal.title.text")}
-                <span className="text-[10px] block">{t("optional")}</span>
+                <span className="text-10 block">{t("optional")}</span>
               </label>
               <Controller
                 control={control}
@@ -120,11 +120,11 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={onClose}>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+          <Button variant="secondary" size="lg" onClick={onClose}>
             {t("Cancel")}
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+          <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
             {preloadedData?.id ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}{" "}
             {t("home.quick_links.title")}
           </Button>
