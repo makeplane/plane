@@ -6,7 +6,7 @@ import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { CalendarCheck2, CalendarClock, Link, Paperclip, Clock, SignalIcon, Volleyball, Calendar, User } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Link, Paperclip, Clock, SignalIcon, Volleyball, Calendar, User, Tag } from "lucide-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
@@ -52,6 +52,7 @@ import { WorkItemLayoutAdditionalProperties } from "@/plane-web/components/issue
 // local components
 import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
+import { CategoryDropdown } from "@/components/dropdowns/category-property";
 
 export interface IIssueProperties {
   issue: TIssue;
@@ -236,6 +237,17 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const handleLevel = (level: string | null) => {
     if(updateIssue)
       updateIssue(issue.project_id, issue.id, {level: level ?? null}).then(() => {
+         captureSuccess({
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
+          payload:{ id: issue.id },
+         })
+    })
+  }
+
+
+    const handleCategory = (category: string | null) => {
+    if(updateIssue)
+      updateIssue(issue.project_id, issue.id, {category: category ?? null}).then(() => {
          captureSuccess({
           eventName: WORK_ITEM_TRACKER_EVENTS.update,
           payload:{ id: issue.id },
@@ -464,6 +476,28 @@ const isStartTimeReadOnly = (
               />
         </div>
       </WithDisplayPropertiesHOC>
+
+
+
+<WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="category">
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <CategoryDropdown
+             value={issue?.category ?? null}
+             onChange={handleCategory}
+             placeholder={t("category_field")}
+             icon={<Tag className="h-3 w-3 flex-shrink-0" />}
+             buttonVariant={issue?.category ? "border-with-text": "border-without-text"}
+             clearIconClassName="!text-custom-text-100"
+             disabled={disabled}
+             renderByDefault={isMobile}
+             showTooltip
+              />
+        </div>
+      </WithDisplayPropertiesHOC>
+
+
+
+
 
 
       {/* sport field */}
