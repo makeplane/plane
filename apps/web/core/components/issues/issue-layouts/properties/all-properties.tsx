@@ -448,10 +448,6 @@ const isStartTimeReadOnly = (
     />
   </div>
 </WithDisplayPropertiesHOC>
-
-
-       {/* level field */}
- 
         {/* Level */}
 <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>

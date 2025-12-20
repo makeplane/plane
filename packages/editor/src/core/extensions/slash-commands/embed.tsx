@@ -20,7 +20,11 @@ export default function EmbedInput({
   };
 
   return (
-    <div className="bg-custom-background-90 border border-custom-border-300 rounded-md p-3 pt-1 shadow-lg z-[9999] w-75" >
+    <div
+      onMouseDown={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
+      className="bg-custom-background-90 border border-custom-border-300 rounded-md p-3 pt-1 shadow-lg z-[9999] w-75"
+    >
       <p className="text-gray-400 text-sm mb-2">
         Works with YouTube, Figma, Google Docs and more
       </p>
@@ -33,12 +37,18 @@ export default function EmbedInput({
           onChange={(e) => setLink(e.target.value)}
           placeholder="Enter or paste a link"
           className="block bg-transparent text-sm placeholder-custom-text-400 rounded-md border-[0.5px] px-3 py-2 w-full min-w-[250px] focus:outline-none focus:ring-1 border-custom-border-300 focus:ring-custom-primary-200"
-          onKeyDown={(e) => e.key === "Enter" && handleEmbed()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleEmbed();
+            }
+          }}
         />
 
         <button
+          type="button"
           onClick={handleEmbed}
-          className="text-white bg-custom-primary-100 hover:bg-custom-primary-200 focus:text-custom-brand-40 focus:bg-custom-primary-200 px-3 py-1.5 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center"
+          className="text-white bg-custom-primary-100 hover:bg-custom-primary-200 px-3 py-1.5 text-xs rounded"
         >
           Embed
         </button>
@@ -46,6 +56,7 @@ export default function EmbedInput({
 
       {onCancel && (
         <button
+          type="button"
           onClick={onCancel}
           className="mt-2 text-xs text-gray-400 hover:text-gray-200"
         >
