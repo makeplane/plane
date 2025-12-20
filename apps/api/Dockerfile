@@ -52,7 +52,13 @@ FROM python:3.12.10-alpine AS production
 
 # Set working directory
 WORKDIR /app
-RUN apk add bash
+
+# Install runtime dependencies required by Python packages
+RUN apk add --no-cache \
+    bash \
+    libpq \
+    libxslt \
+    xmlsec
 
 # Copy the virtual environment from builder
 COPY --from=builder /app/.venv /app/.venv
