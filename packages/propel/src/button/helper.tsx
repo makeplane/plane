@@ -7,7 +7,7 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-accent-primary hover:bg-accent-primary-hover active:bg-accent-primary-active disabled:bg-layer-disabled text-on-color disabled:text-disabled",
+          "bg-accent-primary hover:bg-accent-primary-hover active:bg-accent-primary-active disabled:bg-layer-disabled text-on-color disabled:text-on-color-disabled",
         "error-fill":
           "bg-danger-primary hover:bg-danger-primary-hover active:bg-danger-primary-active disabled:bg-layer-disabled text-on-color disabled:text-disabled",
         "error-outline":
