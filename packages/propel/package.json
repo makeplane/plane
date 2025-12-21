@@ -89,7 +89,7 @@
     "@storybook/react-vite": "9.1.10",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "storybook": "9.1.10",
+    "storybook": "9.1.17",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   }
