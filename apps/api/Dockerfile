@@ -64,25 +64,6 @@ RUN apk del .build-deps
 # Stage 2: Production - Lean runtime image
 FROM builder AS production
 
-# Install only runtime dependencies
-RUN apk add --no-cache \
-    bash=5.2.37-r0 \
-    libpq=17.7-r0 \
-    libxslt=1.1.43-r3 \
-    xmlsec=1.3.7-r0
-
-# Copy the virtual environment from builder
-COPY --from=builder /app/.venv /app/.venv
-
-# Copy application code
-COPY --from=builder /app /app
-
-# Set working directory
-WORKDIR /app
-
-# Set PATH to include virtual environment
-ENV PATH="/app/.venv/bin:$PATH"
-
 # Expose Django default port
 EXPOSE 8000
 
