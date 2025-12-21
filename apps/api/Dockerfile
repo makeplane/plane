@@ -38,8 +38,7 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 # Sync the project
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked \
-    && apk del .build-deps
+    uv sync --locked
 
 
 # Optional dev environment
