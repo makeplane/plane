@@ -1,5 +1,5 @@
 # Stage 1: Builder - Install dependencies with uv
-FROM python:3.12.10-alpine AS builder
+FROM python:3.12.10-alpine AS builder-with-tools
 
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:0.9.18 /uv /usr/local/bin/uv
@@ -43,7 +43,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 
 # Optional dev environment
-FROM builder AS dev
+FROM builder-with-tools AS dev
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --group local
 
@@ -51,13 +51,18 @@ CMD [ "./bin/docker-entrypoint-api-local.sh" ]
 
 
 # Optional test environment
-FROM builder AS test
+FROM builder-with-tools AS test
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --group test
 
 
+# Remove build deps for cleaner builder
+FROM builder-with-tools AS builder
+RUN apk del .build-deps
+
+
 # Stage 2: Production - Lean runtime image
-FROM python:3.12.10-alpine AS production
+FROM builder AS production
 
 # Install only runtime dependencies
 RUN apk add --no-cache \
