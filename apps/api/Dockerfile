@@ -13,18 +13,18 @@ ENV UV_COMPILE_BYTECODE=1 \
 
 # Install build dependencies and runtime dependencies
 RUN apk add --no-cache --virtual .build-deps \
-    gcc \
-    musl-dev \
-    python3-dev \
-    linux-headers \
-    libpq-dev \
-    libxslt-dev \
-    xmlsec-dev \
+    gcc=14.2.0-r6 \
+    musl-dev=1.2.5-r10 \
+    python3-dev=3.12.12-r0 \
+    linux-headers=6.14.2-r0 \
+    libpq-dev=17.7-r0 \
+    libxslt-dev=1.1.43-r3 \
+    xmlsec-dev=1.3.7-r0 \
     && apk add --no-cache \
-    bash \
-    libpq \
-    libxslt \
-    xmlsec
+    bash=5.2.37-r0 \
+    libpq=17.7-r0 \
+    libxslt=1.1.43-r3 \
+    xmlsec=1.3.7-r0
 
 # Install dependencies
 RUN --mount=type=cache,target=/root/.cache/uv \
@@ -66,10 +66,10 @@ FROM builder AS production
 
 # Install only runtime dependencies
 RUN apk add --no-cache \
-    bash \
-    libpq \
-    libxslt \
-    xmlsec
+    bash=5.2.37-r0 \
+    libpq=17.7-r0 \
+    libxslt=1.1.43-r3 \
+    xmlsec=1.3.7-r0
 
 # Copy the virtual environment from builder
 COPY --from=builder /app/.venv /app/.venv
