@@ -9,7 +9,8 @@ WORKDIR /app
 
 # Set environment variables for uv
 ENV UV_COMPILE_BYTECODE=1 \
-    UV_LINK_MODE=copy
+    UV_LINK_MODE=copy \
+    PYTHONUNBUFFERED=1
 
 # Install build dependencies and runtime dependencies
 RUN apk add --no-cache --virtual .build-deps \
