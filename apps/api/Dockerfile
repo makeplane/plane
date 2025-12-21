@@ -11,6 +11,21 @@ WORKDIR /app
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy
 
+# Install build dependencies and runtime dependencies
+RUN apk add --no-cache --virtual .build-deps \
+    gcc \
+    musl-dev \
+    python3-dev \
+    linux-headers \
+    libpq-dev \
+    libxslt-dev \
+    xmlsec-dev \
+    && apk add --no-cache \
+    bash \
+    libpq \
+    libxslt \
+    xmlsec
+
 # Install dependencies
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
@@ -23,37 +38,28 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 # Sync the project
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked
+    uv sync --locked \
+    && apk del .build-deps
 
 
 # Optional dev environment
 FROM builder AS dev
-# Copy application source code
-COPY . ./plane
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --group local
-
-RUN apk add bash
 
 CMD [ "./bin/docker-entrypoint-api-local.sh" ]
 
 
 # Optional test environment
 FROM builder AS test
-# Copy application source code
-COPY . ./plane
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --group test
 
-RUN apk add bash
 
 # Stage 2: Production - Lean runtime image
 FROM python:3.12.10-alpine AS production
 
-# Set working directory
-WORKDIR /app
-
-# Install runtime dependencies required by Python packages
+# Install only runtime dependencies
 RUN apk add --no-cache \
     bash \
     libpq \
@@ -63,18 +69,16 @@ RUN apk add --no-cache \
 # Copy the virtual environment from builder
 COPY --from=builder /app/.venv /app/.venv
 
-# Copy application source code
-COPY . ./plane
+# Copy application code
+COPY --from=builder /app /app
 
-# Set environment variables
-ENV PATH="/app/.venv/bin:$PATH" \
-    PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
+# Set working directory
+WORKDIR /app
+
+# Set PATH to include virtual environment
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Expose Django default port
 EXPOSE 8000
-
-# Set working directory to Django project
-WORKDIR /app/plane
 
 CMD ["./bin/docker-entrypoint-api.sh"]
