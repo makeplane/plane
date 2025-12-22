@@ -41,7 +41,7 @@ export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
         <Button
           variant="primary"
           onClick={() => {
-            close();
+            handleClose();
             onConfirm(date);
           }}
         >

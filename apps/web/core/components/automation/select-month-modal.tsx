@@ -39,7 +39,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
   };
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
+    <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <h3 className="text-16 font-medium leading-6 text-primary">Customize time range</h3>

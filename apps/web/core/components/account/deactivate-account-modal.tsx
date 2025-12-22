@@ -80,7 +80,7 @@ export function DeactivateAccountModal(props: Props) {
         </div>
       </div>
       <div className="mb-2 flex items-center justify-end gap-2 p-4 sm:px-6">
-        <Button variant="secondary" size="lg" onClick={onClose}>
+        <Button variant="secondary" size="lg" onClick={handleClose}>
           {t("cancel")}
         </Button>
         <Button variant="error-fill" size="lg" onClick={handleDeleteAccount}>

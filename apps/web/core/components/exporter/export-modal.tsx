@@ -139,7 +139,7 @@ export const Exporter = observer(function Exporter(props: Props) {
             multiple
           />
         </div>
-        <div onClick={() => setMultiple(!multiple)} className="flex max-w-min cursor-pointer items-center gap-2">
+        <div className="flex max-w-min cursor-pointer items-center gap-2">
           <Checkbox checked={multiple} onChange={() => setMultiple(!multiple)} />
           <div className="whitespace-nowrap text-13">
             {t("workspace_settings.settings.exports.export_separate_files")}

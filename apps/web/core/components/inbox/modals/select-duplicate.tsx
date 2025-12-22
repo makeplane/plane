@@ -65,6 +65,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
 
   const handleClose = () => {
     onClose();
+    setQuery("");
   };
 
   const handleSubmit = (selectedItem: string) => {
