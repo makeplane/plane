@@ -84,10 +84,10 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
   return (
     <ModalCore isOpen={isOpen} width={EModalWidth.LG} position={EModalPosition.TOP} handleClose={handleClose}>
       <Combobox as="div" multiple value={selectedProjectIds} onChange={handleSelectedProjectChange}>
-        <div className="flex items-center gap-2 px-4 border-b border-custom-border-100">
-          <Search className="flex-shrink-0 size-4 text-custom-text-400" aria-hidden="true" />
+        <div className="flex items-center gap-2 px-4 border-b border-subtle">
+          <Search className="flex-shrink-0 size-4 text-placeholder" aria-hidden="true" />
           <Combobox.Input
-            className="h-12 w-full border-0 bg-transparent text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
+            className="h-12 w-full border-0 bg-transparent text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
             placeholder="Search for projects"
             displayValue={() => ""}
             value={searchTerm}
@@ -102,16 +102,16 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
               return (
                 <div
                   key={projectDetails.id}
-                  className="group flex items-center gap-1.5 bg-custom-background-90 px-2 py-1 rounded cursor-pointer"
+                  className="group flex items-center gap-1.5 bg-surface-2 px-2 py-1 rounded-sm cursor-pointer"
                   onClick={() => {
                     handleSelectedProjectChange(selectedProjectIds.filter((id) => id !== projectDetails.id));
                   }}
                 >
                   <Logo logo={projectDetails.logo_props} size={14} />
-                  <p className="text-xs truncate text-custom-text-300 group-hover:text-custom-text-200 transition-colors">
+                  <p className="text-11 truncate text-tertiary group-hover:text-secondary transition-colors">
                     {projectDetails.identifier}
                   </p>
-                  <CloseIcon className="size-3 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200 transition-colors" />
+                  <CloseIcon className="size-3 flex-shrink-0 text-placeholder group-hover:text-secondary transition-colors" />
                 </div>
               );
             })}
@@ -131,7 +131,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
             </div>
           ) : (
             <ul
-              className={cn("text-custom-text-100", {
+              className={cn("text-primary", {
                 "px-2": filteredProjectIds.length > 0,
               })}
             >
@@ -145,10 +145,10 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                     value={projectDetails.id}
                     className={({ active }) =>
                       cn(
-                        "flex items-center justify-between gap-2 truncate w-full cursor-pointer select-none rounded-md p-2 text-custom-text-200 transition-colors",
+                        "flex items-center justify-between gap-2 truncate w-full cursor-pointer select-none rounded-md p-2 text-secondary transition-colors",
                         {
-                          "bg-custom-background-80": active,
-                          "text-custom-text-100": isProjectSelected,
+                          "bg-layer-1": active,
+                          "text-primary": isProjectSelected,
                         }
                       )
                     }
@@ -158,8 +158,8 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                         <Checkbox checked={isProjectSelected} />
                         <Logo logo={projectDetails.logo_props} size={16} />
                       </span>
-                      <span className="flex-shrink-0 text-[10px]">{projectDetails.identifier}</span>
-                      <p className="text-sm truncate">{projectDetails.name}</p>
+                      <span className="flex-shrink-0 text-10">{projectDetails.identifier}</span>
+                      <p className="text-13 truncate">{projectDetails.name}</p>
                     </div>
                   </Combobox.Option>
                 );
@@ -168,14 +168,14 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
           )}
         </Combobox.Options>
       </Combobox>
-      <div className="flex items-center justify-end gap-2 p-3 border-t border-custom-border-100">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+      <div className="flex items-center justify-end gap-2 p-3 border-t border-subtle">
+        <Button variant="secondary" size="lg" onClick={handleClose}>
           {t("cancel")}
         </Button>
         <Button
           ref={moveButtonRef}
           variant="primary"
-          size="sm"
+          size="lg"
           onClick={handleSubmit}
           loading={isSubmitting}
           disabled={!areSelectedProjectsChanged}

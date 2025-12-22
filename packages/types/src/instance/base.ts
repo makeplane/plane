@@ -5,7 +5,9 @@ import type {
   TInstanceImageConfigurationKeys,
   TInstanceAuthenticationKeys,
   TInstanceWorkspaceConfigurationKeys,
+  TCoreLoginMediums,
 } from "./";
+import type { TExtendedLoginMediums } from "./auth-ee";
 
 export interface IInstanceInfo {
   instance: IInstance;
@@ -56,6 +58,7 @@ export interface IInstanceConfig {
   app_base_url: string | undefined;
   space_base_url: string | undefined;
   admin_base_url: string | undefined;
+  is_self_managed: boolean;
   // intercom
   is_intercom_enabled: boolean;
   intercom_app_id: string | undefined;
@@ -97,3 +100,5 @@ export interface IInstanceConfiguration {
 export type IFormattedInstanceConfiguration = {
   [key in TInstanceConfigurationKeys]: string;
 };
+
+export type TLoginMediums = TCoreLoginMediums | TExtendedLoginMediums;

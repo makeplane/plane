@@ -7,7 +7,7 @@ export interface IBannerStyling {
 export const bannerSizeStyling = {
   container: "py-3 px-6 h-12",
   icon: "w-5 h-5",
-  title: "text-sm",
+  title: "text-13",
   action: "gap-2",
 };
 
@@ -33,14 +33,14 @@ export const getBannerStyling = (variant: TBannerVariant): string => {
 
 // Get title styling
 export const getBannerTitleStyling = (): string =>
-  `font-medium text-custom-text-200 flex-1 min-w-0 ${bannerSizeStyling.title}`;
+  `font-medium text-secondary flex-1 min-w-0 ${bannerSizeStyling.title}`;
 
 // Get action container styling
 export const getBannerActionStyling = (): string => `flex items-center flex-shrink-0 ${bannerSizeStyling.action}`;
 
 // Get dismiss button styling
 export const getBannerDismissStyling = (): string =>
-  "rounded p-1 hover:bg-custom-background-90 transition-colors flex-shrink-0";
+  "rounded-sm p-1 hover:bg-surface-2 transition-colors flex-shrink-0";
 
 // Get dismiss icon styling
-export const getBannerDismissIconStyling = (): string => "text-custom-text-200";
+export const getBannerDismissIconStyling = (): string => "text-secondary";

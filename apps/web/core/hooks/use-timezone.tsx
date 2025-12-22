@@ -43,8 +43,8 @@ const useTimezone = () => {
     if (!timezone) return undefined;
     return (
       <div className="flex gap-1.5">
-        <span className="text-custom-text-400">{timezone.utc_offset}</span>
-        <span className="text-custom-text-200">{timezone.label}</span>
+        <span className="text-placeholder">{timezone.utc_offset}</span>
+        <span className="text-secondary">{timezone.label}</span>
       </div>
     );
   };

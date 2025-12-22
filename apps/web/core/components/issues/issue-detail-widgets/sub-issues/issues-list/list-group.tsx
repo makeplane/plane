@@ -61,7 +61,7 @@ export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TS
           !isAllIssues && (
             <div className="flex items-center gap-2 p-3">
               <ChevronRightIcon
-                className={cn("size-3.5 transition-all text-custom-text-400", {
+                className={cn("size-3.5 transition-all text-placeholder", {
                   "rotate-90": isCollapsibleOpen,
                 })}
                 strokeWidth={2.5}
@@ -69,8 +69,8 @@ export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TS
               <div className="flex-shrink-0 grid place-items-center overflow-hidden">
                 {group.icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
               </div>
-              <span className="text-sm text-custom-text-100 font-medium">{group.name}</span>
-              <span className="text-sm text-custom-text-400">{workItemIds.length}</span>
+              <span className="text-13 text-primary font-medium">{group.name}</span>
+              <span className="text-13 text-placeholder">{workItemIds.length}</span>
             </div>
           )
         }

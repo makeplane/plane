@@ -63,7 +63,7 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="space-y-5 ">
-        <div className="text-xl font-medium text-custom-text-200">
+        <div className="text-18 font-medium text-secondary">
           {data
             ? t("workspace_settings.settings.webhooks.modal.details")
             : t("workspace_settings.settings.webhooks.modal.title")}
@@ -80,7 +80,7 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
                 <WebhookInput value={value} onChange={onChange} hasError={Boolean(errors.url)} />
               )}
             />
-            {errors.url && <div className="text-xs text-red-500">{errors.url.message}</div>}
+            {errors.url && <div className="text-11 text-red-500">{errors.url.message}</div>}
           </div>
           {data && <WebhookToggle control={control} />}
           <WebhookOptions value={webhookEventType} onChange={(val) => setWebhookEventType(val)} />
@@ -93,6 +93,7 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
         <div className="pt-0 space-y-5">
           <WebhookSecretKey data={data} />
           <Button
+            size="lg"
             type="submit"
             loading={isSubmitting}
             data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_UPDATE_BUTTON}
@@ -101,12 +102,12 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
           </Button>
         </div>
       ) : (
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+          <Button variant="secondary" size="lg" onClick={handleClose}>
             {t("cancel")}
           </Button>
           {!webhookSecretKey && (
-            <Button type="submit" variant="primary" size="sm" loading={isSubmitting} className="capitalize">
+            <Button type="submit" variant="primary" size="lg" loading={isSubmitting} className="capitalize">
               {isSubmitting ? t("common.creating") : t("common.create")}
             </Button>
           )}

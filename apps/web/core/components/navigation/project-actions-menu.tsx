@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
@@ -21,7 +19,7 @@ type Props = {
   onPublishModal: () => void;
 };
 
-export const ProjectActionsMenu: FC<Props> = ({
+export function ProjectActionsMenu({
   workspaceSlug,
   project,
   isAdmin,
@@ -29,7 +27,7 @@ export const ProjectActionsMenu: FC<Props> = ({
   onCopyText,
   onLeaveProject,
   onPublishModal,
-}) => {
+}: Props) {
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   // translation
@@ -44,7 +42,7 @@ export const ProjectActionsMenu: FC<Props> = ({
       customButton={
         <span
           ref={actionSectionRef}
-          className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded"
+          className="grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm"
           onClick={() => setIsMenuActive(!isMenuActive)}
         >
           <MoreHorizontal className="size-4" />
@@ -62,7 +60,7 @@ export const ProjectActionsMenu: FC<Props> = ({
       {isAdmin && (
         <CustomMenu.MenuItem onClick={onPublishModal}>
           <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
-            <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
+            <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm text-secondary transition-all duration-300 hover:bg-layer-1">
               <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
             </div>
             <div>{t("publish_project")}</div>
@@ -111,4 +109,4 @@ export const ProjectActionsMenu: FC<Props> = ({
       )}
     </CustomMenu>
   );
-};
+}

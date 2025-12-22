@@ -43,7 +43,7 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
       <Disclosure.Button
         as="button"
         type="button"
-        className="flex items-center justify-between gap-2 w-full rounded px-1 py-1.5 text-xs text-left truncate text-custom-text-200 hover:bg-custom-background-80"
+        className="flex items-center justify-between gap-2 w-full rounded-sm px-1 py-1.5 text-11 text-left truncate text-secondary hover:bg-layer-1"
       >
         {({ open }) => (
           <>
@@ -61,13 +61,13 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
       </Disclosure.Button>
       <Disclosure.Panel className="p-1 space-y-2 mb-1.5">
         {/* <div className="space-y-1.5">
-          <p className="text-xs text-custom-text-300 font-semibold">Text colors</p>
+          <p className="text-11 text-tertiary font-semibold">Text colors</p>
           <div className="flex items-center flex-wrap gap-2">
             {COLORS_LIST.map((color) => (
               <button
                 key={color.key}
                 type="button"
-                className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
+                className="flex-shrink-0 size-6 rounded-sm border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
                 style={{
                   backgroundColor: color.textColor,
                 }}
@@ -76,7 +76,7 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
+              className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
               onClick={() => handleTextColorChange(editor, null)}
             >
               <Ban className="size-4" />
@@ -84,13 +84,13 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
           </div>
         </div> */}
         <div className="space-y-1">
-          <p className="text-xs text-custom-text-300 font-semibold">Background colors</p>
+          <p className="text-11 text-tertiary font-semibold">Background colors</p>
           <div className="flex items-center flex-wrap gap-2">
             {COLORS_LIST.map((color) => (
               <button
                 key={color.key}
                 type="button"
-                className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
+                className="flex-shrink-0 size-6 rounded-sm border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
                 style={{
                   backgroundColor: color.backgroundColor,
                 }}
@@ -102,7 +102,7 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
+              className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1-hover transition-colors"
               onClick={() => {
                 handleBackgroundColorChange(editor, null);
                 onSelect(null);

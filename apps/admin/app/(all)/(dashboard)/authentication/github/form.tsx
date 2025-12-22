@@ -8,12 +8,12 @@ import { API_BASE_URL } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGithubAuthenticationConfigurationKeys } from "@plane/types";
-
-import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
 import type { TControllerInputFormField } from "@/components/common/controller-input";
+import type { TControllerSwitchFormField } from "@/components/common/controller-switch";
+import { ControllerSwitch } from "@/components/common/controller-switch";
 import { ControllerInput } from "@/components/common/controller-input";
 import type { TCopyField } from "@/components/common/copy-field";
 import { CopyField } from "@/components/common/copy-field";
@@ -43,6 +43,7 @@ export function InstanceGithubConfigForm(props: Props) {
       GITHUB_CLIENT_ID: config["GITHUB_CLIENT_ID"],
       GITHUB_CLIENT_SECRET: config["GITHUB_CLIENT_SECRET"],
       GITHUB_ORGANIZATION_ID: config["GITHUB_ORGANIZATION_ID"],
+      ENABLE_GITHUB_SYNC: config["ENABLE_GITHUB_SYNC"] || "0",
     },
   });
 
@@ -60,7 +61,7 @@ export function InstanceGithubConfigForm(props: Props) {
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             GitHub OAuth application settings.
@@ -82,7 +83,7 @@ export function InstanceGithubConfigForm(props: Props) {
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             GitHub OAuth application settings.
@@ -104,6 +105,11 @@ export function InstanceGithubConfigForm(props: Props) {
     },
   ];
 
+  const GITHUB_FORM_SWITCH_FIELD: TControllerSwitchFormField<GithubConfigFormValues> = {
+    name: "ENABLE_GITHUB_SYNC",
+    label: "GitHub",
+  };
+
   const GITHUB_COMMON_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Origin_URL",
@@ -116,7 +122,7 @@ export function InstanceGithubConfigForm(props: Props) {
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             here.
@@ -139,7 +145,7 @@ export function InstanceGithubConfigForm(props: Props) {
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             here.
@@ -152,20 +158,22 @@ export function InstanceGithubConfigForm(props: Props) {
   const onSubmit = async (formData: GithubConfigFormValues) => {
     const payload: Partial<GithubConfigFormValues> = { ...formData };
 
-    await updateInstanceConfigurations(payload)
-      .then((response = []) => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Done!",
-          message: "Your GitHub authentication is configured. You should test it now.",
-        });
-        reset({
-          GITHUB_CLIENT_ID: response.find((item) => item.key === "GITHUB_CLIENT_ID")?.value,
-          GITHUB_CLIENT_SECRET: response.find((item) => item.key === "GITHUB_CLIENT_SECRET")?.value,
-          GITHUB_ORGANIZATION_ID: response.find((item) => item.key === "GITHUB_ORGANIZATION_ID")?.value,
-        });
-      })
-      .catch((err) => console.error(err));
+    try {
+      const response = await updateInstanceConfigurations(payload);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Done!",
+        message: "Your GitHub authentication is configured. You should test it now.",
+      });
+      reset({
+        GITHUB_CLIENT_ID: response.find((item) => item.key === "GITHUB_CLIENT_ID")?.value,
+        GITHUB_CLIENT_SECRET: response.find((item) => item.key === "GITHUB_CLIENT_SECRET")?.value,
+        GITHUB_ORGANIZATION_ID: response.find((item) => item.key === "GITHUB_ORGANIZATION_ID")?.value,
+        ENABLE_GITHUB_SYNC: response.find((item) => item.key === "ENABLE_GITHUB_SYNC")?.value,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleGoBack = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -185,7 +193,7 @@ export function InstanceGithubConfigForm(props: Props) {
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
           <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
-            <div className="pt-2.5 text-xl font-medium">GitHub-provided details for Plane</div>
+            <div className="pt-2.5 text-18 font-medium">GitHub-provided details for Plane</div>
             {GITHUB_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -199,27 +207,30 @@ export function InstanceGithubConfigForm(props: Props) {
                 required={field.required}
               />
             ))}
+            <ControllerSwitch control={control} field={GITHUB_FORM_SWITCH_FIELD} />
             <div className="flex flex-col gap-1 pt-4">
               <div className="flex items-center gap-4">
-                <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isDirty}>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={(e) => void handleSubmit(onSubmit)(e)}
+                  loading={isSubmitting}
+                  disabled={!isDirty}
+                >
                   {isSubmitting ? "Saving..." : "Save changes"}
                 </Button>
-                <Link
-                  href="/authentication"
-                  className={cn(getButtonStyling("neutral-primary", "md"), "font-medium")}
-                  onClick={handleGoBack}
-                >
+                <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
                   Go back
                 </Link>
               </div>
             </div>
           </div>
           <div className="col-span-2 md:col-span-1 flex flex-col gap-y-6">
-            <div className="pt-2 text-xl font-medium">Plane-provided details for GitHub</div>
+            <div className="pt-2 text-18 font-medium">Plane-provided details for GitHub</div>
 
             <div className="flex flex-col gap-y-4">
               {/* common service details */}
-              <div className="flex flex-col gap-y-4 px-6 py-4 bg-custom-background-80 rounded-lg">
+              <div className="flex flex-col gap-y-4 px-6 py-4 bg-layer-1 rounded-lg">
                 {GITHUB_COMMON_SERVICE_DETAILS.map((field) => (
                   <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                 ))}
@@ -227,11 +238,11 @@ export function InstanceGithubConfigForm(props: Props) {
 
               {/* web service details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                <div className="px-6 py-3 bg-layer-1/60 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
                   <Monitor className="w-3 h-3" />
                   Web
                 </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
                   {GITHUB_SERVICE_DETAILS.map((field) => (
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}

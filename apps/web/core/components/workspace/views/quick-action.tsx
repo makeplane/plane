@@ -4,14 +4,13 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel, GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceView } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
+import { useViewMenuItems } from "@/components/common/quick-actions-helper";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { useViewMenuItems } from "@/plane-web/components/views/helper";
 // local imports
 import { DeleteGlobalViewModal } from "./delete-view-modal";
 import { CreateUpdateWorkspaceViewModal } from "./modal";
@@ -44,16 +43,15 @@ export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickAct
     });
   const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
 
-  const MENU_ITEMS: TContextMenuItem[] = useViewMenuItems({
+  const MENU_ITEMS = useViewMenuItems({
     isOwner,
     isAdmin,
-    setDeleteViewModal,
-    setCreateUpdateViewModal: setUpdateViewModal,
+    handleDelete: () => setDeleteViewModal(true),
+    handleEdit: () => setUpdateViewModal(true),
     handleOpenInNewTab,
-    handleCopyText,
-    isLocked: view.is_locked,
+    handleCopyLink: handleCopyText,
     workspaceSlug,
-    viewId: view.id,
+    view,
   });
 
   return (
@@ -64,9 +62,9 @@ export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickAct
         ellipsis
         placement="bottom-end"
         closeOnSelect
-        buttonClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+        buttonClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
       >
-        {MENU_ITEMS.map((item) => {
+        {MENU_ITEMS.items.map((item) => {
           if (item.shouldRender === false) return null;
           return (
             <CustomMenu.MenuItem
@@ -80,7 +78,7 @@ export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickAct
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -91,8 +89,8 @@ export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickAct
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("text-tertiary whitespace-pre-line", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

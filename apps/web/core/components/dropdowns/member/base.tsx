@@ -122,7 +122,7 @@ export const MemberDropdownBase = observer(function MemberDropdownBase(props: TM
           className={cn(
             "clickable block h-full max-w-full outline-none",
             {
-              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-not-allowed text-secondary": disabled,
               "cursor-pointer": !disabled,
             },
             buttonContainerClassName
@@ -132,7 +132,7 @@ export const MemberDropdownBase = observer(function MemberDropdownBase(props: TM
           tabIndex={tabIndex}
         >
           <DropdownButton
-            className={cn("text-xs", buttonClassName)}
+            className={cn("text-11", buttonClassName)}
             isActive={isOpen}
             tooltipHeading={placeholder}
             tooltipContent={
@@ -144,7 +144,7 @@ export const MemberDropdownBase = observer(function MemberDropdownBase(props: TM
           >
             {!hideIcon && <ButtonAvatars showTooltip={showTooltip} userIds={value} icon={icon} />}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-              <span className="flex-grow truncate leading-5">
+              <span className="flex-grow truncate leading-5 text-left text-body-xs-medium">
                 {getDisplayName(value, showUserDetails, placeholder)}
               </span>
             )}

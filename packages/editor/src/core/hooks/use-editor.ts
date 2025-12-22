@@ -40,6 +40,7 @@ export const useEditor = (props: TEditorHookProps) => {
     onEditorFocus,
     onTransaction,
     placeholder,
+    showPlaceholderOnEmpty,
     tabIndex,
     provider,
     value,
@@ -70,6 +71,7 @@ export const useEditor = (props: TEditorHookProps) => {
           isTouchDevice,
           mentionHandler,
           placeholder,
+          showPlaceholderOnEmpty,
           tabIndex,
           provider,
         }),
@@ -80,7 +82,11 @@ export const useEditor = (props: TEditorHookProps) => {
       onTransaction: () => {
         onTransaction?.();
       },
-      onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
+      onUpdate: ({ editor, transaction }) => {
+        // Check if this update is only due to migration update
+        const isMigrationUpdate = transaction?.getMeta("uniqueIdOnlyChange") === true;
+        onChange?.(editor.getJSON(), editor.getHTML(), { isMigrationUpdate });
+      },
       onDestroy: () => handleEditorReady?.(false),
       onFocus: onEditorFocus,
     },

@@ -94,7 +94,8 @@ export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
       tr.setStoredMarks(newState.tr.storedMarks);
 
       // Don't add ID generation to undo history
-      tr.setMeta("addToHistory", false);
+      // since its causing issue with undo feature we are commmeting it out for now
+      // tr.setMeta("addToHistory", false);
 
       return tr;
     },

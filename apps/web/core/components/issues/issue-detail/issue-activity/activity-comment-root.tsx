@@ -67,6 +67,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
           <CommentCard
             key={activityComment.id}
             workspaceSlug={workspaceSlug}
+            entityId={issueId}
             comment={comment}
             activityOperations={activityOperations}
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
@@ -74,6 +75,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
             showCopyLinkOption={!isIntakeIssue}
             disabled={disabled}
             projectId={projectId}
+            enableReplies
           />
         ) : BASE_ACTIVITY_FILTER_TYPES.includes(activityComment.activity_type as EActivityFilterType) ? (
           <IssueActivityItem

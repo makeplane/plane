@@ -34,23 +34,23 @@ interface Props {
 }
 
 function HeadingPrimary({ children }: { children: React.ReactNode }) {
-  return <h1 className="text-lg font-semibold text-custom-text-100">{children}</h1>;
+  return <h1 className="text-16 font-semibold text-primary">{children}</h1>;
 }
 
 function HeadingSecondary({ children }: { children: React.ReactNode }) {
-  return <h3 className="text-base font-semibold text-custom-text-100">{children}</h3>;
+  return <h3 className="text-14 font-semibold text-primary">{children}</h3>;
 }
 
 function Paragraph({ children }: { children: React.ReactNode }) {
-  return <p className="text-sm text-custom-text-200">{children}</p>;
+  return <p className="text-13 text-secondary">{children}</p>;
 }
 
 function OrderedList({ children }: { children: React.ReactNode }) {
-  return <ol className="mb-4 ml-8 list-decimal text-sm text-custom-text-200">{children}</ol>;
+  return <ol className="mb-4 ml-8 list-decimal text-13 text-secondary">{children}</ol>;
 }
 
 function UnorderedList({ children }: { children: React.ReactNode }) {
-  return <ul className="mb-4 ml-8 list-disc text-sm text-custom-text-200">{children}</ul>;
+  return <ul className="mb-4 ml-8 list-disc text-13 text-secondary">{children}</ul>;
 }
 
 function Link({ href, children }: CustomComponentProps) {

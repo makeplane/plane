@@ -23,7 +23,7 @@ export function AccessField(props: Props) {
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[1px] border-custom-border-200 p-1">
+    <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded-sm border-[1px] border-subtle p-1">
       {accessSpecifiers.map((access, index) => {
         const label = access.i18n_label ? t(access.i18n_label) : access.label;
         return (
@@ -32,16 +32,13 @@ export function AccessField(props: Props) {
               type="button"
               onClick={() => onChange(access.key)}
               className={cn(
-                "flex-shrink-0 relative flex justify-center items-center w-5 h-5 rounded-sm p-1 transition-all",
-                value === access.key ? "bg-custom-background-80" : "hover:bg-custom-background-80"
+                "flex-shrink-0 relative flex justify-center items-center w-5 h-5 rounded-xs p-1 transition-all",
+                value === access.key ? "bg-layer-1" : "hover:bg-layer-1"
               )}
               tabIndex={2 + index}
             >
               <access.icon
-                className={cn(
-                  "h-3.5 w-3.5 transition-all",
-                  value === access.key ? "text-custom-text-100" : "text-custom-text-400"
-                )}
+                className={cn("h-3.5 w-3.5 transition-all", value === access.key ? "text-primary" : "text-placeholder")}
                 strokeWidth={2}
               />
             </button>

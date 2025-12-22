@@ -58,7 +58,7 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
 
   const chevronIconClasses = useMemo(
     () =>
-      `w-4 h-4 text-custom-text-400 transition-transform duration-300 ease-in-out ${isExpanded ? "rotate-180" : "rotate-0"}`,
+      `w-4 h-4 text-placeholder transition-transform duration-300 ease-in-out ${isExpanded ? "rotate-180" : "rotate-0"}`,
     [isExpanded]
   );
 
@@ -71,23 +71,21 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
   );
 
   return (
-    <div
-      className={`flex flex-col rounded-lg overflow-hidden transition-all duration-300 ease-in-out bg-custom-background-90`}
-    >
+    <div className={`flex flex-col rounded-lg overflow-hidden transition-all duration-300 ease-in-out bg-surface-2`}>
       <div
         className={cn(
-          "flex items-center justify-between transition-colors duration-200 px-3 py-2 text-sm",
+          "flex items-center justify-between transition-colors duration-200 px-3 py-2 text-13",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
           isExpanded && "pb-1"
         )}
         onClick={handleToggleExpand}
       >
-        <div className="flex items-center gap-1 text-custom-text-300">
+        <div className="flex items-center gap-1 text-tertiary">
           <Lock className="size-3" />
           <span className="font-medium">Set a password</span>
           <span>{`(Optional)`}</span>
         </div>
-        <div className="flex items-center gap-2 text-custom-text-400">
+        <div className="flex items-center gap-2 text-placeholder">
           <ChevronDownIcon className={chevronIconClasses} />
         </div>
       </div>
@@ -107,7 +105,7 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
 
         <div className="flex flex-col gap-2 pb-2">
           {/* Confirm password label */}
-          <div className="text-custom-text-300 font-medium transform transition-all duration-300 ease-in-out delay-75 text-sm">
+          <div className="text-tertiary font-medium transform transition-all duration-300 ease-in-out delay-75 text-13">
             Confirm password
           </div>
 
@@ -120,8 +118,8 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
               placeholder="Confirm password"
               className="transition-all duration-200"
             />
-            {hasPasswordMismatch && <p className="text-xs text-red-500 mt-1">Passwords do not match</p>}
-            {isPasswordValid && <p className="text-xs text-green-500 mt-1">✓ Passwords match</p>}
+            {hasPasswordMismatch && <p className="text-11 text-red-500 mt-1">Passwords do not match</p>}
+            {isPasswordValid && <p className="text-11 text-green-500 mt-1">✓ Passwords match</p>}
           </div>
         </div>
       </div>

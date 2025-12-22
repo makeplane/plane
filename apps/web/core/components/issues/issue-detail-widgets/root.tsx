@@ -30,7 +30,7 @@ export function IssueDetailWidgets(props: Props) {
 
   return (
     <>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col space-y-4">
         <IssueDetailWidgetActionButtons
           workspaceSlug={workspaceSlug}
           projectId={projectId}

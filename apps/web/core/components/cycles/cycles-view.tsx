@@ -41,8 +41,8 @@ export const CyclesView = observer(function CyclesView(props: ICyclesView) {
             className="mx-auto h-36 w-36 sm:h-48 sm:w-48 object-contain"
             alt="No matching cycles"
           />
-          <h5 className="mb-1 mt-7 text-xl font-medium">{t("project_cycles.no_matching_cycles")}</h5>
-          <p className="text-base text-custom-text-400">
+          <h5 className="mb-1 mt-7 text-18 font-medium">{t("project_cycles.no_matching_cycles")}</h5>
+          <p className="text-14 text-placeholder">
             {searchQuery.trim() === ""
               ? t("project_cycles.remove_filters_to_see_all_cycles")
               : t("project_cycles.remove_search_criteria_to_see_all_cycles")}

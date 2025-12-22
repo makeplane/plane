@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -16,7 +14,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const WorkItemDetailsHeader = observer(() => {
+export const WorkItemDetailsHeader = observer(function WorkItemDetailsHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, workItem } = useParams();
@@ -42,7 +40,7 @@ export const WorkItemDetailsHeader = observer(() => {
               <BreadcrumbLink
                 label="Work Items"
                 href={`/${workspaceSlug}/projects/${projectId}/issues/`}
-                icon={<WorkItemsIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
               />
             }
           />

@@ -2,11 +2,12 @@ import React from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 // plane imports
+import type { TButtonSize, TButtonVariant } from "@plane/propel/button";
+import { getButtonStyling } from "@plane/propel/button";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty, TSupportedOperators } from "@plane/types";
 import { LOGICAL_OPERATOR } from "@plane/types";
-import type { TButtonVariant } from "@plane/ui";
-import { cn, getButtonStyling } from "@plane/ui";
+import { cn } from "@plane/utils";
 // local imports
 import { AddFilterDropdown } from "./dropdown";
 
@@ -14,6 +15,7 @@ export type TAddFilterButtonProps<P extends TFilterProperty, E extends TExternal
   buttonConfig?: {
     label: string | null;
     variant?: TButtonVariant;
+    size?: TButtonSize;
     className?: string;
     defaultOpen?: boolean;
     iconConfig?: {
@@ -31,7 +33,8 @@ export const AddFilterButton = observer(function AddFilterButton<P extends TFilt
 ) {
   const { filter, buttonConfig, onFilterSelect } = props;
   const {
-    variant = "link-neutral",
+    variant = "secondary",
+    size = "base",
     className,
     label,
     iconConfig = { shouldShowIcon: true },
@@ -59,12 +62,12 @@ export const AddFilterButton = observer(function AddFilterButton<P extends TFilt
       {...props}
       buttonConfig={{
         ...buttonConfig,
-        className: cn(getButtonStyling(variant, "sm"), "py-[5px]", className),
+        className: cn(getButtonStyling(variant, size), "py-[5px]", className),
       }}
       handleFilterSelect={handleFilterSelect}
       customButton={
         <div className="flex items-center gap-1">
-          {iconConfig.shouldShowIcon && <FilterIcon className="size-4 text-custom-text-200" />}
+          {iconConfig.shouldShowIcon && <FilterIcon className="size-4 text-secondary" />}
           {label}
         </div>
       }

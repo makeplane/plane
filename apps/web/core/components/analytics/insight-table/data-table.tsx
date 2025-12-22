@@ -63,14 +63,14 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
       <div className="flex w-full items-center justify-between">
         <div className="relative flex max-w-[300px] items-center gap-4 ">
           {table.getHeaderGroups()?.[0]?.headers?.[0]?.id && (
-            <div className="flex items-center gap-2 whitespace-nowrap text-sm text-custom-text-400">
+            <div className="flex items-center gap-2 whitespace-nowrap text-13 text-placeholder">
               {searchPlaceholder}
             </div>
           )}
           {!isSearchOpen && (
             <button
               type="button"
-              className="-mr-5 grid place-items-center rounded p-2 text-custom-text-400 hover:bg-custom-background-80"
+              className="-mr-5 grid place-items-center rounded-sm p-2 text-placeholder hover:bg-layer-1"
               onClick={() => {
                 setIsSearchOpen(true);
                 inputRef.current?.focus();
@@ -81,16 +81,16 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
           )}
           <div
             className={cn(
-              "mr-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 opacity-0 transition-[width] ease-linear",
+              "mr-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-surface-1 text-placeholder opacity-0 transition-[width] ease-linear",
               {
-                "w-64 border-custom-border-200 px-2.5 py-1.5 opacity-100": isSearchOpen,
+                "w-64 border-subtle px-2.5 py-1.5 opacity-100": isSearchOpen,
               }
             )}
           >
             <Search className="h-3.5 w-3.5" />
             <input
               ref={inputRef}
-              className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
+              className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
               placeholder="Search"
               value={table.getColumn(table.getHeaderGroups()?.[0]?.headers?.[0]?.id)?.getFilterValue() as string}
               onChange={(e) => {
@@ -155,7 +155,7 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
                   <EmptyStateCompact
                     assetKey="unknown"
                     assetClassName="size-20"
-                    rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+                    rootClassName="border border-subtle px-5 py-10 md:py-20 md:px-20"
                     title={t("workspace_empty_state.analytics_work_items.title")}
                   />
                 </TableCell>

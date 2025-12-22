@@ -73,7 +73,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
 
   if (!issueIds || issueIds.length === 0) return <></>;
   return (
-    <div className="relative flex h-full w-full flex-col overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
+    <div className="relative flex h-full w-full flex-col overflow-x-hidden whitespace-nowrap bg-layer-1 text-secondary">
       <div ref={portalRef} className="spreadsheet-menu-portal" />
       <MultipleSelectGroup
         containerRef={containerRef}
@@ -103,8 +103,8 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
                 isEpic={isEpic}
               />
             </div>
-            <div className="border-t border-custom-border-100">
-              <div className="z-5 sticky bottom-0 left-0 mb-3">
+            <div className="border-t border-subtle">
+              <div className="z-5 sticky bottom-0 left-0">
                 {enableQuickCreateIssue && !disableIssueCreation && (
                   <QuickAddIssueRoot
                     layout={EIssueLayoutTypes.SPREADSHEET}

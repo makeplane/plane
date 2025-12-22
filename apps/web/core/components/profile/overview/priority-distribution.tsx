@@ -22,7 +22,7 @@ export function ProfilePriorityDistribution({ userProfile }: Props) {
   const { t } = useTranslation();
   return (
     <div className="flex flex-col space-y-2">
-      <h3 className="text-lg font-medium">{t("profile.stats.priority_distribution.title")}</h3>
+      <h3 className="text-16 font-medium">{t("profile.stats.priority_distribution.title")}</h3>
       {userProfile ? (
         <Card>
           {userProfile.priority_distribution.length > 0 ? (

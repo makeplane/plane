@@ -25,7 +25,7 @@ export const IssueDefaultActivity = observer(function IssueDefaultActivity(props
   return (
     <IssueActivityBlockComponent
       activityId={activityId}
-      icon={<WorkItemsIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<WorkItemsIcon width={14} height={14} className="text-secondary" aria-hidden="true" />}
       ends={ends}
     >
       <>

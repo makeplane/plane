@@ -2,7 +2,7 @@
 import React from "react";
 
 // Common classnames
-const AXIS_TICK_CLASSNAME = "fill-custom-text-300 text-sm";
+const AXIS_TICK_CLASSNAME = "fill-tertiary text-13";
 
 export const CustomXAxisTick = React.memo(function CustomXAxisTick({ x, y, payload, getLabel }: any) {
   return (

@@ -18,7 +18,7 @@ export function LucideIconsList(props: LucideIconsListProps) {
         <button
           key={icon.name}
           type="button"
-          className="h-9 w-9 select-none text-lg grid place-items-center rounded hover:bg-custom-background-80"
+          className="h-9 w-9 select-none text-16 grid place-items-center rounded-sm hover:bg-layer-1"
           onClick={() => {
             onChange({
               name: icon.name,

@@ -20,12 +20,12 @@ export const IssueStateActivity = observer(function IssueStateActivity(props: TI
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<StatePropertyIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />}
+      icon={<StatePropertyIcon className="h-4 w-4 flex-shrink-0 text-secondary" />}
       activityId={activityId}
       ends={ends}
     >
       <>
-        set the state to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+        set the state to <span className="font-medium text-primary">{activity.new_value}</span>
         {showIssue ? ` for ` : ``}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>

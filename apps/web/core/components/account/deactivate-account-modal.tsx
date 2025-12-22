@@ -73,7 +73,7 @@ export function DeactivateAccountModal(props: Props) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -87,7 +87,7 @@ export function DeactivateAccountModal(props: Props) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[40rem]">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all sm:my-8 sm:w-[40rem]">
                 <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                   <div className="">
                     <div className="flex items-start gap-x-4">
@@ -98,10 +98,10 @@ export function DeactivateAccountModal(props: Props) {
                         />
                       </div>
                       <div>
-                        <Dialog.Title as="h3" className="my-4 text-2xl font-medium leading-6 text-custom-text-100">
+                        <Dialog.Title as="h3" className="my-4 text-20 font-medium leading-6 text-primary">
                           {t("deactivate_your_account")}
                         </Dialog.Title>
-                        <p className="mt-6 list-disc pr-4 text-base font-normal text-custom-text-200">
+                        <p className="mt-6 list-disc pr-4 text-14 font-regular text-secondary">
                           {t("deactivate_your_account_description")}
                         </p>
                       </div>
@@ -109,10 +109,10 @@ export function DeactivateAccountModal(props: Props) {
                   </div>
                 </div>
                 <div className="mb-2 flex items-center justify-end gap-2 p-4 sm:px-6">
-                  <Button variant="neutral-primary" onClick={onClose}>
+                  <Button variant="secondary" size="lg" onClick={onClose}>
                     {t("cancel")}
                   </Button>
-                  <Button variant="danger" onClick={handleDeleteAccount}>
+                  <Button variant="error-fill" size="lg" onClick={handleDeleteAccount}>
                     {isDeactivating ? t("deactivating") : t("confirm")}
                   </Button>
                 </div>

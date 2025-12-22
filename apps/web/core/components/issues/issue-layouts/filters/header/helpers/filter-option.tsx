@@ -1,5 +1,3 @@
-import React from "react";
-// lucide icons
 import { Check } from "lucide-react";
 
 type Props = {
@@ -17,22 +15,22 @@ export function FilterOption(props: Props) {
   return (
     <button
       type="button"
-      className="flex w-full items-center gap-2 rounded p-1.5 hover:bg-custom-background-80"
+      className="flex w-full items-center gap-2 rounded-sm p-1.5 hover:bg-layer-transparent-hover"
       onClick={onClick}
     >
       <div
-        className={`grid h-3 w-3 flex-shrink-0 place-items-center border bg-custom-background-90 ${
-          isChecked ? "border-custom-primary-100 bg-custom-primary-100 text-white" : "border-custom-border-300"
-        } ${multiple ? "rounded-sm" : "rounded-full"}`}
+        className={`grid h-3 w-3 flex-shrink-0 place-items-center border ${
+          isChecked ? "border-accent-strong bg-accent-primary text-on-color" : "border-strong"
+        } ${multiple ? "rounded-xs" : "rounded-full"}`}
       >
         {isChecked && <Check size={10} strokeWidth={3} />}
       </div>
       <div className="flex items-center gap-2 truncate">
         {icon && <div className="grid w-5 flex-shrink-0 place-items-center">{icon}</div>}
-        <div className="flex-grow truncate text-xs text-custom-text-200">{title}</div>
+        <div className="flex-grow truncate text-caption-sm-regular text-secondary">{title}</div>
       </div>
       {activePulse && (
-        <div className="flex-shrink-0 text-xs w-2 h-2 rounded-full bg-custom-primary-100 animate-pulse ml-auto" />
+        <div className="flex-shrink-0 text-caption-sm-regular w-2 h-2 rounded-full bg-accent-primary animate-pulse ml-auto" />
       )}
     </button>
   );

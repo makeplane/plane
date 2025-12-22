@@ -21,10 +21,10 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
 
   return (
     <div className="space-y-2">
-      <h6 className="text-base font-medium text-custom-text-400">
+      <h6 className="text-14 font-medium text-placeholder">
         {project_details?.identifier}-{issueDetails?.sequence_id}
       </h6>
-      <h4 className="break-words text-2xl font-medium">{issueDetails.name}</h4>
+      <h4 className="break-words text-20 font-medium">{issueDetails.name}</h4>
       {description && description !== "" && description !== "<p></p>" && (
         <RichTextEditor
           editable={false}

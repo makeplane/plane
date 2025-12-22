@@ -274,13 +274,6 @@ export class FileService extends APIService {
         throw err?.response?.data;
       });
   }
-  async getProjectCoverImages(): Promise<string[]> {
-    return this.get(`/api/project-covers/`)
-      .then((res) => res?.data)
-      .catch((err) => {
-        throw err?.response?.data;
-      });
-  }
 
   async duplicateAsset(
     workspaceSlug: string,

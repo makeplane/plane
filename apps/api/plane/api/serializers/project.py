@@ -3,13 +3,7 @@ import random
 from rest_framework import serializers
 
 # Module imports
-from plane.db.models import (
-    Project,
-    ProjectIdentifier,
-    WorkspaceMember,
-    State,
-    Estimate,
-)
+from plane.db.models import Project, ProjectIdentifier, WorkspaceMember, State, Estimate
 
 from plane.utils.content_validator import (
     validate_html_content,
@@ -17,7 +11,7 @@ from plane.utils.content_validator import (
 from .base import BaseSerializer
 
 
-class  ProjectCreateSerializer(BaseSerializer):
+class ProjectCreateSerializer(BaseSerializer):
     """
     Serializer for creating projects with workspace validation.
 
@@ -123,6 +117,7 @@ class  ProjectCreateSerializer(BaseSerializer):
 
     def create(self, validated_data):
         identifier = validated_data.get("identifier", "").strip().upper()
+
         if identifier == "":
             raise serializers.ValidationError(detail="Project Identifier is required")
 

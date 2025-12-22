@@ -7,11 +7,12 @@ import { API_BASE_URL } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGitlabAuthenticationConfigurationKeys } from "@plane/types";
-import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
 import type { TControllerInputFormField } from "@/components/common/controller-input";
+import type { TControllerSwitchFormField } from "@/components/common/controller-switch";
+import { ControllerSwitch } from "@/components/common/controller-switch";
 import { ControllerInput } from "@/components/common/controller-input";
 import type { TCopyField } from "@/components/common/copy-field";
 import { CopyField } from "@/components/common/copy-field";
@@ -41,6 +42,7 @@ export function InstanceGitlabConfigForm(props: Props) {
       GITLAB_HOST: config["GITLAB_HOST"],
       GITLAB_CLIENT_ID: config["GITLAB_CLIENT_ID"],
       GITLAB_CLIENT_SECRET: config["GITLAB_CLIENT_SECRET"],
+      ENABLE_GITLAB_SYNC: config["ENABLE_GITLAB_SYNC"] || "0",
     },
   });
 
@@ -71,7 +73,7 @@ export function InstanceGitlabConfigForm(props: Props) {
             tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             GitLab OAuth application settings
@@ -94,7 +96,7 @@ export function InstanceGitlabConfigForm(props: Props) {
             tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             GitLab OAuth application settings
@@ -108,6 +110,11 @@ export function InstanceGitlabConfigForm(props: Props) {
     },
   ];
 
+  const GITLAB_FORM_SWITCH_FIELD: TControllerSwitchFormField<GitlabConfigFormValues> = {
+    name: "ENABLE_GITLAB_SYNC",
+    label: "GitLab",
+  };
+
   const GITLAB_SERVICE_FIELD: TCopyField[] = [
     {
       key: "Callback_URL",
@@ -120,7 +127,7 @@ export function InstanceGitlabConfigForm(props: Props) {
             tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             GitLab OAuth application
@@ -134,20 +141,22 @@ export function InstanceGitlabConfigForm(props: Props) {
   const onSubmit = async (formData: GitlabConfigFormValues) => {
     const payload: Partial<GitlabConfigFormValues> = { ...formData };
 
-    await updateInstanceConfigurations(payload)
-      .then((response = []) => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Done!",
-          message: "Your GitLab authentication is configured. You should test it now.",
-        });
-        reset({
-          GITLAB_HOST: response.find((item) => item.key === "GITLAB_HOST")?.value,
-          GITLAB_CLIENT_ID: response.find((item) => item.key === "GITLAB_CLIENT_ID")?.value,
-          GITLAB_CLIENT_SECRET: response.find((item) => item.key === "GITLAB_CLIENT_SECRET")?.value,
-        });
-      })
-      .catch((err) => console.error(err));
+    try {
+      const response = await updateInstanceConfigurations(payload);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Done!",
+        message: "Your GitLab authentication is configured. You should test it now.",
+      });
+      reset({
+        GITLAB_HOST: response.find((item) => item.key === "GITLAB_HOST")?.value,
+        GITLAB_CLIENT_ID: response.find((item) => item.key === "GITLAB_CLIENT_ID")?.value,
+        GITLAB_CLIENT_SECRET: response.find((item) => item.key === "GITLAB_CLIENT_SECRET")?.value,
+        ENABLE_GITLAB_SYNC: response.find((item) => item.key === "ENABLE_GITLAB_SYNC")?.value,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleGoBack = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -167,7 +176,7 @@ export function InstanceGitlabConfigForm(props: Props) {
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
           <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
-            <div className="pt-2.5 text-xl font-medium">GitLab-provided details for Plane</div>
+            <div className="pt-2.5 text-18 font-medium">GitLab-provided details for Plane</div>
             {GITLAB_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -181,24 +190,27 @@ export function InstanceGitlabConfigForm(props: Props) {
                 required={field.required}
               />
             ))}
+            <ControllerSwitch control={control} field={GITLAB_FORM_SWITCH_FIELD} />
             <div className="flex flex-col gap-1 pt-4">
               <div className="flex items-center gap-4">
-                <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isDirty}>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={(e) => void handleSubmit(onSubmit)(e)}
+                  loading={isSubmitting}
+                  disabled={!isDirty}
+                >
                   {isSubmitting ? "Saving..." : "Save changes"}
                 </Button>
-                <Link
-                  href="/authentication"
-                  className={cn(getButtonStyling("neutral-primary", "md"), "font-medium")}
-                  onClick={handleGoBack}
-                >
+                <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
                   Go back
                 </Link>
               </div>
             </div>
           </div>
           <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-custom-background-80/60 rounded-lg">
-              <div className="pt-2 text-xl font-medium">Plane-provided details for GitLab</div>
+            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-layer-1/60 rounded-lg">
+              <div className="pt-2 text-18 font-medium">Plane-provided details for GitLab</div>
               {GITLAB_SERVICE_FIELD.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
               ))}

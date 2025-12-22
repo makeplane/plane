@@ -134,10 +134,11 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
         entityId={issue.id}
         fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
         initialValue={issueDescription}
-        onSubmit={async (value) => {
+        onSubmit={async (value, isMigrationUpdate) => {
           if (!issue.id || !issue.project_id) return;
           await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
             description_html: value,
+            ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
           });
         }}
         setIsSubmitting={(value) => setIsSubmitting(value)}

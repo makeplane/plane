@@ -37,9 +37,7 @@ class GiteaOauthInitiateEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "?" + urlencode(params))
             return HttpResponseRedirect(url)
         try:
             state = uuid.uuid4().hex
@@ -51,9 +49,7 @@ class GiteaOauthInitiateEndpoint(View):
             params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "?" + urlencode(params))
             return HttpResponseRedirect(url)
 
 
@@ -87,9 +83,7 @@ class GiteaCallbackEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
-            provider = GiteaOAuthProvider(
-                request=request, code=code, callback=post_user_auth_workflow
-            )
+            provider = GiteaOAuthProvider(request=request, code=code, callback=post_user_auth_workflow)
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)

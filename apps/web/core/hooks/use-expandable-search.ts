@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useOutsideClickDetector } from "@plane/hooks";
 
 type UseExpandableSearchOptions = {
@@ -8,6 +8,7 @@ type UseExpandableSearchOptions = {
 /**
  * Custom hook for expandable search input behavior
  * Handles focus management to prevent unwanted opening on programmatic focus restoration
+ * Opens on click, typing, or keyboard shortcut (via PowerK Cmd+F)
  */
 export const useExpandableSearch = (options?: UseExpandableSearchOptions) => {
   const { onClose } = options || {};
@@ -19,6 +20,7 @@ export const useExpandableSearch = (options?: UseExpandableSearchOptions) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const wasClickedRef = useRef<boolean>(false);
+  const wasKeyboardTriggeredRef = useRef<boolean>(false);
 
   // Handle close
   const handleClose = useCallback(() => {
@@ -37,16 +39,32 @@ export const useExpandableSearch = (options?: UseExpandableSearchOptions) => {
   // Outside click detection
   useOutsideClickDetector(containerRef, handleOutsideClick);
 
+  // Track keyboard shortcuts that trigger focus (Cmd+F / Ctrl+F)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "f") {
+        // Mark as keyboard triggered so handleFocus knows to open
+        wasKeyboardTriggeredRef.current = true;
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   // Track explicit clicks
   const handleMouseDown = useCallback(() => {
     wasClickedRef.current = true;
   }, []);
 
-  // Only open on explicit clicks, not programmatic focus
+  // Open on explicit clicks or keyboard shortcut, not programmatic focus restoration
   const handleFocus = useCallback(() => {
-    if (wasClickedRef.current) {
+    if (wasClickedRef.current || wasKeyboardTriggeredRef.current) {
       setIsOpen(true);
       wasClickedRef.current = false;
+      wasKeyboardTriggeredRef.current = false;
     }
   }, []);
 
