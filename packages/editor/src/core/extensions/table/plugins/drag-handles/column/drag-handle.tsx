@@ -113,6 +113,17 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
       e.stopPropagation();
       e.preventDefault();
 
+      // Prevent multiple simultaneous drag operations
+      // If there are already listeners attached, remove them first
+      if (activeListenersRef.current.mouseup) {
+        window.removeEventListener("mouseup", activeListenersRef.current.mouseup);
+      }
+      if (activeListenersRef.current.mousemove) {
+        window.removeEventListener("mousemove", activeListenersRef.current.mousemove);
+      }
+      activeListenersRef.current.mouseup = undefined;
+      activeListenersRef.current.mousemove = undefined;
+
       const table = findTable(editor.state.selection);
       if (!table) return;
 
