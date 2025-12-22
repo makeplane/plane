@@ -190,7 +190,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               />
             </div> */}
 
-            {createdByDetails && (
+            {/* {createdByDetails && (
               <div className="flex h-8 items-center gap-2">
                 <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                   <UserCircle2 className="h-4 w-4 flex-shrink-0" />
@@ -201,7 +201,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   <span className="flex-grow truncate text-xs leading-5">{createdByDetails?.display_name}</span>
                 </div>
               </div>
-            )}
+            )} */}
 
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
@@ -253,7 +253,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               />
             </div>
 
-            <div className="flex h-8 items-center gap-2">
+            {/* <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.order_by.due_date")}</span>
@@ -280,7 +280,12 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 // TODO: add this logic
                 // showPlaceholderIcon
               />
-            </div>
+            </div> */}
+
+
+
+
+            
 
            {/* sport field */}
             <div className="flex h-8 items-center gap-2">
