@@ -16,9 +16,7 @@ type TUserRole = "guest" | "member" | "admin" | "unknown";
  * @returns The user role string
  */
 
-export const getUserRoleString = (
-  role: EUserPermissions | EUserWorkspaceRoles | EUserProjectRoles | undefined
-): TUserRole => {
+const getUserRoleString = (role: EUserPermissions | EUserWorkspaceRoles | EUserProjectRoles | undefined): TUserRole => {
   if (!role) return "unknown";
   switch (role) {
     case EUserPermissions.GUEST:
@@ -156,7 +154,12 @@ export const trackWorkspaceCreated = (
 /**
  * Track workspace deletion
  */
-export const trackWorkspaceDeleted = (workspace: IWorkspace, user: IUser, role: TUserRole) => {
+export const trackWorkspaceDeleted = (
+  workspace: IWorkspace,
+  user: IUser,
+  role: EUserPermissions | EUserWorkspaceRoles | undefined
+) => {
+  const userRole = getUserRoleString(role);
   trackEvent(
     "workspace_deleted",
     {
@@ -165,7 +168,7 @@ export const trackWorkspaceDeleted = (workspace: IWorkspace, user: IUser, role: 
       workspace_slug: workspace.slug,
       deleted_at: new Date().toISOString(),
     },
-    role
+    userRole
   );
 };
 
