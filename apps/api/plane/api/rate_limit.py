@@ -106,7 +106,21 @@ class WorkspaceTokenRateThrottle(SimpleRateThrottle):
             token = APIToken.objects.filter(token=api_key).only("allowed_rate_limit").first()
             if token and token.allowed_rate_limit:
                 self.rate = token.allowed_rate_limit
-                # Must re-parse to update num_requests and duration
+
                 self.num_requests, self.duration = self.parse_rate(self.rate)
 
-        return super().allow_request(request, view)
+        allowed = super().allow_request(request, view)
+
+        if allowed:
+            now = self.timer()
+            history = self.cache.get(self.key, [])
+
+            while history and history[-1] <= now - self.duration:
+                history.pop()
+
+            available = self.num_requests - len(history)
+
+            request.META["X-RateLimit-Remaining"] = max(0, available)
+            request.META["X-RateLimit-Reset"] = int(now + self.duration)
+
+        return allowed
