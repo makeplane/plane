@@ -205,11 +205,11 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
   return (
     <div
       className={cn(
-        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-tertiary bg-layer-2 border border-dashed transition-all duration-200 ease-in-out cursor-default",
+        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-tertiary bg-layer-3 border border-dashed transition-all duration-200 ease-in-out cursor-default",
         {
           "border-subtle": !(selected && editor.isEditable && !isErrorState),
-          "hover:text-secondary hover:bg-layer-2-hover cursor-pointer": editor.isEditable && !isErrorState,
-          "bg-layer-2-hover text-secondary": draggedInside && editor.isEditable && !isErrorState,
+          "hover:text-secondary hover:bg-layer-3-hover cursor-pointer": editor.isEditable && !isErrorState,
+          "bg-layer-3-hover text-secondary": draggedInside && editor.isEditable && !isErrorState,
           "text-accent-secondary bg-accent-primary/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
             selected && editor.isEditable && !isErrorState,
           "text-red-500 cursor-default": isErrorState,

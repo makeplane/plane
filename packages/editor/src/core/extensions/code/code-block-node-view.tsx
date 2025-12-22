@@ -38,7 +38,7 @@ export function CodeBlockComponent({ node }: Props) {
         <button
           type="button"
           className={cn(
-            "group/button hidden group-hover/code:flex items-center justify-center absolute top-2 right-2 z-10 size-8 rounded-md bg-layer-2 border border-subtle transition duration-150 ease-in-out backdrop-blur-sm",
+            "group/button hidden group-hover/code:flex items-center justify-center absolute top-2 right-2 z-10 size-8 rounded-md bg-layer-1 border border-subtle transition duration-150 ease-in-out backdrop-blur-sm",
             {
               "bg-green-500/30 hover:bg-green-500/30 active:bg-green-500/30": copied,
             }
@@ -53,7 +53,7 @@ export function CodeBlockComponent({ node }: Props) {
         </button>
       </Tooltip>
 
-      <pre className="bg-layer-2 text-primary rounded-lg p-4 my-2">
+      <pre className="bg-layer-3 text-primary rounded-lg p-4 my-2">
         <NodeViewContent as="code" className="whitespace-pre-wrap" />
       </pre>
     </NodeViewWrapper>
