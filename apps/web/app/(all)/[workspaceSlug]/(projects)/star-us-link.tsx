@@ -29,7 +29,7 @@ export function StarUsOnGitHubLink() {
           },
         })
       }
-      className="flex flex-shrink-0 items-center gap-1.5 rounded-sm bg-layer-1 px-3 py-1.5"
+      className="flex flex-shrink-0 items-center gap-1.5 rounded-sm bg-layer-2 px-3 py-1.5"
       href="https://github.com/makeplane/plane"
       target="_blank"
       rel="noopener noreferrer"
