@@ -26,13 +26,11 @@ export function ControllerSwitch<T extends FieldValues>(props: Props<T>) {
         <Controller
           control={control}
           name={name as FieldPath<T>}
-          render={({ field: { value, onChange } }) => (
-            <ToggleSwitch
-              value={Boolean(parseInt(value))}
-              onChange={() => (parseInt(value) ? onChange("0") : onChange("1"))}
-              size="sm"
-            />
-          )}
+          render={({ field: { value, onChange } }) => {
+            const parsedValue = Number.parseInt(typeof value === "string" ? value : String(value ?? "0"), 10);
+            const isOn = !Number.isNaN(parsedValue) && parsedValue !== 0;
+            return <ToggleSwitch value={isOn} onChange={() => onChange(isOn ? "0" : "1")} size="sm" />;
+          }}
         />
       </div>
     </div>
