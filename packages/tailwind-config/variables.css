@@ -7,6 +7,7 @@
 
   /* ---------- Alpha colors ---------- */
   /* White alpha */
+  --color-white: oklch(1 0 0);
   --color-alpha-white-0: oklch(1 0 0 / 0%);
   --color-alpha-white-100: oklch(1 0 0 / 5%);
   --color-alpha-white-200: oklch(1 0 0 / 10%);
@@ -22,6 +23,7 @@
   --color-alpha-white-1200: oklch(1 0 0 / 95%);
 
   /* Black alpha */
+  --color-black: oklch(0.1482 0.0034 196.79);
   --color-alpha-black-0: oklch(0.1482 0.0034 196.79 / 0%);
   --color-alpha-black-100: oklch(0.1482 0.0034 196.79 / 5%);
   --color-alpha-black-200: oklch(0.1482 0.0034 196.79 / 10%);
