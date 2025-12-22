@@ -136,9 +136,9 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
         },
       });
 
-      const quickAddRes = await quickAddPromise;
-
       try {
+        const quickAddRes = await quickAddPromise;
+
         if (currentWorkspace && currentUser && quickAddRes) {
           const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
           trackWorkItemCreated(

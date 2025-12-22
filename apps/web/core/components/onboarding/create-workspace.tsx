@@ -79,16 +79,13 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
                 message: t("workspace_creation.toast.success.message"),
               });
 
+              await fetchWorkspaces();
+              const role = getWorkspaceRoleByWorkspaceSlug(workspaceResponse.slug);
+
               if (currentUser) {
-                const role = getWorkspaceRoleByWorkspaceSlug(workspaceResponse.slug);
-                trackWorkspaceCreated(
-                  workspaceResponse,
-                  currentUser,
-                  role,
-                );
+                trackWorkspaceCreated(workspaceResponse, currentUser, role);
               }
 
-              await fetchWorkspaces();
               await completeStep(workspaceResponse.id);
             })
             .catch(() => {
