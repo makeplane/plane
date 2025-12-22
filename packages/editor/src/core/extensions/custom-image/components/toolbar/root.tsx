@@ -31,7 +31,7 @@ export function ImageToolbarRoot(props: Props) {
     <>
       <div
         className={cn(
-          "absolute top-1 right-1 h-7 z-20 bg-black/80 rounded-sm flex items-center gap-2 px-2 opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity",
+          "absolute top-1 right-1 h-7 z-20 bg-alpha-black-1000 rounded-sm flex items-center gap-2 px-2 opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity",
           {
             "opacity-100 pointer-events-auto": shouldShowToolbar,
           }
