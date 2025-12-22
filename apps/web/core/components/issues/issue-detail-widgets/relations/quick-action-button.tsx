@@ -3,7 +3,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import type { TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
@@ -56,7 +57,7 @@ export const RelationActionButton = observer(function RelationActionButton(props
           >
             <div className="flex items-center gap-2">
               {item.icon(12)}
-              <span>{t(item.i18n_label)}</span>
+              <span>{t(item.i18n_label as KeysWithoutParams<"translation">)}</span>
             </div>
           </CustomMenu.MenuItem>
         );

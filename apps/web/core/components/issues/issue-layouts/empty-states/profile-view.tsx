@@ -4,6 +4,8 @@ import { useParams } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 
+type TProfileViewId = "activity" | "assigned" | "created" | "subscribed";
+
 // TODO: If projectViewId changes, everything breaks. Figure out a better way to handle this.
 export const ProfileViewEmptyState = observer(function ProfileViewEmptyState() {
   // plane hooks
@@ -13,11 +15,13 @@ export const ProfileViewEmptyState = observer(function ProfileViewEmptyState() {
 
   if (!profileViewId) return null;
 
+  const viewId = profileViewId.toString() as TProfileViewId;
+
   return (
     <EmptyStateDetailed
       assetKey="work-item"
-      title={t(`profile.empty_state.${profileViewId.toString()}.title`)}
-      description={t(`profile.empty_state.${profileViewId.toString()}.description`)}
+      title={t(`profile.empty_state.${viewId}.title`)}
+      description={t(`profile.empty_state.${viewId}.description`)}
     />
   );
 });

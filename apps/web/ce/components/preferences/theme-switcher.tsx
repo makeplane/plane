@@ -4,7 +4,8 @@ import { useTheme } from "next-themes";
 // plane imports
 import type { I_THEME_OPTION } from "@plane/constants";
 import { THEME_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation   } from "@plane/i18n";
+import type {KeysWithoutParams, PrefixedKeyWithoutParams} from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 // components
 import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
@@ -14,11 +15,13 @@ import { PreferencesSection } from "@/components/preferences/section";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 
+type I18nKey = KeysWithoutParams<"translation"> | PrefixedKeyWithoutParams;
+
 export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
   option: {
     id: string;
-    title: string;
-    description: string;
+    title: I18nKey;
+    description: I18nKey;
   };
 }) {
   // store hooks

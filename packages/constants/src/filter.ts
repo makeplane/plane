@@ -32,7 +32,7 @@ export const DATE_BEFORE_FILTER_OPTIONS = [
   },
   {
     name: "1 month ago",
-    i18n_name: "date_filters.1_month_ago",
+    i18n_name: "date_filters.1_month_ago" as const,
     value: "1_months;before;fromnow",
   },
 ];

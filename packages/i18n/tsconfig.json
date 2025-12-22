@@ -1,5 +1,5 @@
 {
   "extends": "@plane/typescript-config/react-library.json",
-  "include": ["./src"],
+  "include": ["./src", "./scripts"],
   "exclude": ["dist", "build", "node_modules"]
 }

@@ -24,8 +24,8 @@ export const usePowerKAccountCommands = (): TPowerKCommandConfig[] => {
     signOut().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: t("sign_out.toast.error.title"),
-        message: t("sign_out.toast.error.message"),
+        title: t("auth.sign_out.toast.error.title"),
+        message: t("auth.sign_out.toast.error.message"),
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps

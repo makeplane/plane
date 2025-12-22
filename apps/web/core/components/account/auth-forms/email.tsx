@@ -15,6 +15,8 @@ type TAuthEmailForm = {
   onSubmit: (data: IEmailCheckData) => Promise<void>;
 };
 
+const EMAIL_ERROR_KEY = "auth.common.email.errors.invalid" as const;
+
 export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailForm) {
   const { onSubmit, defaultEmail } = props;
   // states
@@ -23,7 +25,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
   // plane hooks
   const { t } = useTranslation();
   const emailError = useMemo(
-    () => (email && !checkEmailValidity(email) ? { email: "auth.common.email.errors.invalid" } : undefined),
+    () => (email && !checkEmailValidity(email) ? { email: EMAIL_ERROR_KEY } : undefined),
     [email]
   );
 

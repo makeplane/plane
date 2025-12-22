@@ -2,7 +2,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 // ui
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { UserCirclePropertyIcon, CreateIcon, LayerStackIcon } from "@plane/propel/icons";
 import type { IUserProfileData } from "@plane/types";
 import { Loader, Card, ECardSpacing, ECardDirection } from "@plane/ui";
@@ -50,7 +51,7 @@ export function ProfileStats({ userProfile }: Props) {
                   <card.icon className="h-5 w-5" />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-13 text-placeholder">{t(card.i18n_title)}</p>
+                  <p className="text-13 text-placeholder">{t(card.i18n_title as KeysWithoutParams<"translation">)}</p>
                   <p className="text-18 font-semibold">{card.value}</p>
                 </div>
               </Card>

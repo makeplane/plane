@@ -2,7 +2,8 @@ import React from "react";
 import { Command } from "cmdk";
 import { X, Search } from "lucide-react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 // local imports
 import type { TPowerKContext, TPowerKPageType } from "../../core/types";
 import { POWER_K_MODAL_PAGE_DETAILS } from "./constants";
@@ -21,7 +22,7 @@ export function PowerKModalHeader(props: Props) {
   const { t } = useTranslation();
   // derived values
   const placeholder = activePage
-    ? t(POWER_K_MODAL_PAGE_DETAILS[activePage].i18n_placeholder)
+    ? t(POWER_K_MODAL_PAGE_DETAILS[activePage].i18n_placeholder as KeysWithoutParams<"translation">)
     : t("power_k.page_placeholders.default");
 
   return (

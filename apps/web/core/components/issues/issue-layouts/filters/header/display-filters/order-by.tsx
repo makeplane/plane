@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import type { TIssueOrderByOptions } from "@plane/types";
 
 // components
@@ -36,7 +37,7 @@ export const FilterOrderBy = observer(function FilterOrderBy(props: Props) {
               key={orderBy?.key}
               isChecked={activeOrderBy === orderBy?.key ? true : false}
               onClick={() => handleUpdate(orderBy.key)}
-              title={t(orderBy.titleTranslationKey)}
+              title={t(orderBy.titleTranslationKey as KeysWithoutParams<"translation">)}
               multiple={false}
             />
           ))}

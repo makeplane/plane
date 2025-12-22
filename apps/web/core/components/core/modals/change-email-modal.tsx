@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Transition, Dialog } from "@headlessui/react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTranslation   } from "@plane/i18n";
+import type {KeysWithoutParams, PrefixedKeyWithoutParams} from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Input } from "@plane/ui";
@@ -27,6 +28,29 @@ const defaultValues: TUniqueCodeValuesForm = { email: "", code: "" };
 // service initialization
 const authService = new AuthService();
 
+type I18nKey = KeysWithoutParams<"translation"> | PrefixedKeyWithoutParams;
+
+type ChangeEmailTranslationPath =
+  | "title"
+  | "description"
+  | "toasts.success_title"
+  | "toasts.success_message"
+  | "form.email.label"
+  | "form.email.placeholder"
+  | "form.email.errors.required"
+  | "form.email.errors.invalid"
+  | "form.email.errors.exists"
+  | "form.email.errors.validation_failed"
+  | "form.code.label"
+  | "form.code.placeholder"
+  | "form.code.errors.required"
+  | "form.code.errors.invalid"
+  | "form.code.helper_text"
+  | "actions.cancel"
+  | "actions.confirm"
+  | "actions.continue"
+  | "states.sending";
+
 export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props) {
   const { isOpen, onClose } = props;
   // states
@@ -34,7 +58,8 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
   // store hooks
   const { signOut } = useUser();
   const { t } = useTranslation();
-  const changeEmailT = (path: string) => t(`account_settings.profile.change_email_modal.${path}`);
+  const changeEmailT = (path: ChangeEmailTranslationPath) =>
+    t(`account_settings.profile.change_email_modal.${path}` as I18nKey);
   // form info
   const {
     handleSubmit,
@@ -56,8 +81,8 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
     await signOut().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: t("sign_out.toast.error.title"),
-        message: t("sign_out.toast.error.message"),
+        title: t("auth.sign_out.toast.error.title"),
+        message: t("auth.sign_out.toast.error.message"),
       })
     );
   };

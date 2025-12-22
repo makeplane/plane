@@ -1,16 +1,19 @@
 import type { LucideIcon } from "lucide-react";
 // plane ui
-import { useTranslation } from "@plane/i18n";
+import { useTranslation   } from "@plane/i18n";
+import type {KeysWithoutParams, PrefixedKeyWithoutParams} from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
+
+type I18nKey = KeysWithoutParams<"translation"> | PrefixedKeyWithoutParams;
 
 type Props = {
   onChange: (value: number) => void;
   value: number;
   accessSpecifiers: {
     key: number;
-    i18n_label?: string;
+    i18n_label?: I18nKey;
     label?: string;
     icon: LucideIcon;
   }[];

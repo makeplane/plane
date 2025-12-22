@@ -9,7 +9,8 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -133,7 +134,9 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
             <div className="mt-6 space-y-5">
               {userDetails.map((detail) => (
                 <div key={detail.i18n_label} className="flex items-center gap-4 text-13">
-                  <div className="w-2/5 flex-shrink-0 text-secondary">{t(detail.i18n_label)}</div>
+                  <div className="w-2/5 flex-shrink-0 text-secondary">
+                    {t(detail.i18n_label as KeysWithoutParams<"translation">)}
+                  </div>
                   <div className="w-3/5 break-words font-medium">{detail.value}</div>
                 </div>
               ))}

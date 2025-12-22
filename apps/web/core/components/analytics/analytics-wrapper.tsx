@@ -1,10 +1,11 @@
 import React from "react";
 // plane package imports
-import { useTranslation } from "@plane/i18n";
+import { useTranslation   } from "@plane/i18n";
+import type {KeysWithoutParams, PrefixedKeyWithoutParams} from "@plane/i18n";
 import { cn } from "@plane/utils";
 
 type Props = {
-  i18nTitle: string;
+  i18nTitle: KeysWithoutParams<"translation"> | PrefixedKeyWithoutParams;
   children: React.ReactNode;
   className?: string;
 };

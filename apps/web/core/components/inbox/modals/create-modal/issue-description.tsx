@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -71,7 +72,9 @@ export const InboxIssueDescription = observer(function InboxIssueDescription(pro
       projectId={projectId}
       dragDropEnabled={false}
       onChange={(_description: object, description_html: string) => handleData("description_html", description_html)}
-      placeholder={(isFocused, description) => t(`${getDescriptionPlaceholderI18n(isFocused, description)}`)}
+      placeholder={(isFocused, description) =>
+        t(getDescriptionPlaceholderI18n(isFocused, description) as KeysWithoutParams<"translation">)
+      }
       searchMentionCallback={async (payload) =>
         await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
           ...payload,

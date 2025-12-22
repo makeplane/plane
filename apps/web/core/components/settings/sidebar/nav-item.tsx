@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Disclosure } from "@headlessui/react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import type { EUserWorkspaceRoles } from "@plane/types";
 import { cn, joinUrlPath } from "@plane/utils";
 // hooks
@@ -49,7 +50,7 @@ const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: T
         {setting.icon
           ? setting.icon
           : actionIcons && actionIcons({ type: setting.key, size: 16, className: "w-4 h-4" })}
-        <div className="text-13 font-medium truncate">{t(setting.i18n_label)}</div>
+        <div className="text-13 font-medium truncate">{t(setting.i18n_label as KeysWithoutParams<"translation">)}</div>
       </div>
       {appendItemsToTitle?.(setting.key)}
     </>

@@ -2,7 +2,8 @@ import { observer } from "mobx-react";
 // plane types
 import { EUserPermissionsLevel } from "@plane/constants";
 // components
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import type { TPowerKContext } from "@/components/power-k/core/types";
 import { PowerKSettingsMenu } from "@/components/power-k/menus/settings";
 // hooks
@@ -34,7 +35,7 @@ export const PowerKOpenProjectSettingsMenu = observer(function PowerKOpenProject
   );
   const settingsListWithIcons = settingsList.map((setting) => ({
     ...setting,
-    label: t(setting.i18n_label),
+    label: t(setting.i18n_label as KeysWithoutParams<"translation">),
     icon: setting.Icon,
   }));
 

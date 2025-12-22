@@ -1,5 +1,6 @@
 import { SignalHigh } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 // types
 import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -29,7 +30,10 @@ export function IssueBlockPriority({
   if (priority_detail === null) return <></>;
 
   return (
-    <Tooltip tooltipHeading="Priority" tooltipContent={t(priority_detail?.titleTranslationKey || "")}>
+    <Tooltip
+      tooltipHeading="Priority"
+      tooltipContent={t((priority_detail?.titleTranslationKey || "") as KeysWithoutParams<"translation">)}
+    >
       <div
         className={cn(
           "h-full flex items-center gap-1.5 border-[0.5px] rounded-sm text-11 px-2 py-0.5",
@@ -59,7 +63,11 @@ export function IssueBlockPriority({
         ) : (
           <SignalHigh className="size-3" />
         )}
-        {shouldShowName && <span className="pl-2 text-13">{t(priority_detail?.titleTranslationKey || "")}</span>}
+        {shouldShowName && (
+          <span className="pl-2 text-13">
+            {t((priority_detail?.titleTranslationKey || "") as KeysWithoutParams<"translation">)}
+          </span>
+        )}
       </div>
     </Tooltip>
   );

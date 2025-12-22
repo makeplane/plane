@@ -130,7 +130,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
                   onChange={(value: string) => {
                     router.push(`/${workspaceSlug}/workspace-views/${value}`);
                   }}
-                  title={viewDetails?.name ?? t(defaultViewDetails?.i18n_label ?? "")}
+                  title={viewDetails?.name ?? (defaultViewDetails?.i18n_label ? t(defaultViewDetails.i18n_label) : "")}
                   icon={
                     <Breadcrumbs.Icon>
                       <ViewsIcon className="size-4 flex-shrink-0 text-tertiary" />

@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 // ui
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -44,7 +45,7 @@ export const WorkspaceDraftIssueQuickActions = observer(function WorkspaceDraftI
           >
             {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
             <div>
-              <h5>{t(item.title || "")}</h5>
+              <h5>{t((item.title || "") as KeysWithoutParams<"translation">)}</h5>
               {item.description && (
                 <p
                   className={cn("text-tertiary whitespace-pre-line", {

@@ -10,6 +10,7 @@
     "preview": "react-router build && PORT=3002 react-router-serve ./build/server/index.js",
     "start": "PORT=3002 react-router-serve ./build/server/index.js",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf .react-router && rm -rf node_modules && rm -rf dist && rm -rf build",
+    "check:i18n": "tsx ../../packages/i18n/scripts/check-app-keys.ts",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=932",
     "check:types": "react-router typegen && tsc --noEmit",
     "check:format": "prettier . --cache --check",

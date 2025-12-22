@@ -5,7 +5,8 @@ import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // editor
 import type { EditorRefApi } from "@plane/editor";
 // i18n
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -177,7 +178,7 @@ export function IssueCommentToolbar(props: Props) {
               disabled={isSubmitButtonDisabled}
               loading={isSubmitting}
             >
-              {t(submitButtonText)}
+              {t(submitButtonText as KeysWithoutParams<"translation">)}
             </Button>
           </div>
         )}

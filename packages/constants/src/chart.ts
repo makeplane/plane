@@ -32,15 +32,10 @@ export enum EChartModels {
   PROGRESS = "PROGRESS",
 }
 
-export const CHART_COLOR_PALETTES: {
-  key: TChartColorScheme;
-  i18n_label: string;
-  light: string[];
-  dark: string[];
-}[] = [
+export const CHART_COLOR_PALETTES = [
   {
     key: "modern",
-    i18n_label: "dashboards.widget.color_palettes.modern",
+    i18n_label: "dashboards.widget.color_palettes.modern" as const,
     light: [
       "#6172E8",
       "#8B6EDB",
@@ -68,7 +63,7 @@ export const CHART_COLOR_PALETTES: {
   },
   {
     key: "horizon",
-    i18n_label: "dashboards.widget.color_palettes.horizon",
+    i18n_label: "dashboards.widget.color_palettes.horizon" as const,
     light: [
       "#E76E50",
       "#289D90",
@@ -96,7 +91,7 @@ export const CHART_COLOR_PALETTES: {
   },
   {
     key: "earthen",
-    i18n_label: "dashboards.widget.color_palettes.earthen",
+    i18n_label: "dashboards.widget.color_palettes.earthen" as const,
     light: [
       "#386641",
       "#6A994E",

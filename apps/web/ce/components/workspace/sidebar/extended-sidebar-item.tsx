@@ -9,7 +9,8 @@ import { Pin, PinOff } from "lucide-react";
 // plane imports
 import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import { DragHandle, DropIndicator } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -189,7 +190,9 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
           <Link href={itemHref} onClick={() => handleLinkClick()} className="group flex-grow">
             <div className="flex items-center gap-1.5 py-[1px]">
               {icon}
-              <p className="text-13 leading-5 font-medium">{t(item.labelTranslationKey)}</p>
+              <p className="text-13 leading-5 font-medium">
+                {t(item.labelTranslationKey as KeysWithoutParams<"translation">)}
+              </p>
             </div>
           </Link>
           <div className="flex items-center gap-2">

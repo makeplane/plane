@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
 import { ExternalLink, LinkIcon } from "lucide-react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
 import type { TStaticViewTypes } from "@plane/types";
@@ -75,7 +76,7 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
             >
               {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
               <div>
-                <h5>{t(item.title || "")}</h5>
+                <h5>{t((item.title || "") as KeysWithoutParams<"translation">)}</h5>
                 {item.description && (
                   <p
                     className={cn("text-tertiary whitespace-pre-line", {

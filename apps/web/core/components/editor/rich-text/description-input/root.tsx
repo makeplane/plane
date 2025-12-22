@@ -4,7 +4,8 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import type { EditorRefApi, TExtensions } from "@plane/editor";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import type { EFileAssetType, TNameDescriptionLoader } from "@plane/types";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
@@ -218,7 +219,11 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
                 hasUnsavedChanges.current = true;
                 debouncedFormSave();
               }}
-              placeholder={placeholder ?? ((isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value)))}
+              placeholder={
+                placeholder ??
+                ((isFocused, value) =>
+                  t(getDescriptionPlaceholderI18n(isFocused, value) as KeysWithoutParams<"translation">))
+              }
               searchMentionCallback={async (payload) =>
                 await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
                   ...payload,

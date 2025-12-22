@@ -4,7 +4,8 @@ import { useParams } from "next/navigation";
 // plane constants
 import { ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
 // plane i18n
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 // types
 import type { IIssueDisplayProperties } from "@plane/types";
 // plane web helpers
@@ -83,7 +84,7 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
                   })
                 }
               >
-                {t(displayProperty.titleTranslationKey)}
+                {t(displayProperty.titleTranslationKey as KeysWithoutParams<"translation">)}
               </button>
             </>
           ))}

@@ -1,5 +1,6 @@
 import { ISSUE_LAYOUTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import type { EIssueLayoutTypes } from "@plane/types";
@@ -42,7 +43,7 @@ export function MobileLayoutSelection({
           className="flex items-center gap-2"
         >
           <IssueLayoutIcon layout={layout.key} className="h-3 w-3" />
-          <div className="text-tertiary">{t(layout.i18n_label)}</div>
+          <div className="text-tertiary">{t(layout.i18n_label as KeysWithoutParams<"translation">)}</div>
         </CustomMenu.MenuItem>
       ))}
     </CustomMenu>

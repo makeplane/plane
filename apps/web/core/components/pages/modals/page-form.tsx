@@ -4,7 +4,8 @@ import type { LucideIcon } from "lucide-react";
 import { Globe2, Lock } from "lucide-react";
 // plane imports
 import { ETabIndices, EPageAccess } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation   } from "@plane/i18n";
+import type {KeysWithoutParams, PrefixedKeyWithoutParams} from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
@@ -23,9 +24,11 @@ type Props = {
   handleFormSubmit: () => Promise<void>;
 };
 
+type I18nKey = KeysWithoutParams<"translation"> | PrefixedKeyWithoutParams;
+
 const PAGE_ACCESS_SPECIFIERS: {
   key: EPageAccess;
-  i18n_label: string;
+  i18n_label: I18nKey;
   icon: LucideIcon;
 }[] = [
   { key: EPageAccess.PUBLIC, i18n_label: "common.access.public", icon: Globe2 },
@@ -132,7 +135,7 @@ export function PageForm(props: Props) {
             accessSpecifiers={PAGE_ACCESS_SPECIFIERS}
             isMobile={isMobile}
           />
-          <h6 className="text-11 font-medium">{t(i18n_access_label || "")}</h6>
+          <h6 className="text-11 font-medium">{t((i18n_access_label || "") as KeysWithoutParams<"translation">)}</h6>
         </div>
         <div className="flex items-center justify-end gap-2">
           <Button variant="secondary" size="lg" onClick={handleModalClose} tabIndex={getIndex("cancel")}>

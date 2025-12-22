@@ -5,7 +5,8 @@ import { useParams } from "next/navigation";
 import { GripVertical, X } from "lucide-react";
 // plane imports
 import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore, Sortable } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
@@ -214,7 +215,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                     <div className="flex items-center gap-2 flex-1">
                       {getSidebarNavigationItemIcon(item.key)}
                       <label className="text-13 text-primary flex-1 cursor-pointer">
-                        {t(item.labelTranslationKey)}
+                        {t(item.labelTranslationKey as KeysWithoutParams<"translation">)}
                       </label>
                     </div>
                   </div>
@@ -244,7 +245,9 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                       />
                       <div className="flex items-center gap-2 flex-1">
                         {icon}
-                        <span className="text-13 text-primary">{t(item.labelTranslationKey)}</span>
+                        <span className="text-13 text-primary">
+                          {t(item.labelTranslationKey as KeysWithoutParams<"translation">)}
+                        </span>
                       </div>
                     </div>
                   );

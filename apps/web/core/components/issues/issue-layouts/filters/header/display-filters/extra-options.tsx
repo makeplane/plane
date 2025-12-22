@@ -1,6 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import type { IIssueDisplayFilterOptions, TIssueExtraOptions } from "@plane/types";
 // components
 import { FilterOption } from "@/components/issues/issue-layouts/filters";
@@ -45,7 +46,7 @@ export const FilterExtraOptions = observer(function FilterExtraOptions(props: Pr
             key={option.key}
             isChecked={selectedExtraOptions?.[option.key] ? true : false}
             onClick={() => handleUpdate(option.key, !selectedExtraOptions?.[option.key])}
-            title={t(option.titleTranslationKey)}
+            title={t(option.titleTranslationKey as KeysWithoutParams<"translation">)}
           />
         );
       })}

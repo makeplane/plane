@@ -5,7 +5,8 @@ import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Era
 import type { IProjectMemberDisplayProperties, TMemberOrderByOptions } from "@plane/constants";
 import { MEMBER_PROPERTY_DETAILS } from "@plane/constants";
 // i18n
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 // types
 import { CustomMenu } from "@plane/ui";
 import type { IMemberFilters } from "@/store/member/utils";
@@ -42,7 +43,7 @@ export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Pr
       className="!w-full"
       customButton={
         <div className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary">
-          <span>{t(propertyDetails.i18n_title)}</span>
+          <span>{t(propertyDetails.i18n_title as KeysWithoutParams<"translation">)}</span>
           <div className="ml-3 flex">
             {(activeSortingProperty === propertyDetails.ascendingOrderKey ||
               activeSortingProperty === propertyDetails.descendingOrderKey) && (

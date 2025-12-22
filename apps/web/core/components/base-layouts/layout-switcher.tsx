@@ -1,4 +1,5 @@
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TBaseLayoutType } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -27,7 +28,11 @@ export function LayoutSwitcher(props: Props) {
       {BASE_LAYOUTS.filter((l) => (layouts ? layouts.includes(l.key) : true)).map((layout) => {
         const Icon = layout.icon;
         return (
-          <Tooltip key={layout.key} tooltipContent={t(layout.label)} isMobile={isMobile}>
+          <Tooltip
+            key={layout.key}
+            tooltipContent={t(layout.label as KeysWithoutParams<"translation">)}
+            isMobile={isMobile}
+          >
             <button
               type="button"
               className={cn(

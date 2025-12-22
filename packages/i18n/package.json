@@ -1,44 +1,42 @@
 {
   "name": "@plane/i18n",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "license": "AGPL-3.0",
-  "description": "I18n shared across multiple apps internally",
+  "description": "Internationalization for Plane",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./package.json": "./package.json"
-  },
   "scripts": {
     "dev": "tsdown --watch",
     "build": "tsdown",
-    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=51",
+    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=0",
     "check:types": "tsc --noEmit",
     "check:format": "prettier . --cache --check",
-    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=51",
+    "i18n:check": "tsx scripts/check-missing-keys.ts",
+    "i18n:migrate": "tsx scripts/migrate-translations.ts",
+    "i18n:generate-types": "tsx scripts/generate-types.ts",
+    "i18n:validate": "tsx scripts/validate-translations.ts",
+    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix",
     "fix:format": "prettier . --cache --write",
-    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@plane/utils": "workspace:*",
-    "intl-messageformat": "^10.7.11",
-    "lodash-es": "catalog:",
-    "mobx": "catalog:",
-    "mobx-react": "catalog:",
+    "i18next": "^25.7.3",
     "react": "catalog:"
   },
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",
-    "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "tsdown": "catalog:",
+    "tsx": "^4.19.2",
     "typescript": "catalog:"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./server": "./dist/server/index.js",
+    "./package.json": "./package.json"
+  }
 }

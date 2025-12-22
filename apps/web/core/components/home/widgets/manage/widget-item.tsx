@@ -14,7 +14,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // plane types
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import type { InstructionType, TWidgetEntityData } from "@plane/types";
 // plane ui
 import { DropIndicator, ToggleSwitch } from "@plane/ui";
@@ -129,7 +130,7 @@ export const WidgetItem = observer(function WidgetItem(props: Props) {
       >
         <div className="flex items-center">
           <WidgetItemDragHandle sort_order={widget.sort_order} isDragging={isDragging} />
-          <div>{t(widgetTitle, { count: 1 })}</div>
+          <div>{t(widgetTitle as KeysWithoutParams<"translation">)}</div>
         </div>
         <ToggleSwitch
           value={widget.is_enabled}

@@ -1,22 +1,10 @@
 export const THEMES = ["light", "dark", "light-contrast", "dark-contrast", "custom"];
 
-export interface I_THEME_OPTION {
-  key: string;
-  value: string;
-  i18n_label: string;
-  type: string;
-  icon: {
-    border: string;
-    color1: string;
-    color2: string;
-  };
-}
-
-export const THEME_OPTIONS: I_THEME_OPTION[] = [
+export const THEME_OPTIONS = [
   {
     key: "system_preference",
     value: "system",
-    i18n_label: "System preference",
+    i18n_label: "system_preference" as const,
     type: "light",
     icon: {
       border: "#DEE2E6",
@@ -27,7 +15,7 @@ export const THEME_OPTIONS: I_THEME_OPTION[] = [
   {
     key: "light",
     value: "light",
-    i18n_label: "Light",
+    i18n_label: "light" as const,
     type: "light",
     icon: {
       border: "#DEE2E6",
@@ -38,7 +26,7 @@ export const THEME_OPTIONS: I_THEME_OPTION[] = [
   {
     key: "dark",
     value: "dark",
-    i18n_label: "Dark",
+    i18n_label: "dark" as const,
     type: "dark",
     icon: {
       border: "#2E3234",
@@ -49,7 +37,7 @@ export const THEME_OPTIONS: I_THEME_OPTION[] = [
   {
     key: "light_contrast",
     value: "light-contrast",
-    i18n_label: "Light high contrast",
+    i18n_label: "light_contrast" as const,
     type: "light",
     icon: {
       border: "#000000",
@@ -60,7 +48,7 @@ export const THEME_OPTIONS: I_THEME_OPTION[] = [
   {
     key: "dark_contrast",
     value: "dark-contrast",
-    i18n_label: "Dark high contrast",
+    i18n_label: "dark_contrast" as const,
     type: "dark",
     icon: {
       border: "#FFFFFF",
@@ -71,7 +59,7 @@ export const THEME_OPTIONS: I_THEME_OPTION[] = [
   {
     key: "custom",
     value: "custom",
-    i18n_label: "Custom theme",
+    i18n_label: "custom" as const,
     type: "light",
     icon: {
       border: "#FFC9C9",
@@ -79,4 +67,6 @@ export const THEME_OPTIONS: I_THEME_OPTION[] = [
       color2: "#FF5151",
     },
   },
-];
+] as const;
+
+export type I_THEME_OPTION = (typeof THEME_OPTIONS)[number];

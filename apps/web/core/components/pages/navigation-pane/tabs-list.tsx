@@ -1,6 +1,7 @@
 import { Tab } from "@headlessui/react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 // plane web components
 import { ORDERED_PAGE_NAVIGATION_TABS_LIST } from "@/plane-web/components/pages/navigation-pane";
 
@@ -18,7 +19,7 @@ export function PageNavigationPaneTabsList() {
               type="button"
               className="relative z-[1] flex-1 py-1.5 text-13 font-semibold outline-none"
             >
-              {t(tab.i18n_label)}
+              {t(tab.i18n_label as KeysWithoutParams<"translation">)}
             </Tab>
           ))}
           {/* active tab indicator */}

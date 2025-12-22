@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info, Lock } from "lucide-react";
 import { NETWORK_CHOICES, PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
@@ -249,7 +250,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 <span>{watch("identifier")} .</span>
                 <span className="flex items-center gap-1.5">
                   {project.network === 0 && <Lock className="h-2.5 w-2.5 text-on-color " />}
-                  {currentNetwork && t(currentNetwork?.i18n_label)}
+                  {currentNetwork && t(currentNetwork?.i18n_label as KeysWithoutParams<"translation">)}
                 </span>
               </span>
             </div>
@@ -386,7 +387,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                         {selectedNetwork ? (
                           <>
                             <ProjectNetworkIcon iconKey={selectedNetwork.iconKey} className="h-3.5 w-3.5" />
-                            {t(selectedNetwork.i18n_label)}
+                            {t(selectedNetwork.i18n_label as KeysWithoutParams<"translation">)}
                           </>
                         ) : (
                           <span className="text-placeholder">{t("select_network")}</span>
@@ -403,8 +404,10 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                         <div className="flex items-start gap-2">
                           <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
                           <div className="-mt-1">
-                            <p>{t(network.i18n_label)}</p>
-                            <p className="text-11 text-placeholder">{t(network.description)}</p>
+                            <p>{t(network.i18n_label as KeysWithoutParams<"translation">)}</p>
+                            <p className="text-11 text-placeholder">
+                              {t(network.description as KeysWithoutParams<"translation">)}
+                            </p>
                           </div>
                         </div>
                       </CustomSelect.Option>

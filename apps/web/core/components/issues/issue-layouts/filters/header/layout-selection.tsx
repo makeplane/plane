@@ -1,6 +1,7 @@
 // plane imports
 import { ISSUE_LAYOUTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { EIssueLayoutTypes } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -28,7 +29,11 @@ export function LayoutSelection(props: Props) {
   return (
     <div className="flex items-center gap-1 rounded-md bg-layer-3 p-1">
       {ISSUE_LAYOUTS.filter((l) => layouts.includes(l.key)).map((layout) => (
-        <Tooltip key={layout.key} tooltipContent={t(layout.i18n_title)} isMobile={isMobile}>
+        <Tooltip
+          key={layout.key}
+          tooltipContent={t(layout.i18n_title as KeysWithoutParams<"translation">)}
+          isMobile={isMobile}
+        >
           <button
             type="button"
             className={cn(

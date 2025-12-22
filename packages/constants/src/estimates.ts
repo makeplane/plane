@@ -23,11 +23,11 @@ export const estimateCount = {
 export const ESTIMATE_SYSTEMS: TEstimateSystems = {
   points: {
     name: "Points",
-    i18n_name: "project_settings.estimates.systems.points.label",
+    i18n_name: "project_settings.estimates.systems.points.label" as const,
     templates: {
       fibonacci: {
         title: "Fibonacci",
-        i18n_title: "project_settings.estimates.systems.points.fibonacci",
+        i18n_title: "project_settings.estimates.systems.points.fibonacci" as const,
         values: [
           { id: undefined, key: 1, value: "1" },
           { id: undefined, key: 2, value: "2" },
@@ -39,7 +39,7 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
       },
       linear: {
         title: "Linear",
-        i18n_title: "project_settings.estimates.systems.points.linear",
+        i18n_title: "project_settings.estimates.systems.points.linear" as const,
         values: [
           { id: undefined, key: 1, value: "1" },
           { id: undefined, key: 2, value: "2" },
@@ -51,7 +51,7 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
       },
       squares: {
         title: "Squares",
-        i18n_title: "project_settings.estimates.systems.points.squares",
+        i18n_title: "project_settings.estimates.systems.points.squares" as const,
         values: [
           { id: undefined, key: 1, value: "1" },
           { id: undefined, key: 2, value: "4" },
@@ -63,7 +63,7 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
       },
       custom: {
         title: "Custom",
-        i18n_title: "project_settings.estimates.systems.points.custom",
+        i18n_title: "project_settings.estimates.systems.points.custom" as const,
         values: [
           { id: undefined, key: 1, value: "1" },
           { id: undefined, key: 2, value: "2" },
@@ -76,11 +76,11 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
   },
   categories: {
     name: "Categories",
-    i18n_name: "project_settings.estimates.systems.categories.label",
+    i18n_name: "project_settings.estimates.systems.categories.label" as const,
     templates: {
       t_shirt_sizes: {
         title: "T-Shirt Sizes",
-        i18n_title: "project_settings.estimates.systems.categories.t_shirt_sizes",
+        i18n_title: "project_settings.estimates.systems.categories.t_shirt_sizes" as const,
         values: [
           { id: undefined, key: 1, value: "XS" },
           { id: undefined, key: 2, value: "S" },
@@ -92,7 +92,7 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
       },
       easy_to_hard: {
         title: "Easy to hard",
-        i18n_title: "project_settings.estimates.systems.categories.easy_to_hard",
+        i18n_title: "project_settings.estimates.systems.categories.easy_to_hard" as const,
         values: [
           { id: undefined, key: 1, value: "Easy" },
           { id: undefined, key: 2, value: "Medium" },
@@ -102,7 +102,7 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
       },
       custom: {
         title: "Custom",
-        i18n_title: "project_settings.estimates.systems.categories.custom",
+        i18n_title: "project_settings.estimates.systems.categories.custom" as const,
         values: [
           { id: undefined, key: 1, value: "Easy" },
           { id: undefined, key: 2, value: "Hard" },
@@ -115,11 +115,11 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
   },
   time: {
     name: "Time",
-    i18n_name: "project_settings.estimates.systems.time.label",
+    i18n_name: "project_settings.estimates.systems.time.label" as const,
     templates: {
       hours: {
         title: "Hours",
-        i18n_title: "project_settings.estimates.systems.time.hours",
+        i18n_title: "project_settings.estimates.systems.time.hours" as const,
         values: [
           { id: undefined, key: 1, value: "1" },
           { id: undefined, key: 2, value: "2" },

@@ -7,7 +7,8 @@ import { Check, Hotel } from "lucide-react";
 // plane ui
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { MembersPropertyIcon, ProjectIcon, CloseIcon } from "@plane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
 // helpers
@@ -158,8 +159,10 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
               >
                 <span className="text-24 my-auto">{item.icon}</span>
               </div>
-              <h3 className="text-13 font-medium text-primary mb-2">{t(item.title)}</h3>
-              <p className="text-11 text-tertiary mb-2">{t(item.description)}</p>
+              <h3 className="text-13 font-medium text-primary mb-2">
+                {t(item.title as KeysWithoutParams<"translation">)}
+              </h3>
+              <p className="text-11 text-tertiary mb-2">{t(item.description as KeysWithoutParams<"translation">)}</p>
               {isStateComplete ? (
                 <div className="flex items-center gap-2 bg-[#17a34a] rounded-full p-1 w-fit">
                   <Check className="size-3 text-accent-primary text-on-color" />
@@ -182,7 +185,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
                     }}
                     className={cn("text-accent-primary hover:text-accent-secondary text-13 font-medium", {})}
                   >
-                    {t(item.cta.text)}
+                    {t(item.cta.text as KeysWithoutParams<"translation">)}
                   </Link>
                 ) : (
                   <button
@@ -190,7 +193,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
                     className="text-accent-primary hover:text-accent-secondary text-13 font-medium text-left"
                     onClick={item.cta.onClick}
                   >
-                    {t(item.cta.text)}
+                    {t(item.cta.text as KeysWithoutParams<"translation">)}
                   </button>
                 ))
               )}

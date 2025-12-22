@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 // icons
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 // constants
 // helpers
@@ -31,7 +32,7 @@ export const AppliedAccessFilters = observer(function AppliedAccessFilters(props
 
         return (
           <div key={access} className="flex items-center gap-1 rounded-sm bg-layer-1 py-1 px-1.5 text-11">
-            <span className="normal-case">{t(label)}</span>
+            <span className="normal-case">{t(label as KeysWithoutParams<"translation">)}</span>
             {editable && (
               <button
                 type="button"

@@ -4,7 +4,8 @@ import { useParams } from "next/navigation";
 // plane constants
 import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // plane i18n
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 // icons
 import { ChevronDownIcon } from "@plane/propel/icons";
 // types
@@ -103,7 +104,7 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
               className="flex items-center gap-2"
             >
               <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="h-3 w-3" />
-              <div className="text-tertiary">{t(layout.i18n_title)}</div>
+              <div className="text-tertiary">{t(layout.i18n_title as KeysWithoutParams<"translation">)}</div>
             </CustomMenu.MenuItem>
           );
         })}

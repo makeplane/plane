@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TInboxIssueCurrentTab } from "@plane/types";
 import { EInboxIssueCurrentTab } from "@plane/types";
@@ -94,7 +95,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                 }
               }}
             >
-              <div>{t(option?.i18n_label)}</div>
+              <div>{t(option?.i18n_label as KeysWithoutParams<"translation">)}</div>
               {option?.key === "open" && currentTab === option?.key && (
                 <div className="rounded-full p-1.5 py-0.5 bg-accent-primary/20 text-accent-primary text-11 font-semibold">
                   {inboxIssuePaginationInfo?.total_results || 0}

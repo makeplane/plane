@@ -108,29 +108,29 @@ export const ISSUE_GROUP_BY_OPTIONS: {
   key: TIssueGroupByOptions;
   titleTranslationKey: string;
 }[] = [
-  { key: "state", titleTranslationKey: "common.states" },
-  { key: "state_detail.group", titleTranslationKey: "common.state_groups" },
-  { key: "priority", titleTranslationKey: "common.priority" },
-  { key: "team_project", titleTranslationKey: "common.team_project" }, // required this on team issues
-  { key: "project", titleTranslationKey: "common.project" }, // required this on my issues
-  { key: "cycle", titleTranslationKey: "common.cycle" }, // required this on my issues
-  { key: "module", titleTranslationKey: "common.module" }, // required this on my issues
-  { key: "labels", titleTranslationKey: "common.labels" },
-  { key: "assignees", titleTranslationKey: "common.assignees" },
-  { key: "created_by", titleTranslationKey: "common.created_by" },
-  { key: null, titleTranslationKey: "common.none" },
+  { key: "state", titleTranslationKey: "common.states" as const },
+  { key: "state_detail.group", titleTranslationKey: "common.state_groups" as const },
+  { key: "priority", titleTranslationKey: "common.priority" as const },
+  { key: "team_project", titleTranslationKey: "common.team_project" as const }, // required this on team issues
+  { key: "project", titleTranslationKey: "common.project" as const }, // required this on my issues
+  { key: "cycle", titleTranslationKey: "common.cycle" as const }, // required this on my issues
+  { key: "module", titleTranslationKey: "common.module" as const }, // required this on my issues
+  { key: "labels", titleTranslationKey: "common.labels" as const },
+  { key: "assignees", titleTranslationKey: "common.assignees" as const },
+  { key: "created_by", titleTranslationKey: "common.created_by" as const },
+  { key: null, titleTranslationKey: "common.none" as const },
 ];
 
 export const ISSUE_ORDER_BY_OPTIONS: {
   key: TIssueOrderByOptions;
   titleTranslationKey: string;
 }[] = [
-  { key: "sort_order", titleTranslationKey: "common.order_by.manual" },
-  { key: "-created_at", titleTranslationKey: "common.order_by.last_created" },
-  { key: "-updated_at", titleTranslationKey: "common.order_by.last_updated" },
-  { key: "start_date", titleTranslationKey: "common.order_by.start_date" },
-  { key: "target_date", titleTranslationKey: "common.order_by.due_date" },
-  { key: "-priority", titleTranslationKey: "common.priority" },
+  { key: "sort_order", titleTranslationKey: "common.order_by.manual" as const },
+  { key: "-created_at", titleTranslationKey: "common.order_by.last_created" as const },
+  { key: "-updated_at", titleTranslationKey: "common.order_by.last_updated" as const },
+  { key: "start_date", titleTranslationKey: "common.order_by.start_date" as const },
+  { key: "target_date", titleTranslationKey: "common.order_by.due_date" as const },
+  { key: "-priority", titleTranslationKey: "common.priority" as const },
 ];
 
 export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
@@ -167,45 +167,45 @@ export const ISSUE_DISPLAY_PROPERTIES: {
 }[] = [
   {
     key: "key",
-    titleTranslationKey: "issue.display.properties.id",
+    titleTranslationKey: "issue.display.properties.id" as const,
   },
   {
     key: "issue_type",
-    titleTranslationKey: "issue.display.properties.issue_type",
+    titleTranslationKey: "issue.display.properties.issue_type" as const,
   },
   {
     key: "assignee",
-    titleTranslationKey: "common.assignee",
+    titleTranslationKey: "common.assignee" as const,
   },
   {
     key: "start_date",
-    titleTranslationKey: "common.order_by.start_date",
+    titleTranslationKey: "common.order_by.start_date" as const,
   },
   {
     key: "due_date",
-    titleTranslationKey: "common.order_by.due_date",
+    titleTranslationKey: "common.order_by.due_date" as const,
   },
-  { key: "labels", titleTranslationKey: "common.labels" },
+  { key: "labels", titleTranslationKey: "common.labels" as const },
   {
     key: "priority",
-    titleTranslationKey: "common.priority",
+    titleTranslationKey: "common.priority" as const,
   },
-  { key: "state", titleTranslationKey: "common.state" },
+  { key: "state", titleTranslationKey: "common.state" as const },
   {
     key: "sub_issue_count",
-    titleTranslationKey: "issue.display.properties.sub_issue_count",
+    titleTranslationKey: "issue.display.properties.sub_issue_count" as const,
   },
   {
     key: "attachment_count",
-    titleTranslationKey: "issue.display.properties.attachment_count",
+    titleTranslationKey: "issue.display.properties.attachment_count" as const,
   },
-  { key: "link", titleTranslationKey: "common.link" },
+  { key: "link", titleTranslationKey: "common.link" as const },
   {
     key: "estimate",
-    titleTranslationKey: "common.estimate",
+    titleTranslationKey: "common.estimate" as const,
   },
-  { key: "modules", titleTranslationKey: "common.module" },
-  { key: "cycle", titleTranslationKey: "common.cycle" },
+  { key: "modules", titleTranslationKey: "common.module" as const },
+  { key: "cycle", titleTranslationKey: "common.cycle" as const },
 ];
 
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
@@ -236,7 +236,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   };
 } = {
   assignee: {
-    i18n_title: "common.assignees",
+    i18n_title: "common.assignees" as const,
     ascendingOrderKey: "assignees__first_name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-assignees__first_name",
@@ -244,7 +244,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: "MembersPropertyIcon",
   },
   created_on: {
-    i18n_title: "common.sort.created_on",
+    i18n_title: "common.sort.created_on" as const,
     ascendingOrderKey: "-created_at",
     ascendingOrderTitle: "New",
     descendingOrderKey: "created_at",
@@ -252,7 +252,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: "CalendarDays",
   },
   due_date: {
-    i18n_title: "common.order_by.due_date",
+    i18n_title: "common.order_by.due_date" as const,
     ascendingOrderKey: "-target_date",
     ascendingOrderTitle: "New",
     descendingOrderKey: "target_date",
@@ -260,7 +260,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: "DueDatePropertyIcon",
   },
   estimate: {
-    i18n_title: "common.estimate",
+    i18n_title: "common.estimate" as const,
     ascendingOrderKey: "estimate_point__key",
     ascendingOrderTitle: "Low",
     descendingOrderKey: "-estimate_point__key",
@@ -268,7 +268,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: "EstimatePropertyIcon",
   },
   labels: {
-    i18n_title: "common.labels",
+    i18n_title: "common.labels" as const,
     ascendingOrderKey: "labels__name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-labels__name",
@@ -276,7 +276,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: "LabelPropertyIcon",
   },
   modules: {
-    i18n_title: "common.modules",
+    i18n_title: "common.modules" as const,
     ascendingOrderKey: "issue_module__module__name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-issue_module__module__name",
@@ -284,7 +284,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: "DiceIcon",
   },
   cycle: {
-    i18n_title: "common.cycle",
+    i18n_title: "common.cycle" as const,
     ascendingOrderKey: "issue_cycle__cycle__name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-issue_cycle__cycle__name",
@@ -292,7 +292,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: "ContrastIcon",
   },
   priority: {
-    i18n_title: "common.priority",
+    i18n_title: "common.priority" as const,
     ascendingOrderKey: "priority",
     ascendingOrderTitle: "None",
     descendingOrderKey: "-priority",
@@ -300,7 +300,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: "PriorityPropertyIcon",
   },
   start_date: {
-    i18n_title: "common.order_by.start_date",
+    i18n_title: "common.order_by.start_date" as const,
     ascendingOrderKey: "-start_date",
     ascendingOrderTitle: "New",
     descendingOrderKey: "start_date",
@@ -308,7 +308,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: "StartDatePropertyIcon",
   },
   state: {
-    i18n_title: "common.state",
+    i18n_title: "common.state" as const,
     ascendingOrderKey: "state__name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-state__name",
@@ -316,7 +316,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: "StatePropertyIcon",
   },
   updated_on: {
-    i18n_title: "common.sort.updated_on",
+    i18n_title: "common.sort.updated_on" as const,
     ascendingOrderKey: "-updated_at",
     ascendingOrderTitle: "New",
     descendingOrderKey: "updated_at",
@@ -324,7 +324,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: "CalendarDays",
   },
   link: {
-    i18n_title: "common.link",
+    i18n_title: "common.link" as const,
     ascendingOrderKey: "-link_count",
     ascendingOrderTitle: "Most",
     descendingOrderKey: "link_count",
@@ -332,7 +332,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: "Link2",
   },
   attachment_count: {
-    i18n_title: "common.attachment",
+    i18n_title: "common.attachment" as const,
     ascendingOrderKey: "-attachment_count",
     ascendingOrderTitle: "Most",
     descendingOrderKey: "attachment_count",
@@ -340,7 +340,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: "Paperclip",
   },
   sub_issue_count: {
-    i18n_title: "issue.display.properties.sub_issue",
+    i18n_title: "issue.display.properties.sub_issue" as const,
     ascendingOrderKey: "-sub_issues_count",
     ascendingOrderTitle: "Most",
     descendingOrderKey: "sub_issues_count",

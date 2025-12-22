@@ -2,7 +2,8 @@ import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
@@ -112,7 +113,9 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
         relationKey: relationKey,
         issueIds: issueIds,
         icon: issueRelationOption?.icon,
-        label: issueRelationOption?.i18n_label ? t(issueRelationOption?.i18n_label) : "",
+        label: issueRelationOption?.i18n_label
+          ? t(issueRelationOption?.i18n_label as KeysWithoutParams<"translation">)
+          : "",
         className: issueRelationOption?.className,
       };
     });

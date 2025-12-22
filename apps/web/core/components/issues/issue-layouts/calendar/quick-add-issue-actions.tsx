@@ -52,7 +52,7 @@ export const CalendarQuickAddIssueActions = observer(function CalendarQuickAddIs
     ).then(() => addIssuesToView?.(issueIds));
 
     setPromiseToast(addExistingIssuesPromise, {
-      loading: t("issue.adding", { count: issueIds.length }),
+      loading: t("issue.adding"),
       success: {
         title: t("toast.success"),
         message: () => t("entity.add.success", { entity: t("issue.label", { count: 2 }) }),

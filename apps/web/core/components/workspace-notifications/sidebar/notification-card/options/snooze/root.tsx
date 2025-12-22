@@ -52,7 +52,7 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
         await unSnoozeNotification(workspaceSlug);
         setToast({
           title: `${t("common.success")}!`,
-          message: t("notification.toasts.un_snoozed"),
+          message: t("notification.toasts.unsnoozed"),
           type: TOAST_TYPE.SUCCESS,
         });
       } catch (e) {

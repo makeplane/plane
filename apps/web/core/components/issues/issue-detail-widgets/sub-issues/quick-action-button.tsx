@@ -4,7 +4,8 @@ import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { WorkItemsIcon } from "@plane/propel/icons";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -93,7 +94,7 @@ export const SubIssuesActionButton = observer(function SubIssuesActionButton(pro
         >
           <div className="flex items-center gap-2">
             {item.icon}
-            <span>{t(item.i18n_label)}</span>
+            <span>{t(item.i18n_label as KeysWithoutParams<"translation">)}</span>
           </div>
         </CustomMenu.MenuItem>
       ))}

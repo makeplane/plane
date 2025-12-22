@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ISSUE_PRIORITY_FILTERS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { PriorityIcon } from "@plane/propel/icons";
 // local imports
 import { FilterHeader } from "./helpers/filter-header";
@@ -42,7 +43,7 @@ export const FilterPriority = observer(function FilterPriority(props: Props) {
                 isChecked={appliedFilters?.includes(priority.key) ? true : false}
                 onClick={() => handleUpdate(priority.key)}
                 icon={<PriorityIcon priority={priority.key} className="h-3.5 w-3.5" />}
-                title={t(priority.titleTranslationKey)}
+                title={t(priority.titleTranslationKey as KeysWithoutParams<"translation">)}
               />
             ))
           ) : (

@@ -24,16 +24,16 @@ const WORKSPACE_ACTION_LINKS = [
   {
     key: "create_workspace",
     Icon: CirclePlus,
-    i18n_label: "create_workspace",
+    i18n_label: "create_workspace" as const,
     href: "/create-workspace",
   },
   {
     key: "invitations",
     Icon: Mails,
-    i18n_label: "workspace_invites",
+    i18n_label: "workspace_invites" as const,
     href: "/invitations",
   },
-];
+] as const;
 
 function ProjectActionIcons({ type, size, className = "" }: { type: string; size?: number; className?: string }) {
   const icons = {
@@ -107,8 +107,8 @@ export const ProfileLayoutSidebar = observer(function ProfileLayoutSidebar() {
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: t("sign_out.toast.error.title"),
-          message: t("sign_out.toast.error.message"),
+          title: t("auth.sign_out.toast.error.title"),
+          message: t("auth.sign_out.toast.error.message"),
         })
       )
       .finally(() => setIsSigningOut(false));
@@ -148,7 +148,7 @@ export const ProfileLayoutSidebar = observer(function ProfileLayoutSidebar() {
               return (
                 <Link key={link.key} href={link.href} className="block w-full" onClick={handleItemClick}>
                   <Tooltip
-                    tooltipContent={t(link.key)}
+                    tooltipContent={t(link.i18n_label)}
                     position="right"
                     className="ml-2"
                     disabled={!sidebarCollapsed}
@@ -221,7 +221,7 @@ export const ProfileLayoutSidebar = observer(function ProfileLayoutSidebar() {
             {WORKSPACE_ACTION_LINKS.map((link) => (
               <Link className="block w-full" key={link.key} href={link.href} onClick={handleItemClick}>
                 <Tooltip
-                  tooltipContent={t(link.key)}
+                  tooltipContent={t(link.i18n_label)}
                   position="right"
                   className="ml-2"
                   disabled={!sidebarCollapsed}

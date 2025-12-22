@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 // constants
 // helpers
 import { INBOX_STATUS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { cn, findHowManyDaysLeft } from "@plane/utils";
 // store
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
@@ -25,9 +26,12 @@ export const InboxIssueStatus = observer(function InboxIssueStatus(props: Props)
   const isSnoozedDatePassed = inboxIssue.status === 0 && new Date(inboxIssue.snoozed_till ?? "") < new Date();
   if (!inboxIssueStatusDetail || isSnoozedDatePassed) return <></>;
 
-  const description = t(inboxIssueStatusDetail.i18n_description(), {
-    days: findHowManyDaysLeft(new Date(inboxIssue.snoozed_till ?? "")),
-  });
+  const description =
+    inboxIssue.status === 0
+      ? t("inbox_issue.status.snoozed.description", {
+          days: findHowManyDaysLeft(new Date(inboxIssue.snoozed_till ?? "")) ?? 0,
+        })
+      : t(inboxIssueStatusDetail.i18n_description() as KeysWithoutParams<"translation">);
   const statusIcon = ICON_PROPERTIES[inboxIssue?.status];
 
   return (

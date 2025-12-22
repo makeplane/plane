@@ -47,7 +47,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
             message: t("entity.link_copied_to_clipboard", {
               entity:
                 issueServiceType === EIssueServiceType.ISSUES
-                  ? t("common.sub_work_items", { count: 1 })
+                  ? t("common.sub_work_item")
                   : t("issue.label", { count: 1 }),
             }),
           });
@@ -63,7 +63,7 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
             message: t("entity.fetch.failed", {
               entity:
                 issueServiceType === EIssueServiceType.ISSUES
-                  ? t("common.sub_work_items", { count: 2 })
+                  ? t("common.sub_work_items")
                   : t("issue.label", { count: 2 }),
             }),
           });

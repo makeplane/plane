@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { CalendarLayoutIcon, BoardLayoutIcon, ListLayoutIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
@@ -90,7 +91,7 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
               className="flex items-center gap-2"
             >
               <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="h-3 w-3" />
-              <div className="text-tertiary">{t(layout.i18n_title)}</div>
+              <div className="text-tertiary">{t(layout.i18n_title as KeysWithoutParams<"translation">)}</div>
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>

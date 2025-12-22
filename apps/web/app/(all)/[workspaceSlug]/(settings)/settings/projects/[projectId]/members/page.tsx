@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
@@ -41,7 +42,9 @@ function MembersSettingsPage({ params }: Route.ComponentProps) {
   return (
     <SettingsContentWrapper size="lg">
       <PageHead title={pageTitle} />
-      <SettingsHeading title={t(getProjectSettingsPageLabelI18nKey("members", "common.members"))} />
+      <SettingsHeading
+        title={t(getProjectSettingsPageLabelI18nKey("members", "common.members") as KeysWithoutParams<"translation">)}
+      />
       <ProjectSettingsMemberDefaults projectId={projectId} workspaceSlug={workspaceSlug} />
       <ProjectTeamspaceList projectId={projectId} workspaceSlug={workspaceSlug} />
       <ProjectMemberList projectId={projectId} workspaceSlug={workspaceSlug} />

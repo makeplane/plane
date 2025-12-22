@@ -2,13 +2,16 @@ import type { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { NETWORK_CHOICES, ETabIndices } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation   } from "@plane/i18n";
+import type {KeysWithoutParams, PrefixedKeyWithoutParams} from "@plane/i18n";
 import type { IProject } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { getTabIndex } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
+
+type I18nKey = KeysWithoutParams<"translation"> | PrefixedKeyWithoutParams;
 
 type Props = {
   isMobile?: boolean;
@@ -37,7 +40,7 @@ function ProjectAttributes(props: Props) {
                     {currentNetwork ? (
                       <>
                         <ProjectNetworkIcon iconKey={currentNetwork.iconKey} />
-                        {t(currentNetwork.i18n_label)}
+                        {t(currentNetwork.i18n_label as I18nKey)}
                       </>
                     ) : (
                       <span className="text-placeholder">{t("select_network")}</span>
@@ -55,8 +58,8 @@ function ProjectAttributes(props: Props) {
                     <div className="flex items-start gap-2">
                       <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
                       <div className="-mt-1">
-                        <p>{t(network.i18n_label)}</p>
-                        <p className="text-11 text-placeholder">{t(network.description)}</p>
+                        <p>{t(network.i18n_label as I18nKey)}</p>
+                        <p className="text-11 text-placeholder">{t(network.description as I18nKey)}</p>
                       </div>
                     </div>
                   </CustomSelect.Option>

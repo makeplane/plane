@@ -5,7 +5,8 @@ import Link from "next/link";
 import { MoveDiagonal, MoveRight } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { CenterPanelIcon, CopyLinkIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -210,7 +211,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
                     }`}
                   >
                     <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />
-                    {t(mode.i18n_title)}
+                    {t(mode.i18n_title as KeysWithoutParams<"translation">)}
                   </div>
                 </CustomSelect.Option>
               ))}

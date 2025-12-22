@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { EUserProjectRoles } from "@plane/types";
 // plane ui
@@ -176,7 +177,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
             <SidebarNavItem isActive={!!isActive(item)}>
               <div className="flex items-center gap-1.5 py-[1px]">
                 <item.icon className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`} />
-                <span className="text-11 font-medium">{t(item.i18n_key)}</span>
+                <span className="text-11 font-medium">{t(item.i18n_key as KeysWithoutParams<"translation">)}</span>
               </div>
             </SidebarNavItem>
           </Link>

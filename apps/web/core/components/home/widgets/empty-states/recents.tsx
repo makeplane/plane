@@ -1,4 +1,5 @@
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { CompactAssetType } from "@plane/propel/empty-state";
 
@@ -34,7 +35,11 @@ export function RecentsEmptyState({ type }: { type: string }) {
 
   return (
     <div className="flex items-center justify-center py-10 bg-layer-1 w-full rounded-lg">
-      <EmptyStateCompact assetKey={assetKey} assetClassName="size-20" title={t(text)} />
+      <EmptyStateCompact
+        assetKey={assetKey}
+        assetClassName="size-20"
+        title={t(text as KeysWithoutParams<"translation">)}
+      />
     </div>
   );
 }

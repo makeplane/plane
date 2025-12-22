@@ -4,7 +4,8 @@ import { useParams, usePathname } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } from "@plane/constants";
 
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import type { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
@@ -61,7 +62,9 @@ export const SidebarUserMenuItem = observer(function SidebarUserMenuItem(props: 
       <SidebarNavItem isActive={isActive}>
         <div className="flex items-center gap-1.5 py-[1px]">
           <item.Icon className="size-4 flex-shrink-0" />
-          <p className="text-13 leading-5 font-medium">{t(item.labelTranslationKey)}</p>
+          <p className="text-13 leading-5 font-medium">
+            {t(item.labelTranslationKey as KeysWithoutParams<"translation">)}
+          </p>
         </div>
         {item.key === "notifications" && <NotificationAppSidebarOption workspaceSlug={workspaceSlug.toString()} />}
       </SidebarNavItem>

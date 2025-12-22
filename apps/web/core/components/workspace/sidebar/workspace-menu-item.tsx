@@ -3,7 +3,8 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import type { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -58,7 +59,9 @@ export const SidebarWorkspaceMenuItem = observer(function SidebarWorkspaceMenuIt
               "rotate-180": item.key === "active_cycles",
             })}
           />
-          <p className="text-13 leading-5 font-medium">{t(item.labelTranslationKey)}</p>
+          <p className="text-13 leading-5 font-medium">
+            {t(item.labelTranslationKey as KeysWithoutParams<"translation">)}
+          </p>
         </div>
         <div className="flex-shrink-0">
           <UpgradeBadge />

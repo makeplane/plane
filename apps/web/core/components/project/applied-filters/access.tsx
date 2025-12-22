@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
 // constants
 import { NETWORK_CHOICES } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 
 type Props = {
@@ -20,7 +21,7 @@ export const AppliedAccessFilters = observer(function AppliedAccessFilters(props
         const accessDetails = NETWORK_CHOICES.find((s) => `${s.key}` === status);
         return (
           <div key={status} className="flex items-center gap-1 rounded-sm px-1.5 py-1 text-11 bg-layer-1">
-            {accessDetails && t(accessDetails?.i18n_label)}
+            {accessDetails && t(accessDetails?.i18n_label as KeysWithoutParams<"translation">)}
             {editable && (
               <button
                 type="button"

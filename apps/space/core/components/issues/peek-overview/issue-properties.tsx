@@ -2,7 +2,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { LinkIcon } from "lucide-react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import {
   StatePropertyIcon,
   StateGroupIcon,
@@ -100,7 +101,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
               }`}
             >
               {priority && <PriorityIcon priority={priority?.key} size={12} className="flex-shrink-0" />}
-              <span>{t(priority?.titleTranslationKey || "common.none")}</span>
+              <span>{t((priority?.titleTranslationKey || "common.none") as KeysWithoutParams<"translation">)}</span>
             </div>
           </div>
         </div>

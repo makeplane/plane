@@ -5,7 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { EEstimateSystem } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { ChevronUpIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TModulePlotType } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
@@ -134,7 +135,10 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
                         value={plotType}
                         label={
                           <span>
-                            {t(moduleBurnDownChartOptions.find((v) => v.value === plotType)?.i18n_label || "none")}
+                            {t(
+                              (moduleBurnDownChartOptions.find((v) => v.value === plotType)?.i18n_label ||
+                                "none") as KeysWithoutParams<"translation">
+                            )}
                           </span>
                         }
                         onChange={onChange}
@@ -142,7 +146,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
                       >
                         {moduleBurnDownChartOptions.map((item) => (
                           <CustomSelect.Option key={item.value} value={item.value}>
-                            {t(item.i18n_label)}
+                            {t(item.i18n_label as KeysWithoutParams<"translation">)}
                           </CustomSelect.Option>
                         ))}
                       </CustomSelect>

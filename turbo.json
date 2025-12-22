@@ -55,6 +55,11 @@
       "inputs": ["$TURBO_DEFAULT$"],
       "outputs": ["node_modules/.cache/prettier/**"]
     },
+    "check:i18n": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
+      "outputs": []
+    },
     "check:lint": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],

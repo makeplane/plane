@@ -104,7 +104,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           setToast({
             title: t("common.error.label"),
             type: TOAST_TYPE.ERROR,
-            message: t("entity.update.failed", { entity: t("issue.label") }),
+            message: t("entity.update.failed", { entity: t("issue.label", { count: 1 }) }),
           });
         }
       },
@@ -115,7 +115,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           setToast({
             title: t("common.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: t("entity.delete.success", { entity: t("issue.label") }),
+            message: t("entity.delete.success", { entity: t("issue.label", { count: 1 }) }),
           });
           captureSuccess({
             eventName: WORK_ITEM_TRACKER_EVENTS.delete,
@@ -126,7 +126,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           setToast({
             title: t("common.error.label"),
             type: TOAST_TYPE.ERROR,
-            message: t("entity.delete.failed", { entity: t("issue.label") }),
+            message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
           });
           captureError({
             eventName: WORK_ITEM_TRACKER_EVENTS.delete,

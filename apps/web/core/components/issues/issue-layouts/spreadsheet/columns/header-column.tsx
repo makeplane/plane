@@ -3,7 +3,8 @@ import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Era
 // constants
 import { SPREADSHEET_PROPERTY_DETAILS } from "@plane/constants";
 // i18n
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 // types
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
 import { CustomMenu, Row } from "@plane/ui";
@@ -50,7 +51,9 @@ export function HeaderColumn(props: Props) {
         <Row className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary">
           <div className="flex items-center gap-1.5">
             {<SpreadSheetPropertyIcon iconKey={propertyDetails.icon} className="h-4 w-4 text-placeholder" />}
-            {property === "sub_issue_count" && isEpic ? t("issue.label", { count: 2 }) : t(propertyDetails.i18n_title)}
+            {property === "sub_issue_count" && isEpic
+              ? t("issue.label", { count: 2 })
+              : t(propertyDetails.i18n_title as KeysWithoutParams<"translation">)}
           </div>
           <div className="ml-3 flex">
             {activeSortingProperty === property && (

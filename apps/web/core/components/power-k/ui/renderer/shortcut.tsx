@@ -1,5 +1,6 @@
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { substringMatch } from "@plane/utils";
 // components
 import type { TPowerKCommandConfig, TPowerKCommandGroup } from "@/components/power-k/core/types";
@@ -20,7 +21,9 @@ export function ShortcutRenderer(props: Props) {
   const { t } = useTranslation();
 
   // Apply search filter
-  const filteredCommands = commands.filter((command) => substringMatch(t(command.i18n_title), searchQuery));
+  const filteredCommands = commands.filter((command) =>
+    substringMatch(t(command.i18n_title as KeysWithoutParams<"translation">), searchQuery)
+  );
 
   // Group commands - separate contextual by context type, others by group
   type GroupedCommands = {
@@ -41,7 +44,7 @@ export function ShortcutRenderer(props: Props) {
       if (!group) {
         group = {
           key: contextKey,
-          title: t(CONTEXT_ENTITY_MAP[command.contextType].i18n_title),
+          title: t(CONTEXT_ENTITY_MAP[command.contextType].i18n_title as KeysWithoutParams<"translation">),
           priority: POWER_K_GROUP_PRIORITY.contextual,
           commands: [],
         };
@@ -56,7 +59,7 @@ export function ShortcutRenderer(props: Props) {
       if (!group) {
         group = {
           key: groupKey,
-          title: t(POWER_K_GROUP_I18N_TITLES[groupKey as TPowerKCommandGroup]),
+          title: t(POWER_K_GROUP_I18N_TITLES[groupKey as TPowerKCommandGroup] as KeysWithoutParams<"translation">),
           priority: POWER_K_GROUP_PRIORITY[groupKey as TPowerKCommandGroup],
           commands: [],
         };
@@ -81,7 +84,9 @@ export function ShortcutRenderer(props: Props) {
               {group.commands.map((command) => (
                 <div key={command.id} className="mt-1">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-11 text-secondary text-left">{t(command.i18n_title)}</h4>
+                    <h4 className="text-11 text-secondary text-left">
+                      {t(command.i18n_title as KeysWithoutParams<"translation">)}
+                    </h4>
                     <div className="flex items-center gap-x-1.5">
                       {command.keySequence && <KeySequenceBadge sequence={command.keySequence} />}
                       {(command.shortcut || command.modifierShortcut) && (

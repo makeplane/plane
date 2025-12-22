@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname, useParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useProject } from "@/hooks/store/use-project";
@@ -66,7 +67,9 @@ export const NavItemChildren = observer(function NavItemChildren(props: { projec
                       "text-11 font-medium"
                     )}
                   >
-                    {t(getProjectSettingsPageLabelI18nKey(link.key, link.i18n_label))}
+                    {t(
+                      getProjectSettingsPageLabelI18nKey(link.key, link.i18n_label) as KeysWithoutParams<"translation">
+                    )}
                   </div>
                 </Link>
               )

@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TRecentActivityFilterKeys } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -26,7 +27,9 @@ export const FiltersDropdown = observer(function FiltersDropdown(props: TFilters
           setActiveFilter(filter.name);
         }}
       >
-        <div className="truncate font-medium text-11 capitalize">{t(filter.i18n_key)}</div>
+        <div className="truncate font-medium text-11 capitalize">
+          {t(filter.i18n_key as KeysWithoutParams<"translation">)}
+        </div>
       </CustomMenu.MenuItem>
     ));
   }
@@ -39,7 +42,7 @@ export const FiltersDropdown = observer(function FiltersDropdown(props: TFilters
       placement="bottom-start"
       customButton={
         <button className="flex hover:bg-layer-transparent-hover px-2 py-1 rounded-sm gap-1 capitalize border border-subtle">
-          <span className="font-medium text-13 my-auto">{t(title || "")}</span>
+          <span className="font-medium text-13 my-auto">{t((title || "") as KeysWithoutParams<"translation">)}</span>
           <ChevronDownIcon className={cn("size-3 my-auto text-tertiary hover:text-secondary duration-300")} />
         </button>
       }

@@ -5,7 +5,8 @@ import { useParams, usePathname } from "next/navigation";
 // plane imports
 import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { joinUrlPath } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
@@ -66,7 +67,9 @@ export const SidebarItemBase = observer(function SidebarItemBase({
       <SidebarNavItem isActive={item.highlight(pathname, itemHref)}>
         <div className="flex items-center gap-1.5 py-[1px]">
           {icon}
-          <p className="text-13 leading-5 font-medium">{t(item.labelTranslationKey)}</p>
+          <p className="text-13 leading-5 font-medium">
+            {t(item.labelTranslationKey as KeysWithoutParams<"translation">)}
+          </p>
         </div>
         {additionalRender?.(item.key, slug)}
       </SidebarNavItem>

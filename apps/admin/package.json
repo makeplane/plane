@@ -11,6 +11,7 @@
     "preview": "react-router build && serve -s build/client -l 3001",
     "start": "serve -s build/client -l 3001",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist && rm -rf build",
+    "check:i18n": "tsx ../../packages/i18n/scripts/check-app-keys.ts",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=485",
     "check:types": "react-router typegen && tsc --noEmit",
     "check:format": "prettier . --cache --check",

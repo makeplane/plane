@@ -1,7 +1,8 @@
 import type { FC } from "react";
 import React from "react";
-// plane utils
-import { calculateTimeAgo, cn, getIconForLink } from "@plane/utils";
+// plane imports
+import { useLocale } from "@plane/i18n";
+import { cn, getIconForLink } from "@plane/utils";
 // plane ui
 import type { TContextMenuItem } from "../dropdowns/context-menu/root";
 import { CustomMenu } from "../dropdowns/custom-menu";
@@ -17,6 +18,8 @@ export type TLinkItemBlockProps = {
 export function LinkItemBlock(props: TLinkItemBlockProps) {
   // props
   const { title, url, createdAt, menuItems, onClick } = props;
+  // i18n
+  const { formatRelative } = useLocale();
   // icons
   const Icon = getIconForLink(url);
   return (
@@ -29,7 +32,7 @@ export function LinkItemBlock(props: TLinkItemBlockProps) {
       </div>
       <div className="flex-1 truncate">
         <div className="text-13 font-medium truncate">{title}</div>
-        {createdAt && <div className="text-11 font-medium text-placeholder">{calculateTimeAgo(createdAt)}</div>}
+        {createdAt && <div className="text-11 font-medium text-placeholder">{formatRelative(createdAt)}</div>}
       </div>
       {menuItems && (
         <div className="hidden group-hover:block">

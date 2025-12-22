@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { cn } from "@plane/utils";
 import { SettingsSidebarHeader } from "./header";
 import type { TSettingItem } from "./nav-item";
@@ -51,7 +52,9 @@ export const SettingsSidebar = observer(function SettingsSidebar(props: Settings
           if (groupedSettings[category].length === 0) return null;
           return (
             <div key={category} className="py-3">
-              <span className="text-13 font-semibold text-tertiary capitalize mb-2 px-2">{t(category)}</span>
+              <span className="text-13 font-semibold text-tertiary capitalize mb-2 px-2">
+                {t(category as KeysWithoutParams<"translation">)}
+              </span>
               <div className="relative flex flex-col gap-0.5 h-full mt-2">
                 {groupedSettings[category].map(
                   (setting) =>

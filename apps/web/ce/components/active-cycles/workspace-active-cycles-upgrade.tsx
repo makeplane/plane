@@ -2,7 +2,10 @@ import { observer } from "mobx-react";
 import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search } from "lucide-react";
 // plane imports
 import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation   } from "@plane/i18n";
+import type {KeysWithoutParams, PrefixedKeyWithoutParams} from "@plane/i18n";
+
+type I18nKey = KeysWithoutParams<"translation"> | PrefixedKeyWithoutParams;
 import { getButtonStyling } from "@plane/propel/button";
 import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -20,46 +23,46 @@ import { useUser } from "@/hooks/store/user";
 
 export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
   {
-    key: "10000_feet_view",
+    key: "10000_feet_view" as const,
     title: "10,000-feet view of all active cycles.",
     description:
       "Zoom out to see running cycles across all your projects at once instead of going from Cycle to Cycle in each project.",
     icon: Folder,
   },
   {
-    key: "get_snapshot_of_each_active_cycle",
+    key: "get_snapshot_of_each_active_cycle" as const,
     title: "Get a snapshot of each active cycle.",
     description:
       "Track high-level metrics for all active cycles, see their state of progress, and get a sense of scope against deadlines.",
     icon: CircleDashed,
   },
   {
-    key: "compare_burndowns",
+    key: "compare_burndowns" as const,
     title: "Compare burndowns.",
-    description: "Monitor how each of your teams are performing with a peek into each cycle’s burndown report.",
+    description: "Monitor how each of your teams are performing with a peek into each cycle's burndown report.",
     icon: BarChart4,
   },
   {
-    key: "quickly_see_make_or_break_issues",
+    key: "quickly_see_make_or_break_issues" as const,
     title: "Quickly see make-or-break work items. ",
     description:
       "Preview high-priority work items for each cycle against due dates. See all of them per cycle in one click.",
     icon: AlertOctagon,
   },
   {
-    key: "zoom_into_cycles_that_need_attention",
+    key: "zoom_into_cycles_that_need_attention" as const,
     title: "Zoom into cycles that need attention. ",
-    description: "Investigate the state of any cycle that doesn’t conform to expectations in one click.",
+    description: "Investigate the state of any cycle that doesn't conform to expectations in one click.",
     icon: Search,
   },
   {
-    key: "stay_ahead_of_blockers",
+    key: "stay_ahead_of_blockers" as const,
     title: "Stay ahead of blockers.",
     description:
-      "Spot challenges from one project to another and see inter-cycle dependencies that aren’t obvious from any other view.",
+      "Spot challenges from one project to another and see inter-cycle dependencies that aren't obvious from any other view.",
     icon: Microscope,
   },
-];
+] as const;
 
 export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyclesUpgrade() {
   const { t } = useTranslation();
@@ -118,7 +121,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
               <h3 className="font-medium">{t(item.key)}</h3>
               <item.icon className="mt-1 h-4 w-4 text-blue-500" />
             </div>
-            <span className="text-13 text-tertiary">{t(`${item.key}_description`)}</span>
+            <span className="text-13 text-tertiary">{t(`${item.key}_description` as I18nKey)}</span>
           </div>
         ))}
       </div>

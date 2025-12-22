@@ -2,7 +2,8 @@ import { useRef } from "react";
 import { AlertCircle } from "lucide-react";
 // plane imports
 import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import type { TIssueOrderByOptions } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
@@ -37,9 +38,12 @@ export function GroupDragOverlay(props: Props) {
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
-  const readableOrderBy = t(
-    ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.titleTranslationKey || ""
-  );
+  const readableOrderBy = ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.titleTranslationKey
+    ? t(
+        ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)!
+          .titleTranslationKey as KeysWithoutParams<"translation">
+      )
+    : "";
 
   return (
     <div
@@ -75,7 +79,7 @@ export function GroupDragOverlay(props: Props) {
             <>
               {readableOrderBy && (
                 <span>
-                  {t("issue.layouts.ordered_by_label")} <span className="font-semibold">{t(readableOrderBy)}</span>.
+                  {t("issue.layouts.ordered_by_label")} <span className="font-semibold">{readableOrderBy}</span>.
                 </span>
               )}
               <span>{t("entity.drop_here_to_move", { entity: isEpic ? "epic" : "work item" })}</span>

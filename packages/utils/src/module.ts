@@ -5,17 +5,18 @@ import type { IModule, TModuleDisplayFilters, TModuleFilters, TModuleOrderByOpti
 import { getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";
 
-const collator = new Intl.Collator("en-US", { numeric: true, sensitivity: "base" });
+/**
+ * @description collator for natural sorting (handles numbers within strings correctly)
+ */
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
 
 /**
- * @description performs natural sorting of strings (handles numbers within strings correctly)
- * @param {string} a - first string to compare
- * @param {string} b - second string to compare
- * @returns {number} - comparison result (-1, 0, or 1)
+ * @description performs natural sorting of strings
  */
 const naturalSort = (a: string, b: string): number => collator.compare(a, b);
+
 /**
- * @description orders modules based on their status
+ * @description orders modules based on the specified key
  * @param {IModule[]} modules
  * @param {TModuleOrderByOptions | undefined} orderByKey
  * @returns {IModule[]}

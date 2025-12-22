@@ -1,9 +1,12 @@
 import { Info } from "lucide-react";
 // plane imports
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation   } from "@plane/i18n";
+import type {KeysWithoutParams, PrefixedKeyWithoutParams} from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TEstimateSystemKeys } from "@plane/types";
+
+type I18nKey = KeysWithoutParams<"translation"> | PrefixedKeyWithoutParams;
 // components
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // plane web imports
@@ -36,21 +39,22 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
               const currentSystem = system as TEstimateSystemKeys;
               const isEnabled = isEstimateSystemEnabled(currentSystem);
               if (!isEnabled) return null;
+              const i18nName = ESTIMATE_SYSTEMS[currentSystem]?.i18n_name;
               return {
                 label: !ESTIMATE_SYSTEMS[currentSystem]?.is_available ? (
                   <div className="relative flex items-center gap-2 cursor-no-drop text-tertiary">
-                    {t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}
+                    {i18nName ? t(i18nName as I18nKey) : null}
                     <Tooltip tooltipContent={t("common.coming_soon")}>
                       <Info size={12} />
                     </Tooltip>
                   </div>
                 ) : !isEnabled ? (
                   <div className="relative flex items-center gap-2 cursor-no-drop text-tertiary">
-                    {t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}
+                    {i18nName ? t(i18nName as I18nKey) : null}
                     <UpgradeBadge />
                   </div>
                 ) : (
-                  <div>{t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}</div>
+                  <div>{i18nName ? t(i18nName as I18nKey) : null}</div>
                 ),
                 value: system,
                 disabled: !isEnabled,

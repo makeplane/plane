@@ -2,7 +2,8 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { Menu } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import { useUserSettings } from "@/hooks/store/user";
 
@@ -39,7 +40,9 @@ export const SettingsMobileNav = observer(function SettingsMobileNav(props: Prop
         {/* path */}
         <div className="flex items-center gap-2">
           <ChevronRightIcon className="size-4 text-tertiary" />
-          <span className="text-13 font-medium text-secondary">{t(activePath)}</span>
+          <span className="text-13 font-medium text-secondary">
+            {t(activePath as KeysWithoutParams<"translation">)}
+          </span>
         </div>
       </div>
     </div>

@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { NETWORK_CHOICES } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // local imports
@@ -39,7 +40,7 @@ export const FilterAccess = observer(function FilterAccess(props: Props) {
                 isChecked={appliedFilters?.includes(`${access.key}`) ? true : false}
                 onClick={() => handleUpdate(`${access.key}`)}
                 icon={<ProjectNetworkIcon iconKey={access.iconKey} />}
-                title={t(access.i18n_label)}
+                title={t(access.i18n_label as KeysWithoutParams<"translation">)}
               />
             ))
           ) : (

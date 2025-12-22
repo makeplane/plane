@@ -1,7 +1,8 @@
 import React from "react";
 import { Command } from "cmdk";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 // local imports
 import type { TPowerKCommandConfig, TPowerKCommandGroup, TPowerKContext } from "../../core/types";
 import { PowerKModalCommandItem } from "../modal/command-item";
@@ -45,8 +46,8 @@ export function CommandRenderer(props: Props) {
 
         const title =
           groupKey === "contextual" && activeContext
-            ? t(CONTEXT_ENTITY_MAP[activeContext].i18n_title)
-            : t(POWER_K_GROUP_I18N_TITLES[groupKey]);
+            ? t(CONTEXT_ENTITY_MAP[activeContext].i18n_title as KeysWithoutParams<"translation">)
+            : t(POWER_K_GROUP_I18N_TITLES[groupKey] as KeysWithoutParams<"translation">);
 
         return (
           <Command.Group key={groupKey} heading={title}>
@@ -55,7 +56,7 @@ export function CommandRenderer(props: Props) {
                 key={command.id}
                 icon={command.icon}
                 iconNode={command.iconNode}
-                label={t(command.i18n_title)}
+                label={t(command.i18n_title as KeysWithoutParams<"translation">)}
                 keySequence={command.keySequence}
                 shortcut={command.shortcut || command.modifierShortcut}
                 onSelect={() => onCommandSelect(command)}

@@ -8,7 +8,8 @@ import {
   WORKSPACE_TRACKER_ELEMENTS,
   WORKSPACE_TRACKER_EVENTS,
 } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
@@ -256,7 +257,9 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
           disabled={!isValid}
           loading={isSubmitting}
         >
-          {isSubmitting ? t(primaryButtonText.loading) : t(primaryButtonText.default)}
+          {isSubmitting
+            ? t(primaryButtonText.loading as KeysWithoutParams<"translation">)
+            : t(primaryButtonText.default as KeysWithoutParams<"translation">)}
         </Button>
         {!secondaryButton && (
           <Button variant="secondary" type="button" size="xl" onClick={() => router.back()}>

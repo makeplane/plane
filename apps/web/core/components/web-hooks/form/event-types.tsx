@@ -1,5 +1,6 @@
 // types
-import { useTranslation } from "@plane/i18n";
+import { useTranslation  } from "@plane/i18n";
+import type {KeysWithoutParams} from "@plane/i18n";
 import type { TWebhookEventTypes } from "@plane/types";
 
 type Props = {
@@ -36,7 +37,7 @@ export function WebhookOptions(props: Props) {
               onChange={() => onChange(option.key)}
             />
             <label className="text-13" htmlFor={option.key}>
-              {t(option.i18n_label)}
+              {t(option.i18n_label as KeysWithoutParams<"translation">)}
             </label>
           </div>
         ))}

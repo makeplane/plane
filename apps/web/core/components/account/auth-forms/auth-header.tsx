@@ -103,7 +103,7 @@ export const AuthHeader = observer(function AuthHeader(props: TAuthHeader) {
 
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-h4-semibold text-primary">{typeof header === "string" ? t(header) : header}</span>
+      <span className="text-h4-semibold text-primary">{header}</span>
       <span className="text-h4-semibold text-placeholder">{subHeader}</span>
     </div>
   );
