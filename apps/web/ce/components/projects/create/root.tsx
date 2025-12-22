@@ -106,7 +106,6 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
         if (currentUser && currentWorkspace && res) {
           const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
           trackProjectCreated({ id: res.id, created_at: res.created_at ?? "" }, currentWorkspace, currentUser, role);
-          trackProjectCreated({ id: res.id, created_at: res.created_at ?? "" }, currentWorkspace, currentUser, role);
         }
         setToast({
           type: TOAST_TYPE.SUCCESS,
