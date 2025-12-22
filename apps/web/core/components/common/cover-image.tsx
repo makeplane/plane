@@ -7,7 +7,7 @@ type TCoverImageProps = {
   src: string | null | undefined;
   /** Alt text for the image */
   alt?: string;
-  /** Additional className for the container */
+  /** Additional className for the image or skeleton */
   className?: string;
   /** Whether to show default image when src is null/undefined. If false, shows loading skeleton */
   showDefaultWhenEmpty?: boolean;
