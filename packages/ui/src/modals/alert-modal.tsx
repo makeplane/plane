@@ -2,8 +2,8 @@ import type { LucideIcon } from "lucide-react";
 import { AlertTriangle, Info } from "lucide-react";
 import React from "react";
 // components
-import type { TButtonVariant } from "../button";
-import { Button } from "../button";
+import type { TButtonVariant } from "@plane/propel/button";
+import { Button } from "@plane/propel/button";
 import { cn } from "../utils";
 import { EModalPosition, EModalWidth } from "./constants";
 import { ModalCore } from "./modal-core";
@@ -28,6 +28,7 @@ type Props = {
   title: string;
   variant?: TModalVariant;
   width?: EModalWidth;
+  customIcon?: React.ReactNode;
 };
 
 const VARIANT_ICONS: Record<TModalVariant, LucideIcon> = {
@@ -36,7 +37,7 @@ const VARIANT_ICONS: Record<TModalVariant, LucideIcon> = {
 };
 
 const BUTTON_VARIANTS: Record<TModalVariant, TButtonVariant> = {
-  danger: "danger",
+  danger: "error-fill",
   primary: "primary",
 };
 
@@ -62,6 +63,7 @@ export function AlertModalCore(props: Props) {
     title,
     variant = "danger",
     width = EModalWidth.XL,
+    customIcon,
   } = props;
 
   const Icon = VARIANT_ICONS[variant];
@@ -76,7 +78,7 @@ export function AlertModalCore(props: Props) {
               VARIANT_CLASSES[variant]
             )}
           >
-            <Icon className="size-5" aria-hidden="true" />
+            {customIcon ? <>{customIcon}</> : <Icon className="size-5" aria-hidden="true" />}
           </span>
         )}
         <div className="text-center sm:text-left">
@@ -85,7 +87,7 @@ export function AlertModalCore(props: Props) {
         </div>
       </div>
       <div className="px-5 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t-[0.5px] border-subtle">
-        <Button variant="neutral-primary" onClick={handleClose}>
+        <Button variant="secondary" onClick={handleClose}>
           {secondaryButtonText}
         </Button>
         <Button variant={BUTTON_VARIANTS[variant]} tabIndex={1} onClick={handleSubmit} loading={isSubmitting}>
