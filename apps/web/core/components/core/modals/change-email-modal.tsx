@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Transition, Dialog } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Input } from "@plane/ui";
+import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
@@ -127,119 +126,82 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-30" onClose={handleClose}>
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 transition-opacity bg-backdrop" />
-        </Transition.Child>
-
-        <div className="overflow-y-auto fixed inset-0 z-30">
-          <div className="flex justify-center items-center p-4 min-h-full text-center sm:p-0">
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 px-4 text-left shadow-raised-200 transition-all sm:my-8 sm:w-[30rem]">
-                <div className="py-4 space-y-0">
-                  <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
-                    {changeEmailT("title")}
-                  </Dialog.Title>
-                  <p className="my-4 text-13 text-secondary">{changeEmailT("description")}</p>
-                </div>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-                  <div className="flex flex-col gap-1">
-                    {secondStep && (
-                      <h4 className="text-13 font-medium text-secondary">{changeEmailT("form.email.label")}</h4>
-                    )}
-                    <Controller
-                      control={control}
-                      name="email"
-                      rules={{
-                        required: changeEmailT("form.email.errors.required"),
-                        pattern: {
-                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                          message: changeEmailT("form.email.errors.invalid"),
-                        },
-                      }}
-                      render={({ field: { value, onChange, ref } }) => (
-                        <Input
-                          id="email"
-                          name="email"
-                          type="email"
-                          value={value}
-                          onChange={onChange}
-                          ref={ref}
-                          hasError={Boolean(errors.email)}
-                          placeholder={changeEmailT("form.email.placeholder")}
-                          className={cn(
-                            { "border-red-500": errors.email },
-                            { "cursor-not-allowed !bg-surface-2": secondStep }
-                          )}
-                          disabled={secondStep}
-                        />
-                      )}
-                    />
-                    {errors?.email && <span className="text-11 text-red-500">{errors?.email?.message}</span>}
-                  </div>
-
-                  {secondStep && (
-                    <div className="flex flex-col gap-1">
-                      <h4 className="text-13 font-medium text-secondary">{changeEmailT("form.code.label")}</h4>
-                      <Controller
-                        control={control}
-                        name="code"
-                        rules={{ required: changeEmailT("form.code.errors.required") }}
-                        render={({ field: { value, onChange, ref } }) => (
-                          <Input
-                            id="code"
-                            name="code"
-                            value={value}
-                            onChange={onChange}
-                            ref={ref}
-                            placeholder={changeEmailT("form.code.placeholder")}
-                            className={cn({ "border-red-500": errors.code })}
-                            autoFocus
-                          />
-                        )}
-                      />
-                      {errors?.code ? (
-                        <span className="text-11 text-red-500">{errors?.code?.message}</span>
-                      ) : (
-                        <span className="text-11 text-green-700">{changeEmailT("form.code.helper_text")}</span>
-                      )}
-                    </div>
-                  )}
-                  <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle py-4">
-                    <Button type="button" variant="secondary" size="lg" onClick={handleClose}>
-                      {changeEmailT("actions.cancel")}
-                    </Button>
-                    <Button type="submit" variant="primary" size="lg" disabled={isSubmitting}>
-                      {isSubmitting
-                        ? changeEmailT("states.sending")
-                        : secondStep
-                          ? changeEmailT("actions.confirm")
-                          : changeEmailT("actions.continue")}
-                    </Button>
-                  </div>
-                </form>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
+      <div className="py-4 space-y-0 px-4">
+        <h3 className="text-16 font-medium leading-6 text-primary">{changeEmailT("title")}</h3>
+        <p className="my-4 text-13 text-secondary">{changeEmailT("description")}</p>
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-4" noValidate>
+        <div className="flex flex-col gap-1">
+          {secondStep && <h4 className="text-13 font-medium text-secondary">{changeEmailT("form.email.label")}</h4>}
+          <Controller
+            control={control}
+            name="email"
+            rules={{
+              required: changeEmailT("form.email.errors.required"),
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: changeEmailT("form.email.errors.invalid"),
+              },
+            }}
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.email)}
+                placeholder={changeEmailT("form.email.placeholder")}
+                className={cn({ "border-red-500": errors.email }, { "cursor-not-allowed !bg-surface-2": secondStep })}
+                disabled={secondStep}
+              />
+            )}
+          />
+          {errors?.email && <span className="text-11 text-red-500">{errors?.email?.message}</span>}
         </div>
-      </Dialog>
-    </Transition.Root>
+
+        {secondStep && (
+          <div className="flex flex-col gap-1">
+            <h4 className="text-13 font-medium text-secondary">{changeEmailT("form.code.label")}</h4>
+            <Controller
+              control={control}
+              name="code"
+              rules={{ required: changeEmailT("form.code.errors.required") }}
+              render={({ field: { value, onChange, ref } }) => (
+                <Input
+                  id="code"
+                  name="code"
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  placeholder={changeEmailT("form.code.placeholder")}
+                  className={cn({ "border-red-500": errors.code })}
+                  autoFocus
+                />
+              )}
+            />
+            {errors?.code ? (
+              <span className="text-11 text-red-500">{errors?.code?.message}</span>
+            ) : (
+              <span className="text-11 text-green-700">{changeEmailT("form.code.helper_text")}</span>
+            )}
+          </div>
+        )}
+        <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle py-4">
+          <Button type="button" variant="secondary" size="lg" onClick={handleClose}>
+            {changeEmailT("actions.cancel")}
+          </Button>
+          <Button type="submit" variant="primary" size="lg" disabled={isSubmitting}>
+            {isSubmitting
+              ? changeEmailT("states.sending")
+              : secondStep
+                ? changeEmailT("actions.confirm")
+                : changeEmailT("actions.continue")}
+          </Button>
+        </div>
+      </form>
+    </ModalCore>
   );
 });
