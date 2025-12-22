@@ -12,7 +12,7 @@ import {
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/core";
 import { Ellipsis } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
@@ -49,6 +49,25 @@ export function RowDragHandle(props: RowDragHandleProps) {
   const { editor, row } = props;
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // Track active event listeners for cleanup
+  const activeListenersRef = useRef<{
+    mouseup?: (e: MouseEvent) => void;
+    mousemove?: (e: MouseEvent) => void;
+  }>({});
+
+  // Cleanup window event listeners on unmount
+  useEffect(() => {
+    const listenersRef = activeListenersRef.current;
+    return () => {
+      // Remove any lingering window event listeners when component unmounts
+      if (listenersRef.mouseup) {
+        window.removeEventListener("mouseup", listenersRef.mouseup);
+      }
+      if (listenersRef.mousemove) {
+        window.removeEventListener("mousemove", listenersRef.mousemove);
+      }
+    };
+  }, []);
   // floating ui
   const { refs, floatingStyles, context } = useFloating({
     placement: "bottom-start",
@@ -133,6 +152,9 @@ export function RowDragHandle(props: RowDragHandleProps) {
         }
         window.removeEventListener("mouseup", handleFinish);
         window.removeEventListener("mousemove", handleMove);
+        // Clear the ref
+        activeListenersRef.current.mouseup = undefined;
+        activeListenersRef.current.mousemove = undefined;
       };
 
       let pseudoRow: HTMLElement | undefined;
@@ -168,6 +190,9 @@ export function RowDragHandle(props: RowDragHandleProps) {
       };
 
       try {
+        // Store references for cleanup
+        activeListenersRef.current.mouseup = handleFinish;
+        activeListenersRef.current.mousemove = handleMove;
         window.addEventListener("mouseup", handleFinish);
         window.addEventListener("mousemove", handleMove);
       } catch (error) {
