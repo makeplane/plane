@@ -79,7 +79,6 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
   // debounced search callback
   const debouncedSearchCallback = useCallback(
     debounce(async (searchQuery: string) => {
-      setIsLoading(true);
       try {
         const sectionsResponse = await searchCallback?.(searchQuery);
         if (sectionsResponse) {
@@ -96,7 +95,8 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
 
   // trigger debounced search when query changes
   useEffect(() => {
-    if (query) {
+    if (query !== undefined && query !== null) {
+      setIsLoading(true);
       void debouncedSearchCallback(query);
     }
   }, [query, debouncedSearchCallback]);
