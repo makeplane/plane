@@ -23,6 +23,7 @@ import {
   shouldHighlightIssueDueDate,
 } from "@plane/utils";
 // components
+import { CategoryDropdown } from "@/components/dropdowns/category-property";
 import { CycleDropdown } from "@/components/dropdowns/cycle";
 import { DateDropdown } from "@/components/dropdowns/date";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
@@ -52,7 +53,6 @@ import { WorkItemLayoutAdditionalProperties } from "@/plane-web/components/issue
 // local components
 import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
-import { CategoryDropdown } from "@/components/dropdowns/category-property";
 
 export interface IIssueProperties {
   issue: TIssue;
@@ -336,7 +336,7 @@ const isStartTimeReadOnly = (
 // Usage:
  const disabled = isStartTimeReadOnly(issue.start_date, issue.start_time);
 
-  // {console.log("Render all display propertie:",  JSON.stringify(displayProperties) )}
+  {console.log("Render all display propertie:", JSON.parse(JSON.stringify(displayProperties)) )}
 
   return (
     <div className={className}>
@@ -358,10 +358,10 @@ const isStartTimeReadOnly = (
       </WithDisplayPropertiesHOC>
 
       {/* Season field */}
-       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
+       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="year">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <YearRangeDropdown
-             value={issue?.year ?? null}
+             value={issue.year ?? null}
              onChange={handleYear}
              placeholder={t("year_field")}
              icon={<Calendar className="h-3 w-3 flex-shrink-0" />}
@@ -464,7 +464,7 @@ const isStartTimeReadOnly = (
 <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <LevelDropdown
-             value={issue?.level ?? null}
+             value={issue.level ?? null}
              onChange={handleLevel}
              placeholder={t("level_field")}
              icon={<SignalIcon className="h-3 w-3 flex-shrink-0" />}
@@ -482,7 +482,7 @@ const isStartTimeReadOnly = (
 <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="category">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <CategoryDropdown
-             value={issue?.category ?? null}
+             value={issue.category ?? null}
              onChange={handleCategory}
              placeholder={t("category_field")}
              icon={<Tag className="h-3 w-3 flex-shrink-0" />}
@@ -501,10 +501,10 @@ const isStartTimeReadOnly = (
 
 
       {/* sport field */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="sport">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <SportDropdown
-             value={issue?.sport ?? null}
+             value={issue.sport ?? null}
              onChange={handleSport}
              placeholder={t("sport_field")}
              icon={<Volleyball className="h-3 w-3 flex-shrink-0" />}
@@ -517,10 +517,10 @@ const isStartTimeReadOnly = (
         </div>
       </WithDisplayPropertiesHOC>
 
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
+        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="program">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <ProgramDropdown
-             value={issue?.program ?? null}
+             value={issue.program ?? null}
              onChange={handleProgram}
              placeholder={t("program_field")}
              icon={<User className="h-3 w-3 flex-shrink-0" />}

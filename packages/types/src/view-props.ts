@@ -201,7 +201,6 @@ export interface IIssueDisplayProperties {
   modules?: boolean;
   cycle?: boolean;
   issue_type?: boolean;
-
   level?: boolean;
   sport?: boolean;
   program?: boolean;

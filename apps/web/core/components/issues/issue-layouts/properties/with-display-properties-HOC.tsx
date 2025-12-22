@@ -3,37 +3,45 @@ import { observer } from "mobx-react";
 import type { IIssueDisplayProperties } from "@plane/types";
 
 interface IWithDisplayPropertiesHOC {
-  displayProperties: IIssueDisplayProperties;
+  displayProperties?: IIssueDisplayProperties;
   shouldRenderProperty?: (displayProperties: IIssueDisplayProperties) => boolean;
   displayPropertyKey: keyof IIssueDisplayProperties | (keyof IIssueDisplayProperties)[];
   children: ReactNode;
 }
 
 export const WithDisplayPropertiesHOC = observer(
-  ({ displayProperties, shouldRenderProperty, displayPropertyKey, children }: IWithDisplayPropertiesHOC) => {
-
-    const getDisplayFlag = (key: keyof IIssueDisplayProperties) => {
-      // If the backend does NOT return the key → default to true (show it)
-      if (!(key in displayProperties)) return true;
-
-      // Otherwise use the backend value
-      return !!displayProperties[key];
-    };
-
-    let shouldDisplayPropertyFromFilters = false;
-
-    if (Array.isArray(displayPropertyKey)) {
-      shouldDisplayPropertyFromFilters = displayPropertyKey.every((key) => getDisplayFlag(key));
-    } else {
-      shouldDisplayPropertyFromFilters = getDisplayFlag(displayPropertyKey);
+  ({
+    displayProperties,
+    shouldRenderProperty,
+    displayPropertyKey,
+    children,
+  }: IWithDisplayPropertiesHOC) => {
+    // If displayProperties is not ready yet → allow render
+    if (!displayProperties) {
+      return <>{children}</>;
     }
 
-    const renderProperty =
-      shouldDisplayPropertyFromFilters && (shouldRenderProperty ? shouldRenderProperty(displayProperties) : true);
+    const getDisplayFlag = (key: keyof IIssueDisplayProperties): boolean => {
+      // key missing → show by default
+      if (!Object.prototype.hasOwnProperty.call(displayProperties, key)) {
+        return true;
+      }
 
-    if (!renderProperty) return null;
+      // key exists → respect backend value
+      return Boolean(displayProperties[key]);
+    };
+
+    const shouldDisplay =
+      Array.isArray(displayPropertyKey)
+        ? displayPropertyKey.every(getDisplayFlag)
+        : getDisplayFlag(displayPropertyKey);
+
+    if (!shouldDisplay) return null;
+
+    if (shouldRenderProperty && !shouldRenderProperty(displayProperties)) {
+      return null;
+    }
 
     return <>{children}</>;
   }
 );
-
