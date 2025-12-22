@@ -358,7 +358,7 @@ const isStartTimeReadOnly = (
       </WithDisplayPropertiesHOC>
 
       {/* Season field */}
-       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
+       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="year">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <YearRangeDropdown
              value={issue?.year ?? null}
@@ -501,7 +501,7 @@ const isStartTimeReadOnly = (
 
 
       {/* sport field */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="sport">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <SportDropdown
              value={issue?.sport ?? null}
@@ -517,7 +517,7 @@ const isStartTimeReadOnly = (
         </div>
       </WithDisplayPropertiesHOC>
 
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="level">
+        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="program">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <ProgramDropdown
              value={issue?.program ?? null}

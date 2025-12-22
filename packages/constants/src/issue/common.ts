@@ -192,6 +192,10 @@ export const ISSUE_DISPLAY_PROPERTIES: {
     titleTranslationKey: "common.order_by.start_date",
   },
   {
+    key: "start_time",
+    titleTranslationKey: "starting_time",
+  },
+  {
     key: "due_date",
     titleTranslationKey: "common.order_by.due_date",
   },
@@ -216,6 +220,11 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   },
   { key: "modules", titleTranslationKey: "common.module" },
   { key: "cycle", titleTranslationKey: "common.cycle" },
+  { key: "level", titleTranslationKey: "level_field" },
+  { key: "sport", titleTranslationKey: "sport_field" },
+  { key: "program", titleTranslationKey: "program_field" },
+  { key: "year", titleTranslationKey: "year_field" },
+  { key: "category", titleTranslationKey: "category_field" },
 ];
 
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [

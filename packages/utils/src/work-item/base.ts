@@ -295,6 +295,7 @@ export const getComputedDisplayProperties = (
   displayProperties: IIssueDisplayProperties = {}
 ): IIssueDisplayProperties => ({
   assignee: displayProperties?.assignee ?? true,
+  start_time: displayProperties?.start_time ?? true,
   start_date: displayProperties?.start_date ?? true,
   due_date: displayProperties?.due_date ?? true,
   labels: displayProperties?.labels ?? true,
@@ -310,6 +311,11 @@ export const getComputedDisplayProperties = (
   modules: displayProperties?.modules ?? true,
   cycle: displayProperties?.cycle ?? true,
   issue_type: displayProperties?.issue_type ?? true,
+  level: displayProperties?.level ?? true,
+  sport: displayProperties?.sport ?? true,
+  program: displayProperties?.program ?? true,
+  year: displayProperties?.year ?? true,
+  category: displayProperties?.category ?? true,
 });
 
 /**

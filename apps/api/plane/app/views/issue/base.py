@@ -163,6 +163,7 @@ class IssueListEndpoint(BaseAPIView):
                 "completed_at",
                 "estimate_point",
                 "priority",
+                "start_time",
                 "start_date",
                 "target_date",
                 "sequence_id",
@@ -182,6 +183,11 @@ class IssueListEndpoint(BaseAPIView):
                 "is_draft",
                 "archived_at",
                 "deleted_at",
+                "level",
+                "sport",
+                "program",
+                "year",
+                "category",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(issues, datetime_fields, request.user.user_timezone)
@@ -428,6 +434,7 @@ class IssueViewSet(BaseViewSet):
                     "completed_at",
                     "estimate_point",
                     "priority",
+                    "start_time",
                     "start_date",
                     "target_date",
                     "sequence_id",
@@ -447,6 +454,11 @@ class IssueViewSet(BaseViewSet):
                     "is_draft",
                     "archived_at",
                     "deleted_at",
+                    "level",
+                    "sport",
+                    "program",
+                    "year",
+                    "category",
                 )
                 .first()
             )
