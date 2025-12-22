@@ -117,7 +117,7 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
           >
             {!hideIcon && <CycleIcon className="h-3 w-3 flex-shrink-0" />}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (!!selectedName || !!placeholder) && (
-              <span className="max-w-40 flex-grow truncate">{selectedName ?? placeholder}</span>
+              <span className="max-w-40 truncate">{selectedName ?? placeholder}</span>
             )}
             {dropdownArrow && (
               <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />

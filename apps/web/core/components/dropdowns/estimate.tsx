@@ -192,12 +192,16 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
           >
             {!hideIcon && <EstimatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             {(selectedEstimate || placeholder) && BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-              <span className="flex-grow truncate">
-                {selectedEstimate
-                  ? currentActiveEstimate?.type === EEstimateSystem.TIME
-                    ? convertMinutesToHoursMinutesString(Number(selectedEstimate.value))
-                    : selectedEstimate.value
-                  : placeholder}
+              <span className="truncate">
+                {selectedEstimate ? (
+                  currentActiveEstimate?.type === EEstimateSystem.TIME ? (
+                    convertMinutesToHoursMinutesString(Number(selectedEstimate.value))
+                  ) : (
+                    selectedEstimate.value
+                  )
+                ) : (
+                  <span className="text-placeholder">{placeholder}</span>
+                )}
               </span>
             )}
             {dropdownArrow && (
