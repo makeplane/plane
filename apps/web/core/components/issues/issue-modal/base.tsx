@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { useEffect, useRef, useState } from "react";
 // Plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -23,14 +23,14 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 // local imports
-import { CreateIssueToastActionItems } from "../create-issue-toast-action-items";
-import { DraftIssueLayout } from "./draft-issue-layout";
-import { IssueFormRoot } from "./form";
-import type { IssueFormProps } from "./form";
-import type { IssuesModalProps } from "./modal";
-import { getUserRoleString, trackWorkItemCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { trackWorkItemCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { CreateIssueToastActionItems } from "../create-issue-toast-action-items";
+import { DraftIssueLayout } from "./draft-issue-layout";
+import type { IssueFormProps } from "./form";
+import { IssueFormRoot } from "./form";
+import type { IssuesModalProps } from "./modal";
 
 export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueModalBase(props: IssuesModalProps) {
   const {
@@ -253,7 +253,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
           { id: payload.project_id },
           currentWorkspace,
           currentUser,
-          getUserRoleString(role)
+          role
         );
       }
       if (!createMore) handleClose();

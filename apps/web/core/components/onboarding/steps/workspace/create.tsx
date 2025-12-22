@@ -24,7 +24,7 @@ import { useUser, useUserPermissions, useUserProfile, useUserSettings } from "@/
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 import { WorkspaceService } from "@/plane-web/services";
 // local components
-import { getUserRoleString, trackWorkspaceCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { trackWorkspaceCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { CommonOnboardingHeader } from "../common";
 
 type Props = {
@@ -89,7 +89,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
           const role = getWorkspaceRoleByWorkspaceSlug(workspaceResponse.slug);
 
           if (currentUser) {
-            trackWorkspaceCreated(workspaceResponse, currentUser, getUserRoleString(role));
+            trackWorkspaceCreated(workspaceResponse, currentUser, role);
           }
 
           await completeStep(workspaceResponse.id);

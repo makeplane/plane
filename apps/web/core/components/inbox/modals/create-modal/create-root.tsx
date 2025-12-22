@@ -1,6 +1,6 @@
-import type { FC, FormEvent } from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import type { FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 // plane imports
 import { ETabIndices, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
@@ -9,9 +9,9 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
-import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
+import { getTabIndex, renderFormattedPayloadDate } from "@plane/utils";
 // helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
@@ -26,11 +26,11 @@ import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-dup
 // services
 import { FileService } from "@/services/file.service";
 // local imports
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { trackWorkItemCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { InboxIssueDescription } from "./issue-description";
 import { InboxIssueProperties } from "./issue-properties";
 import { InboxIssueTitle } from "./issue-title";
-import { getUserRoleString, trackWorkItemCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 const fileService = new FileService();
 
@@ -184,7 +184,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
             { id: projectId },
             currentWorkspace,
             currentUser,
-            getUserRoleString(role)
+            role
           );
         }
 

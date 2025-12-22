@@ -15,7 +15,7 @@ import { usePageStore } from "@/plane-web/hooks/store";
 // local imports
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { getUserRoleString, trackPageCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { trackPageCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { PageForm } from "./page-form";
 
 type Props = {
@@ -82,7 +82,7 @@ export function CreatePageModal(props: Props) {
             currentWorkspace,
             currentUser,
             "project",
-            getUserRoleString(role)
+            role
           );
         }
         handleStateClear();

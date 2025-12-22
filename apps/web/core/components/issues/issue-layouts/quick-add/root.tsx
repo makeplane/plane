@@ -1,25 +1,25 @@
-import type { FC } from "react";
-import { useEffect, useState } from "react";
+import { PlusIcon } from "lucide-react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import type { UseFormRegister } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import { PlusIcon } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
-import type { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";
+import type { EIssueLayoutTypes, IProject, TIssue } from "@plane/types";
 import { cn, createIssuePayload } from "@plane/utils";
 // helpers
 import { captureError } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { QuickAddIssueFormRoot } from "@/plane-web/components/issues/quick-add";
 // local imports
-import { CreateIssueToastActionItems } from "../../create-issue-toast-action-items";
-import { getUserRoleString, trackWorkItemCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { trackWorkItemCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { CreateIssueToastActionItems } from "../../create-issue-toast-action-items";
 
 export type TQuickAddIssueForm = {
   ref: React.RefObject<HTMLFormElement>;
@@ -146,7 +146,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
             { id: projectId.toString() },
             currentWorkspace,
             currentUser,
-            getUserRoleString(role)
+            role
           );
         }
       } catch (error) {

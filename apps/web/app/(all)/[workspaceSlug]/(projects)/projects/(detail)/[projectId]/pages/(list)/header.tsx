@@ -19,7 +19,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-import { getUserRoleString, trackPageCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { trackPageCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 export const PagesListHeader = observer(function PagesListHeader() {
@@ -58,7 +58,7 @@ export const PagesListHeader = observer(function PagesListHeader() {
           currentWorkspace,
           currentUser,
           "project",
-          getUserRoleString(role)
+          role
         );
       }
       const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${pageData.id}`;

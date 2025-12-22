@@ -14,7 +14,7 @@ import { captureError } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions, useUserSettings } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { getUserRoleString, trackWorkspaceDeleted } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { trackWorkspaceDeleted } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -71,7 +71,7 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
         const role = getWorkspaceRoleByWorkspaceSlug(data.slug);
 
         if (currentUser) {
-          trackWorkspaceDeleted(data, currentUser, getUserRoleString(role));
+          trackWorkspaceDeleted(data, currentUser, role);
         }
 
         setToast({

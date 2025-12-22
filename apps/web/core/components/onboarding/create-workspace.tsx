@@ -1,12 +1,12 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // constants
 import {
   ORGANIZATION_SIZE,
   RESTRICTED_URLS,
-  WORKSPACE_TRACKER_EVENTS,
   WORKSPACE_TRACKER_ELEMENTS,
+  WORKSPACE_TRACKER_EVENTS,
 } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
@@ -20,8 +20,8 @@ import { captureError } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions, useUserProfile, useUserSettings } from "@/hooks/store/user";
 // services
+import { trackWorkspaceCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { WorkspaceService } from "@/plane-web/services";
-import { getUserRoleString, trackWorkspaceCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 
 type Props = {
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
@@ -84,7 +84,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
                 trackWorkspaceCreated(
                   workspaceResponse,
                   currentUser,
-                  getUserRoleString(role),
+                  role,
                 );
               }
 

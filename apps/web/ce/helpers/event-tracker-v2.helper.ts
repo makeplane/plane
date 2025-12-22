@@ -131,7 +131,13 @@ export const trackEvent = (eventName: string, properties: Record<string, unknown
  * Track workspace creation
  * Call this immediately after a workspace is created
  */
-export const trackWorkspaceCreated = (workspace: IWorkspace, user: IUser, role: TUserRole) => {
+export const trackWorkspaceCreated = (
+  workspace: IWorkspace,
+  user: IUser,
+  role: EUserPermissions | EUserWorkspaceRoles | undefined,
+  extraProperties?: Record<string, unknown>
+) => {
+  const userRole = getUserRoleString(role);
   joinWorkspaceGroup(workspace);
   trackEvent(
     "workspace_created",
@@ -141,8 +147,9 @@ export const trackWorkspaceCreated = (workspace: IWorkspace, user: IUser, role: 
       workspace_slug: workspace.slug,
       workspace_name: workspace.name,
       created_at: workspace.created_at instanceof Date ? workspace.created_at.toISOString() : workspace.created_at,
+      ...extraProperties,
     },
-    role
+    userRole
   );
 };
 
@@ -175,8 +182,9 @@ export const trackProjectCreated = (
   project: { id: string; created_at: string | Date },
   workspace: IWorkspace,
   user: IUser,
-  role: TUserRole
+  role: EUserPermissions | EUserWorkspaceRoles | undefined
 ) => {
+  const userRole = getUserRoleString(role);
   trackEvent(
     "project_created",
     {
@@ -186,7 +194,7 @@ export const trackProjectCreated = (
       project_id: project.id,
       created_at: project.created_at instanceof Date ? project.created_at.toISOString() : project.created_at,
     },
-    role
+    userRole
   );
 };
 
@@ -198,8 +206,9 @@ export const trackWorkItemCreated = (
   project: { id: string },
   workspace: IWorkspace,
   user: IUser,
-  role: TUserRole
+  role: EUserPermissions | EUserWorkspaceRoles | undefined
 ) => {
+  const userRole = getUserRoleString(role);
   trackEvent(
     "work_item_created",
     {
@@ -211,7 +220,7 @@ export const trackWorkItemCreated = (
       work_item_type: workItem.type,
       created_at: workItem.created_at instanceof Date ? workItem.created_at.toISOString() : workItem.created_at,
     },
-    role
+    userRole
   );
 };
 
@@ -223,8 +232,9 @@ export const trackCycleCreated = (
   project: { id: string },
   workspace: IWorkspace,
   user: IUser,
-  role: TUserRole
+  role: EUserPermissions | EUserWorkspaceRoles | undefined
 ) => {
+  const userRole = getUserRoleString(role);
   trackEvent(
     "cycle_created",
     {
@@ -236,7 +246,7 @@ export const trackCycleCreated = (
       cycle_length_days: cycle.length_days || null,
       created_at: cycle.created_at instanceof Date ? cycle.created_at.toISOString() : cycle.created_at,
     },
-    role
+    userRole
   );
 };
 
@@ -248,8 +258,9 @@ export const trackPageCreated = (
   workspace: IWorkspace,
   user: IUser,
   location: "project" | "wiki" | "teamspace" | "workitem",
-  role: TUserRole
+  role: EUserPermissions | EUserWorkspaceRoles | undefined
 ) => {
+  const userRole = getUserRoleString(role);
   trackEvent(
     "page_created",
     {
@@ -261,6 +272,6 @@ export const trackPageCreated = (
       project_id: page.project_id || null,
       created_at: page.created_at instanceof Date ? page.created_at.toISOString() : page.created_at,
     },
-    role
+    userRole
   );
 };

@@ -18,7 +18,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web types
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { getUserRoleString, trackProjectCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { trackProjectCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 import type { TProject } from "@/plane-web/types/projects";
 import ProjectAttributes from "./attributes";
 import { getProjectFormValues } from "./utils";
@@ -105,12 +105,8 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
         }
         if (currentUser && currentWorkspace && res) {
           const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
-          trackProjectCreated(
-            { id: res.id, created_at: res.created_at ?? "" },
-            currentWorkspace,
-            currentUser,
-            getUserRoleString(role)
-          );
+          trackProjectCreated({ id: res.id, created_at: res.created_at ?? "" }, currentWorkspace, currentUser, role);
+          trackProjectCreated({ id: res.id, created_at: res.created_at ?? "" }, currentWorkspace, currentUser, role);
         }
         setToast({
           type: TOAST_TYPE.SUCCESS,
