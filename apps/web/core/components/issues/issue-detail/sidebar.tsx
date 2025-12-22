@@ -7,6 +7,7 @@ import {
   CalendarCheck2,
   CalendarClock,
   Clock,
+  Handshake,
   SignalIcon,
   Tag,
   Triangle,
@@ -49,6 +50,7 @@ import { IssueCycleSelect } from "./cycle-select";
 // import { IssueLabel } from "./label";
 import { IssueModuleSelect } from "./module-select";
 import type { TIssueOperations } from "./root";
+import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 
 type Props = {
   workspaceSlug: string;
@@ -304,6 +306,24 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={`text-sm ${issue?.sport ? "" : "text-custom-text-400"}`}
                 clearIconClassName="h-3 w-3 hidden group-hover:inline" />
+            </div>
+
+            {/* opposition field */}
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                <Handshake className="h-4 w-4 flex-shrink-0" />
+                <span>Opposition</span>
+              </div>
+              <OppositionTeamProperty
+                storageKey={`opp-team-${issueId}`}
+                value={issue?.opposition_team}
+                onChange={(team) =>
+                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                    opposition_team: team,
+                  })
+                }
+                disabled={!isEditable}
+              />
             </div>
 
             {/* program field */}
