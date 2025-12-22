@@ -41,6 +41,7 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
     tabIndex,
     disabled = false,
     renderByDefault = true,
+    closeOnSelect = true,
     onChange,
     value,
   } = props;
@@ -49,46 +50,41 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
   const [tempTime24, setTempTime24] = useState<string>("");
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  const [referenceElement, setReferenceElement] =
-    useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] =
-    useState<HTMLDivElement | null>(null);
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
-  const { styles, attributes } = usePopper(
-    referenceElement,
-    popperElement,
-    {
-      placement: "bottom-start",
-      modifiers: [{ name: "preventOverflow", options: { padding: 12 } }],
-    }
-  );
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "bottom-start",
+    modifiers: [{ name: "preventOverflow", options: { padding: 12 } }],
+  });
 
   const isTimeSelected = Boolean(value && value.trim() !== "");
 
-  const { handleClose, handleKeyDown, handleOnClick } =
-    useDropdown({
-      dropdownRef,
-      isOpen,
-      setIsOpen,
-    });
+  const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
+    dropdownRef,
+    isOpen,
+    setIsOpen,
+  });
 
   /* ─────────────────────────────── */
   /* Open dropdown & initialize time */
   /* ─────────────────────────────── */
-  const handleOpen = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
     handleOnClick(e);
     setTempTime24(value ? isoTo24Hour(value) : "");
   };
 
-  /* ─────────────────────── */
-  /* TMP time change only   */
-  /* ─────────────────────── */
-  const handlePickTime = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setTempTime24(e.target.value);
+  /* ─────────────────────────────── */
+  /* Apply time immediately on change */
+  /* ─────────────────────────────── */
+  const handlePickTime = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTime = e.target.value;
+    setTempTime24(newTime);
+
+    if (newTime) {
+      const updatedISO = updateISOTime(value, newTime);
+      onChange(updatedISO);
+    }
   };
 
   /* ───────────── */
@@ -133,17 +129,12 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
         {!hideIcon && icon}
 
         {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-          <span className="flex-grow truncate">
-            {displayValue}
-          </span>
+          <span className="flex-grow truncate">{displayValue}</span>
         )}
 
         {isClearable && isTimeSelected && !disabled && (
           <X
-            className={cn(
-              "h-2.5 w-2.5 flex-shrink-0",
-              clearIconClassName
-            )}
+            className={cn("h-2.5 w-2.5 flex-shrink-0", clearIconClassName)}
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -177,32 +168,29 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
                 "my-1 bg-custom-background-100  shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden z-30"
               )}
             >
-              <input
-                type="time"
-                value={tempTime24}
-                onChange={handlePickTime}
-                autoFocus
-                className="w-full bg-custom-background-100  text-sm rounded px-2 py-1 outline-none"
-              />
-
-              <div className="flex justify-end gap-2 p-2 ">
-                <button
-                  className=" text-xs px-3 py-1 rounded bg-custom-background-90 text-custom-text-200 hover:bg-custom-background-80"
+              <div className="flex p-2 justify-between items-center space-x-2 min-w-[130px] ">
+                <input
+                  type="time"
+                  value={tempTime24}
+                  onChange={handlePickTime}
+                  autoFocus
+                  className="w-full bg-custom-background-100  text-sm rounded px-2 py-1 outline-none"
+                />
+                <X
+                  className="h-3.5 w-3.5 flex-shrink-0"
                   onClick={() => {
                     handleClose();
                     referenceElement?.blur();
                   }}
-                >
-                  Cancel
-                </button>
+                />
 
-                <button
+                {/* <button
                   className="text-xs px-3 py-1 rounded border border-custom-border-200 text-custom-text-300 "
                   onClick={handleApply}
                   disabled={!tempTime24}
                 >
                   OK
-                </button>
+                </button> */}
               </div>
             </div>
           </Combobox.Options>,
