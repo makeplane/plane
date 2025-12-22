@@ -5,7 +5,7 @@ FROM python:3.12.10-alpine AS builder-with-tools
 COPY --from=ghcr.io/astral-sh/uv:0.9.18 /uv /usr/local/bin/uv
 
 # Set working directory
-WORKDIR /app
+WORKDIR /code
 
 # Set environment variables for uv
 ENV UV_COMPILE_BYTECODE=1 \
@@ -34,8 +34,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-install-project
 
 # Copy the project into the image
-COPY . /app/
-ENV PATH="/app/.venv/bin:$PATH"
+COPY . /code/
+ENV PATH="/code/.venv/bin:$PATH"
 
 # Sync the project
 RUN --mount=type=cache,target=/root/.cache/uv \
