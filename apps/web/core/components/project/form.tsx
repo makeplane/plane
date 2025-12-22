@@ -12,10 +12,11 @@ import { EFileAssetType } from "@plane/types";
 import type { IProject, IWorkspace } from "@plane/types";
 import { CustomSelect, Input, TextArea } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
+import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 import { TimezoneSelect } from "@/components/global";
 // helpers
-import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL, handleCoverImageChange } from "@/helpers/cover-image.helper";
+import { handleCoverImageChange } from "@/helpers/cover-image.helper";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -200,11 +201,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="relative h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <img
-          src={getCoverImageDisplayURL(coverImage, DEFAULT_COVER_IMAGE_URL)}
-          alt="Project cover image"
-          className="h-44 w-full rounded-md object-cover"
-        />
+        <CoverImage src={coverImage} alt="Project cover image" className="h-44 w-full rounded-md" />
         <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
             <Controller
