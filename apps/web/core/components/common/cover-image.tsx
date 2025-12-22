@@ -13,7 +13,7 @@ type TCoverImageProps = {
   showDefaultWhenEmpty?: boolean;
   /** Custom fallback URL to use instead of DEFAULT_COVER_IMAGE_URL */
   fallbackUrl?: string;
-};
+} & React.ComponentProps<"img">;
 
 /**
  * A reusable cover image component that handles:
@@ -30,6 +30,7 @@ export function CoverImage(props: TCoverImageProps) {
     className,
     showDefaultWhenEmpty = false,
     fallbackUrl = DEFAULT_COVER_IMAGE_URL,
+    ...restProps
   } = props;
 
   // Show loading skeleton when src is undefined/null and we don't want to show default
@@ -39,5 +40,5 @@ export function CoverImage(props: TCoverImageProps) {
 
   const displayUrl = getCoverImageDisplayURL(src, fallbackUrl);
 
-  return <img src={displayUrl} alt={alt} className={cn("object-cover", className)} />;
+  return <img src={displayUrl} alt={alt} className={cn("object-cover", className)} {...restProps} />;
 }
