@@ -200,7 +200,7 @@ export function InstanceGitlabConfigForm(props: Props) {
                   loading={isSubmitting}
                   disabled={!isDirty}
                 >
-                  {isSubmitting ? "Saving..." : "Save changes"}
+                  {isSubmitting ? "Saving" : "Save changes"}
                 </Button>
                 <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
                   Go back
@@ -209,7 +209,7 @@ export function InstanceGitlabConfigForm(props: Props) {
             </div>
           </div>
           <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-layer-1/60 rounded-lg">
+            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-layer-3 rounded-lg">
               <div className="pt-2 text-18 font-medium">Plane-provided details for GitLab</div>
               {GITLAB_SERVICE_FIELD.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
