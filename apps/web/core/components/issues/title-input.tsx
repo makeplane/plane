@@ -147,7 +147,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
           className={cn(
             "block w-full resize-none overflow-hidden rounded-sm border-none bg-transparent px-3 py-0 text-20 font-medium outline-none ring-0",
             {
-              "ring-1 ring-red-400 mx-2.5": title?.length === 0,
+              "ring-1 ring-danger-strong mx-2.5": title?.length === 0,
             },
             className
           )}

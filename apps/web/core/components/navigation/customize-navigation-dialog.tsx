@@ -324,7 +324,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                               "text-secondary",
                               parseInt(projectCountInput) >= 1
                                 ? "border-strong focus:border-accent-strong focus:ring-1 focus:ring-accent-strong"
-                                : "border-danger-strong focus:border-danger-strong focus:ring-1 focus:ring-red-500"
+                                : "border-danger-strong focus:border-danger-strong focus:ring-1 focus:ring-danger-strong"
                             )}
                           />
                         </div>
