@@ -33,7 +33,7 @@ export const AppSidebar: FC = observer(() => {
       <SidebarMenuItems />
       {/* Favorites Menu */}
       {canPerformWorkspaceMemberActions && !isFavoriteEmpty && <SidebarFavoritesMenu />}
-      {/* Teams List */}
+       {/* Teams List */}
       <SidebarTeamsList />
       {/* Projects List */}
       <SidebarProjectsList />

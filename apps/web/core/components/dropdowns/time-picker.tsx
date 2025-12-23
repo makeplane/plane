@@ -172,6 +172,7 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
                   type="time"
                   value={tempTime24}
                   onChange={handlePickTime}
+                  onClick={(e) => e.stopPropagation()}
                   autoFocus
                   className="w-full bg-custom-background-100  text-sm rounded px-2 py-1 outline-none"
                 />

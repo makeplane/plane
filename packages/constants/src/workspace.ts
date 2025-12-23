@@ -315,7 +315,7 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspac
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     highlight: (pathname: string, url: string) => pathname === url,
   },
-  opposition: {
+  opposition: { 
     key: "opposition",
     labelTranslationKey: "Opposition",
     href: `/opposition/`,
@@ -333,6 +333,13 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarN
 export const WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"]!,
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["opposition"]!,
+  {
+    key: "calendar",
+    labelTranslationKey: "Calendar",
+    href: `/calendar/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
 ];
 
 export const IS_FAVORITE_MENU_OPEN = "is_favorite_menu_open";
