@@ -83,12 +83,12 @@ export const badgeStyling: IBadgeStyling = {
   "accent-success": {
     default: `text-success-primary bg-green-50`,
     hover: `hover:bg-green-100 hover:text-success-primary`,
-    disabled: `cursor-not-allowed !text-green-300`,
+    disabled: `cursor-not-allowed text-success-secondary!`,
   },
   "outline-success": {
     default: `text-success-primary bg-surface-1 border border-success-strong`,
     hover: `hover:text-success-primary hover:bg-green-50`,
-    disabled: `cursor-not-allowed !text-green-300 border-success-subtle`,
+    disabled: `cursor-not-allowed text-success-secondary! border-success-subtle`,
   },
 
   warning: {
