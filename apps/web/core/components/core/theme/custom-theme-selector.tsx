@@ -98,9 +98,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(handleUpdateTheme)}
-    >
+    <form onSubmit={handleSubmit(handleUpdateTheme)}>
       <div className="space-y-5">
         <h3 className="text-16 font-semibold text-primary">{t("customize_your_theme")}</h3>
 
