@@ -43,5 +43,10 @@ class Migration(migrations.Migration):
             name='feature_tours',
             field=models.JSONField(default=plane.db.models.workspace.get_default_feature_tours),
         ),
+         migrations.AddField(
+            model_name='apitoken',
+            name='allowed_rate_limit',
+            field=models.CharField(default='60/min', max_length=255),
+        ),
         migrations.RunPython(populate_feature_tours, reverse_code=migrations.RunPython.noop),
     ]
