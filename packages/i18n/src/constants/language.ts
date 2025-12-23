@@ -22,6 +22,7 @@ export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
   { label: "Română", value: "ro" },
   { label: "Tiếng việt", value: "vi-VN" },
   { label: "Türkçe", value: "tr-TR" },
+  { label: "فارسی", value: "fa" },
 ];
 
 /**
