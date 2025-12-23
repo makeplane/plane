@@ -22,7 +22,6 @@ const apiTokenService = new APITokenService();
 function ApiTokensPage() {
   // states
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false);
-  // router
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -31,11 +30,11 @@ function ApiTokensPage() {
   const { data: tokens } = useSWR(API_TOKENS_LIST, () => apiTokenService.list());
 
   const pageTitle = currentWorkspace?.name
-    ? `${currentWorkspace.name} - ${t("workspace_settings.settings.api_tokens.title")}`
+    ? `${currentWorkspace.name} - ${t("account_settings.api_tokens.title")}`
     : undefined;
 
   if (!tokens) {
-    return <APITokenSettingsLoader />;
+    return <APITokenSettingsLoader title={t("account_settings.api_tokens.title")} />;
   }
 
   return (
