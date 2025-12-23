@@ -174,7 +174,7 @@ export const BarChart = React.memo(function BarChart<K extends string, T extends
           {showTooltip && (
             <Tooltip
               cursor={{
-                fill: "var(--color-alpha-black-300)",
+                fill: "var(--alpha-black-300)",
                 className: "bg-layer-1 cursor-pointer",
               }}
               wrapperStyle={{
