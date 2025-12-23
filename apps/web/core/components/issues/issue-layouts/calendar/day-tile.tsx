@@ -144,9 +144,6 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
   const isWeekend = [0, 6].includes(date.date.getDay());
   const isMonthLayout = calendarLayout === "month";
 
-  const normalBackground = isWeekend ? "bg-custom-background-90" : "bg-custom-background-100";
-  const draggingOverBackground = isWeekend ? "bg-custom-background-80" : "bg-custom-background-90";
-
   return (
     <>
       <div ref={dayTileRef} className="group relative flex h-full w-full flex-col bg-custom-background-90">
@@ -158,7 +155,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                 ? "font-medium"
                 : "text-custom-text-300"
               : "font-medium" // if week layout, highlight all days
-          } ${isWeekend ? "bg-custom-background-90" : "bg-custom-background-100"} `}
+          } ${isWeekend ? "bg-custom-background-100" : "bg-custom-background-100"} `}
         >
           {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
           {isToday ? (
@@ -174,7 +171,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
         <div className="h-full w-full hidden md:block">
           <div
             className={cn(
-              `h-full w-full select-none ${isDraggingOver ? `${draggingOverBackground} opacity-70` : normalBackground}`,
+              `h-full w-full select-none ${isDraggingOver ? `bg-custom-background-90 opacity-70` : 'bg-custom-background-100'}`,
               {
                 "min-h-[5rem]": isMonthLayout,
               }
