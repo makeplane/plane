@@ -1,7 +1,6 @@
-import React from "react";
+import { AlertTriangle } from "lucide-react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { AlertTriangle } from "lucide-react";
 // types
 import { WORKSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -11,11 +10,12 @@ import type { IWorkspace } from "@plane/types";
 // ui
 import { Input } from "@plane/ui";
 // hooks
-import { cn } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { captureError } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserSettings } from "@/hooks/store/user";
+import { useUser, useUserPermissions, useUserSettings } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { trackWorkspaceDeleted } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { cn } from "@plane/utils";
 
 type Props = {
   data: IWorkspace | null;
@@ -36,6 +36,9 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
   const { t } = useTranslation();
   const { getWorkspaceRedirectionUrl } = useWorkspace();
   const { fetchCurrentUserSettings } = useUserSettings();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+  const { data: currentUser } = useUser();
+
   // form info
   const {
     control,
@@ -64,10 +67,13 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
         await fetchCurrentUserSettings();
         handleClose();
         router.push(getWorkspaceRedirectionUrl());
-        captureSuccess({
-          eventName: WORKSPACE_TRACKER_EVENTS.delete,
-          payload: { slug: data.slug },
-        });
+
+        const role = getWorkspaceRoleByWorkspaceSlug(data.slug);
+
+        if (currentUser) {
+          trackWorkspaceDeleted(data, currentUser, role);
+        }
+
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("workspace_settings.settings.general.delete_modal.success_title"),

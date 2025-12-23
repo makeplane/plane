@@ -1,6 +1,6 @@
-import type { FC, FormEvent } from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import type { FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 // plane imports
 import { ETabIndices, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
@@ -9,9 +9,9 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
-import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
+import { getTabIndex, renderFormattedPayloadDate } from "@plane/utils";
 // helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
@@ -26,6 +26,8 @@ import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-dup
 // services
 import { FileService } from "@/services/file.service";
 // local imports
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { trackWorkItemCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { InboxIssueDescription } from "./issue-description";
 import { InboxIssueProperties } from "./issue-properties";
 import { InboxIssueTitle } from "./issue-title";
@@ -69,6 +71,9 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
   const { isMobile } = usePlatformOS();
   const { getProjectById } = useProject();
+  const { currentWorkspace } = useWorkspace();
+  const { data: currentUser } = useUser();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { t } = useTranslation();
   // states
   const [createMore, setCreateMore] = useState<boolean>(false);
@@ -157,30 +162,39 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
 
     await createInboxIssue(workspaceSlug, projectId, payload)
       .then(async (res) => {
+        if (!res?.issue) return;
         if (uploadedAssetIds.length > 0) {
-          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res?.issue.id ?? "", {
+          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res.issue?.id ?? "", {
             asset_ids: uploadedAssetIds,
           });
           setUploadedAssetIds([]);
         }
         if (!createMore) {
-          router.push(`/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
+          router.push(`/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res.issue?.id}`);
           handleModalClose();
         } else {
           descriptionEditorRef?.current?.clearEditor();
           setFormData(defaultIssueData);
         }
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.create,
-          payload: {
-            id: res?.issue?.id,
-          },
-        });
+
+        if (currentWorkspace && currentUser) {
+          const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+          trackWorkItemCreated(
+            { id: res?.issue?.id ?? "", created_at: res.issue?.created_at ?? "" },
+            { id: projectId },
+            currentWorkspace,
+            currentUser,
+            role
+          );
+        }
+
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: `Success!`,
           message: "Work item created successfully.",
         });
+
+        return res;
       })
       .catch((error) => {
         console.error(error);

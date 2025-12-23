@@ -29,6 +29,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
+import { joinWorkspaceGroup } from "@/plane-web/helpers/event-tracker-v2.helper";
 
 const workspaceService = new WorkspaceService();
 
@@ -80,10 +81,9 @@ function UserInvitationsPage() {
         const invitation = invitations?.find((i) => i.id === firstInviteId);
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
         if (redirectWorkspace?.id) {
-          joinEventGroup(GROUP_WORKSPACE_TRACKER_EVENT, redirectWorkspace?.id, {
-            date: new Date().toDateString(),
-            workspace_id: redirectWorkspace?.id,
-          });
+          if (redirectWorkspace) {
+            joinWorkspaceGroup(redirectWorkspace);
+          }
         }
         captureSuccess({
           eventName: MEMBER_TRACKER_EVENTS.accept,

@@ -1,21 +1,24 @@
-import type { FC } from "react";
-import { useEffect, useState } from "react";
+import { PlusIcon } from "lucide-react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import type { UseFormRegister } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import { PlusIcon } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
-import type { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";
+import type { EIssueLayoutTypes, IProject, TIssue } from "@plane/types";
 import { cn, createIssuePayload } from "@plane/utils";
 // helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { captureError } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { QuickAddIssueFormRoot } from "@/plane-web/components/issues/quick-add";
 // local imports
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { trackWorkItemCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { CreateIssueToastActionItems } from "../../create-issue-toast-action-items";
 
 export type TQuickAddIssueForm = {
@@ -67,6 +70,12 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
   const { workspaceSlug, projectId } = useParams();
   // states
   const [isOpen, setIsOpen] = useState(isQuickAddOpen ?? false);
+
+  // store hooks
+  const { currentWorkspace } = useWorkspace();
+  const { data: currentUser } = useUser();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+
   // form info
   const {
     reset,
@@ -127,20 +136,26 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
         },
       });
 
-      await quickAddPromise
-        .then((res) => {
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.create,
-            payload: { id: res?.id },
-          });
-        })
-        .catch((error) => {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.create,
-            payload: { id: payload.id },
-            error: error as Error,
-          });
+      try {
+        const quickAddRes = await quickAddPromise;
+
+        if (currentWorkspace && currentUser && quickAddRes) {
+          const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+          trackWorkItemCreated(
+            { id: quickAddRes.id, created_at: quickAddRes.created_at ?? "" },
+            { id: projectId.toString() },
+            currentWorkspace,
+            currentUser,
+            role
+          );
+        }
+      } catch (error) {
+        captureError({
+          eventName: WORK_ITEM_TRACKER_EVENTS.create,
+          payload: { id: payload.id },
+          error: error as Error,
         });
+      }
     }
   };
 

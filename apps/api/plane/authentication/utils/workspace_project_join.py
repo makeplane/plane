@@ -1,3 +1,7 @@
+# Django imports
+from django.utils import timezone
+
+# Module imports
 from plane.db.models import (
     ProjectMember,
     ProjectMemberInvite,
@@ -5,6 +9,7 @@ from plane.db.models import (
     WorkspaceMemberInvite,
 )
 from plane.utils.cache import invalidate_cache_directly
+from plane.bgtasks.event_tracking_task import track_event
 
 
 def process_workspace_project_invitations(user):
@@ -24,6 +29,22 @@ def process_workspace_project_invitations(user):
         ],
         ignore_conflicts=True,
     )
+
+    [
+        track_event.delay(
+            user_id=user.id,
+            event_name="user_joined_workspaces",
+            slug=workspace_member_invite.workspace.slug,
+            event_properties={
+                "user_id": user.id,
+                "workspace_id": workspace_member_invite.workspace.id,
+                "workspace_slug": workspace_member_invite.workspace.slug,
+                "role": workspace_member_invite.role,
+                "joined_at": str(timezone.now()),
+            },
+        )
+        for workspace_member_invite in workspace_member_invites
+    ]
 
     [
         invalidate_cache_directly(

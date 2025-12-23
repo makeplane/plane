@@ -1,12 +1,12 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // constants
 import {
   ORGANIZATION_SIZE,
   RESTRICTED_URLS,
-  WORKSPACE_TRACKER_EVENTS,
   WORKSPACE_TRACKER_ELEMENTS,
+  WORKSPACE_TRACKER_EVENTS,
 } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
@@ -16,10 +16,11 @@ import type { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
 import { CustomSelect, Input, Spinner } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { captureError } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserProfile, useUserSettings } from "@/hooks/store/user";
+import { useUser, useUserPermissions, useUserProfile, useUserSettings } from "@/hooks/store/user";
 // services
+import { trackWorkspaceCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { WorkspaceService } from "@/plane-web/services";
 
 type Props = {
@@ -42,7 +43,10 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
   // store hooks
   const { updateUserProfile } = useUserProfile();
   const { fetchCurrentUserSettings } = useUserSettings();
-  const { createWorkspace, fetchWorkspaces } = useWorkspace();
+  const { createWorkspace, fetchWorkspaces, currentWorkspace } = useWorkspace();
+  const { data: currentUser } = useUser();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+
   // form info
   const {
     handleSubmit,
@@ -74,11 +78,14 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
                 title: t("workspace_creation.toast.success.title"),
                 message: t("workspace_creation.toast.success.message"),
               });
-              captureSuccess({
-                eventName: WORKSPACE_TRACKER_EVENTS.create,
-                payload: { slug: formData.slug },
-              });
+
               await fetchWorkspaces();
+              const role = getWorkspaceRoleByWorkspaceSlug(workspaceResponse.slug);
+
+              if (currentUser) {
+                trackWorkspaceCreated(workspaceResponse, currentUser, role);
+              }
+
               await completeStep(workspaceResponse.id);
             })
             .catch(() => {

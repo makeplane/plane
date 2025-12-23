@@ -43,6 +43,7 @@ export interface IUser extends IUserLite {
   user_timezone: string;
   username: string;
   last_login_medium: TLoginMediums;
+  last_login_time: string | null;
   theme: IUserTheme;
 }
 

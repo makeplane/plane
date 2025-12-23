@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { observer } from "mobx-react";
-import { Controller, useForm } from "react-hook-form";
 import { CircleCheck } from "lucide-react";
+import { observer } from "mobx-react";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 // plane imports
 import {
   ORGANIZATION_SIZE,
@@ -16,14 +16,15 @@ import type { IUser, IWorkspace } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserProfile, useUserSettings } from "@/hooks/store/user";
+import { useUser, useUserPermissions, useUserProfile, useUserSettings } from "@/hooks/store/user";
 // plane-web imports
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 import { WorkspaceService } from "@/plane-web/services";
 // local components
+import { trackWorkspaceCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { CommonOnboardingHeader } from "../common";
 
 type Props = {
@@ -48,9 +49,10 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
   const { t } = useTranslation();
   // store hooks
   const { updateUserProfile } = useUserProfile();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { fetchCurrentUserSettings } = useUserSettings();
   const { createWorkspace, fetchWorkspaces } = useWorkspace();
-
+  const { data: currentUser } = useUser();
   const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
 
   // form info
@@ -82,11 +84,14 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
             title: t("workspace_creation.toast.success.title"),
             message: t("workspace_creation.toast.success.message"),
           });
-          captureSuccess({
-            eventName: WORKSPACE_TRACKER_EVENTS.create,
-            payload: { slug: formData.slug },
-          });
+
           await fetchWorkspaces();
+          const role = getWorkspaceRoleByWorkspaceSlug(workspaceResponse.slug);
+
+          if (currentUser) {
+            trackWorkspaceCreated(workspaceResponse, currentUser, role);
+          }
+
           await completeStep(workspaceResponse.id);
           onComplete(formData.organization_size === "Just myself");
         } catch {

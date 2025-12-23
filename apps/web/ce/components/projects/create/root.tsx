@@ -1,22 +1,24 @@
-import { useState } from "react";
-import { observer } from "mobx-react";
-import { FormProvider, useForm } from "react-hook-form";
-import { PROJECT_TRACKER_EVENTS, RANDOM_EMOJI_CODES } from "@plane/constants";
+import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { observer } from "mobx-react";
+import { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
-import type { IProject } from "@plane/types";
 // constants
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 import ProjectCreateButtons from "@/components/project/create/project-create-buttons";
 // hooks
-import { DEFAULT_COVER_IMAGE_URL, getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helper";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helper";
+import { captureError } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web types
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { trackProjectCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 import type { TProject } from "@/plane-web/types/projects";
 import ProjectAttributes from "./attributes";
 import { getProjectFormValues } from "./utils";
@@ -36,6 +38,9 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
   // store
   const { t } = useTranslation();
   const { addProjectToFavorites, createProject, updateProject } = useProject();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+  const { data: currentUser } = useUser();
+  const { currentWorkspace } = useWorkspace();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
   // form info
@@ -98,12 +103,10 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
           await updateCoverImageStatus(res.id, coverImage);
           await updateProject(workspaceSlug.toString(), res.id, { cover_image_url: coverImage });
         }
-        captureSuccess({
-          eventName: PROJECT_TRACKER_EVENTS.create,
-          payload: {
-            identifier: formData.identifier,
-          },
-        });
+        if (currentUser && currentWorkspace && res) {
+          const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+          trackProjectCreated({ id: res.id, created_at: res.created_at ?? "" }, currentWorkspace, currentUser, role);
+        }
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("success"),
@@ -114,6 +117,8 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
           handleAddToFavorites(res.id);
         }
         handleNextStep(res.id);
+
+        return res;
       })
       .catch((err) => {
         try {

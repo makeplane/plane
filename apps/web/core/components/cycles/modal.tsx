@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { mutate } from "swr";
 // types
 import { CYCLE_TRACKER_EVENTS } from "@plane/constants";
@@ -7,16 +7,19 @@ import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types"
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
-import { renderFormattedPayloadDate } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useProject } from "@/hooks/store/use-project";
 import useKeypress from "@/hooks/use-keypress";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { renderFormattedPayloadDate } from "@plane/utils";
 // services
 import { CycleService } from "@/services/cycle.service";
 // local imports
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { trackCycleCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { CycleForm } from "./form";
 
 type CycleModalProps = {
@@ -38,6 +41,10 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
   const { workspaceProjectIds } = useProject();
   const { createCycle, updateCycleDetails } = useCycle();
   const { isMobile } = usePlatformOS();
+
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+  const { data: currentUser } = useUser();
+  const { currentWorkspace } = useWorkspace();
 
   const { setValue: setCycleTab } = useLocalStorage<TCycleTabOptions>("cycle_tab", "active");
 
@@ -62,12 +69,16 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
           title: "Success!",
           message: "Cycle created successfully.",
         });
-        captureSuccess({
-          eventName: CYCLE_TRACKER_EVENTS.create,
-          payload: {
-            id: res.id,
-          },
-        });
+        if (currentWorkspace && currentUser) {
+          const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+          trackCycleCreated(
+            { id: res.id, created_at: res?.created_at ?? "" },
+            { id: projectId },
+            currentWorkspace,
+            currentUser,
+            role
+          );
+        }
       })
       .catch((err) => {
         setToast({

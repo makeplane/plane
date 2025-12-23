@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { useEffect, useRef, useState } from "react";
 // Plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -23,10 +23,13 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 // local imports
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { trackWorkItemCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { CreateIssueToastActionItems } from "../create-issue-toast-action-items";
 import { DraftIssueLayout } from "./draft-issue-layout";
-import { IssueFormRoot } from "./form";
 import type { IssueFormProps } from "./form";
+import { IssueFormRoot } from "./form";
 import type { IssuesModalProps } from "./modal";
 
 export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueModalBase(props: IssuesModalProps) {
@@ -73,6 +76,9 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
   const { fetchIssue } = useIssueDetail();
   const { allowedProjectIds, handleCreateUpdatePropertyValues, handleCreateSubWorkItem } = useIssueModal();
   const { getProjectByIdentifier } = useProject();
+  const { currentWorkspace } = useWorkspace();
+  const { data: currentUser } = useUser();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
   // derived values
@@ -241,10 +247,16 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
           />
         ),
       });
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.create,
-        payload: { id: response.id },
-      });
+      if (currentWorkspace && currentUser && response) {
+        const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+        trackWorkItemCreated(
+          { id: response.id, created_at: response.created_at },
+          { id: payload.project_id },
+          currentWorkspace,
+          currentUser,
+          role
+        );
+      }
       if (!createMore) handleClose();
       if (createMore && issueTitleRef) issueTitleRef?.current?.focus();
       setDescription("<p></p>");
@@ -328,10 +340,13 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
             />
           ) : undefined,
       });
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: { id: data.id },
-      });
+
+      if (currentWorkspace && currentUser) {
+        captureSuccess({
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
+          payload: { id: data.id },
+        });
+      }
       handleClose();
     } catch (error: any) {
       console.error(error);
