@@ -69,6 +69,8 @@ def page_version(page_id, existing_instance, user_id):
                 PageVersion.objects.filter(page_id=page_id).order_by("last_saved_at").first().delete()
 
         return
+    except Page.DoesNotExist:
+        return
     except Exception as e:
         log_exception(e)
         return
