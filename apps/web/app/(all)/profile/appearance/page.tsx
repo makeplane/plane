@@ -63,9 +63,7 @@ function ProfileAppearancePage() {
       // Wait for the promise to resolve, then reload after showing toast
       try {
         await updateCurrentUserThemePromise;
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        window.location.reload();
       } catch (error) {
         // Error toast already shown by setPromiseToast
         console.error("Error updating theme:", error);

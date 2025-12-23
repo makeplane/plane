@@ -67,9 +67,7 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
         });
         // Wait for the promise to resolve, then reload after showing toast
         await updatePromise;
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        window.location.reload();
       } catch (error) {
         console.error("Error updating theme:", error);
       }

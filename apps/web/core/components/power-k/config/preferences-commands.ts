@@ -32,9 +32,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
             message: "Reloading to apply changes...",
           });
           // reload the page after showing the toast
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500);
+          window.location.reload();
           return;
         })
         .catch(() => {
