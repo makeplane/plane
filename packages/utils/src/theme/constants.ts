@@ -112,3 +112,33 @@ export type SaturationCurve = "ease-in-out" | "linear";
  * Default saturation curve
  */
 export const DEFAULT_SATURATION_CURVE: SaturationCurve = "ease-in-out";
+
+/**
+ * Editor color backgrounds for light mode
+ * Used for stickies and editor elements
+ */
+export const EDITOR_COLORS_LIGHT = {
+  gray: "#d6d6d8",
+  peach: "#ffd5d7",
+  pink: "#fdd4e3",
+  orange: "#ffe3cd",
+  green: "#c3f0de",
+  "light-blue": "#c5eff9",
+  "dark-blue": "#c9dafb",
+  purple: "#e3d8fd",
+};
+
+/**
+ * Editor color backgrounds for dark mode
+ * Used for stickies and editor elements
+ */
+export const EDITOR_COLORS_DARK = {
+  gray: "#404144",
+  peach: "#593032",
+  pink: "#562e3d",
+  orange: "#583e2a",
+  green: "#1d4a3b",
+  "light-blue": "#1f495c",
+  "dark-blue": "#223558",
+  purple: "#3d325a",
+};
