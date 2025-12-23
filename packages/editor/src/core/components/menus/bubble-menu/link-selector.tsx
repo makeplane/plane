@@ -66,7 +66,7 @@ export function BubbleMenuLinkSelector(props: Props) {
       <div className="w-60 mt-1 rounded-md bg-surface-1 shadow-raised-200">
         <div
           className={cn("flex rounded-sm  border-[0.5px] border-strong transition-colors", {
-            "border-red-500": error,
+            "border-danger-strong": error,
           })}
         >
           <input
@@ -89,7 +89,7 @@ export function BubbleMenuLinkSelector(props: Props) {
           {editor.getAttributes("link").href ? (
             <button
               type="button"
-              className="grid place-items-center rounded-xs p-1 text-red-500 hover:bg-red-500/20 transition-all"
+              className="grid place-items-center rounded-xs p-1 text-danger-primary hover:bg-danger-primary transition-all"
               onClick={(e) => {
                 unsetLinkEditor(editor);
                 e.stopPropagation();
@@ -112,7 +112,7 @@ export function BubbleMenuLinkSelector(props: Props) {
           )}
         </div>
         {error && (
-          <p className="text-11 text-red-500 my-1 px-2 pointer-events-none animate-in fade-in slide-in-from-top-0">
+          <p className="text-11 text-danger-primary my-1 px-2 pointer-events-none animate-in fade-in slide-in-from-top-0">
             Please enter a valid URL
           </p>
         )}

@@ -167,11 +167,15 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
             }
           )}
         >
-          <span className={`${title.length === 0 || title.length > 255 ? "text-red-500" : ""}`}>{title.length}</span>
+          <span className={`${title.length === 0 || title.length > 255 ? "text-danger-primary" : ""}`}>
+            {title.length}
+          </span>
           /255
         </div>
       </div>
-      {title?.length === 0 && <span className="text-13 font-medium text-red-500">{t("form.title.required")}</span>}
+      {title?.length === 0 && (
+        <span className="text-13 font-medium text-danger-primary">{t("form.title.required")}</span>
+      )}
     </div>
   );
 });

@@ -270,7 +270,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                               }}
                             />
                             {errors.members && errors.members[index]?.member_id && (
-                              <span className="px-1 text-13 text-red-500">
+                              <span className="px-1 text-13 text-danger-primary">
                                 {errors.members[index]?.member_id?.message}
                               </span>
                             )}
@@ -310,7 +310,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                                 )}
                               />
                               {errors.members && errors.members[index]?.role && (
-                                <span className="px-1 text-13 text-red-500">
+                                <span className="px-1 text-13 text-danger-primary">
                                   {errors.members[index]?.role?.message}
                                 </span>
                               )}

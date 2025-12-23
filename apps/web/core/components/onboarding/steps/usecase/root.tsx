@@ -155,7 +155,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
             </div>
           )}
         />
-        {errors.use_case && <span className="text-13 text-red-500">{errors.use_case.message}</span>}
+        {errors.use_case && <span className="text-13 text-danger-primary">{errors.use_case.message}</span>}
       </div>
 
       {/* Action Buttons */}

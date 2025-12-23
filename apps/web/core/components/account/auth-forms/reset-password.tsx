@@ -185,7 +185,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
           {!!resetFormData.confirm_password &&
             resetFormData.password !== resetFormData.confirm_password &&
             renderPasswordMatchError && (
-              <span className="text-13 text-red-500">{t("auth.common.password.errors.match")}</span>
+              <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
             )}
         </div>
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>

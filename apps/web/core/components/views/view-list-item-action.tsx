@@ -95,7 +95,7 @@ export const ViewListItemAction = observer(function ViewListItemAction(props: Pr
 
       {view?.anchor && publishLink ? (
         <div
-          className="px-3 py-1.5 bg-green-500/20 text-green-500 rounded-sm text-11 font-medium flex items-center gap-1.5 cursor-pointer"
+          className="px-3 py-1.5 bg-success-primary text-success-primary rounded-sm text-11 font-medium flex items-center gap-1.5 cursor-pointer"
           onClick={() => setPublishModalOpen(true)}
         >
           <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />

@@ -144,7 +144,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border focus:outline-none hover:bg-layer-transparent-hover",
             votingDimensions,
             {
-              "border-red-600 text-red-600": isDownVotedByUser,
+              "border-danger-strong text-danger-primary": isDownVotedByUser,
               "border-strong": !isDownVotedByUser,
               "cursor-default": isInIframe,
             }

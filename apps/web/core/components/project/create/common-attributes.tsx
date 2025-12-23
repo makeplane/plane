@@ -78,7 +78,7 @@ function ProjectCommonAttributes(props: Props) {
             />
           )}
         />
-        <span className="text-11 text-red-500">{errors?.name?.message}</span>
+        <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
       </div>
       <div className="relative">
         <Controller
@@ -122,7 +122,7 @@ function ProjectCommonAttributes(props: Props) {
         >
           <Info className="absolute right-2 top-2.5 h-3 w-3 text-placeholder" />
         </Tooltip>
-        <span className="text-11 text-red-500">{errors?.identifier?.message}</span>
+        <span className="text-11 text-danger-primary">{errors?.identifier?.message}</span>
       </div>
       <div className="md:col-span-4">
         <Controller

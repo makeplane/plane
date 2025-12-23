@@ -14,8 +14,8 @@ export const bannerSizeStyling = {
 // TODO: update this with new color once its implemented
 // Banner variant styling
 export const bannerStyling: IBannerStyling = {
-  success: "bg-green-500/10",
-  error: "bg-red-500/10",
+  success: "bg-success-primary",
+  error: "bg-danger-primary",
   warning: "bg-yellow-500/10",
   info: "bg-blue-500/10",
 };

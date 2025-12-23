@@ -153,7 +153,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
             </div>
           )}
         />
-        {errors.role && <span className="text-13 text-red-500">{errors.role.message}</span>}
+        {errors.role && <span className="text-13 text-danger-primary">{errors.role.message}</span>}
       </div>
       {/* Action Buttons */}
       <div className="space-y-3">

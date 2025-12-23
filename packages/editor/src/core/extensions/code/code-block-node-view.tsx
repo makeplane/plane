@@ -40,13 +40,13 @@ export function CodeBlockComponent({ node }: Props) {
           className={cn(
             "group/button hidden group-hover/code:flex items-center justify-center absolute top-2 right-2 z-10 size-8 rounded-md bg-layer-1 border border-subtle transition duration-150 ease-in-out backdrop-blur-sm",
             {
-              "bg-green-500/30 hover:bg-green-500/30 active:bg-green-500/30": copied,
+              "bg-success-primary hover:bg-success-primary active:bg-success-primary": copied,
             }
           )}
           onClick={copyToClipboard}
         >
           {copied ? (
-            <CheckIcon className="h-3 w-3 text-green-500" strokeWidth={3} />
+            <CheckIcon className="h-3 w-3 text-success-primary" strokeWidth={3} />
           ) : (
             <CopyIcon className="h-3 w-3 text-tertiary group-hover/button:text-primary" />
           )}

@@ -129,7 +129,7 @@ export function InstanceSignInForm() {
 
             <div className="w-full space-y-1">
               <label className="text-13 text-tertiary font-medium" htmlFor="email">
-                Email <span className="text-red-500">*</span>
+                Email <span className="text-danger-primary">*</span>
               </label>
               <Input
                 className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
@@ -147,7 +147,7 @@ export function InstanceSignInForm() {
 
             <div className="w-full space-y-1">
               <label className="text-13 text-tertiary font-medium" htmlFor="password">
-                Password <span className="text-red-500">*</span>
+                Password <span className="text-danger-primary">*</span>
               </label>
               <div className="relative">
                 <Input
