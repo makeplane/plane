@@ -11,7 +11,7 @@ from posthog import Posthog
 from plane.license.utils.instance_value import get_configuration_value
 from plane.utils.exception_logger import log_exception
 from plane.db.models import Workspace
-from plane.utils.analytics_events import USER_INVITED_TO_WORKSPACE
+from plane.utils.analytics_events import USER_INVITED_TO_WORKSPACE, WORKSPACE_DELETED
 
 
 logger = logging.getLogger("plane.worker")
@@ -39,7 +39,7 @@ def posthogConfiguration():
 def preprocess_data_properties(
     user_id: uuid.UUID, event_name: str, slug: str, data_properties: Dict[str, Any]
 ) -> Dict[str, Any]:
-    if event_name == USER_INVITED_TO_WORKSPACE:
+    if event_name == USER_INVITED_TO_WORKSPACE or event_name == WORKSPACE_DELETED:
         try:
             # Check if the current user is the workspace owner
             workspace = Workspace.objects.get(slug=slug)
@@ -71,7 +71,7 @@ def track_event(user_id: uuid.UUID, event_name: str, slug: str, event_properties
         }
         # track the event using posthog
         posthog = Posthog(POSTHOG_API_KEY, host=POSTHOG_HOST)
-        posthog.capture(distinct_id=user_id, event=event_name, properties=data_properties, groups=groups)
+        posthog.capture(distinct_id=str(user_id), event=event_name, properties=data_properties, groups=groups)
     except Exception as e:
         log_exception(e)
         return False
