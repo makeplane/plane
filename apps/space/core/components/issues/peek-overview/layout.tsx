@@ -85,7 +85,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIss
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 z-20 bg-backdrop bg-opacity-50 transition-opacity" />
+            <div className="fixed inset-0 z-20 bg-backdrop transition-opacity" />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
