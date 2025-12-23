@@ -8,3 +8,4 @@ export * from "./filter-applied-icon";
 export * from "./search-icon";
 export * from "./preferences-icon";
 export * from "./copy-link";
+export * from "./upgrade-icon";

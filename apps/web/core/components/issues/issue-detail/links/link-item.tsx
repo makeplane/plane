@@ -60,14 +60,14 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
               href={linkDetail.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 w-0 text-body-xs-regular cursor-pointer flex items-center gap-3"
+              className="flex-1 w-0 text-body-xs-regular cursor-pointer flex items-center"
             >
-              <span className="truncate">
+              <span className="truncate flex-1 w-0">
                 {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
+                {linkTitle && linkTitle !== "" && (
+                  <span className="text-placeholder text-caption-sm-regular"> {linkTitle}</span>
+                )}
               </span>
-              {linkTitle && linkTitle !== "" && (
-                <span className="text-placeholder text-caption-sm-regular flex-shrink-0">{linkTitle}</span>
-              )}
             </a>
           </Tooltip>
         </div>

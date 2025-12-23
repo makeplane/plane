@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -112,7 +111,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           verticalAlignPosition ? `w-[44px] flex-col items-center` : `w-full flex-row items-center`
         }`}
       >
-        <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center overflow-hidden rounded-xs">
+        <div className="flex size-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-xs">
           {icon ? icon : <Circle width={14} strokeWidth={2} />}
         </div>
 

@@ -72,8 +72,12 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("success"),
-        message: t("theme_updated_successfully"),
+        message: "Reloading to apply changes...",
       });
+      // reload the page after showing the toast
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error("Failed to apply theme:", error);
       setToast({
