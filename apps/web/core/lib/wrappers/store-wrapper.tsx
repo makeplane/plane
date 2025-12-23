@@ -55,7 +55,8 @@ function StoreWrapper(props: TStoreWrapper) {
     const userId = userProfile?.id;
 
     // Reset initialization flag when user changes (logout/login)
-    if (userId && userId !== currentUserIdRef.current) {
+    // This handles both logout (userId becomes undefined) and login (userId changes)
+    if (userId !== currentUserIdRef.current) {
       hasInitializedThemeRef.current = false;
       previousThemeRef.current = undefined;
       currentUserIdRef.current = userId;
@@ -71,7 +72,7 @@ function StoreWrapper(props: TStoreWrapper) {
 
     // Mark as initialized - prevents future syncs from server
     hasInitializedThemeRef.current = true;
-  }, [userProfile?.theme?.theme, userProfile?.id, setTheme]);
+  }, [userProfile?.theme?.theme, setTheme]);
 
   /**
    * Effect 2: Custom theme CSS application (runs on every change)
