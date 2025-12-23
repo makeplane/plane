@@ -107,8 +107,8 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
       title: t("common.remove"),
       icon: Trash2,
       shouldRender: isAdmin,
-      className: "text-danger",
-      iconClassName: "text-danger",
+      className: "text-danger-primary",
+      iconClassName: "text-danger-primary",
     },
   ];
 

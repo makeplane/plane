@@ -286,13 +286,10 @@
   --txt-on-color: var(--neutral-100);
   --txt-on-color-disabled: var(--alpha-black-400);
   --txt-inverse: var(--neutral-white);
-  --txt-success: var(--green-700);
   --txt-success-primary: var(--green-900);
   --txt-success-secondary: var(--green-700);
-  --txt-warning: var(--amber-700);
   --txt-warning-primary: var(--amber-900);
   --txt-warning-secondary: var(--amber-700);
-  --txt-danger: var(--red-700);
   --txt-danger-primary: var(--red-900);
   --txt-danger-secondary: var(--red-700);
   /* Icon colors */
@@ -519,13 +516,10 @@
   --txt-on-color: var(--neutral-1200);
   --txt-on-color-disabled: var(--alpha-white-400);
   --txt-inverse: var(--neutral-black);
-  --txt-success: var(--green-700);
   --txt-success-primary: var(--green-900);
   --txt-success-secondary: var(--green-700);
-  --txt-warning: var(--amber-700);
   --txt-warning-primary: var(--amber-900);
   --txt-warning-secondary: var(--amber-700);
-  --txt-danger: var(--red-700);
   --txt-danger-primary: var(--red-900);
   --txt-danger-secondary: var(--red-700);
   /* Icon colors */
@@ -802,13 +796,10 @@
   --text-color-on-color: var(--txt-on-color);
   --text-color-on-color-disabled: var(--txt-on-color-disabled);
   --text-color-inverse: var(--txt-inverse);
-  --text-color-success: var(--txt-success);
   --text-color-success-primary: var(--txt-success-primary);
   --text-color-success-secondary: var(--txt-success-secondary);
-  --text-color-warning: var(--txt-warning);
   --text-color-warning-primary: var(--txt-warning-primary);
   --text-color-warning-secondary: var(--txt-warning-secondary);
-  --text-color-danger: var(--txt-danger);
   --text-color-danger-primary: var(--txt-danger-primary);
   --text-color-danger-secondary: var(--txt-danger-secondary);
   /* Stroke colors */

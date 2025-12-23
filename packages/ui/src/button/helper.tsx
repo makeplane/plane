@@ -80,7 +80,7 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !bg-layer-1 !text-placeholder`,
   },
   "outline-danger": {
-    default: `bg-layer-2 text-danger border border-danger-strong`,
+    default: `bg-layer-2 text-danger-primary border border-danger-strong`,
     hover: `hover:bg-danger-subtle`,
     pressed: `focus:bg-danger-subtle-hover`,
     disabled: `cursor-not-allowed text-disabled! border-subtle-1!`,
