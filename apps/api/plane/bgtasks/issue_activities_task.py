@@ -12,7 +12,6 @@ from django.utils import timezone
 
 # Module imports
 from plane.app.serializers import IssueActivitySerializer
-from plane.bgtasks.notification_task import notifications
 from plane.db.models import (
     CommentReaction,
     Cycle,
@@ -32,7 +31,7 @@ from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 from plane.utils.issue_relation_mapper import get_inverse_relation
 from plane.utils.uuid import is_valid_uuid
-
+from plane.bgtasks.notification_task import process_issue_notifications
 
 def extract_ids(data: dict | None, primary_key: str, fallback_key: str) -> set[str]:
     if not data:
@@ -1580,18 +1579,18 @@ def issue_activity(
         issue_activities_created = IssueActivity.objects.bulk_create(issue_activities)
 
         if notification:
-            notifications.delay(
-                type=type,
+            process_issue_notifications(
                 issue_id=issue_id,
-                actor_id=actor_id,
                 project_id=project_id,
-                subscriber=subscriber,
-                issue_activities_created=json.dumps(
+                actor_id=actor_id,
+                activities_data=json.dumps(
                     IssueActivitySerializer(issue_activities_created, many=True).data,
                     cls=DjangoJSONEncoder,
                 ),
                 requested_data=requested_data,
                 current_instance=current_instance,
+                subscriber=subscriber,
+                notification_type=type,
             )
 
         return
