@@ -327,6 +327,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip
+            labelClassName="text-caption-sm-regular"
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -351,6 +352,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip
+            labelClassName="text-caption-sm-regular"
           />
         </div>
       </WithDisplayPropertiesHOC>
