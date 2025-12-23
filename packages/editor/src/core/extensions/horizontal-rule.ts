@@ -25,7 +25,7 @@ export const CustomHorizontalRule = Node.create<HorizontalRuleOptions>({
   addOptions() {
     return {
       HTMLAttributes: {
-        class: "py-4 border-custom-border-400",
+        class: "py-4 border-strong-1",
       },
     };
   },

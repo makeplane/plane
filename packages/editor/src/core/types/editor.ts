@@ -27,6 +27,8 @@ import type {
   TRealtimeConfig,
   TServerHandler,
   TUserDetails,
+  TExtendedEditorRefApi,
+  EventToPayloadMap,
 } from "@/types";
 
 export type TEditorCommands =
@@ -97,7 +99,7 @@ export type TDocumentInfo = {
   words: number;
 };
 
-export type EditorRefApi = {
+export type CoreEditorRefApi = {
   blur: () => void;
   clearEditor: (emitUpdate?: boolean) => void;
   createSelectionAtCursorPosition: () => void;
@@ -118,6 +120,7 @@ export type EditorRefApi = {
   getDocumentInfo: () => TDocumentInfo;
   getHeadings: () => IMarking[];
   getMarkDown: () => string;
+  copyMarkdownToClipboard: () => void;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
   isAnyDropbarOpen: () => boolean;
@@ -129,7 +132,7 @@ export type EditorRefApi = {
   onStateChange: (callback: () => void) => () => void;
   redo: () => void;
   scrollSummary: (marking: IMarking) => void;
-  // eslint-disable-next-line no-undef
+
   scrollToNodeViaDOMCoordinates: ({ pos, behavior }: { pos?: number; behavior?: ScrollBehavior }) => void;
   setEditorValue: (content: string, emitUpdate?: boolean) => void;
   setEditorValueAtCursorPosition: (content: string) => void;
@@ -137,6 +140,10 @@ export type EditorRefApi = {
   setProviderDocument: (value: Uint8Array) => void;
   undo: () => void;
 };
+
+export type EditorRefApi = CoreEditorRefApi & TExtendedEditorRefApi;
+
+export type EditorTitleRefApi = EditorRefApi;
 
 // editor props
 export type IEditorProps = {
@@ -160,10 +167,11 @@ export type IEditorProps = {
   mentionHandler: TMentionHandler;
   onAssetChange?: (assets: TEditorAsset[]) => void;
   onEditorFocus?: () => void;
-  onChange?: (json: object, html: string) => void;
+  onChange?: (json: object, html: string, { isMigrationUpdate }?: { isMigrationUpdate?: boolean }) => void;
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
+  showPlaceholderOnEmpty?: boolean;
   tabIndex?: number;
   value?: string | null;
   extendedEditorProps: IEditorPropsExtended;
@@ -185,6 +193,15 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   serverHandler?: TServerHandler;
   user: TUserDetails;
   extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
+  updatePageProperties?: <T extends keyof EventToPayloadMap>(
+    pageIds: string | string[],
+    actionType: T,
+    data: EventToPayloadMap[T],
+    performAction?: boolean
+  ) => void;
+  pageRestorationInProgress?: boolean;
+  titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
+  isFetchingFallbackBinary?: boolean;
 };
 
 export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {

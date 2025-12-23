@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useCallback, useRef, useState } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
@@ -11,6 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useSticky } from "@/hooks/use-stickies";
+import { IconButton } from "@plane/propel/icon-button";
 
 export const StickySearch = observer(function StickySearch() {
   // router
@@ -50,29 +50,29 @@ export const StickySearch = observer(function StickySearch() {
   return (
     <div className="flex items-center mr-2 my-auto">
       {!isSearchOpen && (
-        <button
-          type="button"
-          className="-mr-1 p-1 hover:bg-custom-background-80 rounded text-custom-text-400 grid place-items-center"
+        <IconButton
+          variant="ghost"
+          size="lg"
+          className="-mr-2"
+          icon={Search}
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
           }}
-        >
-          <Search className=" size-4 " />
-        </button>
+        />
       )}
       <div
         className={cn(
-          "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+          "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
           {
-            "w-30 md:w-64 px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
+            "w-30 md:w-64 px-2.5 py-1.5 border-subtle opacity-100": isSearchOpen,
           }
         )}
       >
-        <Search className="h-3.5 w-3.5" />
+        <Search className="shrink-0 size-3.5" />
         <input
           ref={inputRef}
-          className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
+          className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
           placeholder={t("stickies.search_placeholder")}
           value={searchQuery}
           onChange={(e) => {

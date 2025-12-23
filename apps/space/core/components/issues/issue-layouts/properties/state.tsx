@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane ui
 import { StateGroupIcon } from "@plane/propel/icons";
@@ -24,7 +22,7 @@ type Props = {
     }
 );
 
-export const IssueBlockState: React.FC<Props> = observer((props) => {
+export const IssueBlockState = observer(function IssueBlockState(props: Props) {
   const { shouldShowBorder = true } = props;
   // store hooks
   const { getStateById } = useStates();
@@ -35,13 +33,13 @@ export const IssueBlockState: React.FC<Props> = observer((props) => {
   return (
     <Tooltip tooltipHeading="State" tooltipContent={state.name}>
       <div
-        className={cn("flex h-full w-full items-center justify-between gap-1 rounded px-2.5 py-1 text-xs", {
-          "border-[0.5px] border-custom-border-300": shouldShowBorder,
+        className={cn("flex h-full w-full items-center justify-between gap-1 rounded-sm px-2.5 py-1 text-11", {
+          "border-[0.5px] border-strong": shouldShowBorder,
         })}
       >
         <div className="flex w-full items-center gap-1.5">
           <StateGroupIcon stateGroup={state.group} />
-          <div className="text-xs">{state.name}</div>
+          <div className="text-11">{state.name}</div>
         </div>
       </div>
     </Tooltip>

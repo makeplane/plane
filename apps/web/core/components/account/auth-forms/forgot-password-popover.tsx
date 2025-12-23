@@ -30,7 +30,7 @@ export function ForgotPasswordPopover() {
         <button
           type="button"
           ref={setReferenceElement}
-          className="text-xs font-medium text-custom-primary-100 outline-none"
+          className="text-11 font-medium text-accent-primary outline-none"
         >
           {t("auth.common.forgot_password")}
         </button>
@@ -38,20 +38,20 @@ export function ForgotPasswordPopover() {
       <Popover.Panel className="fixed z-10">
         {({ close }) => (
           <div
-            className="border border-custom-border-300 bg-custom-background-100 rounded z-10 py-1 px-2 w-64 break-words flex items-start gap-3 text-left ml-3"
+            className="border border-strong bg-surface-1 rounded-sm z-10 py-1 px-2 w-64 break-words flex items-start gap-3 text-left ml-3"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
             <span className="flex-shrink-0">🤥</span>
-            <p className="text-xs">{t("auth.forgot_password.errors.smtp_not_enabled")}</p>
+            <p className="text-11">{t("auth.forgot_password.errors.smtp_not_enabled")}</p>
             <button
               type="button"
               className="flex-shrink-0 size-3 grid place-items-center"
               onClick={() => close()}
               aria-label={t("aria_labels.auth_forms.close_popover")}
             >
-              <CloseIcon className="size-3 text-custom-text-200" />
+              <CloseIcon className="size-3 text-secondary" />
             </button>
           </div>
         )}

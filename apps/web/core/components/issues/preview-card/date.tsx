@@ -19,7 +19,7 @@ export function WorkItemPreviewCardDate(props: Props) {
   if (!startDate && !targetDate) return null;
 
   return (
-    <div className="text-xs h-full rounded px-1 text-custom-text-200">
+    <div className="text-11 h-full rounded-sm px-1 text-secondary">
       {isDateRangeEnabled ? (
         <div
           className={cn("h-full flex items-center gap-1", {

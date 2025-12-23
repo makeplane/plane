@@ -37,7 +37,7 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
   // states
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
   // derived values
-  const projectId = !!routerProjectId ? routerProjectId?.toString() : undefined;
+  const projectId = routerProjectId ? routerProjectId?.toString() : undefined;
 
   // Filter out "cycle" and "module" keys if cycleViewDisabled or moduleViewDisabled is true
   // Also filter out display properties that should not be rendered
@@ -72,10 +72,10 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
               <button
                 key={displayProperty.key}
                 type="button"
-                className={`rounded border px-2 py-0.5 text-xs transition-all ${
+                className={`rounded-sm border px-2 py-0.5 text-11 transition-all ${
                   displayProperties?.[displayProperty.key]
-                    ? "border-custom-primary-100 bg-custom-primary-100 text-white"
-                    : "border-custom-border-200 hover:bg-custom-background-80"
+                    ? "border-accent-strong bg-accent-primary text-on-color"
+                    : "border-subtle hover:bg-layer-1"
                 }`}
                 onClick={() =>
                   handleUpdate({

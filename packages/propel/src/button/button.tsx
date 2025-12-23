@@ -1,23 +1,12 @@
 import * as React from "react";
 import { cn } from "../utils";
-import type { TButtonVariant, TButtonSizes } from "./helper";
-import { getIconStyling, getButtonStyling } from "./helper";
-
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: TButtonVariant;
-  size?: TButtonSizes;
-  className?: string;
-  loading?: boolean;
-  disabled?: boolean;
-  appendIcon?: any;
-  prependIcon?: any;
-  children: React.ReactNode;
-}
+import type { ButtonProps } from "./helper";
+import { getIconStyling, buttonVariants } from "./helper";
 
 const Button = React.forwardRef(function Button(props: ButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) {
   const {
     variant = "primary",
-    size = "md",
+    size = "base",
     className = "",
     type = "button",
     loading = false,
@@ -28,14 +17,19 @@ const Button = React.forwardRef(function Button(props: ButtonProps, ref: React.F
     ...rest
   } = props;
 
-  const buttonStyle = getButtonStyling(variant, size, disabled || loading);
-  const buttonIconStyle = getIconStyling(size);
+  const buttonIconStyle = getIconStyling(size ?? "base");
 
   return (
-    <button ref={ref} type={type} className={cn(buttonStyle, className)} disabled={disabled || loading} {...rest}>
-      {prependIcon && <div className={buttonIconStyle}>{React.cloneElement(prependIcon, { strokeWidth: 2 })}</div>}
+    <button
+      ref={ref}
+      type={type}
+      className={cn(buttonVariants({ variant, size }), className)}
+      disabled={disabled || loading}
+      {...rest}
+    >
+      {prependIcon && React.cloneElement(prependIcon, { className: cn("shrink-0", buttonIconStyle), strokeWidth: 2 })}
       {children}
-      {appendIcon && <div className={buttonIconStyle}>{React.cloneElement(appendIcon, { strokeWidth: 2 })}</div>}
+      {appendIcon && React.cloneElement(appendIcon, { className: cn("shrink-0", buttonIconStyle), strokeWidth: 2 })}
     </button>
   );
 });

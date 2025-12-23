@@ -77,15 +77,15 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
   }, [currentTab, filteredInboxIssueIds, inboxIssueId, projectId, router, workspaceSlug]);
 
   return (
-    <div className="bg-custom-background-100 flex-shrink-0 w-full h-full border-r border-custom-border-300 ">
+    <div className="bg-surface-1 flex-shrink-0 w-full h-full border-r border-strong ">
       <div className="relative w-full h-full flex flex-col overflow-hidden">
         <Header variant={EHeaderVariant.SECONDARY}>
           {tabNavigationOptions.map((option) => (
             <div
               key={option?.key}
               className={cn(
-                `text-sm relative flex items-center gap-1 h-full px-3 cursor-pointer transition-all font-medium`,
-                currentTab === option?.key ? `text-custom-primary-100` : `hover:text-custom-text-200`
+                `text-13 relative flex items-center gap-1 h-full px-3 cursor-pointer transition-all font-medium`,
+                currentTab === option?.key ? `text-accent-primary` : `hover:text-secondary`
               )}
               onClick={() => {
                 if (currentTab != option?.key) {
@@ -96,14 +96,14 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
             >
               <div>{t(option?.i18n_label)}</div>
               {option?.key === "open" && currentTab === option?.key && (
-                <div className="rounded-full p-1.5 py-0.5 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold">
+                <div className="rounded-full p-1.5 py-0.5 bg-accent-primary/20 text-accent-primary text-11 font-semibold">
                   {inboxIssuePaginationInfo?.total_results || 0}
                 </div>
               )}
               <div
                 className={cn(
                   `border absolute bottom-0 right-0 left-0 rounded-t-md`,
-                  currentTab === option?.key ? `border-custom-primary-100` : `border-transparent`
+                  currentTab === option?.key ? `border-accent-strong` : `border-transparent`
                 )}
               />
             </div>

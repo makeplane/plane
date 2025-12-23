@@ -19,7 +19,7 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { ActivityFilterRoot } from "@/plane-web/components/issues/worklog/activity/filter-root";
 import { IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog/activity/worklog-create-button";
 import { IssueActivityCommentRoot } from "./activity-comment-root";
-import { useCommentOperations } from "./helper";
+import { useWorkItemCommentOperations } from "./helper";
 import { ActivitySortRoot } from "./sort-root";
 
 type TIssueActivity = {
@@ -81,7 +81,7 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
   };
 
   // helper hooks
-  const activityOperations = useCommentOperations(workspaceSlug, projectId, issueId);
+  const activityOperations = useWorkItemCommentOperations(workspaceSlug, projectId, issueId);
 
   const project = getProjectById(projectId);
   const renderCommentCreationBox = useMemo(
@@ -99,10 +99,10 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
   if (!project) return <></>;
 
   return (
-    <div className="space-y-4 pt-3">
+    <div className="space-y-4">
       {/* header */}
       <div className="flex items-center justify-between">
-        <div className="text-lg text-custom-text-100">{t("common.activity")}</div>
+        <div className="text-h5-medium text-primary">{t("common.activity")}</div>
         <div className="flex items-center gap-2">
           {isWorklogButtonEnabled && (
             <IssueActivityWorklogCreateButton

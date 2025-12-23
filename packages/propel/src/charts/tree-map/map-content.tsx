@@ -208,7 +208,7 @@ export function CustomTreeMapContent({
               y={pY + LAYOUT.TEXT.PADDING_LEFT}
               width={LAYOUT.ICON.SIZE}
               height={LAYOUT.ICON.SIZE}
-              className={textClassName || "text-custom-text-300"}
+              className={textClassName || "text-tertiary"}
             >
               {React.cloneElement(icon, {
                 className: cn("size-4", icon?.props?.className),
@@ -221,10 +221,7 @@ export function CustomTreeMapContent({
               x={pX + LAYOUT.TEXT.PADDING_LEFT + iconSpace}
               y={pY + LAYOUT.TEXT.VERTICAL_OFFSET}
               textAnchor="start"
-              className={cn(
-                "text-sm font-extralight tracking-wider select-none",
-                textClassName || "text-custom-text-300"
-              )}
+              className={cn("text-13 font-light tracking-wider select-none", textClassName || "text-tertiary")}
               fill="currentColor"
             >
               {top.nameTruncated ? truncateText(name, availableTextWidth, LAYOUT.TEXT.FONT_SIZES.SM, iconSpace) : name}
@@ -240,10 +237,7 @@ export function CustomTreeMapContent({
                 x={pX + LAYOUT.TEXT.PADDING_LEFT}
                 y={pY + pHeight - LAYOUT.TEXT.PADDING_LEFT}
                 textAnchor="start"
-                className={cn(
-                  "text-sm font-extralight tracking-wider select-none",
-                  textClassName || "text-custom-text-300"
-                )}
+                className={cn("text-13 font-light tracking-wider select-none", textClassName || "text-tertiary")}
                 fill="currentColor"
               >
                 {value.toLocaleString()}

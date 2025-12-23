@@ -86,7 +86,7 @@ export type TAuthErrorInfo = {
 };
 
 const errorCodeMessages: {
-  [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string | undefined) => React.ReactNode };
+  [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string) => React.ReactNode };
 } = {
   // global
   [EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED]: {
@@ -156,7 +156,7 @@ const errorCodeMessages: {
   // sign in
   [EAuthenticationErrorCodes.USER_ACCOUNT_DEACTIVATED]: {
     title: `User account deactivated`,
-    message: () => `User account deactivated. Please contact ${!!SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
+    message: () => `User account deactivated. Please contact ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
   },
 
   [EAuthenticationErrorCodes.USER_DOES_NOT_EXIST]: {
@@ -332,10 +332,7 @@ const errorCodeMessages: {
   },
 };
 
-export const authErrorHandler = (
-  errorCode: EAuthenticationErrorCodes,
-  email?: string | undefined
-): TAuthErrorInfo | undefined => {
+export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: string): TAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
     EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED,
     EAuthenticationErrorCodes.INVALID_EMAIL,

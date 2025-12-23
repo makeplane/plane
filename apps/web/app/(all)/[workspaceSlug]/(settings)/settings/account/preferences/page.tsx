@@ -10,7 +10,7 @@ import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 
-function ProfileAppearancePage() {
+const ProfileAppearancePage = observer(() => {
   const { t } = useTranslation();
   // hooks
   const { data: userProfile } = useUserProfile();
@@ -34,6 +34,6 @@ function ProfileAppearancePage() {
       </div>
     </>
   );
-}
+});
 
-export default observer(ProfileAppearancePage);
+export default ProfileAppearancePage;

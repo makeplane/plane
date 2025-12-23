@@ -16,12 +16,12 @@ export const AppliedStateGroupFilters = observer(function AppliedStateGroupFilte
   return (
     <>
       {values.map((stateGroup) => (
-        <div key={stateGroup} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+        <div key={stateGroup} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
           <StateGroupIcon stateGroup={stateGroup as TStateGroups} size={EIconSize.SM} />
           {stateGroup}
           <button
             type="button"
-            className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+            className="grid place-items-center text-tertiary hover:text-secondary"
             onClick={() => handleRemove(stateGroup)}
           >
             <CloseIcon height={10} width={10} strokeWidth={2} />

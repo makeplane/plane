@@ -14,7 +14,6 @@ import {
   renderAdditionalAction,
   renderAdditionalValue,
   shouldShowConnector,
-  shouldRender,
 } from "@/plane-web/components/workspace-notifications/notification-card/content";
 
 // Types
@@ -168,7 +167,7 @@ export function NotificationContent({
   };
 
   const renderTriggerName = () => (
-    <span className="text-custom-text-100 font-medium">
+    <span className="text-primary font-medium">
       {triggeredBy?.is_bot ? triggeredBy.first_name : triggeredBy?.display_name}{" "}
     </span>
   );
@@ -201,11 +200,11 @@ export function NotificationContent({
   return (
     <>
       {renderTriggerName()}
-      <span className="text-custom-text-300">{renderAction()} </span>
-      {shouldRender(notificationField, verb) && (
+      <span className="text-tertiary">{renderAction()} </span>
+      {verb !== "deleted" && (
         <>
-          {showConnector && <span className="text-custom-text-300">to </span>}
-          <span className="text-custom-text-100 font-medium">{renderValue()}</span>
+          {showConnector && <span className="text-tertiary">to </span>}
+          <span className="text-primary font-medium">{renderValue()}</span>
           {notificationField === "comment" && renderCommentBox && (
             <div className="scale-75 origin-left">
               <LiteTextEditor

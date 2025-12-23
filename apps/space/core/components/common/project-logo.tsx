@@ -17,7 +17,7 @@ export function ProjectLogo(props: Props) {
         style={{
           color: logo.icon.color,
         }}
-        className={cn("material-symbols-rounded text-base", className)}
+        className={cn("material-symbols-rounded text-14", className)}
       >
         {logo.icon.name}
       </span>
@@ -25,7 +25,7 @@ export function ProjectLogo(props: Props) {
 
   if (logo.in_use === "emoji" && logo.emoji)
     return (
-      <span className={cn("text-base", className)}>
+      <span className={cn("text-14", className)}>
         {logo.emoji.value?.split("-").map((emoji) => String.fromCodePoint(parseInt(emoji, 10)))}
       </span>
     );

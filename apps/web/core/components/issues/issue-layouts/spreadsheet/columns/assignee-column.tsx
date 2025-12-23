@@ -16,7 +16,7 @@ export const SpreadsheetAssigneeColumn = observer(function SpreadsheetAssigneeCo
   const { issue, onChange, disabled, onClose } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle">
       <MemberDropdown
         value={issue?.assignee_ids ?? []}
         onChange={(data) => {
@@ -36,7 +36,7 @@ export const SpreadsheetAssigneeColumn = observer(function SpreadsheetAssigneeCo
         buttonVariant={
           issue?.assignee_ids && issue.assignee_ids.length > 1 ? "transparent-without-text" : "transparent-with-text"
         }
-        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10 px-page-x"
+        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x"
         buttonContainerClassName="w-full"
         optionsClassName="z-[9]"
         onClose={onClose}

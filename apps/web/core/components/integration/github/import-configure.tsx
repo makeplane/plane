@@ -29,7 +29,7 @@ export function GithubImportConfigure({ handleStepChange, provider, appIntegrati
       <div className="flex items-center gap-2 py-5">
         <div className="w-full">
           <div className="font-medium">Configure</div>
-          <div className="text-sm text-custom-text-200">Set up your GitHub import.</div>
+          <div className="text-13 text-secondary">Set up your GitHub import.</div>
         </div>
         <div className="flex-shrink-0">
           <GithubAuth workspaceIntegration={workspaceIntegration} provider={provider} />

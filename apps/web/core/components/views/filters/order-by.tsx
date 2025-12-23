@@ -1,13 +1,10 @@
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
-// types
+// plane imports
 import { VIEW_SORT_BY_OPTIONS, VIEW_SORTING_KEY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
-// ui
 import { CustomMenu } from "@plane/ui";
-// constants
 
 type Props = {
   onChange: (value: { key?: TViewFiltersSortKey; order?: TViewFiltersSortBy }) => void;
@@ -24,10 +21,9 @@ export function ViewOrderByDropdown(props: Props) {
   const isDescending = sortBy === "desc";
 
   const buttonClassName = isMobile
-    ? "flex items-center text-sm text-custom-text-200 gap-2 w-full"
-    : `${getButtonStyling("neutral-primary", "sm")} px-2 text-custom-text-300`;
+    ? "flex items-center text-13 text-secondary gap-2 w-full"
+    : getButtonStyling("secondary", "lg");
 
-  const chevronClassName = isMobile ? "h-4 w-4 text-custom-text-200" : "h-3 w-3";
   const icon = (
     <>{!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}</>
   );
@@ -36,8 +32,7 @@ export function ViewOrderByDropdown(props: Props) {
       customButton={
         <span className={buttonClassName}>
           {!isMobile && icon}
-          <span className="flex-shrink-0"> {orderByDetails?.i18n_label && t(orderByDetails?.i18n_label)}</span>
-          <ChevronDownIcon className={chevronClassName} strokeWidth={2} />
+          <span className="shrink-0"> {orderByDetails?.i18n_label && t(orderByDetails?.i18n_label)}</span>
         </span>
       }
       placement="bottom-end"
@@ -59,7 +54,7 @@ export function ViewOrderByDropdown(props: Props) {
           {sortKey === option.key && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2 border-custom-border-200" />
+      <hr className="my-2 border-subtle" />
       {VIEW_SORT_BY_OPTIONS.map((option) => {
         const isSelected = (option.key === "asc" && !isDescending) || (option.key === "desc" && isDescending);
         return (

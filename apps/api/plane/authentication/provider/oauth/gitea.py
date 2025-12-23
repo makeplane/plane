@@ -101,9 +101,7 @@ class GiteaOAuthProvider(OauthAdapter):
                     else None
                 ),
                 "refresh_token_expired_at": (
-                    datetime.fromtimestamp(
-                        token_response.get("refresh_token_expired_at"), tz=pytz.utc
-                    )
+                    datetime.fromtimestamp(token_response.get("refresh_token_expired_at"), tz=pytz.utc)
                     if token_response.get("refresh_token_expired_at")
                     else None
                 ),

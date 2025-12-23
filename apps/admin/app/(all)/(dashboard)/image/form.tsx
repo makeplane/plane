@@ -56,7 +56,7 @@ export function InstanceImageConfigForm(props: IInstanceImageConfigForm) {
               <a
                 href="https://unsplash.com/documentation#creating-a-developer-account"
                 target="_blank"
-                className="text-custom-primary-100 hover:underline"
+                className="text-accent-primary hover:underline"
                 rel="noreferrer"
               >
                 Learn more.
@@ -70,7 +70,7 @@ export function InstanceImageConfigForm(props: IInstanceImageConfigForm) {
       </div>
 
       <div>
-        <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+        <Button variant="primary" size="lg" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
       </div>

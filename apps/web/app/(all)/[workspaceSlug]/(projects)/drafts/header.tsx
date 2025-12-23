@@ -46,7 +46,7 @@ export const WorkspaceDraftHeader = observer(function WorkspaceDraftHeader() {
             <Breadcrumbs>
               <Breadcrumbs.Item
                 component={
-                  <BreadcrumbLink label={t("drafts")} icon={<DraftIcon className="h-4 w-4 text-custom-text-300" />} />
+                  <BreadcrumbLink label={t("drafts")} icon={<DraftIcon className="h-4 w-4 text-tertiary" />} />
                 }
               />
             </Breadcrumbs>
@@ -62,7 +62,7 @@ export const WorkspaceDraftHeader = observer(function WorkspaceDraftHeader() {
           {joinedProjectIds && joinedProjectIds.length > 0 && (
             <Button
               variant="primary"
-              size="sm"
+              size="lg"
               className="items-center gap-1"
               onClick={() => setIsDraftIssueModalOpen(true)}
               disabled={!isAuthorizedUser}

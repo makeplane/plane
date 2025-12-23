@@ -32,6 +32,7 @@ export const MarkdownClipboardPlugin = (args: TArgs): Plugin => {
             });
             event.clipboardData?.setData("text/plain", markdown);
             event.clipboardData?.setData("text/html", clipboardHTML);
+            event.clipboardData?.setData("text/plane-editor-html", clipboardHTML);
             return true;
           } catch (error) {
             console.error("Failed to copy markdown content to clipboard:", error);

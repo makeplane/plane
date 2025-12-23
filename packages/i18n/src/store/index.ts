@@ -101,11 +101,10 @@ export class TranslationStore {
 
   private loadRemainingLanguages(): void {
     const remainingLanguages = SUPPORTED_LANGUAGES.map((lang) => lang.value).filter(
-      (lang) =>
-        !this.loadedLanguages.has(lang as TLanguage) && lang !== this.currentLocale && lang !== FALLBACK_LANGUAGE
+      (lang) => !this.loadedLanguages.has(lang) && lang !== this.currentLocale && lang !== FALLBACK_LANGUAGE
     );
     // Load all remaining languages in parallel
-    Promise.all(remainingLanguages.map((lang) => this.loadLanguageTranslations(lang as TLanguage))).catch((error) => {
+    Promise.all(remainingLanguages.map((lang) => this.loadLanguageTranslations(lang))).catch((error) => {
       console.error("Failed to load some remaining languages:", error);
     });
   }

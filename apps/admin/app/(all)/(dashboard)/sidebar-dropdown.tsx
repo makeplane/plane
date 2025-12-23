@@ -33,20 +33,20 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
   const getSidebarMenuItems = () => (
     <Menu.Items
       className={cn(
-        "absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y divide-custom-sidebar-border-100 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none",
+        "absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y divide-subtle rounded-md border border-subtle bg-surface-1 px-1 py-2 text-11 shadow-lg outline-none",
         {
           "left-4": isSidebarCollapsed,
         }
       )}
     >
       <div className="flex flex-col gap-2.5 pb-2">
-        <span className="px-2 text-custom-sidebar-text-200 truncate">{currentUser?.email}</span>
+        <span className="px-2 text-secondary truncate">{currentUser?.email}</span>
       </div>
       <div className="py-2">
         <Menu.Item
           as="button"
           type="button"
-          className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
+          className="flex w-full items-center gap-2 rounded-sm px-2 py-1 hover:bg-layer-1-hover"
           onClick={handleThemeSwitch}
         >
           <Palette className="h-4 w-4 stroke-[1.5]" />
@@ -59,7 +59,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
           <Menu.Item
             as="button"
             type="submit"
-            className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
+            className="flex w-full items-center gap-2 rounded-sm px-2 py-1 hover:bg-layer-1-hover"
           >
             <LogOut className="h-4 w-4 stroke-[1.5]" />
             Sign out
@@ -75,10 +75,10 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
   }, [csrfToken]);
 
   return (
-    <div className="flex max-h-header items-center gap-x-5 gap-y-2 border-b border-custom-sidebar-border-200 px-4 py-3.5">
+    <div className="flex max-h-header items-center gap-x-5 gap-y-2 border-b border-subtle px-4 py-3.5">
       <div className="h-full w-full truncate">
         <div
-          className={`flex flex-grow items-center gap-x-2 truncate rounded py-1 ${
+          className={`flex flex-grow items-center gap-x-2 truncate rounded-sm py-1 ${
             isSidebarCollapsed ? "justify-center" : ""
           }`}
         >
@@ -88,8 +88,8 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
                 "cursor-default": !isSidebarCollapsed,
               })}
             >
-              <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded bg-custom-sidebar-background-80">
-                <UserCog2 className="h-5 w-5 text-custom-text-200" />
+              <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-sm bg-layer-1">
+                <UserCog2 className="h-5 w-5 text-secondary" />
               </div>
             </Menu.Button>
             {isSidebarCollapsed && (
@@ -109,7 +109,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
 
           {!isSidebarCollapsed && (
             <div className="flex w-full gap-2">
-              <h4 className="grow truncate text-base font-medium text-custom-text-200">Instance admin</h4>
+              <h4 className="grow truncate text-14 font-medium text-secondary">Instance admin</h4>
             </div>
           )}
         </div>
@@ -123,7 +123,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
               src={getFileURL(currentUser.avatar_url)}
               size={24}
               shape="square"
-              className="!text-base"
+              className="!text-14"
             />
           </Menu.Button>
 

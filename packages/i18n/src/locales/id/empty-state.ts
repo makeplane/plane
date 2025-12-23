@@ -192,5 +192,10 @@ export default {
         "Hasilkan token API yang aman untuk menghubungkan ruang kerja Anda dengan sistem dan aplikasi eksternal.",
       cta_primary: "Tambahkan token API",
     },
+    webhooks: {
+      title: "Belum ada Webhook yang ditambahkan",
+      description: "Otomatisasi notifikasi ke layanan eksternal ketika peristiwa proyek terjadi.",
+      cta_primary: "Tambahkan webhook",
+    },
   },
 } as const;

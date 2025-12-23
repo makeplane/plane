@@ -76,7 +76,7 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
           label={
             <>
               <AddWorkItemIcon className="size-4" />
-              <span className="text-sm font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
+              <span className="text-13 font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
             </>
           }
           onClick={() => toggleCreateIssueModal(true)}

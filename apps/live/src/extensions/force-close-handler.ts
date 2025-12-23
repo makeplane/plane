@@ -12,7 +12,7 @@ export class ForceCloseHandler implements Extension {
   priority = 999;
 
   async onConfigure({ instance }: onConfigurePayload) {
-    const redisExt = instance.configuration.extensions.find((ext) => ext instanceof Redis) as Redis | undefined;
+    const redisExt = instance.configuration.extensions.find((ext) => ext instanceof Redis);
 
     if (!redisExt) {
       logger.warn("[FORCE_CLOSE_HANDLER] Redis extension not found");
@@ -149,7 +149,7 @@ export const forceCloseDocumentAcrossServers = async (
   logger.info(`[FORCE_CLOSE] Closed ${closedCount}/${connectionsBefore} local connections`);
 
   // STEP 4: BROADCAST TO OTHER SERVERS
-  const redisExt = instance.configuration.extensions.find((ext) => ext instanceof Redis) as Redis | undefined;
+  const redisExt = instance.configuration.extensions.find((ext) => ext instanceof Redis);
 
   if (redisExt) {
     const commandData: ForceCloseCommandData = {

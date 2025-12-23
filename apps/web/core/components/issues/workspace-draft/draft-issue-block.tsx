@@ -15,8 +15,9 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 // plane-web imports
-import { IdentifierText, IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { IssueTypeIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local imports
+import { IdentifierText } from "../issue-detail/identifier-text";
 import { CreateUpdateIssueModal } from "../issue-modal/modal";
 import { WorkspaceDraftIssueDeleteIssueModal } from "./delete-modal";
 import { DraftIssueProperties } from "./draft-issue-properties";
@@ -119,7 +120,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
       />
       <div
         id={`issue-${issue.id}`}
-        className=" relative border-b border-b-custom-border-200 w-full cursor-pointer"
+        className=" relative border-b border-b-subtle-1 w-full cursor-pointer"
         onDoubleClick={() => {
           setIssueToEdit(issue);
           setCreateUpdateIssueModal(true);
@@ -128,7 +129,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
         <Row
           ref={issueRef}
           className={cn(
-            "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-sm transition-colors border border-transparent last:border-b-transparent",
+            "group/list-block min-h-11 relative flex flex-col gap-3 bg-layer-transparent hover:bg-layer-transparent-hover py-3 text-13 transition-colors",
             {
               "md:flex-row md:items-center": isSidebarCollapsed,
               "lg:flex-row lg:items-center": !isSidebarCollapsed,
@@ -145,7 +146,8 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
                       <IdentifierText
                         identifier={projectIdentifier}
                         enableClickToCopyIdentifier
-                        textContainerClassName="text-xs font-medium text-custom-text-300"
+                        size="xs"
+                        variant="tertiary"
                       />
                     </div>
                   )}
@@ -156,13 +158,13 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
               </div>
 
               <Tooltip tooltipContent={issue.name} position="top-start" renderByDefault={false}>
-                <p className="w-full truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
+                <p className="w-full truncate cursor-pointer text-13 text-primary">{issue.name}</p>
               </Tooltip>
             </div>
 
             {/* quick actions */}
             <div
-              className={cn("block border border-custom-border-300 rounded", {
+              className={cn("block border border-strong rounded-sm", {
                 "md:hidden": isSidebarCollapsed,
                 "lg:hidden": !isSidebarCollapsed,
               })}

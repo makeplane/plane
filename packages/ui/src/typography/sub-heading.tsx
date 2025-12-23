@@ -9,7 +9,7 @@ type Props = {
 
 function SubHeading({ children, className, noMargin }: Props) {
   return (
-    <h3 className={cn("text-xl font-medium text-custom-text-200 block leading-7", !noMargin && "mb-2", className)}>
+    <h3 className={cn("text-18 font-medium text-secondary block leading-7", !noMargin && "mb-2", className)}>
       {children}
     </h3>
   );
