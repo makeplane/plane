@@ -349,7 +349,7 @@ const isStartTimeReadOnly = (
             value={issue.state_id}
             onChange={handleState}
             projectId={issue.project_id}
-            disabled={disabled}
+            // disabled={disabled}
             buttonVariant="border-with-text"
             renderByDefault={isMobile}
             showTooltip
@@ -367,7 +367,7 @@ const isStartTimeReadOnly = (
              icon={<Calendar className="h-3 w-3 flex-shrink-0" />}
              buttonVariant={issue?.year ? "border-with-text": "border-without-text"}
              clearIconClassName="!text-custom-text-100"
-             disabled={disabled}
+            //  disabled={disabled}
              renderByDefault={isMobile}
              showTooltip
               />
@@ -437,7 +437,7 @@ const isStartTimeReadOnly = (
             icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-10"
-            disabled={disabled}
+            // disabled={disabled}
             renderByDefault={isMobile}
             showTooltip
           />
@@ -454,7 +454,7 @@ const isStartTimeReadOnly = (
       icon={<Clock className="h-3 w-3 flex-shrink-0" />}
       buttonVariant={issue.start_time ? "border-with-text" : "border-without-text"}
       clearIconClassName="!text-custom-text-100"
-      disabled={disabled || !issue.start_date}
+      // disabled={disabled || !issue.start_date}
       renderByDefault={isMobile}
       showTooltip
     />
@@ -470,7 +470,7 @@ const isStartTimeReadOnly = (
              icon={<SignalIcon className="h-3 w-3 flex-shrink-0" />}
              buttonVariant={issue?.level ? "border-with-text": "border-without-text"}
              clearIconClassName="!text-custom-text-100"
-             disabled={disabled}
+            //  disabled={disabled}
              renderByDefault={isMobile}
              showTooltip
               />
@@ -488,7 +488,7 @@ const isStartTimeReadOnly = (
              icon={<Tag className="h-3 w-3 flex-shrink-0" />}
              buttonVariant={issue?.category ? "border-with-text": "border-without-text"}
              clearIconClassName="!text-custom-text-100"
-             disabled={disabled}
+            //  disabled={disabled}
              renderByDefault={isMobile}
              showTooltip
               />
@@ -510,7 +510,7 @@ const isStartTimeReadOnly = (
              icon={<Volleyball className="h-3 w-3 flex-shrink-0" />}
              buttonVariant={issue?.sport ? "border-with-text": "border-without-text"}
              clearIconClassName="!text-custom-text-100"
-             disabled={disabled}
+            //  disabled={disabled}
              renderByDefault={isMobile}
              showTooltip
               />
@@ -526,7 +526,7 @@ const isStartTimeReadOnly = (
              icon={<User className="h-3 w-3 flex-shrink-0" />}
              buttonVariant={issue?.program ? "border-with-text": "border-without-text"}
              clearIconClassName="!text-custom-text-100"
-             disabled={disabled}
+            //  disabled={disabled}
              renderByDefault={isMobile}
              showTooltip
               />
@@ -542,7 +542,7 @@ const isStartTimeReadOnly = (
             projectId={issue?.project_id}
             value={issue?.assignee_ids}
             onChange={handleAssignee}
-            disabled={disabled}
+            // disabled={disabled}
             multiple
             buttonVariant={issue.assignee_ids?.length > 0 ? "transparent-without-text" : "border-without-text"}
             buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
@@ -567,7 +567,7 @@ const isStartTimeReadOnly = (
                     projectId={issue?.project_id}
                     value={issue?.module_ids ?? []}
                     onChange={handleModule}
-                    disabled={disabled}
+                    // disabled={disabled}
                     renderByDefault={isMobile}
                     multiple
                     buttonVariant="border-with-text"
@@ -587,7 +587,7 @@ const isStartTimeReadOnly = (
                     projectId={issue?.project_id}
                     value={issue?.cycle_id}
                     onChange={handleCycle}
-                    disabled={disabled}
+                    // disabled={disabled}
                     buttonVariant="border-with-text"
                     renderByDefault={isMobile}
                     showTooltip
@@ -607,7 +607,7 @@ const isStartTimeReadOnly = (
               value={issue.estimate_point ?? undefined}
               onChange={handleEstimate}
               projectId={issue.project_id}
-              disabled={isReadOnly}
+              // disabled={isReadOnly}
               buttonVariant="border-with-text"
               renderByDefault={isMobile}
               showTooltip

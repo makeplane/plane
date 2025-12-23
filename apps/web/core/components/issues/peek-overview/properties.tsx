@@ -127,7 +127,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             placeholder={t("issue.add.start_date")}
             buttonVariant="transparent-with-text"
             minDate={minDate ?? undefined}
-            disabled={isLocked}
+            // disabled={isLocked}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.start_date ? "" : "text-custom-text-400"}`}
@@ -152,7 +152,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             placeholder={t("add_start_time")}
             buttonVariant="transparent-with-text"
             className="w-3/4 flex-grow group"
-            disabled={isLocked}
+            // disabled={isLocked}
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.start_time ? "" : "text-custom-text-400"}`}
             hideIcon
@@ -177,7 +177,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             placeholder={t("add_level")}
             buttonVariant="transparent-with-text"
             className="w-3/4 flex-grow group"
-            disabled={isLocked}
+            // disabled={isLocked}
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.level ? "" : "text-custom-text-400"}`}
             hideIcon
@@ -202,7 +202,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             placeholder={t("add_program")}
             buttonVariant="transparent-with-text"
             className="w-3/4 flex-grow group"
-            disabled={isLocked}
+            // disabled={isLocked}
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.program ? "" : "text-custom-text-400"}`}
             hideIcon
@@ -227,7 +227,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             placeholder={t("add_sport")}
             buttonVariant="transparent-with-text"
             className="w-3/4 flex-grow group"
-            disabled={isLocked}
+            // disabled={isLocked}
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.sport ? "" : "text-custom-text-400"}`}
             hideIcon
@@ -250,7 +250,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                 opposition_team: team,
               })
             }
-            disabled={isLocked}
+            // disabled={isLocked}
           />
         </div>
 
@@ -271,7 +271,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             placeholder={t("add_category")}
             buttonVariant="transparent-with-text"
             className="w-3/4 flex-grow group"
-            disabled={isLocked}
+            // disabled={isLocked}
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.category ? "" : "text-custom-text-400"}`}
             hideIcon
@@ -296,7 +296,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             placeholder={t("add_year")}
             buttonVariant="transparent-with-text"
             className="w-3/4 flex-grow group"
-            disabled={isLocked}
+            // disabled={isLocked}
             buttonContainerClassName="w-full text-left"
             buttonClassName={`text-sm ${issue?.year ? "" : "text-custom-text-400"}`}
             hideIcon
