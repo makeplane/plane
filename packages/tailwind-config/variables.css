@@ -863,7 +863,7 @@
   --text-color-icon-on-color-disabled: var(--txt-icon-on-color-disabled);
   --text-color-icon-inverse: var(--txt-icon-inverse);
   /* Link colors */
-  --text-color-link-primary: var(--text-link-primary);
+  --text-color-link-primary: var(--txt-link-primary);
   --text-color-link-primary-hover: var(--txt-link-primary-hover);
   --text-color-link-secondary: var(--txt-link-secondary);
   /* Neutral plan colors */
