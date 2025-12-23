@@ -86,10 +86,7 @@ function ProfileAppearancePage() {
               <p className="text-13 text-secondary">{t("select_or_customize_your_interface_color_scheme")}</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
-              <ThemeSwitch
-                value={currentTheme}
-                onChange={handleThemeChange}
-              />
+              <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
             </div>
           </div>
           {userProfile?.theme?.theme === "custom" && <CustomThemeSelector />}
