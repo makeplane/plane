@@ -5,6 +5,7 @@ import {
   FilterIcon,
   PreferencesIcon,
   SearchIcon,
+  UpgradeIcon,
 } from "./actions";
 import { AddIcon } from "./actions/add-icon";
 import { CloseIcon } from "./actions/close-icon";
@@ -134,6 +135,7 @@ export const ICON_REGISTRY = {
   "action.search": SearchIcon,
   "action.preferences": PreferencesIcon,
   "action.copy-link": CopyLinkIcon,
+  "action.upgrade": UpgradeIcon,
 
   // Arrow icons
   "arrow.chevron-down": ChevronDownIcon,
