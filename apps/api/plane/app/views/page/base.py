@@ -541,26 +541,28 @@ class PagesDescriptionViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Store the old description_html before saving (needed for both tasks)
+        old_description_html = page.description_html
+
         # Serialize the existing instance
         existing_instance = json.dumps({"description_html": page.description_html}, cls=DjangoJSONEncoder)
 
         # Use serializer for validation and update
         serializer = PageBinaryUpdateSerializer(page, data=request.data, partial=True)
         if serializer.is_valid():
+            serializer.save()
+
             # Capture the page transaction
             if request.data.get("description_html"):
                 page_transaction.delay(
                     new_description_html=request.data.get("description_html", "<p></p>"),
-                    old_description_html=page.description_html,
+                    old_description_html=old_description_html,
                     page_id=page_id,
                 )
 
-            # Update the page using serializer
-            updated_page = serializer.save()
-
             # Run background tasks
             page_version.delay(
-                page_id=updated_page.id,
+                page_id=page_id,
                 existing_instance=existing_instance,
                 user_id=request.user.id,
             )
