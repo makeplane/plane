@@ -120,7 +120,7 @@ export function applyCustomTheme(brandColor: string, neutralColor: string, mode:
   });
 
   Object.entries(ALPHA_MAPPING).forEach(([key, value]) => {
-    themeElement.style.setProperty(`-alpha-white-${key}`, oklchToCSS(neutralOKLCH, value * 100));
+    themeElement.style.setProperty(`--alpha-white-${key}`, oklchToCSS(neutralOKLCH, value * 100));
     themeElement.style.setProperty(`--alpha-black-${key}`, oklchToCSS(neutralOKLCH, value * 100));
   });
 
