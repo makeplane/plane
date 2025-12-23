@@ -35,6 +35,7 @@ type Props = TDropdownProps & {
   closeOnSelect?: boolean;
   formatToken?: string;
   renderByDefault?: boolean;
+  labelClassName?: string;
 };
 
 export const DateDropdown = observer(function DateDropdown(props: Props) {
@@ -62,6 +63,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
     value,
     formatToken,
     renderByDefault = true,
+    labelClassName = "",
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -138,7 +140,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
       >
         {!hideIcon && icon}
         {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-          <span className="flex-grow truncate text-left text-body-xs-medium">
+          <span className={cn("flex-grow truncate text-left text-body-xs-medium", labelClassName)}>
             {value ? renderFormattedDate(value, formatToken) : placeholder}
           </span>
         )}
