@@ -83,7 +83,7 @@ const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthent
           withBorder={false}
         />
       }
-  >
+    >
       {formattedConfig ? (
         <InstanceGoogleConfigForm config={formattedConfig} />
       ) : (
