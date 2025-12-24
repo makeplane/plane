@@ -4,7 +4,7 @@ from django.db import migrations, models
 import plane.db.models.workspace
 
 
-def get_default_feature_tours():
+def get_default_product_tour():
     return {
         "work_items": True,
         "cycles": True,
@@ -14,11 +14,11 @@ def get_default_feature_tours():
     }
 
 
-def populate_feature_tours(apps, _schema_editor):
+def populate_product_tour(apps, _schema_editor):
     WorkspaceUserProperties = apps.get_model('db', 'WorkspaceUserProperties')
-    default_value = get_default_feature_tours()
+    default_value = get_default_product_tour()
     # Use bulk update for better performance
-    WorkspaceUserProperties.objects.all().update(feature_tours=default_value)
+    WorkspaceUserProperties.objects.all().update(product_tour=default_value)
 
 
 class Migration(migrations.Migration):
@@ -40,8 +40,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='workspaceuserproperties',
-            name='feature_tours',
-            field=models.JSONField(default=plane.db.models.workspace.get_default_feature_tours),
+            name='product_tour',
+            field=models.JSONField(default=plane.db.models.workspace.get_default_product_tour),
         ),
-        migrations.RunPython(populate_feature_tours, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(populate_product_tour, reverse_code=migrations.RunPython.noop),
     ]

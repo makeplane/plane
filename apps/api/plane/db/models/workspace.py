@@ -112,7 +112,7 @@ def slug_validator(value):
         raise ValidationError("Slug is not valid")
 
 
-def get_default_feature_tours():
+def get_default_product_tour():
     return {
         "work_items": False,
         "cycles": False,
@@ -335,7 +335,7 @@ class WorkspaceUserProperties(BaseModel):
         choices=NavigationControlPreference.choices,
         default=NavigationControlPreference.ACCORDION,
     )
-    feature_tours = models.JSONField(default=get_default_feature_tours)
+    product_tour = models.JSONField(default=get_default_product_tour)
 
     class Meta:
         unique_together = ["workspace", "user", "deleted_at"]
