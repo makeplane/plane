@@ -21,26 +21,6 @@ logger = logging.getLogger("plane.worker")
 DEFAULT_FAVICON = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxpbmstaWNvbiBsdWNpZGUtbGluayI+PHBhdGggZD0iTTEwIDEzYTUgNSAwIDAgMCA3LjU0LjU0bDMtM2E1IDUgMCAwIDAtNy4wNy03LjA3bC0xLjcyIDEuNzEiLz48cGF0aCBkPSJNMTQgMTFhNSA1IDAgMCAwLTcuNTQtLjU0bC0zIDNhNSA1IDAgMCAwIDcuMDcgNy4wN2wxLjcxLTEuNzEiLz48L3N2Zz4="  # noqa: E501
 
 
-def is_private_ip(hostname: str) -> bool:
-    """
-    Check if a hostname resolves to a private/internal IP address.
-
-    Args:
-        hostname: The hostname to check
-
-    Returns:
-        bool: True if the hostname resolves to a private IP, False otherwise
-    """
-    try:
-        # Resolve hostname to IP address
-        ip_str = socket.gethostbyname(hostname)
-        ip = ipaddress.ip_address(ip_str)
-        return ip.is_private or ip.is_loopback or ip.is_reserved
-    except (socket.gaierror, ValueError):
-        # If we can't resolve the hostname, allow it (will fail later on request)
-        return False
-
-
 def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
     """
     Crawls a URL to extract the title and favicon.
@@ -61,19 +41,29 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         title = None
         final_url = url
 
-        parsed = urlparse(url)
-
-        if is_private_ip(parsed.hostname):
-            raise ValueError("Access to private/internal networks is not allowed")
+        parsed = urlparse(final_url)
 
         try:
-            response = requests.get(url, headers=headers, timeout=1)
+            ip = ipaddress.ip_address(parsed.hostname)
+            if ip.is_private or ip.is_loopback or ip.is_reserved:
+                raise ValueError("Access to private/internal networks is not allowed")
+        except ValueError:
+            # Not an IP address, continue with domain validation
+            pass
+
+        try:
+            response = requests.get(final_url, headers=headers, timeout=1)
             final_url = response.url  # Get the final URL after any redirects
 
-            parsed = urlparse(final_url)
+            try:
+                parsed = urlparse(final_url)
 
-            if is_private_ip(parsed.hostname):
-                raise ValueError("Access to private/internal networks is not allowed")
+                ip = ipaddress.ip_address(parsed.hostname)
+                if ip.is_private or ip.is_loopback or ip.is_reserved:
+                    raise ValueError("Access to private/internal networks is not allowed")
+            except ValueError:
+                # Not an IP address, continue with domain validation
+                pass
 
             soup = BeautifulSoup(response.content, "html.parser")
             title_tag = soup.find("title")
