@@ -1,5 +1,19 @@
+import type { TExtendedInstanceAuthenticationModeKeys } from "./auth-ee";
+
+export type TCoreInstanceAuthenticationModeKeys =
+  | "unique-codes"
+  | "passwords-login"
+  | "google"
+  | "github"
+  | "gitlab"
+  | "gitea";
+
+export type TInstanceAuthenticationModeKeys =
+  | TCoreInstanceAuthenticationModeKeys
+  | TExtendedInstanceAuthenticationModeKeys;
+
 export type TInstanceAuthenticationModes = {
-  key: string;
+  key: TInstanceAuthenticationModeKeys;
   name: string;
   description: string;
   icon: React.ReactNode;
@@ -51,6 +65,19 @@ export type TGetBaseAuthenticationModeProps = {
   disabled: boolean;
   updateConfig: (key: TInstanceAuthenticationMethodKeys, value: string) => void;
   resolvedTheme: string | undefined;
+};
+
+export type TOAuthOption = {
+  id: string;
+  text: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  enabled?: boolean;
+};
+
+export type TOAuthConfigs = {
+  isOAuthEnabled: boolean;
+  oAuthOptions: TOAuthOption[];
 };
 
 export type TCoreLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google" | "gitea";

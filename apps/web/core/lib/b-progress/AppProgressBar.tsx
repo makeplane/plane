@@ -60,7 +60,7 @@ const PROGRESS_CONFIG: Readonly<ProgressConfig> = {
  * }
  * ```
  */
-export function AppProgressBar(): null {
+export default function AppProgressBar(): null {
   const navigation = useNavigation();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startedRef = useRef<boolean>(false);
