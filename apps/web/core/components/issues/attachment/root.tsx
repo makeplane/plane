@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useAttachmentOperations } from "../issue-detail-widgets/attachments/helper";
@@ -20,8 +19,8 @@ export const IssueAttachmentRoot = observer(function IssueAttachmentRoot(props: 
   const attachmentHelpers = useAttachmentOperations(workspaceSlug, projectId, issueId);
 
   return (
-    <div className="relative py-3 space-y-3">
-      <h3 className="text-16">Attachments</h3>
+    <div className="relative space-y-3">
+      <h3 className="text-body-sm-medium">Attachments</h3>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         <IssueAttachmentUpload
           workspaceSlug={workspaceSlug}

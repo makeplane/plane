@@ -254,7 +254,7 @@ export const getSlashCommandFilteredSections =
             icon: <ALargeSmall className="size-3.5" />,
             iconContainerStyle: {
               borderRadius: "4px",
-              backgroundColor: "rgba(var(--color-background-100))",
+              backgroundColor: "var(--background-color-surface-1)",
               border: "1px solid var(--border-color-strong)",
             },
             command: ({ editor, range }) => toggleTextColor(undefined, editor, range),

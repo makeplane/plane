@@ -198,7 +198,9 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
           }
         }}
         data-prevent-progress={!isMemberOfProject || isArchived}
-        className="flex flex-col rounded-sm border border-subtle bg-layer-1 hover:bg-layer-1-hover rounded-xl overflow-hidden"
+        className={cn(
+          "flex flex-col justify-between group/project-card border border-subtle bg-layer-2 hover:shadow-raised-200 hover:border-strong w-full rounded-lg overflow-hidden duration-300 transition-all"
+        )}
       >
         <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
         <div className="relative h-[118px] w-full rounded-t ">

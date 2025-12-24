@@ -126,7 +126,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
         {issue && (
           <div className="group relative flex min-h-11 h-full w-full items-center px-1.5 py-1 transition-all hover:bg-surface-2">
             <span className="size-5 flex-shrink-0" />
-            <div className="flex w-full truncate cursor-pointer items-center gap-3">
+            <div className="flex flex-1 min-w-0 cursor-pointer items-center gap-3">
               <div className="flex-shrink-0">
                 {projectDetail && (
                   <IssueIdentifier
@@ -141,7 +141,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
               </div>
 
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span className="w-full truncate text-13 text-primary">{issue.name}</span>
+                <span className="flex-1 w-0 truncate text-13 text-primary">{issue.name}</span>
               </Tooltip>
             </div>
             <div
@@ -159,7 +159,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 issueServiceType={issueServiceType}
               />
             </div>
-            <div className="flex-shrink-0 text-13">
+            <div className="pl-2 flex-shrink-0 text-13">
               <CustomMenu placement="bottom-end" ellipsis>
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleEditIssue}>

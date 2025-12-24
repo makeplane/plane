@@ -26,7 +26,7 @@ export function LayoutSelection(props: Props) {
   };
 
   return (
-    <div className="flex items-center gap-1 rounded-sm bg-layer-3 p-1">
+    <div className="flex items-center gap-1 rounded-md bg-layer-3 p-1">
       {ISSUE_LAYOUTS.filter((l) => layouts.includes(l.key)).map((layout) => (
         <Tooltip key={layout.key} tooltipContent={t(layout.i18n_title)} isMobile={isMobile}>
           <button

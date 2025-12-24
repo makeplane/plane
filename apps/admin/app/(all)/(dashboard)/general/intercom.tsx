@@ -44,16 +44,16 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
   };
 
   const enableIntercomConfig = () => {
-    submitInstanceConfigurations({ IS_INTERCOM_ENABLED: isIntercomEnabled ? "0" : "1" });
+    void submitInstanceConfigurations({ IS_INTERCOM_ENABLED: isIntercomEnabled ? "0" : "1" });
   };
 
   return (
     <>
-      <div className="flex items-center gap-14 px-4 py-3 border border-subtle rounded-sm">
+      <div className="flex items-center gap-14">
         <div className="grow flex items-center gap-4">
           <div className="shrink-0">
-            <div className="flex items-center justify-center w-10 h-10 bg-layer-1 rounded-full">
-              <MessageSquare className="w-6 h-6 text-tertiary/80 p-0.5" />
+            <div className="flex items-center justify-center size-11 bg-layer-1 rounded-lg">
+              <MessageSquare className="size-5 text-tertiary p-0.5" />
             </div>
           </div>
 

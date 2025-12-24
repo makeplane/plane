@@ -176,7 +176,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <div className="flex flex-col max-h-[90vh] bg-surface-1 rounded-lg">
         {/* Header */}
-        <div className="flex justify-between px-6 py-4">
+        <div className="flex justify-between px-6 pt-4">
           <div>
             <h2 className="text-18 font-semibold text-primary">{t("customize_navigation")}</h2>
             <p className="mt-1 text-13 text-tertiary">
@@ -213,7 +213,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                     />
                     <div className="flex items-center gap-2 flex-1">
                       {getSidebarNavigationItemIcon(item.key)}
-                      <label className="text-13 text-secondary flex-1 cursor-pointer">
+                      <label className="text-13 text-primary flex-1 cursor-pointer">
                         {t(item.labelTranslationKey)}
                       </label>
                     </div>
@@ -244,7 +244,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                       />
                       <div className="flex items-center gap-2 flex-1">
                         {icon}
-                        <span className="text-13 text-secondary">{t(item.labelTranslationKey)}</span>
+                        <span className="text-13 text-primary">{t(item.labelTranslationKey)}</span>
                       </div>
                     </div>
                   );
@@ -268,11 +268,11 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                       value="accordion"
                       checked={projectPreferences.navigationMode === "accordion"}
                       onChange={() => updateNavigationMode("accordion")}
-                      className="size-4 text-accent-primary focus:ring-custom-primary-100 mt-1"
+                      className="size-4 text-accent-primary focus:ring-accent-strong mt-1"
                     />
                     <div className="flex-1">
-                      <div className="text-13 text-secondary">{t("accordion_navigation_control")}</div>
-                      <div className="text-11 text-tertiary">
+                      <div className="text-13 text-primary">{t("accordion_navigation_control")}</div>
+                      <div className="text-11 text-secondary">
                         Feature tabs will appear as nested items under project and acts as accordion.
                       </div>
                     </div>
@@ -285,11 +285,11 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                       value="horizontal"
                       checked={projectPreferences.navigationMode === "horizontal"}
                       onChange={() => updateNavigationMode("horizontal")}
-                      className="size-4 text-accent-primary focus:ring-custom-primary-100 mt-1"
+                      className="size-4 text-accent-primary focus:ring-accent-strong mt-1"
                     />
                     <div className="flex-1">
-                      <div className="text-13 text-secondary">{t("horizontal_navigation_bar")}</div>
-                      <div className="text-11 text-tertiary">
+                      <div className="text-13 text-primary">{t("horizontal_navigation_bar")}</div>
+                      <div className="text-11 text-secondary">
                         Feature tabs will appear as horizontal tabs inside a project.
                       </div>
                     </div>
@@ -297,20 +297,20 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                 </div>
 
                 {/* Limited Projects Checkbox */}
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <label className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2 cursor-pointer">
                     <Checkbox
                       checked={projectPreferences.showLimitedProjects}
                       onChange={(e) => updateShowLimitedProjects(e.target.checked)}
                     />
-                    <span className="text-13 text-secondary">{t("show_limited_projects_on_sidebar")}</span>
+                    <span className="text-13 text-primary">{t("show_limited_projects_on_sidebar")}</span>
                   </label>
 
                   {projectPreferences.showLimitedProjects && (
                     <div className="pl-8">
                       <div className="flex flex-col gap-1 w-full">
-                        <div className="flex flex-col gap-2 w-full">
-                          <label className="text-11 text-tertiary w-full">{t("enter_number_of_projects")}</label>
+                        <div className="flex flex-col gap-2 w-full pb-1.5">
+                          <label className="text-11 text-secondary w-full">{t("enter_number_of_projects")}</label>
                           <input
                             type="number"
                             min="1"
@@ -323,7 +323,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                               "bg-surface-2 border",
                               "text-secondary",
                               parseInt(projectCountInput) >= 1
-                                ? "border-strong focus:border-accent-strong focus:ring-1 focus:ring-custom-primary-100"
+                                ? "border-strong focus:border-accent-strong focus:ring-1 focus:ring-accent-strong"
                                 : "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
                             )}
                           />

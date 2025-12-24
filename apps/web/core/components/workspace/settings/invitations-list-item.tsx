@@ -16,6 +16,7 @@ import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-wor
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   invitationId: string;
@@ -31,6 +32,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
   const { t } = useTranslation();
   // store hooks
   const { allowPermissions, workspaceInfoBySlug } = useUserPermissions();
+  const { mutateWorkspaceMembersActivity } = useWorkspace();
   const {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
   } = useMember();
@@ -50,36 +52,36 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
   );
 
   const handleRemoveInvitation = async () => {
-    if (!workspaceSlug || !invitationDetails) return;
+    try {
+      if (!workspaceSlug || !invitationDetails) return;
 
-    await deleteMemberInvitation(workspaceSlug.toString(), invitationDetails.id)
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Invitation removed successfully.",
-        });
-      })
-      .catch((err) =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.error || "Something went wrong. Please try again.",
-        })
-      );
+      await deleteMemberInvitation(workspaceSlug.toString(), invitationDetails.id);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Invitation removed successfully.",
+      });
+      void mutateWorkspaceMembersActivity(workspaceSlug);
+    } catch (err: unknown) {
+      const error = err as { error?: string };
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: error?.error || "Something went wrong. Please try again.",
+      });
+    }
   };
 
   if (!invitationDetails || !currentWorkspaceMemberInfo) return null;
 
-  const handleCopyText = () => {
+  const handleCopyText = async () => {
     try {
       const inviteLink = new URL(invitationDetails.invite_link, window.location.origin).href;
-      copyTextToClipboard(inviteLink).then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("common.link_copied"),
-          message: t("entity.link_copied_to_clipboard", { entity: t("common.invite") }),
-        });
+      await copyTextToClipboard(inviteLink);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("common.link_copied"),
+        message: t("entity.link_copied_to_clipboard", { entity: t("common.invite") }),
       });
     } catch (error) {
       console.error("Error generating invite link:", error);
@@ -89,7 +91,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "copy-link",
-      action: handleCopyText,
+      action: () => void handleCopyText(),
       title: t("common.actions.copy_link"),
       icon: LinkIcon,
       shouldRender: !!invitationDetails.invite_link,
@@ -157,7 +159,8 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
 
               updateMemberInvitation(workspaceSlug.toString(), invitationDetails.id, {
                 role: value,
-              }).catch((error) => {
+              }).catch((err: unknown) => {
+                const error = err as { error?: string };
                 setToast({
                   type: TOAST_TYPE.ERROR,
                   title: "Error!",
@@ -169,7 +172,11 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
             placement="bottom-end"
           >
             {Object.keys(ROLE).map((key) => {
-              if (currentWorkspaceRole && currentWorkspaceRole !== 20 && currentWorkspaceRole < parseInt(key))
+              if (
+                currentWorkspaceRole &&
+                Number(currentWorkspaceRole) !== 20 &&
+                Number(currentWorkspaceRole) < parseInt(key)
+              )
                 return null;
 
               return (

@@ -10,6 +10,7 @@ const BAR_TOP_BORDER_RADIUS = 4; // Border radius for the top of bars
 const BAR_BOTTOM_BORDER_RADIUS = 4; // Border radius for the bottom of bars
 const DEFAULT_LOLLIPOP_LINE_WIDTH = 2; // Width of lollipop stick
 const DEFAULT_LOLLIPOP_CIRCLE_RADIUS = 8; // Radius of lollipop circle
+const DEFAULT_BAR_FILL_COLOR = "#000000"; // Default color when fill is a function - black
 
 // Types
 interface TShapeProps {
@@ -66,7 +67,7 @@ function PercentageText({
   className?: string;
 }) {
   return (
-    <text x={x} y={y} textAnchor="middle" className={cn("text-11 font-medium", className)} fill="currentColor">
+    <text x={x} y={y} textAnchor="middle" className={cn("text-xs font-medium", className)} fill="currentColor">
       {percentage}%
     </text>
   );
@@ -109,9 +110,12 @@ const CustomBar = React.memo(function CustomBar(props: TBarProps) {
     <g>
       <path
         d={getBarPath(x, y, width, height, topBorderRadius, bottomBorderRadius)}
-        className="transition-opacity duration-200"
         fill={fill}
         opacity={opacity}
+        style={{
+          transition: "opacity 200ms",
+          fill: fill,
+        }}
       />
       {showText && (
         <PercentageText x={x + width / 2} y={textY} percentage={currentBarPercentage} className={textClassName} />
@@ -172,11 +176,13 @@ const createShapeVariant =
     );
   };
 
+export { DEFAULT_BAR_FILL_COLOR };
+
 export const barShapeVariants: Record<
   TBarChartShapeVariant,
   (props: TShapeProps, bar: TBarItem<string>, stackKeys: string[]) => React.ReactNode
 > = {
-  bar: createShapeVariant(CustomBar), // Standard bar with rounded-sm corners
+  bar: createShapeVariant(CustomBar), // Standard bar with rounded corners
   lollipop: createShapeVariant(CustomBarLollipop), // Line with circle at top
   "lollipop-dotted": createShapeVariant(CustomBarLollipop, { dotted: true }), // Dotted line lollipop variant
 };

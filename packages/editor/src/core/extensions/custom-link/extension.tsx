@@ -124,7 +124,7 @@ export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
         target: "_blank",
         rel: "noopener noreferrer nofollow",
         class:
-          "text-accent-secondary underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
+          "text-accent-secondary underline underline-offset-[3px] hover:text-accent-primary transition-colors cursor-pointer",
       },
       validate: (url: string) => isValidHttpUrl(url).isValid,
     };

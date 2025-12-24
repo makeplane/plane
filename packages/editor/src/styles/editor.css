@@ -76,7 +76,7 @@
     }
 
     &.ProseMirror-selectednode {
-      outline: 3px solid rgba(var(--color-primary-100));
+      outline: 3px solid var(--border-color-accent-strong);
       filter: brightness(90%);
     }
   }
@@ -105,7 +105,7 @@ ul[data-type="taskList"] li > div {
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"] {
-  @apply border! border-strong/20!;
+  @apply border! border-strong!;
   outline: none;
   border-radius: 2px;
   transform: scale(1.05);

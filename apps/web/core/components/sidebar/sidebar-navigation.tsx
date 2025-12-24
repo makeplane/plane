@@ -13,7 +13,7 @@ export function SidebarNavItem(props: TSidebarNavItem) {
       className={cn(
         "cursor-pointer relative group w-full flex items-center justify-between gap-1.5 rounded-md px-2 py-1 outline-none",
         {
-          "text-secondary !bg-layer-transparent-active": isActive,
+          "text-primary !bg-layer-transparent-active": isActive,
           "text-secondary hover:bg-layer-transparent-hover active:bg-layer-transparent-active": !isActive,
         },
         className

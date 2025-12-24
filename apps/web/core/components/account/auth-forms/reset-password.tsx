@@ -96,7 +96,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
       <AuthFormHeader title="Reset password" description="Create a new password." />
 
       {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-        <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
+        <AuthBanner message={errorInfo.message} handleBannerData={(value) => setErrorInfo(value)} />
       )}
       <form
         className="space-y-4"
@@ -143,12 +143,12 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
             />
             {showPassword.password ? (
               <EyeOff
-                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                 onClick={() => handleShowPassword("password")}
               />
             ) : (
               <Eye
-                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                 onClick={() => handleShowPassword("password")}
               />
             )}
@@ -172,12 +172,12 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
             />
             {showPassword.retypePassword ? (
               <EyeOff
-                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                 onClick={() => handleShowPassword("retypePassword")}
               />
             ) : (
               <Eye
-                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                 onClick={() => handleShowPassword("retypePassword")}
               />
             )}

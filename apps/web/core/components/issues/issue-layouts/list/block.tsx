@@ -284,7 +284,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                 displayPropertyKey="sub_issue_count"
                 shouldRenderProperty={(properties) => !!properties.sub_issue_count}
               >
-                <IssueStats issueId={issue.id} className="ml-2 font-medium text-tertiary" />
+                <IssueStats issueId={issue.id} className="ml-2 text-body-xs-medium text-tertiary" />
               </WithDisplayPropertiesHOC>
             )}
           </div>

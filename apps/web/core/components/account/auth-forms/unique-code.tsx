@@ -137,7 +137,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
               aria-label={t("aria_labels.auth_forms.clear_email")}
               onClick={handleEmailClear}
             >
-              <XCircle className="size-5 stroke-custom-text-400" />
+              <XCircle className="size-5 stroke-placeholder" />
             </button>
           )}
         </div>

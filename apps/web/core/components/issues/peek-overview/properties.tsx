@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
@@ -76,7 +75,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   return (
     <div>
       <h6 className="text-body-xs-medium">{t("common.properties")}</h6>
-      <div className={`w-full space-y-2 mt-3 ${disabled ? "opacity-60" : ""}`}>
+      <div className={`w-full space-y-3 mt-3 ${disabled ? "opacity-60" : ""}`}>
         <SidebarPropertyListItem icon={StatePropertyIcon} label={t("common.state")}>
           <StateDropdown
             value={issue?.state_id}
@@ -86,7 +85,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             buttonVariant="transparent-with-text"
             className="w-full grow group"
             buttonContainerClassName="w-full text-left h-7.5"
-            buttonClassName="text-body-xs-regular"
+            buttonClassName={`text-body-xs-medium ${issue?.state_id ? "" : "text-placeholder"}`}
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
           />
@@ -103,7 +102,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
             className="w-full grow group"
             buttonContainerClassName="w-full text-left h-7.5"
-            buttonClassName={`text-body-xs-regular justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-placeholder"}`}
+            buttonClassName={`text-body-xs-medium justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-placeholder"}`}
             hideIcon={issue.assignee_ids?.length === 0}
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
@@ -115,20 +114,24 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             value={issue?.priority}
             onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
             disabled={disabled}
-            buttonVariant="border-with-text"
-            className="w-full grow group rounded-lg px-2"
-            buttonContainerClassName="w-full text-left"
-            buttonClassName="w-min h-auto whitespace-nowrap"
+            buttonVariant="transparent-with-text"
+            className="w-full h-7.5 grow rounded-sm"
+            buttonContainerClassName="w-full text-left h-7.5"
+            buttonClassName={`text-body-xs-medium whitespace-nowrap [&_svg]:size-3.5 ${!issue?.priority || issue?.priority === "none" ? "text-placeholder" : ""}`}
           />
         </SidebarPropertyListItem>
 
         {createdByDetails && (
-          <SidebarPropertyListItem icon={UserCirclePropertyIcon} label={t("common.created_by")}>
+          <SidebarPropertyListItem
+            icon={UserCirclePropertyIcon}
+            label={t("common.created_by")}
+            childrenClassName="px-2"
+          >
             <ButtonAvatars
               showTooltip
               userIds={createdByDetails?.display_name.includes("-intake") ? null : createdByDetails?.id}
             />
-            <span className="grow truncate leading-5">
+            <span className="grow truncate text-body-xs-medium text-secondary leading-5">
               {createdByDetails?.display_name.includes("-intake") ? "Plane" : createdByDetails?.display_name}
             </span>
           </SidebarPropertyListItem>
@@ -148,14 +151,14 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             disabled={disabled}
             className="w-full grow group"
             buttonContainerClassName="w-full text-left h-7.5"
-            buttonClassName={`text-body-xs-regular ${issue?.start_date ? "" : "text-placeholder"}`}
+            buttonClassName={`text-body-xs-medium ${issue?.start_date ? "" : "text-placeholder"}`}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
         </SidebarPropertyListItem>
 
         <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full">
             <DateDropdown
               value={issue.target_date}
               onChange={(val) =>
@@ -169,7 +172,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               disabled={disabled}
               className="w-full grow group"
               buttonContainerClassName="w-full text-left h-7.5"
-              buttonClassName={cn("text-body-xs-regular", {
+              buttonClassName={cn("text-body-xs-medium", {
                 "text-placeholder": !issue.target_date,
                 "text-danger": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
               })}
@@ -190,7 +193,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               buttonVariant="transparent-with-text"
               className="w-full grow group"
               buttonContainerClassName="w-full text-left h-7.5"
-              buttonClassName={`text-body-xs-regular ${issue?.estimate_point !== undefined ? "" : "text-placeholder"}`}
+              buttonClassName={`text-body-xs-medium ${issue?.estimate_point !== undefined ? "" : "text-placeholder"}`}
               placeholder="None"
               hideIcon
               dropdownArrow
@@ -231,7 +234,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
         <SidebarPropertyListItem icon={ParentPropertyIcon} label={t("common.parent")}>
           <IssueParentSelectRoot
-            className="w-full grow h-full"
+            className="w-full h-7.5 grow"
             disabled={disabled}
             issueId={issueId}
             issueOperations={issueOperations}

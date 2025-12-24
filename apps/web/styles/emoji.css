@@ -6,7 +6,7 @@
     --epr-picker-border-radius: 0.25rem !important;
     --epr-horizontal-padding: 0.5rem !important;
     --epr-emoji-padding: 0.5rem !important;
-    background-color: rgba(var(--color-background-100)) !important;
+    @apply bg-surface-1!;
   }
 
   .epr-main {
@@ -16,8 +16,7 @@
 
   .epr-emoji-category-label {
     font-size: 0.7875rem !important;
-    background-color: rgba(var(--color-background-100), 0.8) !important;
-    @apply text-tertiary!;
+    @apply bg-surface-1/80! text-tertiary!;
   }
 
   .epr-category-nav,
@@ -27,7 +26,7 @@
 
   button.epr-emoji:hover > *,
   button.epr-emoji:focus > * {
-    background-color: rgba(var(--color-background-80)) !important;
+    @apply bg-layer-2!;
   }
 
   input.epr-search {
@@ -43,12 +42,12 @@
   }
 
   button.epr-btn-clear-search:hover {
-    background-color: rgba(var(--color-background-80)) !important;
+    @apply bg-layer-2!;
     @apply text-tertiary!;
   }
 
   .epr-emoji-variation-picker {
-    background-color: rgba(var(--color-background-100)) !important;
+    @apply bg-surface-1!;
     @apply border-subtle-1!;
   }
 }

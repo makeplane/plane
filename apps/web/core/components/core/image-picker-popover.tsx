@@ -9,7 +9,7 @@ import { Tab, Popover } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { Button } from "@plane/propel/button";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import { Input, Loader } from "@plane/ui";
@@ -180,17 +180,13 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
 
   return (
     <Popover className="relative z-19" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
-      <Popover.Button
-        className="rounded-sm border border-strong bg-surface-1 px-2 py-1 text-11 text-secondary hover:text-primary"
-        onClick={handleOnClick}
-        disabled={disabled}
-      >
+      <Popover.Button className={getButtonStyling("secondary", "sm")} onClick={handleOnClick} disabled={disabled}>
         {label}
       </Popover.Button>
 
       {isOpen && (
         <Popover.Panel
-          className="absolute right-0 z-20 mt-2 rounded-md border border-subtle bg-surface-1 shadow-custom-shadow-sm"
+          className="absolute right-0 z-20 mt-2 rounded-md border border-subtle bg-surface-1 shadow-raised-200"
           static
         >
           <div
@@ -216,7 +212,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                 <Tab.Panel className="mt-4 h-full w-full space-y-4">
                   {(unsplashImages || !unsplashError) && (
                     <>
-                      <div className="flex gap-x-2">
+                      <div className="flex items-center gap-x-2">
                         <Controller
                           control={control}
                           name="search"
@@ -239,7 +235,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                             />
                           )}
                         />
-                        <Button variant="primary" onClick={() => setSearchParams(formData.search)}>
+                        <Button variant="primary" size="xl" onClick={() => setSearchParams(formData.search)}>
                           Search
                         </Button>
                       </div>
@@ -303,7 +299,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                     <div className="flex w-full flex-1 items-center gap-3">
                       <div
                         {...getRootProps()}
-                        className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
+                        className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
                             ? "border-2 border-dashed border-subtle hover:bg-surface-2"
                             : ""

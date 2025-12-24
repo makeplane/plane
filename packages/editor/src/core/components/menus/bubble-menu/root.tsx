@@ -186,7 +186,7 @@ export function EditorBubbleMenu(props: Props) {
       {!isSelecting && (
         <div
           ref={menuRef}
-          className="flex py-2 divide-x divide-subtle-1 rounded-lg border border-subtle bg-surface-1 shadow-custom-shadow-rg overflow-x-scroll horizontal-scrollbar scrollbar-xs"
+          className="flex py-2 divide-x divide-subtle-1 rounded-lg border border-subtle bg-surface-1 shadow-raised-200 overflow-x-scroll horizontal-scrollbar scrollbar-xs"
         >
           <div className="px-2">
             <BubbleMenuNodeSelector editor={editor} />

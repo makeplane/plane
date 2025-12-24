@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import type { IBaseLayoutsListItem, IBaseLayoutsListGroupProps } from "@plane/types";
-import { cn, Row } from "@plane/ui";
+import { cn } from "@plane/ui";
 import { useGroupDropTarget } from "../hooks/use-group-drop-target";
 import { GroupHeader } from "./group-header";
 import { BaseListItem } from "./item";
@@ -33,12 +33,12 @@ export const BaseListGroup = observer(function BaseListGroup<T extends IBaseLayo
   return (
     <div
       ref={groupRef}
-      className={cn("relative flex flex-shrink-0 flex-col border-[1px] border-transparent", {
+      className={cn("relative flex flex-shrink-0 flex-col", {
         "bg-layer-1": isDraggingOver,
       })}
     >
       {/* Group Header */}
-      <Row className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle bg-surface-2 py-1">
+      <div className="sticky top-0 w-full shrink-0 border-b border-subtle bg-layer-1 hover:bg-layer-1-hover py-1 px-6 cursor-pointer z-10">
         {renderGroupHeader ? (
           renderGroupHeader({ group, itemCount: itemIds.length, isCollapsed, onToggleGroup })
         ) : (
@@ -49,7 +49,7 @@ export const BaseListGroup = observer(function BaseListGroup<T extends IBaseLayo
             onToggleGroup={onToggleGroup}
           />
         )}
-      </Row>
+      </div>
 
       {/* Group Items */}
       {!isCollapsed && (

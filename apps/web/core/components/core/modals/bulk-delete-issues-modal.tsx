@@ -163,7 +163,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
             leaveTo="opacity-0 scale-95"
           >
             <Dialog.Panel className="relative flex w-full items-center justify-center ">
-              <div className="w-full max-w-2xl transform divide-y divide-subtle-1 divide-opacity-10 rounded-lg bg-surface-1 shadow-custom-shadow-md transition-all">
+              <div className="w-full max-w-2xl transform divide-y divide-subtle-1 divide-opacity-10 rounded-lg bg-surface-1 shadow-raised-200 transition-all">
                 <form>
                   <Combobox
                     onChange={(val: string) => {

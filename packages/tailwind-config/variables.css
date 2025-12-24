@@ -1,18 +1,3 @@
-@import "@fontsource/inter/200.css";
-@import "@fontsource/inter/300.css";
-@import "@fontsource/inter/400.css";
-@import "@fontsource/inter/500.css";
-@import "@fontsource/inter/600.css";
-@import "@fontsource/inter/700.css";
-@import "@fontsource/inter/800.css";
-@import "@fontsource/ibm-plex-mono/200.css";
-@import "@fontsource/ibm-plex-mono/300.css";
-@import "@fontsource/ibm-plex-mono/400.css";
-@import "@fontsource/ibm-plex-mono/500.css";
-@import "@fontsource/ibm-plex-mono/600.css";
-@import "@fontsource/ibm-plex-mono/700.css";
-@import "@fontsource/material-symbols-rounded/400.css";
-
 @custom-variant dark (&:where([data-theme*="dark"], [data-theme*="dark"] *));
 @custom-variant dark-high-contrast (&:where([data-theme="dark-contrast"], [data-theme="dark-contrast"] *));
 @custom-variant light-high-contrast (&:where([data-theme="light-contrast"], [data-theme="light-contrast"] *));
@@ -22,6 +7,7 @@
 
   /* ---------- Alpha colors ---------- */
   /* White alpha */
+  --color-white: oklch(1 0 0);
   --color-alpha-white-0: oklch(1 0 0 / 0%);
   --color-alpha-white-100: oklch(1 0 0 / 5%);
   --color-alpha-white-200: oklch(1 0 0 / 10%);
@@ -37,6 +23,7 @@
   --color-alpha-white-1200: oklch(1 0 0 / 95%);
 
   /* Black alpha */
+  --color-black: oklch(0.1482 0.0034 196.79);
   --color-alpha-black-0: oklch(0.1482 0.0034 196.79 / 0%);
   --color-alpha-black-100: oklch(0.1482 0.0034 196.79 / 5%);
   --color-alpha-black-200: oklch(0.1482 0.0034 196.79 / 10%);
@@ -233,19 +220,19 @@
 @theme {
   /* Neutral colors */
   --color-neutral-white: oklch(1 0 0);
-  --color-neutral-100: oklch(0.9851 0 129.63);
-  --color-neutral-200: oklch(0.9694 0.0011 197.14);
-  --color-neutral-300: oklch(0.9544 0.0011 197.14);
-  --color-neutral-400: oklch(0.9393 0.0011 197.14);
-  --color-neutral-500: oklch(0.9237 0.0026 228.79);
-  --color-neutral-600: oklch(0.8932 0.0026 228.79);
-  --color-neutral-700: oklch(0.8617 0.0036 219.54);
-  --color-neutral-800: oklch(0.6994 0.0072 233.69);
-  --color-neutral-900: oklch(0.616 0.0084 228.93);
-  --color-neutral-1000: oklch(0.5279 0.0078 233.75);
-  --color-neutral-1100: oklch(0.4384 0.0072 223.57);
-  --color-neutral-1200: oklch(0.2376 0.0036 228.95);
-  --color-neutral-black: oklch(0.1472 0.0034 196.79);
+  --color-neutral-100: oklch(0.9848 0.0003 230.66);
+  --color-neutral-200: oklch(0.9696 0.0007 230.67);
+  --color-neutral-300: oklch(0.9543 0.001 230.67);
+  --color-neutral-400: oklch(0.9389 0.0014 230.68);
+  --color-neutral-500: oklch(0.9235 0.001733 230.6853);
+  --color-neutral-600: oklch(0.8925 0.0024 230.7);
+  --color-neutral-700: oklch(0.8612 0.0032 230.71);
+  --color-neutral-800: oklch(0.6668 0.0079 230.82);
+  --color-neutral-900: oklch(0.6161 0.009153 230.867);
+  --color-neutral-1000: oklch(0.5288 0.0083 230.88);
+  --color-neutral-1100: oklch(0.4377 0.0066 230.87);
+  --color-neutral-1200: oklch(0.2378 0.0029 230.83);
+  --color-neutral-black: oklch(0.1472 0.0034 230.83);
 
   /* Brand colors */
   --color-brand-100: oklch(0.9847 0.0083 236.56);
@@ -312,17 +299,17 @@
   --background-color-surface-1: var(--color-neutral-white);
   --background-color-surface-2: var(--color-neutral-100);
   --background-color-layer-1: var(--color-neutral-200);
-  --background-color-layer-1-hover: var(--color-alpha-black-100);
-  --background-color-layer-1-active: var(--color-alpha-black-200);
-  --background-color-layer-1-selected: var(--color-alpha-black-300);
+  --background-color-layer-1-hover: var(--color-neutral-300);
+  --background-color-layer-1-active: var(--color-neutral-400);
+  --background-color-layer-1-selected: var(--color-neutral-400);
   --background-color-layer-2: var(--color-neutral-white);
-  --background-color-layer-2-hover: var(--color-alpha-black-100);
-  --background-color-layer-2-active: var(--color-alpha-black-200);
-  --background-color-layer-2-selected: var(--color-alpha-black-300);
+  --background-color-layer-2-hover: var(--color-neutral-100);
+  --background-color-layer-2-active: var(--color-neutral-200);
+  --background-color-layer-2-selected: var(--color-neutral-200);
   --background-color-layer-3: var(--color-neutral-300);
-  --background-color-layer-3-hover: var(--color-alpha-black-100);
-  --background-color-layer-3-active: var(--color-alpha-black-200);
-  --background-color-layer-3-selected: var(--color-alpha-black-300);
+  --background-color-layer-3-hover: var(--color-neutral-400);
+  --background-color-layer-3-active: var(--color-neutral-500);
+  --background-color-layer-3-selected: var(--color-neutral-500);
   --background-color-layer-transparent: var(--color-alpha-white-0);
   --background-color-layer-transparent-hover: var(--color-alpha-black-100);
   --background-color-layer-transparent-active: var(--color-alpha-black-200);
@@ -351,7 +338,8 @@
   --background-color-danger-transparent-hover: var(--color-red-100);
   --background-color-danger-transparent-active: var(--color-red-100);
   --background-color-danger-transparent-selected: var(--color-red-100);
-  --background-color-backdrop: var(--color-alpha-black-400);
+  --background-color-backdrop: var(--color-alpha-black-500);
+  --background-color-inverse: var(--color-alpha-black-1000);
 
   /* Border colors */
   --border-color-subtle: var(--color-neutral-400);
@@ -555,19 +543,19 @@
     /* ---------- Dark mode color tokens ---------- */
     @variant dark {
       /* Neutral colors */
-      --color-neutral-black: oklch(0.1689 0.0021 286.18);
-      --color-neutral-100: oklch(0.2039 0.0025 247.95);
-      --color-neutral-200: oklch(0.216 0.0037 228.98);
-      --color-neutral-300: oklch(0.2376 0.0036 228.95);
-      --color-neutral-400: oklch(0.2586 0.0035 228.93);
-      --color-neutral-500: oklch(0.302 0.0067 229.06);
-      --color-neutral-600: oklch(0.3421 0.0045 219.61);
-      --color-neutral-700: oklch(0.3996 0.0052 236.62);
-      --color-neutral-800: oklch(0.6994 0.0072 233.69);
-      --color-neutral-900: oklch(0.7485 0.0063 239.85);
-      --color-neutral-1000: oklch(0.7966 0.0044 236.51);
-      --color-neutral-1100: oklch(0.8463 0.0036 219.54);
-      --color-neutral-1200: oklch(0.9237 0.0026 228.79);
+      --color-neutral-black: oklch(0.1689 0.0021 230.81);
+      --color-neutral-100: oklch(0.1932 0.002 230.81);
+      --color-neutral-200: oklch(0.2158 0.0025 230.82);
+      --color-neutral-300: oklch(0.2378 0.0029 230.83);
+      --color-neutral-400: oklch(0.2593 0.0033 230.84);
+      --color-neutral-500: oklch(0.3011 0.0041 230.85);
+      --color-neutral-600: oklch(0.3415 0.0049 230.86);
+      --color-neutral-700: oklch(0.3999 0.0059 230.87);
+      --color-neutral-800: oklch(0.5989 0.0096 230.88);
+      --color-neutral-900: oklch(0.6835 0.0074 230.81);
+      --color-neutral-1000: oklch(0.7655 0.0054 230.76);
+      --color-neutral-1100: oklch(0.8455 0.0035 230.72);
+      --color-neutral-1200: oklch(0.9235 0.001733 230.6853);
       --color-neutral-white: oklch(0.9702 0 0);
 
       /* Brand colors */
@@ -633,19 +621,19 @@
       /* Background colors */
       --background-color-canvas: var(--color-neutral-black);
       --background-color-surface-1: var(--color-neutral-100);
-      --background-color-surface-2: var(--color-neutral-100);
+      --background-color-surface-2: var(--color-neutral-200);
       --background-color-layer-1: var(--color-neutral-200);
-      --background-color-layer-1-hover: var(--color-alpha-white-100);
-      --background-color-layer-1-active: var(--color-alpha-white-200);
-      --background-color-layer-1-selected: var(--color-alpha-white-300);
+      --background-color-layer-1-hover: var(--color-neutral-300);
+      --background-color-layer-1-active: var(--color-neutral-400);
+      --background-color-layer-1-selected: var(--color-neutral-400);
       --background-color-layer-2: var(--color-neutral-300);
-      --background-color-layer-2-hover: var(--color-alpha-white-100);
-      --background-color-layer-2-active: var(--color-alpha-white-200);
-      --background-color-layer-2-selected: var(--color-alpha-white-300);
+      --background-color-layer-2-hover: var(--color-neutral-400);
+      --background-color-layer-2-active: var(--color-neutral-500);
+      --background-color-layer-2-selected: var(--color-neutral-500);
       --background-color-layer-3: var(--color-neutral-400);
-      --background-color-layer-3-hover: var(--color-alpha-white-100);
-      --background-color-layer-3-active: var(--color-alpha-white-200);
-      --background-color-layer-3-selected: var(--color-alpha-white-300);
+      --background-color-layer-3-hover: var(--color-neutral-500);
+      --background-color-layer-3-active: var(--color-neutral-600);
+      --background-color-layer-3-selected: var(--color-neutral-600);
       --background-color-layer-transparent: var(--color-alpha-black-0);
       --background-color-layer-transparent-hover: var(--color-alpha-white-100);
       --background-color-layer-transparent-active: var(--color-alpha-white-200);
@@ -674,7 +662,8 @@
       --background-color-danger-transparent-hover: var(--color-red-100);
       --background-color-danger-transparent-active: var(--color-red-100);
       --background-color-danger-transparent-selected: var(--color-red-100);
-      --background-color-backdrop: var(--color-alpha-white-200);
+      --background-color-backdrop: var(--color-alpha-black-1000);
+      --background-color-inverse: var(--color-alpha-white-1000);
 
       /* Border colors */
       --border-color-subtle: var(--color-neutral-400);
@@ -843,10 +832,10 @@
   /* ---------- Font family ---------- */
   --font-*: initial;
   --font-heading:
-    "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Inter Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     "Noto Color Emoji";
   --font-body:
-    "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Inter Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     "Noto Color Emoji";
   --font-code:
     "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -1140,10 +1129,14 @@
   padding-bottom: 1.35rem;
 }
 
+@utility pt-page-y {
+  padding-top: 1.35rem;
+}
+
 @utility scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
-  &::-webkit-scrollbar: {
+  &::-webkit-scrollbar {
     display: none;
   }
 }
@@ -1152,7 +1145,7 @@
   font-family: "Material Symbols Rounded";
   font-weight: normal;
   font-style: normal;
-  font-size: 1.5rem;
+  font-size: 24px;
   line-height: 1;
   letter-spacing: normal;
   text-transform: none;

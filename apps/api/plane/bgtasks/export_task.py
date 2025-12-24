@@ -15,9 +15,10 @@ from django.utils import timezone
 from django.db.models import Prefetch
 
 # Module imports
-from plane.db.models import ExporterHistory, Issue, IssueRelation
+from plane.db.models import ExporterHistory, Issue, IssueComment, IssueRelation, IssueSubscriber
 from plane.utils.exception_logger import log_exception
-from plane.utils.exporters import Exporter, IssueExportSchema
+from plane.utils.porters.exporter import DataExporter
+from plane.utils.porters.serializers.issue import IssueExportSerializer
 
 
 def create_zip_file(files: List[tuple[str, str | bytes]]) -> io.BytesIO:
@@ -159,10 +160,16 @@ def issue_export_task(
                 "labels",
                 "issue_cycle__cycle",
                 "issue_module__module",
-                "issue_comments",
                 "assignees",
-                "issue_subscribers",
                 "issue_link",
+                Prefetch(
+                    "issue_subscribers",
+                    queryset=IssueSubscriber.objects.select_related("subscriber"),
+                ),
+                Prefetch(
+                    "issue_comments",
+                    queryset=IssueComment.objects.select_related("actor").order_by("created_at"),
+                ),
                 Prefetch(
                     "issue_relation",
                     queryset=IssueRelation.objects.select_related("related_issue", "related_issue__project"),
@@ -180,11 +187,7 @@ def issue_export_task(
 
         # Create exporter for the specified format
         try:
-            exporter = Exporter(
-                format_type=provider,
-                schema_class=IssueExportSchema,
-                options={"list_joiner": ", "},
-            )
+            exporter = DataExporter(IssueExportSerializer, format_type=provider)
         except ValueError as e:
             # Invalid format type
             exporter_instance = ExporterHistory.objects.get(token=token_id)

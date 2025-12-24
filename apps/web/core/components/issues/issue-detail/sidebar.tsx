@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
@@ -81,8 +80,8 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
     <>
       <div className="flex items-center h-full w-full flex-col divide-y-2 divide-subtle-1 overflow-hidden">
         <div className="h-full w-full overflow-y-auto px-6">
-          <h5 className="mt-6 text-body-xs-medium">{t("common.properties")}</h5>
-          <div className={`mb-2 mt-3 space-y-2.5 ${!isEditable ? "opacity-60" : ""}`}>
+          <h5 className="mt-5 text-body-xs-medium">{t("common.properties")}</h5>
+          <div className={`mb-2 mt-4 space-y-2.5 truncate ${!isEditable ? "opacity-60" : ""}`}>
             <SidebarPropertyListItem icon={StatePropertyIcon} label={t("common.state")}>
               <StateDropdown
                 value={issue?.state_id}
@@ -121,10 +120,10 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 value={issue?.priority}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
                 disabled={!isEditable}
-                buttonVariant="border-with-text"
-                className="w-full grow rounded-lg"
-                buttonContainerClassName="w-full text-left px-2 h-7.5"
-                buttonClassName="w-min h-auto whitespace-nowrap"
+                buttonVariant="transparent-with-text"
+                className="w-full h-7.5 grow rounded-sm"
+                buttonContainerClassName="size-full text-left"
+                buttonClassName="size-full px-2 py-0.5 whitespace-nowrap [&_svg]:size-3.5"
               />
             </SidebarPropertyListItem>
 
@@ -236,7 +235,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
             <SidebarPropertyListItem icon={ParentPropertyIcon} label={t("common.parent")}>
               <IssueParentSelectRoot
-                className="h-full w-full grow"
+                className="w-full h-7.5 grow"
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 issueId={issueId}

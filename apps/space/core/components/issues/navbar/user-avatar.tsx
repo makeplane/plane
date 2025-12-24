@@ -87,7 +87,7 @@ export const UserAvatar = observer(function UserAvatar() {
             >
               <Popover.Panel>
                 <div
-                  className="z-10 overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-custom-shadow-rg p-1"
+                  className="z-10 overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-raised-200 p-1"
                   ref={setPopperElement}
                   style={styles.popper}
                   {...attributes.popper}

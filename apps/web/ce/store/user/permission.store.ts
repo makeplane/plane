@@ -21,4 +21,8 @@ export class UserPermissionStore extends BaseUserPermissionStore implements IUse
     (workspaceSlug: string, projectId?: string): EUserPermissions | undefined =>
       this.getProjectRole(workspaceSlug, projectId)
   );
+
+  fetchWorkspaceLevelProjectEntities = (workspaceSlug: string, projectId: string): void => {
+    void this.store.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+  };
 }

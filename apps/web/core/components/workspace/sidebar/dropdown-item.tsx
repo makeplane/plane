@@ -87,21 +87,27 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
               {[EUserPermissions.ADMIN, EUserPermissions.MEMBER].includes(workspace?.role) && (
                 <Link
                   href={`/${workspace.slug}/settings`}
-                  onClick={handleClose}
-                  className="flex border border-subtle rounded-md py-1 px-2 gap-1 hover:text-secondary text-tertiary hover:border-strong bg-layer-3 hover:bg-layer-3-hover"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleClose();
+                  }}
+                  className="flex border border-strong rounded-md py-1.5 px-2.5 gap-1.5 hover:text-secondary text-secondary hover:border-strong bg-layer-2 hover:shadow-raised-100 transition-colors"
                 >
-                  <Settings className="h-4 w-4 my-auto" />
-                  <span className="text-13 font-medium my-auto">{t("settings")}</span>
+                  <Settings className="h-4 w-4 my-auto flex-shrink-0" />
+                  <span className="text-13 font-medium my-auto whitespace-nowrap">{t("settings")}</span>
                 </Link>
               )}
               {[EUserPermissions.ADMIN].includes(workspace?.role) && (
                 <Link
                   href={`/${workspace.slug}/settings/members`}
-                  onClick={handleClose}
-                  className="flex border border-subtle rounded-md py-1 px-2 gap-1 hover:text-secondary text-tertiary hover:border-strong bg-layer-3 hover:bg-layer-3-hover"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleClose();
+                  }}
+                  className="flex border border-strong rounded-md py-1.5 px-2.5 gap-1.5 hover:text-secondary text-secondary hover:border-strong bg-layer-2 hover:shadow-raised-100 transition-colors"
                 >
-                  <UserPlus className="h-4 w-4 my-auto" />
-                  <span className="text-13 font-medium my-auto">
+                  <UserPlus className="h-4 w-4 my-auto flex-shrink-0" />
+                  <span className="text-13 font-medium my-auto whitespace-nowrap">
                     {t("project_settings.members.invite_members.title")}
                   </span>
                 </Link>

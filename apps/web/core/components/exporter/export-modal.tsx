@@ -9,7 +9,7 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IImporterService } from "@plane/types";
 // ui
-import { CustomSearchSelect } from "@plane/ui";
+import { Checkbox, CustomSearchSelect } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
@@ -130,7 +130,7 @@ export const Exporter = observer(function Exporter(props: Props) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-surface-1 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all sm:my-8 sm:w-full sm:max-w-xl">
                 <div className="flex flex-col gap-6 gap-y-4 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="flex items-center justify-start">
@@ -168,7 +168,7 @@ export const Exporter = observer(function Exporter(props: Props) {
                     onClick={() => setMultiple(!multiple)}
                     className="flex max-w-min cursor-pointer items-center gap-2"
                   >
-                    <input type="checkbox" checked={multiple} onChange={() => setMultiple(!multiple)} />
+                    <Checkbox checked={multiple} onChange={() => setMultiple(!multiple)} />
                     <div className="whitespace-nowrap text-13">
                       {t("workspace_settings.settings.exports.export_separate_files")}
                     </div>

@@ -25,6 +25,7 @@
   "dependencies": {
     "@plane/constants": "workspace:*",
     "@plane/types": "workspace:*",
+    "chroma-js": "^3.2.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "hast": "^1.0.0",
@@ -44,6 +45,7 @@
   },
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",
+    "@types/chroma-js": "^3.1.2",
     "@types/hast": "^3.0.4",
     "@types/lodash-es": "catalog:",
     "@types/mdast": "^4.0.4",

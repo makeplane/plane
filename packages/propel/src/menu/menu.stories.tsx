@@ -161,7 +161,7 @@ export const WithSubmenu: Story = {
         <Menu.MenuItem onClick={() => alert("Open")}>Open</Menu.MenuItem>
         <Menu.SubMenu
           trigger="Export"
-          className="min-w-[12rem] rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-rg"
+          className="min-w-[12rem] rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200"
         >
           <Menu.MenuItem onClick={() => alert("Export as PDF")}>Export as PDF</Menu.MenuItem>
           <Menu.MenuItem onClick={() => alert("Export as CSV")}>Export as CSV</Menu.MenuItem>
@@ -220,7 +220,7 @@ export const ComplexMenu: Story = {
         </Menu.MenuItem>
         <Menu.SubMenu
           trigger="Settings"
-          className="min-w-[12rem] rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-rg"
+          className="min-w-[12rem] rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200"
         >
           <Menu.MenuItem onClick={() => alert("General Settings")}>General</Menu.MenuItem>
           <Menu.MenuItem onClick={() => alert("Privacy Settings")}>Privacy</Menu.MenuItem>

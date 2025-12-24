@@ -63,7 +63,7 @@ export function GroupDragOverlay(props: Props) {
         <div
           className={cn("p-3 my-8 flex flex-col rounded-sm items-center", {
             "text-secondary": shouldOverlayBeVisible,
-            "text-custom-text-error": isDropDisabled,
+            "text-danger-secondary": isDropDisabled,
           })}
         >
           {dropErrorMessage ? (

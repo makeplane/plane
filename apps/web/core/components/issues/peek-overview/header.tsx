@@ -220,7 +220,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
       </div>
       <div className="flex items-center gap-x-4">
         <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           {currentUser && !isArchived && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}

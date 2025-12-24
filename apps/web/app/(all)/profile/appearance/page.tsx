@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
@@ -6,9 +6,8 @@ import type { I_THEME_OPTION } from "@plane/constants";
 import { THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
-import type { IUserTheme } from "@plane/types";
+import { applyCustomTheme } from "@plane/utils";
 // components
-import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
 import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
@@ -19,46 +18,59 @@ import { ProfileSettingContentWrapper } from "@/components/profile/profile-setti
 import { useUserProfile } from "@/hooks/store/user";
 
 function ProfileAppearancePage() {
-  const { t } = useTranslation();
-  const { setTheme } = useTheme();
-  // states
-  const [currentTheme, setCurrentTheme] = useState<I_THEME_OPTION | null>(null);
-  // hooks
+  // store hooks
   const { data: userProfile, updateUserTheme } = useUserProfile();
-
-  useEffect(() => {
-    if (userProfile?.theme?.theme) {
-      const userThemeOption = THEME_OPTIONS.find((t) => t.value === userProfile?.theme?.theme);
-      if (userThemeOption) {
-        setCurrentTheme(userThemeOption);
-      }
-    }
+  // theme
+  const { setTheme } = useTheme();
+  // translation
+  const { t } = useTranslation();
+  // derived values
+  const currentTheme = useMemo(() => {
+    const userThemeOption = THEME_OPTIONS.find((t) => t.value === userProfile?.theme?.theme);
+    return userThemeOption || null;
   }, [userProfile?.theme?.theme]);
 
-  const handleThemeChange = (themeOption: I_THEME_OPTION) => {
-    applyThemeChange({ theme: themeOption.value });
+  const handleThemeChange = useCallback(
+    async (themeOption: I_THEME_OPTION) => {
+      setTheme(themeOption.value);
 
-    const updateCurrentUserThemePromise = updateUserTheme({ theme: themeOption.value });
-    setPromiseToast(updateCurrentUserThemePromise, {
-      loading: "Updating theme...",
-      success: {
-        title: "Success!",
-        message: () => "Theme updated successfully!",
-      },
-      error: {
-        title: "Error!",
-        message: () => "Failed to Update the theme",
-      },
-    });
-  };
+      // If switching to custom theme and user has saved custom colors, apply them immediately
+      if (
+        themeOption.value === "custom" &&
+        userProfile?.theme?.primary &&
+        userProfile?.theme?.background &&
+        userProfile?.theme?.darkPalette !== undefined
+      ) {
+        applyCustomTheme(
+          userProfile.theme.primary,
+          userProfile.theme.background,
+          userProfile.theme.darkPalette ? "dark" : "light"
+        );
+      }
 
-  const applyThemeChange = (theme: Partial<IUserTheme>) => {
-    setTheme(theme?.theme || "system");
-
-    if (theme?.theme === "custom" && theme?.palette) {
-      applyTheme(theme?.palette !== ",,,," ? theme?.palette : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5", false);
-    } else unsetCustomCssVariables();
-  };
+      const updateCurrentUserThemePromise = updateUserTheme({ theme: themeOption.value });
+      setPromiseToast(updateCurrentUserThemePromise, {
+        loading: "Updating theme...",
+        success: {
+          title: "Theme updated",
+          message: () => "Reloading to apply changes...",
+        },
+        error: {
+          title: "Error!",
+          message: () => "Failed to update theme. Please try again.",
+        },
+      });
+      // Wait for the promise to resolve, then reload after showing toast
+      try {
+        await updateCurrentUserThemePromise;
+        window.location.reload();
+      } catch (error) {
+        // Error toast already shown by setPromiseToast
+        console.error("Error updating theme:", error);
+      }
+    },
+    [setTheme, updateUserTheme, userProfile]
+  );
 
   return (
     <>
@@ -75,7 +87,7 @@ function ProfileAppearancePage() {
               <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
             </div>
           </div>
-          {userProfile?.theme?.theme === "custom" && <CustomThemeSelector applyThemeChange={applyThemeChange} />}
+          {userProfile?.theme?.theme === "custom" && <CustomThemeSelector />}
         </ProfileSettingContentWrapper>
       ) : (
         <div className="grid h-full w-full place-items-center px-4 sm:px-0">

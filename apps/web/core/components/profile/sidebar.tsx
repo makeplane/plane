@@ -117,7 +117,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                   className="h-full w-full rounded-sm object-cover"
                 />
               ) : (
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-sm bg-[#028375] capitalize text-on-color">
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-sm bg-accent-primary capitalize text-on-color">
                   {userData?.first_name?.[0]}
                 </div>
               )}

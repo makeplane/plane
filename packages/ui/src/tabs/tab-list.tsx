@@ -19,22 +19,26 @@ type TTabListProps = {
   tabClassName?: string;
   size?: "sm" | "md" | "lg";
   selectedTab?: string;
+  autoWrap?: boolean;
   onTabChange?: (key: string) => void;
 };
 
-export function TabList({
-  tabs,
-  tabListClassName,
-  tabClassName,
-  size = "md",
-  selectedTab,
-  onTabChange,
-}: TTabListProps) {
+export function TabList({ autoWrap = true, ...props }: TTabListProps) {
+  return autoWrap ? (
+    <Tab.Group>
+      <TabListInner {...props} />
+    </Tab.Group>
+  ) : (
+    <TabListInner {...props} />
+  );
+}
+
+function TabListInner({ tabs, tabListClassName, tabClassName, size = "md", selectedTab, onTabChange }: TTabListProps) {
   return (
     <Tab.List
       as="div"
       className={cn(
-        "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-layer-1/60",
+        "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-layer-1",
         tabListClassName
       )}
     >
@@ -65,7 +69,9 @@ export function TabList({
           }}
           disabled={tab.disabled}
         >
-          {tab.icon && <tab.icon className="size-4" />}
+          {tab.icon && (
+            <tab.icon className={cn({ "size-3": size === "sm", "size-4": size === "md", "size-5": size === "lg" })} />
+          )}
           {tab.label}
         </Tab>
       ))}

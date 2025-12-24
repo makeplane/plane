@@ -49,24 +49,25 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
         key={linkId}
         className="group col-span-12 lg:col-span-6 xl:col-span-4 2xl:col-span-3 3xl:col-span-2 flex items-center justify-between gap-3 h-10 flex-shrink-0 px-3 bg-surface-2 hover:bg-layer-1 border-[0.5px] border-subtle rounded-sm"
       >
-        <div className="flex items-center gap-2.5 truncate flex-grow">
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
           {faviconUrl ? (
-            <img src={faviconUrl} alt="favicon" className="size-4" />
+            <img src={faviconUrl} alt="favicon" className="size-4 flex-shrink-0" />
           ) : (
-            <Link className="size-4 text-tertiary group-hover:text-primary" />
+            <Link className="size-4 text-tertiary group-hover:text-primary flex-shrink-0" />
           )}
           <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
             <a
               href={linkDetail.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="truncate text-body-xs-regular cursor-pointer flex-grow flex items-center gap-3"
+              className="flex-1 w-0 text-body-xs-regular cursor-pointer flex items-center"
             >
-              {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
-
-              {linkTitle && linkTitle !== "" && (
-                <span className="text-placeholder text-caption-sm-regular">{linkTitle}</span>
-              )}
+              <span className="truncate flex-1 w-0">
+                {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
+                {linkTitle && linkTitle !== "" && (
+                  <span className="text-placeholder text-caption-sm-regular"> {linkTitle}</span>
+                )}
+              </span>
             </a>
           </Tooltip>
         </div>

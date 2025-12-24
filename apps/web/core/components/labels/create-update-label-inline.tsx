@@ -34,7 +34,7 @@ type TCreateUpdateLabelInlineProps = {
 
 const defaultValues: Partial<IIssueLabel> = {
   name: "",
-  color: "rgb(var(--color-text-200))",
+  color: "var(--text-color-secondary)",
 };
 
 export const CreateUpdateLabelInline = observer(

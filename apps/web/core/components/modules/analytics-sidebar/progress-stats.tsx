@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
@@ -120,7 +119,7 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
           className={cn(
             `flex w-full items-center justify-between gap-2 rounded-md p-1`,
             roundedTab ? `rounded-3xl` : `rounded-md`,
-            noBackground ? `` : `bg-surface-2`,
+            noBackground ? `` : `bg-layer-2`,
             size === "xs" ? `text-11` : `text-13`
           )}
         >
@@ -129,7 +128,9 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
               className={cn(
                 `p-1 w-full text-primary outline-none focus:outline-none cursor-pointer transition-all`,
                 roundedTab ? `rounded-3xl border border-subtle` : `rounded-sm`,
-                stat.key === currentTab ? "bg-surface-1 text-tertiary" : "text-placeholder hover:text-tertiary"
+                stat.key === currentTab
+                  ? "bg-layer-transparent-active text-secondary"
+                  : "text-placeholder hover:text-secondary"
               )}
               key={stat.key}
               onClick={() => setModuleTab(stat.key)}

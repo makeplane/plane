@@ -1,12 +1,12 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Loader, Search } from "lucide-react";
+import { Check, Loader, Plus, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LabelFilledIcon, LabelPropertyIcon } from "@plane/propel/icons";
+import { Button } from "@plane/propel/button";
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // helpers
@@ -72,7 +72,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-end",
+    placement: "bottom-start",
     modifiers: [
       {
         name: "preventOverflow",
@@ -85,17 +85,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
 
   const issueLabels = values ?? [];
 
-  const label = (
-    <button
-      type="button"
-      className="h-full w-full flex items-center gap-1.5 rounded-lg px-2 py-0.5 bg-layer-transparent-active  hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary"
-    >
-      <div className="flex-shrink-0">
-        <LabelFilledIcon className="size-3.5" />
-      </div>
-      <div className="flex-shrink-0">{t("label.select")}</div>
-    </button>
-  );
+  const label = <span className="text-body-xs-medium text-placeholder">{t("label.select")}</span>;
 
   const searchInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (query !== "" && e.key === "Escape") {
@@ -124,25 +114,27 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
     <>
       <Combobox
         as="div"
-        className={`w-auto max-w-full flex-shrink-0 text-left`}
+        className="size-full flex-shrink-0 text-left"
         value={issueLabels}
         onChange={(value) => onSelect(value)}
         multiple
       >
         <Combobox.Button as={Fragment}>
-          <button
+          <Button
             ref={setReferenceElement}
             type="button"
-            className="cursor-pointer"
+            variant="tertiary"
+            size="sm"
+            prependIcon={<Plus />}
             onClick={() => !projectLabels && fetchLabels()}
           >
             {label}
-          </button>
+          </Button>
         </Combobox.Button>
 
         <Combobox.Options className="fixed z-10">
           <div
-            className={`z-10 my-1 w-48 whitespace-nowrap rounded-sm border border-strong bg-surface-1 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none`}
+            className={`z-10 my-1 w-48 whitespace-nowrap rounded-sm border border-strong bg-surface-1 py-2.5 text-11 shadow-raised-200 focus:outline-none`}
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}

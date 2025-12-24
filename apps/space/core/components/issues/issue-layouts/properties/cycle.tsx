@@ -27,7 +27,7 @@ export const IssueBlockCycle = observer(function IssueBlockCycle({ cycleId, shou
       >
         <div className="flex w-full items-center text-11 gap-1.5">
           <CycleIcon className="h-3 w-3 flex-shrink-0" />
-          <div className="max-w-40 flex-grow truncate ">{cycle?.name ?? "No Cycle"}</div>
+          <div className="max-w-40 truncate ">{cycle?.name ?? "No Cycle"}</div>
         </div>
       </div>
     </Tooltip>

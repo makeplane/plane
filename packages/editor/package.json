@@ -62,6 +62,7 @@
     "@tiptap/react": "^2.22.3",
     "@tiptap/starter-kit": "^2.22.3",
     "@tiptap/suggestion": "^2.22.3",
+    "lodash-es": "catalog:",
     "buffer": "^6.0.3",
     "emoji-regex": "^10.3.0",
     "highlight.js": "^11.8.0",
@@ -85,6 +86,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@types/lodash-es": "catalog:",
     "postcss": "^8.4.38",
     "tsdown": "catalog:",
     "typescript": "catalog:"

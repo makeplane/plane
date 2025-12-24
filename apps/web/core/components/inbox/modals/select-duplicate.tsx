@@ -150,7 +150,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-surface-1 shadow-custom-shadow-md transition-all">
+                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-surface-1 shadow-raised-200 transition-all">
                   <Combobox value={value} onChange={handleSubmit}>
                     <div className="relative m-1">
                       <Search

@@ -52,11 +52,11 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
 
   return (
     <AuthenticationWrapper>
-      <div className="flex h-full flex-col gap-y-2 overflow-hidden sm:flex-row sm:gap-y-0">
+      <div className="flex h-full flex-col gap-y-2 overflow-hidden sm:flex-row sm:gap-y-0 bg-surface-1">
         <div className="relative h-1/6 flex-shrink-0 sm:w-2/12 md:w-3/12 lg:w-1/5">
           <div className="absolute left-0 top-1/2 h-[0.5px] w-full -translate-y-1/2 border-b-[0.5px] border-subtle sm:left-1/2 sm:top-0 sm:h-screen sm:w-[0.5px] sm:-translate-x-1/2 sm:translate-y-0 sm:border-r-[0.5px] md:left-1/3" />
           <Link
-            className="absolute left-5 top-1/2 grid -translate-y-1/2 place-items-center bg-surface-1 px-3 sm:left-1/2 sm:top-12 sm:-translate-x-[15px] sm:translate-y-0 sm:px-0 sm:py-5 md:left-1/3"
+            className="absolute left-5 top-1/2 grid -translate-y-1/2 place-items-center px-3 sm:left-1/2 sm:top-12 sm:-translate-x-[15px] sm:translate-y-0 sm:px-0 sm:py-5 md:left-1/3"
             href="/"
           >
             <PlaneLogo className="h-9 w-auto text-primary" />

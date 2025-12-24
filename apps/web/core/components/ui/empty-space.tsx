@@ -29,7 +29,7 @@ function EmptySpace({ title, description, children, Icon, link }: EmptySpaceProp
         {link ? (
           <div className="mt-6 flex">
             <Link href={link.href}>
-              <span className="text-13 font-medium text-accent-primary hover:text-custom-primary">
+              <span className="text-13 font-medium text-accent-primary hover:text-accent-primary">
                 {link.text}
                 <span aria-hidden="true"> &rarr;</span>
               </span>

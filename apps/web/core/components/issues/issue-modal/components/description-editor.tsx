@@ -148,7 +148,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
   };
 
   return (
-    <div className="border-[0.5px] border-subtle rounded-lg relative">
+    <div className="border-[0.5px] border-subtle-1 bg-layer-2 rounded-lg relative">
       {descriptionHtmlData === undefined || !projectId ? (
         <Loader className="min-h-[120px] max-h-64 space-y-2 overflow-hidden rounded-md border border-subtle p-3 py-2 pt-3">
           <Loader.Item width="100%" height="26px" />

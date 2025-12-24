@@ -32,7 +32,7 @@ function ProjectCreateHeader(props: Props) {
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
 
   return (
-    <div className="group relative h-44 w-full rounded-lg bg-layer-1">
+    <div className="group relative h-44 w-full rounded-lg">
       {coverImage && (
         <img
           src={getCoverImageDisplayURL(coverImage, DEFAULT_COVER_IMAGE_URL)}

@@ -41,7 +41,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
   const { project_details } = usePublish(anchor.toString());
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 px-3 py-2">
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
         <div className="relative">
           <div className="line-clamp-1 text-11 text-tertiary">
@@ -50,7 +50,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
         </div>
       </WithDisplayPropertiesHOC>
 
-      <div className="w-full line-clamp-1 text-13 text-14 text-primary mb-1.5">
+      <div className="w-full line-clamp-1 text-13 text-primary mb-1.5">
         <Tooltip tooltipContent={issue.name}>
           <span>{issue.name}</span>
         </Tooltip>

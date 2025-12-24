@@ -192,12 +192,16 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
           >
             {!hideIcon && <EstimatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             {(selectedEstimate || placeholder) && BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-              <span className="flex-grow truncate">
-                {selectedEstimate
-                  ? currentActiveEstimate?.type === EEstimateSystem.TIME
-                    ? convertMinutesToHoursMinutesString(Number(selectedEstimate.value))
-                    : selectedEstimate.value
-                  : placeholder}
+              <span className="truncate">
+                {selectedEstimate ? (
+                  currentActiveEstimate?.type === EEstimateSystem.TIME ? (
+                    convertMinutesToHoursMinutesString(Number(selectedEstimate.value))
+                  ) : (
+                    selectedEstimate.value
+                  )
+                ) : (
+                  <span className="text-placeholder">{placeholder}</span>
+                )}
               </span>
             )}
             {dropdownArrow && (
@@ -225,7 +229,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none"
+            className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}

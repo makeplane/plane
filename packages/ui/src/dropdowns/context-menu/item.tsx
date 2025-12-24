@@ -190,10 +190,7 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
-            className={cn(
-              "fixed z-[35] min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11",
-              "ring-1 ring-black ring-opacity-5"
-            )}
+            className="fixed z-[35] min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11"
             data-context-submenu="true"
           >
             <div ref={nestedMenuRef} className="max-h-72 overflow-y-scroll vertical-scrollbar scrollbar-sm">

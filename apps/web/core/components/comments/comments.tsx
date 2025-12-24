@@ -1,5 +1,4 @@
-import type { FC } from "react";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -19,6 +18,7 @@ type TCommentsWrapper = {
   getCommentById?: (activityId: string) => TIssueComment | undefined;
   showAccessSpecifier?: boolean;
   showCopyLinkOption?: boolean;
+  enableReplies?: boolean;
 };
 
 export const CommentsWrapper = observer(function CommentsWrapper(props: TCommentsWrapper) {
@@ -31,6 +31,7 @@ export const CommentsWrapper = observer(function CommentsWrapper(props: TComment
     projectId,
     showAccessSpecifier = false,
     showCopyLinkOption = false,
+    enableReplies = false,
   } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
@@ -65,6 +66,7 @@ export const CommentsWrapper = observer(function CommentsWrapper(props: TComment
             <CommentCard
               key={comment.id}
               workspaceSlug={workspaceSlug}
+              entityId={entityId}
               comment={comment}
               activityOperations={activityOperations}
               disabled={!isEditingAllowed}
@@ -72,6 +74,7 @@ export const CommentsWrapper = observer(function CommentsWrapper(props: TComment
               projectId={projectId}
               showAccessSpecifier={showAccessSpecifier}
               showCopyLinkOption={showCopyLinkOption}
+              enableReplies={enableReplies}
             />
           );
         })}
