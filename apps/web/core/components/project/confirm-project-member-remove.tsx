@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
-// headless ui
-import { Dialog, Transition } from "@headlessui/react";
 // types
 import { Button } from "@plane/propel/button";
 import type { IUserLite } from "@plane/types";
 // ui
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
@@ -48,86 +47,42 @@ export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMember
   const currentProjectDetails = getProjectById(projectId.toString());
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-backdrop transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all sm:my-8 sm:w-[40rem]">
-                <div className="bg-surface-1 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                  <div className="sm:flex sm:items-start">
-                    <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                      <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
-                    </div>
-                    <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                      <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
-                        {isCurrentUser ? "Leave project?" : `Remove ${data?.display_name}?`}
-                      </Dialog.Title>
-                      <div className="mt-2">
-                        <p className="text-13 text-secondary">
-                          {isCurrentUser ? (
-                            <>
-                              Are you sure you want to leave the{" "}
-                              <span className="font-bold">{currentProjectDetails?.name}</span> project? You will be able
-                              to join the project if invited again or if it{"'"}s public.
-                            </>
-                          ) : (
-                            <>
-                              Are you sure you want to remove member-{" "}
-                              <span className="font-bold">{data?.display_name}</span>? They will no longer have access
-                              to this project. This action cannot be undone.
-                            </>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <Button variant="secondary" size="lg" onClick={handleClose}>
-                    Cancel
-                  </Button>
-                  <Button
-                    variant="error-fill"
-                    size="lg"
-                    tabIndex={1}
-                    onClick={handleDeletion}
-                    loading={isDeleteLoading}
-                  >
-                    {isCurrentUser
-                      ? isDeleteLoading
-                        ? "Leaving..."
-                        : "Leave"
-                      : isDeleteLoading
-                        ? "Removing..."
-                        : "Remove"}
-                  </Button>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
+      <div className="bg-surface-1 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+        <div className="sm:flex sm:items-start">
+          <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+            <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
+          </div>
+          <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+            <h3 className="text-16 font-medium leading-6 text-primary">
+              {isCurrentUser ? "Leave project?" : `Remove ${data?.display_name}?`}
+            </h3>
+            <div className="mt-2">
+              <p className="text-13 text-secondary">
+                {isCurrentUser ? (
+                  <>
+                    Are you sure you want to leave the <span className="font-bold">{currentProjectDetails?.name}</span>{" "}
+                    project? You will be able to join the project if invited again or if it{"'"}s public.
+                  </>
+                ) : (
+                  <>
+                    Are you sure you want to remove member- <span className="font-bold">{data?.display_name}</span>?
+                    They will no longer have access to this project. This action cannot be undone.
+                  </>
+                )}
+              </p>
+            </div>
           </div>
         </div>
-      </Dialog>
-    </Transition.Root>
+      </div>
+      <div className="flex justify-end gap-2 p-4 sm:px-6">
+        <Button variant="secondary" size="lg" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="error-fill" size="lg" tabIndex={1} onClick={handleDeletion} loading={isDeleteLoading}>
+          {isCurrentUser ? (isDeleteLoading ? "Leaving..." : "Leave") : isDeleteLoading ? "Removing..." : "Remove"}
+        </Button>
+      </div>
+    </ModalCore>
   );
 });

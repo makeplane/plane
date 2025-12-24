@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Search } from "lucide-react";
-import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // assets
 import darkIssuesAsset from "@/app/assets/empty-state/search/issues-dark.webp?url";
 import lightIssuesAsset from "@/app/assets/empty-state/search/issues-light.webp?url";
@@ -65,6 +65,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
 
   const handleClose = () => {
     onClose();
+    setQuery("");
   };
 
   const handleSubmit = (selectedItem: string) => {
@@ -124,66 +125,34 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
     );
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
-      <div className="flex flex-wrap items-start">
-        <div className="space-y-1 sm:basis-1/2">
-          <Dialog as="div" className="relative z-30" onClose={handleClose}>
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div className="fixed inset-0 bg-backdrop transition-opacity" />
-            </Transition.Child>
-
-            <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
-              <Transition.Child
-                as={React.Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-surface-1 shadow-raised-200 transition-all">
-                  <Combobox value={value} onChange={handleSubmit}>
-                    <div className="relative m-1">
-                      <Search
-                        className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
-                        aria-hidden="true"
-                      />
-                      <input
-                        type="text"
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none focus:ring-0 sm:text-13"
-                        placeholder="Search..."
-                        onChange={(e) => setQuery(e.target.value)}
-                      />
-                    </div>
-
-                    <Combobox.Options static className="max-h-80 scroll-py-2 divide-y divide-subtle-1 overflow-y-auto">
-                      {isSearching ? (
-                        <Loader className="space-y-3 p-3">
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                        </Loader>
-                      ) : (
-                        <>{issueList}</>
-                      )}
-                    </Combobox.Options>
-                  </Combobox>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </Dialog>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
+      <Combobox value={value} onChange={handleSubmit}>
+        <div className="relative m-1">
+          <Search
+            className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
+            aria-hidden="true"
+          />
+          <input
+            type="text"
+            className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none focus:ring-0 sm:text-13"
+            placeholder="Search..."
+            onChange={(e) => setQuery(e.target.value)}
+          />
         </div>
-      </div>
-    </Transition.Root>
+
+        <Combobox.Options static className="max-h-80 scroll-py-2 divide-y divide-subtle-1 overflow-y-auto">
+          {isSearching ? (
+            <Loader className="space-y-3 p-3">
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+            </Loader>
+          ) : (
+            <>{issueList}</>
+          )}
+        </Combobox.Options>
+      </Combobox>
+    </ModalCore>
   );
 }
