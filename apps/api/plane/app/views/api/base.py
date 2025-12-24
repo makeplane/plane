@@ -36,11 +36,11 @@ class ApiTokenEndpoint(BaseAPIView):
 
     def get(self, request: Request, pk: Optional[str] = None) -> Response:
         if pk is None:
-            api_tokens = APIToken.objects.filter(user=request.user, is_service=False)
+            api_tokens = APIToken.objects.filter(user=request.user, is_service=False, workspace_id__isnull=True)
             serializer = APITokenReadSerializer(api_tokens, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            api_tokens = APIToken.objects.get(user=request.user, pk=pk)
+            api_tokens = APIToken.objects.get(user=request.user, pk=pk, workspace_id__isnull=True)
             serializer = APITokenReadSerializer(api_tokens)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
