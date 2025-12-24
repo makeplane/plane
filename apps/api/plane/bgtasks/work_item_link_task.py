@@ -1,7 +1,5 @@
 # Python imports
 import logging
-import socket
-
 
 # Third party imports
 from celery import shared_task
