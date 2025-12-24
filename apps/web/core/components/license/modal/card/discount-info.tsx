@@ -4,6 +4,9 @@ import type { TBillingFrequency } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { cn } from "@plane/utils";
 
+import ScribbleBlack from "@/app/assets/scribble/scribble-black.svg?url";
+import ScribbleWhite from "@/app/assets/scribble/scribble-white.svg?url";
+
 type TDiscountInfoProps = {
   className?: string;
   currency: string;
@@ -42,12 +45,8 @@ export function DiscountInfo({ className, currency, frequency, price, subscripti
       {actualPrice != price && (
         <span className={cn("relative", className)}>
           <img
-            src={
-              resolvedTheme === "dark"
-                ? "https://images.plane.so/pricing/hero/scribble-white.svg"
-                : "https://images.plane.so/pricing/hero/scribble-black.svg"
-            }
-            alt="image"
+            src={resolvedTheme === "dark" ? ScribbleWhite : ScribbleBlack}
+            alt="scribble"
             className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-full scale-x-125"
           />
           {currency}

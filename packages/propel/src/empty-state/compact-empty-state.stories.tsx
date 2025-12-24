@@ -110,7 +110,7 @@ export const WithAssetKeyAndMultipleActions: Story = {
       {
         label: "Import",
         onClick: () => console.log("import-clicked"),
-        variant: "outline-primary",
+        variant: "secondary",
       },
     ],
   },

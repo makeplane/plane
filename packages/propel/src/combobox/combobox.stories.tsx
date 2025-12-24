@@ -142,7 +142,7 @@ export const MultiSelectWithLimit: Story = {
             ))}
           </Combobox.Options>
         </Combobox>
-        <p className="text-xs text-gray-500">Maximum 3 selections allowed</p>
+        <p className="text-11 text-gray-500">Maximum 3 selections allowed</p>
       </div>
     );
   },

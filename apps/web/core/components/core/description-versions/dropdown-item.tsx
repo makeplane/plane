@@ -30,7 +30,7 @@ export const DescriptionVersionsDropdownItem = observer(function DescriptionVers
           src={getFileURL(versionCreator?.avatar_url ?? "")}
         />
       </span>
-      <p className="text-xs text-custom-text-200 flex items-center gap-1.5">
+      <p className="text-11 text-secondary flex items-center gap-1.5">
         <span className="font-medium">{versionCreator?.display_name ?? t("common.deactivated_user")}</span>
         <span>{calculateTimeAgo(version.last_saved_at)}</span>
       </p>

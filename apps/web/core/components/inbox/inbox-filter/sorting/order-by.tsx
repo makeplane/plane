@@ -28,7 +28,7 @@ export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDrop
       <ArrowDownWideNarrow className="size-3 " />
     );
   const largeButton = (
-    <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
+    <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
       {inboxSorting?.sort_by === "asc" ? (
         <ArrowUpWideNarrow className="size-3 " />
       ) : (
@@ -55,7 +55,7 @@ export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDrop
           {inboxSorting?.order_by?.includes(option.key) && <Check className="size-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2 border-custom-border-200" />
+      <hr className="my-2 border-subtle" />
       {INBOX_ISSUE_SORT_BY_OPTIONS.map((option) => (
         <CustomMenu.MenuItem
           key={option.key}

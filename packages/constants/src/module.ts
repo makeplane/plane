@@ -23,8 +23,8 @@ export const MODULE_STATUS: {
     i18n_label: "project_modules.status.backlog",
     value: "backlog",
     color: MODULE_STATUS_COLORS.backlog,
-    textColor: "text-custom-text-400",
-    bgColor: "bg-custom-background-80",
+    textColor: "text-placeholder",
+    bgColor: "bg-layer-1",
   },
   {
     i18n_label: "project_modules.status.planned",
@@ -44,8 +44,8 @@ export const MODULE_STATUS: {
     i18n_label: "project_modules.status.paused",
     value: "paused",
     color: MODULE_STATUS_COLORS.paused,
-    textColor: "text-custom-text-300",
-    bgColor: "bg-custom-background-90",
+    textColor: "text-tertiary",
+    bgColor: "bg-surface-2",
   },
   {
     i18n_label: "project_modules.status.completed",

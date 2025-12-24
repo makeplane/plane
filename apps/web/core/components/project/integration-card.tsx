@@ -34,12 +34,10 @@ const projectService = new ProjectService();
 export function IntegrationCard({ integration }: Props) {
   const { workspaceSlug, projectId } = useParams();
 
-  const { data: syncedGithubRepository } = useSWR(
-    projectId ? PROJECT_GITHUB_REPOSITORY(projectId as string) : null,
-    () =>
-      workspaceSlug && projectId && integration
-        ? projectService.getProjectGithubRepository(workspaceSlug as string, projectId as string, integration.id)
-        : null
+  const { data: syncedGithubRepository } = useSWR(projectId ? PROJECT_GITHUB_REPOSITORY(projectId) : null, () =>
+    workspaceSlug && projectId && integration
+      ? projectService.getProjectGithubRepository(workspaceSlug, projectId, integration.id)
+      : null
   );
 
   const handleChange = (repo: any) => {
@@ -53,14 +51,14 @@ export function IntegrationCard({ integration }: Props) {
     } = repo;
 
     projectService
-      .syncGithubRepository(workspaceSlug as string, projectId as string, integration.id, {
+      .syncGithubRepository(workspaceSlug, projectId, integration.id, {
         name,
         owner: login,
         repository_id: id,
         url: html_url,
       })
       .then(() => {
-        mutate(PROJECT_GITHUB_REPOSITORY(projectId as string));
+        mutate(PROJECT_GITHUB_REPOSITORY(projectId));
 
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -81,7 +79,7 @@ export function IntegrationCard({ integration }: Props) {
   return (
     <>
       {integration && (
-        <div className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6">
+        <div className="flex items-center justify-between gap-2 border-b border-subtle bg-surface-1 px-4 py-6">
           <div className="flex items-start gap-4">
             <div className="h-10 w-10 flex-shrink-0">
               <img
@@ -91,8 +89,8 @@ export function IntegrationCard({ integration }: Props) {
               />
             </div>
             <div>
-              <h3 className="flex items-center gap-4 text-sm font-medium">{integration.integration_detail.title}</h3>
-              <p className="text-sm tracking-tight text-custom-text-200">
+              <h3 className="flex items-center gap-4 text-13 font-medium">{integration.integration_detail.title}</h3>
+              <p className="text-13 tracking-tight text-secondary">
                 {integrationDetails[integration.integration_detail.provider].description}
               </p>
             </div>

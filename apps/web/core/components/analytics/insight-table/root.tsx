@@ -32,7 +32,7 @@ export function InsightTable<T extends Exclude<TAnalyticsTabsBase, "overview">>(
         searchPlaceholder={`${data?.length || 0} ${headerText}`}
         actions={(table: Table<AnalyticsTableDataMap[T]>) => (
           <Button
-            variant="accent-primary"
+            variant="secondary"
             prependIcon={<Download className="h-3.5 w-3.5" />}
             onClick={() => onExport?.(table.getFilteredRowModel().rows)}
           >

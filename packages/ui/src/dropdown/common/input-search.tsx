@@ -39,16 +39,16 @@ export function InputSearch(props: IInputSearch) {
   return (
     <div
       className={cn(
-        "flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2",
+        "flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2",
         inputContainerClassName
       )}
     >
-      {inputIcon ? <>{inputIcon}</> : <Search className="h-4 w-4 text-custom-text-300" aria-hidden="true" />}
+      {inputIcon ? <>{inputIcon}</> : <Search className="h-4 w-4 text-tertiary" aria-hidden="true" />}
       <Combobox.Input
         as="input"
         ref={inputRef}
         className={cn(
-          "w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none",
+          "w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none",
           inputClassName
         )}
         value={query}

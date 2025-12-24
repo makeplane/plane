@@ -50,8 +50,8 @@ export const IssueCycleSelect = observer(function IssueCycleSelect(props: TIssue
         disabled={disableSelect}
         buttonVariant="transparent-with-text"
         className="group w-full"
-        buttonContainerClassName="w-full text-left rounded"
-        buttonClassName={`text-sm justify-between  ${issue?.cycle_id ? "" : "text-custom-text-400"}`}
+        buttonContainerClassName="w-full text-left h-7.5 rounded-sm"
+        buttonClassName={`text-body-xs-medium justify-between ${issue?.cycle_id ? "" : "text-placeholder"}`}
         placeholder={t("cycle.no_cycle")}
         hideIcon
         dropdownArrow

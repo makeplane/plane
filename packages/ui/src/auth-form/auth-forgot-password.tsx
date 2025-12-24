@@ -27,7 +27,7 @@ export function AuthForgotPassword({
       onClick={handleClick}
       disabled={disabled}
       className={cn(
-        "text-sm text-custom-primary-100 hover:text-custom-primary-200 transition-colors duration-200",
+        "text-13 text-accent-primary hover:text-accent-secondary transition-colors duration-200",
         {
           "opacity-50 cursor-not-allowed": disabled,
           "cursor-pointer": !disabled,

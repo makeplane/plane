@@ -192,5 +192,10 @@ export default {
         "Genera tokens API seguros para conectar tu espacio de trabajo con sistemas y aplicaciones externos.",
       cta_primary: "Agregar token API",
     },
+    webhooks: {
+      title: "Aún no se ha agregado ningún Webhook",
+      description: "Automatiza las notificaciones a servicios externos cuando ocurran eventos del proyecto.",
+      cta_primary: "Agregar webhook",
+    },
   },
 } as const;

@@ -1,4 +1,4 @@
-import DOMPurify from "dompurify";
+import sanitizeHtml from "sanitize-html";
 import type { Content, JSONContent } from "@plane/types";
 
 /**
@@ -120,7 +120,7 @@ const text = stripHTML(html);
 console.log(text); // Some text
  */
 export const sanitizeHTML = (htmlString: string) => {
-  const sanitizedText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: [] }); // sanitize the string to remove all HTML tags
+  const sanitizedText = sanitizeHtml(htmlString, { allowedTags: [] }); // sanitize the string to remove all HTML tags
   return sanitizedText.trim(); // trim the string to remove leading and trailing whitespaces
 };
 
@@ -155,8 +155,8 @@ export const checkEmailValidity = (email: string): boolean => {
 };
 
 export const isEmptyHtmlString = (htmlString: string, allowedHTMLTags: string[] = []) => {
-  // Remove HTML tags using DOMPurify
-  const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: allowedHTMLTags });
+  // Remove HTML tags using sanitize-html
+  const cleanText = sanitizeHtml(htmlString, { allowedTags: allowedHTMLTags });
   // Trim the string and check if it's empty
   return cleanText.trim() === "";
 };

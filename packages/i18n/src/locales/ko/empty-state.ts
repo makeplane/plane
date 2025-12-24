@@ -181,5 +181,10 @@ export default {
       description: "작업 공간을 외부 시스템 및 애플리케이션과 연결하기 위한 보안 API 토큰을 생성하세요.",
       cta_primary: "API 토큰 추가",
     },
+    webhooks: {
+      title: "아직 웹훅이 추가되지 않았습니다",
+      description: "프로젝트 이벤트가 발생할 때 외부 서비스에 대한 알림을 자동화하세요.",
+      cta_primary: "웹훅 추가",
+    },
   },
 } as const;

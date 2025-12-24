@@ -96,11 +96,11 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
         ))}
       </div>
       <Disclosure as="div" className="flex flex-col" defaultOpen={!!isWorkspaceMenuOpen}>
-        <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90">
+        <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-placeholder hover:bg-layer-transparent-hover">
           <Disclosure.Button
             as="button"
             type="button"
-            className="w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400"
+            className="w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder"
             onClick={() => toggleListDisclosure(!isWorkspaceMenuOpen)}
             aria-label={t(
               isWorkspaceMenuOpen
@@ -108,13 +108,13 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
                 : "aria_labels.app_sidebar.open_workspace_menu"
             )}
           >
-            <span className="text-sm font-semibold">{t("workspace")}</span>
+            <span className="text-13 font-semibold">{t("workspace")}</span>
           </Disclosure.Button>
           <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
             <Disclosure.Button
               as="button"
               type="button"
-              className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+              className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0"
               onClick={() => toggleListDisclosure(!isWorkspaceMenuOpen)}
               aria-label={t(
                 isWorkspaceMenuOpen
@@ -152,7 +152,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
                   <button
                     type="button"
                     onClick={() => toggleExtendedSidebar()}
-                    className="flex items-center gap-1.5 text-sm font-medium flex-grow text-custom-text-350"
+                    className="flex items-center gap-1.5 text-13 font-medium flex-grow text-tertiary"
                     id="extended-sidebar-toggle"
                     aria-label={t(
                       isExtendedSidebarOpened

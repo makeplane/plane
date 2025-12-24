@@ -56,7 +56,8 @@ export type TGanttDisplayOptions = {
 
 // Main Gantt Layout Props
 export interface IBaseLayoutsGanttProps<T extends IBaseLayoutsGanttItem>
-  extends Omit<IBaseLayoutsBaseProps<T>, "renderItem" | "enableDragDrop" | "onDrop" | "canDrag">,
+  extends
+    Omit<IBaseLayoutsBaseProps<T>, "renderItem" | "enableDragDrop" | "onDrop" | "canDrag">,
     IGanttRenderProps<T>,
     IGanttCapabilities,
     TGanttDisplayOptions {

@@ -55,9 +55,10 @@ export type TConfigManagerParams = {
  * @template V - The filter value type extending TFilterValue
  * @template E - The external filter type extending TExternalFilter
  */
-export class FilterConfigManager<P extends TFilterProperty, E extends TExternalFilter = TExternalFilter>
-  implements IFilterConfigManager<P>
-{
+export class FilterConfigManager<
+  P extends TFilterProperty,
+  E extends TExternalFilter = TExternalFilter,
+> implements IFilterConfigManager<P> {
   // observables
   filterConfigs: IFilterConfigManager<P>["filterConfigs"];
   configOptions: IFilterConfigManager<P>["configOptions"];

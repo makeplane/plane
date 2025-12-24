@@ -37,8 +37,8 @@ export function CalloutBlockLogoSelector(props: Props) {
         isOpen={isOpen}
         handleToggle={handleOpen}
         className="flex-shrink-0 grid place-items-center"
-        buttonClassName={cn("flex-shrink-0 size-8 grid place-items-center rounded-lg", {
-          "hover:bg-white/10": !disabled,
+        buttonClassName={cn("flex-shrink-0 size-8 grid place-items-center rounded-lg text-primary", {
+          "hover:bg-layer-1-hover": !disabled,
         })}
         label={<Logo logo={logoValue} size={18} type="lucide" />}
         onChange={(val) => {
@@ -53,27 +53,29 @@ export function CalloutBlockLogoSelector(props: Props) {
           };
           if (val.type === "emoji") {
             // val.value is now a string in decimal format (e.g. "128512")
+            const emojiValue = val.value;
             newLogoValue = {
-              "data-emoji-unicode": val.value,
+              "data-emoji-unicode": emojiValue,
               "data-emoji-url": undefined,
             };
             newLogoValueToStoreInLocalStorage = {
               in_use: "emoji",
               emoji: {
-                value: val.value,
+                value: emojiValue,
                 url: undefined,
               },
             };
           } else if (val.type === "icon") {
+            const iconValue = val.value as { name: string; color: string };
             newLogoValue = {
-              "data-icon-name": val.value.name,
-              "data-icon-color": val.value.color,
+              "data-icon-name": iconValue.name,
+              "data-icon-color": iconValue.color,
             };
             newLogoValueToStoreInLocalStorage = {
               in_use: "icon",
               icon: {
-                name: val.value.name,
-                color: val.value.color,
+                name: iconValue.name,
+                color: iconValue.color,
               },
             };
           }

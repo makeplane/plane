@@ -195,7 +195,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
           buttonClassName={
             shouldHighlightIssueDueDate(issue?.target_date || null, stateDetails?.group) ? "text-red-500" : ""
           }
-          clearIconClassName="!text-custom-text-100"
+          clearIconClassName="!text-primary"
           optionsClassName="z-10"
           renderByDefault={isMobile}
           showTooltip

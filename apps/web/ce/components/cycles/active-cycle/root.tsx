@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Disclosure } from "@headlessui/react";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { ICycle } from "@plane/types";
@@ -15,7 +16,6 @@ import { ActiveCycleProgress } from "@/components/cycles/active-cycle/progress";
 import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
 import { CycleListGroupHeader } from "@/components/cycles/list/cycle-list-group-header";
 import { CyclesListItem } from "@/components/cycles/list/cycles-list-item";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import type { ActiveCycleIssueDetails } from "@/store/issue/cycle";
@@ -50,16 +50,17 @@ const ActiveCyclesComponent = observer(function ActiveCyclesComponent({
 
   if (!cycleId || !activeCycle) {
     return (
-      <DetailedEmptyState
+      <EmptyStateDetailed
+        assetKey="cycle"
         title={t("project_cycles.empty_state.active.title")}
         description={t("project_cycles.empty_state.active.description")}
-        assetPath={activeCycleResolvedPath}
+        rootClassName="py-10 h-auto"
       />
     );
   }
 
   return (
-    <div className="flex flex-col border-b border-custom-border-200">
+    <div className="flex flex-col border-b border-subtle">
       <CyclesListItem
         key={cycleId}
         cycleId={cycleId}
@@ -67,8 +68,8 @@ const ActiveCyclesComponent = observer(function ActiveCyclesComponent({
         projectId={projectId}
         className="!border-b-transparent"
       />
-      <Row className="bg-custom-background-100 pt-3 pb-6">
-        <div className="grid grid-cols-1 bg-custom-background-100 gap-3 lg:grid-cols-2 xl:grid-cols-3">
+      <Row className="bg-surface-1 pt-3 pb-6">
+        <div className="grid grid-cols-1 bg-surface-1 gap-3 lg:grid-cols-2 xl:grid-cols-3">
           <ActiveCycleProgress
             handleFiltersUpdate={handleFiltersUpdate}
             projectId={projectId}
@@ -114,7 +115,7 @@ export const ActiveCycleRoot = observer(function ActiveCycleRoot(props: IActiveC
         <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
           {({ open }) => (
             <>
-              <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 cursor-pointer">
+              <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle bg-layer-1 cursor-pointer">
                 <CycleListGroupHeader title={t("project_cycles.active_cycle.label")} type="current" isExpanded={open} />
               </Disclosure.Button>
               <Disclosure.Panel>

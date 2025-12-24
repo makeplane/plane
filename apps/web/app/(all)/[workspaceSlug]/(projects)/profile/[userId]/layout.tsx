@@ -74,7 +74,7 @@ function UseProfileLayout({ params }: Route.ComponentProps) {
                     <Outlet />
                   </div>
                 ) : (
-                  <div className="grid h-full w-full place-items-center text-custom-text-200">
+                  <div className="grid h-full w-full place-items-center text-secondary">
                     {t("you_do_not_have_the_permission_to_access_this_page")}
                   </div>
                 )}

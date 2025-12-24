@@ -345,13 +345,13 @@ export default {
   project_id_must_be_at_most_5_characters: "El ID del proyecto debe tener como máximo 5 caracteres",
   project_id: "ID del proyecto",
   project_id_tooltip_content:
-    "Te ayuda a identificar elementos de trabajo en el proyecto de manera única. Máximo 5 caracteres.",
+    "Te ayuda a identificar elementos de trabajo en el proyecto de manera única. Máximo 10 caracteres.",
   description_placeholder: "Descripción",
   only_alphanumeric_non_latin_characters_allowed: "Solo se permiten caracteres alfanuméricos y no latinos.",
   project_id_is_required: "El ID del proyecto es requerido",
   project_id_allowed_char: "Solo se permiten caracteres alfanuméricos y no latinos.",
   project_id_min_char: "El ID del proyecto debe tener al menos 1 carácter",
-  project_id_max_char: "El ID del proyecto debe tener como máximo 5 caracteres",
+  project_id_max_char: "El ID del proyecto debe tener como máximo 10 caracteres",
   project_description_placeholder: "Ingresa la descripción del proyecto",
   select_network: "Seleccionar red",
   lead: "Líder",
@@ -1600,6 +1600,7 @@ export default {
         name: "Nombre del espacio de trabajo",
         company_size: "Tamaño de la empresa",
         url: "URL del espacio de trabajo",
+        workspace_timezone: "Zona horaria del espacio de trabajo",
         update_workspace: "Actualizar espacio de trabajo",
         delete_workspace: "Eliminar este espacio de trabajo",
         delete_workspace_description:

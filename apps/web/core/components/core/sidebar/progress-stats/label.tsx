@@ -40,7 +40,7 @@ export const LabelStatComponent = observer(function LabelStatComponent(props: TL
                         backgroundColor: label.color ?? "transparent",
                       }}
                     />
-                    <span className="text-xs text-ellipsis truncate">{label.title ?? t("no_labels_yet")}</span>
+                    <span className="text-11 text-ellipsis truncate">{label.title ?? t("no_labels_yet")}</span>
                   </div>
                 }
                 completed={label.completed}
@@ -63,7 +63,7 @@ export const LabelStatComponent = observer(function LabelStatComponent(props: TL
                         backgroundColor: label.color ?? "transparent",
                       }}
                     />
-                    <span className="text-xs">{label.title ?? t("no_labels_yet")}</span>
+                    <span className="text-11">{label.title ?? t("no_labels_yet")}</span>
                   </div>
                 }
                 completed={label.completed}
@@ -74,10 +74,10 @@ export const LabelStatComponent = observer(function LabelStatComponent(props: TL
         })
       ) : (
         <div className="flex h-full flex-col items-center justify-center gap-2">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-layer-1">
             <img src={emptyLabel} className="h-12 w-12 object-contain" alt="empty label" />
           </div>
-          <h6 className="text-base text-custom-text-300">{t("no_labels_yet")}</h6>
+          <h6 className="text-14 text-tertiary">{t("no_labels_yet")}</h6>
         </div>
       )}
     </div>

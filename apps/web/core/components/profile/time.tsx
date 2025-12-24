@@ -21,7 +21,7 @@ export function ProfileSidebarTime(props: Props) {
 
   return (
     <span>
-      {timeString} <span className="text-custom-text-200">{timeZone}</span>
+      {timeString} <span className="text-secondary">{timeZone}</span>
     </span>
   );
 }

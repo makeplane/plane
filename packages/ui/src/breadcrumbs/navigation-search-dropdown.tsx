@@ -61,16 +61,16 @@ export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationS
                 }
               }}
               className={cn(
-                "group h-full flex items-center gap-2 px-1.5 py-1 text-sm font-medium text-custom-text-300 cursor-pointer rounded rounded-r-none",
+                "group h-full flex items-center gap-2 px-1.5 py-1 text-13 font-medium text-tertiary cursor-pointer rounded-sm rounded-r-none",
                 {
-                  "hover:bg-custom-background-80 hover:text-custom-text-100": !isLast,
+                  "hover:bg-layer-1 hover:text-primary": !isLast,
                 }
               )}
             >
-              {shouldTruncate && <div className="flex @4xl:hidden text-custom-text-300">...</div>}
+              {shouldTruncate && <div className="flex @4xl:hidden text-tertiary">...</div>}
               <div
                 className={cn("flex gap-2", {
-                  "hidden @4xl:flex gap-2": shouldTruncate,
+                  "hidden @4xl:flex gap-2 items-center": shouldTruncate,
                 })}
               >
                 {icon && <Breadcrumbs.Icon>{icon}</Breadcrumbs.Icon>}
@@ -79,13 +79,13 @@ export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationS
             </button>
           </Tooltip>
           <Breadcrumbs.Separator
-            className={cn("rounded-r", {
-              "bg-custom-background-80": isDropdownOpen && !isLast,
-              "hover:bg-custom-background-80": !isLast,
+            className={cn("rounded-r-sm", {
+              "bg-layer-1": isDropdownOpen && !isLast,
+              "hover:bg-layer-1": !isLast,
             })}
             containerClassName="p-0"
-            iconClassName={cn("group-hover:rotate-90 hover:text-custom-text-100", {
-              "text-custom-text-100": isDropdownOpen,
+            iconClassName={cn("group-hover:rotate-90 hover:text-primary", {
+              "text-primary": isDropdownOpen,
               "rotate-90": isDropdownOpen || isLast,
             })}
             showDivider={!isLast}
@@ -93,11 +93,11 @@ export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationS
         </>
       }
       disabled={navigationDisabled}
-      className="h-full rounded"
+      className="h-full rounded-sm"
       customButtonClassName={cn(
-        "group flex items-center gap-0.5 rounded hover:bg-custom-background-90 outline-none cursor-pointer h-full rounded",
+        "group flex items-center gap-0.5 rounded-sm hover:bg-surface-2 outline-none cursor-pointer h-full rounded-sm",
         {
-          "bg-custom-background-90": isDropdownOpen,
+          "bg-surface-2": isDropdownOpen,
         }
       )}
     />

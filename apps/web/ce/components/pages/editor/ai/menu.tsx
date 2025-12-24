@@ -138,7 +138,7 @@ export function EditorAIMenu(props: Props) {
   return (
     <div
       className={cn(
-        "w-[210px] flex flex-col rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-rg transition-all",
+        "w-[210px] flex flex-col rounded-md border-[0.5px] border-strong bg-surface-1 shadow-raised-200 transition-all",
         {
           "w-[700px]": activeTask,
         }
@@ -146,7 +146,7 @@ export function EditorAIMenu(props: Props) {
     >
       <div
         className={cn("flex max-h-72 w-full", {
-          "divide-x divide-custom-border-200": activeTask,
+          "divide-x divide-subtle-1": activeTask,
         })}
       >
         <div className="flex-shrink-0 w-[210px] overflow-y-auto px-2 py-2.5 transition-all">
@@ -158,9 +158,9 @@ export function EditorAIMenu(props: Props) {
                 key={item.key}
                 type="button"
                 className={cn(
-                  "w-full flex items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-80 transition-colors",
+                  "w-full flex items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 text-11 text-secondary hover:bg-layer-1 transition-colors",
                   {
-                    "bg-custom-background-80": isActiveTask,
+                    "bg-layer-1": isActiveTask,
                   }
                 )}
                 onClick={(e) => {
@@ -203,7 +203,7 @@ export function EditorAIMenu(props: Props) {
                   "items-start": response,
                 })}
               >
-                <span className="flex-shrink-0 size-7 grid place-items-center text-custom-text-200 rounded-full border border-custom-border-200">
+                <span className="flex-shrink-0 size-7 grid place-items-center text-secondary rounded-full border border-subtle">
                   <Sparkles className="size-3" />
                 </span>
                 {response ? (
@@ -223,7 +223,7 @@ export function EditorAIMenu(props: Props) {
                     <div className="mt-3 flex items-center gap-4">
                       <button
                         type="button"
-                        className="p-1 text-custom-text-300 text-sm font-medium rounded hover:bg-custom-background-80 outline-none"
+                        className="p-1 text-tertiary text-13 font-medium rounded-sm hover:bg-layer-1 outline-none"
                         onClick={() => handleInsertText(false)}
                       >
                         Replace selection
@@ -231,16 +231,16 @@ export function EditorAIMenu(props: Props) {
                       <Tooltip tooltipContent="Add to next line">
                         <button
                           type="button"
-                          className="flex-shrink-0 size-6 grid place-items-center rounded hover:bg-custom-background-80 outline-none"
+                          className="flex-shrink-0 size-6 grid place-items-center rounded-sm hover:bg-layer-1 outline-none"
                           onClick={() => handleInsertText(true)}
                         >
-                          <CornerDownRight className="text-custom-text-300 size-4" />
+                          <CornerDownRight className="text-tertiary size-4" />
                         </button>
                       </Tooltip>
                       <Tooltip tooltipContent="Re-generate response">
                         <button
                           type="button"
-                          className="flex-shrink-0 size-6 grid place-items-center rounded hover:bg-custom-background-80 outline-none"
+                          className="flex-shrink-0 size-6 grid place-items-center rounded-sm hover:bg-layer-1 outline-none"
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
@@ -249,7 +249,7 @@ export function EditorAIMenu(props: Props) {
                           disabled={isRegenerating}
                         >
                           <RefreshCcw
-                            className={cn("text-custom-text-300 size-4", {
+                            className={cn("text-tertiary size-4", {
                               "animate-spin": isRegenerating,
                             })}
                           />
@@ -258,20 +258,20 @@ export function EditorAIMenu(props: Props) {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-custom-text-200">
+                  <p className="text-13 text-secondary">
                     {activeTask ? LOADING_TEXTS[activeTask] : "Pi is writing"}...
                   </p>
                 )}
               </div>
-              <div className="sticky bottom-0 w-full bg-custom-background-100 pl-[54.8px] py-2 flex items-center gap-2">
+              <div className="sticky bottom-0 w-full bg-surface-1 pl-[54.8px] py-2 flex items-center gap-2">
                 {TONES_LIST.map((tone) => (
                   <button
                     key={tone.key}
                     type="button"
                     className={cn(
-                      "p-1 text-xs text-custom-text-200 font-medium bg-custom-background-80 rounded transition-colors outline-none",
+                      "p-1 text-11 text-secondary font-medium bg-layer-1 rounded-sm transition-colors outline-none",
                       {
-                        "bg-custom-primary-100/20 text-custom-primary-100": tone.key === "default",
+                        "bg-accent-primary/20 text-accent-primary": tone.key === "default",
                       }
                     )}
                     onClick={(e) => {
@@ -289,11 +289,11 @@ export function EditorAIMenu(props: Props) {
         </div>
       </div>
       {activeTask && (
-        <div className="bg-custom-background-90 rounded-b-md py-2 px-4 text-custom-text-300 flex items-center gap-2 border-t border-custom-border-200">
+        <div className="bg-surface-2 rounded-b-md py-2 px-4 text-tertiary flex items-center gap-2 border-t border-subtle">
           <span className="flex-shrink-0 size-4 grid place-items-center">
             <TriangleAlert className="size-3" />
           </span>
-          <p className="flex-shrink-0 text-xs font-medium">
+          <p className="flex-shrink-0 text-11 font-medium">
             By using this feature, you consent to sharing the message with a 3rd party service.
           </p>
         </div>

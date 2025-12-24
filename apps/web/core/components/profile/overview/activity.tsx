@@ -36,29 +36,29 @@ export const ProfileActivity = observer(function ProfileActivity() {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-lg font-medium">{t("profile.stats.recent_activity.title")}</h3>
+      <h3 className="text-16 font-medium">{t("profile.stats.recent_activity.title")}</h3>
       <Card>
         {userProfileActivity ? (
           userProfileActivity.results.length > 0 ? (
             <div className="space-y-5">
               {userProfileActivity.results.map((activity) => (
                 <div key={activity.id} className="flex gap-3">
-                  <div className="flex-shrink-0 grid place-items-center overflow-hidden rounded h-6 w-6">
+                  <div className="flex-shrink-0 grid place-items-center overflow-hidden rounded-sm h-6 w-6">
                     {activity.actor_detail?.avatar_url && activity.actor_detail?.avatar_url !== "" ? (
                       <img
                         src={getFileURL(activity.actor_detail?.avatar_url)}
                         alt={activity.actor_detail?.display_name}
-                        className="rounded"
+                        className="rounded-sm"
                       />
                     ) : (
-                      <div className="grid h-6 w-6 place-items-center rounded border-2 bg-gray-700 text-xs text-white">
+                      <div className="grid h-6 w-6 place-items-center rounded-sm border-2 border-strong text-11 text-on-color">
                         {activity.actor_detail?.display_name?.charAt(0)}
                       </div>
                     )}
                   </div>
                   <div className="-mt-1 w-4/5 break-words">
-                    <p className="inline text-sm text-custom-text-200">
-                      <span className="font-medium text-custom-text-100">
+                    <p className="inline text-13 text-secondary">
+                      <span className="font-medium text-primary">
                         {currentUser?.id === activity.actor_detail?.id
                           ? "You"
                           : activity.actor_detail?.display_name}{" "}
@@ -71,9 +71,7 @@ export const ProfileActivity = observer(function ProfileActivity() {
                         </span>
                       )}
                     </p>
-                    <p className="text-xs text-custom-text-200 whitespace-nowrap ">
-                      {calculateTimeAgo(activity.created_at)}
-                    </p>
+                    <p className="text-11 text-secondary whitespace-nowrap ">{calculateTimeAgo(activity.created_at)}</p>
                   </div>
                 </div>
               ))}

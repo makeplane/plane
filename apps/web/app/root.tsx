@@ -20,6 +20,11 @@ import type { Route } from "./+types/root";
 // local
 import { CustomErrorComponent } from "./error";
 import { AppProvider } from "./provider";
+// fonts
+import "@fontsource-variable/inter";
+import interVariableWoff2 from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import "@fontsource/material-symbols-rounded";
+import "@fontsource/ibm-plex-mono";
 
 const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
 
@@ -33,6 +38,13 @@ export const links: LinksFunction = () => [
   { rel: "apple-touch-icon", sizes: "512x512", href: icon512 },
   { rel: "manifest", href: "/manifest.json" },
   { rel: "stylesheet", href: globalStyles },
+  {
+    rel: "preload",
+    href: interVariableWoff2,
+    as: "font",
+    type: "font/woff2",
+    crossOrigin: "anonymous",
+  },
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -59,10 +71,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <div id="editor-portal" />
         <AppProvider>
           <div
-            className={cn(
-              "h-screen w-full overflow-hidden bg-custom-background-100 relative flex flex-col",
-              "app-container"
-            )}
+            className={cn("h-screen w-full overflow-hidden bg-canvas relative flex flex-col", "desktop-app-container")}
           >
             <main className="w-full h-full overflow-hidden relative">{children}</main>
           </div>

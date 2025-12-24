@@ -36,7 +36,7 @@ export const CYCLE_STATUS: {
     value: "draft",
     i18n_title: "project_cycles.status.draft",
     color: "#525252",
-    textColor: "text-custom-text-300",
-    bgColor: "bg-custom-background-90",
+    textColor: "text-tertiary",
+    bgColor: "bg-surface-2",
   },
 ];
