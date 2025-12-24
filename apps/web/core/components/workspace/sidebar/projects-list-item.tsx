@@ -286,6 +286,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
               "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
               {
                 "bg-surface-2": isMenuActive,
+                "bg-layer-transparent-active": URLProjectId === project?.id,
               }
             )}
             id={`${project?.id}`}
