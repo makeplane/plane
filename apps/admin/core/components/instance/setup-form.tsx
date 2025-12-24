@@ -54,13 +54,13 @@ const defaultFromData: TFormData = {
 export function InstanceSetupForm() {
   // search params
   const searchParams = useSearchParams();
-  const firstNameParam = searchParams.get("first_name") || undefined;
-  const lastNameParam = searchParams.get("last_name") || undefined;
-  const companyParam = searchParams.get("company") || undefined;
-  const emailParam = searchParams.get("email") || undefined;
-  const isTelemetryEnabledParam = (searchParams.get("is_telemetry_enabled") === "True" ? true : false) || true;
-  const errorCode = searchParams.get("error_code") || undefined;
-  const errorMessage = searchParams.get("error_message") || undefined;
+  const firstNameParam = searchParams?.get("first_name") || undefined;
+  const lastNameParam = searchParams?.get("last_name") || undefined;
+  const companyParam = searchParams?.get("company") || undefined;
+  const emailParam = searchParams?.get("email") || undefined;
+  const isTelemetryEnabledParam = (searchParams?.get("is_telemetry_enabled") === "True" ? true : false) || true;
+  const errorCode = searchParams?.get("error_code") || undefined;
+  const errorMessage = searchParams?.get("error_message") || undefined;
   // state
   const [showPassword, setShowPassword] = useState({
     password: false,
@@ -238,7 +238,7 @@ export function InstanceSetupForm() {
                   name="password"
                   type={showPassword.password ? "text" : "password"}
                   inputSize="md"
-                  placeholder="New password..."
+                  placeholder="New password"
                   value={formData.password}
                   onChange={(e) => handleFormChange("password", e.target.value)}
                   hasError={errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD ? true : false}
