@@ -268,6 +268,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
 
   const isAccordionMode = projectPreferences.navigationMode === "accordion";
 
+  const shouldHighlightProject = URLProjectId === project?.id && projectPreferences.navigationMode !== "accordion";
+
   return (
     <>
       <PublishProjectModal isOpen={publishModalOpen} projectId={projectId} onClose={() => setPublishModal(false)} />
@@ -286,7 +288,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
               "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
               {
                 "bg-surface-2": isMenuActive,
-                "bg-layer-transparent-active": URLProjectId === project?.id,
+                "bg-layer-transparent-active": shouldHighlightProject,
               }
             )}
             id={`${project?.id}`}
