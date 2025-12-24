@@ -19,6 +19,18 @@ logger = logging.getLogger("plane.worker")
 DEFAULT_FAVICON = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxpbmstaWNvbiBsdWNpZGUtbGluayI+PHBhdGggZD0iTTEwIDEzYTUgNSAwIDAgMCA3LjU0LjU0bDMtM2E1IDUgMCAwIDAtNy4wNy03LjA3bC0xLjcyIDEuNzEiLz48cGF0aCBkPSJNMTQgMTFhNSA1IDAgMCAwLTcuNTQtLjU0bC0zIDNhNSA1IDAgMCAwIDcuMDcgNy4wN2wxLjcxLTEuNzEiLz48L3N2Zz4="  # noqa: E501
 
 
+def is_ip_address(url):
+    parsed = urlparse(url)
+
+    try:
+        ip = ipaddress.ip_address(parsed.hostname)
+        if ip.is_private or ip.is_loopback or ip.is_reserved:
+            raise ValueError("Access to private/internal networks is not allowed")
+    except ValueError:
+        # Not an IP address, continue with domain validation
+        pass
+
+
 def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
     """
     Crawls a URL to extract the title and favicon.
@@ -39,29 +51,14 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         title = None
         final_url = url
 
-        parsed = urlparse(final_url)
-
-        try:
-            ip = ipaddress.ip_address(parsed.hostname)
-            if ip.is_private or ip.is_loopback or ip.is_reserved:
-                raise ValueError("Access to private/internal networks is not allowed")
-        except ValueError:
-            # Not an IP address, continue with domain validation
-            pass
+        is_ip_address(final_url)
 
         try:
             response = requests.get(final_url, headers=headers, timeout=1)
             final_url = response.url  # Get the final URL after any redirects
 
-            try:
-                parsed = urlparse(final_url)
-
-                ip = ipaddress.ip_address(parsed.hostname)
-                if ip.is_private or ip.is_loopback or ip.is_reserved:
-                    raise ValueError("Access to private/internal networks is not allowed")
-            except ValueError:
-                # Not an IP address, continue with domain validation
-                pass
+            # check for redirected url also
+            is_ip_address(final_url)
 
             soup = BeautifulSoup(response.content, "html.parser")
             title_tag = soup.find("title")
