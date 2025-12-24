@@ -1,5 +1,7 @@
 # Python import
 from typing import Optional
+from uuid import uuid4
+
 
 # Third party
 from rest_framework.response import Response
@@ -8,7 +10,7 @@ from rest_framework import status
 
 # Module import
 from plane.app.views import BaseAPIView
-from plane.db.models import APIToken
+from plane.db.models import APIToken, Workspace
 from plane.app.serializers import APITokenSerializer, APITokenReadSerializer
 from plane.app.permissions import WorkSpaceAdminPermission
 
@@ -19,11 +21,27 @@ class WorkspaceAPITokenEndpoint(BaseAPIView):
     ]
 
     def post(self, request: Request, slug: str) -> Response:
-        serializer = APITokenSerializer(data=request.data, context={"workspace_slug": slug, "user": request.user})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        label = request.data.get("label", str(uuid4().hex))
+        description = request.data.get("description", "")
+        expired_at = request.data.get("expired_at", None)
+
+        # Check the user type
+        user_type = 1 if request.user.is_bot else 0
+
+        workspace = Workspace.objects.get(slug=slug)
+
+        api_token = APIToken.objects.create(
+            label=label,
+            description=description,
+            user=request.user,
+            user_type=user_type,
+            expired_at=expired_at,
+            workspace=workspace,
+        )
+
+        serializer = APITokenSerializer(api_token)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request: Request, slug: str, pk: Optional[str] = None) -> Response:
         if pk is None:
