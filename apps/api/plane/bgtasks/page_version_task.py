@@ -14,7 +14,7 @@ from plane.utils.exception_logger import log_exception
 
 
 @shared_task
-def page_version(page_id, existing_instance, user_id):
+def track_page_version(page_id, existing_instance, user_id):
     try:
         # Get the page
         page = Page.objects.get(id=page_id)
@@ -48,6 +48,7 @@ def page_version(page_id, existing_instance, user_id):
                         "description_json",
                         "description_stripped",
                         "sub_pages_data",
+                        "updated_at"
                     ]
                 )
             else:

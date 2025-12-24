@@ -46,7 +46,7 @@ from plane.utils.error_codes import ERROR_CODES
 # Local imports
 from ..base import BaseAPIView, BaseViewSet
 from plane.bgtasks.page_transaction_task import page_transaction
-from plane.bgtasks.page_version_task import page_version
+from plane.bgtasks.page_version_task import track_page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
 from plane.app.permissions import ProjectPagePermission
@@ -561,7 +561,7 @@ class PagesDescriptionViewSet(BaseViewSet):
                 )
 
             # Run background tasks
-            page_version.delay(
+            track_page_version.delay(
                 page_id=page_id,
                 existing_instance=existing_instance,
                 user_id=request.user.id,
