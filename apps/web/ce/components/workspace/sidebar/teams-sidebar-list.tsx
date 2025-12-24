@@ -1,1 +1,3 @@
-export const SidebarTeamsList = () => null;
+export function SidebarTeamsList() {
+  return null;
+}

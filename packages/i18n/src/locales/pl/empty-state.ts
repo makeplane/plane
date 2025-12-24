@@ -24,6 +24,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "Wygląda na to, że nie masz dostępu do tego projektu",
+      restricted_description: "Skontaktuj się z administratorem, aby poprosić o dostęp i móc kontynuować tutaj.",
+      join_description: "Kliknij przycisk poniżej, aby dołączyć.",
+      cta_primary: "Dołącz do projektu",
+      cta_loading: "Dołączanie do projektu",
+    },
+    invalid_project: {
+      title: "Projekt nie został znaleziony",
+      description: "Projekt, którego szukasz, nie istnieje.",
+    },
     work_items: {
       title: "Zacznij od swojego pierwszego elementu roboczego.",
       description:
@@ -181,6 +192,11 @@ export default {
       description:
         "Generuj bezpieczne tokeny API, aby połączyć swój obszar roboczy z zewnętrznymi systemami i aplikacjami.",
       cta_primary: "Dodaj token API",
+    },
+    webhooks: {
+      title: "Nie dodano jeszcze webhooka",
+      description: "Automatyzuj powiadomienia do usług zewnętrznych, gdy wystąpią zdarzenia projektowe.",
+      cta_primary: "Dodaj webhook",
     },
   },
 } as const;

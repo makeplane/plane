@@ -20,7 +20,7 @@ type Props = {
   width: string;
 };
 
-export const ImageToolbarRoot: React.FC<Props> = (props) => {
+export function ImageToolbarRoot(props: Props) {
   const { alignment, editor, downloadSrc, handleAlignmentChange, isTouchDevice } = props;
   // states
   const [shouldShowToolbar, setShouldShowToolbar] = useState(false);
@@ -31,7 +31,7 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
     <>
       <div
         className={cn(
-          "absolute top-1 right-1 h-7 z-20 bg-black/80 rounded flex items-center gap-2 px-2 opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity",
+          "absolute top-1 right-1 h-7 z-20 bg-alpha-black-1000 rounded-sm flex items-center gap-2 px-2 opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity",
           {
             "opacity-100 pointer-events-auto": shouldShowToolbar,
           }
@@ -54,4 +54,4 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

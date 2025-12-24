@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 
 // react hook form
@@ -20,7 +18,7 @@ type Props = {
   tabIndex?: number;
 };
 
-export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }) => {
+export function ModuleStatusSelect({ control, error, tabIndex }: Props) {
   const { t } = useTranslation();
   return (
     <Controller
@@ -33,14 +31,14 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }
           <CustomSelect
             value={value}
             label={
-              <div className={`flex items-center justify-center gap-2 text-xs py-0.5 ${error ? "text-red-500" : ""}`}>
+              <div className={`flex items-center justify-center gap-2 text-11 py-0.5 ${error ? "text-red-500" : ""}`}>
                 {value ? (
                   <ModuleStatusIcon status={value} />
                 ) : (
-                  <StatePropertyIcon className={`h-3 w-3 ${error ? "text-red-500" : "text-custom-text-200"}`} />
+                  <StatePropertyIcon className={`h-3 w-3 ${error ? "text-red-500" : "text-secondary"}`} />
                 )}
                 {(selectedValue && t(selectedValue?.i18n_label)) ?? (
-                  <span className={`${error ? "text-red-500" : "text-custom-text-200"}`}>Status</span>
+                  <span className={`${error ? "text-red-500" : "text-secondary"}`}>Status</span>
                 )}
               </div>
             }
@@ -61,4 +59,4 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }
       }}
     />
   );
-};
+}

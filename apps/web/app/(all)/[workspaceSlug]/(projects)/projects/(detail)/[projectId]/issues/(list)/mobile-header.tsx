@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -20,14 +18,11 @@ import {
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 
-export const ProjectIssuesMobileHeader = observer(() => {
+export const ProjectIssuesMobileHeader = observer(function ProjectIssuesMobileHeader() {
   // i18n
   const { t } = useTranslation();
   const [analyticsModal, setAnalyticsModal] = useState(false);
-  const { workspaceSlug, projectId } = useParams() as {
-    workspaceSlug: string;
-    projectId: string;
-  };
+  const { workspaceSlug, projectId } = useParams();
   const { currentProjectDetails } = useProject();
 
   // store hooks
@@ -67,19 +62,19 @@ export const ProjectIssuesMobileHeader = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         projectDetails={currentProjectDetails ?? undefined}
       />
-      <div className="md:hidden flex justify-evenly border-b border-custom-border-200 py-2 z-[13] bg-custom-background-100">
+      <div className="md:hidden flex justify-evenly border-b border-subtle py-2 z-[13] bg-surface-1">
         <MobileLayoutSelection
           layouts={[EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN, EIssueLayoutTypes.CALENDAR]}
           onChange={handleLayoutChange}
         />
-        <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
+        <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
           <FiltersDropdown
             title={t("common.display")}
             placement="bottom-end"
             menuButton={
-              <span className="flex items-center text-sm text-custom-text-200">
+              <span className="flex items-center text-13 text-secondary">
                 {t("common.display")}
-                <ChevronDownIcon className="ml-2 h-4 w-4 text-custom-text-200" />
+                <ChevronDownIcon className="ml-2 h-4 w-4 text-secondary" />
               </span>
             }
           >
@@ -99,7 +94,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
 
         <button
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center border-l border-custom-border-200 text-sm text-custom-text-200"
+          className="flex flex-grow justify-center border-l border-subtle text-13 text-secondary"
         >
           {t("common.analytics")}
         </button>

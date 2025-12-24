@@ -202,7 +202,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
       if (isEmpty(this.filters) || isEmpty(this.filters[cycleId])) return;
 
       const _filters = {
-        richFilters: this.filters[cycleId].richFilters as TWorkItemFilterExpression,
+        richFilters: this.filters[cycleId].richFilters,
         displayFilters: this.filters[cycleId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[cycleId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[cycleId].kanbanFilters as TIssueKanbanFilters,

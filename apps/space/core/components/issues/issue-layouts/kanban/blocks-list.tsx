@@ -13,14 +13,13 @@ interface IssueBlocksListProps {
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
-export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = observer((props) => {
+export const KanbanIssueBlocksList = observer(function KanbanIssueBlocksList(props: IssueBlocksListProps) {
   const { subGroupId, groupId, issueIds, displayProperties, scrollableContainerRef } = props;
 
   return (
     <>
-      {issueIds && issueIds.length > 0 ? (
-        <>
-          {issueIds.map((issueId) => {
+      {issueIds && issueIds.length > 0
+        ? issueIds.map((issueId) => {
             if (!issueId) return null;
 
             let draggableId = issueId;
@@ -37,9 +36,8 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = observer((p
                 scrollableContainerRef={scrollableContainerRef}
               />
             );
-          })}
-        </>
-      ) : null}
+          })
+        : null}
     </>
   );
 });

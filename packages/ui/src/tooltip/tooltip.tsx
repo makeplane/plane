@@ -33,7 +33,7 @@ interface ITooltipProps {
   renderByDefault?: boolean;
 }
 
-export const Tooltip: React.FC<ITooltipProps> = ({
+export function Tooltip({
   tooltipHeading,
   tooltipContent,
   position = "top",
@@ -43,8 +43,10 @@ export const Tooltip: React.FC<ITooltipProps> = ({
   openDelay = 200,
   closeDelay,
   isMobile = false,
-  renderByDefault = true, //FIXME: tooltip should always render on hover and not by default, this is a temporary fix
-}) => {
+
+  //FIXME: tooltip should always render on hover and not by default, this is a temporary fix
+  renderByDefault = true,
+}: ITooltipProps) {
   const toolTipRef = useRef<HTMLDivElement | null>(null);
 
   const [shouldRender, setShouldRender] = useState(renderByDefault);
@@ -81,24 +83,19 @@ export const Tooltip: React.FC<ITooltipProps> = ({
       content={
         <div
           className={cn(
-            "relative block z-50 max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-xs text-custom-text-200 shadow-md",
+            "relative block z-50 max-w-xs gap-1 overflow-hidden break-words rounded-md bg-surface-1 p-2 text-11 text-secondary shadow-md",
             {
               hidden: isMobile,
             },
             className
           )}
         >
-          {tooltipHeading && <h5 className="font-medium text-custom-text-100">{tooltipHeading}</h5>}
+          {tooltipHeading && <h5 className="font-medium text-primary">{tooltipHeading}</h5>}
           {tooltipContent}
         </div>
       }
       position={position}
-      renderTarget={({
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        isOpen: isTooltipOpen,
-        ref: eleReference,
-        ...tooltipProps
-      }) =>
+      renderTarget={({ isOpen: isTooltipOpen, ref: eleReference, ...tooltipProps }) =>
         React.cloneElement(children, {
           ref: eleReference,
           ...tooltipProps,
@@ -107,4 +104,4 @@ export const Tooltip: React.FC<ITooltipProps> = ({
       }
     />
   );
-};
+}

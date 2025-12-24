@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useParams } from "next/navigation";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
@@ -17,7 +15,7 @@ import { WorkspaceService } from "@/plane-web/services";
 
 const workspaceService = new WorkspaceService();
 
-export const JiraImportUsers: FC = () => {
+export function JiraImportUsers() {
   const { workspaceSlug } = useParams();
   // form info
   const {
@@ -59,11 +57,11 @@ export const JiraImportUsers: FC = () => {
     | undefined;
 
   return (
-    <div className="h-full w-full space-y-10 divide-y-2 divide-custom-border-200 overflow-y-auto">
+    <div className="h-full w-full space-y-10 divide-y-2 divide-subtle-1 overflow-y-auto">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Users</h3>
-          <p className="text-sm text-custom-text-200">Update, invite or choose not to invite assignee</p>
+          <p className="text-13 text-secondary">Update, invite or choose not to invite assignee</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -77,8 +75,8 @@ export const JiraImportUsers: FC = () => {
       {watch("data.invite_users") && (
         <div className="pt-6">
           <div className="grid grid-cols-3 gap-3">
-            <div className="col-span-1 text-sm text-custom-text-200">Name</div>
-            <div className="col-span-1 text-sm text-custom-text-200">Import as</div>
+            <div className="col-span-1 text-13 text-secondary">Name</div>
+            <div className="col-span-1 text-13 text-secondary">Import as</div>
           </div>
 
           <div className="mt-5 space-y-3">
@@ -96,7 +94,7 @@ export const JiraImportUsers: FC = () => {
                         input
                         value={value}
                         onChange={onChange}
-                        label={<span className="capitalize">{Boolean(value) ? value : ("Ignore" as any)}</span>}
+                        label={<span className="capitalize">{value ? value : ("Ignore" as any)}</span>}
                       >
                         <CustomSelect.Option value="invite">Invite by email</CustomSelect.Option>
                         <CustomSelect.Option value="map">Map to existing</CustomSelect.Option>
@@ -151,4 +149,4 @@ export const JiraImportUsers: FC = () => {
       )}
     </div>
   );
-};
+}

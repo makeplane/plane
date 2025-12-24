@@ -26,7 +26,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
 // types
-import type { TEditorCommands } from "@/types";
+import type { IEditorPropsExtended, TEditorCommands, TExtensions } from "@/types";
 // local imports
 import { TextAlignmentSelector } from "./alignment-selector";
 import { BubbleMenuLinkSelector } from "./link-selector";
@@ -61,10 +61,13 @@ export type EditorStateType = {
 };
 
 type Props = {
+  disabledExtensions: TExtensions[];
   editor: Editor;
+  extendedEditorProps: IEditorPropsExtended;
+  flaggedExtensions: TExtensions[];
 };
 
-export const EditorBubbleMenu: FC<Props> = (props) => {
+export function EditorBubbleMenu(props: Props) {
   const { editor } = props;
   // states
   const [isSelecting, setIsSelecting] = useState(false);
@@ -183,7 +186,7 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
       {!isSelecting && (
         <div
           ref={menuRef}
-          className="flex py-2 divide-x divide-custom-border-200 rounded-lg border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg overflow-x-scroll horizontal-scrollbar scrollbar-xs"
+          className="flex py-2 divide-x divide-subtle-1 rounded-lg border border-subtle bg-surface-1 shadow-raised-200 overflow-x-scroll horizontal-scrollbar scrollbar-xs"
         >
           <div className="px-2">
             <BubbleMenuNodeSelector editor={editor} />
@@ -208,9 +211,9 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
                   e.stopPropagation();
                 }}
                 className={cn(
-                  "size-7 grid place-items-center rounded text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 transition-colors",
+                  "size-7 grid place-items-center rounded-sm text-tertiary hover:bg-layer-1 active:bg-layer-1 transition-colors",
                   {
-                    "bg-custom-background-80 text-custom-text-100": editorState[item.key],
+                    "bg-layer-1 text-primary": editorState[item.key],
                   }
                 )}
               >
@@ -223,4 +226,4 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
       )}
     </BubbleMenu>
   );
-};
+}

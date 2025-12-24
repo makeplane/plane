@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
@@ -31,7 +29,7 @@ import { IssueFormRoot } from "./form";
 import type { IssueFormProps } from "./form";
 import type { IssuesModalProps } from "./modal";
 
-export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((props) => {
+export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueModalBase(props: IssuesModalProps) {
   const {
     data,
     isOpen,
@@ -46,6 +44,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     modalTitle,
     primaryButtonText,
     isProjectSelectionDisabled = false,
+    showActionItemsOnUpdate = false,
   } = props;
   const issueStoreType = useIssueStoreType();
 
@@ -320,6 +319,14 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         type: TOAST_TYPE.SUCCESS,
         title: t("success"),
         message: t("issue_updated_successfully"),
+        actionItems:
+          showActionItemsOnUpdate && payload.project_id ? (
+            <CreateIssueToastActionItems
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={payload.project_id}
+              issueId={data.id}
+            />
+          ) : undefined,
       });
       captureSuccess({
         eventName: WORK_ITEM_TRACKER_EVENTS.update,

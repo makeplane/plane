@@ -33,7 +33,7 @@ type Props = {
   isEditable?: boolean;
 };
 
-export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
+export function ProjectSettingLabelItem(props: Props) {
   const {
     label,
     setIsUpdating,
@@ -87,12 +87,12 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
     <LabelDndHOC label={label} isGroup={false} isChild={isChild} isLastChild={isLastChild} onDrop={onDrop}>
       {(isDragging, isDroppingInLabel, dragHandleRef) => (
         <div
-          className={`rounded ${isDroppingInLabel ? "border-[2px] border-custom-primary-100" : "border-[1.5px] border-transparent"}`}
+          className={`rounded-sm ${isDroppingInLabel ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
         >
           <div
-            className={`py-3 px-1 group relative flex items-center justify-between gap-2 space-y-3 rounded  ${
-              isDroppingInLabel ? "" : "border-[0.5px] border-custom-border-200"
-            } ${isDragging || isParentDragging ? "bg-custom-background-80" : "bg-custom-background-100"}`}
+            className={`py-3 px-1 group relative flex items-center justify-between gap-2 space-y-3 rounded-sm  ${
+              isDroppingInLabel ? "" : "border-[0.5px] border-subtle"
+            } ${isDragging || isParentDragging ? "bg-layer-1" : "bg-surface-1"}`}
           >
             {isEditLabelForm ? (
               <CreateUpdateLabelInline
@@ -121,4 +121,4 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
       )}
     </LabelDndHOC>
   );
-};
+}

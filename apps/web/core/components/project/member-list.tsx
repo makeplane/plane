@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
@@ -22,7 +20,7 @@ type TProjectMemberListProps = {
   workspaceSlug: string;
 };
 
-export const ProjectMemberList: React.FC<TProjectMemberListProps> = observer((props) => {
+export const ProjectMemberList = observer(function ProjectMemberList(props: TProjectMemberListProps) {
   const { projectId, workspaceSlug } = props;
   // states
   const [inviteModal, setInviteModal] = useState(false);
@@ -77,13 +75,13 @@ export const ProjectMemberList: React.FC<TProjectMemberListProps> = observer((pr
         projectId={projectId}
         workspaceSlug={workspaceSlug}
       />
-      <div className="flex items-center justify-between gap-4 py-2 overflow-x-hidden border-b border-custom-border-100">
-        <div className="text-base font-semibold">{t("common.members")}</div>
+      <div className="flex items-center justify-between gap-4 py-2 overflow-x-hidden border-b border-subtle">
+        <div className="text-14 font-semibold">{t("common.members")}</div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-start gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2 py-1">
+          <div className="flex items-center justify-start gap-1.5 rounded-md border border-subtle bg-surface-1 px-2 py-1">
             <Search className="h-3.5 w-3.5" />
             <input
-              className="w-full max-w-[234px] border-none bg-transparent text-sm focus:outline-none placeholder:text-custom-text-400"
+              className="w-full max-w-[234px] border-none bg-transparent text-13 focus:outline-none placeholder:text-placeholder"
               placeholder="Search"
               value={searchQuery}
               autoFocus
@@ -98,7 +96,6 @@ export const ProjectMemberList: React.FC<TProjectMemberListProps> = observer((pr
           {isAdmin && (
             <Button
               variant="primary"
-              size="sm"
               onClick={() => {
                 setInviteModal(true);
               }}
@@ -112,7 +109,7 @@ export const ProjectMemberList: React.FC<TProjectMemberListProps> = observer((pr
       {!projectMemberIds ? (
         <MembersSettingsLoader />
       ) : (
-        <div className="divide-y divide-custom-border-100 overflow-scroll">
+        <div className="divide-y divide-subtle overflow-scroll">
           {searchedProjectMembers.length !== 0 && (
             <ProjectMemberListItem
               memberDetails={memberDetails ?? []}
@@ -121,7 +118,7 @@ export const ProjectMemberList: React.FC<TProjectMemberListProps> = observer((pr
             />
           )}
           {searchedProjectMembers.length === 0 && (
-            <h4 className="text-sm mt-16 text-center text-custom-text-400">{t("no_matching_members")}</h4>
+            <h4 className="text-13 mt-16 text-center text-placeholder">{t("no_matching_members")}</h4>
           )}
         </div>
       )}

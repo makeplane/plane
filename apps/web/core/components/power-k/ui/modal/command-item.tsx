@@ -18,13 +18,13 @@ type Props = {
   value?: string;
 };
 
-export const PowerKModalCommandItem: React.FC<Props> = (props) => {
+export function PowerKModalCommandItem(props: Props) {
   const { icon: Icon, iconNode, isDisabled, isSelected, keySequence, label, onSelect, shortcut, value } = props;
 
   return (
     <Command.Item value={value} onSelect={onSelect} className="focus:outline-none" disabled={isDisabled}>
       <div
-        className={cn("flex items-center gap-2 text-custom-text-200", {
+        className={cn("flex items-center gap-2 text-secondary", {
           "opacity-70": isDisabled,
         })}
       >
@@ -33,10 +33,10 @@ export const PowerKModalCommandItem: React.FC<Props> = (props) => {
         {label}
       </div>
       <div className="shrink-0 flex items-center gap-2">
-        {isSelected && <Check className="shrink-0 size-3 text-custom-text-200" />}
+        {isSelected && <Check className="shrink-0 size-3 text-secondary" />}
         {keySequence && <KeySequenceBadge sequence={keySequence} />}
         {shortcut && <ShortcutBadge shortcut={shortcut} />}
       </div>
     </Command.Item>
   );
-};
+}

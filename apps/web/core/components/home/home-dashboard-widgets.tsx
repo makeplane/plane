@@ -54,7 +54,7 @@ export const HOME_WIDGETS_LIST: {
   },
 };
 
-export const DashboardWidgets = observer(() => {
+export const DashboardWidgets = observer(function DashboardWidgets() {
   // router
   const { workspaceSlug } = useParams();
   // navigation
@@ -86,7 +86,7 @@ export const DashboardWidgets = observer(() => {
       {!isWikiApp && <NoProjectsEmptyState />}
 
       {isAnyWidgetEnabled ? (
-        <div className="flex flex-col divide-y-[1px] divide-custom-border-100">
+        <div className="flex flex-col">
           {orderedWidgets.map((key) => {
             const WidgetComponent = HOME_WIDGETS_LIST[key]?.component;
             const isEnabled = widgetsMap[key]?.is_enabled;

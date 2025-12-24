@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { STATE_TRACKER_EVENTS } from "@plane/constants";
@@ -18,7 +15,7 @@ type TStateUpdate = {
   handleClose: () => void;
 };
 
-export const StateUpdate: FC<TStateUpdate> = observer((props) => {
+export const StateUpdate = observer(function StateUpdate(props: TStateUpdate) {
   const { state, updateStateCallback, shouldTrackEvents, handleClose } = props;
   // states
   const [loader, setLoader] = useState(false);
@@ -50,7 +47,7 @@ export const StateUpdate: FC<TStateUpdate> = observer((props) => {
       handleClose();
       return { status: "success" };
     } catch (error) {
-      const errorStatus = error as unknown as { status: number };
+      const errorStatus = error as { status: number };
       if (errorStatus?.status === 400) {
         setToast({
           type: TOAST_TYPE.ERROR,

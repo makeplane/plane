@@ -1,8 +1,15 @@
 import { Icon } from "./icon";
 export const ActionsIconsMap = [
   { icon: <Icon name="action.add" />, title: "AddIcon" },
+  { icon: <Icon name="action.add-workitem" />, title: "AddWorkItemIcon" },
   { icon: <Icon name="action.add-reaction" />, title: "AddReactionIcon" },
   { icon: <Icon name="action.close" />, title: "CloseIcon" },
+  { icon: <Icon name="action.filter" />, title: "FilterIcon" },
+  { icon: <Icon name="action.filter-applied" />, title: "FilterAppliedIcon" },
+  { icon: <Icon name="action.search" />, title: "SearchIcon" },
+  { icon: <Icon name="action.preferences" />, title: "PreferencesIcon" },
+  { icon: <Icon name="action.copy-link" />, title: "CopyLinkIcon" },
+  { icon: <Icon name="action.upgrade" />, title: "UpgradeIcon" },
 ];
 
 export const ArrowsIconsMap = [
@@ -10,6 +17,7 @@ export const ArrowsIconsMap = [
   { icon: <Icon name="arrow.chevron-left" />, title: "ChevronLeftIcon" },
   { icon: <Icon name="arrow.chevron-right" />, title: "ChevronRightIcon" },
   { icon: <Icon name="arrow.chevron-up" />, title: "ChevronUpIcon" },
+  { icon: <Icon name="arrow.reply" />, title: "ReplyIcon" },
 ];
 
 export const WorkspaceIconsMap = [
@@ -19,6 +27,7 @@ export const WorkspaceIconsMap = [
   { icon: <Icon name="workspace.draft" />, title: "DraftIcon" },
   { icon: <Icon name="workspace.home" />, title: "HomeIcon" },
   { icon: <Icon name="workspace.inbox" />, title: "InboxIcon" },
+  { icon: <Icon name="workspace.multiple-sticky" />, title: "MultipleStickyIcon" },
   { icon: <Icon name="workspace.project" />, title: "ProjectIcon" },
   { icon: <Icon name="workspace.your-work" />, title: "YourWorkIcon" },
 ];
@@ -70,4 +79,5 @@ export const PropertyIconsMap = [
   { icon: <Icon name="property.user" />, title: "UserPropertyIcon" },
   { icon: <Icon name="property.user-square" />, title: "UserSquarePropertyIcon" },
   { icon: <Icon name="property.workflows" />, title: "WorkflowsPropertyIcon" },
+  { icon: <Icon name="property.label-filled" />, title: "LabelFilledIcon" },
 ];

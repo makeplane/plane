@@ -17,6 +17,9 @@ from plane.db.mixins import SoftDeletionManager
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
+from .description import Description
+from plane.db.mixins import ChangeTrackerMixin
+from .state import StateGroup
 
 
 def get_default_properties():
@@ -95,6 +98,7 @@ class IssueManager(SoftDeletionManager):
             )
             .filter(deleted_at__isnull=True)
             .filter(state__is_triage=False)
+            .exclude(state__group=StateGroup.TRIAGE.value)
             .exclude(archived_at__isnull=False)
             .exclude(project__archived_at__isnull=False)
             .exclude(is_draft=True)
@@ -203,39 +207,35 @@ class Issue(ProjectBaseModel):
 
         if self._state.adding:
             with transaction.atomic():
-                # Create a lock for this specific project using an advisory lock
+                # Create a lock for this specific project using a transaction-level advisory lock
                 # This ensures only one transaction per project can execute this code at a time
+                # The lock is automatically released when the transaction ends
                 lock_key = convert_uuid_to_integer(self.project.id)
 
                 with connection.cursor() as cursor:
-                    # Get an exclusive lock using the project ID as the lock key
-                    cursor.execute("SELECT pg_advisory_lock(%s)", [lock_key])
+                    # Get an exclusive transaction-level lock using the project ID as the lock key
+                    cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
 
-                try:
-                    # Get the last sequence for the project
-                    last_sequence = IssueSequence.objects.filter(project=self.project).aggregate(
-                        largest=models.Max("sequence")
-                    )["largest"]
-                    self.sequence_id = last_sequence + 1 if last_sequence else 1
-                    # Strip the html tags using html parser
-                    self.description_stripped = (
-                        None
-                        if (self.description_html == "" or self.description_html is None)
-                        else strip_tags(self.description_html)
-                    )
-                    largest_sort_order = Issue.objects.filter(project=self.project, state=self.state).aggregate(
-                        largest=models.Max("sort_order")
-                    )["largest"]
-                    if largest_sort_order is not None:
-                        self.sort_order = largest_sort_order + 10000
+                # Get the last sequence for the project
+                last_sequence = IssueSequence.objects.filter(project=self.project).aggregate(
+                    largest=models.Max("sequence")
+                )["largest"]
+                self.sequence_id = last_sequence + 1 if last_sequence else 1
+                # Strip the html tags using html parser
+                self.description_stripped = (
+                    None
+                    if (self.description_html == "" or self.description_html is None)
+                    else strip_tags(self.description_html)
+                )
+                largest_sort_order = Issue.objects.filter(project=self.project, state=self.state).aggregate(
+                    largest=models.Max("sort_order")
+                )["largest"]
+                if largest_sort_order is not None:
+                    self.sort_order = largest_sort_order + 10000
 
-                    super(Issue, self).save(*args, **kwargs)
+                super(Issue, self).save(*args, **kwargs)
 
-                    IssueSequence.objects.create(issue=self, sequence=self.sequence_id, project=self.project)
-                finally:
-                    # Release the lock
-                    with connection.cursor() as cursor:
-                        cursor.execute("SELECT pg_advisory_unlock(%s)", [lock_key])
+                IssueSequence.objects.create(issue=self, sequence=self.sequence_id, project=self.project)
         else:
             # Strip the html tags using html parser
             self.description_stripped = (
@@ -442,10 +442,13 @@ class IssueActivity(ProjectBaseModel):
         return str(self.issue)
 
 
-class IssueComment(ProjectBaseModel):
+class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
     comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
+    description = models.OneToOneField(
+        "db.Description", on_delete=models.CASCADE, related_name="issue_comment_description", null=True
+    )
     attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_comments")
     # System can also create comment
@@ -463,10 +466,62 @@ class IssueComment(ProjectBaseModel):
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
     edited_at = models.DateTimeField(null=True, blank=True)
+    parent = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="parent_issue_comment"
+    )
+
+    TRACKED_FIELDS = ["comment_stripped", "comment_json", "comment_html"]
 
     def save(self, *args, **kwargs):
+        """
+        Custom save method for IssueComment that manages the associated Description model.
+
+        This method handles creation and updates of both the comment and its description in a
+        single atomic transaction to ensure data consistency.
+        """
+
         self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
-        return super(IssueComment, self).save(*args, **kwargs)
+        is_creating = self._state.adding
+
+        # Prepare description defaults
+        description_defaults = {
+            "workspace_id": self.workspace_id,
+            "project_id": self.project_id,
+            "created_by_id": self.created_by_id,
+            "updated_by_id": self.updated_by_id,
+            "description_stripped": self.comment_stripped,
+            "description_json": self.comment_json,
+            "description_html": self.comment_html,
+        }
+
+        with transaction.atomic():
+            super(IssueComment, self).save(*args, **kwargs)
+
+            if is_creating or not self.description_id:
+                # Create new description for new comment
+                description = Description.objects.create(**description_defaults)
+                self.description_id = description.id
+                super(IssueComment, self).save(update_fields=["description_id"])
+            else:
+                field_mapping = {
+                    "comment_html": "description_html",
+                    "comment_stripped": "description_stripped",
+                    "comment_json": "description_json",
+                }
+
+                # Use _changes_on_save which is captured by ChangeTrackerMixin.save()
+                # before the tracked fields are reset
+                changed_fields = {
+                    desc_field: getattr(self, comment_field)
+                    for comment_field, desc_field in field_mapping.items()
+                    if comment_field in self._changes_on_save
+                }
+
+                # Update description only if comment fields changed
+                if changed_fields and self.description_id:
+                    Description.objects.filter(pk=self.description_id).update(
+                        **changed_fields, updated_by_id=self.updated_by_id, updated_at=self.updated_at
+                    )
 
     class Meta:
         verbose_name = "Issue Comment"

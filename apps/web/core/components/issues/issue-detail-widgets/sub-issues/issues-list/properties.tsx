@@ -33,7 +33,7 @@ type Props = {
   issue: TIssue;
 };
 
-export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => {
+export const SubIssuesListItemProperties = observer(function SubIssuesListItemProperties(props: Props) {
   const { workspaceSlug, parentIssueId, issueId, canEdit, updateSubIssue, displayProperties, issue } = props;
   const { t } = useTranslation();
   const { getStateById } = useProjectState();
@@ -116,7 +116,6 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
             }
             disabled={!canEdit}
             buttonVariant="border-without-text"
-            buttonClassName="border"
             showTooltip
           />
         </div>
@@ -189,7 +188,7 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
             icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={shouldHighlight ? "text-red-500" : ""}
-            clearIconClassName="text-custom-text-100"
+            clearIconClassName="text-primary"
             optionsClassName="z-30"
             disabled={!canEdit}
             showTooltip

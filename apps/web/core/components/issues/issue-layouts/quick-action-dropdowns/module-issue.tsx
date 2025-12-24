@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
@@ -32,7 +30,7 @@ import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
 import { useModuleIssueMenuItems } from "./helper";
 
-export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
+export const ModuleIssueQuickActions = observer(function ModuleIssueQuickActions(props: IQuickActionProps) {
   const {
     issue,
     handleDelete,
@@ -104,13 +102,16 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
 
   const MENU_ITEMS = useModuleIssueMenuItems(menuItemProps);
 
-  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
-    ...item,
-    onClick: () => {
-      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.MODULE });
-      item.action();
-    },
-  }));
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
+    return {
+      ...item,
+
+      onClick: () => {
+        captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.MODULE });
+        item.action();
+      },
+    };
+  });
   return (
     <>
       {/* Modals */}
@@ -173,8 +174,8 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
                     <h5>{item.title}</h5>
                     {item.description && (
                       <p
-                        className={cn("text-custom-text-300 whitespace-pre-line", {
-                          "text-custom-text-400": item.disabled,
+                        className={cn("text-tertiary whitespace-pre-line", {
+                          "text-placeholder": item.disabled,
                         })}
                       >
                         {item.description}
@@ -186,7 +187,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
                 className={cn(
                   "flex items-center gap-2",
                   {
-                    "text-custom-text-400": item.disabled,
+                    "text-placeholder": item.disabled,
                   },
                   item.className
                 )}
@@ -201,7 +202,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
                     className={cn(
                       "flex items-center gap-2",
                       {
-                        "text-custom-text-400": nestedItem.disabled,
+                        "text-placeholder": nestedItem.disabled,
                       },
                       nestedItem.className
                     )}
@@ -212,8 +213,8 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
                       <h5>{nestedItem.title}</h5>
                       {nestedItem.description && (
                         <p
-                          className={cn("text-custom-text-300 whitespace-pre-line", {
-                            "text-custom-text-400": nestedItem.disabled,
+                          className={cn("text-tertiary whitespace-pre-line", {
+                            "text-placeholder": nestedItem.disabled,
                           })}
                         >
                           {nestedItem.description}
@@ -237,7 +238,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -248,8 +249,8 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("text-tertiary whitespace-pre-line", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback } from "react";
 import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
@@ -20,7 +18,7 @@ type IssueFiltersDropdownProps = {
   anchor: string;
 };
 
-export const IssueFiltersDropdown: React.FC<IssueFiltersDropdownProps> = observer((props) => {
+export const IssueFiltersDropdown = observer(function IssueFiltersDropdown(props: IssueFiltersDropdownProps) {
   const { anchor } = props;
   // router
   const router = useRouter();
@@ -58,7 +56,7 @@ export const IssueFiltersDropdown: React.FC<IssueFiltersDropdownProps> = observe
   );
 
   return (
-    <div className="z-10 flex h-full w-full flex-col">
+    <div className="relative">
       <FiltersDropdown title="Filters" placement="bottom-end">
         <FilterSelection
           filters={issueFilters?.filters ?? {}}

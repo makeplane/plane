@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -9,6 +7,8 @@ import { setPromiseToast } from "@plane/propel/toast";
 import type { TInstanceConfigurationKeys } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, resolveGeneralTheme } from "@plane/utils";
+// components
+import { PageWrapper } from "@/components/common/page-wrapper";
 // hooks
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { useAuthenticationModes } from "@/hooks/oauth";
@@ -16,7 +16,7 @@ import { useInstance } from "@/hooks/store";
 // types
 import type { Route } from "./+types/page";
 
-const InstanceAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() => {
+const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(_props: Route.ComponentProps) {
   // theme
   const { resolvedTheme: resolvedThemeAdmin } = useTheme();
   // store
@@ -62,68 +62,63 @@ const InstanceAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() =
 
   const authenticationModes = useAuthenticationModes({ disabled: isSubmitting, updateConfig, resolvedTheme });
   return (
-    <>
-      <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
-        <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
-          <div className="text-xl font-medium text-custom-text-100">Manage authentication modes for your instance</div>
-          <div className="text-sm font-normal text-custom-text-300">
-            Configure authentication modes for your team and restrict sign-ups to be invite only.
-          </div>
-        </div>
-        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
-          {formattedConfig ? (
-            <div className="space-y-3">
-              <div className={cn("w-full flex items-center gap-14 rounded")}>
-                <div className="flex grow items-center gap-4">
-                  <div className="grow">
-                    <div className="text-lg font-medium pb-1">Allow anyone to sign up even without an invite</div>
-                    <div className={cn("font-normal leading-5 text-custom-text-300 text-xs")}>
-                      Toggling this off will only let users sign up when they are invited.
-                    </div>
-                  </div>
-                </div>
-                <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
-                  <div className="flex items-center gap-4">
-                    <ToggleSwitch
-                      value={Boolean(parseInt(enableSignUpConfig))}
-                      onChange={() => {
-                        if (Boolean(parseInt(enableSignUpConfig)) === true) {
-                          updateConfig("ENABLE_SIGNUP", "0");
-                        } else {
-                          updateConfig("ENABLE_SIGNUP", "1");
-                        }
-                      }}
-                      size="sm"
-                      disabled={isSubmitting}
-                    />
-                  </div>
+    <PageWrapper
+      header={{
+        title: "Manage authentication modes for your instance",
+        description: "Configure authentication modes for your team and restrict sign-ups to be invite only.",
+      }}
+    >
+      {formattedConfig ? (
+        <div className="space-y-3">
+          <div className={cn("w-full flex items-center gap-14 rounded-sm")}>
+            <div className="flex grow items-center gap-4">
+              <div className="grow">
+                <div className="text-16 font-medium pb-1">Allow anyone to sign up even without an invite</div>
+                <div className={cn("font-regular leading-5 text-tertiary text-11")}>
+                  Toggling this off will only let users sign up when they are invited.
                 </div>
               </div>
-              <div className="text-lg font-medium pt-6">Available authentication modes</div>
-              {authenticationModes.map((method) => (
-                <AuthenticationMethodCard
-                  key={method.key}
-                  name={method.name}
-                  description={method.description}
-                  icon={method.icon}
-                  config={method.config}
-                  disabled={isSubmitting}
-                  unavailable={method.unavailable}
-                />
-              ))}
             </div>
-          ) : (
-            <Loader className="space-y-10">
-              <Loader.Item height="50px" width="75%" />
-              <Loader.Item height="50px" width="75%" />
-              <Loader.Item height="50px" width="40%" />
-              <Loader.Item height="50px" width="40%" />
-              <Loader.Item height="50px" width="20%" />
-            </Loader>
-          )}
+            <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
+              <div className="flex items-center gap-4">
+                <ToggleSwitch
+                  value={Boolean(parseInt(enableSignUpConfig))}
+                  onChange={() => {
+                    if (Boolean(parseInt(enableSignUpConfig)) === true) {
+                      updateConfig("ENABLE_SIGNUP", "0");
+                    } else {
+                      updateConfig("ENABLE_SIGNUP", "1");
+                    }
+                  }}
+                  size="sm"
+                  disabled={isSubmitting}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="text-lg font-medium pt-6">Available authentication modes</div>
+          {authenticationModes.map((method) => (
+            <AuthenticationMethodCard
+              key={method.key}
+              name={method.name}
+              description={method.description}
+              icon={method.icon}
+              config={method.config}
+              disabled={isSubmitting}
+              unavailable={method.unavailable}
+            />
+          ))}
         </div>
-      </div>
-    </>
+      ) : (
+        <Loader className="space-y-10">
+          <Loader.Item height="50px" width="75%" />
+          <Loader.Item height="50px" width="75%" />
+          <Loader.Item height="50px" width="40%" />
+          <Loader.Item height="50px" width="40%" />
+          <Loader.Item height="50px" width="20%" />
+        </Loader>
+      )}
+    </PageWrapper>
   );
 });
 

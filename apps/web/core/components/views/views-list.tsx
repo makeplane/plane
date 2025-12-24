@@ -15,7 +15,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { ProjectViewListItem } from "./view-list-item";
 
-export const ProjectViewsList = observer(() => {
+export const ProjectViewsList = observer(function ProjectViewsList() {
   const { projectId } = useParams();
   // plane hooks
   const { t } = useTranslation();
@@ -51,7 +51,7 @@ export const ProjectViewsList = observer(() => {
             {filteredProjectViews.length > 0 ? (
               filteredProjectViews.map((view) => <ProjectViewListItem key={view.id} view={view} />)
             ) : (
-              <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>
+              <p className="mt-10 text-center text-13 text-tertiary">No results found</p>
             )}
           </ListLayout>
         </div>

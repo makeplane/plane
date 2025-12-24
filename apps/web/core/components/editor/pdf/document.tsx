@@ -1,5 +1,3 @@
-"use client";
-
 import type { PageProps } from "@react-pdf/renderer";
 import { Document, Font, Page } from "@react-pdf/renderer";
 import { Html } from "react-pdf-html";
@@ -45,7 +43,7 @@ type Props = {
   pageFormat: PageProps["size"];
 };
 
-export const PDFDocument: React.FC<Props> = (props) => {
+export function PDFDocument(props: Props) {
   const { content, pageFormat } = props;
 
   return (
@@ -61,4 +59,4 @@ export const PDFDocument: React.FC<Props> = (props) => {
       </Page>
     </Document>
   );
-};
+}

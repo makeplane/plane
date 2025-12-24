@@ -24,6 +24,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "您似乎無權存取此專案",
+      restricted_description: "請聯絡管理員以申請存取權，核准後即可在此繼續。",
+      join_description: "點擊下方按鈕加入專案。",
+      cta_primary: "加入專案",
+      cta_loading: "正在加入專案",
+    },
+    invalid_project: {
+      title: "找不到專案",
+      description: "您所查找的專案不存在。",
+    },
     work_items: {
       title: "從您的第一個工作項開始。",
       description: "工作項是專案的建構模組 — 指派負責人、設定優先順序並輕鬆追蹤進度。",
@@ -165,6 +176,11 @@ export default {
       title: "暫無個人權杖",
       description: "產生安全的 API 權杖以將工作區與外部系統和應用程式連線。",
       cta_primary: "新增 API 權杖",
+    },
+    webhooks: {
+      title: "尚未新增 Webhook",
+      description: "在專案事件發生時自動向外部服務傳送通知。",
+      cta_primary: "新增 webhook",
     },
   },
 } as const;

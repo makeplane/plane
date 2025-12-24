@@ -22,7 +22,7 @@ const isDate = (date: string) => {
   return datePattern.test(date);
 };
 
-export const FilterDate: FC<Props> = observer((props) => {
+export const FilterDate = observer(function FilterDate(props: Props) {
   const { filterKey, label, searchQuery } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
@@ -88,7 +88,7 @@ export const FilterDate: FC<Props> = observer((props) => {
               />
             </>
           ) : (
-            <p className="text-xs italic text-custom-text-400">No matches found</p>
+            <p className="text-11 italic text-placeholder">No matches found</p>
           )}
         </div>
       )}

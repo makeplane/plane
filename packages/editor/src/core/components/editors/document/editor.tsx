@@ -18,7 +18,7 @@ import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
 import type { EditorRefApi, IDocumentEditorProps } from "@/types";
 
-const DocumentEditor = (props: IDocumentEditorProps) => {
+function DocumentEditor(props: IDocumentEditorProps) {
   const {
     bubbleMenuEnabled = false,
     containerClassName,
@@ -30,9 +30,10 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     fileHandler,
     flaggedExtensions,
     forwardedRef,
+    getEditorMetaData,
+    handleEditorReady,
     id,
     isTouchDevice,
-    handleEditorReady,
     mentionHandler,
     onChange,
     user,
@@ -72,6 +73,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     fileHandler,
     flaggedExtensions,
     forwardedRef,
+    getEditorMetaData,
     handleEditorReady,
     id,
     initialValue: value,
@@ -91,17 +93,21 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
       displayConfig={displayConfig}
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
+      extendedEditorProps={extendedEditorProps}
       id={id}
       flaggedExtensions={flaggedExtensions}
       disabledExtensions={disabledExtensions}
       isTouchDevice={!!isTouchDevice}
     />
   );
-};
+}
 
-const DocumentEditorWithRef = forwardRef<EditorRefApi, IDocumentEditorProps>((props, ref) => (
-  <DocumentEditor {...props} forwardedRef={ref as MutableRefObject<EditorRefApi | null>} />
-));
+const DocumentEditorWithRef = forwardRef(function DocumentEditorWithRef(
+  props: IDocumentEditorProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
+  return <DocumentEditor {...props} forwardedRef={ref as MutableRefObject<EditorRefApi | null>} />;
+});
 
 DocumentEditorWithRef.displayName = "DocumentEditorWithRef";
 

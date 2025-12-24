@@ -29,7 +29,7 @@ type Props = {
   storeType: EIssuesStoreType;
 };
 
-export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
+export const SubIssuesListRoot = observer(function SubIssuesListRoot(props: Props) {
   const {
     workspaceSlug,
     projectId,
@@ -96,7 +96,7 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
           icon={<ListFilter />}
           customClassName={storeType !== EIssuesStoreType.EPIC ? "border-none" : ""}
           actionElement={
-            <Button variant="neutral-primary" size="sm" onClick={() => resetFilters(rootIssueId)}>
+            <Button variant="secondary" onClick={() => resetFilters(rootIssueId)}>
               {t("sub_work_item.empty_state.list_filters.action")}
             </Button>
           }

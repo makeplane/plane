@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -40,7 +38,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const RelationIssueListItem: FC<Props> = observer((props) => {
+export const RelationIssueListItem = observer(function RelationIssueListItem(props: Props) {
   const {
     workspaceSlug,
     issueId,
@@ -65,7 +63,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   // derived values
   const issue = getIssueById(relationIssueId);
   const { handleRedirection } = useIssuePeekOverviewRedirection(!!issue?.is_epic);
-  const issueOperations = useRelationOperations(!!issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  const issueOperations = useRelationOperations(issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
   const projectId = issue?.project_id;
 
@@ -126,9 +124,9 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
         className="w-full cursor-pointer"
       >
         {issue && (
-          <div className="group relative flex min-h-11 h-full w-full items-center px-1.5 py-1 transition-all hover:bg-custom-background-90">
+          <div className="group relative flex min-h-11 h-full w-full items-center px-1.5 py-1 transition-all hover:bg-surface-2">
             <span className="size-5 flex-shrink-0" />
-            <div className="flex w-full truncate cursor-pointer items-center gap-3">
+            <div className="flex flex-1 min-w-0 cursor-pointer items-center gap-3">
               <div className="flex-shrink-0">
                 {projectDetail && (
                   <IssueIdentifier
@@ -136,17 +134,18 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                     issueTypeId={issue.type_id}
                     projectIdentifier={projectDetail.identifier}
                     issueSequenceId={issue.sequence_id}
-                    textContainerClassName="text-xs text-custom-text-200"
+                    size="xs"
+                    variant="secondary"
                   />
                 )}
               </div>
 
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span className="w-full truncate text-sm text-custom-text-100">{issue.name}</span>
+                <span className="flex-1 w-0 truncate text-13 text-primary">{issue.name}</span>
               </Tooltip>
             </div>
             <div
-              className="flex-shrink-0 text-sm"
+              className="flex-shrink-0 text-13"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -160,7 +159,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                 issueServiceType={issueServiceType}
               />
             </div>
-            <div className="flex-shrink-0 text-sm">
+            <div className="pl-2 flex-shrink-0 text-13">
               <CustomMenu placement="bottom-end" ellipsis>
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleEditIssue}>

@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -44,7 +42,7 @@ type Props = {
   isArchived: boolean;
 };
 
-export const IssueMainContent: React.FC<Props> = observer((props) => {
+export const IssueMainContent = observer(function IssueMainContent(props: Props) {
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -130,16 +128,17 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
         <DescriptionInput
           issueSequenceId={issue.sequence_id}
-          containerClassName="-ml-3 border-none"
+          containerClassName="p-0 border-none"
           disabled={isArchived || !isEditable}
           editorRef={editorRef}
           entityId={issue.id}
           fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
           initialValue={issue.description_html}
-          onSubmit={async (value) => {
+          onSubmit={async (value, isMigrationUpdate) => {
             if (!issue.id || !issue.project_id) return;
             await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
               description_html: value,
+              ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
             });
           }}
           projectId={issue.project_id}

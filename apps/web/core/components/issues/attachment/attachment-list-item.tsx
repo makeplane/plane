@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
@@ -26,7 +24,7 @@ type TIssueAttachmentsListItem = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer((props) => {
+export const IssueAttachmentsListItem = observer(function IssueAttachmentsListItem(props: TIssueAttachmentsListItem) {
   const { t } = useTranslation();
   // props
   const { attachmentId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
@@ -56,14 +54,14 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
           window.open(fileURL, "_blank");
         }}
       >
-        <div className="group flex items-center justify-between gap-3 h-11 hover:bg-custom-background-90 pl-9 pr-2">
-          <div className="flex items-center gap-3 text-sm truncate">
+        <div className="group flex items-center justify-between gap-3 h-11 hover:bg-surface-2 pl-9 pr-2">
+          <div className="flex items-center gap-3 text-13 truncate">
             <div className="flex items-center gap-3">{fileIcon}</div>
             <Tooltip tooltipContent={`${fileName}.${fileExtension}`} isMobile={isMobile}>
-              <p className="text-custom-text-200 font-medium truncate">{`${fileName}.${fileExtension}`}</p>
+              <p className="text-secondary font-medium truncate">{`${fileName}.${fileExtension}`}</p>
             </Tooltip>
-            <span className="flex size-1.5 bg-custom-background-80 rounded-full" />
-            <span className="flex-shrink-0 text-custom-text-400">{convertBytesToSize(attachment.attributes.size)}</span>
+            <span className="flex size-1.5 bg-layer-1 rounded-full" />
+            <span className="flex-shrink-0 text-placeholder">{convertBytesToSize(attachment.attributes.size)}</span>
           </div>
 
           <div className="flex items-center gap-3">

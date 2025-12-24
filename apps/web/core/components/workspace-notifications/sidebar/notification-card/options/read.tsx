@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { MessageSquare } from "lucide-react";
 // plane imports
@@ -21,7 +18,9 @@ type TNotificationItemReadOption = {
   notification: INotification;
 };
 
-export const NotificationItemReadOption: FC<TNotificationItemReadOption> = observer((props) => {
+export const NotificationItemReadOption = observer(function NotificationItemReadOption(
+  props: TNotificationItemReadOption
+) {
   const { workspaceSlug, notification } = props;
   // hooks
   const { currentNotificationTab } = useWorkspaceNotifications();
@@ -61,7 +60,7 @@ export const NotificationItemReadOption: FC<TNotificationItemReadOption> = obser
       tooltipContent={data.read_at ? t("notification.options.mark_unread") : t("notification.options.mark_read")}
       callBack={handleNotificationUpdate}
     >
-      <MessageSquare className="h-3 w-3 text-custom-text-300" />
+      <MessageSquare className="h-3 w-3 text-tertiary" />
     </NotificationItemOptionButton>
   );
 });

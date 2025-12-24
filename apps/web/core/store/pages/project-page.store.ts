@@ -217,6 +217,7 @@ export class ProjectPageStore implements IProjectPageStore {
             const existingPage = this.getPageById(page.id);
             if (existingPage) {
               // If page already exists, update all fields except name
+
               const { name, ...otherFields } = page;
               existingPage.mutateProperties(otherFields, false);
             } else {

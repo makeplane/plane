@@ -1,14 +1,12 @@
-"use client";
-
 import * as React from "react";
 import { DayPicker } from "react-day-picker";
-import { ChevronLeftIcon } from "../icons";
+import { ChevronLeftIcon } from "../icons/arrows/chevron-left";
 
 import { cn } from "../utils";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
-export const Calendar = ({ className, showOutsideDays = true, ...props }: CalendarProps) => {
+export function Calendar({ className, showOutsideDays = true, ...props }: CalendarProps) {
   const currentYear = new Date().getFullYear();
   const thirtyYearsAgoFirstDay = new Date(currentYear - 30, 0, 1);
   const thirtyYearsFromNowFirstDay = new Date(currentYear + 30, 11, 31);
@@ -35,4 +33,4 @@ export const Calendar = ({ className, showOutsideDays = true, ...props }: Calend
       {...props}
     />
   );
-};
+}

@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { LabelPropertyIcon } from "@plane/propel/icons";
 // hooks
@@ -9,7 +8,7 @@ import { IssueActivityBlockComponent, IssueLink, LabelActivityChip } from "./";
 
 type TIssueLabelActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
+export const IssueLabelActivity = observer(function IssueLabelActivity(props: TIssueLabelActivity) {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {
@@ -24,7 +23,7 @@ export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<LabelPropertyIcon height={14} width={14} className="text-custom-text-200" />}
+      icon={<LabelPropertyIcon height={14} width={14} className="text-secondary" />}
       activityId={activityId}
       ends={ends}
     >

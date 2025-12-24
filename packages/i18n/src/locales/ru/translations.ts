@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Уникальный код",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Вставьте код, отправленный на ваш email",
         requesting_new_code: "Запрос нового кода",
         sending_code: "Отправка кода",
@@ -335,13 +335,13 @@ export default {
   project_id_must_be_at_least_1_character: "ID проекта должен содержать минимум 1 символ",
   project_id_must_be_at_most_5_characters: "ID проекта должен содержать максимум 5 символов",
   project_id: "ID проекта",
-  project_id_tooltip_content: "Помогает идентифицировать рабочие элементы в проекте. Макс. 5 символов.",
+  project_id_tooltip_content: "Помогает идентифицировать рабочие элементы в проекте. Макс. 10 символов.",
   description_placeholder: "Описание",
   only_alphanumeric_non_latin_characters_allowed: "Допускаются только буквенно-цифровые и нелатинские символы.",
   project_id_is_required: "Требуется ID проекта",
   project_id_allowed_char: "Допускаются только буквенно-цифровые и нелатинские символы.",
   project_id_min_char: "ID проекта должен содержать минимум 1 символ",
-  project_id_max_char: "ID проекта должен содержать максимум 5 символов",
+  project_id_max_char: "ID проекта должен содержать максимум 10 символов",
   project_description_placeholder: "Введите описание проекта",
   select_network: "Выбрать сеть",
   lead: "Руководитель",
@@ -1527,6 +1527,47 @@ export default {
         "При подтверждении все параметры сортировки, фильтрации и отображения + макет, выбранный для этого представления, будут безвозвратно удалены без возможности восстановления.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Изменить email",
+        description: "Введите новый адрес электронной почты, чтобы получить ссылку для подтверждения.",
+        toasts: {
+          success_title: "Успех!",
+          success_message: "Email успешно обновлён. Пожалуйста, войдите снова.",
+        },
+        form: {
+          email: {
+            label: "Новый email",
+            placeholder: "Введите свой email",
+            errors: {
+              required: "Email обязателен",
+              invalid: "Email недействителен",
+              exists: "Email уже существует. Используйте другой.",
+              validation_failed: "Не удалось подтвердить email. Попробуйте ещё раз.",
+            },
+          },
+          code: {
+            label: "Уникальный код",
+            placeholder: "123456",
+            helper_text: "Код подтверждения отправлен на ваш новый email.",
+            errors: {
+              required: "Уникальный код обязателен",
+              invalid: "Неверный код подтверждения. Попробуйте ещё раз.",
+            },
+          },
+        },
+        actions: {
+          continue: "Продолжить",
+          confirm: "Подтвердить",
+          cancel: "Отмена",
+        },
+        states: {
+          sending: "Отправка…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Настройки пространства",
     page_label: "{workspace} - Основные настройки",
@@ -1542,6 +1583,7 @@ export default {
         name: "Название пространства",
         company_size: "Размер компании",
         url: "URL пространства",
+        workspace_timezone: "Часовой пояс рабочего пространства",
         update_workspace: "Обновить пространство",
         delete_workspace: "Удалить пространство",
         delete_workspace_description: "Все данные будут безвозвратно удалены.",

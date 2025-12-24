@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // ui
@@ -7,12 +5,12 @@ import { Button } from "@plane/propel/button";
 // utils
 import { cn } from "@plane/utils";
 
-type EmptyStateSize = "sm" | "md" | "lg";
+type EmptyStateSize = "sm" | "base" | "lg";
 
 type ButtonConfig = {
   text: string;
-  prependIcon?: React.ReactNode;
-  appendIcon?: React.ReactNode;
+  prependIcon?: React.ReactElement;
+  appendIcon?: React.ReactElement;
   onClick?: () => void;
   disabled?: boolean;
 };
@@ -31,32 +29,34 @@ type Props = {
 
 const sizeClasses = {
   sm: "md:min-w-[24rem] max-w-[45rem]",
-  md: "md:min-w-[28rem] max-w-[50rem]",
+  base: "md:min-w-[28rem] max-w-[50rem]",
   lg: "md:min-w-[30rem] max-w-[60rem]",
 } as const;
 
-const CustomButton = ({
+function CustomButton({
   config,
   variant,
   size,
 }: {
   config: ButtonConfig;
-  variant: "primary" | "neutral-primary";
+  variant: "primary" | "secondary";
   size: EmptyStateSize;
-}) => (
-  <Button
-    variant={variant}
-    size={size}
-    onClick={config.onClick}
-    prependIcon={config.prependIcon}
-    appendIcon={config.appendIcon}
-    disabled={config.disabled}
-  >
-    {config.text}
-  </Button>
-);
+}) {
+  return (
+    <Button
+      variant={variant}
+      size={size}
+      onClick={config.onClick}
+      prependIcon={config.prependIcon}
+      appendIcon={config.appendIcon}
+      disabled={config.disabled}
+    >
+      {config.text}
+    </Button>
+  );
+}
 
-export const DetailedEmptyState: React.FC<Props> = observer((props) => {
+export const DetailedEmptyState = observer(function DetailedEmptyState(props: Props) {
   const {
     title,
     description,
@@ -79,9 +79,9 @@ export const DetailedEmptyState: React.FC<Props> = observer((props) => {
       )}
     >
       <div className={cn("flex flex-col gap-5", sizeClasses[size])}>
-        <div className="flex flex-col gap-1.5 flex-shrink">
-          <h3 className={cn("text-xl font-semibold", { "font-medium": !description })}>{title}</h3>
-          {description && <p className="text-sm">{description}</p>}
+        <div className="flex flex-col gap-1.5 shrink-0">
+          <h3 className={cn("text-18 font-semibold", { "font-medium": !description })}>{title}</h3>
+          {description && <p className="text-13">{description}</p>}
         </div>
 
         {assetPath && <img src={assetPath} alt={title} className="w-full h-auto" loading="lazy" />}
@@ -93,9 +93,7 @@ export const DetailedEmptyState: React.FC<Props> = observer((props) => {
               (primaryButton?.text && <CustomButton config={primaryButton} variant="primary" size={size} />)}
             {/* secondary button */}
             {customSecondaryButton ??
-              (secondaryButton?.text && (
-                <CustomButton config={secondaryButton} variant="neutral-primary" size={size} />
-              ))}
+              (secondaryButton?.text && <CustomButton config={secondaryButton} variant="secondary" size={size} />)}
           </div>
         )}
       </div>

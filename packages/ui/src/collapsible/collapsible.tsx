@@ -1,5 +1,4 @@
 import { Disclosure, Transition } from "@headlessui/react";
-import type { FC } from "react";
 import React, { useState, useEffect, useCallback } from "react";
 
 export type TCollapsibleProps = {
@@ -13,7 +12,7 @@ export type TCollapsibleProps = {
   defaultOpen?: boolean;
 };
 
-export const Collapsible: FC<TCollapsibleProps> = (props) => {
+export function Collapsible(props: TCollapsibleProps) {
   const { title, children, buttonRef, className, buttonClassName, isOpen, onToggle, defaultOpen } = props;
   // state
   const [localIsOpen, setLocalIsOpen] = useState<boolean>(isOpen || defaultOpen ? true : false);
@@ -40,15 +39,18 @@ export const Collapsible: FC<TCollapsibleProps> = (props) => {
       </Disclosure.Button>
       <Transition
         show={localIsOpen}
-        enter="transition-max-height duration-400 ease-in-out"
-        enterFrom="max-h-0"
-        enterTo="max-h-screen"
-        leave="transition-max-height duration-400 ease-in-out"
-        leaveFrom="max-h-screen"
-        leaveTo="max-h-0"
+        enter="transition-all duration-300 ease-in-out"
+        enterFrom="grid-rows-[0fr] opacity-0"
+        enterTo="grid-rows-[1fr] opacity-100"
+        leave="transition-all duration-300 ease-in-out"
+        leaveFrom="grid-rows-[1fr] opacity-100"
+        leaveTo="grid-rows-[0fr] opacity-0"
+        className="grid overflow-hidden"
       >
-        <Disclosure.Panel static>{children}</Disclosure.Panel>
+        <Disclosure.Panel static className="min-h-0">
+          {children}
+        </Disclosure.Panel>
       </Transition>
     </Disclosure>
   );
-};
+}

@@ -13,7 +13,7 @@ export type TPowerKModalNoSearchResultsCommandProps = {
   updateSearchTerm: (value: string) => void;
 };
 
-export const PowerKModalNoSearchResultsCommand: React.FC<TPowerKModalNoSearchResultsCommandProps> = (props) => {
+export function PowerKModalNoSearchResultsCommand(props: TPowerKModalNoSearchResultsCommandProps) {
   const { updateSearchTerm } = props;
   // translation
   const { t } = useTranslation();
@@ -26,11 +26,11 @@ export const PowerKModalNoSearchResultsCommand: React.FC<TPowerKModalNoSearchRes
         label={
           <p className="flex items-center gap-2">
             {t("power_k.search_menu.no_results")}{" "}
-            <span className="shrink-0 text-sm text-custom-text-300">{t("power_k.search_menu.clear_search")}</span>
+            <span className="shrink-0 text-13 text-tertiary">{t("power_k.search_menu.clear_search")}</span>
           </p>
         }
         onSelect={() => updateSearchTerm("")}
       />
     </Command.Group>
   );
-};
+}

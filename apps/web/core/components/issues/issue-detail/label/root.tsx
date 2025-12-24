@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -16,7 +13,6 @@ import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 // types
 import { LabelList, IssueLabelSelectRoot } from "./";
 // TODO: Fix this import statement, as core should not import from ee
-// eslint-disable-next-line import/order
 
 export type TIssueLabel = {
   workspaceSlug: string;
@@ -33,7 +29,7 @@ export type TLabelOperations = {
   createLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => Promise<any>;
 };
 
-export const IssueLabel: FC<TIssueLabel> = observer((props) => {
+export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
   const {
     workspaceSlug,
     projectId,
@@ -96,7 +92,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
   );
 
   return (
-    <div className="relative flex flex-wrap items-center gap-1">
+    <div className="relative flex flex-wrap items-center gap-1 min-h-7.5 w-full px-2">
       <LabelList
         workspaceSlug={workspaceSlug}
         projectId={projectId}

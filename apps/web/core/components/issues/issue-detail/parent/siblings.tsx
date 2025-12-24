@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import type { TIssue } from "@plane/types";
@@ -14,7 +13,7 @@ export type TIssueParentSiblings = {
   parentIssue: TIssue;
 };
 
-export const IssueParentSiblings: FC<TIssueParentSiblings> = observer((props) => {
+export const IssueParentSiblings = observer(function IssueParentSiblings(props: TIssueParentSiblings) {
   const { workspaceSlug, currentIssue, parentIssue } = props;
   // hooks
   const {
@@ -36,7 +35,7 @@ export const IssueParentSiblings: FC<TIssueParentSiblings> = observer((props) =>
   return (
     <div className="my-1">
       {isLoading ? (
-        <div className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-xs text-custom-text-200">
+        <div className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-11 text-secondary">
           Loading
         </div>
       ) : subIssueIds && subIssueIds.length > 0 ? (
@@ -47,7 +46,7 @@ export const IssueParentSiblings: FC<TIssueParentSiblings> = observer((props) =>
             )
         )
       ) : (
-        <div className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-xs text-custom-text-200">
+        <div className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-11 text-secondary">
           No sibling work items
         </div>
       )}

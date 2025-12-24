@@ -13,7 +13,7 @@ type Props = {
   ignoreGroupedFilters: Partial<TIssueGroupByOptions>[];
 };
 
-export const FilterGroupBy: React.FC<Props> = observer((props) => {
+export const FilterGroupBy = observer(function FilterGroupBy(props: Props) {
   const { displayFilters, groupByOptions, handleUpdate, ignoreGroupedFilters } = props;
   // hooks
   const { t } = useTranslation();

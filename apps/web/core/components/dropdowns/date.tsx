@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
@@ -37,9 +35,10 @@ type Props = TDropdownProps & {
   closeOnSelect?: boolean;
   formatToken?: string;
   renderByDefault?: boolean;
+  labelClassName?: string;
 };
 
-export const DateDropdown: React.FC<Props> = observer((props) => {
+export const DateDropdown = observer(function DateDropdown(props: Props) {
   const {
     buttonClassName = "",
     buttonContainerClassName,
@@ -64,6 +63,7 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
     value,
     formatToken,
     renderByDefault = true,
+    labelClassName = "",
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -120,7 +120,7 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
       className={cn(
         "clickable block h-full max-w-full outline-none",
         {
-          "cursor-not-allowed text-custom-text-200": disabled,
+          "cursor-not-allowed text-secondary": disabled,
           "cursor-pointer": !disabled,
         },
         buttonContainerClassName
@@ -140,7 +140,9 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
       >
         {!hideIcon && icon}
         {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-          <span className="flex-grow truncate">{value ? renderFormattedDate(value, formatToken) : placeholder}</span>
+          <span className={cn("flex-grow truncate text-left text-body-xs-medium", labelClassName)}>
+            {value ? renderFormattedDate(value, formatToken) : placeholder}
+          </span>
         )}
         {isClearable && !disabled && isDateSelected && (
           <CloseIcon
@@ -176,7 +178,7 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
           <Combobox.Options data-prevent-outside-click static>
             <div
               className={cn(
-                "my-1 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden z-30",
+                "my-1 bg-surface-1 shadow-raised-200 border-[0.5px] border-strong rounded-md overflow-hidden z-30",
                 optionsClassName
               )}
               ref={setPopperElement}
@@ -184,7 +186,7 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
               {...attributes.popper}
             >
               <Calendar
-                className="rounded-md border border-custom-border-200 p-3"
+                className="rounded-md border border-subtle p-3"
                 captionLayout="dropdown"
                 selected={getDate(value)}
                 defaultMonth={getDate(value)}

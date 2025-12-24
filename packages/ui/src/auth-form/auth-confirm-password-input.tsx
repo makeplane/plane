@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { cn } from "@plane/utils";
 import { AuthInput } from "./auth-input";
 
-export interface AuthConfirmPasswordInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "autoComplete"> {
+export interface AuthConfirmPasswordInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "autoComplete"
+> {
   password: string;
   label?: string;
   error?: string;
@@ -15,7 +17,7 @@ export interface AuthConfirmPasswordInputProps
   onPasswordMatchChange?: (matches: boolean) => void;
 }
 
-export const AuthConfirmPasswordInput: React.FC<AuthConfirmPasswordInputProps> = ({
+export function AuthConfirmPasswordInput({
   password,
   label = "Confirm Password",
   error,
@@ -27,7 +29,7 @@ export const AuthConfirmPasswordInput: React.FC<AuthConfirmPasswordInputProps> =
   onChange,
   onPasswordMatchChange,
   ...props
-}) => {
+}: AuthConfirmPasswordInputProps) {
   const [isFocused, setIsFocused] = useState(false);
 
   const confirmPassword = value as string;
@@ -71,7 +73,7 @@ export const AuthConfirmPasswordInput: React.FC<AuthConfirmPasswordInputProps> =
         onBlur={handleBlur}
         autoComplete="on"
       />
-      {confirmPassword && passwordsMatch && <p className="text-sm text-green-500">Passwords match</p>}
+      {confirmPassword && passwordsMatch && <p className="text-13 text-green-500">Passwords match</p>}
     </div>
   );
-};
+}

@@ -17,7 +17,7 @@ type Props = {
   children: ReactNode;
 };
 
-const ComboDropDown = forwardRef((props: Props, ref) => {
+const ComboDropDown = forwardRef(function ComboDropDown(props: Props, ref) {
   const { button, renderByDefault = true, children, ...rest } = props;
 
   const dropDownButtonRef = useRef<HTMLDivElement | null>(null);
@@ -49,7 +49,7 @@ const ComboDropDown = forwardRef((props: Props, ref) => {
   }
 
   return (
-    // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error, @typescript-eslint/ban-ts-comment
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     <Combobox {...rest} ref={ref}>
       <Combobox.Button as={Fragment}>{button}</Combobox.Button>

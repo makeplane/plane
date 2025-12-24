@@ -22,7 +22,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
+export const PageVersionsOverlay = observer(function PageVersionsOverlay(props: Props) {
   const { editorComponent, fetchVersionDetails, handleRestore, pageId, restoreEnabled, storeType } = props;
   // navigation
   const router = useRouter();
@@ -43,7 +43,7 @@ export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
   return (
     <div
       className={cn(
-        "absolute inset-0 z-[16] h-full bg-custom-background-100 flex overflow-hidden opacity-0 pointer-events-none transition-opacity",
+        "absolute inset-0 z-[16] h-full bg-surface-1 flex overflow-hidden opacity-0 pointer-events-none transition-opacity",
         {
           "opacity-100 pointer-events-auto": isOpen,
         }

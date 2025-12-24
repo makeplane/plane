@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -17,7 +15,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterState: FC<Props> = observer((props) => {
+export const FilterState = observer(function FilterState(props: Props) {
   const { states, searchQuery } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);
@@ -72,7 +70,7 @@ export const FilterState: FC<Props> = observer((props) => {
                 {filteredOptions.length > 5 && (
                   <button
                     type="button"
-                    className="ml-8 text-xs font-medium text-custom-primary-100"
+                    className="ml-8 text-11 font-medium text-accent-primary"
                     onClick={handleViewToggle}
                   >
                     {itemsToRender === filteredOptions.length ? "View less" : "View all"}
@@ -80,7 +78,7 @@ export const FilterState: FC<Props> = observer((props) => {
                 )}
               </>
             ) : (
-              <p className="text-xs italic text-custom-text-400">No matches found</p>
+              <p className="text-11 italic text-placeholder">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

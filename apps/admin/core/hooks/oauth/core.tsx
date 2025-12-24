@@ -1,7 +1,10 @@
 import { KeyRound, Mails } from "lucide-react";
 // types
-import type { TGetBaseAuthenticationModeProps, TInstanceAuthenticationModes } from "@plane/types";
-import { resolveGeneralTheme } from "@plane/utils";
+import type {
+  TCoreInstanceAuthenticationModeKeys,
+  TGetBaseAuthenticationModeProps,
+  TInstanceAuthenticationModes,
+} from "@plane/types";
 // assets
 import giteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
 import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
@@ -19,7 +22,7 @@ import { PasswordLoginConfiguration } from "@/components/authentication/password
 // Authentication methods
 export const getCoreAuthenticationModesMap: (
   props: TGetBaseAuthenticationModeProps
-) => Record<TInstanceAuthenticationModes["key"], TInstanceAuthenticationModes> = ({
+) => Record<TCoreInstanceAuthenticationModeKeys, TInstanceAuthenticationModes> = ({
   disabled,
   updateConfig,
   resolvedTheme,
@@ -29,14 +32,14 @@ export const getCoreAuthenticationModesMap: (
     name: "Unique codes",
     description:
       "Log in or sign up for Plane using codes sent via email. You need to have set up SMTP to use this method.",
-    icon: <Mails className="h-6 w-6 p-0.5 text-custom-text-300/80" />,
+    icon: <Mails className="h-6 w-6 p-0.5 text-tertiary" />,
     config: <EmailCodesConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   "passwords-login": {
     key: "passwords-login",
     name: "Passwords",
     description: "Allow members to create accounts with passwords and use it with their email addresses to sign in.",
-    icon: <KeyRound className="h-6 w-6 p-0.5 text-custom-text-300/80" />,
+    icon: <KeyRound className="h-6 w-6 p-0.5 text-tertiary" />,
     config: <PasswordLoginConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   google: {
@@ -52,7 +55,7 @@ export const getCoreAuthenticationModesMap: (
     description: "Allow members to log in or sign up for Plane with their GitHub accounts.",
     icon: (
       <img
-        src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
+        src={resolvedTheme === "dark" ? githubDarkModeImage : githubLightModeImage}
         height={20}
         width={20}
         alt="GitHub Logo"

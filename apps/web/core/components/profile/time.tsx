@@ -5,7 +5,7 @@ type Props = {
   timeZone: string | undefined;
 };
 
-export const ProfileSidebarTime: React.FC<Props> = (props) => {
+export function ProfileSidebarTime(props: Props) {
   const { timeZone } = props;
   // current time hook
   const { currentTime } = useCurrentTime();
@@ -21,7 +21,7 @@ export const ProfileSidebarTime: React.FC<Props> = (props) => {
 
   return (
     <span>
-      {timeString} <span className="text-custom-text-200">{timeZone}</span>
+      {timeString} <span className="text-secondary">{timeZone}</span>
     </span>
   );
-};
+}

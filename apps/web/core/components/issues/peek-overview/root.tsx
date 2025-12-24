@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
@@ -22,7 +20,7 @@ import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import type { TIssueOperations } from "../issue-detail";
 import { IssueView } from "./view";
 
-export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
+export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWorkItemPeekOverview) {
   const {
     embedIssue = false,
     embedRemoveCurrentNotification,
@@ -83,6 +81,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
                 eventName: WORK_ITEM_TRACKER_EVENTS.update,
                 payload: { id: issueId },
               });
+              return;
             })
             .catch((error) => {
               captureError({
@@ -106,6 +105,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
               payload: { id: issueId },
             });
             removeRoutePeekId();
+            return;
           });
         } catch (error) {
           setToast({

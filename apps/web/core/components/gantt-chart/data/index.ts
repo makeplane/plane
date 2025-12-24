@@ -59,7 +59,7 @@ export const timePreview = (date: Date) => {
 export const datePreview = (date: Date, includeTime: boolean = false) => {
   const day = date.getDate();
   let month: number | WeekMonthDataType = date.getMonth();
-  month = months[month as number] as WeekMonthDataType;
+  month = months[month];
   const year = date.getFullYear();
 
   return `${charCapitalize(month?.shortTitle)} ${day}, ${year}${includeTime ? `, ${timePreview(date)}` : ``}`;

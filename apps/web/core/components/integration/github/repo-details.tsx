@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect } from "react";
 
@@ -28,14 +26,14 @@ type Props = {
 // services
 const githubIntegrationService = new GithubIntegrationService();
 
-export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, setUsers, setValue }) => {
+export function GithubRepoDetails({ selectedRepo, handleStepChange, setUsers, setValue }: Props) {
   const { workspaceSlug } = useParams();
 
   const { data: repoInfo } = useSWR(
-    workspaceSlug && selectedRepo ? GITHUB_REPOSITORY_INFO(workspaceSlug as string, selectedRepo.name) : null,
+    workspaceSlug && selectedRepo ? GITHUB_REPOSITORY_INFO(workspaceSlug, selectedRepo.name) : null,
     workspaceSlug && selectedRepo
       ? () =>
-          githubIntegrationService.getGithubRepoInfo(workspaceSlug as string, {
+          githubIntegrationService.getGithubRepoInfo(workspaceSlug, {
             owner: selectedRepo.owner.login,
             repo: selectedRepo.name,
           })
@@ -62,20 +60,20 @@ export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, s
           <div className="flex items-center justify-between gap-4">
             <div>
               <div className="font-medium">Repository Details</div>
-              <div className="text-sm text-custom-text-200">Import completed. We have found:</div>
+              <div className="text-13 text-secondary">Import completed. We have found:</div>
             </div>
             <div className="mt-4 flex gap-16">
               <div className="flex-shrink-0 text-center">
-                <p className="text-3xl font-bold">{repoInfo.issue_count}</p>
-                <h6 className="text-sm text-custom-text-200">Work items</h6>
+                <p className="text-24 font-bold">{repoInfo.issue_count}</p>
+                <h6 className="text-13 text-secondary">Work items</h6>
               </div>
               <div className="flex-shrink-0 text-center">
-                <p className="text-3xl font-bold">{repoInfo.labels}</p>
-                <h6 className="text-sm text-custom-text-200">Labels</h6>
+                <p className="text-24 font-bold">{repoInfo.labels}</p>
+                <h6 className="text-13 text-secondary">Labels</h6>
               </div>
               <div className="flex-shrink-0 text-center">
-                <p className="text-3xl font-bold">{repoInfo.collaborators.length}</p>
-                <h6 className="text-sm text-custom-text-200">Users</h6>
+                <p className="text-24 font-bold">{repoInfo.collaborators.length}</p>
+                <h6 className="text-13 text-secondary">Users</h6>
               </div>
             </div>
           </div>
@@ -90,7 +88,7 @@ export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, s
         </Loader>
       )}
       <div className="mt-6 flex items-center justify-end gap-2">
-        <Button variant="neutral-primary" onClick={() => handleStepChange("import-data")}>
+        <Button variant="secondary" onClick={() => handleStepChange("import-data")}>
           Back
         </Button>
         <Button
@@ -103,4 +101,4 @@ export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, s
       </div>
     </div>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
@@ -36,7 +34,7 @@ const defaultValues: Partial<IModule> = {
   member_ids: [],
 };
 
-export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
+export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal(props: Props) {
   const { isOpen, onClose, data, workspaceSlug, projectId } = props;
   // states
   const [activeProject, setActiveProject] = useState<string | null>(null);

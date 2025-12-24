@@ -1,12 +1,10 @@
-"use client";
-
-import type { FC } from "react";
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
-import { LinkIcon } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CopyLinkIcon } from "@plane/propel/icons";
+import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
@@ -30,7 +28,7 @@ type Props = {
   issueId: string;
 };
 
-export const IssueDetailQuickActions: FC<Props> = observer((props) => {
+export const IssueDetailQuickActions = observer(function IssueDetailQuickActions(props: Props) {
   const { workspaceSlug, projectId, issueId } = props;
   const { t } = useTranslation();
 
@@ -151,19 +149,13 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
   return (
     <>
       <div className="flex items-center justify-end flex-shrink-0">
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-wrap items-center gap-2">
           {currentUser && !issue?.archived_at && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
-          <div className="flex flex-wrap items-center gap-2.5 text-custom-text-300">
+          <div className="flex flex-wrap items-center gap-2 text-tertiary">
             <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
-              <button
-                type="button"
-                className="grid h-5 w-5 place-items-center rounded hover:text-custom-text-200 focus:outline-none focus:ring-2 focus:ring-custom-primary"
-                onClick={handleCopyText}
-              >
-                <LinkIcon className="h-4 w-4" />
-              </button>
+              <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
             </Tooltip>
             <WorkItemDetailQuickActions
               parentRef={parentRef}

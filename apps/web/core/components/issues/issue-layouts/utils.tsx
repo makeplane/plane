@@ -1,5 +1,3 @@
-"use client";
-
 import type { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { clone, isNil, pull, uniq, concat } from "lodash-es";
@@ -162,7 +160,7 @@ const getCycleColumns = (): IGroupByColumn[] | undefined => {
     cycles.push({
       id: cycle.id,
       name: cycle.name,
-      icon: <CycleGroupIcon cycleGroup={cycleStatus as TCycleGroups} className="h-3.5 w-3.5" />,
+      icon: <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />,
       payload: { cycle_id: cycle.id },
       isDropDisabled,
       dropErrorMessage: isDropDisabled ? "Work item cannot be moved to completed cycles" : undefined,
@@ -488,11 +486,8 @@ const handleSortOrder = (
   return currentIssueState;
 };
 
-export const getIssueBlockId = (
-  issueId: string | undefined,
-  groupId: string | undefined,
-  subGroupId?: string | undefined
-) => `issue_${issueId}_${groupId}_${subGroupId}`;
+export const getIssueBlockId = (issueId: string | undefined, groupId: string | undefined, subGroupId?: string) =>
+  `issue_${issueId}_${groupId}_${subGroupId}`;
 
 /**
  * returns empty Array if groupId is None
@@ -713,12 +708,12 @@ export const getBlockViewDetails = (
  * This method returns the icon for Spreadsheet column headers
  * @param iconKey
  */
-export const SpreadSheetPropertyIcon: FC<ISvgIcons & { iconKey: string }> = (props) => {
+export function SpreadSheetPropertyIcon(props: ISvgIcons & { iconKey: string }) {
   const { iconKey } = props;
   const Icon = SpreadSheetPropertyIconMap[iconKey];
   if (!Icon) return null;
   return <Icon {...props} />;
-};
+}
 
 /**
  * This method returns if the filters are applied
@@ -753,3 +748,18 @@ export const isFiltersApplied = (filters: IIssueFilterOptions): boolean =>
     if (Array.isArray(value)) return value.length > 0;
     return value !== undefined && value !== null && value !== "";
   });
+
+/**
+ * Calculates the minimum width needed for issue identifiers in list layouts
+ * @param projectIdentifierLength - Length of the project identifier (e.g., "PROJ" = 4)
+ * @param maxSequenceId - Maximum sequence ID in the project (e.g., 1234)
+ * @returns Width in pixels needed to display the identifier
+ *
+ * @example
+ * // For "PROJ-1234"
+ * calculateIdentifierWidth(4, 1234) // Returns width for "PROJ" + "-" + "1234"
+ */
+export const calculateIdentifierWidth = (projectIdentifierLength: number, maxSequenceId: number): number => {
+  const sequenceDigits = Math.max(1, Math.floor(Math.log10(maxSequenceId)) + 1);
+  return projectIdentifierLength * 7 + 7 + sequenceDigits * 7; // project identifier chars + dash + sequence digits
+};

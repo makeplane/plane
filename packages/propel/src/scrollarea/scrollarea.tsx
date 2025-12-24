@@ -54,9 +54,9 @@ const verticalSizeStyles = {
 } as const;
 
 const thumbSizeStyles = {
-  sm: "before:absolute before:left-1/2 before:top-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2",
-  md: "before:absolute before:left-1/2 before:top-1/2 before:size-full before:min-h-14 before:min-w-14 before:-translate-x-1/2 before:-translate-y-1/2",
-  lg: "before:absolute before:left-1/2 before:top-1/2 before:size-full before:min-h-17 before:min-w-17 before:-translate-x-1/2 before:-translate-y-1/2",
+  sm: "before:absolute before:left-1/2 before:top-1/2 before:size-full before:min-h-11 before:-translate-x-1/2 before:-translate-y-1/2",
+  md: "before:absolute before:left-1/2 before:top-1/2 before:size-full before:min-h-14 before:-translate-x-1/2 before:-translate-y-1/2",
+  lg: "before:absolute before:left-1/2 before:top-1/2 before:size-full before:min-h-17 before:-translate-x-1/2 before:-translate-y-1/2",
 } as const;
 
 interface ScrollBarProps extends React.ComponentProps<typeof BaseScrollArea.Scrollbar> {
@@ -76,12 +76,11 @@ const ScrollBar = React.memo(function ScrollBar({
       data-slot="scroll-area-scrollbar"
       orientation={orientation}
       className={cn(
-        "group/track mr-1 flex justify-center rounded bg-transparent opacity-0 transition-opacity delay-300 ",
+        "group/track mr-1 flex justify-center rounded-sm bg-transparent opacity-0 transition-opacity delay-300 ",
         orientation === "vertical" && verticalSizeStyles[size],
         orientation === "horizontal" && horizontalSizeStyles[size],
         scrollType === "always" && "opacity-100",
-        scrollType === "scroll" &&
-          "data-[scrolling]:opacity-100  data-[scrolling]:delay-0 data-[scrolling]:duration-75",
+        scrollType === "scroll" && "data-[scrolling]:opacity-100 data-[scrolling]:delay-0 data-[scrolling]:duration-75",
         scrollType === "hover" && "data-[hovering]:opacity-100 data-[hovering]:delay-0 data-[hovering]:duration-75",
         className
       )}
@@ -90,7 +89,7 @@ const ScrollBar = React.memo(function ScrollBar({
       <BaseScrollArea.Thumb
         data-slot="scroll-area-thumb"
         className={cn(
-          "relative flex-1 rounded-[10px] bg-custom-scrollbar-neutral group-hover:bg-custom-scrollbar-hover group-active/track:bg-custom-scrollbar-active data-[scrolling]:bg-custom-scrollbar-active",
+          "relative flex-1 rounded-[10px] bg-scrollbar-thumb group-hover/track:bg-scrollbar-thumb-hover group-active/track:bg-scrollbar-thumb-active data-[scrolling]:bg-scrollbar-thumb-active",
           thumbSizeStyles[size]
         )}
       />

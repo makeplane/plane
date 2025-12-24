@@ -1,5 +1,3 @@
-"use client";
-
 import type { MutableRefObject } from "react";
 import { useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
@@ -36,7 +34,7 @@ interface ILabelItemBlock {
   draggable?: boolean;
 }
 
-export const LabelItemBlock = (props: ILabelItemBlock) => {
+export function LabelItemBlock(props: ILabelItemBlock) {
   const {
     label,
     isDragging,
@@ -93,13 +91,13 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
           {!isLabelGroup && (
             <div className="py-0.5">
               <button
-                className="flex size-5 items-center justify-center rounded hover:bg-custom-background-80"
+                className="flex size-5 items-center justify-center rounded-sm hover:bg-layer-1"
                 onClick={() => {
                   handleLabelDelete(label);
                 }}
                 data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_DELETE_BUTTON}
               >
-                <CloseIcon className="size-3.5 flex-shrink-0 text-custom-sidebar-text-300" />
+                <CloseIcon className="size-3.5 flex-shrink-0 text-tertiary" />
               </button>
             </div>
           )}
@@ -107,4 +105,4 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
       )}
     </div>
   );
-};
+}

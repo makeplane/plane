@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useMemo } from "react";
 // hooks
 import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";

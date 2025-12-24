@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect } from "react";
 
 // next
@@ -31,7 +29,7 @@ type Props = {
 // services
 const jiraImporterService = new JiraImporterService();
 
-export const JiraProjectDetail: React.FC<Props> = (props) => {
+export function JiraProjectDetail(props: Props) {
   const { setCurrentStep, setDisableTopBarAfter } = props;
 
   const {
@@ -105,12 +103,12 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
   if (error) {
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <p className="text-sm text-custom-text-200">
+        <p className="text-13 text-secondary">
           Something went wrong. Please{" "}
           <button
             onClick={() => setCurrentStep({ state: "import-configure" })}
             type="button"
-            className="inline text-custom-primary underline"
+            className="inline text-accent-primary underline"
           >
             go back
           </button>{" "}
@@ -125,28 +123,28 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Import Data</h3>
-          <p className="text-sm text-custom-text-200">Import Completed. We have found:</p>
+          <p className="text-13 text-secondary">Import Completed. We have found:</p>
         </div>
         <div className="col-span-1 flex items-center justify-between">
           <div>
-            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.issues}</h4>
-            <p className="text-sm text-custom-text-200">Work items</p>
+            <h4 className="mb-2 text-16 font-semibold">{projectInfo?.issues}</h4>
+            <p className="text-13 text-secondary">Work items</p>
           </div>
           <div>
-            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.states}</h4>
-            <p className="text-sm text-custom-text-200">States</p>
+            <h4 className="mb-2 text-16 font-semibold">{projectInfo?.states}</h4>
+            <p className="text-13 text-secondary">States</p>
           </div>
           <div>
-            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.modules}</h4>
-            <p className="text-sm text-custom-text-200">Modules</p>
+            <h4 className="mb-2 text-16 font-semibold">{projectInfo?.modules}</h4>
+            <p className="text-13 text-secondary">Modules</p>
           </div>
           <div>
-            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.labels}</h4>
-            <p className="text-sm text-custom-text-200">Labels</p>
+            <h4 className="mb-2 text-16 font-semibold">{projectInfo?.labels}</h4>
+            <p className="text-13 text-secondary">Labels</p>
           </div>
           <div>
-            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.users?.length}</h4>
-            <p className="text-sm text-custom-text-200">Users</p>
+            <h4 className="mb-2 text-16 font-semibold">{projectInfo?.users?.length}</h4>
+            <p className="text-13 text-secondary">Users</p>
           </div>
         </div>
       </div>
@@ -154,7 +152,7 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Import Epics</h3>
-          <p className="text-sm text-custom-text-200">Import epics as modules</p>
+          <p className="text-13 text-secondary">Import epics as modules</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -166,4 +164,4 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

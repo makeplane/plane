@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -19,7 +17,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
 
-export const ModuleEmptyState: React.FC = observer(() => {
+export const ModuleEmptyState = observer(function ModuleEmptyState() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, moduleId: routerModuleId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
@@ -34,7 +32,7 @@ export const ModuleEmptyState: React.FC = observer(() => {
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const moduleWorkItemFilter = moduleId ? useWorkItemFilterInstance(EIssuesStoreType.MODULE, moduleId) : undefined;
+  const moduleWorkItemFilter = useWorkItemFilterInstance(EIssuesStoreType.MODULE, moduleId);
   const canPerformEmptyStateActions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT
@@ -83,7 +81,7 @@ export const ModuleEmptyState: React.FC = observer(() => {
                 label: "Clear filters",
                 onClick: moduleWorkItemFilter?.clearFilters,
                 disabled: !canPerformEmptyStateActions || !moduleWorkItemFilter,
-                variant: "outline-primary",
+                variant: "secondary",
               },
             ]}
           />
@@ -106,7 +104,7 @@ export const ModuleEmptyState: React.FC = observer(() => {
                 label: t("project_empty_state.module_work_items.cta_secondary"),
                 onClick: () => setModuleIssuesListModal(true),
                 disabled: !canPerformEmptyStateActions,
-                variant: "outline-primary",
+                variant: "secondary",
               },
             ]}
           />

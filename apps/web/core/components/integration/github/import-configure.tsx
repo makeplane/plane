@@ -1,5 +1,3 @@
-"use client";
-
 // components
 import { Button } from "@plane/propel/button";
 import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
@@ -14,12 +12,7 @@ type Props = {
   workspaceIntegrations: IWorkspaceIntegration[] | undefined;
 };
 
-export const GithubImportConfigure: React.FC<Props> = ({
-  handleStepChange,
-  provider,
-  appIntegrations,
-  workspaceIntegrations,
-}) => {
+export function GithubImportConfigure({ handleStepChange, provider, appIntegrations, workspaceIntegrations }: Props) {
   // current integration from all the integrations available
   const integration =
     appIntegrations && appIntegrations.length > 0 && appIntegrations.find((i) => i.provider === provider);
@@ -36,7 +29,7 @@ export const GithubImportConfigure: React.FC<Props> = ({
       <div className="flex items-center gap-2 py-5">
         <div className="w-full">
           <div className="font-medium">Configure</div>
-          <div className="text-sm text-custom-text-200">Set up your GitHub import.</div>
+          <div className="text-13 text-secondary">Set up your GitHub import.</div>
         </div>
         <div className="flex-shrink-0">
           <GithubAuth workspaceIntegration={workspaceIntegration} provider={provider} />
@@ -54,4 +47,4 @@ export const GithubImportConfigure: React.FC<Props> = ({
       </div>
     </div>
   );
-};
+}

@@ -22,7 +22,7 @@ export interface EmojiReactionPickerProps {
   align?: TAlign;
 }
 
-export const EmojiReactionPicker: React.FC<EmojiReactionPickerProps> = (props) => {
+export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
   const {
     isOpen,
     handleToggle,
@@ -64,10 +64,7 @@ export const EmojiReactionPicker: React.FC<EmojiReactionPickerProps> = (props) =
       </Popover.Button>
       <Popover.Panel
         positionerClassName="z-50"
-        className={cn(
-          "w-80 bg-custom-background-100 rounded-md border-[0.5px] border-custom-border-300 overflow-hidden",
-          dropdownClassName
-        )}
+        className={cn("w-80 bg-surface-1 rounded-md border-[0.5px] border-strong overflow-hidden", dropdownClassName)}
         side={finalSide}
         align={finalAlign}
         sideOffset={8}
@@ -83,4 +80,4 @@ export const EmojiReactionPicker: React.FC<EmojiReactionPickerProps> = (props) =
       </Popover.Panel>
     </Popover>
   );
-};
+}

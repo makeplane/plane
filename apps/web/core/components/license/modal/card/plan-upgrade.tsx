@@ -1,12 +1,8 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { TALK_TO_SALES_URL } from "@plane/constants";
 import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { getDiscountPillStyle } from "@plane/ui";
-import { calculateYearlyDiscount, cn, getSubscriptionName, getSubscriptionPriceDetails } from "@plane/utils";
+import { calculateYearlyDiscount, getSubscriptionName, getSubscriptionPriceDetails } from "@plane/utils";
 // components
 import { BasePaidPlanCard, TalkToSalesCard } from "@/components/license";
 // local components
@@ -28,7 +24,7 @@ export type PlanUpgradeCardProps = {
   isTrialAllowed: boolean;
 };
 
-export const PlanUpgradeCard: FC<PlanUpgradeCardProps> = observer((props) => {
+export const PlanUpgradeCard = observer(function PlanUpgradeCard(props: PlanUpgradeCardProps) {
   const {
     planVariant,
     features,
@@ -75,7 +71,7 @@ export const PlanUpgradeCard: FC<PlanUpgradeCardProps> = observer((props) => {
         <>
           Yearly
           {yearlyDiscount > 0 && (
-            <span className={cn(getDiscountPillStyle(planVariant), "rounded-full px-1.5 py-0.5 ml-1 text-xs")}>
+            <span className="bg-accent-primary text-on-color rounded-full px-1.5 py-0.5 ml-1 text-caption-sm">
               -{yearlyDiscount}%
             </span>
           )}

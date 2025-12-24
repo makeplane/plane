@@ -1,10 +1,7 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { MoreHorizontal } from "lucide-react";
 
-// icons
-import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // ui
 import {
   CYCLE_TRACKER_EVENTS,
@@ -13,18 +10,18 @@ import {
   CYCLE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ArchiveIcon } from "@plane/propel/icons";
+import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 // hooks
+import { useCycleMenuItems } from "@/components/common/quick-actions-helper";
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useEndCycle, EndCycleModal } from "@/plane-web/components/cycles";
 // local imports
 import { ArchiveCycleModal } from "./archived-cycles/modal";
 import { CycleDeleteModal } from "./delete-modal";
@@ -38,7 +35,7 @@ type Props = {
   customClassName?: string;
 };
 
-export const CycleQuickActions: React.FC<Props> = observer((props) => {
+export const CycleQuickActions = observer(function CycleQuickActions(props: Props) {
   const { parentRef, cycleId, projectId, workspaceSlug, customClassName } = props;
   // router
   const router = useAppRouter();
@@ -52,12 +49,6 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
   // derived values
   const cycleDetails = getCycleById(cycleId);
-  const isArchived = !!cycleDetails?.archived_at;
-  const isCompleted = cycleDetails?.status?.toLowerCase() === "completed";
-  const isCurrentCycle = cycleDetails?.status?.toLowerCase() === "current";
-  const transferrableIssuesCount = cycleDetails
-    ? cycleDetails.total_issues - (cycleDetails.cancelled_issues + cycleDetails.completed_issues)
-    : 0;
   // auth
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -65,8 +56,6 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
     workspaceSlug,
     projectId
   );
-
-  const { isEndCycleModalOpen, setEndCycleModalOpen, endCycleContextMenu } = useEndCycle(isCurrentCycle);
 
   const cycleLink = `${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`;
   const handleCopyText = () =>
@@ -78,12 +67,6 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
       });
     });
   const handleOpenInNewTab = () => window.open(`/${cycleLink}`, "_blank");
-
-  const handleEditCycle = () => {
-    setUpdateModal(true);
-  };
-
-  const handleArchiveCycle = () => setArchiveCycleModal(true);
 
   const handleRestoreCycle = async () =>
     await restoreCycle(workspaceSlug, projectId, cycleId)
@@ -115,70 +98,35 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
         });
       });
 
-  const handleDeleteCycle = () => {
-    setDeleteModal(true);
-  };
+  const menuResult = useCycleMenuItems({
+    cycleDetails: cycleDetails ?? undefined,
+    workspaceSlug,
+    projectId,
+    cycleId,
+    isEditingAllowed,
+    handleEdit: () => setUpdateModal(true),
+    handleArchive: () => setArchiveCycleModal(true),
+    handleRestore: handleRestoreCycle,
+    handleDelete: () => setDeleteModal(true),
+    handleCopyLink: handleCopyText,
+    handleOpenInNewTab,
+  });
 
-  const MENU_ITEMS: TContextMenuItem[] = [
-    {
-      key: "edit",
-      title: t("edit"),
-      icon: Pencil,
-      action: handleEditCycle,
-      shouldRender: isEditingAllowed && !isCompleted && !isArchived,
-    },
-    {
-      key: "open-new-tab",
-      action: handleOpenInNewTab,
-      title: t("open_in_new_tab"),
-      icon: ExternalLink,
-      shouldRender: !isArchived,
-    },
-    {
-      key: "copy-link",
-      action: handleCopyText,
-      title: t("copy_link"),
-      icon: LinkIcon,
-      shouldRender: !isArchived,
-    },
-    {
-      key: "archive",
-      action: handleArchiveCycle,
-      title: t("archive"),
-      description: isCompleted ? undefined : t("project_cycles.only_completed_cycles_can_be_archived"),
-      icon: ArchiveIcon,
-      className: "items-start",
-      iconClassName: "mt-1",
-      shouldRender: isEditingAllowed && !isArchived,
-      disabled: !isCompleted,
-    },
-    {
-      key: "restore",
-      action: handleRestoreCycle,
-      title: t("restore"),
-      icon: ArchiveRestoreIcon,
-      shouldRender: isEditingAllowed && isArchived,
-    },
-    {
-      key: "delete",
-      action: handleDeleteCycle,
-      title: t("delete"),
-      icon: Trash2,
-      shouldRender: isEditingAllowed && !isCompleted && !isArchived,
-    },
-  ];
+  const MENU_ITEMS: TContextMenuItem[] = Array.isArray(menuResult) ? menuResult : menuResult.items;
+  const additionalModals = Array.isArray(menuResult) ? null : menuResult.modals;
 
-  if (endCycleContextMenu) MENU_ITEMS.splice(3, 0, endCycleContextMenu);
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
+    return {
+      ...item,
 
-  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map((item) => ({
-    ...item,
-    action: () => {
-      captureClick({
-        elementName: CYCLE_TRACKER_ELEMENTS.CONTEXT_MENU,
-      });
-      item.action();
-    },
-  }));
+      action: () => {
+        captureClick({
+          elementName: CYCLE_TRACKER_ELEMENTS.CONTEXT_MENU,
+        });
+        item.action();
+      },
+    };
+  });
 
   return (
     <>
@@ -205,21 +153,17 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
             workspaceSlug={workspaceSlug}
             projectId={projectId}
           />
-          {isCurrentCycle && (
-            <EndCycleModal
-              isOpen={isEndCycleModalOpen}
-              handleClose={() => setEndCycleModalOpen(false)}
-              cycleId={cycleId}
-              projectId={projectId}
-              workspaceSlug={workspaceSlug}
-              transferrableIssuesCount={transferrableIssuesCount}
-              cycleName={cycleDetails.name}
-            />
-          )}
+          {additionalModals}
         </div>
       )}
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect maxHeight="lg" buttonClassName={customClassName}>
+      <CustomMenu
+        customButton={<IconButton variant="tertiary" size="lg" icon={MoreHorizontal} />}
+        placement="bottom-end"
+        closeOnSelect
+        maxHeight="lg"
+        buttonClassName={customClassName}
+      >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (
@@ -234,19 +178,19 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
               disabled={item.disabled}
             >
-              {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
+              {item.icon && <item.icon className={cn("h-3 w-3 flex-shrink-0", item.iconClassName)} />}
               <div>
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("text-tertiary whitespace-pre-line", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

@@ -1,5 +1,4 @@
-import type { FC } from "react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane imports
@@ -25,7 +24,7 @@ type TAuthRoot = {
   authMode: EAuthModes;
 };
 
-export const AuthRoot: FC<TAuthRoot> = observer((props) => {
+export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   //router
   const searchParams = useSearchParams();
   // query params
@@ -96,7 +95,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
     <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
       <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
         {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-          <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
+          <AuthBanner message={errorInfo.message} handleBannerData={(value) => setErrorInfo(value)} />
         )}
         <AuthHeader
           workspaceSlug={workspaceSlug?.toString() || undefined}

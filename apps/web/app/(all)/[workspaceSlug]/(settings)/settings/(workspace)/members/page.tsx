@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
@@ -30,10 +28,10 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
-import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members/invite-modal";
+import { SendWorkspaceInvitationModal, MembersActivityButton } from "@/plane-web/components/workspace/members";
 import type { Route } from "./+types/page";
 
-function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
+const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -44,7 +42,7 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
   const {
     workspace: { workspaceMemberIds, inviteMembersToWorkspace, filtersStore },
   } = useMember();
-  const { currentWorkspace } = useWorkspace();
+  const { currentWorkspace, mutateWorkspaceMembersActivity } = useWorkspace();
   const { t } = useTranslation();
 
   // derived values
@@ -57,6 +55,7 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
   const handleWorkspaceInvite = async (data: IWorkspaceBulkInviteFormData) => {
     try {
       await inviteMembersToWorkspace(workspaceSlug, data);
+      void mutateWorkspaceMembersActivity(workspaceSlug);
 
       setInviteModal(false);
 
@@ -72,23 +71,27 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
         title: "Success!",
         message: t("workspace_settings.settings.members.invitations_sent_successfully"),
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
+    } catch (error: unknown) {
+      let message = undefined;
+      if (error instanceof Error) {
+        const err = error as Error & { error?: string };
+        message = err.error;
+      }
       captureError({
         eventName: MEMBER_TRACKER_EVENTS.invite,
         payload: {
           emails: data.emails.map((email) => email.email),
         },
-        error: err,
+        error: error as Error,
       });
 
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: `${err.error ?? t("something_went_wrong_please_try_again")}`,
+        message: `${message ?? t("something_went_wrong_please_try_again")}`,
       });
 
-      throw err;
+      throw error;
     }
   };
 
@@ -125,20 +128,21 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >
-        <div className="flex justify-between gap-4 pb-3.5 items-start">
-          <h4 className="flex items-center gap-2.5 text-xl font-medium">
+        <div className="flex justify-between gap-4 pb-3.5 items-center">
+          <h4 className="flex items-center gap-2.5 text-h5-medium">
             {t("workspace_settings.settings.members.title")}
             {workspaceMemberIds && workspaceMemberIds.length > 0 && (
               <CountChip count={workspaceMemberIds.length} className="h-5 m-auto" />
             )}
           </h4>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" />
+            <div className="flex items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5">
+              <Search className="h-3.5 w-3.5 text-placeholder" />
               <input
-                className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
+                className="w-full max-w-[234px] border-none bg-transparent text-body-xs-regular outline-none placeholder:text-placeholder"
                 placeholder={`${t("search")}...`}
                 value={searchQuery}
+                // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -148,10 +152,11 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
               handleUpdate={handleRoleFilterUpdate}
               memberType="workspace"
             />
+            <MembersActivityButton workspaceSlug={workspaceSlug} />
             {canPerformWorkspaceAdminActions && (
               <Button
                 variant="primary"
-                size="sm"
+                size="lg"
                 onClick={() => setInviteModal(true)}
                 data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
               >
@@ -165,6 +170,6 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
       </section>
     </SettingsContentWrapper>
   );
-}
+});
 
-export default observer(WorkspaceMembersSettingsPage);
+export default WorkspaceMembersSettingsPage;

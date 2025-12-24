@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -41,7 +39,7 @@ const getImporterLogo = (provider: string) => {
 };
 
 // FIXME: [Deprecated] Remove this component
-const IntegrationGuide = observer(() => {
+const IntegrationGuide = observer(function IntegrationGuide() {
   // states
   const [refreshing, setRefreshing] = useState(false);
   const [deleteImportModal, setDeleteImportModal] = useState(false);
@@ -56,8 +54,8 @@ const IntegrationGuide = observer(() => {
   const { t } = useTranslation();
 
   const { data: importerServices } = useSWR(
-    workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug as string) : null,
-    workspaceSlug ? () => integrationService.getImporterServicesList(workspaceSlug as string) : null
+    workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug) : null,
+    workspaceSlug ? () => integrationService.getImporterServicesList(workspaceSlug) : null
   );
 
   const handleDeleteImport = (importService: IImporterService) => {
@@ -78,8 +76,8 @@ const IntegrationGuide = observer(() => {
           <>
             {/* <div className="mb-5 flex items-center gap-2">
               <div className="h-full w-full space-y-1">
-                <div className="text-lg font-medium">Relocation Guide</div>
-                <div className="text-sm">
+                <div className="text-16 font-medium">Relocation Guide</div>
+                <div className="text-13">
                   You can now transfer all the work items that you{"'"}ve created in other tracking
                   services. This tool will guide you to relocate the work item to Plane.
                 </div>
@@ -89,7 +87,7 @@ const IntegrationGuide = observer(() => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <div className="flex flex-shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap text-sm font-medium text-[#3F76FF] hover:text-opacity-80">
+                <div className="flex flex-shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap text-13 font-medium text-[#3F76FF] hover:text-opacity-80">
                   Read More
                   <ArrowRightIcon width={"18px"} color={"#3F76FF"} />
                 </div>
@@ -98,7 +96,7 @@ const IntegrationGuide = observer(() => {
             {IMPORTERS_LIST.map((service) => (
               <div
                 key={service.provider}
-                className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6"
+                className="flex items-center justify-between gap-2 border-b border-subtle bg-surface-1 px-4 py-6"
               >
                 <div className="flex items-start gap-4">
                   <div className="relative h-10 w-10 flex-shrink-0">
@@ -109,8 +107,8 @@ const IntegrationGuide = observer(() => {
                     />
                   </div>
                   <div>
-                    <h3 className="flex items-center gap-4 text-sm font-medium">{t(service.i18n_title)}</h3>
-                    <p className="text-sm tracking-tight text-custom-text-200">{t(service.i18n_description)}</p>
+                    <h3 className="flex items-center gap-4 text-13 font-medium">{t(service.i18n_title)}</h3>
+                    <p className="text-13 tracking-tight text-secondary">{t(service.i18n_description)}</p>
                   </div>
                 </div>
                 <div className="flex-shrink-0">
@@ -123,15 +121,15 @@ const IntegrationGuide = observer(() => {
               </div>
             ))}
             <div>
-              <div className="flex items-center border-b border-custom-border-100 pb-3.5 pt-7">
-                <h3 className="flex gap-2 text-xl font-medium">
+              <div className="flex items-center border-b border-subtle pb-3.5 pt-7">
+                <h3 className="flex gap-2 text-18 font-medium">
                   Previous Imports
                   <button
                     type="button"
-                    className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs outline-none"
+                    className="flex flex-shrink-0 items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11 outline-none"
                     onClick={() => {
                       setRefreshing(true);
-                      mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string)).then(() => setRefreshing(false));
+                      mutate(IMPORTER_SERVICES_LIST(workspaceSlug)).then(() => setRefreshing(false));
                     }}
                   >
                     <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
@@ -143,7 +141,7 @@ const IntegrationGuide = observer(() => {
                 {importerServices ? (
                   importerServices.length > 0 ? (
                     <div className="space-y-2">
-                      <div className="divide-y divide-custom-border-200">
+                      <div className="divide-y divide-subtle-1">
                         {importerServices.map((service) => (
                           <SingleImport
                             key={service.id}
@@ -175,3 +173,5 @@ const IntegrationGuide = observer(() => {
 });
 
 export default IntegrationGuide;
+
+export { IntegrationGuide };

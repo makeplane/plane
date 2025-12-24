@@ -59,7 +59,7 @@ def get_default_props():
 
 
 def get_default_preferences():
-    return {"pages": {"block_display": True}}
+    return {"pages": {"block_display": True}, "navigation": {"default_tab": "work_items", "hide_in_more_menu": []}}
 
 
 class Project(BaseModel):
@@ -116,6 +116,11 @@ class Project(BaseModel):
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
 
+    def __init__(self, *args, **kwargs):
+        # Track if timezone is provided, if so, don't override it with the workspace timezone when saving
+        self.is_timezone_provided = kwargs.get("timezone") is not None
+        super().__init__(*args, **kwargs)
+
     @property
     def cover_image_url(self):
         # Return cover image url
@@ -155,7 +160,15 @@ class Project(BaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
+        from plane.db.models import Workspace
+
         self.identifier = self.identifier.strip().upper()
+        is_creating = self._state.adding
+
+        if is_creating and not self.is_timezone_provided:
+            workspace = Workspace.objects.get(id=self.workspace_id)
+            self.timezone = workspace.timezone
+
         return super().save(*args, **kwargs)
 
 

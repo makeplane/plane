@@ -1,5 +1,3 @@
-"use client";
-
 import type { Dispatch, FC, SetStateAction } from "react";
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
@@ -30,7 +28,7 @@ type TEstimatePointCreateRoot = {
   ) => void;
 };
 
-export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((props) => {
+export const EstimatePointCreateRoot = observer(function EstimatePointCreateRoot(props: TEstimatePointCreateRoot) {
   // props
   const {
     workspaceSlug,
@@ -112,7 +110,7 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
   if (!workspaceSlug || !projectId) return <></>;
   return (
     <div className="space-y-1">
-      <div className="text-sm font-medium text-custom-text-200 capitalize">{estimateType}</div>
+      <div className="text-13 font-medium text-secondary capitalize">{estimateType}</div>
 
       <div>
         <Sortable
@@ -167,7 +165,7 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
           />
         ))}
       {estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= estimateCount.max - 1 && (
-        <Button variant="link-primary" size="sm" prependIcon={<Plus />} onClick={handleCreate}>
+        <Button variant="link" prependIcon={<Plus />} onClick={handleCreate}>
           Add {estimateType}
         </Button>
       )}

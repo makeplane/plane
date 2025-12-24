@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import type { LucideIcon } from "lucide-react";
 // plane imports
@@ -20,7 +18,7 @@ export type TReadonlyMemberProps = {
   projectId?: string;
 };
 
-export const ReadonlyMember: React.FC<TReadonlyMemberProps> = observer((props) => {
+export const ReadonlyMember = observer(function ReadonlyMember(props: TReadonlyMemberProps) {
   const { className, icon: Icon, hideIcon = false, value, placeholder, multiple = false } = props;
 
   const { t } = useTranslation();
@@ -30,7 +28,7 @@ export const ReadonlyMember: React.FC<TReadonlyMemberProps> = observer((props) =
 
   if (members.length === 0) {
     return (
-      <div className={cn("flex items-center gap-1 text-sm", className)}>
+      <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
         {<ButtonAvatars showTooltip={false} userIds={value} icon={Icon} />}
         <span className="flex-grow truncate">{placeholder ?? t("common.none")}</span>
       </div>
@@ -39,9 +37,9 @@ export const ReadonlyMember: React.FC<TReadonlyMemberProps> = observer((props) =
 
   if (multiple) {
     return (
-      <div className={cn("flex items-center gap-1 text-sm", className)}>
+      <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
         {!hideIcon && Icon && <Icon className="h-3 w-3 flex-shrink-0" />}
-        <ButtonAvatars showTooltip={false} userIds={memberIds} size="sm" />
+        <ButtonAvatars showTooltip={false} userIds={memberIds} />
       </div>
     );
   }
@@ -49,11 +47,11 @@ export const ReadonlyMember: React.FC<TReadonlyMemberProps> = observer((props) =
   const member = members[0];
 
   return (
-    <div className={cn("flex items-center gap-1 text-sm", className)}>
+    <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
       {!hideIcon && Icon && <Icon className="size-4 flex-shrink-0" />}
       <div className="flex items-center gap-2">
-        <div className="size-4 rounded-full bg-custom-background-80 flex items-center justify-center">
-          <span className="text-sm font-medium">
+        <div className="size-4 rounded-full bg-layer-1 flex items-center justify-center">
+          <span className="text-13 font-medium">
             {member?.display_name?.charAt(0) ?? member?.email?.charAt(0) ?? "?"}
           </span>
         </div>

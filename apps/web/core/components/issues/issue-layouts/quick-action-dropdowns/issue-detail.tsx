@@ -1,9 +1,8 @@
-"use client";
-
 import { useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import { Ellipsis } from "lucide-react";
 // plane imports
 import {
   ARCHIVABLE_STATE_GROUPS,
@@ -31,6 +30,7 @@ import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
 import { useWorkItemDetailMenuItems } from "./helper";
+import { IconButton } from "@plane/propel/icon-button";
 
 type TWorkItemDetailQuickActionProps = IQuickActionProps & {
   toggleEditIssueModal?: (value: boolean) => void;
@@ -40,14 +40,15 @@ type TWorkItemDetailQuickActionProps = IQuickActionProps & {
   isPeekMode?: boolean;
 };
 
-export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProps> = observer((props) => {
+export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickActions(
+  props: TWorkItemDetailQuickActionProps
+) {
   const {
     issue,
     handleDelete,
     handleUpdate,
     handleArchive,
     handleRestore,
-    customActionButton,
     portalElement,
     readOnly = false,
     placements = "bottom-end",
@@ -176,15 +177,20 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
       }
       return item;
     })
-    .filter((item) => item.shouldRender !== false);
+    .filter(function MENU_ITEMS(item) {
+      return item.shouldRender !== false;
+    });
 
-  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
-    ...item,
-    onClick: () => {
-      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
-      item.action();
-    },
-  }));
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
+    return {
+      ...item,
+
+      onClick: () => {
+        captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
+        item.action();
+      },
+    };
+  });
 
   return (
     <>
@@ -238,7 +244,7 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
       <CustomMenu
         ellipsis
         placement={placements}
-        customButton={customActionButton}
+        customButton={<IconButton size="lg" variant="secondary" icon={Ellipsis} />}
         portalElement={portalElement}
         menuItemsClassName="z-[14]"
         maxHeight="lg"
@@ -258,8 +264,8 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
                     <h5>{item.title}</h5>
                     {item.description && (
                       <p
-                        className={cn("text-custom-text-300 whitespace-pre-line", {
-                          "text-custom-text-400": item.disabled,
+                        className={cn("text-tertiary whitespace-pre-line", {
+                          "text-placeholder": item.disabled,
                         })}
                       >
                         {item.description}
@@ -271,7 +277,7 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
                 className={cn(
                   "flex items-center gap-2",
                   {
-                    "text-custom-text-400": item.disabled,
+                    "text-placeholder": item.disabled,
                   },
                   item.className
                 )}
@@ -286,7 +292,7 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
                     className={cn(
                       "flex items-center gap-2",
                       {
-                        "text-custom-text-400": nestedItem.disabled,
+                        "text-placeholder": nestedItem.disabled,
                       },
                       nestedItem.className
                     )}
@@ -297,8 +303,8 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
                       <h5>{nestedItem.title}</h5>
                       {nestedItem.description && (
                         <p
-                          className={cn("text-custom-text-300 whitespace-pre-line", {
-                            "text-custom-text-400": nestedItem.disabled,
+                          className={cn("text-tertiary whitespace-pre-line", {
+                            "text-placeholder": nestedItem.disabled,
                           })}
                         >
                           {nestedItem.description}
@@ -322,7 +328,7 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -333,8 +339,8 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("text-tertiary whitespace-pre-line", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

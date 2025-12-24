@@ -43,9 +43,11 @@ type TArguments = Pick<
   | "disabledExtensions"
   | "flaggedExtensions"
   | "fileHandler"
+  | "getEditorMetaData"
   | "isTouchDevice"
   | "mentionHandler"
   | "placeholder"
+  | "showPlaceholderOnEmpty"
   | "tabIndex"
   | "extendedEditorProps"
 > & {
@@ -60,9 +62,11 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     enableHistory,
     fileHandler,
     flaggedExtensions,
+    getEditorMetaData,
     isTouchDevice = false,
     mentionHandler,
     placeholder,
+    showPlaceholderOnEmpty,
     tabIndex,
     editable,
     extendedEditorProps,
@@ -106,14 +110,16 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     TableCell,
     TableRow,
     CustomMentionExtension(mentionHandler),
-    CustomPlaceholderExtension({ placeholder }),
+    CustomPlaceholderExtension({ placeholder, showPlaceholderOnEmpty }),
     CharacterCount,
     CustomColorExtension,
     CustomTextAlignExtension,
     CustomCalloutExtension,
     UtilityExtension({
       disabledExtensions,
+      flaggedExtensions,
       fileHandler,
+      getEditorMetaData,
       isEditable: editable,
       isTouchDevice,
     }),

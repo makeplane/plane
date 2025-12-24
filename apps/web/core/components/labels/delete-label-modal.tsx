@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -19,7 +17,7 @@ type Props = {
   data: IIssueLabel | null;
 };
 
-export const DeleteLabelModal: React.FC<Props> = observer((props) => {
+export const DeleteLabelModal = observer(function DeleteLabelModal(props: Props) {
   const { isOpen, onClose, data } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -79,8 +77,8 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
       title="Delete Label"
       content={
         <>
-          Are you sure you want to delete <span className="font-medium text-custom-text-100">{data?.name}</span>? This
-          will remove the label from all the work item and from any views where the label is being filtered upon.
+          Are you sure you want to delete <span className="font-medium text-primary">{data?.name}</span>? This will
+          remove the label from all the work item and from any views where the label is being filtered upon.
         </>
       }
     />

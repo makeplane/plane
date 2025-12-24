@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -16,7 +14,7 @@ interface IWebhookListItem {
   webhook: IWebhook;
 }
 
-export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
+export function WebhooksListItem(props: IWebhookListItem) {
   const { webhook } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -57,13 +55,13 @@ export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
   };
 
   return (
-    <div className="border-b border-custom-border-200">
+    <div className="border-b border-subtle">
       <Link href={`/${workspaceSlug}/settings/webhooks/${webhook?.id}`}>
         <span className="flex items-center justify-between gap-4 py-[18px]">
-          <h5 className="truncate text-base font-medium">{webhook.url}</h5>
+          <h5 className="truncate text-14 font-medium">{webhook.url}</h5>
           <ToggleSwitch value={webhook.is_active} onChange={handleToggle} />
         </span>
       </Link>
     </div>
   );
-};
+}

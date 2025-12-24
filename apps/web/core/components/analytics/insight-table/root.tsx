@@ -15,9 +15,9 @@ interface InsightTableProps<T extends Exclude<TAnalyticsTabsBase, "overview">> {
   onExport?: (rows: Row<AnalyticsTableDataMap[T]>[]) => void;
 }
 
-export const InsightTable = <T extends Exclude<TAnalyticsTabsBase, "overview">>(
+export function InsightTable<T extends Exclude<TAnalyticsTabsBase, "overview">>(
   props: InsightTableProps<T>
-): React.ReactElement => {
+): React.ReactElement {
   const { data, isLoading, columns, headerText, onExport } = props;
   const { t } = useTranslation();
   if (isLoading) {
@@ -32,7 +32,7 @@ export const InsightTable = <T extends Exclude<TAnalyticsTabsBase, "overview">>(
         searchPlaceholder={`${data?.length || 0} ${headerText}`}
         actions={(table: Table<AnalyticsTableDataMap[T]>) => (
           <Button
-            variant="accent-primary"
+            variant="secondary"
             prependIcon={<Download className="h-3.5 w-3.5" />}
             onClick={() => onExport?.(table.getFilteredRowModel().rows)}
           >
@@ -42,4 +42,4 @@ export const InsightTable = <T extends Exclude<TAnalyticsTabsBase, "overview">>(
       />
     </div>
   );
-};
+}

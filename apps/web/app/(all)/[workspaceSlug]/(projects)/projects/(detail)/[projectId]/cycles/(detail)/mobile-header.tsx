@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -25,7 +23,7 @@ const SUPPORTED_LAYOUTS = [
   { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: CalendarLayoutIcon },
 ];
 
-export const CycleIssuesMobileHeader = observer(() => {
+export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader() {
   // router
   const { workspaceSlug, projectId, cycleId } = useParams();
   // states
@@ -92,15 +90,15 @@ export const CycleIssuesMobileHeader = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <div className="flex justify-evenly py-2 border-b border-custom-border-200 md:hidden bg-custom-background-100">
+      <div className="flex justify-evenly py-2 border-b border-subtle md:hidden bg-surface-1">
         <CustomMenu
           maxHeight={"md"}
-          className="flex flex-grow justify-center text-custom-text-200 text-sm"
+          className="flex flex-grow justify-center text-secondary text-13"
           placement="bottom-start"
           customButton={
-            <span className="flex flex-grow justify-center text-custom-text-200 text-sm">{t("common.layout")}</span>
+            <span className="flex flex-grow justify-center text-secondary text-13">{t("common.layout")}</span>
           }
-          customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
+          customButtonClassName="flex flex-grow justify-center text-secondary text-13"
           closeOnSelect
         >
           {SUPPORTED_LAYOUTS.map((layout, index) => (
@@ -112,18 +110,18 @@ export const CycleIssuesMobileHeader = observer(() => {
               className="flex items-center gap-2"
             >
               <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="w-3 h-3" />
-              <div className="text-custom-text-300">{t(layout.titleTranslationKey)}</div>
+              <div className="text-tertiary">{t(layout.titleTranslationKey)}</div>
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow justify-center border-l border-custom-border-200 items-center text-custom-text-200 text-sm">
+        <div className="flex flex-grow justify-center border-l border-subtle items-center text-secondary text-13">
           <FiltersDropdown
             title={t("common.display")}
             placement="bottom-end"
             menuButton={
-              <span className="flex items-center text-custom-text-200 text-sm">
+              <span className="flex items-center text-secondary text-13">
                 {t("common.display")}
-                <ChevronDownIcon className="text-custom-text-200 h-4 w-4 ml-2" />
+                <ChevronDownIcon className="text-secondary h-4 w-4 ml-2" />
               </span>
             }
           >
@@ -144,7 +142,7 @@ export const CycleIssuesMobileHeader = observer(() => {
 
         <span
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center text-custom-text-200 text-sm border-l border-custom-border-200"
+          className="flex flex-grow justify-center text-secondary text-13 border-l border-subtle"
         >
           {t("common.analytics")}
         </span>

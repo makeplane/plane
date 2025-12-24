@@ -7,4 +7,6 @@ export type TMovePageModalProps = {
   page: TPageInstance;
 };
 
-export const MovePageModal: React.FC<TMovePageModalProps> = () => null;
+export function MovePageModal(_props: TMovePageModalProps) {
+  return null;
+}

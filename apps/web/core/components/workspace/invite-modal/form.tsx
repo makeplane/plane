@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { Dialog } from "@headlessui/react";
 
@@ -12,16 +10,16 @@ type TInvitationFormProps = {
   className?: string;
 };
 
-export const InvitationForm = observer((props: TInvitationFormProps) => {
+export const InvitationForm = observer(function InvitationForm(props: TInvitationFormProps) {
   const { title, description, children, actions, onSubmit, className } = props;
 
   return (
     <form onSubmit={onSubmit} className={className}>
       <div className="space-y-4">
-        <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+        <Dialog.Title as="h3" className="text-body-md-medium leading-6 text-primary">
           {title}
         </Dialog.Title>
-        <div className="text-sm text-custom-text-200">{description}</div>
+        <div className="text-body-xs-regular text-secondary">{description}</div>
         {children}
       </div>
       {actions}

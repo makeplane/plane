@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
@@ -11,14 +9,15 @@ import {
   SPACE_BASE_PATH,
   SPACE_BASE_URL,
   WORK_ITEM_TRACKER_ELEMENTS,
-  EProjectFeatureKey,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { WorkItemsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { CountChip } from "@/components/common/count-chip";
 // constants
 import { HeaderFilters } from "@/components/issues/filters";
@@ -30,13 +29,13 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web
-import { CommonProjectBreadcrumbs } from "../breadcrumbs/common";
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const IssuesHeader = observer(() => {
+export const IssuesHeader = observer(function IssuesHeader() {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
     issues: { getGroupIssueCount },
@@ -64,10 +63,16 @@ export const IssuesHeader = observer(() => {
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
           <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"} className="flex-grow-0">
-            <CommonProjectBreadcrumbs
-              workspaceSlug={workspaceSlug?.toString()}
-              projectId={projectId?.toString()}
-              featureKey={EProjectFeatureKey.WORK_ITEMS}
+            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink
+                  label="Work Items"
+                  href={`/${workspaceSlug}/projects/${projectId}/issues/`}
+                  icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
+                  isLast
+                />
+              }
               isLast
             />
           </Breadcrumbs>
@@ -84,11 +89,11 @@ export const IssuesHeader = observer(() => {
         {currentProjectDetails?.anchor ? (
           <a
             href={publishedURL}
-            className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
+            className="group flex items-center gap-1.5 rounded-sm bg-accent-primary/10 px-2.5 py-1 text-11 font-medium text-accent-primary"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
+            <Circle className="h-1.5 w-1.5 fill-accent-primary" strokeWidth={2} />
             {t("workspace_projects.network.public.title")}
             <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
           </a>
@@ -97,7 +102,7 @@ export const IssuesHeader = observer(() => {
         )}
       </Header.LeftItem>
       <Header.RightItem>
-        <div className="hidden gap-3 md:flex">
+        <div className="hidden gap-2 md:flex">
           <HeaderFilters
             projectId={projectId}
             currentProjectDetails={currentProjectDetails}
@@ -105,19 +110,18 @@ export const IssuesHeader = observer(() => {
             canUserCreateIssue={canUserCreateIssue}
           />
         </div>
-        {canUserCreateIssue ? (
+        {canUserCreateIssue && (
           <Button
+            variant="primary"
+            size="lg"
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
             data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
-            size="sm"
           >
             <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
             <div className="hidden sm:block">{t("issue.add.label")}</div>
           </Button>
-        ) : (
-          <></>
         )}
       </Header.RightItem>
     </Header>

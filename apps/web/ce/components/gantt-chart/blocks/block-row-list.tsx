@@ -1,4 +1,3 @@
-import type { FC } from "react";
 // components
 import type { IBlockUpdateData, IGanttBlock } from "@plane/types";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
@@ -18,7 +17,7 @@ export type GanttChartBlocksProps = {
   ganttContainerRef: React.RefObject<HTMLDivElement>;
 };
 
-export const GanttChartRowList: FC<GanttChartBlocksProps> = (props) => {
+export function GanttChartRowList(props: GanttChartBlocksProps) {
   const {
     blockIds,
     blockUpdateHandler,
@@ -56,4 +55,4 @@ export const GanttChartRowList: FC<GanttChartBlocksProps> = (props) => {
       ))}
     </div>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
 // types
@@ -34,7 +32,7 @@ interface ICreateWebhookModal {
   onClose: () => void;
 }
 
-export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
+export function CreateWebhookModal(props: ICreateWebhookModal) {
   const { isOpen, onClose, currentWorkspace, createWebhook, clearSecretKey } = props;
   // states
   const [generatedWebhook, setGeneratedKey] = useState<IWebhook | null>(null);
@@ -124,4 +122,4 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
       )}
     </ModalCore>
   );
-};
+}

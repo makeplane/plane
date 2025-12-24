@@ -1,7 +1,4 @@
-"use client";
-
-import type { FC } from "react";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
   DropTargetRecord,
@@ -33,7 +30,7 @@ type Props = {
   handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
-export const FavoriteRoot: FC<Props> = observer((props) => {
+export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
   // props
   const { isLastChild, parentId, workspaceSlug, favorite, handleRemoveFromFavorites, handleDrop } = props;
   // store hooks
@@ -72,7 +69,7 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded bg-custom-background-100 text-sm p-1 pr-2">
+                <div className="rounded-sm bg-surface-1 text-13 p-1 pr-2">
                   <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} />
                 </div>
               );
@@ -123,7 +120,7 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
 
   return (
     <>
-      <DropIndicator isVisible={instruction === "reorder-above"} />
+      {isDragging && <DropIndicator isVisible={instruction === "reorder-above"} />}
       <FavoriteItemWrapper elementRef={elementRef} isMenuActive={isMenuActive}>
         <FavoriteItemDragHandle isDragging={isDragging} sort_order={favorite.sort_order} />
         <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} />

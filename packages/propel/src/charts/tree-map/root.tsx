@@ -7,7 +7,7 @@ import { cn } from "../../utils/classname";
 import { CustomTreeMapContent } from "./map-content";
 import { TreeMapTooltip } from "./tooltip";
 
-export const TreeMapChart = React.memo((props: TreeMapChartProps) => {
+export const TreeMapChart = React.memo(function TreeMapChart(props: TreeMapChartProps) {
   const { data, className = "w-full h-96", isAnimationActive = false, showTooltip = true } = props;
   return (
     <div className={cn(className)}>
@@ -16,8 +16,8 @@ export const TreeMapChart = React.memo((props: TreeMapChartProps) => {
           data={data}
           nameKey="name"
           dataKey="value"
-          stroke="currentColor"
-          className="text-custom-background-100 bg-custom-background-100"
+          stroke="transparent"
+          className="bg-layer-1 cursor-pointer"
           content={<CustomTreeMapContent />}
           animationEasing="ease-out"
           isUpdateAnimationActive={isAnimationActive}
@@ -29,7 +29,7 @@ export const TreeMapChart = React.memo((props: TreeMapChartProps) => {
               content={({ active, payload }) => <TreeMapTooltip active={active} payload={payload} />}
               cursor={{
                 fill: "currentColor",
-                className: "text-custom-background-90/80 cursor-pointer",
+                className: "bg-layer-1 cursor-pointer",
               }}
               wrapperStyle={{
                 pointerEvents: "auto",

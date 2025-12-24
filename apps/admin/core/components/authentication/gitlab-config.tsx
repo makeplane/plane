@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
@@ -17,7 +15,7 @@ type Props = {
   updateConfig: (key: TInstanceAuthenticationMethodKeys, value: string) => void;
 };
 
-export const GitlabConfiguration: React.FC<Props> = observer((props) => {
+export const GitlabConfiguration = observer(function GitlabConfiguration(props: Props) {
   const { disabled, updateConfig } = props;
   // store
   const { formattedConfig } = useInstance();
@@ -29,7 +27,7 @@ export const GitlabConfiguration: React.FC<Props> = observer((props) => {
     <>
       {isGitlabConfigured ? (
         <div className="flex items-center gap-4">
-          <Link href="/authentication/gitlab" className={cn(getButtonStyling("link-primary", "md"), "font-medium")}>
+          <Link href="/authentication/gitlab" className={cn(getButtonStyling("link", "base"), "font-medium")}>
             Edit
           </Link>
           <ToggleSwitch
@@ -43,11 +41,8 @@ export const GitlabConfiguration: React.FC<Props> = observer((props) => {
           />
         </div>
       ) : (
-        <Link
-          href="/authentication/gitlab"
-          className={cn(getButtonStyling("neutral-primary", "sm"), "text-custom-text-300")}
-        >
-          <Settings2 className="h-4 w-4 p-0.5 text-custom-text-300/80" />
+        <Link href="/authentication/gitlab" className={cn(getButtonStyling("secondary", "base"), "text-tertiary")}>
+          <Settings2 className="h-4 w-4 p-0.5 text-tertiary" />
           Configure
         </Link>
       )}

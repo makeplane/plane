@@ -17,7 +17,7 @@ type Props = {
   forceRender?: boolean;
 };
 
-const RenderIfVisible: React.FC<Props> = (props) => {
+function RenderIfVisible(props: Props) {
   const {
     defaultHeight = "300px",
     root,
@@ -79,9 +79,9 @@ const RenderIfVisible: React.FC<Props> = (props) => {
 
   const child = isVisible ? <>{children}</> : placeholderChildren;
   const style = isVisible || !shouldRecordHeights ? {} : { height: placeholderHeight.current, width: "100%" };
-  const className = isVisible || placeholderChildren ? classNames : cn(classNames, "bg-custom-background-80");
+  const className = isVisible || placeholderChildren ? classNames : cn(classNames, "bg-layer-1");
 
   return React.createElement(as, { ref: intersectionRef, style, className }, child);
-};
+}
 
 export default RenderIfVisible;

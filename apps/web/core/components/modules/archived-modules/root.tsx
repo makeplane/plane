@@ -15,7 +15,7 @@ import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module
 import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 
-export const ArchivedModuleLayoutRoot: React.FC = observer(() => {
+export const ArchivedModuleLayoutRoot = observer(function ArchivedModuleLayoutRoot() {
   // router
   const { workspaceSlug, projectId } = useParams();
   // plane hooks
@@ -58,7 +58,7 @@ export const ArchivedModuleLayoutRoot: React.FC = observer(() => {
   return (
     <>
       {calculateTotalFilters(currentProjectArchivedFilters ?? {}) !== 0 && (
-        <div className="border-b border-custom-border-200 px-5 py-3">
+        <div className="border-b border-subtle px-5 py-3">
           <ModuleAppliedFiltersList
             appliedFilters={currentProjectArchivedFilters ?? {}}
             handleClearAllFilters={() => clearAllFilters(projectId.toString(), "archived")}

@@ -14,7 +14,7 @@ export type TIssueModalProviderProps = {
   children: React.ReactNode;
 };
 
-export const IssueModalProvider = observer((props: TIssueModalProviderProps) => {
+export const IssueModalProvider = observer(function IssueModalProvider(props: TIssueModalProviderProps) {
   const { children, allowedProjectIds } = props;
   // states
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);

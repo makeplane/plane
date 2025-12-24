@@ -24,6 +24,7 @@ from plane.db.models import (
     DeployBoard,
     ProjectMember,
     State,
+    DEFAULT_STATES,
     Workspace,
     UserFavorite,
 )
@@ -209,7 +210,9 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
         """
         try:
             workspace = Workspace.objects.get(slug=slug)
+
             serializer = ProjectCreateSerializer(data={**request.data}, context={"workspace_id": workspace.id})
+
             if serializer.is_valid():
                 serializer.save()
 
@@ -232,41 +235,6 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                         user_id=serializer.instance.project_lead,
                     )
 
-                # Default states
-                states = [
-                    {
-                        "name": "Backlog",
-                        "color": "#60646C",
-                        "sequence": 15000,
-                        "group": "backlog",
-                        "default": True,
-                    },
-                    {
-                        "name": "Todo",
-                        "color": "#60646C",
-                        "sequence": 25000,
-                        "group": "unstarted",
-                    },
-                    {
-                        "name": "In Progress",
-                        "color": "#F59E0B",
-                        "sequence": 35000,
-                        "group": "started",
-                    },
-                    {
-                        "name": "Done",
-                        "color": "#46A758",
-                        "sequence": 45000,
-                        "group": "completed",
-                    },
-                    {
-                        "name": "Cancelled",
-                        "color": "#9AA4BC",
-                        "sequence": 55000,
-                        "group": "cancelled",
-                    },
-                ]
-
                 State.objects.bulk_create(
                     [
                         State(
@@ -279,7 +247,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                             default=state.get("default", False),
                             created_by=request.user,
                         )
-                        for state in states
+                        for state in DEFAULT_STATES
                     ]
                 )
 

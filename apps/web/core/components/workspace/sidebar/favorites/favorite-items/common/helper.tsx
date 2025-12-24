@@ -1,5 +1,3 @@
-"use client";
-
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 // plane imports
@@ -8,7 +6,7 @@ import type { IFavorite, TLogoProps } from "@plane/types";
 // plane web constants
 import { FAVORITE_ITEM_ICONS, FAVORITE_ITEM_LINKS } from "@/plane-web/constants/sidebar-favorites";
 
-export const getFavoriteItemIcon = (type: string, logo?: TLogoProps | undefined) => {
+export const getFavoriteItemIcon = (type: string, logo?: TLogoProps) => {
   const Icon = FAVORITE_ITEM_ICONS[type] || PageIcon;
 
   return (

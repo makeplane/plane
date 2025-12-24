@@ -4,11 +4,10 @@ import { observer } from "mobx-react";
 import { useAnalytics } from "@/hooks/store/use-analytics";
 import { useProject } from "@/hooks/store/use-project";
 // components
-import DurationDropdown from "./select/duration";
 import { ProjectSelect } from "./select/project";
 
-const AnalyticsFilterActions = observer(() => {
-  const { selectedProjects, selectedDuration, updateSelectedProjects, updateSelectedDuration } = useAnalytics();
+const AnalyticsFilterActions = observer(function AnalyticsFilterActions() {
+  const { selectedProjects, updateSelectedProjects } = useAnalytics();
   const { joinedProjectIds } = useProject();
   return (
     <div className="flex items-center justify-end gap-2">

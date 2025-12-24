@@ -1,5 +1,6 @@
 import type { TUserPermissions } from "./enums";
 import type { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
+import type { TLoginMediums } from "./instance";
 
 /**
  * @description The start of the week for the user
@@ -14,8 +15,6 @@ export enum EStartOfTheWeek {
   FRIDAY = 5,
   SATURDAY = 6,
 }
-
-export type TLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google";
 
 export interface IUserLite {
   avatar_url: string;
@@ -60,14 +59,10 @@ export type TUserProfile = {
   role: string | undefined;
   last_workspace_id: string | undefined;
   theme: {
-    text: string | undefined;
     theme: string | undefined;
-    palette: string | undefined;
     primary: string | undefined;
     background: string | undefined;
     darkPalette: boolean | undefined;
-    sidebarText: string | undefined;
-    sidebarBackground: string | undefined;
   };
   onboarding_step: TOnboardingSteps;
   is_onboarded: boolean;
@@ -102,14 +97,10 @@ export interface IUserSettings {
 }
 
 export interface IUserTheme {
-  text: string | undefined;
-  theme: string | undefined;
-  palette: string | undefined;
-  primary: string | undefined;
-  background: string | undefined;
-  darkPalette: boolean | undefined;
-  sidebarText: string | undefined;
-  sidebarBackground: string | undefined;
+  theme: string | undefined; // 'light', 'dark', 'custom', etc.
+  primary?: string | undefined;
+  background?: string | undefined;
+  darkPalette?: boolean | undefined;
 }
 
 export interface IUserMemberLite extends IUserLite {

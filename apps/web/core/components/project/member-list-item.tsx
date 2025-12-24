@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
@@ -24,7 +22,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
+export const ProjectMemberListItem = observer(function ProjectMemberListItem(props: Props) {
   const { memberDetails, projectId, workspaceSlug } = props;
   // router
   const router = useAppRouter();
@@ -93,10 +91,10 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
         columns={columns}
         data={(memberDetails?.filter((member): member is IProjectMemberDetails => member !== null) ?? []) as any}
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
-        tHeadClassName="border-b border-custom-border-100"
-        thClassName="text-left font-medium divide-x-0 text-custom-text-400"
+        tHeadClassName="border-b border-subtle"
+        thClassName="text-left font-medium divide-x-0 text-placeholder"
         tBodyClassName="divide-y-0"
-        tBodyTrClassName="divide-x-0 p-4 h-[40px] text-custom-text-200"
+        tBodyTrClassName="divide-x-0 p-4 h-[40px] text-secondary"
         tHeadTrClassName="divide-x-0"
       />
     </>

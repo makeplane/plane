@@ -4,6 +4,6 @@ import CSVFileIcon from "@/app/assets/attachment/csv-icon.png?url";
 // type
 import type { ImageIconPros } from "../types";
 
-export const CsvIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <img src={CSVFileIcon} width={width} height={height} alt="CSVFileIcon" />
-);
+export function CsvIcon({ width, height }: ImageIconPros) {
+  return <img src={CSVFileIcon} width={width} height={height} alt="CSVFileIcon" />;
+}

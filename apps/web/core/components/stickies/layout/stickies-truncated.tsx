@@ -15,7 +15,7 @@ type StickiesTruncatedProps = {
   handleClose?: () => void;
 };
 
-export const StickiesTruncated = observer((props: StickiesTruncatedProps) => {
+export const StickiesTruncated = observer(function StickiesTruncated(props: StickiesTruncatedProps) {
   const { handleClose = () => {} } = props;
   // navigation
   const { workspaceSlug } = useParams();
@@ -38,7 +38,7 @@ export const StickiesTruncated = observer((props: StickiesTruncatedProps) => {
         <Link
           href={`/${workspaceSlug}/stickies`}
           className={cn(
-            "gap-1 w-full text-custom-primary-100 text-sm font-medium transition-opacity duration-300 bg-custom-background-90/20"
+            "gap-1 w-full text-accent-primary text-13 font-medium transition-opacity duration-300 bg-surface-2/20"
           )}
           onClick={handleClose}
         >

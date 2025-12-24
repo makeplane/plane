@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -23,7 +21,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { SettingsHeading } from "../settings/heading";
 
-export const ProjectSettingsLabelList: React.FC = observer(() => {
+export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelList() {
   // router
   const { workspaceSlug, projectId } = useParams();
   // refs
@@ -93,7 +91,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
 
       <div className="w-full py-2">
         {showLabelForm && (
-          <div className="my-2 w-full rounded border border-custom-border-200 px-3.5 py-2">
+          <div className="my-2 w-full rounded-sm border border-subtle px-3.5 py-2">
             <CreateUpdateLabelInline
               labelForm={showLabelForm}
               setLabelForm={setLabelForm}

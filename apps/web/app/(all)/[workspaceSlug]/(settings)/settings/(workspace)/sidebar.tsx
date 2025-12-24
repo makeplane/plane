@@ -27,26 +27,18 @@ export const WORKSPACE_SETTINGS_ICONS: Record<keyof typeof WORKSPACE_SETTINGS, L
   webhooks: Webhook,
 };
 
-export const WorkspaceActionIcons = ({
-  type,
-  size,
-  className,
-}: {
-  type: string;
-  size?: number;
-  className?: string;
-}) => {
+export function WorkspaceActionIcons({ type, size, className }: { type: string; size?: number; className?: string }) {
   if (type === undefined) return null;
   const Icon = WORKSPACE_SETTINGS_ICONS[type as keyof typeof WORKSPACE_SETTINGS_ICONS];
   if (!Icon) return null;
   return <Icon size={size} className={className} strokeWidth={2} />;
-};
+}
 
 type TWorkspaceSettingsSidebarProps = {
   isMobile?: boolean;
 };
 
-export const WorkspaceSettingsSidebar = (props: TWorkspaceSettingsSidebarProps) => {
+export function WorkspaceSettingsSidebar(props: TWorkspaceSettingsSidebarProps) {
   const { isMobile = false } = props;
   // router
   const pathname = usePathname();
@@ -77,4 +69,4 @@ export const WorkspaceSettingsSidebar = (props: TWorkspaceSettingsSidebarProps) 
       actionIcons={WorkspaceActionIcons}
     />
   );
-};
+}

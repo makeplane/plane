@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -43,7 +41,7 @@ const defaultValues: Partial<ICycle> = {
 
 const cycleService = new CycleService();
 
-export const CycleSidebarHeader: FC<Props> = observer((props) => {
+export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Props) {
   const { workspaceSlug, projectId, cycleDetails, handleClose, isArchived = false } = props;
   // hooks
   const { allowPermissions } = useUserPermissions();
@@ -108,7 +106,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
 
   const dateChecker = async (payload: any) => {
     try {
-      const res = await cycleService.cycleDateCheck(workspaceSlug as string, projectId as string, payload);
+      const res = await cycleService.cycleDateCheck(workspaceSlug, projectId, payload);
       return res.status;
     } catch (err) {
       return false;
@@ -155,22 +153,22 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="sticky z-10 top-0 pt-2 flex items-center justify-between bg-custom-sidebar-background-100">
+      <div className="sticky z-10 top-0 pt-2 flex items-center justify-between bg-surface-1">
         <div className="flex items-center justify-center size-5">
           <button
-            className="flex size-4 items-center justify-center rounded-full bg-custom-border-200"
+            className="flex size-6 items-center justify-center rounded-full bg-layer-3 hover:bg-layer-3-hover flex-shrink-0"
             onClick={() => handleClose()}
           >
-            <ChevronRightIcon className="h-3 w-3 stroke-2 text-white" />
+            <ChevronRightIcon className="size-4 stroke-2 text-secondary" />
           </button>
         </div>
       </div>
       <div className="flex flex-col gap-2 w-full">
         <div className="flex items-start justify-between gap-3 pt-2">
-          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{cycleDetails.name}</h4>
+          <h4 className="w-full break-words text-18 font-semibold text-primary">{cycleDetails.name}</h4>
           {currentCycle && (
             <span
-              className="flex h-6 min-w-20 px-3 items-center justify-center rounded text-center text-xs font-medium"
+              className="flex h-6 min-w-20 px-3 items-center justify-center rounded-sm text-center text-11 font-medium whitespace-nowrap truncate"
               style={{
                 color: currentCycle.color,
                 backgroundColor: `${currentCycle.color}20`,
@@ -225,7 +223,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
                 )}
               />
               {projectUTCOffset && (
-                <span className="rounded-md text-xs px-2 cursor-default  py-1 bg-custom-background-80 text-custom-text-300">
+                <span className="rounded-md text-11 px-2 cursor-default  py-1 bg-layer-1 text-tertiary">
                   {projectUTCOffset}
                 </span>
               )}

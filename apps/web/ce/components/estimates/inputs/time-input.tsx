@@ -5,4 +5,6 @@ export type TEstimateTimeInputProps = {
   handleEstimateInputValue: (value: string) => void;
 };
 
-export const EstimateTimeInput: FC<TEstimateTimeInputProps> = () => <></>;
+export function EstimateTimeInput(_props: TEstimateTimeInputProps) {
+  return <></>;
+}

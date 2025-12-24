@@ -10,16 +10,14 @@ interface Props {
   containerRef: MutableRefObject<HTMLDivElement | null>;
 }
 
-export const IssueBlocksList: React.FC<Props> = (props) => {
+export function IssueBlocksList(props: Props) {
   const { issueIds = [], groupId, displayProperties } = props;
 
   return (
-    <div className="relative h-full w-full">
-      {issueIds &&
-        issueIds?.length > 0 &&
-        issueIds.map((issueId: string) => (
-          <IssueBlock key={issueId} issueId={issueId} displayProperties={displayProperties} groupId={groupId} />
-        ))}
+    <div className="relative size-full">
+      {issueIds?.map((issueId) => (
+        <IssueBlock key={issueId} issueId={issueId} displayProperties={displayProperties} groupId={groupId} />
+      ))}
     </div>
   );
-};
+}

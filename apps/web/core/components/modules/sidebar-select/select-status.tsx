@@ -1,5 +1,3 @@
-"use client";
-
 // react
 import React from "react";
 // react-hook-form
@@ -21,11 +19,11 @@ type Props = {
   watch: UseFormWatch<Partial<IModule>>;
 };
 
-export const SidebarStatusSelect: React.FC<Props> = ({ control, submitChanges, watch }) => {
+export function SidebarStatusSelect({ control, submitChanges, watch }: Props) {
   const { t } = useTranslation();
   return (
     <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+      <div className="flex items-center gap-x-2 text-13 sm:basis-1/2">
         <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
         <p>Status</p>
       </div>
@@ -36,7 +34,7 @@ export const SidebarStatusSelect: React.FC<Props> = ({ control, submitChanges, w
           render={({ field: { value } }) => (
             <CustomSelect
               label={
-                <span className={`flex items-center gap-2 text-left capitalize ${value ? "" : "text-custom-text-100"}`}>
+                <span className={`flex items-center gap-2 text-left capitalize ${value ? "" : "text-primary"}`}>
                   <span
                     className="h-2 w-2 flex-shrink-0 rounded-full"
                     style={{
@@ -65,4 +63,4 @@ export const SidebarStatusSelect: React.FC<Props> = ({ control, submitChanges, w
       </div>
     </div>
   );
-};
+}

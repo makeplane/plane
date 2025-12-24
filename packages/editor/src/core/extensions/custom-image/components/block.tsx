@@ -4,7 +4,7 @@ import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from
 import { cn } from "@plane/utils";
 // local imports
 import type { Pixel, TCustomImageAttributes, TCustomImageSize } from "../types";
-import { ensurePixelString, getImageBlockId } from "../utils";
+import { ensurePixelString, getImageBlockId, isImageDuplicating } from "../utils";
 import type { CustomImageNodeViewProps } from "./node-view";
 import { ImageToolbarRoot } from "./toolbar";
 import { ImageUploadStatus } from "./upload-status";
@@ -20,7 +20,7 @@ type CustomImageBlockProps = CustomImageNodeViewProps & {
   downloadSrc: string | undefined;
 };
 
-export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
+export function CustomImageBlock(props: CustomImageBlockProps) {
   // props
   const {
     editor,
@@ -42,6 +42,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     aspectRatio: nodeAspectRatio,
     src: imgNodeSrc,
     alignment: nodeAlignment,
+    status,
   } = node.attrs;
   // states
   const [size, setSize] = useState<TCustomImageSize>({
@@ -79,7 +80,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     if (editorContainer) {
       closestEditorContainer = editorContainer;
     } else {
-      closestEditorContainer = img.closest(".editor-container") as HTMLDivElement | null;
+      closestEditorContainer = img.closest(".editor-container");
       if (!closestEditorContainer) {
         console.error("Editor container not found");
         return;
@@ -202,15 +203,16 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     [editor, getPos, isTouchDevice]
   );
 
+  const isDuplicating = isImageDuplicating(status);
   // show the image loader if the remote image's src or preview image from filesystem is not set yet (while loading the image post upload) (or)
   // if the initial resize (from 35% width and "auto" height attrs to the actual size in px) is not complete
-  const showImageLoader = !(resolvedImageSrc || imageFromFileSystem) || !initialResizeComplete || hasErroredOnFirstLoad;
-  // show the image upload status only when the resolvedImageSrc is not ready
-  const showUploadStatus = !resolvedImageSrc;
+  const showImageLoader =
+    (!resolvedImageSrc && !isDuplicating) || !initialResizeComplete || hasErroredOnFirstLoad || isDuplicating; // show the image upload status only when the resolvedImageSrc is not ready
+  const showUploadStatus = !resolvedImageSrc && !isDuplicating;
   // show the image utils only if the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
-  const showImageToolbar = resolvedImageSrc && resolvedDownloadSrc && initialResizeComplete;
+  const showImageToolbar = resolvedImageSrc && resolvedDownloadSrc && initialResizeComplete && !isDuplicating;
   // show the image resizer only if the editor is editable, the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
-  const showImageResizer = editor.isEditable && resolvedImageSrc && initialResizeComplete;
+  const showImageResizer = editor.isEditable && resolvedImageSrc && initialResizeComplete && !isDuplicating;
   // show the preview image from the file system if the remote image's src is not set
   const displayedImageSrc = resolvedImageSrc || imageFromFileSystem;
 
@@ -232,10 +234,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
         }}
       >
         {showImageLoader && (
-          <div
-            className="animate-pulse bg-custom-background-80 rounded-md"
-            style={{ width: size.width, height: size.height }}
-          />
+          <div className="animate-pulse bg-layer-1 rounded-md" style={{ width: size.width, height: size.height }} />
         )}
         <img
           ref={imageRef}
@@ -305,13 +304,13 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
           />
         )}
         {selected && displayedImageSrc === resolvedImageSrc && (
-          <div className="absolute inset-0 size-full bg-custom-primary-500/30 pointer-events-none" />
+          <div className="absolute inset-0 size-full bg-accent-primary/30 pointer-events-none" />
         )}
         {showImageResizer && (
           <>
             <div
               className={cn(
-                "absolute inset-0 border-2 border-custom-primary-100 pointer-events-none rounded-md transition-opacity duration-100 ease-in-out",
+                "absolute inset-0 border-2 border-accent-strong pointer-events-none rounded-md transition-opacity duration-100 ease-in-out",
                 {
                   "opacity-100": isResizing,
                   "opacity-0 group-hover/image-component:opacity-100": !isResizing,
@@ -320,7 +319,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
             />
             <div
               className={cn(
-                "absolute bottom-0 translate-y-1/2 size-4 rounded-full bg-custom-primary-100 border-2 border-white transition-opacity duration-100 ease-in-out",
+                "absolute bottom-0 translate-y-1/2 size-4 rounded-full bg-accent-primary border-2 border-white transition-opacity duration-100 ease-in-out",
                 {
                   "opacity-100 pointer-events-auto": isResizing,
                   "opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto":
@@ -337,4 +336,4 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       </div>
     </div>
   );
-};
+}

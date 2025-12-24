@@ -1,1 +1,3 @@
-export const HomePageHeader = () => <></>;
+export function HomePageHeader() {
+  return <></>;
+}

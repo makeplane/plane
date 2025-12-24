@@ -1,17 +1,21 @@
 import { useCallback } from "react";
-import { useParams } from "next/navigation";
 // plane types
 import type { TSearchEntities } from "@plane/types";
 // helpers
-import { getBase64Image } from "@plane/utils";
+import { getBase64Image, getEditorAssetSrc } from "@plane/utils";
+import type { TCustomComponentsMetaData } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
 import { useAdditionalEditorMention } from "@/plane-web/hooks/use-additional-editor-mention";
 
-export const useParseEditorContent = () => {
-  // params
-  const { workspaceSlug } = useParams();
+type TArgs = {
+  projectId?: string;
+  workspaceSlug: string;
+};
+
+export const useParseEditorContent = (args: TArgs) => {
+  const { projectId, workspaceSlug } = args;
   // store hooks
   const { getUserDetails } = useMember();
   // parse additional content
@@ -150,7 +154,7 @@ export const useParseEditorContent = () => {
       serializedDoc = serializedDoc.replace(/background-color: null/g, "").replace(/color: null/g, "");
       return serializedDoc;
     },
-    [getUserDetails]
+    [getUserDetails, parseAdditionalEditorContent]
   );
 
   /**
@@ -160,7 +164,6 @@ export const useParseEditorContent = () => {
    */
   const replaceCustomComponentsFromMarkdownContent = useCallback(
     (props: { markdownContent: string; noAssets?: boolean }): string => {
-      const start = performance.now();
       const { markdownContent, noAssets = false } = props;
       let parsedMarkdownContent = markdownContent;
       // replace the matched mention components with [display_name](redirect_url)
@@ -203,15 +206,68 @@ export const useParseEditorContent = () => {
       // remove all issue-embed components
       const issueEmbedRegex = /<issue-embed-component[^>]*>[^]*<\/issue-embed-component>/g;
       parsedMarkdownContent = parsedMarkdownContent.replace(issueEmbedRegex, "");
-      const end = performance.now();
-      console.log("Exec time:", end - start);
       return parsedMarkdownContent;
     },
-    [getUserDetails, workspaceSlug]
+    [getUserDetails, parseAdditionalEditorContent, workspaceSlug]
+  );
+
+  const getEditorMetaData = useCallback(
+    (htmlContent: string): TCustomComponentsMetaData => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlContent, "text/html");
+      const imageMetaData: TCustomComponentsMetaData["file_assets"] = [];
+      // process image components
+      const imageComponents = doc.querySelectorAll("image-component");
+      imageComponents.forEach((element) => {
+        const src = element.getAttribute("src");
+        if (src) {
+          const assetSrc = src.startsWith("http")
+            ? src
+            : getEditorAssetSrc({
+                assetId: src,
+                projectId,
+                workspaceSlug,
+              });
+          if (assetSrc) {
+            imageMetaData.push({
+              id: src,
+              name: src,
+              url: assetSrc,
+            });
+          }
+        }
+      });
+      // process user mentions
+      const userMentions: TCustomComponentsMetaData["user_mentions"] = [];
+      const mentionComponents = doc.querySelectorAll("mention-component");
+      mentionComponents.forEach((element) => {
+        const id = element.getAttribute("entity_identifier");
+        if (id) {
+          const userDetails = getUserDetails(id);
+          const originUrl = typeof window !== "undefined" && (window.location.origin ?? "");
+          const path = `${workspaceSlug}/profile/${id}`;
+          const url = `${originUrl}/${path}`;
+          if (userDetails) {
+            userMentions.push({
+              id,
+              display_name: userDetails.display_name,
+              url,
+            });
+          }
+        }
+      });
+
+      return {
+        file_assets: imageMetaData,
+        user_mentions: userMentions,
+      };
+    },
+    [getUserDetails, projectId, workspaceSlug]
   );
 
   return {
     replaceCustomComponentsFromHTMLContent,
     replaceCustomComponentsFromMarkdownContent,
+    getEditorMetaData,
   };
 };

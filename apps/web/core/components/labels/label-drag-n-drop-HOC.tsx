@@ -1,5 +1,3 @@
-"use client";
-
 import type { MutableRefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -25,15 +23,15 @@ type LabelDragPreviewProps = {
   isGroup: boolean;
 };
 
-export const LabelDragPreview = (props: LabelDragPreviewProps) => {
+export function LabelDragPreview(props: LabelDragPreviewProps) {
   const { label, isGroup } = props;
 
   return (
-    <div className="py-3 pl-2 pr-4 border-[1px] border-custom-border-200 bg-custom-background-100">
+    <div className="py-3 pl-2 pr-4 border-[1px] border-subtle bg-surface-1">
       <LabelName name={label.name} color={label.color} isGroup={isGroup} />
     </div>
   );
-};
+}
 
 type Props = {
   label: IIssueLabel;
@@ -53,7 +51,7 @@ type Props = {
   ) => void;
 };
 
-export const LabelDndHOC = observer((props: Props) => {
+export const LabelDndHOC = observer(function LabelDndHOC(props: Props) {
   const { label, isGroup, isChild, isLastChild, children, onDrop } = props;
 
   const [isDragging, setIsDragging] = useState(false);
@@ -152,7 +150,7 @@ export const LabelDndHOC = observer((props: Props) => {
           if (instruction === "reorder-below") dropAtEndOfList = true;
 
           const sourceData = source.data as TargetData;
-          if (sourceData.id) onDrop(sourceData.id as string, parentId, droppedLabelId, dropAtEndOfList);
+          if (sourceData.id) onDrop(sourceData.id, parentId, droppedLabelId, dropAtEndOfList);
         },
       })
     );

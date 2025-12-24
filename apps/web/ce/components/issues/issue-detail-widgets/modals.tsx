@@ -10,4 +10,6 @@ export type TWorkItemAdditionalWidgetModalsProps = {
   workspaceSlug: string;
 };
 
-export const WorkItemAdditionalWidgetModals: FC<TWorkItemAdditionalWidgetModalsProps> = () => null;
+export function WorkItemAdditionalWidgetModals(_props: TWorkItemAdditionalWidgetModalsProps) {
+  return null;
+}

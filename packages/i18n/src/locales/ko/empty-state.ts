@@ -24,6 +24,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "이 프로젝트에 접근할 수 없는 것 같습니다",
+      restricted_description: "관리자에게 접근 권한을 요청하시면 여기서 계속 진행하실 수 있습니다.",
+      join_description: "아래 버튼을 클릭하여 프로젝트에 참여하세요.",
+      cta_primary: "프로젝트 참여",
+      cta_loading: "프로젝트 참여 중",
+    },
+    invalid_project: {
+      title: "프로젝트를 찾을 수 없습니다",
+      description: "찾으시는 프로젝트가 존재하지 않습니다.",
+    },
     work_items: {
       title: "첫 번째 작업 항목으로 시작하세요.",
       description:
@@ -169,6 +180,11 @@ export default {
       title: "아직 개인 토큰이 없습니다",
       description: "작업 공간을 외부 시스템 및 애플리케이션과 연결하기 위한 보안 API 토큰을 생성하세요.",
       cta_primary: "API 토큰 추가",
+    },
+    webhooks: {
+      title: "아직 웹훅이 추가되지 않았습니다",
+      description: "프로젝트 이벤트가 발생할 때 외부 서비스에 대한 알림을 자동화하세요.",
+      cta_primary: "웹훅 추가",
     },
   },
 } as const;

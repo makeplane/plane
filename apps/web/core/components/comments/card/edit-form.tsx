@@ -6,7 +6,7 @@ import type { EditorRefApi } from "@plane/editor";
 import { CloseIcon } from "@plane/propel/icons";
 // plane imports
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
-import { isCommentEmpty } from "@plane/utils";
+import { cn, isCommentEmpty } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
 
@@ -21,7 +21,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const CommentCardEditForm: React.FC<Props> = observer((props) => {
+export const CommentCardEditForm = observer(function CommentCardEditForm(props: Props) {
   const {
     activityOperations,
     comment,
@@ -46,7 +46,7 @@ export const CommentCardEditForm: React.FC<Props> = observer((props) => {
   });
   const commentHTML = watch("comment_html");
 
-  const isEmpty = isCommentEmpty(commentHTML ?? undefined);
+  const isEmpty = isCommentEmpty(commentHTML);
   const isEditorReadyToDiscard = editorRef.current?.isEditorReadyToDiscard();
   const isSubmitButtonDisabled = isSubmitting || !isEditorReadyToDiscard;
   const isDisabled = isSubmitting || isEmpty || isSubmitButtonDisabled;
@@ -94,37 +94,58 @@ export const CommentCardEditForm: React.FC<Props> = observer((props) => {
             const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file, comment.id);
             return asset_id;
           }}
+          duplicateFile={async (assetId: string) => {
+            const { asset_id } = await activityOperations.duplicateCommentAsset(assetId, comment.id);
+            return asset_id;
+          }}
           projectId={projectId}
-          parentClassName="p-2"
+          parentClassName="p-2 bg-surface-1"
           displayConfig={{
             fontSize: "small-font",
           }}
         />
       </div>
-      <div className="flex gap-1 self-end">
+      <div className="flex gap-2 self-end">
         {!isEmpty && (
           <button
             type="button"
             onClick={handleSubmit(onEnter)}
             disabled={isDisabled}
-            className={`group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300  ${
-              isEmpty ? "cursor-not-allowed bg-gray-200" : "hover:bg-green-500"
-            }`}
+            className={cn(
+              "group rounded-lg border size-7 flex items-center justify-center shadow-md duration-300",
+              isDisabled
+                ? "cursor-not-allowed border-green-500/50 bg-green-500/10"
+                : "border-green-500 bg-green-500/20 hover:bg-green-500"
+            )}
           >
             <Check
-              className={`h-3 w-3 text-green-500 duration-300 ${isEmpty ? "text-black" : "group-hover:text-white"}`}
+              className={cn(
+                "size-4 duration-300",
+                isDisabled ? "text-green-500/50" : "text-green-500 group-hover:text-on-color"
+              )}
             />
           </button>
         )}
         <button
           type="button"
-          className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
+          disabled={isSubmitting}
+          className={cn(
+            "group rounded-lg border size-7 flex items-center justify-center shadow-md duration-300",
+            isSubmitting
+              ? "cursor-not-allowed border-red-500/50 bg-red-500/10"
+              : "border-red-500 bg-red-500/20 hover:bg-red-500"
+          )}
           onClick={() => {
             setIsEditing(false);
             editorRef.current?.setEditorValue(comment.comment_html ?? "<p></p>");
           }}
         >
-          <CloseIcon className="size-3 text-red-500 duration-300 group-hover:text-white" />
+          <CloseIcon
+            className={cn(
+              "size-5 duration-300",
+              isSubmitting ? "text-red-500/50" : "text-red-500 group-hover:text-on-color"
+            )}
+          />
         </button>
       </div>
     </form>

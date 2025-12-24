@@ -8,7 +8,7 @@ import type { IMultiSelectDropdownOptions, ISingleSelectDropdownOptions } from "
 // components
 import { DropdownOptionsLoader, InputSearch } from ".";
 
-export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSelectDropdownOptions> = (props) => {
+export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSelectDropdownOptions) {
   const {
     isOpen,
     query,
@@ -51,11 +51,11 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
                   disabled={option.disabled}
                   className={({ active, selected }) =>
                     cn(
-                      "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
+                      "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5",
                       {
-                        "bg-custom-background-80": active,
-                        "text-custom-text-100": selected,
-                        "text-custom-text-200": !selected,
+                        "bg-layer-1": active,
+                        "text-primary": selected,
+                        "text-secondary": !selected,
                       },
                       option.className && option.className({ active, selected })
                     )
@@ -77,7 +77,7 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-custom-text-400">No matching results</p>
+              <p className="px-1.5 py-1 italic text-placeholder">No matching results</p>
             )
           ) : loader ? (
             <> {loader} </>
@@ -88,4 +88,4 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
       </div>
     </>
   );
-};
+}

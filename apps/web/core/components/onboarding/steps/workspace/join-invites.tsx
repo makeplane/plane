@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 // plane imports
 import { MEMBER_TRACKER_ELEMENTS, MEMBER_TRACKER_EVENTS, ROLE } from "@plane/constants";
@@ -26,7 +24,7 @@ type Props = {
 };
 const workspaceService = new WorkspaceService();
 
-export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
+export function WorkspaceJoinInvitesStep(props: Props) {
   const { invitations, handleNextStep, handleCurrentViewChange } = props;
   // states
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
@@ -88,7 +86,7 @@ export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
             return (
               <div
                 key={invitation.id}
-                className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 border-custom-border-200 hover:bg-custom-background-90`}
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 border-subtle hover:bg-surface-2`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
                 <div className="flex-shrink-0">
@@ -99,8 +97,8 @@ export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
                   />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
-                  <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
+                  <div className="text-13 font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
+                  <p className="text-11 text-secondary">{ROLE[invitation.role]}</p>
                 </div>
                 <span className={`flex-shrink-0`}>
                   <Checkbox checked={isSelected} />
@@ -112,7 +110,7 @@ export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
       <div className="flex flex-col gap-4">
         <Button
           variant="primary"
-          size="lg"
+          size="xl"
           className="w-full"
           onClick={submitInvitations}
           disabled={isJoiningWorkspaces || !invitationsRespond.length}
@@ -121,8 +119,8 @@ export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
           {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue"}
         </Button>
         <Button
-          variant="link-neutral"
-          size="lg"
+          variant="ghost"
+          size="xl"
           className="w-full"
           onClick={handleCurrentViewChange}
           disabled={isJoiningWorkspaces}
@@ -134,4 +132,4 @@ export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
   ) : (
     <div>No Invitations found</div>
   );
-};
+}

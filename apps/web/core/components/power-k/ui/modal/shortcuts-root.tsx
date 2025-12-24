@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useState, Fragment } from "react";
 import { Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
@@ -17,7 +14,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const ShortcutsModal: FC<Props> = (props) => {
+export function ShortcutsModal(props: Props) {
   const { isOpen, onClose } = props;
   // states
   const [query, setQuery] = useState("");
@@ -44,7 +41,7 @@ export const ShortcutsModal: FC<Props> = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-30 overflow-y-auto">
@@ -59,18 +56,15 @@ export const ShortcutsModal: FC<Props> = (props) => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative flex h-full items-center justify-center">
-                <div className="flex h-[61vh] w-full flex-col  space-y-4 overflow-hidden rounded-lg bg-custom-background-100 p-5 shadow-custom-shadow-md transition-all sm:w-[28rem]">
+                <div className="flex h-[61vh] w-full flex-col  space-y-4 overflow-hidden rounded-lg bg-surface-1 p-5 shadow-raised-200 transition-all sm:w-[28rem]">
                   <Dialog.Title as="h3" className="flex justify-between">
-                    <span className="text-lg font-medium">Keyboard shortcuts</span>
+                    <span className="text-16 font-medium">Keyboard shortcuts</span>
                     <button type="button" onClick={handleClose}>
-                      <CloseIcon
-                        className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100"
-                        aria-hidden="true"
-                      />
+                      <CloseIcon className="h-4 w-4 text-secondary hover:text-primary" aria-hidden="true" />
                     </button>
                   </Dialog.Title>
-                  <div className="flex w-full items-center rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2">
-                    <Search className="h-3.5 w-3.5 text-custom-text-200" />
+                  <div className="flex w-full items-center rounded-sm border-[0.5px] border-subtle bg-surface-2 px-2">
+                    <Search className="h-3.5 w-3.5 text-secondary" />
                     <Input
                       id="search"
                       name="search"
@@ -78,7 +72,7 @@ export const ShortcutsModal: FC<Props> = (props) => {
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       placeholder="Search for shortcuts"
-                      className="w-full border-none bg-transparent py-1 text-xs text-custom-text-200 outline-none"
+                      className="w-full border-none bg-transparent py-1 text-11 text-secondary outline-none"
                       autoFocus
                       tabIndex={1}
                     />
@@ -92,4 +86,4 @@ export const ShortcutsModal: FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

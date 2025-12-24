@@ -14,7 +14,7 @@ type Props = {
   onSubmit: () => Promise<void>;
 };
 
-export const DeclineIssueModal: React.FC<Props> = (props) => {
+export function DeclineIssueModal(props: Props) {
   const { isOpen, onClose, data, onSubmit } = props;
   // states
   const [isDeclining, setIsDeclining] = useState(false);
@@ -45,7 +45,7 @@ export const DeclineIssueModal: React.FC<Props> = (props) => {
       content={
         <>
           Are you sure you want to decline work item{" "}
-          <span className="break-words font-medium text-custom-text-100">
+          <span className="break-words font-medium text-primary">
             {projectDetails?.identifier}-{data?.sequence_id}
           </span>
           {""}? This action cannot be undone.
@@ -57,4 +57,4 @@ export const DeclineIssueModal: React.FC<Props> = (props) => {
       }}
     />
   );
-};
+}

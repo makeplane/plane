@@ -1,5 +1,3 @@
-"use client";
-import type { FC } from "react";
 import React from "react";
 // helpers
 import { cn } from "@plane/utils";
@@ -10,16 +8,16 @@ type Props = {
   isMenuActive?: boolean;
 };
 
-export const FavoriteItemWrapper: FC<Props> = (props) => {
+export function FavoriteItemWrapper(props: Props) {
   const { children, elementRef, isMenuActive = false } = props;
   return (
     <>
       <div
         ref={elementRef}
         className={cn(
-          "group/project-item cursor-pointer relative group flex items-center justify-between w-full gap-1.5 rounded px-2 py-1 outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90",
+          "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
           {
-            "bg-custom-sidebar-background-90": isMenuActive,
+            "bg-surface-2": isMenuActive,
           }
         )}
       >
@@ -27,4 +25,4 @@ export const FavoriteItemWrapper: FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

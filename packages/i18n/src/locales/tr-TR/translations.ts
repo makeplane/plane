@@ -337,13 +337,14 @@ export default {
   project_id_must_be_at_least_1_character: "Proje ID en az 1 karakter olmalı",
   project_id_must_be_at_most_5_characters: "Proje ID en fazla 5 karakter olmalı",
   project_id: "Proje ID",
-  project_id_tooltip_content: "Projedeki iş öğelerini benzersiz şekilde tanımlamanıza yardımcı olur. Maks. 5 karakter.",
+  project_id_tooltip_content:
+    "Projedeki iş öğelerini benzersiz şekilde tanımlamanıza yardımcı olur. Maks. 10 karakter.",
   description_placeholder: "Açıklama",
   only_alphanumeric_non_latin_characters_allowed: "Yalnızca alfasayısal ve Latin olmayan karakterlere izin verilir.",
   project_id_is_required: "Proje ID gereklidir",
   project_id_allowed_char: "Yalnızca alfasayısal ve Latin olmayan karakterlere izin verilir.",
   project_id_min_char: "Proje ID en az 1 karakter olmalı",
-  project_id_max_char: "Proje ID en fazla 5 karakter olmalı",
+  project_id_max_char: "Proje ID en fazla 10 karakter olmalı",
   project_description_placeholder: "Proje açıklamasını girin",
   select_network: "Ağ seç",
   lead: "Lider",
@@ -1529,6 +1530,47 @@ export default {
         "Onaylarsanız, bu görünüm için seçtiğiniz tüm sıralama, filtreleme ve görüntüleme seçenekleri + düzen kalıcı olarak silinecek ve geri yükleme imkanı olmayacaktır.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "E-postayı değiştir",
+        description: "Doğrulama bağlantısı almak için yeni bir e-posta adresi girin.",
+        toasts: {
+          success_title: "Başarılı!",
+          success_message: "E-posta başarıyla güncellendi. Lütfen tekrar giriş yapın.",
+        },
+        form: {
+          email: {
+            label: "Yeni e-posta",
+            placeholder: "E-postanızı girin",
+            errors: {
+              required: "E-posta zorunludur",
+              invalid: "E-posta geçersiz",
+              exists: "E-posta zaten mevcut. Başka bir tane kullanın.",
+              validation_failed: "E-posta doğrulaması başarısız oldu. Lütfen tekrar deneyin.",
+            },
+          },
+          code: {
+            label: "Benzersiz kod",
+            placeholder: "123456",
+            helper_text: "Doğrulama kodu yeni e-postanıza gönderildi.",
+            errors: {
+              required: "Benzersiz kod zorunludur",
+              invalid: "Geçersiz doğrulama kodu. Lütfen tekrar deneyin.",
+            },
+          },
+        },
+        actions: {
+          continue: "Devam et",
+          confirm: "Onayla",
+          cancel: "İptal et",
+        },
+        states: {
+          sending: "Gönderiliyor…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Çalışma Alanı Ayarları",
     page_label: "{workspace} - Genel ayarlar",
@@ -1544,6 +1586,7 @@ export default {
         name: "Çalışma Alanı Adı",
         company_size: "Şirket Büyüklüğü",
         url: "Çalışma Alanı URL'si",
+        workspace_timezone: "Çalışma Alanı Saat Dilimi",
         update_workspace: "Çalışma Alanını Güncelle",
         delete_workspace: "Bu çalışma alanını sil",
         delete_workspace_description:

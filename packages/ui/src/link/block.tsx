@@ -14,7 +14,7 @@ export type TLinkItemBlockProps = {
   onClick?: () => void;
 };
 
-export const LinkItemBlock: FC<TLinkItemBlockProps> = (props) => {
+export function LinkItemBlock(props: TLinkItemBlockProps) {
   // props
   const { title, url, createdAt, menuItems, onClick } = props;
   // icons
@@ -22,14 +22,14 @@ export const LinkItemBlock: FC<TLinkItemBlockProps> = (props) => {
   return (
     <div
       onClick={onClick}
-      className="cursor-pointer group flex items-center bg-custom-background-100 px-4 w-[230px] h-[56px] border-[0.5px] border-custom-border-200 rounded-md gap-4"
+      className="cursor-pointer group flex items-center bg-surface-1 px-4 w-[230px] h-[56px] border-[0.5px] border-subtle rounded-md gap-4"
     >
-      <div className="flex-shrink-0 size-8 rounded p-2 bg-custom-background-90 grid place-items-center">
-        <Icon className="size-4 stroke-2 text-custom-text-350 group-hover:text-custom-text-100" />
+      <div className="flex-shrink-0 size-8 rounded-sm p-2 bg-surface-2 grid place-items-center">
+        <Icon className="size-4 stroke-2 text-tertiary group-hover:text-primary" />
       </div>
       <div className="flex-1 truncate">
-        <div className="text-sm font-medium truncate">{title}</div>
-        {createdAt && <div className="text-xs font-medium text-custom-text-400">{calculateTimeAgo(createdAt)}</div>}
+        <div className="text-13 font-medium truncate">{title}</div>
+        {createdAt && <div className="text-11 font-medium text-placeholder">{calculateTimeAgo(createdAt)}</div>}
       </div>
       {menuItems && (
         <div className="hidden group-hover:block">
@@ -43,7 +43,7 @@ export const LinkItemBlock: FC<TLinkItemBlockProps> = (props) => {
                   item.action();
                 }}
                 className={cn("flex items-center gap-2 w-full ", {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 })}
                 disabled={item.disabled}
               >
@@ -52,8 +52,8 @@ export const LinkItemBlock: FC<TLinkItemBlockProps> = (props) => {
                   <h5>{item.title}</h5>
                   {item.description && (
                     <p
-                      className={cn("text-custom-text-300 whitespace-pre-line", {
-                        "text-custom-text-400": item.disabled,
+                      className={cn("text-tertiary whitespace-pre-line", {
+                        "text-placeholder": item.disabled,
                       })}
                     >
                       {item.description}
@@ -67,4 +67,4 @@ export const LinkItemBlock: FC<TLinkItemBlockProps> = (props) => {
       )}
     </div>
   );
-};
+}
