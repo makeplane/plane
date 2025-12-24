@@ -21,11 +21,6 @@ class Migration(migrations.Migration):
             new_name='ProjectUserProperty',
         ),
         migrations.AddField(
-            model_name='apitoken',
-            name='allowed_rate_limit',
-            field=models.CharField(default='60/min', max_length=255),
-        ),
-        migrations.AddField(
             model_name='projectuserproperty',
             name='preferences',
             field=models.JSONField(default=plane.db.models.project.get_default_preferences),
