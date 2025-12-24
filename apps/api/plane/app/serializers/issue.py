@@ -18,7 +18,7 @@ from plane.db.models import (
     Issue,
     IssueActivity,
     IssueComment,
-    ProjectUserProperty,
+    IssueUserProperty,
     IssueAssignee,
     IssueSubscriber,
     IssueLabel,
@@ -346,9 +346,9 @@ class IssueActivitySerializer(BaseSerializer):
         fields = "__all__"
 
 
-class ProjectUserPropertySerializer(BaseSerializer):
+class IssueUserPropertySerializer(BaseSerializer):
     class Meta:
-        model = ProjectUserProperty
+        model = IssueUserProperty
         fields = "__all__"
         read_only_fields = ["user", "workspace", "project"]
 

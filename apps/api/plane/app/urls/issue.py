@@ -14,7 +14,7 @@ from plane.app.views import (
     IssueReactionViewSet,
     IssueRelationViewSet,
     IssueSubscriberViewSet,
-    ProjectUserDisplayPropertyEndpoint,
+    IssueUserDisplayPropertyEndpoint,
     IssueViewSet,
     LabelViewSet,
     BulkArchiveIssuesEndpoint,
@@ -208,13 +208,13 @@ urlpatterns = [
         name="project-issue-comment-reactions",
     ),
     ## End Comment Reactions
-    ## ProjectUserProperty
+    ## IssueUserProperty
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-properties/",
-        ProjectUserDisplayPropertyEndpoint.as_view(),
+        IssueUserDisplayPropertyEndpoint.as_view(),
         name="project-issue-display-properties",
     ),
-    ## ProjectUserProperty End
+    ## IssueUserProperty End
     ## Issue Archives
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/",

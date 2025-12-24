@@ -20,7 +20,7 @@ from plane.db.models import (
     WorkspaceMember,
     Project,
     ProjectMember,
-    ProjectUserProperty,
+    IssueUserProperty,
     State,
     Label,
     Issue,
@@ -118,9 +118,9 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
         )
 
         # Create issue user properties
-        ProjectUserProperty.objects.bulk_create(
+        IssueUserProperty.objects.bulk_create(
             [
-                ProjectUserProperty(
+                IssueUserProperty(
                     project=project,
                     user_id=workspace_member["member_id"],
                     workspace_id=workspace.id,
