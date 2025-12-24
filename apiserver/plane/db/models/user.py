@@ -107,6 +107,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # my_issues_prop = models.JSONField(null=True)
 
     is_bot = models.BooleanField(default=False)
+    hub_codes = models.JSONField(default=list, blank=True, null=True)
 
     # timezone
     USER_TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))

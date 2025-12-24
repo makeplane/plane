@@ -137,12 +137,18 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
                     )
 
         # If user does not exist, create the user
+        hub_codes_input = request.data.get("hub_codes")
+        hub_codes_for_creation = (
+            hub_codes_input if hub_codes_input is not None else []
+        )
+
         user_data = {
                 "email": email,
                 "display_name": request.data.get("display_name"),
                 "first_name": request.data.get("first_name", ""),
                 "last_name": request.data.get("last_name", ""),
                 "role": request.data.get("role", 15),
+                "hub_codes": hub_codes_for_creation,
             }
         if not user:
             user = self.create_user(user_data)
@@ -157,6 +163,10 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
             profile.company_name = workspace.name
             profile.save()
 
+        if user and hub_codes_input is not None:
+            user.hub_codes = hub_codes_input
+            user.save(update_fields=["hub_codes"])
+
         if not workspace_member:
             self.create_workspace_member(workspace.id, user, role=user_data.get("role"))
             
@@ -170,6 +180,81 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
 
         return Response(user_data, status=status.HTTP_201_CREATED)
 
+    def patch(self, request, slug, project_id, member_id):
+        workspace = Workspace.objects.filter(slug=slug).first()
+        project = Project.objects.filter(pk=project_id, workspace=workspace).first()
+
+        if not workspace or not project:
+            return Response(
+                {"error": "Provided workspace or project does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            user = User.objects.get(id=member_id)
+        except User.DoesNotExist:
+            return Response(
+                {"error": "User does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        project_member = ProjectMember.objects.filter(
+            project=project, member=user, workspace=workspace, is_active=True
+        ).first()
+
+        if not project_member:
+            return Response(
+                {"error": "User is not a member of this project"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        user_fields = ["display_name", "first_name", "last_name", "hub_codes"]
+        user_updated = False
+        for field in user_fields:
+            if field in request.data:
+                setattr(user, field, request.data.get(field))
+                user_updated = True
+
+        if user_updated:
+            user.save(update_fields=[field for field in user_fields if field in request.data])
+
+        if "role" in request.data:
+            try:
+                project_member.role = int(request.data.get("role"))
+            except (TypeError, ValueError):
+                return Response(
+                    {"error": "Invalid role value"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            project_member.save(update_fields=["role"])
+
+        serialized_user = UserLiteSerializer(user).data
+        return Response(serialized_user, status=status.HTTP_200_OK)
+
+    def delete(self, request, slug, project_id, member_id):
+        workspace = Workspace.objects.filter(slug=slug).first()
+        project = Project.objects.filter(pk=project_id, workspace=workspace).first()
+
+        if not workspace or not project:
+            return Response(
+                {"error": "Provided workspace or project does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            user = User.objects.get(id=member_id)
+        except User.DoesNotExist:
+            return Response(
+                {"error": "User does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        ProjectMember.objects.filter(project=project, member=user).delete()
+        WorkspaceMember.objects.filter(workspace=workspace, member=user).delete()
+        user.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def create_user(self, data):
         user = User.objects.create(
             email=data.get("email"),
@@ -179,9 +264,9 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
             username=data.get("username", uuid.uuid4().hex),
             password=make_password(data.get("username", uuid.uuid4().hex)),
             is_password_autoset=False,
-            is_active=False,
+            is_active=True,
+            hub_codes=data.get("hub_codes", []),
         )
-        user.save()
         return user
 
         # Create a workspace member for the user if not already a member
