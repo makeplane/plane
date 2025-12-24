@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 # Module import
 from .base import BaseSerializer
-from plane.db.models import APIToken, APIActivityLog, Workspace
+from plane.db.models import APIToken, APIActivityLog
 
 
 class APITokenSerializer(BaseSerializer):
@@ -21,19 +21,6 @@ class APITokenSerializer(BaseSerializer):
             "workspace",
             "user",
         ]
-
-    def create(self, validated_data):
-        workspace_slug = self.context.get("workspace_slug")
-        user = self.context.get("user")
-
-        # Set the workspace
-        workspace = Workspace.objects.get(slug=workspace_slug)
-        validated_data["workspace"] = workspace
-
-        # Set the user and user type
-        validated_data["user"] = user
-        validated_data["user_type"] = 1 if user.is_bot else 0
-        return super().create(validated_data)
 
 
 class APITokenReadSerializer(BaseSerializer):
