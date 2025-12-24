@@ -38,7 +38,17 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
 
         soup = None
         title = None
-        final_url = None
+        final_url = url
+
+        parsed = urlparse(url)
+
+        try:
+            ip = ipaddress.ip_address(parsed.hostname)
+            if ip.is_private or ip.is_loopback or ip.is_reserved:
+                raise ValueError("Access to private/internal networks is not allowed")
+        except ValueError:
+            # Not an IP address, continue with domain validation
+            pass
 
         try:
             response = requests.get(url, headers=headers, timeout=1)
