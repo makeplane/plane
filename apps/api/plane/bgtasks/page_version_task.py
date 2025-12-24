@@ -12,6 +12,7 @@ from django.utils import timezone
 from plane.db.models import Page, PageVersion
 from plane.utils.exception_logger import log_exception
 
+PAGE_VERSION_TASK_TIMEOUT = 600
 
 @shared_task
 def track_page_version(page_id, existing_instance, user_id):
@@ -33,7 +34,7 @@ def track_page_version(page_id, existing_instance, user_id):
             if (
                 page_version
                 and str(page_version.owned_by_id) == str(user_id)
-                and (timezone.now() - page_version.last_saved_at).total_seconds() <= 600
+                and (timezone.now() - page_version.last_saved_at).total_seconds() <= PAGE_VERSION_TASK_TIMEOUT
             ):
 
                 page_version.description_html = page.description_html
