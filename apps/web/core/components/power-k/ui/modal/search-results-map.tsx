@@ -14,6 +14,7 @@ import type { TPowerKSearchResultsKeys } from "@/components/power-k/core/types";
 // plane web imports
 import { SEARCH_RESULTS_GROUPS_MAP_EXTENDED } from "@/plane-web/components/command-palette/power-k/search/search-results-map";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 
 export type TPowerKSearchResultGroupDetails = {
   icon?: React.ComponentType<{ className?: string }>;
@@ -43,7 +44,14 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
           projectIdentifier={workItem.project__identifier}
           issueSequenceId={workItem.sequence_id}
           size="xs"
-        />{" "}
+        />
+        <StateDropdown
+          value={workItem?.state}
+          projectId={workItem.projectId?.toString() ?? ""}
+          disabled={true}
+          buttonVariant="background-with-text"
+          size="xs"
+        />
         {workItem.name}
       </div>
     ),
