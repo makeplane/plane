@@ -157,7 +157,7 @@ export function InstanceSetupForm() {
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <div className="w-full space-y-1">
                 <label className="text-13 text-tertiary font-medium" htmlFor="first_name">
-                  First name <span className="text-red-500">*</span>
+                  First name <span className="text-danger-primary">*</span>
                 </label>
                 <Input
                   className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
@@ -174,7 +174,7 @@ export function InstanceSetupForm() {
               </div>
               <div className="w-full space-y-1">
                 <label className="text-13 text-tertiary font-medium" htmlFor="last_name">
-                  Last name <span className="text-red-500">*</span>
+                  Last name <span className="text-danger-primary">*</span>
                 </label>
                 <Input
                   className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
@@ -192,7 +192,7 @@ export function InstanceSetupForm() {
 
             <div className="w-full space-y-1">
               <label className="text-13 text-tertiary font-medium" htmlFor="email">
-                Email <span className="text-red-500">*</span>
+                Email <span className="text-danger-primary">*</span>
               </label>
               <Input
                 className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
@@ -207,13 +207,13 @@ export function InstanceSetupForm() {
                 autoComplete="on"
               />
               {errorData.type && errorData.type === EErrorCodes.INVALID_EMAIL && errorData.message && (
-                <p className="px-1 text-11 text-red-500">{errorData.message}</p>
+                <p className="px-1 text-11 text-danger-primary">{errorData.message}</p>
               )}
             </div>
 
             <div className="w-full space-y-1">
               <label className="text-13 text-tertiary font-medium" htmlFor="company_name">
-                Company name <span className="text-red-500">*</span>
+                Company name <span className="text-danger-primary">*</span>
               </label>
               <Input
                 className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
@@ -229,7 +229,7 @@ export function InstanceSetupForm() {
 
             <div className="w-full space-y-1">
               <label className="text-13 text-tertiary font-medium" htmlFor="password">
-                Set a password <span className="text-red-500">*</span>
+                Set a password <span className="text-danger-primary">*</span>
               </label>
               <div className="relative">
                 <Input
@@ -267,14 +267,14 @@ export function InstanceSetupForm() {
                 )}
               </div>
               {errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD && errorData.message && (
-                <p className="px-1 text-11 text-red-500">{errorData.message}</p>
+                <p className="px-1 text-11 text-danger-primary">{errorData.message}</p>
               )}
               <PasswordStrengthIndicator password={formData.password} isFocused={isPasswordInputFocused} />
             </div>
 
             <div className="w-full space-y-1">
               <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
-                Confirm password <span className="text-red-500">*</span>
+                Confirm password <span className="text-danger-primary">*</span>
               </label>
               <div className="relative">
                 <Input
@@ -311,7 +311,9 @@ export function InstanceSetupForm() {
               </div>
               {!!formData.confirm_password &&
                 formData.password !== formData.confirm_password &&
-                renderPasswordMatchError && <span className="text-13 text-red-500">Passwords don{"'"}t match</span>}
+                renderPasswordMatchError && (
+                  <span className="text-13 text-danger-primary">Passwords don{"'"}t match</span>
+                )}
             </div>
 
             <div className="relative flex gap-2">

@@ -139,7 +139,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                             removeRelation(workspaceSlug, projectId, issueId, relationKey, relationIssueId);
                           }}
                         >
-                          <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-danger" />
+                          <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-danger-primary" />
                         </span>
                       </Tooltip>
                     )}

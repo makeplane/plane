@@ -109,7 +109,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
                     handleRemoveSubIssue(workspaceSlug, projectId, parentIssue.id, issueId);
                   }}
                 >
-                  <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-danger" />
+                  <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-danger-primary" />
                 </span>
               </Tooltip>
             )}

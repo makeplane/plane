@@ -95,7 +95,7 @@ export function ModalPortal({
     >
       {showOverlay && (
         <div
-          className={cn("absolute inset-0 bg-alpha-black-700 transition-opacity duration-300", overlayClassName)}
+          className={cn("absolute inset-0 bg-black/50 transition-colors duration-300", overlayClassName)}
           onClick={handleOverlayClick}
           aria-hidden="true"
         />

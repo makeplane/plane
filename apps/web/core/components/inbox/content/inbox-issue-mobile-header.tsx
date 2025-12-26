@@ -177,7 +177,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   )
                 }
               >
-                <div className="flex items-center gap-2 text-green-500">
+                <div className="flex items-center gap-2 text-success-primary">
                   <CircleCheck size={14} strokeWidth={2} />
                   Accept
                 </div>
@@ -193,7 +193,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   )
                 }
               >
-                <div className="flex items-center gap-2 text-red-500">
+                <div className="flex items-center gap-2 text-danger-primary">
                   <CircleX size={14} strokeWidth={2} />
                   Decline
                 </div>
@@ -201,7 +201,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             )}
             {canDelete && !isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
-                <div className="flex items-center gap-2 text-red-500">
+                <div className="flex items-center gap-2 text-danger-primary">
                   <TrashIcon width={14} height={14} strokeWidth={2} />
                   Delete
                 </div>

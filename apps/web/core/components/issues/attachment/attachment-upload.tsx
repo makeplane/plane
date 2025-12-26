@@ -47,14 +47,14 @@ export const IssueAttachmentUpload = observer(function IssueAttachmentUpload(pro
       {...getRootProps()}
       className={`flex h-[60px] items-center justify-center rounded-md border-2 border-dashed bg-accent-primary/5 px-4 text-11 text-accent-primary ${
         isDragActive ? "border-accent-strong bg-accent-primary/10" : "border-subtle"
-      } ${isDragReject ? "bg-red-100" : ""} ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+      } ${isDragReject ? "bg-danger-subtle" : ""} ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
     >
       <input {...getInputProps()} />
       <span className="flex items-center gap-2">
         {isDragActive ? (
           <p>Drop here...</p>
         ) : fileError ? (
-          <p className="text-center text-red-500">{fileError}</p>
+          <p className="text-center text-danger-primary">{fileError}</p>
         ) : isLoading ? (
           <p className="text-center">Uploading...</p>
         ) : (

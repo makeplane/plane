@@ -51,7 +51,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
         <div
           className={cn(
             `relative flex items-center rounded-md bg-surface-1 border`,
-            !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-strong`
+            !isFocused && Boolean(emailError?.email) ? `border-danger-strong` : `border-strong`
           )}
           onFocus={() => {
             setIsFocused(true);
@@ -88,7 +88,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
           )}
         </div>
         {emailError?.email && !isFocused && (
-          <p className="flex items-center gap-1 text-11 text-red-600 px-0.5">
+          <p className="flex items-center gap-1 text-11 text-danger-primary px-0.5">
             <CircleAlert height={12} width={12} />
             {t(emailError.email)}
           </p>

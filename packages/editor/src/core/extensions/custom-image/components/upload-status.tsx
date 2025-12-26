@@ -53,7 +53,7 @@ export function ImageUploadStatus(props: Props) {
   if (uploadStatus === undefined) return null;
 
   return (
-    <div className="absolute top-1 right-1 z-20 bg-alpha-black-800 rounded-sm text-11 font-medium w-10 text-center">
+    <div className="absolute top-1 right-1 z-20 bg-black/60 rounded-sm text-11 font-medium w-10 text-center">
       {displayStatus}%
     </div>
   );

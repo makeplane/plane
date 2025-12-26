@@ -139,7 +139,7 @@ export const WithActions: Story = {
             <TableCell>Admin</TableCell>
             <TableCell className="text-right">
               <button className="mr-2 text-blue-500 hover:underline">Edit</button>
-              <button className="text-red-500 hover:underline">Delete</button>
+              <button className="text-danger-primary hover:underline">Delete</button>
             </TableCell>
           </TableRow>
           <TableRow>
@@ -148,7 +148,7 @@ export const WithActions: Story = {
             <TableCell>User</TableCell>
             <TableCell className="text-right">
               <button className="mr-2 text-blue-500 hover:underline">Edit</button>
-              <button className="text-red-500 hover:underline">Delete</button>
+              <button className="text-danger-primary hover:underline">Delete</button>
             </TableCell>
           </TableRow>
         </TableBody>
@@ -173,10 +173,10 @@ export const WithBadges: Story = {
           <TableRow>
             <TableCell>Website Redesign</TableCell>
             <TableCell>
-              <span className="rounded-full bg-green-100 px-2 py-1 text-11 text-green-800">In Progress</span>
+              <span className="rounded-full bg-green-100 px-2 py-1 text-11 text-success-primary">In Progress</span>
             </TableCell>
             <TableCell>
-              <span className="rounded-full bg-red-100 px-2 py-1 text-11 text-red-800">High</span>
+              <span className="rounded-full bg-red-100 px-2 py-1 text-11 text-danger-primary">High</span>
             </TableCell>
             <TableCell>John Doe</TableCell>
           </TableRow>
@@ -196,7 +196,7 @@ export const WithBadges: Story = {
               <span className="rounded-full bg-gray-100 px-2 py-1 text-11 text-gray-800">Completed</span>
             </TableCell>
             <TableCell>
-              <span className="rounded-full bg-green-100 px-2 py-1 text-11 text-green-800">Low</span>
+              <span className="rounded-full bg-green-100 px-2 py-1 text-11 text-success-primary">Low</span>
             </TableCell>
             <TableCell>Bob Wilson</TableCell>
           </TableRow>
@@ -297,7 +297,7 @@ export const LargeDataset: Story = {
               <TableCell>
                 <span
                   className={`rounded-full px-2 py-1 text-11 ${
-                    i % 2 === 0 ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                    i % 2 === 0 ? "bg-green-100 text-success-primary" : "bg-gray-100 text-gray-800"
                   }`}
                 >
                   {i % 2 === 0 ? "Active" : "Inactive"}

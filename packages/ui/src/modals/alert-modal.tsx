@@ -42,7 +42,7 @@ const BUTTON_VARIANTS: Record<TModalVariant, TButtonVariant> = {
 };
 
 const VARIANT_CLASSES: Record<TModalVariant, string> = {
-  danger: "bg-red-500/20 text-red-500",
+  danger: "bg-danger-primary text-danger-primary",
   primary: "bg-accent-primary/20 text-accent-primary",
 };
 

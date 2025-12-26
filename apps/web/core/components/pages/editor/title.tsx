@@ -70,7 +70,7 @@ export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
           >
             <span
               className={cn({
-                "text-red-500": title && title.length > 255,
+                "text-danger-primary": title && title.length > 255,
               })}
             >
               {title?.length}

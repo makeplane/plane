@@ -257,7 +257,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
               <div className="flex flex-col gap-1">
                 <h4 className="text-13 font-medium text-secondary">
                   {t("first_name")}&nbsp;
-                  <span className="text-red-500">*</span>
+                  <span className="text-danger-primary">*</span>
                 </h4>
                 <Controller
                   control={control}
@@ -275,13 +275,13 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                       ref={ref}
                       hasError={Boolean(errors.first_name)}
                       placeholder="Enter your first name"
-                      className={`w-full rounded-md ${errors.first_name ? "border-red-500" : ""}`}
+                      className={`w-full rounded-md ${errors.first_name ? "border-danger-strong" : ""}`}
                       maxLength={24}
                       autoComplete="on"
                     />
                   )}
                 />
-                {errors.first_name && <span className="text-11 text-red-500">{errors.first_name.message}</span>}
+                {errors.first_name && <span className="text-11 text-danger-primary">{errors.first_name.message}</span>}
               </div>
               <div className="flex flex-col gap-1">
                 <h4 className="text-13 font-medium text-secondary">{t("last_name")}</h4>
@@ -308,7 +308,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
               <div className="flex flex-col gap-1">
                 <h4 className="text-13 font-medium text-secondary">
                   {t("display_name")}&nbsp;
-                  <span className="text-red-500">*</span>
+                  <span className="text-danger-primary">*</span>
                 </h4>
                 <Controller
                   control={control}
@@ -334,17 +334,19 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                       ref={ref}
                       hasError={Boolean(errors?.display_name)}
                       placeholder="Enter your display name"
-                      className={`w-full ${errors?.display_name ? "border-red-500" : ""}`}
+                      className={`w-full ${errors?.display_name ? "border-danger-strong" : ""}`}
                       maxLength={24}
                     />
                   )}
                 />
-                {errors?.display_name && <span className="text-11 text-red-500">{errors?.display_name?.message}</span>}
+                {errors?.display_name && (
+                  <span className="text-11 text-danger-primary">{errors?.display_name?.message}</span>
+                )}
               </div>
               <div className="flex flex-col gap-1">
                 <h4 className="text-13 font-medium text-secondary">
                   {t("auth.common.email.label")}&nbsp;
-                  <span className="text-red-500">*</span>
+                  <span className="text-danger-primary">*</span>
                 </h4>
                 <Controller
                   control={control}
@@ -362,7 +364,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                       hasError={Boolean(errors.email)}
                       placeholder="Enter your email"
                       className={`w-full cursor-not-allowed rounded-md !bg-surface-2 ${
-                        errors.email ? "border-red-500" : ""
+                        errors.email ? "border-danger-strong" : ""
                       }`}
                       autoComplete="on"
                       disabled

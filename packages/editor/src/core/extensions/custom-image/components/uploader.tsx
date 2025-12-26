@@ -212,10 +212,10 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
           "bg-layer-3-hover text-secondary": draggedInside && editor.isEditable && !isErrorState,
           "text-accent-secondary bg-accent-primary/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
             selected && editor.isEditable && !isErrorState,
-          "text-red-500 cursor-default": isErrorState,
-          "hover:text-red-500 hover:bg-red-500/10": isErrorState && editor.isEditable,
-          "bg-red-500/10": isErrorState && selected,
-          "hover:bg-red-500/20": isErrorState && selected && editor.isEditable,
+          "text-danger-primary cursor-default": isErrorState,
+          "hover:text-danger-primary hover:bg-danger-primary": isErrorState && editor.isEditable,
+          "bg-danger-primary": isErrorState && selected,
+          "hover:bg-danger-primary": isErrorState && selected && editor.isEditable,
         }
       )}
       style={borderColor ? { borderColor } : undefined}
@@ -236,9 +236,9 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
           type="button"
           onClick={handleRetryClick}
           className={cn(
-            "flex items-center gap-1 px-2 py-1 font-medium text-red-500 rounded-md transition-all duration-200 ease-in-out hover:bg-red-500/20 hover:text-red-500",
+            "flex items-center gap-1 px-2 py-1 font-medium text-danger-primary rounded-md transition-all duration-200 ease-in-out hover:bg-danger-primary hover:text-danger-primary",
             {
-              "hover:bg-red-500/20": selected,
+              "hover:bg-danger-primary": selected,
             }
           )}
           title="Retry duplication"

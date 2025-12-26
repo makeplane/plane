@@ -76,7 +76,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                   />
 
                   {errors.close_in && (
-                    <span className="px-1 text-13 text-red-500">Select a month between 1 and 12.</span>
+                    <span className="px-1 text-13 text-danger-primary">Select a month between 1 and 12.</span>
                   )}
                 </>
               ) : (
@@ -109,7 +109,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                     )}
                   />
                   {errors.archive_in && (
-                    <span className="px-1 text-13 text-red-500">Select a month between 1 and 12.</span>
+                    <span className="px-1 text-13 text-danger-primary">Select a month between 1 and 12.</span>
                   )}
                 </>
               )}

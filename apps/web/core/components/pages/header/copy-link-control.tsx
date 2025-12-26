@@ -58,7 +58,7 @@ export const PageCopyLinkControl = observer(function PageCopyLinkControl({ page 
         icon={isCopied ? CheckIcon : LinkIcon}
         onClick={handleCopy}
         aria-label={isCopied ? "Copied link" : "Copy link"}
-        className={cn(isCopied && "text-green-500")}
+        className={cn(isCopied && "text-success-primary")}
       />
     </Tooltip>
   );
