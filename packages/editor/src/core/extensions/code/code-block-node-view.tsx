@@ -1,4 +1,4 @@
-import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import type { NodeViewProps } from "@tiptap/react";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
 import ts from "highlight.js/lib/languages/typescript";
 import { common, createLowlight } from "lowlight";
@@ -9,16 +9,20 @@ import { CopyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
+// types
+import type { TCodeBlockAttributes } from "./types";
 
 // we just have ts support for now
 const lowlight = createLowlight(common);
 lowlight.register("ts", ts);
 
-type Props = {
-  node: ProseMirrorNode;
+export type CodeBlockNodeViewProps = NodeViewProps & {
+  node: NodeViewProps["node"] & {
+    attrs: TCodeBlockAttributes;
+  };
 };
 
-export function CodeBlockComponent({ node }: Props) {
+export function CodeBlockComponent({ node }: CodeBlockNodeViewProps) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -34,7 +38,7 @@ export function CodeBlockComponent({ node }: Props) {
   };
 
   return (
-    <NodeViewWrapper className="code-block relative group/code">
+    <NodeViewWrapper className="code-block relative group/code" key={`code-block-${node.attrs.id}`}>
       <Tooltip tooltipContent="Copy code">
         <button
           type="button"

@@ -46,7 +46,6 @@ export const useEditorMention = (args: TArgs) => {
                   name={user.member__display_name}
                 />
               ),
-              id: user.member__id,
               entity_identifier: user.member__id,
               entity_name: "user_mention",
               title: user.member__display_name,

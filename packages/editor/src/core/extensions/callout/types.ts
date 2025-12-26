@@ -1,4 +1,5 @@
 import type { Node as ProseMirrorNode } from "@tiptap/core";
+import type { TBlockNodeBaseAttributes } from "../unique-id/types";
 
 export enum ECalloutAttributeNames {
   ICON_COLOR = "data-icon-color",
@@ -20,7 +21,7 @@ export type TCalloutBlockEmojiAttributes = {
   [ECalloutAttributeNames.EMOJI_URL]: string | undefined;
 };
 
-export type TCalloutBlockAttributes = {
+export type TCalloutBlockAttributes = TBlockNodeBaseAttributes & {
   [ECalloutAttributeNames.LOGO_IN_USE]: "emoji" | "icon";
   [ECalloutAttributeNames.BACKGROUND]: string | undefined;
   [ECalloutAttributeNames.BLOCK_TYPE]: "callout-component";

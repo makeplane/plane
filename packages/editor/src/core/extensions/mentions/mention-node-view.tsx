@@ -1,5 +1,7 @@
 import type { NodeViewProps } from "@tiptap/react";
 import { NodeViewWrapper } from "@tiptap/react";
+import { useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
 // extension config
 import type { TMentionExtensionOptions } from "./extension-config";
 // extension types
@@ -19,7 +21,7 @@ export function MentionNodeView(props: MentionNodeViewProps) {
   } = props;
 
   return (
-    <NodeViewWrapper className="mention-component inline w-fit">
+    <NodeViewWrapper className="mention-component inline w-fit" key={`mention-${attrs.id}`}>
       {(extension.options as TMentionExtensionOptions).renderComponent({
         entity_identifier: attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER] ?? "",
         entity_name: attrs[EMentionComponentAttributeNames.ENTITY_NAME] ?? "user_mention",
