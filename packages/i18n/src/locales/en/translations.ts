@@ -1408,7 +1408,7 @@ export default {
       heading: "Security",
     },
     api_tokens: {
-      title: "Personal Access Tokens",
+      heading: "Personal Access Tokens",
       description: "Generate secure API tokens to integrate your data with external systems and applications.",
     },
     activity: {
@@ -1574,7 +1574,7 @@ export default {
         heading: "Workspace Access Tokens",
         description: "Generate secure API tokens to integrate your data with external systems and applications.",
         title: "Workspace Access Tokens",
-        add_token: "Add personal access token",
+        add_token: "Add Workspace access token",
         create_token: "Create token",
         never_expires: "Never expires",
         generate_token: "Generate token",

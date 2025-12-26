@@ -1710,7 +1710,7 @@ export default {
       },
       api_tokens: {
         title: "APIトークン",
-        add_token: "APIトークンを追加",
+        add_token: "ワークスペースアクセストークンを追加",
         create_token: "トークンを作成",
         never_expires: "無期限",
         generate_token: "トークンを生成",

@@ -1714,7 +1714,7 @@ export default {
       },
       api_tokens: {
         title: "API-токены",
-        add_token: "Добавить токен",
+        add_token: "Добавить токен доступа к рабочему пространству",
         create_token: "Создать токен",
         never_expires: "Бессрочный",
         generate_token: "Сгенерировать токен",
