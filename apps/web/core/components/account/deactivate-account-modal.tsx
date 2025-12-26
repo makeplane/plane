@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Trash2 } from "lucide-react";
 import { PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
+import { TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
@@ -68,7 +68,7 @@ export function DeactivateAccountModal(props: Props) {
         <div className="">
           <div className="flex items-start gap-x-4">
             <div className="mt-3 grid place-items-center rounded-full bg-danger-primary p-2 sm:mt-3 sm:p-2 md:mt-0 md:p-4 lg:mt-0 lg:p-4 ">
-              <Trash2
+              <TrashIcon
                 className="h-4 w-4 text-danger-primary sm:h-4 sm:w-4 md:h-6 md:w-6 lg:h-6 lg:w-6"
                 aria-hidden="true"
               />

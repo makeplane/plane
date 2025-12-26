@@ -2,8 +2,9 @@ import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
 import ts from "highlight.js/lib/languages/typescript";
 import { common, createLowlight } from "lowlight";
-import { CopyIcon, CheckIcon } from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import { useState } from "react";
+import { CopyIcon } from "@plane/propel/icons";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
 // plane utils

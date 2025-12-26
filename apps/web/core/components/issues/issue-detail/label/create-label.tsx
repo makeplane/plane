@@ -2,9 +2,9 @@ import { useState, Fragment, useEffect } from "react";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
 import { usePopper } from "react-popper";
-import { Plus, Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 import { Popover } from "@headlessui/react";
-import { CloseIcon } from "@plane/propel/icons";
+import { PlusIcon, CloseIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 // hooks
 import { Input } from "@plane/ui";
@@ -80,7 +80,7 @@ export function LabelCreate(props: ILabelCreate) {
         onClick={handleIsCreateToggle}
       >
         <div className="flex-shrink-0">
-          {isCreateToggle ? <CloseIcon className="h-2.5 w-2.5" /> : <Plus className="h-2.5 w-2.5" />}
+          {isCreateToggle ? <CloseIcon className="h-2.5 w-2.5" /> : <PlusIcon className="h-2.5 w-2.5" />}
         </div>
         <div className="flex-shrink-0">{isCreateToggle ? "Cancel" : "New"}</div>
       </div>
@@ -154,7 +154,7 @@ export function LabelCreate(props: ILabelCreate) {
             {isSubmitting ? (
               <Loader className="spin h-3.5 w-3.5 text-on-color" />
             ) : (
-              <Plus className="h-3.5 w-3.5 text-on-color" />
+              <PlusIcon className="h-3.5 w-3.5 text-on-color" />
             )}
           </button>
         </form>

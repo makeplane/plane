@@ -1,10 +1,11 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Check } from "lucide-react";
+
 // plane imports
 import { ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS, USE_CASES } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { CheckIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
@@ -140,7 +141,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
                         "border-strong": !isSelected,
                       })}
                     >
-                      <Check
+                      <CheckIcon
                         className={cn("w-3 h-3 text-on-color", {
                           "opacity-100": isSelected,
                           "opacity-0": !isSelected,

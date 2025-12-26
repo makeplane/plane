@@ -1,11 +1,11 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Box, Check, PenTool, Rocket, Monitor, RefreshCw } from "lucide-react";
+import { Box, PenTool, Rocket, Monitor, RefreshCw } from "lucide-react";
 // plane imports
 import { ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { ViewsIcon } from "@plane/propel/icons";
+import { CheckIcon, ViewsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
@@ -143,7 +143,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                         <button
                           className={`size-4 rounded-sm border-2 flex items-center justify-center bg-accent-primary border-blue-500`}
                         >
-                          <Check className="w-3 h-3 text-on-color" />
+                          <CheckIcon className="w-3 h-3 text-on-color" />
                         </button>
                       </>
                     )}

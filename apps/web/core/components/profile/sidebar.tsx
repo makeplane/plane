@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
-import { Pencil } from "lucide-react";
+
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
@@ -11,7 +11,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { EditIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
@@ -96,7 +96,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
               <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded-sm bg-white">
                 <Link href={`/${workspaceSlug}/settings/account`}>
                   <span className="grid place-items-center text-black">
-                    <Pencil className="h-3 w-3" />
+                    <EditIcon className="h-3 w-3" />
                   </span>
                 </Link>
               </div>

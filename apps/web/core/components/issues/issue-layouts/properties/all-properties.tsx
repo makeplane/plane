@@ -4,12 +4,12 @@ import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Link, Paperclip } from "lucide-react";
+import { Paperclip } from "lucide-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
+import { LinkIcon, StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
@@ -517,7 +517,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
-            <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <LinkIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-caption-sm-regular">{issue.link_count}</div>
           </div>
         </Tooltip>

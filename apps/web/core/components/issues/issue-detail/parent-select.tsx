@@ -1,9 +1,9 @@
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Pencil } from "lucide-react";
+
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { EditIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
@@ -123,7 +123,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
               "text-placeholder": !issue.parent_id && !parentIssue,
             })}
           >
-            <Pencil className="h-2.5 w-2.5 flex-shrink-0" />
+            <EditIcon className="h-2.5 w-2.5 flex-shrink-0" />
           </span>
         )}
       </button>

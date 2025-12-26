@@ -1,9 +1,9 @@
 import type { SetStateAction } from "react";
 import { observer } from "mobx-react";
-import { GripVertical, Pencil } from "lucide-react";
-// plane imports
+import { GripVertical } from "lucide-react";
 import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
-import { StateGroupIcon } from "@plane/propel/icons";
+// plane imports
+import { EditIcon, StateGroupIcon } from "@plane/propel/icons";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
 // local imports
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -72,7 +72,7 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
               onClick={() => setUpdateStateModal(true)}
               data-ph-element={STATE_TRACKER_ELEMENTS.STATE_LIST_EDIT_BUTTON}
             >
-              <Pencil className="w-3 h-3" />
+              <EditIcon className="w-3 h-3" />
             </button>
             <StateDelete
               totalStates={stateCount}

@@ -1,9 +1,9 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { Link2, MoveRight } from "lucide-react";
+import { MoveRight } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 // ui
-import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
+import { LinkIcon, CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
@@ -116,7 +116,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
             className="shrink-0 focus:outline-none text-tertiary hover:text-secondary"
             tabIndex={1}
           >
-            <Link2 className="h-4 w-4 -rotate-45" />
+            <LinkIcon className="h-4 w-4 -rotate-45" />
           </button>
         )}
       </div>

@@ -1,10 +1,10 @@
 import type { Dispatch, SetStateAction } from "react";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2 } from "lucide-react";
+
 import { Disclosure, Transition } from "@headlessui/react";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { EditIcon, TrashIcon, ChevronDownIcon } from "@plane/propel/icons";
 // store
 // icons
 // types
@@ -53,7 +53,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
 
   const customMenuItems: ICustomMenuItem[] = [
     {
-      CustomIcon: Pencil,
+      CustomIcon: EditIcon,
       onClick: () => {
         captureClick({
           elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_CONTEXT_MENU,
@@ -66,7 +66,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
       key: "edit_label",
     },
     {
-      CustomIcon: Trash2,
+      CustomIcon: TrashIcon,
       onClick: () => {
         captureClick({
           elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_CONTEXT_MENU,

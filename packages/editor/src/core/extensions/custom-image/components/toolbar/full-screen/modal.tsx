@@ -1,7 +1,7 @@
-import { Download, ExternalLink, Minus, Plus } from "lucide-react";
+import { Download, Minus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-import { CloseIcon } from "@plane/propel/icons";
+import { NewTabIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 
@@ -262,7 +262,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
               disabled={magnification >= MAX_ZOOM}
               aria-label="Zoom in"
             >
-              <Plus className="size-4" />
+              <PlusIcon className="size-4" />
             </button>
           </div>
           {!isTouchDevice && (
@@ -282,7 +282,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
               className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
               aria-label="Open image in new tab"
             >
-              <ExternalLink className="size-4" />
+              <NewTabIcon className="size-4" />
             </button>
           )}
         </div>

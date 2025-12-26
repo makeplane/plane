@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Check } from "lucide-react";
-// plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { ChevronDownIcon } from "@plane/propel/icons";
+// plane imports
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -154,7 +153,7 @@ export function PageToolbar(props: Props) {
               <item.icon className="size-3" />
               {item.name}
             </span>
-            {activeTypography?.itemKey === item.itemKey && <Check className="size-3 text-tertiary shrink-0" />}
+            {activeTypography?.itemKey === item.itemKey && <CheckIcon className="size-3 text-tertiary shrink-0" />}
           </CustomMenu.MenuItem>
         ))}
       </CustomMenu>

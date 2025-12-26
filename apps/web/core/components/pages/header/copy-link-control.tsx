@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
-import { Link, Check } from "lucide-react";
+
+import { LinkIcon, CheckIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import { IconButton } from "@plane/propel/icon-button";
@@ -54,7 +55,7 @@ export const PageCopyLinkControl = observer(function PageCopyLinkControl({ page 
       <IconButton
         variant="ghost"
         size="lg"
-        icon={isCopied ? Check : Link}
+        icon={isCopied ? CheckIcon : LinkIcon}
         onClick={handleCopy}
         aria-label={isCopied ? "Copied link" : "Copy link"}
         className={cn(isCopied && "text-success-primary")}

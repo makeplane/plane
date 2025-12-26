@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { Lock } from "lucide-react";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { LockIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { PasswordInput, PasswordStrengthIndicator } from "@plane/ui";
 import { cn } from "@plane/utils";
 
@@ -81,7 +80,7 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
         onClick={handleToggleExpand}
       >
         <div className="flex items-center gap-1 text-tertiary">
-          <Lock className="size-3" />
+          <LockIcon className="size-3" />
           <span className="font-medium">Set a password</span>
           <span>{`(Optional)`}</span>
         </div>

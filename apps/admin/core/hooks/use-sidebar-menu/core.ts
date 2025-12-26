@@ -1,6 +1,6 @@
-import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
+import { Image, BrainCog, Cog, Mail } from "lucide-react";
 // plane imports
-import { WorkspaceIcon } from "@plane/propel/icons";
+import { LockIcon, WorkspaceIcon } from "@plane/propel/icons";
 // types
 import type { TSidebarMenuItem } from "./types";
 
@@ -26,7 +26,7 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     href: `/workspace/`,
   },
   authentication: {
-    Icon: Lock,
+    Icon: LockIcon,
     name: "Authentication",
     description: "Configure authentication modes.",
     href: `/authentication/`,

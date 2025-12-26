@@ -1,4 +1,5 @@
-import { AlertTriangle, CheckCircle2, Clock, Copy, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { CopyIcon } from "@plane/propel/icons";
 import type { TInboxIssueStatus } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -25,7 +26,7 @@ export const ICON_PROPERTIES = {
     bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-[#E9F6E9]"),
   },
   [EInboxIssueStatus.DUPLICATE]: {
-    icon: Copy,
+    icon: CopyIcon,
     textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-secondary"),
     bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-gray-500/10"),
   },

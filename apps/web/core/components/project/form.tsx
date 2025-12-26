@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Info, Lock } from "lucide-react";
+import { Info } from "lucide-react";
 import { NETWORK_CHOICES, PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
+import { LockIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EFileAssetType } from "@plane/types";
@@ -245,7 +246,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               <span className="flex items-center gap-2 text-13">
                 <span>{watch("identifier")} .</span>
                 <span className="flex items-center gap-1.5">
-                  {project.network === 0 && <Lock className="h-2.5 w-2.5 text-on-color " />}
+                  {project.network === 0 && <LockIcon className="h-2.5 w-2.5 text-on-color " />}
                   {currentNetwork && t(currentNetwork?.i18n_label)}
                 </span>
               </span>

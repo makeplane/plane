@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef } from "react";
-import { Rocket, Search } from "lucide-react";
+import { Rocket } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
-import { CloseIcon } from "@plane/propel/icons";
+import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
@@ -141,7 +141,7 @@ export function ExistingIssuesListModal(props: Props) {
         }}
       >
         <div className="relative m-1">
-          <Search
+          <SearchIcon
             className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
             aria-hidden="true"
           />

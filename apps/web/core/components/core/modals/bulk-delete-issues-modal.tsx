@@ -4,11 +4,11 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import { Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse, IUser } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
@@ -164,7 +164,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
           }}
         >
           <div className="relative m-1">
-            <Search
+            <SearchIcon
               className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
               aria-hidden="true"
             />

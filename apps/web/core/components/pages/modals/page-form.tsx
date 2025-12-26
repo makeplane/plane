@@ -1,13 +1,14 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 import type { LucideIcon } from "lucide-react";
-import { Globe2, Lock } from "lucide-react";
+
 // plane imports
 import { ETabIndices, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { PageIcon } from "@plane/propel/icons";
+import { GlobeIcon, LockIcon, PageIcon } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
 import type { TPage } from "@plane/types";
 import { Input } from "@plane/ui";
 import { getTabIndex } from "@plane/utils";
@@ -26,10 +27,10 @@ type Props = {
 const PAGE_ACCESS_SPECIFIERS: {
   key: EPageAccess;
   i18n_label: string;
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
 }[] = [
-  { key: EPageAccess.PUBLIC, i18n_label: "common.access.public", icon: Globe2 },
-  { key: EPageAccess.PRIVATE, i18n_label: "common.access.private", icon: Lock },
+  { key: EPageAccess.PUBLIC, i18n_label: "common.access.public", icon: GlobeIcon },
+  { key: EPageAccess.PRIVATE, i18n_label: "common.access.private", icon: LockIcon },
 ];
 
 export function PageForm(props: Props) {

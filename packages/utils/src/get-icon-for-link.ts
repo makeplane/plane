@@ -16,8 +16,8 @@ import {
   FileCode,
   Mail,
   Chrome,
-  Link2,
 } from "lucide-react";
+import { LinkIcon } from "@plane/propel/icons";
 
 type IconMatcher = {
   pattern: RegExp;
@@ -60,5 +60,5 @@ export const getIconForLink = (url: string) => {
   const allMatchers = [...SOCIAL_MEDIA_MATCHERS, ...PRODUCTIVITY_MATCHERS, ...FILE_TYPE_MATCHERS, ...OTHER_MATCHERS];
 
   const matchedIcon = allMatchers.find(({ pattern }) => pattern.test(lowerUrl));
-  return matchedIcon?.icon ?? Link2;
+  return matchedIcon?.icon ?? LinkIcon;
 };

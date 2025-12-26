@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { CircleCheck, CircleX, Clock, ExternalLink, FileStack, Link, Trash2, PanelLeft, MoveRight } from "lucide-react";
-import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { CircleCheck, CircleX, Clock, FileStack, PanelLeft, MoveRight } from "lucide-react";
+import { LinkIcon, NewTabIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
@@ -122,7 +122,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             {isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
                 <div className="flex items-center gap-2">
-                  <Link size={14} strokeWidth={2} />
+                  <LinkIcon width={14} height={14} strokeWidth={2} />
                   Copy work item link
                 </div>
               </CustomMenu.MenuItem>
@@ -130,7 +130,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             {isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={() => router.push(workItemLink)}>
                 <div className="flex items-center gap-2">
-                  <ExternalLink size={14} strokeWidth={2} />
+                  <NewTabIcon width={14} height={14} strokeWidth={2} />
                   Open work item
                 </div>
               </CustomMenu.MenuItem>
@@ -202,7 +202,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             {canDelete && !isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
                 <div className="flex items-center gap-2 text-danger-primary">
-                  <Trash2 size={14} strokeWidth={2} />
+                  <TrashIcon width={14} height={14} strokeWidth={2} />
                   Delete
                 </div>
               </CustomMenu.MenuItem>
