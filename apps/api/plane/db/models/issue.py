@@ -90,8 +90,6 @@ class IssueManager(SoftDeletionManager):
         return (
             super()
             .get_queryset()
-            .filter(deleted_at__isnull=True)
-            .filter(state__is_triage=False)
             .exclude(state__group=StateGroup.TRIAGE.value)
             .exclude(archived_at__isnull=False)
             .exclude(project__archived_at__isnull=False)
