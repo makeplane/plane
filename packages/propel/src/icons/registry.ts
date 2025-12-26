@@ -17,10 +17,10 @@ import {
   PreferencesIcon,
   SearchIcon,
   TrashIcon,
-  UpgradeIcon
+  UpgradeIcon,
 } from "./actions";
 // Arrow icons
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon , ReplyIcon} from "./arrows";
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, ReplyIcon } from "./arrows";
 // Default icon
 import { DefaultIcon } from "./default-icon";
 // Layout icons
