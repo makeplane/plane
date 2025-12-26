@@ -143,6 +143,8 @@ export const USER_PROFILE_PROJECT_SEGREGATION = (workspaceSlug: string, userId: 
 
 // api-tokens
 export const API_TOKENS_LIST = `API_TOKENS_LIST`;
+export const WORKSPACE_API_TOKENS_LIST = (workspaceSlug: string) =>
+  `WORKSPACE_API_TOKENS_LIST_${workspaceSlug.toUpperCase()}`;
 
 // marketplace
 export const APPLICATIONS_LIST = (workspaceSlug: string) => `APPLICATIONS_LIST_${workspaceSlug.toUpperCase()}`;

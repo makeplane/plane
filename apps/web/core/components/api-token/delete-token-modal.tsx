@@ -1,28 +1,29 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { mutate } from "swr";
 // types
-import { PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
+import { PROFILE_SETTINGS_TRACKER_EVENTS, WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { APITokenService } from "@plane/services";
+import { APITokenService, WorkspaceAPITokenService } from "@plane/services";
 import type { IApiToken } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // fetch-keys
-import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+import { API_TOKENS_LIST, WORKSPACE_API_TOKENS_LIST } from "@/constants/fetch-keys";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   tokenId: string;
+  workspaceSlug?: string;
 };
 
 const apiTokenService = new APITokenService();
+const workspaceApiTokenService = new WorkspaceAPITokenService();
 
 export function DeleteApiTokenModal(props: Props) {
-  const { isOpen, onClose, tokenId } = props;
+  const { isOpen, onClose, tokenId, workspaceSlug } = props;
   // states
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   // router params
@@ -36,8 +37,11 @@ export function DeleteApiTokenModal(props: Props) {
   const handleDeletion = async () => {
     setDeleteLoading(true);
 
-    await apiTokenService
-      .destroy(tokenId)
+    const apiCall = workspaceSlug
+      ? workspaceApiTokenService.destroy(workspaceSlug, tokenId)
+      : apiTokenService.destroy(tokenId);
+
+    await apiCall
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -46,12 +50,14 @@ export function DeleteApiTokenModal(props: Props) {
         });
 
         mutate<IApiToken[]>(
-          API_TOKENS_LIST,
+          workspaceSlug ? WORKSPACE_API_TOKENS_LIST(workspaceSlug) : API_TOKENS_LIST,
           (prevData) => (prevData ?? []).filter((token) => token.id !== tokenId),
           false
         );
         captureSuccess({
-          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.pat_deleted,
+          eventName: workspaceSlug
+            ? WORKSPACE_SETTINGS_TRACKER_EVENTS.pat_deleted
+            : PROFILE_SETTINGS_TRACKER_EVENTS.pat_deleted,
           payload: {
             token: tokenId,
           },
@@ -68,7 +74,9 @@ export function DeleteApiTokenModal(props: Props) {
       )
       .catch((err) => {
         captureError({
-          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.pat_deleted,
+          eventName: workspaceSlug
+            ? WORKSPACE_SETTINGS_TRACKER_EVENTS.pat_deleted
+            : PROFILE_SETTINGS_TRACKER_EVENTS.pat_deleted,
           payload: {
             token: tokenId,
           },

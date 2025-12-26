@@ -1724,7 +1724,7 @@ export default {
       },
       api_tokens: {
         title: "Chei secrete API",
-        add_token: "Adaugă cheie secretă API",
+        add_token: "Adaugă token de acces la spațiul de lucru",
         create_token: "Creează cheie secretă",
         never_expires: "Nu expiră niciodată",
         generate_token: "Generează cheie secretă",

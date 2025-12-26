@@ -1732,7 +1732,7 @@ export default {
       },
       api_tokens: {
         title: "Tokens de API",
-        add_token: "Adicionar token de API",
+        add_token: "Adicionar token de acesso ao espaço de trabalho",
         create_token: "Criar token",
         never_expires: "Nunca expira",
         generate_token: "Gerar token",

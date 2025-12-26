@@ -1,5 +1,5 @@
 import { useParams, usePathname } from "next/navigation";
-import { ArrowUpToLine, Building, CreditCard, Users, Webhook } from "lucide-react";
+import { ArrowUpToLine, Building, CreditCard, KeyRound, Users, Webhook } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 // plane imports
 import {
@@ -25,6 +25,7 @@ export const WORKSPACE_SETTINGS_ICONS: Record<keyof typeof WORKSPACE_SETTINGS, L
   export: ArrowUpToLine,
   "billing-and-plans": CreditCard,
   webhooks: Webhook,
+  "api-tokens": KeyRound,
 };
 
 export function WorkspaceActionIcons({ type, size, className }: { type: string; size?: number; className?: string }) {

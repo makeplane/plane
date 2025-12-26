@@ -1729,7 +1729,7 @@ export default {
       },
       api_tokens: {
         title: "API-Tokens",
-        add_token: "API-Token hinzufügen",
+        add_token: "Workspace-Zugriffstoken hinzufügen",
         create_token: "Token erstellen",
         never_expires: "Läuft nie ab",
         generate_token: "Token generieren",

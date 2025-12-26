@@ -1732,7 +1732,7 @@ export default {
       },
       api_tokens: {
         title: "Jetons API",
-        add_token: "Ajouter un jeton API",
+        add_token: "Ajouter un jeton d'accès à l'espace de travail",
         create_token: "Créer un jeton",
         never_expires: "N’expire jamais",
         generate_token: "Générer un jeton",

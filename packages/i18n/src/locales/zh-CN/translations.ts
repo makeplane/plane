@@ -1691,7 +1691,7 @@ export default {
       },
       api_tokens: {
         title: "API 令牌",
-        add_token: "添加 API 令牌",
+        add_token: "添加工作区访问令牌",
         create_token: "创建令牌",
         never_expires: "永不过期",
         generate_token: "生成令牌",

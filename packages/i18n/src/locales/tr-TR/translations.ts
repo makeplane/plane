@@ -1720,7 +1720,7 @@ export default {
       },
       api_tokens: {
         title: "API Token'ları",
-        add_token: "API Token'ı ekle",
+        add_token: "Çalışma alanı erişim token'ı ekle",
         create_token: "Token oluştur",
         never_expires: "Süresi dolmaz",
         generate_token: "Token oluştur",

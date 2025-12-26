@@ -1711,7 +1711,7 @@ export default {
       },
       api_tokens: {
         title: "API Tokeny",
-        add_token: "Pridať API token",
+        add_token: "Pridať token prístupu k pracovnému priestoru",
         create_token: "Vytvoriť token",
         never_expires: "Nikdy neexpiruje",
         generate_token: "Generovať token",
