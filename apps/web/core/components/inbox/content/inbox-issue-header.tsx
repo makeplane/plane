@@ -314,7 +314,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                 <Button
                   variant="secondary"
                   prependIcon={<CircleCheck className="w-3 h-3" />}
-                  className="text-green-500 border border-green-500 bg-green-500/20 focus:bg-green-500/20 focus:text-green-500 hover:bg-green-500/40 bg-opacity-20"
+                  className="text-success-primary border border-success-strong bg-success-primary focus:bg-success-primary focus:text-success-primary hover:bg-success-primary"
                   onClick={() =>
                     handleActionWithPermission(
                       isProjectAdmin,
@@ -333,7 +333,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                 <Button
                   variant="secondary"
                   prependIcon={<CircleX className="w-3 h-3" />}
-                  className="text-red-500 border border-red-500 bg-red-500/20 focus:bg-red-500/20 focus:text-red-500 hover:bg-red-500/40 bg-opacity-20"
+                  className="text-danger-primary border border-danger-strong bg-danger-primary focus:bg-danger-primary focus:text-danger-primary hover:bg-danger-primary-hover"
                   onClick={() =>
                     handleActionWithPermission(
                       isProjectAdmin,

@@ -118,8 +118,8 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
               placeholder="Confirm password"
               className="transition-all duration-200"
             />
-            {hasPasswordMismatch && <p className="text-11 text-red-500 mt-1">Passwords do not match</p>}
-            {isPasswordValid && <p className="text-11 text-green-500 mt-1">✓ Passwords match</p>}
+            {hasPasswordMismatch && <p className="text-11 text-danger-primary mt-1">Passwords do not match</p>}
+            {isPasswordValid && <p className="text-11 text-success-primary mt-1">✓ Passwords match</p>}
           </div>
         </div>
       </div>

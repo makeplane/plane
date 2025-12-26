@@ -324,12 +324,12 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                               "text-secondary",
                               parseInt(projectCountInput) >= 1
                                 ? "border-strong focus:border-accent-strong focus:ring-1 focus:ring-accent-strong"
-                                : "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                                : "border-danger-strong focus:border-danger-strong focus:ring-1 focus:ring-danger-strong"
                             )}
                           />
                         </div>
                         {parseInt(projectCountInput) < 1 && projectCountInput !== "" && (
-                          <span className="text-11 text-red-500 pl-0.5">Minimum value is 1</span>
+                          <span className="text-11 text-danger-primary pl-0.5">Minimum value is 1</span>
                         )}
                       </div>
                     </div>

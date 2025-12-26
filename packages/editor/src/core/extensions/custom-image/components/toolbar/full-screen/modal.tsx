@@ -193,14 +193,11 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
 
   return (
     <div
-      className={cn(
-        "fixed inset-0 size-full z-50 bg-alpha-black-1100 opacity-0 pointer-events-none transition-opacity",
-        {
-          "opacity-100 pointer-events-auto editor-image-full-screen-modal": isFullScreenEnabled,
-          "cursor-default": !isDragging,
-          "cursor-grabbing": isDragging,
-        }
-      )}
+      className={cn("fixed inset-0 size-full z-50 bg-black/90 opacity-0 pointer-events-none transition-opacity", {
+        "opacity-100 pointer-events-auto editor-image-full-screen-modal": isFullScreenEnabled,
+        "cursor-default": !isDragging,
+        "cursor-grabbing": isDragging,
+      })}
       role="dialog"
       aria-modal="true"
       aria-label="Fullscreen image viewer"
@@ -216,7 +213,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
           className="absolute top-10 right-10 size-8 grid place-items-center"
           aria-label="Close image viewer"
         >
-          <CloseIcon className="size-8 text-alpha-white-800 hover:text-alpha-white-1200 transition-colors" />
+          <CloseIcon className="size-8 text-white/60 hover:text-white transition-colors" />
         </button>
         <img
           ref={setImageRef}
@@ -234,7 +231,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
           }}
           onMouseDown={handleMouseDown}
         />
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1 rounded-md border border-subtle-1 py-2 divide-x divide-subtle-1 bg-alpha-black-1200">
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1 rounded-md border border-subtle-1 py-2 divide-x divide-subtle-1 bg-black">
           <div className="flex items-center">
             <button
               type="button"
@@ -245,13 +242,13 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
                 }
                 handleMagnification("decrease");
               }}
-              className="size-6 grid place-items-center text-alpha-white-800 hover:text-alpha-white-1200 disabled:text-alpha-white-500 transition-colors duration-200"
+              className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
               disabled={magnification <= MIN_ZOOM}
               aria-label="Zoom out"
             >
               <Minus className="size-4" />
             </button>
-            <span className="text-13 w-12 text-center text-alpha-white-1200">{Math.round(100 * magnification)}%</span>
+            <span className="text-13 w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
             <button
               type="button"
               onClick={(e) => {
@@ -261,7 +258,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
                 }
                 handleMagnification("increase");
               }}
-              className="size-6 grid place-items-center text-alpha-white-800 hover:text-alpha-white-1200 disabled:text-alpha-white-500 transition-colors duration-200"
+              className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
               disabled={magnification >= MAX_ZOOM}
               aria-label="Zoom in"
             >
@@ -272,7 +269,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
             <button
               type="button"
               onClick={() => window.open(downloadSrc, "_blank")}
-              className="flex-shrink-0 size-8 grid place-items-center text-alpha-white-800 hover:text-alpha-white-1200 transition-colors duration-200"
+              className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
               aria-label="Download image"
             >
               <Download className="size-4" />
@@ -282,7 +279,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
             <button
               type="button"
               onClick={() => window.open(src, "_blank")}
-              className="flex-shrink-0 size-8 grid place-items-center text-alpha-white-800 hover:text-alpha-white-1200 transition-colors duration-200"
+              className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
               aria-label="Open image in new tab"
             >
               <ExternalLink className="size-4" />

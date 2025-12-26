@@ -167,10 +167,10 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                                 <div
                                   className={`rounded-sm px-1 py-0.5 text-11 font-medium ${
                                     completedIssuePercentage <= 35
-                                      ? "bg-red-500/10 text-red-500"
+                                      ? "bg-danger-primary text-danger-primary"
                                       : completedIssuePercentage <= 70
                                         ? "bg-yellow-500/10 text-yellow-500"
-                                        : "bg-green-500/10 text-green-500"
+                                        : "bg-success-primary text-success-primary"
                                   }`}
                                 >
                                   {completedIssuePercentage}%

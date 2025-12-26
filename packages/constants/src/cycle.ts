@@ -28,7 +28,7 @@ export const CYCLE_STATUS: {
     value: "completed",
     i18n_title: "project_cycles.status.completed",
     color: "#16A34A",
-    textColor: "text-green-600",
+    textColor: "text-success-primary",
     bgColor: "bg-green-50",
   },
   {

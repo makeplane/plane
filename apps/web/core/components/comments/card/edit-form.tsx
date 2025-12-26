@@ -114,14 +114,14 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
             className={cn(
               "group rounded-lg border size-7 flex items-center justify-center shadow-md duration-300",
               isDisabled
-                ? "cursor-not-allowed border-green-500/50 bg-green-500/10"
-                : "border-green-500 bg-green-500/20 hover:bg-green-500"
+                ? "cursor-not-allowed border-success-strong/50 bg-success-primary"
+                : "border-success-strong bg-success-primary hover:bg-green-500"
             )}
           >
             <Check
               className={cn(
                 "size-4 duration-300",
-                isDisabled ? "text-green-500/50" : "text-green-500 group-hover:text-on-color"
+                isDisabled ? "text-success-primary/50" : "text-success-primary group-hover:text-on-color"
               )}
             />
           </button>
@@ -132,8 +132,8 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
           className={cn(
             "group rounded-lg border size-7 flex items-center justify-center shadow-md duration-300",
             isSubmitting
-              ? "cursor-not-allowed border-red-500/50 bg-red-500/10"
-              : "border-red-500 bg-red-500/20 hover:bg-red-500"
+              ? "cursor-not-allowed border-danger-strong/50 bg-danger-primary"
+              : "border-danger-strong bg-danger-primary hover:bg-red-500"
           )}
           onClick={() => {
             setIsEditing(false);
@@ -143,7 +143,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
           <CloseIcon
             className={cn(
               "size-5 duration-300",
-              isSubmitting ? "text-red-500/50" : "text-red-500 group-hover:text-on-color"
+              isSubmitting ? "text-danger-primary/50" : "text-danger-primary group-hover:text-on-color"
             )}
           />
         </button>

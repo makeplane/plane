@@ -42,7 +42,7 @@ const Info: React.FC<{ title: string; children?: React.ReactNode; tone?: "info" 
   tone = "info",
 }) => (
   <div
-    className={`mb-4 rounded-md border ${tone === "warn" ? "border-red-500 bg-red-50 p-4" : "border-subtle bg-layer-1 p-4"}`}
+    className={`mb-4 rounded-md border ${tone === "warn" ? "border-danger-strong bg-red-50 p-4" : "border-subtle bg-layer-1 p-4"}`}
   >
     <h3 className={`text-primary mb-2 text-16 font-semibold`}>{title}</h3>
     <div className="text-secondary text-13">{children}</div>
@@ -376,7 +376,7 @@ export const CommonMistakes: Story = {
       </Info>
 
       <div className="space-y-6">
-        <div className="border-2 border-red-500 rounded-md p-4">
+        <div className="border-2 border-danger-strong rounded-md p-4">
           <h4 className="text-primary mb-2 font-semibold">❌ Mistake 1: Nested Surfaces (Same Plane)</h4>
           <Surface>
             <p className="text-secondary mb-2 text-13">Surface 1</p>
@@ -389,7 +389,7 @@ export const CommonMistakes: Story = {
           </p>
         </div>
 
-        <div className="border-2 border-red-500 rounded-md p-4">
+        <div className="border-2 border-danger-strong rounded-md p-4">
           <h4 className="text-primary mb-2 font-semibold">❌ Mistake 2: Wrong Layer-Surface Association</h4>
           <Surface>
             <p className="text-secondary mb-2 text-13">Surface 1</p>
@@ -403,7 +403,7 @@ export const CommonMistakes: Story = {
           </p>
         </div>
 
-        <div className="border-2 border-red-500 rounded-md p-4">
+        <div className="border-2 border-danger-strong rounded-md p-4">
           <h4 className="text-primary mb-2 font-semibold">❌ Mistake 3: Mismatched Hover State</h4>
           <Surface>
             <div className="bg-layer-1 hover:bg-layer-2-hover rounded-md p-4 transition-colors">
@@ -413,7 +413,7 @@ export const CommonMistakes: Story = {
           <p className="text-tertiary mt-2 text-11">✅ Fix: Use bg-layer-1 hover:bg-layer-1-hover</p>
         </div>
 
-        <div className="border-2 border-red-500 rounded-md p-4">
+        <div className="border-2 border-danger-strong rounded-md p-4">
           <h4 className="text-primary mb-2 font-semibold">❌ Mistake 4: Canvas for Pages</h4>
           <div className="bg-canvas rounded-md p-4">
             <p className="text-secondary text-13">Using bg-canvas for a page or component - WRONG!</p>

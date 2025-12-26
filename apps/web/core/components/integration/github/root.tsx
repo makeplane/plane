@@ -173,10 +173,10 @@ export function GithubImporterRoot() {
                   <div
                     className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border ${
                       index <= activeIntegrationState()
-                        ? `border-accent-strong bg-accent-primary ${
+                        ? `border-accent-strong ${
                             index === activeIntegrationState()
-                              ? "border-opacity-100 bg-opacity-100"
-                              : "border-opacity-80 bg-opacity-80"
+                              ? "border-opacity-100 bg-accent-primary"
+                              : "border-opacity-80 bg-accent-primary/80"
                           }`
                         : "border-subtle"
                     }`}

@@ -20,7 +20,7 @@ export const getStrengthInfo = (strength: E_PASSWORD_STRENGTH): StrengthInfo => 
     case E_PASSWORD_STRENGTH.LENGTH_NOT_VALID:
       return {
         message: "Password is too short",
-        textColor: "text-red-500",
+        textColor: "text-danger-primary",
         activeFragments: 1,
       };
     case E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID:
@@ -32,7 +32,7 @@ export const getStrengthInfo = (strength: E_PASSWORD_STRENGTH): StrengthInfo => 
     case E_PASSWORD_STRENGTH.STRENGTH_VALID:
       return {
         message: "Password is strong",
-        textColor: "text-green-500",
+        textColor: "text-success-primary",
         activeFragments: 3,
       };
     default:

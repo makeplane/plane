@@ -299,7 +299,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               />
             )}
           />
-          <span className="text-11 text-red-500">{errors?.name?.message}</span>
+          <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
         </div>
         <div className="flex flex-col gap-1">
           <h4 className="text-13">{t("description")}</h4>
@@ -363,7 +363,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 <Info className="absolute right-2 top-2.5 h-4 w-4 text-placeholder" />
               </Tooltip>
             </div>
-            <span className="text-11 text-red-500">
+            <span className="text-11 text-danger-primary">
               <>{errors?.identifier?.message}</>
             </span>
           </div>
@@ -431,7 +431,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 </>
               )}
             />
-            {errors.timezone && <span className="text-11 text-red-500">{errors.timezone.message}</span>}
+            {errors.timezone && <span className="text-11 text-danger-primary">{errors.timezone.message}</span>}
           </div>
         </div>
         <div className="flex items-center justify-between py-2">

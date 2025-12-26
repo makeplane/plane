@@ -60,7 +60,7 @@ export const SwitchAccountDropdown = observer(function SwitchAccountDropdown(pro
               as="button"
               type="button"
               className={({ active }) =>
-                cn("text-red-500 px-1 py-1.5 whitespace-nowrap text-left rounded-sm w-full", {
+                cn("text-danger-primary px-1 py-1.5 whitespace-nowrap text-left rounded-sm w-full", {
                   "bg-layer-1": active,
                 })
               }

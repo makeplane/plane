@@ -149,7 +149,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
         } ${memberDetails?.member.display_name.toLowerCase()}`,
         content: (
           <div className="flex w-full items-center gap-2">
-            <div className="flex-shrink-0 pt-0.5">
+            <div className="shrink-0 pt-0.5">
               <Avatar name={memberDetails?.member.display_name} src={getFileURL(memberDetails?.member.avatar_url)} />
             </div>
             <div className="truncate">
@@ -195,7 +195,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
           <div className="mb-3 space-y-4">
             {fields.map((field, index) => (
               <div key={field.id} className="group mb-1 flex items-start justify-between gap-x-4 text-13 w-full">
-                <div className="flex flex-col gap-1 flex-grow w-full">
+                <div className="flex flex-col gap-1 grow w-full">
                   <Controller
                     control={control}
                     name={`members.${index}.member_id`}
@@ -239,11 +239,13 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                     }}
                   />
                   {errors.members && errors.members[index]?.member_id && (
-                    <span className="px-1 text-13 text-red-500">{errors.members[index]?.member_id?.message}</span>
+                    <span className="px-1 text-13 text-danger-primary">
+                      {errors.members[index]?.member_id?.message}
+                    </span>
                   )}
                 </div>
 
-                <div className="flex items-center justify-between gap-2 flex-shrink-0 ">
+                <div className="flex items-center justify-between gap-2 shrink-0">
                   <div className="flex flex-col gap-1">
                     <Controller
                       name={`members.${index}.role`}
@@ -275,7 +277,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                       )}
                     />
                     {errors.members && errors.members[index]?.role && (
-                      <span className="px-1 text-13 text-red-500">{errors.members[index]?.role?.message}</span>
+                      <span className="px-1 text-13 text-danger-primary">{errors.members[index]?.role?.message}</span>
                     )}
                   </div>
 

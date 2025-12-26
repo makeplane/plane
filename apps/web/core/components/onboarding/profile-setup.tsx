@@ -338,7 +338,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label
-                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                     htmlFor="first_name"
                   >
                     First name
@@ -369,11 +369,13 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       />
                     )}
                   />
-                  {errors.first_name && <span className="text-13 text-red-500">{errors.first_name.message}</span>}
+                  {errors.first_name && (
+                    <span className="text-13 text-danger-primary">{errors.first_name.message}</span>
+                  )}
                 </div>
                 <div className="space-y-1">
                   <label
-                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                     htmlFor="last_name"
                   >
                     Last name
@@ -403,7 +405,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       />
                     )}
                   />
-                  {errors.last_name && <span className="text-13 text-red-500">{errors.last_name.message}</span>}
+                  {errors.last_name && <span className="text-13 text-danger-primary">{errors.last_name.message}</span>}
                 </div>
               </div>
 
@@ -490,7 +492,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       )}
                     />
                     {errors.confirm_password && (
-                      <span className="text-13 text-red-500">{errors.confirm_password.message}</span>
+                      <span className="text-13 text-danger-primary">{errors.confirm_password.message}</span>
                     )}
                   </div>
                 </>
@@ -503,7 +505,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
             <>
               <div className="space-y-1">
                 <label
-                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                   htmlFor="role"
                 >
                   What role are you working on? Choose one.
@@ -534,11 +536,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     </div>
                   )}
                 />
-                {errors.role && <span className="text-13 text-red-500">{errors.role.message}</span>}
+                {errors.role && <span className="text-13 text-danger-primary">{errors.role.message}</span>}
               </div>
               <div className="space-y-1">
                 <label
-                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                   htmlFor="use_case"
                 >
                   What is your domain expertise? Choose one or more.
@@ -576,7 +578,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     </div>
                   )}
                 />
-                {errors.use_case && <span className="text-13 text-red-500">{errors.use_case.message}</span>}
+                {errors.use_case && <span className="text-13 text-danger-primary">{errors.use_case.message}</span>}
               </div>
             </>
           )}

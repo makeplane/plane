@@ -119,7 +119,9 @@ export function PageForm(props: Props) {
               autoFocus
             />
             {isTitleLengthMoreThan255Character && (
-              <span className="text-11 text-red-500">Max length of the name should be less than 255 characters</span>
+              <span className="text-11 text-danger-primary">
+                Max length of the name should be less than 255 characters
+              </span>
             )}
           </div>
         </div>

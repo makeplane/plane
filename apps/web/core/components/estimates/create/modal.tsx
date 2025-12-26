@@ -187,7 +187,7 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
             />
           )}
           {/* {isEstimatePointError && (
-            <div className="pt-5 text-13 text-red-500">
+            <div className="pt-5 text-13 text-danger-primary">
               Estimate points can&apos;t be empty. Enter a value in each field or remove those you don&apos;t have
               values for.
             </div>

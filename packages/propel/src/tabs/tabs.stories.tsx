@@ -252,7 +252,7 @@ export const DynamicTabs: Story = {
                       e.stopPropagation();
                       removeTab(tab.value);
                     }}
-                    className="ml-2 hover:text-red-500"
+                    className="ml-2 hover:text-danger-primary"
                   >
                     ×
                   </button>

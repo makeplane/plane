@@ -298,8 +298,10 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             isClearable
             mergeDates
             buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger" : ""}
-            clearIconClassName="!text-primary"
+            buttonClassName={
+              shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger-primary" : ""
+            }
+            clearIconClassName="text-primary!"
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip
@@ -344,10 +346,12 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onChange={handleTargetDate}
             minDate={minDate}
             placeholder={t("common.order_by.due_date")}
-            icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
+            icon={<DueDatePropertyIcon className="h-3 w-3 shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger" : ""}
-            clearIconClassName="!text-primary"
+            buttonClassName={
+              shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger-primary" : ""
+            }
+            clearIconClassName="text-primary!"
             optionsClassName="z-10"
             disabled={isReadOnly}
             renderByDefault={isMobile}

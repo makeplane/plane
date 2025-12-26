@@ -93,7 +93,7 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
         <span
           className={cn(
-            "shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-danger-subtle text-danger"
+            "shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-danger-subtle text-danger-primary"
           )}
         >
           <AlertTriangle className="size-5 text-danger-primary" aria-hidden="true" />

@@ -72,11 +72,11 @@ export const useExportColumns = () => {
         <span
           className={`rounded-sm text-11 px-2 py-1 capitalize ${
             rowData.status === "completed"
-              ? "bg-green-500/20 text-green-500"
+              ? "bg-success-primary text-success-primary"
               : rowData.status === "processing"
                 ? "bg-yellow-500/20 text-yellow-500"
                 : rowData.status === "failed"
-                  ? "bg-red-500/20 text-red-500"
+                  ? "bg-danger-primary text-danger-primary"
                   : rowData.status === "expired"
                     ? "bg-orange-500/20 text-orange-500"
                     : "bg-gray-500/20 text-gray-500"
@@ -104,7 +104,7 @@ export const useExportColumns = () => {
             )}
           </>
         ) : (
-          <div className="text-11 text-red-500">Expired</div>
+          <div className="text-11 text-danger-primary">Expired</div>
         ),
     },
   ];

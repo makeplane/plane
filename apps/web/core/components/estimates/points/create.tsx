@@ -171,7 +171,7 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
       <div
         className={cn(
           "relative w-full border rounded-sm flex items-center my-1",
-          estimatePointError?.message ? `border-red-500` : `border-subtle`
+          estimatePointError?.message ? `border-danger-strong` : `border-subtle`
         )}
       >
         <EstimateInputRoot
@@ -181,7 +181,7 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
         />
         {estimatePointError?.message && (
           <Tooltip tooltipContent={estimatePointError?.message} position="bottom">
-            <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-red-500">
+            <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-danger-primary">
               <Info size={14} />
             </div>
           </Tooltip>
@@ -191,7 +191,7 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
       {estimateInputValue && estimateInputValue.length > 0 && (
         <button
           type="submit"
-          className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer text-green-500"
+          className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer text-success-primary"
           disabled={loader}
         >
           {loader ? <Spinner className="w-4 h-4" /> : <Check size={14} />}
