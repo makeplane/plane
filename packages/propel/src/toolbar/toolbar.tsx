@@ -129,7 +129,7 @@ const buttonVariants = {
   outline:
     "border border-accent-strong text-accent-primary bg-transparent hover:bg-accent-primary/10 focus:bg-accent-primary/20",
   ghost: "text-secondary hover:bg-surface-2 focus:bg-surface-2",
-  destructive: "bg-red-500 text-on-color hover:bg-red-600 focus:bg-red-600",
+  destructive: "bg-danger-primary text-on-color hover:bg-danger-primary-hover focus:bg-danger-primary-selected",
 };
 
 const ToolbarSubmitButton = React.forwardRef(function ToolbarSubmitButton(

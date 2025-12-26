@@ -50,7 +50,7 @@ export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMember
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <div className="bg-surface-1 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
         <div className="sm:flex sm:items-start">
-          <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-danger-primary sm:mx-0 sm:h-10 sm:w-10">
+          <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-danger-subtle sm:mx-0 sm:h-10 sm:w-10">
             <AlertTriangle className="h-6 w-6 text-danger-primary" aria-hidden="true" />
           </div>
           <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">

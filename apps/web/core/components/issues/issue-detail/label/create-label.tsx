@@ -144,13 +144,17 @@ export function LabelCreate(props: ILabelCreate) {
           />
           <button
             type="button"
-            className="grid place-items-center rounded-sm bg-red-500 p-1"
+            className="grid place-items-center rounded-sm bg-danger-primary p-1"
             onClick={() => setIsCreateToggle(false)}
             disabled={disabled}
           >
             <CloseIcon className="h-3.5 w-3.5 text-on-color" />
           </button>
-          <button type="submit" className="grid place-items-center rounded-sm bg-green-500 p-1" disabled={isSubmitting}>
+          <button
+            type="submit"
+            className="grid place-items-center rounded-sm bg-success-primary p-1"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? (
               <Loader className="spin h-3.5 w-3.5 text-on-color" />
             ) : (

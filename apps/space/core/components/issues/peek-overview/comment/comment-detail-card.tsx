@@ -132,7 +132,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="group rounded-sm border border-success-strong bg-success-primary p-2 shadow-md duration-300 hover:bg-green-500"
+                className="group rounded-sm border border-success-strong bg-success-primary p-2 shadow-md duration-300 hover:bg-success-primary"
               >
                 <CheckIcon
                   className="h-3 w-3 text-success-primary duration-300 group-hover:text-on-color"

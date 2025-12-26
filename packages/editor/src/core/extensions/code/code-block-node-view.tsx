@@ -41,7 +41,7 @@ export function CodeBlockComponent({ node }: Props) {
           className={cn(
             "group/button hidden group-hover/code:flex items-center justify-center absolute top-2 right-2 z-10 size-8 rounded-md bg-layer-1 border border-subtle transition duration-150 ease-in-out backdrop-blur-sm",
             {
-              "bg-success-primary hover:bg-success-primary active:bg-success-primary": copied,
+              "bg-success-subtle hover:bg-success-subtle-1 active:bg-success-subtle-1": copied,
             }
           )}
           onClick={copyToClipboard}

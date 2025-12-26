@@ -151,7 +151,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
     <div
       className={cn(
         containerClassName,
-        errors && errors?.name && errors?.name?.message ? `border-danger-strong bg-danger-primary` : ``
+        errors && errors?.name && errors?.name?.message ? `border-danger-strong bg-danger-subtle` : ``
       )}
     >
       {isOpen ? (

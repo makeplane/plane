@@ -54,11 +54,11 @@ export const getFragmentColor = (fragmentIndex: number, activeFragments: number)
 
   switch (activeFragments) {
     case 1:
-      return "bg-red-500";
+      return "bg-danger-primary";
     case 2:
       return "bg-orange-500";
     case 3:
-      return "bg-green-500";
+      return "bg-success-primary";
     default:
       return "bg-layer-1";
   }

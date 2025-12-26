@@ -29,7 +29,7 @@ export const CYCLE_STATUS: {
     i18n_title: "project_cycles.status.completed",
     color: "#16A34A",
     textColor: "text-success-primary",
-    bgColor: "bg-green-50",
+    bgColor: "bg-success-subtle",
   },
   {
     i18n_label: "project_cycles.status.draft",
