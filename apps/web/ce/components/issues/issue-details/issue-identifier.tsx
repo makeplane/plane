@@ -1,85 +1,13 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
-// types
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
-import type { IIssueDisplayProperties } from "@plane/types";
-// ui
-// helpers
-import { cn } from "@plane/utils";
+// plane imports
+import type { TIssueIdentifierProps, TIssueTypeIdentifier } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
-
-type TIssueIdentifierBaseProps = {
-  projectId: string;
-  size?: "xs" | "sm" | "md" | "lg";
-  textContainerClassName?: string;
-  displayProperties?: IIssueDisplayProperties | undefined;
-  enableClickToCopyIdentifier?: boolean;
-};
-
-type TIssueIdentifierFromStore = TIssueIdentifierBaseProps & {
-  issueId: string;
-};
-
-type TIssueIdentifierWithDetails = TIssueIdentifierBaseProps & {
-  issueTypeId?: string | null;
-  projectIdentifier: string;
-  issueSequenceId: string | number;
-};
-
-export type TIssueIdentifierProps = TIssueIdentifierFromStore | TIssueIdentifierWithDetails;
-
-type TIssueTypeIdentifier = {
-  issueTypeId: string;
-  size?: "xs" | "sm" | "md" | "lg";
-};
-
-export const IssueTypeIdentifier = observer(function IssueTypeIdentifier(_props: TIssueTypeIdentifier) {
-  return <></>;
-});
-
-type TIdentifierTextProps = {
-  identifier: string;
-  enableClickToCopyIdentifier?: boolean;
-  textContainerClassName?: string;
-};
-
-export function IdentifierText(props: TIdentifierTextProps) {
-  const { identifier, enableClickToCopyIdentifier = false, textContainerClassName } = props;
-  // handlers
-  const handleCopyIssueIdentifier = () => {
-    if (enableClickToCopyIdentifier) {
-      navigator.clipboard.writeText(identifier).then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Work item ID copied to clipboard",
-        });
-      });
-    }
-  };
-
-  return (
-    <Tooltip tooltipContent="Click to copy" disabled={!enableClickToCopyIdentifier} position="top">
-      <span
-        className={cn(
-          "text-base font-medium text-custom-text-300",
-          {
-            "cursor-pointer": enableClickToCopyIdentifier,
-          },
-          textContainerClassName
-        )}
-        onClick={handleCopyIssueIdentifier}
-      >
-        {identifier}
-      </span>
-    </Tooltip>
-  );
-}
+import { IdentifierText } from "@/components/issues/issue-detail/identifier-text";
 
 export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueIdentifierProps) {
-  const { projectId, textContainerClassName, displayProperties, enableClickToCopyIdentifier = false } = props;
+  const { projectId, variant, size, displayProperties, enableClickToCopyIdentifier = false } = props;
   // store hooks
   const { getProjectIdentifierById } = useProject();
   const {
@@ -100,8 +28,13 @@ export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueId
       <IdentifierText
         identifier={`${projectIdentifier}-${issueSequenceId}`}
         enableClickToCopyIdentifier={enableClickToCopyIdentifier}
-        textContainerClassName={textContainerClassName}
+        variant={variant}
+        size={size}
       />
     </div>
   );
+});
+
+export const IssueTypeIdentifier = observer(function IssueTypeIdentifier(_props: TIssueTypeIdentifier) {
+  return <></>;
 });

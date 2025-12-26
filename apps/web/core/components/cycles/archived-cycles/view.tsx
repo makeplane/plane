@@ -35,8 +35,8 @@ export const ArchivedCyclesView = observer(function ArchivedCyclesView(props: IA
             className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
             alt="No matching cycles"
           />
-          <h5 className="text-xl font-medium mt-7 mb-1">No matching cycles</h5>
-          <p className="text-custom-text-400 text-base">
+          <h5 className="text-18 font-medium mt-7 mb-1">No matching cycles</h5>
+          <p className="text-placeholder text-14">
             {archivedCyclesSearchQuery.trim() === ""
               ? "Remove the filters to see all cycles"
               : "Remove the search criteria to see all cycles"}

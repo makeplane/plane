@@ -23,7 +23,7 @@ export const IssueLabelActivity = observer(function IssueLabelActivity(props: TI
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<LabelPropertyIcon height={14} width={14} className="text-custom-text-200" />}
+      icon={<LabelPropertyIcon height={14} width={14} className="text-secondary" />}
       activityId={activityId}
       ends={ends}
     >

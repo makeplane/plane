@@ -32,11 +32,11 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
 
   return (
     <Row
-      className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap py-2"
+      className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap py-2 bg-surface-1"
       style={{ height: `${GANTT_BREADCRUMBS_HEIGHT}px` }}
     >
       <div className="ml-auto">
-        <div className="ml-auto text-sm font-medium">
+        <div className="ml-auto text-11 font-medium text-tertiary">
           {blockIds ? `${blockIds.length} ${loaderTitle}` : t("common.loading")}
         </div>
       </div>
@@ -45,10 +45,12 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
         {VIEWS_LIST.map((chartView: any) => (
           <div
             key={chartView?.key}
-            className={cn("cursor-pointer rounded-sm p-1 px-2 text-xs", {
-              "bg-custom-background-80": currentView === chartView?.key,
-              "hover:bg-custom-background-90": currentView !== chartView?.key,
-            })}
+            className={cn(
+              "cursor-pointer rounded-md p-1 px-2 text-11 bg-layer-transparent hover:bg-layer-transparent-hover",
+              {
+                "bg-layer-transparent-selected": currentView === chartView?.key,
+              }
+            )}
             onClick={() => handleChartView(chartView?.key)}
           >
             {t(chartView?.i18n_title)}
@@ -59,7 +61,7 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
       {showToday && (
         <button
           type="button"
-          className="rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80"
+          className="rounded-md p-1 px-2 text-11 bg-layer-transparent hover:bg-layer-transparent-hover"
           onClick={handleToday}
         >
           {t("common.today")}
@@ -68,7 +70,7 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
 
       <button
         type="button"
-        className="flex items-center justify-center rounded-sm border border-custom-border-200 p-1 transition-all hover:bg-custom-background-80"
+        className="flex items-center justify-center rounded-md border border-subtle p-1 transition-all bg-layer-transparent hover:bg-layer-transparent-hover"
         onClick={toggleFullScreenMode}
       >
         {fullScreenMode ? <Shrink className="h-4 w-4" /> : <Expand className="h-4 w-4" />}

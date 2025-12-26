@@ -45,7 +45,7 @@ export const getLabelMultiSelectConfig = (params: TCreateLabelFilterParams, sing
 export const getLabelFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateLabelFilterParams> =>
   (params: TCreateLabelFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Label",
       ...params,

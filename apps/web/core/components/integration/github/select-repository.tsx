@@ -70,7 +70,7 @@ export function SelectRepository(props: Props) {
           {userRepositories && options.length < totalCount && (
             <button
               type="button"
-              className="w-full p-1 text-center text-[0.6rem] text-custom-text-200 hover:bg-custom-background-80"
+              className="w-full p-1 text-center text-10 text-secondary hover:bg-layer-1"
               onClick={() => setSize(size + 1)}
               disabled={isValidating}
             >

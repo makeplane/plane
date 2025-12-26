@@ -56,7 +56,7 @@ export const Interactive: Story = {
           users={["Alice", "Bob", "Charlie"]}
           onReactionClick={handleClick}
         />
-        <p className="text-sm text-custom-text-400">Click to toggle reaction</p>
+        <p className="text-13 text-placeholder">Click to toggle reaction</p>
       </div>
     );
   },
@@ -207,14 +207,14 @@ export const InMessageContext: Story = {
     };
 
     return (
-      <div className="max-w-md border border-custom-border-200 rounded-lg p-4 space-y-3">
+      <div className="max-w-md border border-subtle rounded-lg p-4 space-y-3">
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-custom-primary-100 flex items-center justify-center text-white text-sm">
+          <div className="w-8 h-8 rounded-full bg-accent-primary flex items-center justify-center text-on-color text-13">
             AB
           </div>
           <div className="flex-1">
-            <div className="font-medium text-sm">Alice Brown</div>
-            <div className="text-sm text-custom-text-300 mt-1">
+            <div className="font-medium text-13">Alice Brown</div>
+            <div className="text-13 text-tertiary mt-1">
               Hey everyone! Just wanted to share some exciting news about our project launch next week!
             </div>
           </div>

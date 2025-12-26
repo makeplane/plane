@@ -68,7 +68,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIss
             leaveFrom="translate-x-0"
             leaveTo="translate-x-full"
           >
-            <Dialog.Panel className="fixed right-0 top-0 z-20 h-full w-1/2 bg-custom-background-100 shadow-custom-shadow-sm">
+            <Dialog.Panel className="fixed right-0 top-0 z-20 h-full w-1/2 bg-surface-1 shadow-raised-200 border-l border-subtle-1">
               <SidePeekView anchor={anchor} handleClose={handleClose} issueDetails={issueDetails} />
             </Dialog.Panel>
           </Transition.Child>
@@ -85,7 +85,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIss
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 z-20 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+            <div className="fixed inset-0 z-20 bg-backdrop bg-opacity-50 transition-opacity" />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -98,8 +98,8 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIss
           >
             <Dialog.Panel>
               <div
-                className={`fixed left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-custom-background-100 shadow-custom-shadow-xl transition-all duration-300 ${
-                  peekMode === "modal" ? "h-[70%] w-3/5" : "h-[95%] w-[95%]"
+                className={`fixed left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-surface-1 transition-all duration-300 ${
+                  peekMode === "modal" ? "h-[70%] w-3/5" : "size-[95%]"
                 }`}
               >
                 {peekMode === "modal" && (

@@ -101,7 +101,7 @@ export function ModuleForm(props: Props) {
               )}
             />
           )}
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-18 font-medium text-secondary">
             {status ? t("common.update") : t("common.create")} {t("common.module").toLowerCase()}
           </h3>
         </div>
@@ -126,13 +126,13 @@ export function ModuleForm(props: Props) {
                   onChange={onChange}
                   hasError={Boolean(errors?.name)}
                   placeholder={t("title")}
-                  className="w-full text-base"
+                  className="w-full text-14"
                   tabIndex={getIndex("name")}
                   autoFocus
                 />
               )}
             />
-            <span className="text-xs text-red-500">{errors?.name?.message}</span>
+            <span className="text-11 text-red-500">{errors?.name?.message}</span>
           </div>
           <div>
             <Controller
@@ -145,7 +145,7 @@ export function ModuleForm(props: Props) {
                   value={value}
                   onChange={onChange}
                   placeholder={t("description")}
-                  className="w-full text-base resize-none min-h-24"
+                  className="w-full text-14 resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
                   tabIndex={getIndex("description")}
                 />
@@ -226,11 +226,11 @@ export function ModuleForm(props: Props) {
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
+      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+        <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
           {t("cancel")}
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
+        <Button variant="primary" size="lg" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
           {status
             ? isSubmitting
               ? t("updating")

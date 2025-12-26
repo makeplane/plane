@@ -25,7 +25,7 @@ export function EstimateEmptyScreen(props: TEstimateEmptyScreen) {
       title={""}
       description={""}
       assetPath={resolvedPath}
-      className="w-full !px-0 !py-0"
+      className="w-full p-0!"
       primaryButton={{
         text: t("project_settings.empty_state.estimates.primary_button"),
         onClick: () => {

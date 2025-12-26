@@ -1,23 +1,22 @@
-import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
 // plane web imports
-import { CommentBlock } from "@/plane-web/components/comments";
+import { CommentBlock, CommentCardDisplay } from "@/plane-web/components/comments";
 // local imports
 import { CommentQuickActions } from "../quick-actions";
-import { CommentCardDisplay } from "./display";
-import { CommentCardEditForm } from "./edit-form";
 
 type TCommentCard = {
   workspaceSlug: string;
+  entityId: string;
   comment: TIssueComment | undefined;
   activityOperations: TCommentsOperations;
   ends: "top" | "bottom" | undefined;
   showAccessSpecifier: boolean;
   showCopyLinkOption: boolean;
+  enableReplies: boolean;
   disabled?: boolean;
   projectId?: string;
 };
@@ -25,6 +24,7 @@ type TCommentCard = {
 export const CommentCard = observer(function CommentCard(props: TCommentCard) {
   const {
     workspaceSlug,
+    entityId,
     comment,
     activityOperations,
     ends,
@@ -43,10 +43,20 @@ export const CommentCard = observer(function CommentCard(props: TCommentCard) {
   if (!comment || !workspaceId) return null;
 
   return (
-    <CommentBlock
-      comment={comment}
-      quickActions={
-        !disabled && (
+    <CommentBlock comment={comment} ends={ends}>
+      <CommentCardDisplay
+        activityOperations={activityOperations}
+        entityId={entityId}
+        comment={comment}
+        disabled={disabled}
+        projectId={projectId}
+        readOnlyEditorRef={readOnlyEditorRef}
+        showAccessSpecifier={showAccessSpecifier}
+        workspaceId={workspaceId}
+        workspaceSlug={workspaceSlug}
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
+        renderQuickActions={() => (
           <CommentQuickActions
             activityOperations={activityOperations}
             comment={comment}
@@ -54,33 +64,8 @@ export const CommentCard = observer(function CommentCard(props: TCommentCard) {
             showAccessSpecifier={showAccessSpecifier}
             showCopyLinkOption={showCopyLinkOption}
           />
-        )
-      }
-      ends={ends}
-    >
-      {isEditing ? (
-        <CommentCardEditForm
-          activityOperations={activityOperations}
-          comment={comment}
-          isEditing
-          readOnlyEditorRef={readOnlyEditorRef.current}
-          setIsEditing={setIsEditing}
-          projectId={projectId}
-          workspaceId={workspaceId}
-          workspaceSlug={workspaceSlug}
-        />
-      ) : (
-        <CommentCardDisplay
-          activityOperations={activityOperations}
-          comment={comment}
-          disabled={disabled}
-          projectId={projectId}
-          readOnlyEditorRef={readOnlyEditorRef}
-          showAccessSpecifier={showAccessSpecifier}
-          workspaceId={workspaceId}
-          workspaceSlug={workspaceSlug}
-        />
-      )}
+        )}
+      />
     </CommentBlock>
   );
 });

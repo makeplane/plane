@@ -207,39 +207,35 @@ class Issue(ProjectBaseModel):
 
         if self._state.adding:
             with transaction.atomic():
-                # Create a lock for this specific project using an advisory lock
+                # Create a lock for this specific project using a transaction-level advisory lock
                 # This ensures only one transaction per project can execute this code at a time
+                # The lock is automatically released when the transaction ends
                 lock_key = convert_uuid_to_integer(self.project.id)
 
                 with connection.cursor() as cursor:
-                    # Get an exclusive lock using the project ID as the lock key
-                    cursor.execute("SELECT pg_advisory_lock(%s)", [lock_key])
+                    # Get an exclusive transaction-level lock using the project ID as the lock key
+                    cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
 
-                try:
-                    # Get the last sequence for the project
-                    last_sequence = IssueSequence.objects.filter(project=self.project).aggregate(
-                        largest=models.Max("sequence")
-                    )["largest"]
-                    self.sequence_id = last_sequence + 1 if last_sequence else 1
-                    # Strip the html tags using html parser
-                    self.description_stripped = (
-                        None
-                        if (self.description_html == "" or self.description_html is None)
-                        else strip_tags(self.description_html)
-                    )
-                    largest_sort_order = Issue.objects.filter(project=self.project, state=self.state).aggregate(
-                        largest=models.Max("sort_order")
-                    )["largest"]
-                    if largest_sort_order is not None:
-                        self.sort_order = largest_sort_order + 10000
+                # Get the last sequence for the project
+                last_sequence = IssueSequence.objects.filter(project=self.project).aggregate(
+                    largest=models.Max("sequence")
+                )["largest"]
+                self.sequence_id = last_sequence + 1 if last_sequence else 1
+                # Strip the html tags using html parser
+                self.description_stripped = (
+                    None
+                    if (self.description_html == "" or self.description_html is None)
+                    else strip_tags(self.description_html)
+                )
+                largest_sort_order = Issue.objects.filter(project=self.project, state=self.state).aggregate(
+                    largest=models.Max("sort_order")
+                )["largest"]
+                if largest_sort_order is not None:
+                    self.sort_order = largest_sort_order + 10000
 
-                    super(Issue, self).save(*args, **kwargs)
+                super(Issue, self).save(*args, **kwargs)
 
-                    IssueSequence.objects.create(issue=self, sequence=self.sequence_id, project=self.project)
-                finally:
-                    # Release the lock
-                    with connection.cursor() as cursor:
-                        cursor.execute("SELECT pg_advisory_unlock(%s)", [lock_key])
+                IssueSequence.objects.create(issue=self, sequence=self.sequence_id, project=self.project)
         else:
             # Strip the html tags using html parser
             self.description_stripped = (
@@ -513,10 +509,12 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
                     "comment_json": "description_json",
                 }
 
+                # Use _changes_on_save which is captured by ChangeTrackerMixin.save()
+                # before the tracked fields are reset
                 changed_fields = {
                     desc_field: getattr(self, comment_field)
                     for comment_field, desc_field in field_mapping.items()
-                    if self.has_changed(comment_field)
+                    if comment_field in self._changes_on_save
                 }
 
                 # Update description only if comment fields changed

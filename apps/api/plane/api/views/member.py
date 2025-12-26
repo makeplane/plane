@@ -154,7 +154,6 @@ class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
 
 # API endpoint to get and update a project member
 class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
-
     @extend_schema(
         operation_id="get_project_member",
         summary="Get project member",

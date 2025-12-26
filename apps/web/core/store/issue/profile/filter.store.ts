@@ -183,7 +183,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
       if (isEmpty(this.filters) || isEmpty(this.filters[userId])) return;
 
       const _filters = {
-        richFilters: this.filters[userId].richFilters as TWorkItemFilterExpression,
+        richFilters: this.filters[userId].richFilters,
         displayFilters: this.filters[userId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[userId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[userId].kanbanFilters as TIssueKanbanFilters,

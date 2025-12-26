@@ -3,6 +3,7 @@ import * as Sentry from "@sentry/react-router";
 import Script from "next/script";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
+import { ThemeProvider, useTheme } from "next-themes";
 // plane imports
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
 import { cn } from "@plane/utils";
@@ -14,12 +15,18 @@ import faviconIco from "@/app/assets/favicon/favicon.ico?url";
 import icon180 from "@/app/assets/icons/icon-180x180.png?url";
 import icon512 from "@/app/assets/icons/icon-512x512.png?url";
 import ogImage from "@/app/assets/og-image.png?url";
-import { LogoSpinner } from "@/components/common/logo-spinner";
 import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
+// components
+import { LogoSpinner } from "@/components/common/logo-spinner";
 // local
 import { CustomErrorComponent } from "./error";
 import { AppProvider } from "./provider";
+// fonts
+import "@fontsource-variable/inter";
+import interVariableWoff2 from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import "@fontsource/material-symbols-rounded";
+import "@fontsource/ibm-plex-mono";
 
 const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
 
@@ -33,13 +40,20 @@ export const links: LinksFunction = () => [
   { rel: "apple-touch-icon", sizes: "512x512", href: icon512 },
   { rel: "manifest", href: "/manifest.json" },
   { rel: "stylesheet", href: globalStyles },
+  {
+    rel: "preload",
+    href: interVariableWoff2,
+    as: "font",
+    type: "font/woff2",
+    crossOrigin: "anonymous",
+  },
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
   const isSessionRecorderEnabled = parseInt(process.env.VITE_ENABLE_SESSION_RECORDER || "0");
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -54,19 +68,12 @@ export function Layout({ children }: { children: ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <div id="context-menu-portal" />
         <div id="editor-portal" />
-        <AppProvider>
-          <div
-            className={cn(
-              "h-screen w-full overflow-hidden bg-custom-background-100 relative flex flex-col",
-              "app-container"
-            )}
-          >
-            <main className="w-full h-full overflow-hidden relative">{children}</main>
-          </div>
-        </AppProvider>
+        <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
+          {children}
+        </ThemeProvider>
         <Scripts />
         {!!isSessionRecorderEnabled && process.env.VITE_SESSION_RECORDER_KEY && (
           <Script id="clarity-tracking">
@@ -109,12 +116,25 @@ export const meta: Route.MetaFunction = () => [
 ];
 
 export default function Root() {
-  return <Outlet />;
+  return (
+    <AppProvider>
+      <div className={cn("h-screen w-full overflow-hidden bg-canvas relative flex flex-col", "desktop-app-container")}>
+        <main className="w-full h-full overflow-hidden relative">
+          <Outlet />
+        </main>
+      </div>
+    </AppProvider>
+  );
 }
 
 export function HydrateFallback() {
+  const { resolvedTheme } = useTheme();
+
+  // if we are on the server or the theme is not resolved, return an empty div
+  if (typeof window === "undefined" || resolvedTheme === undefined) return <div />;
+
   return (
-    <div className="relative flex h-screen w-full items-center justify-center">
+    <div className="relative flex bg-canvas h-screen w-full items-center justify-center">
       <LogoSpinner />
     </div>
   );

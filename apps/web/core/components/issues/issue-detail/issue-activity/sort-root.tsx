@@ -1,35 +1,16 @@
 import { memo } from "react";
 import { ArrowUpWideNarrow, ArrowDownWideNarrow } from "lucide-react";
 // plane package imports
-import type { E_SORT_ORDER } from "@plane/constants";
-import { getButtonStyling } from "@plane/propel/button";
-import { cn } from "@plane/utils";
+import { E_SORT_ORDER } from "@plane/constants";
+import { IconButton } from "@plane/propel/icon-button";
 
 export type TActivitySortRoot = {
   sortOrder: E_SORT_ORDER;
   toggleSort: () => void;
-  className?: string;
-  iconClassName?: string;
 };
 export const ActivitySortRoot = memo(function ActivitySortRoot(props: TActivitySortRoot) {
-  return (
-    <div
-      className={cn(
-        getButtonStyling("neutral-primary", "sm"),
-        "px-2 text-custom-text-300 cursor-pointer",
-        props.className
-      )}
-      onClick={() => {
-        props.toggleSort();
-      }}
-    >
-      {props.sortOrder === "asc" ? (
-        <ArrowUpWideNarrow className={cn("size-4", props.iconClassName)} />
-      ) : (
-        <ArrowDownWideNarrow className={cn("size-4", props.iconClassName)} />
-      )}
-    </div>
-  );
+  const SortIcon = props.sortOrder === E_SORT_ORDER.ASC ? ArrowUpWideNarrow : ArrowDownWideNarrow;
+  return <IconButton variant="tertiary" icon={SortIcon} onClick={props.toggleSort} />;
 });
 
 ActivitySortRoot.displayName = "ActivitySortRoot";

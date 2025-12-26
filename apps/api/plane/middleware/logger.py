@@ -4,13 +4,15 @@ import time
 
 # Django imports
 from django.http import HttpRequest
+from django.utils import timezone
 
 # Third party imports
 from rest_framework.request import Request
 
 # Module imports
 from plane.utils.ip_address import get_client_ip
-from plane.db.models import APIActivityLog
+from plane.utils.exception_logger import log_exception
+from plane.bgtasks.logger_task import process_logs
 
 api_logger = logging.getLogger("plane.api.request")
 
@@ -70,6 +72,10 @@ class RequestLoggerMiddleware:
 
 
 class APITokenLogMiddleware:
+    """
+    Middleware to log External API requests to MongoDB or PostgreSQL.
+    """
+
     def __init__(self, get_response):
         self.get_response = get_response
 
@@ -104,24 +110,41 @@ class APITokenLogMiddleware:
     def process_request(self, request, response, request_body):
         api_key_header = "X-Api-Key"
         api_key = request.headers.get(api_key_header)
-        # If the API key is present, log the request
-        if api_key:
-            try:
-                APIActivityLog.objects.create(
-                    token_identifier=api_key,
-                    path=request.path,
-                    method=request.method,
-                    query_params=request.META.get("QUERY_STRING", ""),
-                    headers=str(request.headers),
-                    body=(self._safe_decode_body(request_body) if request_body else None),
-                    response_body=(self._safe_decode_body(response.content) if response.content else None),
-                    response_code=response.status_code,
-                    ip_address=get_client_ip(request=request),
-                    user_agent=request.META.get("HTTP_USER_AGENT", None),
-                )
 
-            except Exception as e:
-                api_logger.exception(e)
-                # If the token does not exist, you can decide whether to log this as an invalid attempt
+        # If the API key is not present, return
+        if not api_key:
+            return
+
+        try:
+            log_data = {
+                "token_identifier": api_key,
+                "path": request.path,
+                "method": request.method,
+                "query_params": request.META.get("QUERY_STRING", ""),
+                "headers": str(request.headers),
+                "body": self._safe_decode_body(request_body) if request_body else None,
+                "response_body": self._safe_decode_body(response.content) if response.content else None,
+                "response_code": response.status_code,
+                "ip_address": get_client_ip(request=request),
+                "user_agent": request.META.get("HTTP_USER_AGENT", None),
+            }
+            user_id = (
+                str(request.user.id)
+                if getattr(request, "user") and getattr(request.user, "is_authenticated", False)
+                else None
+            )
+            # Additional fields for MongoDB
+            mongo_log = {
+                **log_data,
+                "created_at": timezone.now(),
+                "updated_at": timezone.now(),
+                "created_by": user_id,
+                "updated_by": user_id,
+            }
+
+            process_logs.delay(log_data=log_data, mongo_log=mongo_log)
+
+        except Exception as e:
+            log_exception(e)
 
         return None

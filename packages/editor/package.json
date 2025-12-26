@@ -1,6 +1,6 @@
 {
   "name": "@plane/editor",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Core Editor that powers Plane",
   "license": "AGPL-3.0",
   "private": true,
@@ -18,11 +18,11 @@
   "scripts": {
     "build": "tsc && tsdown",
     "dev": "tsdown --watch",
-    "check:lint": "eslint . --max-warnings 30",
+    "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1435",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint": "eslint . --fix",
-    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "check:format": "prettier . --cache --check",
+    "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix --max-warnings=1435",
+    "fix:format": "prettier . --cache --write",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
@@ -44,13 +44,16 @@
     "@tiptap/extension-blockquote": "^2.22.3",
     "@tiptap/extension-character-count": "^2.22.3",
     "@tiptap/extension-collaboration": "^2.22.3",
+    "@tiptap/extension-document": "^2.22.3",
     "@tiptap/extension-emoji": "^2.22.3",
+    "@tiptap/extension-heading": "^2.22.3",
     "@tiptap/extension-image": "^2.22.3",
     "@tiptap/extension-list-item": "^2.22.3",
     "@tiptap/extension-mention": "^2.22.3",
     "@tiptap/extension-placeholder": "^2.22.3",
     "@tiptap/extension-task-item": "^2.22.3",
     "@tiptap/extension-task-list": "^2.22.3",
+    "@tiptap/extension-text": "^2.22.3",
     "@tiptap/extension-text-align": "^2.22.3",
     "@tiptap/extension-text-style": "^2.22.3",
     "@tiptap/extension-underline": "^2.22.3",
@@ -59,6 +62,7 @@
     "@tiptap/react": "^2.22.3",
     "@tiptap/starter-kit": "^2.22.3",
     "@tiptap/suggestion": "^2.22.3",
+    "lodash-es": "catalog:",
     "buffer": "^6.0.3",
     "emoji-regex": "^10.3.0",
     "highlight.js": "^11.8.0",
@@ -77,13 +81,12 @@
     "yjs": "^13.6.20"
   },
   "devDependencies": {
-    "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@prettier/plugin-oxc": "0.0.4",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@types/lodash-es": "catalog:",
     "postcss": "^8.4.38",
     "tsdown": "catalog:",
     "typescript": "catalog:"

@@ -19,22 +19,26 @@ type TTabListProps = {
   tabClassName?: string;
   size?: "sm" | "md" | "lg";
   selectedTab?: string;
+  autoWrap?: boolean;
   onTabChange?: (key: string) => void;
 };
 
-export function TabList({
-  tabs,
-  tabListClassName,
-  tabClassName,
-  size = "md",
-  selectedTab,
-  onTabChange,
-}: TTabListProps) {
+export function TabList({ autoWrap = true, ...props }: TTabListProps) {
+  return autoWrap ? (
+    <Tab.Group>
+      <TabListInner {...props} />
+    </Tab.Group>
+  ) : (
+    <TabListInner {...props} />
+  );
+}
+
+function TabListInner({ tabs, tabListClassName, tabClassName, size = "md", selectedTab, onTabChange }: TTabListProps) {
   return (
     <Tab.List
       as="div"
       className={cn(
-        "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-sm p-0.5 bg-custom-background-80/60",
+        "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-layer-1",
         tabListClassName
       )}
     >
@@ -42,16 +46,16 @@ export function TabList({
         <Tab
           className={({ selected }) =>
             cn(
-              "flex items-center justify-center p-1 min-w-fit w-full font-medium text-custom-text-100 outline-none focus:outline-none cursor-pointer transition-all rounded",
+              "flex items-center justify-center p-1 min-w-fit w-full font-medium text-primary outline-none focus:outline-none cursor-pointer transition-all rounded-sm",
               (selectedTab ? selectedTab === tab.key : selected)
-                ? "bg-custom-background-100 text-custom-text-100 shadow-sm"
+                ? "bg-layer-transparent-active text-primary shadow-sm"
                 : tab.disabled
-                  ? "text-custom-text-400 cursor-not-allowed"
-                  : "text-custom-text-400 hover:text-custom-text-300 hover:bg-custom-background-80/60",
+                  ? "text-placeholder cursor-not-allowed"
+                  : "text-placeholder hover:text-tertiary hover:bg-layer-transparent-hover",
               {
-                "text-xs": size === "sm",
-                "text-sm": size === "md",
-                "text-base": size === "lg",
+                "text-11": size === "sm",
+                "text-13": size === "md",
+                "text-14": size === "lg",
               },
               tabClassName
             )
@@ -65,7 +69,9 @@ export function TabList({
           }}
           disabled={tab.disabled}
         >
-          {tab.icon && <tab.icon className="size-4" />}
+          {tab.icon && (
+            <tab.icon className={cn({ "size-3": size === "sm", "size-4": size === "md", "size-5": size === "lg" })} />
+          )}
           {tab.label}
         </Tab>
       ))}

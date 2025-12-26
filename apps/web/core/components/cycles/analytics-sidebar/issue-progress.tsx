@@ -98,7 +98,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
 
   if (!cycleDetails) return <></>;
   return (
-    <div className="border-t border-custom-border-200 space-y-4 py-5">
+    <div className="border-t border-subtle space-y-4 py-5">
       <Disclosure defaultOpen>
         {({ open }) => (
           <div className="flex flex-col">
@@ -106,9 +106,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
             {isCycleDateValid ? (
               <div className="relative w-full flex justify-between items-center gap-2">
                 <Disclosure.Button className="relative flex items-center gap-2 w-full">
-                  <div className="font-medium text-custom-text-200 text-sm">
-                    {t("project_cycles.active_cycle.progress")}
-                  </div>
+                  <div className="font-medium text-secondary text-13">{t("project_cycles.active_cycle.progress")}</div>
                 </Disclosure.Button>
                 <Disclosure.Button className="ml-auto">
                   {open ? (
@@ -120,13 +118,11 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
               </div>
             ) : (
               <div className="relative w-full flex justify-between items-center gap-2">
-                <div className="font-medium text-custom-text-200 text-sm">
-                  {t("project_cycles.active_cycle.progress")}
-                </div>
+                <div className="font-medium text-secondary text-13">{t("project_cycles.active_cycle.progress")}</div>
               </div>
             )}
             <Transition show={open}>
-              <Disclosure.Panel className="flex flex-col divide-y divide-custom-border-200">
+              <Disclosure.Panel className="flex flex-col divide-y divide-subtle-1">
                 {cycleStartDate && cycleEndDate ? (
                   <>
                     {isCycleDateValid && (
@@ -160,7 +156,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
                     )}
                   </>
                 ) : (
-                  <div className="my-2 py-2 text-sm text-custom-text-350  bg-custom-background-90 rounded-md px-2 w-full">
+                  <div className="my-2 py-2 text-13 text-tertiary  bg-surface-2 rounded-md px-2 w-full">
                     {t("no_data_yet")}
                   </div>
                 )}

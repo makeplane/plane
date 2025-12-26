@@ -43,12 +43,12 @@ export const WithinContainer: Story = {
       <div className="w-[300px] rounded-lg border p-6 space-y-4">
         <div className="space-y-2">
           <h4 className="font-medium leading-none">Section 1</h4>
-          <p className="text-sm text-muted-foreground">Description for section 1</p>
+          <p className="text-13 text-muted-foreground">Description for section 1</p>
         </div>
         <Separator />
         <div className="space-y-2">
           <h4 className="font-medium leading-none">Section 2</h4>
-          <p className="text-sm text-muted-foreground">Description for section 2</p>
+          <p className="text-13 text-muted-foreground">Description for section 2</p>
         </div>
       </div>
     );

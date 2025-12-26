@@ -1,10 +1,19 @@
-import { AddReactionIcon, AddWorkItemIcon, PreferencesIcon, SearchIcon } from "./actions";
+import {
+  AddReactionIcon,
+  AddWorkItemIcon,
+  FilterAppliedIcon,
+  FilterIcon,
+  PreferencesIcon,
+  SearchIcon,
+  UpgradeIcon,
+} from "./actions";
 import { AddIcon } from "./actions/add-icon";
 import { CloseIcon } from "./actions/close-icon";
 import { ChevronDownIcon } from "./arrows/chevron-down";
 import { ChevronLeftIcon } from "./arrows/chevron-left";
 import { ChevronRightIcon } from "./arrows/chevron-right";
 import { ChevronUpIcon } from "./arrows/chevron-up";
+import { ReplyIcon } from "./arrows/reply-icon";
 import { DefaultIcon } from "./default-icon";
 import { BoardLayoutIcon } from "./layouts/board-icon";
 import { CalendarLayoutIcon } from "./layouts/calendar-icon";
@@ -40,6 +49,8 @@ import { UserCirclePropertyIcon } from "./properties/user-circle-icon";
 import { UserPropertyIcon } from "./properties/user-icon";
 import { UserSquarePropertyIcon } from "./properties/user-square-icon";
 import { WorkflowsPropertyIcon } from "./properties/workflows-icon";
+import { CopyLinkIcon } from "./actions/copy-link";
+import { LabelFilledIcon } from "./properties/label-filled-icon";
 import { PiChatLogo } from "./sub-brand/pi-chat";
 import { PlaneNewIcon } from "./sub-brand/plane-icon";
 import { WikiIcon } from "./sub-brand/wiki-icon";
@@ -112,20 +123,26 @@ export const ICON_REGISTRY = {
   "property.user": UserPropertyIcon,
   "property.user-square": UserSquarePropertyIcon,
   "property.workflows": WorkflowsPropertyIcon,
+  "property.label-filled": LabelFilledIcon,
 
   // Action icons
   "action.add": AddIcon,
   "action.add-workitem": AddWorkItemIcon,
   "action.add-reaction": AddReactionIcon,
   "action.close": CloseIcon,
+  "action.filter": FilterIcon,
+  "action.filter-applied": FilterAppliedIcon,
   "action.search": SearchIcon,
   "action.preferences": PreferencesIcon,
+  "action.copy-link": CopyLinkIcon,
+  "action.upgrade": UpgradeIcon,
 
   // Arrow icons
   "arrow.chevron-down": ChevronDownIcon,
   "arrow.chevron-left": ChevronLeftIcon,
   "arrow.chevron-right": ChevronRightIcon,
   "arrow.chevron-up": ChevronUpIcon,
+  "arrow.reply": ReplyIcon,
 
   // Default fallback
   default: DefaultIcon,

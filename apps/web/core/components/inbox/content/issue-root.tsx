@@ -90,11 +90,10 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
       fetch: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
         return;
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
+
       remove: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
         try {
           await removeIssue(workspaceSlug, projectId, _issueId);
@@ -167,7 +166,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
 
   return (
     <>
-      <div className="rounded-lg space-y-4">
+      <div className="space-y-4 pb-4">
         {duplicateIssues.length > 0 && (
           <DeDupeIssuePopoverRoot
             workspaceSlug={workspaceSlug}
@@ -201,10 +200,11 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
             entityId={issue.id}
             fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
             initialValue={issue.description_html ?? "<p></p>"}
-            onSubmit={async (value) => {
+            onSubmit={async (value, isMigrationUpdate) => {
               if (!issue.id || !issue.project_id) return;
               await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
                 description_html: value,
+                ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
               });
             }}
             projectId={issue.project_id}
@@ -249,24 +249,30 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
         </div>
       </div>
 
-      <IssueAttachmentRoot
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={issue.id}
-        disabled={!isEditable}
-      />
+      <div className="py-4">
+        <IssueAttachmentRoot
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issue.id}
+          disabled={!isEditable}
+        />
+      </div>
 
-      <InboxIssueContentProperties
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issue={issue}
-        issueOperations={issueOperations}
-        isEditable={isEditable}
-        duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
-        isIntakeAccepted={isIntakeAccepted}
-      />
+      <div className="py-4">
+        <InboxIssueContentProperties
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issue={issue}
+          issueOperations={issueOperations}
+          isEditable={isEditable}
+          duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
+          isIntakeAccepted={isIntakeAccepted}
+        />
+      </div>
 
-      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} isIntakeIssue />
+      <div className="pt-4">
+        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} isIntakeIssue />
+      </div>
     </>
   );
 });

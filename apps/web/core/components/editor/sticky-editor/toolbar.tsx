@@ -63,21 +63,17 @@ export function StickyEditorToolbar(props: Props) {
         {showColorPalette && <ColorPalette handleUpdate={handleColorChange} />}
         <Tooltip
           tooltipContent={
-            <p className="flex flex-col gap-1 text-center text-xs">
+            <p className="flex flex-col gap-1 text-center text-11">
               <span className="font-medium">Background color</span>
             </p>
           }
         >
-          <button
-            type="button"
-            onClick={() => setShowColorPalette(!showColorPalette)}
-            className="flex text-custom-text-100/50"
-          >
+          <button type="button" onClick={() => setShowColorPalette(!showColorPalette)} className="flex text-primary/50">
             <Palette className="size-4 my-auto" />
           </button>
         </Tooltip>
 
-        <div className="flex w-fit items-stretch justify-between gap-4 rounded p-1 my-auto">
+        <div className="flex w-fit items-stretch justify-between gap-4 rounded-sm p-1 my-auto">
           <div className="flex items-stretch my-auto gap-4">
             {Object.keys(toolbarItems).map((key) => (
               <div key={key} className={cn("flex items-stretch gap-4", {})}>
@@ -88,23 +84,20 @@ export function StickyEditorToolbar(props: Props) {
                     <Tooltip
                       key={item.renderKey}
                       tooltipContent={
-                        <p className="flex flex-col gap-1 text-center text-xs">
+                        <p className="flex flex-col gap-1 text-center text-11">
                           <span className="font-medium">{item.name}</span>
-                          {item.shortcut && <kbd className="text-custom-text-400">{item.shortcut.join(" + ")}</kbd>}
+                          {item.shortcut && <kbd className="text-placeholder">{item.shortcut.join(" + ")}</kbd>}
                         </p>
                       }
                     >
                       <button
                         type="button"
                         onClick={() => executeCommand(item)}
-                        className={cn(
-                          "grid place-items-center aspect-square rounded-sm p-0.5 text-custom-text-100/50",
-                          {}
-                        )}
+                        className={cn("grid place-items-center aspect-square rounded-xs p-0.5 text-primary/50", {})}
                       >
                         <item.icon
                           className={cn("h-3.5 w-3.5", {
-                            "font-extrabold": isItemActive,
+                            "font-heavy": isItemActive,
                           })}
                           strokeWidth={2.5}
                         />
@@ -120,12 +113,12 @@ export function StickyEditorToolbar(props: Props) {
       {/* delete action */}
       <Tooltip
         tooltipContent={
-          <p className="flex flex-col gap-1 text-center text-xs">
+          <p className="flex flex-col gap-1 text-center text-11">
             <span className="font-medium">Delete</span>
           </p>
         }
       >
-        <button type="button" onClick={handleDelete} className="my-auto text-custom-text-100/50">
+        <button type="button" onClick={handleDelete} className="my-auto text-primary/50">
           <Trash2 className="size-4" />
         </button>
       </Tooltip>

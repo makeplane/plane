@@ -40,7 +40,7 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
           {logo_props?.in_use ? (
             <Logo logo={logo_props} size={16} type="lucide" />
           ) : (
-            <PageIcon className="h-4 w-4 text-custom-text-300" />
+            <PageIcon className="h-4 w-4 text-tertiary" />
           )}
         </>
       }
