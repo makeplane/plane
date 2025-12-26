@@ -16,7 +16,7 @@ import { createFilterConfig, createOperatorConfigEntry, getProjectMultiSelectCon
 export const getProjectFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateProjectFilterParams> =>
   (params: TCreateProjectFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Projects",
       ...params,

@@ -268,6 +268,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
 
   const isAccordionMode = projectPreferences.navigationMode === "accordion";
 
+  const shouldHighlightProject = URLProjectId === project?.id && projectPreferences.navigationMode !== "accordion";
+
   return (
     <>
       <PublishProjectModal isOpen={publishModalOpen} projectId={projectId} onClose={() => setPublishModal(false)} />
@@ -286,6 +288,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
               "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
               {
                 "bg-surface-2": isMenuActive,
+                "bg-layer-transparent-active": shouldHighlightProject,
               }
             )}
             id={`${project?.id}`}
@@ -469,7 +472,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
             >
               {isProjectListOpen && (
                 <Disclosure.Panel as="div" className="relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5">
-                  <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-subtle-1" />
+                  <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-layer-3" />
                   <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
                 </Disclosure.Panel>
               )}

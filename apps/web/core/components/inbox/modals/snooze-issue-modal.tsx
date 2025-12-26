@@ -1,10 +1,9 @@
-import type { FC } from "react";
-import { Fragment, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { useState } from "react";
 // ui
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Calendar } from "@plane/propel/calendar";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 
 export type InboxIssueSnoozeModalProps = {
   isOpen: boolean;
@@ -21,63 +20,34 @@ export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
   const { t } = useTranslation();
 
   return (
-    <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
+      <div className="flex h-full w-full flex-col gap-y-1 px-5 py-8 sm:p-6">
+        <Calendar
+          className="rounded-md border border-subtle p-3"
+          captionLayout="dropdown"
+          selected={date ? new Date(date) : undefined}
+          defaultMonth={date ? new Date(date) : undefined}
+          onSelect={(date: Date | undefined) => {
+            if (!date) return;
+            setDate(date);
+          }}
+          mode="single"
+          disabled={[
+            {
+              before: new Date(),
+            },
+          ]}
+        />
+        <Button
+          variant="primary"
+          onClick={() => {
+            handleClose();
+            onConfirm(date);
+          }}
         >
-          <div className="fixed inset-0 bg-backdrop transition-opacity" />
-        </Transition.Child>
-        <div className="fixed inset-0 z-20 flex w-full justify-center overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative flex transform rounded-lg bg-surface-1 px-5 py-8 text-left shadow-raised-200 transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <div className="flex h-full w-full flex-col gap-y-1">
-                  <Calendar
-                    className="rounded-md border border-subtle p-3"
-                    captionLayout="dropdown"
-                    selected={date ? new Date(date) : undefined}
-                    defaultMonth={date ? new Date(date) : undefined}
-                    onSelect={(date: Date | undefined) => {
-                      if (!date) return;
-                      setDate(date);
-                    }}
-                    mode="single"
-                    disabled={[
-                      {
-                        before: new Date(),
-                      },
-                    ]}
-                  />
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      close();
-                      onConfirm(date);
-                    }}
-                  >
-                    {t("inbox_issue.actions.snooze")}
-                  </Button>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition.Root>
+          {t("inbox_issue.actions.snooze")}
+        </Button>
+      </div>
+    </ModalCore>
   );
 }

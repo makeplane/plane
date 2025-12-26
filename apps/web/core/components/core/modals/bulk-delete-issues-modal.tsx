@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { Search } from "lucide-react";
-import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse, IUser } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // assets
 import darkIssuesAsset from "@/app/assets/empty-state/search/issues-dark.webp?url";
 import lightIssuesAsset from "@/app/assets/empty-state/search/issues-light.webp?url";
@@ -150,80 +150,57 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
     );
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <div className="fixed inset-0 z-20 overflow-y-auto bg-backdrop p-4 transition-opacity sm:p-6 md:p-20">
-          <Transition.Child
-            as={React.Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 scale-100"
-            leaveTo="opacity-0 scale-95"
-          >
-            <Dialog.Panel className="relative flex w-full items-center justify-center ">
-              <div className="w-full max-w-2xl transform divide-y divide-subtle-1 divide-opacity-10 rounded-lg bg-surface-1 shadow-raised-200 transition-all">
-                <form>
-                  <Combobox
-                    onChange={(val: string) => {
-                      const selectedIssues = watch("delete_issue_ids");
-                      if (selectedIssues.includes(val))
-                        setValue(
-                          "delete_issue_ids",
-                          selectedIssues.filter((i) => i !== val)
-                        );
-                      else setValue("delete_issue_ids", [...selectedIssues, val]);
-                    }}
-                  >
-                    <div className="relative m-1">
-                      <Search
-                        className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
-                        aria-hidden="true"
-                      />
-                      <input
-                        type="text"
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none focus:ring-0 sm:text-13"
-                        placeholder="Search..."
-                        onChange={(event) => setQuery(event.target.value)}
-                      />
-                    </div>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
+      <form>
+        <Combobox
+          onChange={(val: string) => {
+            const selectedIssues = watch("delete_issue_ids");
+            if (selectedIssues.includes(val))
+              setValue(
+                "delete_issue_ids",
+                selectedIssues.filter((i) => i !== val)
+              );
+            else setValue("delete_issue_ids", [...selectedIssues, val]);
+          }}
+        >
+          <div className="relative m-1">
+            <Search
+              className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
+              aria-hidden="true"
+            />
+            <input
+              type="text"
+              className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none focus:ring-0 sm:text-13"
+              placeholder="Search..."
+              onChange={(event) => setQuery(event.target.value)}
+            />
+          </div>
 
-                    <Combobox.Options static className="max-h-80 scroll-py-2 divide-y divide-subtle-1 overflow-y-auto">
-                      {isSearching ? (
-                        <Loader className="space-y-3 p-3">
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                        </Loader>
-                      ) : (
-                        <>{issueList}</>
-                      )}
-                    </Combobox.Options>
-                  </Combobox>
+          <Combobox.Options static className="max-h-80 scroll-py-2 divide-y divide-subtle-1 overflow-y-auto">
+            {isSearching ? (
+              <Loader className="space-y-3 p-3">
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+              </Loader>
+            ) : (
+              <>{issueList}</>
+            )}
+          </Combobox.Options>
+        </Combobox>
 
-                  {issues.length > 0 && (
-                    <div className="flex items-center justify-end gap-2 p-3">
-                      <Button variant="secondary" size="lg" onClick={handleClose}>
-                        Cancel
-                      </Button>
-                      <Button
-                        variant="error-fill"
-                        size="lg"
-                        onClick={handleSubmit(handleDelete)}
-                        loading={isSubmitting}
-                      >
-                        {isSubmitting ? "Deleting..." : "Delete selected work items"}
-                      </Button>
-                    </div>
-                  )}
-                </form>
-              </div>
-            </Dialog.Panel>
-          </Transition.Child>
-        </div>
-      </Dialog>
-    </Transition.Root>
+        {issues.length > 0 && (
+          <div className="flex items-center justify-end gap-2 p-3">
+            <Button variant="secondary" size="lg" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button variant="error-fill" size="lg" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
+              {isSubmitting ? "Deleting..." : "Delete selected work items"}
+            </Button>
+          </div>
+        )}
+      </form>
+    </ModalCore>
   );
 });
