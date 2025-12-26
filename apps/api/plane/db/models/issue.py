@@ -90,12 +90,6 @@ class IssueManager(SoftDeletionManager):
         return (
             super()
             .get_queryset()
-            .filter(
-                models.Q(issue_intake__status=1)
-                | models.Q(issue_intake__status=-1)
-                | models.Q(issue_intake__status=2)
-                | models.Q(issue_intake__isnull=True)
-            )
             .filter(deleted_at__isnull=True)
             .filter(state__is_triage=False)
             .exclude(state__group=StateGroup.TRIAGE.value)
