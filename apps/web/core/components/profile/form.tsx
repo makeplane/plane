@@ -1,20 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { CircleUserRound, InfoIcon } from "lucide-react";
+import { CircleUserRound } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, getButtonStyling } from "@plane/propel/button";
+import { Button } from "@plane/propel/button";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import type { IUser, TUserProfile } from "@plane/types";
 import { Input } from "@plane/ui";
-import { cn, getFileURL } from "@plane/utils";
+import { getFileURL } from "@plane/utils";
 // components
 import { DeactivateAccountModal } from "@/components/account/deactivate-account-modal";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -49,7 +47,6 @@ export type TProfileFormProps = {
 
 export const ProfileForm = observer(function ProfileForm(props: TProfileFormProps) {
   const { user, profile } = props;
-  const { workspaceSlug } = useParams();
   // states
   const [isLoading, setIsLoading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
@@ -100,6 +97,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
           message: "Profile picture deleted successfully.",
         });
         setValue("avatar_url", "");
+        return;
       })
       .catch(() => {
         setToast({
@@ -169,6 +167,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
         captureSuccess({
           eventName: PROFILE_SETTINGS_TRACKER_EVENTS.update_profile,
         });
+        return;
       })
       .catch(() => {
         captureError({
@@ -198,16 +197,6 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
           />
         )}
       />
-      <div className="w-full flex text-accent-secondary bg-accent-primary/10 rounded-md p-2 gap-2 items-center mb-4">
-        <InfoIcon className="h-4 w-4 flex-shrink-0" />
-        <div className="text-13 font-medium flex-1">{t("settings_moved_to_preferences")}</div>
-        <Link
-          href={`/${workspaceSlug}/settings/account/preferences`}
-          className={cn(getButtonStyling("secondary", "base"))}
-        >
-          {t("go_to_preferences")}
-        </Link>
-      </div>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         <div className="flex w-full flex-col gap-6">
           <div className="relative h-44 w-full">
