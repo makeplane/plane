@@ -59,7 +59,7 @@ export function PageRenderer(props: Props) {
         "wide-layout": displayConfig.wideLayout,
       })}
     >
-      {isLoading ? (
+      {false ? (
         <DocumentContentLoader className={documentLoaderClassName} />
       ) : (
         <>

@@ -17,7 +17,7 @@ class IssueForIntakeSerializer(BaseSerializer):
         model = Issue
         fields = [
             "name",
-            "description",
+            "description_json",
             "description_html",
             "priority",
         ]
