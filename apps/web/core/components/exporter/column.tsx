@@ -72,11 +72,11 @@ export const useExportColumns = () => {
         <span
           className={`rounded-sm text-11 px-2 py-1 capitalize ${
             rowData.status === "completed"
-              ? "bg-success-primary text-success-primary"
+              ? "bg-success-subtle text-success-primary"
               : rowData.status === "processing"
                 ? "bg-yellow-500/20 text-yellow-500"
                 : rowData.status === "failed"
-                  ? "bg-danger-primary text-danger-primary"
+                  ? "bg-danger-subtle text-danger-primary"
                   : rowData.status === "expired"
                     ? "bg-orange-500/20 text-orange-500"
                     : "bg-gray-500/20 text-gray-500"

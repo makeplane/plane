@@ -258,7 +258,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
           className={`${
             isDragging ? `opacity-100` : `opacity-0`
           } flex w-full items-center justify-center rounded-sm border-2 border-danger-strong/20 bg-surface-1 px-3 py-5 text-11 font-medium italic text-danger-primary ${
-            isDragOverDelete ? "bg-red-500 opacity-70 blur-2xl" : ""
+            isDragOverDelete ? "bg-danger-primary blur-2xl" : ""
           } transition duration-300`}
         >
           Drop here to delete the work item.

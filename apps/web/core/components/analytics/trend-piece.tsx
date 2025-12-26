@@ -43,9 +43,9 @@ const variants: Record<NonNullable<Props["variant"]>, Record<"ontrack" | "offtra
     atrisk: "text-danger-primary border border-danger-strong",
   },
   tinted: {
-    ontrack: "text-success-primary bg-success-primary",
+    ontrack: "text-success-primary bg-success-subtle",
     offtrack: "text-yellow-500 bg-yellow-500/10",
-    atrisk: "text-danger-primary bg-danger-primary",
+    atrisk: "text-danger-primary bg-danger-subtle",
   },
 } as const;
 

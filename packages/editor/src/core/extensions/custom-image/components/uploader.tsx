@@ -168,7 +168,8 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
     [uploadFile, editor, getPos]
   );
 
-  const isErrorState = failedToLoadImage || hasDuplicationFailed;
+  // const isErrorState = failedToLoadImage || hasDuplicationFailed;
+  const isErrorState = true;
 
   const borderColor =
     selected && editor.isEditable && !isErrorState
@@ -212,10 +213,10 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
           "bg-layer-3-hover text-secondary": draggedInside && editor.isEditable && !isErrorState,
           "text-accent-secondary bg-accent-primary/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
             selected && editor.isEditable && !isErrorState,
-          "text-danger-primary cursor-default": isErrorState,
-          "hover:text-danger-primary hover:bg-danger-primary": isErrorState && editor.isEditable,
-          "bg-danger-primary": isErrorState && selected,
-          "hover:bg-danger-primary": isErrorState && selected && editor.isEditable,
+          "text-danger-primary bg-danger-subtle cursor-default": isErrorState,
+          "hover:text-danger-primary hover:bg-danger-subtle-hover": isErrorState && editor.isEditable,
+          "bg-danger-subtle-selected": isErrorState && selected,
+          "hover:bg-danger-subtle-active": isErrorState && selected && editor.isEditable,
         }
       )}
       style={borderColor ? { borderColor } : undefined}
@@ -236,9 +237,9 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
           type="button"
           onClick={handleRetryClick}
           className={cn(
-            "flex items-center gap-1 px-2 py-1 font-medium text-danger-primary rounded-md transition-all duration-200 ease-in-out hover:bg-danger-primary hover:text-danger-primary",
+            "flex items-center gap-1 px-2 py-1 font-medium text-danger-primary rounded-md transition-all duration-200 ease-in-out hover:bg-danger-subtle-hover",
             {
-              "hover:bg-danger-primary": selected,
+              "hover:bg-danger-subtle-hover": selected,
             }
           )}
           title="Retry duplication"

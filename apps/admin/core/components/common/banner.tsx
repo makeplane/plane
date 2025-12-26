@@ -10,7 +10,7 @@ export function Banner(props: TBanner) {
 
   return (
     <div
-      className={`rounded-md p-2 w-full border ${type === "error" ? "bg-danger-primary border-danger-strong" : "bg-success-primary border-success-strong"}`}
+      className={`rounded-md p-2 w-full border ${type === "error" ? "bg-danger-subtle border-danger-strong" : "bg-success-subtle border-success-strong"}`}
     >
       <div className="flex items-center justify-center">
         <div className="flex-shrink-0">

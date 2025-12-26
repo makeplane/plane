@@ -47,7 +47,7 @@ const TextArea = React.forwardRef(function TextArea(
           "px-3 py-2": textAreaSize === "sm",
           "p-3": textAreaSize === "md",
           "border-danger-strong": hasError,
-          "bg-red-100": hasError && mode === "primary",
+          "bg-danger-subtle": hasError && mode === "primary",
         },
         className
       )}

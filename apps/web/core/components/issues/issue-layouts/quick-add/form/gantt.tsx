@@ -8,7 +8,7 @@ export const GanttQuickAddIssueForm = observer(function GanttQuickAddIssueForm(p
   const { ref, projectDetail, hasError, register, onSubmit, isEpic } = props;
   const { t } = useTranslation();
   return (
-    <div className={cn("shadow-raised-200", hasError && "border border-danger-strong/20 bg-danger-primary")}>
+    <div className={cn("shadow-raised-200", hasError && "border border-danger-strong/20 bg-danger-subtle")}>
       <form
         ref={ref}
         onSubmit={onSubmit}

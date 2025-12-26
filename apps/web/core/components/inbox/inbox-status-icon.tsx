@@ -18,7 +18,7 @@ export const ICON_PROPERTIES = {
   [EInboxIssueStatus.SNOOZED]: {
     icon: Clock,
     textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "text-danger-primary" : "text-placeholder"),
-    bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "bg-danger-primary" : "bg-[#E0E1E6]"),
+    bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "bg-danger-subtle" : "bg-[#E0E1E6]"),
   },
   [EInboxIssueStatus.ACCEPTED]: {
     icon: CheckCircle2,

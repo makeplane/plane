@@ -270,7 +270,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
         />
       </>
 
-      <Row className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 bg-surface-1 z-[15] border-b border-subtle">
+      <Row className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 bg-surface-1 z-15 border-b border-subtle">
         <div className="flex items-center gap-4">
           {isNotificationEmbed && (
             <button onClick={embedRemoveCurrentNotification}>
@@ -310,11 +310,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
 
           <div className="flex flex-wrap items-center gap-2">
             {canMarkAsAccepted && (
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <Button
                   variant="secondary"
                   prependIcon={<CircleCheck className="w-3 h-3" />}
-                  className="text-success-primary border border-success-strong bg-success-primary focus:bg-success-primary focus:text-success-primary hover:bg-success-primary"
+                  className="text-on-color border border-success-strong bg-success-primary focus:bg-success-primary focus:text-success-primary hover:bg-success-primary"
                   onClick={() =>
                     handleActionWithPermission(
                       isProjectAdmin,
@@ -329,11 +329,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
             )}
 
             {canMarkAsDeclined && (
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <Button
                   variant="secondary"
                   prependIcon={<CircleX className="w-3 h-3" />}
-                  className="text-danger-primary border border-danger-strong bg-danger-primary focus:bg-danger-primary focus:text-danger-primary hover:bg-danger-primary-hover"
+                  className="text-on-color border border-danger-strong bg-danger-primary focus:bg-danger-primary focus:text-danger-primary hover:bg-danger-primary-hover"
                   onClick={() =>
                     handleActionWithPermission(
                       isProjectAdmin,

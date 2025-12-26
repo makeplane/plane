@@ -36,11 +36,11 @@ export const SingleImport = observer(function SingleImport({ service, refreshing
           <span
             className={`rounded-sm px-2 py-0.5 text-11 capitalize ${
               service.status === "completed"
-                ? "bg-success-primary text-success-primary"
+                ? "bg-success-subtle text-success-primary"
                 : service.status === "processing"
                   ? "bg-yellow-500/20 text-yellow-500"
                   : service.status === "failed"
-                    ? "bg-danger-primary text-danger-primary"
+                    ? "bg-danger-subtle text-danger-primary"
                     : ""
             }`}
           >

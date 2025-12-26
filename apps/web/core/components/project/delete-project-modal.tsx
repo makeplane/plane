@@ -91,7 +91,7 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
         <div className="flex w-full items-center justify-start gap-6">
-          <span className="place-items-center rounded-full bg-danger-primary p-4">
+          <span className="place-items-center rounded-full bg-danger-subtle p-4">
             <AlertTriangle className="h-6 w-6 text-danger-primary" aria-hidden="true" />
           </span>
           <span className="flex items-center justify-start">

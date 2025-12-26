@@ -90,7 +90,7 @@ export function BubbleMenuLinkSelector(props: Props) {
           {editor.getAttributes("link").href ? (
             <button
               type="button"
-              className="grid place-items-center rounded-xs p-1 text-danger-primary hover:bg-danger-primary transition-all"
+              className="grid place-items-center rounded-xs p-1 text-danger-primary hover:bg-danger-subtle-hover transition-all"
               onClick={(e) => {
                 unsetLinkEditor(editor);
                 e.stopPropagation();

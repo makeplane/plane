@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 import type { EditorRefApi } from "@plane/editor";
@@ -111,40 +111,26 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
             onClick={handleSubmit(onEnter)}
             disabled={isDisabled}
             className={cn(
-              "group rounded-lg border size-7 flex items-center justify-center shadow-md duration-300",
-              isDisabled
-                ? "cursor-not-allowed border-success-strong/50 bg-success-primary"
-                : "border-success-strong bg-success-primary hover:bg-green-500"
+              "group rounded-lg border border-success-subtle size-7 grid place-items-center shadow-raised-100 bg-success-subtle duration-300",
+              isDisabled ? "" : "hover:bg-success-subtle-1"
             )}
           >
-            <CheckIcon
-              className={cn(
-                "size-4 duration-300",
-                isDisabled ? "text-success-primary/50" : "text-success-primary group-hover:text-on-color"
-              )}
-            />
+            <CheckIcon className="size-4 text-success-primary" />
           </button>
         )}
         <button
           type="button"
           disabled={isSubmitting}
           className={cn(
-            "group rounded-lg border size-7 flex items-center justify-center shadow-md duration-300",
-            isSubmitting
-              ? "cursor-not-allowed border-danger-strong/50 bg-danger-primary"
-              : "border-danger-strong bg-danger-primary hover:bg-red-500"
+            "group rounded-lg border border-danger-subtle size-7 grid place-items-center shadow-raised-100 bg-danger-subtle duration-300",
+            isSubmitting ? "" : "hover:bg-danger-subtle-hover"
           )}
           onClick={() => {
             setIsEditing(false);
             editorRef.current?.setEditorValue(comment.comment_html ?? "<p></p>");
           }}
         >
-          <CloseIcon
-            className={cn(
-              "size-5 duration-300",
-              isSubmitting ? "text-danger-primary/50" : "text-danger-primary group-hover:text-on-color"
-            )}
-          />
+          <CloseIcon className="size-4 text-danger-primary" />
         </button>
       </div>
     </form>

@@ -67,7 +67,7 @@ export function DeactivateAccountModal(props: Props) {
       <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
         <div className="">
           <div className="flex items-start gap-x-4">
-            <div className="mt-3 grid place-items-center rounded-full bg-danger-primary p-2 sm:mt-3 sm:p-2 md:mt-0 md:p-4 lg:mt-0 lg:p-4 ">
+            <div className="mt-3 grid place-items-center rounded-full bg-danger-subtle p-2 sm:mt-3 sm:p-2 md:mt-0 md:p-4 lg:mt-0 lg:p-4 ">
               <TrashIcon
                 className="h-4 w-4 text-danger-primary sm:h-4 sm:w-4 md:h-6 md:w-6 lg:h-6 lg:w-6"
                 aria-hidden="true"

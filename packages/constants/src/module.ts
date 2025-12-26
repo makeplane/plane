@@ -52,14 +52,14 @@ export const MODULE_STATUS: {
     value: "completed",
     color: MODULE_STATUS_COLORS.completed,
     textColor: "text-success-primary",
-    bgColor: "bg-green-100",
+    bgColor: "bg-success-subtle",
   },
   {
     i18n_label: "project_modules.status.cancelled",
     value: "cancelled",
     color: MODULE_STATUS_COLORS.cancelled,
     textColor: "text-danger-primary",
-    bgColor: "bg-red-50",
+    bgColor: "bg-danger-subtle",
   },
 ];
 
