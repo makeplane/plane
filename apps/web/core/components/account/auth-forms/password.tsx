@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
@@ -15,8 +15,6 @@ import { ForgotPasswordPopover } from "@/components/account/auth-forms/forgot-pa
 // constants
 // helpers
 import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
-// hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // services
 import { AuthService } from "@/services/auth.service";
 
@@ -154,15 +152,6 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               : true;
           if (isPasswordValid) {
             setIsSubmitting(true);
-            captureSuccess({
-              eventName:
-                mode === EAuthModes.SIGN_IN
-                  ? AUTH_TRACKER_EVENTS.sign_in_with_password
-                  : AUTH_TRACKER_EVENTS.sign_up_with_password,
-              payload: {
-                email: passwordFormData.email,
-              },
-            });
             if (formRef.current) formRef.current.submit(); // Manually submit the form if the condition is met
           } else {
             setBannerMessage(true);
@@ -170,15 +159,6 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         }}
         onError={() => {
           setIsSubmitting(false);
-          captureError({
-            eventName:
-              mode === EAuthModes.SIGN_IN
-                ? AUTH_TRACKER_EVENTS.sign_in_with_password
-                : AUTH_TRACKER_EVENTS.sign_up_with_password,
-            payload: {
-              email: passwordFormData.email,
-            },
-          });
         }}
       >
         <input type="hidden" name="csrfmiddlewaretoken" />

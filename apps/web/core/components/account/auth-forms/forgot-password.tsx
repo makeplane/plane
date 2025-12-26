@@ -5,14 +5,11 @@ import { Controller, useForm } from "react-hook-form";
 // icons
 import { CircleCheck } from "lucide-react";
 // plane imports
-import { AUTH_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Input } from "@plane/ui";
 import { cn, checkEmailValidity } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import useTimer from "@/hooks/use-timer";
 // services
@@ -59,12 +56,6 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
         email: formData.email,
       })
       .then(() => {
-        captureSuccess({
-          eventName: AUTH_TRACKER_EVENTS.forgot_password,
-          payload: {
-            email: formData.email,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("auth.forgot_password.toast.success.title"),
@@ -73,12 +64,6 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
         setResendCodeTimer(30);
       })
       .catch((err) => {
-        captureError({
-          eventName: AUTH_TRACKER_EVENTS.forgot_password,
-          payload: {
-            email: formData.email,
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("auth.forgot_password.toast.error.title"),

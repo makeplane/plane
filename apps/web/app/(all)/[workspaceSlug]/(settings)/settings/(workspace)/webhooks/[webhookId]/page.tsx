@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWebhook } from "@plane/types";
 // ui
@@ -11,7 +11,6 @@ import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "@/components/web-hooks";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWebhook } from "@/hooks/store/use-webhook";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -55,12 +54,6 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
 
     try {
       await updateWebhook(workspaceSlug, formData.id, payload);
-
-      captureSuccess({
-        eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_updated,
-        payload: { webhook: formData.id },
-      });
-
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
@@ -68,12 +61,6 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      captureError({
-        eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_updated,
-        payload: { webhook: formData.id },
-        error: error as Error,
-      });
-
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",

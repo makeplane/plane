@@ -2,10 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { PRODUCT_TOUR_TRACKER_EVENTS } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
-// helpers
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 import { useUserProfile, useUser } from "@/hooks/store/user";
@@ -33,19 +30,8 @@ export const WorkspaceHomeView = observer(function WorkspaceHomeView() {
     }
   );
 
-  const handleTourCompleted = () => {
-    updateTourCompleted()
-      .then(() => {
-        captureSuccess({
-          eventName: PRODUCT_TOUR_TRACKER_EVENTS.complete,
-          payload: {
-            user_id: currentUser?.id,
-          },
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  const handleTourCompleted = async () => {
+    await updateTourCompleted();
   };
 
   // TODO: refactor loader implementation

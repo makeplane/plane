@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 
 import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
 // plane imports
-import { ROLE, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS, GROUP_WORKSPACE_TRACKER_EVENT } from "@plane/constants";
+import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
@@ -19,9 +19,7 @@ import emptyInvitation from "@/app/assets/empty-state/invitation.svg?url";
 import { EmptyState } from "@/components/common/empty-state";
 import { WorkspaceLogo } from "@/components/workspace/logo";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
-// helpers
 // hooks
-import { captureError, captureSuccess, joinEventGroup } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -79,18 +77,6 @@ function UserInvitationsPage() {
         const firstInviteId = invitationsRespond[0];
         const invitation = invitations?.find((i) => i.id === firstInviteId);
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
-        if (redirectWorkspace?.id) {
-          joinEventGroup(GROUP_WORKSPACE_TRACKER_EVENT, redirectWorkspace?.id, {
-            date: new Date().toDateString(),
-            workspace_id: redirectWorkspace?.id,
-          });
-        }
-        captureSuccess({
-          eventName: MEMBER_TRACKER_EVENTS.accept,
-          payload: {
-            member_id: invitation?.id,
-          },
-        });
         updateUserProfile({ last_workspace_id: redirectWorkspace?.id })
           .then(() => {
             setIsJoiningWorkspaces(false);
@@ -107,14 +93,7 @@ function UserInvitationsPage() {
             setIsJoiningWorkspaces(false);
           });
       })
-      .catch((err) => {
-        captureError({
-          eventName: MEMBER_TRACKER_EVENTS.accept,
-          payload: {
-            member_id: invitationsRespond?.[0],
-          },
-          error: err,
-        });
+      .catch((_err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("error"),
@@ -183,7 +162,6 @@ function UserInvitationsPage() {
                     onClick={submitInvitations}
                     disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                     loading={isJoiningWorkspaces}
-                    data-ph-element={MEMBER_TRACKER_ELEMENTS.ACCEPT_INVITATION_BUTTON}
                   >
                     {t("accept_and_join")}
                   </Button>

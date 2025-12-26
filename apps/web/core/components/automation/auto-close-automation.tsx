@@ -1,17 +1,10 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { ArchiveX } from "lucide-react";
 // types
-import {
-  PROJECT_AUTOMATION_MONTHS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  EIconSize,
-  PROJECT_SETTINGS_TRACKER_ELEMENTS,
-  PROJECT_SETTINGS_TRACKER_EVENTS,
-} from "@plane/constants";
+import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel, EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { StateGroupIcon, StatePropertyIcon } from "@plane/propel/icons";
 import type { IProject } from "@plane/types";
@@ -21,7 +14,6 @@ import { CustomSelect, CustomSearchSelect, ToggleSwitch, Loader } from "@plane/u
 import { SelectMonthModal } from "@/components/automation";
 // constants
 // hooks
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -111,15 +103,6 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
               } else {
                 await handleChange({ close_in: 0, default_state: null });
               }
-              captureElementAndEvent({
-                element: {
-                  elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.AUTOMATIONS_CLOSE_TOGGLE_BUTTON,
-                },
-                event: {
-                  eventName: PROJECT_SETTINGS_TRACKER_EVENTS.auto_close_workitems,
-                  state: "SUCCESS",
-                },
-              });
             }}
             size="sm"
             disabled={!isAdmin}
