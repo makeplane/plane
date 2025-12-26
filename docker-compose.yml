@@ -38,7 +38,7 @@ services:
     container_name: api
     build:
       context: ./apps/api
-      dockerfile: Dockerfile.api
+      dockerfile: Dockerfile
       args:
         DOCKER_BUILDKIT: 1
     restart: always
@@ -53,7 +53,7 @@ services:
     container_name: bgworker
     build:
       context: ./apps/api
-      dockerfile: Dockerfile.api
+      dockerfile: Dockerfile
       args:
         DOCKER_BUILDKIT: 1
     restart: always
@@ -69,7 +69,7 @@ services:
     container_name: beatworker
     build:
       context: ./apps/api
-      dockerfile: Dockerfile.api
+      dockerfile: Dockerfile
       args:
         DOCKER_BUILDKIT: 1
     restart: always
@@ -85,7 +85,7 @@ services:
     container_name: plane-migrator
     build:
       context: ./apps/api
-      dockerfile: Dockerfile.api
+      dockerfile: Dockerfile
       args:
         DOCKER_BUILDKIT: 1
     restart: no
