@@ -10,8 +10,6 @@ import IssuesTour from "@/app/assets/onboarding/issues.webp?url";
 import ModulesTour from "@/app/assets/onboarding/modules.webp?url";
 import PagesTour from "@/app/assets/onboarding/pages.webp?url";
 import ViewsTour from "@/app/assets/onboarding/views.webp?url";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUser } from "@/hooks/store/user";

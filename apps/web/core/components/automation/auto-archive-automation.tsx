@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveRestore } from "lucide-react";
@@ -16,9 +16,7 @@ import type { IProject } from "@plane/types";
 import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 // component
 import { SelectMonthModal } from "@/components/automation";
-// constants
 // hooks
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 

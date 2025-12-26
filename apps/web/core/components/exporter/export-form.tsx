@@ -8,8 +8,6 @@ import {
   EUserPermissionsLevel,
   EXPORTERS_LIST,
   // ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  WORKSPACE_SETTINGS_TRACKER_EVENTS,
-  WORKSPACE_SETTINGS_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -20,7 +18,6 @@ import type { TWorkItemFilterExpression } from "@plane/types";
 import { CustomSearchSelect, CustomSelect } from "@plane/ui";
 // import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
 // import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { ProjectExportService } from "@/services/project/project-export.service";
@@ -105,12 +102,6 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         await projectExportService.csvExport(workspaceSlug, payload);
         mutateServices();
         setExportLoading(false);
-        captureSuccess({
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.csv_exported,
-          payload: {
-            provider: formData.provider.provider,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("workspace_settings.settings.exports.modal.toasts.success.title"),
@@ -127,13 +118,6 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         });
       } catch (error) {
         setExportLoading(false);
-        captureError({
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.csv_exported,
-          payload: {
-            provider: formData.provider.provider,
-          },
-          error: error as Error,
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("error"),
@@ -258,12 +242,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         />
       </div> */}
       <div className="flex items-center justify-between">
-        <Button
-          variant="primary"
-          type="submit"
-          loading={exportLoading}
-          data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.EXPORT_BUTTON}
-        >
+        <Button variant="primary" type="submit" loading={exportLoading}>
           {exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}
         </Button>
       </div>

@@ -1,24 +1,16 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
-
 // ui
-import {
-  CYCLE_TRACKER_EVENTS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  CYCLE_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
-// helpers
 // hooks
 import { useCycleMenuItems } from "@/components/common/quick-actions-helper";
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -76,12 +68,6 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
           title: t("project_cycles.action.restore.success.title"),
           message: t("project_cycles.action.restore.success.description"),
         });
-        captureSuccess({
-          eventName: CYCLE_TRACKER_EVENTS.restore,
-          payload: {
-            id: cycleId,
-          },
-        });
         router.push(`/${workspaceSlug}/projects/${projectId}/archives/cycles`);
       })
       .catch(() => {
@@ -89,12 +75,6 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
           type: TOAST_TYPE.ERROR,
           title: t("project_cycles.action.restore.failed.title"),
           message: t("project_cycles.action.restore.failed.description"),
-        });
-        captureError({
-          eventName: CYCLE_TRACKER_EVENTS.restore,
-          payload: {
-            id: cycleId,
-          },
         });
       });
 
@@ -118,11 +98,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
   const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
     return {
       ...item,
-
       action: () => {
-        captureClick({
-          elementName: CYCLE_TRACKER_ELEMENTS.CONTEXT_MENU,
-        });
         item.action();
       },
     };
@@ -170,9 +146,6 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
             <CustomMenu.MenuItem
               key={item.key}
               onClick={() => {
-                captureClick({
-                  elementName: CYCLE_TRACKER_ELEMENTS.QUICK_ACTIONS,
-                });
                 item.action();
               }}
               className={cn(

@@ -1,8 +1,8 @@
-import type { FC, FormEvent } from "react";
+import type { FormEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { ETabIndices, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -10,8 +10,6 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
@@ -170,12 +168,6 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
           descriptionEditorRef?.current?.clearEditor();
           setFormData(defaultIssueData);
         }
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.create,
-          payload: {
-            id: res?.issue?.id,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: `Success!`,
@@ -184,13 +176,6 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
       })
       .catch((error) => {
         console.error(error);
-        captureError({
-          eventName: WORK_ITEM_TRACKER_EVENTS.create,
-          payload: {
-            id: formData?.id,
-          },
-          error: error as Error,
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: `Error!`,

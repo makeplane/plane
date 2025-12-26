@@ -12,8 +12,6 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Input, PasswordStrengthIndicator } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -59,12 +57,6 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
   const { t } = useTranslation();
   // hooks
   const { data: user, handleSetPassword } = useUser();
-
-  useEffect(() => {
-    captureView({
-      elementName: AUTH_TRACKER_ELEMENTS.SET_PASSWORD_FORM,
-    });
-  }, []);
 
   useEffect(() => {
     if (csrfToken === undefined)

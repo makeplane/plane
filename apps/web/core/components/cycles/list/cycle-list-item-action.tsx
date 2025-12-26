@@ -1,17 +1,11 @@
-import type { FC, MouseEvent } from "react";
+import type { MouseEvent } from "react";
 import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Eye, ArrowRight, CalendarDays } from "lucide-react";
 // plane imports
-import {
-  CYCLE_TRACKER_EVENTS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  IS_FAVORITE_MENU_OPEN,
-  CYCLE_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { TransferIcon, WorkItemsIcon, MembersPropertyIcon } from "@plane/propel/icons";
@@ -25,7 +19,6 @@ import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -109,25 +102,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
-      .then(() => {
-        if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
-        captureSuccess({
-          eventName: CYCLE_TRACKER_EVENTS.favorite,
-          payload: {
-            id: cycleId,
-          },
-        });
-      })
-      .catch((error) => {
-        captureError({
-          eventName: CYCLE_TRACKER_EVENTS.favorite,
-          payload: {
-            id: cycleId,
-          },
-          error,
-        });
-      });
+    const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId);
 
     setPromiseToast(addToFavoritePromise, {
       loading: t("project_cycles.action.favorite.loading"),
@@ -146,24 +121,11 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    const removeFromFavoritePromise = removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
-      .then(() => {
-        captureSuccess({
-          eventName: CYCLE_TRACKER_EVENTS.unfavorite,
-          payload: {
-            id: cycleId,
-          },
-        });
-      })
-      .catch((error) => {
-        captureError({
-          eventName: CYCLE_TRACKER_EVENTS.unfavorite,
-          payload: {
-            id: cycleId,
-          },
-          error,
-        });
-      });
+    const removeFromFavoritePromise = removeCycleFromFavorites(
+      workspaceSlug?.toString(),
+      projectId.toString(),
+      cycleId
+    );
 
     setPromiseToast(removeFromFavoritePromise, {
       loading: t("project_cycles.action.unfavorite.loading"),
@@ -319,7 +281,6 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
       )}
       {isEditingAllowed && !cycleDetails.archived_at && (
         <FavoriteStar
-          data-ph-element={CYCLE_TRACKER_ELEMENTS.LIST_ITEM}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
