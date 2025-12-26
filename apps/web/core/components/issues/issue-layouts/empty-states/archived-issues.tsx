@@ -39,7 +39,7 @@ export const ProjectArchivedEmptyState = observer(function ProjectArchivedEmptyS
               label: "Clear filters",
               onClick: archivedWorkItemFilter?.clearFilters,
               disabled: !canPerformEmptyStateActions || !archivedWorkItemFilter,
-              variant: "outline-primary",
+              variant: "secondary",
             },
           ]}
         />

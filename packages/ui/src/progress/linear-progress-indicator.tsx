@@ -35,23 +35,21 @@ export function LinearProgressIndicator({
     else
       return (
         <Tooltip key={item.id} tooltipContent={`${item.name} ${Math.round(item.value)}${inPercentage ? "%" : ""}`}>
-          <div style={style} className={cn("first:rounded-l-sm last:rounded-r-sm", barClassName)} />
+          <div style={style} className={cn("first:rounded-l-xs last:rounded-r-xs", barClassName)} />
         </Tooltip>
       );
   });
 
   return (
     <div
-      className={cn("flex w-full items-center justify-between gap-[1px] rounded-sm", {
+      className={cn("flex w-full items-center justify-between gap-[1px] rounded-xs", {
         "h-2": size === "sm",
         "h-3": size === "md",
         "h-3.5": size === "lg",
         "h-[14px]": size === "xl",
       })}
     >
-      <div className={cn("flex h-full w-full gap-[1.5px] p-[2px] bg-custom-background-90 rounded-sm", className)}>
-        {bars}
-      </div>
+      <div className={cn("flex h-full w-full gap-[1.5px] p-[2px] bg-surface-2 rounded-xs", className)}>{bars}</div>
     </div>
   );
 }

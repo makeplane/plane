@@ -7,6 +7,8 @@ import {
   CloseIcon,
   CopyIcon,
   EditIcon,
+  FilterAppliedIcon,
+  FilterIcon,
   GlobeIcon,
   LinkIcon,
   LockIcon,
@@ -15,9 +17,10 @@ import {
   PreferencesIcon,
   SearchIcon,
   TrashIcon,
+  UpgradeIcon
 } from "./actions";
 // Arrow icons
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from "./arrows";
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon , ReplyIcon} from "./arrows";
 // Default icon
 import { DefaultIcon } from "./default-icon";
 // Layout icons
@@ -58,6 +61,8 @@ import {
   WorkflowsPropertyIcon,
 } from "./properties";
 // Sub-brand icons
+import { CopyLinkIcon } from "./actions/copy-link";
+import { LabelFilledIcon } from "./properties/label-filled-icon";
 import { PiChatLogo, PlaneNewIcon, WikiIcon } from "./sub-brand";
 // Workspace icons
 import {
@@ -131,6 +136,7 @@ export const ICON_REGISTRY = {
   "property.user": UserPropertyIcon,
   "property.user-square": UserSquarePropertyIcon,
   "property.workflows": WorkflowsPropertyIcon,
+  "property.label-filled": LabelFilledIcon,
 
   // Action icons
   "action.add": AddIcon,
@@ -144,10 +150,14 @@ export const ICON_REGISTRY = {
   "action.link": LinkIcon,
   "action.lock": LockIcon,
   "action.new-tab": NewTabIcon,
+  "action.filter": FilterIcon,
+  "action.filter-applied": FilterAppliedIcon,
   "action.search": SearchIcon,
   "action.plus": PlusIcon,
   "action.preferences": PreferencesIcon,
   "action.trash": TrashIcon,
+  "action.copy-link": CopyLinkIcon,
+  "action.upgrade": UpgradeIcon,
 
   // Arrow icons
   "arrow.chevron-down": ChevronDownIcon,
@@ -157,6 +167,7 @@ export const ICON_REGISTRY = {
 
   // Misc icons
   "misc.info": InfoIcon,
+  "arrow.reply": ReplyIcon,
 
   // Default fallback
   default: DefaultIcon,

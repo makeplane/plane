@@ -97,13 +97,10 @@ export const WorkspaceDraftIssuesRoot = observer(function WorkspaceDraftIssuesRo
             <WorkspaceDraftIssuesLoader items={1} />
           ) : (
             <div
-              className={cn(
-                "h-11 pl-6 p-3 text-sm font-medium bg-custom-background-100 border-b border-custom-border-200 transition-all",
-                {
-                  "text-custom-primary-100 hover:text-custom-primary-200 cursor-pointer underline-offset-2 hover:underline":
-                    paginationInfo?.next_page_results,
-                }
-              )}
+              className={cn("h-11 pl-6 p-3 text-13 font-medium bg-surface-1 border-b border-subtle transition-all", {
+                "text-accent-primary hover:text-accent-secondary cursor-pointer underline-offset-2 hover:underline":
+                  paginationInfo?.next_page_results,
+              })}
               onClick={handleNextIssues}
             >
               Load More &darr;

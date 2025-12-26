@@ -36,24 +36,24 @@ export function CalloutBlockColorSelector(props: Props) {
             e.stopPropagation();
           }}
           className={cn(
-            "flex items-center gap-1 h-full whitespace-nowrap py-1 px-2.5 text-sm font-medium text-custom-text-300 hover:bg-white/10 active:bg-custom-background-80 rounded transition-colors",
+            "flex items-center gap-1 h-full whitespace-nowrap py-1 px-2.5 text-13 font-medium text-tertiary hover:bg-layer-1-hover active:bg-layer-1-active rounded-sm transition-colors",
             {
-              "bg-white/10": isOpen,
+              "bg-layer-1": isOpen,
             }
           )}
           disabled={disabled}
         >
-          <span>Color</span>
+          <span className="text-12">Color</span>
           <ChevronDownIcon className="flex-shrink-0 size-3" />
         </button>
         {isOpen && (
-          <section className="absolute top-full right-0 z-10 mt-1 rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 p-2 shadow-custom-shadow-rg animate-in fade-in slide-in-from-top-1">
+          <section className="absolute top-full right-0 z-10 mt-1 rounded-md border-[0.5px] border-strong bg-surface-1 p-2 shadow-raised-200 animate-in fade-in slide-in-from-top-1">
             <div className="flex items-center gap-2">
               {COLORS_LIST.map((color) => (
                 <button
                   key={color.key}
                   type="button"
-                  className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
+                  className="flex-shrink-0 size-6 rounded-sm border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
                   style={{
                     backgroundColor: color.backgroundColor,
                   }}
@@ -62,7 +62,7 @@ export function CalloutBlockColorSelector(props: Props) {
               ))}
               <button
                 type="button"
-                className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
+                className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1-hover transition-colors"
                 onClick={() => handleColorSelect(null)}
               >
                 <Ban className="size-4" />

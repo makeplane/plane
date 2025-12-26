@@ -49,7 +49,7 @@ export const getPriorityMultiSelectConfig = (
 export const getPriorityFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreatePriorityFilterParams> =>
   (params: TCreatePriorityFilterParams) =>
-    createFilterConfig<P, TIssuePriorities>({
+    createFilterConfig<P>({
       id: key,
       label: "Priority",
       ...params,

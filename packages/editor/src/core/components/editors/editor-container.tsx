@@ -1,13 +1,17 @@
+import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Editor } from "@tiptap/react";
 import type { FC, ReactNode } from "react";
-import { useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // components
+import type { TCollabValue } from "@/contexts";
 import { LinkContainer } from "@/plane-editor/components/link-container";
+// plugins
+import { nodeHighlightPluginKey } from "@/plugins/highlight";
 // types
 import type { TDisplayConfig } from "@/types";
 
@@ -18,12 +22,85 @@ type Props = {
   editorContainerClassName: string;
   id: string;
   isTouchDevice: boolean;
+  provider?: HocuspocusProvider | undefined;
+  state?: TCollabValue["state"];
 };
 
 export function EditorContainer(props: Props) {
-  const { children, displayConfig, editor, editorContainerClassName, id, isTouchDevice } = props;
+  const { children, displayConfig, editor, editorContainerClassName, id, isTouchDevice, provider, state } = props;
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
+  const hasScrolledOnce = useRef(false);
+  const scrollToNode = useCallback(
+    (nodeId: string) => {
+      if (!editor) return false;
+
+      const doc = editor.state.doc;
+      let pos: number | null = null;
+
+      doc.descendants((node, position) => {
+        if (node.attrs && node.attrs.id === nodeId) {
+          pos = position;
+          return false;
+        }
+      });
+
+      if (pos === null) {
+        return false;
+      }
+
+      const nodePosition = pos;
+      const tr = editor.state.tr.setMeta(nodeHighlightPluginKey, { nodeId });
+      editor.view.dispatch(tr);
+
+      requestAnimationFrame(() => {
+        const domNode = editor.view.nodeDOM(nodePosition);
+        if (domNode instanceof HTMLElement) {
+          domNode.scrollIntoView({ behavior: "instant", block: "center" });
+        }
+      });
+
+      editor.once("focus", () => {
+        const clearTr = editor.state.tr.setMeta(nodeHighlightPluginKey, { nodeId: null });
+        editor.view.dispatch(clearTr);
+      });
+
+      hasScrolledOnce.current = true;
+      return true;
+    },
+
+    [editor]
+  );
+
+  useEffect(() => {
+    const nodeId = window.location.href.split("#")[1];
+
+    const handleSynced = () => scrollToNode(nodeId);
+
+    if (nodeId && !hasScrolledOnce.current) {
+      if (provider && state) {
+        const { hasCachedContent } = state;
+        // If the provider is synced or the cached content is available and the server is disconnected, scroll to the node
+        if (hasCachedContent) {
+          const hasScrolled = handleSynced();
+          if (!hasScrolled) {
+            provider.on("synced", handleSynced);
+          }
+        } else if (provider.isSynced) {
+          handleSynced();
+        } else {
+          provider.on("synced", handleSynced);
+        }
+      } else {
+        handleSynced();
+      }
+      return () => {
+        if (provider) {
+          provider.off("synced", handleSynced);
+        }
+      };
+    }
+  }, [scrollToNode, provider, state]);
 
   const handleContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (event.target !== event.currentTarget) return;
@@ -88,7 +165,6 @@ export function EditorContainer(props: Props) {
           `editor-container cursor-text relative line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
           {
             "active-editor": editor?.isFocused && editor?.isEditable,
-            "wide-layout": displayConfig.wideLayout,
           },
           displayConfig.fontSize ?? DEFAULT_DISPLAY_CONFIG.fontSize,
           displayConfig.fontStyle ?? DEFAULT_DISPLAY_CONFIG.fontStyle,

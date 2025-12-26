@@ -38,6 +38,7 @@ type LiteTextEditorWrapperProps = MakeOptional<
   issue_id?: string;
   parentClassName?: string;
   editorClassName?: string;
+  submitButtonText?: string;
 } & (
     | {
         editable: false;
@@ -73,6 +74,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
     disabledExtensions: additionalDisabledExtensions = [],
     editorClassName = "",
     showPlaceholderOnEmpty = true,
+    submitButtonText = "common.comment",
     ...rest
   } = props;
   // states
@@ -112,7 +114,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
   return (
     <div
       className={cn(
-        "relative border border-custom-border-200 rounded",
+        "relative border border-subtle rounded-sm",
         {
           "p-3": editable && !isLiteVariant,
         },
@@ -208,6 +210,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
             showAccessSpecifier={showAccessSpecifier}
             editorRef={editorRef}
             showSubmitButton={showSubmitButton}
+            submitButtonText={submitButtonText}
           />
         </div>
       )}

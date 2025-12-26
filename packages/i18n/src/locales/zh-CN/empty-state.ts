@@ -177,5 +177,10 @@ export default {
       description: "生成安全的 API 令牌以将工作空间与外部系统和应用程序连接。",
       cta_primary: "添加 API 令牌",
     },
+    webhooks: {
+      title: "尚未添加 Webhook",
+      description: "在项目事件发生时自动向外部服务发送通知。",
+      cta_primary: "添加 webhook",
+    },
   },
 } as const;

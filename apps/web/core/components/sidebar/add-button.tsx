@@ -1,3 +1,4 @@
+import { Button } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 
 type Props = React.ComponentProps<"button"> & {
@@ -8,17 +9,15 @@ type Props = React.ComponentProps<"button"> & {
 export function SidebarAddButton(props: Props) {
   const { label, onClick, disabled, ...rest } = props;
   return (
-    <button
-      type="button"
-      className={cn(
-        "flex-grow text-custom-text-300 text-sm font-medium border-[0.5px] border-custom-sidebar-border-300 text-left rounded-md shadow-sm h-8 px-2 flex items-center gap-1.5",
-        !disabled && "hover:bg-custom-sidebar-background-90"
-      )}
+    <Button
+      variant={"secondary"}
+      size={"xl"}
+      className="w-full justify-start"
       onClick={onClick}
       disabled={disabled}
       {...rest}
     >
       {label}
-    </button>
+    </Button>
   );
 }

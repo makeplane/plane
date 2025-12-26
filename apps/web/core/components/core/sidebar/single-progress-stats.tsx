@@ -11,9 +11,9 @@ type TSingleProgressStatsProps = {
 export function SingleProgressStats({ title, completed, total, onClick, selected = false }: TSingleProgressStatsProps) {
   return (
     <div
-      className={`flex w-full items-center justify-between gap-4 rounded-sm p-1 text-xs ${
-        onClick ? "cursor-pointer hover:bg-custom-background-90" : ""
-      } ${selected ? "bg-custom-background-80" : ""}`}
+      className={`flex w-full items-center justify-between gap-4 rounded-xs p-1 text-11 ${
+        onClick ? "cursor-pointer hover:bg-surface-2" : ""
+      } ${selected ? "bg-layer-1" : ""}`}
       onClick={onClick}
     >
       <div className="w-4/6">{title}</div>

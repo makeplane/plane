@@ -840,7 +840,7 @@ export default {
         label: "Remove parent work item",
       },
     },
-    new: "New Work item",
+    new: "New work item",
     adding: "Adding work item",
     create: {
       success: "Work item created successfully",
@@ -980,7 +980,7 @@ export default {
     delete: "Delete attachment",
   },
   label: {
-    select: "Select label",
+    select: "Add labels",
     create: {
       success: "Label created successfully",
       failed: "Label creation failed",
@@ -2627,6 +2627,7 @@ export default {
       copy_current_page_url: "Copy current page URL",
       copy_current_page_url_toast_success: "Current page URL copied to clipboard.",
       copy_current_page_url_toast_error: "Some error occurred while copying the current page URL to clipboard.",
+      focus_top_nav_search: "Focus search input",
     },
     preferences_actions: {
       update_theme: "Change interface theme",

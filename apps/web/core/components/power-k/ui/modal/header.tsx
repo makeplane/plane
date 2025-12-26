@@ -26,7 +26,7 @@ export function PowerKModalHeader(props: Props) {
     : t("power_k.page_placeholders.default");
 
   return (
-    <div className="border-b border-custom-border-200">
+    <div className="border-b border-subtle">
       {/* Context Indicator */}
       {context.shouldShowContextBasedActions && !activePage && (
         <PowerKModalContextIndicator
@@ -37,18 +37,18 @@ export function PowerKModalHeader(props: Props) {
 
       {/* Search Input */}
       <div className="flex items-center gap-2 px-4 py-3">
-        <SearchIcon className="shrink-0 size-4 text-custom-text-400" />
+        <SearchIcon className="shrink-0 size-4 text-placeholder" />
         <Command.Input
           value={searchTerm}
           onValueChange={onSearchChange}
           placeholder={placeholder}
-          className="flex-1 bg-transparent text-sm text-custom-text-100 placeholder-custom-text-400 outline-none"
+          className="flex-1 bg-transparent text-13 text-primary placeholder-(--text-color-placeholder) outline-none"
           autoFocus
         />
         {searchTerm && (
           <button
             onClick={() => onSearchChange("")}
-            className="flex-shrink-0 rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
+            className="flex-shrink-0 rounded-sm p-1 text-placeholder hover:bg-layer-1 hover:text-secondary"
           >
             <X className="h-3 w-3" />
           </button>

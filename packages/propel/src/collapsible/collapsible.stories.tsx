@@ -32,7 +32,7 @@ const meta = {
         </Collapsible.CollapsibleTrigger>
         <Collapsible.CollapsibleContent className="mt-2">
           <div className="rounded-md border border-gray-200 p-4">
-            <p className="text-sm">This is the collapsible content that can be shown or hidden.</p>
+            <p className="text-13">This is the collapsible content that can be shown or hidden.</p>
           </div>
         </Collapsible.CollapsibleContent>
       </Collapsible.CollapsibleRoot>
@@ -56,13 +56,16 @@ export const Controlled: Story = {
     return (
       <div className="space-y-4">
         <div className="flex gap-2">
-          <button onClick={() => setIsOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-sm text-white">
+          <button onClick={() => setIsOpen(true)} className="rounded-sm bg-blue-500 px-4 py-2 text-13 text-on-color">
             Open
           </button>
-          <button onClick={() => setIsOpen(false)} className="rounded bg-gray-500 px-4 py-2 text-sm text-white">
+          <button onClick={() => setIsOpen(false)} className="rounded-sm bg-gray-500 px-4 py-2 text-13 text-on-color">
             Close
           </button>
-          <button onClick={() => setIsOpen(!isOpen)} className="rounded bg-green-500 px-4 py-2 text-sm text-white">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="rounded-sm bg-green-500 px-4 py-2 text-13 text-on-color"
+          >
             Toggle
           </button>
         </div>
@@ -73,8 +76,8 @@ export const Controlled: Story = {
           </Collapsible.CollapsibleTrigger>
           <Collapsible.CollapsibleContent className="mt-2">
             <div className="rounded-md border border-gray-200 p-4">
-              <p className="text-sm">This collapsible is controlled by external state.</p>
-              <p className="mt-2 text-sm">Current state: {isOpen ? "Open" : "Closed"}</p>
+              <p className="text-13">This collapsible is controlled by external state.</p>
+              <p className="mt-2 text-13">Current state: {isOpen ? "Open" : "Closed"}</p>
             </div>
           </Collapsible.CollapsibleContent>
         </Collapsible.CollapsibleRoot>
@@ -95,10 +98,10 @@ export const NestedContent: Story = {
         <Collapsible.CollapsibleContent className="mt-2">
           <div className="space-y-2 rounded-md border border-gray-200 p-4">
             <h4 className="font-semibold">Section 1</h4>
-            <p className="text-sm">This is some content in the first section.</p>
+            <p className="text-13">This is some content in the first section.</p>
             <h4 className="font-semibold">Section 2</h4>
-            <p className="text-sm">This is some content in the second section.</p>
-            <ul className="list-inside list-disc text-sm">
+            <p className="text-13">This is some content in the second section.</p>
+            <ul className="list-inside list-disc text-13">
               <li>Item 1</li>
               <li>Item 2</li>
               <li>Item 3</li>
@@ -115,8 +118,8 @@ export const CustomStyling: Story = {
     const [isOpen, setIsOpen] = useState(args.isOpen);
     return (
       <Collapsible.CollapsibleRoot {...args} isOpen={isOpen} onToggle={() => setIsOpen(!isOpen)} className="w-96">
-        <Collapsible.CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 text-white shadow-lg transition-all hover:shadow-xl">
-          <span className="text-lg font-bold">Custom Styled Trigger</span>
+        <Collapsible.CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 text-on-color shadow-lg transition-all hover:shadow-xl">
+          <span className="text-16 font-bold">Custom Styled Trigger</span>
           <ChevronDownIcon className="h-5 w-5 transition-transform group-data-[panel-open]:rotate-180" />
         </Collapsible.CollapsibleTrigger>
         <Collapsible.CollapsibleContent className="mt-4">
@@ -140,7 +143,7 @@ export const MultipleCollapsibles: Story = {
           </Collapsible.CollapsibleTrigger>
           <Collapsible.CollapsibleContent className="mt-2">
             <div className="rounded-md border border-gray-200 p-4">
-              <p className="text-sm">Content for the first item.</p>
+              <p className="text-13">Content for the first item.</p>
             </div>
           </Collapsible.CollapsibleContent>
         </Collapsible.CollapsibleRoot>
@@ -152,7 +155,7 @@ export const MultipleCollapsibles: Story = {
           </Collapsible.CollapsibleTrigger>
           <Collapsible.CollapsibleContent className="mt-2">
             <div className="rounded-md border border-gray-200 p-4">
-              <p className="text-sm">Content for the second item.</p>
+              <p className="text-13">Content for the second item.</p>
             </div>
           </Collapsible.CollapsibleContent>
         </Collapsible.CollapsibleRoot>
@@ -164,7 +167,7 @@ export const MultipleCollapsibles: Story = {
           </Collapsible.CollapsibleTrigger>
           <Collapsible.CollapsibleContent className="mt-2">
             <div className="rounded-md border border-gray-200 p-4">
-              <p className="text-sm">Content for the third item.</p>
+              <p className="text-13">Content for the third item.</p>
             </div>
           </Collapsible.CollapsibleContent>
         </Collapsible.CollapsibleRoot>

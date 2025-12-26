@@ -20,7 +20,7 @@ export const ProjectAccessRestriction = observer(function ProjectAccessRestricti
   // - User lacks permission to access the private project (403 Forbidden) but is a workspace admin (can join any project)
   if (errorStatusCode === 409 || (errorStatusCode === 403 && isWorkspaceAdmin))
     return (
-      <div className="grid h-full w-full place-items-center bg-custom-background-100">
+      <div className="grid h-full w-full place-items-center bg-surface-1">
         <EmptyStateDetailed
           title={t("project_empty_state.no_access.title")}
           description={t("project_empty_state.no_access.join_description")}
@@ -43,7 +43,7 @@ export const ProjectAccessRestriction = observer(function ProjectAccessRestricti
   // - User lacks permission to access the private project (403 Forbidden)
   if (errorStatusCode === 403) {
     return (
-      <div className="grid h-full w-full place-items-center bg-custom-background-100">
+      <div className="grid h-full w-full place-items-center bg-surface-1">
         <EmptyStateDetailed
           title={t("project_empty_state.no_access.title")}
           description={t("project_empty_state.no_access.restricted_description")}
@@ -58,7 +58,7 @@ export const ProjectAccessRestriction = observer(function ProjectAccessRestricti
   // - Project not found (404 Not Found)
   // - Any other error status code
   return (
-    <div className="grid h-full w-full place-items-center bg-custom-background-100">
+    <div className="grid h-full w-full place-items-center bg-surface-1">
       <EmptyStateDetailed
         title={t("project_empty_state.invalid_project.title")}
         description={t("project_empty_state.invalid_project.description")}

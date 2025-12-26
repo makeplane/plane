@@ -30,6 +30,7 @@ export interface IProjectStore {
   joinedProjectIds: string[];
   favoriteProjectIds: string[];
   currentProjectDetails: TProject | undefined;
+  currentProjectNextSequenceId: number | undefined;
   // actions
   getProjectById: (projectId: string | undefined | null) => TProject | undefined;
   getPartialProjectById: (projectId: string | undefined | null) => TPartialProject | undefined;
@@ -107,6 +108,7 @@ export class ProjectStore implements IProjectStore {
       currentProjectDetails: computed,
       joinedProjectIds: computed,
       favoriteProjectIds: computed,
+      currentProjectNextSequenceId: computed,
       // helper actions
       processProjectAfterCreation: action,
       // fetch actions
@@ -214,6 +216,15 @@ export class ProjectStore implements IProjectStore {
   get currentProjectDetails() {
     if (!this.rootStore.router.projectId) return;
     return this.projectMap?.[this.rootStore.router.projectId];
+  }
+
+  /**
+   * Returns the next sequence ID for the current project
+   * Used for calculating identifier width in list layouts
+   */
+  get currentProjectNextSequenceId() {
+    if (!this.rootStore.router.projectId) return undefined;
+    return this.currentProjectDetails?.next_work_item_sequence;
   }
 
   /**

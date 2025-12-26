@@ -15,7 +15,7 @@ import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useExpandableSearch } from "@/hooks/use-expandable-search";
 
-export const TopNavPowerK = observer(function TopNavPowerK() {
+export const TopNavPowerK = observer(() => {
   // router
   const router = useAppRouter();
   const params = useParams();
@@ -209,15 +209,15 @@ export const TopNavPowerK = observer(function TopNavPowerK() {
       >
         <div
           className={cn(
-            "flex items-center w-full h-7 p-2 rounded-md bg-custom-sidebar-background-80 hover:bg-custom-background-80 border border-transparent transition-colors duration-200",
+            "flex items-center w-full h-7 p-2 rounded-lg bg-layer-2 border border-subtle-1 transition-colors duration-200",
             {
-              "border-custom-border-200": isOpen,
+              "bg-layer-1": isOpen,
             }
           )}
           onClick={() => inputRef.current?.focus()}
           role="button"
         >
-          <SearchIcon className="shrink-0 size-3.5 text-custom-text-350 mr-2" />
+          <SearchIcon className="shrink-0 size-3.5 text-placeholder mr-2" />
           <input
             ref={inputRef}
             type="text"
@@ -230,18 +230,18 @@ export const TopNavPowerK = observer(function TopNavPowerK() {
             onFocus={handleFocus}
             onKeyDown={handleKeyDown}
             placeholder="Search commands..."
-            className="flex-1 bg-transparent text-sm text-custom-text-100 placeholder-custom-text-350 outline-none min-w-0"
+            className="flex-1 bg-transparent text-13 text-primary placeholder-text-placeholder outline-none min-w-0"
           />
           {searchTerm && (
             <button type="button" onClick={handleClear} className="shrink-0 ml-2">
-              <CloseIcon className="size-3.5 text-custom-text-400 hover:text-custom-text-100" />
+              <CloseIcon className="size-3.5 text-placeholder hover:text-primary" />
             </button>
           )}
         </div>
       </div>
       <div
         className={cn(
-          "absolute -top-[6px] left-1/2 -translate-x-1/2  bg-custom-background-100 border border-custom-border-200 rounded-md shadow-lg overflow-hidden z-20  transition-all duration-300 ease-in-out flex flex-col px-0 pt-10",
+          "absolute -top-[6px] left-1/2 -translate-x-1/2  bg-surface-1 border border-subtle rounded-md shadow-lg overflow-hidden z-20  transition-all duration-300 ease-in-out flex flex-col px-0 pt-10",
           {
             "opacity-100 w-[574px] max-h-[80vh]": isOpen,
             "opacity-0 w-0 h-0": !isOpen,

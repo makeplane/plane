@@ -22,13 +22,13 @@ export const AppliedStatusFilters = observer(function AppliedStatusFilters(props
         if (!statusDetails) return null;
 
         return (
-          <div key={status} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+          <div key={status} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
             <ModuleStatusIcon status={statusDetails.value} height="12px" width="12px" />
             {t(statusDetails.i18n_label)}
             {editable && (
               <button
                 type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(status)}
               >
                 <CloseIcon height={10} width={10} strokeWidth={2} />

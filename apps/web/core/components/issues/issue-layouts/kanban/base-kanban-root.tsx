@@ -257,7 +257,7 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
         <div
           className={`${
             isDragging ? `opacity-100` : `opacity-0`
-          } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
+          } flex w-full items-center justify-center rounded-sm border-2 border-red-500/20 bg-surface-1 px-3 py-5 text-11 font-medium italic text-red-500 ${
             isDragOverDelete ? "bg-red-500 opacity-70 blur-2xl" : ""
           } transition duration-300`}
         >
@@ -266,10 +266,10 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
       </div>
       <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
         <div
-          className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-custom-background-90 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
+          className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-surface-2 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
           ref={scrollableContainerRef}
         >
-          <div className="relative h-full w-max min-w-full bg-custom-background-90">
+          <div className="relative h-full w-max min-w-full bg-surface-2">
             <div className="h-full w-max">
               <KanBanView
                 issuesMap={issueMap}

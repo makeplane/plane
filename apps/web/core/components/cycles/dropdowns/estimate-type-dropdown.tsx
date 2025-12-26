@@ -29,7 +29,7 @@ export const EstimateTypeDropdown = observer(function EstimateTypeDropdown(props
         label={<span>{cycleEstimateOptions.find((v) => v.value === value)?.label ?? "None"}</span>}
         onChange={onChange}
         maxHeight="lg"
-        buttonClassName="bg-custom-background-90 border-none rounded text-sm font-medium "
+        buttonClassName="bg-surface-2 border-none rounded-sm text-13 font-medium "
       >
         {cycleEstimateOptions.map((item) => (
           <CustomSelect.Option key={item.value} value={item.value}>

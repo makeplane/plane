@@ -15,7 +15,7 @@ export const SpreadsheetEstimateColumn = observer(function SpreadsheetEstimateCo
   const { issue, onChange, disabled, onClose } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle">
       <EstimateDropdown
         value={issue.estimate_point || undefined}
         onChange={(data) =>
@@ -25,7 +25,7 @@ export const SpreadsheetEstimateColumn = observer(function SpreadsheetEstimateCo
         projectId={issue.project_id ?? undefined}
         disabled={disabled}
         buttonVariant="transparent-with-text"
-        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10 px-page-x"
+        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x"
         buttonContainerClassName="w-full"
         onClose={onClose}
       />

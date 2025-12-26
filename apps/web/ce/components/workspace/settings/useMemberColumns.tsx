@@ -62,9 +62,7 @@ export const useMemberColumns = () => {
       key: "Display name",
       content: t("workspace_settings.settings.members.details.display_name"),
       tdRender: (rowData: RowData) => (
-        <div className={`w-32 ${isSuspended(rowData) ? "text-custom-text-400" : ""}`}>
-          {rowData.member.display_name}
-        </div>
+        <div className={`w-32 ${isSuspended(rowData) ? "text-placeholder" : ""}`}>{rowData.member.display_name}</div>
       ),
       thRender: () => (
         <MemberHeaderColumn
@@ -79,9 +77,7 @@ export const useMemberColumns = () => {
       key: "Email address",
       content: t("workspace_settings.settings.members.details.email_address"),
       tdRender: (rowData: RowData) => (
-        <div className={`w-48 truncate ${isSuspended(rowData) ? "text-custom-text-400" : ""}`}>
-          {rowData.member.email}
-        </div>
+        <div className={`w-48 truncate ${isSuspended(rowData) ? "text-placeholder" : ""}`}>{rowData.member.email}</div>
       ),
       thRender: () => (
         <MemberHeaderColumn

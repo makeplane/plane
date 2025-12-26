@@ -1,19 +1,18 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-// plane ui imports
+// plane imports
+import { ProjectIcon } from "@plane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
-// plane propel imports
-import { ProjectIcon } from "@plane/propel/icons";
 // hooks
-import { useAppRouter } from "@/hooks/use-app-router";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
 import { useNavigationItems } from "@/plane-web/components/navigations";
-// local components
+// local imports
 import { SwitcherLabel } from "../common/switcher-label";
 import { ProjectHeaderButton } from "./project-header-button";
-// utils
 import { getTabUrl } from "./tab-navigation-utils";
 import { useTabPreferences } from "./use-tab-preferences";
 
@@ -101,7 +100,7 @@ export const ProjectHeader = observer(function ProjectHeader(props: TProjectHead
       onChange={handleProjectChange}
       customButton={currentProjectDetails ? <ProjectHeaderButton project={currentProjectDetails} /> : null}
       className="h-full rounded"
-      customButtonClassName="group flex items-center gap-0.5 rounded hover:bg-custom-background-90 outline-none cursor-pointer h-full"
+      customButtonClassName="group flex items-center gap-0.5 rounded-sm hover:bg-surface-2 outline-none cursor-pointer h-full"
     />
   );
 });

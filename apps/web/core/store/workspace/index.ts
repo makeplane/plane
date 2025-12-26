@@ -45,13 +45,14 @@ export interface IWorkspaceRootStore {
     data: Array<{ key: string; is_pinned: boolean; sort_order: number }>
   ) => Promise<void>;
   getNavigationPreferences: (workspaceSlug: string) => IWorkspaceSidebarNavigation | undefined;
+  mutateWorkspaceMembersActivity: (workspaceSlug: string) => Promise<void>;
   // sub-stores
   webhook: IWebhookStore;
   apiToken: IApiTokenStore;
   home: IHomeStore;
 }
 
-export class WorkspaceRootStore implements IWorkspaceRootStore {
+export abstract class BaseWorkspaceRootStore implements IWorkspaceRootStore {
   loader: boolean = false;
   // observables
   workspaces: Record<string, IWorkspace> = {};
@@ -205,7 +206,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * @param {string} workspaceSlug
    * @param {string} logoURL
    */
-  updateWorkspaceLogo = async (workspaceSlug: string, logoURL: string) => {
+  updateWorkspaceLogo = (workspaceSlug: string, logoURL: string) => {
     const workspaceId = this.getWorkspaceBySlug(workspaceSlug)?.id;
     if (!workspaceId) {
       throw new Error("Workspace not found");
@@ -219,15 +220,19 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * delete workspace using the workspace slug
    * @param workspaceSlug
    */
-  deleteWorkspace = async (workspaceSlug: string) =>
-    await this.workspaceService.deleteWorkspace(workspaceSlug).then(() => {
+  deleteWorkspace = async (workspaceSlug: string) => {
+    try {
+      await this.workspaceService.deleteWorkspace(workspaceSlug);
       const updatedWorkspacesList = this.workspaces;
       const workspaceId = this.getWorkspaceBySlug(workspaceSlug)?.id;
       delete updatedWorkspacesList[`${workspaceId}`];
       runInAction(() => {
         this.workspaces = updatedWorkspacesList;
       });
-    });
+    } catch (error) {
+      console.error("Failed to delete workspace:", error);
+    }
+  };
 
   fetchSidebarNavigationPreferences = async (workspaceSlug: string) => {
     try {
@@ -309,4 +314,10 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       throw error;
     }
   };
+
+  /**
+   * Mutate workspace members activity
+   * @param workspaceSlug
+   */
+  abstract mutateWorkspaceMembersActivity(workspaceSlug: string): Promise<void>;
 }

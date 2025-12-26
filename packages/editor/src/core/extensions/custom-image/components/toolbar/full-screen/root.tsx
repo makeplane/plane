@@ -1,7 +1,7 @@
 import { Maximize } from "lucide-react";
 import { useEffect, useState } from "react";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // local imports
 import { ImageFullScreenModal } from "./modal";
 
@@ -47,7 +47,7 @@ export function ImageFullScreenActionRoot(props: Props) {
             e.stopPropagation();
             setIsFullScreenEnabled(true);
           }}
-          className="flex-shrink-0 h-full grid place-items-center text-white/60 hover:text-white transition-colors"
+          className="flex-shrink-0 h-full grid place-items-center text-on-color/60 hover:text-on-color transition-colors"
           aria-label="View image in full screen"
         >
           <Maximize className="size-3" />

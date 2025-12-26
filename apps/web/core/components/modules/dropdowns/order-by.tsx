@@ -29,8 +29,8 @@ export function ModuleOrderByDropdown(props: Props) {
   return (
     <CustomMenu
       customButton={
-        <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
-          {!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}
+        <div className={cn(getButtonStyling("secondary", "lg"), "px-2 text-tertiary")}>
+          {!isDescending ? <ArrowUpWideNarrow className="size-3" /> : <ArrowDownWideNarrow className="size-3" />}
           {orderByDetails && t(orderByDetails?.i18n_label)}
           <ChevronDownIcon className="size-3" strokeWidth={2} />
         </div>
@@ -54,7 +54,7 @@ export function ModuleOrderByDropdown(props: Props) {
       ))}
       {!isManual && (
         <>
-          <hr className="my-2 border-custom-border-200" />
+          <hr className="my-2 border-subtle" />
           <CustomMenu.MenuItem
             className="flex items-center justify-between gap-2"
             onClick={() => {

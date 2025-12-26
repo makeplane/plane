@@ -206,7 +206,7 @@ function ContextMenuWithoutPortal(props: ContextMenuProps) {
     >
       <div
         ref={contextMenuRef}
-        className="fixed border-[0.5px] border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-rg rounded-md px-2 py-2.5 max-h-72 min-w-[12rem] overflow-y-scroll vertical-scrollbar scrollbar-sm"
+        className="fixed border-[0.5px] border-subtle-1 bg-surface-1 rounded-md px-2 py-2.5 max-h-72 min-w-[12rem] overflow-y-scroll vertical-scrollbar scrollbar-sm"
         style={{
           top: position.y,
           left: position.x,
