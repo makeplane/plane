@@ -1703,7 +1703,7 @@ export default {
       },
       api_tokens: {
         title: "API 토큰",
-        add_token: "API 토큰 추가",
+        add_token: "워크스페이스 액세스 토큰 추가",
         create_token: "토큰 생성",
         never_expires: "만료되지 않음",
         generate_token: "토큰 생성",

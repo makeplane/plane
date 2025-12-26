@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
@@ -19,7 +20,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 
 const apiTokenService = new APITokenService();
 
-function ApiTokensPage() {
+const ApiTokensPage: FC = observer(function ApiTokensPage() {
   // states
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false);
   // plane hooks
@@ -42,67 +43,49 @@ function ApiTokensPage() {
       <PageHead title={pageTitle} />
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
       <section className="w-full">
+        <SettingsHeading
+          title={t("account_settings.api_tokens.heading")}
+          description={t("account_settings.api_tokens.description")}
+          button={{
+            label: t("workspace_settings.settings.api_tokens.add_token"),
+            onClick: () => {
+              captureClick({
+                elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.HEADER_ADD_PAT_BUTTON,
+              });
+              setIsCreateTokenModalOpen(true);
+            },
+          }}
+        />
         {tokens.length > 0 ? (
           <>
-            <SettingsHeading
-              title={t("account_settings.api_tokens.heading")}
-              description={t("account_settings.api_tokens.description")}
-              button={{
-                label: t("workspace_settings.settings.api_tokens.add_token"),
-                onClick: () => {
-                  captureClick({
-                    elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.HEADER_ADD_PAT_BUTTON,
-                  });
-                  setIsCreateTokenModalOpen(true);
-                },
-              }}
-            />
-            <div>
-              {tokens.map((token) => (
-                <ApiTokenListItem key={token.id} token={token} />
-              ))}
-            </div>
+            {tokens.map((token) => (
+              <ApiTokenListItem key={token.id} token={token} />
+            ))}
           </>
         ) : (
-          <div className="flex h-full w-full flex-col py-">
-            <SettingsHeading
-              title={t("account_settings.api_tokens.heading")}
-              description={t("account_settings.api_tokens.description")}
-              button={{
-                label: t("workspace_settings.settings.api_tokens.add_token"),
+          <EmptyStateCompact
+            assetKey="token"
+            assetClassName="size-20"
+            title={t("settings_empty_state.tokens.title")}
+            description={t("settings_empty_state.tokens.description")}
+            actions={[
+              {
+                label: t("settings_empty_state.tokens.cta_primary"),
                 onClick: () => {
                   captureClick({
-                    elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.HEADER_ADD_PAT_BUTTON,
+                    elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.EMPTY_STATE_ADD_PAT_BUTTON,
                   });
                   setIsCreateTokenModalOpen(true);
                 },
-              }}
-            />
-
-            <EmptyStateCompact
-              assetKey="token"
-              assetClassName="size-20"
-              title={t("settings_empty_state.tokens.title")}
-              description={t("settings_empty_state.tokens.description")}
-              actions={[
-                {
-                  label: t("settings_empty_state.tokens.cta_primary"),
-                  onClick: () => {
-                    captureClick({
-                      elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.EMPTY_STATE_ADD_PAT_BUTTON,
-                    });
-                    setIsCreateTokenModalOpen(true);
-                  },
-                },
-              ]}
-              align="start"
-              rootClassName="py-20"
-            />
-          </div>
+              },
+            ]}
+            align="start"
+            rootClassName="py-20"
+          />
         )}
       </section>
     </div>
   );
-}
+});
 
-export default observer(ApiTokensPage);
+export default ApiTokensPage;

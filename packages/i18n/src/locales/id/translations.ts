@@ -1720,7 +1720,7 @@ export default {
       },
       api_tokens: {
         title: "Token API",
-        add_token: "Tambah token API",
+        add_token: "Tambah token akses ruang kerja",
         create_token: "Buat token",
         never_expires: "Tidak pernah kedaluwarsa",
         generate_token: "Hasilkan token",

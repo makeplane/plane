@@ -1692,7 +1692,7 @@ export default {
       },
       api_tokens: {
         title: "API 權杖",
-        add_token: "新增 API 權杖",
+        add_token: "新增工作區存取權杖",
         create_token: "建立權杖",
         never_expires: "永不過期",
         generate_token: "產生權杖",

@@ -1720,7 +1720,7 @@ export default {
       },
       api_tokens: {
         title: "Token API",
-        add_token: "Thêm token API",
+        add_token: "Thêm token truy cập không gian làm việc",
         create_token: "Tạo token",
         never_expires: "Không bao giờ hết hạn",
         generate_token: "Tạo token",
