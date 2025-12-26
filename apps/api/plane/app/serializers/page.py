@@ -28,6 +28,7 @@ class PageSerializer(BaseSerializer):
     # Many to many
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    sort_order = serializers.SerializerMethodField()
 
     class Meta:
         model = Page
@@ -51,6 +52,7 @@ class PageSerializer(BaseSerializer):
             "logo_props",
             "label_ids",
             "project_ids",
+            "sort_order",
         ]
         read_only_fields = ["workspace", "owned_by"]
 
@@ -120,6 +122,14 @@ class PageSerializer(BaseSerializer):
             )
 
         return super().update(instance, validated_data)
+
+    def get_sort_order(self, obj):
+        """Get sort_order from prefetched ProjectPage for the specific project"""
+        if hasattr(obj, "current_project_page") and obj.current_project_page:
+            return obj.current_project_page[0].sort_order
+
+        # If project_id is not available, return default sort_order
+        return Page.DEFAULT_SORT_ORDER
 
 
 class PageDetailSerializer(PageSerializer):
