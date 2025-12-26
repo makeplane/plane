@@ -7,7 +7,7 @@ import { Combobox } from "@headlessui/react";
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CheckIcon, SearchIcon, LabelPropertyIcon } from "@plane/propel/icons";
+import { CheckIcon, SearchIcon, PlusIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // helpers
@@ -126,7 +126,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
             type="button"
             variant="tertiary"
             size="sm"
-            prependIcon={<Plus />}
+            prependIcon={<PlusIcon />}
             onClick={() => !projectLabels && fetchLabels()}
           >
             {label}
