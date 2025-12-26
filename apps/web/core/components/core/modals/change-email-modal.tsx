@@ -188,7 +188,7 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
             {errors?.code ? (
               <span className="text-11 text-danger-primary">{errors?.code?.message}</span>
             ) : (
-              <span className="text-11 text-green-700">{changeEmailT("form.code.helper_text")}</span>
+              <span className="text-11 text-success-primary">{changeEmailT("form.code.helper_text")}</span>
             )}
           </div>
         )}
