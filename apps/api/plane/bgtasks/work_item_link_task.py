@@ -19,20 +19,34 @@ logger = logging.getLogger("plane.worker")
 DEFAULT_FAVICON = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxpbmstaWNvbiBsdWNpZGUtbGluayI+PHBhdGggZD0iTTEwIDEzYTUgNSAwIDAgMCA3LjU0LjU0bDMtM2E1IDUgMCAwIDAtNy4wNy03LjA3bC0xLjcyIDEuNzEiLz48cGF0aCBkPSJNMTQgMTFhNSA1IDAgMCAwLTcuNTQtLjU0bC0zIDNhNSA1IDAgMCAwIDcuMDcgNy4wN2wxLjcxLTEuNzEiLz48L3N2Zz4="  # noqa: E501
 
 
-def validate_url_ip(url: str) -> None:
+ALLOWED_SCHEMES = {"http", "https"}
+
+
+def validate_url(url: str) -> None:
     """
-    Validate that a URL doesn't point to a private/internal IP address.
-    Only checks if the hostname is a direct IP address.
+    Validate that a URL is safe to fetch.
+    Checks scheme and IP address restrictions.
 
     Args:
         url: The URL to validate
 
     Raises:
-        ValueError: If the URL points to a private/internal IP
+        ValueError: If the URL is unsafe (bad scheme or private/internal IP)
     """
     parsed = urlparse(url)
-    hostname = parsed.hostname
+    scheme = parsed.scheme.lower() if parsed.scheme else ""
 
+    # Default to https if no scheme provided
+    if not scheme:
+        url = f"https://{url}"
+        parsed = urlparse(url)
+        scheme = parsed.scheme.lower()
+
+    # Validate scheme
+    if scheme not in ALLOWED_SCHEMES:
+        raise ValueError(f"URL scheme '{scheme}' is not allowed. Only HTTP and HTTPS are permitted.")
+
+    hostname = parsed.hostname
     if not hostname:
         return
 
@@ -43,7 +57,7 @@ def validate_url_ip(url: str) -> None:
         return
 
     # It IS an IP address - check if it's private/internal
-    if ip.is_private or ip.is_loopback or ip.is_reserved:
+    if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_link_local or ip.is_multicast:
         raise ValueError("Access to private/internal networks is not allowed")
 
 
@@ -67,14 +81,14 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         title = None
         final_url = url
 
-        validate_url_ip(final_url)
+        validate_url(final_url)
 
         try:
             response = requests.get(final_url, headers=headers, timeout=1)
             final_url = response.url  # Get the final URL after any redirects
 
             # check for redirected url also
-            validate_url_ip(final_url)
+            validate_url(final_url)
 
             soup = BeautifulSoup(response.content, "html.parser")
             title_tag = soup.find("title")
@@ -136,7 +150,7 @@ def find_favicon_url(soup: Optional[BeautifulSoup], base_url: str) -> Optional[s
     parsed_url = urlparse(base_url)
     fallback_url = f"{parsed_url.scheme}://{parsed_url.netloc}/favicon.ico"
 
-    # Check if fallback exists
+    # Quick check if fallback exists (validated later in fetch_and_encode_favicon)
     try:
         response = requests.head(fallback_url, timeout=2)
         if response.status_code == 200:
@@ -168,6 +182,9 @@ def fetch_and_encode_favicon(
                 "favicon_url": None,
                 "favicon_base64": f"data:image/svg+xml;base64,{DEFAULT_FAVICON}",
             }
+
+        # Validate favicon URL before fetching to prevent SSRF
+        validate_url(favicon_url)
 
         response = requests.get(favicon_url, headers=headers, timeout=1)
 
