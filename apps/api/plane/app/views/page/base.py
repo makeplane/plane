@@ -299,6 +299,16 @@ class PageViewSet(BaseViewSet):
         ):
             queryset = queryset.filter(owned_by=request.user)
         
+        # Filter by page type (public, private, archived)
+        page_type = request.GET.get("type", "public")
+        if page_type == "private":
+            queryset = queryset.filter(access=1, archived_at__isnull=True)
+        elif page_type == "archived":
+            queryset = queryset.filter(archived_at__isnull=False)
+        elif page_type == "public":
+            queryset = queryset.filter(access=0, archived_at__isnull=True)
+        
+        # Apply additional filters from query params
         filters = page_filters(request.query_params, "GET")
         queryset = queryset.filter(**filters)
         
