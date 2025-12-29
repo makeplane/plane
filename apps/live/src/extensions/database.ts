@@ -44,7 +44,7 @@ const fetchDocument = async ({ context, documentName: pageId, instance }: FetchP
           await service.updateDescriptionBinary(pageId, payload);
         } catch (e) {
           const error = new AppError(e);
-          logger.error("Failed to save binary after first convertion from html:", error);
+          logger.error("Failed to save binary after first conversion from html:", error);
         }
         return convertedBinaryData;
       }
