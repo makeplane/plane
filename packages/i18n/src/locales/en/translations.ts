@@ -1408,7 +1408,7 @@ export default {
       heading: "Security",
     },
     api_tokens: {
-      heading: "Personal Access Tokens",
+      title: "Personal Access Tokens",
       description: "Generate secure API tokens to integrate your data with external systems and applications.",
     },
     activity: {
