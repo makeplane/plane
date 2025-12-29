@@ -313,6 +313,10 @@ class PageViewSet(BaseViewSet):
         queryset = queryset.filter(**filters)
         
         order_by_param = request.GET.get("order_by", "-created_at")
+        ALLOWED_ORDER_FIELDS = {"created_at", "-created_at", "updated_at", "-updated_at", "name", "-name"}
+
+        if order_by_param not in ALLOWED_ORDER_FIELDS:
+            order_by_param = "-created_at"
         queryset = queryset.order_by(order_by_param)
 
         return self.paginate(

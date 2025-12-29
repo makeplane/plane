@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import type { TPageNavigationTabs } from "@plane/types";
-import { Loader } from "@plane/ui";
 // components
 import { ListLayout } from "@/components/core/list";
 // hooks

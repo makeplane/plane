@@ -133,7 +133,7 @@ def filter_search(params, page_filter, method, prefix=""):
     else:
         if params.get("search", None):
             page_filter[f"{prefix}name__icontains"] = params.get("search")
-    
+
     return page_filter
 
 
