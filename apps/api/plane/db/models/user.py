@@ -238,6 +238,7 @@ class Profile(TimeAuditModel):
 
     # marketing
     has_marketing_email_consent = models.BooleanField(default=False)
+    is_subscribed_to_changelog = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Profile"
