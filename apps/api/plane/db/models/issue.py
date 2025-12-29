@@ -844,3 +844,136 @@ class IssueDescriptionVersion(ProjectBaseModel):
         except Exception as e:
             log_exception(e)
             return False
+
+
+class IssuePropertyTypeChoices(models.TextChoices):
+    """Choices for custom field types"""
+    TEXT = "text", "Text"
+    NUMBER = "number", "Number"
+    DATE = "date", "Date"
+    BOOLEAN = "boolean", "Boolean"
+    SELECT = "select", "Select"
+    MULTI_SELECT = "multi_select", "Multi Select"
+
+
+class IssueProperty(ProjectBaseModel):
+    """
+    Model to define custom field schemas for issues within a project.
+    Each property defines a field that can be attached to any issue in the project.
+    """
+    name = models.CharField(max_length=255, verbose_name="Property Name")
+    key = models.SlugField(
+        max_length=255,
+        verbose_name="Property Key",
+        help_text="Auto-generated immutable key for API usage"
+    )
+    description = models.TextField(blank=True, default="")
+    property_type = models.CharField(
+        max_length=20,
+        choices=IssuePropertyTypeChoices.choices,
+        default=IssuePropertyTypeChoices.TEXT,
+        verbose_name="Property Type"
+    )
+    # Options for SELECT and MULTI_SELECT types
+    # Format: [{"value": "option1", "color": "#FF0000"}, {"value": "option2", "color": "#00FF00"}]
+    options = models.JSONField(default=list, blank=True)
+    # Default value for new issues (stored as JSON for type flexibility)
+    default_value = models.JSONField(null=True, blank=True)
+    is_required = models.BooleanField(default=False)
+    sort_order = models.FloatField(default=65535)
+    is_active = models.BooleanField(default=True)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        unique_together = ["project", "key", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "key"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_property_unique_project_key_when_deleted_at_null",
+            ),
+            models.UniqueConstraint(
+                fields=["project", "name"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_property_unique_project_name_when_deleted_at_null",
+            ),
+        ]
+        verbose_name = "Issue Property"
+        verbose_name_plural = "Issue Properties"
+        db_table = "issue_properties"
+        ordering = ("sort_order", "-created_at")
+
+    def save(self, *args, **kwargs):
+        # Auto-generate key from name if not provided (only on creation)
+        if self._state.adding and not self.key:
+            from django.utils.text import slugify
+            base_key = slugify(self.name).replace("-", "_")
+            # Ensure uniqueness within project
+            key = base_key
+            counter = 1
+            while IssueProperty.objects.filter(
+                project=self.project, key=key, deleted_at__isnull=True
+            ).exists():
+                key = f"{base_key}_{counter}"
+                counter += 1
+            self.key = key
+
+        # Auto-increment sort_order
+        if self._state.adding:
+            last_order = IssueProperty.objects.filter(
+                project=self.project
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            if last_order is not None:
+                self.sort_order = last_order + 10000
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.name} ({self.key})"
+
+
+class IssuePropertyValue(ProjectBaseModel):
+    """
+    Model to store custom field values for specific issues.
+    Each record links an issue to a property definition and stores its value.
+    """
+    issue = models.ForeignKey(
+        Issue,
+        on_delete=models.CASCADE,
+        related_name="property_values"
+    )
+    property = models.ForeignKey(
+        IssueProperty,
+        on_delete=models.CASCADE,
+        related_name="values"
+    )
+    # Value stored as JSON to support all types:
+    # - TEXT: "string value"
+    # - NUMBER: 123 or 123.45
+    # - DATE: "2024-01-15"
+    # - BOOLEAN: true/false
+    # - SELECT: "selected_option"
+    # - MULTI_SELECT: ["option1", "option2"]
+    value = models.JSONField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ["issue", "property", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "property"],
+                condition=Q(deleted_at__isnull=True),
+                name="issue_property_value_unique_issue_property_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Issue Property Value"
+        verbose_name_plural = "Issue Property Values"
+        db_table = "issue_property_values"
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["issue", "property"]),
+            models.Index(fields=["property"]),
+        ]
+
+    def __str__(self):
+        return f"{self.issue.name} - {self.property.name}: {self.value}"

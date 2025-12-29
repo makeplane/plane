@@ -38,6 +38,8 @@ from plane.db.models import (
     IssueDescriptionVersion,
     ProjectMember,
     EstimatePoint,
+    IssueProperty,
+    IssuePropertyValue,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -266,6 +268,18 @@ class IssueCreateSerializer(BaseSerializer):
             except IntegrityError:
                 pass
 
+        # Handle custom_fields if provided in initial_data
+        custom_fields = self.initial_data.get("custom_fields")
+        if custom_fields:
+            self._handle_custom_fields(
+                issue=issue,
+                custom_fields=custom_fields,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                created_by_id=created_by_id,
+                updated_by_id=updated_by_id,
+            )
+
         return issue
 
     def update(self, instance, validated_data):
@@ -320,9 +334,82 @@ class IssueCreateSerializer(BaseSerializer):
             except IntegrityError:
                 pass
 
+        # Handle custom_fields if provided in initial_data
+        custom_fields = self.initial_data.get("custom_fields")
+        if custom_fields:
+            self._handle_custom_fields(
+                issue=instance,
+                custom_fields=custom_fields,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                created_by_id=created_by_id,
+                updated_by_id=updated_by_id,
+            )
+
         # Time updation occues even when other related models are updated
         instance.updated_at = timezone.now()
         return super().update(instance, validated_data)
+
+    def _handle_custom_fields(self, issue, custom_fields, project_id, workspace_id, created_by_id, updated_by_id):
+        """
+        Helper method to handle custom_fields on create/update.
+        custom_fields format: {"property_key": value, ...}
+        """
+        if not custom_fields or not isinstance(custom_fields, dict):
+            return
+
+        # Get all properties for this project by key
+        properties = IssueProperty.objects.filter(
+            project_id=project_id,
+            key__in=custom_fields.keys(),
+            deleted_at__isnull=True,
+        )
+        property_map = {prop.key: prop for prop in properties}
+
+        # Get existing values for this issue
+        existing_values = IssuePropertyValue.objects.filter(
+            issue=issue,
+            property__key__in=custom_fields.keys(),
+            deleted_at__isnull=True,
+        )
+        existing_map = {ev.property.key: ev for ev in existing_values}
+
+        values_to_create = []
+        values_to_update = []
+
+        for key, value in custom_fields.items():
+            if key not in property_map:
+                continue  # Skip unknown properties
+
+            prop = property_map[key]
+
+            if key in existing_map:
+                # Update existing value
+                existing_value = existing_map[key]
+                existing_value.value = value
+                existing_value.updated_by_id = updated_by_id
+                values_to_update.append(existing_value)
+            else:
+                # Create new value
+                values_to_create.append(
+                    IssuePropertyValue(
+                        issue=issue,
+                        property=prop,
+                        value=value,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
+                    )
+                )
+
+        # Bulk create new values
+        if values_to_create:
+            IssuePropertyValue.objects.bulk_create(values_to_create, batch_size=10)
+
+        # Bulk update existing values
+        if values_to_update:
+            IssuePropertyValue.objects.bulk_update(values_to_update, ["value", "updated_by_id"], batch_size=10)
 
 
 class IssueActivitySerializer(BaseSerializer):
@@ -930,6 +1017,25 @@ class IssueDetailSerializer(IssueSerializer):
         ]
         read_only_fields = fields
 
+    def to_representation(self, instance):
+        """Override to inject custom_fields into the response"""
+        data = super().to_representation(instance)
+
+        # Add custom_fields - fetch all property values for this issue
+        property_values = IssuePropertyValue.objects.filter(
+            issue_id=instance.id,
+            deleted_at__isnull=True,
+        ).select_related("property")
+
+        # Build custom_fields dict keyed by property key
+        custom_fields = {}
+        for pv in property_values:
+            if pv.property:
+                custom_fields[pv.property.key] = pv.value
+
+        data["custom_fields"] = custom_fields
+        return data
+
 
 class IssuePublicSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
@@ -1023,3 +1129,202 @@ class IssueDescriptionVersionDetailSerializer(BaseSerializer):
             "updated_by",
         ]
         read_only_fields = ["workspace", "project", "issue"]
+
+
+class IssuePropertySerializer(BaseSerializer):
+    """Serializer for IssueProperty model - defines custom field schemas"""
+
+    class Meta:
+        model = IssueProperty
+        fields = [
+            "id",
+            "name",
+            "key",
+            "description",
+            "property_type",
+            "options",
+            "default_value",
+            "is_required",
+            "sort_order",
+            "is_active",
+            "project_id",
+            "workspace_id",
+            "external_source",
+            "external_id",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "id",
+            "key",
+            "workspace",
+            "project",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+    def validate_name(self, value):
+        """Ensure property name is unique within the project"""
+        project_id = self.context.get("project_id")
+        property_qs = IssueProperty.objects.filter(
+            project_id=project_id, name__iexact=value, deleted_at__isnull=True
+        )
+        if self.instance:
+            property_qs = property_qs.exclude(id=self.instance.pk)
+        if property_qs.exists():
+            raise serializers.ValidationError("Property with this name already exists in the project")
+        return value
+
+    def validate(self, attrs):
+        """Validate options for SELECT and MULTI_SELECT types"""
+        property_type = attrs.get("property_type", getattr(self.instance, "property_type", None))
+        options = attrs.get("options", getattr(self.instance, "options", []))
+
+        if property_type in ["select", "multi_select"]:
+            if not options or not isinstance(options, list):
+                raise serializers.ValidationError({
+                    "options": "Options are required for select and multi_select types"
+                })
+            # Validate each option has required fields
+            for i, option in enumerate(options):
+                if not isinstance(option, dict):
+                    raise serializers.ValidationError({
+                        "options": f"Option at index {i} must be an object"
+                    })
+                if "value" not in option:
+                    raise serializers.ValidationError({
+                        "options": f"Option at index {i} must have a 'value' field"
+                    })
+
+        # Validate default_value matches property_type
+        default_value = attrs.get("default_value")
+        if default_value is not None and property_type:
+            if property_type == "boolean" and not isinstance(default_value, bool):
+                raise serializers.ValidationError({
+                    "default_value": "Default value must be a boolean for boolean type"
+                })
+            if property_type == "number" and not isinstance(default_value, (int, float)):
+                raise serializers.ValidationError({
+                    "default_value": "Default value must be a number for number type"
+                })
+            if property_type == "select" and default_value:
+                valid_values = [opt.get("value") for opt in options]
+                if default_value not in valid_values:
+                    raise serializers.ValidationError({
+                        "default_value": "Default value must be one of the defined options"
+                    })
+            if property_type == "multi_select" and default_value:
+                if not isinstance(default_value, list):
+                    raise serializers.ValidationError({
+                        "default_value": "Default value must be a list for multi_select type"
+                    })
+                valid_values = [opt.get("value") for opt in options]
+                for val in default_value:
+                    if val not in valid_values:
+                        raise serializers.ValidationError({
+                            "default_value": f"'{val}' is not a valid option"
+                        })
+
+        return attrs
+
+
+class IssuePropertyLiteSerializer(BaseSerializer):
+    """Lightweight serializer for IssueProperty - used in nested responses"""
+
+    class Meta:
+        model = IssueProperty
+        fields = [
+            "id",
+            "name",
+            "key",
+            "property_type",
+            "options",
+            "is_required",
+            "is_active",
+        ]
+
+
+class IssuePropertyValueSerializer(BaseSerializer):
+    """Serializer for IssuePropertyValue model - stores custom field values per issue"""
+    property_detail = IssuePropertyLiteSerializer(source="property", read_only=True)
+
+    class Meta:
+        model = IssuePropertyValue
+        fields = [
+            "id",
+            "issue_id",
+            "property_id",
+            "property_detail",
+            "value",
+            "project_id",
+            "workspace_id",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "created_at",
+            "updated_at",
+        ]
+
+    def validate(self, attrs):
+        """Validate value matches the property type"""
+        property_obj = attrs.get("property")
+        value = attrs.get("value")
+
+        if property_obj is None and self.instance:
+            property_obj = self.instance.property
+
+        if property_obj and value is not None:
+            property_type = property_obj.property_type
+
+            if property_type == "text" and not isinstance(value, str):
+                raise serializers.ValidationError({
+                    "value": "Value must be a string for text type"
+                })
+            if property_type == "number" and not isinstance(value, (int, float)):
+                raise serializers.ValidationError({
+                    "value": "Value must be a number for number type"
+                })
+            if property_type == "boolean" and not isinstance(value, bool):
+                raise serializers.ValidationError({
+                    "value": "Value must be a boolean for boolean type"
+                })
+            if property_type == "date" and value:
+                # Date should be stored as ISO string
+                if not isinstance(value, str):
+                    raise serializers.ValidationError({
+                        "value": "Value must be a date string (YYYY-MM-DD) for date type"
+                    })
+            if property_type == "select":
+                valid_values = [opt.get("value") for opt in property_obj.options]
+                if value not in valid_values:
+                    raise serializers.ValidationError({
+                        "value": f"'{value}' is not a valid option"
+                    })
+            if property_type == "multi_select":
+                if not isinstance(value, list):
+                    raise serializers.ValidationError({
+                        "value": "Value must be a list for multi_select type"
+                    })
+                valid_values = [opt.get("value") for opt in property_obj.options]
+                for val in value:
+                    if val not in valid_values:
+                        raise serializers.ValidationError({
+                            "value": f"'{val}' is not a valid option"
+                        })
+
+        # Validate required fields
+        if property_obj and property_obj.is_required and value is None:
+            raise serializers.ValidationError({
+                "value": f"'{property_obj.name}' is a required field"
+            })
+
+        return attrs
+

@@ -27,6 +27,10 @@ from plane.app.views import (
     WorkItemDescriptionVersionEndpoint,
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
+    # Custom Fields
+    IssuePropertyViewSet,
+    IssuePropertyValueViewSet,
+    BulkIssuePropertyValueEndpoint,
 )
 
 urlpatterns = [
@@ -278,5 +282,42 @@ urlpatterns = [
         "workspaces/<str:slug>/work-items/<str:project_identifier>-<str:issue_identifier>/",
         IssueDetailIdentifierEndpoint.as_view(),
         name="issue-detail-identifier",
+    ),
+    # ==========================================================================
+    # CUSTOM FIELDS (Issue Properties)
+    # ==========================================================================
+    # Project-level property definitions
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/properties/",
+        IssuePropertyViewSet.as_view({"get": "list", "post": "create"}),
+        name="project-issue-properties",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/properties/<uuid:pk>/",
+        IssuePropertyViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-issue-properties",
+    ),
+    # Issue-level property values
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/property-values/",
+        IssuePropertyValueViewSet.as_view({"get": "list", "post": "create"}),
+        name="issue-property-values",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/property-values/<uuid:pk>/",
+        IssuePropertyValueViewSet.as_view({"delete": "destroy"}),
+        name="issue-property-values",
+    ),
+    # Bulk custom fields endpoint - get/set all custom fields for an issue
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/custom-fields/",
+        BulkIssuePropertyValueEndpoint.as_view(),
+        name="issue-custom-fields",
     ),
 ]
