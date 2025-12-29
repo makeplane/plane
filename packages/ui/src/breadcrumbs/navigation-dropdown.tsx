@@ -46,7 +46,7 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
           )}
         >
           <div className="flex @4xl:hidden text-tertiary">...</div>
-          <div className="hidden @4xl:flex gap-2">
+          <div className="hidden @4xl:flex gap-2 items-center">
             {selectedItemIcon && <Breadcrumbs.Icon>{selectedItemIcon}</Breadcrumbs.Icon>}
             <Breadcrumbs.Label>{selectedItem?.title}</Breadcrumbs.Label>
           </div>

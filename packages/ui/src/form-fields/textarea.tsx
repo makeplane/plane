@@ -37,17 +37,17 @@ const TextArea = React.forwardRef(function TextArea(
       ref={textAreaRef}
       value={value}
       className={cn(
-        "no-scrollbar w-full bg-transparent placeholder-(--text-color-placeholder) outline-none",
+        "no-scrollbar w-full bg-layer-2 placeholder-(--text-color-placeholder) outline-none",
         {
-          "rounded-md border-[0.5px] border-subtle": mode === "primary",
+          "rounded-md border-[0.5px] border-subtle-1": mode === "primary",
           "focus:ring-theme rounded-sm border-none bg-transparent ring-0 transition-all focus:ring-1":
             mode === "transparent",
           "rounded-sm border-none bg-transparent ring-0": mode === "true-transparent",
           "px-1.5 py-1": textAreaSize === "xs",
           "px-3 py-2": textAreaSize === "sm",
           "p-3": textAreaSize === "md",
-          "border-red-500": hasError,
-          "bg-red-100": hasError && mode === "primary",
+          "border-danger-strong": hasError,
+          "bg-danger-subtle": hasError && mode === "primary",
         },
         className
       )}

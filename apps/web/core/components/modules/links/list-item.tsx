@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
-import { Copy, Pencil, Trash2 } from "lucide-react";
-// plane types
+
 import { MODULE_TRACKER_ELEMENTS } from "@plane/constants";
+import { CopyIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
+// plane types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ILinkDetails } from "@plane/types";
@@ -67,7 +68,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
                 handleEditLink();
               }}
             >
-              <Pencil className="size-3 stroke-[1.5]" />
+              <EditIcon className="size-3 stroke-[1.5]" />
             </button>
           )}
           <button
@@ -75,7 +76,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
             onClick={() => copyToClipboard(link.url)}
             className="grid place-items-center p-1 hover:bg-layer-transparent-hover text-secondary rounded-sm"
           >
-            <Copy className="size-3 stroke-[1.5]" />
+            <CopyIcon className="size-3 stroke-[1.5]" />
           </button>
           {isEditingAllowed && (
             <button
@@ -88,7 +89,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
                 handleDeleteLink();
               }}
             >
-              <Trash2 className="size-3 stroke-[1.5]" />
+              <TrashIcon className="size-3 stroke-[1.5]" />
             </button>
           )}
         </div>

@@ -1,8 +1,8 @@
-import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 import { MODULE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TModuleOrderByOptions } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
@@ -49,7 +49,7 @@ export function ModuleOrderByDropdown(props: Props) {
           }}
         >
           {t(option.i18n_label)}
-          {value?.includes(option.key) && <Check className="h-3 w-3" />}
+          {value?.includes(option.key) && <CheckIcon className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
       {!isManual && (
@@ -62,7 +62,7 @@ export function ModuleOrderByDropdown(props: Props) {
             }}
           >
             Ascending
-            {!isDescending && <Check className="h-3 w-3" />}
+            {!isDescending && <CheckIcon className="h-3 w-3" />}
           </CustomMenu.MenuItem>
           <CustomMenu.MenuItem
             className="flex items-center justify-between gap-2"
@@ -71,7 +71,7 @@ export function ModuleOrderByDropdown(props: Props) {
             }}
           >
             Descending
-            {isDescending && <Check className="h-3 w-3" />}
+            {isDescending && <CheckIcon className="h-3 w-3" />}
           </CustomMenu.MenuItem>
         </>
       )}

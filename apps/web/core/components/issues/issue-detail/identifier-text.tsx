@@ -16,7 +16,7 @@ const VARIANT_MAP: Record<TIdentifierTextVariant, string> = {
   tertiary: "text-tertiary",
   primary: "text-primary",
   "primary-subtle": "text-primary/80",
-  success: "text-success",
+  success: "text-success-primary",
 };
 
 export function IdentifierText(props: TIdentifierTextProps) {

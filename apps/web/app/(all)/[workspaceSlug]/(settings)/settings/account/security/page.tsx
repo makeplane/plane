@@ -159,7 +159,9 @@ function SecurityPage() {
                   />
                 )}
               </div>
-              {errors.old_password && <span className="text-11 text-red-500">{errors.old_password.message}</span>}
+              {errors.old_password && (
+                <span className="text-11 text-danger-primary">{errors.old_password.message}</span>
+              )}
             </div>
           )}
           <div className="space-y-1">
@@ -199,7 +201,9 @@ function SecurityPage() {
             </div>
             {passwordSupport}
             {isNewPasswordSameAsOldPassword && !isPasswordInputFocused && (
-              <span className="text-11 text-red-500">{t("new_password_must_be_different_from_old_password")}</span>
+              <span className="text-11 text-danger-primary">
+                {t("new_password_must_be_different_from_old_password")}
+              </span>
             )}
           </div>
           <div className="space-y-1">
@@ -238,7 +242,7 @@ function SecurityPage() {
               )}
             </div>
             {!!confirmPassword && password !== confirmPassword && renderPasswordMatchError && (
-              <span className="text-13 text-red-500">{t("auth.common.password.errors.match")}</span>
+              <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
             )}
           </div>
         </div>

@@ -1,6 +1,6 @@
-import { Copy } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { CopyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IApiToken } from "@plane/types";
@@ -43,7 +43,7 @@ export function GeneratedTokenDetails(props: Props) {
       >
         <span className="truncate pr-2">{tokenDetails.token}</span>
         <Tooltip tooltipContent="Copy secret key" isMobile={isMobile}>
-          <Copy className="h-4 w-4 text-placeholder flex-shrink-0" />
+          <CopyIcon className="h-4 w-4 text-placeholder flex-shrink-0" />
         </Tooltip>
       </button>
       <div className="mt-6 flex items-center justify-between">

@@ -1,11 +1,13 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Loader, Search } from "lucide-react";
+import { Loader } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { CheckIcon, SearchIcon, PlusIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // helpers
@@ -84,11 +86,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
 
   const issueLabels = values ?? [];
 
-  const label = (
-    <span className="size-full flex items-center rounded-sm px-2 py-0.5 bg-layer-transparent hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary">
-      {t("label.select")}
-    </span>
-  );
+  const label = <span className="text-body-xs-medium text-placeholder">{t("label.select")}</span>;
 
   const searchInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (query !== "" && e.key === "Escape") {
@@ -123,14 +121,16 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
         multiple
       >
         <Combobox.Button as={Fragment}>
-          <button
+          <Button
             ref={setReferenceElement}
             type="button"
-            className="cursor-pointer size-full"
+            variant="tertiary"
+            size="sm"
+            prependIcon={<PlusIcon />}
             onClick={() => !projectLabels && fetchLabels()}
           >
             {label}
-          </button>
+          </Button>
         </Combobox.Button>
 
         <Combobox.Options className="fixed z-10">
@@ -142,7 +142,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
           >
             <div className="px-2">
               <div className="flex w-full items-center justify-start rounded-sm border border-subtle bg-surface-2 px-2">
-                <Search className="h-3.5 w-3.5 text-tertiary" />
+                <SearchIcon className="h-3.5 w-3.5 text-tertiary" />
                 <Combobox.Input
                   className="w-full bg-transparent px-2 py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
                   value={query}
@@ -173,7 +173,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
                         {option.content}
                         {selected && (
                           <div className="flex-shrink-0">
-                            <Check className={`h-3.5 w-3.5`} />
+                            <CheckIcon className={`h-3.5 w-3.5`} />
                           </div>
                         )}
                       </>

@@ -93,7 +93,7 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
 
           <CustomMenu.MenuItem
             onClick={() => issueOperations.update(workspaceSlug, projectId, issueId, { parent_id: null })}
-            className="flex items-center gap-2 py-2 text-red-500"
+            className="flex items-center gap-2 py-2 text-danger-primary"
           >
             <MinusCircle className="h-4 w-4" />
             <span>{t("issue.remove.parent.label")}</span>

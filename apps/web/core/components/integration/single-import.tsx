@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
-import { Trash2 } from "lucide-react";
+
 // plane imports
 import { IMPORTERS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TrashIcon } from "@plane/propel/icons";
 import type { IImporterService } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // icons
@@ -35,11 +36,11 @@ export const SingleImport = observer(function SingleImport({ service, refreshing
           <span
             className={`rounded-sm px-2 py-0.5 text-11 capitalize ${
               service.status === "completed"
-                ? "bg-green-500/20 text-green-500"
+                ? "bg-success-subtle text-success-primary"
                 : service.status === "processing"
                   ? "bg-yellow-500/20 text-yellow-500"
                   : service.status === "failed"
-                    ? "bg-red-500/20 text-red-500"
+                    ? "bg-danger-subtle text-danger-primary"
                     : ""
             }`}
           >
@@ -54,7 +55,7 @@ export const SingleImport = observer(function SingleImport({ service, refreshing
       <CustomMenu ellipsis>
         <CustomMenu.MenuItem onClick={handleDelete}>
           <span className="flex items-center justify-start gap-2">
-            <Trash2 className="h-3.5 w-3.5" />
+            <TrashIcon className="h-3.5 w-3.5" />
             Delete import
           </span>
         </CustomMenu.MenuItem>

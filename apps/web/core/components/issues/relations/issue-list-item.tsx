@@ -1,9 +1,8 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash, Link as LinkIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { LinkIcon, EditIcon, TrashIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, TIssueServiceType } from "@plane/types";
@@ -126,7 +125,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
         {issue && (
           <div className="group relative flex min-h-11 h-full w-full items-center px-1.5 py-1 transition-all hover:bg-surface-2">
             <span className="size-5 flex-shrink-0" />
-            <div className="flex w-full truncate cursor-pointer items-center gap-3">
+            <div className="flex flex-1 min-w-0 cursor-pointer items-center gap-3">
               <div className="flex-shrink-0">
                 {projectDetail && (
                   <IssueIdentifier
@@ -141,7 +140,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
               </div>
 
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span className="w-full truncate text-13 text-primary">{issue.name}</span>
+                <span className="flex-1 w-0 truncate text-13 text-primary">{issue.name}</span>
               </Tooltip>
             </div>
             <div
@@ -164,7 +163,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleEditIssue}>
                     <div className="flex items-center gap-2">
-                      <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+                      <EditIcon className="h-3.5 w-3.5" strokeWidth={2} />
                       <span>{t("common.actions.edit")}</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -189,7 +188,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleDeleteIssue}>
                     <div className="flex items-center gap-2">
-                      <Trash className="h-3.5 w-3.5" strokeWidth={2} />
+                      <TrashIcon className="h-3.5 w-3.5" strokeWidth={2} />
                       <span>{t("common.actions.delete")}</span>
                     </div>
                   </CustomMenu.MenuItem>

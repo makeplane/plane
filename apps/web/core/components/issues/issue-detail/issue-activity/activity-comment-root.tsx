@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
-import type { E_SORT_ORDER, TActivityFilters } from "@plane/constants";
-import { EActivityFilterType, filterActivityOnSelectedFilters } from "@plane/constants";
+import type { E_SORT_ORDER, TActivityFilters, EActivityFilterType } from "@plane/constants";
+import { BASE_ACTIVITY_FILTER_TYPES, filterActivityOnSelectedFilters } from "@plane/constants";
 import type { TCommentsOperations } from "@plane/types";
 // components
 import { CommentCard } from "@/components/comments/card/root";
@@ -52,13 +52,6 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
 
   const filteredActivityAndComments = filterActivityOnSelectedFilters(activityAndComments, selectedFilters);
 
-  const BASE_ACTIVITY_FILTER_TYPES = [
-    EActivityFilterType.ACTIVITY,
-    EActivityFilterType.STATE,
-    EActivityFilterType.ASSIGNEE,
-    EActivityFilterType.DEFAULT,
-  ];
-
   return (
     <div>
       {filteredActivityAndComments.map((activityComment, index) => {
@@ -67,6 +60,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
           <CommentCard
             key={activityComment.id}
             workspaceSlug={workspaceSlug}
+            entityId={issueId}
             comment={comment}
             activityOperations={activityOperations}
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
@@ -74,6 +68,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
             showCopyLinkOption={!isIntakeIssue}
             disabled={disabled}
             projectId={projectId}
+            enableReplies
           />
         ) : BASE_ACTIVITY_FILTER_TYPES.includes(activityComment.activity_type as EActivityFilterType) ? (
           <IssueActivityItem

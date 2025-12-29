@@ -40,7 +40,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
 
   return (
     <div
-      className={cn("flex items-center min-h-11 w-full px-3.5 bg-canvas z-[27] transition-all duration-300", {
+      className={cn("flex items-center min-h-10 w-full px-3.5 bg-canvas z-[27] transition-all duration-300", {
         "px-2": !showLabel,
       })}
     >
@@ -63,7 +63,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
                 <div className="relative">
                   <InboxIcon className="size-5" />
                   {totalNotifications > 0 && (
-                    <span className="absolute -top-0 -right-0 size-2 rounded-full bg-red-500" />
+                    <span className="absolute top-0 right-0 size-2 rounded-full bg-danger-primary" />
                   )}
                 </div>
               ),

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { MoreHorizontal } from "lucide-react";
 
 // ui
 import {
@@ -9,6 +10,7 @@ import {
   CYCLE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -155,7 +157,13 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
         </div>
       )}
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect maxHeight="lg" buttonClassName={customClassName}>
+      <CustomMenu
+        customButton={<IconButton variant="tertiary" size="lg" icon={MoreHorizontal} />}
+        placement="bottom-end"
+        closeOnSelect
+        maxHeight="lg"
+        buttonClassName={customClassName}
+      >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (

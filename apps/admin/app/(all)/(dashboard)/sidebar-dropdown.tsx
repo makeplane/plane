@@ -71,14 +71,14 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
 
   useEffect(() => {
     if (csrfToken === undefined)
-      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
+      void authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
 
   return (
-    <div className="flex max-h-header items-center gap-x-5 gap-y-2 border-b border-subtle px-4 py-3.5">
+    <div className="flex max-h-header items-center gap-x-5 gap-y-2 border-b border-subtle px-4 py-2.5">
       <div className="h-full w-full truncate">
         <div
-          className={`flex flex-grow items-center gap-x-2 truncate rounded-sm py-1 ${
+          className={`flex flex-grow items-center gap-x-2 truncate rounded-sm ${
             isSidebarCollapsed ? "justify-center" : ""
           }`}
         >
@@ -88,8 +88,8 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
                 "cursor-default": !isSidebarCollapsed,
               })}
             >
-              <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-sm bg-layer-1">
-                <UserCog2 className="h-5 w-5 text-secondary" />
+              <div className="flex size-8 flex-shrink-0 items-center justify-center rounded-sm bg-layer-1">
+                <UserCog2 className="size-5 text-primary" />
               </div>
             </Menu.Button>
             {isSidebarCollapsed && (
@@ -109,7 +109,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
 
           {!isSidebarCollapsed && (
             <div className="flex w-full gap-2">
-              <h4 className="grow truncate text-14 font-medium text-secondary">Instance admin</h4>
+              <h4 className="grow truncate text-body-md-medium text-primary">Instance admin</h4>
             </div>
           )}
         </div>
@@ -123,7 +123,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
               src={getFileURL(currentUser.avatar_url)}
               size={24}
               shape="square"
-              className="!text-14"
+              className="!text-body-sm-medium"
             />
           </Menu.Button>
 

@@ -1,9 +1,9 @@
 import type { Dispatch, SetStateAction } from "react";
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
-import { Pencil } from "lucide-react";
+
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
-import { CloseIcon } from "@plane/propel/icons";
+import { EditIcon, CloseIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
 // hooks
@@ -69,7 +69,7 @@ export function ProjectSettingLabelItem(props: Props) {
       key: "remove_from_group",
     },
     {
-      CustomIcon: Pencil,
+      CustomIcon: EditIcon,
       onClick: () => {
         setEditLabelForm(true);
         setIsUpdating(true);

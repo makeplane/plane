@@ -1,8 +1,9 @@
 import React from "react";
 import { Command } from "cmdk";
-import { X, Search } from "lucide-react";
-// plane imports
+import { X } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+// plane imports
+import { SearchIcon } from "@plane/propel/icons";
 // local imports
 import type { TPowerKContext, TPowerKPageType } from "../../core/types";
 import { POWER_K_MODAL_PAGE_DETAILS } from "./constants";
@@ -36,7 +37,7 @@ export function PowerKModalHeader(props: Props) {
 
       {/* Search Input */}
       <div className="flex items-center gap-2 px-4 py-3">
-        <Search className="shrink-0 size-4 text-placeholder" />
+        <SearchIcon className="shrink-0 size-4 text-placeholder" />
         <Command.Input
           value={searchTerm}
           onValueChange={onSearchChange}

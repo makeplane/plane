@@ -1,7 +1,7 @@
-import { Download, ExternalLink, Minus, Plus } from "lucide-react";
+import { Download, Minus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-import { CloseIcon } from "@plane/propel/icons";
+import { NewTabIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 
@@ -213,7 +213,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
           className="absolute top-10 right-10 size-8 grid place-items-center"
           aria-label="Close image viewer"
         >
-          <CloseIcon className="size-8 text-on-color/60 hover:text-on-color transition-colors" />
+          <CloseIcon className="size-8 text-white/60 hover:text-white transition-colors" />
         </button>
         <img
           ref={setImageRef}
@@ -231,7 +231,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
           }}
           onMouseDown={handleMouseDown}
         />
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1 rounded-md border border-white/20 py-2 divide-x divide-white/20 bg-black">
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1 rounded-md border border-subtle-1 py-2 divide-x divide-subtle-1 bg-black">
           <div className="flex items-center">
             <button
               type="button"
@@ -242,13 +242,13 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
                 }
                 handleMagnification("decrease");
               }}
-              className="size-6 grid place-items-center text-on-color/60 hover:text-on-color disabled:text-on-color/30 transition-colors duration-200"
+              className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
               disabled={magnification <= MIN_ZOOM}
               aria-label="Zoom out"
             >
               <Minus className="size-4" />
             </button>
-            <span className="text-13 w-12 text-center text-on-color">{Math.round(100 * magnification)}%</span>
+            <span className="text-13 w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
             <button
               type="button"
               onClick={(e) => {
@@ -258,18 +258,18 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
                 }
                 handleMagnification("increase");
               }}
-              className="size-6 grid place-items-center text-on-color/60 hover:text-on-color disabled:text-on-color/30 transition-colors duration-200"
+              className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
               disabled={magnification >= MAX_ZOOM}
               aria-label="Zoom in"
             >
-              <Plus className="size-4" />
+              <PlusIcon className="size-4" />
             </button>
           </div>
           {!isTouchDevice && (
             <button
               type="button"
               onClick={() => window.open(downloadSrc, "_blank")}
-              className="flex-shrink-0 size-8 grid place-items-center text-on-color/60 hover:text-on-color transition-colors duration-200"
+              className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
               aria-label="Download image"
             >
               <Download className="size-4" />
@@ -279,10 +279,10 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
             <button
               type="button"
               onClick={() => window.open(src, "_blank")}
-              className="flex-shrink-0 size-8 grid place-items-center text-on-color/60 hover:text-on-color transition-colors duration-200"
+              className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
               aria-label="Open image in new tab"
             >
-              <ExternalLink className="size-4" />
+              <NewTabIcon className="size-4" />
             </button>
           )}
         </div>

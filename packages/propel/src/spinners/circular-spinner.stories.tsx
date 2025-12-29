@@ -91,11 +91,11 @@ export const ColorVariations: Story = {
           <p className="mt-2 text-11 text-gray-600">Blue</p>
         </div>
         <div className="text-center">
-          <Spinner className="text-green-500" />
+          <Spinner className="text-success-primary" />
           <p className="mt-2 text-11 text-gray-600">Green</p>
         </div>
         <div className="text-center">
-          <Spinner className="text-red-500" />
+          <Spinner className="text-danger-primary" />
           <p className="mt-2 text-11 text-gray-600">Red</p>
         </div>
         <div className="text-center">

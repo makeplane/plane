@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { usePopper } from "react-popper";
-import { Check, Search, SignalHigh } from "lucide-react";
+import { SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { PriorityIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon, PriorityIcon, ChevronDownIcon, SearchIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssuePriorities } from "@plane/types";
 // ui
@@ -120,7 +120,14 @@ function BorderButton(props: ButtonProps) {
             <SignalHigh className="size-3" />
           ))}
         {!hideText && (
-          <span className="flex-grow truncate text-caption-sm-regular">{priorityDetails?.title ?? placeholder}</span>
+          <span
+            className={cn("flex-grow truncate text-body-xs-medium", {
+              "text-secondary": priority && priority !== "none",
+              "text-placeholder": !priority || priority === "none",
+            })}
+          >
+            {priorityDetails?.title ?? placeholder}
+          </span>
         )}
         {dropdownArrow && (
           <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
@@ -204,7 +211,12 @@ function BackgroundButton(props: ButtonProps) {
             <SignalHigh className="size-3" />
           ))}
         {!hideText && (
-          <span className="flex-grow truncate text-caption-sm-regular">
+          <span
+            className={cn("flex-grow truncate text-body-xs-medium", {
+              "text-secondary": priority && priority !== "none",
+              "text-placeholder": !priority || priority === "none",
+            })}
+          >
             {priorityDetails?.title ?? t("common.priority") ?? placeholder}
           </span>
         )}
@@ -246,7 +258,7 @@ function TransparentButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full w-full flex items-center gap-1.5 rounded-sm px-2 py-0.5 hover:bg-layer-transparent-hover",
+          "h-full w-full flex items-center gap-1.5 rounded-sm hover:bg-layer-transparent-hover px-2",
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
@@ -283,7 +295,12 @@ function TransparentButton(props: ButtonProps) {
             <SignalHigh className="size-3" />
           ))}
         {!hideText && (
-          <span className="flex-grow truncate text-caption-sm-regular">
+          <span
+            className={cn("flex-grow truncate text-body-xs-medium", {
+              "text-secondary": priority && priority !== "none",
+              "text-placeholder": !priority || priority === "none",
+            })}
+          >
             {priorityDetails?.title ?? t("common.priority") ?? placeholder}
           </span>
         )}
@@ -448,7 +465,7 @@ export function PriorityDropdown(props: Props) {
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-              <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+              <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
@@ -477,7 +494,7 @@ export function PriorityDropdown(props: Props) {
                     {({ selected }) => (
                       <>
                         <span className="flex-grow truncate">{option.content}</span>
-                        {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                        {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                       </>
                     )}
                   </Combobox.Option>

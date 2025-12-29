@@ -9,7 +9,7 @@ import { Tab, Popover } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { Button } from "@plane/propel/button";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import { Input, Loader } from "@plane/ui";
@@ -180,11 +180,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
 
   return (
     <Popover className="relative z-19" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
-      <Popover.Button
-        className="rounded-sm border border-strong bg-surface-1 px-2 py-1 text-11 text-secondary hover:text-primary"
-        onClick={handleOnClick}
-        disabled={disabled}
-      >
+      <Popover.Button className={getButtonStyling("secondary", "sm")} onClick={handleOnClick} disabled={disabled}>
         {label}
       </Popover.Button>
 
@@ -216,7 +212,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                 <Tab.Panel className="mt-4 h-full w-full space-y-4">
                   {(unsplashImages || !unsplashError) && (
                     <>
-                      <div className="flex gap-x-2">
+                      <div className="flex items-center gap-x-2">
                         <Controller
                           control={control}
                           name="search"
@@ -239,7 +235,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                             />
                           )}
                         />
-                        <Button variant="primary" onClick={() => setSearchParams(formData.search)}>
+                        <Button variant="primary" size="xl" onClick={() => setSearchParams(formData.search)}>
                           Search
                         </Button>
                       </div>
@@ -335,7 +331,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       </div>
                     </div>
                     {fileRejections.length > 0 && (
-                      <p className="text-13 text-red-500">
+                      <p className="text-13 text-danger-primary">
                         {fileRejections[0].errors[0].code === "file-too-large"
                           ? "The image size cannot exceed 5 MB."
                           : "Please upload a file in a valid format."}

@@ -185,7 +185,7 @@ export const Interactive: Story = {
           <p className="text-13 text-gray-700">
             Status: <span className="font-semibold">{enabled ? "Enabled" : "Disabled"}</span>
           </p>
-          {enabled && <p className="mt-2 text-11 text-green-600">Feature is now active and ready to use!</p>}
+          {enabled && <p className="mt-2 text-11 text-success-primary">Feature is now active and ready to use!</p>}
         </div>
       </div>
     );

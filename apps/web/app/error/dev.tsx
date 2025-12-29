@@ -46,7 +46,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
           <Card variant={ECardVariant.WITH_SHADOW} className="!p-6 transition-none">
             <div className="space-y-4">
               <div>
-                <h2 className="text-20 font-semibold text-red-500 mb-2">
+                <h2 className="text-20 font-semibold text-danger-primary mb-2">
                   {error.status} {error.statusText}
                 </h2>
                 <div className="h-px w-full bg-subtle-1" />
@@ -55,7 +55,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
               <div className="space-y-2">
                 <h3 className="text-13 font-medium text-tertiary uppercase tracking-wide">Error Data</h3>
                 <div className="bg-layer-1 rounded-md p-4">
-                  <p className="text-13 text-secondary font-mono">{error.data}</p>
+                  <p className="text-13 text-secondary font-code">{error.data}</p>
                 </div>
               </div>
 
@@ -80,7 +80,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
           <Card variant={ECardVariant.WITH_SHADOW} className="!p-6 transition-none">
             <div className="space-y-4">
               <div>
-                <h2 className="text-20 font-semibold text-red-500 mb-2">Error</h2>
+                <h2 className="text-20 font-semibold text-danger-primary mb-2">Error</h2>
                 <div className="h-px w-full bg-subtle-1" />
               </div>
 
@@ -95,7 +95,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
                 <div className="space-y-2">
                   <h3 className="text-13 font-medium text-tertiary uppercase tracking-wide">Stack Trace</h3>
                   <div className="bg-layer-1 rounded-md border border-subtle max-h-96 overflow-auto">
-                    <pre className="p-4 text-11 text-secondary font-mono whitespace-pre-wrap break-words">
+                    <pre className="p-4 text-11 text-secondary font-code whitespace-pre-wrap break-words">
                       {error.stack}
                     </pre>
                   </div>

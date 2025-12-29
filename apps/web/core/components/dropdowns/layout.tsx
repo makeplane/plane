@@ -1,14 +1,15 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { Check } from "lucide-react";
 // plane imports
 import { ISSUE_LAYOUT_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CheckIcon } from "@plane/propel/icons";
 import { EIssueLayoutTypes } from "@plane/types";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
+import { getIconButtonStyling } from "@plane/propel/icon-button";
 
 type TLayoutDropDown = {
   onChange: (value: EIssueLayoutTypes) => void;
@@ -54,7 +55,7 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
           <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3 text-secondary`} />
           <span className="font-medium text-11">{t(dropdownValue.i18n_label)}</span>
         </div>
-        {props.selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+        {props.selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
       </div>
     );
   }, []);
@@ -67,7 +68,7 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
       value={value?.toString()}
       keyExtractor={keyExtractor}
       options={options}
-      buttonContainerClassName="bg-surface-1 border border-subtle hover:bg-surface-2 focus:text-tertiary focus:bg-surface-2 px-2 py-1.5  rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center relative"
+      buttonContainerClassName={cn(getIconButtonStyling("secondary", "lg"), "w-auto px-2")}
       buttonContent={buttonContent}
       renderItem={itemContent}
       disableSearch

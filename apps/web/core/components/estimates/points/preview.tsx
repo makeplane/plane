@@ -1,10 +1,11 @@
 import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { GripVertical, Pencil, Trash2 } from "lucide-react";
+import { GripVertical } from "lucide-react";
 // plane imports
 import { EEstimateSystem, estimateCount } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // plane web imports
@@ -71,7 +72,7 @@ export const EstimatePointItemPreview = observer(function EstimatePointItemPrevi
             className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer"
             onClick={() => setEstimatePointEditToggle(true)}
           >
-            <Pencil size={14} className="text-secondary" />
+            <EditIcon width={14} height={14} className="text-secondary" />
           </div>
           {estimatePoints.length > estimateCount.min && (
             <div
@@ -82,7 +83,7 @@ export const EstimatePointItemPreview = observer(function EstimatePointItemPrevi
                   : handleEstimatePointValueRemove && handleEstimatePointValueRemove()
               }
             >
-              <Trash2 size={14} className="text-secondary" />
+              <TrashIcon width={14} height={14} className="text-secondary" />
             </div>
           )}
         </div>

@@ -1,10 +1,10 @@
 import { Combobox } from "@headlessui/react";
-import { Check } from "lucide-react";
+
 import React, { createContext, useCallback, useContext, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 // plane helpers
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
@@ -94,7 +94,7 @@ function CustomSelect(props: ICustomSelectProps) {
                 ref={setReferenceElement}
                 type="button"
                 className={cn(
-                  "flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-strong",
+                  "flex w-full items-center justify-between gap-1 rounded border border-strong",
                   {
                     "px-3 py-2 text-13": input,
                     "px-2 py-1 text-11": !input,
@@ -172,7 +172,7 @@ function Option(props: ICustomSelectItemProps) {
       {({ selected }) => (
         <div className="flex items-center justify-between gap-2 w-full">
           {children}
-          {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+          {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
         </div>
       )}
     </Combobox.Option>

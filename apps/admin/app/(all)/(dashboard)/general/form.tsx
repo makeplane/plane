@@ -1,17 +1,17 @@
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Telescope } from "lucide-react";
-// types
+// plane imports
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IInstance, IInstanceAdmin } from "@plane/types";
-// ui
 import { Input, ToggleSwitch } from "@plane/ui";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
-import { useInstance } from "@/hooks/store";
-import { IntercomConfig } from "./intercom";
 // hooks
+import { useInstance } from "@/hooks/store";
+// components
+import { IntercomConfig } from "./intercom";
 
 export interface IGeneralConfigurationForm {
   instance: IInstance;
@@ -27,8 +27,8 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
   const {
     handleSubmit,
     control,
-    watch,
     formState: { errors, isSubmitting },
+    watch,
   } = useForm<Partial<IInstance>>({
     defaultValues: {
       instance_name: instance?.instance_name,
@@ -105,14 +105,14 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
         </div>
       </div>
 
-      <div className="space-y-4">
-        <div className="text-16 font-medium text-primary">Chat + telemetry</div>
+      <div className="space-y-6">
+        <div className="text-16 font-medium text-primary pb-1.5 border-b border-subtle">Chat + telemetry</div>
         <IntercomConfig isTelemetryEnabled={watch("is_telemetry_enabled") ?? false} />
-        <div className="flex items-center gap-14 px-4 py-3 border border-subtle rounded-sm">
+        <div className="flex items-center gap-14">
           <div className="grow flex items-center gap-4">
             <div className="shrink-0">
-              <div className="flex items-center justify-center w-10 h-10 bg-layer-1 rounded-full">
-                <Telescope className="w-6 h-6 text-tertiary/80 p-0.5" />
+              <div className="flex items-center justify-center size-11 bg-layer-1 rounded-lg">
+                <Telescope className="size-5 text-tertiary" />
               </div>
             </div>
             <div className="grow">
@@ -144,8 +144,15 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
       </div>
 
       <div>
-        <Button variant="primary" size="lg" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Save changes"}
+        <Button
+          variant="primary"
+          size="lg"
+          onClick={() => {
+            void handleSubmit(onSubmit)();
+          }}
+          loading={isSubmitting}
+        >
+          {isSubmitting ? "Saving" : "Save changes"}
         </Button>
       </div>
     </div>

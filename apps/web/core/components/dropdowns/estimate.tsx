@@ -3,11 +3,10 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EstimatePropertyIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon, SearchIcon, EstimatePropertyIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { EEstimateSystem } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 import { convertMinutesToHoursMinutesString, cn } from "@plane/utils";
@@ -192,12 +191,16 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
           >
             {!hideIcon && <EstimatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             {(selectedEstimate || placeholder) && BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-              <span className="flex-grow truncate">
-                {selectedEstimate
-                  ? currentActiveEstimate?.type === EEstimateSystem.TIME
-                    ? convertMinutesToHoursMinutesString(Number(selectedEstimate.value))
-                    : selectedEstimate.value
-                  : placeholder}
+              <span className="truncate">
+                {selectedEstimate ? (
+                  currentActiveEstimate?.type === EEstimateSystem.TIME ? (
+                    convertMinutesToHoursMinutesString(Number(selectedEstimate.value))
+                  ) : (
+                    selectedEstimate.value
+                  )
+                ) : (
+                  <span className="text-placeholder">{placeholder}</span>
+                )}
               </span>
             )}
             {dropdownArrow && (
@@ -231,7 +234,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-              <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+              <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
@@ -272,7 +275,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
                               )}
                             >
                               <span className="flex-grow truncate">{option.content}</span>
-                              {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                              {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                             </div>
                           )}
                         </Combobox.Option>

@@ -34,7 +34,7 @@ export function PasswordInput({
           "w-full px-3 py-2 pr-10 text-secondary border rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-accent-strong placeholder:text-placeholder focus:border-transparent transition-all duration-200",
           {
             "border-strong": !error,
-            "border-red-500": error,
+            "border-danger-strong": error,
           },
           className
         )}

@@ -127,7 +127,7 @@ export const BarChart = React.memo(function BarChart<K extends string, T extends
           barSize={barSize}
           className="recharts-wrapper"
         >
-          <CartesianGrid stroke="--alpha(var(--border-color-subtle) / 80%)" vertical={false} />
+          <CartesianGrid stroke="var(--border-color-subtle)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
             tick={(props) => {
@@ -174,7 +174,7 @@ export const BarChart = React.memo(function BarChart<K extends string, T extends
           {showTooltip && (
             <Tooltip
               cursor={{
-                fill: "var(--color-alpha-black-300)",
+                fill: "var(--alpha-black-300)",
                 className: "bg-layer-1 cursor-pointer",
               }}
               wrapperStyle={{

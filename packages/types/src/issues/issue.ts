@@ -73,7 +73,7 @@ export type TBaseIssue = {
   is_intake?: boolean;
 };
 
-export type IssueRelation = {
+type IssueRelation = {
   id: string;
   name: string;
   project_id: string;
@@ -182,7 +182,7 @@ export interface IPublicIssue extends Pick<
   vote_items: IPublicVote[];
 }
 
-export type TPublicIssueResponseResults =
+type TPublicIssueResponseResults =
   | IPublicIssue[]
   | {
       [key: string]: {
