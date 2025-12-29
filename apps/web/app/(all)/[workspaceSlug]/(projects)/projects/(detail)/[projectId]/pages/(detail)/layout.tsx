@@ -13,7 +13,7 @@ export default function ProjectPageDetailsLayout({ params }: Route.ComponentProp
   const { workspaceSlug, projectId } = params;
   const { fetchPagesList } = usePageStore(EPageStoreType.PROJECT);
   // fetching pages list
-  useSWR(`PROJECT_PAGES_${projectId}`, () => fetchPagesList(workspaceSlug, projectId));
+  useSWR(`PROJECT_PAGES_${projectId}`, () => fetchPagesList(workspaceSlug, projectId, "public"));
   return (
     <>
       <AppHeader header={<PageDetailsHeader />} />

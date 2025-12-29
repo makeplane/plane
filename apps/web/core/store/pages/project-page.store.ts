@@ -321,6 +321,7 @@ export class ProjectPageStore implements IProjectPageStore {
       // Build query parameters
       const queries: Record<string, string | number> = {
         per_page: PAGES_PER_PAGE,
+        type: pageType, // Send page type to backend for filtering
       };
 
       // Add search query if provided
