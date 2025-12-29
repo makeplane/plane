@@ -45,15 +45,27 @@ class WorkspaceAPITokenEndpoint(BaseAPIView):
 
     def get(self, request: Request, slug: str, pk: Optional[str] = None) -> Response:
         if pk is None:
-            api_tokens = APIToken.objects.filter(workspace__slug=slug, is_service=False, user=request.user)
+            try:
+                api_tokens = APIToken.objects.filter(workspace__slug=slug, is_service=False, user=request.user)
+            except APIToken.DoesNotExist:
+                return Response({"error": "API token does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
             serializer = APITokenReadSerializer(api_tokens, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            api_tokens = APIToken.objects.get(workspace__slug=slug, pk=pk, user=request.user)
+            try:
+                api_tokens = APIToken.objects.get(workspace__slug=slug, pk=pk, user=request.user)
+            except APIToken.DoesNotExist:
+                return Response({"error": "API token does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
             serializer = APITokenReadSerializer(api_tokens)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request: Request, slug: str, pk: str) -> Response:
-        api_token = APIToken.objects.get(workspace__slug=slug, pk=pk, is_service=False, user=request.user)
+        try:
+            api_token = APIToken.objects.get(workspace__slug=slug, pk=pk, is_service=False, user=request.user)
+        except APIToken.DoesNotExist:
+            return Response({"error": "API token does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
         api_token.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
