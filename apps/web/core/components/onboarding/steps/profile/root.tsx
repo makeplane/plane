@@ -1,10 +1,9 @@
-import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ImageIcon } from "lucide-react";
 // plane imports
-import { E_PASSWORD_STRENGTH, ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS } from "@plane/constants";
+import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser } from "@plane/types";
@@ -12,8 +11,6 @@ import { EOnboardingSteps } from "@plane/types";
 import { cn, getFileURL, getPasswordStrength } from "@plane/utils";
 // components
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
-// helpers
-import { captureError, captureView } from "@/helpers/event-tracker.helper";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
@@ -94,9 +91,6 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
         formData.password && handleSetPassword(formData.password),
       ]);
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -107,15 +101,11 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
 
   const onSubmit = async (formData: TProfileSetupFormValues) => {
     if (!user) return;
-    captureView({
-      elementName: ONBOARDING_TRACKER_ELEMENTS.PROFILE_SETUP_FORM,
-    });
     updateUserProfile({
       has_marketing_email_consent: formData.has_marketing_email_consent,
     });
-    await handleSubmitUserDetail(formData).then(() => {
-      handleStepChange(EOnboardingSteps.PROFILE_SETUP);
-    });
+    await handleSubmitUserDetail(formData);
+    handleStepChange(EOnboardingSteps.PROFILE_SETUP);
   };
 
   const handleDelete = (url: string | null | undefined) => {

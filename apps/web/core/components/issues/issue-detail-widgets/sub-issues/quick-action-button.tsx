@@ -1,7 +1,5 @@
-import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -9,7 +7,6 @@ import { PlusIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type Props = {
@@ -54,13 +51,11 @@ export const SubIssuesActionButton = observer(function SubIssuesActionButton(pro
   };
 
   const handleCreateNew = () => {
-    captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.sub_issue.create });
     handleIssueCrudState("create", issueId, null);
     toggleCreateIssueModal(true);
   };
 
   const handleAddExisting = () => {
-    captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.sub_issue.add_existing });
     handleIssueCrudState("existing", issueId, null);
     toggleSubIssuesModal(issue.id);
   };

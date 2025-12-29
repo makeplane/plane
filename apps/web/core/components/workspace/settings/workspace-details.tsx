@@ -1,15 +1,8 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-
-// constants
-import {
-  ORGANIZATION_SIZE,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  WORKSPACE_TRACKER_EVENTS,
-  WORKSPACE_TRACKER_ELEMENTS,
-} from "@plane/constants";
+// Plane Imports
+import { ORGANIZATION_SIZE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EditIcon } from "@plane/propel/icons";
@@ -19,9 +12,8 @@ import { CustomSelect, Input } from "@plane/ui";
 import { copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
 import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
-// helpers
 import { TimezoneSelect } from "@/components/global/timezone-select";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
@@ -70,21 +62,12 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
 
     try {
       await updateWorkspace(currentWorkspace.slug, payload);
-      captureSuccess({
-        eventName: WORKSPACE_TRACKER_EVENTS.update,
-        payload: { slug: currentWorkspace.slug },
-      });
       setToast({
         title: "Success!",
         type: TOAST_TYPE.SUCCESS,
         message: "Workspace updated successfully",
       });
     } catch (err: unknown) {
-      captureError({
-        eventName: WORKSPACE_TRACKER_EVENTS.update,
-        payload: { slug: currentWorkspace.slug },
-        error: err instanceof Error ? err : new Error(String(err)),
-      });
       console.error(err);
     } finally {
       setTimeout(() => {
@@ -305,7 +288,6 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
           {isAdmin && (
             <div className="flex items-center justify-between py-2">
               <Button
-                data-ph-element={WORKSPACE_TRACKER_ELEMENTS.UPDATE_WORKSPACE_BUTTON}
                 variant="primary"
                 size="lg"
                 onClick={(e) => {

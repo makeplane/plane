@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 // types
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProjectView } from "@plane/types";
@@ -12,7 +12,6 @@ import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 import { useViewMenuItems } from "@/components/common/quick-actions-helper";
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { PublishViewModal, useViewPublish } from "@/plane-web/components/views/publish";
@@ -77,9 +76,7 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
   const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
     return {
       ...item,
-
       action: () => {
-        captureClick({ elementName: PROJECT_VIEW_TRACKER_ELEMENTS.LIST_ITEM_CONTEXT_MENU });
         item.action();
       },
     };
@@ -110,7 +107,6 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
             <CustomMenu.MenuItem
               key={item.key}
               onClick={() => {
-                captureClick({ elementName: PROJECT_VIEW_TRACKER_ELEMENTS.QUICK_ACTIONS });
                 item.action();
               }}
               className={cn(

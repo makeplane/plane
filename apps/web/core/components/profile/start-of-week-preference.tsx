@@ -1,16 +1,10 @@
-import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import {
-  PROFILE_SETTINGS_TRACKER_ELEMENTS,
-  PROFILE_SETTINGS_TRACKER_EVENTS,
-  START_OF_THE_WEEK_OPTIONS,
-} from "@plane/constants";
+import { START_OF_THE_WEEK_OPTIONS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EStartOfTheWeek } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // hooks
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useUserProfile } from "@/hooks/store/user";
 import { PreferencesSection } from "../preferences/section";
 
@@ -23,6 +17,15 @@ export const StartOfWeekPreference = observer(function StartOfWeekPreference(pro
   // hooks
   const { data: userProfile, updateUserProfile } = useUserProfile();
 
+  const handleStartOfWeekChange = async (val: number) => {
+    try {
+      await updateUserProfile({ start_of_the_week: val });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: "Success", message: "First day of the week updated successfully" });
+    } catch (_error) {
+      setToast({ type: TOAST_TYPE.ERROR, title: "Update failed", message: "Please try again later." });
+    }
+  };
+
   return (
     <PreferencesSection
       title={props.option.title}
@@ -32,40 +35,7 @@ export const StartOfWeekPreference = observer(function StartOfWeekPreference(pro
           <CustomSelect
             value={userProfile.start_of_the_week}
             label={getStartOfWeekLabel(userProfile.start_of_the_week)}
-            onChange={(val: number) => {
-              updateUserProfile({ start_of_the_week: val })
-                .then(() => {
-                  captureElementAndEvent({
-                    element: {
-                      elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.FIRST_DAY_OF_WEEK_DROPDOWN,
-                    },
-                    event: {
-                      eventName: PROFILE_SETTINGS_TRACKER_EVENTS.first_day_updated,
-                      payload: {
-                        start_of_the_week: val,
-                      },
-                      state: "SUCCESS",
-                    },
-                  });
-                  setToast({
-                    type: TOAST_TYPE.SUCCESS,
-                    title: "Success",
-                    message: "First day of the week updated successfully",
-                  });
-                })
-                .catch(() => {
-                  captureElementAndEvent({
-                    element: {
-                      elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.FIRST_DAY_OF_WEEK_DROPDOWN,
-                    },
-                    event: {
-                      eventName: PROFILE_SETTINGS_TRACKER_EVENTS.first_day_updated,
-                      state: "ERROR",
-                    },
-                  });
-                  setToast({ type: TOAST_TYPE.ERROR, title: "Update failed", message: "Please try again later." });
-                });
-            }}
+            onChange={handleStartOfWeekChange}
             input
             maxHeight="lg"
           >

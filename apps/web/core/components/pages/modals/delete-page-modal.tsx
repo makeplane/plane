@@ -7,8 +7,6 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
 import { getPageName } from "@plane/utils";
 // constants
-// hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import type { EPageStoreType } from "@/plane-web/hooks/store";

@@ -3,19 +3,12 @@ import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import {
-  ARCHIVABLE_STATE_GROUPS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  WORK_ITEM_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -107,7 +100,6 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
       ...item,
 
       onClick: () => {
-        captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.CYCLE });
         item.action();
       },
     };
@@ -197,7 +189,6 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
                   <CustomMenu.MenuItem
                     key={nestedItem.key}
                     onClick={() => {
-                      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.CYCLE });
                       nestedItem.action();
                     }}
                     className={cn(
@@ -233,7 +224,6 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
             <CustomMenu.MenuItem
               key={item.key}
               onClick={() => {
-                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.CYCLE });
                 item.action();
               }}
               className={cn(

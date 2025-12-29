@@ -1,18 +1,13 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-// headless ui
 import { AlertTriangleIcon } from "lucide-react";
-// types
-import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
-// ui
 import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// constants
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 
@@ -62,21 +57,8 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
           return leaveProject(workspaceSlug.toString(), project.id)
             .then(() => {
               handleClose();
-              captureSuccess({
-                eventName: MEMBER_TRACKER_EVENTS.project.leave,
-                payload: {
-                  project: project.id,
-                },
-              });
             })
             .catch((err) => {
-              captureError({
-                eventName: MEMBER_TRACKER_EVENTS.project.leave,
-                payload: {
-                  project: project.id,
-                },
-                error: err,
-              });
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: "Error!",

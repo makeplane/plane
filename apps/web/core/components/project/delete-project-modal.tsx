@@ -1,16 +1,12 @@
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
-// types
-import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
-// ui
 import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// constants
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 
@@ -55,36 +51,22 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
   const onSubmit = async () => {
     if (!workspaceSlug || !canDelete) return;
 
-    await deleteProject(workspaceSlug.toString(), project.id)
-      .then(() => {
-        if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
-
-        handleClose();
-        captureSuccess({
-          eventName: PROJECT_TRACKER_EVENTS.delete,
-          payload: {
-            id: project.id,
-          },
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Project deleted successfully.",
-        });
-      })
-      .catch(() => {
-        captureError({
-          eventName: PROJECT_TRACKER_EVENTS.delete,
-          payload: {
-            id: project.id,
-          },
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Something went wrong. Please try again later.",
-        });
+    try {
+      await deleteProject(workspaceSlug.toString(), project.id);
+      if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
+      handleClose();
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Project deleted successfully.",
       });
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Something went wrong. Please try again later.",
+      });
+    }
   };
 
   return (

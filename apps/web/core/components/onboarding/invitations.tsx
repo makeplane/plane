@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 // plane imports
-import { ROLE, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { ROLE } from "@plane/constants";
 // types
 import { Button } from "@plane/propel/button";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
@@ -11,7 +11,6 @@ import { truncateText } from "@plane/utils";
 // helpers
 import { WorkspaceLogo } from "@/components/workspace/logo";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserSettings } from "@/hooks/store/user";
 // services
@@ -43,31 +42,15 @@ export function Invitations(props: Props) {
 
   const submitInvitations = async () => {
     const invitation = invitations?.find((invitation) => invitation.id === invitationsRespond[0]);
-
     if (invitationsRespond.length <= 0 && !invitation?.role) return;
-
     setIsJoiningWorkspaces(true);
-
     try {
       await workspaceService.joinWorkspaces({ invitations: invitationsRespond });
-      captureSuccess({
-        eventName: MEMBER_TRACKER_EVENTS.accept,
-        payload: {
-          member_id: invitation?.id,
-        },
-      });
       await fetchWorkspaces();
       await fetchCurrentUserSettings();
       await handleNextStep();
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      captureError({
-        eventName: MEMBER_TRACKER_EVENTS.accept,
-        payload: {
-          member_id: invitation?.id,
-        },
-        error: error,
-      });
       setIsJoiningWorkspaces(false);
     }
   };
@@ -114,7 +97,6 @@ export function Invitations(props: Props) {
         className="w-full"
         onClick={submitInvitations}
         disabled={isJoiningWorkspaces || !invitationsRespond.length}
-        data-ph-element={MEMBER_TRACKER_ELEMENTS.ONBOARDING_JOIN_WORKSPACE}
       >
         {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue to workspace"}
       </Button>

@@ -1,12 +1,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { STATE_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
 // components
 import { StateForm } from "@/components/project-states";
-// hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
 type TStateUpdate = {
   state: IState;
@@ -16,7 +13,7 @@ type TStateUpdate = {
 };
 
 export const StateUpdate = observer(function StateUpdate(props: TStateUpdate) {
-  const { state, updateStateCallback, shouldTrackEvents, handleClose } = props;
+  const { state, updateStateCallback, handleClose } = props;
   // states
   const [loader, setLoader] = useState(false);
 
@@ -30,15 +27,6 @@ export const StateUpdate = observer(function StateUpdate(props: TStateUpdate) {
 
     try {
       await updateStateCallback(state.id, formData);
-      if (shouldTrackEvents) {
-        captureSuccess({
-          eventName: STATE_TRACKER_EVENTS.update,
-          payload: {
-            state_group: state.group,
-            id: state.id,
-          },
-        });
-      }
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
@@ -61,15 +49,6 @@ export const StateUpdate = observer(function StateUpdate(props: TStateUpdate) {
           title: "Error!",
           message: "State could not be updated. Please try again.",
         });
-        if (shouldTrackEvents) {
-          captureError({
-            eventName: STATE_TRACKER_EVENTS.update,
-            payload: {
-              state_group: state.group,
-              id: state.id,
-            },
-          });
-        }
         return { status: "error" };
       }
     }
