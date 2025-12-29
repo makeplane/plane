@@ -17,13 +17,13 @@ import type { TProject } from "@/plane-web/types/projects";
 type Props = {
   setValue: UseFormSetValue<TProject>;
   isMobile: boolean;
-  hasManuallyEditedIdentifier: boolean;
-  setHasManuallyEditedIdentifier: (value: boolean) => void;
+  shouldAutoSyncIdentifier: boolean;
+  setShouldAutoSyncIdentifier: (value: boolean) => void;
   handleFormOnChange?: () => void;
 };
 
 function ProjectCommonAttributes(props: Props) {
-  const { setValue, isMobile, hasManuallyEditedIdentifier, setHasManuallyEditedIdentifier, handleFormOnChange } = props;
+  const { setValue, isMobile, shouldAutoSyncIdentifier, setShouldAutoSyncIdentifier, handleFormOnChange } = props;
   const {
     formState: { errors },
     control,
@@ -34,7 +34,7 @@ function ProjectCommonAttributes(props: Props) {
 
   const handleNameChange =
     (onChange: (event: ChangeEvent<HTMLInputElement>) => void) => (e: ChangeEvent<HTMLInputElement>) => {
-      if (!hasManuallyEditedIdentifier) {
+      if (!shouldAutoSyncIdentifier) {
         onChange(e);
         return;
       }
@@ -47,7 +47,7 @@ function ProjectCommonAttributes(props: Props) {
   const handleIdentifierChange = (onChange: (value: string) => void) => (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     const alphanumericValue = projectIdentifierSanitizer(value);
-    setHasManuallyEditedIdentifier(false);
+    setShouldAutoSyncIdentifier(false);
     onChange(alphanumericValue);
     handleFormOnChange?.();
   };

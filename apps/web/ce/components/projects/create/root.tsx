@@ -36,7 +36,7 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
   const { t } = useTranslation();
   const { addProjectToFavorites, createProject, updateProject } = useProject();
   // states
-  const [hasManuallyEditedIdentifier, setHasManuallyEditedIdentifier] = useState(true);
+  const [shouldAutoSyncIdentifier, setShouldAutoSyncIdentifier] = useState(true);
   // form info
   const methods = useForm<TProject>({
     defaultValues: { ...getProjectFormValues(), ...data },
@@ -166,7 +166,7 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
 
   const handleClose = () => {
     onClose();
-    setHasManuallyEditedIdentifier(true);
+    setShouldAutoSyncIdentifier(true);
     setTimeout(() => {
       reset();
     }, 300);
@@ -181,8 +181,8 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
           <ProjectCommonAttributes
             setValue={setValue}
             isMobile={isMobile}
-            hasManuallyEditedIdentifier={hasManuallyEditedIdentifier}
-            setHasManuallyEditedIdentifier={setHasManuallyEditedIdentifier}
+            shouldAutoSyncIdentifier={shouldAutoSyncIdentifier}
+            setShouldAutoSyncIdentifier={setShouldAutoSyncIdentifier}
           />
           <ProjectAttributes isMobile={isMobile} />
         </div>
