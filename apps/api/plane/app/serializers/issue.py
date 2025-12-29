@@ -42,6 +42,8 @@ from plane.db.models import (
     IssueDescriptionVersion,
     ProjectMember,
     EstimatePoint,
+    IssueProperty,
+    IssuePropertyValue,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -1157,3 +1159,202 @@ class IssueDescriptionVersionDetailSerializer(BaseSerializer):
             "updated_by",
         ]
         read_only_fields = ["workspace", "project", "issue"]
+
+
+class IssuePropertySerializer(BaseSerializer):
+    """Serializer for IssueProperty model - defines custom field schemas"""
+
+    class Meta:
+        model = IssueProperty
+        fields = [
+            "id",
+            "name",
+            "key",
+            "description",
+            "property_type",
+            "options",
+            "default_value",
+            "is_required",
+            "sort_order",
+            "is_active",
+            "project_id",
+            "workspace_id",
+            "external_source",
+            "external_id",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = [
+            "id",
+            "key",
+            "workspace",
+            "project",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+    def validate_name(self, value):
+        """Ensure property name is unique within the project"""
+        project_id = self.context.get("project_id")
+        property_qs = IssueProperty.objects.filter(
+            project_id=project_id, name__iexact=value, deleted_at__isnull=True
+        )
+        if self.instance:
+            property_qs = property_qs.exclude(id=self.instance.pk)
+        if property_qs.exists():
+            raise serializers.ValidationError("Property with this name already exists in the project")
+        return value
+
+    def validate(self, attrs):
+        """Validate options for SELECT and MULTI_SELECT types"""
+        property_type = attrs.get("property_type", getattr(self.instance, "property_type", None))
+        options = attrs.get("options", getattr(self.instance, "options", []))
+
+        if property_type in ["select", "multi_select"]:
+            if not options or not isinstance(options, list):
+                raise serializers.ValidationError({
+                    "options": "Options are required for select and multi_select types"
+                })
+            # Validate each option has required fields
+            for i, option in enumerate(options):
+                if not isinstance(option, dict):
+                    raise serializers.ValidationError({
+                        "options": f"Option at index {i} must be an object"
+                    })
+                if "value" not in option:
+                    raise serializers.ValidationError({
+                        "options": f"Option at index {i} must have a 'value' field"
+                    })
+
+        # Validate default_value matches property_type
+        default_value = attrs.get("default_value")
+        if default_value is not None and property_type:
+            if property_type == "boolean" and not isinstance(default_value, bool):
+                raise serializers.ValidationError({
+                    "default_value": "Default value must be a boolean for boolean type"
+                })
+            if property_type == "number" and not isinstance(default_value, (int, float)):
+                raise serializers.ValidationError({
+                    "default_value": "Default value must be a number for number type"
+                })
+            if property_type == "select" and default_value:
+                valid_values = [opt.get("value") for opt in options]
+                if default_value not in valid_values:
+                    raise serializers.ValidationError({
+                        "default_value": "Default value must be one of the defined options"
+                    })
+            if property_type == "multi_select" and default_value:
+                if not isinstance(default_value, list):
+                    raise serializers.ValidationError({
+                        "default_value": "Default value must be a list for multi_select type"
+                    })
+                valid_values = [opt.get("value") for opt in options]
+                for val in default_value:
+                    if val not in valid_values:
+                        raise serializers.ValidationError({
+                            "default_value": f"'{val}' is not a valid option"
+                        })
+
+        return attrs
+
+
+class IssuePropertyLiteSerializer(BaseSerializer):
+    """Lightweight serializer for IssueProperty - used in nested responses"""
+
+    class Meta:
+        model = IssueProperty
+        fields = [
+            "id",
+            "name",
+            "key",
+            "property_type",
+            "options",
+            "is_required",
+            "is_active",
+        ]
+
+
+class IssuePropertyValueSerializer(BaseSerializer):
+    """Serializer for IssuePropertyValue model - stores custom field values per issue"""
+    property_detail = IssuePropertyLiteSerializer(source="property", read_only=True)
+
+    class Meta:
+        model = IssuePropertyValue
+        fields = [
+            "id",
+            "issue_id",
+            "property_id",
+            "property_detail",
+            "value",
+            "project_id",
+            "workspace_id",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "created_at",
+            "updated_at",
+        ]
+
+    def validate(self, attrs):
+        """Validate value matches the property type"""
+        property_obj = attrs.get("property")
+        value = attrs.get("value")
+
+        if property_obj is None and self.instance:
+            property_obj = self.instance.property
+
+        if property_obj and value is not None:
+            property_type = property_obj.property_type
+
+            if property_type == "text" and not isinstance(value, str):
+                raise serializers.ValidationError({
+                    "value": "Value must be a string for text type"
+                })
+            if property_type == "number" and not isinstance(value, (int, float)):
+                raise serializers.ValidationError({
+                    "value": "Value must be a number for number type"
+                })
+            if property_type == "boolean" and not isinstance(value, bool):
+                raise serializers.ValidationError({
+                    "value": "Value must be a boolean for boolean type"
+                })
+            if property_type == "date" and value:
+                # Date should be stored as ISO string
+                if not isinstance(value, str):
+                    raise serializers.ValidationError({
+                        "value": "Value must be a date string (YYYY-MM-DD) for date type"
+                    })
+            if property_type == "select":
+                valid_values = [opt.get("value") for opt in property_obj.options]
+                if value not in valid_values:
+                    raise serializers.ValidationError({
+                        "value": f"'{value}' is not a valid option"
+                    })
+            if property_type == "multi_select":
+                if not isinstance(value, list):
+                    raise serializers.ValidationError({
+                        "value": "Value must be a list for multi_select type"
+                    })
+                valid_values = [opt.get("value") for opt in property_obj.options]
+                for val in value:
+                    if val not in valid_values:
+                        raise serializers.ValidationError({
+                            "value": f"'{val}' is not a valid option"
+                        })
+
+        # Validate required fields
+        if property_obj and property_obj.is_required and value is None:
+            raise serializers.ValidationError({
+                "value": f"'{property_obj.name}' is a required field"
+            })
+
+        return attrs
+
