@@ -100,7 +100,9 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
                   />
                 )}
               />
-              {errors.url && <span className="text-caption-sm-regular text-danger">{t("common.url_is_invalid")}</span>}
+              {errors.url && (
+                <span className="text-caption-sm-regular text-danger-primary">{t("common.url_is_invalid")}</span>
+              )}
             </div>
             <div>
               <label htmlFor="title" className="mb-2 text-secondary">

@@ -51,15 +51,15 @@ export const MODULE_STATUS: {
     i18n_label: "project_modules.status.completed",
     value: "completed",
     color: MODULE_STATUS_COLORS.completed,
-    textColor: "text-green-600",
-    bgColor: "bg-green-100",
+    textColor: "text-success-primary",
+    bgColor: "bg-success-subtle",
   },
   {
     i18n_label: "project_modules.status.cancelled",
     value: "cancelled",
     color: MODULE_STATUS_COLORS.cancelled,
-    textColor: "text-red-500",
-    bgColor: "bg-red-50",
+    textColor: "text-danger-primary",
+    bgColor: "bg-danger-subtle",
   },
 ];
 

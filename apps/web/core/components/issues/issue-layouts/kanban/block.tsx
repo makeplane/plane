@@ -119,7 +119,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
       </div>
 
       <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
-        <div className="w-full line-clamp-1 text-14 text-primary">
+        <div className="w-full line-clamp-1 text-body-sm-medium text-primary">
           <span>{issue.name}</span>
         </div>
       </Tooltip>

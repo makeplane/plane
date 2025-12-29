@@ -1,11 +1,12 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Check, Settings, UserPlus } from "lucide-react";
+import { Settings, UserPlus } from "lucide-react";
 import { Menu } from "@headlessui/react";
 // plane imports
 import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CheckIcon } from "@plane/propel/icons";
 import type { IWorkspace } from "@plane/types";
 import { cn, getFileURL, getUserRole } from "@plane/utils";
 // plane web imports
@@ -75,7 +76,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
           </div>
           {workspace.id === activeWorkspace?.id ? (
             <span className="flex-shrink-0 p-1">
-              <Check className="h-5 w-5 text-primary" />
+              <CheckIcon className="h-5 w-5 text-primary" />
             </span>
           ) : (
             <SubscriptionPill workspace={workspace} />

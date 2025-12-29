@@ -71,7 +71,7 @@ export function NameColumn(props: NameProps) {
               >
                 <CustomMenu.MenuItem>
                   <div
-                    className="flex items-center gap-x-1 cursor-pointer text-red-600 font-medium"
+                    className="flex items-center gap-x-1 cursor-pointer text-danger-primary font-medium"
                     data-ph-element={MEMBER_TRACKER_ELEMENTS.PROJECT_MEMBER_TABLE_CONTEXT_MENU}
                     onClick={() => setRemoveMemberModal(rowData)}
                   >
@@ -167,7 +167,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
                   <span>{roleLabel}</span>
                 </div>
               }
-              buttonClassName={`!px-0 !justify-start hover:bg-surface-1 ${errors.role ? "border-red-500" : "border-none"}`}
+              buttonClassName={`!px-0 !justify-start hover:bg-surface-1 ${errors.role ? "border-danger-strong" : "border-none"}`}
               className="rounded-md p-0 w-32"
               input
             >

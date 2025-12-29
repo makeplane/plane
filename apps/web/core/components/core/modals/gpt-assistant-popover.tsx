@@ -244,7 +244,7 @@ export function GptAssistantPopover(props: Props) {
               </div>
             )}
             {invalidResponse && (
-              <div className="text-13 text-red-500">
+              <div className="text-13 text-danger-primary">
                 No response could be generated. This may be due to insufficient content or task information. Please try
                 again.
               </div>

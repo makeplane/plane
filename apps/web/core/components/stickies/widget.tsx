@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Plus } from "lucide-react";
+
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { PlusIcon } from "@plane/propel/icons";
 // hooks
 import { useSticky } from "@/hooks/use-stickies";
 // local imports
@@ -36,7 +37,7 @@ export const StickiesWidget = observer(function StickiesWidget() {
             className="flex gap-1 text-13 font-medium text-accent-primary my-auto"
             disabled={creatingSticky}
           >
-            <Plus className="size-4 my-auto" />
+            <PlusIcon className="size-4 my-auto" />
             <span>{t("stickies.add")}</span>
             {creatingSticky && (
               <div

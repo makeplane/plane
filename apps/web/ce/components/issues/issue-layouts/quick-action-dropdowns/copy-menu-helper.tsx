@@ -1,11 +1,11 @@
-import type { Copy } from "lucide-react";
+import type { ISvgIcons } from "@plane/propel/icons";
 import type { TContextMenuItem } from "@plane/ui";
 
 export interface CopyMenuHelperProps {
   baseItem: {
     key: string;
     title: string;
-    icon: typeof Copy;
+    icon: React.FC<ISvgIcons>;
     action: () => void;
     shouldRender: boolean;
   };

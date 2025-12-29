@@ -1,8 +1,9 @@
-import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 // plane imports
 import { VIEW_SORT_BY_OPTIONS, VIEW_SORTING_KEY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 
@@ -51,7 +52,7 @@ export function ViewOrderByDropdown(props: Props) {
           }
         >
           {t(option.i18n_label)}
-          {sortKey === option.key && <Check className="h-3 w-3" />}
+          {sortKey === option.key && <CheckIcon className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
       <hr className="my-2 border-subtle" />
@@ -69,7 +70,7 @@ export function ViewOrderByDropdown(props: Props) {
             }}
           >
             {t(option.i18n_label)}
-            {isSelected && <Check className="h-3 w-3" />}
+            {isSelected && <CheckIcon className="h-3 w-3" />}
           </CustomMenu.MenuItem>
         );
       })}

@@ -107,8 +107,8 @@ export function Avatar(props: Props) {
         <AvatarPrimitive.Fallback
           className={cn(sizeInfo.fontSize, "grid h-full w-full place-items-center", getBorderRadius(shape), className)}
           style={{
-            backgroundColor: fallbackBackgroundColor ?? "rgba(var(--color-primary-500))",
-            color: fallbackTextColor ?? "#ffffff",
+            backgroundColor: fallbackBackgroundColor ?? "var(--background-color-accent-primary)",
+            color: fallbackTextColor ?? "var(--text-color-on-color)",
           }}
         >
           {fallbackLetter}

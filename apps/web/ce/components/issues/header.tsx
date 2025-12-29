@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Circle, ExternalLink } from "lucide-react";
+import { Circle } from "lucide-react";
 // plane imports
 import {
   EUserPermissions,
@@ -12,7 +12,7 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { WorkItemsIcon } from "@plane/propel/icons";
+import { NewTabIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
@@ -95,7 +95,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
           >
             <Circle className="h-1.5 w-1.5 fill-accent-primary" strokeWidth={2} />
             {t("workspace_projects.network.public.title")}
-            <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
+            <NewTabIcon className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
           </a>
         ) : (
           <></>

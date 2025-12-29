@@ -94,7 +94,7 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
                   />
                 )}
               />
-              {errors.url && <span className="text-11 text-red-500">{t("link.modal.url.required")}</span>}
+              {errors.url && <span className="text-11 text-danger-primary">{t("link.modal.url.required")}</span>}
             </div>
             <div>
               <label htmlFor="title" className="mb-2 text-secondary text-14 font-medium">

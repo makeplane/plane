@@ -2,9 +2,10 @@ import { useState } from "react";
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { PlusIcon } from "lucide-react";
-// plane imports
+
 import { useTranslation } from "@plane/i18n";
+// plane imports
+import { PlusIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";

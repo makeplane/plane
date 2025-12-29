@@ -1,8 +1,9 @@
 "use client";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { Check, SettingsIcon } from "lucide-react";
+import { SettingsIcon } from "lucide-react";
 import { ContextMenu } from "@plane/propel/context-menu";
+import { CheckIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // components
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
@@ -63,13 +64,13 @@ export const AppRailRoot = observer(() => {
             <ContextMenu.Item onClick={() => updateDisplayMode("icon_only")}>
               <div className="flex items-center justify-between w-full gap-2">
                 <span className="text-11">Icon only</span>
-                {preferences.displayMode === "icon_only" && <Check className="size-3.5" />}
+                {preferences.displayMode === "icon_only" && <CheckIcon className="size-3.5" />}
               </div>
             </ContextMenu.Item>
             <ContextMenu.Item onClick={() => updateDisplayMode("icon_with_label")}>
               <div className="flex items-center justify-between w-full gap-2">
                 <span className="text-11">Icon with name</span>
-                {preferences.displayMode === "icon_with_label" && <Check className="size-3.5" />}
+                {preferences.displayMode === "icon_with_label" && <CheckIcon className="size-3.5" />}
               </div>
             </ContextMenu.Item>
             <ContextMenu.Separator />

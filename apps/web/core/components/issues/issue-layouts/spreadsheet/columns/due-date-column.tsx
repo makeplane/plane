@@ -48,7 +48,7 @@ export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColu
         buttonClassName={cn(
           "rounded-none text-left group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x",
           {
-            "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+            "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
           }
         )}
         optionsClassName="z-[9]"

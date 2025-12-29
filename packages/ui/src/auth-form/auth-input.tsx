@@ -42,7 +42,7 @@ export function AuthInput({
           className={cn(
             "rounded-md disable-autofill-style h-6 w-full placeholder:text-14 placeholder:text-placeholder p-0 border-none",
             {
-              "border-red-500": error,
+              "border-danger-strong": error,
             },
             className
           )}
@@ -58,7 +58,7 @@ export function AuthInput({
         )}
       </div>
 
-      {error && <p className={cn("text-13 text-red-500", errorClassName)}>{error}</p>}
+      {error && <p className={cn("text-13 text-danger-primary", errorClassName)}>{error}</p>}
     </div>
   );
 }

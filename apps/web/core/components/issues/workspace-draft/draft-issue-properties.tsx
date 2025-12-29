@@ -193,7 +193,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
           icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
           buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
           buttonClassName={
-            shouldHighlightIssueDueDate(issue?.target_date || null, stateDetails?.group) ? "text-red-500" : ""
+            shouldHighlightIssueDueDate(issue?.target_date || null, stateDetails?.group) ? "text-danger-primary" : ""
           }
           clearIconClassName="!text-primary"
           optionsClassName="z-10"

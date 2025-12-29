@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
-import { ExternalLink } from "lucide-react";
+
 // plane internal packages
 import { WEB_BASE_URL } from "@plane/constants";
+import { NewTabIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { getFileURL } from "@plane/utils";
 // hooks
@@ -75,7 +76,7 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
         </div>
       </div>
       <div className="flex-shrink-0">
-        <ExternalLink size={16} className="text-placeholder group-hover:text-secondary" />
+        <NewTabIcon width={14} height={16} className="text-placeholder group-hover:text-secondary" />
       </div>
     </a>
   );

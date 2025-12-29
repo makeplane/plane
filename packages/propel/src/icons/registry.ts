@@ -1,68 +1,81 @@
+// Action icons
 import {
+  AddIcon,
   AddReactionIcon,
   AddWorkItemIcon,
+  CheckIcon,
+  CloseIcon,
+  CopyIcon,
+  EditIcon,
   FilterAppliedIcon,
   FilterIcon,
+  GlobeIcon,
+  LinkIcon,
+  LockIcon,
+  NewTabIcon,
+  PlusIcon,
   PreferencesIcon,
   SearchIcon,
+  TrashIcon,
   UpgradeIcon,
 } from "./actions";
-import { AddIcon } from "./actions/add-icon";
-import { CloseIcon } from "./actions/close-icon";
-import { ChevronDownIcon } from "./arrows/chevron-down";
-import { ChevronLeftIcon } from "./arrows/chevron-left";
-import { ChevronRightIcon } from "./arrows/chevron-right";
-import { ChevronUpIcon } from "./arrows/chevron-up";
-import { ReplyIcon } from "./arrows/reply-icon";
+// Arrow icons
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, ReplyIcon } from "./arrows";
+// Default icon
 import { DefaultIcon } from "./default-icon";
-import { BoardLayoutIcon } from "./layouts/board-icon";
-import { CalendarLayoutIcon } from "./layouts/calendar-icon";
-import { CardLayoutIcon } from "./layouts/card-icon";
-import { GridLayoutIcon } from "./layouts/grid-icon";
-import { ListLayoutIcon } from "./layouts/list-icon";
-import { SheetLayoutIcon } from "./layouts/sheet-icon";
-import { TimelineLayoutIcon } from "./layouts/timeline-icon";
-import { CycleIcon } from "./project/cycle-icon";
-import { EpicIcon } from "./project/epic-icon";
-import { IntakeIcon } from "./project/intake-icon";
-import { ModuleIcon } from "./project/module-icon";
-import { PageIcon } from "./project/page-icon";
-import { ViewsIcon } from "./project/view-icon";
-import { WorkItemsIcon } from "./project/work-items-icon";
-import { BooleanPropertyIcon } from "./properties/boolean-icon";
-import { DropdownPropertyIcon } from "./properties/dropdown-icon";
-import { DueDatePropertyIcon } from "./properties/due-date-icon";
-import { DuplicatePropertyIcon } from "./properties/duplicate-icon";
-import { EstimatePropertyIcon } from "./properties/estimate-icon";
-import { HashPropertyIcon } from "./properties/hash-icon";
-import { LabelPropertyIcon } from "./properties/label-icon";
-import { MembersPropertyIcon } from "./properties/members-icon";
-import { OverdueDatePropertyIcon } from "./properties/overdue-date-icon";
-import { ParentPropertyIcon } from "./properties/parent-icon";
-import { PriorityPropertyIcon } from "./properties/priority-icon";
-import { RelatesToPropertyIcon } from "./properties/relates-to-icon";
-import { RelationPropertyIcon } from "./properties/relation-icon";
-import { ScopePropertyIcon } from "./properties/scope-icon";
-import { StartDatePropertyIcon } from "./properties/start-date-icon";
-import { StatePropertyIcon } from "./properties/state-icon";
-import { UserCirclePropertyIcon } from "./properties/user-circle-icon";
-import { UserPropertyIcon } from "./properties/user-icon";
-import { UserSquarePropertyIcon } from "./properties/user-square-icon";
-import { WorkflowsPropertyIcon } from "./properties/workflows-icon";
+// Layout icons
+import {
+  BoardLayoutIcon,
+  CalendarLayoutIcon,
+  CardLayoutIcon,
+  GridLayoutIcon,
+  ListLayoutIcon,
+  SheetLayoutIcon,
+  TimelineLayoutIcon,
+} from "./layouts";
+// Misc icons
+import { InfoIcon } from "./misc";
+// Project icons
+import { CycleIcon, EpicIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "./project";
+// Property icons
+import {
+  BooleanPropertyIcon,
+  DropdownPropertyIcon,
+  DueDatePropertyIcon,
+  DuplicatePropertyIcon,
+  EstimatePropertyIcon,
+  HashPropertyIcon,
+  LabelPropertyIcon,
+  MembersPropertyIcon,
+  OverdueDatePropertyIcon,
+  ParentPropertyIcon,
+  PriorityPropertyIcon,
+  RelatesToPropertyIcon,
+  RelationPropertyIcon,
+  ScopePropertyIcon,
+  StartDatePropertyIcon,
+  StatePropertyIcon,
+  UserCirclePropertyIcon,
+  UserPropertyIcon,
+  UserSquarePropertyIcon,
+  WorkflowsPropertyIcon,
+} from "./properties";
+// Sub-brand icons
 import { CopyLinkIcon } from "./actions/copy-link";
 import { LabelFilledIcon } from "./properties/label-filled-icon";
-import { PiChatLogo } from "./sub-brand/pi-chat";
-import { PlaneNewIcon } from "./sub-brand/plane-icon";
-import { WikiIcon } from "./sub-brand/wiki-icon";
-import { AnalyticsIcon } from "./workspace/analytics-icon";
-import { ArchiveIcon } from "./workspace/archive-icon";
-import { DashboardIcon } from "./workspace/dashboard-icon";
-import { DraftIcon } from "./workspace/draft-icon";
-import { HomeIcon } from "./workspace/home-icon";
-import { InboxIcon } from "./workspace/inbox-icon";
-import { MultipleStickyIcon } from "./workspace/multiple-sticky-icon";
-import { ProjectIcon } from "./workspace/project-icon";
-import { YourWorkIcon } from "./workspace/your-work-icon";
+import { PiChatLogo, PlaneNewIcon, WikiIcon } from "./sub-brand";
+// Workspace icons
+import {
+  AnalyticsIcon,
+  ArchiveIcon,
+  DashboardIcon,
+  DraftIcon,
+  HomeIcon,
+  InboxIcon,
+  MultipleStickyIcon,
+  ProjectIcon,
+  YourWorkIcon,
+} from "./workspace";
 
 export const ICON_REGISTRY = {
   // Sub-brand icons
@@ -129,11 +142,20 @@ export const ICON_REGISTRY = {
   "action.add": AddIcon,
   "action.add-workitem": AddWorkItemIcon,
   "action.add-reaction": AddReactionIcon,
+  "action.check": CheckIcon,
   "action.close": CloseIcon,
+  "action.copy": CopyIcon,
+  "action.edit": EditIcon,
+  "action.globe": GlobeIcon,
+  "action.link": LinkIcon,
+  "action.lock": LockIcon,
+  "action.new-tab": NewTabIcon,
   "action.filter": FilterIcon,
   "action.filter-applied": FilterAppliedIcon,
   "action.search": SearchIcon,
+  "action.plus": PlusIcon,
   "action.preferences": PreferencesIcon,
+  "action.trash": TrashIcon,
   "action.copy-link": CopyLinkIcon,
   "action.upgrade": UpgradeIcon,
 
@@ -142,6 +164,9 @@ export const ICON_REGISTRY = {
   "arrow.chevron-left": ChevronLeftIcon,
   "arrow.chevron-right": ChevronRightIcon,
   "arrow.chevron-up": ChevronUpIcon,
+
+  // Misc icons
+  "misc.info": InfoIcon,
   "arrow.reply": ReplyIcon,
 
   // Default fallback

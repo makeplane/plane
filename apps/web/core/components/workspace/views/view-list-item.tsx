@@ -2,9 +2,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Pencil, Trash2 } from "lucide-react";
-// plane imports
+
 import { GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
+// plane imports
 import { CustomMenu } from "@plane/ui";
 import { truncateText } from "@plane/utils";
 // helpers
@@ -57,7 +58,7 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
-                        <Pencil size={14} strokeWidth={2} />
+                        <EditIcon width={14} height={14} strokeWidth={2} />
                         <span>Edit View</span>
                       </span>
                     </CustomMenu.MenuItem>
@@ -70,7 +71,7 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
-                        <Trash2 size={14} strokeWidth={2} />
+                        <TrashIcon width={14} height={14} strokeWidth={2} />
                         <span>Delete View</span>
                       </span>
                     </CustomMenu.MenuItem>

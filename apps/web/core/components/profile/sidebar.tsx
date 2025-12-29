@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
-import { Pencil } from "lucide-react";
+
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
@@ -11,14 +11,14 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { EditIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
 import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
-// helpers
-import { getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
+// components
+import { CoverImage } from "@/components/common/cover-image";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProject } from "@/hooks/store/use-project";
@@ -96,18 +96,16 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
               <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded-sm bg-white">
                 <Link href={`/${workspaceSlug}/settings/account`}>
                   <span className="grid place-items-center text-black">
-                    <Pencil className="h-3 w-3" />
+                    <EditIcon className="h-3 w-3" />
                   </span>
                 </Link>
               </div>
             )}
-            <img
-              src={
-                getCoverImageDisplayURL(userData?.cover_image_url, "/users/user-profile-cover-default-img.png") ||
-                "/users/user-profile-cover-default-img.png"
-              }
+            <CoverImage
+              src={userData?.cover_image_url ?? undefined}
               alt={userData?.display_name}
-              className="h-[110px] w-full object-cover"
+              className="h-[110px] w-full"
+              showDefaultWhenEmpty
             />
             <div className="absolute -bottom-[26px] left-5 h-[52px] w-[52px] rounded-sm">
               {userData?.avatar_url && userData?.avatar_url !== "" ? (
@@ -169,10 +167,10 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                                 <div
                                   className={`rounded-sm px-1 py-0.5 text-11 font-medium ${
                                     completedIssuePercentage <= 35
-                                      ? "bg-red-500/10 text-red-500"
+                                      ? "bg-danger-subtle text-danger-primary"
                                       : completedIssuePercentage <= 70
                                         ? "bg-yellow-500/10 text-yellow-500"
-                                        : "bg-green-500/10 text-green-500"
+                                        : "bg-success-subtle text-success-primary"
                                   }`}
                                 >
                                   {completedIssuePercentage}%

@@ -202,7 +202,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
         {/* Name Input */}
         <div className="flex flex-col gap-2">
           <label
-            className="block text-13 font-medium text-tertiary after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="block text-13 font-medium text-tertiary after:content-['*'] after:ml-0.5 after:text-danger-primary"
             htmlFor="first_name"
           >
             Name
@@ -230,7 +230,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
                   "w-full px-3 py-2 text-secondary border border-strong rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-accent-strong placeholder:text-placeholder focus:border-transparent transition-all duration-200",
                   {
                     "border-strong": !errors.first_name,
-                    "border-red-500": errors.first_name,
+                    "border-danger-strong": errors.first_name,
                   }
                 )}
                 placeholder="Enter your full name"
@@ -238,7 +238,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
               />
             )}
           />
-          {errors.first_name && <span className="text-13 text-red-500">{errors.first_name.message}</span>}
+          {errors.first_name && <span className="text-13 text-danger-primary">{errors.first_name.message}</span>}
         </div>
 
         {/* setting up password for the first time */}

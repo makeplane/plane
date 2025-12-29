@@ -72,8 +72,8 @@ const ProjectInsights = observer(function ProjectInsights() {
                   {
                     key: "count",
                     name: "Count",
-                    fill: "var(--color-brand-default)",
-                    stroke: "var(--color-brand-default)",
+                    fill: "var(--text-color-accent-primary)",
+                    stroke: "var(--text-color-accent-primary)",
                     fillOpacity: 0.6,
                     dot: {
                       r: 4,

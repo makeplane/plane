@@ -1,10 +1,10 @@
 import type { Editor } from "@tiptap/core";
 import { TableMap } from "@tiptap/pm/tables";
-import { ArrowLeft, ArrowRight, Copy, ToggleRight, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, ToggleRight } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 // extensions
 import type { ISvgIcons } from "@plane/propel/icons";
-import { CloseIcon } from "@plane/propel/icons";
+import { CopyIcon, TrashIcon, CloseIcon } from "@plane/propel/icons";
 import { findTable, getSelectedColumns } from "@/extensions/table/table/utilities/helpers";
 // local imports
 import { duplicateColumns } from "../actions";
@@ -31,7 +31,7 @@ const DROPDOWN_ITEMS: {
   {
     key: "duplicate",
     label: "Duplicate",
-    icon: Copy,
+    icon: CopyIcon,
     action: (editor) => {
       const table = findTable(editor.state.selection);
       if (!table) return;
@@ -52,7 +52,7 @@ const DROPDOWN_ITEMS: {
   {
     key: "delete",
     label: "Delete",
-    icon: Trash2,
+    icon: TrashIcon,
     action: (editor) => editor.chain().focus().deleteColumn().run(),
   },
 ];
