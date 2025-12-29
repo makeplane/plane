@@ -1,10 +1,15 @@
 // types
 import { API_BASE_URL } from "@plane/constants";
-import type { TDocumentPayload, TPage } from "@plane/types";
+import type { TDocumentPayload, TPage, TPaginationInfo } from "@plane/types";
 // helpers
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
+
+// Paginated response type for pages
+export type TPagePaginatedResponse = TPaginationInfo & {
+  results: TPage[];
+};
 
 export class ProjectPageService extends APIService {
   private fileUploadService: FileUploadService;
@@ -15,8 +20,19 @@ export class ProjectPageService extends APIService {
     this.fileUploadService = new FileUploadService();
   }
 
-  async fetchAll(workspaceSlug: string, projectId: string): Promise<TPage[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`)
+  async fetchAll(
+    workspaceSlug: string,
+    projectId: string,
+    queries?: Record<string, string | number>,
+    config = {}
+  ): Promise<TPagePaginatedResponse> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`,
+      {
+        params: queries,
+      },
+      config
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
