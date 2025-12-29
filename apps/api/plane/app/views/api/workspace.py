@@ -45,10 +45,7 @@ class WorkspaceAPITokenEndpoint(BaseAPIView):
 
     def get(self, request: Request, slug: str, pk: Optional[str] = None) -> Response:
         if pk is None:
-            try:
-                api_tokens = APIToken.objects.filter(workspace__slug=slug, is_service=False, user=request.user)
-            except APIToken.DoesNotExist:
-                return Response({"error": "API token does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            api_tokens = APIToken.objects.filter(workspace__slug=slug, is_service=False, user=request.user)
 
             serializer = APITokenReadSerializer(api_tokens, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
