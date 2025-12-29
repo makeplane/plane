@@ -58,13 +58,12 @@ export const NavItemChildren = observer(function NavItemChildren(props: { projec
                 >
                   <div
                     className={cn(
-                      "cursor-pointer relative group w-full flex items-center justify-between gap-1.5 rounded p-1 px-1.5 outline-none",
+                      "cursor-pointer relative group w-full flex items-center justify-between text-secondary gap-1.5 rounded-sm p-1 px-1.5 outline-none",
                       {
-                        "text-custom-text-200 bg-custom-background-80/75": isActive,
-                        "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
-                          !isActive,
+                        "bg-layer-transparent-active hover:bg-layer-transparent-active": isActive,
+                        "hover:bg-layer-transparent-hover": !isActive,
                       },
-                      "text-xs font-medium"
+                      "text-11 font-medium"
                     )}
                   >
                     {t(getProjectSettingsPageLabelI18nKey(link.key, link.i18n_label))}

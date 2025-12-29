@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
-import { Pencil, Trash2, Copy, Link } from "lucide-react";
+
 import { useTranslation } from "@plane/i18n";
+import { LinkIcon, CopyIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssueServiceType } from "@plane/types";
@@ -47,29 +48,32 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
     <>
       <div
         key={linkId}
-        className="group col-span-12 lg:col-span-6 xl:col-span-4 2xl:col-span-3 3xl:col-span-2 flex items-center justify-between gap-3 h-10 flex-shrink-0 px-3 bg-custom-background-90 hover:bg-custom-background-80 border-[0.5px] border-custom-border-200 rounded"
+        className="group col-span-12 lg:col-span-6 xl:col-span-4 2xl:col-span-3 3xl:col-span-2 flex items-center justify-between gap-3 h-10 flex-shrink-0 px-3 bg-surface-2 hover:bg-layer-1 border-[0.5px] border-subtle rounded-sm"
       >
-        <div className="flex items-center gap-2.5 truncate flex-grow">
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
           {faviconUrl ? (
-            <img src={faviconUrl} alt="favicon" className="size-4" />
+            <img src={faviconUrl} alt="favicon" className="size-4 flex-shrink-0" />
           ) : (
-            <Link className="size-4 text-custom-text-350 group-hover:text-custom-text-100" />
+            <LinkIcon className="size-4 text-tertiary group-hover:text-primary flex-shrink-0" />
           )}
           <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
             <a
               href={linkDetail.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="truncate text-sm cursor-pointer flex-grow flex items-center gap-3"
+              className="flex-1 w-0 text-body-xs-regular cursor-pointer flex items-center"
             >
-              {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
-
-              {linkTitle && linkTitle !== "" && <span className="text-custom-text-400 text-xs">{linkTitle}</span>}
+              <span className="truncate flex-1 w-0">
+                {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
+                {linkTitle && linkTitle !== "" && (
+                  <span className="text-placeholder text-caption-sm-regular"> {linkTitle}</span>
+                )}
+              </span>
             </a>
           </Tooltip>
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
-          <p className="p-1 text-xs align-bottom leading-5 text-custom-text-400 group-hover-text-custom-text-200">
+          <p className="p-1 text-caption-sm-regular align-bottom leading-5 text-placeholder group-hover-text-secondary">
             {calculateTimeAgo(linkDetail.created_at)}
           </p>
           <span
@@ -81,13 +85,13 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
                 message: t("common.link_copied_to_clipboard"),
               });
             }}
-            className="relative grid place-items-center rounded p-1 text-custom-text-400 outline-none group-hover:text-custom-text-200 cursor-pointer hover:bg-custom-background-80"
+            className="relative grid place-items-center rounded-sm p-1 text-placeholder outline-none group-hover:text-secondary cursor-pointer hover:bg-layer-1"
           >
-            <Copy className="h-3.5 w-3.5 stroke-[1.5]" />
+            <CopyIcon className="h-3.5 w-3.5 stroke-[1.5]" />
           </span>
           <CustomMenu
             ellipsis
-            buttonClassName="text-custom-text-400 group-hover:text-custom-text-200"
+            buttonClassName="text-placeholder group-hover:text-secondary"
             placement="bottom-end"
             closeOnSelect
             disabled={isNotAllowed}
@@ -98,7 +102,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
                 toggleIssueLinkModal(true);
               }}
             >
-              <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+              <EditIcon className="h-3 w-3 stroke-[1.5] text-secondary" />
               {t("common.actions.edit")}
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
@@ -107,7 +111,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
                 linkOperations.remove(linkDetail.id);
               }}
             >
-              <Trash2 className="h-3 w-3" />
+              <TrashIcon className="h-3 w-3" />
               {t("common.actions.delete")}
             </CustomMenu.MenuItem>
           </CustomMenu>

@@ -13,13 +13,13 @@ type Props = {
 };
 
 const IconWrapper = React.memo(function IconWrapper({ icon }: { icon: React.ReactNode }) {
-  return <div className="flex size-4 items-center justify-center overflow-hidden !text-[1rem]">{icon}</div>;
+  return <div className="flex size-4 items-center justify-center overflow-hidden !text-16">{icon}</div>;
 });
 
 IconWrapper.displayName = "IconWrapper";
 
 const LabelWrapper = React.memo(function LabelWrapper({ label }: { label: React.ReactNode }) {
-  return <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{label}</div>;
+  return <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate text-primary">{label}</div>;
 });
 
 LabelWrapper.displayName = "LabelWrapper";

@@ -2,7 +2,8 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 // icons
-import { Check, Info } from "lucide-react";
+import { Info } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 // ui
 import { CircularProgressIndicator } from "@plane/ui";
 // components
@@ -72,14 +73,14 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
         <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
           {completedModuleCheck ? (
             progress === 100 ? (
-              <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
+              <CheckIcon className="h-3 w-3 stroke-[2] text-accent-primary" />
             ) : (
-              <span className="text-sm text-custom-primary-100">{`!`}</span>
+              <span className="text-13 text-accent-primary">{`!`}</span>
             )
           ) : progress === 100 ? (
-            <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
+            <CheckIcon className="h-3 w-3 stroke-[2] text-accent-primary" />
           ) : (
-            <span className="text-[9px] text-custom-text-300">{`${progress}%`}</span>
+            <span className="text-9 text-tertiary">{`${progress}%`}</span>
           )}
         </CircularProgressIndicator>
       }
@@ -88,7 +89,7 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
           onClick={openModuleOverview}
           className={`z-[5] flex-shrink-0 ${isMobile ? "flex" : "hidden group-hover:flex"}`}
         >
-          <Info className="h-4 w-4 text-custom-text-400" />
+          <Info className="h-4 w-4 text-placeholder" />
         </button>
       }
       actionableItems={<ModuleListItemAction moduleId={moduleId} moduleDetails={moduleDetails} parentRef={parentRef} />}

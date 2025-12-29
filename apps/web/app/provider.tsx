@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { useTheme, ThemeProvider } from "next-themes";
+import { useTheme } from "next-themes";
 import { SWRConfig } from "swr";
 // Plane Imports
 import { WEB_SWR_CONFIG } from "@plane/constants";
@@ -9,44 +9,45 @@ import { Toast } from "@plane/propel/toast";
 import { resolveGeneralTheme } from "@plane/utils";
 // polyfills
 import "@/lib/polyfills";
-// progress bar
-import { AppProgressBar } from "@/lib/b-progress";
 // mobx store provider
 import { StoreProvider } from "@/lib/store-context";
-// wrappers
-import { InstanceWrapper } from "@/lib/wrappers/instance-wrapper";
 
 // lazy imports
+const AppProgressBar = lazy(function AppProgressBar() {
+  return import("@/lib/b-progress/AppProgressBar");
+});
+
 const StoreWrapper = lazy(function StoreWrapper() {
   return import("@/lib/wrappers/store-wrapper");
 });
 
-const PostHogProvider = lazy(function PostHogProvider() {
-  return import("@/lib/posthog-provider");
+const InstanceWrapper = lazy(function InstanceWrapper() {
+  return import("@/lib/wrappers/instance-wrapper");
 });
 
 const ChatSupportModal = lazy(function ChatSupportModal() {
   return import("@/components/global/chat-support-modal");
 });
 
+const PostHogProvider = lazy(function PostHogProvider() {
+  return import("@/lib/posthog-provider");
+});
+
 export interface IAppProvider {
   children: React.ReactNode;
-}
-
-function ToastWithTheme() {
-  const { resolvedTheme } = useTheme();
-  return <Toast theme={resolveGeneralTheme(resolvedTheme)} />;
 }
 
 export function AppProvider(props: IAppProvider) {
   const { children } = props;
   // themes
+  const { resolvedTheme } = useTheme();
+
   return (
     <StoreProvider>
-      <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
+      <>
         <AppProgressBar />
         <TranslationProvider>
-          <ToastWithTheme />
+          <Toast theme={resolveGeneralTheme(resolvedTheme)} />
           <StoreWrapper>
             <InstanceWrapper>
               <Suspense>
@@ -58,7 +59,7 @@ export function AppProvider(props: IAppProvider) {
             </InstanceWrapper>
           </StoreWrapper>
         </TranslationProvider>
-      </ThemeProvider>
+      </>
     </StoreProvider>
   );
 }

@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../utils";
 import type { TTabNavigationItemProps } from "./tab-navigation-types";
@@ -7,15 +6,15 @@ export function TabNavigationItem({ children, isActive, className }: TTabNavigat
   return (
     <div
       className={cn(
-        "relative flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors z-10",
-        isActive ? "text-custom-text-100" : "text-custom-text-200 hover:text-custom-text-100",
+        "relative flex items-center gap-2 rounded-md px-2 py-1.5 text-13 font-medium transition-colors z-10",
+        isActive ? "text-primary" : "text-secondary hover:text-primary hover:bg-layer-transparent-hover",
         className
       )}
     >
       <AnimatePresence>
         {isActive && (
           <motion.div
-            className="absolute inset-0 bg-custom-background-90 rounded-md -z-10"
+            className="absolute inset-0 bg-layer-transparent-active rounded-md -z-10"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}

@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Lock } from "lucide-react";
+
 // plane imports
 import {
   EIssueFilterType,
@@ -11,7 +11,7 @@ import {
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { ViewsIcon } from "@plane/propel/icons";
+import { LockIcon, ViewsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EViewAccess, EIssueLayoutTypes } from "@plane/types";
@@ -124,7 +124,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
               <BreadcrumbLink
                 label="Views"
                 href={`/${workspaceSlug}/projects/${projectId}/views/`}
-                icon={<ViewsIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
               />
             }
           />
@@ -149,9 +149,9 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
         </Breadcrumbs>
 
         {viewDetails?.access === EViewAccess.PRIVATE ? (
-          <div className="cursor-default text-custom-text-300">
+          <div className="cursor-default text-tertiary">
             <Tooltip tooltipContent={"Private"}>
-              <Lock className="h-4 w-4" />
+              <LockIcon className="h-4 w-4" />
             </Tooltip>
           </div>
         ) : (
@@ -190,23 +190,22 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
             </FiltersDropdown>
           )}
         </>
-        {canUserCreateIssue ? (
+        {canUserCreateIssue && (
           <Button
+            variant="primary"
+            size="lg"
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
             data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.PROJECT_VIEW}
-            size="sm"
           >
             Add work item
           </Button>
-        ) : (
-          <></>
         )}
         <div className="hidden md:block">
           <ViewQuickActions
             parentRef={parentRef}
-            customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+            customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
             projectId={projectId.toString()}
             view={viewDetails}
             workspaceSlug={workspaceSlug.toString()}

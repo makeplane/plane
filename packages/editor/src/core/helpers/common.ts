@@ -15,8 +15,8 @@ export const getEditorClassNames = ({ noBorder, borderOnFocus, containerClassNam
   cn(
     "w-full max-w-full sm:rounded-lg focus:outline-none focus:border-0",
     {
-      "border border-custom-border-200": !noBorder,
-      "focus:border border-custom-border-300": borderOnFocus,
+      "border border-subtle-1": !noBorder,
+      "focus:border border-strong": borderOnFocus,
     },
     containerClassName
   );

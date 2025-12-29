@@ -2,8 +2,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
-import { Boxes, Check, Share2, Star, User2 } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { Boxes, Share2, Star, User2 } from "lucide-react";
+import { CheckIcon, CloseIcon } from "@plane/propel/icons";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { EmptySpace, EmptySpaceItem } from "@/components/ui/empty-space";
@@ -75,15 +75,15 @@ function WorkspaceInvitationPage() {
       <div className="flex h-full w-full flex-col items-center justify-center px-3">
         {invitationDetail && !invitationDetail.responded_at ? (
           error ? (
-            <div className="flex w-full flex-col space-y-4 rounded border border-custom-border-200 bg-custom-background-100 px-4 py-8 text-center shadow-2xl md:w-1/3">
-              <h2 className="text-xl uppercase">INVITATION NOT FOUND</h2>
+            <div className="flex w-full flex-col space-y-4 rounded-sm border border-subtle bg-surface-1 px-4 py-8 text-center shadow-2xl md:w-1/3">
+              <h2 className="text-18 uppercase">INVITATION NOT FOUND</h2>
             </div>
           ) : (
             <EmptySpace
               title={`You have been invited to ${invitationDetail.workspace.name}`}
               description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
             >
-              <EmptySpaceItem Icon={Check} title="Accept" action={handleAccept} />
+              <EmptySpaceItem Icon={CheckIcon} title="Accept" action={handleAccept} />
               <EmptySpaceItem Icon={CloseIcon} title="Ignore" action={handleReject} />
             </EmptySpace>
           )

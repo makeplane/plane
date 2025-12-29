@@ -30,7 +30,7 @@ export const StateGroupStatComponent = observer(function StateGroupStatComponent
           title={
             <div className="flex items-center gap-2">
               <StateGroupIcon stateGroup={group.state as TStateGroups} />
-              <span className="text-xs capitalize">{group.state}</span>
+              <span className="text-11 capitalize">{group.state}</span>
             </div>
           }
           completed={group.completed}

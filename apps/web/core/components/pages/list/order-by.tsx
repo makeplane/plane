@@ -1,12 +1,10 @@
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
-// types
+// plane imports
 import { getButtonStyling } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
+// types
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TPageFiltersSortBy, TPageFiltersSortKey } from "@plane/types";
-// ui
 import { CustomMenu } from "@plane/ui";
-// helpers
-import { cn } from "@plane/utils";
 
 type Props = {
   onChange: (value: { key?: TPageFiltersSortKey; order?: TPageFiltersSortBy }) => void;
@@ -32,10 +30,9 @@ export function PageOrderByDropdown(props: Props) {
   return (
     <CustomMenu
       customButton={
-        <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
+        <div className={getButtonStyling("secondary", "lg")}>
           {!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}
           {orderByDetails?.label}
-          <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
         </div>
       }
       placement="bottom-end"
@@ -53,10 +50,10 @@ export function PageOrderByDropdown(props: Props) {
           }
         >
           {option.label}
-          {sortKey === option.key && <Check className="h-3 w-3" />}
+          {sortKey === option.key && <CheckIcon className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2 border-custom-border-200" />
+      <hr className="my-2 border-subtle" />
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
         onClick={() => {
@@ -67,7 +64,7 @@ export function PageOrderByDropdown(props: Props) {
         }}
       >
         Ascending
-        {!isDescending && <Check className="h-3 w-3" />}
+        {!isDescending && <CheckIcon className="h-3 w-3" />}
       </CustomMenu.MenuItem>
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
@@ -79,7 +76,7 @@ export function PageOrderByDropdown(props: Props) {
         }}
       >
         Descending
-        {isDescending && <Check className="h-3 w-3" />}
+        {isDescending && <CheckIcon className="h-3 w-3" />}
       </CustomMenu.MenuItem>
     </CustomMenu>
   );

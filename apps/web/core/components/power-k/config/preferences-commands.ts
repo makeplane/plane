@@ -28,9 +28,12 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
         .then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: t("toast.success"),
-            message: t("power_k.preferences_actions.toast.theme.success"),
+            title: "Theme updated",
+            message: "Reloading to apply changes...",
           });
+          // reload the page after showing the toast
+          window.location.reload();
+          return;
         })
         .catch(() => {
           setToast({
@@ -38,6 +41,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
             title: t("toast.error"),
             message: t("power_k.preferences_actions.toast.theme.error"),
           });
+          return;
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,6 +57,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
             title: t("toast.success"),
             message: t("power_k.preferences_actions.toast.timezone.success"),
           });
+          return;
         })
         .catch(() => {
           setToast({
@@ -60,6 +65,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
             title: t("toast.error"),
             message: t("power_k.preferences_actions.toast.timezone.error"),
           });
+          return;
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,6 +81,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
             title: t("toast.success"),
             message: t("power_k.preferences_actions.toast.generic.success"),
           });
+          return;
         })
         .catch(() => {
           setToast({
@@ -82,6 +89,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
             title: t("toast.error"),
             message: t("power_k.preferences_actions.toast.generic.error"),
           });
+          return;
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -98,7 +106,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       icon: Palette,
       onSelect: (data) => {
         const theme = data as string;
-        handleUpdateTheme(theme);
+        void handleUpdateTheme(theme);
       },
       isEnabled: () => true,
       isVisible: () => true,

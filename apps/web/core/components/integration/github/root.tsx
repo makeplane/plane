@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
-import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
-import { MembersPropertyIcon } from "@plane/propel/icons";
+import { ArrowLeft, List, Settings, UploadCloud } from "lucide-react";
+import { CheckIcon, MembersPropertyIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
@@ -70,7 +70,7 @@ const integrationWorkflowData = [
   {
     title: "Confirm",
     key: "import-confirm",
-    icon: Check,
+    icon: CheckIcon,
   },
 ];
 
@@ -156,13 +156,13 @@ export function GithubImporterRoot() {
     <form onSubmit={handleSubmit(createGithubImporterService)}>
       <div className="mt-4 space-y-2">
         <Link href={`/${workspaceSlug}/settings/imports`}>
-          <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
+          <span className="inline-flex cursor-pointer items-center gap-2 text-13 font-medium text-secondary hover:text-primary">
             <ArrowLeft className="h-3 w-3" />
             <div>Cancel import & go back</div>
           </span>
         </Link>
 
-        <div className="space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
+        <div className="space-y-4 rounded-[10px] border border-subtle bg-surface-1 p-4">
           <div className="flex items-center gap-2">
             <div className="h-10 w-10 flex-shrink-0">
               <img src={GithubLogo} className="w-full h-full object-cover" alt="GitHubLogo" />
@@ -173,23 +173,23 @@ export function GithubImporterRoot() {
                   <div
                     className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border ${
                       index <= activeIntegrationState()
-                        ? `border-custom-primary bg-custom-primary ${
+                        ? `border-accent-strong ${
                             index === activeIntegrationState()
-                              ? "border-opacity-100 bg-opacity-100"
-                              : "border-opacity-80 bg-opacity-80"
+                              ? "border-opacity-100 bg-accent-primary"
+                              : "border-opacity-80 bg-accent-primary/80"
                           }`
-                        : "border-custom-border-200"
+                        : "border-subtle"
                     }`}
                   >
                     <integration.icon
-                      className={`h-5 w-5 ${index <= activeIntegrationState() ? "text-white" : "text-custom-text-400"}`}
+                      className={`h-5 w-5 ${index <= activeIntegrationState() ? "text-on-color" : "text-placeholder"}`}
                     />
                   </div>
                   {index < integrationWorkflowData.length - 1 && (
                     <div
                       key={index}
                       className={`border-b px-7 ${
-                        index <= activeIntegrationState() - 1 ? `border-custom-primary` : `border-custom-border-200`
+                        index <= activeIntegrationState() - 1 ? `border-accent-strong` : `border-subtle`
                       }`}
                     >
                       {" "}

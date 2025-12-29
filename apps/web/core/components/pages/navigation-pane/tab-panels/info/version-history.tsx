@@ -39,19 +39,19 @@ const VersionHistoryItem = observer(function VersionHistoryItem(props: VersionHi
   const { t } = useTranslation();
 
   return (
-    <li className="relative flex items-center gap-x-4 text-xs font-medium">
+    <li className="relative flex items-center gap-x-4 text-11 font-medium">
       {/* timeline icon */}
       <div className="relative size-6 flex-none grid place-items-center">
-        <div className="size-2 rounded-full bg-custom-background-80" />
+        <div className="size-2 rounded-full bg-layer-3" />
       </div>
       {/* end timeline icon */}
       <Link
         href={getVersionLink(version.id)}
-        className={cn("block flex-1 hover:bg-custom-background-90 rounded-md py-2 px-1", {
-          "bg-custom-background-80 hover:bg-custom-background-80": isVersionActive,
+        className={cn("block flex-1 hover:bg-layer-transparent-hover rounded-md py-2 px-1", {
+          " bg-layer-transparent-selected hover:bg-layer-transparent-selected": isVersionActive,
         })}
       >
-        <p className="text-custom-text-300">
+        <p className="text-tertiary">
           {renderFormattedDate(version.last_saved_at)}, {renderFormattedTime(version.last_saved_at)}
         </p>
         <p className="mt-1 flex items-center gap-1">
@@ -59,7 +59,7 @@ const VersionHistoryItem = observer(function VersionHistoryItem(props: VersionHi
             size="sm"
             src={getFileURL(versionCreator?.avatar_url ?? "")}
             name={versionCreator?.display_name}
-            className="flex-shrink-0"
+            className="shrink-0"
           />
           <span>{versionCreator?.display_name ?? t("common.deactivated_user")}</span>
         </p>
@@ -104,26 +104,24 @@ export const PageNavigationPaneInfoTabVersionHistory = observer(function PageNav
 
   return (
     <div>
-      <p className="text-xs font-medium text-custom-text-200">
-        {t("page_navigation_pane.tabs.info.version_history.label")}
-      </p>
+      <p className="text-11 font-medium text-secondary">{t("page_navigation_pane.tabs.info.version_history.label")}</p>
       <div className="mt-3">
-        <ul role="list" className="relative">
+        <ul className="relative">
           {/* timeline line */}
           <div className={cn("absolute left-0 top-0 h-full flex w-6 justify-center")}>
-            <div className="w-px bg-custom-background-80" />
+            <div className="w-px bg-layer-3" />
           </div>
           {/* end timeline line */}
-          <li className="relative flex items-center gap-x-4 text-xs font-medium">
+          <li className="relative flex items-center gap-x-4 text-11 font-medium">
             {/* timeline icon */}
-            <div className="relative size-6 flex-none rounded-full grid place-items-center bg-custom-primary-100/20">
-              <div className="size-2.5 rounded-full bg-custom-primary-100/40" />
+            <div className="relative size-6 flex-none rounded-full grid place-items-center bg-accent-primary/20">
+              <div className="size-2.5 rounded-full bg-accent-primary/40" />
             </div>
             {/* end timeline icon */}
             <Link
               href={getVersionLink()}
-              className={cn("flex-1 hover:bg-custom-background-90 rounded-md py-2 px-1", {
-                "bg-custom-background-80 hover:bg-custom-background-80": !activeVersion,
+              className={cn("flex-1 bg-layer-transparent hover:bg-layer-transparent-hover rounded-md py-2 px-1", {
+                "bg-layer-transparent-selected hover:bg-layer-transparent-selected": !activeVersion,
               })}
             >
               {t("page_navigation_pane.tabs.info.version_history.current_version")}

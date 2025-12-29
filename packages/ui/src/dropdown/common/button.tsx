@@ -23,7 +23,7 @@ export function DropdownButton(props: IMultiSelectDropdownButton | ISingleSelect
         className={cn(
           "clickable block h-full max-w-full outline-none",
           {
-            "cursor-not-allowed text-custom-text-200": disabled,
+            "cursor-not-allowed text-secondary": disabled,
             "cursor-pointer": !disabled,
           },
           buttonContainerClassName

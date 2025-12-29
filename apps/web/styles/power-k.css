@@ -1,45 +1,27 @@
-[cmdk-group] {
-  padding-left: 0.45rem;
-  padding-right: 0.45rem;
-  margin-top: 0.5rem;
-}
+@layer components {
+  [cmdk-group] {
+    @apply mt-2 px-[0.45rem];
+  }
 
-[cmdk-group-heading] {
-  color: rgba(var(--color-text-300));
-  font-size: 0.75rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  padding-left: 0.45rem;
-  padding-right: 0.45rem;
-}
+  [cmdk-group-heading] {
+    @apply text-tertiary text-12 font-medium mb-2 px-[0.45rem];
+  }
 
-[cmdk-item] {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 0.375rem;
-  padding: 0.5rem;
-  font-size: 0.825rem;
-  line-height: 1.25rem;
-  cursor: pointer;
-}
+  [cmdk-item] {
+    @apply flex items-center justify-between cursor-pointer bg-layer-transparent text-body-xs-regular p-2 rounded-md;
 
-[cmdk-item]:focus {
-  background-color: rgba(var(--color-background-80));
-}
+    &:focus,
+    &[aria-selected="true"] {
+      @apply bg-layer-transparent-active;
+    }
 
-[cmdk-item][aria-selected="true"] {
-  background-color: rgba(var(--color-background-80));
-}
+    &[aria-disabled="true"],
+    &[data-disabled="true"] {
+      @apply bg-layer-transparent opacity-50 cursor-not-allowed;
 
-[cmdk-item][aria-disabled="true"],
-[cmdk-item][data-disabled="true"] {
-  cursor: not-allowed;
-  opacity: 0.5;
-  background-color: transparent;
-}
-
-[cmdk-item][aria-disabled="true"]:focus,
-[cmdk-item][data-disabled="true"]:focus {
-  background-color: rgba(var(--color-background-80), 0.7);
+      &:focus {
+        @apply bg-layer-1/70;
+      }
+    }
+  }
 }

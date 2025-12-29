@@ -37,15 +37,11 @@ const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: T
   // hooks
   const { toggleSidebar } = useUserSettings();
   // derived
-  const buttonClass = cn(
-    "flex w-full items-center px-2 py-1.5 rounded text-custom-text-200 justify-between",
-    "hover:bg-custom-primary-100/10",
-    {
-      "text-custom-text-200 bg-custom-background-80/75": typeof isActive === "function" ? isActive(setting) : isActive,
-      "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
-        typeof isActive === "function" ? !isActive(setting) : !isActive,
-    }
-  );
+  const isItemActive = typeof isActive === "function" ? isActive(setting) : isActive;
+  const buttonClass = cn("flex w-full items-center px-2 py-1.5 rounded-sm text-secondary justify-between", {
+    "bg-layer-transparent-active hover:bg-layer-transparent-active": isItemActive,
+    "hover:bg-layer-transparent-hover": !isItemActive,
+  });
 
   const titleElement = (
     <>
@@ -53,7 +49,7 @@ const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: T
         {setting.icon
           ? setting.icon
           : actionIcons && actionIcons({ type: setting.key, size: 16, className: "w-4 h-4" })}
-        <div className="text-sm font-medium truncate">{t(setting.i18n_label)}</div>
+        <div className="text-13 font-medium truncate">{t(setting.i18n_label)}</div>
       </div>
       {appendItemsToTitle?.(setting.key)}
     </>
@@ -65,7 +61,7 @@ const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: T
         as="button"
         type="button"
         className={cn(
-          "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400"
+          "group w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder"
         )}
         onClick={() => setIsExpanded(!isExpanded)}
       >
@@ -84,7 +80,7 @@ const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: T
       {/* Nested Navigation */}
       {isExpanded && (
         <Disclosure.Panel as="div" className={cn("relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5")} static>
-          <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-custom-border-200" />
+          <div className="absolute left-[15px] top-0 bottom-1 w-px bg-subtle-1" />
           {renderChildren?.(setting.key)}
         </Disclosure.Panel>
       )}

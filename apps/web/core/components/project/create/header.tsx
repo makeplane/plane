@@ -10,9 +10,8 @@ import type { IProject } from "@plane/types";
 // plane ui
 import { getTabIndex } from "@plane/utils";
 // components
+import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
-// helpers
-import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 // plane web imports
 import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/template-select";
 
@@ -32,20 +31,18 @@ function ProjectCreateHeader(props: Props) {
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
 
   return (
-    <div className="group relative h-44 w-full rounded-lg bg-custom-background-80">
-      {coverImage && (
-        <img
-          src={getCoverImageDisplayURL(coverImage, DEFAULT_COVER_IMAGE_URL)}
-          className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
-          alt={t("project_cover_image_alt")}
-        />
-      )}
+    <div className="group relative h-44 w-full rounded-lg">
+      <CoverImage
+        src={coverImage}
+        alt={t("project_cover_image_alt")}
+        className="absolute left-0 top-0 h-full w-full rounded-lg"
+      />
       <div className="absolute left-2.5 top-2.5">
         <ProjectTemplateSelect handleModalClose={handleClose} />
       </div>
       <div className="absolute right-2 top-2 p-2">
         <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={getIndex("close")}>
-          <CloseIcon className="h-5 w-5 text-white" />
+          <CloseIcon className="h-5 w-5 text-on-color" />
         </button>
       </div>
       <div className="absolute bottom-2 right-2">
@@ -75,7 +72,7 @@ function ProjectCreateHeader(props: Props) {
               className="flex items-center justify-center"
               buttonClassName="flex items-center justify-center"
               label={
-                <span className="grid h-11 w-11 place-items-center rounded-md bg-custom-background-80">
+                <span className="grid h-11 w-11 place-items-center rounded-md bg-layer-1">
                   <Logo logo={value} size={20} />
                 </span>
               }

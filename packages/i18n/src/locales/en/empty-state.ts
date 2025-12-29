@@ -183,5 +183,10 @@ export default {
       description: "Generate secure API tokens to connect your workspace with external systems and applications.",
       cta_primary: "Add API token",
     },
+    webhooks: {
+      title: "No Webhook added yet",
+      description: "Automate notifications to external services when project events occur.",
+      cta_primary: "Add webhook",
+    },
   },
 } as const;

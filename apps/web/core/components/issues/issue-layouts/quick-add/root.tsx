@@ -4,10 +4,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import type { UseFormRegister } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import { PlusIcon } from "lucide-react";
+
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { PlusIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";
 import { cn, createIssuePayload } from "@plane/utils";
@@ -150,7 +151,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
     <div
       className={cn(
         containerClassName,
-        errors && errors?.name && errors?.name?.message ? `border-red-500 bg-red-500/10` : ``
+        errors && errors?.name && errors?.name?.message ? `border-danger-strong bg-danger-subtle` : ``
       )}
     >
       {isOpen ? (
@@ -171,13 +172,13 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
           {QuickAddButton && <QuickAddButton isEpic={isEpic} onClick={() => handleIsOpen(true)} />}
           {customQuickAddButton && <>{customQuickAddButton}</>}
           {!QuickAddButton && !customQuickAddButton && (
-            <div
-              className="flex w-full cursor-pointer items-center gap-2 px-2 py-3 text-custom-text-350 hover:text-custom-text-300"
+            <button
+              className="flex w-full cursor-pointer items-center gap-2 px-2 py-3 bg-layer-transparent hover:bg-layer-transparent-hover"
               onClick={() => handleIsOpen(true)}
             >
               <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-              <span className="text-sm font-medium">{t(`${isEpic ? "epic.new" : "issue.new"}`)}</span>
-            </div>
+              <span className="text-13 font-medium">{t(`${isEpic ? "epic.new" : "issue.new"}`)}</span>
+            </button>
           )}
         </>
       )}

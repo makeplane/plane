@@ -3,9 +3,22 @@ export const ActionsIconsMap = [
   { icon: <Icon name="action.add" />, title: "AddIcon" },
   { icon: <Icon name="action.add-workitem" />, title: "AddWorkItemIcon" },
   { icon: <Icon name="action.add-reaction" />, title: "AddReactionIcon" },
+  { icon: <Icon name="action.check" />, title: "CheckIcon" },
   { icon: <Icon name="action.close" />, title: "CloseIcon" },
+  { icon: <Icon name="action.copy" />, title: "CopyIcon" },
+  { icon: <Icon name="action.edit" />, title: "EditIcon" },
+  { icon: <Icon name="action.globe" />, title: "GlobeIcon" },
+  { icon: <Icon name="action.link" />, title: "LinkIcon" },
+  { icon: <Icon name="action.lock" />, title: "LockIcon" },
+  { icon: <Icon name="action.new-tab" />, title: "NewTabIcon" },
+  { icon: <Icon name="action.filter" />, title: "FilterIcon" },
+  { icon: <Icon name="action.filter-applied" />, title: "FilterAppliedIcon" },
   { icon: <Icon name="action.search" />, title: "SearchIcon" },
+  { icon: <Icon name="action.plus" />, title: "PlusIcon" },
   { icon: <Icon name="action.preferences" />, title: "PreferencesIcon" },
+  { icon: <Icon name="action.trash" />, title: "TrashIcon" },
+  { icon: <Icon name="action.copy-link" />, title: "CopyLinkIcon" },
+  { icon: <Icon name="action.upgrade" />, title: "UpgradeIcon" },
 ];
 
 export const ArrowsIconsMap = [
@@ -13,6 +26,7 @@ export const ArrowsIconsMap = [
   { icon: <Icon name="arrow.chevron-left" />, title: "ChevronLeftIcon" },
   { icon: <Icon name="arrow.chevron-right" />, title: "ChevronRightIcon" },
   { icon: <Icon name="arrow.chevron-up" />, title: "ChevronUpIcon" },
+  { icon: <Icon name="arrow.reply" />, title: "ReplyIcon" },
 ];
 
 export const WorkspaceIconsMap = [
@@ -74,4 +88,7 @@ export const PropertyIconsMap = [
   { icon: <Icon name="property.user" />, title: "UserPropertyIcon" },
   { icon: <Icon name="property.user-square" />, title: "UserSquarePropertyIcon" },
   { icon: <Icon name="property.workflows" />, title: "WorkflowsPropertyIcon" },
+  { icon: <Icon name="property.label-filled" />, title: "LabelFilledIcon" },
 ];
+
+export const MiscIconsMap = [{ icon: <Icon name="misc.info" />, title: "InfoIcon" }];

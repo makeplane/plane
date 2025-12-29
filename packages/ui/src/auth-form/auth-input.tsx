@@ -31,20 +31,18 @@ export function AuthInput({
   return (
     <div className={cn(baseContainerClassName)}>
       {label && (
-        <label htmlFor={id} className={cn("text-sm font-semibold text-custom-text-300")}>
+        <label htmlFor={id} className={cn("text-13 font-semibold text-tertiary")}>
           {label}
         </label>
       )}
-      <div
-        className={cn("relative flex items-center rounded-md border border-custom-border-300 py-2 px-3 transition-all")}
-      >
+      <div className={cn("relative flex items-center rounded-md border border-strong py-2 px-3 transition-all")}>
         <Input
           {...props}
           type={inputType}
           className={cn(
-            "rounded-md disable-autofill-style h-6 w-full placeholder:text-base placeholder:text-custom-text-400 p-0 border-none",
+            "rounded-md disable-autofill-style h-6 w-full placeholder:text-14 placeholder:text-placeholder p-0 border-none",
             {
-              "border-red-500": error,
+              "border-danger-strong": error,
             },
             className
           )}
@@ -53,14 +51,14 @@ export function AuthInput({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+            className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
           >
             {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
         )}
       </div>
 
-      {error && <p className={cn("text-sm text-red-500", errorClassName)}>{error}</p>}
+      {error && <p className={cn("text-13 text-danger-primary", errorClassName)}>{error}</p>}
     </div>
   );
 }

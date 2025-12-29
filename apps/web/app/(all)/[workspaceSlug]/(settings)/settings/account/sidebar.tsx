@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Blocks, Lock } from "lucide-react";
+import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Blocks } from "lucide-react";
 // plane imports
 import { GROUPED_PROFILE_SETTINGS, PROFILE_SETTINGS_CATEGORIES } from "@plane/constants";
+import { LockIcon } from "@plane/propel/icons";
 import { getFileURL } from "@plane/utils";
 // components
 import { SettingsSidebar } from "@/components/settings/sidebar";
@@ -11,7 +12,7 @@ import { useUser } from "@/hooks/store/user";
 
 const ICONS = {
   profile: CircleUser,
-  security: Lock,
+  security: LockIcon,
   activity: Activity,
   preferences: Settings2,
   notifications: Bell,
@@ -50,7 +51,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
           <div className="flex-shrink-0">
             {!currentUser?.avatar_url || currentUser?.avatar_url === "" ? (
               <div className="h-8 w-8 rounded-full">
-                <CircleUserRound className="h-full w-full text-custom-text-200" />
+                <CircleUserRound className="h-full w-full text-secondary" />
               </div>
             ) : (
               <div className="relative h-8 w-8 overflow-hidden">
@@ -63,8 +64,8 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
             )}
           </div>
           <div className="w-full overflow-hidden">
-            <div className="text-base font-medium text-custom-text-200 truncate">{currentUser?.display_name}</div>
-            <div className="text-sm text-custom-text-300 truncate">{currentUser?.email}</div>
+            <div className="text-14 font-medium text-secondary truncate">{currentUser?.display_name}</div>
+            <div className="text-13 text-tertiary truncate">{currentUser?.email}</div>
           </div>
         </div>
       }

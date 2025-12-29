@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Globe2, Link, Lock, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 // plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@plane/propel/icon-button";
+import { LinkIcon, GlobeIcon, LockIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
@@ -37,14 +39,14 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
           key: "edit",
           action: setEditMode,
           title: t("common.actions.edit"),
-          icon: Pencil,
+          icon: EditIcon,
           shouldRender: canEdit,
         },
         {
           key: "copy_link",
           action: () => activityOperations.copyCommentLink(comment.id),
           title: t("common.actions.copy_link"),
-          icon: Link,
+          icon: LinkIcon,
           shouldRender: showCopyLinkOption,
         },
         {
@@ -60,14 +62,14 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
             comment.access === EIssueCommentAccessSpecifier.INTERNAL
               ? t("issue.comments.switch.public")
               : t("issue.comments.switch.private"),
-          icon: comment.access === EIssueCommentAccessSpecifier.INTERNAL ? Globe2 : Lock,
+          icon: comment.access === EIssueCommentAccessSpecifier.INTERNAL ? GlobeIcon : LockIcon,
           shouldRender: showAccessSpecifier,
         },
         {
           key: "delete",
           action: () => activityOperations.removeComment(comment.id),
           title: t("common.actions.delete"),
-          icon: Trash2,
+          icon: TrashIcon,
           shouldRender: canDelete,
         },
       ];
@@ -76,7 +78,7 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
   );
 
   return (
-    <CustomMenu ellipsis closeOnSelect>
+    <CustomMenu customButton={<IconButton icon={MoreHorizontal} variant="ghost" size="sm" />} closeOnSelect>
       {MENU_ITEMS.map((item) => {
         if (item.shouldRender === false) return null;
 
@@ -87,7 +89,7 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
             className={cn(
               "flex items-center gap-2",
               {
-                "text-custom-text-400": item.disabled,
+                "text-placeholder": item.disabled,
               },
               item.className
             )}
@@ -98,8 +100,8 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
               <h5>{item.title}</h5>
               {item.description && (
                 <p
-                  className={cn("text-custom-text-300 whitespace-pre-line", {
-                    "text-custom-text-400": item.disabled,
+                  className={cn("text-tertiary whitespace-pre-line", {
+                    "text-placeholder": item.disabled,
                   })}
                 >
                   {item.description}

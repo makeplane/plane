@@ -48,13 +48,13 @@ export function IssueCommentToolbar(props: Props) {
   }, [editorRef, updateActiveStates]);
 
   return (
-    <div className="flex h-9 w-full items-stretch gap-1.5 bg-custom-background-90 overflow-x-scroll">
-      <div className="flex w-full items-stretch justify-between gap-2 rounded border-[0.5px] border-custom-border-200 p-1">
+    <div className="flex h-9 w-full items-stretch gap-1.5 overflow-x-scroll">
+      <div className="flex w-full items-stretch justify-between gap-2 rounded-sm border-[0.5px] border-subtle p-1">
         <div className="flex items-stretch">
           {Object.keys(toolbarItems).map((key, index) => (
             <div
               key={key}
-              className={cn("flex items-stretch gap-0.5 border-r border-custom-border-200 px-2.5", {
+              className={cn("flex items-stretch gap-0.5 border-r border-subtle px-2.5", {
                 "pl-0": index === 0,
               })}
             >
@@ -65,9 +65,9 @@ export function IssueCommentToolbar(props: Props) {
                   <Tooltip
                     key={item.renderKey}
                     tooltipContent={
-                      <p className="flex flex-col gap-1 text-center text-xs">
+                      <p className="flex flex-col gap-1 text-center text-11">
                         <span className="font-medium">{item.name}</span>
-                        {item.shortcut && <kbd className="text-custom-text-400">{item.shortcut.join(" + ")}</kbd>}
+                        {item.shortcut && <kbd className="text-placeholder">{item.shortcut.join(" + ")}</kbd>}
                       </p>
                     }
                   >
@@ -75,15 +75,15 @@ export function IssueCommentToolbar(props: Props) {
                       type="button"
                       onClick={() => executeCommand(item)}
                       className={cn(
-                        "grid place-items-center aspect-square rounded-sm p-0.5 text-custom-text-400 hover:bg-custom-background-80",
+                        "grid place-items-center aspect-square rounded-xs p-0.5 text-placeholder hover:bg-layer-transparent-hover",
                         {
-                          "bg-custom-background-80 text-custom-text-100": isItemActive,
+                          "bg-layer-transparent-hover text-primary": isItemActive,
                         }
                       )}
                     >
                       <item.icon
                         className={cn("h-3.5 w-3.5", {
-                          "text-custom-text-100": isItemActive,
+                          "text-primary": isItemActive,
                         })}
                         strokeWidth={2.5}
                       />
@@ -99,7 +99,6 @@ export function IssueCommentToolbar(props: Props) {
             <Button
               type="button"
               variant="primary"
-              className="px-2.5 py-1.5 text-xs"
               onClick={handleSubmit}
               disabled={isCommentEmpty}
               loading={isSubmitting}

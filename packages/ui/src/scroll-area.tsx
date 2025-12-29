@@ -42,7 +42,7 @@ export function ScrollArea(props: TScrollAreaProps) {
       >
         <RadixScrollArea.Thumb
           className={cn(
-            "relative flex-1 rounded-[10px]  bg-custom-scrollbar-neutral group-hover:bg-custom-scrollbar-hover group-active/track:bg-custom-scrollbar-active",
+            "relative flex-1 rounded-[10px] bg-scrollbar-thumb group-hover:bg-scrollbar-thumb-surface-hover group-hover/track:bg-scrollbar-thumb-hover group-active/track:bg-scrollbar-thumb-active",
             thumbSizeStyles[size]
           )}
         />
@@ -56,7 +56,7 @@ export function ScrollArea(props: TScrollAreaProps) {
       >
         <RadixScrollArea.Thumb
           className={cn(
-            "relative flex-1 rounded-[10px] bg-custom-scrollbar-neutral group-hover:bg-custom-scrollbar-hover group-active/track:bg-custom-scrollbar-active",
+            "relative flex-1 rounded-[10px] bg-scrollbar-thumb group-hover:bg-scrollbar-thumb-surface-hover group-hover/track:bg-scrollbar-thumb-hover group-active/track:bg-scrollbar-thumb-active",
             thumbSizeStyles[size]
           )}
         />

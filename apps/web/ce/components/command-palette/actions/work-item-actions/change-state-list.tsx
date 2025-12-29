@@ -1,9 +1,8 @@
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
-import { Check } from "lucide-react";
-// plane imports
 import { EIconSize } from "@plane/constants";
-import { StateGroupIcon } from "@plane/propel/icons";
+// plane imports
+import { CheckIcon, StateGroupIcon } from "@plane/propel/icons";
 import { Spinner } from "@plane/ui";
 // store hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -36,7 +35,7 @@ export const ChangeWorkItemStateList = observer(function ChangeWorkItemStateList
                 />
                 <p>{state.name}</p>
               </div>
-              <div>{state.id === currentStateId && <Check className="h-3 w-3" />}</div>
+              <div>{state.id === currentStateId && <CheckIcon className="h-3 w-3" />}</div>
             </Command.Item>
           ))
         ) : (

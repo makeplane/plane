@@ -32,7 +32,7 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
   // derived values
   const currentProjectDetails = getProjectById(projectId);
 
-  const handleSubmit = async (featureKey: string, featureProperty: string) => {
+  const handleSubmit = (featureKey: string, featureProperty: string) => {
     if (!workspaceSlug || !projectId || !currentProjectDetails) return;
 
     // making the request to update the project feature
@@ -52,13 +52,14 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
         message: () => "Something went wrong while updating project feature. Please try again.",
       },
     });
-    updateProjectPromise.then(() => {
+    void updateProjectPromise.then(() => {
       captureSuccess({
         eventName: PROJECT_TRACKER_EVENTS.feature_toggled,
         payload: {
           feature_key: featureKey,
         },
       });
+      return undefined;
     });
   };
 
@@ -70,25 +71,20 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
         <div key={featureSectionKey} className="">
           <SettingsHeading title={t(feature.key)} description={t(`${feature.key}_description`)} />
           {Object.entries(feature.featureList).map(([featureItemKey, featureItem]) => (
-            <div
-              key={featureItemKey}
-              className="gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 py-4"
-            >
+            <div key={featureItemKey} className="gap-x-8 gap-y-2 border-b border-subtle bg-surface-1 py-4">
               <div key={featureItemKey} className="flex items-center justify-between">
                 <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
-                    {featureItem.icon}
-                  </div>
+                  <div className="flex items-center justify-center rounded-sm bg-surface-2 p-3">{featureItem.icon}</div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-medium leading-5">{t(featureItem.key)}</h4>
+                      <h4 className="text-13 font-medium leading-5">{t(featureItem.key)}</h4>
                       {featureItem.isPro && (
                         <Tooltip tooltipContent="Pro feature" position="top">
-                          <UpgradeBadge className="rounded" />
+                          <UpgradeBadge className="rounded-sm" />
                         </Tooltip>
                       )}
                     </div>
-                    <p className="text-sm leading-5 tracking-tight text-custom-text-300">
+                    <p className="text-13 leading-5 tracking-tight text-tertiary">
                       {t(`${featureItem.key}_description`)}
                     </p>
                   </div>

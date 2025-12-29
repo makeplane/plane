@@ -9,8 +9,8 @@ import { Popover } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { Button } from "@plane/propel/button";
 import { Tabs } from "@plane/propel/tabs";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import { Input, Loader } from "@plane/ui";
@@ -183,25 +183,21 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
 
   return (
     <Popover className="relative z-19" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
-      <Popover.Button
-        className="rounded border border-custom-border-300 bg-custom-background-100 px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
-        onClick={handleOnClick}
-        disabled={disabled}
-      >
+      <Popover.Button className={getButtonStyling("secondary", "sm")} onClick={handleOnClick} disabled={disabled}>
         {label}
       </Popover.Button>
 
       {isOpen && (
         <Popover.Panel
-          className="absolute right-0 z-20 mt-2 rounded-md border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-sm"
+          className="absolute right-0 z-20 mt-2 rounded-md border border-subtle bg-surface-1 shadow-raised-200"
           static
         >
           <div
             ref={imagePickerRef}
-            className="flex h-96 w-80 flex-col overflow-auto rounded border border-custom-border-300 bg-custom-background-100 shadow-2xl md:h-[36rem] md:w-[36rem]"
+            className="flex h-96 w-80 flex-col overflow-auto rounded border border-subtle bg-surface-1 shadow-raised-200 md:h-[36rem] md:w-[36rem]"
           >
             <Tabs defaultValue={enabledTabs[0]?.key || "images"} className="flex h-full flex-col p-3">
-              <Tabs.List className="flex rounded bg-custom-background-80 p-1">
+              <Tabs.List className="flex rounded bg-layer-3 p-1">
                 {enabledTabs.map((tab) => (
                   <Tabs.Trigger key={tab.key} value={tab.key} size="md">
                     {tab.title}
@@ -213,7 +209,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                 <Tabs.Content value="unsplash" className="h-full w-full space-y-4">
                   {(unsplashImages || !unsplashError) && (
                     <>
-                      <div className="flex gap-x-2">
+                      <div className="flex items-center gap-x-2">
                         <Controller
                           control={control}
                           name="search"
@@ -232,11 +228,11 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                               onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                               ref={ref}
                               placeholder="Search for images"
-                              className="w-full text-sm"
+                              className="w-full text-13"
                             />
                           )}
                         />
-                        <Button variant="primary" onClick={() => setSearchParams(formData.search)} size="sm">
+                        <Button variant="primary" size="xl" onClick={() => setSearchParams(formData.search)}>
                           Search
                         </Button>
                       </div>
@@ -255,13 +251,13 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                                 <img
                                   src={image.urls.small}
                                   alt={image.alt_description}
-                                  className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
+                                  className="absolute left-0 top-0 h-full w-full cursor-pointer rounded-sm object-cover"
                                 />
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <p className="pt-7 text-center text-xs text-custom-text-300">No images found.</p>
+                          <p className="pt-7 text-center text-11 text-secondary">No images found.</p>
                         )
                       ) : (
                         <Loader className="grid grid-cols-4 gap-4">
@@ -289,7 +285,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                         <img
                           src={imageUrl}
                           alt={`Cover image ${index + 1}`}
-                          className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover hover:opacity-80 transition-opacity"
+                          className="absolute left-0 top-0 h-full w-full cursor-pointer rounded-sm object-cover hover:opacity-80 transition-opacity"
                         />
                       </div>
                     ))}
@@ -300,15 +296,15 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                     <div className="flex w-full flex-1 items-center gap-3">
                       <div
                         {...getRootProps()}
-                        className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
+                        className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
-                            ? "border-2 border-dashed border-custom-border-200 hover:bg-custom-background-90"
+                            ? "border-2 border-dashed border-subtle hover:bg-surface-2"
                             : ""
                         }`}
                       >
                         <button
                           type="button"
-                          className="absolute right-0 top-0 z-40 -translate-y-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-custom-text-200"
+                          className="absolute right-0 top-0 z-40 -translate-y-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
                         >
                           Edit
                         </button>
@@ -322,7 +318,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                           </>
                         ) : (
                           <div>
-                            <span className="mt-2 block text-sm font-medium text-custom-text-200">
+                            <span className="mt-2 block text-13 font-medium text-secondary">
                               {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
                             </span>
                           </div>
@@ -332,18 +328,18 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       </div>
                     </div>
                     {fileRejections.length > 0 && (
-                      <p className="text-sm text-red-500">
+                      <p className="text-13 text-danger-primary">
                         {fileRejections[0].errors[0].code === "file-too-large"
                           ? "The image size cannot exceed 5 MB."
                           : "Please upload a file in a valid format."}
                       </p>
                     )}
 
-                    <p className="text-sm text-custom-text-200">File formats supported- .jpeg, .jpg, .png, .webp</p>
+                    <p className="text-13 text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
 
                     <div className="flex h-12 items-start justify-end gap-2">
                       <Button
-                        variant="neutral-primary"
+                        variant="secondary"
                         onClick={() => {
                           setIsOpen(false);
                           setImage(null);

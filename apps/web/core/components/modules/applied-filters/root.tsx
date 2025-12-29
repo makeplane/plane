@@ -50,7 +50,7 @@ export function ModuleAppliedFiltersList(props: Props) {
           return (
             <Tag key={filterKey}>
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+                <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
                 {filterKey === "status" && (
                   <AppliedStatusFilters
                     editable={isEditingAllowed}
@@ -75,7 +75,7 @@ export function ModuleAppliedFiltersList(props: Props) {
                 {isEditingAllowed && (
                   <button
                     type="button"
-                    className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                    className="grid place-items-center text-tertiary hover:text-secondary"
                     onClick={() => handleRemoveFilter(filterKey, null)}
                   >
                     <CloseIcon height={12} width={12} strokeWidth={2} />
@@ -88,16 +88,16 @@ export function ModuleAppliedFiltersList(props: Props) {
         {!isArchived && isFavoriteFilterApplied && (
           <div
             key="module_display_filters"
-            className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
+            className="flex flex-wrap items-center gap-2 rounded-md border border-subtle px-2 py-1 capitalize"
           >
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs text-custom-text-300">Modules</span>
-              <div className="flex items-center gap-1 rounded p-1 text-xs bg-custom-background-80">
+              <span className="text-11 text-tertiary">Modules</span>
+              <div className="flex items-center gap-1 rounded-sm p-1 text-11 bg-layer-1">
                 Favorite
                 {isEditingAllowed && (
                   <button
                     type="button"
-                    className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                    className="grid place-items-center text-tertiary hover:text-secondary"
                     onClick={() =>
                       handleDisplayFiltersUpdate &&
                       handleDisplayFiltersUpdate({

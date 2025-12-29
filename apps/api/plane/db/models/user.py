@@ -147,6 +147,11 @@ class User(AbstractBaseUser, PermissionsMixin):
             return self.cover_image
         return None
 
+    @property
+    def full_name(self):
+        """Return user's full name (first + last)."""
+        return f"{self.first_name} {self.last_name}".strip()
+
     def save(self, *args, **kwargs):
         self.email = self.email.lower().strip()
         self.mobile_number = self.mobile_number
@@ -166,6 +171,16 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.is_staff = True
 
         super(User, self).save(*args, **kwargs)
+
+    @classmethod
+    def get_display_name(cls, email):
+        if not email:
+            return "".join(random.choice(string.ascii_letters) for _ in range(6))
+        return (
+            email.split("@")[0]
+            if len(email.split("@")) == 2
+            else "".join(random.choice(string.ascii_letters) for _ in range(6))
+        )
 
 
 class Profile(TimeAuditModel):

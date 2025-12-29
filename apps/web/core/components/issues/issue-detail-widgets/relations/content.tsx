@@ -138,7 +138,7 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
               title={
                 <div className={`flex items-center gap-1 px-2.5 py-1 h-9  w-full ${relation.className}`}>
                   <span>{relation.icon ? relation.icon(14) : null}</span>
-                  <span className="text-sm font-medium leading-5">{relation.label}</span>
+                  <span className="text-13 font-medium leading-5">{relation.label}</span>
                 </div>
               }
               defaultOpen

@@ -23,7 +23,7 @@ export const AppliedStateFilters = observer(function AppliedStateFilters(props: 
         if (!stateDetails) return null;
 
         return (
-          <div key={stateId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+          <div key={stateId} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
             <StateGroupIcon
               color={stateDetails.color}
               stateGroup={stateDetails.group}
@@ -34,7 +34,7 @@ export const AppliedStateFilters = observer(function AppliedStateFilters(props: 
             {editable && (
               <button
                 type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(stateId)}
               >
                 <CloseIcon height={10} width={10} strokeWidth={2} />
