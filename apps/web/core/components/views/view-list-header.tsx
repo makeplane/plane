@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { ListFilter, Search } from "lucide-react";
+import { ListFilter } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { CloseIcon } from "@plane/propel/icons";
+import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // plane helpers
 // helpers
 import { cn } from "@plane/utils";
@@ -59,7 +59,7 @@ export const ViewListHeader = observer(function ViewListHeader() {
               setIsSearchOpen(true);
               inputRef.current?.focus();
             }}
-            icon={Search}
+            icon={SearchIcon}
           />
         )}
         <div
@@ -70,7 +70,7 @@ export const ViewListHeader = observer(function ViewListHeader() {
             }
           )}
         >
-          <Search className="h-3.5 w-3.5" />
+          <SearchIcon className="h-3.5 w-3.5" />
           <input
             ref={inputRef}
             className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"

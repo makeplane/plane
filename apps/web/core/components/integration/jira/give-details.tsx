@@ -2,8 +2,9 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useFormContext, Controller } from "react-hook-form";
-import { Plus } from "lucide-react";
+
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { PlusIcon } from "@plane/propel/icons";
 import type { IJiraImporterForm } from "@plane/types";
 // hooks
 // components
@@ -59,7 +60,9 @@ export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
               />
             )}
           />
-          {errors.metadata?.api_token && <p className="text-11 text-red-500">{errors.metadata.api_token.message}</p>}
+          {errors.metadata?.api_token && (
+            <p className="text-11 text-danger-primary">{errors.metadata.api_token.message}</p>
+          )}
         </div>
       </div>
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
@@ -88,7 +91,7 @@ export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
             )}
           />
           {errors.metadata?.project_key && (
-            <p className="text-11 text-red-500">{errors.metadata.project_key.message}</p>
+            <p className="text-11 text-danger-primary">{errors.metadata.project_key.message}</p>
           )}
         </div>
       </div>
@@ -118,7 +121,7 @@ export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
               />
             )}
           />
-          {errors.metadata?.email && <p className="text-11 text-red-500">{errors.metadata.email.message}</p>}
+          {errors.metadata?.email && <p className="text-11 text-danger-primary">{errors.metadata.email.message}</p>}
         </div>
       </div>
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
@@ -147,7 +150,7 @@ export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
             )}
           />
           {errors.metadata?.cloud_hostname && (
-            <p className="text-11 text-red-500">{errors.metadata.cloud_hostname.message}</p>
+            <p className="text-11 text-danger-primary">{errors.metadata.cloud_hostname.message}</p>
           )}
         </div>
       </div>
@@ -203,7 +206,7 @@ export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
                     }}
                     className="flex cursor-pointer select-none items-center space-x-2 truncate rounded-sm px-1 py-1.5 text-secondary"
                   >
-                    <Plus className="h-4 w-4 text-secondary" />
+                    <PlusIcon className="h-4 w-4 text-secondary" />
                     <span>Create new project</span>
                   </button>
                 </div>

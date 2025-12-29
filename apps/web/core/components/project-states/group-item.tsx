@@ -1,10 +1,10 @@
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
+
 // plane imports
 import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { PlusIcon, StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -89,7 +89,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
           }}
           disabled={!isEditable || createState}
         >
-          <Plus className="w-4 h-4" />
+          <PlusIcon className="w-4 h-4" />
         </button>
       </div>
 

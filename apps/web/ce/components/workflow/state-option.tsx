@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
-import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+import { CheckIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 export type TStateOptionProps = {
@@ -31,7 +31,7 @@ export const StateOption = observer(function StateOption(props: TStateOptionProp
       {({ selected }) => (
         <>
           <span className="flex-grow truncate">{option.content}</span>
-          {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+          {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
         </>
       )}
     </Combobox.Option>

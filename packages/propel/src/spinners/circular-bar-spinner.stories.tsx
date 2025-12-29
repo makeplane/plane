@@ -49,7 +49,7 @@ export const ExtraLarge: Story = {
 
 export const CustomColor: Story = {
   args: {
-    className: "text-green-500",
+    className: "text-success-primary",
   },
 };
 
@@ -91,11 +91,11 @@ export const ColorVariations: Story = {
           <p className="mt-2 text-11 text-gray-600">Blue</p>
         </div>
         <div className="text-center">
-          <CircularBarSpinner className="text-green-500" height="24px" width="24px" />
+          <CircularBarSpinner className="text-success-primary" height="24px" width="24px" />
           <p className="mt-2 text-11 text-gray-600">Green</p>
         </div>
         <div className="text-center">
-          <CircularBarSpinner className="text-red-500" height="24px" width="24px" />
+          <CircularBarSpinner className="text-danger-primary" height="24px" width="24px" />
           <p className="mt-2 text-11 text-gray-600">Red</p>
         </div>
         <div className="text-center">

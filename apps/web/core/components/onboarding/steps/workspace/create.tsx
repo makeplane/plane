@@ -145,7 +145,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
             htmlFor="name"
           >
             {t("workspace_creation.form.name.label")}
@@ -182,7 +182,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                     "w-full px-3 py-2 text-secondary border border-strong rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-accent-strong placeholder:text-placeholder focus:border-transparent transition-all duration-200",
                     {
                       "border-strong": !errors.name,
-                      "border-red-500": errors.name,
+                      "border-danger-strong": errors.name,
                     }
                   )}
                   // eslint-disable-next-line jsx-a11y/no-autofocus
@@ -191,11 +191,11 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
               </div>
             )}
           />
-          {errors.name && <span className="text-13 text-red-500">{errors.name.message}</span>}
+          {errors.name && <span className="text-13 text-danger-primary">{errors.name.message}</span>}
         </div>
         <div className="flex flex-col gap-2">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
             htmlFor="slug"
           >
             {t("workspace_creation.form.url.label")}
@@ -216,7 +216,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                   "flex items-center w-full px-3 py-2 text-secondary border border-strong rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-accent-strong focus:border-transparent transition-all duration-200",
                   {
                     "border-strong": !errors.name,
-                    "border-red-500": errors.name,
+                    "border-danger-strong": errors.name,
                   }
                 )}
               >
@@ -244,16 +244,18 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
           />
           <p className="text-13 text-tertiary">{t("workspace_creation.form.url.edit_slug")}</p>
           {slugError && (
-            <p className="-mt-3 text-13 text-red-500">{t("workspace_creation.errors.validation.url_already_taken")}</p>
+            <p className="-mt-3 text-13 text-danger-primary">
+              {t("workspace_creation.errors.validation.url_already_taken")}
+            </p>
           )}
           {invalidSlug && (
-            <p className="text-13 text-red-500">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
+            <p className="text-13 text-danger-primary">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
           )}
-          {errors.slug && <span className="text-13 text-red-500">{errors.slug.message}</span>}
+          {errors.slug && <span className="text-13 text-danger-primary">{errors.slug.message}</span>}
         </div>
         <div className="flex flex-col gap-2">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
             htmlFor="organization_size"
           >
             {t("workspace_creation.form.organization_size.label")}
@@ -291,7 +293,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
               )}
             />
             {errors.organization_size && (
-              <span className="text-13 text-red-500">{errors.organization_size.message}</span>
+              <span className="text-13 text-danger-primary">{errors.organization_size.message}</span>
             )}
           </div>
         </div>

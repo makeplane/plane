@@ -4,12 +4,12 @@ import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Link, Paperclip } from "lucide-react";
+import { Paperclip } from "lucide-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
+import { LinkIcon, StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
@@ -298,8 +298,10 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             isClearable
             mergeDates
             buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger" : ""}
-            clearIconClassName="!text-primary"
+            buttonClassName={
+              shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger-primary" : ""
+            }
+            clearIconClassName="text-primary!"
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip
@@ -327,6 +329,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip
+            labelClassName="text-caption-sm-regular"
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -343,14 +346,17 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onChange={handleTargetDate}
             minDate={minDate}
             placeholder={t("common.order_by.due_date")}
-            icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
+            icon={<DueDatePropertyIcon className="h-3 w-3 shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger" : ""}
-            clearIconClassName="!text-primary"
+            buttonClassName={
+              shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger-primary" : ""
+            }
+            clearIconClassName="text-primary!"
             optionsClassName="z-10"
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip
+            labelClassName="text-caption-sm-regular"
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -511,7 +517,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
-            <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <LinkIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-caption-sm-regular">{issue.link_count}</div>
           </div>
         </Tooltip>

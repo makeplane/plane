@@ -3,13 +3,13 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { Outlet } from "react-router";
 // components
+import { AdminHeader } from "@/components/common/header";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { NewUserPopup } from "@/components/new-user-popup";
 // hooks
 import { useUser } from "@/hooks/store";
 // local components
 import type { Route } from "./+types/layout";
-import { AdminHeader } from "./header";
 import { AdminSidebar } from "./sidebar";
 
 function AdminLayout(_props: Route.ComponentProps) {

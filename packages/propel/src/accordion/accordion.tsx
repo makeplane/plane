@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Accordion as BaseAccordion } from "@base-ui-components/react";
-import { PlusIcon } from "lucide-react";
+
+import { PlusIcon } from "../icons";
 
 export interface AccordionRootProps {
   defaultValue?: string[];

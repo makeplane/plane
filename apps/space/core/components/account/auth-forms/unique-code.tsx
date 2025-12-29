@@ -116,7 +116,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
           autoFocus
         />
         <div className="flex w-full items-center justify-between px-1 text-11 pt-1">
-          <p className="flex items-center gap-1 font-medium text-green-700">
+          <p className="flex items-center gap-1 font-medium text-success-primary">
             <CircleCheck height={12} width={12} />
             Paste the code sent to your email
           </p>

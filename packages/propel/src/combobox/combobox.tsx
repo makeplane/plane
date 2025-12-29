@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Combobox as BaseCombobox } from "@base-ui-components/react/combobox";
-import { Search } from "lucide-react";
+import { SearchIcon } from "../icons";
 import { cn } from "../utils/classname";
 
 // Type definitions
@@ -174,7 +174,7 @@ function ComboboxOptions({
           <div className="flex flex-col gap-1">
             {showSearch && (
               <div className="relative">
-                <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-placeholder" />
+                <SearchIcon className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-placeholder" />
                 <input
                   type="text"
                   placeholder={searchPlaceholder}

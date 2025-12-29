@@ -2,7 +2,8 @@ import type { FC } from "react";
 import React, { useRef, useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
-import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
+import { SquareStackIcon } from "lucide-react";
+import { CopyIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane utils
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TWorkspaceDraftIssue } from "@plane/types";
@@ -60,7 +61,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
     {
       key: "edit",
       title: "edit",
-      icon: Pencil,
+      icon: EditIcon,
       action: () => {
         setIssueToEdit(issue);
         setCreateUpdateIssueModal(true);
@@ -69,7 +70,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
     {
       key: "make-a-copy",
       title: "make_a_copy",
-      icon: Copy,
+      icon: CopyIcon,
       action: () => {
         setCreateUpdateIssueModal(true);
       },
@@ -87,7 +88,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
     {
       key: "delete",
       title: "delete",
-      icon: Trash2,
+      icon: TrashIcon,
       action: () => {
         setDeleteIssueModal(true);
       },

@@ -96,7 +96,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
       <AuthFormHeader title="Reset password" description="Create a new password." />
 
       {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-        <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
+        <AuthBanner message={errorInfo.message} handleBannerData={(value) => setErrorInfo(value)} />
       )}
       <form
         className="space-y-4"
@@ -185,7 +185,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
           {!!resetFormData.confirm_password &&
             resetFormData.password !== resetFormData.confirm_password &&
             renderPasswordMatchError && (
-              <span className="text-13 text-red-500">{t("auth.common.password.errors.match")}</span>
+              <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
             )}
         </div>
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>

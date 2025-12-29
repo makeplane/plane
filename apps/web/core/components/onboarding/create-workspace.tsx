@@ -149,7 +149,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
       <form className="w-full mx-auto mt-2 space-y-4" onSubmit={handleSubmit(handleCreateWorkspace)}>
         <div className="space-y-1">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
             htmlFor="name"
           >
             {t("workspace_creation.form.name.label")}
@@ -189,11 +189,11 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
               </div>
             )}
           />
-          {errors.name && <span className="text-13 text-red-500">{errors.name.message}</span>}
+          {errors.name && <span className="text-13 text-danger-primary">{errors.name.message}</span>}
         </div>
         <div className="space-y-1">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
             htmlFor="slug"
           >
             {t("workspace_creation.form.url.label")}
@@ -211,7 +211,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
             render={({ field: { value, ref, onChange } }) => (
               <div
                 className={`relative flex items-center rounded-md border-[0.5px] px-3 ${
-                  invalidSlug ? "border-red-500" : "border-strong"
+                  invalidSlug ? "border-danger-strong" : "border-strong"
                 }`}
               >
                 <span className="whitespace-nowrap text-13">{window && window.location.host}/</span>
@@ -235,17 +235,19 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
           />
           <p className="text-13 text-tertiary">{t("workspace_creation.form.url.edit_slug")}</p>
           {slugError && (
-            <p className="-mt-3 text-13 text-red-500">{t("workspace_creation.errors.validation.url_already_taken")}</p>
+            <p className="-mt-3 text-13 text-danger-primary">
+              {t("workspace_creation.errors.validation.url_already_taken")}
+            </p>
           )}
           {invalidSlug && (
-            <p className="text-13 text-red-500">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
+            <p className="text-13 text-danger-primary">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
           )}
-          {errors.slug && <span className="text-13 text-red-500">{errors.slug.message}</span>}
+          {errors.slug && <span className="text-13 text-danger-primary">{errors.slug.message}</span>}
         </div>
         <hr className="w-full border-strong" />
         <div className="space-y-1">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
             htmlFor="organization_size"
           >
             {t("workspace_creation.form.organization_size.label")}
@@ -278,7 +280,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
               )}
             />
             {errors.organization_size && (
-              <span className="text-13 text-red-500">{errors.organization_size.message}</span>
+              <span className="text-13 text-danger-primary">{errors.organization_size.message}</span>
             )}
           </div>
         </div>

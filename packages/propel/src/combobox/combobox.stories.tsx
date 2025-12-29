@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 import { useArgs } from "storybook/preview-api";
+import { CheckIcon } from "../icons";
 import { Combobox } from "./combobox";
 
 const frameworks = [
@@ -48,7 +49,7 @@ const meta = {
               value={framework.value}
               className="flex items-center gap-2 px-4 py-2"
             >
-              {value === framework.value && <Check className="h-4 w-4" />}
+              {value === framework.value && <CheckIcon className="h-4 w-4" />}
               <span>{framework.label}</span>
             </Combobox.Option>
           ))}
@@ -79,7 +80,7 @@ export const WithoutSearch: Story = {
               value={framework.value}
               className="flex items-center gap-2 px-4 py-2"
             >
-              {value === framework.value && <Check className="h-4 w-4" />}
+              {value === framework.value && <CheckIcon className="h-4 w-4" />}
               <span>{framework.label}</span>
             </Combobox.Option>
           ))}
@@ -106,7 +107,7 @@ export const MultiSelect: Story = {
               value={framework.value}
               className="flex items-center gap-2 px-4 py-2"
             >
-              {value.includes(framework.value) && <Check className="h-4 w-4" />}
+              {value.includes(framework.value) && <CheckIcon className="h-4 w-4" />}
               <span>{framework.label}</span>
             </Combobox.Option>
           ))}
@@ -136,7 +137,7 @@ export const MultiSelectWithLimit: Story = {
                 value={framework.value}
                 className="flex items-center gap-2 px-4 py-2"
               >
-                {value.includes(framework.value) && <Check className="h-4 w-4" />}
+                {value.includes(framework.value) && <CheckIcon className="h-4 w-4" />}
                 <span>{framework.label}</span>
               </Combobox.Option>
             ))}
@@ -165,7 +166,7 @@ export const Disabled: Story = {
               value={framework.value}
               className="flex items-center gap-2 px-4 py-2"
             >
-              {value === framework.value && <Check className="h-4 w-4" />}
+              {value === framework.value && <CheckIcon className="h-4 w-4" />}
               <span>{framework.label}</span>
             </Combobox.Option>
           ))}
@@ -192,7 +193,7 @@ export const DisabledOptions: Story = {
               disabled={framework.value === "angular" || framework.value === "svelte"}
               className="flex items-center gap-2 px-4 py-2"
             >
-              {value === framework.value && <Check className="h-4 w-4" />}
+              {value === framework.value && <CheckIcon className="h-4 w-4" />}
               <span>{framework.label}</span>
             </Combobox.Option>
           ))}
@@ -218,7 +219,7 @@ export const CustomMaxHeight: Story = {
               value={framework.value}
               className="flex items-center gap-2 px-4 py-2"
             >
-              {value === framework.value && <Check className="h-4 w-4" />}
+              {value === framework.value && <CheckIcon className="h-4 w-4" />}
               <span>{framework.label}</span>
             </Combobox.Option>
           ))}
@@ -249,7 +250,7 @@ export const CustomEmptyMessage: Story = {
               value={framework.value}
               className="flex items-center gap-2 px-4 py-2"
             >
-              {value === framework.value && <Check className="h-4 w-4" />}
+              {value === framework.value && <CheckIcon className="h-4 w-4" />}
               <span>{framework.label}</span>
             </Combobox.Option>
           ))}

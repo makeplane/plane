@@ -98,7 +98,7 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
                 />
               )}
             />
-            <span className="text-11 text-red-500">{errors?.name?.message}</span>
+            <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
           </div>
           <div>
             <Controller

@@ -94,7 +94,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
             <div className="flex items-center justify-center rounded-sm bg-layer-3 p-3">
-              <ArchiveX className="h-4 w-4 flex-shrink-0 text-red-500" />
+              <ArchiveX className="h-4 w-4 flex-shrink-0 text-danger-primary" />
             </div>
             <div className="">
               <h4 className="text-13 font-medium">{t("project_settings.automations.auto-close.title")}</h4>

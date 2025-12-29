@@ -73,7 +73,7 @@ export function AuthConfirmPasswordInput({
         onBlur={handleBlur}
         autoComplete="on"
       />
-      {confirmPassword && passwordsMatch && <p className="text-13 text-green-500">Passwords match</p>}
+      {confirmPassword && passwordsMatch && <p className="text-13 text-success-primary">Passwords match</p>}
     </div>
   );
 }

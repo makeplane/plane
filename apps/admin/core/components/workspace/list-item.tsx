@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
-import { ExternalLink } from "lucide-react";
+
 // plane internal packages
 import { WEB_BASE_URL } from "@plane/constants";
+import { NewTabIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { getFileURL } from "@plane/utils";
 // hooks
@@ -23,13 +24,13 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
       key={workspaceId}
       href={`${WEB_BASE_URL}/${encodeURIComponent(workspace.slug)}`}
       target="_blank"
-      className="group flex items-center justify-between p-4 gap-2.5 truncate border border-subtle/70 hover:border-subtle bg-layer-1 hover:bg-layer-1-hover rounded-md"
+      className="group flex items-center justify-between p-3 gap-2.5 truncate border border-subtle hover:border-subtle-1 bg-layer-1 hover:bg-layer-1-hover hover:shadow-raised-100 rounded-lg"
       rel="noreferrer"
     >
       <div className="flex items-start gap-4">
         <span
           className={`relative flex h-8 w-8 flex-shrink-0 items-center justify-center p-2 mt-1 text-11 uppercase ${
-            !workspace?.logo_url && "rounded-sm bg-accent-primary text-on-color"
+            !workspace?.logo_url && "rounded-lg bg-accent-primary text-on-color"
           }`}
         >
           {workspace?.logo_url && workspace.logo_url !== "" ? (
@@ -75,7 +76,7 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
         </div>
       </div>
       <div className="flex-shrink-0">
-        <ExternalLink size={14} className="text-placeholder group-hover:text-secondary" />
+        <NewTabIcon width={14} height={16} className="text-placeholder group-hover:text-secondary" />
       </div>
     </a>
   );

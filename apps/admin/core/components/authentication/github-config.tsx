@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
@@ -43,7 +42,7 @@ export const GithubConfiguration = observer(function GithubConfiguration(props: 
         </div>
       ) : (
         <Link href="/authentication/github" className={cn(getButtonStyling("secondary", "base"), "text-tertiary")}>
-          <Settings2 className="h-4 w-4 p-0.5 text-tertiary/80" />
+          <Settings2 className="h-4 w-4 p-0.5 text-tertiary" />
           Configure
         </Link>
       )}

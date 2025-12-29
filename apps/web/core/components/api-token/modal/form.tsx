@@ -147,7 +147,7 @@ export function CreateApiTokenForm(props: Props) {
                 />
               )}
             />
-            {errors.label && <span className="text-11 text-red-500">{errors.label.message}</span>}
+            {errors.label && <span className="text-11 text-danger-primary">{errors.label.message}</span>}
           </div>
           <Controller
             control={control}

@@ -1,6 +1,7 @@
 import React from "react";
 import { Command } from "cmdk";
-import { Check } from "lucide-react";
+
+import { CheckIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 // local imports
@@ -33,7 +34,7 @@ export function PowerKModalCommandItem(props: Props) {
         {label}
       </div>
       <div className="shrink-0 flex items-center gap-2">
-        {isSelected && <Check className="shrink-0 size-3 text-secondary" />}
+        {isSelected && <CheckIcon className="shrink-0 size-3 text-secondary" />}
         {keySequence && <KeySequenceBadge sequence={keySequence} />}
         {shortcut && <ShortcutBadge shortcut={shortcut} />}
       </div>

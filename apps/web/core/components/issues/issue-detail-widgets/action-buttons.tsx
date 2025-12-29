@@ -1,8 +1,8 @@
 import type { FC } from "react";
 import React from "react";
-import { Link, Paperclip } from "lucide-react";
+import { Paperclip } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { ViewsIcon, RelationPropertyIcon } from "@plane/propel/icons";
+import { LinkIcon, ViewsIcon, RelationPropertyIcon } from "@plane/propel/icons";
 // plane imports
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // plane web imports
@@ -63,7 +63,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           customButton={
             <IssueDetailWidgetButton
               title={t("issue.add.link")}
-              icon={<Link className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+              icon={<LinkIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
               disabled={disabled}
             />
           }

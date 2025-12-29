@@ -81,14 +81,14 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !bg-green-300`,
   },
   "accent-success": {
-    default: `text-green-500 bg-green-50`,
-    hover: `hover:bg-green-100 hover:text-green-600`,
-    disabled: `cursor-not-allowed !text-green-300`,
+    default: `text-success-primary bg-green-50`,
+    hover: `hover:bg-green-100 hover:text-success-primary`,
+    disabled: `cursor-not-allowed text-success-secondary!`,
   },
   "outline-success": {
-    default: `text-green-500 bg-surface-1 border border-green-500`,
-    hover: `hover:text-green-600 hover:bg-green-50`,
-    disabled: `cursor-not-allowed !text-green-300 border-green-300`,
+    default: `text-success-primary bg-surface-1 border border-success-strong`,
+    hover: `hover:text-success-primary hover:bg-green-50`,
+    disabled: `cursor-not-allowed text-success-secondary! border-success-subtle`,
   },
 
   warning: {
@@ -113,14 +113,14 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !bg-red-300`,
   },
   "accent-destructive": {
-    default: `text-red-500 bg-red-50`,
-    hover: `hover:bg-red-100 hover:text-red-600`,
-    disabled: `cursor-not-allowed !text-red-300`,
+    default: `text-danger-primary bg-red-50`,
+    hover: `hover:bg-red-100 hover:text-danger-primary`,
+    disabled: `cursor-not-allowed text-danger-secondary!`,
   },
   "outline-destructive": {
-    default: `text-red-500 bg-surface-1 border border-red-500`,
-    hover: `hover:text-red-600 hover:bg-red-50`,
-    disabled: `cursor-not-allowed !text-red-300 border-red-300`,
+    default: `text-danger-primary bg-surface-1 border border-danger-strong`,
+    hover: `hover:text-danger-primary hover:bg-red-50`,
+    disabled: `cursor-not-allowed text-danger-secondary! border-danger-subtle`,
   },
 };
 

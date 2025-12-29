@@ -119,7 +119,7 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
             )}
           />
           {resendTimerCode > 0 && (
-            <p className="flex items-start w-full gap-1 px-1 text-11 font-medium text-green-700">
+            <p className="flex items-start w-full gap-1 px-1 text-11 font-medium text-success-primary">
               <CircleCheck height={12} width={12} className="mt-0.5" />
               {t("auth.forgot_password.email_sent")}
             </p>
