@@ -19,11 +19,20 @@ type TPageView = {
 export const PagesListView = observer(function PagesListView(props: TPageView) {
   const { children, pageType, projectId, storeType, workspaceSlug } = props;
   // store hooks
-  const { isAnyPageAvailable, fetchPagesList } = usePageStore(storeType);
-  // fetching pages list
+  const { isAnyPageAvailable, fetchPagesList, filters } = usePageStore(storeType);
+
+  // fetching pages list - include filters and sorting in SWR key to refetch when they change
   useSWR(
-    workspaceSlug && projectId && pageType ? `PROJECT_PAGES_${projectId}` : null,
-    workspaceSlug && projectId && pageType ? () => fetchPagesList(workspaceSlug, projectId, pageType) : null
+    workspaceSlug && projectId && pageType
+      ? `PROJECT_PAGES_${projectId}_${pageType}_${filters.searchQuery || ""}_${filters.sortKey || ""}_${
+          filters.sortBy || ""
+        }_${JSON.stringify(filters.filters || {})}`
+      : null,
+    workspaceSlug && projectId && pageType ? () => fetchPagesList(workspaceSlug, projectId, pageType) : null,
+    {
+      revalidateOnFocus: true,
+      revalidateIfStale: true,
+    }
   );
 
   // pages loader

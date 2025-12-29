@@ -156,6 +156,11 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
         />
       );
   }
+
+  if (loader === "mutation-loader" && (!filteredPageIds || filteredPageIds.length === 0)) {
+    return <PageLoader />;
+  }
+
   // if no pages match the filter criteria
   if (filteredPageIds?.length === 0)
     return (
