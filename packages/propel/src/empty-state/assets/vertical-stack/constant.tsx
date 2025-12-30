@@ -2,6 +2,7 @@ import {
   ArchivedCycleVerticalStackIllustration,
   ArchivedModuleVerticalStackIllustration,
   ArchivedWorkItemVerticalStackIllustration,
+  ChangelogVerticalStackIllustration,
   CustomerVerticalStackIllustration,
   CycleVerticalStackIllustration,
   DashboardVerticalStackIllustration,
@@ -32,6 +33,10 @@ export const VerticalStackAssetsMap = [
   {
     asset: <ArchivedWorkItemVerticalStackIllustration />,
     title: "ArchivedWorkItemVerticalStackIllustration",
+  },
+  {
+    asset: <ChangelogVerticalStackIllustration />,
+    title: "ChangelogVerticalStackIllustration",
   },
   {
     asset: <CustomerVerticalStackIllustration />,

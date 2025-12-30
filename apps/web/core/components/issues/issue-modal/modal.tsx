@@ -26,6 +26,7 @@ export interface IssuesModalProps {
   isProjectSelectionDisabled?: boolean;
   templateId?: string;
   allowedProjectIds?: string[];
+  showActionItemsOnUpdate?: boolean;
 }
 
 export const CreateUpdateIssueModal = observer(function CreateUpdateIssueModal(props: IssuesModalProps) {

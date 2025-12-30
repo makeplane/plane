@@ -65,7 +65,7 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
       tdRender: (rowData: RowData) => (
         <NameColumn
           rowData={rowData}
-          workspaceSlug={workspaceSlug as string}
+          workspaceSlug={workspaceSlug}
           isAdmin={isAdmin}
           currentUser={currentUser}
           setRemoveMemberModal={setRemoveMemberModal}
@@ -94,7 +94,7 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         />
       ),
-      tdRender: (rowData: RowData) => <div className="w-48 text-custom-text-200">{rowData.member.email}</div>,
+      tdRender: (rowData: RowData) => <div className="w-48 text-secondary">{rowData.member.email}</div>,
     },
     {
       key: "Account Type",
@@ -110,8 +110,8 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
         <AccountTypeColumn
           rowData={rowData}
           currentProjectRole={currentProjectRole}
-          projectId={projectId as string}
-          workspaceSlug={workspaceSlug as string}
+          projectId={projectId}
+          workspaceSlug={workspaceSlug}
         />
       ),
     },

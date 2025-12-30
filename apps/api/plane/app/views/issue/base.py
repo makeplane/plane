@@ -611,6 +611,10 @@ class IssueViewSet(BaseViewSet):
     def partial_update(self, request, slug, project_id, pk=None):
         queryset = self.get_queryset()
         queryset = self.apply_annotations(queryset)
+
+        skip_activity = request.data.pop("skip_activity", False)
+        is_description_update = request.data.get("description_html") is not None
+
         issue = (
             queryset.annotate(
                 label_ids=Coalesce(
@@ -659,32 +663,36 @@ class IssueViewSet(BaseViewSet):
         serializer = IssueCreateSerializer(issue, data=request.data, partial=True, context={"project_id": project_id})
         if serializer.is_valid():
             serializer.save()
-            issue_activity.delay(
-                type="issue.activity.updated",
-                requested_data=requested_data,
-                actor_id=str(request.user.id),
-                issue_id=str(pk),
-                project_id=str(project_id),
-                current_instance=current_instance,
-                epoch=int(timezone.now().timestamp()),
-                notification=True,
-                origin=base_host(request=request, is_app=True),
-            )
-            model_activity.delay(
-                model_name="issue",
-                model_id=str(serializer.data.get("id", None)),
-                requested_data=request.data,
-                current_instance=current_instance,
-                actor_id=request.user.id,
-                slug=slug,
-                origin=base_host(request=request, is_app=True),
-            )
-            # updated issue description version
-            issue_description_version_task.delay(
-                updated_issue=current_instance,
-                issue_id=str(serializer.data.get("id", None)),
-                user_id=request.user.id,
-            )
+            # Check if the update is a migration description update
+            is_migration_description_update = skip_activity and is_description_update
+            # Log all the updates
+            if not is_migration_description_update:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=requested_data,
+                    actor_id=str(request.user.id),
+                    issue_id=str(pk),
+                    project_id=str(project_id),
+                    current_instance=current_instance,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=base_host(request=request, is_app=True),
+                )
+                model_activity.delay(
+                    model_name="issue",
+                    model_id=str(serializer.data.get("id", None)),
+                    requested_data=request.data,
+                    current_instance=current_instance,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=base_host(request=request, is_app=True),
+                )
+                # updated issue description version
+                issue_description_version_task.delay(
+                    updated_issue=current_instance,
+                    issue_id=str(serializer.data.get("id", None)),
+                    user_id=request.user.id,
+                )
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

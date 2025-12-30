@@ -39,9 +39,7 @@ class LabelViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
         try:
-            serializer = LabelSerializer(
-                data=request.data, context={"project_id": project_id}
-            )
+            serializer = LabelSerializer(data=request.data, context={"project_id": project_id})
             if serializer.is_valid():
                 serializer.save(project_id=project_id)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)

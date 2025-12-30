@@ -182,5 +182,10 @@ export default {
       description: "ワークスペースを外部システムおよびアプリケーションと接続するための安全なAPIトークンを生成します。",
       cta_primary: "APIトークンを追加",
     },
+    webhooks: {
+      title: "まだWebhookが追加されていません",
+      description: "プロジェクトイベントが発生したときに外部サービスへの通知を自動化します。",
+      cta_primary: "Webhookを追加",
+    },
   },
 } as const;

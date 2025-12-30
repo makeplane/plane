@@ -21,6 +21,7 @@ export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHand
         [nodeType: string]: Set<string> | undefined;
       } = {};
       if (!transactions.some((tr) => tr.docChanged)) return null;
+      if (transactions.some((tr) => tr.getMeta(CORE_EDITOR_META.SKIP_FILE_DELETION))) return null;
 
       newState.doc.descendants((node) => {
         const nodeType = node.type.name as keyof NodeFileMapType;
@@ -34,40 +35,35 @@ export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHand
         }
       });
 
-      transactions.forEach((transaction) => {
-        // if the transaction has meta of skipFileDeletion set to true, then return (like while clearing the editor content programmatically)
-        if (transaction.getMeta(CORE_EDITOR_META.SKIP_FILE_DELETION)) return;
+      const removedFiles: TFileNode[] = [];
 
-        const removedFiles: TFileNode[] = [];
+      // iterate through all the nodes in the old state
+      oldState.doc.descendants((node) => {
+        const nodeType = node.type.name as keyof NodeFileMapType;
+        const isAValidNode = NODE_FILE_MAP[nodeType];
+        // if the node doesn't match, then return as no point in checking
+        if (!isAValidNode) return;
+        // Check if the node has been deleted or replaced
+        if (!newFileSources[nodeType]?.has(node.attrs.src)) {
+          removedFiles.push(node as TFileNode);
+        }
+      });
 
-        // iterate through all the nodes in the old state
-        oldState.doc.descendants((node) => {
-          const nodeType = node.type.name as keyof NodeFileMapType;
-          const isAValidNode = NODE_FILE_MAP[nodeType];
-          // if the node doesn't match, then return as no point in checking
-          if (!isAValidNode) return;
-          // Check if the node has been deleted or replaced
-          if (!newFileSources[nodeType]?.has(node.attrs.src)) {
-            removedFiles.push(node as TFileNode);
-          }
-        });
-
-        removedFiles.forEach(async (node) => {
-          const nodeType = node.type.name as keyof NodeFileMapType;
-          const src = node.attrs.src;
-          const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
-          if (!nodeFileSetDetails || !src) return;
-          try {
-            editor.storage[nodeType]?.[nodeFileSetDetails.fileSetName]?.set(src, true);
-            // update assets list storage value
-            editor.commands.updateAssetsList?.({
-              idToRemove: node.attrs.id,
-            });
-            await deleteHandler(src);
-          } catch (error) {
-            console.error("Error deleting file via delete utility plugin:", error);
-          }
-        });
+      removedFiles.forEach(async (node) => {
+        const nodeType = node.type.name as keyof NodeFileMapType;
+        const src = node.attrs.src;
+        const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
+        if (!nodeFileSetDetails || !src) return;
+        try {
+          editor.storage[nodeType]?.[nodeFileSetDetails.fileSetName]?.set(src, true);
+          // update assets list storage value
+          editor.commands.updateAssetsList?.({
+            idToRemove: node.attrs.id,
+          });
+          await deleteHandler(src);
+        } catch (error) {
+          console.error("Error deleting file via delete utility plugin:", error);
+        }
       });
 
       return null;

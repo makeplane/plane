@@ -46,11 +46,9 @@ const moveItem = <T,>(
   // Insert at the calculated position (bounds check is implicit in splice)
   newData.splice(adjustedDestinationIndex, 0, movedItem);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { __uuid__: movedItemId, ...movedItemData } = movedItem;
   return {
     newData: newData.map((item) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { __uuid__: uuid, ...rest } = item;
       return rest as T;
     }),

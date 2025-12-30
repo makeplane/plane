@@ -51,9 +51,7 @@ def transfer_cycle_issues(
         dict: Response data with success or error message
     """
     # Get the new cycle
-    new_cycle = Cycle.objects.filter(
-        workspace__slug=slug, project_id=project_id, pk=new_cycle_id
-    ).first()
+    new_cycle = Cycle.objects.filter(workspace__slug=slug, project_id=project_id, pk=new_cycle_id).first()
 
     # Check if new cycle is already completed
     if new_cycle.end_date is not None and new_cycle.end_date < timezone.now():
@@ -216,9 +214,7 @@ def transfer_cycle_issues(
         assignee_estimate_distribution = [
             {
                 "display_name": item["display_name"],
-                "assignee_id": (
-                    str(item["assignee_id"]) if item["assignee_id"] else None
-                ),
+                "assignee_id": (str(item["assignee_id"]) if item["assignee_id"] else None),
                 "avatar_url": item.get("avatar_url"),
                 "total_estimates": item["total_estimates"],
                 "completed_estimates": item["completed_estimates"],
@@ -310,9 +306,7 @@ def transfer_cycle_issues(
             )
         )
         .values("display_name", "assignee_id", "avatar_url")
-        .annotate(
-            total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False))
-        )
+        .annotate(total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False)))
         .annotate(
             completed_issues=Count(
                 "id",
@@ -360,9 +354,7 @@ def transfer_cycle_issues(
         .annotate(color=F("labels__color"))
         .annotate(label_id=F("labels__id"))
         .values("label_name", "color", "label_id")
-        .annotate(
-            total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False))
-        )
+        .annotate(total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False)))
         .annotate(
             completed_issues=Count(
                 "id",
@@ -409,9 +401,7 @@ def transfer_cycle_issues(
     )
 
     # Get the current cycle and save progress snapshot
-    current_cycle = Cycle.objects.filter(
-        workspace__slug=slug, project_id=project_id, pk=cycle_id
-    ).first()
+    current_cycle = Cycle.objects.filter(workspace__slug=slug, project_id=project_id, pk=cycle_id).first()
 
     current_cycle.progress_snapshot = {
         "total_issues": old_cycle.total_issues,
@@ -461,9 +451,7 @@ def transfer_cycle_issues(
         )
 
     # Bulk update cycle issues
-    cycle_issues = CycleIssue.objects.bulk_update(
-        updated_cycles, ["cycle_id"], batch_size=100
-    )
+    cycle_issues = CycleIssue.objects.bulk_update(updated_cycles, ["cycle_id"], batch_size=100)
 
     # Capture Issue Activity
     issue_activity.delay(

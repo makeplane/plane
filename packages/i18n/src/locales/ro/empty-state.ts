@@ -191,5 +191,10 @@ export default {
         "Generați token-uri API sigure pentru a conecta spațiul dvs. de lucru cu sisteme și aplicații externe.",
       cta_primary: "Adăugați token API",
     },
+    webhooks: {
+      title: "Încă nu s-a adăugat niciun Webhook",
+      description: "Automatizați notificările către servicii externe când apar evenimente ale proiectului.",
+      cta_primary: "Adăugați webhook",
+    },
   },
 } as const;

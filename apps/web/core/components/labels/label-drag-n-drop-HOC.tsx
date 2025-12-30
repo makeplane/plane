@@ -27,7 +27,7 @@ export function LabelDragPreview(props: LabelDragPreviewProps) {
   const { label, isGroup } = props;
 
   return (
-    <div className="py-3 pl-2 pr-4 border-[1px] border-custom-border-200 bg-custom-background-100">
+    <div className="py-3 pl-2 pr-4 border-[1px] border-subtle bg-surface-1">
       <LabelName name={label.name} color={label.color} isGroup={isGroup} />
     </div>
   );
@@ -150,7 +150,7 @@ export const LabelDndHOC = observer(function LabelDndHOC(props: Props) {
           if (instruction === "reorder-below") dropAtEndOfList = true;
 
           const sourceData = source.data as TargetData;
-          if (sourceData.id) onDrop(sourceData.id as string, parentId, droppedLabelId, dropAtEndOfList);
+          if (sourceData.id) onDrop(sourceData.id, parentId, droppedLabelId, dropAtEndOfList);
         },
       })
     );

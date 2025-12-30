@@ -1,12 +1,14 @@
 export const ILLUSTRATION_COLOR_TOKEN_MAP = {
   fill: {
-    primary: "rgba(var(--color-background-100))", // white or #fff,
-    secondary: "rgba(var(--color-background-90))", // #F4F5F5
-    tertiary: "rgba(var(--color-background-80))", // #E5E7E8
+    primary: "var(--illustration-fill-primary)", // #FFFFFF
+    secondary: "var(--illustration-fill-secondary)", // #F4F5F5
+    tertiary: "var(--illustration-fill-tertiary)", // #eaebeb
+    quaternary: "var(--illustration-fill-quaternary)", // #CFD2D3
   },
   stroke: {
-    primary: "rgba(var(--color-text-200))", // #1D1F20
-    secondary: "rgba(var(--color-border-400))", // #7A8185 or #CFD2D3
+    primary: "var(--illustration-stroke-primary)", //#CFD2D3
+    secondary: "var(--illustration-stroke-secondary)", // #8A9093
+    tertiary: "var(--illustration-stroke-tertiary)", // #1d1f20
   },
 };
 

@@ -40,10 +40,10 @@ export const SidebarWorkspaceMenuHeader = observer(function SidebarWorkspaceMenu
   const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN] as any, EUserPermissionsLevel.WORKSPACE);
 
   return (
-    <div className="flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded mt-2.5">
+    <div className="flex px-2 bg-surface-1 group/workspace-button hover:bg-surface-2 rounded-sm mt-2.5">
       <Disclosure.Button
         as="button"
-        className="flex-1 sticky top-0  z-10  w-full  py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400  text-sm font-semibold"
+        className="flex-1 sticky top-0  z-10  w-full  py-1.5 flex items-center justify-between gap-1 text-placeholder  text-13 font-semibold"
         onClick={() => toggleWorkspaceMenu(!isWorkspaceMenuOpen)}
       >
         <span>{t("workspace")}</span>
@@ -52,7 +52,7 @@ export const SidebarWorkspaceMenuHeader = observer(function SidebarWorkspaceMenu
         customButton={
           <span
             ref={actionSectionRef}
-            className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded my-auto"
+            className="grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm my-auto"
             onClick={() => {
               setIsMenuActive(!isMenuActive);
             }}
@@ -87,13 +87,13 @@ export const SidebarWorkspaceMenuHeader = observer(function SidebarWorkspaceMenu
       </CustomMenu>
       <Disclosure.Button
         as="button"
-        className="sticky top-0 z-10 group/workspace-button px-0.5 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold"
+        className="sticky top-0 z-10 group/workspace-button px-0.5 py-1.5 flex items-center justify-between gap-1 text-placeholder hover:bg-surface-2 rounded-sm text-11 font-semibold"
         onClick={() => toggleWorkspaceMenu(!isWorkspaceMenuOpen)}
       >
         {" "}
-        <span className="flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded hover:bg-custom-sidebar-background-80">
+        <span className="flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded-sm hover:bg-layer-1">
           <ChevronRightIcon
-            className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+            className={cn("size-4 flex-shrink-0 text-placeholder transition-transform", {
               "rotate-90": isWorkspaceMenuOpen,
             })}
           />

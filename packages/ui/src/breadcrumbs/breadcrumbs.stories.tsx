@@ -25,7 +25,7 @@ function BreadcrumbBlock(props: TBreadcrumbBlockProps) {
   return (
     <>
       <Breadcrumbs.ItemWrapper label={label} disableTooltip={disableTooltip}>
-        {icon && <div className="flex size-4 items-center justify-center overflow-hidden !text-[1rem]">{icon}</div>}
+        {icon && <div className="flex size-4 items-center justify-center overflow-hidden !text-16">{icon}</div>}
         {label && <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{label}</div>}
       </Breadcrumbs.ItemWrapper>
     </>

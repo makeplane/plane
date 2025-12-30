@@ -48,9 +48,9 @@ export function OAuthOptions(props: OAuthOptionsProps) {
       </div>
 
       <div className="mt-4 flex items-center transition-all duration-300">
-        <hr className="w-full border-custom-border-300 transition-colors duration-300" />
-        <p className="mx-3 flex-shrink-0 text-center text-sm text-custom-text-400 transition-colors duration-300">or</p>
-        <hr className="w-full border-custom-border-300 transition-colors duration-300" />
+        <hr className="w-full border-strong transition-colors duration-300" />
+        <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder transition-colors duration-300">or</p>
+        <hr className="w-full border-strong transition-colors duration-300" />
       </div>
     </div>
   );

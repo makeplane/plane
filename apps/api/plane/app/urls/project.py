@@ -11,7 +11,6 @@ from plane.app.views import (
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
     UserProjectInvitationsViewset,
-    ProjectPublicCoverImagesEndpoint,
     UserProjectRolesEndpoint,
     ProjectArchiveUnarchiveEndpoint,
     ProjectMemberPreferenceEndpoint,
@@ -105,11 +104,6 @@ urlpatterns = [
         "workspaces/<str:slug>/user-favorite-projects/<uuid:project_id>/",
         ProjectFavoritesViewSet.as_view({"delete": "destroy"}),
         name="project-favorite",
-    ),
-    path(
-        "project-covers/",
-        ProjectPublicCoverImagesEndpoint.as_view(),
-        name="project-covers",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/",

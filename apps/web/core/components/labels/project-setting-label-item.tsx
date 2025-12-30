@@ -1,9 +1,9 @@
 import type { Dispatch, SetStateAction } from "react";
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
-import { Pencil } from "lucide-react";
+
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
-import { CloseIcon } from "@plane/propel/icons";
+import { EditIcon, CloseIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
 // hooks
@@ -69,7 +69,7 @@ export function ProjectSettingLabelItem(props: Props) {
       key: "remove_from_group",
     },
     {
-      CustomIcon: Pencil,
+      CustomIcon: EditIcon,
       onClick: () => {
         setEditLabelForm(true);
         setIsUpdating(true);
@@ -87,12 +87,12 @@ export function ProjectSettingLabelItem(props: Props) {
     <LabelDndHOC label={label} isGroup={false} isChild={isChild} isLastChild={isLastChild} onDrop={onDrop}>
       {(isDragging, isDroppingInLabel, dragHandleRef) => (
         <div
-          className={`rounded ${isDroppingInLabel ? "border-[2px] border-custom-primary-100" : "border-[1.5px] border-transparent"}`}
+          className={`rounded-sm ${isDroppingInLabel ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
         >
           <div
-            className={`py-3 px-1 group relative flex items-center justify-between gap-2 space-y-3 rounded  ${
-              isDroppingInLabel ? "" : "border-[0.5px] border-custom-border-200"
-            } ${isDragging || isParentDragging ? "bg-custom-background-80" : "bg-custom-background-100"}`}
+            className={`py-3 px-1 group relative flex items-center justify-between gap-2 space-y-3 rounded-sm  ${
+              isDroppingInLabel ? "" : "border-[0.5px] border-subtle"
+            } ${isDragging || isParentDragging ? "bg-layer-1" : "bg-surface-1"}`}
           >
             {isEditLabelForm ? (
               <CreateUpdateLabelInline

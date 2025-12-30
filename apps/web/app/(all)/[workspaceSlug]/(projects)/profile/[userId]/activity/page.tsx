@@ -51,14 +51,14 @@ function ProfileActivityPage() {
       <PageHead title="Profile - Activity" />
       <div className="flex h-full w-full flex-col overflow-hidden py-5">
         <div className="flex items-center justify-between gap-2 px-5 md:px-9">
-          <h3 className="text-lg font-medium">{t("profile.stats.recent_activity.title")}</h3>
+          <h3 className="text-16 font-medium">{t("profile.stats.recent_activity.title")}</h3>
           {canDownloadActivity && <DownloadActivityButton />}
         </div>
         <div className="vertical-scrollbar scrollbar-md flex h-full flex-col overflow-y-auto px-5 md:px-9">
           {activityPages}
           {pageCount < totalPages && resultsCount !== 0 && (
-            <div className="flex w-full items-center justify-center text-xs">
-              <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
+            <div className="flex w-full items-center justify-center text-11">
+              <Button variant="secondary" onClick={handleLoadMore}>
                 {t("common.load_more")}
               </Button>
             </div>

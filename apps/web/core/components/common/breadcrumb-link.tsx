@@ -1,4 +1,3 @@
-import type { ReactNode, FC } from "react";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -14,13 +13,13 @@ type Props = {
 };
 
 const IconWrapper = React.memo(function IconWrapper({ icon }: { icon: React.ReactNode }) {
-  return <div className="flex size-4 items-center justify-center overflow-hidden !text-[1rem]">{icon}</div>;
+  return <div className="flex size-4 items-center justify-center overflow-hidden !text-16">{icon}</div>;
 });
 
 IconWrapper.displayName = "IconWrapper";
 
-const LabelWrapper = React.memo(function LabelWrapper({ label }: { label: ReactNode }) {
-  return <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{label}</div>;
+const LabelWrapper = React.memo(function LabelWrapper({ label }: { label: React.ReactNode }) {
+  return <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate text-primary">{label}</div>;
 });
 
 LabelWrapper.displayName = "LabelWrapper";
@@ -30,7 +29,7 @@ const BreadcrumbContent = React.memo(function BreadcrumbContent({
   label,
 }: {
   icon?: React.ReactNode;
-  label?: ReactNode;
+  label?: React.ReactNode;
 }) {
   if (!icon && !label) return null;
 
@@ -58,10 +57,10 @@ export const BreadcrumbLink = observer(function BreadcrumbLink(props: Props) {
   const { isMobile } = usePlatformOS();
 
   const itemWrapperProps = useMemo(
-    () => ({
+    (): Omit<React.ComponentProps<typeof ItemWrapper>, "children"> => ({
       label: label?.toString(),
       disableTooltip: isMobile || disableTooltip,
-      type: (href && href !== "" ? "link" : "text") as "link" | "text",
+      type: href && href !== "" ? "link" : "text",
       isLast,
     }),
     [href, label, isMobile, disableTooltip, isLast]

@@ -62,11 +62,11 @@ export const IssueBlockMembers = observer(function IssueBlockMembers({ memberIds
   return (
     <div className="relative h-full flex flex-wrap items-center gap-1">
       <div
-        className={cn("flex flex-shrink-0 cursor-default items-center rounded-md text-xs", {
-          "border-[0.5px] border-custom-border-300 px-2.5 py-1": shouldShowBorder && !members?.length,
+        className={cn("flex flex-shrink-0 cursor-default items-center rounded-md text-11", {
+          "border-[0.5px] border-strong px-2.5 py-1": shouldShowBorder && !members?.length,
         })}
       >
-        <div className="flex items-center gap-1.5 text-custom-text-200">
+        <div className="flex items-center gap-1.5 text-secondary">
           <ButtonAvatars members={members} showTooltip={false} />
           {!shouldShowBorder && members.length <= 1 && (
             <span>{members?.[0]?.member__display_name ?? "No Assignees"}</span>

@@ -1,15 +1,11 @@
-import { ArrowDownWideNarrow, Check } from "lucide-react";
+import { ArrowDownWideNarrow } from "lucide-react";
+// plane imports
 import { PROJECT_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TProjectOrderByOptions } from "@plane/types";
-// ui
 import { CustomMenu } from "@plane/ui";
-// helpers
-import { cn } from "@plane/utils";
-// types
-// constants
 
 type Props = {
   onChange: (value: TProjectOrderByOptions) => void;
@@ -34,16 +30,14 @@ export function ProjectOrderByDropdown(props: Props) {
       customButton={
         <>
           {isMobile ? (
-            <div className="flex text-sm items-center gap-2 neutral-primary text-custom-text-200">
-              <ArrowDownWideNarrow className="h-3 w-3" />
+            <div className={getButtonStyling("secondary", "lg")}>
+              <ArrowDownWideNarrow className="shrink-0 size-3.5" strokeWidth={2} />
               {orderByDetails && t(orderByDetails?.i18n_label)}
-              <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
             </div>
           ) : (
-            <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-200")}>
-              <ArrowDownWideNarrow className="h-3 w-3" />
+            <div className={getButtonStyling("secondary", "lg")}>
+              <ArrowDownWideNarrow className="shrink-0 size-3.5" strokeWidth={2} />
               {orderByDetails && t(orderByDetails?.i18n_label)}
-              <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
             </div>
           )}
         </>
@@ -62,10 +56,10 @@ export function ProjectOrderByDropdown(props: Props) {
           }}
         >
           {option && t(option?.i18n_label)}
-          {value?.includes(option.key) && <Check className="h-3 w-3" />}
+          {value?.includes(option.key) && <CheckIcon className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2 border-custom-border-200" />
+      <hr className="my-2 border-subtle" />
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
         onClick={() => {
@@ -74,7 +68,7 @@ export function ProjectOrderByDropdown(props: Props) {
         disabled={isOrderingDisabled}
       >
         Ascending
-        {!isOrderingDisabled && !isDescending && <Check className="h-3 w-3" />}
+        {!isOrderingDisabled && !isDescending && <CheckIcon className="h-3 w-3" />}
       </CustomMenu.MenuItem>
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
@@ -84,7 +78,7 @@ export function ProjectOrderByDropdown(props: Props) {
         disabled={isOrderingDisabled}
       >
         Descending
-        {!isOrderingDisabled && isDescending && <Check className="h-3 w-3" />}
+        {!isOrderingDisabled && isDescending && <CheckIcon className="h-3 w-3" />}
       </CustomMenu.MenuItem>
     </CustomMenu>
   );

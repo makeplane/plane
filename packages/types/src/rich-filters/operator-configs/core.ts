@@ -8,19 +8,19 @@ import type {
 import type { CORE_COLLECTION_OPERATOR, CORE_COMPARISON_OPERATOR, CORE_EQUALITY_OPERATOR } from "../operators";
 
 // ----------------------------- EXACT Operator -----------------------------
-export type TCoreExactOperatorConfigs<V extends TFilterValue> =
-  | TSingleSelectFilterFieldConfig<V>
-  | TDateFilterFieldConfig<V>;
+export type TCoreExactOperatorConfigs =
+  | TSingleSelectFilterFieldConfig<TFilterValue>
+  | TDateFilterFieldConfig<TFilterValue>;
 
 // ----------------------------- IN Operator -----------------------------
-export type TCoreInOperatorConfigs<V extends TFilterValue> = TMultiSelectFilterFieldConfig<V>;
+export type TCoreInOperatorConfigs = TMultiSelectFilterFieldConfig<TFilterValue>;
 
 // ----------------------------- RANGE Operator -----------------------------
-export type TCoreRangeOperatorConfigs<V extends TFilterValue> = TDateRangeFilterFieldConfig<V>;
+export type TCoreRangeOperatorConfigs = TDateRangeFilterFieldConfig<TFilterValue>;
 
 // ----------------------------- Core Operator Specific Configs -----------------------------
-export type TCoreOperatorSpecificConfigs<V extends TFilterValue> = {
-  [CORE_EQUALITY_OPERATOR.EXACT]: TCoreExactOperatorConfigs<V>;
-  [CORE_COLLECTION_OPERATOR.IN]: TCoreInOperatorConfigs<V>;
-  [CORE_COMPARISON_OPERATOR.RANGE]: TCoreRangeOperatorConfigs<V>;
+export type TCoreOperatorSpecificConfigs = {
+  [CORE_EQUALITY_OPERATOR.EXACT]: TCoreExactOperatorConfigs;
+  [CORE_COLLECTION_OPERATOR.IN]: TCoreInOperatorConfigs;
+  [CORE_COMPARISON_OPERATOR.RANGE]: TCoreRangeOperatorConfigs;
 };

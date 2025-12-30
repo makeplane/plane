@@ -189,7 +189,7 @@ export class WorkspaceDraftIssuesFilter extends IssueFilterHelperStore implement
       if (isEmpty(this.filters) || isEmpty(this.filters[workspaceSlug])) return;
 
       const _filters = {
-        richFilters: this.filters[workspaceSlug].richFilters as TWorkItemFilterExpression,
+        richFilters: this.filters[workspaceSlug].richFilters,
         displayFilters: this.filters[workspaceSlug].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[workspaceSlug].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[workspaceSlug].kanbanFilters as TIssueKanbanFilters,

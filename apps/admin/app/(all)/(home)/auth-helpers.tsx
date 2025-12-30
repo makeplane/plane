@@ -26,7 +26,7 @@ export enum EErrorAlertType {
 }
 
 const errorCodeMessages: {
-  [key in EAdminAuthErrorCodes]: { title: string; message: (email?: string | undefined) => React.ReactNode };
+  [key in EAdminAuthErrorCodes]: { title: string; message: (email?: string) => React.ReactNode };
 } = {
   // admin
   [EAdminAuthErrorCodes.ADMIN_ALREADY_EXIST]: {
@@ -79,14 +79,11 @@ const errorCodeMessages: {
   },
   [EAdminAuthErrorCodes.ADMIN_USER_DEACTIVATED]: {
     title: `User account deactivated`,
-    message: () => `User account deactivated. Please contact ${!!SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
+    message: () => `User account deactivated. Please contact ${SUPPORT_EMAIL ? SUPPORT_EMAIL : "administrator"}.`,
   },
 };
 
-export const authErrorHandler = (
-  errorCode: EAdminAuthErrorCodes,
-  email?: string | undefined
-): TAdminAuthErrorInfo | undefined => {
+export const authErrorHandler = (errorCode: EAdminAuthErrorCodes, email?: string): TAdminAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
     EAdminAuthErrorCodes.ADMIN_ALREADY_EXIST,
     EAdminAuthErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME,
@@ -120,14 +117,14 @@ export const getBaseAuthenticationModes: (props: TGetBaseAuthenticationModeProps
     name: "Unique codes",
     description:
       "Log in or sign up for Plane using codes sent via email. You need to have set up SMTP to use this method.",
-    icon: <Mails className="h-6 w-6 p-0.5 text-custom-text-300/80" />,
+    icon: <Mails className="h-6 w-6 p-0.5 text-tertiary" />,
     config: <EmailCodesConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   {
     key: "passwords-login",
     name: "Passwords",
     description: "Allow members to create accounts with passwords and use it with their email addresses to sign in.",
-    icon: <KeyRound className="h-6 w-6 p-0.5 text-custom-text-300/80" />,
+    icon: <KeyRound className="h-6 w-6 p-0.5 text-tertiary" />,
     config: <PasswordLoginConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   {

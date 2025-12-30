@@ -1,4 +1,4 @@
-import type { IJiraMetadata } from "@plane/types";
+import type { EUserPermissions, IJiraMetadata } from "@plane/types";
 
 const paramsToKey = (params: any) => {
   const {
@@ -70,6 +70,9 @@ export const WORKSPACE_INVITATION = (invitationId: string) => `WORKSPACE_INVITAT
 export const WORKSPACE_MEMBER_ME_INFORMATION = (workspaceSlug: string) =>
   `WORKSPACE_MEMBER_ME_INFORMATION_${workspaceSlug.toUpperCase()}`;
 
+export const WORKSPACE_MEMBER_ACTIVITY = (workspaceSlug: string) =>
+  `WORKSPACE_MEMBER_ACTIVITY_${workspaceSlug.toUpperCase()}`;
+
 export const WORKSPACE_PROJECTS_ROLES_INFORMATION = (workspaceSlug: string) =>
   `WORKSPACE_PROJECTS_ROLES_INFORMATION_${workspaceSlug.toUpperCase()}`;
 
@@ -79,6 +82,9 @@ export const WORKSPACE_STATES = (workspaceSlug: string) => `WORKSPACE_STATES_${w
 
 export const WORKSPACE_SIDEBAR_PREFERENCES = (workspaceSlug: string) =>
   `WORKSPACE_SIDEBAR_PREFERENCES_${workspaceSlug.toUpperCase()}`;
+
+export const WORKSPACE_PROJECT_NAVIGATION_PREFERENCES = (workspaceSlug: string) =>
+  `WORKSPACE_PROJECT_NAVIGATION_PREFERENCES_${workspaceSlug.toUpperCase()}`;
 
 export const PROJECT_GITHUB_REPOSITORY = (projectId: string) => `PROJECT_GITHUB_REPOSITORY_${projectId.toUpperCase()}`;
 
@@ -154,29 +160,41 @@ export const PROJECT_DETAILS = (workspaceSlug: string, projectId: string) =>
 export const PROJECT_ME_INFORMATION = (workspaceSlug: string, projectId: string) =>
   `PROJECT_ME_INFORMATION_${projectId.toString().toUpperCase()}`;
 
-export const PROJECT_LABELS = (workspaceSlug: string, projectId: string) =>
-  `PROJECT_LABELS_${projectId.toString().toUpperCase()}`;
+export const PROJECT_LABELS = (projectId: string, projectRole: EUserPermissions | undefined) =>
+  `PROJECT_LABELS_${projectId.toString().toUpperCase()}_${projectRole}`;
 
-export const PROJECT_MEMBERS = (workspaceSlug: string, projectId: string) =>
-  `PROJECT_MEMBERS_${projectId.toString().toUpperCase()}`;
+export const PROJECT_MEMBERS = (projectId: string, projectRole: EUserPermissions | undefined) =>
+  `PROJECT_MEMBERS_${projectId.toString().toUpperCase()}_${projectRole}`;
 
-export const PROJECT_STATES = (workspaceSlug: string, projectId: string) =>
-  `PROJECT_STATES_${projectId.toString().toUpperCase()}`;
+export const PROJECT_STATES = (projectId: string, projectRole: EUserPermissions | undefined) =>
+  `PROJECT_STATES_${projectId.toString().toUpperCase()}_${projectRole}`;
 
-export const PROJECT_INTAKE_STATE = (workspaceSlug: string, projectId: string) =>
-  `PROJECT_INTAKE_STATE_${projectId.toString().toUpperCase()}`;
+export const PROJECT_INTAKE_STATE = (projectId: string, projectRole: EUserPermissions | undefined) =>
+  `PROJECT_INTAKE_STATE_${projectId.toString().toUpperCase()}_${projectRole}`;
 
-export const PROJECT_ESTIMATES = (workspaceSlug: string, projectId: string) =>
-  `PROJECT_ESTIMATES_${projectId.toString().toUpperCase()}`;
+export const PROJECT_ESTIMATES = (projectId: string, projectRole: EUserPermissions | undefined) =>
+  `PROJECT_ESTIMATES_${projectId.toString().toUpperCase()}_${projectRole}`;
 
-export const PROJECT_ALL_CYCLES = (workspaceSlug: string, projectId: string) =>
-  `PROJECT_ALL_CYCLES_${projectId.toString().toUpperCase()}`;
+export const PROJECT_ALL_CYCLES = (projectId: string, projectRole: EUserPermissions | undefined) =>
+  `PROJECT_ALL_CYCLES_${projectId.toString().toUpperCase()}_${projectRole}`;
 
-export const PROJECT_MODULES = (workspaceSlug: string, projectId: string) =>
-  `PROJECT_MODULES_${projectId.toString().toUpperCase()}`;
+export const PROJECT_MODULES = (projectId: string, projectRole: EUserPermissions | undefined) =>
+  `PROJECT_MODULES_${projectId.toString().toUpperCase()}_${projectRole}`;
 
-export const PROJECT_VIEWS = (workspaceSlug: string, projectId: string) =>
-  `PROJECT_VIEWS_${projectId.toString().toUpperCase()}`;
+export const PROJECT_VIEWS = (projectId: string, projectRole: EUserPermissions | undefined) =>
+  `PROJECT_VIEWS_${projectId.toString().toUpperCase()}_${projectRole}`;
 
-export const PROJECT_MEMBER_PREFERENCES = (workspaceSlug: string, projectId: string) =>
-  `PROJECT_MEMBER_PREFERENCES_${projectId.toString().toUpperCase()}`;
+export const PROJECT_MEMBER_PREFERENCES = (projectId: string, projectRole: EUserPermissions | undefined) =>
+  `PROJECT_MEMBER_PREFERENCES_${projectId.toString().toUpperCase()}_${projectRole}`;
+
+export const PROJECT_WORKFLOWS = (projectId: string, projectRole: EUserPermissions | undefined) =>
+  `PROJECT_WORKFLOWS_${projectId.toString().toUpperCase()}_${projectRole}`;
+
+export const EPICS_PROPERTIES_AND_OPTIONS = (projectId: string, projectRole: EUserPermissions | undefined) =>
+  `EPICS_PROPERTIES_AND_OPTIONS_${projectId.toString().toUpperCase()}_${projectRole}`;
+
+export const WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS = (projectId: string, projectRole: EUserPermissions | undefined) =>
+  `WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS_${projectId.toString().toUpperCase()}_${projectRole}`;
+
+export const PROJECT_MILESTONES = (projectId: string, projectRole: EUserPermissions | undefined) =>
+  `PROJECT_MILESTONES_${projectId.toString().toUpperCase()}_${projectRole}`;

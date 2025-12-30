@@ -26,7 +26,7 @@ export const Default: Story = {
       <div className="space-y-6 p-4">
         <div className="flex items-center justify-center gap-6">
           <button
-            className="px-4 py-2 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition-colors shadow-md"
+            className="px-4 py-2 bg-red-500 text-on-color font-medium rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-danger-strong focus:ring-offset-2 transition-colors shadow-md"
             onClick={() => setCount((prev) => Math.max(0, prev - 1))}
           >
             -1
@@ -35,7 +35,7 @@ export const Default: Story = {
             <AnimatedCounter {...args} count={count} />
           </div>
           <button
-            className="px-4 py-2 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition-colors shadow-md"
+            className="px-4 py-2 bg-green-500 text-on-color font-medium rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-success-strong focus:ring-offset-2 transition-colors shadow-md"
             onClick={() => setCount((prev) => prev + 1)}
           >
             +1
@@ -54,13 +54,13 @@ export const Sizes: Story = {
       <div className="space-y-6 p-4">
         <div className="flex items-center gap-4">
           <button
-            className="px-3 py-1 bg-custom-background-80 text-sm rounded hover:bg-custom-background-90"
+            className="px-3 py-1 bg-layer-1 text-13 rounded-sm hover:bg-surface-2"
             onClick={() => setCount((prev) => Math.max(0, prev - 1))}
           >
             -1
           </button>
           <button
-            className="px-3 py-1 bg-custom-background-80 text-sm rounded hover:bg-custom-background-90"
+            className="px-3 py-1 bg-layer-1 text-13 rounded-sm hover:bg-surface-2"
             onClick={() => setCount((prev) => prev + 1)}
           >
             +1
@@ -68,20 +68,20 @@ export const Sizes: Story = {
         </div>
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
-            <span className="text-sm text-custom-text-400 w-20">Small:</span>
-            <div className="flex items-center justify-center min-w-[40px] h-8 bg-custom-background-80 border border-custom-border-200 rounded">
+            <span className="text-13 text-placeholder w-20">Small:</span>
+            <div className="flex items-center justify-center min-w-[40px] h-8 bg-layer-1 border border-subtle rounded-sm">
               <AnimatedCounter count={count} size="sm" />
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-custom-text-400 w-20">Medium:</span>
-            <div className="flex items-center justify-center min-w-[50px] h-10 bg-custom-background-80 border border-custom-border-200 rounded">
+            <span className="text-13 text-placeholder w-20">Medium:</span>
+            <div className="flex items-center justify-center min-w-[50px] h-10 bg-layer-1 border border-subtle rounded-sm">
               <AnimatedCounter count={count} size="md" />
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-custom-text-400 w-20">Large:</span>
-            <div className="flex items-center justify-center min-w-[60px] h-12 bg-custom-background-80 border border-custom-border-200 rounded">
+            <span className="text-13 text-placeholder w-20">Large:</span>
+            <div className="flex items-center justify-center min-w-[60px] h-12 bg-layer-1 border border-subtle rounded-sm">
               <AnimatedCounter count={count} size="lg" />
             </div>
           </div>
@@ -99,19 +99,19 @@ export const LargeNumbers: Story = {
       <div className="space-y-6 p-4">
         <div className="flex items-center gap-4">
           <button
-            className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+            className="px-3 py-1 bg-red-500 text-on-color text-13 rounded-sm hover:bg-red-600"
             onClick={() => setCount((prev) => Math.max(0, prev - 1000))}
           >
             -1000
           </button>
           <button
-            className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600"
+            className="px-3 py-1 bg-green-500 text-on-color text-13 rounded-sm hover:bg-green-600"
             onClick={() => setCount((prev) => prev + 1000)}
           >
             +1000
           </button>
         </div>
-        <div className="flex items-center justify-center min-w-[100px] h-12 bg-custom-background-80 border border-custom-border-200 rounded-lg">
+        <div className="flex items-center justify-center min-w-[100px] h-12 bg-layer-1 border border-subtle rounded-lg">
           <AnimatedCounter count={count} size="lg" />
         </div>
       </div>
@@ -142,11 +142,11 @@ export const Countdown: Story = {
     return (
       <div className="space-y-6 p-4">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center justify-center min-w-[60px] h-16 bg-custom-background-80 border-2 border-custom-border-200 rounded-lg">
-            <AnimatedCounter count={count} size="lg" className="text-2xl" />
+          <div className="flex items-center justify-center min-w-[60px] h-16 bg-layer-1 border-2 border-subtle rounded-lg">
+            <AnimatedCounter count={count} size="lg" className="text-20" />
           </div>
           <button
-            className="px-6 py-2 bg-custom-primary-100 text-white font-medium rounded-lg hover:bg-custom-primary-200"
+            className="px-6 py-2 bg-accent-primary text-on-color font-medium rounded-lg hover:bg-accent-primary/80"
             onClick={handleStart}
             disabled={isRunning}
           >
@@ -173,26 +173,26 @@ export const LiveCounter: Story = {
     return (
       <div className="space-y-6 p-4">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center justify-center min-w-[80px] h-16 bg-custom-background-80 border-2 border-custom-border-200 rounded-lg">
-            <AnimatedCounter count={count} size="lg" className="text-2xl" />
+          <div className="flex items-center justify-center min-w-[80px] h-16 bg-layer-1 border-2 border-subtle rounded-lg">
+            <AnimatedCounter count={count} size="lg" className="text-20" />
           </div>
           <div className="flex gap-2">
             <button
-              className="px-4 py-2 bg-green-500 text-white font-medium rounded hover:bg-green-600"
+              className="px-4 py-2 bg-green-500 text-on-color font-medium rounded-sm hover:bg-green-600"
               onClick={() => setIsRunning(true)}
               disabled={isRunning}
             >
               Start
             </button>
             <button
-              className="px-4 py-2 bg-red-500 text-white font-medium rounded hover:bg-red-600"
+              className="px-4 py-2 bg-red-500 text-on-color font-medium rounded-sm hover:bg-red-600"
               onClick={() => setIsRunning(false)}
               disabled={!isRunning}
             >
               Stop
             </button>
             <button
-              className="px-4 py-2 bg-gray-500 text-white font-medium rounded hover:bg-gray-600"
+              className="px-4 py-2 bg-gray-500 text-on-color font-medium rounded-sm hover:bg-gray-600"
               onClick={() => {
                 setIsRunning(false);
                 setCount(0);
@@ -215,49 +215,49 @@ export const MultipleCounters: Story = {
 
     return (
       <div className="space-y-6 p-4">
-        <div className="max-w-md border border-custom-border-200 rounded-lg p-4">
+        <div className="max-w-md border border-subtle rounded-lg p-4">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-medium">Engagement Stats</h3>
           </div>
           <div className="flex gap-4">
             <div className="flex-1 flex flex-col items-center gap-2">
-              <div className="text-custom-text-400 text-sm">Likes</div>
+              <div className="text-placeholder text-13">Likes</div>
               <div className="flex items-center gap-2">
                 <button
-                  className="w-8 h-8 flex items-center justify-center bg-custom-background-80 rounded hover:bg-custom-background-90"
+                  className="w-8 h-8 flex items-center justify-center bg-layer-1 rounded-sm hover:bg-surface-2"
                   onClick={() => setLikes((prev) => prev + 1)}
                 >
                   +
                 </button>
-                <div className="flex items-center justify-center min-w-[40px] h-10 bg-custom-background-80 border border-custom-border-200 rounded">
+                <div className="flex items-center justify-center min-w-[40px] h-10 bg-layer-1 border border-subtle rounded-sm">
                   <AnimatedCounter count={likes} size="md" />
                 </div>
               </div>
             </div>
             <div className="flex-1 flex flex-col items-center gap-2">
-              <div className="text-custom-text-400 text-sm">Comments</div>
+              <div className="text-placeholder text-13">Comments</div>
               <div className="flex items-center gap-2">
                 <button
-                  className="w-8 h-8 flex items-center justify-center bg-custom-background-80 rounded hover:bg-custom-background-90"
+                  className="w-8 h-8 flex items-center justify-center bg-layer-1 rounded-sm hover:bg-surface-2"
                   onClick={() => setComments((prev) => prev + 1)}
                 >
                   +
                 </button>
-                <div className="flex items-center justify-center min-w-[40px] h-10 bg-custom-background-80 border border-custom-border-200 rounded">
+                <div className="flex items-center justify-center min-w-[40px] h-10 bg-layer-1 border border-subtle rounded-sm">
                   <AnimatedCounter count={comments} size="md" />
                 </div>
               </div>
             </div>
             <div className="flex-1 flex flex-col items-center gap-2">
-              <div className="text-custom-text-400 text-sm">Shares</div>
+              <div className="text-placeholder text-13">Shares</div>
               <div className="flex items-center gap-2">
                 <button
-                  className="w-8 h-8 flex items-center justify-center bg-custom-background-80 rounded hover:bg-custom-background-90"
+                  className="w-8 h-8 flex items-center justify-center bg-layer-1 rounded-sm hover:bg-surface-2"
                   onClick={() => setShares((prev) => prev + 1)}
                 >
                   +
                 </button>
-                <div className="flex items-center justify-center min-w-[40px] h-10 bg-custom-background-80 border border-custom-border-200 rounded">
+                <div className="flex items-center justify-center min-w-[40px] h-10 bg-layer-1 border border-subtle rounded-sm">
                   <AnimatedCounter count={shares} size="md" />
                 </div>
               </div>
@@ -277,15 +277,13 @@ export const InBadge: Story = {
       <div className="space-y-6 p-4">
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
-            <button className="px-4 py-2 bg-custom-background-80 border border-custom-border-200 rounded-lg">
-              Notifications
-            </button>
-            <div className="absolute -top-2 -right-2 min-w-[24px] h-6 flex items-center justify-center bg-red-500 text-white rounded-full px-1.5">
-              <AnimatedCounter count={notifications} size="sm" className="text-xs font-medium" />
+            <button className="px-4 py-2 bg-layer-1 border border-subtle rounded-lg">Notifications</button>
+            <div className="absolute -top-2 -right-2 min-w-[24px] h-6 flex items-center justify-center bg-red-500 text-on-color rounded-full px-1.5">
+              <AnimatedCounter count={notifications} size="sm" className="text-11 font-medium" />
             </div>
           </div>
           <button
-            className="px-4 py-2 bg-custom-primary-100 text-white rounded hover:bg-custom-primary-200"
+            className="px-4 py-2 bg-accent-primary text-on-color rounded-sm hover:bg-accent-primary/80"
             onClick={() => setNotifications((prev) => prev + 1)}
           >
             Add Notification
@@ -309,20 +307,17 @@ export const FastAnimation: Story = {
     return (
       <div className="space-y-6 p-4">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center justify-center min-w-[60px] h-12 bg-custom-background-80 border border-custom-border-200 rounded-lg">
+          <div className="flex items-center justify-center min-w-[60px] h-12 bg-layer-1 border border-subtle rounded-lg">
             <AnimatedCounter count={count} size="lg" />
           </div>
           <div className="flex gap-2">
             <button
-              className="px-4 py-2 bg-custom-primary-100 text-white rounded hover:bg-custom-primary-200"
+              className="px-4 py-2 bg-accent-primary text-on-color rounded-sm hover:bg-accent-primary/80"
               onClick={incrementFast}
             >
               +10 Fast
             </button>
-            <button
-              className="px-4 py-2 bg-custom-background-80 rounded hover:bg-custom-background-90"
-              onClick={() => setCount(0)}
-            >
+            <button className="px-4 py-2 bg-layer-1 rounded-sm hover:bg-surface-2" onClick={() => setCount(0)}>
               Reset
             </button>
           </div>

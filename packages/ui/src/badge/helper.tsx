@@ -27,10 +27,10 @@ export interface IBadgeStyling {
 
 // TODO: convert them to objects instead of enums
 enum badgeSizeStyling {
-  sm = `px-2.5 py-1 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  md = `px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  lg = `px-4 py-2 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  xl = `px-5 py-3 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  sm = `px-2.5 py-1 font-medium text-11 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  md = `px-4 py-1.5 font-medium text-13 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  lg = `px-4 py-2 font-medium text-13 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  xl = `px-5 py-3 font-medium text-13 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
 }
 
 // TODO: convert them to objects instead of enums
@@ -44,55 +44,55 @@ enum badgeIconStyling {
 
 export const badgeStyling: IBadgeStyling = {
   primary: {
-    default: `text-white bg-custom-primary-100`,
-    hover: `hover:bg-custom-primary-200`,
+    default: `text-on-color bg-accent-primary`,
+    hover: `hover:bg-accent-primary/80`,
     disabled: `cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60`,
   },
   "accent-primary": {
-    default: `bg-custom-primary-10 text-custom-primary-100`,
-    hover: `hover:bg-custom-primary-20 hover:text-custom-primary-200`,
-    disabled: `cursor-not-allowed !text-custom-primary-60`,
+    default: `bg-accent-subtle text-accent-primary`,
+    hover: `hover:bg-custom-primary-20 hover:text-accent-secondary`,
+    disabled: `cursor-not-allowed !text-accent-primary/60`,
   },
   "outline-primary": {
-    default: `text-custom-primary-100 bg-custom-background-100 border border-custom-primary-100`,
-    hover: `hover:border-custom-primary-80 hover:bg-custom-primary-10`,
-    disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
+    default: `text-accent-primary bg-surface-1 border border-accent-strong`,
+    hover: `hover:border-accent-strong-80 hover:bg-accent-subtle`,
+    disabled: `cursor-not-allowed !text-accent-primary/60 !border-accent-strong-60 `,
   },
 
   neutral: {
-    default: `text-custom-background-100 bg-custom-text-100 border border-custom-border-200`,
-    hover: `hover:bg-custom-text-200`,
-    disabled: `cursor-not-allowed bg-custom-border-200 !text-custom-text-400`,
+    default: `text-custom-background-100 bg-layer-1 border border-subtle`,
+    hover: `hover:bg-layer-1`,
+    disabled: `cursor-not-allowed bg-subtle-1 !text-placeholder`,
   },
   "accent-neutral": {
-    default: `text-custom-text-200 bg-custom-background-80`,
-    hover: `hover:bg-custom-border-200 hover:text-custom-text-100`,
-    disabled: `cursor-not-allowed !text-custom-text-400`,
+    default: `text-secondary bg-layer-1`,
+    hover: `hover:bg-subtle-1 hover:text-primary`,
+    disabled: `cursor-not-allowed !text-placeholder`,
   },
   "outline-neutral": {
-    default: `text-custom-text-200 bg-custom-background-100 border border-custom-border-200`,
-    hover: `hover:text-custom-text-100 hover:bg-custom-border-200`,
-    disabled: `cursor-not-allowed !text-custom-text-400`,
+    default: `text-secondary bg-surface-1 border border-subtle`,
+    hover: `hover:text-primary hover:bg-subtle-1`,
+    disabled: `cursor-not-allowed !text-placeholder`,
   },
 
   success: {
-    default: `text-white bg-green-500`,
+    default: `text-on-color bg-green-500`,
     hover: `hover:bg-green-600`,
     disabled: `cursor-not-allowed !bg-green-300`,
   },
   "accent-success": {
-    default: `text-green-500 bg-green-50`,
-    hover: `hover:bg-green-100 hover:text-green-600`,
-    disabled: `cursor-not-allowed !text-green-300`,
+    default: `text-success-primary bg-green-50`,
+    hover: `hover:bg-green-100 hover:text-success-primary`,
+    disabled: `cursor-not-allowed text-success-secondary!`,
   },
   "outline-success": {
-    default: `text-green-500 bg-custom-background-100 border border-green-500`,
-    hover: `hover:text-green-600 hover:bg-green-50`,
-    disabled: `cursor-not-allowed !text-green-300 border-green-300`,
+    default: `text-success-primary bg-surface-1 border border-success-strong`,
+    hover: `hover:text-success-primary hover:bg-green-50`,
+    disabled: `cursor-not-allowed text-success-secondary! border-success-subtle`,
   },
 
   warning: {
-    default: `text-white bg-amber-500`,
+    default: `text-on-color bg-amber-500`,
     hover: `hover:bg-amber-600`,
     disabled: `cursor-not-allowed !bg-amber-300`,
   },
@@ -102,25 +102,25 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !text-amber-300`,
   },
   "outline-warning": {
-    default: `text-amber-500 bg-custom-background-100 border border-amber-500`,
+    default: `text-amber-500 bg-surface-1 border border-amber-500`,
     hover: `hover:text-amber-600 hover:bg-amber-50`,
     disabled: `cursor-not-allowed !text-amber-300 border-amber-300`,
   },
 
   destructive: {
-    default: `text-white bg-red-500`,
+    default: `text-on-color bg-red-500`,
     hover: `hover:bg-red-600`,
     disabled: `cursor-not-allowed !bg-red-300`,
   },
   "accent-destructive": {
-    default: `text-red-500 bg-red-50`,
-    hover: `hover:bg-red-100 hover:text-red-600`,
-    disabled: `cursor-not-allowed !text-red-300`,
+    default: `text-danger-primary bg-red-50`,
+    hover: `hover:bg-red-100 hover:text-danger-primary`,
+    disabled: `cursor-not-allowed text-danger-secondary!`,
   },
   "outline-destructive": {
-    default: `text-red-500 bg-custom-background-100 border border-red-500`,
-    hover: `hover:text-red-600 hover:bg-red-50`,
-    disabled: `cursor-not-allowed !text-red-300 border-red-300`,
+    default: `text-danger-primary bg-surface-1 border border-danger-strong`,
+    hover: `hover:text-danger-primary hover:bg-red-50`,
+    disabled: `cursor-not-allowed text-danger-secondary! border-danger-subtle`,
   },
 };
 

@@ -20,16 +20,11 @@ const IntegrationGuide = observer(function IntegrationGuide() {
       <div className="h-full w-full">
         <>
           <ExportForm
-            workspaceSlug={workspaceSlug as string}
+            workspaceSlug={workspaceSlug}
             provider={provider}
-            mutateServices={() => mutate(EXPORT_SERVICES_LIST(workspaceSlug as string, `${cursor}`, `${per_page}`))}
+            mutateServices={() => mutate(EXPORT_SERVICES_LIST(workspaceSlug, `${cursor}`, `${per_page}`))}
           />
-          <PrevExports
-            workspaceSlug={workspaceSlug as string}
-            cursor={cursor}
-            per_page={per_page}
-            setCursor={setCursor}
-          />
+          <PrevExports workspaceSlug={workspaceSlug} cursor={cursor} per_page={per_page} setCursor={setCursor} />
         </>
       </div>
     </>

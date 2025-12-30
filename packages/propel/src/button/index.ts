@@ -1,3 +1,3 @@
 export { Button } from "./button";
-export * from "./helper";
-export type { ButtonProps } from "./button";
+export { getButtonStyling } from "./helper";
+export type { ButtonProps, TButtonVariant, TButtonSize } from "./helper";

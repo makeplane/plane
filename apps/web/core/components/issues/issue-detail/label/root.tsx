@@ -13,7 +13,6 @@ import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 // types
 import { LabelList, IssueLabelSelectRoot } from "./";
 // TODO: Fix this import statement, as core should not import from ee
-// eslint-disable-next-line import/order
 
 export type TIssueLabel = {
   workspaceSlug: string;
@@ -93,7 +92,7 @@ export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
   );
 
   return (
-    <div className="relative flex flex-wrap items-center gap-1">
+    <div className="relative flex flex-wrap items-center gap-1 min-h-7.5 w-full px-2">
       <LabelList
         workspaceSlug={workspaceSlug}
         projectId={projectId}

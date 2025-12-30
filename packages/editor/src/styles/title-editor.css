@@ -1,0 +1,49 @@
+/* Title editor styles */
+.page-title-editor {
+  width: 100%;
+  outline: none;
+  resize: none;
+  border-radius: 0;
+}
+
+.page-title-editor .ProseMirror {
+  background-color: transparent;
+  font-weight: bold;
+  letter-spacing: -2%;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+/* Handle font sizes */
+.page-title-editor.small-font .ProseMirror h1 {
+  font-size: 1.6rem;
+  line-height: 1.9rem;
+}
+
+.page-title-editor.large-font .ProseMirror h1 {
+  font-size: 2rem;
+  line-height: 2.375rem;
+}
+
+/* Focus state */
+.page-title-editor.active-editor .ProseMirror {
+  box-shadow: none;
+  outline: none;
+}
+
+/* Placeholder */
+.page-title-editor .ProseMirror h1.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--color-placeholder);
+  pointer-events: none;
+  height: 0;
+}
+
+.page-title-editor .ProseMirror h1.is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--color-placeholder);
+  pointer-events: none;
+  height: 0;
+}

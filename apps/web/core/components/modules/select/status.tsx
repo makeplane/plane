@@ -31,14 +31,16 @@ export function ModuleStatusSelect({ control, error, tabIndex }: Props) {
           <CustomSelect
             value={value}
             label={
-              <div className={`flex items-center justify-center gap-2 text-xs py-0.5 ${error ? "text-red-500" : ""}`}>
+              <div
+                className={`flex items-center justify-center gap-2 text-11 py-0.5 ${error ? "text-danger-primary" : ""}`}
+              >
                 {value ? (
                   <ModuleStatusIcon status={value} />
                 ) : (
-                  <StatePropertyIcon className={`h-3 w-3 ${error ? "text-red-500" : "text-custom-text-200"}`} />
+                  <StatePropertyIcon className={`h-3 w-3 ${error ? "text-danger-primary" : "text-secondary"}`} />
                 )}
                 {(selectedValue && t(selectedValue?.i18n_label)) ?? (
-                  <span className={`${error ? "text-red-500" : "text-custom-text-200"}`}>Status</span>
+                  <span className={`${error ? "text-danger-primary" : "text-secondary"}`}>Status</span>
                 )}
               </div>
             }

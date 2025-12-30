@@ -191,5 +191,10 @@ export default {
         "Tạo token API an toàn để kết nối không gian làm việc của bạn với các hệ thống và ứng dụng bên ngoài.",
       cta_primary: "Thêm token API",
     },
+    webhooks: {
+      title: "Chưa thêm Webhook",
+      description: "Tự động hóa thông báo đến các dịch vụ bên ngoài khi sự kiện dự án xảy ra.",
+      cta_primary: "Thêm webhook",
+    },
   },
 } as const;

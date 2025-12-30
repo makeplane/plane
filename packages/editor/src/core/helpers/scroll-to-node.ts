@@ -27,7 +27,6 @@ function scrollToNode(editor: Editor, pos: number): void {
   }
 }
 
-// eslint-disable-next-line no-undef
 export function scrollToNodeViaDOMCoordinates(editor: Editor, pos: number, behavior?: ScrollBehavior): void {
   const view = editor.view;
 

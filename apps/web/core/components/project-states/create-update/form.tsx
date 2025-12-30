@@ -15,7 +15,7 @@ type TStateForm = {
 function PopoverButton({ color }: { color?: string }) {
   return (
     <div
-      className="group inline-flex items-center text-base font-medium focus:outline-none h-5 w-5 rounded transition-all"
+      className="group inline-flex items-center text-14 font-medium focus:outline-none h-5 w-5 rounded-sm transition-all"
       style={{
         backgroundColor: color ?? "black",
       }}
@@ -57,7 +57,7 @@ export function StateForm(props: TStateForm) {
   };
 
   return (
-    <div className="relative flex space-x-2 bg-custom-background-100 p-3 rounded">
+    <div className="relative flex space-x-2 bg-surface-1 p-3 rounded-sm">
       {/* color */}
       <div className="flex-shrink-0 h-full mt-2">
         <Popover button={<PopoverButton color={formData?.color} />} panelClassName="mt-4 -ml-3">
@@ -88,14 +88,14 @@ export function StateForm(props: TStateForm) {
           value={formData?.description}
           onChange={(e) => handleFormData("description", e.target.value)}
           hasError={(errors && Boolean(errors.description)) || false}
-          className="w-full text-sm min-h-14 resize-none"
+          className="w-full text-13 min-h-14 resize-none"
         />
 
         <div className="flex space-x-2 items-center">
-          <Button onClick={formSubmit} variant="primary" size="sm" disabled={buttonDisabled}>
+          <Button onClick={formSubmit} variant="primary" size="lg" disabled={buttonDisabled}>
             {buttonTitle}
           </Button>
-          <Button type="button" variant="neutral-primary" size="sm" disabled={buttonDisabled} onClick={onCancel}>
+          <Button type="button" variant="secondary" size="lg" disabled={buttonDisabled} onClick={onCancel}>
             Cancel
           </Button>
         </div>

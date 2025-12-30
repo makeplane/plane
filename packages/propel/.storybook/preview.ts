@@ -1,6 +1,5 @@
 import type { Preview } from "@storybook/react-vite";
-import "@plane/tailwind-config/global.css";
-import "../src/styles/react-day-picker.css";
+import "./tailwind.css";
 
 const parameters: Preview["parameters"] = {
   controls: {

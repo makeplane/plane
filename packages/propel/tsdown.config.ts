@@ -5,6 +5,7 @@ export default defineConfig({
     "src/accordion/index.ts",
     "src/animated-counter/index.ts",
     "src/avatar/index.ts",
+    "src/badge/index.ts",
     "src/banner/index.ts",
     "src/button/index.ts",
     "src/calendar/index.ts",
@@ -19,6 +20,7 @@ export default defineConfig({
     "src/emoji-icon-picker/index.ts",
     "src/emoji-reaction/index.ts",
     "src/emoji-reaction-picker/index.ts",
+    "src/icon-button/index.ts",
     "src/icons/index.ts",
     "src/input/index.ts",
     "src/menu/index.ts",
@@ -42,8 +44,6 @@ export default defineConfig({
   exports: {
     customExports: (exports) => ({
       ...exports,
-      "./styles/fonts.css": "./dist/styles/fonts/index.css",
-      "./styles/fonts": "./dist/styles/fonts/index.css",
       "./styles/react-day-picker.css": "./dist/styles/react-day-picker.css",
       "./styles/react-day-picker": "./dist/styles/react-day-picker.css",
     }),

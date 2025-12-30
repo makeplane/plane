@@ -96,10 +96,10 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
             const destinationData = self.data as TDraggableData;
 
             if (sourceData && destinationData && sourceData.id) {
-              const destinationGroupKey = destinationData.groupKey as TStateGroups;
+              const destinationGroupKey = destinationData.groupKey;
               const edge = extractClosestEdge(destinationData) || undefined;
               const payload: Partial<IState> = {
-                id: sourceData.id as string,
+                id: sourceData.id,
                 group: destinationGroupKey,
                 sequence: getCurrentStateSequence(groupedStates[destinationGroupKey], destinationData, edge),
               };
@@ -129,7 +129,7 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
       <div
         ref={draggableElementRef}
         className={cn(
-          "relative border border-custom-border-100 bg-custom-background-100 py-3 px-3.5 rounded group",
+          "relative border border-subtle bg-surface-1 py-3 px-3.5 rounded-sm group",
           isDragging ? `opacity-50` : `opacity-100`,
           totalStates === 1 ? `cursor-auto` : `cursor-grab`,
           stateItemClassName

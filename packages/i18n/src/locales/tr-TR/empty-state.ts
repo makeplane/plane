@@ -190,5 +190,10 @@ export default {
         "Çalışma alanınızı harici sistemler ve uygulamalarla bağlamak için güvenli API token'ları oluşturun.",
       cta_primary: "API token'ı ekle",
     },
+    webhooks: {
+      title: "Henüz Webhook eklenmedi",
+      description: "Proje olayları gerçekleştiğinde harici hizmetlere bildirimleri otomatikleştirin.",
+      cta_primary: "Webhook ekle",
+    },
   },
 } as const;

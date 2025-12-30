@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import type { FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
-import { Plus } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssueServiceType } from "@plane/types";
@@ -98,7 +98,7 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
     >
       <button {...getRootProps()} type="button" disabled={disabled}>
         <input {...getInputProps()} />
-        {customButton ? customButton : <Plus className="h-4 w-4" />}
+        {customButton ? customButton : <PlusIcon className="h-4 w-4" />}
       </button>
     </div>
   );

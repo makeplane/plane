@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { CircleCheck, CircleX, Clock, ExternalLink, FileStack, Link, Trash2, PanelLeft, MoveRight } from "lucide-react";
-import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { CircleCheck, CircleX, Clock, FileStack, PanelLeft, MoveRight } from "lucide-react";
+import { LinkIcon, NewTabIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
@@ -87,28 +87,25 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
     <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
       {isNotificationEmbed && (
         <button onClick={embedRemoveCurrentNotification}>
-          <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200 mr-2" />
+          <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary mr-2" />
         </button>
       )}
       <PanelLeft
         onClick={() => setIsMobileSidebar(!isMobileSidebar)}
-        className={cn(
-          "w-4 h-4 flex-shrink-0 mr-2 my-auto",
-          isMobileSidebar ? "text-custom-primary-100" : "text-custom-text-200"
-        )}
+        className={cn("w-4 h-4 flex-shrink-0 mr-2 my-auto", isMobileSidebar ? "text-accent-primary" : "text-secondary")}
       />
-      <div className="flex items-center gap-2 w-full bg-custom-background-100 z-[15]">
+      <div className="flex items-center gap-2 w-full bg-surface-1 z-[15]">
         <div className="flex items-center gap-x-2">
           <button
             type="button"
-            className="rounded border border-custom-border-200 p-1.5"
+            className="rounded-sm border border-subtle p-1.5"
             onClick={() => handleInboxIssueNavigation("prev")}
           >
             <ChevronUpIcon height={14} width={14} strokeWidth={2} />
           </button>
           <button
             type="button"
-            className="rounded border border-custom-border-200 p-1.5"
+            className="rounded-sm border border-subtle p-1.5"
             onClick={() => handleInboxIssueNavigation("next")}
           >
             <ChevronDownIcon height={14} width={14} strokeWidth={2} />
@@ -125,7 +122,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             {isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
                 <div className="flex items-center gap-2">
-                  <Link size={14} strokeWidth={2} />
+                  <LinkIcon width={14} height={14} strokeWidth={2} />
                   Copy work item link
                 </div>
               </CustomMenu.MenuItem>
@@ -133,7 +130,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             {isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={() => router.push(workItemLink)}>
                 <div className="flex items-center gap-2">
-                  <ExternalLink size={14} strokeWidth={2} />
+                  <NewTabIcon width={14} height={14} strokeWidth={2} />
                   Open work item
                 </div>
               </CustomMenu.MenuItem>
@@ -180,7 +177,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   )
                 }
               >
-                <div className="flex items-center gap-2 text-green-500">
+                <div className="flex items-center gap-2 text-success-primary">
                   <CircleCheck size={14} strokeWidth={2} />
                   Accept
                 </div>
@@ -196,7 +193,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   )
                 }
               >
-                <div className="flex items-center gap-2 text-red-500">
+                <div className="flex items-center gap-2 text-danger-primary">
                   <CircleX size={14} strokeWidth={2} />
                   Decline
                 </div>
@@ -204,8 +201,8 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             )}
             {canDelete && !isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
-                <div className="flex items-center gap-2 text-red-500">
-                  <Trash2 size={14} strokeWidth={2} />
+                <div className="flex items-center gap-2 text-danger-primary">
+                  <TrashIcon width={14} height={14} strokeWidth={2} />
                   Delete
                 </div>
               </CustomMenu.MenuItem>

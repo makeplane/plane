@@ -78,7 +78,7 @@ export const getPasswordCriteria = (password: string): PasswordCriteria[] => [
 
 // Error code messages
 const errorCodeMessages: {
-  [key in EAuthErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in EAuthErrorCodes]: { title: string; message: (email?: string) => ReactNode };
 } = {
   // global
   [EAuthErrorCodes.INSTANCE_NOT_CONFIGURED]: {
@@ -293,10 +293,7 @@ const errorCodeMessages: {
 };
 
 // Error handler
-export const authErrorHandler = (
-  errorCode: EAuthErrorCodes,
-  email?: string | undefined
-): TAuthErrorInfo | undefined => {
+export const authErrorHandler = (errorCode: EAuthErrorCodes, email?: string): TAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
     EAuthErrorCodes.INSTANCE_NOT_CONFIGURED,
     EAuthErrorCodes.INVALID_EMAIL,
