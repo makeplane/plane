@@ -119,7 +119,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
   const handleInboxIssueAccept = async () => {
     const nextOrPreviousIssueId = redirectIssue();
     await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.ACCEPTED);
-    await fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    try {
+      await fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    } catch (error) {
+      console.error("Failed to refresh inbox issues:", error);
+    }
     setAcceptIssueModal(false);
     handleRedirection(nextOrPreviousIssueId);
   };
@@ -127,7 +131,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
   const handleInboxIssueDecline = async () => {
     const nextOrPreviousIssueId = redirectIssue();
     await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.DECLINED);
-    await fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    try {
+      await fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    } catch (error) {
+      console.error("Failed to refresh inbox issues:", error);
+    }
     setDeclineIssueModal(false);
     handleRedirection(nextOrPreviousIssueId);
   };
@@ -141,7 +149,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
 
   const handleInboxIssueDuplicate = async (issueId: string) => {
     await inboxIssue?.updateInboxIssueDuplicateTo(issueId);
-    await fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    try {
+      await fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    } catch (error) {
+      console.error("Failed to refresh inbox issues:", error);
+    }
   };
 
   const handleInboxIssueDelete = async () => {
