@@ -59,7 +59,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
   const [declineIssueModal, setDeclineIssueModal] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // store
-  const { currentTab, deleteInboxIssue, filteredInboxIssueIds } = useProjectInbox();
+  const { currentTab, deleteInboxIssue, filteredInboxIssueIds, fetchInboxIssues } = useProjectInbox();
   const { data: currentUser } = useUser();
   const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails } = useProject();
@@ -119,6 +119,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
   const handleInboxIssueAccept = async () => {
     const nextOrPreviousIssueId = redirectIssue();
     await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.ACCEPTED);
+    await fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
     setAcceptIssueModal(false);
     handleRedirection(nextOrPreviousIssueId);
   };
@@ -126,6 +127,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
   const handleInboxIssueDecline = async () => {
     const nextOrPreviousIssueId = redirectIssue();
     await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.DECLINED);
+    await fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
     setDeclineIssueModal(false);
     handleRedirection(nextOrPreviousIssueId);
   };
@@ -139,6 +141,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
 
   const handleInboxIssueDuplicate = async (issueId: string) => {
     await inboxIssue?.updateInboxIssueDuplicateTo(issueId);
+    await fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
   };
 
   const handleInboxIssueDelete = async () => {
