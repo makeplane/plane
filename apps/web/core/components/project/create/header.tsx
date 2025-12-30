@@ -18,13 +18,21 @@ import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/te
 type Props = {
   handleClose: () => void;
   isMobile?: boolean;
-  handleFormChange?: () => void;
+  handleFormOnChange?: () => void;
   isClosable?: boolean;
   handleTemplateSelect?: () => void;
+  showActionButtons?: boolean;
 };
 
 function ProjectCreateHeader(props: Props) {
-  const { handleClose, isMobile = false, handleFormChange, isClosable = true, handleTemplateSelect } = props;
+  const {
+    handleClose,
+    isMobile = false,
+    handleFormOnChange,
+    isClosable = true,
+    handleTemplateSelect,
+    showActionButtons = true,
+  } = props;
   const { watch, control, setValue } = useFormContext<IProject>();
   const { t } = useTranslation();
   // derived values
@@ -40,9 +48,11 @@ function ProjectCreateHeader(props: Props) {
         alt={t("project_cover_image_alt")}
         className="absolute left-0 top-0 h-full w-full rounded-lg"
       />
-      <div className="absolute left-2.5 top-2.5">
-        <ProjectTemplateSelect onClick={handleTemplateSelect} />
-      </div>
+      {showActionButtons && (
+        <div className="absolute left-2.5 top-2.5">
+          <ProjectTemplateSelect onClick={handleTemplateSelect} />
+        </div>
+      )}
       {isClosable && (
         <div className="absolute right-2 top-2 p-2">
           <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={getIndex("close")}>
@@ -59,7 +69,7 @@ function ProjectCreateHeader(props: Props) {
               label={t("change_cover")}
               onChange={(data) => {
                 onChange(data);
-                handleFormChange?.();
+                handleFormOnChange?.();
               }}
               control={control}
               value={value ?? null}
@@ -101,7 +111,7 @@ function ProjectCreateHeader(props: Props) {
                   shouldDirty: true,
                 });
                 onChange(newLogoProps);
-                handleFormChange?.();
+                handleFormOnChange?.();
                 setIsOpen(false);
               }}
               defaultIconColor={value?.in_use && value.in_use === "icon" ? value.icon?.color : undefined}

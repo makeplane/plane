@@ -1,7 +1,7 @@
 import type { ChangeEvent } from "react";
 import type { UseFormSetValue } from "react-hook-form";
 import { Controller, useFormContext } from "react-hook-form";
-import { Info } from "lucide-react";
+import { InfoIcon } from "@plane/propel/icons";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -120,7 +120,7 @@ function ProjectCommonAttributes(props: Props) {
           className="text-13"
           position="right-start"
         >
-          <Info className="absolute right-2 top-2.5 h-3 w-3 text-placeholder" />
+          <InfoIcon className="absolute right-2 top-2.5 h-3 w-3 text-placeholder" />
         </Tooltip>
         <span className="text-11 text-danger-primary">{errors?.identifier?.message}</span>
       </div>
