@@ -168,8 +168,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
     [uploadFile, editor, getPos]
   );
 
-  // const isErrorState = failedToLoadImage || hasDuplicationFailed;
-  const isErrorState = true;
+  const isErrorState = failedToLoadImage || hasDuplicationFailed;
 
   const borderColor =
     selected && editor.isEditable && !isErrorState

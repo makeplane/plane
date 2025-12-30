@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { NETWORK_CHOICES, ETabIndices } from "@plane/constants";
@@ -79,7 +78,7 @@ function ProjectAttributes(props: Props) {
                   placeholder={t("lead")}
                   multiple={false}
                   buttonVariant="border-with-text"
-                  tabIndex={5}
+                  tabIndex={getIndex("lead")}
                 />
               </div>
             );
