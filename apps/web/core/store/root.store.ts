@@ -13,7 +13,6 @@ import type { IPowerKStore } from "@/plane-web/store/power-k.store";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IStateStore } from "@/plane-web/store/state.store";
 import { StateStore } from "@/plane-web/store/state.store";
-import { WorkspaceRootStore } from "@/plane-web/store/workspace";
 // stores
 import type { ICycleStore } from "./cycle.store";
 import { CycleStore } from "./cycle.store";
@@ -62,6 +61,7 @@ import { ThemeStore } from "./theme.store";
 import type { IUserStore } from "./user";
 import { UserStore } from "./user";
 import type { IWorkspaceRootStore } from "./workspace";
+import { WorkspaceRootStore } from "./workspace";
 
 enableStaticRendering(typeof window === "undefined");
 

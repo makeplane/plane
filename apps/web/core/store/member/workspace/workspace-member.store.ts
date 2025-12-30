@@ -23,7 +23,7 @@ export interface IWorkspaceMembership {
   is_active?: boolean;
 }
 
-export interface IWorkspaceMemberStore {
+export interface IBaseWorkspaceMemberStore {
   // observables
   workspaceMemberMap: Record<string, Record<string, IWorkspaceMembership>>;
   workspaceMemberInvitations: Record<string, IWorkspaceMemberInvitation[]>;
@@ -57,7 +57,7 @@ export interface IWorkspaceMemberStore {
   isUserSuspended: (userId: string, workspaceSlug: string) => boolean;
 }
 
-export class WorkspaceMemberStore implements IWorkspaceMemberStore {
+export abstract class BaseWorkspaceMemberStore implements IBaseWorkspaceMemberStore {
   // observables
   workspaceMemberMap: {
     [workspaceSlug: string]: Record<string, IWorkspaceMembership>;
@@ -251,7 +251,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * @param userId
    * @param data
    */
-  updateMember = async (workspaceSlug: string, userId: string, data: { role: EUserPermissions }) => {
+  async updateMember(workspaceSlug: string, userId: string, data: { role: EUserPermissions }) {
     const memberDetails = this.getWorkspaceMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
     // original data to revert back in case of error
@@ -261,7 +261,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
         set(this.workspaceMemberMap, [workspaceSlug, userId, "role"], data.role);
       });
       await this.workspaceService.updateWorkspaceMember(workspaceSlug, memberDetails.id, data);
-      void this.rootStore.workspaceRoot.mutateWorkspaceMembersActivity(workspaceSlug);
     } catch (error) {
       // revert back to original members in case of error
       runInAction(() => {
@@ -269,22 +268,21 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       });
       throw error;
     }
-  };
+  }
 
   /**
    * @description remove a member from workspace
    * @param workspaceSlug
    * @param userId
    */
-  removeMemberFromWorkspace = async (workspaceSlug: string, userId: string) => {
+  async removeMemberFromWorkspace(workspaceSlug: string, userId: string) {
     const memberDetails = this.getWorkspaceMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
     await this.workspaceService.deleteWorkspaceMember(workspaceSlug, memberDetails?.id);
     runInAction(() => {
       set(this.workspaceMemberMap, [workspaceSlug, userId, "is_active"], false);
     });
-    void this.rootStore.workspaceRoot.mutateWorkspaceMembersActivity(workspaceSlug);
-  };
+  }
 
   /**
    * @description fetch all the member invitations of a workspace
@@ -303,11 +301,10 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * @param workspaceSlug
    * @param data
    */
-  inviteMembersToWorkspace = async (workspaceSlug: string, data: IWorkspaceBulkInviteFormData) => {
+  async inviteMembersToWorkspace(workspaceSlug: string, data: IWorkspaceBulkInviteFormData) {
     await this.workspaceService.inviteWorkspace(workspaceSlug, data);
     await this.fetchWorkspaceMemberInvitations(workspaceSlug);
-    void this.rootStore.workspaceRoot.mutateWorkspaceMembersActivity(workspaceSlug);
-  };
+  }
 
   /**
    * @description update the role of a member invitation
@@ -345,15 +342,14 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * @param workspaceSlug
    * @param memberId
    */
-  deleteMemberInvitation = async (workspaceSlug: string, invitationId: string) => {
+  async deleteMemberInvitation(workspaceSlug: string, invitationId: string) {
     await this.workspaceService.deleteWorkspaceInvitations(workspaceSlug.toString(), invitationId);
     runInAction(() => {
       this.workspaceMemberInvitations[workspaceSlug] = this.workspaceMemberInvitations[workspaceSlug].filter(
         (inv) => inv.id !== invitationId
       );
     });
-    void this.rootStore.workspaceRoot.mutateWorkspaceMembersActivity(workspaceSlug);
-  };
+  }
 
   isUserSuspended = computedFn((userId: string, workspaceSlug: string) => {
     if (!workspaceSlug) return false;

@@ -5,10 +5,9 @@ import type { IUserLite } from "@plane/types";
 // plane web imports
 import type { IProjectMemberStore } from "@/plane-web/store/member/project-member.store";
 import { ProjectMemberStore } from "@/plane-web/store/member/project-member.store";
+import type { IWorkspaceMemberStore } from "@/plane-web/store/member/workspace-member.store";
+import { WorkspaceMemberStore } from "@/plane-web/store/member/workspace-member.store";
 import type { RootStore } from "@/plane-web/store/root.store";
-// local imports
-import type { IWorkspaceMemberStore } from "./workspace/workspace-member.store";
-import { WorkspaceMemberStore } from "./workspace/workspace-member.store";
 
 export interface IMemberRootStore {
   // observables

@@ -57,14 +57,13 @@ export interface IWorkspaceRootStore {
     workspaceSlug: string,
     data: Partial<IWorkspaceUserPropertiesResponse>
   ) => Promise<void>;
-  mutateWorkspaceMembersActivity: (workspaceSlug: string) => Promise<void>;
   // sub-stores
   webhook: IWebhookStore;
   apiToken: IApiTokenStore;
   home: IHomeStore;
 }
 
-export abstract class BaseWorkspaceRootStore implements IWorkspaceRootStore {
+export class WorkspaceRootStore implements IWorkspaceRootStore {
   loader: boolean = false;
   // observables
   workspaces: Record<string, IWorkspace> = {};
@@ -375,10 +374,4 @@ export abstract class BaseWorkspaceRootStore implements IWorkspaceRootStore {
       throw error;
     }
   };
-
-  /**
-   * Mutate workspace members activity
-   * @param workspaceSlug
-   */
-  abstract mutateWorkspaceMembersActivity(workspaceSlug: string): Promise<void>;
 }
