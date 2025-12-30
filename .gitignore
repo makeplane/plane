@@ -35,8 +35,6 @@ pnpm-debug.log*
 .pnpm-debug.log*
 
 # Local env files
-.env
-.env.local
 .env.development.local
 .env.test.local
 .env.production.local
@@ -53,7 +51,6 @@ venv
 *.pyc
 staticfiles
 mediafiles
-.env
 .DS_Store
 logs/
 htmlcov/
@@ -72,7 +69,6 @@ pnpm-debug.log
 *.njsproj
 *.sln
 package-lock.json
-.vscode
 
 # Sentry
 .sentryclirc
@@ -110,3 +106,7 @@ build/
 .react-router/
 temp/
 scripts/
+temp_auto_push.bat
+temp_interactive_push.bat
+branch_structure.json
+config.bat

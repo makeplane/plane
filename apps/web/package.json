@@ -5,10 +5,10 @@
   "license": "AGPL-3.0",
   "type": "module",
   "scripts": {
-    "dev": "react-router dev --port 3000",
-    "build": "react-router build",
+    "dev": "node init && react-router dev --port 3000",
+    "build": "node init && react-router build",
     "preview": "react-router build && serve -s build/client -l 3000",
-    "start": "serve -s build/client -l 3000",
+    "start": "node init && serve -s build/client -l 3000",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf .react-router && rm -rf node_modules && rm -rf dist && rm -rf build",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=14367",
     "check:types": "react-router typegen && tsc --noEmit",

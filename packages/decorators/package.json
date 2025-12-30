@@ -10,8 +10,8 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch",
+    "build": "node init && tsdown",
+    "dev": "node init && tsdown --watch",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=29",
     "check:types": "tsc --noEmit",
     "check:format": "prettier . --cache --check",

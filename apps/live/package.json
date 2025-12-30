@@ -12,9 +12,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc --noEmit && tsdown",
-    "dev": "tsdown --watch --onSuccess \"node --env-file=.env .\"",
-    "start": "node --env-file=.env .",
+    "build": "node init && tsc --noEmit && tsdown",
+    "dev": "node init && tsdown --watch --onSuccess \"node --env-file=.env .\"",
+    "start": "node init && node --env-file=.env .",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=160",
     "check:types": "tsc --noEmit",
     "check:format": "prettier . --cache --check",

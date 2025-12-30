@@ -16,8 +16,8 @@
     "./styles": "./dist/styles/index.css"
   },
   "scripts": {
-    "build": "tsc && tsdown",
-    "dev": "tsdown --watch",
+    "build": "node init && tsc && tsdown",
+    "dev": "node init && tsdown --watch",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1435",
     "check:types": "tsc --noEmit",
     "check:format": "prettier . --cache --check",

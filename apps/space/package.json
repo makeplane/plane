@@ -5,10 +5,10 @@
   "license": "AGPL-3.0",
   "type": "module",
   "scripts": {
-    "dev": "react-router dev --port 3002",
-    "build": "react-router build",
+    "dev": "node init && react-router dev --port 3002",
+    "build": "node init && react-router build",
     "preview": "react-router build && PORT=3002 react-router-serve ./build/server/index.js",
-    "start": "PORT=3002 react-router-serve ./build/server/index.js",
+    "start": "node init && PORT=3002 react-router-serve ./build/server/index.js",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf .react-router && rm -rf node_modules && rm -rf dist && rm -rf build",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=932",
     "check:types": "react-router typegen && tsc --noEmit",
