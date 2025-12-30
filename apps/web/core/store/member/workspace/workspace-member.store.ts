@@ -4,14 +4,14 @@ import { computedFn } from "mobx-utils";
 // types
 import type { EUserPermissions } from "@plane/constants";
 import type { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
-// plane-web constants
+// plane-web imports
+import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // types
 import type { IRouterStore } from "@/store/router.store";
 import type { IUserStore } from "@/store/user";
 // store
-import type { CoreRootStore } from "../../root.store";
 import type { IMemberRootStore } from "../index.ts";
 import type { IWorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
 import { WorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
@@ -69,10 +69,11 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   routerStore: IRouterStore;
   userStore: IUserStore;
   memberRoot: IMemberRootStore;
+  rootStore: RootStore;
   // services
   workspaceService;
 
-  constructor(_memberRoot: IMemberRootStore, _rootStore: CoreRootStore) {
+  constructor(_memberRoot: IMemberRootStore, _rootStore: RootStore) {
     makeObservable(this, {
       // observables
       workspaceMemberMap: observable,
@@ -95,6 +96,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     this.routerStore = _rootStore.router;
     this.userStore = _rootStore.user;
     this.memberRoot = _memberRoot;
+    this.rootStore = _rootStore;
     // services
     this.workspaceService = new WorkspaceService();
   }
@@ -259,6 +261,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
         set(this.workspaceMemberMap, [workspaceSlug, userId, "role"], data.role);
       });
       await this.workspaceService.updateWorkspaceMember(workspaceSlug, memberDetails.id, data);
+      void this.rootStore.workspaceRoot.mutateWorkspaceMembersActivity(workspaceSlug);
     } catch (error) {
       // revert back to original members in case of error
       runInAction(() => {
@@ -276,11 +279,11 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   removeMemberFromWorkspace = async (workspaceSlug: string, userId: string) => {
     const memberDetails = this.getWorkspaceMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
-    await this.workspaceService.deleteWorkspaceMember(workspaceSlug, memberDetails?.id).then(() => {
-      runInAction(() => {
-        set(this.workspaceMemberMap, [workspaceSlug, userId, "is_active"], false);
-      });
+    await this.workspaceService.deleteWorkspaceMember(workspaceSlug, memberDetails?.id);
+    runInAction(() => {
+      set(this.workspaceMemberMap, [workspaceSlug, userId, "is_active"], false);
     });
+    void this.rootStore.workspaceRoot.mutateWorkspaceMembersActivity(workspaceSlug);
   };
 
   /**
@@ -301,9 +304,9 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * @param data
    */
   inviteMembersToWorkspace = async (workspaceSlug: string, data: IWorkspaceBulkInviteFormData) => {
-    const response = await this.workspaceService.inviteWorkspace(workspaceSlug, data);
+    await this.workspaceService.inviteWorkspace(workspaceSlug, data);
     await this.fetchWorkspaceMemberInvitations(workspaceSlug);
-    return response;
+    void this.rootStore.workspaceRoot.mutateWorkspaceMembersActivity(workspaceSlug);
   };
 
   /**
@@ -317,7 +320,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     invitationId: string,
     data: Partial<IWorkspaceMemberInvitation>
   ) => {
-    const originalMemberInvitations = [...this.workspaceMemberInvitations?.[workspaceSlug]]; // in case of error, we will revert back to original members
+    const originalMemberInvitations = [...(this.workspaceMemberInvitations?.[workspaceSlug] ?? [])]; // in case of error, we will revert back to original members
     try {
       const memberInvitations = originalMemberInvitations?.map((invitation) => ({
         ...invitation,
@@ -342,14 +345,15 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * @param workspaceSlug
    * @param memberId
    */
-  deleteMemberInvitation = async (workspaceSlug: string, invitationId: string) =>
-    await this.workspaceService.deleteWorkspaceInvitations(workspaceSlug.toString(), invitationId).then(() => {
-      runInAction(() => {
-        this.workspaceMemberInvitations[workspaceSlug] = this.workspaceMemberInvitations[workspaceSlug].filter(
-          (inv) => inv.id !== invitationId
-        );
-      });
+  deleteMemberInvitation = async (workspaceSlug: string, invitationId: string) => {
+    await this.workspaceService.deleteWorkspaceInvitations(workspaceSlug.toString(), invitationId);
+    runInAction(() => {
+      this.workspaceMemberInvitations[workspaceSlug] = this.workspaceMemberInvitations[workspaceSlug].filter(
+        (inv) => inv.id !== invitationId
+      );
     });
+    void this.rootStore.workspaceRoot.mutateWorkspaceMembersActivity(workspaceSlug);
+  };
 
   isUserSuspended = computedFn((userId: string, workspaceSlug: string) => {
     if (!workspaceSlug) return false;
