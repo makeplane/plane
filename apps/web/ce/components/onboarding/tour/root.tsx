@@ -105,9 +105,6 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                   <Button
                     variant="primary"
                     onClick={() => {
-                      captureClick({
-                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.START_BUTTON,
-                      });
                       setStep("work-items");
                     }}
                   >
@@ -117,9 +114,6 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                     type="button"
                     className="bg-transparent text-11 font-medium text-accent-primary outline-subtle-1"
                     onClick={() => {
-                      captureClick({
-                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.SKIP_BUTTON,
-                      });
                       onComplete();
                     }}
                   >
@@ -168,9 +162,6 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                   <Button
                     variant="primary"
                     onClick={() => {
-                      captureClick({
-                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.CREATE_PROJECT_BUTTON,
-                      });
                       onComplete();
                       toggleCreateProjectModal(true);
                     }}

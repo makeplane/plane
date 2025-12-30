@@ -2,7 +2,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
-import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
 import { getPageName } from "@plane/utils";
@@ -44,12 +43,6 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
     setIsDeleting(true);
     await removePage({ pageId })
       .then(() => {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
-          payload: {
-            id: pageId,
-          },
-        });
         handleClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -62,12 +55,6 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
         }
       })
       .catch(() => {
-        captureError({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
-          payload: {
-            id: pageId,
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
