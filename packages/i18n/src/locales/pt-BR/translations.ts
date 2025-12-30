@@ -1731,8 +1731,10 @@ export default {
         },
       },
       api_tokens: {
+        heading: "Tokens de API",
+        description: "Gere tokens de API seguros para integrar seus dados com sistemas e aplicativos externos.",
         title: "Tokens de API",
-        add_token: "Adicionar token de acesso ao espaço de trabalho",
+        add_token: "Adicionar token de acesso",
         create_token: "Criar token",
         never_expires: "Nunca expira",
         generate_token: "Gerar token",

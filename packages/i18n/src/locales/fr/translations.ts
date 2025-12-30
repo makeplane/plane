@@ -1731,8 +1731,11 @@ export default {
         },
       },
       api_tokens: {
+        heading: "Jetons API",
+        description:
+          "Générez des jetons API sécurisés pour intégrer vos données avec des systèmes et applications externes.",
         title: "Jetons API",
-        add_token: "Ajouter un jeton d'accès à l'espace de travail",
+        add_token: "Ajouter un jeton d'accès",
         create_token: "Créer un jeton",
         never_expires: "N’expire jamais",
         generate_token: "Générer un jeton",

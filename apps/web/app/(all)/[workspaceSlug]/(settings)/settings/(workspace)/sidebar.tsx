@@ -25,7 +25,7 @@ export const WORKSPACE_SETTINGS_ICONS: Record<keyof typeof WORKSPACE_SETTINGS, L
   export: ArrowUpToLine,
   "billing-and-plans": CreditCard,
   webhooks: Webhook,
-  "api-tokens": KeyRound,
+  "access-tokens": KeyRound,
 };
 
 export function WorkspaceActionIcons({ type, size, className }: { type: string; size?: number; className?: string }) {

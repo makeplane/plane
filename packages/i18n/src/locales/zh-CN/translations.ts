@@ -1690,8 +1690,10 @@ export default {
         },
       },
       api_tokens: {
+        heading: "API 令牌",
+        description: "生成安全的 API 令牌，将您的数据与外部系统和应用程序集成。",
         title: "API 令牌",
-        add_token: "添加工作区访问令牌",
+        add_token: "添加访问令牌",
         create_token: "创建令牌",
         never_expires: "永不过期",
         generate_token: "生成令牌",

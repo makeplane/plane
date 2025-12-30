@@ -1709,8 +1709,10 @@ export default {
         },
       },
       api_tokens: {
+        heading: "APIトークン",
+        description: "セキュアなAPIトークンを生成して、データを外部システムやアプリケーションと統合します。",
         title: "APIトークン",
-        add_token: "ワークスペースアクセストークンを追加",
+        add_token: "アクセストークンを追加",
         create_token: "トークンを作成",
         never_expires: "無期限",
         generate_token: "トークンを生成",

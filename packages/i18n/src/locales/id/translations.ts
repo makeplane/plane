@@ -1719,8 +1719,10 @@ export default {
         },
       },
       api_tokens: {
+        heading: "Token API",
+        description: "Buat token API yang aman untuk mengintegrasikan data Anda dengan sistem dan aplikasi eksternal.",
         title: "Token API",
-        add_token: "Tambah token akses ruang kerja",
+        add_token: "Tambah token akses",
         create_token: "Buat token",
         never_expires: "Tidak pernah kedaluwarsa",
         generate_token: "Hasilkan token",

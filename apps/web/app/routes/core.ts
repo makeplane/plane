@@ -277,8 +277,8 @@ export const coreRoutes: RouteConfigEntry[] = [
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/webhooks/[webhookId]/page.tsx"
           ),
           route(
-            ":workspaceSlug/settings/api-tokens",
-            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/api-tokens/page.tsx"
+            ":workspaceSlug/settings/access-tokens",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/access-tokens/page.tsx"
           ),
         ]),
 

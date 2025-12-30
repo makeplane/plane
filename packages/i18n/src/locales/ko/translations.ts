@@ -1702,8 +1702,10 @@ export default {
         },
       },
       api_tokens: {
+        heading: "API 토큰",
+        description: "보안 API 토큰을 생성하여 데이터를 외부 시스템 및 애플리케이션과 통합합니다.",
         title: "API 토큰",
-        add_token: "워크스페이스 액세스 토큰 추가",
+        add_token: "액세스 토큰 추가",
         create_token: "토큰 생성",
         never_expires: "만료되지 않음",
         generate_token: "토큰 생성",
