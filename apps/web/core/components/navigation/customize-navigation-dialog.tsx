@@ -265,9 +265,9 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                     <input
                       type="radio"
                       name="navigation-mode"
-                      value="accordion"
-                      checked={projectPreferences.navigationMode === "accordion"}
-                      onChange={() => updateNavigationMode("accordion")}
+                      value="ACCORDION"
+                      checked={projectPreferences.navigationMode === "ACCORDION"}
+                      onChange={() => updateNavigationMode("ACCORDION")}
                       className="size-4 text-accent-primary focus:ring-accent-strong mt-1"
                     />
                     <div className="flex-1">
@@ -282,9 +282,9 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                     <input
                       type="radio"
                       name="navigation-mode"
-                      value="horizontal"
-                      checked={projectPreferences.navigationMode === "horizontal"}
-                      onChange={() => updateNavigationMode("horizontal")}
+                      value="TABBED"
+                      checked={projectPreferences.navigationMode === "TABBED"}
+                      onChange={() => updateNavigationMode("TABBED")}
                       className="size-4 text-accent-primary focus:ring-accent-strong mt-1"
                     />
                     <div className="flex-1">

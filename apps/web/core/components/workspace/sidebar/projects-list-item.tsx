@@ -255,7 +255,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   if (!project) return null;
 
   const handleItemClick = () => {
-    if (projectPreferences.navigationMode === "accordion") {
+    if (projectPreferences.navigationMode === "ACCORDION") {
       setIsProjectListOpen(!isProjectListOpen);
     } else {
       router.push(defaultTabUrl);
@@ -266,9 +266,9 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
     }
   };
 
-  const isAccordionMode = projectPreferences.navigationMode === "accordion";
+  const isAccordionMode = projectPreferences.navigationMode === "ACCORDION";
 
-  const shouldHighlightProject = URLProjectId === project?.id && projectPreferences.navigationMode !== "accordion";
+  const shouldHighlightProject = URLProjectId === project?.id && projectPreferences.navigationMode !== "ACCORDION";
 
   return (
     <>
