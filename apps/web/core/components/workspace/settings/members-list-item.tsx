@@ -32,7 +32,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
     workspace: { removeMemberFromWorkspace },
   } = useMember();
   const { leaveWorkspace } = useUserPermissions();
-  const { getWorkspaceRedirectionUrl } = useWorkspace();
+  const { getWorkspaceRedirectionUrl, mutateWorkspaceMembersActivity } = useWorkspace();
   const { fetchCurrentUserSettings } = useUserSettings();
   const { t } = useTranslation();
   // derived values
@@ -59,6 +59,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
 
     try {
       await removeMemberFromWorkspace(workspaceSlug.toString(), memberId);
+      void mutateWorkspaceMembersActivity(workspaceSlug);
     } catch (err: unknown) {
       const error = err as { error?: string };
       setToast({
