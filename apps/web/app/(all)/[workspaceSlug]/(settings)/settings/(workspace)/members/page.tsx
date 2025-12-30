@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // types
-import {
-  EUserPermissions,
-  EUserPermissionsLevel,
-  MEMBER_TRACKER_ELEMENTS,
-  MEMBER_TRACKER_EVENTS,
-} from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { SearchIcon } from "@plane/propel/icons";
@@ -40,7 +35,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   const {
     workspace: { workspaceMemberIds, inviteMembersToWorkspace, filtersStore },
   } = useMember();
-  const { currentWorkspace, mutateWorkspaceMembersActivity } = useWorkspace();
+  const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
 
   // derived values
@@ -53,7 +48,6 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   const handleWorkspaceInvite = async (data: IWorkspaceBulkInviteFormData) => {
     try {
       await inviteMembersToWorkspace(workspaceSlug, data);
-      void mutateWorkspaceMembersActivity(workspaceSlug);
 
       setInviteModal(false);
 
@@ -137,12 +131,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
             />
             <MembersActivityButton workspaceSlug={workspaceSlug} />
             {canPerformWorkspaceAdminActions && (
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => setInviteModal(true)}
-                data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
-              >
+              <Button variant="primary" size="lg" onClick={() => setInviteModal(true)}>
                 {t("workspace_settings.settings.members.add_member")}
               </Button>
             )}
