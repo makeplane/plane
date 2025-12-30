@@ -430,17 +430,17 @@ export class ProjectPageStore implements IProjectPageStore {
           case "public":
             this.filteredPublicPageIds = isFirstPage
               ? responsePageIds
-              : [...this.filteredPublicPageIds, ...responsePageIds];
+              : Array.from(new Set([...this.filteredPublicPageIds, ...responsePageIds]));
             break;
           case "private":
             this.filteredPrivatePageIds = isFirstPage
               ? responsePageIds
-              : [...this.filteredPrivatePageIds, ...responsePageIds];
+              : Array.from(new Set([...this.filteredPrivatePageIds, ...responsePageIds]));
             break;
           case "archived":
             this.filteredArchivedPageIds = isFirstPage
               ? responsePageIds
-              : [...this.filteredArchivedPageIds, ...responsePageIds];
+              : Array.from(new Set([...this.filteredArchivedPageIds, ...responsePageIds]));
             break;
         }
 
