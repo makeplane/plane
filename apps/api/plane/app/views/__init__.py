@@ -35,7 +35,6 @@ from .workspace.base import (
     UserWorkSpacesEndpoint,
     WorkSpaceAvailabilityCheckEndpoint,
     UserWorkspaceDashboardEndpoint,
-    WorkspaceThemeViewSet,
     ExportWorkspaceUserActivityEndpoint,
 )
 
@@ -194,8 +193,6 @@ from .intake.base import (
 
 from .analytic.base import (
     AnalyticsEndpoint,
-    AnalyticViewViewset,
-    SavedAnalyticEndpoint,
     ExportAnalyticsEndpoint,
     DefaultAnalyticsEndpoint,
     ProjectStatsEndpoint,

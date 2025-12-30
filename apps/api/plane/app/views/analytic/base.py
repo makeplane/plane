@@ -11,14 +11,10 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import WorkSpaceAdminPermission
-from plane.app.serializers import AnalyticViewSerializer
-from plane.app.views.base import BaseAPIView, BaseViewSet
+from plane.app.views.base import BaseAPIView
 from plane.bgtasks.analytic_plot_export import analytic_export_task
 from plane.db.models import (
-    AnalyticView,
     Issue,
-    Workspace,
     Project,
     ProjectMember,
     Cycle,
@@ -182,45 +178,6 @@ class AnalyticsEndpoint(BaseAPIView):
                     "module_details": module_details,
                 },
             },
-            status=status.HTTP_200_OK,
-        )
-
-
-class AnalyticViewViewset(BaseViewSet):
-    permission_classes = [WorkSpaceAdminPermission]
-    model = AnalyticView
-    serializer_class = AnalyticViewSerializer
-
-    def perform_create(self, serializer):
-        workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
-        serializer.save(workspace_id=workspace.id)
-
-    def get_queryset(self):
-        return self.filter_queryset(super().get_queryset().filter(workspace__slug=self.kwargs.get("slug")))
-
-
-class SavedAnalyticEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def get(self, request, slug, analytic_id):
-        analytic_view = AnalyticView.objects.get(pk=analytic_id, workspace__slug=slug)
-
-        filter = analytic_view.query
-        queryset = Issue.issue_objects.filter(**filter)
-
-        x_axis = analytic_view.query_dict.get("x_axis", False)
-        y_axis = analytic_view.query_dict.get("y_axis", False)
-
-        if not x_axis or not y_axis:
-            return Response(
-                {"error": "x-axis and y-axis dimensions are required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        segment = request.GET.get("segment", False)
-        distribution = build_graph_plot(queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment)
-        total_issues = queryset.count()
-        return Response(
-            {"total": total_issues, "distribution": distribution},
             status=status.HTTP_200_OK,
         )
 

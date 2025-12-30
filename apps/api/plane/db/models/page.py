@@ -32,7 +32,6 @@ class Page(BaseModel):
     owned_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="pages")
     access = models.PositiveSmallIntegerField(choices=((0, "Public"), (1, "Private")), default=0)
     color = models.CharField(max_length=255, blank=True)
-    labels = models.ManyToManyField("db.Label", blank=True, related_name="pages", through="db.PageLabel")
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -111,21 +110,6 @@ class PageLog(BaseModel):
 
     def __str__(self):
         return f"{self.page.name} {self.entity_name}"
-
-
-class PageLabel(BaseModel):
-    label = models.ForeignKey("db.Label", on_delete=models.CASCADE, related_name="page_labels")
-    page = models.ForeignKey("db.Page", on_delete=models.CASCADE, related_name="page_labels")
-    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_label")
-
-    class Meta:
-        verbose_name = "Page Label"
-        verbose_name_plural = "Page Labels"
-        db_table = "page_labels"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        return f"{self.page.name} {self.label.name}"
 
 
 class ProjectPage(BaseModel):
