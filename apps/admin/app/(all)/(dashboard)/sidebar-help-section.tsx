@@ -1,11 +1,11 @@
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { ExternalLink, HelpCircle, MoveLeft } from "lucide-react";
+import { HelpCircle, MoveLeft } from "lucide-react";
 import { Transition } from "@headlessui/react";
-// plane internal packages
 import { WEB_BASE_URL } from "@plane/constants";
-import { DiscordIcon, GithubIcon, PageIcon } from "@plane/propel/icons";
+// plane internal packages
+import { DiscordIcon, GithubIcon, NewTabIcon, PageIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
@@ -56,7 +56,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
             href={redirectionLink}
             className={`relative px-2 py-1 flex items-center gap-1 rounded-sm bg-layer-1 text-body-xs-medium text-secondary whitespace-nowrap`}
           >
-            <ExternalLink size={16} />
+            <NewTabIcon width={14} height={14} />
             {!isSidebarCollapsed && "Redirect to Plane"}
           </a>
         </Tooltip>

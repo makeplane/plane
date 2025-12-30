@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
-import { Link, Paperclip } from "lucide-react";
-import { ViewsIcon } from "@plane/propel/icons";
+import { Paperclip } from "lucide-react";
+import { LinkIcon, ViewsIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties } from "@plane/types";
@@ -169,7 +169,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       >
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
-            <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <LinkIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-11">{issue.link_count}</div>
           </div>
         </Tooltip>

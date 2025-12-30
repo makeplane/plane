@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { Check, MoreVerticalIcon } from "lucide-react";
+import { MoreVerticalIcon } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
 // ui
@@ -10,7 +10,7 @@ import { Popover, Transition } from "@headlessui/react";
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
 import { EIssueFilterType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronUpIcon } from "@plane/propel/icons";
+import { CheckIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { TCalendarLayouts, TSupportedFilterForUpdate } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // types
@@ -140,7 +140,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                       onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
                     >
                       {layoutDetails.title}
-                      {calendarLayout === layout && <Check size={12} strokeWidth={2} />}
+                      {calendarLayout === layout && <CheckIcon width={12} height={12} strokeWidth={2} />}
                     </button>
                   ))}
                   <button

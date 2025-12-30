@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 // icons
-import { Rocket, Search } from "lucide-react";
+import { Rocket } from "lucide-react";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
+import { SearchIcon } from "@plane/propel/icons";
 // types
 import type { ISearchIssueResponse } from "@plane/types";
 // ui
@@ -94,7 +95,7 @@ export function ParentIssuesListModal({
         }}
       >
         <div className="relative m-1">
-          <Search
+          <SearchIcon
             className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
             aria-hidden="true"
           />

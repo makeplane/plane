@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
-import { Earth, Info, Lock, Minus } from "lucide-react";
+import { Earth, Info, Minus } from "lucide-react";
 // plane imports
 import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
+import { LockIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Avatar, FavoriteStar } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
@@ -45,7 +46,7 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
       </div>
       <div className="cursor-default text-tertiary">
         <Tooltip tooltipContent={access === 0 ? "Public" : "Private"}>
-          {access === 0 ? <Earth className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+          {access === 0 ? <Earth className="h-4 w-4" /> : <LockIcon className="h-4 w-4" />}
         </Tooltip>
       </div>
       {/* vertical divider */}

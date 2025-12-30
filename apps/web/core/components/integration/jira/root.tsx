@@ -4,9 +4,9 @@ import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { mutate } from "swr";
 // icons
-import { ArrowLeft, Check, List, Settings } from "lucide-react";
+import { ArrowLeft, List, Settings } from "lucide-react";
 import { Button } from "@plane/propel/button";
-import { MembersPropertyIcon } from "@plane/propel/icons";
+import { CheckIcon, MembersPropertyIcon } from "@plane/propel/icons";
 // types
 import type { IJiraImporterForm } from "@plane/types";
 // assets
@@ -44,7 +44,7 @@ const integrationWorkflowData: Array<{
   {
     title: "Confirm",
     key: "import-confirmation",
-    icon: Check,
+    icon: CheckIcon,
   },
 ];
 
@@ -116,12 +116,12 @@ export function JiraImporterRoot() {
                     index > activeIntegrationState() + 1 ||
                     Boolean(index === activeIntegrationState() + 1 && disableTopBarAfter)
                   }
-                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-subtle ${
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-subtle ${
                     index <= activeIntegrationState()
-                      ? `border-accent-strong bg-accent-primary ${
+                      ? `border-accent-strong ${
                           index === activeIntegrationState()
-                            ? "border-opacity-100 bg-opacity-100"
-                            : "border-opacity-80 bg-opacity-80"
+                            ? "border-opacity-100 bg-accent-primary"
+                            : "border-opacity-80 bg-accent-primary/80"
                         }`
                       : "border-subtle"
                   }`}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import type { LucideIcon } from "lucide-react";
-import { Globe2, Lock } from "lucide-react";
+
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // editor
 import type { EditorRefApi } from "@plane/editor";
@@ -8,6 +8,8 @@ import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
+import { GlobeIcon, LockIcon } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // constants
 import { cn } from "@plane/utils";
@@ -29,19 +31,19 @@ type Props = {
 };
 
 type TCommentAccessType = {
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   key: EIssueCommentAccessSpecifier;
   label: "Private" | "Public";
 };
 
 const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
   {
-    icon: Lock,
+    icon: LockIcon,
     key: EIssueCommentAccessSpecifier.INTERNAL,
     label: "Private",
   },
   {
-    icon: Globe2,
+    icon: GlobeIcon,
     key: EIssueCommentAccessSpecifier.EXTERNAL,
     label: "Public",
   },

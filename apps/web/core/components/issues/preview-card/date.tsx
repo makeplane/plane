@@ -23,7 +23,7 @@ export function WorkItemPreviewCardDate(props: Props) {
       {isDateRangeEnabled ? (
         <div
           className={cn("h-full flex items-center gap-1", {
-            "text-red-500": shouldHighlightDate,
+            "text-danger-primary": shouldHighlightDate,
           })}
         >
           <CalendarDays className="shrink-0 size-3" />
@@ -39,7 +39,7 @@ export function WorkItemPreviewCardDate(props: Props) {
       ) : (
         <div
           className={cn("h-full flex items-center gap-1", {
-            "text-red-500": shouldHighlightDate,
+            "text-danger-primary": shouldHighlightDate,
           })}
         >
           <DueDatePropertyIcon className="shrink-0 size-3" />

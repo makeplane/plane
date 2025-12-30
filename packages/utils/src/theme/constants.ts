@@ -126,7 +126,7 @@ export const EDITOR_COLORS_LIGHT = {
   "light-blue": "#c5eff9",
   "dark-blue": "#c9dafb",
   purple: "#e3d8fd",
-};
+} as const;
 
 /**
  * Editor color backgrounds for dark mode

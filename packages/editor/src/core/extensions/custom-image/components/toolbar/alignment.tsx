@@ -34,7 +34,7 @@ export function ImageAlignmentAction(props: Props) {
       <Tooltip disabled={isTouchDevice} tooltipContent="Align">
         <button
           type="button"
-          className="h-full flex items-center gap-1 text-alpha-white-800 hover:text-alpha-white-1200 transition-colors"
+          className="h-full flex items-center gap-1 text-white/60 hover:text-white transition-colors"
           onClick={() => setIsDropdownOpen((prev) => !prev)}
         >
           {activeAlignmentDetails && <activeAlignmentDetails.icon className="flex-shrink-0 size-3" />}
@@ -42,12 +42,12 @@ export function ImageAlignmentAction(props: Props) {
         </button>
       </Tooltip>
       {isDropdownOpen && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0.5 h-7 bg-alpha-black-1000 flex items-center gap-2 px-2 rounded-sm">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0.5 h-7 bg-black/80 flex items-center gap-2 px-2 rounded-sm">
           {IMAGE_ALIGNMENT_OPTIONS.map((option) => (
             <Tooltip disabled={isTouchDevice} key={option.value} tooltipContent={option.label}>
               <button
                 type="button"
-                className="flex-shrink-0 h-full grid place-items-center text-alpha-white-800 hover:text-alpha-white-1200 transition-colors"
+                className="flex-shrink-0 h-full grid place-items-center text-white/60 hover:text-white transition-colors"
                 onClick={() => {
                   handleChange(option.value);
                   setIsDropdownOpen(false);

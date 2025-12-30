@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { Info, Plus, SquareUser } from "lucide-react";
+import { Info, SquareUser } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import {
   MODULE_STATUS,
@@ -15,6 +15,7 @@ import {
 // plane types
 import { useTranslation } from "@plane/i18n";
 import {
+  PlusIcon,
   MembersPropertyIcon,
   ModuleStatusIcon,
   WorkItemsIcon,
@@ -459,7 +460,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                                   className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
                                   onClick={() => setModuleLinkModal(true)}
                                 >
-                                  <Plus className="h-3 w-3" />
+                                  <PlusIcon className="h-3 w-3" />
                                   {t("add_link")}
                                 </button>
                               </div>
@@ -485,7 +486,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                                 className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
                                 onClick={() => setModuleLinkModal(true)}
                               >
-                                <Plus className="h-3 w-3" />
+                                <PlusIcon className="h-3 w-3" />
                                 {t("add_link")}
                               </button>
                             )}

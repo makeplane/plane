@@ -93,7 +93,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
                           onChange(newModuleIds);
                         }}
                       >
-                        <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-red-500" />
+                        <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-danger-primary" />
                       </button>
                     </Tooltip>
                   )}

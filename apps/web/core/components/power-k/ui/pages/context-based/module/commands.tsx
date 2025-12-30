@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
-import { LinkIcon, Star, StarOff, Users } from "lucide-react";
+import { Star, StarOff, Users } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon } from "@plane/propel/icons";
+import { LinkIcon, ModuleStatusIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IModule, TModuleStatus } from "@plane/types";
 import { EUserPermissions } from "@plane/types";

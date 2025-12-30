@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { AlertCircle, Search } from "lucide-react";
-import { CycleIcon, TransferIcon, CloseIcon } from "@plane/propel/icons";
+import { AlertCircle } from "lucide-react";
+import { SearchIcon, CycleIcon, TransferIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -83,7 +83,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
           </button>
         </div>
         <div className="flex items-center gap-2 border-b border-subtle px-5 pb-3">
-          <Search className="h-4 w-4 text-secondary" />
+          <SearchIcon className="h-4 w-4 text-secondary" />
           <input
             className="outline-none text-13"
             placeholder="Search for a cycle..."

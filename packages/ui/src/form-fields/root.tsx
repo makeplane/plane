@@ -50,8 +50,8 @@ export function ValidationMessage({ type, message, className }: ValidationMessag
       className={cn(
         "text-13",
         {
-          "text-red-500": type === "error",
-          "text-green-500": type === "success",
+          "text-danger-primary": type === "error",
+          "text-success-primary": type === "success",
         },
         className
       )}

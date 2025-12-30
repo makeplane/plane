@@ -112,23 +112,23 @@ export function applyCustomTheme(brandColor: string, neutralColor: string, mode:
   // Apply base palette colors
   // This updates the source palette variables that semantic colors reference
   Object.entries(neutralMapping).forEach(([key, value]) => {
-    themeElement.style.setProperty(`--color-neutral-${key}`, value);
+    themeElement.style.setProperty(`--neutral-${key}`, value);
   });
 
   Object.entries(brandMapping).forEach(([key, value]) => {
-    themeElement.style.setProperty(`--color-brand-${key}`, value);
+    themeElement.style.setProperty(`--brand-${key}`, value);
   });
 
   Object.entries(ALPHA_MAPPING).forEach(([key, value]) => {
-    themeElement.style.setProperty(`--color-alpha-white-${key}`, oklchToCSS(neutralOKLCH, value * 100));
-    themeElement.style.setProperty(`--color-alpha-black-${key}`, oklchToCSS(neutralOKLCH, value * 100));
+    themeElement.style.setProperty(`--alpha-white-${key}`, oklchToCSS(neutralOKLCH, value * 100));
+    themeElement.style.setProperty(`--alpha-black-${key}`, oklchToCSS(neutralOKLCH, value * 100));
   });
 
   // Apply contrasting text colors for use on colored backgrounds
   // Uses WCAG relative luminance for accurate contrast determination
   const { textColor, iconColor } = getOnColorTextColors(brandColor, "wcag");
-  themeElement.style.setProperty(`--text-color-on-color`, oklchToCSS(textColor));
-  themeElement.style.setProperty(`--text-color-icon-on-color`, oklchToCSS(iconColor));
+  themeElement.style.setProperty(`--txt-on-color`, oklchToCSS(textColor));
+  themeElement.style.setProperty(`--txt-icon-on-color`, oklchToCSS(iconColor));
 
   // Apply editor color backgrounds based on mode
   const editorColors = mode === "dark" ? EDITOR_COLORS_DARK : EDITOR_COLORS_LIGHT;
@@ -163,22 +163,22 @@ export function clearCustomTheme(): void {
     "black",
   ];
   neutralKeys.forEach((key) => {
-    themeElement.style.removeProperty(`--color-neutral-${key}`);
+    themeElement.style.removeProperty(`--neutral-${key}`);
   });
 
   // Clear brand base palette colors
   const brandKeys = ["100", "200", "300", "400", "500", "600", "700", "800", "900", "1000", "1100", "1200", "default"];
   brandKeys.forEach((key) => {
-    themeElement.style.removeProperty(`--color-brand-${key}`);
+    themeElement.style.removeProperty(`--brand-${key}`);
   });
 
   Object.keys(ALPHA_MAPPING).forEach((key) => {
-    themeElement.style.removeProperty(`--color-alpha-white-${key}`);
-    themeElement.style.removeProperty(`--color-alpha-black-${key}`);
+    themeElement.style.removeProperty(`--alpha-white-${key}`);
+    themeElement.style.removeProperty(`--alpha-black-${key}`);
   });
 
-  themeElement.style.removeProperty(`--text-color-on-color`);
-  themeElement.style.removeProperty(`--text-color-icon-on-color`);
+  themeElement.style.removeProperty(`--txt-on-color`);
+  themeElement.style.removeProperty(`--txt-icon-on-color`);
 
   // Clear editor color background overrides
   Object.keys(EDITOR_COLORS_LIGHT).forEach((color) => {

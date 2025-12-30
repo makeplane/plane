@@ -1,5 +1,6 @@
-import { ArchiveIcon, Earth, Lock } from "lucide-react";
+import { ArchiveIcon, Earth } from "lucide-react";
 import { EPageAccess } from "@plane/constants";
+import { LockIcon } from "@plane/propel/icons";
 import type { TPage } from "@plane/types";
 
 export function PageAccessIcon(page: TPage) {
@@ -10,7 +11,7 @@ export function PageAccessIcon(page: TPage) {
       ) : page.access === EPageAccess.PUBLIC ? (
         <Earth className="h-2.5 w-2.5 text-tertiary" />
       ) : (
-        <Lock className="h-2.5 w-2.5 text-tertiary" />
+        <LockIcon className="h-2.5 w-2.5 text-tertiary" />
       )}
     </div>
   );

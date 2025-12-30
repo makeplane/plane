@@ -1,9 +1,10 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
-// plane imports
+
 import { useTranslation } from "@plane/i18n";
+import { PlusIcon } from "@plane/propel/icons";
+// plane imports
 import type { TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
@@ -34,7 +35,7 @@ export const RelationActionButton = observer(function RelationActionButton(props
   };
 
   // button element
-  const customButtonElement = customButton ? <>{customButton}</> : <Plus className="h-4 w-4" />;
+  const customButtonElement = customButton ? <>{customButton}</> : <PlusIcon className="h-4 w-4" />;
 
   return (
     <CustomMenu

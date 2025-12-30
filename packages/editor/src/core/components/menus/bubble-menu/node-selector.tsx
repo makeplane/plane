@@ -1,7 +1,7 @@
 import type { Editor } from "@tiptap/react";
-import { Check } from "lucide-react";
+
 import type { FC } from "react";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 // plane utils
 import { cn } from "@plane/utils";
 // components
@@ -96,7 +96,7 @@ export function BubbleMenuNodeSelector(props: Props) {
               <item.icon className="size-3 flex-shrink-0" />
               <span>{item.name}</span>
             </div>
-            {activeItem.name === item.name && <Check className="size-3 text-tertiary flex-shrink-0" />}
+            {activeItem.name === item.name && <CheckIcon className="size-3 text-tertiary flex-shrink-0" />}
           </button>
         ))}
       </section>

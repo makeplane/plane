@@ -1,8 +1,7 @@
 import { useState, Fragment } from "react";
-import { Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 import { Input } from "@plane/ui";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
@@ -64,7 +63,7 @@ export function ShortcutsModal(props: Props) {
                     </button>
                   </Dialog.Title>
                   <div className="flex w-full items-center rounded-sm border-[0.5px] border-subtle bg-surface-2 px-2">
-                    <Search className="h-3.5 w-3.5 text-secondary" />
+                    <SearchIcon className="h-3.5 w-3.5 text-secondary" />
                     <Input
                       id="search"
                       name="search"
