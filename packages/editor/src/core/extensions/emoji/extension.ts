@@ -25,7 +25,7 @@ export const EmojiExtension = Emoji.extend({
   },
 }).configure({
   // Filter out emojis without emoji value and remove fallbackImage property to prevent CDN calls
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   emojis: gitHubEmojis.filter((item) => item.emoji).map(({ fallbackImage, ...emoji }) => emoji),
   suggestion: emojiSuggestion,
   enableEmoticons: true,

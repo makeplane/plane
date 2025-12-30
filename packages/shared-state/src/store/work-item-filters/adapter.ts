@@ -194,12 +194,12 @@ class WorkItemFiltersAdapter extends FilterAdapter<TWorkItemFilterProperty, TWor
     const property = key.substring(0, lastDoubleUnderscoreIndex);
     const operator = key.substring(lastDoubleUnderscoreIndex + 2) as TSupportedOperators;
 
-    const rawValue = data[key as TWorkItemFilterConditionKey];
+    const rawValue = data[key];
 
     // Parse comma-separated values
     const parsedValue = MULTI_VALUE_OPERATORS.includes(operator) ? this._parseFilterValue(rawValue) : rawValue;
 
-    return [property as TWorkItemFilterProperty, operator as TSupportedOperators, parsedValue];
+    return [property as TWorkItemFilterProperty, operator, parsedValue];
   };
 
   /**
@@ -242,7 +242,7 @@ class WorkItemFiltersAdapter extends FilterAdapter<TWorkItemFilterProperty, TWor
     operator: TSupportedOperators,
     value: SingleOrArray<TFilterValue>
   ): TWorkItemFilterConditionData => {
-    const conditionKey = `${property}__${operator}` as TWorkItemFilterConditionKey;
+    const conditionKey = `${property}__${operator}`;
 
     // Convert value to string format
     const stringValue = Array.isArray(value) ? value.join(",") : value;

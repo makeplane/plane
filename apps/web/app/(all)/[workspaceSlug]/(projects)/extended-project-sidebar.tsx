@@ -2,10 +2,10 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { Plus, Search } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
+import { PlusIcon, SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
@@ -106,26 +106,26 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
       >
         <div className="flex flex-col gap-1 w-full sticky top-4 px-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-custom-text-300 py-1.5">Projects</span>
+            <span className="text-13 font-semibold text-tertiary py-1.5">Projects</span>
             {isAuthorizedUser && (
               <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
                 <button
                   type="button"
                   data-ph-element={PROJECT_TRACKER_ELEMENTS.EXTENDED_SIDEBAR_ADD_BUTTON}
-                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0 text-custom-text-300 hover:text-custom-text-200 transition-colors"
+                  className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0 text-tertiary hover:text-secondary transition-colors"
                   onClick={() => {
                     setIsProjectModalOpen(true);
                   }}
                 >
-                  <Plus className="size-3" />
+                  <PlusIcon className="size-3" />
                 </button>
               </Tooltip>
             )}
           </div>
-          <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1 w-full">
-            <Search className="h-3.5 w-3.5 text-custom-text-400" />
+          <div className="ml-auto flex items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1 w-full">
+            <SearchIcon className="h-3.5 w-3.5 text-placeholder" />
             <input
-              className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
+              className="w-full max-w-[234px] border-none bg-transparent text-13 outline-none placeholder:text-placeholder"
               placeholder={t("search")}
               value={searchQuery}
               autoFocus

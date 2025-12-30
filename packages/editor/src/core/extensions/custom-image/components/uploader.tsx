@@ -40,6 +40,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
   // refs
   const fileInputRef = useRef<HTMLInputElement>(null);
   const hasTriggeredFilePickerRef = useRef(false);
+  const hasTriedUploadingOnMountRef = useRef(false);
   const { id: imageEntityId } = node.attrs;
   // derived values
   const imageComponentImageFileMap = useMemo(() => getImageComponentImageFileMap(editor), [editor]);
@@ -124,17 +125,16 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
     uploader: uploadFile,
   });
 
-  // the meta data of the image component
-  const meta = useMemo(
-    () => imageComponentImageFileMap?.get(imageEntityId ?? ""),
-    [imageComponentImageFileMap, imageEntityId]
-  );
-
   // after the image component is mounted we start the upload process based on
   // it's uploaded
   useEffect(() => {
+    if (hasTriedUploadingOnMountRef.current) return;
+
+    // the meta data of the image component
+    const meta = imageComponentImageFileMap?.get(imageEntityId ?? "");
     if (meta) {
       if (meta.event === "drop" && "file" in meta) {
+        hasTriedUploadingOnMountRef.current = true;
         uploadFile(meta.file);
       } else if (meta.event === "insert" && fileInputRef.current && !hasTriggeredFilePickerRef.current) {
         if (meta.hasOpenedFileInputOnce) return;
@@ -144,8 +144,10 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
         hasTriggeredFilePickerRef.current = true;
         imageComponentImageFileMap?.set(imageEntityId ?? "", { ...meta, hasOpenedFileInputOnce: true });
       }
+    } else {
+      hasTriedUploadingOnMountRef.current = true;
     }
-  }, [meta, uploadFile, imageComponentImageFileMap, imageEntityId, isTouchDevice]);
+  }, [imageEntityId, isTouchDevice, uploadFile, imageComponentImageFileMap]);
 
   const onFileChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
@@ -166,9 +168,17 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
     [uploadFile, editor, getPos]
   );
 
+  // const isErrorState = failedToLoadImage || hasDuplicationFailed;
+  const isErrorState = true;
+
+  const borderColor =
+    selected && editor.isEditable && !isErrorState
+      ? "color-mix(in srgb, var(--border-color-accent-strong) 20%, transparent)"
+      : undefined;
+
   const getDisplayMessage = useCallback(() => {
     const isUploading = isImageBeingUploaded;
-    if (failedToLoadImage || hasDuplicationFailed) {
+    if (isErrorState) {
       return "Error loading image";
     }
 
@@ -181,7 +191,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
     }
 
     return "Add an image";
-  }, [draggedInside, editor.isEditable, failedToLoadImage, isImageBeingUploaded, hasDuplicationFailed]);
+  }, [draggedInside, editor.isEditable, isErrorState, isImageBeingUploaded]);
 
   const handleRetryClick = useCallback(
     (e: React.MouseEvent) => {
@@ -196,18 +206,20 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
   return (
     <div
       className={cn(
-        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 bg-custom-background-90 border border-dashed border-custom-border-300 transition-all duration-200 ease-in-out cursor-default",
+        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-tertiary bg-layer-3 border border-dashed transition-all duration-200 ease-in-out cursor-default",
         {
-          "hover:text-custom-text-200 hover:bg-custom-background-80 cursor-pointer": editor.isEditable,
-          "bg-custom-background-80 text-custom-text-200": draggedInside && editor.isEditable,
-          "text-custom-primary-200 bg-custom-primary-100/10 border-custom-primary-200/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200":
-            selected && editor.isEditable,
-          "text-red-500 cursor-default": failedToLoadImage || hasDuplicationFailed,
-          "hover:text-red-500": (failedToLoadImage || hasDuplicationFailed) && editor.isEditable,
-          "bg-red-500/10": (failedToLoadImage || hasDuplicationFailed) && selected,
-          "hover:bg-red-500/10": (failedToLoadImage || hasDuplicationFailed) && selected && editor.isEditable,
+          "border-subtle": !(selected && editor.isEditable && !isErrorState),
+          "hover:text-secondary hover:bg-layer-3-hover cursor-pointer": editor.isEditable && !isErrorState,
+          "bg-layer-3-hover text-secondary": draggedInside && editor.isEditable && !isErrorState,
+          "text-accent-secondary bg-accent-primary/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
+            selected && editor.isEditable && !isErrorState,
+          "text-danger-primary bg-danger-subtle cursor-default": isErrorState,
+          "hover:text-danger-primary hover:bg-danger-subtle-hover": isErrorState && editor.isEditable,
+          "bg-danger-subtle-selected": isErrorState && selected,
+          "hover:bg-danger-subtle-active": isErrorState && selected && editor.isEditable,
         }
       )}
+      style={borderColor ? { borderColor } : undefined}
       onDrop={onDrop}
       onDragOver={onDragEnter}
       onDragLeave={onDragLeave}
@@ -219,21 +231,21 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
       }}
     >
       <ImageIcon className="size-4" />
-      <div className="text-base font-medium flex-1">{getDisplayMessage()}</div>
+      <div className="text-14 font-medium flex-1">{getDisplayMessage()}</div>
       {hasDuplicationFailed && editor.isEditable && (
         <button
           type="button"
           onClick={handleRetryClick}
           className={cn(
-            "flex items-center gap-1 px-2 py-1 text-xs font-medium text-custom-text-300 hover:bg-custom-background-90 hover:text-custom-text-200 rounded-md transition-all duration-200 ease-in-out",
+            "flex items-center gap-1 px-2 py-1 font-medium text-danger-primary rounded-md transition-all duration-200 ease-in-out hover:bg-danger-subtle-hover",
             {
-              "hover:bg-red-500/20": selected,
+              "hover:bg-danger-subtle-hover": selected,
             }
           )}
           title="Retry duplication"
         >
           <RotateCcw className="size-3" />
-          Retry
+          <span className="text-11">Retry</span>
         </button>
       )}
       <input

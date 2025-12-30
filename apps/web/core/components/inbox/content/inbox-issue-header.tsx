@@ -1,12 +1,12 @@
 import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { CircleCheck, CircleX, Clock, ExternalLink, FileStack, Link, Trash2, MoveRight, Copy } from "lucide-react";
+import { CircleCheck, CircleX, Clock, FileStack, MoveRight } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { LinkIcon, CopyIcon, NewTabIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
@@ -241,6 +241,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
           beforeFormSubmit={handleInboxIssueAccept}
           withDraftIssueWrapper={false}
           fetchIssueDetails={false}
+          showActionItemsOnUpdate
           modalTitle={t("inbox_issue.actions.move", {
             value: `${currentProjectDetails?.identifier}-${issue?.sequence_id}`,
           })}
@@ -269,15 +270,15 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
         />
       </>
 
-      <Row className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 bg-custom-background-100 z-[15] border-b border-custom-border-200">
+      <Row className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 bg-surface-1 z-15 border-b border-subtle">
         <div className="flex items-center gap-4">
           {isNotificationEmbed && (
             <button onClick={embedRemoveCurrentNotification}>
-              <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+              <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary" />
             </button>
           )}
           {issue?.project_id && issue.sequence_id && (
-            <h3 className="text-base font-medium text-custom-text-300 flex-shrink-0">
+            <h3 className="text-14 font-medium text-tertiary flex-shrink-0">
               {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
             </h3>
           )}
@@ -292,14 +293,14 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
             <div className="flex items-center gap-x-2">
               <button
                 type="button"
-                className="rounded border border-custom-border-200 p-1.5"
+                className="rounded-sm border border-subtle p-1.5"
                 onClick={() => handleInboxIssueNavigation("prev")}
               >
                 <ChevronUpIcon height={14} width={14} strokeWidth={2} />
               </button>
               <button
                 type="button"
-                className="rounded border border-custom-border-200 p-1.5"
+                className="rounded-sm border border-subtle p-1.5"
                 onClick={() => handleInboxIssueNavigation("next")}
               >
                 <ChevronDownIcon height={14} width={14} strokeWidth={2} />
@@ -309,12 +310,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
 
           <div className="flex flex-wrap items-center gap-2">
             {canMarkAsAccepted && (
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <Button
-                  variant="neutral-primary"
-                  size="sm"
+                  variant="secondary"
                   prependIcon={<CircleCheck className="w-3 h-3" />}
-                  className="text-green-500 border border-green-500 bg-green-500/20 focus:bg-green-500/20 focus:text-green-500 hover:bg-green-500/40 bg-opacity-20"
+                  className="text-on-color border border-success-strong bg-success-primary focus:bg-success-primary focus:text-success-primary hover:bg-success-primary"
                   onClick={() =>
                     handleActionWithPermission(
                       isProjectAdmin,
@@ -329,12 +329,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
             )}
 
             {canMarkAsDeclined && (
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <Button
-                  variant="neutral-primary"
-                  size="sm"
+                  variant="secondary"
                   prependIcon={<CircleX className="w-3 h-3" />}
-                  className="text-red-500 border border-red-500 bg-red-500/20 focus:bg-red-500/20 focus:text-red-500 hover:bg-red-500/40 bg-opacity-20"
+                  className="text-on-color border border-danger-strong bg-danger-primary focus:bg-danger-primary focus:text-danger-primary hover:bg-danger-primary-hover"
                   onClick={() =>
                     handleActionWithPermission(
                       isProjectAdmin,
@@ -351,15 +350,14 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
             {isAcceptedOrDeclined ? (
               <div className="flex items-center gap-2">
                 <Button
-                  variant="neutral-primary"
-                  prependIcon={<Link className="h-2.5 w-2.5" />}
-                  size="sm"
+                  variant="secondary"
+                  prependIcon={<LinkIcon className="h-2.5 w-2.5" />}
                   onClick={() => handleCopyIssueLink(workItemLink)}
                 >
                   {t("inbox_issue.actions.copy")}
                 </Button>
                 <ControlLink href={workItemLink} onClick={() => router.push(workItemLink)} target="_self">
-                  <Button variant="neutral-primary" prependIcon={<ExternalLink className="h-2.5 w-2.5" />} size="sm">
+                  <Button variant="secondary" prependIcon={<NewTabIcon className="h-2.5 w-2.5" />}>
                     {t("inbox_issue.actions.open")}
                   </Button>
                 </ControlLink>
@@ -404,14 +402,14 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                     )}
                     <CustomMenu.MenuItem onClick={() => handleCopyIssueLink(workItemLink)}>
                       <div className="flex items-center gap-2">
-                        <Copy size={14} strokeWidth={2} />
+                        <CopyIcon width={14} height={14} strokeWidth={2} />
                         {t("inbox_issue.actions.copy")}
                       </div>
                     </CustomMenu.MenuItem>
                     {canDelete && (
                       <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
                         <div className="flex items-center gap-2">
-                          <Trash2 size={14} strokeWidth={2} />
+                          <TrashIcon width={14} height={14} strokeWidth={2} />
                           {t("inbox_issue.actions.delete")}
                         </div>
                       </CustomMenu.MenuItem>

@@ -19,11 +19,11 @@ export function IssueBlockPriority({
   const priority_detail = priority != null ? getIssuePriorityFilters(priority) : null;
 
   const priorityClasses = {
-    urgent: "bg-red-600/10 text-red-600 border-red-600 px-1",
-    high: "bg-orange-500/20 text-orange-950 border-orange-500",
-    medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
-    low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
-    none: "hover:bg-custom-background-80 border-custom-border-300",
+    urgent: "bg-layer-2 text-priority-urgent border-priority-urgent px-1",
+    high: "bg-layer-2 text-priority-high border-priority-high",
+    medium: "bg-layer-2 text-priority-medium border-priority-medium",
+    low: "bg-layer-2 text-priority-low border-priority-low",
+    none: "bg-layer-2 text-priority-none border-priority-none",
   };
 
   if (priority_detail === null) return <></>;
@@ -32,13 +32,13 @@ export function IssueBlockPriority({
     <Tooltip tooltipHeading="Priority" tooltipContent={t(priority_detail?.titleTranslationKey || "")}>
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] rounded text-xs px-2 py-0.5",
+          "h-full flex items-center gap-1.5 border-[0.5px] rounded-sm text-11 px-2 py-0.5",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
             "px-0.5": !shouldShowName,
             // highlight the whole button if text is hidden and priority is urgent
-            "bg-red-600/10 border-red-600": priority === "urgent" && shouldShowName,
+            "border-priority-urgent": priority === "urgent" && shouldShowName,
           }
         )}
       >
@@ -59,7 +59,7 @@ export function IssueBlockPriority({
         ) : (
           <SignalHigh className="size-3" />
         )}
-        {shouldShowName && <span className="pl-2 text-sm">{t(priority_detail?.titleTranslationKey || "")}</span>}
+        {shouldShowName && <span className="pl-2 text-13">{t(priority_detail?.titleTranslationKey || "")}</span>}
       </div>
     </Tooltip>
   );

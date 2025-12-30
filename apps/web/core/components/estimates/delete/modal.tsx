@@ -73,23 +73,23 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
       <div className="relative space-y-6 py-5">
         {/* heading */}
         <div className="relative flex justify-between items-center gap-2 px-5">
-          <div className="text-xl font-medium text-custom-text-100">Delete Estimate System</div>
+          <div className="text-18 font-medium text-primary">Delete Estimate System</div>
         </div>
 
         {/* estimate steps */}
         <div className="px-5">
-          <div className="text-base text-custom-text-200">
-            Deleting the estimate <span className="font-bold text-custom-text-100">{estimate?.name}</span>
+          <div className="text-14 text-secondary">
+            Deleting the estimate <span className="font-bold text-primary">{estimate?.name}</span>
             &nbsp;system will remove it from all work items permanently. This action cannot be undone. If you add
             estimates again, you will need to update all the work items.
           </div>
         </div>
 
-        <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose} disabled={buttonLoader}>
+        <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-subtle">
+          <Button variant="secondary" size="lg" onClick={handleClose} disabled={buttonLoader}>
             Cancel
           </Button>
-          <Button variant="danger" size="sm" onClick={handleDeleteEstimate} disabled={buttonLoader}>
+          <Button variant="error-fill" size="lg" onClick={handleDeleteEstimate} disabled={buttonLoader}>
             {buttonLoader ? "Deleting" : "Delete Estimate"}
           </Button>
         </div>

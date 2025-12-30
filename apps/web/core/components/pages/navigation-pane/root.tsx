@@ -50,7 +50,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
   const activeTab: TPageNavigationPaneTab = navigationPaneQueryParam || "outline";
 
   // Check if any extension is currently active based on query parameters
-  const ActiveExtension = extensions.find(function ActiveExtension(extension) {
+  const ActiveExtension = extensions.find((extension) => {
     const paneTabValue = searchParams.get(PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM);
     const hasVersionParam = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
 
@@ -81,7 +81,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
 
   return (
     <aside
-      className="flex-shrink-0 h-full flex flex-col bg-custom-background-100 pt-3.5 border-l border-custom-border-200 transition-all duration-300 ease-out"
+      className="shrink-0 h-full flex flex-col bg-surface-1 pt-3.5 border-l border-subtle transition-all duration-300 ease-out"
       style={{
         width: `${paneWidth}px`,
         marginRight: isNavigationPaneOpen ? "0px" : `-${paneWidth}px`,
@@ -91,7 +91,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
         <Tooltip tooltipContent={t("page_navigation_pane.close_button")}>
           <button
             type="button"
-            className="size-3.5 grid place-items-center text-custom-text-200 hover:text-custom-text-100 transition-colors"
+            className="size-3.5 grid place-items-center text-secondary hover:text-primary transition-colors"
             onClick={handleClose}
             aria-label={t("page_navigation_pane.close_button")}
           >
@@ -100,7 +100,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
         </Tooltip>
       </div>
 
-      <div className="flex-1 flex flex-col overflow-hidden animate-slide-in-right">
+      <div className="flex-1 flex flex-col overflow-hidden animate-slide-in-right px-3">
         {ActiveExtension ? (
           <ActiveExtension.component page={page} extensionData={ActiveExtension.data} storeType={storeType} />
         ) : showNavigationTabs ? (

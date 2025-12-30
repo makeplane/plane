@@ -1,6 +1,7 @@
 import { Combobox } from "@headlessui/react";
-import { Check } from "lucide-react";
+
 import React from "react";
+import { CheckIcon } from "@plane/propel/icons";
 // helpers
 import { cn } from "../../utils";
 // types
@@ -51,11 +52,11 @@ export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSele
                   disabled={option.disabled}
                   className={({ active, selected }) =>
                     cn(
-                      "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
+                      "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5",
                       {
-                        "bg-custom-background-80": active,
-                        "text-custom-text-100": selected,
-                        "text-custom-text-200": !selected,
+                        "bg-layer-1": active,
+                        "text-primary": selected,
+                        "text-secondary": !selected,
                       },
                       option.className && option.className({ active, selected })
                     )
@@ -69,7 +70,7 @@ export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSele
                       ) : (
                         <>
                           <span className="flex-grow truncate">{option.value}</span>
-                          {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                          {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                         </>
                       )}
                     </>
@@ -77,7 +78,7 @@ export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSele
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-custom-text-400">No matching results</p>
+              <p className="px-1.5 py-1 italic text-placeholder">No matching results</p>
             )
           ) : loader ? (
             <> {loader} </>

@@ -1,17 +1,81 @@
+/**
+ * Tabs Component
+ *
+ * A flexible tab navigation component built on top of Base UI's Tabs primitive.
+ *
+ * @example
+ * ```tsx
+ * import { Tabs } from "@plane/propel/tabs";
+ *
+ * // Basic usage
+ * <Tabs defaultValue="tab1">
+ *   <Tabs.List>
+ *     <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab2">Tab 2</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab3">Tab 3</Tabs.Trigger>
+ *   </Tabs.List>
+ *   <Tabs.Content value="tab1">Content for Tab 1</Tabs.Content>
+ *   <Tabs.Content value="tab2">Content for Tab 2</Tabs.Content>
+ *   <Tabs.Content value="tab3">Content for Tab 3</Tabs.Content>
+ * </Tabs>
+ *
+ * // With variant and size options
+ * <Tabs defaultValue="overview" variant="contained">
+ *   <Tabs.List background="contained">
+ *     <Tabs.Trigger value="overview" size="sm">Overview</Tabs.Trigger>
+ *     <Tabs.Trigger value="settings" size="sm">Settings</Tabs.Trigger>
+ *   </Tabs.List>
+ *   <Tabs.Content value="overview">Overview content</Tabs.Content>
+ *   <Tabs.Content value="settings">Settings content</Tabs.Content>
+ * </Tabs>
+ *
+ * // Controlled usage
+ * const [activeTab, setActiveTab] = useState("tab1");
+ *
+ * <Tabs value={activeTab} onValueChange={setActiveTab}>
+ *   <Tabs.List>
+ *     <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab2">Tab 2</Tabs.Trigger>
+ *   </Tabs.List>
+ *   <Tabs.Content value="tab1">Content 1</Tabs.Content>
+ *   <Tabs.Content value="tab2">Content 2</Tabs.Content>
+ * </Tabs>
+ * ```
+ *
+ * @props
+ * - `Tabs` (Root): Accepts all props from Base UI's Tabs.Root plus `variant`
+ * - `Tabs.List`: Container for triggers. `background?: "contained"` adds bg color
+ * - `Tabs.Trigger`: Tab button. `size?: "sm" | "md" | "lg"` controls text size
+ * - `Tabs.Content`: Tab panel content
+ * - `Tabs.Indicator`: Optional animated indicator element
+ */
 import * as React from "react";
 import { Tabs as TabsPrimitive } from "@base-ui-components/react/tabs";
 import { cn } from "../utils/classname";
 
+type TabsVariant = "contained";
+
+type TabsContextType = {
+  variant?: TabsVariant;
+};
+
+const TabsContext = React.createContext<TabsContextType | undefined>(undefined);
+
 type TabsCompound = React.ForwardRefExoticComponent<
-  React.ComponentProps<typeof TabsPrimitive.Root> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Root>>
+  React.ComponentProps<typeof TabsPrimitive.Root> & {
+    variant?: TabsVariant;
+  } & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Root>>
 > & {
   List: React.ForwardRefExoticComponent<
-    React.ComponentProps<typeof TabsPrimitive.List> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.List>>
+    React.ComponentProps<typeof TabsPrimitive.List> & {
+      background?: TabsVariant;
+    } & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.List>>
   >;
   Trigger: React.ForwardRefExoticComponent<
-    React.ComponentProps<typeof TabsPrimitive.Tab> & { size?: "sm" | "md" | "lg" } & React.RefAttributes<
-        React.ElementRef<typeof TabsPrimitive.Tab>
-      >
+    React.ComponentProps<typeof TabsPrimitive.Tab> & {
+      size?: "sm" | "md" | "lg";
+      variant?: TabsVariant;
+    } & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Tab>>
   >;
   Content: React.ForwardRefExoticComponent<
     React.ComponentProps<typeof TabsPrimitive.Panel> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Panel>>
@@ -20,28 +84,39 @@ type TabsCompound = React.ForwardRefExoticComponent<
 };
 
 const TabsRoot = React.forwardRef(function TabsRoot(
-  { className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>,
+  { className, variant, ...props }: React.ComponentProps<typeof TabsPrimitive.Root> & { variant?: TabsVariant },
   ref: React.ForwardedRef<React.ElementRef<typeof TabsPrimitive.Root>>
 ) {
   return (
-    <TabsPrimitive.Root
-      data-slot="tabs"
-      className={cn("flex flex-col w-full h-full", className)}
-      {...props}
-      ref={ref}
-    />
+    <TabsContext.Provider value={{ variant }}>
+      <TabsPrimitive.Root
+        data-slot="tabs"
+        className={cn("flex flex-col w-full h-full", className)}
+        {...props}
+        ref={ref}
+      />
+    </TabsContext.Provider>
   );
 });
 
 const TabsList = React.forwardRef(function TabsList(
-  { className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>,
+  {
+    className,
+    background = "contained",
+    ...props
+  }: React.ComponentProps<typeof TabsPrimitive.List> & {
+    background?: TabsVariant;
+  },
   ref: React.ForwardedRef<React.ElementRef<typeof TabsPrimitive.List>>
 ) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        "flex w-full items-center justify-between gap-1.5 rounded-md text-sm p-0.5 bg-custom-background-80/60 relative overflow-auto",
+        "flex w-full items-center justify-between gap-1.5 rounded-lg text-13 p-0.5 relative overflow-auto",
+        {
+          "bg-layer-3": background === "contained",
+        },
         className
       )}
       {...props}
@@ -51,21 +126,25 @@ const TabsList = React.forwardRef(function TabsList(
 });
 
 const TabsTrigger = React.forwardRef(function TabsTrigger(
-  { className, size = "md", ...props }: React.ComponentProps<typeof TabsPrimitive.Tab> & { size?: "sm" | "md" | "lg" },
+  {
+    className,
+    size = "md",
+    ...props
+  }: React.ComponentProps<typeof TabsPrimitive.Tab> & { size?: "sm" | "md" | "lg"; variant?: TabsVariant },
   ref: React.ForwardedRef<React.ElementRef<typeof TabsPrimitive.Tab>>
 ) {
   return (
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
-        "flex items-center justify-center p-1 min-w-fit w-full font-medium text-custom-text-100 outline-none focus:outline-none cursor-pointer transition-all duration-200 ease-in-out rounded",
-        "data-[selected]:bg-custom-background-100 data-[selected]:text-custom-text-100 data-[selected]:shadow-sm",
-        "text-custom-text-400 hover:text-custom-text-300 hover:bg-custom-background-80/60",
-        "disabled:text-custom-text-400 disabled:cursor-not-allowed",
+        "flex items-center justify-center p-1 min-w-fit w-full font-medium text-primary outline-none focus:outline-none cursor-pointer transition-all duration-200 ease-in-out rounded-md border border-transparent",
+        " data-[selected]:text-primary data-[selected]:shadow-sm data-[selected]:bg-layer-2 data-[selected]:border data-[selected]:border-subtle-1 data-[selected]:raised-200",
+        "text-placeholder  hover:text-tertiary hover:bg-layer-transparent-hover",
+        "disabled:text-placeholder disabled:cursor-not-allowed",
         {
-          "text-xs": size === "sm",
-          "text-sm": size === "md",
-          "text-base": size === "lg",
+          "text-11": size === "sm",
+          "text-13": size === "md",
+          "text-14": size === "lg",
         },
         className
       )}
@@ -95,7 +174,7 @@ const TabsIndicator = React.forwardRef(function TabsIndicator(
   return (
     <div
       className={cn(
-        "absolute left-0 top-[50%] z-[-1] h-6 w-[var(--active-tab-width)] translate-x-[var(--active-tab-left)] -translate-y-[50%] rounded-sm bg-custom-background-100 shadow-sm transition-[width,transform] duration-200 ease-in-out",
+        "absolute left-0 top-[50%] z-[-1] h-6 w-[var(--active-tab-width)] translate-x-[var(--active-tab-left)] -translate-y-[50%] rounded-xs bg-surface-1 shadow-sm transition-[width,transform] duration-200 ease-in-out",
         className
       )}
       {...props}
@@ -104,6 +183,53 @@ const TabsIndicator = React.forwardRef(function TabsIndicator(
   );
 });
 
+/**
+ * A compound Tabs component built on Base UI primitives.
+ *
+ * @example
+ * ```tsx
+ * import { Tabs } from "@plane/propel";
+ *
+ * // Basic usage
+ * <Tabs defaultValue="tab1">
+ *   <Tabs.List>
+ *     <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab2">Tab 2</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab3">Tab 3</Tabs.Trigger>
+ *   </Tabs.List>
+ *   <Tabs.Content value="tab1">Content for Tab 1</Tabs.Content>
+ *   <Tabs.Content value="tab2">Content for Tab 2</Tabs.Content>
+ *   <Tabs.Content value="tab3">Content for Tab 3</Tabs.Content>
+ * </Tabs>
+ *
+ * // With size variants (sm | md | lg)
+ * <Tabs defaultValue="tab1">
+ *   <Tabs.List>
+ *     <Tabs.Trigger value="tab1" size="sm">Small</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab2" size="md">Medium</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab3" size="lg">Large</Tabs.Trigger>
+ *   </Tabs.List>
+ *   <Tabs.Content value="tab1">Small tab content</Tabs.Content>
+ *   <Tabs.Content value="tab2">Medium tab content</Tabs.Content>
+ *   <Tabs.Content value="tab3">Large tab content</Tabs.Content>
+ * </Tabs>
+ *
+ * // With contained background variant
+ * <Tabs defaultValue="tab1" variant="contained">
+ *   <Tabs.List background="contained">
+ *     <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab2">Tab 2</Tabs.Trigger>
+ *   </Tabs.List>
+ *   <Tabs.Content value="tab1">Content 1</Tabs.Content>
+ *   <Tabs.Content value="tab2">Content 2</Tabs.Content>
+ * </Tabs>
+ * ```
+ *
+ * @property {Tabs.List} List - Container for tab triggers with optional background variant
+ * @property {Tabs.Trigger} Trigger - Individual tab button with size variants (sm, md, lg)
+ * @property {Tabs.Content} Content - Panel content associated with each tab
+ * @property {Tabs.Indicator} Indicator - Animated indicator for active tab selection
+ */
 export const Tabs = Object.assign(TabsRoot, {
   List: TabsList,
   Trigger: TabsTrigger,

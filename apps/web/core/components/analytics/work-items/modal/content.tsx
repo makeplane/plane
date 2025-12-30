@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { Tab } from "@headlessui/react";
 // plane package imports
 import type { ICycle, IModule, IProject } from "@plane/types";
 import { Spinner } from "@plane/ui";

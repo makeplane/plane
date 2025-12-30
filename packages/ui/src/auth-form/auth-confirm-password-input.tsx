@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { cn } from "@plane/utils";
 import { AuthInput } from "./auth-input";
 
-export interface AuthConfirmPasswordInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "autoComplete"> {
+export interface AuthConfirmPasswordInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "autoComplete"
+> {
   password: string;
   label?: string;
   error?: string;
@@ -71,7 +73,7 @@ export function AuthConfirmPasswordInput({
         onBlur={handleBlur}
         autoComplete="on"
       />
-      {confirmPassword && passwordsMatch && <p className="text-sm text-green-500">Passwords match</p>}
+      {confirmPassword && passwordsMatch && <p className="text-13 text-success-primary">Passwords match</p>}
     </div>
   );
 }

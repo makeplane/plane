@@ -67,47 +67,46 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
   } = useForm<IWorkspace>({ defaultValues, mode: "onChange" });
 
   const handleCreateWorkspace = async (formData: IWorkspace) => {
-    await workspaceService
-      .workspaceSlugCheck(formData.slug)
-      .then(async (res) => {
-        if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
-          setSlugError(false);
+    try {
+      const res = (await workspaceService.workspaceSlugCheck(formData.slug)) as { status: boolean };
+      if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
+        setSlugError(false);
 
-          await createWorkspace(formData)
-            .then(async (res) => {
-              captureSuccess({
-                eventName: WORKSPACE_TRACKER_EVENTS.create,
-                payload: { slug: formData.slug },
-              });
-              setToast({
-                type: TOAST_TYPE.SUCCESS,
-                title: t("workspace_creation.toast.success.title"),
-                message: t("workspace_creation.toast.success.message"),
-              });
+        try {
+          const workspaceResponse = await createWorkspace(formData);
+          captureSuccess({
+            eventName: WORKSPACE_TRACKER_EVENTS.create,
+            payload: { slug: formData.slug },
+          });
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: t("workspace_creation.toast.success.title"),
+            message: t("workspace_creation.toast.success.message"),
+          });
 
-              if (onSubmit) await onSubmit(res);
-            })
-            .catch(() => {
-              captureError({
-                eventName: WORKSPACE_TRACKER_EVENTS.create,
-                payload: { slug: formData.slug },
-                error: new Error("Error creating workspace"),
-              });
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: t("workspace_creation.toast.error.title"),
-                message: t("workspace_creation.toast.error.message"),
-              });
-            });
-        } else setSlugError(true);
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("workspace_creation.toast.error.title"),
-          message: t("workspace_creation.toast.error.message"),
-        });
+          if (onSubmit) await onSubmit(workspaceResponse);
+        } catch {
+          captureError({
+            eventName: WORKSPACE_TRACKER_EVENTS.create,
+            payload: { slug: formData.slug },
+            error: new Error("Error creating workspace"),
+          });
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("workspace_creation.toast.error.title"),
+            message: t("workspace_creation.toast.error.message"),
+          });
+        }
+      } else {
+        setSlugError(true);
+      }
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("workspace_creation.toast.error.title"),
+        message: t("workspace_creation.toast.error.message"),
       });
+    }
   };
 
   useEffect(
@@ -119,12 +118,17 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
   );
 
   return (
-    <form className="space-y-6 sm:space-y-9" onSubmit={handleSubmit(handleCreateWorkspace)}>
+    <form
+      className="space-y-6 sm:space-y-9"
+      onSubmit={(e) => {
+        void handleSubmit(handleCreateWorkspace)(e);
+      }}
+    >
       <div className="space-y-6 sm:space-y-7">
-        <div className="space-y-1 text-sm">
+        <div className="flex flex-col gap-2 text-13">
           <label htmlFor="workspaceName">
             {t("workspace_creation.form.name.label")}
-            <span className="ml-0.5 text-red-500">*</span>
+            <span className="ml-0.5 text-danger-primary">*</span>
           </label>
           <div className="flex flex-col gap-1">
             <Controller
@@ -158,16 +162,16 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
                 />
               )}
             />
-            <span className="text-xs text-red-500">{errors?.name?.message}</span>
+            <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
           </div>
         </div>
-        <div className="space-y-1 text-sm">
+        <div className="flex flex-col gap-2 text-13">
           <label htmlFor="workspaceUrl">
             {t("workspace_creation.form.url.label")}
-            <span className="ml-0.5 text-red-500">*</span>
+            <span className="ml-0.5 text-danger-primary">*</span>
           </label>
-          <div className="flex w-full items-center rounded-md border-[0.5px] border-custom-border-200 px-3">
-            <span className="whitespace-nowrap text-sm text-custom-text-200">{window && window.location.host}/</span>
+          <div className="flex w-full items-center rounded-md border border-subtle px-3 bg-layer-2">
+            <span className="whitespace-nowrap text-12 text-secondary">{window && window.location.host}/</span>
             <Controller
               control={control}
               name="slug"
@@ -191,23 +195,25 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
                   ref={ref}
                   hasError={Boolean(errors.slug)}
                   placeholder={t("workspace_creation.form.url.placeholder")}
-                  className="block w-full rounded-md border-none bg-transparent !px-0 py-2 text-sm"
+                  className="block w-full rounded-md border-none bg-transparent !px-0 py-2 text-12"
                 />
               )}
             />
           </div>
           {slugError && (
-            <p className="-mt-3 text-sm text-red-500">{t("workspace_creation.errors.validation.url_already_taken")}</p>
+            <p className="-mt-3 text-13 text-danger-primary">
+              {t("workspace_creation.errors.validation.url_already_taken")}
+            </p>
           )}
           {invalidSlug && (
-            <p className="text-sm text-red-500">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
+            <p className="text-13 text-danger-primary">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
           )}
-          {errors.slug && <span className="text-xs text-red-500">{errors.slug.message}</span>}
+          {errors.slug && <span className="text-11 text-danger-primary">{errors.slug.message}</span>}
         </div>
-        <div className="space-y-1 text-sm">
+        <div className="flex flex-col gap-2 text-13">
           <span>
             {t("workspace_creation.form.organization_size.label")}
-            <span className="ml-0.5 text-red-500">*</span>
+            <span className="ml-0.5 text-danger-primary">*</span>
           </span>
           <div className="w-full">
             <Controller
@@ -220,12 +226,12 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-custom-text-400">
+                      <span className="text-placeholder">
                         {t("workspace_creation.form.organization_size.placeholder")}
                       </span>
                     )
                   }
-                  buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
+                  buttonClassName="border border-subtle bg-layer-2 !shadow-none !rounded-md"
                   input
                 >
                   {ORGANIZATION_SIZE.map((item) => (
@@ -237,7 +243,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
               )}
             />
             {errors.organization_size && (
-              <span className="text-sm text-red-500">{errors.organization_size.message}</span>
+              <span className="text-13 text-danger-primary">{errors.organization_size.message}</span>
             )}
           </div>
         </div>
@@ -248,14 +254,14 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
           data-ph-element={WORKSPACE_TRACKER_ELEMENTS.CREATE_WORKSPACE_BUTTON}
           variant="primary"
           type="submit"
-          size="md"
+          size="xl"
           disabled={!isValid}
           loading={isSubmitting}
         >
           {isSubmitting ? t(primaryButtonText.loading) : t(primaryButtonText.default)}
         </Button>
         {!secondaryButton && (
-          <Button variant="neutral-primary" type="button" size="md" onClick={() => router.back()}>
+          <Button variant="secondary" type="button" size="xl" onClick={() => router.back()}>
             {t("common.go_back")}
           </Button>
         )}

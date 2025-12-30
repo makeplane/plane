@@ -210,7 +210,7 @@ class UserEndpoint(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        except Exception as e:
+        except Exception:
             return Response(
                 {"error": "Failed to verify code. Please try again."},
                 status=status.HTTP_400_BAD_REQUEST,

@@ -72,6 +72,7 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
           title: t("success"),
           message: t("favorite_created_successfully"),
         });
+        return;
       })
       .catch(() => {
         setToast({
@@ -110,6 +111,7 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
           title: t("success"),
           message: t("favorite_updated_successfully"),
         });
+        return;
       })
       .catch(() => {
         setToast({
@@ -131,7 +133,7 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
   });
   return (
     <div className="flex items-center gap-1.5 py-[1px] px-2" ref={ref}>
-      <FavoriteFolderIcon className="w-[16px]" />
+      <FavoriteFolderIcon className="size-4" />
       <form onSubmit={handleSubmit(actionType === "create" ? handleAddNewFolder : handleRenameFolder)}>
         <Controller
           name="name"

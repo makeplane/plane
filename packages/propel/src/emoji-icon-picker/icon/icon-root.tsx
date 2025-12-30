@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { InfoIcon, Search } from "lucide-react";
+import { InfoIcon } from "lucide-react";
+import { SearchIcon } from "../../icons";
 import { cn } from "../../utils/classname";
 import { adjustColorForContrast, DEFAULT_COLORS } from "../helper";
 import { LucideIconsList } from "./lucide-root";
@@ -31,27 +32,24 @@ export function IconRoot(props: IconRootProps) {
 
   return (
     <>
-      <div className="flex flex-col sticky top-0 bg-custom-background-100">
+      <div className="flex flex-col sticky top-0 bg-surface-1">
         {!searchDisabled && (
           <div className="flex items-center px-2 py-[15px] w-full ">
             <div
-              className={cn(
-                "relative flex items-center gap-2 bg-custom-background-90 h-10 rounded-lg w-full px-[30px] border",
-                {
-                  "border-custom-primary-100": isInputFocused,
-                  "border-transparent": !isInputFocused,
-                }
-              )}
+              className={cn("relative flex items-center gap-2 bg-surface-2 h-10 rounded-lg w-full px-[30px] border", {
+                "border-accent-strong": isInputFocused,
+                "border-transparent": !isInputFocused,
+              })}
               onFocus={() => setIsInputFocused(true)}
               onBlur={() => setIsInputFocused(false)}
             >
-              <Search className="absolute left-2.5 bottom-3 h-3.5 w-3.5 text-custom-text-400" />
+              <SearchIcon className="absolute left-2.5 bottom-3 h-3.5 w-3.5 text-placeholder" />
 
               <input
                 placeholder="Search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="block rounded-md bg-transparent placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-custom-border-200 text-[1rem] border-none p-0 h-full w-full"
+                className="block rounded-md bg-transparent placeholder-(--text-color-placeholder) focus:outline-none px-3 py-2 border-[0.5px] border-subtle text-16 border-none p-0 h-full w-full"
               />
             </div>
           </div>
@@ -65,8 +63,8 @@ export function IconRoot(props: IconRootProps) {
                   backgroundColor: `#${hexValue}`,
                 }}
               />
-              <span className="text-xs text-custom-text-300 flex-shrink-0">HEX</span>
-              <span className="text-xs text-custom-text-200 flex-shrink-0 -mr-1">#</span>
+              <span className="text-11 text-tertiary flex-shrink-0">HEX</span>
+              <span className="text-11 text-secondary flex-shrink-0 -mr-1">#</span>
               <input
                 type="text"
                 value={hexValue}
@@ -75,7 +73,7 @@ export function IconRoot(props: IconRootProps) {
                   setHexValue(value);
                   if (/^[0-9A-Fa-f]{6}$/.test(value)) setActiveColor(adjustColorForContrast(`#${value}`));
                 }}
-                className="block placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-custom-border-200 flex-grow pl-0 text-xs text-custom-text-200 rounded border-none bg-transparent ring-0"
+                className="block placeholder-(--text-color-placeholder) focus:outline-none px-3 py-2 border-[0.5px] border-subtle flex-grow pl-0 text-11 text-secondary rounded-sm border-none bg-transparent ring-0"
                 autoFocus
               />
             </div>
@@ -97,7 +95,7 @@ export function IconRoot(props: IconRootProps) {
           <button
             type="button"
             className={cn("grid place-items-center h-4 w-4 rounded-full border border-transparent", {
-              "border-custom-border-400": !showHexInput,
+              "border-strong-1": !showHexInput,
             })}
             onClick={() => {
               setShowHexInput((prevData) => !prevData);
@@ -107,13 +105,13 @@ export function IconRoot(props: IconRootProps) {
             {showHexInput ? (
               <span className="conical-gradient h-4 w-4 rounded-full" />
             ) : (
-              <span className="text-custom-text-300 text-[0.6rem] grid place-items-center">#</span>
+              <span className="text-tertiary text-10 grid place-items-center">#</span>
             )}
           </button>
         </div>
         <div className="flex items-center gap-2 w-full pl-4 pr-3 py-1 h-6">
           <InfoIcon className="h-3 w-3" />
-          <p className="text-xs"> Colors will be adjusted to ensure sufficient contrast.</p>
+          <p className="text-11"> Colors will be adjusted to ensure sufficient contrast.</p>
         </div>
       </div>
       <div className="grid grid-cols-8 gap-1 px-2.5 justify-items-center mt-2">

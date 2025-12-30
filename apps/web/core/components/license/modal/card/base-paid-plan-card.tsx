@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { CheckCircle } from "lucide-react";
@@ -6,7 +5,6 @@ import { CheckCircle } from "lucide-react";
 import { Tabs } from "@plane/propel/tabs";
 // helpers
 import type { EProductSubscriptionEnum, TBillingFrequency, TSubscriptionPrice } from "@plane/types";
-import { getSubscriptionBackgroundColor, getUpgradeCardVariantStyle } from "@plane/ui";
 import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
 
 export type TBasePaidPlanCardProps = {
@@ -33,25 +31,16 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
   // states
   const [selectedPlan, setSelectedPlan] = useState<TBillingFrequency>("month");
   const basePlan = getBaseSubscriptionName(planVariant);
-  const upgradeCardVariantStyle = getUpgradeCardVariantStyle(planVariant);
   // Plane details
   const planeName = getSubscriptionName(planVariant);
 
   return (
-    <div className={cn("flex flex-col py-6 px-3", upgradeCardVariantStyle)}>
+    <div className="flex flex-col py-6 px-3 bg-layer-1 rounded-xl">
       <Tabs value={selectedPlan} onValueChange={(value) => setSelectedPlan(value as TBillingFrequency)}>
         <div className="flex w-full justify-center">
-          <Tabs.List className={cn("flex rounded-md w-60", getSubscriptionBackgroundColor(planVariant, "50"))}>
+          <Tabs.List>
             {prices.map((price: TSubscriptionPrice) => (
-              <Tabs.Trigger
-                key={price.key}
-                value={price.recurring}
-                className={cn(
-                  "w-full rounded  text-sm font-medium leading-5 py-2",
-                  "data-[selected]:bg-custom-background-100 data-[selected]:text-custom-text-100 data-[selected]:shadow",
-                  "text-custom-text-300 hover:text-custom-text-200"
-                )}
-              >
+              <Tabs.Trigger key={price.key} value={price.recurring}>
                 {renderPriceContent(price)}
               </Tabs.Trigger>
             ))}
@@ -61,11 +50,11 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
           {prices.map((price: TSubscriptionPrice) => (
             <Tabs.Content key={price.key} value={price.recurring}>
               <div className="pt-6 text-center">
-                <div className="text-xl font-medium">Plane {planeName}</div>
+                <div className="text-h4-medium">Plane {planeName}</div>
                 {renderActionButton(price)}
               </div>
               <div className="px-2 pt-6 pb-2">
-                <div className="p-2 text-sm font-semibold">{`Everything in ${basePlan} +`}</div>
+                <div className="p-2 text-caption-md-semibold">{`Everything in ${basePlan} +`}</div>
                 <ul className="grid grid-cols-12 gap-x-4">
                   {features.map((feature) => (
                     <li
@@ -74,9 +63,9 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
                         "sm:col-span-6": !verticalFeatureList,
                       })}
                     >
-                      <p className="w-full text-sm font-medium leading-5 flex items-center line-clamp-1">
-                        <CheckCircle className="h-4 w-4 mr-2 text-custom-text-300 flex-shrink-0" />
-                        <span className="text-custom-text-200 truncate">{feature}</span>
+                      <p className="w-full text-caption-md-medium leading-5 flex items-center line-clamp-1">
+                        <CheckCircle className="size-4 mr-2 text-tertiary flex-shrink-0" />
+                        <span className="text-secondary truncate">{feature}</span>
                       </p>
                     </li>
                   ))}

@@ -19,7 +19,7 @@ export const IssueDescriptionActivity = observer(function IssueDescriptionActivi
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<AlignLeft size={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<AlignLeft size={14} className="text-secondary" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

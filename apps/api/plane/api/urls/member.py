@@ -1,6 +1,10 @@
 from django.urls import path
 
-from plane.api.views import ProjectMemberListCreateAPIEndpoint, ProjectMemberDetailAPIEndpoint, WorkspaceMemberAPIEndpoint
+from plane.api.views import (
+    ProjectMemberListCreateAPIEndpoint,
+    ProjectMemberDetailAPIEndpoint,
+    WorkspaceMemberAPIEndpoint,
+)
 
 urlpatterns = [
     # Project members

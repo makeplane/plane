@@ -29,13 +29,13 @@ const Input = React.forwardRef(function Input(props: InputProps, ref: React.Forw
       type={type}
       name={name}
       className={cn(
-        "block rounded-md bg-transparent text-sm placeholder-custom-text-400 focus:outline-none",
+        "block rounded-md bg-layer-2 text-13 placeholder-tertiary border-subtle-1 focus:outline-none",
         {
-          "rounded-md border-[0.5px] border-custom-border-200": mode === "primary",
-          "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-custom-primary":
+          "rounded-md border-[0.5px]": mode === "primary",
+          "rounded-sm border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-accent-strong":
             mode === "transparent",
-          "rounded border-none bg-transparent ring-0": mode === "true-transparent",
-          "border-red-500": hasError,
+          "rounded-sm border-none bg-transparent ring-0": mode === "true-transparent",
+          "border-danger-strong": hasError,
           "px-1.5 py-1": inputSize === "xs",
           "px-3 py-2": inputSize === "sm",
           "p-3": inputSize === "md",

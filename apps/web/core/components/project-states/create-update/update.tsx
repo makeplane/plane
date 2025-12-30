@@ -47,7 +47,7 @@ export const StateUpdate = observer(function StateUpdate(props: TStateUpdate) {
       handleClose();
       return { status: "success" };
     } catch (error) {
-      const errorStatus = error as unknown as { status: number };
+      const errorStatus = error as { status: number };
       if (errorStatus?.status === 400) {
         setToast({
           type: TOAST_TYPE.ERROR,

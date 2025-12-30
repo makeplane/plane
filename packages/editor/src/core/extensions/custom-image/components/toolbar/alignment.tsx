@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { ChevronDownIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // local imports
 import type { TCustomImageAlignment } from "../../types";
 import { IMAGE_ALIGNMENT_OPTIONS } from "../../utils";
@@ -42,7 +42,7 @@ export function ImageAlignmentAction(props: Props) {
         </button>
       </Tooltip>
       {isDropdownOpen && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0.5 h-7 bg-black/80 flex items-center gap-2 px-2 rounded">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0.5 h-7 bg-black/80 flex items-center gap-2 px-2 rounded-sm">
           {IMAGE_ALIGNMENT_OPTIONS.map((option) => (
             <Tooltip disabled={isTouchDevice} key={option.value} tooltipContent={option.label}>
               <button

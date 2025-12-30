@@ -27,7 +27,7 @@ export function PageNavigationPaneTabPanelsRoot(props: Props) {
         <Tabs.Content
           key={tab.key}
           value={tab.key}
-          className="size-full p-3.5 pt-0 overflow-y-auto vertical-scrollbar scrollbar-sm outline-none"
+          className="size-full overflow-y-auto vertical-scrollbar scrollbar-sm outline-none"
         >
           {tab.key === "outline" && <PageNavigationPaneOutlineTabPanel page={page} />}
           {tab.key === "info" && <PageNavigationPaneInfoTabPanel page={page} versionHistory={versionHistory} />}

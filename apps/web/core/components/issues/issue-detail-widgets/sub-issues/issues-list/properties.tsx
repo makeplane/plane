@@ -116,7 +116,6 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
             }
             disabled={!canEdit}
             buttonVariant="border-without-text"
-            buttonClassName="border"
             showTooltip
           />
         </div>
@@ -144,7 +143,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
             isClearable
             mergeDates
             buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlight ? "text-red-500" : ""}
+            buttonClassName={shouldHighlight ? "text-danger-primary" : ""}
             disabled={!canEdit}
             showTooltip
             customTooltipHeading="Date Range"
@@ -188,8 +187,8 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
             placeholder={t("common.order_by.due_date")}
             icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlight ? "text-red-500" : ""}
-            clearIconClassName="text-custom-text-100"
+            buttonClassName={shouldHighlight ? "text-danger-primary" : ""}
+            clearIconClassName="text-primary"
             optionsClassName="z-30"
             disabled={!canEdit}
             showTooltip

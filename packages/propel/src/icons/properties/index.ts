@@ -1,4 +1,5 @@
 export * from "./boolean-icon";
+export * from "./comment-reply-icon";
 export * from "./dropdown-icon";
 export * from "./due-date-icon";
 export * from "./duplicate-icon";
@@ -18,3 +19,4 @@ export * from "./user-circle-icon";
 export * from "./user-icon";
 export * from "./user-square-icon";
 export * from "./workflows-icon";
+export * from "./label-filled-icon";

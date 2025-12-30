@@ -25,41 +25,35 @@ type TOperatorOptionForDisplay = {
   label: string;
 };
 
-export interface IFilterConfig<P extends TFilterProperty, V extends TFilterValue = TFilterValue>
-  extends TFilterConfig<P, V> {
+export interface IFilterConfig<P extends TFilterProperty> extends TFilterConfig<P> {
   // computed
   allEnabledSupportedOperators: TSupportedOperators[];
   firstOperator: TSupportedOperators | undefined;
   // computed functions
   getOperatorConfig: (
     operator: TAllAvailableOperatorsForDisplay
-  ) => TOperatorSpecificConfigs<V>[keyof TOperatorSpecificConfigs<V>] | undefined;
+  ) => TOperatorSpecificConfigs[keyof TOperatorSpecificConfigs] | undefined;
   getLabelForOperator: (operator: TAllAvailableOperatorsForDisplay | undefined) => string;
-  getDisplayOperatorByValue: <T extends TSupportedOperators | TAllAvailableOperatorsForDisplay>(
-    operator: T,
-    value: V
-  ) => T;
-  getAllDisplayOperatorOptionsByValue: (value: V) => TOperatorOptionForDisplay[];
+  getDisplayOperatorByValue: <T extends TSupportedOperators>(operator: T, value: TFilterValue) => T;
+  getAllDisplayOperatorOptionsByValue: (value: TFilterValue) => TOperatorOptionForDisplay[];
   // actions
-  mutate: (updates: Partial<TFilterConfig<P, V>>) => void;
+  mutate: (updates: Partial<TFilterConfig<P>>) => void;
 }
 
-export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TFilterValue>
-  implements IFilterConfig<P, V>
-{
+export class FilterConfig<P extends TFilterProperty> implements IFilterConfig<P> {
   // observables
-  id: IFilterConfig<P, V>["id"];
-  label: IFilterConfig<P, V>["label"];
-  icon?: IFilterConfig<P, V>["icon"];
-  isEnabled: IFilterConfig<P, V>["isEnabled"];
-  supportedOperatorConfigsMap: IFilterConfig<P, V>["supportedOperatorConfigsMap"];
-  allowMultipleFilters: IFilterConfig<P, V>["allowMultipleFilters"];
+  id: IFilterConfig<P>["id"];
+  label: IFilterConfig<P>["label"];
+  icon?: IFilterConfig<P>["icon"];
+  isEnabled: IFilterConfig<P>["isEnabled"];
+  supportedOperatorConfigsMap: IFilterConfig<P>["supportedOperatorConfigsMap"];
+  allowMultipleFilters: IFilterConfig<P>["allowMultipleFilters"];
 
   /**
    * Creates a new FilterConfig instance.
    * @param params - The parameters for the filter config.
    */
-  constructor(params: TFilterConfig<P, V>) {
+  constructor(params: TFilterConfig<P>) {
     this.id = params.id;
     this.label = params.label;
     this.icon = params.icon;
@@ -88,7 +82,7 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
    * Returns all supported operators.
    * @returns All supported operators.
    */
-  get allEnabledSupportedOperators(): IFilterConfig<P, V>["allEnabledSupportedOperators"] {
+  get allEnabledSupportedOperators(): IFilterConfig<P>["allEnabledSupportedOperators"] {
     return Array.from(this.supportedOperatorConfigsMap.entries())
       .filter(([, operatorConfig]) => operatorConfig.isOperatorEnabled)
       .map(([operator]) => operator);
@@ -98,7 +92,7 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
    * Returns the first operator.
    * @returns The first operator.
    */
-  get firstOperator(): IFilterConfig<P, V>["firstOperator"] {
+  get firstOperator(): IFilterConfig<P>["firstOperator"] {
     return this.allEnabledSupportedOperators[0];
   }
 
@@ -109,7 +103,7 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
    * @param operator - The operator.
    * @returns The operator config.
    */
-  getOperatorConfig: IFilterConfig<P, V>["getOperatorConfig"] = computedFn((operator) =>
+  getOperatorConfig: IFilterConfig<P>["getOperatorConfig"] = computedFn((operator) =>
     this.supportedOperatorConfigsMap.get(getOperatorForPayload(operator).operator)
   );
 
@@ -118,7 +112,7 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
    * @param operator - The operator.
    * @returns The label for the operator.
    */
-  getLabelForOperator: IFilterConfig<P, V>["getLabelForOperator"] = computedFn((operator) => {
+  getLabelForOperator: IFilterConfig<P>["getLabelForOperator"] = computedFn((operator) => {
     if (!operator) return EMPTY_OPERATOR_LABEL;
 
     const operatorConfig = this.getOperatorConfig(operator);
@@ -139,7 +133,7 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
    * @param value - The value.
    * @returns The operator for the value.
    */
-  getDisplayOperatorByValue: IFilterConfig<P, V>["getDisplayOperatorByValue"] = computedFn((operator, value) => {
+  getDisplayOperatorByValue: IFilterConfig<P>["getDisplayOperatorByValue"] = computedFn((operator, value) => {
     const operatorConfig = this.getOperatorConfig(operator);
     if (operatorConfig?.type === FILTER_FIELD_TYPE.MULTI_SELECT && (Array.isArray(value) ? value.length : 0) <= 1) {
       return operatorConfig.singleValueOperator as typeof operator;
@@ -155,28 +149,26 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
    * @param value - The current filter value used to determine the appropriate operator variant
    * @returns Array of operator options with their display labels and values
    */
-  getAllDisplayOperatorOptionsByValue: IFilterConfig<P, V>["getAllDisplayOperatorOptionsByValue"] = computedFn(
-    (value) => {
-      const operatorOptions: TOperatorOptionForDisplay[] = [];
+  getAllDisplayOperatorOptionsByValue: IFilterConfig<P>["getAllDisplayOperatorOptionsByValue"] = computedFn((value) => {
+    const operatorOptions: TOperatorOptionForDisplay[] = [];
 
-      // Process each supported operator to build display options
-      for (const operator of this.allEnabledSupportedOperators) {
-        const displayOperator = this.getDisplayOperatorByValue(operator, value);
-        const displayOperatorLabel = this.getLabelForOperator(displayOperator);
-        operatorOptions.push({
-          value: operator,
-          label: displayOperatorLabel,
-        });
+    // Process each supported operator to build display options
+    for (const operator of this.allEnabledSupportedOperators) {
+      const displayOperator = this.getDisplayOperatorByValue(operator, value);
+      const displayOperatorLabel = this.getLabelForOperator(displayOperator);
+      operatorOptions.push({
+        value: operator,
+        label: displayOperatorLabel,
+      });
 
-        const additionalOperatorOption = this._getAdditionalOperatorOptions(operator, value);
-        if (additionalOperatorOption) {
-          operatorOptions.push(additionalOperatorOption);
-        }
+      const additionalOperatorOption = this._getAdditionalOperatorOptions(operator, value);
+      if (additionalOperatorOption) {
+        operatorOptions.push(additionalOperatorOption);
       }
-
-      return operatorOptions;
     }
-  );
+
+    return operatorOptions;
+  });
 
   // ------------ actions ------------
 
@@ -184,11 +176,11 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
    * Mutates the config.
    * @param updates - The updates to apply to the config.
    */
-  mutate: IFilterConfig<P, V>["mutate"] = action((updates) => {
+  mutate: IFilterConfig<P>["mutate"] = action((updates) => {
     runInAction(() => {
       for (const key in updates) {
         if (updates.hasOwnProperty(key)) {
-          const configKey = key as keyof TFilterConfig<P, V>;
+          const configKey = key as keyof TFilterConfig<P>;
           set(this, configKey, updates[configKey]);
         }
       }
@@ -199,6 +191,6 @@ export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
 
   private _getAdditionalOperatorOptions = (
     _operator: TSupportedOperators,
-    _value: V
+    _value: TFilterValue
   ): TOperatorOptionForDisplay | undefined => undefined;
 }

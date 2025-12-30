@@ -31,7 +31,11 @@ export const NotificationOption = observer(function NotificationOption(props: TN
   const notification = useNotification(notificationId);
 
   return (
-    <div className={cn("flex-shrink-0 hidden group-hover:block text-sm", isSnoozeStateModalOpen ? `!block` : ``)}>
+    <div
+      className={cn("flex-shrink-0 hidden group-hover:block text-body-xs-medium", {
+        block: isSnoozeStateModalOpen,
+      })}
+    >
       <div className="relative flex justify-center items-center gap-2">
         {/* read */}
         <NotificationItemReadOption workspaceSlug={workspaceSlug} notification={notification} />

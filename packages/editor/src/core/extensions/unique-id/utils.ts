@@ -30,6 +30,7 @@ export const createIdsForView = (view: EditorView, options: UniqueIDOptions) => 
   });
 
   tr.setMeta("addToHistory", false);
+  tr.setMeta("uniqueIdOnlyChange", true);
 
   view.dispatch(tr);
 };

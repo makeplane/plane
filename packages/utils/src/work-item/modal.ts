@@ -38,7 +38,7 @@ export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { 
 
   const dirtyFieldKeys = Object.keys(dirtyFields) as (keyof TIssue)[];
   for (const dirtyField of dirtyFieldKeys) {
-    if (!!dirtyFields[dirtyField]) {
+    if (dirtyFields[dirtyField]) {
       set(changedFields, [dirtyField], formData[dirtyField]);
     }
   }
