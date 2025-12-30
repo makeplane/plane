@@ -1,11 +1,12 @@
 import { Database as HocuspocusDatabase } from "@hocuspocus/extension-database";
-// utils
+// plane imports
 import {
   getAllDocumentFormatsFromDocumentEditorBinaryData,
   getBinaryDataFromDocumentEditorHTMLString,
 } from "@plane/editor";
-// logger
+import type { TDocumentPayload } from "@plane/types";
 import { logger } from "@plane/logger";
+// lib
 import { AppError } from "@/lib/errors";
 // services
 import { getPageService } from "@/services/page/handler";
@@ -36,10 +37,10 @@ const fetchDocument = async ({ context, documentName: pageId, instance }: FetchP
             convertedBinaryData,
             true
           );
-          const payload = {
+          const payload: TDocumentPayload = {
             description_binary: contentBinaryEncoded,
             description_html: contentHTML,
-            description: contentJSON,
+            description_json: contentJSON,
           };
           await service.updateDescriptionBinary(pageId, payload);
         } catch (e) {
@@ -76,10 +77,10 @@ const storeDocument = async ({
       true
     );
     // create payload
-    const payload = {
+    const payload: TDocumentPayload = {
       description_binary: contentBinaryEncoded,
       description_html: contentHTML,
-      description: contentJSON,
+      description_json: contentJSON,
     };
     await service.updateDescriptionBinary(pageId, payload);
   } catch (error) {
