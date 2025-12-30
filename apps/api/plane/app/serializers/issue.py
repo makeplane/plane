@@ -2,7 +2,7 @@
 from django.utils import timezone
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 
 # Third Party imports
 from rest_framework import serializers
@@ -271,7 +271,7 @@ class IssueCreateSerializer(BaseSerializer):
         # Handle custom_fields if provided in initial_data
         custom_fields = self.initial_data.get("custom_fields")
         if custom_fields:
-            self._handle_custom_fields(
+            errors = self._handle_custom_fields(
                 issue=issue,
                 custom_fields=custom_fields,
                 project_id=project_id,
@@ -279,6 +279,10 @@ class IssueCreateSerializer(BaseSerializer):
                 created_by_id=created_by_id,
                 updated_by_id=updated_by_id,
             )
+            if errors:
+                # Delete the issue if custom_fields validation fails
+                issue.delete()
+                raise serializers.ValidationError({"custom_fields": errors})
 
         return issue
 
@@ -337,7 +341,7 @@ class IssueCreateSerializer(BaseSerializer):
         # Handle custom_fields if provided in initial_data
         custom_fields = self.initial_data.get("custom_fields")
         if custom_fields:
-            self._handle_custom_fields(
+            errors = self._handle_custom_fields(
                 issue=instance,
                 custom_fields=custom_fields,
                 project_id=project_id,
@@ -345,6 +349,8 @@ class IssueCreateSerializer(BaseSerializer):
                 created_by_id=created_by_id,
                 updated_by_id=updated_by_id,
             )
+            if errors:
+                raise serializers.ValidationError({"custom_fields": errors})
 
         # Time updation occues even when other related models are updated
         instance.updated_at = timezone.now()
@@ -354,9 +360,10 @@ class IssueCreateSerializer(BaseSerializer):
         """
         Helper method to handle custom_fields on create/update.
         custom_fields format: {"property_key": value, ...}
+        Returns a dict of validation errors if any, otherwise None.
         """
         if not custom_fields or not isinstance(custom_fields, dict):
-            return
+            return None
 
         # Get all properties for this project by key
         properties = IssueProperty.objects.filter(
@@ -366,6 +373,11 @@ class IssueCreateSerializer(BaseSerializer):
         )
         property_map = {prop.key: prop for prop in properties}
 
+        # Validate all keys exist
+        invalid_keys = set(custom_fields.keys()) - set(property_map.keys())
+        if invalid_keys:
+            return {"custom_fields": f"Unknown property keys: {', '.join(invalid_keys)}"}
+
         # Get existing values for this issue
         existing_values = IssuePropertyValue.objects.filter(
             issue=issue,
@@ -374,42 +386,53 @@ class IssueCreateSerializer(BaseSerializer):
         )
         existing_map = {ev.property.key: ev for ev in existing_values}
 
-        values_to_create = []
-        values_to_update = []
+        # First pass: validate ALL fields before saving ANY
+        serializers_to_save = []
+        validation_errors = {}
 
         for key, value in custom_fields.items():
-            if key not in property_map:
-                continue  # Skip unknown properties
-
             prop = property_map[key]
 
+            # Prepare data for serializer
+            data = {"value": value, "property": prop.id}
+
             if key in existing_map:
-                # Update existing value
-                existing_value = existing_map[key]
-                existing_value.value = value
-                existing_value.updated_by_id = updated_by_id
-                values_to_update.append(existing_value)
+                # Update existing
+                serializer = IssuePropertyValueSerializer(
+                    instance=existing_map[key],
+                    data=data,
+                    context={"project_id": project_id},
+                    partial=True,
+                )
             else:
-                # Create new value
-                values_to_create.append(
-                    IssuePropertyValue(
-                        issue=issue,
-                        property=prop,
-                        value=value,
-                        project_id=project_id,
-                        workspace_id=workspace_id,
-                        created_by_id=created_by_id,
-                        updated_by_id=updated_by_id,
-                    )
+                # Create new
+                serializer = IssuePropertyValueSerializer(
+                    data=data,
+                    context={"project_id": project_id},
                 )
 
-        # Bulk create new values
-        if values_to_create:
-            IssuePropertyValue.objects.bulk_create(values_to_create, batch_size=10)
+            if serializer.is_valid():
+                serializers_to_save.append((key, serializer, prop.id))
+            else:
+                validation_errors[key] = serializer.errors
 
-        # Bulk update existing values
-        if values_to_update:
-            IssuePropertyValue.objects.bulk_update(values_to_update, ["value", "updated_by_id"], batch_size=10)
+        # If any validation failed, return errors without saving anything
+        if validation_errors:
+            return validation_errors
+
+        # Second pass: save all validated serializers in a transaction
+        with transaction.atomic():
+            for key, serializer, prop_id in serializers_to_save:
+                serializer.save(
+                    issue_id=issue.id,
+                    property_id=prop_id,
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                    created_by_id=created_by_id,
+                    updated_by_id=updated_by_id,
+                )
+
+        return None
 
 
 class IssueActivitySerializer(BaseSerializer):
@@ -1022,9 +1045,11 @@ class IssueDetailSerializer(IssueSerializer):
         data = super().to_representation(instance)
 
         # Add custom_fields - fetch all property values for this issue
+        # Filter out values where the property itself has been soft-deleted
         property_values = IssuePropertyValue.objects.filter(
             issue_id=instance.id,
             deleted_at__isnull=True,
+            property__deleted_at__isnull=True,
         ).select_related("property")
 
         # Build custom_fields dict keyed by property key

@@ -1,5 +1,5 @@
 # Django imports
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.db.models import Prefetch
 
 # Third Party imports
@@ -181,6 +181,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
             issue = Issue.objects.get(
                 id=issue_id,
                 project_id=project_id,
+                deleted_at__isnull=True,
             )
         except Issue.DoesNotExist:
             return Response(
@@ -257,6 +258,7 @@ class BulkIssuePropertyValueEndpoint(BaseAPIView):
             issue = Issue.objects.get(
                 id=issue_id,
                 project_id=project_id,
+                deleted_at__isnull=True,
             )
         except Issue.DoesNotExist:
             return Response(
@@ -288,7 +290,8 @@ class BulkIssuePropertyValueEndpoint(BaseAPIView):
         )
         existing_map = {ev.property.key: ev for ev in existing_values}
 
-        results = []
+        # First pass: validate ALL fields before saving ANY
+        serializers_to_save = []
         errors = []
 
         for key, value in custom_fields.items():
@@ -313,20 +316,27 @@ class BulkIssuePropertyValueEndpoint(BaseAPIView):
                 )
 
             if serializer.is_valid():
-                serializer.save(
-                    issue_id=issue_id,
-                    property_id=prop.id,
-                    project_id=project_id,
-                )
-                results.append({key: serializer.data})
+                serializers_to_save.append((key, serializer, prop.id))
             else:
                 errors.append({key: serializer.errors})
 
+        # If any validation failed, return errors without saving anything
         if errors:
             return Response(
-                {"results": results, "errors": errors},
+                {"errors": errors},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Second pass: save all validated serializers in a transaction
+        results = []
+        with transaction.atomic():
+            for key, serializer, prop_id in serializers_to_save:
+                serializer.save(
+                    issue_id=issue_id,
+                    property_id=prop_id,
+                    project_id=project_id,
+                )
+                results.append({key: serializer.data})
 
         return Response({"results": results}, status=status.HTTP_200_OK)
 
@@ -341,6 +351,7 @@ class BulkIssuePropertyValueEndpoint(BaseAPIView):
             issue = Issue.objects.get(
                 id=issue_id,
                 project_id=project_id,
+                deleted_at__isnull=True,
             )
         except Issue.DoesNotExist:
             return Response(
@@ -349,9 +360,11 @@ class BulkIssuePropertyValueEndpoint(BaseAPIView):
             )
 
         # Get all property values for this issue
+        # Filter out values where the property itself has been soft-deleted
         property_values = IssuePropertyValue.objects.filter(
             issue_id=issue_id,
             deleted_at__isnull=True,
+            property__deleted_at__isnull=True,
         ).select_related("property")
 
         # Build flat response keyed by property key
