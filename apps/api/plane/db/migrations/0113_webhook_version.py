@@ -48,5 +48,10 @@ class Migration(migrations.Migration):
             name='allowed_rate_limit',
             field=models.CharField(default='60/min', max_length=255),
         ),
+         migrations.AddField(
+            model_name='profile',
+            name='is_subscribed_to_changelog',
+            field=models.BooleanField(default=False),
+        ),
         migrations.RunPython(populate_product_tour, reverse_code=migrations.RunPython.noop),
     ]
