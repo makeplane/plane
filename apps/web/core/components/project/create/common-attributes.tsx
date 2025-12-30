@@ -17,14 +17,13 @@ import type { TProject } from "@/plane-web/types/projects";
 type Props = {
   setValue: UseFormSetValue<TProject>;
   isMobile: boolean;
-  isChangeInIdentifierRequired: boolean;
-  setIsChangeInIdentifierRequired: (value: boolean) => void;
+  shouldAutoSyncIdentifier: boolean;
+  setShouldAutoSyncIdentifier: (value: boolean) => void;
   handleFormOnChange?: () => void;
 };
 
 function ProjectCommonAttributes(props: Props) {
-  const { setValue, isMobile, isChangeInIdentifierRequired, setIsChangeInIdentifierRequired, handleFormOnChange } =
-    props;
+  const { setValue, isMobile, shouldAutoSyncIdentifier, setShouldAutoSyncIdentifier, handleFormOnChange } = props;
   const {
     formState: { errors },
     control,
@@ -33,21 +32,22 @@ function ProjectCommonAttributes(props: Props) {
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
   const { t } = useTranslation();
 
-  const handleNameChange = (onChange: (...event: any[]) => void) => (e: ChangeEvent<HTMLInputElement>) => {
-    if (!isChangeInIdentifierRequired) {
+  const handleNameChange =
+    (onChange: (event: ChangeEvent<HTMLInputElement>) => void) => (e: ChangeEvent<HTMLInputElement>) => {
+      if (!shouldAutoSyncIdentifier) {
+        onChange(e);
+        return;
+      }
+      if (e.target.value === "") setValue("identifier", "");
+      else setValue("identifier", projectIdentifierSanitizer(e.target.value).substring(0, 10));
       onChange(e);
-      return;
-    }
-    if (e.target.value === "") setValue("identifier", "");
-    else setValue("identifier", projectIdentifierSanitizer(e.target.value).substring(0, 10));
-    onChange(e);
-    handleFormOnChange?.();
-  };
+      handleFormOnChange?.();
+    };
 
-  const handleIdentifierChange = (onChange: any) => (e: ChangeEvent<HTMLInputElement>) => {
+  const handleIdentifierChange = (onChange: (value: string) => void) => (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     const alphanumericValue = projectIdentifierSanitizer(value);
-    setIsChangeInIdentifierRequired(false);
+    setShouldAutoSyncIdentifier(false);
     onChange(alphanumericValue);
     handleFormOnChange?.();
   };
