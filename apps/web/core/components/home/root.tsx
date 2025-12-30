@@ -31,7 +31,11 @@ export const WorkspaceHomeView = observer(function WorkspaceHomeView() {
   );
 
   const handleTourCompleted = async () => {
-    await updateTourCompleted();
+    try {
+      await updateTourCompleted();
+    } catch (error) {
+      console.error("Error updating tour completed", error);
+    }
   };
 
   // TODO: refactor loader implementation

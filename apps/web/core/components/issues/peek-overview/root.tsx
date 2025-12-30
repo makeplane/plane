@@ -163,7 +163,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
           });
           await removeFromCyclePromise;
           fetchActivities(workspaceSlug, projectId, issueId);
-        } catch (_error) {
+        } catch (error) {
           console.error("Error removing issue from cycle", error);
         }
       },
