@@ -2,7 +2,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CircleDashed } from "lucide-react";
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { PlusIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -15,7 +14,6 @@ import { ExistingIssuesListModal } from "@/components/core/modals/existing-issue
 import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
@@ -132,7 +130,6 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             >
               <CustomMenu.MenuItem
                 onClick={() => {
-                  captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.create });
                   setIsOpen(true);
                 }}
               >
@@ -140,7 +137,6 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               </CustomMenu.MenuItem>
               <CustomMenu.MenuItem
                 onClick={() => {
-                  captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.add_existing });
                   setOpenExistingIssueListModal(true);
                 }}
               >
@@ -151,7 +147,6 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             <div
               className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1"
               onClick={() => {
-                captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.create });
                 setIsOpen(true);
               }}
             >

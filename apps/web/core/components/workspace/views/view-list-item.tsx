@@ -2,14 +2,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-
-import { GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
-import { EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 import { truncateText } from "@plane/utils";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
 // local imports
@@ -51,9 +47,6 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
                   <CustomMenu ellipsis>
                     <CustomMenu.MenuItem
                       onClick={() => {
-                        captureClick({
-                          elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.LIST_ITEM,
-                        });
                         setUpdateViewModal(true);
                       }}
                     >
@@ -64,9 +57,6 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
                     </CustomMenu.MenuItem>
                     <CustomMenu.MenuItem
                       onClick={() => {
-                        captureClick({
-                          elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.LIST_ITEM,
-                        });
                         setDeleteViewModal(true);
                       }}
                     >

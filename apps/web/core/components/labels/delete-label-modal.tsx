@@ -1,14 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IIssueLabel } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useLabel } from "@/hooks/store/use-label";
 
 type Props = {
@@ -38,27 +36,10 @@ export const DeleteLabelModal = observer(function DeleteLabelModal(props: Props)
 
     await deleteLabel(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
-        captureSuccess({
-          eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_deleted,
-          payload: {
-            name: data.name,
-            project_id: projectId,
-          },
-        });
         handleClose();
       })
       .catch((err) => {
         setIsDeleteLoading(false);
-
-        captureError({
-          eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_deleted,
-          payload: {
-            name: data.name,
-            project_id: projectId,
-          },
-          error: err,
-        });
-
         const error = err?.error || "Label could not be deleted. Please try again.";
         setToast({
           type: TOAST_TYPE.ERROR,

@@ -1,17 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Info, SquareUser } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import {
-  MODULE_STATUS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  EEstimateSystem,
-  MODULE_TRACKER_EVENTS,
-  MODULE_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, EEstimateSystem } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
 import {
@@ -33,7 +26,6 @@ import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { CreateUpdateModuleLinkModal, ModuleAnalyticsProgress, ModuleLinksList } from "@/components/modules";
-import { captureElementAndEvent, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useModule } from "@/hooks/store/use-module";
@@ -79,98 +71,39 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
     defaultValues,
   });
 
-  const submitChanges = (data: Partial<IModule>) => {
+  const submitChanges = async (data: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
-    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data)
-      .then((res) => {
-        captureElementAndEvent({
-          element: {
-            elementName: MODULE_TRACKER_ELEMENTS.RIGHT_SIDEBAR,
-          },
-          event: {
-            eventName: MODULE_TRACKER_EVENTS.update,
-            payload: { id: res.id },
-            state: "SUCCESS",
-          },
-        });
-      })
-      .catch((error) => {
-        captureError({
-          eventName: MODULE_TRACKER_EVENTS.update,
-          payload: { id: moduleId },
-          error,
-        });
-      });
+    await updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data);
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
-
     const payload = { metadata: {}, ...formData };
-
-    await createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload)
-      .then(() =>
-        captureSuccess({
-          eventName: MODULE_TRACKER_EVENTS.link.create,
-          payload: { id: moduleId },
-        })
-      )
-      .catch((error) => {
-        captureError({
-          eventName: MODULE_TRACKER_EVENTS.link.create,
-          payload: { id: moduleId },
-          error,
-        });
-      });
+    await createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload);
   };
 
   const handleUpdateLink = async (formData: ModuleLink, linkId: string) => {
     if (!workspaceSlug || !projectId) return;
-
     const payload = { metadata: {}, ...formData };
-
-    await updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload)
-      .then(() =>
-        captureSuccess({
-          eventName: MODULE_TRACKER_EVENTS.link.update,
-          payload: { id: moduleId },
-        })
-      )
-      .catch((error) => {
-        captureError({
-          eventName: MODULE_TRACKER_EVENTS.link.update,
-          payload: { id: moduleId },
-          error,
-        });
-      });
+    await updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload);
   };
 
   const handleDeleteLink = async (linkId: string) => {
     if (!workspaceSlug || !projectId) return;
-
-    deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
-      .then(() => {
-        captureSuccess({
-          eventName: MODULE_TRACKER_EVENTS.link.delete,
-          payload: { id: moduleId },
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module link deleted successfully.",
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Some error occurred",
-        });
-        captureError({
-          eventName: MODULE_TRACKER_EVENTS.link.delete,
-          payload: { id: moduleId },
-        });
+    try {
+      await deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Module link deleted successfully.",
       });
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Some error occurred",
+      });
+    }
   };
 
   const handleDateChange = async (startDate: Date | undefined, targetDate: Date | undefined) => {

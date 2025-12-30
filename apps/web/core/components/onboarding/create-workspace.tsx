@@ -2,12 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // constants
-import {
-  ORGANIZATION_SIZE,
-  RESTRICTED_URLS,
-  WORKSPACE_TRACKER_EVENTS,
-  WORKSPACE_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -16,7 +11,6 @@ import type { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
 import { CustomSelect, Input, Spinner } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserProfile, useUserSettings } from "@/hooks/store/user";
 // services
@@ -61,47 +55,26 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
   const handleCreateWorkspace = async (formData: IWorkspace) => {
     if (isSubmitting) return;
 
-    await workspaceService
-      .workspaceSlugCheck(formData.slug)
-      .then(async (res) => {
-        if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
-          setSlugError(false);
-
-          await createWorkspace(formData)
-            .then(async (workspaceResponse) => {
-              setToast({
-                type: TOAST_TYPE.SUCCESS,
-                title: t("workspace_creation.toast.success.title"),
-                message: t("workspace_creation.toast.success.message"),
-              });
-              captureSuccess({
-                eventName: WORKSPACE_TRACKER_EVENTS.create,
-                payload: { slug: formData.slug },
-              });
-              await fetchWorkspaces();
-              await completeStep(workspaceResponse.id);
-            })
-            .catch(() => {
-              captureError({
-                eventName: WORKSPACE_TRACKER_EVENTS.create,
-                payload: { slug: formData.slug },
-                error: new Error("Error creating workspace"),
-              });
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: t("workspace_creation.toast.error.title"),
-                message: t("workspace_creation.toast.error.message"),
-              });
-            });
-        } else setSlugError(true);
-      })
-      .catch(() =>
+    try {
+      const res = await workspaceService.workspaceSlugCheck(formData.slug);
+      if (res?.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
+        setSlugError(false);
+        const workspaceResponse = await createWorkspace(formData);
         setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("workspace_creation.toast.error.title"),
-          message: t("workspace_creation.toast.error.message"),
-        })
-      );
+          type: TOAST_TYPE.SUCCESS,
+          title: t("workspace_creation.toast.success.title"),
+          message: t("workspace_creation.toast.success.message"),
+        });
+        await fetchWorkspaces();
+        await completeStep(workspaceResponse.id);
+      } else setSlugError(true);
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("workspace_creation.toast.error.title"),
+        message: t("workspace_creation.toast.error.message"),
+      });
+    }
   };
 
   const completeStep = async (workspaceId: string) => {
@@ -284,14 +257,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
             )}
           </div>
         </div>
-        <Button
-          data-ph-element={WORKSPACE_TRACKER_ELEMENTS.ONBOARDING_CREATE_WORKSPACE_BUTTON}
-          variant="primary"
-          type="submit"
-          size="xl"
-          className="w-full"
-          disabled={isButtonDisabled}
-        >
+        <Button variant="primary" type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
           {isSubmitting ? <Spinner height="20px" width="20px" /> : t("workspace_creation.button.default")}
         </Button>
       </form>

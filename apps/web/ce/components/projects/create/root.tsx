@@ -1,18 +1,16 @@
-import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { observer } from "mobx-react";
 import { useState } from "react";
+import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
-// constants
+// components
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 import ProjectCreateButtons from "@/components/project/create/project-create-buttons";
 // hooks
 import { getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helper";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web types
@@ -97,12 +95,6 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
           await updateCoverImageStatus(res.id, coverImage);
           await updateProject(workspaceSlug.toString(), res.id, { cover_image_url: coverImage });
         }
-        captureSuccess({
-          eventName: PROJECT_TRACKER_EVENTS.create,
-          payload: {
-            identifier: formData.identifier,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("success"),
@@ -116,13 +108,6 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
       })
       .catch((err) => {
         try {
-          captureError({
-            eventName: PROJECT_TRACKER_EVENTS.create,
-            payload: {
-              identifier: formData.identifier,
-            },
-          });
-
           // Handle the new error format where codes are nested in arrays under field names
           const errorData = err?.data ?? {};
 

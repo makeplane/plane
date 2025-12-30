@@ -20,8 +20,6 @@ import { PageHead } from "@/components/core/page-title";
 import { MemberListFiltersDropdown } from "@/components/project/dropdowns/filters/member-list";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { WorkspaceMembersList } from "@/components/workspace/settings/members-list";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -58,13 +56,6 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
 
       setInviteModal(false);
 
-      captureSuccess({
-        eventName: MEMBER_TRACKER_EVENTS.invite,
-        payload: {
-          emails: data.emails.map((email) => email.email),
-        },
-      });
-
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
@@ -76,14 +67,6 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
         const err = error as Error & { error?: string };
         message = err.error;
       }
-      captureError({
-        eventName: MEMBER_TRACKER_EVENTS.invite,
-        payload: {
-          emails: data.emails.map((email) => email.email),
-        },
-        error: error as Error,
-      });
-
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",

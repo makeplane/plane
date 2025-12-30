@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 // plane imports
-import { ROLE, EUserPermissions, MEMBER_TRACKER_EVENTS } from "@plane/constants";
+import { ROLE, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { PlusIcon, CloseIcon, ChevronDownIcon } from "@plane/propel/icons";
@@ -11,7 +11,6 @@ import { Avatar, CustomSelect, CustomSearchSelect, EModalPosition, EModalWidth, 
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 
@@ -86,23 +85,9 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
           type: TOAST_TYPE.SUCCESS,
           message: "Members added successfully.",
         });
-
-        captureSuccess({
-          eventName: MEMBER_TRACKER_EVENTS.project.add,
-          payload: {
-            members: [...payload.members.map((member) => member.member_id)],
-          },
-        });
       })
       .catch((error) => {
         console.error(error);
-        captureError({
-          eventName: MEMBER_TRACKER_EVENTS.project.add,
-          payload: {
-            members: [...payload.members.map((member) => member.member_id)],
-          },
-          error: error,
-        });
       })
       .finally(() => {
         reset(defaultValues);

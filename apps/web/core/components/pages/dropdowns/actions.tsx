@@ -3,9 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, FileOutput, LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // constants
-import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 // plane editor
-import type { EditorRefApi } from "@plane/editor";
 import { LinkIcon, CopyIcon, LockIcon, NewTabIcon, ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
 // plane ui
 import type { TContextMenuItem } from "@plane/ui";
@@ -13,9 +12,7 @@ import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
-// helpers
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web components
 import { MovePageModal } from "@/plane-web/components/pages";
@@ -82,9 +79,6 @@ export const PageActions = observer(function PageActions(props: Props) {
         {
           key: "toggle-lock",
           action: () => {
-            captureClick({
-              elementName: PROJECT_PAGE_TRACKER_ELEMENTS.LOCK_BUTTON,
-            });
             pageOperations.toggleLock();
           },
           title: is_locked ? "Unlock" : "Lock",
@@ -94,9 +88,6 @@ export const PageActions = observer(function PageActions(props: Props) {
         {
           key: "toggle-access",
           action: () => {
-            captureClick({
-              elementName: PROJECT_PAGE_TRACKER_ELEMENTS.ACCESS_TOGGLE,
-            });
             pageOperations.toggleAccess();
           },
           title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
@@ -120,9 +111,6 @@ export const PageActions = observer(function PageActions(props: Props) {
         {
           key: "make-a-copy",
           action: () => {
-            captureClick({
-              elementName: PROJECT_PAGE_TRACKER_ELEMENTS.DUPLICATE_BUTTON,
-            });
             pageOperations.duplicate();
           },
           title: "Make a copy",
@@ -132,9 +120,6 @@ export const PageActions = observer(function PageActions(props: Props) {
         {
           key: "archive-restore",
           action: () => {
-            captureClick({
-              elementName: PROJECT_PAGE_TRACKER_ELEMENTS.ARCHIVE_BUTTON,
-            });
             pageOperations.toggleArchive();
           },
           title: archived_at ? "Restore" : "Archive",
@@ -144,9 +129,6 @@ export const PageActions = observer(function PageActions(props: Props) {
         {
           key: "delete",
           action: () => {
-            captureClick({
-              elementName: PROJECT_PAGE_TRACKER_ELEMENTS.CONTEXT_MENU,
-            });
             setDeletePageModal(true);
           },
           title: "Delete",

@@ -5,15 +5,13 @@ import { useSearchParams } from "next/navigation";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // plane imports
-import { AUTH_TRACKER_ELEMENTS, AUTH_TRACKER_EVENTS, E_PASSWORD_STRENGTH } from "@plane/constants";
+import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Input, PasswordStrengthIndicator } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -61,12 +59,6 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
   const { data: user, handleSetPassword } = useUser();
 
   useEffect(() => {
-    captureView({
-      elementName: AUTH_TRACKER_ELEMENTS.SET_PASSWORD_FORM,
-    });
-  }, []);
-
-  useEffect(() => {
     if (csrfToken === undefined)
       authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
@@ -92,9 +84,6 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
       e.preventDefault();
       if (!csrfToken) throw new Error("csrf token not found");
       await handleSetPassword(csrfToken, { password: passwordFormData.password });
-      captureSuccess({
-        eventName: AUTH_TRACKER_EVENTS.password_created,
-      });
       router.push("/");
     } catch (error: unknown) {
       let message = undefined;
@@ -102,9 +91,6 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
         const err = error as Error & { error?: string };
         message = err.error;
       }
-      captureError({
-        eventName: AUTH_TRACKER_EVENTS.password_created,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("common.errors.default.title"),

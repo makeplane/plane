@@ -1,13 +1,10 @@
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 // constants
 import type { EPageAccess } from "@plane/constants";
-import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import type { TPage } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
-import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import type { EPageStoreType } from "@/plane-web/hooks/store";
@@ -64,20 +61,11 @@ export function CreatePageModal(props: Props) {
     try {
       const pageData = await createPage(pageFormData);
       if (pageData) {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            id: pageData.id,
-          },
-        });
         handleStateClear();
         if (redirectionEnabled) router.push(`/${workspaceSlug}/projects/${projectId}/pages/${pageData.id}`);
       }
-    } catch (error: any) {
-      captureError({
-        eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-        error,
-      });
+    } catch (error) {
+      console.error(error);
     }
   };
 

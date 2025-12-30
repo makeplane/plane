@@ -3,8 +3,6 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EIssuesStoreType } from "@plane/types";
-// components
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -30,7 +28,6 @@ export const ProjectViewEmptyState = observer(function ProjectViewEmptyState() {
         {
           label: "New work item",
           onClick: () => {
-            captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.PROJECT_VIEW });
             toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
           },
           disabled: !isCreatingIssueAllowed,

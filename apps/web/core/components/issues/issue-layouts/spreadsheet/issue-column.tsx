@@ -1,10 +1,7 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
-// hooks
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 // components
 import { SPREADSHEET_COLUMNS } from "@/plane-web/components/issues/issue-layouts/utils";
 import { shouldRenderColumn } from "@/plane-web/helpers/issue-filter.helper";
@@ -30,6 +27,10 @@ export const IssueColumn = observer(function IssueColumn(props: Props) {
 
   if (!Column) return null;
 
+  const handleUpdateIssue = async (issue: TIssue, data: Partial<TIssue>) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, data);
+  };
+
   return (
     <WithDisplayPropertiesHOC
       displayProperties={displayProperties}
@@ -43,17 +44,7 @@ export const IssueColumn = observer(function IssueColumn(props: Props) {
       >
         <Column
           issue={issueDetail}
-          onChange={(issue: TIssue, data: Partial<TIssue>) =>
-            updateIssue &&
-            updateIssue(issue.project_id, issue.id, data).then(() => {
-              captureSuccess({
-                eventName: WORK_ITEM_TRACKER_EVENTS.update,
-                payload: {
-                  id: issue.id,
-                },
-              });
-            })
-          }
+          onChange={handleUpdateIssue}
           disabled={disableUserActions}
           onClose={() => tableCellRef?.current?.focus()}
         />
