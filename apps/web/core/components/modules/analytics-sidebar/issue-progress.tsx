@@ -208,15 +208,12 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
                       )}
                       isEditable={Boolean(!peekModule) && moduleFilter !== undefined}
                       moduleId={moduleId}
-                      noBackground={false}
                       plotType={plotType}
-                      roundedTab={false}
                       selectedFilters={{
                         assignees: selectedAssignees,
                         labels: selectedLabels,
                         stateGroups: selectedStateGroups,
                       }}
-                      size="xs"
                       totalIssuesCount={plotType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
                     />
                   </div>

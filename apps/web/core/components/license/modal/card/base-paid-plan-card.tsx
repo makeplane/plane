@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { CheckCircle } from "lucide-react";
-import { Tab } from "@headlessui/react";
 // plane imports
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@plane/propel/tabs";
 // helpers
 import type { EProductSubscriptionEnum, TBillingFrequency, TSubscriptionPrice } from "@plane/types";
 import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
@@ -35,31 +35,20 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
   const planeName = getSubscriptionName(planVariant);
 
   return (
-    <div className="flex flex-col py-6 px-3 bg-layer-2 rounded-xl border border-subtle">
-      <Tab.Group selectedIndex={selectedPlan === "month" ? 0 : 1}>
-        <div className="flex w-full justify-center h-9">
-          <Tab.List className="flex space-x-1 rounded-md p-0.5 w-60 bg-layer-3">
+    <div className="flex flex-col py-6 px-3 bg-layer-1 rounded-xl">
+      <Tabs value={selectedPlan} onValueChange={(value) => setSelectedPlan(value as TBillingFrequency)}>
+        <div className="flex w-full justify-center">
+          <TabsList>
             {prices.map((price: TSubscriptionPrice) => (
-              <Tab
-                key={price.key}
-                className={({ selected }) =>
-                  cn(
-                    "w-full rounded-sm py-1 text-caption-md-medium leading-5",
-                    selected
-                      ? "bg-layer-2 text-primary shadow-raised-100 border border-subtle-1"
-                      : "text-tertiary hover:text-secondary"
-                  )
-                }
-                onClick={() => setSelectedPlan(price.recurring)}
-              >
+              <TabsTrigger key={price.key} value={price.recurring}>
                 {renderPriceContent(price)}
-              </Tab>
+              </TabsTrigger>
             ))}
-          </Tab.List>
+          </TabsList>
         </div>
-        <Tab.Panels>
+        <div>
           {prices.map((price: TSubscriptionPrice) => (
-            <Tab.Panel key={price.key}>
+            <TabsContent key={price.key} value={price.recurring}>
               <div className="pt-6 text-center">
                 <div className="text-h4-medium">Plane {planeName}</div>
                 {renderActionButton(price)}
@@ -83,10 +72,10 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
                 </ul>
                 {extraFeatures && <div>{extraFeatures}</div>}
               </div>
-            </Tab.Panel>
+            </TabsContent>
           ))}
-        </Tab.Panels>
-      </Tab.Group>
+        </div>
+      </Tabs>
     </div>
   );
 });

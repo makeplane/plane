@@ -5,11 +5,9 @@ import { useDropzone } from "react-dropzone";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import useSWR from "swr";
-import { Popover } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { Tabs } from "@plane/propel/tabs";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
@@ -21,6 +19,8 @@ import { useInstance } from "@/hooks/store/use-instance";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services
 import { FileService } from "@/services/file.service";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@plane/propel/tabs";
+import { Popover } from "@plane/propel/popover";
 
 type TTabOption = {
   key: string;
@@ -182,34 +182,30 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
   useOutsideClickDetector(ref, handleClose);
 
   return (
-    <Popover className="relative z-19" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <Popover.Button className={getButtonStyling("secondary", "sm")} onClick={handleOnClick} disabled={disabled}>
         {label}
       </Popover.Button>
 
       {isOpen && (
-        <Popover.Panel
-          className="absolute right-0 z-20 mt-2 rounded-md border border-subtle bg-surface-1 shadow-raised-200"
-          static
-        >
+        <Popover.Panel className="absolute right-0 z-20 mt-2 rounded-md border border-subtle bg-surface-1 shadow-raised-200">
           <div
             ref={imagePickerRef}
-            className="flex h-96 w-80 flex-col overflow-auto rounded border border-subtle bg-surface-1 shadow-raised-200 md:h-[36rem] md:w-[36rem]"
+            className="flex h-96 w-80 flex-col overflow-auto rounded border border-subtle bg-surface-1 shadow-raised-200 md:h-[36rem] md:w-[36rem] p-2"
           >
-            <Tabs defaultValue={enabledTabs[0]?.key || "images"} className="flex h-full flex-col p-3">
-              <Tabs.List className="flex rounded bg-layer-3 p-1">
-                {enabledTabs.map((tab) => (
-                  <Tabs.Trigger key={tab.key} value={tab.key} size="md">
+            <Tabs>
+              <TabsList>
+                {tabOptions.map((tab) => (
+                  <TabsTrigger key={tab.key} value={tab.key}>
                     {tab.title}
-                  </Tabs.Trigger>
+                  </TabsTrigger>
                 ))}
-                <Tabs.Indicator />
-              </Tabs.List>
-              <div className="vertical-scrollbar scrollbar-sm p-3 mt-3 flex-1 overflow-y-auto overflow-x-hidden">
-                <Tabs.Content value="unsplash" className="h-full w-full space-y-4">
+              </TabsList>
+              <div className="mt-1 flex-1 overflow-auto">
+                <TabsContent value="unsplash">
                   {(unsplashImages || !unsplashError) && (
                     <>
-                      <div className="flex items-center gap-x-2">
+                      <div className="flex gap-x-2 items-center">
                         <Controller
                           control={control}
                           name="search"
@@ -228,11 +224,11 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                               onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                               ref={ref}
                               placeholder="Search for images"
-                              className="w-full text-13"
+                              className="w-full text-sm"
                             />
                           )}
                         />
-                        <Button variant="primary" size="xl" onClick={() => setSearchParams(formData.search)}>
+                        <Button variant="primary" onClick={() => setSearchParams(formData.search)} size="xl">
                           Search
                         </Button>
                       </div>
@@ -251,13 +247,13 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                                 <img
                                   src={image.urls.small}
                                   alt={image.alt_description}
-                                  className="absolute left-0 top-0 h-full w-full cursor-pointer rounded-sm object-cover"
+                                  className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
                                 />
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <p className="pt-7 text-center text-11 text-secondary">No images found.</p>
+                          <p className="pt-7 text-center text-xs text-custom-text-300">No images found.</p>
                         )
                       ) : (
                         <Loader className="grid grid-cols-4 gap-4">
@@ -273,8 +269,8 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       )}
                     </>
                   )}
-                </Tabs.Content>
-                <Tabs.Content value="images" className="h-full w-full space-y-4">
+                </TabsContent>
+                <TabsContent value="images">
                   <div className="grid grid-cols-4 gap-4">
                     {Object.values(STATIC_COVER_IMAGES).map((imageUrl, index) => (
                       <div
@@ -290,8 +286,8 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       </div>
                     ))}
                   </div>
-                </Tabs.Content>
-                <Tabs.Content value="upload" className="h-full w-full">
+                </TabsContent>
+                <TabsContent value="upload">
                   <div className="flex h-full w-full flex-col gap-y-2">
                     <div className="flex w-full flex-1 items-center gap-3">
                       <div
@@ -358,7 +354,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       </Button>
                     </div>
                   </div>
-                </Tabs.Content>
+                </TabsContent>
               </div>
             </Tabs>
           </div>

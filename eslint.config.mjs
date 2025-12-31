@@ -143,7 +143,19 @@ export default defineConfig([
       "react/jsx-no-target-blank": "warn",
       "react/no-unknown-property": "warn",
       "react/prop-types": "off",
-      "valid-typeof": "warn",
+      
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@headlessui/react",
+              importNames: ["Tab"],
+              message: "Use Tabs from '@plane/propel/tabs' instead.",
+            },
+          ],
+        },
+      ],
     },
   },
   {
