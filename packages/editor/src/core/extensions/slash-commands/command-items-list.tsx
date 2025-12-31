@@ -9,7 +9,6 @@ import {
   Heading5,
   Heading6,
   ImageIcon,
-  Link as LinkIcon,
   List,
   ListOrdered,
   FileCodeIcon,
@@ -19,7 +18,6 @@ import {
   Smile,
   Table,
   TextQuote,
-  Link2,
 } from "lucide-react";
 // constants
 import { COLORS_LIST } from "@/constants/common";
