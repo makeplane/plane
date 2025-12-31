@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { CheckCircle } from "lucide-react";
 // plane imports
-import { Tabs } from "@plane/propel/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@plane/propel/tabs";
 // helpers
 import type { EProductSubscriptionEnum, TBillingFrequency, TSubscriptionPrice } from "@plane/types";
 import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
@@ -38,17 +38,17 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
     <div className="flex flex-col py-6 px-3 bg-layer-1 rounded-xl">
       <Tabs value={selectedPlan} onValueChange={(value) => setSelectedPlan(value as TBillingFrequency)}>
         <div className="flex w-full justify-center">
-          <Tabs.List>
+          <TabsList>
             {prices.map((price: TSubscriptionPrice) => (
-              <Tabs.Trigger key={price.key} value={price.recurring}>
+              <TabsTrigger key={price.key} value={price.recurring}>
                 {renderPriceContent(price)}
-              </Tabs.Trigger>
+              </TabsTrigger>
             ))}
-          </Tabs.List>
+          </TabsList>
         </div>
         <div>
           {prices.map((price: TSubscriptionPrice) => (
-            <Tabs.Content key={price.key} value={price.recurring}>
+            <TabsContent key={price.key} value={price.recurring}>
               <div className="pt-6 text-center">
                 <div className="text-h4-medium">Plane {planeName}</div>
                 {renderActionButton(price)}
@@ -72,7 +72,7 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
                 </ul>
                 {extraFeatures && <div>{extraFeatures}</div>}
               </div>
-            </Tabs.Content>
+            </TabsContent>
           ))}
         </div>
       </Tabs>

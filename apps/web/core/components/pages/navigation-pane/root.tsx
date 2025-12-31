@@ -1,7 +1,7 @@
-import React, { useCallback } from "react";
+import { ArrowRightCircle } from "lucide-react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowRightCircle } from "lucide-react";
+import { useCallback } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Tabs } from "@plane/propel/tabs";

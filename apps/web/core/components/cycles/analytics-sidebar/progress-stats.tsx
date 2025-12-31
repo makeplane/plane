@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Tabs } from "@plane/propel/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@plane/propel/tabs";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import type { TCycleDistribution, TCycleEstimateDistribution, TCyclePlotType } from "@plane/types";
 import { toFilterArray } from "@plane/utils";
@@ -110,15 +110,15 @@ export const CycleProgressStats = observer(function CycleProgressStats(props: TC
   return (
     <div>
       <Tabs defaultValue={currentTab ?? "stat-assignees"} onValueChange={(value) => setCycleTab(value)}>
-        <Tabs.List>
+        <TabsList>
           {PROGRESS_STATS.map((stat) => (
-            <Tabs.Trigger key={stat.key} value={stat.key}>
+            <TabsTrigger key={stat.key} value={stat.key}>
               {t(stat.i18n_title)}
-            </Tabs.Trigger>
+            </TabsTrigger>
           ))}
-        </Tabs.List>
+        </TabsList>
         <div className="py-3">
-          <Tabs.Content value="stat-states">
+          <TabsContent value="stat-states">
             <StateGroupStatComponent
               distribution={distributionStateData}
               handleStateGroupFiltersUpdate={handleStateGroupFiltersUpdate}
@@ -126,23 +126,23 @@ export const CycleProgressStats = observer(function CycleProgressStats(props: TC
               selectedStateGroups={selectedStateGroups}
               totalIssuesCount={totalIssuesCount}
             />
-          </Tabs.Content>
-          <Tabs.Content value="stat-assignees">
+          </TabsContent>
+          <TabsContent value="stat-assignees">
             <AssigneeStatComponent
               distribution={distributionAssigneeData}
               handleAssigneeFiltersUpdate={handleAssigneeFiltersUpdate}
               isEditable={isEditable}
               selectedAssigneeIds={selectedAssigneeIds}
             />
-          </Tabs.Content>
-          <Tabs.Content value="stat-labels">
+          </TabsContent>
+          <TabsContent value="stat-labels">
             <LabelStatComponent
               distribution={distributionLabelData}
               handleLabelFiltersUpdate={handleLabelFiltersUpdate}
               isEditable={isEditable}
               selectedLabelIds={selectedLabelIds}
             />
-          </Tabs.Content>
+          </TabsContent>
         </div>
       </Tabs>
     </div>

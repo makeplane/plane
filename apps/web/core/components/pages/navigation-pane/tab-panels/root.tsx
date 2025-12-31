@@ -1,6 +1,6 @@
 import React from "react";
 // plane imports
-import { Tabs } from "@plane/propel/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@plane/propel/tabs";
 // components
 import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // plane web imports
@@ -24,7 +24,7 @@ export function PageNavigationPaneTabPanelsRoot(props: Props) {
   return (
     <>
       {ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => (
-        <Tabs.Content
+        <TabsContent
           key={tab.key}
           value={tab.key}
           className="size-full overflow-y-auto vertical-scrollbar scrollbar-sm outline-none"
@@ -33,7 +33,7 @@ export function PageNavigationPaneTabPanelsRoot(props: Props) {
           {tab.key === "info" && <PageNavigationPaneInfoTabPanel page={page} versionHistory={versionHistory} />}
           {tab.key === "assets" && <PageNavigationPaneAssetsTabPanel page={page} />}
           <PageNavigationPaneAdditionalTabPanelsRoot activeTab={tab.key} page={page} />
-        </Tabs.Content>
+        </TabsContent>
       ))}
     </>
   );

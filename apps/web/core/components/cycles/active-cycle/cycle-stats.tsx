@@ -6,7 +6,7 @@ import { CalendarCheck } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/propel/icons";
-import { Tabs } from "@plane/propel/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@plane/propel/tabs";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import type { ICycle } from "@plane/types";
@@ -88,13 +88,13 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
   return cycleId ? (
     <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-surface-1 col-span-1 lg:col-span-2 xl:col-span-1 border border-subtle rounded-lg">
       <Tabs value={tab ?? "Priority-Issues"} onValueChange={setTab}>
-        <Tabs.List>
-          <Tabs.Trigger value="Priority-Issues">{t("project_cycles.active_cycle.priority_issue")}</Tabs.Trigger>
-          <Tabs.Trigger value="Assignees">{t("project_cycles.active_cycle.assignees")}</Tabs.Trigger>
-          <Tabs.Trigger value="Labels">{t("project_cycles.active_cycle.labels")}</Tabs.Trigger>
-        </Tabs.List>
+        <TabsList>
+          <TabsTrigger value="Priority-Issues">{t("project_cycles.active_cycle.priority_issue")}</TabsTrigger>
+          <TabsTrigger value="Assignees">{t("project_cycles.active_cycle.assignees")}</TabsTrigger>
+          <TabsTrigger value="Labels">{t("project_cycles.active_cycle.labels")}</TabsTrigger>
+        </TabsList>
 
-        <Tabs.Content
+        <TabsContent
           value="Priority-Issues"
           className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-secondary vertical-scrollbar scrollbar-sm"
         >
@@ -181,9 +181,9 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
               loaders
             )}
           </div>
-        </Tabs.Content>
+        </TabsContent>
 
-        <Tabs.Content
+        <TabsContent
           value="Assignees"
           className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-secondary vertical-scrollbar scrollbar-sm"
         >
@@ -243,9 +243,9 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
           ) : (
             loaders
           )}
-        </Tabs.Content>
+        </TabsContent>
 
-        <Tabs.Content
+        <TabsContent
           value="Labels"
           className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-secondary vertical-scrollbar scrollbar-sm"
         >
@@ -286,7 +286,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
           ) : (
             loaders
           )}
-        </Tabs.Content>
+        </TabsContent>
       </Tabs>
     </div>
   ) : (

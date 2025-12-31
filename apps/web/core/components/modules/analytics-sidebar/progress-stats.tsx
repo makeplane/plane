@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { Tabs } from "@plane/propel/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@plane/propel/tabs";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import type { TModuleDistribution, TModuleEstimateDistribution, TModulePlotType } from "@plane/types";
 import { toFilterArray } from "@plane/utils";
@@ -106,30 +106,30 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
   return (
     <div>
       <Tabs defaultValue={currentTab ?? "stat-assignees"} onValueChange={(value) => setModuleTab(value)}>
-        <Tabs.List>
+        <TabsList>
           {PROGRESS_STATS.map((stat) => (
-            <Tabs.Trigger key={stat.key} value={stat.key}>
+            <TabsTrigger key={stat.key} value={stat.key}>
               {t(stat.i18n_title)}
-            </Tabs.Trigger>
+            </TabsTrigger>
           ))}
-        </Tabs.List>
-        <Tabs.Content value="stat-assignees">
+        </TabsList>
+        <TabsContent value="stat-assignees">
           <AssigneeStatComponent
             distribution={distributionAssigneeData}
             handleAssigneeFiltersUpdate={handleAssigneeFiltersUpdate}
             isEditable={isEditable}
             selectedAssigneeIds={selectedAssigneeIds}
           />
-        </Tabs.Content>
-        <Tabs.Content value="stat-labels">
+        </TabsContent>
+        <TabsContent value="stat-labels">
           <LabelStatComponent
             distribution={distributionLabelData}
             handleLabelFiltersUpdate={handleLabelFiltersUpdate}
             isEditable={isEditable}
             selectedLabelIds={selectedLabelIds}
           />
-        </Tabs.Content>
-        <Tabs.Content value="stat-states">
+        </TabsContent>
+        <TabsContent value="stat-states">
           <StateGroupStatComponent
             distribution={distributionStateData}
             handleStateGroupFiltersUpdate={handleStateGroupFiltersUpdate}
@@ -137,7 +137,7 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
             selectedStateGroups={selectedStateGroups}
             totalIssuesCount={totalIssuesCount}
           />
-        </Tabs.Content>
+        </TabsContent>
       </Tabs>
     </div>
   );

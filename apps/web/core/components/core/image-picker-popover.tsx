@@ -19,7 +19,7 @@ import { useInstance } from "@/hooks/store/use-instance";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services
 import { FileService } from "@/services/file.service";
-import { Tabs } from "@plane/propel/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@plane/propel/tabs";
 import { Popover } from "@plane/propel/popover";
 
 type TTabOption = {
@@ -194,15 +194,15 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
             className="flex h-96 w-80 flex-col overflow-auto rounded border border-subtle bg-surface-1 shadow-raised-200 md:h-[36rem] md:w-[36rem] p-2"
           >
             <Tabs>
-              <Tabs.List>
+              <TabsList>
                 {tabOptions.map((tab) => (
-                  <Tabs.Trigger key={tab.key} value={tab.key}>
+                  <TabsTrigger key={tab.key} value={tab.key}>
                     {tab.title}
-                  </Tabs.Trigger>
+                  </TabsTrigger>
                 ))}
-              </Tabs.List>
+              </TabsList>
               <div className="mt-1 flex-1 overflow-auto">
-                <Tabs.Content value="unsplash">
+                <TabsContent value="unsplash">
                   {(unsplashImages || !unsplashError) && (
                     <>
                       <div className="flex gap-x-2 items-center">
@@ -269,8 +269,8 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       )}
                     </>
                   )}
-                </Tabs.Content>
-                <Tabs.Content value="images">
+                </TabsContent>
+                <TabsContent value="images">
                   <div className="grid grid-cols-4 gap-4">
                     {Object.values(STATIC_COVER_IMAGES).map((imageUrl, index) => (
                       <div
@@ -286,8 +286,8 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       </div>
                     ))}
                   </div>
-                </Tabs.Content>
-                <Tabs.Content value="upload">
+                </TabsContent>
+                <TabsContent value="upload">
                   <div className="flex h-full w-full flex-col gap-y-2">
                     <div className="flex w-full flex-1 items-center gap-3">
                       <div
@@ -354,7 +354,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       </Button>
                     </div>
                   </div>
-                </Tabs.Content>
+                </TabsContent>
               </div>
             </Tabs>
           </div>
