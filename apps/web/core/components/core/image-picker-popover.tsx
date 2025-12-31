@@ -9,7 +9,7 @@ import { Popover } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { Tabs } from "@plane/propel/tabs";
+import { Tabs, TabsContent, TabsList, TabsIndicator, TabsTrigger } from "@plane/propel/tabs";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
@@ -197,16 +197,16 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
             className="flex h-96 w-80 flex-col overflow-auto rounded border border-subtle bg-surface-1 shadow-raised-200 md:h-[36rem] md:w-[36rem]"
           >
             <Tabs defaultValue={enabledTabs[0]?.key || "images"} className="flex h-full flex-col p-3">
-              <Tabs.List className="flex rounded bg-layer-3 p-1">
+              <TabsList className="flex rounded bg-layer-3 p-1">
                 {enabledTabs.map((tab) => (
-                  <Tabs.Trigger key={tab.key} value={tab.key} size="md">
+                  <TabsTrigger key={tab.key} value={tab.key} size="md">
                     {tab.title}
-                  </Tabs.Trigger>
+                  </TabsTrigger>
                 ))}
-                <Tabs.Indicator />
-              </Tabs.List>
+                <TabsIndicator />
+              </TabsList>
               <div className="vertical-scrollbar scrollbar-sm p-3 mt-3 flex-1 overflow-y-auto overflow-x-hidden">
-                <Tabs.Content value="unsplash" className="h-full w-full space-y-4">
+                <TabsContent value="unsplash" className="h-full w-full space-y-4">
                   {(unsplashImages || !unsplashError) && (
                     <>
                       <div className="flex items-center gap-x-2">
@@ -273,8 +273,8 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       )}
                     </>
                   )}
-                </Tabs.Content>
-                <Tabs.Content value="images" className="h-full w-full space-y-4">
+                </TabsContent>
+                <TabsContent value="images" className="h-full w-full space-y-4">
                   <div className="grid grid-cols-4 gap-4">
                     {Object.values(STATIC_COVER_IMAGES).map((imageUrl, index) => (
                       <div
@@ -290,8 +290,8 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       </div>
                     ))}
                   </div>
-                </Tabs.Content>
-                <Tabs.Content value="upload" className="h-full w-full">
+                </TabsContent>
+                <TabsContent value="upload" className="h-full w-full">
                   <div className="flex h-full w-full flex-col gap-y-2">
                     <div className="flex w-full flex-1 items-center gap-3">
                       <div
@@ -358,7 +358,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       </Button>
                     </div>
                   </div>
-                </Tabs.Content>
+                </TabsContent>
               </div>
             </Tabs>
           </div>
