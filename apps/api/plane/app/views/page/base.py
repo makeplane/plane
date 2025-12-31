@@ -15,6 +15,7 @@ from django.db.models import (
     Case,
     When,
     IntegerField,
+    Prefetch,
 )
 from django.http import StreamingHttpResponse
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -98,6 +99,15 @@ class PageViewSet(BaseViewSet):
             .annotate(is_favorite=Exists(subquery))
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
+            .prefetch_related(
+                Prefetch(
+                    "project_pages",
+                    queryset=ProjectPage.objects.filter(
+                        project_id=self.kwargs.get("project_id"), deleted_at__isnull=True
+                    ),
+                    to_attr="current_project_page",
+                )
+            )
             .order_by("-is_favorite", "-created_at")
             .annotate(
                 project=Exists(
