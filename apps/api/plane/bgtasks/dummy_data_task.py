@@ -30,7 +30,6 @@ from plane.db.models import (
     ModuleIssue,
     Page,
     ProjectPage,
-    PageLabel,
     Intake,
     IntakeIssue,
 )
@@ -240,24 +239,6 @@ def create_pages(workspace, project, user_id, pages_count):
         [ProjectPage(page=page, project=project, workspace=workspace) for page in pages],
         batch_size=1000,
     )
-
-
-def create_page_labels(workspace, project, user_id, pages_count):
-    # labels
-    labels = Label.objects.filter(project=project).values_list("id", flat=True)
-    pages = random.sample(
-        list(Page.objects.filter(projects__id=project.id).values_list("id", flat=True)),
-        int(pages_count / 2),
-    )
-
-    # Bulk page labels
-    bulk_page_labels = []
-    for page in pages:
-        for label in random.sample(list(labels), random.randint(0, len(labels) - 1)):
-            bulk_page_labels.append(PageLabel(page_id=page, label_id=label, workspace=workspace))
-
-    # Page labels
-    PageLabel.objects.bulk_create(bulk_page_labels, batch_size=1000, ignore_conflicts=True)
 
 
 def create_issues(workspace, project, user_id, issue_count):
@@ -516,9 +497,6 @@ def create_dummy_data(
 
     # create pages
     create_pages(workspace=workspace, project=project, user_id=user_id, pages_count=pages_count)
-
-    # create page labels
-    create_page_labels(workspace=workspace, project=project, user_id=user_id, pages_count=pages_count)
 
     # create issues
     create_issues(workspace=workspace, project=project, user_id=user_id, issue_count=issue_count)

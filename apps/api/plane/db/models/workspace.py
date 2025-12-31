@@ -261,55 +261,6 @@ class WorkspaceMemberInvite(BaseModel):
         return f"{self.workspace.name} {self.email} {self.accepted}"
 
 
-class Team(BaseModel):
-    name = models.CharField(max_length=255, verbose_name="Team Name")
-    description = models.TextField(verbose_name="Team Description", blank=True)
-    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name="workspace_team")
-    logo_props = models.JSONField(default=dict)
-
-    def __str__(self):
-        """Return name of the team"""
-        return f"{self.name} <{self.workspace.name}>"
-
-    class Meta:
-        unique_together = ["name", "workspace", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["name", "workspace"],
-                condition=models.Q(deleted_at__isnull=True),
-                name="team_unique_name_workspace_when_deleted_at_null",
-            )
-        ]
-        verbose_name = "Team"
-        verbose_name_plural = "Teams"
-        db_table = "teams"
-        ordering = ("-created_at",)
-
-
-class WorkspaceTheme(BaseModel):
-    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="themes")
-    name = models.CharField(max_length=300)
-    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="themes")
-    colors = models.JSONField(default=dict)
-
-    def __str__(self):
-        return str(self.name) + str(self.actor.email)
-
-    class Meta:
-        unique_together = ["workspace", "name", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["workspace", "name"],
-                condition=models.Q(deleted_at__isnull=True),
-                name="workspace_theme_unique_workspace_name_when_deleted_at_null",
-            )
-        ]
-        verbose_name = "Workspace Theme"
-        verbose_name_plural = "Workspace Themes"
-        db_table = "workspace_themes"
-        ordering = ("-created_at",)
-
-
 class WorkspaceUserProperties(BaseModel):
     class NavigationControlPreference(models.TextChoices):
         ACCORDION = "ACCORDION", "Accordion"

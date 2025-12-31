@@ -28,14 +28,13 @@ from plane.app.permissions import (
 )
 
 # Module imports
-from plane.app.serializers import WorkSpaceSerializer, WorkspaceThemeSerializer
+from plane.app.serializers import WorkSpaceSerializer
 from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.db.models import (
     Issue,
     IssueActivity,
     Workspace,
     WorkspaceMember,
-    WorkspaceTheme,
     Profile,
 )
 from plane.app.permissions import ROLE, allow_permission
@@ -77,12 +76,14 @@ class WorkSpaceViewSet(BaseViewSet):
 
     def create(self, request):
         try:
-            (DISABLE_WORKSPACE_CREATION,) = get_configuration_value([
-                {
-                    "key": "DISABLE_WORKSPACE_CREATION",
-                    "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
-                }
-            ])
+            (DISABLE_WORKSPACE_CREATION,) = get_configuration_value(
+                [
+                    {
+                        "key": "DISABLE_WORKSPACE_CREATION",
+                        "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
+                    }
+                ]
+            )
 
             if DISABLE_WORKSPACE_CREATION == "1":
                 return Response(
@@ -339,23 +340,6 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
-
-
-class WorkspaceThemeViewSet(BaseViewSet):
-    permission_classes = [WorkSpaceAdminPermission]
-    model = WorkspaceTheme
-    serializer_class = WorkspaceThemeSerializer
-
-    def get_queryset(self):
-        return super().get_queryset().filter(workspace__slug=self.kwargs.get("slug"))
-
-    def create(self, request, slug):
-        workspace = Workspace.objects.get(slug=slug)
-        serializer = WorkspaceThemeSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(workspace=workspace, actor=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
