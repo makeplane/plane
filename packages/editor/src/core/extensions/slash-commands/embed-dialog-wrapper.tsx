@@ -6,8 +6,6 @@ import { AlertModalCore } from "@plane/ui";
 import { validateUrl } from "@/helpers/urls";
 import EmbedInput from "./embed";
 
-
-
 export function EmbedDialog() {
   const [editor, setEditor] = useState<any>(null);
   const [open, setOpen] = useState(false);
@@ -26,13 +24,7 @@ export function EmbedDialog() {
   if (!open || !editor) return null;
 
   const insertFallbackLink = (url: string) => {
-    editor
-      .chain()
-      .focus()
-      .setLink({ href: url })
-      .insertContent(url)
-      .unsetLink()
-      .run();
+    editor.chain().focus().setLink({ href: url }).insertContent(url).unsetLink().run();
   };
 
   const handleEmbed = async (rawUrl: string) => {
@@ -57,7 +49,7 @@ export function EmbedDialog() {
           .chain()
           .focus()
           .insertContent({
-            type: "issueEmbed",
+            type: "linkEmbed",
             attrs: {
               url,
               title: data.title ?? url,
@@ -84,10 +76,10 @@ export function EmbedDialog() {
 
   return createPortal(
     <>
-    <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-24">
-      <EmbedInput onEmbed={handleEmbed} onCancel={close} />
-    </div>
-     <AlertModalCore
+      <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-24">
+        <EmbedInput onEmbed={handleEmbed} onCancel={close} />
+      </div>
+      <AlertModalCore
         isOpen={showInvalidUrlAlert}
         title="Invalid URL"
         content={<p>Your URL is not valid. Please enter a valid URL.</p>}
@@ -96,7 +88,7 @@ export function EmbedDialog() {
         isSubmitting={false}
         variant="danger"
       />
-      </>,
+    </>,
     document.body
   );
 }

@@ -8,7 +8,7 @@ export function validateUrl(input: string): string | null {
   const protocolRegex = /^(https?|rtmps?):\/\/[^\s/$.?#].[^\s]*$/i;
 
   if (wwwRegex.test(value)) {
-    return value; // valid www URL
+    return `https://${value}`; // add https:// to www URLs
   }
 
   if (protocolRegex.test(value)) {

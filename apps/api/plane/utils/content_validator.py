@@ -73,6 +73,7 @@ CUSTOM_TAGS = {
     "label",
     "input",
     "image-component",
+    "link-embed-component",
 }
 ALLOWED_TAGS = nh3.ALLOWED_TAGS | CUSTOM_TAGS
 
@@ -130,6 +131,13 @@ ATTRIBUTES = {
         "title",
     },
     "mention-component": {"id", "entity_identifier", "entity_name"},
+    "link-embed-component": {
+        "data-url",
+        "data-title",
+        "data-description",
+        "data-image",
+        "data-favicon",
+    },
     "th": {
         "colspan",
         "rowspan",
