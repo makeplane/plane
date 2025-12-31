@@ -33,6 +33,7 @@ export function CustomCalloutBlock(props: CustomCalloutNodeViewProps) {
       style={{
         backgroundColor: activeBackgroundColor,
       }}
+      key={`callout-block-${node.attrs.id}`}
     >
       <CalloutBlockLogoSelector
         blockAttributes={node.attrs}

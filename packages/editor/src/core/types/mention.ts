@@ -5,7 +5,7 @@ export type TMentionSuggestion = {
   entity_identifier: string;
   entity_name: TSearchEntities;
   icon: React.ReactNode;
-  id: string;
+  id?: string | null;
   subTitle?: string;
   title: string;
 };
