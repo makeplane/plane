@@ -12,6 +12,6 @@ export function CommonProjectBreadcrumbs(props: TCommonProjectBreadcrumbProps) {
   // preferences
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
 
-  if (projectPreferences.navigationMode === "horizontal") return null;
+  if (projectPreferences.navigationMode === "TABBED") return null;
   return <ProjectBreadcrumb workspaceSlug={workspaceSlug} projectId={projectId} />;
 }

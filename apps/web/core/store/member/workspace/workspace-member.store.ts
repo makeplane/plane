@@ -11,10 +11,10 @@ import { WorkspaceService } from "@/plane-web/services";
 import type { IRouterStore } from "@/store/router.store";
 import type { IUserStore } from "@/store/user";
 // store
-import type { CoreRootStore } from "../../root.store";
 import type { IMemberRootStore } from "../index.ts";
 import type { IWorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
 import { WorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IWorkspaceMembership {
   id: string;
@@ -72,7 +72,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   // services
   workspaceService;
 
-  constructor(_memberRoot: IMemberRootStore, _rootStore: CoreRootStore) {
+  constructor(_memberRoot: IMemberRootStore, _rootStore: RootStore) {
     makeObservable(this, {
       // observables
       workspaceMemberMap: observable,

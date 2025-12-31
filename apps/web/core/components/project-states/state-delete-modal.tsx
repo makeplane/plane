@@ -1,15 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// types
-import { STATE_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IState } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
-// constants
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectState } from "@/hooks/store/use-project-state";
 
 type TStateDeleteModal = {
@@ -38,12 +35,6 @@ export const StateDeleteModal = observer(function StateDeleteModal(props: TState
 
     await deleteState(workspaceSlug.toString(), data.project_id, data.id)
       .then(() => {
-        captureSuccess({
-          eventName: STATE_TRACKER_EVENTS.delete,
-          payload: {
-            id: data.id,
-          },
-        });
         handleClose();
       })
       .catch((err) => {
@@ -60,12 +51,6 @@ export const StateDeleteModal = observer(function StateDeleteModal(props: TState
             title: "Error!",
             message: "State could not be deleted. Please try again.",
           });
-        captureError({
-          eventName: STATE_TRACKER_EVENTS.delete,
-          payload: {
-            id: data.id,
-          },
-        });
       })
       .finally(() => {
         setIsDeleteLoading(false);

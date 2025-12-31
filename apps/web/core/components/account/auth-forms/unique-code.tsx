@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
-import { API_BASE_URL, AUTH_TRACKER_ELEMENTS, AUTH_TRACKER_EVENTS } from "@plane/constants";
+import { API_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Input, Spinner } from "@plane/ui";
@@ -8,7 +8,6 @@ import { Input, Spinner } from "@plane/ui";
 // helpers
 import { EAuthModes } from "@/helpers/authentication.helper";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import useTimer from "@/hooks/use-timer";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -59,22 +58,10 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       setResendCodeTimer(defaultResetTimerValue);
       handleFormChange("code", uniqueCode?.code || "");
       setIsRequestingNewCode(false);
-      captureSuccess({
-        eventName: AUTH_TRACKER_EVENTS.new_code_requested,
-        payload: {
-          email: email,
-        },
-      });
     } catch {
       setResendCodeTimer(0);
       console.error("Error while requesting new code");
       setIsRequestingNewCode(false);
-      captureError({
-        eventName: AUTH_TRACKER_EVENTS.new_code_requested,
-        payload: {
-          email: email,
-        },
-      });
     }
   };
 
@@ -93,22 +80,9 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "magic-sign-in" : "magic-sign-up"}/`}
       onSubmit={() => {
         setIsSubmitting(true);
-        captureSuccess({
-          eventName: AUTH_TRACKER_EVENTS.code_verify,
-          payload: {
-            state: "SUCCESS",
-            first_time: !isExistingEmail,
-          },
-        });
       }}
       onError={() => {
         setIsSubmitting(false);
-        captureError({
-          eventName: AUTH_TRACKER_EVENTS.code_verify,
-          payload: {
-            state: "FAILED",
-          },
-        });
       }}
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
@@ -163,7 +137,6 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
           </p>
           <button
             type="button"
-            data-ph-element={AUTH_TRACKER_ELEMENTS.REQUEST_NEW_CODE}
             onClick={() => generateNewCode(uniqueCodeFormData.email)}
             className={
               isRequestNewCodeDisabled
@@ -182,14 +155,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       </div>
 
       <div className="space-y-2.5">
-        <Button
-          type="submit"
-          variant="primary"
-          className="w-full"
-          size="xl"
-          disabled={isButtonDisabled}
-          data-ph-element={AUTH_TRACKER_ELEMENTS.VERIFY_CODE}
-        >
+        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
           {isRequestingNewCode ? (
             t("auth.common.unique_code.sending_code")
           ) : isSubmitting ? (

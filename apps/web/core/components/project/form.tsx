@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info } from "lucide-react";
-import { NETWORK_CHOICES, PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
+import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { Button } from "@plane/propel/button";
@@ -18,7 +18,6 @@ import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 import { TimezoneSelect } from "@/components/global";
 // helpers
 import { handleCoverImageChange } from "@/helpers/cover-image.helper";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -87,12 +86,6 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
     if (!workspaceSlug || !project) return;
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then(() => {
-        captureSuccess({
-          eventName: PROJECT_TRACKER_EVENTS.update,
-          payload: {
-            id: projectId,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("toast.success"),
@@ -101,13 +94,6 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
       })
       .catch((err) => {
         try {
-          captureError({
-            eventName: PROJECT_TRACKER_EVENTS.update,
-            payload: {
-              id: projectId,
-            },
-          });
-
           // Handle the new error format where codes are nested in arrays under field names
           const errorData = err ?? {};
 
@@ -437,14 +423,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         </div>
         <div className="flex items-center justify-between py-2">
           <>
-            <Button
-              data-ph-element={PROJECT_TRACKER_ELEMENTS.UPDATE_PROJECT_BUTTON}
-              variant="primary"
-              size="lg"
-              type="submit"
-              loading={isLoading}
-              disabled={!isAdmin}
-            >
+            <Button variant="primary" size="lg" type="submit" loading={isLoading} disabled={!isAdmin}>
               {isLoading ? t("updating") : t("common.update_project")}
             </Button>
             <span className="text-13 italic text-placeholder">

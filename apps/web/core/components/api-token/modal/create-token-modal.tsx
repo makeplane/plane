@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { mutate } from "swr";
 // plane imports
-import { PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { APITokenService } from "@plane/services";
 import type { IApiToken } from "@plane/types";
@@ -9,8 +8,6 @@ import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { renderFormattedDate, csvDownload } from "@plane/utils";
 // constants
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // local imports
 import { CreateApiTokenForm } from "./form";
 import { GeneratedTokenDetails } from "./generated-token-details";
@@ -66,22 +63,12 @@ export function CreateApiTokenModal(props: Props) {
           },
           false
         );
-        captureSuccess({
-          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.pat_created,
-          payload: {
-            token: res.id,
-          },
-        });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err.message || err.detail,
-        });
-
-        captureError({
-          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.pat_created,
         });
 
         throw err;

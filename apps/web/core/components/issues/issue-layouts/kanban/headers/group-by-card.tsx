@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // lucide icons
 import { Minimize2, Maximize2, Circle } from "lucide-react";
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { PlusIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
@@ -13,7 +12,6 @@ import { CustomMenu } from "@plane/ui";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 // types
@@ -75,7 +73,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
         title: "Success!",
         message: "Work items added to the cycle successfully.",
       });
-    } catch (error) {
+    } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -162,7 +160,6 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             >
               <CustomMenu.MenuItem
                 onClick={() => {
-                  captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.create });
                   setIsOpen(true);
                 }}
               >
@@ -170,7 +167,6 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
               </CustomMenu.MenuItem>
               <CustomMenu.MenuItem
                 onClick={() => {
-                  captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.add_existing });
                   setOpenExistingIssueListModal(true);
                 }}
               >
@@ -181,7 +177,6 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             <button
               className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer  overflow-hidden transition-all hover:bg-layer-transparent-hover bg-layer-transparent rounded-sm items-center justify-center"
               onClick={() => {
-                captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.create });
                 setIsOpen(true);
               }}
             >

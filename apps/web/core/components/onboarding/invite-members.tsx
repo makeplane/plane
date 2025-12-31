@@ -15,7 +15,7 @@ import { XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
 // plane imports
 import type { EUserPermissions } from "@plane/constants";
-import { ROLE, ROLE_DETAILS, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { ROLE, ROLE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
@@ -24,8 +24,6 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspace } from "@plane/types";
 // ui
 import { Input, Spinner } from "@plane/ui";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // components
@@ -294,28 +292,14 @@ export function InviteMembers(props: Props) {
         })),
       })
       .then(async () => {
-        captureSuccess({
-          eventName: MEMBER_TRACKER_EVENTS.invite,
-          payload: {
-            workspace: workspace.slug,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Invitations sent successfully.",
         });
-
         await nextStep();
       })
       .catch((err) => {
-        captureError({
-          eventName: MEMBER_TRACKER_EVENTS.invite,
-          payload: {
-            workspace: workspace.slug,
-          },
-          error: err,
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -399,7 +383,6 @@ export function InviteMembers(props: Props) {
                 size="xl"
                 className="w-full"
                 disabled={isInvitationDisabled || !isValid || isSubmitting}
-                data-ph-element={MEMBER_TRACKER_ELEMENTS.ONBOARDING_INVITE_MEMBER}
               >
                 {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
               </Button>
