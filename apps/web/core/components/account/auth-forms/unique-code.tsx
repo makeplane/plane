@@ -129,6 +129,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             className="disable-autofill-style h-10 w-full placeholder:text-placeholder border-0"
             autoComplete="on"
             disabled
+            dir="ltr"
           />
           {uniqueCodeFormData.email.length > 0 && (
             <button
@@ -155,6 +156,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
           placeholder={t("auth.common.unique_code.placeholder")}
           className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
           autoFocus
+          dir="ltr"
         />
         <div className="flex w-full items-center justify-between px-1 text-11 pt-1">
           <p className="flex items-center gap-1 font-medium text-green-700">

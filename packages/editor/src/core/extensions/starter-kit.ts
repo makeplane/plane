@@ -11,16 +11,19 @@ export const CustomStarterKitExtension = (args: TArgs) => {
     bulletList: {
       HTMLAttributes: {
         class: "list-disc pl-7 space-y-(--list-spacing-y)",
+        dir: "auto",
       },
     },
     orderedList: {
       HTMLAttributes: {
         class: "list-decimal pl-7 space-y-(--list-spacing-y)",
+        dir: "auto",
       },
     },
     listItem: {
       HTMLAttributes: {
         class: "not-prose space-y-2",
+        dir: "auto",
       },
     },
     code: false,
@@ -30,11 +33,13 @@ export const CustomStarterKitExtension = (args: TArgs) => {
     paragraph: {
       HTMLAttributes: {
         class: "editor-paragraph-block",
+        dir: "auto",
       },
     },
     heading: {
       HTMLAttributes: {
         class: "editor-heading-block",
+        dir: "auto",
       },
     },
     dropcursor: {

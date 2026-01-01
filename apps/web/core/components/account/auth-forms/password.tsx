@@ -102,8 +102,8 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
   const isButtonDisabled = useMemo(
     () =>
       !isSubmitting &&
-      !!passwordFormData.password &&
-      (mode === EAuthModes.SIGN_UP ? passwordFormData.password === passwordFormData.confirm_password : true)
+        !!passwordFormData.password &&
+        (mode === EAuthModes.SIGN_UP ? passwordFormData.password === passwordFormData.confirm_password : true)
         ? false
         : true,
     [isSubmitting, mode, passwordFormData.confirm_password, passwordFormData.password]
@@ -195,6 +195,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               placeholder={t("auth.common.email.placeholder")}
               className={`disable-autofill-style h-10 w-full placeholder:text-placeholder border-0`}
               disabled
+              dir="ltr"
             />
             {passwordFormData.email.length > 0 && (
               <button
@@ -226,6 +227,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               onBlur={() => setIsPasswordInputFocused(false)}
               autoComplete="on"
               autoFocus
+              dir="ltr"
             />
             <button
               type="button"
@@ -261,6 +263,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
+                dir="ltr"
               />
               <button
                 type="button"

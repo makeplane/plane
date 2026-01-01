@@ -18,6 +18,7 @@ export const KanbanQuickAddIssueForm = observer(function KanbanQuickAddIssueForm
               required: isEpic ? t("epic.title.required") : t("issue.title.required"),
             })}
             className="w-full rounded-md bg-transparent px-2 py-1.5 pl-0 text-13 font-medium leading-5 text-secondary outline-none"
+            dir="auto"
           />
         </div>
       </form>

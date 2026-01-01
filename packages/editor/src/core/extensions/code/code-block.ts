@@ -114,12 +114,12 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
     return {
       setCodeBlock:
         (attributes) =>
-        ({ commands }) =>
-          commands.setNode(this.name, attributes),
+          ({ commands }) =>
+            commands.setNode(this.name, attributes),
       toggleCodeBlock:
         (attributes) =>
-        ({ commands }) =>
-          commands.toggleNode(this.name, CORE_EXTENSIONS.PARAGRAPH, attributes),
+          ({ commands }) =>
+            commands.toggleNode(this.name, CORE_EXTENSIONS.PARAGRAPH, attributes),
     };
   },
 

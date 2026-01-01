@@ -23,14 +23,14 @@ type RichTextEditorWrapperProps = MakeOptional<
   issueSequenceId?: number;
 } & (
     | {
-        editable: false;
-      }
+      editable: false;
+    }
     | {
-        editable: true;
-        searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
-        uploadFile: TFileHandler["upload"];
-        duplicateFile: TFileHandler["duplicate"];
-      }
+      editable: true;
+      searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
+      uploadFile: TFileHandler["upload"];
+      duplicateFile: TFileHandler["duplicate"];
+    }
   );
 
 export const RichTextEditor = forwardRef(function RichTextEditor(
@@ -90,7 +90,11 @@ export const RichTextEditor = forwardRef(function RichTextEditor(
           display_name: getUserDetails(id)?.display_name ?? "",
         }),
       }}
-      extendedEditorProps={{}}
+      extendedEditorProps={{
+        attributes: {
+          dir: "auto",
+        },
+      }}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}
     />

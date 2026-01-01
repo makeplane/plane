@@ -44,6 +44,7 @@ const Input = React.forwardRef(function Input(props: InputProps, ref: React.Forw
         className
       )}
       autoComplete={autoComplete}
+      dir="auto"
       {...rest}
     />
   );
