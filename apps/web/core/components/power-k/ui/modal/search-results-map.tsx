@@ -46,11 +46,10 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
           size="xs"
         />
         <StateDropdown
-          value={workItem?.state}
-          projectId={workItem.projectId?.toString() ?? ""}
+          value={workItem?.state_id}
+          projectId={workItem?.project_id?.toString() ?? ""}
           disabled={true}
           buttonVariant="background-with-text"
-          size="xs"
         />
         {workItem.name}
       </div>

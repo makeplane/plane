@@ -129,6 +129,7 @@ export interface IWorkspaceIssueSearchResult {
   sequence_id: number;
   workspace__slug: string;
   type_id: string;
+  state_id: string;
 }
 
 export interface IWorkspacePageSearchResult {
