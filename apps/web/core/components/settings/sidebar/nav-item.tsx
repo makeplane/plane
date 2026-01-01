@@ -45,11 +45,13 @@ const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: T
 
   const titleElement = (
     <>
-      <div className="flex items-center gap-1.5 overflow-hidden">
+      <div className="flex items-center gap-1.5 overflow-hidden flex-grow">
         {setting.icon
           ? setting.icon
           : actionIcons && actionIcons({ type: setting.key, size: 16, className: "w-4 h-4" })}
-        <div className="text-13 font-medium truncate">{t(setting.i18n_label)}</div>
+        <div className="text-13 font-medium truncate" dir="auto">
+          {t(setting.i18n_label)}
+        </div>
       </div>
       {appendItemsToTitle?.(setting.key)}
     </>
