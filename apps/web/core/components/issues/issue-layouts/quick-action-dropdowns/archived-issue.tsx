@@ -2,13 +2,11 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 // local imports
@@ -66,7 +64,6 @@ export const ArchivedIssueQuickActions = observer(function ArchivedIssueQuickAct
       ...item,
 
       onClick: () => {
-        captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.ARCHIVED });
         item.action();
       },
     };
@@ -99,7 +96,6 @@ export const ArchivedIssueQuickActions = observer(function ArchivedIssueQuickAct
               key={item.key}
               onClick={() => {
                 item.action();
-                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.ARCHIVED });
               }}
               className={cn(
                 "flex items-center gap-2",

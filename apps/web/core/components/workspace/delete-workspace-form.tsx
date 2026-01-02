@@ -1,18 +1,14 @@
-import React from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
-// types
-import { WORKSPACE_TRACKER_EVENTS } from "@plane/constants";
+// Plane Imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
-// ui
 import { Input } from "@plane/ui";
-// hooks
 import { cn } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserSettings } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -59,33 +55,23 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
   const onSubmit = async () => {
     if (!data || !canDelete) return;
 
-    await deleteWorkspace(data.slug)
-      .then(async () => {
-        await fetchCurrentUserSettings();
-        handleClose();
-        router.push(getWorkspaceRedirectionUrl());
-        captureSuccess({
-          eventName: WORKSPACE_TRACKER_EVENTS.delete,
-          payload: { slug: data.slug },
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("workspace_settings.settings.general.delete_modal.success_title"),
-          message: t("workspace_settings.settings.general.delete_modal.success_message"),
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("workspace_settings.settings.general.delete_modal.error_title"),
-          message: t("workspace_settings.settings.general.delete_modal.error_message"),
-        });
-        captureError({
-          eventName: WORKSPACE_TRACKER_EVENTS.delete,
-          payload: { slug: data.slug },
-          error: new Error("Error deleting workspace"),
-        });
+    try {
+      await deleteWorkspace(data.slug);
+      await fetchCurrentUserSettings();
+      handleClose();
+      router.push(getWorkspaceRedirectionUrl());
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("workspace_settings.settings.general.delete_modal.success_title"),
+        message: t("workspace_settings.settings.general.delete_modal.success_message"),
       });
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("workspace_settings.settings.general.delete_modal.error_title"),
+        message: t("workspace_settings.settings.general.delete_modal.error_message"),
+      });
+    }
   };
 
   return (

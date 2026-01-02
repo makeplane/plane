@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { mutate } from "swr";
 // types
-import { PROFILE_SETTINGS_TRACKER_EVENTS, WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { APITokenService, WorkspaceAPITokenService } from "@plane/services";
@@ -10,7 +9,6 @@ import type { IApiToken } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 // fetch-keys
 import { API_TOKENS_LIST, WORKSPACE_API_TOKENS_LIST } from "@/constants/fetch-keys";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -54,36 +52,17 @@ export function DeleteApiTokenModal(props: Props) {
           (prevData) => (prevData ?? []).filter((token) => token.id !== tokenId),
           false
         );
-        captureSuccess({
-          eventName: workspaceSlug
-            ? WORKSPACE_SETTINGS_TRACKER_EVENTS.pat_deleted
-            : PROFILE_SETTINGS_TRACKER_EVENTS.pat_deleted,
-          payload: {
-            token: tokenId,
-          },
-        });
-
         handleClose();
+        setDeleteLoading(false);
       })
-      .catch((err) =>
+      .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("workspace_settings.settings.api_tokens.delete.error.title"),
           message: err?.message ?? t("workspace_settings.settings.api_tokens.delete.error.message"),
-        })
-      )
-      .catch((err) => {
-        captureError({
-          eventName: workspaceSlug
-            ? WORKSPACE_SETTINGS_TRACKER_EVENTS.pat_deleted
-            : PROFILE_SETTINGS_TRACKER_EVENTS.pat_deleted,
-          payload: {
-            token: tokenId,
-          },
-          error: err as Error,
         });
-      })
-      .finally(() => setDeleteLoading(false));
+        setDeleteLoading(false);
+      });
   };
 
   return (

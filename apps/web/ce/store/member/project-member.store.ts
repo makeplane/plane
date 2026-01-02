@@ -41,13 +41,4 @@ export class ProjectMemberStore extends BaseProjectMemberStore implements IProje
    * @param userId - The ID of the user to remove from the project
    */
   processMemberRemoval = (projectId: string, userId: string) => this.handleMemberRemoval(projectId, userId);
-
-  /**
-   * @description Mutate project members activity
-   * @param workspaceSlug
-   * @param projectId
-   */
-  mutateProjectMembersActivity = async (_workspaceSlug: string, _projectId: string) => {
-    // No-op in default/CE version
-  };
 }

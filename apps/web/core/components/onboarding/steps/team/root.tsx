@@ -9,26 +9,19 @@ import type {
   UseFormWatch,
 } from "react-hook-form";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-// icons
 import { usePopper } from "react-popper";
 import { XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
 // plane imports
 import type { EUserPermissions } from "@plane/constants";
-import { ROLE, ROLE_DETAILS, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { ROLE, ROLE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { PlusIcon, CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-// types
 import { EOnboardingSteps } from "@plane/types";
-// ui
 import { Input, Spinner } from "@plane/ui";
-// constants
-// helpers
-
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
 import { WorkspaceService } from "@/plane-web/services";
@@ -299,28 +292,14 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
         })),
       })
       .then(async () => {
-        captureSuccess({
-          eventName: MEMBER_TRACKER_EVENTS.invite,
-          payload: {
-            workspace: workspace.slug,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Invitations sent successfully.",
         });
-
         await nextStep();
       })
       .catch((err) => {
-        captureError({
-          eventName: MEMBER_TRACKER_EVENTS.invite,
-          payload: {
-            workspace: workspace.slug,
-          },
-          error: err,
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -399,7 +378,6 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
           size="xl"
           className="w-full"
           disabled={isInvitationDisabled || !isValid || isSubmitting}
-          data-ph-element={MEMBER_TRACKER_ELEMENTS.ONBOARDING_INVITE_MEMBER}
         >
           {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
         </Button>

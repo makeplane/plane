@@ -1,13 +1,11 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 // components
 import { CycleDropdown } from "@/components/dropdowns/cycle";
 // hooks
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
 type Props = {
@@ -30,12 +28,6 @@ export const SpreadsheetCycleColumn = observer(function SpreadsheetCycleColumn(p
       if (!workspaceSlug || !issue || !issue.project_id || issue.cycle_id === cycleId) return;
       if (cycleId) await addCycleToIssue(workspaceSlug.toString(), issue.project_id, cycleId, issue.id);
       else await removeCycleFromIssue(workspaceSlug.toString(), issue.project_id, issue.id);
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: {
-          id: issue.id,
-        },
-      });
     },
     [workspaceSlug, issue, addCycleToIssue, removeCycleFromIssue]
   );

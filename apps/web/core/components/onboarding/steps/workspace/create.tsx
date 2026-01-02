@@ -3,20 +3,13 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { CircleCheck } from "lucide-react";
 // plane imports
-import {
-  ORGANIZATION_SIZE,
-  RESTRICTED_URLS,
-  WORKSPACE_TRACKER_ELEMENTS,
-  WORKSPACE_TRACKER_EVENTS,
-} from "@plane/constants";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspace } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserProfile, useUserSettings } from "@/hooks/store/user";
@@ -82,19 +75,10 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
             title: t("workspace_creation.toast.success.title"),
             message: t("workspace_creation.toast.success.message"),
           });
-          captureSuccess({
-            eventName: WORKSPACE_TRACKER_EVENTS.create,
-            payload: { slug: formData.slug },
-          });
           await fetchWorkspaces();
           await completeStep(workspaceResponse.id);
           onComplete(formData.organization_size === "Just myself");
         } catch {
-          captureError({
-            eventName: WORKSPACE_TRACKER_EVENTS.create,
-            payload: { slug: formData.slug },
-            error: new Error("Error creating workspace"),
-          });
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("workspace_creation.toast.error.title"),
@@ -299,14 +283,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        <Button
-          data-ph-element={WORKSPACE_TRACKER_ELEMENTS.ONBOARDING_CREATE_WORKSPACE_BUTTON}
-          variant="primary"
-          type="submit"
-          size="xl"
-          className="w-full"
-          disabled={isButtonDisabled}
-        >
+        <Button variant="primary" type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
           {isSubmitting ? <Spinner height="20px" width="20px" /> : t("workspace_creation.button.default")}
         </Button>
         {hasInvitations && (

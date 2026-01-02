@@ -1,17 +1,10 @@
 import { observer } from "mobx-react";
 import { CheckCheck, RefreshCw } from "lucide-react";
 // plane imports
-import {
-  ENotificationLoader,
-  ENotificationQueryParamType,
-  NOTIFICATION_TRACKER_ELEMENTS,
-  NOTIFICATION_TRACKER_EVENTS,
-} from "@plane/constants";
+import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Spinner } from "@plane/ui";
-// helpers
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -59,12 +52,8 @@ export const NotificationSidebarHeaderOptions = observer(function NotificationSi
         <IconButton
           size="base"
           variant="ghost"
-          data-ph-element={NOTIFICATION_TRACKER_ELEMENTS.MARK_ALL_AS_READ_BUTTON}
           icon={loader === ENotificationLoader.MARK_ALL_AS_READY ? Spinner : CheckCheck}
           onClick={() => {
-            captureSuccess({
-              eventName: NOTIFICATION_TRACKER_EVENTS.all_marked_read,
-            });
             handleMarkAllNotificationsAsRead();
           }}
         />

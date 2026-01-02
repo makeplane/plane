@@ -11,7 +11,6 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IIssueLabel } from "@plane/types";
 import { Input } from "@plane/ui";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
 // error codes
 const errorCodes = {
@@ -87,25 +86,10 @@ export const CreateUpdateLabelInline = observer(
       await labelOperationsCallbacks
         .createLabel(formData)
         .then((res) => {
-          captureSuccess({
-            eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_created,
-            payload: {
-              name: res.name,
-              id: res.id,
-            },
-          });
           handleClose();
           reset(defaultValues);
         })
         .catch((error) => {
-          captureError({
-            eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_created,
-            payload: {
-              name: formData.name,
-            },
-            error,
-          });
-
           const errorMessage = getErrorMessage(error, "create");
           setToast({
             title: "Error!",
@@ -122,25 +106,10 @@ export const CreateUpdateLabelInline = observer(
       await labelOperationsCallbacks
         .updateLabel(labelToUpdate.id, formData)
         .then((res) => {
-          captureSuccess({
-            eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_updated,
-            payload: {
-              name: res.name,
-              id: res.id,
-            },
-          });
           reset(defaultValues);
           handleClose();
         })
         .catch((error) => {
-          captureError({
-            eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_updated,
-            payload: {
-              name: formData.name,
-              id: labelToUpdate.id,
-            },
-            error,
-          });
           const errorMessage = getErrorMessage(error, "update");
           setToast({
             title: "Oops!",

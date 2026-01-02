@@ -2,15 +2,13 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } from "@plane/constants";
-
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 import { NotificationAppSidebarOption } from "@/components/workspace-notifications/notification-app-sidebar-option";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
 
@@ -44,20 +42,14 @@ export const SidebarUserMenuItem = observer(function SidebarUserMenuItem(props: 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) return null;
 
-  const handleLinkClick = (itemKey: string) => {
+  const handleLinkClick = () => {
     if (window.innerWidth < 768) {
       toggleSidebar();
     }
-    captureClick({
-      elementName: SIDEBAR_TRACKER_ELEMENTS.USER_MENU_ITEM,
-      context: {
-        destination: itemKey,
-      },
-    });
   };
 
   return (
-    <Link href={item.href} onClick={() => handleLinkClick(item.key)}>
+    <Link href={item.href} onClick={handleLinkClick}>
       <SidebarNavItem isActive={isActive}>
         <div className="flex items-center gap-1.5 py-[1px]">
           <item.Icon className="size-4 flex-shrink-0" />

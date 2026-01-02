@@ -8,8 +8,6 @@ import { SettingsMobileNav } from "@/components/settings/mobile";
 // plane imports
 import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
 import type { EUserWorkspaceRoles } from "@plane/types";
-// plane web components
-import { SettingsRightSidebar } from "@/plane-web/components/settings/right-sidebar";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // local components
@@ -48,7 +46,6 @@ const WorkspaceSettingLayout = observer(function WorkspaceSettingLayout({ params
             <div className="w-full h-full overflow-y-scroll md:pt-page-y">
               <Outlet />
             </div>
-            <SettingsRightSidebar workspaceSlug={workspaceSlug} />
           </div>
         )}
       </div>

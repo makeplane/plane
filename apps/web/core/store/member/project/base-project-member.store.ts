@@ -81,7 +81,6 @@ export interface IBaseProjectMemberStore {
     role: EUserProjectRoles
   ) => Promise<TProjectMembership>;
   removeMemberFromProject: (workspaceSlug: string, projectId: string, userId: string) => Promise<void>;
-  mutateProjectMembersActivity: (workspaceSlug: string, projectId: string) => Promise<void>;
 }
 
 export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore {
@@ -316,13 +315,13 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
           });
         });
       });
-      update(this.projectRoot.projectMap, [projectId, "members"], (memberIds: string[]) =>
+      update(this.projectRoot.projectMap, [projectId, "members"], (memberIds) =>
         uniq([...memberIds, ...data.members.map((m) => m.member_id)])
       );
       this.projectRoot.projectMap[projectId].members = this.projectRoot.projectMap?.[projectId]?.members?.concat(
         data.members.map((m) => m.member_id)
       );
-      void this.mutateProjectMembersActivity(workspaceSlug, projectId);
+
       return response;
     });
 
@@ -376,7 +375,6 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
           role,
         }
       );
-      void this.mutateProjectMembersActivity(workspaceSlug, projectId);
       return response;
     } catch (error) {
       // revert back to original members in case of error
@@ -431,11 +429,11 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
   removeMemberFromProject = async (workspaceSlug: string, projectId: string, userId: string) => {
     const memberDetails = this.getProjectMemberDetails(userId, projectId);
     if (!memberDetails || !memberDetails?.id) throw new Error("Member not found");
-    await this.projectMemberService.deleteProjectMember(workspaceSlug, projectId, memberDetails?.id);
-    runInAction(() => {
-      this.processMemberRemoval(projectId, userId);
+    await this.projectMemberService.deleteProjectMember(workspaceSlug, projectId, memberDetails?.id).then(() => {
+      runInAction(() => {
+        this.processMemberRemoval(projectId, userId);
+      });
     });
-    void this.mutateProjectMembersActivity(workspaceSlug, projectId);
   };
 
   /**
@@ -503,11 +501,4 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
       throw error;
     }
   };
-
-  /**
-   * Mutate project members activity
-   * @param workspaceSlug
-   * @param projectId
-   */
-  abstract mutateProjectMembersActivity(workspaceSlug: string, projectId: string): Promise<void>;
 }

@@ -1,24 +1,16 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveRestore } from "lucide-react";
 // types
-import {
-  PROJECT_AUTOMATION_MONTHS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  PROJECT_SETTINGS_TRACKER_ELEMENTS,
-  PROJECT_SETTINGS_TRACKER_EVENTS,
-} from "@plane/constants";
+import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IProject } from "@plane/types";
 // ui
 import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 // component
 import { SelectMonthModal } from "@/components/automation";
-// constants
 // hooks
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 
@@ -52,6 +44,14 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
     return currentProjectDetails.archive_in !== 0;
   }, [currentProjectDetails]);
 
+  const handleToggleArchive = async () => {
+    if (currentProjectDetails?.archive_in === 0) {
+      await handleChange({ archive_in: 1 });
+    } else {
+      await handleChange({ archive_in: 0 });
+    }
+  };
+
   return (
     <>
       <SelectMonthModal
@@ -74,27 +74,7 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
               </p>
             </div>
           </div>
-          <ToggleSwitch
-            value={autoArchiveStatus}
-            onChange={async () => {
-              if (currentProjectDetails?.archive_in === 0) {
-                await handleChange({ archive_in: 1 });
-              } else {
-                await handleChange({ archive_in: 0 });
-              }
-              captureElementAndEvent({
-                element: {
-                  elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.AUTOMATIONS_ARCHIVE_TOGGLE_BUTTON,
-                },
-                event: {
-                  eventName: PROJECT_SETTINGS_TRACKER_EVENTS.auto_archive_workitems,
-                  state: "SUCCESS",
-                },
-              });
-            }}
-            size="sm"
-            disabled={!isAdmin}
-          />
+          <ToggleSwitch value={autoArchiveStatus} onChange={handleToggleArchive} size="sm" disabled={!isAdmin} />
         </div>
 
         {currentProjectDetails ? (
