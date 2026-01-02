@@ -31,7 +31,8 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
                 is_active=True,
             )
 
-            if workspace_slug:
+            # If the api token has workspace_id, then check if it matches the workspace_slug
+            if api_token.workspace_id and workspace_slug:
                 workspace = Workspace.objects.get(slug=workspace_slug)
 
                 if api_token.workspace_id != workspace.id:
