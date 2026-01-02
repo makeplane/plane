@@ -365,15 +365,15 @@ def track_assignees(
     current_assignees = extract_ids(current_instance, "assignee_ids", "assignees")
 
     added_assignees = requested_assignees - current_assignees
-    dropped_assignees = current_assignees - requested_assignees
+    dropped_assginees = current_assignees - requested_assignees
 
     bulk_subscribers = []
-    for added_assignee in added_assignees:
+    for added_asignee in added_assignees:
         # validate uuids
-        if not is_valid_uuid(added_assignee):
+        if not is_valid_uuid(added_asignee):
             continue
 
-        assignee = User.objects.get(pk=added_assignee)
+        assignee = User.objects.get(pk=added_asignee)
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -403,7 +403,7 @@ def track_assignees(
     # Create assignees subscribers to the issue and ignore if already
     IssueSubscriber.objects.bulk_create(bulk_subscribers, batch_size=10, ignore_conflicts=True)
 
-    for dropped_assignee in dropped_assignees:
+    for dropped_assignee in dropped_assginees:
         # validate uuids
         if not is_valid_uuid(dropped_assignee):
             continue
