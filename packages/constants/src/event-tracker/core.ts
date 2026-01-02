@@ -483,6 +483,9 @@ export const WORKSPACE_SETTINGS_TRACKER_EVENTS = {
   webhook_toggled: "webhook_toggled",
   webhook_details_page_toggled: "webhook_details_page_toggled",
   webhook_updated: "webhook_updated",
+  // PAT
+  pat_created: "workspace_pat_created",
+  pat_deleted: "workspace_pat_deleted",
 };
 
 export const WORKSPACE_SETTINGS_TRACKER_ELEMENTS = {
@@ -499,4 +502,8 @@ export const WORKSPACE_SETTINGS_TRACKER_ELEMENTS = {
   WEBHOOK_DETAILS_PAGE_TOGGLE_SWITCH: "webhook_details_page_toggle_switch",
   WEBHOOK_DELETE_BUTTON: "webhook_delete_button",
   WEBHOOK_UPDATE_BUTTON: "webhook_update_button",
+  // PAT
+  HEADER_ADD_PAT_BUTTON: "workspace_header_add_pat_button",
+  EMPTY_STATE_ADD_PAT_BUTTON: "workspace_empty_state_add_pat_button",
+  LIST_ITEM_DELETE_ICON: "workspace_list_item_delete_icon",
 };

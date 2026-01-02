@@ -1,7 +1,12 @@
+# Django import
+from django.utils import timezone
+
+# Third party import
+from rest_framework import serializers
+
+# Module import
 from .base import BaseSerializer
 from plane.db.models import APIToken, APIActivityLog
-from rest_framework import serializers
-from django.utils import timezone
 
 
 class APITokenSerializer(BaseSerializer):
