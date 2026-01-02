@@ -1,7 +1,7 @@
 # Django imports
 from django.utils import timezone
 from django.db.models import Q
-from django.urls import resolve
+from django.urls import resolve, Resolver404
 
 # Third party imports
 from rest_framework import authentication
@@ -47,7 +47,10 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
         return (api_token.user, api_token.token)
 
     def authenticate(self, request):
-        workspace_slug = resolve(request.path_info).kwargs.get("slug")
+        try:
+            workspace_slug = resolve(request.path_info).kwargs.get("slug")
+        except Resolver404:
+            workspace_slug = None
 
         token = self.get_api_token(request=request)
         if not token:
