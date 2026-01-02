@@ -266,14 +266,18 @@ export const handleCoverImageChange = async (
 
     if (uploadConfig.isUserAsset) {
       return {
-        cover_image_url: uploadedUrl,
+        cover_image: uploadedUrl,
       };
     } else {
       return null;
     }
   }
 
-  return null;
+  // External/uploaded asset (e.g., Unsplash URL, pre-uploaded asset)
+  // Return the URL to be saved in the backend
+  return {
+    cover_image: newImage,
+  };
 };
 
 /**
