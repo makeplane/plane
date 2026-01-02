@@ -403,7 +403,7 @@ def track_assignees(
     # Create assignees subscribers to the issue and ignore if already
     IssueSubscriber.objects.bulk_create(bulk_subscribers, batch_size=10, ignore_conflicts=True)
 
-    for dropped_assignee in dropped_assginees:
+    for dropped_assignee in dropped_assignees:
         # validate uuids
         if not is_valid_uuid(dropped_assignee):
             continue
