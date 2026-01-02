@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { WorkspaceAPITokenService } from "@plane/services";
@@ -16,8 +16,6 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { APITokenSettingsLoader } from "@/components/ui/loader/settings/api-token";
 // constants
 import { WORKSPACE_API_TOKENS_LIST } from "@/constants/fetch-keys";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // store hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -69,9 +67,6 @@ function ApiTokensPage({ params }: Route.ComponentProps) {
             button={{
               label: t("workspace_settings.settings.api_tokens.add_token"),
               onClick: () => {
-                captureClick({
-                  elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.HEADER_ADD_PAT_BUTTON,
-                });
                 setIsCreateTokenModalOpen(true);
               },
             }}
@@ -95,9 +90,6 @@ function ApiTokensPage({ params }: Route.ComponentProps) {
                     {
                       label: t("settings_empty_state.tokens.cta_primary"),
                       onClick: () => {
-                        captureClick({
-                          elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.EMPTY_STATE_ADD_PAT_BUTTON,
-                        });
                         setIsCreateTokenModalOpen(true);
                       },
                     },
