@@ -182,7 +182,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
-            description=request.data.get("issue", {}).get("description", {}),
+            description_json=request.data.get("issue", {}).get("description_json", {}),
             description_html=request.data.get("issue", {}).get("description_html", "<p></p>"),
             priority=request.data.get("issue", {}).get("priority", "none"),
             project_id=project_id,
@@ -368,7 +368,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
                 issue_data = {
                     "name": issue_data.get("name", issue.name),
                     "description_html": issue_data.get("description_html", issue.description_html),
-                    "description": issue_data.get("description", issue.description),
+                    "description_json": issue_data.get("description_json", issue.description_json),
                 }
 
             issue_serializer = IssueSerializer(issue, data=issue_data, partial=True)

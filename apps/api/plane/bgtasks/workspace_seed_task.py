@@ -359,7 +359,7 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_us
             is_global=False,
             access=page_seed.get("access", Page.PUBLIC_ACCESS),
             name=page_seed.get("name"),
-            description=page_seed.get("description", {}),
+            description_json=page_seed.get("description_json", {}),
             description_html=page_seed.get("description_html", "<p></p>"),
             description_binary=page_seed.get("description_binary", None),
             description_stripped=page_seed.get("description_stripped", None),

@@ -141,7 +141,7 @@ def copy_s3_objects_of_description_and_assets(entity_name, entity_identifier, pr
         external_data = sync_with_external_service(entity_name, updated_html)
 
         if external_data:
-            entity.description = external_data.get("description")
+            entity.description_json = external_data.get("description_json")
             entity.description_binary = base64.b64decode(external_data.get("description_binary"))
             entity.save()
 

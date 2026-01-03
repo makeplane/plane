@@ -1,14 +1,8 @@
 import { logger } from "@plane/logger";
-import type { TPage } from "@plane/types";
+import type { TDocumentPayload, TPage } from "@plane/types";
 // services
 import { AppError } from "@/lib/errors";
 import { APIService } from "../api.service";
-
-export type TPageDescriptionPayload = {
-  description_binary: string;
-  description_html: string;
-  description: object;
-};
 
 export abstract class PageCoreService extends APIService {
   protected abstract basePath: string;
@@ -103,7 +97,7 @@ export abstract class PageCoreService extends APIService {
     }
   }
 
-  async updateDescriptionBinary(pageId: string, data: TPageDescriptionPayload): Promise<any> {
+  async updateDescriptionBinary(pageId: string, data: TDocumentPayload): Promise<any> {
     return this.patch(`${this.basePath}/pages/${pageId}/description/`, data, {
       headers: this.getHeader(),
     })

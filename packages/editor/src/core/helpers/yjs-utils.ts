@@ -215,7 +215,7 @@ export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllF
     const { contentBinaryEncoded, contentHTML, contentJSON } =
       getAllDocumentFormatsFromRichTextEditorBinaryData(contentBinary);
     allFormats = {
-      description: contentJSON,
+      description_json: contentJSON,
       description_html: contentHTML,
       description_binary: contentBinaryEncoded,
     };
@@ -228,7 +228,7 @@ export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllF
       false
     );
     allFormats = {
-      description: contentJSON,
+      description_json: contentJSON,
       description_html: contentHTML,
       description_binary: contentBinaryEncoded,
     };
