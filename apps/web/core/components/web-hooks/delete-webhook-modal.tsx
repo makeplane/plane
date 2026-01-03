@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 // ui
-import { WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWebhook } from "@/hooks/store/use-webhook";
 import { useAppRouter } from "@/hooks/use-app-router";
 
@@ -31,39 +29,23 @@ export function DeleteWebhookModal(props: IDeleteWebhook) {
 
   const handleDelete = async () => {
     if (!workspaceSlug || !webhookId) return;
-
     setIsDeleting(true);
-
-    removeWebhook(workspaceSlug.toString(), webhookId.toString())
-      .then(() => {
-        captureSuccess({
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_deleted,
-          payload: {
-            webhook: webhookId,
-          },
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Webhook deleted successfully.",
-        });
-        router.replace(`/${workspaceSlug}/settings/webhooks/`);
-      })
-      .catch((error) => {
-        captureError({
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_deleted,
-          payload: {
-            webhook: webhookId,
-          },
-          error: error as Error,
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? "Something went wrong. Please try again.",
-        });
-      })
-      .finally(() => setIsDeleting(false));
+    try {
+      await removeWebhook(workspaceSlug.toString(), webhookId.toString());
+      router.replace(`/${workspaceSlug}/settings/webhooks/`);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Webhook deleted successfully.",
+      });
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Webhook could not be deleted. Please try again.",
+      });
+    }
+    setIsDeleting(false);
   };
 
   return (

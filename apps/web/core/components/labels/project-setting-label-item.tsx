@@ -1,13 +1,10 @@
 import type { Dispatch, SetStateAction } from "react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
-
-import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { EditIcon, CloseIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useLabel } from "@/hooks/store/use-label";
 // components
 import type { TLabelOperationsCallbacks } from "./create-update-label-inline";
@@ -73,9 +70,6 @@ export function ProjectSettingLabelItem(props: Props) {
       onClick: () => {
         setEditLabelForm(true);
         setIsUpdating(true);
-        captureClick({
-          elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_CONTEXT_MENU,
-        });
       },
       isVisible: true,
       text: "Edit label",

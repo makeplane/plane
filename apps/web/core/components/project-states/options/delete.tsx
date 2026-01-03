@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Loader } from "lucide-react";
-import { STATE_TRACKER_EVENTS, STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -10,18 +9,17 @@ import type { IState, TStateOperationsCallbacks } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TStateDelete = {
   totalStates: number;
   state: IState;
   deleteStateCallback: TStateOperationsCallbacks["deleteState"];
-  shouldTrackEvents: boolean;
+  shouldTrackEvents?: boolean;
 };
 
 export const StateDelete = observer(function StateDelete(props: TStateDelete) {
-  const { totalStates, state, deleteStateCallback, shouldTrackEvents } = props;
+  const { totalStates, state, deleteStateCallback } = props;
   // hooks
   const { isMobile } = usePlatformOS();
   // states
@@ -37,26 +35,9 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
 
     try {
       await deleteStateCallback(state.id);
-      if (shouldTrackEvents) {
-        captureSuccess({
-          eventName: STATE_TRACKER_EVENTS.delete,
-          payload: {
-            id: state.id,
-          },
-        });
-      }
-
       setIsDelete(false);
     } catch (error) {
       const errorStatus = error as { status: number; data: { error: string } };
-      if (shouldTrackEvents) {
-        captureError({
-          eventName: STATE_TRACKER_EVENTS.delete,
-          payload: {
-            id: state.id,
-          },
-        });
-      }
       if (errorStatus.status === 400) {
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -99,7 +80,6 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
         )}
         disabled={isDeleteDisabled}
         onClick={() => setIsDeleteModal(true)}
-        data-ph-element={STATE_TRACKER_ELEMENTS.STATE_LIST_DELETE_BUTTON}
       >
         <Tooltip
           tooltipContent={

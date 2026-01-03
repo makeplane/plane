@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
@@ -7,7 +6,6 @@ import { TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 
@@ -36,9 +34,6 @@ export function DeactivateAccountModal(props: Props) {
 
     await deactivateAccount()
       .then(() => {
-        captureSuccess({
-          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.deactivate_account,
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -50,9 +45,6 @@ export function DeactivateAccountModal(props: Props) {
         return;
       })
       .catch((err: any) => {
-        captureError({
-          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.deactivate_account,
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

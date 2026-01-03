@@ -1,14 +1,12 @@
 import { useMemo } from "react";
 import { useParams } from "next/navigation";
 // plane imports
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { copyUrlToClipboard } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web helpers
@@ -39,18 +37,17 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
 
   const subIssueOperations: TSubIssueOperations = useMemo(
     () => ({
-      copyLink: (path) => {
-        copyUrlToClipboard(path).then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: t("common.link_copied"),
-            message: t("entity.link_copied_to_clipboard", {
-              entity:
-                issueServiceType === EIssueServiceType.ISSUES
-                  ? t("common.sub_work_items", { count: 1 })
-                  : t("issue.label", { count: 1 }),
-            }),
-          });
+      copyLink: async (path) => {
+        await copyUrlToClipboard(path);
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("common.link_copied"),
+          message: t("entity.link_copied_to_clipboard", {
+            entity:
+              issueServiceType === EIssueServiceType.ISSUES
+                ? t("common.sub_work_items", { count: 1 })
+                : t("issue.label", { count: 1 }),
+          }),
         });
       },
       fetchSubIssues: async (workspaceSlug, projectId, parentIssueId) => {
@@ -131,22 +128,13 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
               }
             }
           }
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.update,
-            payload: { id: issueId, parent_id: parentIssueId },
-          });
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("toast.success"),
             message: t("sub_work_item.update.success"),
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-        } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.update,
-            payload: { id: issueId, parent_id: parentIssueId },
-            error: error as Error,
-          });
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
@@ -178,17 +166,8 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
                   : t("issue.label", { count: 1 }),
             }),
           });
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.remove,
-            payload: { id: issueId, parent_id: parentIssueId },
-          });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-        } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.remove,
-            payload: { id: issueId, parent_id: parentIssueId },
-            error: error as Error,
-          });
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
@@ -205,18 +184,9 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           return deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId).then(() => {
-            captureSuccess({
-              eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.delete,
-              payload: { id: issueId, parent_id: parentIssueId },
-            });
             setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           });
-        } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.delete,
-            payload: { id: issueId, parent_id: parentIssueId },
-            error: error as Error,
-          });
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
