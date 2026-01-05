@@ -60,7 +60,7 @@ export function CreateProjectModal(props: Props) {
   });
 
   return (
-    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXXXL}>
       {currentStep === EProjectCreationSteps.CREATE_PROJECT && (
         <CreateProjectForm
           setToFavorite={setToFavorite}

@@ -1,13 +1,8 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
-import {
-  AUTH_TRACKER_EVENTS,
-  E_PASSWORD_STRENGTH,
-  ONBOARDING_TRACKER_ELEMENTS,
-  USER_TRACKER_EVENTS,
-} from "@plane/constants";
+import { E_PASSWORD_STRENGTH } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -18,10 +13,7 @@ import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 // components
 import { cn, getFileURL, getPasswordStrength } from "@plane/utils";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
-// constants
-// helpers
 // hooks
-import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -118,18 +110,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
 
   const handleSetPassword = async (password: string) => {
     const token = await authService.requestCSRFToken().then((data) => data?.csrf_token);
-    await authService
-      .setPassword(token, { password })
-      .then(() => {
-        captureSuccess({
-          eventName: AUTH_TRACKER_EVENTS.password_created,
-        });
-      })
-      .catch(() => {
-        captureError({
-          eventName: AUTH_TRACKER_EVENTS.password_created,
-        });
-      });
+    await authService.setPassword(token, { password });
   };
 
   const handleSubmitProfileSetup = async (formData: TProfileSetupFormValues) => {
@@ -148,13 +129,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         updateUserProfile(profileUpdatePayload),
         totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
-      captureSuccess({
-        eventName: USER_TRACKER_EVENTS.add_details,
-        payload: {
-          use_case: profileUpdatePayload.use_case,
-          role: formData.role,
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",
@@ -165,9 +139,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         finishOnboarding();
       }
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -188,20 +159,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         formData.password && handleSetPassword(formData.password),
       ]).then(() => {
         if (formData.password) {
-          captureView({
-            elementName: ONBOARDING_TRACKER_ELEMENTS.PASSWORD_CREATION_SELECTED,
-          });
         } else {
-          captureView({
-            elementName: ONBOARDING_TRACKER_ELEMENTS.PASSWORD_CREATION_SKIPPED,
-          });
+          setProfileSetupStep(EProfileSetupSteps.USER_PERSONALIZATION);
         }
-        setProfileSetupStep(EProfileSetupSteps.USER_PERSONALIZATION);
       });
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -220,13 +182,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         updateUserProfile(profileUpdatePayload),
         totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
-      captureSuccess({
-        eventName: USER_TRACKER_EVENTS.add_details,
-        payload: {
-          use_case: profileUpdatePayload.use_case,
-          role: formData.role,
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",
@@ -237,9 +192,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         finishOnboarding();
       }
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -250,9 +202,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
 
   const onSubmit = async (formData: TProfileSetupFormValues) => {
     if (!user) return;
-    captureView({
-      elementName: ONBOARDING_TRACKER_ELEMENTS.PROFILE_SETUP_FORM,
-    });
     if (profileSetupStep === EProfileSetupSteps.ALL) await handleSubmitProfileSetup(formData);
     if (profileSetupStep === EProfileSetupSteps.USER_DETAILS) await handleSubmitUserDetail(formData);
     if (profileSetupStep === EProfileSetupSteps.USER_PERSONALIZATION) await handleSubmitUserPersonalization(formData);

@@ -1,16 +1,12 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Box, PenTool, Rocket, Monitor, RefreshCw } from "lucide-react";
 // plane imports
-import { ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { CheckIcon, ViewsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
-// helpers
-import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 // local components
@@ -61,22 +57,12 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
         updateUserProfile(profileUpdatePayload),
         // totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
-      captureSuccess({
-        eventName: USER_TRACKER_EVENTS.add_details,
-        payload: {
-          use_case: formData.use_case,
-          role: formData.role,
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",
         message: "Profile setup completed!",
       });
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -87,12 +73,8 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
 
   const onSubmit = async (formData: TProfileSetupFormValues) => {
     if (!profile) return;
-    captureView({
-      elementName: ONBOARDING_TRACKER_ELEMENTS.PROFILE_SETUP_FORM,
-    });
-    await handleSubmitUserPersonalization(formData).then(() => {
-      handleStepChange(EOnboardingSteps.ROLE_SETUP);
-    });
+    await handleSubmitUserPersonalization(formData);
+    handleStepChange(EOnboardingSteps.ROLE_SETUP);
   };
 
   const handleSkip = () => {

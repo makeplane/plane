@@ -5,12 +5,10 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { EIssuesStoreType } from "@plane/types";
 import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
-//constants
 //hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useKanbanView } from "@/hooks/store/use-kanban-view";
@@ -200,23 +198,14 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
 
     if (!draggedIssueId || !draggedIssue) return;
 
-    await removeIssue(draggedIssue.project_id, draggedIssueId)
-      .then(() => {
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-          payload: { id: draggedIssueId },
-        });
-      })
-      .catch(() => {
-        captureError({
-          eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-          payload: { id: draggedIssueId },
-        });
-      })
-      .finally(() => {
-        setDeleteIssueModal(false);
-        setDraggedIssueId(undefined);
-      });
+    try {
+      await removeIssue(draggedIssue.project_id, draggedIssueId);
+      setDeleteIssueModal(false);
+      setDraggedIssueId(undefined);
+    } catch (_error) {
+      setDeleteIssueModal(false);
+      setDraggedIssueId(undefined);
+    }
   };
 
   const handleCollapsedGroups = useCallback(

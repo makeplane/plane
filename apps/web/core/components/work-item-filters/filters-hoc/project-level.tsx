@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { isEqual, cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel, PROJECT_VIEW_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IProjectView, TWorkItemFilterExpression } from "@plane/types";
 import { EUserProjectRoles, EViewAccess } from "@plane/types";
@@ -10,7 +10,6 @@ import { EUserProjectRoles, EViewAccess } from "@plane/types";
 import { removeNillKeys } from "@/components/issues/issue-layouts/utils";
 import { CreateUpdateProjectViewModal } from "@/components/views/modal";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
@@ -153,24 +152,12 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
             title: "Success!",
             message: "Your view has been updated successfully.",
           });
-          captureSuccess({
-            eventName: PROJECT_VIEW_TRACKER_EVENTS.update,
-            payload: {
-              view_id: viewDetails.id,
-            },
-          });
         })
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Your view could not be updated. Please try again.",
-          });
-          captureError({
-            eventName: PROJECT_VIEW_TRACKER_EVENTS.update,
-            payload: {
-              view_id: viewDetails.id,
-            },
           });
         });
     },

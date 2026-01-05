@@ -11,7 +11,6 @@ import type { ISearchIssueResponse } from "@plane/types";
 import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -107,7 +106,6 @@ export const CycleEmptyState = observer(function CycleEmptyState() {
               {
                 label: t("project_empty_state.cycle_work_items.cta_primary"),
                 onClick: () => {
-                  captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE });
                   toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                 },
                 disabled: !canPerformEmptyStateActions,

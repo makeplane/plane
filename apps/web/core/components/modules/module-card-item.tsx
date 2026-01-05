@@ -11,8 +11,6 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
   IS_FAVORITE_MENU_OPEN,
-  MODULE_TRACKER_EVENTS,
-  MODULE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { WorkItemsIcon } from "@plane/propel/icons";
@@ -26,8 +24,6 @@ import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
-// helpers
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
@@ -72,16 +68,6 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
     const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
       () => {
         if (!storedValue) toggleFavoriteMenu(true);
-        captureElementAndEvent({
-          element: {
-            elementName: MODULE_TRACKER_ELEMENTS.CARD_ITEM,
-          },
-          event: {
-            eventName: MODULE_TRACKER_EVENTS.favorite,
-            payload: { id: moduleId },
-            state: "SUCCESS",
-          },
-        });
       }
     );
 
@@ -107,18 +93,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
       workspaceSlug.toString(),
       projectId.toString(),
       moduleId
-    ).then(() => {
-      captureElementAndEvent({
-        element: {
-          elementName: MODULE_TRACKER_ELEMENTS.CARD_ITEM,
-        },
-        event: {
-          eventName: MODULE_TRACKER_EVENTS.unfavorite,
-          payload: { id: moduleId },
-          state: "SUCCESS",
-        },
-      });
-    });
+    );
 
     setPromiseToast(removeFromFavoritePromise, {
       loading: "Removing module from favorites...",

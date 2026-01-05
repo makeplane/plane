@@ -4,7 +4,6 @@ import { Controller, useForm } from "react-hook-form";
 import { CircleUserRound } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { ChevronDownIcon } from "@plane/propel/icons";
@@ -21,7 +20,6 @@ import { UserImageUploadModal } from "@/components/core/modals/user-image-upload
 import { CoverImage } from "@/components/common/cover-image";
 // helpers
 import { handleCoverImageChange } from "@/helpers/cover-image.helper";
-import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
@@ -164,16 +162,9 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
     });
     updateUserAndProfile
       .then(() => {
-        captureSuccess({
-          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.update_profile,
-        });
         return;
       })
-      .catch(() => {
-        captureError({
-          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.update_profile,
-        });
-      });
+      .catch(() => {});
   };
 
   return (
@@ -385,12 +376,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
           </div>
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between pt-6 pb-8">
-              <Button
-                variant="primary"
-                type="submit"
-                loading={isLoading}
-                data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.SAVE_CHANGES_BUTTON}
-              >
+              <Button variant="primary" type="submit" loading={isLoading}>
                 {isLoading ? t("saving") : t("save_changes")}
               </Button>
             </div>
@@ -417,11 +403,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                 <div className="flex flex-col gap-8">
                   <span className="text-13 tracking-tight">{t("deactivate_account_description")}</span>
                   <div>
-                    <Button
-                      variant="error-fill"
-                      onClick={() => setDeactivateAccountModal(true)}
-                      data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.DEACTIVATE_ACCOUNT_BUTTON}
-                    >
+                    <Button variant="error-fill" onClick={() => setDeactivateAccountModal(true)}>
                       {t("deactivate_account")}
                     </Button>
                   </div>

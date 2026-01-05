@@ -1,20 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 
 // plane imports
-import {
-  DEFAULT_GLOBAL_VIEWS_LIST,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  GLOBAL_VIEW_TRACKER_ELEMENTS,
-  GLOBAL_VIEW_TRACKER_EVENTS,
-} from "@plane/constants";
+import { DEFAULT_GLOBAL_VIEWS_LIST, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { PlusIcon } from "@plane/propel/icons";
 import type { TStaticViewTypes } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
-// helpers
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -76,15 +68,6 @@ export const GlobalViewsHeader = observer(function GlobalViewsHeader() {
   // bring the active view to the centre of the header
   useEffect(() => {
     if (globalViewId && currentWorkspaceViews) {
-      captureSuccess({
-        eventName: GLOBAL_VIEW_TRACKER_EVENTS.open,
-        payload: {
-          view_id: globalViewId,
-          view_type: ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
-            ? "Default"
-            : "Custom",
-        },
-      });
       const activeTabElement = document.querySelector(`#global-view-${globalViewId.toString()}`);
       if (activeTabElement && containerRef.current) {
         const containerRect = containerRef.current.getBoundingClientRect();
@@ -119,7 +102,6 @@ export const GlobalViewsHeader = observer(function GlobalViewsHeader() {
       {isAuthorizedUser ? (
         <button
           type="button"
-          data-ph-element={GLOBAL_VIEW_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
           className="sticky -right-4 flex flex-shrink-0 items-center justify-center border-transparent bg-surface-1 py-3 hover:border-subtle hover:text-placeholder"
           onClick={() => setCreateViewModal(true)}
         >
