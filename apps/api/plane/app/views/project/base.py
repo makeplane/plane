@@ -251,8 +251,6 @@ class ProjectViewSet(BaseViewSet):
                 member=request.user,
                 role=ROLE.ADMIN.value,
             )
-            # Also create the issue property for the user
-            _ = ProjectUserProperty.objects.create(project_id=serializer.data["id"], user=request.user)
 
             if serializer.data["project_lead"] is not None and str(serializer.data["project_lead"]) != str(
                 request.user.id
