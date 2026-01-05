@@ -170,9 +170,11 @@ function BreadcrumbItemWrapper(props: BreadcrumbItemWrapperProps) {
     <Tooltip tooltipContent={label} position="bottom" disabled={!label || label === "" || disableTooltip}>
       <div
         className={cn(
-          "group h-full flex items-center gap-2 rounded-sm px-1.5 py-1 text-13 font-medium text-tertiary cursor-default",
+          "group h-full flex items-center gap-2 rounded-sm px-1.5 py-1 text-13 font-medium cursor-default",
           {
-            "hover:text-primary hover:bg-surface-2 cursor-pointer": type === "link" && !isLast,
+            "text-primary": isLast,
+            "text-tertiary": !isLast,
+            "hover:text-primary hover:bg-layer-transparent-hover cursor-pointer": type === "link" && !isLast,
           },
           className
         )}

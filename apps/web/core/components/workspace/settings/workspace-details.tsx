@@ -242,7 +242,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                       ORGANIZATION_SIZE.find((c) => c === value) ??
                       t("workspace_settings.settings.general.errors.company_size.select_a_range")
                     }
-                    buttonClassName="!border-[0.5px] !border-subtle !shadow-none"
+                    buttonClassName="border border-subtle bg-layer-2 !shadow-none !rounded-md"
                     input
                     disabled={!isAdmin}
                   >

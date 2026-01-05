@@ -4,13 +4,16 @@ import useSWR from "swr";
 // plane internal packages
 import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
-// components
+// assets
 import giteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
+// components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
+import { PageWrapper } from "@/components/common/page-wrapper";
 // hooks
 import { useInstance } from "@/hooks/store";
-//local components
+// types
 import type { Route } from "./+types/page";
+// local
 import { InstanceGiteaConfigForm } from "./form";
 
 const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthenticationPage() {
@@ -32,7 +35,7 @@ const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthentic
     const updateConfigPromise = updateInstanceConfigurations(payload);
 
     setPromiseToast(updateConfigPromise, {
-      loading: "Saving Configuration...",
+      loading: "Saving Configuration",
       success: {
         title: "Configuration saved",
         message: () => `Gitea authentication is now ${value === "1" ? "active" : "disabled"}.`,
@@ -56,42 +59,39 @@ const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthentic
   const isGiteaEnabled = enableGiteaConfig === "1";
 
   return (
-    <>
-      <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
-        <div className="border-b border-subtle mx-4 py-4 space-y-1 flex-shrink-0">
-          <AuthenticationMethodCard
-            name="Gitea"
-            description="Allow members to login or sign up to plane with their Gitea accounts."
-            icon={<img src={giteaLogo} height={24} width={24} alt="Gitea Logo" />}
-            config={
-              <ToggleSwitch
-                value={isGiteaEnabled}
-                onChange={() => {
-                  updateConfig("IS_GITEA_ENABLED", isGiteaEnabled ? "0" : "1");
-                }}
-                size="sm"
-                disabled={isSubmitting || !formattedConfig}
-              />
-            }
-            disabled={isSubmitting || !formattedConfig}
-            withBorder={false}
-          />
-        </div>
-        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
-          {formattedConfig ? (
-            <InstanceGiteaConfigForm config={formattedConfig} />
-          ) : (
-            <Loader className="space-y-8">
-              <Loader.Item height="50px" width="25%" />
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" width="50%" />
-            </Loader>
-          )}
-        </div>
-      </div>
-    </>
+    <PageWrapper
+      customHeader={
+        <AuthenticationMethodCard
+          name="Gitea"
+          description="Allow members to login or sign up to plane with their Gitea accounts."
+          icon={<img src={giteaLogo} height={24} width={24} alt="Gitea Logo" />}
+          config={
+            <ToggleSwitch
+              value={isGiteaEnabled}
+              onChange={() => {
+                updateConfig("IS_GITEA_ENABLED", isGiteaEnabled ? "0" : "1");
+              }}
+              size="sm"
+              disabled={isSubmitting || !formattedConfig}
+            />
+          }
+          disabled={isSubmitting || !formattedConfig}
+          withBorder={false}
+        />
+      }
+    >
+      {formattedConfig ? (
+        <InstanceGiteaConfigForm config={formattedConfig} />
+      ) : (
+        <Loader className="space-y-8">
+          <Loader.Item height="50px" width="25%" />
+          <Loader.Item height="50px" />
+          <Loader.Item height="50px" />
+          <Loader.Item height="50px" />
+          <Loader.Item height="50px" width="50%" />
+        </Loader>
+      )}
+    </PageWrapper>
   );
 });
 export const meta: Route.MetaFunction = () => [{ title: "Gitea Authentication - God Mode" }];

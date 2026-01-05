@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 import {
   StatePropertyIcon,
@@ -58,7 +57,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
   return (
     <div className="flex w-full flex-col divide-y-2 divide-subtle-1">
       <div className="w-full overflow-y-auto">
-        <h5 className="text-13 font-medium my-4">Properties</h5>
+        <h5 className="text-body-sm-medium mb-2">Properties</h5>
         <div className={`divide-y-2 divide-subtle-1 ${!isEditable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* Intake State */}

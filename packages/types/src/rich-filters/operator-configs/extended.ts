@@ -1,13 +1,11 @@
-import type { TFilterValue } from "../expression";
-
 // ----------------------------- EXACT Operator -----------------------------
-export type TExtendedExactOperatorConfigs<_V extends TFilterValue> = never;
+export type TExtendedExactOperatorConfigs = never;
 
 // ----------------------------- IN Operator -----------------------------
-export type TExtendedInOperatorConfigs<_V extends TFilterValue> = never;
+export type TExtendedInOperatorConfigs = never;
 
 // ----------------------------- RANGE Operator -----------------------------
-export type TExtendedRangeOperatorConfigs<_V extends TFilterValue> = never;
+export type TExtendedRangeOperatorConfigs = never;
 
 // ----------------------------- Extended Operator Specific Configs -----------------------------
-export type TExtendedOperatorSpecificConfigs<_V extends TFilterValue> = unknown;
+export type TExtendedOperatorSpecificConfigs = unknown;

@@ -5,7 +5,7 @@
 
 import { hexToOKLCH, oklchToCSS, getRelativeLuminance, getPerceptualBrightness } from "./color-conversion";
 import type { OKLCH } from "./color-conversion";
-import { ALPHA_MAPPING } from "./constants";
+import { ALPHA_MAPPING, EDITOR_COLORS_LIGHT, EDITOR_COLORS_DARK } from "./constants";
 import { generateThemePalettes } from "./palette-generator";
 import { getBrandMapping, getNeutralMapping, invertPalette } from "./theme-inversion";
 
@@ -129,6 +129,12 @@ export function applyCustomTheme(brandColor: string, neutralColor: string, mode:
   const { textColor, iconColor } = getOnColorTextColors(brandColor, "wcag");
   themeElement.style.setProperty(`--text-color-on-color`, oklchToCSS(textColor));
   themeElement.style.setProperty(`--text-color-icon-on-color`, oklchToCSS(iconColor));
+
+  // Apply editor color backgrounds based on mode
+  const editorColors = mode === "dark" ? EDITOR_COLORS_DARK : EDITOR_COLORS_LIGHT;
+  Object.entries(editorColors).forEach(([color, value]) => {
+    themeElement.style.setProperty(`--editor-colors-${color}-background`, value);
+  });
 }
 
 /**
@@ -173,4 +179,9 @@ export function clearCustomTheme(): void {
 
   themeElement.style.removeProperty(`--text-color-on-color`);
   themeElement.style.removeProperty(`--text-color-icon-on-color`);
+
+  // Clear editor color background overrides
+  Object.keys(EDITOR_COLORS_LIGHT).forEach((color) => {
+    themeElement.style.removeProperty(`--editor-colors-${color}-background`);
+  });
 }

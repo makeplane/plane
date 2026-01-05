@@ -1,23 +1,21 @@
-import type { FC } from "react";
 import { Info } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
-// plane imports
 // helpers
-import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
+import type React from "react";
 
 type TAuthBanner = {
-  bannerData: TAuthErrorInfo | undefined;
-  handleBannerData?: (bannerData: TAuthErrorInfo | undefined) => void;
+  message: React.ReactNode;
+  handleBannerData?: (bannerData: undefined) => void;
 };
 
 export function AuthBanner(props: TAuthBanner) {
-  const { bannerData, handleBannerData } = props;
+  const { message, handleBannerData } = props;
   // translation
   const { t } = useTranslation();
 
-  if (!bannerData) return <></>;
-
+  if (!message) return <></>;
   return (
     <div
       role="alert"
@@ -26,7 +24,7 @@ export function AuthBanner(props: TAuthBanner) {
       <div className="size-4 flex-shrink-0 grid place-items-center">
         <Info size={16} className="text-accent-primary" />
       </div>
-      <p className="w-full text-13 font-medium text-accent-primary">{bannerData?.message}</p>
+      <p className="w-full text-13 font-medium text-accent-primary">{message}</p>
       <button
         type="button"
         className="relative ml-auto size-6 rounded-xs grid place-items-center transition-all hover:bg-accent-primary/20 text-accent-primary/80"

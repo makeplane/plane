@@ -45,7 +45,7 @@ export const getCycleMultiSelectConfig = (params: TCreateCycleFilterParams, sing
 export const getCycleFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateCycleFilterParams> =>
   (params: TCreateCycleFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Cycle",
       ...params,

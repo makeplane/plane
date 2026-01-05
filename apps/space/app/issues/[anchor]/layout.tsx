@@ -114,7 +114,7 @@ function IssuesLayout(props: Route.ComponentProps) {
 
   if (!publishSettings && !error) {
     return (
-      <div className="flex items-center justify-center h-screen w-full">
+      <div className="bg-surface-1 flex items-center justify-center h-screen w-full">
         <LogoSpinner />
       </div>
     );

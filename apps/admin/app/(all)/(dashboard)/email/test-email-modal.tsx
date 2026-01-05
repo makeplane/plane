@@ -121,7 +121,7 @@ export function SendTestEmailModal(props: Props) {
                     </Button>
                     {sendEmailStep === ESendEmailSteps.SEND_EMAIL && (
                       <Button variant="primary" size="lg" loading={isLoading} onClick={handleSubmit} tabIndex={3}>
-                        {isLoading ? "Sending email..." : "Send email"}
+                        {isLoading ? "Sending email" : "Send email"}
                       </Button>
                     )}
                   </div>

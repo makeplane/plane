@@ -1,10 +1,19 @@
-import { AddReactionIcon, AddWorkItemIcon, PreferencesIcon, SearchIcon } from "./actions";
+import {
+  AddReactionIcon,
+  AddWorkItemIcon,
+  FilterAppliedIcon,
+  FilterIcon,
+  PreferencesIcon,
+  SearchIcon,
+  UpgradeIcon,
+} from "./actions";
 import { AddIcon } from "./actions/add-icon";
 import { CloseIcon } from "./actions/close-icon";
 import { ChevronDownIcon } from "./arrows/chevron-down";
 import { ChevronLeftIcon } from "./arrows/chevron-left";
 import { ChevronRightIcon } from "./arrows/chevron-right";
 import { ChevronUpIcon } from "./arrows/chevron-up";
+import { ReplyIcon } from "./arrows/reply-icon";
 import { DefaultIcon } from "./default-icon";
 import { BoardLayoutIcon } from "./layouts/board-icon";
 import { CalendarLayoutIcon } from "./layouts/calendar-icon";
@@ -121,15 +130,19 @@ export const ICON_REGISTRY = {
   "action.add-workitem": AddWorkItemIcon,
   "action.add-reaction": AddReactionIcon,
   "action.close": CloseIcon,
+  "action.filter": FilterIcon,
+  "action.filter-applied": FilterAppliedIcon,
   "action.search": SearchIcon,
   "action.preferences": PreferencesIcon,
   "action.copy-link": CopyLinkIcon,
+  "action.upgrade": UpgradeIcon,
 
   // Arrow icons
   "arrow.chevron-down": ChevronDownIcon,
   "arrow.chevron-left": ChevronLeftIcon,
   "arrow.chevron-right": ChevronRightIcon,
   "arrow.chevron-up": ChevronUpIcon,
+  "arrow.reply": ReplyIcon,
 
   // Default fallback
   default: DefaultIcon,

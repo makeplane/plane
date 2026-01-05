@@ -3,7 +3,7 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import type { TConfigOptions } from "@plane/constants";
 import { DEFAULT_FILTER_CONFIG_OPTIONS } from "@plane/constants";
-import type { TExternalFilter, TFilterConfig, TFilterProperty, TFilterValue } from "@plane/types";
+import type { TExternalFilter, TFilterConfig, TFilterProperty } from "@plane/types";
 // local imports
 import type { IFilterConfig } from "./config";
 import { FilterConfig } from "./config";
@@ -24,17 +24,17 @@ import type { IFilterInstance } from "./filter";
  */
 export interface IFilterConfigManager<P extends TFilterProperty> {
   // observables
-  filterConfigs: Map<P, IFilterConfig<P, TFilterValue>>; // filter property -> config
+  filterConfigs: Map<P, IFilterConfig<P>>; // filter property -> config
   configOptions: TConfigOptions;
   areConfigsReady: boolean;
   // computed
-  allAvailableConfigs: IFilterConfig<P, TFilterValue>[];
+  allAvailableConfigs: IFilterConfig<P>[];
   // computed functions
-  getConfigByProperty: (property: P) => IFilterConfig<P, TFilterValue> | undefined;
+  getConfigByProperty: (property: P) => IFilterConfig<P> | undefined;
   // helpers
-  register: <C extends TFilterConfig<P, TFilterValue>>(config: C) => void;
-  registerAll: (configs: TFilterConfig<P, TFilterValue>[]) => void;
-  updateConfigByProperty: (property: P, configUpdates: Partial<TFilterConfig<P, TFilterValue>>) => void;
+  register: <C extends TFilterConfig<P>>(config: C) => void;
+  registerAll: (configs: TFilterConfig<P>[]) => void;
+  updateConfigByProperty: (property: P, configUpdates: Partial<TFilterConfig<P>>) => void;
   setAreConfigsReady: (value: boolean) => void;
 }
 
@@ -115,7 +115,7 @@ export class FilterConfigManager<
    * @returns The config for the property, or undefined if not found.
    */
   getConfigByProperty: IFilterConfigManager<P>["getConfigByProperty"] = computedFn(
-    (property) => this.filterConfigs.get(property) as IFilterConfig<P, TFilterValue>
+    (property) => this.filterConfigs.get(property) as IFilterConfig<P>
   );
 
   // ------------ helpers ------------
@@ -165,7 +165,7 @@ export class FilterConfigManager<
 
   // ------------ private computed ------------
 
-  private get _allConfigs(): IFilterConfig<P, TFilterValue>[] {
+  private get _allConfigs(): IFilterConfig<P>[] {
     return Array.from(this.filterConfigs.values());
   }
 
@@ -173,7 +173,7 @@ export class FilterConfigManager<
    * Returns all enabled filterConfigs.
    * @returns All enabled filterConfigs.
    */
-  private get _allEnabledConfigs(): IFilterConfig<P, TFilterValue>[] {
+  private get _allEnabledConfigs(): IFilterConfig<P>[] {
     return this._allConfigs.filter((config) => config.isEnabled);
   }
 

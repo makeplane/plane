@@ -7,7 +7,7 @@ function ErrorPage() {
   };
 
   return (
-    <div className="grid h-screen place-items-center p-4">
+    <div className="bg-surface-1 grid h-screen place-items-center p-4">
       <div className="space-y-8 text-center">
         <div className="space-y-2">
           <h3 className="text-16 font-semibold">Yikes! That doesn{"'"}t look good.</h3>

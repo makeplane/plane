@@ -20,8 +20,9 @@ import { DeactivateAccountModal } from "@/components/account/deactivate-account-
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 import { ChangeEmailModal } from "@/components/core/modals/change-email-modal";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
+import { CoverImage } from "@/components/common/cover-image";
 // helpers
-import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL, handleCoverImageChange } from "@/helpers/cover-image.helper";
+import { handleCoverImageChange } from "@/helpers/cover-image.helper";
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
@@ -210,9 +211,9 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         <div className="flex w-full flex-col gap-6">
           <div className="relative h-44 w-full">
-            <img
-              src={getCoverImageDisplayURL(userCover, DEFAULT_COVER_IMAGE_URL)}
-              className="h-44 w-full rounded-lg object-cover"
+            <CoverImage
+              src={userCover}
+              className="h-44 w-full rounded-lg"
               alt={currentUser?.first_name ?? "Cover image"}
             />
             <div className="absolute -bottom-6 left-6 flex items-end justify-between">

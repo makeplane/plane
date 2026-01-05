@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -94,7 +93,7 @@ export const InboxContentRoot = observer(function InboxContentRoot(props: TInbox
             embedRemoveCurrentNotification={embedRemoveCurrentNotification}
           />
         </div>
-        <ContentWrapper className="space-y-5 divide-y-2 divide-subtle-1">
+        <ContentWrapper className="divide-y-2 divide-subtle-1">
           <InboxIssueMainContent
             workspaceSlug={workspaceSlug}
             projectId={projectId}

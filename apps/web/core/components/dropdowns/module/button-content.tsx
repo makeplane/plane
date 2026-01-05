@@ -45,7 +45,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
           <div className="relative flex items-center max-w-full gap-1">
             {!hideIcon && <ModuleIcon className="h-3 w-3 flex-shrink-0" />}
             {(value.length > 0 || !!placeholder) && (
-              <div className="max-w-40 flex-grow truncate">
+              <div className="max-w-40 truncate">
                 {value.length > 0
                   ? value.length === 1
                     ? `${getModuleById(value[0])?.name || "module"}`
@@ -75,7 +75,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
                       isMobile={isMobile}
                       renderByDefault={false}
                     >
-                      <span className="max-w-40 flex-grow truncate text-11 font-medium">{moduleDetails?.name}</span>
+                      <span className="max-w-40 truncate text-11 font-medium">{moduleDetails?.name}</span>
                     </Tooltip>
                   )}
                   {!disabled && (

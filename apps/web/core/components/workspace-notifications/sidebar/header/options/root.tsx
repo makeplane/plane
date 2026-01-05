@@ -18,6 +18,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { NotificationFilter } from "../../filters/menu";
 import { NotificationHeaderMenuOption } from "./menu-option";
+import { IconButton } from "@plane/propel/icon-button";
 
 type TNotificationSidebarHeaderOptions = {
   workspaceSlug: string;
@@ -55,32 +56,29 @@ export const NotificationSidebarHeaderOptions = observer(function NotificationSi
     <div className="relative flex justify-center items-center gap-2 text-body-xs-medium">
       {/* mark all notifications as read*/}
       <Tooltip tooltipContent={t("notification.options.mark_all_as_read")} isMobile={isMobile} position="bottom">
-        <div
-          className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-layer-1 rounded-xs"
+        <IconButton
+          size="base"
+          variant="ghost"
           data-ph-element={NOTIFICATION_TRACKER_ELEMENTS.MARK_ALL_AS_READ_BUTTON}
+          icon={loader === ENotificationLoader.MARK_ALL_AS_READY ? Spinner : CheckCheck}
           onClick={() => {
             captureSuccess({
               eventName: NOTIFICATION_TRACKER_EVENTS.all_marked_read,
             });
             handleMarkAllNotificationsAsRead();
           }}
-        >
-          {loader === ENotificationLoader.MARK_ALL_AS_READY ? (
-            <Spinner height="14px" width="14px" />
-          ) : (
-            <CheckCheck className="h-3 w-3" />
-          )}
-        </div>
+        />
       </Tooltip>
 
       {/* refetch current notifications */}
       <Tooltip tooltipContent={t("notification.options.refresh")} isMobile={isMobile} position="bottom">
-        <div
-          className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-layer-1 rounded-xs"
+        <IconButton
+          size="base"
+          variant="ghost"
+          icon={RefreshCw}
+          className={loader === ENotificationLoader.MUTATION_LOADER ? "animate-spin" : ""}
           onClick={refreshNotifications}
-        >
-          <RefreshCw className={`h-3 w-3 ${loader === ENotificationLoader.MUTATION_LOADER ? "animate-spin" : ""}`} />
-        </div>
+        />
       </Tooltip>
 
       {/* notification filters */}

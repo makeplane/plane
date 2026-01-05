@@ -1,7 +1,6 @@
 # Python imports
 import logging
 
-
 # Third party imports
 from celery import shared_task
 import requests
@@ -20,6 +19,34 @@ logger = logging.getLogger("plane.worker")
 DEFAULT_FAVICON = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxpbmstaWNvbiBsdWNpZGUtbGluayI+PHBhdGggZD0iTTEwIDEzYTUgNSAwIDAgMCA3LjU0LjU0bDMtM2E1IDUgMCAwIDAtNy4wNy03LjA3bC0xLjcyIDEuNzEiLz48cGF0aCBkPSJNMTQgMTFhNSA1IDAgMCAwLTcuNTQtLjU0bC0zIDNhNSA1IDAgMCAwIDcuMDcgNy4wN2wxLjcxLTEuNzEiLz48L3N2Zz4="  # noqa: E501
 
 
+def validate_url_ip(url: str) -> None:
+    """
+    Validate that a URL doesn't point to a private/internal IP address.
+    Only checks if the hostname is a direct IP address.
+
+    Args:
+        url: The URL to validate
+
+    Raises:
+        ValueError: If the URL points to a private/internal IP
+    """
+    parsed = urlparse(url)
+    hostname = parsed.hostname
+
+    if not hostname:
+        return
+
+    try:
+        ip = ipaddress.ip_address(hostname)
+    except ValueError:
+        # Not an IP address (it's a domain name), nothing to check here
+        return
+
+    # It IS an IP address - check if it's private/internal
+    if ip.is_private or ip.is_loopback or ip.is_reserved:
+        raise ValueError("Access to private/internal networks is not allowed")
+
+
 def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
     """
     Crawls a URL to extract the title and favicon.
@@ -31,17 +58,6 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         str: JSON string containing title and base64-encoded favicon
     """
     try:
-        # Prevent access to private IP ranges
-        parsed = urlparse(url)
-
-        try:
-            ip = ipaddress.ip_address(parsed.hostname)
-            if ip.is_private or ip.is_loopback or ip.is_reserved:
-                raise ValueError("Access to private/internal networks is not allowed")
-        except ValueError:
-            # Not an IP address, continue with domain validation
-            pass
-
         # Set up headers to mimic a real browser
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"  # noqa: E501
@@ -49,9 +65,16 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
 
         soup = None
         title = None
+        final_url = url
+
+        validate_url_ip(final_url)
 
         try:
-            response = requests.get(url, headers=headers, timeout=1)
+            response = requests.get(final_url, headers=headers, timeout=1)
+            final_url = response.url  # Get the final URL after any redirects
+
+            # check for redirected url also
+            validate_url_ip(final_url)
 
             soup = BeautifulSoup(response.content, "html.parser")
             title_tag = soup.find("title")
@@ -60,8 +83,8 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         except requests.RequestException as e:
             logger.warning(f"Failed to fetch HTML for title: {str(e)}")
 
-        # Fetch and encode favicon
-        favicon_base64 = fetch_and_encode_favicon(headers, soup, url)
+        # Fetch and encode favicon using final URL (after redirects)
+        favicon_base64 = fetch_and_encode_favicon(headers, soup, final_url)
 
         # Prepare result
         result = {

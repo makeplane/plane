@@ -15,6 +15,7 @@ const IconButton = React.forwardRef(function IconButton(
     loading = false,
     disabled = false,
     icon: Icon,
+    iconClassName = "",
     ...rest
   } = props;
 
@@ -27,11 +28,14 @@ const IconButton = React.forwardRef(function IconButton(
       {...rest}
     >
       <Icon
-        className={cn({
-          "size-3.5": size === "sm",
-          "size-4": size === "base" || size === "lg",
-          "size-5": size === "xl",
-        })}
+        className={cn(
+          {
+            "size-3.5": size === "sm",
+            "size-4": size === "base" || size === "lg",
+            "size-5": size === "xl",
+          },
+          iconClassName
+        )}
       />
     </button>
   );

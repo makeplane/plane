@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { CloudOff, Dot } from "lucide-react";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { Badge } from "@plane/propel/badge";
 
 type Props = {

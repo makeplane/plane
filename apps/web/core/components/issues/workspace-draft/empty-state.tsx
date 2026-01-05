@@ -35,7 +35,6 @@ export const WorkspaceDraftEmptyState = observer(function WorkspaceDraftEmptySta
           title={t("workspace_empty_state.drafts.title")}
           description={t("workspace_empty_state.drafts.description")}
           assetKey="draft"
-          assetClassName="size-20"
           actions={[
             {
               label: t("workspace_empty_state.drafts.cta_primary"),

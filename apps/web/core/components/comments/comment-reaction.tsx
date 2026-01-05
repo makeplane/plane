@@ -61,6 +61,12 @@ export const CommentReactions = observer(function CommentReactions(props: TProps
 
   if (!userReactions) return null;
 
+  // Don't render anything if there are no reactions and it's disabled
+  if (reactions.length === 0 && disabled) return null;
+
+  // Don't show the add button if there are no reactions
+  const showAddButton = !disabled && reactions.length > 0;
+
   return (
     <div className="relative">
       <EmojiReactionPicker
@@ -72,7 +78,7 @@ export const CommentReactions = observer(function CommentReactions(props: TProps
           <EmojiReactionGroup
             reactions={reactions}
             onReactionClick={handleReactionClick}
-            showAddButton={!disabled}
+            showAddButton={showAddButton}
             onAddReaction={() => setIsPickerOpen(true)}
           />
         }

@@ -114,13 +114,13 @@ export function InstanceAIForm(props: IInstanceAIForm) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 items-start">
+      <div className="flex flex-col gap-4 items-start">
         <Button variant="primary" size="lg" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Save changes"}
+          {isSubmitting ? "Saving" : "Save changes"}
         </Button>
 
-        <div className="relative inline-flex items-center gap-2 rounded-sm border border-accent-strong/20 bg-accent-primary/10 px-4 py-2 text-11 text-accent-secondary">
-          <Lightbulb height="14" width="14" />
+        <div className="relative inline-flex items-center gap-1.5 rounded-sm border border-accent-subtle bg-accent-subtle px-4 py-2 text-caption-sm-regular text-accent-secondary  ">
+          <Lightbulb className="size-4" />
           <div>
             If you have a preferred AI models vendor, please get in{" "}
             <a className="underline font-medium" href="https://plane.so/contact">

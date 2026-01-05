@@ -15,7 +15,7 @@ export function PoweredBy(props: TPoweredBy) {
   return (
     <a
       href={WEBSITE_URL}
-      className="fixed bottom-2.5 right-5 !z-[999999] flex items-center gap-1 rounded-sm border border-subtle bg-surface-1 px-2 py-1 shadow-raised-100"
+      className="fixed bottom-2.5 right-5 !z-[999999] flex items-center gap-1 rounded-sm border border-subtle bg-layer-3 px-2 py-1 shadow-raised-100"
       target="_blank"
       rel="noreferrer noopener"
     >

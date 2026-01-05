@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
-import { Transition, Dialog } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_AVATAR_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { UserCirclePropertyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { getAssetIdFromUrl, getFileURL, checkURLValidity } from "@plane/utils";
 // services
 import { FileService } from "@/services/file.service";
@@ -88,106 +88,68 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-30" onClose={handleClose}>
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-backdrop transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-30 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
+      <div className="space-y-5 px-5 py-8 sm:p-6">
+        <h3 className="text-16 font-medium leading-6 text-primary">Upload Image</h3>
+        <div className="space-y-3">
+          <div className="flex items-center justify-center gap-3">
+            <div
+              {...getRootProps()}
+              className={`relative grid h-80 w-80 cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 ${
+                (image === null && isDragActive) || !value
+                  ? "border-2 border-dashed border-subtle hover:bg-surface-2"
+                  : ""
+              }`}
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 px-5 py-8 text-left shadow-raised-200 transition-all sm:w-full sm:max-w-xl sm:p-6">
-                <div className="space-y-5">
-                  <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
-                    Upload Image
-                  </Dialog.Title>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-center gap-3">
-                      <div
-                        {...getRootProps()}
-                        className={`relative grid h-80 w-80 cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-accent-strong focus:ring-offset-2 ${
-                          (image === null && isDragActive) || !value
-                            ? "border-2 border-dashed border-subtle hover:bg-surface-2"
-                            : ""
-                        }`}
-                      >
-                        {image !== null || (value && value !== "") ? (
-                          <>
-                            <button
-                              type="button"
-                              className="absolute right-0 top-0 z-40 -translate-y-1/2 translate-x-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
-                            >
-                              Edit
-                            </button>
-                            <img
-                              src={image ? URL.createObjectURL(image) : value ? getFileURL(value) : ""}
-                              alt="image"
-                              className="absolute left-0 top-0 h-full w-full rounded-md object-cover"
-                            />
-                          </>
-                        ) : (
-                          <div>
-                            <UserCirclePropertyIcon className="mx-auto h-16 w-16 text-secondary" />
-                            <span className="mt-2 block text-13 font-medium text-secondary">
-                              {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
-                            </span>
-                          </div>
-                        )}
+              {image !== null || (value && value !== "") ? (
+                <>
+                  <button
+                    type="button"
+                    className="absolute right-0 top-0 z-40 -translate-y-1/2 translate-x-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
+                  >
+                    Edit
+                  </button>
+                  <img
+                    src={image ? URL.createObjectURL(image) : value ? getFileURL(value) : ""}
+                    alt="image"
+                    className="absolute left-0 top-0 h-full w-full rounded-md object-cover"
+                  />
+                </>
+              ) : (
+                <div>
+                  <UserCirclePropertyIcon className="mx-auto h-16 w-16 text-secondary" />
+                  <span className="mt-2 block text-13 font-medium text-secondary">
+                    {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
+                  </span>
+                </div>
+              )}
 
-                        <input {...getInputProps()} />
-                      </div>
-                    </div>
-                    {fileRejections.length > 0 && (
-                      <p className="text-13 text-red-500">
-                        {fileRejections[0].errors[0].code === "file-too-large"
-                          ? "The image size cannot exceed 5 MB."
-                          : "Please upload a file in a valid format."}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <p className="my-4 text-13 text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
-                <div className="flex items-center justify-between">
-                  <Button variant="error-fill" size="lg" onClick={handleImageRemove} disabled={!value}>
-                    {isRemoving ? "Removing" : "Remove"}
-                  </Button>
-                  <div className="flex items-center gap-2">
-                    <Button variant="secondary" size="lg" onClick={handleClose}>
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      onClick={handleSubmit}
-                      disabled={!image}
-                      loading={isImageUploading}
-                    >
-                      {isImageUploading ? "Uploading" : "Upload & Save"}
-                    </Button>
-                  </div>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
+              <input {...getInputProps()} />
+            </div>
+          </div>
+          {fileRejections.length > 0 && (
+            <p className="text-13 text-red-500">
+              {fileRejections[0].errors[0].code === "file-too-large"
+                ? "The image size cannot exceed 5 MB."
+                : "Please upload a file in a valid format."}
+            </p>
+          )}
+        </div>
+        <p className="my-4 text-13 text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
+        <div className="flex items-center justify-between">
+          <Button variant="error-fill" size="lg" onClick={handleImageRemove} disabled={!value}>
+            {isRemoving ? "Removing" : "Remove"}
+          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="secondary" size="lg" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button variant="primary" size="lg" onClick={handleSubmit} disabled={!image} loading={isImageUploading}>
+              {isImageUploading ? "Uploading" : "Upload & Save"}
+            </Button>
           </div>
         </div>
-      </Dialog>
-    </Transition.Root>
+      </div>
+    </ModalCore>
   );
 });

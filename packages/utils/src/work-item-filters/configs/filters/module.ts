@@ -45,7 +45,7 @@ export const getModuleMultiSelectConfig = (params: TCreateModuleFilterParams) =>
 export const getModuleFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateModuleFilterParams> =>
   (params: TCreateModuleFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Module",
       ...params,

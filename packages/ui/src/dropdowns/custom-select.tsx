@@ -94,7 +94,7 @@ function CustomSelect(props: ICustomSelectProps) {
                 ref={setReferenceElement}
                 type="button"
                 className={cn(
-                  "flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-strong",
+                  "flex w-full items-center justify-between gap-1 rounded border border-strong",
                   {
                     "px-3 py-2 text-13": input,
                     "px-2 py-1 text-11": !input,

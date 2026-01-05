@@ -353,3 +353,10 @@ export const filterActivityOnSelectedFilters = (
   });
 
 export const ENABLE_ISSUE_DEPENDENCIES = false;
+
+export const BASE_ACTIVITY_FILTER_TYPES = [
+  EActivityFilterType.ACTIVITY,
+  EActivityFilterType.STATE,
+  EActivityFilterType.ASSIGNEE,
+  EActivityFilterType.DEFAULT,
+];

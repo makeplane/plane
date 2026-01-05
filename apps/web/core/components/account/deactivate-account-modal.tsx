@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Trash2 } from "lucide-react";
-import { Dialog, Transition } from "@headlessui/react";
 import { PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUser } from "@/hooks/store/user";
@@ -47,6 +47,7 @@ export function DeactivateAccountModal(props: Props) {
         signOut();
         router.push("/");
         handleClose();
+        return;
       })
       .catch((err: any) => {
         captureError({
@@ -62,65 +63,30 @@ export function DeactivateAccountModal(props: Props) {
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-backdrop transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all sm:my-8 sm:w-[40rem]">
-                <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                  <div className="">
-                    <div className="flex items-start gap-x-4">
-                      <div className="mt-3 grid place-items-center rounded-full bg-red-500/20 p-2 sm:mt-3 sm:p-2 md:mt-0 md:p-4 lg:mt-0 lg:p-4 ">
-                        <Trash2
-                          className="h-4 w-4 text-red-600 sm:h-4 sm:w-4 md:h-6 md:w-6 lg:h-6 lg:w-6"
-                          aria-hidden="true"
-                        />
-                      </div>
-                      <div>
-                        <Dialog.Title as="h3" className="my-4 text-20 font-medium leading-6 text-primary">
-                          {t("deactivate_your_account")}
-                        </Dialog.Title>
-                        <p className="mt-6 list-disc pr-4 text-14 font-regular text-secondary">
-                          {t("deactivate_your_account_description")}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="mb-2 flex items-center justify-end gap-2 p-4 sm:px-6">
-                  <Button variant="secondary" size="lg" onClick={onClose}>
-                    {t("cancel")}
-                  </Button>
-                  <Button variant="error-fill" size="lg" onClick={handleDeleteAccount}>
-                    {isDeactivating ? t("deactivating") : t("confirm")}
-                  </Button>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
+      <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+        <div className="">
+          <div className="flex items-start gap-x-4">
+            <div className="mt-3 grid place-items-center rounded-full bg-red-500/20 p-2 sm:mt-3 sm:p-2 md:mt-0 md:p-4 lg:mt-0 lg:p-4 ">
+              <Trash2 className="h-4 w-4 text-red-600 sm:h-4 sm:w-4 md:h-6 md:w-6 lg:h-6 lg:w-6" aria-hidden="true" />
+            </div>
+            <div>
+              <h3 className="my-4 text-20 font-medium leading-6 text-primary">{t("deactivate_your_account")}</h3>
+              <p className="mt-6 list-disc pr-4 text-14 font-regular text-secondary">
+                {t("deactivate_your_account_description")}
+              </p>
+            </div>
           </div>
         </div>
-      </Dialog>
-    </Transition.Root>
+      </div>
+      <div className="mb-2 flex items-center justify-end gap-2 p-4 sm:px-6">
+        <Button variant="secondary" size="lg" onClick={handleClose}>
+          {t("cancel")}
+        </Button>
+        <Button variant="error-fill" size="lg" onClick={handleDeleteAccount}>
+          {isDeactivating ? t("deactivating") : t("confirm")}
+        </Button>
+      </div>
+    </ModalCore>
   );
 }

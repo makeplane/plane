@@ -6,6 +6,7 @@ import type { I_THEME_OPTION } from "@plane/constants";
 import { THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
+import { applyCustomTheme } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
@@ -30,22 +31,45 @@ function ProfileAppearancePage() {
   }, [userProfile?.theme?.theme]);
 
   const handleThemeChange = useCallback(
-    (themeOption: I_THEME_OPTION) => {
+    async (themeOption: I_THEME_OPTION) => {
       setTheme(themeOption.value);
+
+      // If switching to custom theme and user has saved custom colors, apply them immediately
+      if (
+        themeOption.value === "custom" &&
+        userProfile?.theme?.primary &&
+        userProfile?.theme?.background &&
+        userProfile?.theme?.darkPalette !== undefined
+      ) {
+        applyCustomTheme(
+          userProfile.theme.primary,
+          userProfile.theme.background,
+          userProfile.theme.darkPalette ? "dark" : "light"
+        );
+      }
+
       const updateCurrentUserThemePromise = updateUserTheme({ theme: themeOption.value });
       setPromiseToast(updateCurrentUserThemePromise, {
         loading: "Updating theme...",
         success: {
-          title: "Success!",
-          message: () => "Theme updated successfully.",
+          title: "Theme updated",
+          message: () => "Reloading to apply changes...",
         },
         error: {
           title: "Error!",
-          message: () => "Failed to update the theme.",
+          message: () => "Failed to update theme. Please try again.",
         },
       });
+      // Wait for the promise to resolve, then reload after showing toast
+      try {
+        await updateCurrentUserThemePromise;
+        window.location.reload();
+      } catch (error) {
+        // Error toast already shown by setPromiseToast
+        console.error("Error updating theme:", error);
+      }
     },
-    [updateUserTheme]
+    [setTheme, updateUserTheme, userProfile]
   );
 
   return (

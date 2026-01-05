@@ -29,7 +29,7 @@ export function CustomCalloutBlock(props: CustomCalloutNodeViewProps) {
 
   return (
     <NodeViewWrapper
-      className="editor-callout-component group/callout-node relative bg-layer-2 rounded-lg text-primary p-4 my-2 flex items-start gap-4 transition-colors duration-500 break-words"
+      className="editor-callout-component group/callout-node relative bg-layer-3 rounded-lg text-primary p-4 my-2 flex items-start gap-4 transition-colors duration-500 break-words"
       style={{
         backgroundColor: activeBackgroundColor,
       }}

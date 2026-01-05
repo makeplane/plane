@@ -125,7 +125,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
       }}
     >
       <div className="space-y-6 sm:space-y-7">
-        <div className="space-y-1 text-13">
+        <div className="flex flex-col gap-2 text-13">
           <label htmlFor="workspaceName">
             {t("workspace_creation.form.name.label")}
             <span className="ml-0.5 text-red-500">*</span>
@@ -165,12 +165,12 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
             <span className="text-11 text-red-500">{errors?.name?.message}</span>
           </div>
         </div>
-        <div className="space-y-1 text-13">
+        <div className="flex flex-col gap-2 text-13">
           <label htmlFor="workspaceUrl">
             {t("workspace_creation.form.url.label")}
             <span className="ml-0.5 text-red-500">*</span>
           </label>
-          <div className="flex w-full items-center rounded-md border-[0.5px] border-subtle px-3 bg-layer-1">
+          <div className="flex w-full items-center rounded-md border border-subtle px-3 bg-layer-2">
             <span className="whitespace-nowrap text-12 text-secondary">{window && window.location.host}/</span>
             <Controller
               control={control}
@@ -208,7 +208,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
           )}
           {errors.slug && <span className="text-11 text-red-500">{errors.slug.message}</span>}
         </div>
-        <div className="space-y-1 text-13">
+        <div className="flex flex-col gap-2 text-13">
           <span>
             {t("workspace_creation.form.organization_size.label")}
             <span className="ml-0.5 text-red-500">*</span>
@@ -229,7 +229,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
                       </span>
                     )
                   }
-                  buttonClassName="!border-[0.5px] !border-subtle !shadow-none bg-layer-1 text-12"
+                  buttonClassName="border border-subtle bg-layer-2 !shadow-none !rounded-md"
                   input
                 >
                   {ORGANIZATION_SIZE.map((item) => (

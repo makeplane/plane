@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
 import { Link, Check } from "lucide-react";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IconButton } from "@plane/propel/icon-button";
 import { cn } from "@plane/utils";
 // hooks

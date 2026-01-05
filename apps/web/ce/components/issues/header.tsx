@@ -102,7 +102,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
         )}
       </Header.LeftItem>
       <Header.RightItem>
-        <div className="hidden gap-3 md:flex">
+        <div className="hidden gap-2 md:flex">
           <HeaderFilters
             projectId={projectId}
             currentProjectDetails={currentProjectDetails}

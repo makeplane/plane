@@ -57,7 +57,7 @@ function RightItem(props: HeaderProps) {
   return (
     <div
       className={cn(
-        "flex justify-end gap-3 w-auto items-center",
+        "flex justify-end gap-2 w-auto items-center",
         {
           "items-baseline": variant === EHeaderVariant.TERNARY,
         },

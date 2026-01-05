@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane utils
 import { cn } from "@plane/utils";
@@ -17,7 +16,7 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
       {currentViewData &&
         weekBlocks?.map((block, rootIndex) => (
           <div
-            key={`month-${block?.startDate}-${block?.endDate}`}
+            key={`month-${block?.startDate.toString()}-${block?.endDate.toString()}`}
             className="relative flex flex-col outline-[0.25px] outline-subtle-1"
           >
             {/** Header Div */}
@@ -47,7 +46,7 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
                   <div
                     key={`sub-title-${rootIndex}-${index}`}
                     className={cn(
-                      "flex flex-shrink-0 p-1 text-center capitalize justify-between outline-[0.25px] outline outline-subtle-1",
+                      "flex flex-shrink-0 p-1 text-center capitalize justify-between outline-[0.25px] outline-subtle-1",
                       {
                         "bg-accent-primary/20": weekDay.today,
                       }
@@ -73,13 +72,13 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
               {block?.children?.map((weekDay, index) => (
                 <div
                   key={`column-${rootIndex}-${index}`}
-                  className={cn("h-full overflow-hidden outline-[0.25px] outline outline-subtle", {
+                  className={cn("h-full overflow-hidden outline-[0.25px] outline-subtle", {
                     "bg-accent-primary/20": weekDay.today,
                   })}
                   style={{ width: `${currentViewData?.data.dayWidth}px` }}
                 >
                   {["sat", "sun"].includes(weekDay?.dayData?.shortTitle) && (
-                    <div className="h-full bg-surface-2 outline-[0.25px] outline outline-strong" />
+                    <div className="h-full bg-surface-2 outline-[0.25px] outline-strong" />
                   )}
                 </div>
               ))}

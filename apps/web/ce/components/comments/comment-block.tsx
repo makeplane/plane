@@ -2,77 +2,43 @@ import type { ReactNode } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+import { CommentReplyIcon } from "@plane/propel/icons";
 import type { TIssueComment } from "@plane/types";
-import { Avatar, Tooltip } from "@plane/ui";
-import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store/use-member";
 
 type TCommentBlock = {
   comment: TIssueComment;
   ends: "top" | "bottom" | undefined;
-  quickActions: ReactNode;
   children: ReactNode;
 };
 
 export const CommentBlock = observer(function CommentBlock(props: TCommentBlock) {
-  const { comment, ends, quickActions, children } = props;
-  // refs
+  const { comment, ends, children } = props;
   const commentBlockRef = useRef<HTMLDivElement>(null);
-  // store hooks
-  const { getUserDetails } = useMember();
-  // derived values
-  const userDetails = getUserDetails(comment?.actor);
-  // translation
-  const { t } = useTranslation();
-
-  const displayName = comment?.actor_detail?.is_bot
-    ? comment?.actor_detail?.first_name + ` ${t("bot")}`
-    : (userDetails?.display_name ?? comment?.actor_detail?.display_name);
-
-  const avatarUrl = userDetails?.avatar_url ?? comment?.actor_detail?.avatar_url;
 
   if (!comment) return null;
-
   return (
     <div
+      id={comment.id}
       className={`relative flex gap-3 ${ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`}`}
       ref={commentBlockRef}
     >
       <div
-        className="absolute left-[13px] top-0 bottom-0 w-px transition-border duration-1000 bg-layer-1"
+        className="absolute left-[13px] top-0 bottom-0 w-px transition-border duration-1000 bg-layer-3"
         aria-hidden
       />
       <div
         className={cn(
-          "flex-shrink-0 relative w-7 h-6 rounded-full transition-border duration-1000 flex justify-center items-center z-[3] uppercase font-medium"
+          "flex-shrink-0 relative w-7 h-7  rounded-lg transition-border duration-1000 flex justify-center items-center z-[3] uppercase shadow-raised-100 bg-layer-2 border border-subtle"
         )}
       >
-        <Avatar size="base" name={displayName} src={getFileURL(avatarUrl)} className="flex-shrink-0" />
+        <CommentReplyIcon width={14} height={14} className="text-secondary" aria-hidden="true" />
       </div>
       <div className="flex flex-col gap-3 truncate flex-grow">
-        <div className="flex w-full gap-2">
-          <div className="flex-1 flex flex-wrap items-center gap-1">
-            <div className="flex items-center gap-1">
-              <span className="text-11 font-medium">{displayName}</span>
-            </div>
-            <div className="text-11 text-tertiary">
-              commented{" "}
-              <Tooltip
-                tooltipContent={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
-                position="bottom"
-              >
-                <span className="text-tertiary">
-                  {calculateTimeAgo(comment.created_at)}
-                  {comment.edited_at && ` (${t("edited")})`}
-                </span>
-              </Tooltip>
-            </div>
-          </div>
-          <div className="flex-shrink-0 ">{quickActions}</div>
+        <div className="text-body-sm-regular mb-2 bg-layer-2 border border-subtle shadow-raised-100 rounded-lg p-3">
+          {children}
         </div>
-        <div className="text-14 mb-2">{children}</div>
       </div>
     </div>
   );

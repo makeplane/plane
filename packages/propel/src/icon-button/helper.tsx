@@ -8,7 +8,7 @@ export const iconButtonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-accent-primary hover:bg-accent-primary-hover active:bg-accent-primary-active focus:bg-accent-primary-active disabled:bg-layer-disabled text-on-color disabled:text-disabled",
+          "bg-accent-primary hover:bg-accent-primary-hover active:bg-accent-primary-active focus:bg-accent-primary-active disabled:bg-layer-disabled text-on-color disabled:text-on-color-disabled",
         "error-fill":
           "bg-danger-primary hover:bg-danger-primary-hover active:bg-danger-primary-active focus:bg-danger-primary-active disabled:bg-layer-disabled text-on-color disabled:text-disabled",
         "error-outline":
@@ -38,6 +38,7 @@ type IconButtonPropsWithChildren = React.ButtonHTMLAttributes<HTMLButtonElement>
   VariantProps<typeof iconButtonVariants> & {
     icon: React.FC<{ className?: string }>;
     loading?: boolean;
+    iconClassName?: string;
   };
 export type IconButtonProps = Omit<IconButtonPropsWithChildren, "children">;
 

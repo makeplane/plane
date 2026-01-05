@@ -1,10 +1,9 @@
-import { useState, Fragment } from "react";
-
-import { Transition, Dialog } from "@headlessui/react";
+import { useState } from "react";
 // types
 import { Button } from "@plane/propel/button";
 import type { IProject } from "@plane/types";
 // ui
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -26,13 +25,17 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
   // router
   const router = useAppRouter();
 
-  const handleJoin = () => {
+  const handleJoin = async () => {
     setIsJoiningLoading(true);
 
-    joinProject(workspaceSlug, project.id)
+    await joinProject(workspaceSlug, project.id)
       .then(() => {
         router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
         handleClose();
+        return;
+      })
+      .catch(() => {
+        console.error("Error joining project");
       })
       .finally(() => {
         setIsJoiningLoading(false);
@@ -40,63 +43,23 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
   };
 
   return (
-    <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-backdrop transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 px-5 py-8 text-left shadow-raised-200 transition-all sm:w-full sm:max-w-xl sm:p-6">
-                <div className="space-y-5">
-                  <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
-                    Join Project?
-                  </Dialog.Title>
-                  <p>
-                    Are you sure you want to join the project{" "}
-                    <span className="break-words font-semibold">{project?.name}</span>? Please click the &apos;Join
-                    Project&apos; button below to continue.
-                  </p>
-                  <div className="space-y-3" />
-                </div>
-                <div className="mt-5 flex justify-end gap-2">
-                  <Button variant="secondary" size="lg" onClick={handleClose}>
-                    Cancel
-                  </Button>
-                  <Button
-                    variant="primary"
-                    size="lg"
-                    tabIndex={1}
-                    type="submit"
-                    onClick={handleJoin}
-                    loading={isJoiningLoading}
-                  >
-                    {isJoiningLoading ? "Joining..." : "Join Project"}
-                  </Button>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition.Root>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
+      <div className="space-y-5 px-5 py-8 sm:p-6">
+        <h3 className="text-16 font-medium leading-6 text-primary">Join Project?</h3>
+        <p>
+          Are you sure you want to join the project <span className="break-words font-semibold">{project?.name}</span>?
+          Please click the &apos;Join Project&apos; button below to continue.
+        </p>
+        <div className="space-y-3" />
+      </div>
+      <div className="mt-5 flex justify-end gap-2 px-5 pb-8 sm:px-6 sm:pb-6">
+        <Button variant="secondary" size="lg" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" size="lg" tabIndex={1} type="submit" onClick={handleJoin} loading={isJoiningLoading}>
+          {isJoiningLoading ? "Joining..." : "Join Project"}
+        </Button>
+      </div>
+    </ModalCore>
   );
 }

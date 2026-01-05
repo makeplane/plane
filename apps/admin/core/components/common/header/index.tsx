@@ -7,50 +7,29 @@ import { Breadcrumbs } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useTheme } from "@/hooks/store";
+// local imports
+import { CORE_HEADER_SEGMENT_LABELS } from "./core";
+import { EXTENDED_HEADER_SEGMENT_LABELS } from "./extended";
 
 export const HamburgerToggle = observer(function HamburgerToggle() {
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   return (
-    <div
-      className="w-7 h-7 rounded-sm flex justify-center items-center bg-layer-1 transition-all hover:bg-layer-1-hover cursor-pointer group md:hidden"
+    <button
+      className="size-7 rounded-sm flex justify-center items-center bg-layer-1 transition-all hover:bg-layer-1-hover cursor-pointer group md:hidden"
       onClick={() => toggleSidebar(!isSidebarCollapsed)}
     >
       <Menu size={14} className="text-secondary group-hover:text-primary transition-all" />
-    </div>
+    </button>
   );
 });
 
+const HEADER_SEGMENT_LABELS = {
+  ...CORE_HEADER_SEGMENT_LABELS,
+  ...EXTENDED_HEADER_SEGMENT_LABELS,
+};
+
 export const AdminHeader = observer(function AdminHeader() {
   const pathName = usePathname();
-
-  const getHeaderTitle = (pathName: string) => {
-    switch (pathName) {
-      case "general":
-        return "General";
-      case "ai":
-        return "Artificial Intelligence";
-      case "email":
-        return "Email";
-      case "authentication":
-        return "Authentication";
-      case "image":
-        return "Image";
-      case "google":
-        return "Google";
-      case "github":
-        return "GitHub";
-      case "gitlab":
-        return "GitLab";
-      case "gitea":
-        return "Gitea";
-      case "workspace":
-        return "Workspace";
-      case "create":
-        return "Create";
-      default:
-        return pathName.toUpperCase();
-    }
-  };
 
   // Function to dynamically generate breadcrumb items based on pathname
   const generateBreadcrumbItems = (pathname: string) => {
@@ -61,14 +40,14 @@ export const AdminHeader = observer(function AdminHeader() {
     const breadcrumbItems = pathSegments.map((segment) => {
       currentUrl += "/" + segment;
       return {
-        title: getHeaderTitle(segment),
+        title: HEADER_SEGMENT_LABELS[segment] ?? segment.toUpperCase(),
         href: currentUrl,
       };
     });
     return breadcrumbItems;
   };
 
-  const breadcrumbItems = generateBreadcrumbItems(pathName);
+  const breadcrumbItems = generateBreadcrumbItems(pathName || "");
 
   return (
     <div className="relative z-10 flex h-header w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-subtle bg-surface-1 p-4">

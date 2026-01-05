@@ -172,6 +172,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         super(User, self).save(*args, **kwargs)
 
+    @classmethod
+    def get_display_name(cls, email):
+        if not email:
+            return "".join(random.choice(string.ascii_letters) for _ in range(6))
+        return (
+            email.split("@")[0]
+            if len(email.split("@")) == 2
+            else "".join(random.choice(string.ascii_letters) for _ in range(6))
+        )
+
 
 class Profile(TimeAuditModel):
     SUNDAY = 0

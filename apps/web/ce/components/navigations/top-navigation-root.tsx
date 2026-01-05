@@ -40,7 +40,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
 
   return (
     <div
-      className={cn("flex items-center min-h-11 w-full px-3.5 bg-canvas z-[27] transition-all duration-300", {
+      className={cn("flex items-center min-h-10 w-full px-3.5 bg-canvas z-[27] transition-all duration-300", {
         "px-2": !showLabel,
       })}
     >

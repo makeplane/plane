@@ -62,7 +62,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
             <div className="h-5 w-full flex">
               {weeks?.map((weekBlock) => (
                 <div
-                  key={`sub-title-${weekBlock.startDate}-${weekBlock.endDate}`}
+                  key={`sub-title-${weekBlock.startDate.toString()}-${weekBlock.endDate.toString()}`}
                   className={cn(
                     "flex flex-shrink-0 py-1 px-2 text-center capitalize justify-between outline-[0.25px] outline-subtle-1",
                     {
@@ -89,7 +89,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
           <div className="h-full w-full flex-grow flex">
             {weeks?.map((weekBlock) => (
               <div
-                key={`column-${weekBlock.startDate}-${weekBlock.endDate}`}
+                key={`column-${weekBlock.startDate.toString()}-${weekBlock.endDate.toString()}`}
                 className={cn("h-full overflow-hidden outline-[0.25px] outline-subtle", {
                   "bg-accent-primary/20": weekBlock.today,
                 })}

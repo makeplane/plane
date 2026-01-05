@@ -10,6 +10,7 @@ import { PopoverMenu } from "@plane/ui";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { NotificationFilterOptionItem } from "./menu-option-item";
+import { IconButton } from "@plane/propel/icon-button";
 
 export const NotificationFilter = observer(function NotificationFilter() {
   // hooks
@@ -26,9 +27,7 @@ export const NotificationFilter = observer(function NotificationFilter() {
       data={translatedFilterTypeOptions}
       button={
         <Tooltip tooltipContent={t("notification.options.filters")} isMobile={isMobile} position="bottom">
-          <div className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-layer-1 rounded-xs outline-none">
-            <ListFilter className="h-3 w-3" />
-          </div>
+          <IconButton size="base" variant="ghost" icon={ListFilter} />
         </Tooltip>
       }
       keyExtractor={(item: { label: string; value: ENotificationFilterType }) => item.value}

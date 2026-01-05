@@ -12,7 +12,7 @@ import {
 
 // ------------ Date filter ------------
 
-export const getSupportedDateOperators = (params: TCreateDateFilterParams): TOperatorConfigMap<Date> =>
+export const getSupportedDateOperators = (params: TCreateDateFilterParams): TOperatorConfigMap =>
   new Map([
     createOperatorConfigEntry(EQUALITY_OPERATOR.EXACT, params, (updatedParams) => getDatePickerConfig(updatedParams)),
     createOperatorConfigEntry(COMPARISON_OPERATOR.RANGE, params, (updatedParams) =>

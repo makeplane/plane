@@ -1,1 +1,0 @@
-MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf: Copyright 2022, 2022 Google LLC. All Rights Reserved.

@@ -77,7 +77,7 @@
     "autoprefixer": "^10.4.19",
     "postcss-cli": "^11.0.0",
     "postcss-nested": "^6.0.1",
-    "storybook": "^8.1.1",
+    "storybook": "9.1.17",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   }

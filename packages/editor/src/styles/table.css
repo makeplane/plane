@@ -86,7 +86,7 @@
     tr[background="none"],
     tr:not([background]) {
       th {
-        @apply bg-layer-2;
+        @apply bg-layer-3;
       }
     }
 

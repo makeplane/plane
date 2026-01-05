@@ -51,7 +51,7 @@ def get_x_axis_field() -> Dict[str, Tuple[str, str, Optional[Dict[str, Any]]]]:
             "assignees__display_name",
             {"issue_assignee__deleted_at__isnull": True},
         ),
-        "ESTIMATE_POINTS": ("estimate_point__value", "estimate_point__key", None),
+        "ESTIMATE_POINTS": ("estimate_point__key", "estimate_point__value", None),
         "CYCLES": (
             "issue_cycle__cycle_id",
             "issue_cycle__cycle__name",
