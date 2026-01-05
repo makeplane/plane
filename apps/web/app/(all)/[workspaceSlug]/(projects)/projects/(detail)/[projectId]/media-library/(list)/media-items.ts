@@ -1,0 +1,261 @@
+"use client";
+
+export type TMediaItem = {
+  id: string;
+  title: string;
+  author: string;
+  createdAt: string;
+  views: number;
+  duration: string;
+  primaryTag: string;
+  secondaryTag: string;
+  itemsCount: number;
+  mediaType: "video" | "image" | "document";
+  thumbnail: string;
+  videoSrc?: string;
+  fileSrc?: string;
+  docs: string[];
+};
+
+export const MEDIA_ITEMS: TMediaItem[] = [
+  {
+    id: "ml-001",
+    title: "Warriors vs Falcons",
+    author: "Markos Gogoulos",
+    createdAt: "12/13/2024",
+    views: 135,
+    duration: "0:24",
+    primaryTag: "Game",
+    secondaryTag: "Event",
+    itemsCount: 100,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Shotlist", "Releases"],
+  },
+  {
+    id: "ml-002",
+    title: "Tigers vs Hawks",
+    author: "Markos Gogoulos",
+    createdAt: "11/22/2024",
+    views: 92,
+    duration: "0:11",
+    primaryTag: "Practice",
+    secondaryTag: "Event",
+    itemsCount: 64,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Coach Notes"],
+  },
+  {
+    id: "ml-003",
+    title: "Spartans vs Kings",
+    author: "Markos Gogoulos",
+    createdAt: "10/05/2024",
+    views: 71,
+    duration: "0:06",
+    primaryTag: "Scrimmage",
+    secondaryTag: "Event",
+    itemsCount: 40,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Rights"],
+  },
+  {
+    id: "ml-004",
+    title: "Lions vs Bears",
+    author: "Markos Gogoulos",
+    createdAt: "09/18/2024",
+    views: 118,
+    duration: "0:08",
+    primaryTag: "Game",
+    secondaryTag: "Event",
+    itemsCount: 88,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Brand Guide", "Usage"],
+  },
+  {
+    id: "ml-005",
+    title: "Storm vs Rangers",
+    author: "Markos Gogoulos",
+    createdAt: "09/02/2024",
+    views: 56,
+    duration: "0:12",
+    primaryTag: "Practice",
+    secondaryTag: "Event",
+    itemsCount: 52,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Audio Notes"],
+  },
+  {
+    id: "ml-006",
+    title: "Sharks vs Dolphins",
+    author: "Markos Gogoulos",
+    createdAt: "08/18/2024",
+    views: 42,
+    duration: "0:18",
+    primaryTag: "Practice",
+    secondaryTag: "Event",
+    itemsCount: 31,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Logo Pack"],
+  },
+  {
+    id: "ml-007",
+    title: "Eagles vs Wolves",
+    author: "Markos Gogoulos",
+    createdAt: "07/30/2024",
+    views: 64,
+    duration: "0:50",
+    primaryTag: "Tournament",
+    secondaryTag: "Event",
+    itemsCount: 72,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Color Grade"],
+  },
+  {
+    id: "ml-008",
+    title: "Chargers vs Panthers",
+    author: "Markos Gogoulos",
+    createdAt: "06/12/2024",
+    views: 48,
+    duration: "0:25",
+    primaryTag: "Game",
+    secondaryTag: "Event",
+    itemsCount: 44,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Release"],
+  },
+  {
+    id: "ml-009",
+    title: "Rockets vs Giants",
+    author: "Markos Gogoulos",
+    createdAt: "05/28/2024",
+    views: 37,
+    duration: "0:27",
+    primaryTag: "Match",
+    secondaryTag: "Event",
+    itemsCount: 28,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Drone Permit"],
+  },
+  {
+    id: "ml-010",
+    title: "Titans vs Bulls",
+    author: "Jamie Patel",
+    createdAt: "05/01/2024",
+    views: 94,
+    duration: "0:32",
+    primaryTag: "Practice",
+    secondaryTag: "Event",
+    itemsCount: 55,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Call Sheet", "Location Map", "Talent List"],
+  },
+  {
+    id: "ml-011",
+    title: "United vs City",
+    author: "Priya Singh",
+    createdAt: "04/12/2024",
+    views: 126,
+    duration: "0:41",
+    primaryTag: "Tournament",
+    secondaryTag: "Event",
+    itemsCount: 97,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Press Notes", "Sponsor Callouts"],
+  },
+  {
+    id: "ml-012",
+    title: "Royals vs Knights",
+    author: "Alex Rivera",
+    createdAt: "03/19/2024",
+    views: 58,
+    duration: "0:22",
+    primaryTag: "Scrimmage",
+    secondaryTag: "Event",
+    itemsCount: 33,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Strategy Notes", "Sponsor Mentions"],
+  },
+  {
+    id: "ml-013",
+    title: "Phoenix vs Coyotes",
+    author: "Taylor Brooks",
+    createdAt: "02/28/2024",
+    views: 62,
+    duration: "0:28",
+    primaryTag: "Game",
+    secondaryTag: "Event",
+    itemsCount: 80,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Lighting Cue Sheet", "Audio Mix Notes"],
+  },
+  {
+    id: "ml-014",
+    title: "Raiders vs Pirates",
+    author: "Morgan Lee",
+    createdAt: "02/03/2024",
+    views: 75,
+    duration: "0:19",
+    primaryTag: "Match",
+    secondaryTag: "Event",
+    itemsCount: 46,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Crowd Release", "Audio Layer Notes"],
+  },
+  {
+    id: "ml-015",
+    title: "Raiders vs Pirates",
+    author: "Morgan Lee",
+    createdAt: "02/03/2024",
+    views: 75,
+    duration: "0:19",
+    primaryTag: "Match",
+    secondaryTag: "Event",
+    itemsCount: 46,
+    mediaType: "video",
+    thumbnail:
+      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
+    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
+    docs: ["Crowd Release", "Audio Layer Notes"],
+  },
+];

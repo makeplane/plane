@@ -17,6 +17,7 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+import { VideoIcon } from "lucide-react";
 
 export type TNavigationItem = {
   name: string;
@@ -124,6 +125,16 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: project.inbox_view,
         sortOrder: 6,
+      },
+      {
+        i18n_key: "Media Library",
+        key: "media_library",
+        name: "Media Library",
+        href: `/${workspaceSlug}/projects/${projectId}/media-library`,
+        icon: VideoIcon,
+        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+        shouldRender: true,
+        sortOrder: 7,
       },
     ],
     [project]

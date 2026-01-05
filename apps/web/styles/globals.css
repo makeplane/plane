@@ -877,6 +877,12 @@ div.web-view-spinner div.bar12 {
   background: rgb(var(--color-background-80));
 }
 
+/* Media library row alignment when swiper doesn't overflow */
+.media-swiper.swiper-locked .swiper-wrapper {
+  justify-content: space-between;
+  width: 100%;
+}
+
 /* By applying below class, the autofilled text in form fields will not have the default autofill background color and styles applied by WebKit browsers  */
 .disable-autofill-style:-webkit-autofill,
 .disable-autofill-style:-webkit-autofill:hover,
