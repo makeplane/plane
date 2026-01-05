@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { Button } from "@plane/propel/button";
 import { FileImage, FileText, FileVideo, UploadCloud, X } from "lucide-react";
-import { useMediaLibrary } from "./media-library-context";
+import { Button } from "@plane/ui";
 import type { TMediaItem } from "./media-items";
+import { useMediaLibrary } from "./media-library-context";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
 

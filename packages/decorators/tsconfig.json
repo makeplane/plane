@@ -5,6 +5,7 @@
     "emitDecoratorMetadata": true,
     "lib": ["ES2020"],
     "rootDir": ".",
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]

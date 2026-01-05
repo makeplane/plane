@@ -3,13 +3,12 @@
 import { useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Calendar, Clock, FileText } from "lucide-react";
-import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Scrollbar } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/scrollbar";
-import { MEDIA_ITEMS, TMediaItem } from "./media-items";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Calendar, Clock, FileText } from "lucide-react";
+
+import type { TMediaItem } from "./media-items";
+import { MEDIA_ITEMS } from "./media-items";
 import { useMediaLibrary } from "./media-library-context";
 import { MediaListView } from "./media-list-view";
 
@@ -218,7 +217,7 @@ export default function MediaLibraryListPage() {
         <div className="text-xs text-custom-text-300">{mediaCount} items</div>
       </div>
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 p-3">
         {filteredSections.length === 0 ? (
           <div className="rounded-lg border border-dashed border-custom-border-200 bg-custom-background-100 p-6 text-center text-sm text-custom-text-300">
             No media matches your search.

@@ -69,7 +69,7 @@ const MediaListSection = ({ section }: { section: TMediaSection }) => (
 );
 
 export const MediaListView = ({ sections }: { sections: TMediaSection[] }) => (
-  <div className="flex flex-col gap-8">
+  <div className="flex flex-col gap-8 p-10">
     {sections.map((section) => (
       <MediaListSection key={section.title} section={section} />
     ))}

@@ -1,6 +1,9 @@
 @import "@plane/propel/styles/fonts";
 @import "@plane/editor/styles";
 @import "react-phone-input-2/lib/style.css";
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/scrollbar";
 
 @tailwind base;
 @tailwind components;
