@@ -63,6 +63,22 @@ class Page(BaseModel):
         """Return owner email and page name"""
         return f"{self.owned_by.email} <{self.name}>"
 
+    def _get_sort_order(self, project):
+        """Get the next sort order for the page within a specific project."""
+        if self.access == Page.PRIVATE_ACCESS:
+            largest = ProjectPage.objects.filter(
+                page__access=Page.PRIVATE_ACCESS,
+                page__owned_by=self.owned_by,
+                project=project,
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+        else:
+            largest = ProjectPage.objects.filter(
+                page__access=Page.PUBLIC_ACCESS,
+                project=project,
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+
+        return (largest or self.DEFAULT_SORT_ORDER) + 10000
+
     def save(self, *args, **kwargs):
         # Strip the html tags using html parser
         self.description_stripped = (
@@ -70,6 +86,18 @@ class Page(BaseModel):
             if (self.description_html == "" or self.description_html is None)
             else strip_tags(self.description_html)
         )
+
+        if not self._state.adding:
+            original = Page.objects.get(pk=self.pk)
+            if original.access != self.access:
+                # Get the project pages for the page and update the sort order
+                project_pages = list(ProjectPage.objects.filter(page=self).select_related("project"))
+                for project_page in project_pages:
+                    project_page.sort_order = self._get_sort_order(project_page.project)
+                # Bulk update all project pages in a single query
+                if project_pages:
+                    ProjectPage.objects.bulk_update(project_pages, ["sort_order"])
+
         super(Page, self).save(*args, **kwargs)
 
 
@@ -129,9 +157,12 @@ class PageLabel(BaseModel):
 
 
 class ProjectPage(BaseModel):
+    DEFAULT_SORT_ORDER = 65535
+
     project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="project_pages")
     page = models.ForeignKey("db.Page", on_delete=models.CASCADE, related_name="project_pages")
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="project_pages")
+    sort_order = models.FloatField(default=DEFAULT_SORT_ORDER)
 
     class Meta:
         unique_together = ["project", "page", "deleted_at"]
@@ -149,6 +180,31 @@ class ProjectPage(BaseModel):
 
     def __str__(self):
         return f"{self.project.name} {self.page.name}"
+
+    def _get_sort_order(self):
+        """Get the next sort order for the project page based on page access type."""
+        if self.page.access == Page.PRIVATE_ACCESS:
+            # For private pages, get max sort_order among pages owned by same user in same project
+            largest = ProjectPage.objects.filter(
+                page__access=Page.PRIVATE_ACCESS,
+                page__owned_by=self.page.owned_by,
+                project=self.project,
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+        else:
+            # For public pages, get max sort_order among all public pages in same project
+            largest = ProjectPage.objects.filter(
+                page__access=Page.PUBLIC_ACCESS,
+                project=self.project,
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+
+        return (largest or self.DEFAULT_SORT_ORDER) + 10000
+
+    def save(self, *args, **kwargs):
+        # Set sort_order for new project pages
+        if self._state.adding and self.sort_order == self.DEFAULT_SORT_ORDER:
+            self.sort_order = self._get_sort_order()
+
+        super(ProjectPage, self).save(*args, **kwargs)
 
 
 class PageVersion(BaseModel):
