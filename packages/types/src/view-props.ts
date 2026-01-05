@@ -196,8 +196,11 @@ export interface IIssueFiltersResponse {
 }
 
 export interface IProjectUserPropertiesResponse extends IIssueFiltersResponse {
-  sort_order?: number;
-  preferences?: {
+  sort_order: number;
+  preferences: {
+    pages: {
+      block_display: boolean;
+    };
     navigation: IProjectMemberNavigationPreferences;
   };
 }

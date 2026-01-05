@@ -53,6 +53,7 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
   const updatePreferences = async (newPreferences: TTabPreferences) => {
     await updateProjectUserProperties(workspaceSlug, projectId, {
       preferences: {
+        ...(storePreferences?.preferences || {}),
         navigation: {
           default_tab: newPreferences.defaultTab,
           hide_in_more_menu: newPreferences.hiddenTabs,
