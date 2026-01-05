@@ -97,7 +97,7 @@ export class ProjectPageStore implements IProjectPageStore {
   error: TError | undefined = undefined;
   filters: TPageFilters = {
     searchQuery: "",
-    sortKey: "created_at",
+    sortKey: "updated_at",
     sortBy: "desc",
   };
   // filtered page type arrays
