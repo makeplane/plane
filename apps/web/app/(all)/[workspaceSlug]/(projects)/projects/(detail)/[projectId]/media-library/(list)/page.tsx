@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Navigation, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Calendar, Clock, FileText } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight, Clock, FileText } from "lucide-react";
 
 import type { TMediaItem } from "./media-items";
 import { MEDIA_ITEMS } from "./media-items";
@@ -100,6 +100,7 @@ const MediaRow = ({
   const prevId = `media-prev-${rowId}`;
   const nextId = `media-next-${rowId}`;
   const scrollbarId = `media-scrollbar-${rowId}`;
+  const hasVideo = section.items.some((item) => item.mediaType === "video");
 
   return (
     <section className="flex flex-col gap-3">
@@ -126,8 +127,9 @@ const MediaRow = ({
               modules={[Navigation, Scrollbar]}
               slidesPerView="auto"
               spaceBetween={16}
-              navigation={{ prevEl: `#${prevId}`, nextEl: `#${nextId}` }}
+              navigation={hasVideo ? { prevEl: `#${prevId}`, nextEl: `#${nextId}` } : undefined}
               scrollbar={{ el: `#${scrollbarId}`, draggable: true }}
+              allowTouchMove={!hasVideo}
               watchOverflow
               className="media-swiper pb-3"
             >
@@ -137,22 +139,26 @@ const MediaRow = ({
                 </SwiperSlide>
               ))}
             </Swiper>
-            <button
-              id={prevId}
-              type="button"
-              className="absolute left-2 top-1/2 hidden -translate-y-1/2 rounded-full border border-custom-border-200 bg-custom-background-100 p-2 text-custom-text-300 shadow-sm hover:text-custom-text-100 sm:flex"
-              aria-label={`Scroll ${section.title} left`}
-            >
-              &lsaquo;
-            </button>
-            <button
-              id={nextId}
-              type="button"
-              className="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-full border border-custom-border-200 bg-custom-background-100 p-2 text-custom-text-300 shadow-sm hover:text-custom-text-100 sm:flex"
-              aria-label={`Scroll ${section.title} right`}
-            >
-              &rsaquo;
-            </button>
+            {hasVideo ? (
+              <>
+                <button
+                  id={prevId}
+                  type="button"
+                  className="absolute left-0 top-[40%] z-10 flex -translate-y-1/2 -translate-x-1/2 rounded-full border border-custom-border-200 bg-custom-background-100 p-2 text-custom-text-300 shadow-sm hover:text-custom-text-100"
+                  aria-label={`Scroll ${section.title} left`}
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  id={nextId}
+                  type="button"
+                  className="absolute right-0 top-[40%] z-10 flex -translate-y-1/2 translate-x-1/2 rounded-full border border-custom-border-200 bg-custom-background-100 p-2 text-custom-text-300 shadow-sm hover:text-custom-text-100"
+                  aria-label={`Scroll ${section.title} right`}
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </>
+            ) : null}
           </div>
           <div id={scrollbarId} className="hidden" />
         </>
@@ -180,42 +186,44 @@ export default function MediaLibraryListPage() {
   const mediaSections = useMemo(
     () => [
       ...uploadedSection,
-      { title: "Featured", items: MEDIA_ITEMS.slice(0, 6) },
-      { title: "Recommended", items: MEDIA_ITEMS.slice(3, 9) },
+      { title: "Game", items: MEDIA_ITEMS.slice(0, 6) },
+      { title: "Practices", items: MEDIA_ITEMS.slice(3, 9) },
       { title: "Latest", items: MEDIA_ITEMS.slice(1, 7) },
     ],
     [uploadedSection]
   );
   const filteredSections = useMemo(() => {
     if (!query) return mediaSections;
-    return mediaSections.map((section) => ({
-      ...section,
-      items: section.items.filter((item) => {
-        const haystack = [
-          item.title,
-          item.author,
-          item.createdAt,
-          item.views.toString(),
-          item.primaryTag,
-          item.secondaryTag,
-          item.itemsCount.toString(),
-          item.docs.join(" "),
-        ]
-          .join(" ")
-          .toLowerCase();
-        return haystack.includes(query);
-      }),
-    })).filter((section) => section.items.length > 0);
+    return mediaSections
+      .map((section) => ({
+        ...section,
+        items: section.items.filter((item) => {
+          const haystack = [
+            item.title,
+            item.author,
+            item.createdAt,
+            item.views.toString(),
+            item.primaryTag,
+            item.secondaryTag,
+            item.itemsCount.toString(),
+            item.docs.join(" "),
+          ]
+            .join(" ")
+            .toLowerCase();
+          return haystack.includes(query);
+        }),
+      }))
+      .filter((section) => section.items.length > 0);
   }, [mediaSections, query]);
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      {/* <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          {/* <h1 className="text-lg font-semibold text-custom-text-100">Sports Media Library</h1> */}
+          <h1 className="text-lg font-semibold text-custom-text-100">Sports Media Library</h1>
         </div>
         <div className="text-xs text-custom-text-300">{mediaCount} items</div>
-      </div>
+      </div> */}
 
       <div className="flex flex-col gap-8 p-3">
         {filteredSections.length === 0 ? (

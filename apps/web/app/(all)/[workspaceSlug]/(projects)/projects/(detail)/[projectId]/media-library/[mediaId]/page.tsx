@@ -150,6 +150,22 @@ const MediaDetailPage = () => {
             </div>
           </div>
 
+          {item.docs.length > 0 ? (
+            <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
+              <div className="border-b border-custom-border-200 px-4 py-2 text-xs font-semibold text-custom-text-100">
+                Documents
+              </div>
+              <div className="space-y-2 px-4 py-3 text-xs text-custom-text-300">
+                {item.docs.map((doc) => (
+                  <div key={doc} className="flex items-center gap-2">
+                    <FileText className="h-3.5 w-3.5" />
+                    <span>{doc}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
           <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
             <div className="border-b border-custom-border-200 px-4 py-2 text-xs font-semibold text-custom-text-100">
               Team info

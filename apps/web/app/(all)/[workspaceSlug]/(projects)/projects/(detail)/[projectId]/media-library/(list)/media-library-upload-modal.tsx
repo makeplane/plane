@@ -8,7 +8,7 @@ import { useMediaLibrary } from "./media-library-context";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
 
-type TUploadItem = {
+type TUploadItem = { 
   id: string;
   file: File;
   status: "ready" | "failed";
@@ -170,23 +170,32 @@ export const MediaLibraryUploadModal = () => {
                       </div>
                     </div>
                   </div>
-                  {item.status === "failed" ? (
+                  <div className="flex items-center gap-2">
+                    {item.status === "failed" ? (
+                      <Button
+                        variant="neutral-primary"
+                        size="sm"
+                        onClick={() =>
+                          setUploads((prev) =>
+                            prev.map((entry) =>
+                              entry.id === item.id ? { ...entry, status: "ready", error: undefined } : entry
+                            )
+                          )
+                        }
+                      >
+                        Retry
+                      </Button>
+                    ) : (
+                      <div className="text-xs text-custom-primary-100">Ready</div>
+                    )}
                     <Button
                       variant="neutral-primary"
                       size="sm"
-                      onClick={() =>
-                        setUploads((prev) =>
-                          prev.map((entry) =>
-                            entry.id === item.id ? { ...entry, status: "ready", error: undefined } : entry
-                          )
-                        )
-                      }
+                      onClick={() => setUploads((prev) => prev.filter((entry) => entry.id !== item.id))}
                     >
-                      Retry
+                      Remove
                     </Button>
-                  ) : (
-                    <div className="text-xs text-custom-primary-100">Ready</div>
-                  )}
+                  </div>
                 </div>
               ))
             )}
@@ -194,26 +203,7 @@ export const MediaLibraryUploadModal = () => {
 
           <hr className="my-4 border-0 border-t border-custom-border-200/60" />
 
-          <div className="mt-4 rounded-lg border border-custom-border-200">
-            <div className="border-b border-custom-border-200 px-4 py-2 text-xs font-semibold text-custom-text-100">
-              Uploaded files
-            </div>
-            {uploadedItems.length === 0 ? (
-              <div className="px-4 py-3 text-xs text-custom-text-300">No uploads yet.</div>
-            ) : (
-              <div className="max-h-40 overflow-auto">
-                {uploadedItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center justify-between border-b border-custom-border-200 px-4 py-2 last:border-b-0"
-                  >
-                    <div className="text-xs text-custom-text-200">{item.title}</div>
-                    <div className="text-[11px] text-custom-text-300">{item.createdAt}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Uploaded files list hidden by request */}
         </div>
 
         <div className="flex items-center justify-between border-t border-custom-border-200 px-5 py-3 text-xs text-custom-text-300">

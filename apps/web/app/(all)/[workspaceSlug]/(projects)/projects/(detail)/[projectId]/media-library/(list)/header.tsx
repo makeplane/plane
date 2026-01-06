@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   useParams,
   usePathname,
@@ -74,6 +74,14 @@ export const MediaLibraryListHeader: React.FC<Props> = ({
   const searchParams = useSearchParams();
 
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
+  const activeLayout = useMemo(() => {
+    const viewParam = searchParams.get("view");
+    return viewParam === MediaLayoutTypes.LIST ? MediaLayoutTypes.LIST : MediaLayoutTypes.GRID;
+  }, [searchParams]);
+  const normalizedLayouts = useMemo(
+    () => layouts.filter((layout) => Object.values(MediaLayoutTypes).includes(layout.key)),
+    [layouts]
+  );
 
   /* ------------------------------------------------------------------ */
   /* SYNC QUERY */
@@ -121,7 +129,7 @@ export const MediaLibraryListHeader: React.FC<Props> = ({
       {/* CENTER SEARCH */}
       <div className="pointer-events-auto absolute left-1/2 top-1/2 w-[320px] -translate-x-1/2 -translate-y-1/2">
         <div className="relative">
-          <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-300" />
+          <Search className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-300" />
           <input
             type="text"
             placeholder="Search media"
@@ -152,7 +160,7 @@ export const MediaLibraryListHeader: React.FC<Props> = ({
         <div className="flex items-center gap-2">
           {/* Layout Toggle */}
           <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
-            {layouts.map((layout) => (
+            {normalizedLayouts.map((layout) => (
               <Tooltip
                 key={layout.key}
                 tooltipContent={layout.i18n_title}
@@ -161,8 +169,9 @@ export const MediaLibraryListHeader: React.FC<Props> = ({
                 <button
                   type="button"
                   onClick={() => handleLayoutChange(layout.key)}
+                  aria-label={`${layout.i18n_title} view`}
                   className={`grid h-[22px] w-7 place-items-center rounded transition ${
-                    selectedLayout === layout.key
+                    activeLayout === layout.key
                       ? "bg-custom-background-100 shadow-custom-shadow-2xs"
                       : "hover:bg-custom-background-100"
                   }`}
