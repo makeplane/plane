@@ -134,21 +134,23 @@ const MediaDetailPage = () => {
             </div>
           </div>
 
-          <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
-            <div className="border-b border-custom-border-200 px-4 py-2 text-xs font-semibold text-custom-text-100">
-              Duration &amp; sharing
-            </div>
-            <div className="space-y-2 px-4 py-3 text-xs text-custom-text-300">
-              <div className="flex items-center justify-between">
-                <span>Video duration</span>
-                <span>{item.mediaType === "image" ? "Image" : item.duration}</span>
+          {item.mediaType === "video" ? (
+            <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
+              <div className="border-b border-custom-border-200 px-4 py-2 text-xs font-semibold text-custom-text-100">
+                Duration &amp; sharing
               </div>
-              <div className="flex items-center justify-between">
-                <span>Shared with</span>
-                <span>--</span>
+              <div className="space-y-2 px-4 py-3 text-xs text-custom-text-300">
+                <div className="flex items-center justify-between">
+                  <span>Video duration</span>
+                  <span>{item.duration}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Shared with</span>
+                  <span>--</span>
+                </div>
               </div>
             </div>
-          </div>
+          ) : null}
 
           {item.docs.length > 0 ? (
             <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">

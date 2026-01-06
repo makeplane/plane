@@ -90,7 +90,7 @@ export default function MediaLibrarySectionPage() {
       <div className="flex items-center gap-3">
         <Link
           href={`/${workspaceSlug}/projects/${projectId}/media-library`}
-          className="rounded-full border border-custom-border-200 bg-custom-background-100 p-2 text-custom-text-300 hover:text-custom-text-100"
+          className="rounded-md border border-custom-border-200 bg-custom-background-100 p-0.5 text-custom-text-300 hover:text-custom-text-100"
           aria-label="Back to media library"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -98,10 +98,7 @@ export default function MediaLibrarySectionPage() {
         <div className="text-sm font-semibold text-custom-text-100">{section.title}</div>
       </div>
       {viewMode === "list" ? (
-        <MediaListView
-          sections={[section]}
-          getItemHref={(item) => getItemHref(workspaceSlug, projectId, item)}
-        />
+        <MediaListView sections={[section]} getItemHref={(item) => getItemHref(workspaceSlug, projectId, item)} />
       ) : (
         <div className="flex flex-wrap gap-4">
           {section.items.map((item) => (
