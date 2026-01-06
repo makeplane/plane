@@ -1,6 +1,6 @@
 import type { NodeViewProps } from "@tiptap/react";
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
-import { useState, memo, useMemo, useCallback } from "react";
+import { useState } from "react";
 // constants
 import { COLORS_LIST } from "@/constants/common";
 // local components
