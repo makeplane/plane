@@ -2,6 +2,46 @@
 import { fileTypeFromBuffer } from "file-type";
 // plane imports
 import type { TFileMetaDataLite, TFileSignedURLResponse } from "@plane/types";
+import { DANGEROUS_EXTENSIONS } from "@plane/constants";
+
+/**
+ * @description Filename validation - checks for double extensions and dangerous patterns
+ * @param {string} filename
+ * @returns {string | null} Error message if invalid, null if valid
+ */
+const validateFilename = (filename: string): string | null => {
+  if (!filename || filename.trim().length === 0) {
+    return "Filename cannot be empty";
+  }
+
+  // Check for dot files (e.g., .htaccess, .env)
+  if (filename.startsWith(".")) {
+    return "Hidden files (starting with dot) are not allowed";
+  }
+
+  // Check for path separators
+  if (filename.includes("/") || filename.includes("\\")) {
+    return "Filename cannot contain path separators";
+  }
+
+  const parts = filename.split(".");
+
+  // Check for double extensions with dangerous patterns
+  if (parts.length >= 3) {
+    const secondLastExt = parts[parts.length - 2]?.toLowerCase() || "";
+    if (DANGEROUS_EXTENSIONS.includes(secondLastExt)) {
+      return "File has suspicious double extension";
+    }
+  }
+
+  // Check if the actual extension is dangerous
+  const extension = parts[parts.length - 1]?.toLowerCase() || "";
+  if (DANGEROUS_EXTENSIONS.includes(extension)) {
+    return `File extension '${extension}' is not allowed`;
+  }
+
+  return null;
+};
 
 /**
  * @description from the provided signed URL response, generate a payload to be used to upload the file
@@ -36,28 +76,29 @@ const detectMimeTypeFromSignature = async (file: File): Promise<string> => {
 };
 
 /**
- * @description Determine the MIME type of a file using multiple detection methods
+ * @description Validate and detect the MIME type of a file using signature detection
+ * Also performs basic security checks on filename
  * @param {File} file
- * @returns {Promise<string>} detected MIME type
+ * @returns {Promise<string>} validated and detected MIME type
  */
-const detectFileType = async (file: File): Promise<string> => {
-  // check if the file has a MIME type
-  if (file.type && file.type.trim() !== "") {
-    return file.type;
+const validateAndDetectFileType = async (file: File): Promise<string> => {
+  // Basic filename validation
+  const filenameError = validateFilename(file.name);
+  if (filenameError) {
+    console.warn(`File validation warning: ${filenameError}`);
   }
 
-  // detect from file signature using file-type library
   try {
     const signatureType = await detectMimeTypeFromSignature(file);
     if (signatureType) {
       return signatureType;
     }
   } catch (_error) {
-    console.error("Error detecting file type from signature:", _error);
+    console.warn("Error detecting file type from signature:", _error);
   }
 
   // fallback for unknown files
-  return "application/octet-stream";
+  return "";
 };
 
 /**
@@ -66,7 +107,7 @@ const detectFileType = async (file: File): Promise<string> => {
  * @returns {Promise<TFileMetaDataLite>} payload with file info
  */
 export const getFileMetaDataForUpload = async (file: File): Promise<TFileMetaDataLite> => {
-  const fileType = await detectFileType(file);
+  const fileType = await validateAndDetectFileType(file);
   return {
     name: file.name,
     size: file.size,

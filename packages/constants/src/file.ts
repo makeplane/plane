@@ -12,3 +12,22 @@ export const ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE = {
   "image/png": [],
   "image/webp": [],
 };
+
+/**
+ * Dangerous file extensions that should be blocked
+ */
+export const DANGEROUS_EXTENSIONS = [
+  "exe",
+  "bat",
+  "cmd",
+  "sh",
+  "php",
+  "asp",
+  "aspx",
+  "jsp",
+  "cgi",
+  "dll",
+  "vbs",
+  "jar",
+  "ps1",
+];
