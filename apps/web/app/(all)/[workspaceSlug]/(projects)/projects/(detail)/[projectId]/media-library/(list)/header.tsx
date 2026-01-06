@@ -1,111 +1,191 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
-// ui
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import {  LayoutGrid, List, Search, Upload, X } from "lucide-react";
+
+// UI
 import { Button } from "@plane/propel/button";
-import { ArrowUpToLine, LayoutGrid, List, Search, X } from "lucide-react";
-import { Breadcrumbs, Header } from "@plane/ui";
-// components
+import { Breadcrumbs, Header, Tooltip } from "@plane/ui";
+
+// Components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-// hooks
+
+
+// Hooks
 import { useProject } from "@/hooks/store/use-project";
-// plane web
+import { usePlatformOS } from "@/hooks/use-platform-os";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { useMediaLibrary } from "./media-library-context";
 
-export const MediaLibraryListHeader = () => {
-  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
+
+/* ------------------------------------------------------------------ */
+/* TYPES */
+/* ------------------------------------------------------------------ */
+
+export enum MediaLayoutTypes {
+  LIST = "list",
+  GRID = "grid",
+}
+
+type LayoutItem = {
+  key: MediaLayoutTypes;
+  i18n_title: string;
+};
+
+type Props = {
+  layouts?: LayoutItem[];
+  selectedLayout?: MediaLayoutTypes;
+};
+
+/* ------------------------------------------------------------------ */
+/* DEFAULTS */
+/* ------------------------------------------------------------------ */
+
+const DEFAULT_LAYOUTS: LayoutItem[] = [
+  { key: MediaLayoutTypes.GRID, i18n_title: "Grid" },
+  { key: MediaLayoutTypes.LIST, i18n_title: "List" },
+];
+
+/* ------------------------------------------------------------------ */
+/* COMPONENT */
+/* ------------------------------------------------------------------ */
+
+export const MediaLibraryListHeader: React.FC<Props> = ({
+  layouts = DEFAULT_LAYOUTS,
+  selectedLayout = MediaLayoutTypes.GRID,
+}) => {
+  const { isMobile } = usePlatformOS();
+  const { openUpload } = useMediaLibrary();
   const { loader } = useProject();
+
+  const { workspaceSlug, projectId } = useParams() as {
+    workspaceSlug: string;
+    projectId: string;
+  };
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
+
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
-  const { openUpload } = useMediaLibrary();
+
+  /* ------------------------------------------------------------------ */
+  /* SYNC QUERY */
+  /* ------------------------------------------------------------------ */
 
   useEffect(() => {
     setQuery(searchParams.get("q") ?? "");
   }, [searchParams]);
 
   const updateQuery = useCallback(
-    (key: string, value: string) => {
+    (key: string, value?: string) => {
       const params = new URLSearchParams(searchParams.toString());
-      params.set(key, value);
+
+      if (value) params.set(key, value);
+      else params.delete(key);
+
       router.replace(`${pathname}?${params.toString()}`);
     },
     [pathname, router, searchParams]
   );
 
+  const handleLayoutChange = (layout: MediaLayoutTypes) => {
+    updateQuery("view", layout);
+  };
+
+  /* ------------------------------------------------------------------ */
+  /* RENDER */
+  /* ------------------------------------------------------------------ */
+
   return (
     <Header className="relative">
+      {/* LEFT */}
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString() ?? ""} projectId={projectId?.toString() ?? ""} />
-          <Breadcrumbs.Item component={<BreadcrumbLink label="Media Library" isLast />} />
+          <CommonProjectBreadcrumbs
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+          />
+          <Breadcrumbs.Item
+            component={<BreadcrumbLink label="Media Library" isLast />}
+          />
         </Breadcrumbs>
       </Header.LeftItem>
-      <div className="pointer-events-auto absolute left-1/2 top-1/2 w-[300px] -translate-x-1/2 -translate-y-1/2 sm:w-[400px]">
+
+      {/* CENTER SEARCH */}
+      <div className="pointer-events-auto absolute left-1/2 top-1/2 w-[320px] -translate-x-1/2 -translate-y-1/2">
         <div className="relative">
-          <Search className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-300" />
+          <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-300" />
           <input
             type="text"
             placeholder="Search media"
             className="h-8 w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-8 text-center text-xs text-custom-text-100 placeholder:text-custom-text-300 focus:outline-none"
             value={query}
-            onChange={(event) => {
-              const nextValue = event.target.value;
-              setQuery(nextValue);
-              updateQuery("q", nextValue);
+            onChange={(e) => {
+              setQuery(e.target.value);
+              updateQuery("q", e.target.value);
             }}
           />
-          {query.length > 0 ? (
+          {query && (
             <button
               type="button"
               onClick={() => {
                 setQuery("");
-                updateQuery("q", "");
+                updateQuery("q");
               }}
               className="absolute right-2 top-1/2 -translate-y-1/2 text-custom-text-300 hover:text-custom-text-100"
-              aria-label="Clear search"
             >
               <X className="h-4 w-4" />
             </button>
-          ) : null}
+          )}
         </div>
       </div>
+
+      {/* RIGHT */}
       <Header.RightItem>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button variant="primary" size="sm" className="gap-1.5" onClick={openUpload}>
-            <ArrowUpToLine className="h-3.5 w-3.5" />
+        <div className="flex items-center gap-2">
+          {/* Layout Toggle */}
+          <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
+            {layouts.map((layout) => (
+              <Tooltip
+                key={layout.key}
+                tooltipContent={layout.i18n_title}
+                isMobile={isMobile}
+              >
+                <button
+                  type="button"
+                  onClick={() => handleLayoutChange(layout.key)}
+                  className={`grid h-[22px] w-7 place-items-center rounded transition ${
+                    selectedLayout === layout.key
+                      ? "bg-custom-background-100 shadow-custom-shadow-2xs"
+                      : "hover:bg-custom-background-100"
+                  }`}
+                >
+                  {layout.key === MediaLayoutTypes.GRID ? (
+                    <LayoutGrid size={14} strokeWidth={2} className="text-custom-text-100" />
+                  ) : (
+                    <List  size={14} strokeWidth={2} className="text-custom-text-100" />
+                  )}
+                </button>
+              </Tooltip>
+            ))}
+          </div>
+           {/* Upload */}
+          <Button
+            variant="primary"
+            size="sm"
+            className="gap-1.5"
+            onClick={openUpload}
+          >
+            <Upload size={16} className="h-3.5 w-3.5" />
             Upload
           </Button>
-          <div className="flex items-center rounded-full border border-custom-border-200 bg-custom-background-90 p-1">
-            <button
-              type="button"
-              onClick={() => updateQuery("view", "grid")}
-              aria-label="Grid view"
-              className={`rounded-full p-2 transition ${
-                viewMode === "grid"
-                  ? "bg-custom-background-100 text-custom-text-100 shadow-sm"
-                  : "text-custom-text-300 hover:text-custom-text-200"
-              }`}
-            >
-              <LayoutGrid className="h-3.5 w-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => updateQuery("view", "list")}
-              aria-label="List view"
-              className={`rounded-full p-2 transition ${
-                viewMode === "list"
-                  ? "bg-custom-background-100 text-custom-text-100 shadow-sm"
-                  : "text-custom-text-300 hover:text-custom-text-200"
-              }`}
-            >
-              <List className="h-3.5 w-3.5" />
-            </button>
-          </div>
         </div>
       </Header.RightItem>
     </Header>
