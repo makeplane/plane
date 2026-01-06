@@ -24,14 +24,15 @@ from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.db.models import (
     UserFavorite,
     DeployBoard,
+    ProjectUserProperty,
     Intake,
-    IssueUserProperty,
     Project,
     ProjectIdentifier,
     ProjectMember,
     ProjectNetwork,
     State,
     DEFAULT_STATES,
+    UserFavorite,
     Workspace,
     WorkspaceMember,
 )
@@ -250,8 +251,6 @@ class ProjectViewSet(BaseViewSet):
                 member=request.user,
                 role=ROLE.ADMIN.value,
             )
-            # Also create the issue property for the user
-            _ = IssueUserProperty.objects.create(project_id=serializer.data["id"], user=request.user)
 
             if serializer.data["project_lead"] is not None and str(serializer.data["project_lead"]) != str(
                 request.user.id
@@ -260,11 +259,6 @@ class ProjectViewSet(BaseViewSet):
                     project_id=serializer.data["id"],
                     member_id=serializer.data["project_lead"],
                     role=ROLE.ADMIN.value,
-                )
-                # Also create the issue property for the user
-                IssueUserProperty.objects.create(
-                    project_id=serializer.data["id"],
-                    user_id=serializer.data["project_lead"],
                 )
 
             State.objects.bulk_create(

@@ -509,7 +509,7 @@ export class ProjectStore implements IProjectStore {
       runInAction(() => {
         set(this.projectMap, [projectId, "sort_order"], viewProps?.sort_order);
       });
-      const response = await this.projectService.setProjectView(workspaceSlug, projectId, viewProps);
+      const response = await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, viewProps);
       return response;
     } catch (error) {
       runInAction(() => {
