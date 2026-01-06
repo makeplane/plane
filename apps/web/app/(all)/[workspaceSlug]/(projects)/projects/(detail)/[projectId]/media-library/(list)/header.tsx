@@ -40,7 +40,6 @@ type LayoutItem = {
 
 type Props = {
   layouts?: LayoutItem[];
-  selectedLayout?: MediaLayoutTypes;
 };
 
 /* ------------------------------------------------------------------ */
@@ -58,7 +57,6 @@ const DEFAULT_LAYOUTS: LayoutItem[] = [
 
 export const MediaLibraryListHeader: React.FC<Props> = ({
   layouts = DEFAULT_LAYOUTS,
-  selectedLayout = MediaLayoutTypes.GRID,
 }) => {
   const { isMobile } = usePlatformOS();
   const { openUpload } = useMediaLibrary();

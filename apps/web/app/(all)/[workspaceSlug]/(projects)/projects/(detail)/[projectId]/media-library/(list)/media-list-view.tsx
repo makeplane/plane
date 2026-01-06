@@ -9,9 +9,15 @@ type TMediaSection = {
   items: TMediaItem[];
 };
 
-const MediaListRow = ({ item }: { item: TMediaItem }) => (
+const MediaListRow = ({
+  item,
+  getItemHref,
+}: {
+  item: TMediaItem;
+  getItemHref?: (item: TMediaItem) => string;
+}) => (
   <Link
-    href={`./${encodeURIComponent(item.id)}`}
+    href={getItemHref ? getItemHref(item) : `./${encodeURIComponent(item.id)}`}
     className="grid w-full items-center gap-4 rounded-lg border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-left text-xs text-custom-text-300 hover:border-custom-border-300"
     style={{ gridTemplateColumns: "140px minmax(200px, 2fr) 1fr 1fr 1fr 1fr" }}
   >
@@ -46,7 +52,13 @@ const MediaListRow = ({ item }: { item: TMediaItem }) => (
   </Link>
 );
 
-const MediaListSection = ({ section }: { section: TMediaSection }) => (
+const MediaListSection = ({
+  section,
+  getItemHref,
+}: {
+  section: TMediaSection;
+  getItemHref?: (item: TMediaItem) => string;
+}) => (
   <section className="flex flex-col gap-3">
     <div className="text-sm font-semibold text-custom-text-100">{section.title}</div>
     <div
@@ -62,16 +74,22 @@ const MediaListSection = ({ section }: { section: TMediaSection }) => (
     </div>
     <div className="flex flex-col gap-3">
       {section.items.map((item) => (
-        <MediaListRow key={`${section.title}-${item.id}`} item={item} />
+        <MediaListRow key={`${section.title}-${item.id}`} item={item} getItemHref={getItemHref} />
       ))}
     </div>
   </section>
 );
 
-export const MediaListView = ({ sections }: { sections: TMediaSection[] }) => (
+export const MediaListView = ({
+  sections,
+  getItemHref,
+}: {
+  sections: TMediaSection[];
+  getItemHref?: (item: TMediaItem) => string;
+}) => (
   <div className="flex flex-col gap-8 p-10">
     {sections.map((section) => (
-      <MediaListSection key={section.title} section={section} />
+      <MediaListSection key={section.title} section={section} getItemHref={getItemHref} />
     ))}
   </div>
 );
