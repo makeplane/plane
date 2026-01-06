@@ -44,7 +44,7 @@ export const MEDIA_ITEMS: TMediaItem[] = [
     primaryTag: "Practice",
     secondaryTag: "Event",
     itemsCount: 64,
-    mediaType: "video",
+    mediaType: "image",
     thumbnail:
       "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80",
     videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
@@ -140,7 +140,7 @@ export const MEDIA_ITEMS: TMediaItem[] = [
     primaryTag: "Game",
     secondaryTag: "Event",
     itemsCount: 44,
-    mediaType: "video",
+    mediaType: "image",
     thumbnail:
       "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80",
     videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
@@ -204,7 +204,7 @@ export const MEDIA_ITEMS: TMediaItem[] = [
     primaryTag: "Scrimmage",
     secondaryTag: "Event",
     itemsCount: 33,
-    mediaType: "video",
+    mediaType: "image",
     thumbnail:
       "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1200&q=80",
     videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",

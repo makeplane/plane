@@ -3,8 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Calendar, Clock, FileText, User } from "lucide-react";
-import { MEDIA_ITEMS, TMediaItem } from "../(list)/media-items";
+import { ArrowLeft, Calendar, FileText, User } from "lucide-react";
+import type { TMediaItem } from "../(list)/media-items";
+import { MEDIA_ITEMS } from "../(list)/media-items";
 import { loadUploadedMediaItems } from "../(list)/media-uploads";
 
 const MediaDetailPage = () => {
@@ -47,14 +48,13 @@ const MediaDetailPage = () => {
   return (
     <div className="flex flex-col gap-6 px-3 py-3">
       <div className="flex items-start justify-between gap-4">
-         <Link
+        <Link
           href={`/${workspaceSlug}/projects/${projectId}/media-library`}
-          className="inline-flex items-center gap-2 rounded-full border border-custom-border-200 px-4 py-1 text-xs text-custom-text-300 hover:text-custom-text-100"
+          className="inline-flex items-center gap-2 rounded-full px-4 py-1 text-xs text-custom-text-300 hover:text-custom-text-100"
         >
           <ArrowLeft className="h-3.8 w-3.8" />
         </Link>
         <div className="flex items-center gap-3">
-        
           <div className="flex items-center gap-2 rounded-full border border-custom-border-200 bg-custom-background-100 px-1 py-1 text-[11px] text-custom-text-300">
             <button
               type="button"
@@ -76,7 +76,6 @@ const MediaDetailPage = () => {
             </button>
           </div>
         </div>
-       
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
@@ -86,15 +85,11 @@ const MediaDetailPage = () => {
               <video controls poster={item.thumbnail} className="h-full w-full object-contain">
                 <source src={item.videoSrc ?? ""} type="video/mp4" />
               </video>
-
             </div>
-
-
           ) : item.mediaType === "image" ? (
             <div className="overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90">
-              <img src={item.thumbnail} alt={item.title} className="h-full w-full object-cover" />
+              <img src={item.thumbnail} alt={item.title} className="h-[505px] w-full object-cover" />
             </div>
-
           ) : (
             <div className="flex h-80 flex-col items-center justify-center gap-3 rounded-lg border border-custom-border-200 bg-custom-background-90 text-custom-text-300">
               <div className="flex flex-col items-center gap-2 text-sm">
@@ -121,8 +116,6 @@ const MediaDetailPage = () => {
           </div>
           <hr className="border-t border-custom-border-200" />
         </div>
-
-
 
         <div className="flex flex-col gap-4 rounded-2xl border border-custom-border-200 bg-custom-background-100 p-4">
           <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
