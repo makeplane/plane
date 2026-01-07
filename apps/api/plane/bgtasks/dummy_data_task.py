@@ -219,7 +219,7 @@ def create_pages(workspace, project, user_id, pages_count):
     Faker.seed(0)
 
     pages = []
-    for _ in range(0, pages_count):
+    for index in range(0, pages_count):
         text = fake.text(max_nb_chars=60000)
         pages.append(
             Page(
@@ -231,13 +231,14 @@ def create_pages(workspace, project, user_id, pages_count):
                 description_html=f"<p>{text}</p>",
                 archived_at=None,
                 is_locked=False,
+                sort_order=Page.DEFAULT_SORT_ORDER * index + 10000,
             )
         )
     # Bulk create pages
     pages = Page.objects.bulk_create(pages, ignore_conflicts=True)
     # Add Page to project
     ProjectPage.objects.bulk_create(
-        [ProjectPage(page=page, project=project, workspace=workspace) for page in pages],
+        [ProjectPage(page=page, project=project, workspace=workspace, sort_order=page.sort_order) for page in pages],
         batch_size=1000,
     )
 

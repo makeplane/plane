@@ -4,10 +4,11 @@ from django.conf import settings
 from django.utils import timezone
 
 # Django imports
-from django.db import models
+from django.db import connection, models, transaction
 
 # Module imports
 from plane.utils.html_processor import strip_tags
+from plane.utils.uuid import convert_uuid_to_integer
 
 from .base import BaseModel
 
@@ -90,13 +91,21 @@ class Page(BaseModel):
         if not self._state.adding:
             original = Page.objects.get(pk=self.pk)
             if original.access != self.access:
-                # Get the project pages for the page and update the sort order
-                project_pages = list(ProjectPage.objects.filter(page=self).select_related("project"))
-                for project_page in project_pages:
-                    project_page.sort_order = self._get_sort_order(project_page.project)
-                # Bulk update all project pages in a single query
-                if project_pages:
-                    ProjectPage.objects.bulk_update(project_pages, ["sort_order"])
+                with transaction.atomic():
+                    # Get the project pages for the page and update the sort order
+                    project_pages = list(ProjectPage.objects.filter(page=self).select_related("project"))
+
+                    # Acquire advisory locks for all projects to prevent race conditions
+                    for project_page in project_pages:
+                        lock_key = convert_uuid_to_integer(project_page.project_id)
+                        with connection.cursor() as cursor:
+                            cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
+
+                    for project_page in project_pages:
+                        project_page.sort_order = self._get_sort_order(project_page.project)
+                    # Bulk update all project pages in a single query
+                    if project_pages:
+                        ProjectPage.objects.bulk_update(project_pages, ["sort_order"])
 
         super(Page, self).save(*args, **kwargs)
 
@@ -201,10 +210,21 @@ class ProjectPage(BaseModel):
 
     def save(self, *args, **kwargs):
         # Set sort_order for new project pages
-        if self._state.adding and self.sort_order == self.DEFAULT_SORT_ORDER:
-            self.sort_order = self._get_sort_order()
+        if self._state.adding:
+            with transaction.atomic():
+                # Create a lock for this specific project using a transaction-level advisory lock
+                # This ensures only one transaction per project can execute this code at a time
+                # The lock is automatically released when the transaction ends
+                lock_key = convert_uuid_to_integer(self.project_id)
 
-        super(ProjectPage, self).save(*args, **kwargs)
+                with connection.cursor() as cursor:
+                    # Get an exclusive transaction-level lock using the project ID as the lock key
+                    cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
+
+                self.sort_order = self._get_sort_order()
+                super(ProjectPage, self).save(*args, **kwargs)
+        else:
+            super(ProjectPage, self).save(*args, **kwargs)
 
 
 class PageVersion(BaseModel):

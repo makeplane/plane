@@ -14,7 +14,7 @@ def update_projectpage_sort_order(apps, schema_editor):
         for index, page in enumerate(pages):
             page.sort_order = index * 10000
 
-        ProjectPage.objects.bulk_update(pages, ["sort_order"])
+        ProjectPage.objects.bulk_update(pages, ["sort_order"], batch_size=3000)
 
 class Migration(migrations.Migration):
 
