@@ -400,7 +400,7 @@ export class ProjectPageStore implements IProjectPageStore {
       } else {
         pages = response.results || [];
         paginationData = {
-          nextCursor: response.next_cursor ?? undefined,
+          nextCursor: response.next_cursor ?? null,
           hasNextPage: response.next_page_results ?? false,
           totalResults: response.total_results ?? 0,
         };

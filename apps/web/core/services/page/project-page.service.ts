@@ -23,16 +23,11 @@ export class ProjectPageService extends APIService {
   async fetchAll(
     workspaceSlug: string,
     projectId: string,
-    queries?: Record<string, string | number>,
-    config = {}
+    queries?: Record<string, string | number>
   ): Promise<TPagePaginatedResponse> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`,
-      {
-        params: queries,
-      },
-      config
-    )
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, {
+      params: queries,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
