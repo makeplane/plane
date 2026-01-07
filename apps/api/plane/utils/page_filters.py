@@ -78,6 +78,7 @@ def date_filter(page_filter, date_term, queries):
                         page_filter[f"{date_term}__lte"] = date_query[0]
             else:
                 page_filter[f"{date_term}__contains"] = date_query[0]
+    return page_filter
 
 
 def filter_created_by(params, page_filter, method, prefix=""):
