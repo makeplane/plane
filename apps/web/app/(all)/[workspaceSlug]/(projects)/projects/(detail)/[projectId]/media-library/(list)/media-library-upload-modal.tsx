@@ -8,7 +8,7 @@ import { useMediaLibrary } from "./media-library-context";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
 
-type TUploadItem = { 
+type TUploadItem = {
   id: string;
   file: File;
   status: "ready" | "failed";
@@ -121,12 +121,7 @@ export const MediaLibraryUploadModal = () => {
             <UploadCloud className="mx-auto h-10 w-10 text-custom-text-300" />
             <div className="mt-2 text-sm font-medium text-custom-text-100">Drag and drop your files here</div>
             <div className="mt-1 text-xs text-custom-text-300">or</div>
-            <Button
-              variant="primary"
-              size="sm"
-              className="mt-3"
-              onClick={() => inputRef.current?.click()}
-            >
+            <Button variant="primary" size="sm" className="mt-3" onClick={() => inputRef.current?.click()}>
               Browse Files
             </Button>
             <input

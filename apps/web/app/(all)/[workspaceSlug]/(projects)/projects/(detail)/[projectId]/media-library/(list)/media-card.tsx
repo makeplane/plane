@@ -5,15 +5,7 @@ import { Calendar, Clock, FileText } from "lucide-react";
 
 import type { TMediaItem } from "./media-items";
 
-export const MediaCard = ({
-  item,
-  href,
-  className,
-}: {
-  item: TMediaItem;
-  href: string;
-  className?: string;
-}) => (
+export const MediaCard = ({ item, href, className }: { item: TMediaItem; href: string; className?: string }) => (
   <Link href={href} className="text-left">
     <div
       className={`group w-[220px] flex-shrink-0 sm:w-[240px] md:w-[260px] lg:w-[280px] xl:w-[300px] ${
@@ -32,6 +24,7 @@ export const MediaCard = ({
             src={item.videoSrc ?? ""}
             poster={item.thumbnail}
             muted
+            loop
             playsInline
             preload="metadata"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"

@@ -18,13 +18,7 @@ type TMediaSection = {
   items: TMediaItem[];
 };
 
-const MediaRow = ({
-  section,
-  getItemHref,
-}: {
-  section: TMediaSection;
-  getItemHref: (item: TMediaItem) => string;
-}) => {
+const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHref: (item: TMediaItem) => string }) => {
   const rowId = useId().replace(/:/g, "");
   const prevId = `media-prev-${rowId}`;
   const nextId = `media-next-${rowId}`;
@@ -93,10 +87,7 @@ export default function MediaLibraryListPage() {
   const query = (searchParams.get("q") ?? "").trim().toLowerCase();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
   const allItems = useMemo(() => [...uploadedItems, ...MEDIA_ITEMS], [uploadedItems]);
-  const mediaCount = useMemo(
-    () => allItems.length,
-    [allItems]
-  );
+  const mediaCount = useMemo(() => allItems.length, [allItems]);
   const uploadedSection = useMemo(
     () => (uploadedItems.length > 0 ? [{ title: "Uploads", items: uploadedItems }] : []),
     [uploadedItems]
@@ -146,7 +137,7 @@ export default function MediaLibraryListPage() {
         <div className="text-xs text-custom-text-300">{mediaCount} items</div>
       </div> */}
 
-      <div className="flex flex-col gap-8 p-3">
+      <div className="flex flex-col gap-8 px-6 py-4">
         {filteredSections.length === 0 ? (
           <div className="rounded-lg border border-dashed border-custom-border-200 bg-custom-background-100 p-6 text-center text-sm text-custom-text-300">
             No media matches your search.
@@ -155,11 +146,7 @@ export default function MediaLibraryListPage() {
           <MediaListView sections={filteredSections} getItemHref={getItemHref} />
         ) : (
           filteredSections.map((section) => (
-            <MediaRow
-              key={section.title}
-              section={section}
-              getItemHref={getItemHref}
-            />
+            <MediaRow key={section.title} section={section} getItemHref={getItemHref} />
           ))
         )}
       </div>
