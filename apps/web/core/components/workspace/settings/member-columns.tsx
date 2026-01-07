@@ -49,12 +49,12 @@ export function NameColumn(props: NameProps) {
           <div className="flex items-center gap-x-4 gap-y-2 w-72 justify-between">
             <div className="flex items-center gap-x-2 gap-y-2 flex-1">
               {isSuspended ? (
-                <div className="bg-layer-1 rounded-full p-0.5">
-                  <SuspendedUserIcon className="h-4 w-4 text-placeholder" />
+                <div className="bg-layer-1 rounded-full">
+                  <SuspendedUserIcon className="size-6 text-placeholder" />
                 </div>
               ) : avatar_url && avatar_url.trim() !== "" ? (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex h-6 w-6 items-center justify-center rounded-full capitalize text-on-color">
+                  <span className="relative flex size-6 items-center justify-center rounded-full capitalize text-on-color">
                     <img
                       src={getFileURL(avatar_url)}
                       className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
@@ -64,7 +64,7 @@ export function NameColumn(props: NameProps) {
                 </Link>
               ) : (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex h-4 w-4 text-11 items-center justify-center rounded-full  capitalize text-tertiary bg-layer-3">
+                  <span className="relative flex size-6 text-11 items-center justify-center rounded-full  capitalize text-tertiary bg-layer-3">
                     {(email ?? display_name ?? "?")[0]}
                   </span>
                 </Link>
