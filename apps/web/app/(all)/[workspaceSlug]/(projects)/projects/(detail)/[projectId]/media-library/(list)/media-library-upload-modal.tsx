@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FileImage, FileText, FileVideo, UploadCloud, X } from "lucide-react";
 import { Button, ToggleSwitch } from "@plane/ui";
 import type { TMediaItem } from "./media-items";
@@ -20,7 +20,7 @@ const getTitleFromFile = (fileName: string) => fileName.replace(/\.[^/.]+$/, "")
 export const MediaLibraryUploadModal = () => {
   const { isUploadOpen, closeUpload, addUploadedItem } = useMediaLibrary();
   const [isDragging, setIsDragging] = useState(false);
-  const [allowMultiple, setAllowMultiple] = useState(true);
+  const [allowMultiple, setAllowMultiple] = useState(false);
   const [uploads, setUploads] = useState<TUploadItem[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -30,6 +30,12 @@ export const MediaLibraryUploadModal = () => {
     if (inputRef.current) inputRef.current.value = "";
     closeUpload();
   };
+
+  useEffect(() => {
+    if (isUploadOpen) {
+      setAllowMultiple(false);
+    }
+  }, [isUploadOpen]);
 
   const addFiles = (files: File[]) => {
     if (files.length === 0) return;
