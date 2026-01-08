@@ -1,0 +1,17 @@
+{
+	servers {
+		trusted_proxies static 0.0.0.0
+	}
+}
+
+:3000 {
+	root * /usr/share/caddy/html
+	try_files {path} /index.html
+	file_server
+
+	# Access logs to stdout (default in Caddy)
+	log {
+		output stdout
+		format console
+	}
+}
