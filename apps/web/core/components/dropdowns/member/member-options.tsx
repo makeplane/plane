@@ -11,7 +11,7 @@ import { CheckIcon, SearchIcon, SuspendedUserIcon } from "@plane/propel/icons";
 import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
 import type { IUserLite } from "@plane/types";
 import { Avatar } from "@plane/ui";
-import { cn, getFileURL } from "@plane/utils";
+import { cn, getFileURL, sortByCurrentUserThenSelected } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
@@ -26,6 +26,7 @@ interface Props {
   optionsClassName?: string;
   placement: Placement | undefined;
   referenceElement: HTMLButtonElement | null;
+  value?: string[] | string | null;
 }
 
 export const MemberOptions = observer(function MemberOptions(props: Props) {
@@ -37,6 +38,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
     optionsClassName = "",
     placement,
     referenceElement,
+    value,
   } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -111,8 +113,11 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
     })
     .filter((o) => !!o);
 
-  const filteredOptions =
-    query === "" ? options : options?.filter((o) => o?.query.toLowerCase().includes(query.toLowerCase()));
+  const filteredOptions = sortByCurrentUserThenSelected(
+    query === "" ? options : options?.filter((o) => o?.query.toLowerCase().includes(query.toLowerCase())),
+    value,
+    currentUser?.id
+  );
 
   return createPortal(
     <Combobox.Options data-prevent-outside-click static>
