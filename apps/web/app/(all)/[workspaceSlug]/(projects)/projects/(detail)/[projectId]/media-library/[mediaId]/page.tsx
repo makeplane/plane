@@ -47,15 +47,15 @@ const MediaDetailPage = () => {
 
   return (
     <div className="flex flex-col gap-6 px-3 py-3">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-center justify-between gap-4">
         <Link
           href={`/${workspaceSlug}/projects/${projectId}/media-library`}
           className="inline-flex items-center gap-2 rounded-full px-4 py-1 text-xs text-custom-text-300 hover:text-custom-text-100"
         >
-          <ArrowLeft className="h-3.8 w-3.8" />
+          <ArrowLeft className="size-md h-3.2 w-3.2" />
         </Link>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 rounded-full border border-custom-border-200 bg-custom-background-100 px-1 py-1 text-[11px] text-custom-text-300">
+          <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-1 py-1 text-[11px] text-custom-text-300">
             <button
               type="button"
               className="rounded-full border border-custom-border-200 px-3 py-1 hover:text-custom-text-100"
