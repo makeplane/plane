@@ -33,7 +33,6 @@ from plane.db.models import (
     DEFAULT_STATES,
     Workspace,
     WorkspaceMember,
-    IntakeIssue,
 )
 from plane.db.models.intake import IntakeIssueStatus
 from plane.utils.host import base_host
@@ -155,7 +154,11 @@ class ProjectViewSet(BaseViewSet):
             )
             .annotate(
                 intake_count=Count(
-                    "project_intakeissue", filter=Q(project_intakeissue__status=IntakeIssueStatus.PENDING.value)
+                    "project_intakeissue",
+                    filter=Q(
+                        project_intakeissue__status=IntakeIssueStatus.PENDING.value,
+                        project_intakeissue__deleted_at__isnull=True,
+                    ),
                 )
             )
             .annotate(inbox_view=F("intake_view"))
