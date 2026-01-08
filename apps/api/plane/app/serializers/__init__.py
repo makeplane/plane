@@ -128,3 +128,4 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+from .media_library import MediaLibraryPackageCreateSerializer

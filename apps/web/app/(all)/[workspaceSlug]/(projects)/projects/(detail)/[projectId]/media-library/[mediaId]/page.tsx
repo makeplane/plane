@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, Calendar, FileText, User } from "lucide-react";
 import type { TMediaItem } from "../(list)/media-items";
-import { MEDIA_ITEMS } from "../(list)/media-items";
 import { loadUploadedMediaItems } from "../(list)/media-uploads";
 import { TagsSection } from "./tags-section";
 
@@ -33,7 +32,7 @@ const MediaDetailPage = () => {
     };
   }, []);
 
-  const allItems = useMemo(() => [...uploadedItems, ...MEDIA_ITEMS], [uploadedItems]);
+  const allItems = useMemo(() => [...uploadedItems, ...libraryItems], [libraryItems, uploadedItems]);
   const item = useMemo(() => {
     if (!mediaId) return null;
     const normalizedId = decodeURIComponent(mediaId);

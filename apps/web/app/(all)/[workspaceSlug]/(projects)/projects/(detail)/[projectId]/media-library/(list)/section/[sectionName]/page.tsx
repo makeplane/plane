@@ -6,15 +6,11 @@ import { useParams, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
 import { MediaCard } from "../../media-card";
-import type { TMediaItem } from "../../media-items";
-import { MEDIA_ITEMS } from "../../media-items";
+import type { TMediaItem, TMediaSection } from "../../media-items";
+import { groupMediaItemsByTag } from "../../media-items";
 import { useMediaLibrary } from "../../media-library-context";
 import { MediaListView } from "../../media-list-view";
-
-type TMediaSection = {
-  title: string;
-  items: TMediaItem[];
-};
+import { useMediaLibraryItems } from "../../use-media-library-items";
 
 const getItemHref = (workspaceSlug: string, projectId: string, item: TMediaItem) =>
   `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
@@ -26,6 +22,7 @@ export default function MediaLibrarySectionPage() {
     sectionName: string;
   };
   const { uploadedItems } = useMediaLibrary();
+  const { items: libraryItems } = useMediaLibraryItems(workspaceSlug, projectId);
   const searchParams = useSearchParams();
   const query = (searchParams.get("q") ?? "").trim().toLowerCase();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
@@ -36,13 +33,8 @@ export default function MediaLibrarySectionPage() {
     [uploadedItems]
   );
   const mediaSections = useMemo<TMediaSection[]>(
-    () => [
-      ...uploadedSection,
-      { title: "Game", items: MEDIA_ITEMS.slice(0, 6) },
-      { title: "Practices", items: MEDIA_ITEMS.slice(3, 9) },
-      { title: "Latest", items: MEDIA_ITEMS.slice(1, 7) },
-    ],
-    [uploadedSection]
+    () => [...uploadedSection, ...groupMediaItemsByTag(libraryItems)],
+    [libraryItems, uploadedSection]
   );
 
   const section = useMemo(() => {

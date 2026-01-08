@@ -39,6 +39,7 @@ from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
+from plane.utils.media_library import delete_project_library
 
 
 class ProjectViewSet(BaseViewSet):
@@ -418,6 +419,10 @@ class ProjectViewSet(BaseViewSet):
         ):
             project = Project.objects.get(pk=pk, workspace__slug=slug)
             project.delete()
+            try:
+                delete_project_library(str(pk))
+            except Exception as exc:
+                log_exception(exc)
             webhook_activity.delay(
                 event="project",
                 verb="deleted",

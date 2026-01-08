@@ -53,3 +53,4 @@ from .asset import (
     GenericAssetUpdateSerializer,
     FileAssetSerializer,
 )
+from .media_library import MediaPackageCreateSerializer

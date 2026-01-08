@@ -8,15 +8,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { MediaCard } from "./media-card";
-import type { TMediaItem } from "./media-items";
-import { MEDIA_ITEMS } from "./media-items";
+import type { TMediaItem, TMediaSection } from "./media-items";
+import { groupMediaItemsByTag } from "./media-items";
 import { useMediaLibrary } from "./media-library-context";
 import { MediaListView } from "./media-list-view";
-
-type TMediaSection = {
-  title: string;
-  items: TMediaItem[];
-};
+import { useMediaLibraryItems } from "./use-media-library-items";
 
 const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHref: (item: TMediaItem) => string }) => {
   const rowId = useId().replace(/:/g, "");
@@ -86,20 +82,14 @@ export default function MediaLibraryListPage() {
   const searchParams = useSearchParams();
   const query = (searchParams.get("q") ?? "").trim().toLowerCase();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
-  // const allItems = useMemo(() => [...uploadedItems, ...MEDIA_ITEMS], [uploadedItems]);
-  // const mediaCount = useMemo(() => allItems.length, [allItems]);
+  const { items: libraryItems } = useMediaLibraryItems(workspaceSlug, projectId);
   const uploadedSection = useMemo(
     () => (uploadedItems.length > 0 ? [{ title: "Uploads", items: uploadedItems }] : []),
     [uploadedItems]
   );
   const mediaSections = useMemo(
-    () => [
-      ...uploadedSection,
-      { title: "Game", items: MEDIA_ITEMS.slice(0, 6) },
-      { title: "Practices", items: MEDIA_ITEMS.slice(3, 9) },
-      { title: "Latest", items: MEDIA_ITEMS.slice(1, 7) },
-    ],
-    [uploadedSection]
+    () => [...uploadedSection, ...groupMediaItemsByTag(libraryItems)],
+    [libraryItems, uploadedSection]
   );
   const filteredSections = useMemo(() => {
     if (!query) return mediaSections;
