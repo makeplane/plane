@@ -109,7 +109,11 @@ export class InboxIssueStore implements IInboxIssueStore {
         if (previousStatus === EInboxIssueStatus.PENDING && inboxIssue.status !== EInboxIssueStatus.PENDING) {
           // Changed from PENDING to something else: decrement
           const currentCount = this.store.projectRoot.project.projectMap[this.projectId]?.intake_count ?? 0;
-          set(this.store.projectRoot.project.projectMap, [this.projectId, "intake_count"], Math.max(0, currentCount - 1));
+          set(
+            this.store.projectRoot.project.projectMap,
+            [this.projectId, "intake_count"],
+            Math.max(0, currentCount - 1)
+          );
         } else if (previousStatus !== EInboxIssueStatus.PENDING && inboxIssue.status === EInboxIssueStatus.PENDING) {
           // Changed from something else to PENDING: increment
           const currentCount = this.store.projectRoot.project.projectMap[this.projectId]?.intake_count ?? 0;
@@ -148,7 +152,11 @@ export class InboxIssueStore implements IInboxIssueStore {
         // Decrement intake_count if the issue was PENDING
         if (wasPending) {
           const currentCount = this.store.projectRoot.project.projectMap[this.projectId]?.intake_count ?? 0;
-          set(this.store.projectRoot.project.projectMap, [this.projectId, "intake_count"], Math.max(0, currentCount - 1));
+          set(
+            this.store.projectRoot.project.projectMap,
+            [this.projectId, "intake_count"],
+            Math.max(0, currentCount - 1)
+          );
         }
       });
     } catch {
@@ -179,7 +187,11 @@ export class InboxIssueStore implements IInboxIssueStore {
         // Handle intake_count transitions
         if (previousStatus === EInboxIssueStatus.PENDING && inboxIssue.status === EInboxIssueStatus.SNOOZED) {
           const currentCount = this.store.projectRoot.project.projectMap[this.projectId]?.intake_count ?? 0;
-          set(this.store.projectRoot.project.projectMap, [this.projectId, "intake_count"], Math.max(0, currentCount - 1));
+          set(
+            this.store.projectRoot.project.projectMap,
+            [this.projectId, "intake_count"],
+            Math.max(0, currentCount - 1)
+          );
         } else if (previousStatus !== EInboxIssueStatus.PENDING && inboxIssue.status === EInboxIssueStatus.PENDING) {
           const currentCount = this.store.projectRoot.project.projectMap[this.projectId]?.intake_count ?? 0;
           set(this.store.projectRoot.project.projectMap, [this.projectId, "intake_count"], currentCount + 1);
