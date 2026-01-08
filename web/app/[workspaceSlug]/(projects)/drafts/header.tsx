@@ -45,11 +45,14 @@ export const WorkspaceDraftHeader = observer(() => {
                 link={<BreadcrumbLink label={`Drafts`} icon={<PenSquare className="h-4 w-4 text-custom-text-300" />} />}
               />
             </Breadcrumbs>
-            {paginationInfo?.total_count && paginationInfo?.total_count > 0 ? (
-              <CountChip count={paginationInfo?.total_count} />
-            ) : (
-              <></>
-            )}
+            {(paginationInfo?.total_count !== undefined && paginationInfo?.total_count !== null && paginationInfo?.total_count > 0) || 
+             paginationInfo?.next_page_results ? (
+              <CountChip 
+                count={paginationInfo?.total_count} 
+                hasMore={paginationInfo?.next_page_results}
+                perPage={100}
+              />
+            ) : null}
           </div>
         </Header.LeftItem>
 

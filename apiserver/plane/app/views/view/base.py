@@ -250,14 +250,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
                         "labels__id",
@@ -403,13 +395,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         issue_queryset = (
             self.get_queryset(filters)
             .filter(**filtersWithoutCustomProperties)
-            .annotate(
-                cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
-                )
-            )
         )
 
         # check for the project member role, if the role is 5 then check for the guest_view_all_features if it is true then show all the issues else show only the issues created by the user
@@ -492,6 +477,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                             archived_at__isnull=True,
                             is_draft=False,
                         ),
+                        skip_count=True,
                     )
             # Group Paginate
             else:
@@ -521,6 +507,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                         archived_at__isnull=True,
                         is_draft=False,
                     ),
+                    skip_count=True,
                 )
         else:
             # List Paginate
@@ -531,6 +518,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 on_results=lambda issues: issue_on_results(
                     group_by=group_by, issues=issues, sub_group_by=sub_group_by
                 ),
+                skip_count=True,
             )
 
 

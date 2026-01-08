@@ -104,6 +104,7 @@ class OffsetPaginator:
         max_limit=MAX_LIMIT,
         max_offset=None,
         on_results=None,
+        skip_count=False,
     ):
         # Key tuple and remove `-` if descending order by
         self.key = (
@@ -117,6 +118,7 @@ class OffsetPaginator:
         self.max_limit = max_limit
         self.max_offset = max_offset
         self.on_results = on_results
+        self.skip_count = skip_count
 
     def get_result(self, limit=1000, cursor=None):
         # offset is page #
@@ -165,11 +167,12 @@ class OffsetPaginator:
         if self.on_results:
             results = self.on_results(results)
 
-        # Count the queryset
-        count = queryset.count()
-
-        # Optionally, calculate the total count and max_hits if needed
-        max_hits = math.ceil(count / limit)
+        if self.skip_count:
+            count = None
+            max_hits = None
+        else:
+            count = queryset.count()
+            max_hits = math.ceil(count / limit)
 
         # Return the cursor results
         return CursorResult(
@@ -284,26 +287,27 @@ class GroupedOffsetPaginator(OffsetPaginator):
             page > 0,
         )
 
-        # Count the queryset
-        count = queryset.count()
-
-        # Optionally, calculate the total count and max_hits if needed
-        # This might require adjustments based on specific use cases
-        if results:
-            max_hits = math.ceil(
-                queryset.values(self.group_by_field_name)
-                .annotate(
-                    count=Count(
-                        "id",
-                        filter=self.count_filter,
-                        distinct=True,
-                    )
-                )
-                .order_by("-count")[0]["count"]
-                / limit
-            )
+        if self.skip_count:
+            count = None
+            max_hits = None
         else:
-            max_hits = 0
+            count = queryset.count()
+            if results:
+                max_hits = math.ceil(
+                    queryset.values(self.group_by_field_name)
+                    .annotate(
+                        count=Count(
+                            "id",
+                            filter=self.count_filter,
+                            distinct=True,
+                        )
+                    )
+                    .order_by("-count")[0]["count"]
+                    / limit
+                )
+            else:
+                max_hits = 0
+
         return CursorResult(
             results=results,
             next=next_cursor,
@@ -526,26 +530,27 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
             page > 0,
         )
 
-        # Count the queryset
-        count = queryset.count()
-
-        # Optionally, calculate the total count and max_hits if needed
-        # This might require adjustments based on specific use cases
-        if results:
-            max_hits = math.ceil(
-                queryset.values(self.group_by_field_name)
-                .annotate(
-                    count=Count(
-                        "id",
-                        filter=self.count_filter,
-                        distinct=True,
-                    )
-                )
-                .order_by("-count")[0]["count"]
-                / limit
-            )
+        if self.skip_count:
+            count = None
+            max_hits = None
         else:
-            max_hits = 0
+            count = queryset.count()
+            if results:
+                max_hits = math.ceil(
+                    queryset.values(self.group_by_field_name)
+                    .annotate(
+                        count=Count(
+                            "id",
+                            filter=self.count_filter,
+                            distinct=True,
+                        )
+                    )
+                    .order_by("-count")[0]["count"]
+                    / limit
+                )
+            else:
+                max_hits = 0
+
         return CursorResult(
             results=results,
             next=next_cursor,
@@ -756,6 +761,7 @@ class BasePaginator:
         sub_group_by_field_name=None,
         sub_group_by_fields=None,
         count_filter=None,
+        skip_count=False,
         **paginator_kwargs,
     ):
         """Paginate the request"""
@@ -783,6 +789,7 @@ class BasePaginator:
                         sub_group_by_fields
                     )
 
+            paginator_kwargs["skip_count"] = skip_count
             paginator = paginator_cls(**paginator_kwargs)
 
         try:

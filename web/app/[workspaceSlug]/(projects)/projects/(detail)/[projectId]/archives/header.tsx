@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
@@ -26,13 +26,24 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
-    issues: { getGroupIssueCount },
+    issues: { getGroupIssueCount, getPaginationData },
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { currentProjectDetails, loader } = useProject();
   // hooks
   const { isMobile } = usePlatformOS();
 
   const issueCount = getGroupIssueCount(undefined, undefined, false);
+  const paginationData = getPaginationData(undefined, undefined);
+
+  const displayCount = useMemo(() => {
+    if (issueCount !== null && issueCount !== undefined && issueCount > 0) {
+      return issueCount.toString();
+    }
+    if (paginationData?.nextPageResults) {
+      return "100+";
+    }
+    return null;
+  }, [issueCount, paginationData?.nextPageResults]);
 
   const activeTabBreadcrumbDetail =
     PROJECT_ARCHIVES_BREADCRUMB_LIST[activeTab as keyof typeof PROJECT_ARCHIVES_BREADCRUMB_LIST];
@@ -80,14 +91,16 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
               />
             )}
           </Breadcrumbs>
-          {activeTab === "issues" && issueCount && issueCount > 0 ? (
+          {activeTab === "issues" && displayCount ? (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in project's archived`}
+              tooltipContent={issueCount !== null && issueCount !== undefined 
+                ? `There are ${issueCount} ${issueCount > 1 ? "issues" : "issue"} in project's archived`
+                : `There are ${displayCount} issues in project's archived`}
               position="bottom"
             >
               <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">
-                {issueCount}
+                {displayCount}
               </span>
             </Tooltip>
           ) : null}

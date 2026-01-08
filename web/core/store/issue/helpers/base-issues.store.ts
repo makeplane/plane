@@ -80,7 +80,7 @@ export interface IBaseIssuesStore {
     groupId: string | undefined,
     subGroupId: string | undefined,
     isSubGroupCumulative: boolean
-  ) => number | undefined;
+  ) => number | null | undefined;
 
   addIssueToCycle: (
     workspaceSlug: string,
@@ -435,16 +435,26 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       groupId: string | undefined,
       subGroupId: string | undefined,
       isSubGroupCumulative: boolean
-    ): number | undefined => {
+    ): number | null | undefined => {
       if (isSubGroupCumulative && subGroupId) {
         const groupIssuesKeys = Object.keys(this.groupedIssueCount);
         let subGroupCumulativeCount = 0;
+        let hasNullCount = false;
 
         for (const groupKey of groupIssuesKeys) {
-          if (groupKey.includes(`_${subGroupId}`)) subGroupCumulativeCount += this.groupedIssueCount[groupKey];
+          if (groupKey.includes(`_${subGroupId}`)) {
+            const count = this.groupedIssueCount[groupKey];
+            // If any group has null count (N+1 strategy), we can't calculate cumulative
+            if (count === null) {
+              hasNullCount = true;
+            } else if (count !== undefined) {
+              subGroupCumulativeCount += count;
+            }
+          }
         }
 
-        return subGroupCumulativeCount;
+        // If any count was null, return null to indicate N+1 mode
+        return hasNullCount ? null : subGroupCumulativeCount;
       }
 
       return get(this.groupedIssueCount, [getGroupKey(groupId, subGroupId)]);

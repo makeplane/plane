@@ -1,16 +1,32 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useMemo } from "react";
 //
 import { cn } from "@/helpers/common.helper";
 
 type TCountChip = {
-  count: string | number;
+  count: string | number | null | undefined;
   className?: string;
+  hasMore?: boolean;
+  perPage?: number;
 };
 
 export const CountChip: FC<TCountChip> = (props) => {
-  const { count, className = "" } = props;
+  const { count, className = "", hasMore = false, perPage = 100 } = props;
+
+  const displayCount = useMemo(() => {
+    if (count !== null && count !== undefined) {
+      return count;
+    }
+    if (hasMore) {
+      return `${perPage}+`;
+    }
+    return null;
+  }, [count, hasMore, perPage]);
+
+  if (displayCount === null) {
+    return null;
+  }
 
   return (
     <div
@@ -19,7 +35,7 @@ export const CountChip: FC<TCountChip> = (props) => {
         className
       )}
     >
-      {count}
+      {displayCount}
     </div>
   );
 };
