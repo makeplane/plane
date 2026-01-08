@@ -12,7 +12,7 @@ export const KanbanIssueBlockLoader = forwardRef(function KanbanIssueBlockLoader
   return (
     <span
       ref={ref}
-      className={cn(`block bg-layer-1 rounded-sm`, { " animate-pulse": shouldAnimate })}
+      className={cn(`block bg-[var(--illustration-fill-secondary)] rounded-sm`, { " animate-pulse": shouldAnimate })}
       style={{ height: `${cardHeight}px` }}
     />
   );

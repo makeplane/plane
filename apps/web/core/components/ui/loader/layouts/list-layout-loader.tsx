@@ -17,23 +17,26 @@ export const ListLoaderItemRow = forwardRef(function ListLoaderItemRow(
   return (
     <Row
       ref={ref}
-      className={cn("flex items-center justify-between h-11 py-3 ", {
+      className={cn("flex items-center justify-between h-11 py-3", {
         "bg-surface-1": renderForPlaceHolder,
-        "border-b border-subtle": !renderForPlaceHolder,
+        "border-t border-subtle": !renderForPlaceHolder,
       })}
     >
       <div className="flex items-center gap-3">
         <span
-          className={cn("h-5 w-10 bg-layer-1 rounded-sm", {
+          className={cn("h-5 w-10 bg-[var(--illustration-fill-tertiary)] rounded-sm", {
             "animate-pulse": shouldAnimate,
             "bg-surface-2": renderForPlaceHolder,
           })}
         />
         <span
-          className={cn(`h-5 w-${getRandomLength(["32", "52", "72"])} bg-layer-1 rounded-sm`, {
-            "animate-pulse": shouldAnimate,
-            "bg-surface-2": renderForPlaceHolder,
-          })}
+          className={cn(
+            `h-5 w-${getRandomLength(["32", "52", "72"])} bg-[var(--illustration-fill-tertiary)] rounded-sm`,
+            {
+              "animate-pulse": shouldAnimate,
+              "bg-surface-2": renderForPlaceHolder,
+            }
+          )}
         />
       </div>
       <div className="flex items-center gap-2">
@@ -42,14 +45,14 @@ export const ListLoaderItemRow = forwardRef(function ListLoaderItemRow(
             {getRandomInt(1, 2) % 2 === 0 ? (
               <span
                 key={index}
-                className={cn("h-5 w-5 bg-layer-1 rounded-sm", {
+                className={cn("h-5 w-5 bg-[var(--illustration-fill-tertiary)] rounded-sm", {
                   "animate-pulse": shouldAnimate,
                   "bg-surface-2": renderForPlaceHolder,
                 })}
               />
             ) : (
               <span
-                className={cn("h-5 w-16 bg-layer-1 rounded-sm", {
+                className={cn("h-5 w-16 bg-[var(--illustration-fill-tertiary)] rounded-sm", {
                   "animate-pulse": shouldAnimate,
                   "bg-surface-2": renderForPlaceHolder,
                 })}

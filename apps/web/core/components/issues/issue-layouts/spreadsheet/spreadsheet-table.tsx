@@ -138,7 +138,9 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
       </tbody>
       {canLoadMoreIssues && (
         <tfoot ref={setIntersectionElement}>
-          <SpreadsheetIssueRowLoader columnCount={displayPropertiesCount} />
+          {Array.from({ length: 3 }).map((_, index) => (
+            <SpreadsheetIssueRowLoader key={index} columnCount={displayPropertiesCount} />
+          ))}
         </tfoot>
       )}
     </table>
