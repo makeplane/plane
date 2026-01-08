@@ -18,6 +18,7 @@ type TUploadItem = {
 const getTitleFromFile = (fileName: string) => fileName.replace(/\.[^/.]+$/, "");
 
 export const MediaLibraryUploadModal = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { isUploadOpen, closeUpload, addUploadedItem, uploadedItems } = useMediaLibrary();
   const [title, setTitle] = useState("");
   const [isDragging, setIsDragging] = useState(false);

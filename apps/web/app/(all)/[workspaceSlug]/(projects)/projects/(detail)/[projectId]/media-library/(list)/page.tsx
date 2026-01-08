@@ -7,10 +7,10 @@ import { Navigation, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import { MediaCard } from "./media-card";
 import type { TMediaItem } from "./media-items";
 import { MEDIA_ITEMS } from "./media-items";
 import { useMediaLibrary } from "./media-library-context";
-import { MediaCard } from "./media-card";
 import { MediaListView } from "./media-list-view";
 
 type TMediaSection = {
@@ -86,8 +86,8 @@ export default function MediaLibraryListPage() {
   const searchParams = useSearchParams();
   const query = (searchParams.get("q") ?? "").trim().toLowerCase();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
-  const allItems = useMemo(() => [...uploadedItems, ...MEDIA_ITEMS], [uploadedItems]);
-  const mediaCount = useMemo(() => allItems.length, [allItems]);
+  // const allItems = useMemo(() => [...uploadedItems, ...MEDIA_ITEMS], [uploadedItems]);
+  // const mediaCount = useMemo(() => allItems.length, [allItems]);
   const uploadedSection = useMemo(
     () => (uploadedItems.length > 0 ? [{ title: "Uploads", items: uploadedItems }] : []),
     [uploadedItems]

@@ -5,11 +5,11 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
+import { MediaCard } from "../../media-card";
 import type { TMediaItem } from "../../media-items";
 import { MEDIA_ITEMS } from "../../media-items";
-import { MediaCard } from "../../media-card";
-import { MediaListView } from "../../media-list-view";
 import { useMediaLibrary } from "../../media-library-context";
+import { MediaListView } from "../../media-list-view";
 
 type TMediaSection = {
   title: string;
