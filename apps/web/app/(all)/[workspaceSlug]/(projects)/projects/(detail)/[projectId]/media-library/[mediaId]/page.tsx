@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { ArrowLeft, Calendar, FileText, User } from "lucide-react";
 import type { TMediaItem } from "../(list)/media-items";
 import { loadUploadedMediaItems } from "../(list)/media-uploads";
+import { useMediaLibraryItems } from "../(list)/use-media-library-items";
 import { TagsSection } from "./tags-section";
 
 const MediaDetailPage = () => {
@@ -15,6 +16,7 @@ const MediaDetailPage = () => {
     projectId: string;
   };
   const [uploadedItems, setUploadedItems] = useState<TMediaItem[]>([]);
+  const { items: libraryItems } = useMediaLibraryItems(workspaceSlug, projectId);
   const [activeTab, setActiveTab] = useState<"details" | "tags">("details");
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
