@@ -213,7 +213,7 @@ export class Storage {
     const response = await issueService.getIssuesForSync(this.workspaceSlug, projectId, queryParams);
 
     await addIssuesBulk(response.results, BATCH_SIZE);
-    if (response.total_pages > 1) {
+    if (response.total_pages !== null && response.total_pages > 1) {
       const promiseArray = [];
       for (let i = 1; i < response.total_pages; i++) {
         queryParams.cursor = `${PAGE_SIZE}:${i}:0`;
@@ -239,7 +239,7 @@ export class Storage {
 
     activeSpan?.setAttributes({
       projectId: projectId,
-      count: response.total_count,
+      count: response.total_count ?? undefined,
     });
   };
 

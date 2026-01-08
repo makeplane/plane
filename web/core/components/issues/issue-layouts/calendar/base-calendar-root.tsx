@@ -121,7 +121,10 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   );
 
   const getGroupIssueCount = useCallback(
-    (groupId: string | undefined) => issues?.getGroupIssueCount(groupId, undefined, false),
+    (groupId: string | undefined) => {
+      const count = issues?.getGroupIssueCount(groupId, undefined, false);
+      return count === null ? undefined : count;
+    },
     [issues?.getGroupIssueCount]
   );
 
