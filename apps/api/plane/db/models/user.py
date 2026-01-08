@@ -84,6 +84,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_email_verified = models.BooleanField(default=False)
     is_password_autoset = models.BooleanField(default=False)
+    is_password_reset_required = models.BooleanField(default=False)
 
     # random token generated
     token = models.CharField(max_length=64, blank=True)
