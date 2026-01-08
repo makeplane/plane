@@ -1,5 +1,9 @@
 "use client";
 
+import { API_BASE_URL } from "@plane/constants";
+
+import type { TMediaArtifact } from "@/services/media-library.service";
+
 export type TMediaItem = {
   id: string;
   title: string;
@@ -17,245 +21,183 @@ export type TMediaItem = {
   docs: string[];
 };
 
-export const MEDIA_ITEMS: TMediaItem[] = [
-  {
-    id: "ml-001",
-    title: "Warriors vs Falcons",
-    author: "Markos Gogoulos",
-    createdAt: "12/13/2024",
-    views: 135,
-    duration: "0:24",
-    primaryTag: "Game",
-    secondaryTag: "Event",
-    itemsCount: 100,
-    mediaType: "video",
-    thumbnail:
-      "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Shotlist", "Releases"],
-  },
-  {
-    id: "ml-002",
-    title: "Tigers vs Hawks",
-    author: "Markos Gogoulos",
-    createdAt: "11/22/2024",
-    views: 92,
-    duration: "0:11",
-    primaryTag: "Practice",
-    secondaryTag: "Event",
-    itemsCount: 64,
-    mediaType: "image",
-    thumbnail:
-      "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Coach Notes"],
-  },
-  {
-    id: "ml-003",
-    title: "Spartans vs Kings",
-    author: "Markos Gogoulos",
-    createdAt: "10/05/2024",
-    views: 71,
-    duration: "0:06",
-    primaryTag: "Scrimmage",
-    secondaryTag: "Event",
-    itemsCount: 40,
-    mediaType: "video",
-    thumbnail:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Rights"],
-  },
-  {
-    id: "ml-004",
-    title: "Lions vs Bears",
-    author: "Markos Gogoulos",
-    createdAt: "09/18/2024",
-    views: 118,
-    duration: "0:08",
-    primaryTag: "Game",
-    secondaryTag: "Event",
-    itemsCount: 88,
-    mediaType: "video",
-    thumbnail:
-      "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Brand Guide", "Usage"],
-  },
-  {
-    id: "ml-005",
-    title: "Storm vs Rangers",
-    author: "Markos Gogoulos",
-    createdAt: "09/02/2024",
-    views: 56,
-    duration: "0:12",
-    primaryTag: "Practice",
-    secondaryTag: "Event",
-    itemsCount: 52,
-    mediaType: "video",
-    thumbnail:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Audio Notes"],
-  },
-  {
-    id: "ml-006",
-    title: "Sharks vs Dolphins",
-    author: "Markos Gogoulos",
-    createdAt: "08/18/2024",
-    views: 42,
-    duration: "0:18",
-    primaryTag: "Practice",
-    secondaryTag: "Event",
-    itemsCount: 31,
-    mediaType: "video",
-    thumbnail:
-      "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Logo Pack"],
-  },
-  {
-    id: "ml-007",
-    title: "Eagles vs Wolves",
-    author: "Markos Gogoulos",
-    createdAt: "07/30/2024",
-    views: 64,
-    duration: "0:50",
-    primaryTag: "Tournament",
-    secondaryTag: "Event",
-    itemsCount: 72,
-    mediaType: "video",
-    thumbnail:
-      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Color Grade"],
-  },
-  {
-    id: "ml-008",
-    title: "Chargers vs Panthers",
-    author: "Markos Gogoulos",
-    createdAt: "06/12/2024",
-    views: 48,
-    duration: "0:25",
-    primaryTag: "Game",
-    secondaryTag: "Event",
-    itemsCount: 44,
-    mediaType: "image",
-    thumbnail:
-      "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Release"],
-  },
-  {
-    id: "ml-009",
-    title: "Rockets vs Giants",
-    author: "Markos Gogoulos",
-    createdAt: "05/28/2024",
-    views: 37,
-    duration: "0:27",
-    primaryTag: "Match",
-    secondaryTag: "Event",
-    itemsCount: 28,
-    mediaType: "video",
-    thumbnail:
-      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Drone Permit"],
-  },
-  {
-    id: "ml-010",
-    title: "Titans vs Bulls",
-    author: "Jamie Patel",
-    createdAt: "05/01/2024",
-    views: 94,
-    duration: "0:32",
-    primaryTag: "Practice",
-    secondaryTag: "Event",
-    itemsCount: 55,
-    mediaType: "video",
-    thumbnail:
-      "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Call Sheet", "Location Map", "Talent List"],
-  },
-  {
-    id: "ml-011",
-    title: "United vs City",
-    author: "Priya Singh",
-    createdAt: "04/12/2024",
-    views: 126,
-    duration: "0:41",
-    primaryTag: "Tournament",
-    secondaryTag: "Event",
-    itemsCount: 97,
-    mediaType: "video",
-    thumbnail:
-      "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Press Notes", "Sponsor Callouts"],
-  },
-  {
-    id: "ml-012",
-    title: "Royals vs Knights",
-    author: "Alex Rivera",
-    createdAt: "03/19/2024",
-    views: 58,
-    duration: "0:22",
-    primaryTag: "Scrimmage",
-    secondaryTag: "Event",
-    itemsCount: 33,
-    mediaType: "image",
-    thumbnail:
-      "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Strategy Notes", "Sponsor Mentions"],
-  },
-  {
-    id: "ml-013",
-    title: "Phoenix vs Coyotes",
-    author: "Taylor Brooks",
-    createdAt: "02/28/2024",
-    views: 62,
-    duration: "0:28",
-    primaryTag: "Game",
-    secondaryTag: "Event",
-    itemsCount: 80,
-    mediaType: "video",
-    thumbnail:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Lighting Cue Sheet", "Audio Mix Notes"],
-  },
-  {
-    id: "ml-014",
-    title: "Raiders vs Pirates",
-    author: "Morgan Lee",
-    createdAt: "02/03/2024",
-    views: 75,
-    duration: "0:19",
-    primaryTag: "Match",
-    secondaryTag: "Event",
-    itemsCount: 46,
-    mediaType: "video",
-    thumbnail:
-      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Crowd Release", "Audio Layer Notes"],
-  },
-  {
-    id: "ml-015",
-    title: "Raiders vs Pirates",
-    author: "Morgan Lee",
-    createdAt: "02/03/2024",
-    views: 75,
-    duration: "0:19",
-    primaryTag: "Match",
-    secondaryTag: "Event",
-    itemsCount: 46,
-    mediaType: "video",
-    thumbnail:
-      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80",
-    videoSrc: "https://vjs.zencdn.net/v/oceans.mp4",
-    docs: ["Crowd Release", "Audio Layer Notes"],
-  },
-];
+export type TMediaSection = {
+  title: string;
+  items: TMediaItem[];
+};
+
+type TArtifactContext = {
+  workspaceSlug: string;
+  projectId: string;
+  packageId: string;
+};
+
+const VIDEO_FORMATS = new Set(["mp4", "m3u8"]);
+const IMAGE_FORMATS = new Set(["jpg", "jpeg", "png", "svg", "thumbnail"]);
+
+const resolveArtifactPath = (path: string) => {
+  if (!path) return "";
+  if (/^https?:\/\//i.test(path)) return path;
+  return `/${path.replace(/^\/+/, "")}`;
+};
+
+const joinApiPath = (base: string, path: string) => `${base?.replace(/\/$/, "") ?? ""}${path}`;
+
+const buildArtifactFileUrl = (context: TArtifactContext, artifactName: string) =>
+  joinApiPath(
+    API_BASE_URL,
+    `/api/workspaces/${context.workspaceSlug}/projects/${context.projectId}/media-library/packages/${context.packageId}/artifacts/${encodeURIComponent(
+      artifactName
+    )}/file/`
+  );
+
+const resolveArtifactSource = (artifact: TMediaArtifact, context?: TArtifactContext) => {
+  const rawPath = artifact.path ?? "";
+  if (rawPath && /^https?:\/\//i.test(rawPath)) return rawPath;
+  if (context && artifact.name) {
+    return buildArtifactFileUrl(context, artifact.name);
+  }
+  return resolveArtifactPath(rawPath);
+};
+
+const formatDateLabel = (value: string) => {
+  const parsed = Date.parse(value);
+  if (Number.isNaN(parsed)) return value;
+  return new Date(parsed).toLocaleDateString();
+};
+
+const getMetaObject = (meta: unknown) => {
+  if (meta && typeof meta === "object" && !Array.isArray(meta)) {
+    return meta as Record<string, unknown>;
+  }
+  return {};
+};
+
+const getMetaString = (meta: Record<string, unknown>, keys: string[], fallback = "") => {
+  for (const key of keys) {
+    const value = meta[key];
+    if (typeof value === "string" && value.trim()) return value;
+  }
+  return fallback;
+};
+
+const getMetaNumber = (meta: Record<string, unknown>, keys: string[], fallback = 0) => {
+  for (const key of keys) {
+    const value = meta[key];
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+    if (typeof value === "string" && value.trim()) {
+      const parsed = Number(value);
+      if (!Number.isNaN(parsed)) return parsed;
+    }
+  }
+  return fallback;
+};
+
+const getMetaStringArray = (meta: Record<string, unknown>, key: string) => {
+  const value = meta[key];
+  if (!Array.isArray(value)) return [];
+  return value.filter((entry): entry is string => typeof entry === "string");
+};
+
+const getMediaType = (format: string): TMediaItem["mediaType"] => {
+  if (VIDEO_FORMATS.has(format)) return "video";
+  if (IMAGE_FORMATS.has(format)) return "image";
+  return "document";
+};
+
+/** ✅ NEW: convert seconds to m:ss */
+const formatDuration = (seconds: number): string => {
+  if (!Number.isFinite(seconds) || seconds <= 0) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${String(secs).padStart(2, "0")}`;
+};
+
+export const mapArtifactsToMediaItems = (
+  artifacts: TMediaArtifact[],
+  context?: TArtifactContext
+): TMediaItem[] => {
+  const thumbnailByLink = new Map<string, string>();
+
+  for (const artifact of artifacts) {
+    const format = (artifact.format ?? "").toLowerCase();
+    if (!artifact.link || !IMAGE_FORMATS.has(format)) continue;
+    const isPreview = artifact.action === "preview" || format === "thumbnail";
+    if (isPreview) {
+      thumbnailByLink.set(artifact.link, resolveArtifactSource(artifact, context));
+    }
+  }
+
+  const sortedArtifacts = [...artifacts].sort((left, right) => {
+    const leftTime = Date.parse(left.created_at || left.updated_at || "");
+    const rightTime = Date.parse(right.created_at || right.updated_at || "");
+    if (Number.isNaN(leftTime) && Number.isNaN(rightTime)) return 0;
+    if (Number.isNaN(leftTime)) return 1;
+    if (Number.isNaN(rightTime)) return -1;
+    return rightTime - leftTime;
+  });
+
+  return sortedArtifacts.map((artifact) => {
+    const format = (artifact.format ?? "").toLowerCase();
+    const mediaType = getMediaType(format);
+    const meta = getMetaObject(artifact.meta);
+
+    const createdAt = formatDateLabel(artifact.created_at || artifact.updated_at || "");
+    const views = getMetaNumber(meta, ["views"], 0);
+
+    /** ✅ FIXED duration mapping */
+    const duration =
+      getMetaString(meta, ["duration"], "") ||
+      formatDuration(getMetaNumber(meta, ["duration_sec", "durationSec"], 0));
+
+    const primaryTag = getMetaString(meta, ["category", "sport", "program"], "Library");
+    const secondaryTag = getMetaString(meta, ["season", "level", "coach"], "Media");
+    const itemsCount = getMetaNumber(meta, ["itemsCount", "items_count"], 1);
+    const author = getMetaString(meta, ["coach", "author", "creator"], "Media Library");
+    const docs = getMetaStringArray(meta, "docs");
+
+    const resolvedPath = resolveArtifactSource(artifact, context);
+
+    const metaThumbnail = getMetaString(meta, ["thumbnail"], "");
+    const thumbnail = resolveArtifactPath(
+      metaThumbnail ||
+      thumbnailByLink.get(artifact.name) ||
+      (mediaType === "image" ? resolvedPath : "")
+    );
+
+    return {
+      id: artifact.name,
+      title: artifact.title,
+      author,
+      createdAt,
+      views,
+      duration,
+      primaryTag,
+      secondaryTag,
+      itemsCount,
+      mediaType,
+      thumbnail,
+      videoSrc: mediaType === "video" ? resolvedPath : undefined,
+      fileSrc: mediaType === "document" ? resolvedPath : undefined,
+      docs,
+    };
+  });
+};
+
+export const groupMediaItemsByTag = (
+  items: TMediaItem[],
+  fallbackTitle = "Library"
+): TMediaSection[] => {
+  const grouped = new Map<string, TMediaItem[]>();
+  for (const item of items) {
+    const key = item.primaryTag || fallbackTitle;
+    const group = grouped.get(key);
+    if (group) group.push(item);
+    else grouped.set(key, [item]);
+  }
+
+  return Array.from(grouped.entries()).map(([title, sectionItems]) => ({
+    title,
+    items: sectionItems,
+  }));
+};

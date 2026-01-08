@@ -8,6 +8,7 @@ import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 const ProjectDetailLayout = ({ children }: { children: ReactNode }) => {
   // router
   const { workspaceSlug, projectId } = useParams();
+
   return (
     <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()}>
       {children}

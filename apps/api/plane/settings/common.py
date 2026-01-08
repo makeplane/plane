@@ -206,6 +206,7 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 # Media Settings
 MEDIA_ROOT = "mediafiles"
 MEDIA_URL = "/media/"
+MEDIA_LIBRARY_ROOT = os.environ.get("MEDIA_LIBRARY_ROOT", os.path.join(BASE_DIR, "media-library"))
 
 # Internationalization
 LANGUAGE_CODE = "en-us"

@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, Calendar, FileText, User } from "lucide-react";
 import type { TMediaItem } from "../(list)/media-items";
-import { MEDIA_ITEMS } from "../(list)/media-items";
 import { loadUploadedMediaItems } from "../(list)/media-uploads";
+import { useMediaLibraryItems } from "../(list)/use-media-library-items";
 
 const MediaDetailPage = () => {
   const { mediaId, workspaceSlug, projectId } = useParams() as {
@@ -15,6 +15,7 @@ const MediaDetailPage = () => {
     projectId: string;
   };
   const [uploadedItems, setUploadedItems] = useState<TMediaItem[]>([]);
+  const { items: libraryItems } = useMediaLibraryItems(workspaceSlug, projectId);
 
   useEffect(() => {
     let isMounted = true;
@@ -30,7 +31,7 @@ const MediaDetailPage = () => {
     };
   }, []);
 
-  const allItems = useMemo(() => [...uploadedItems, ...MEDIA_ITEMS], [uploadedItems]);
+  const allItems = useMemo(() => [...uploadedItems, ...libraryItems], [libraryItems, uploadedItems]);
   const item = useMemo(() => {
     if (!mediaId) return null;
     const normalizedId = decodeURIComponent(mediaId);

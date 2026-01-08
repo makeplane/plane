@@ -30,6 +30,8 @@ from plane.db.models import (
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from .base import BaseAPIView
 from plane.utils.host import base_host
+from plane.utils.exception_logger import log_exception
+from plane.utils.media_library import delete_project_library
 from plane.api.serializers import (
     ProjectSerializer,
     ProjectCreateSerializer,
@@ -517,6 +519,10 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
         # Delete the user favorite cycle
         UserFavorite.objects.filter(entity_type="project", entity_identifier=pk, project_id=pk).delete()
         project.delete()
+        try:
+            delete_project_library(str(pk))
+        except Exception as exc:
+            log_exception(exc)
         webhook_activity.delay(
             event="project",
             verb="deleted",
