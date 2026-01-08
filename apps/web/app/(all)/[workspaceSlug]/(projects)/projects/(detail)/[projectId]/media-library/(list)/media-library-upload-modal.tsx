@@ -1,14 +1,14 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { FileImage, FileText, FileVideo, UploadCloud, X } from "lucide-react";
-import { Button } from "@plane/ui";
+import { Button, ToggleSwitch } from "@plane/ui";
 import type { TMediaItem } from "./media-items";
 import { useMediaLibrary } from "./media-library-context";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
 
-type TUploadItem = { 
+type TUploadItem = {
   id: string;
   file: File;
   status: "ready" | "failed";
@@ -18,21 +18,23 @@ type TUploadItem = {
 const getTitleFromFile = (fileName: string) => fileName.replace(/\.[^/.]+$/, "");
 
 export const MediaLibraryUploadModal = () => {
-  const { isUploadOpen, closeUpload, addUploadedItem, uploadedItems } = useMediaLibrary();
-  const [title, setTitle] = useState("");
+  const { isUploadOpen, closeUpload, addUploadedItem } = useMediaLibrary();
   const [isDragging, setIsDragging] = useState(false);
+  const [allowMultiple, setAllowMultiple] = useState(true);
   const [uploads, setUploads] = useState<TUploadItem[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const previewTitle = useMemo(() => {
-    if (title.trim() !== "") return title.trim();
-    if (uploads.length === 0) return "";
-    return getTitleFromFile(uploads[0].file.name);
-  }, [title, uploads]);
+  const handleClose = () => {
+    setUploads([]);
+    setIsDragging(false);
+    if (inputRef.current) inputRef.current.value = "";
+    closeUpload();
+  };
 
   const addFiles = (files: File[]) => {
     if (files.length === 0) return;
-    const nextItems = files.map((file) => {
+    const filesToAdd = allowMultiple ? files : files.slice(0, 1);
+    const nextItems = filesToAdd.map((file) => {
       const tooLarge = file.size > MAX_FILE_SIZE;
       return {
         id: `${file.name}-${file.size}-${file.lastModified}`,
@@ -41,7 +43,7 @@ export const MediaLibraryUploadModal = () => {
         error: tooLarge ? "File exceeds 100MB limit" : undefined,
       } as TUploadItem;
     });
-    setUploads((prev) => [...prev, ...nextItems]);
+    setUploads((prev) => (allowMultiple ? [...prev, ...nextItems] : nextItems));
   };
 
   const handleUpload = async () => {
@@ -57,7 +59,7 @@ export const MediaLibraryUploadModal = () => {
       const objectUrl = URL.createObjectURL(file);
       const newItem: TMediaItem = {
         id: `upload-${uploadedAt}-${index}-${file.name}`,
-        title: previewTitle || getTitleFromFile(file.name) || "Untitled Upload",
+        title: getTitleFromFile(file.name) || "Untitled Upload",
         author: "You",
         createdAt,
         views: 0,
@@ -74,7 +76,9 @@ export const MediaLibraryUploadModal = () => {
       await addUploadedItem(newItem, file);
     }
     setUploads([]);
-    setTitle("");
+    if (!allowMultiple) {
+      handleClose();
+    }
   };
 
   const getFileIcon = (file: File) => {
@@ -92,7 +96,7 @@ export const MediaLibraryUploadModal = () => {
           <h2 className="text-lg font-semibold text-custom-text-100">Upload Files</h2>
           <button
             type="button"
-            onClick={closeUpload}
+            onClick={handleClose}
             className="text-custom-text-300 hover:text-custom-text-100"
             aria-label="Close upload"
           >
@@ -133,11 +137,15 @@ export const MediaLibraryUploadModal = () => {
               ref={inputRef}
               type="file"
               accept="*/*"
-              multiple
+              multiple={allowMultiple}
               className="hidden"
-              onChange={(event) => addFiles(Array.from(event.target.files ?? []))}
+              onChange={(event) => {
+                addFiles(Array.from(event.target.files ?? []));
+                event.currentTarget.value = "";
+              }}
             />
           </div>
+
           <hr className="my-4 border-0 border-t border-custom-border-200/60" />
 
           {/* <div className="mt-4 flex flex-col gap-3 text-sm text-custom-text-200">
@@ -208,8 +216,24 @@ export const MediaLibraryUploadModal = () => {
 
         <div className="flex items-center justify-between border-t border-custom-border-200 px-5 py-3 text-xs text-custom-text-300">
           <span>Supported formats: All file types (Max size: 100MB)</span>
-          <div className="flex items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={closeUpload}>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-custom-text-300">Upload more</span>
+              <ToggleSwitch
+                value={allowMultiple}
+                onChange={() =>
+                  setAllowMultiple((prev) => {
+                    const next = !prev;
+                    if (!next && uploads.length > 1) {
+                      setUploads([uploads[0]]);
+                    }
+                    return next;
+                  })
+                }
+                size="sm"
+              />
+            </div>
+            <Button variant="neutral-primary" size="sm" onClick={handleClose}>
               Cancel
             </Button>
             <Button variant="primary" size="sm" onClick={handleUpload} disabled={uploads.length === 0}>
