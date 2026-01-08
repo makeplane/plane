@@ -94,6 +94,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     const previousData: Partial<TInboxIssue> = {
       status: this.status,
     };
+    const previousStatus = this.status;
 
     try {
       if (!this.issue.id) return;
@@ -101,7 +102,20 @@ export class InboxIssueStore implements IInboxIssueStore {
       const inboxIssue = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
         status: status,
       });
-      runInAction(() => set(this, "status", inboxIssue?.status));
+      runInAction(() => {
+        set(this, "status", inboxIssue?.status);
+
+        // Handle intake_count transitions
+        if (previousStatus === EInboxIssueStatus.PENDING && inboxIssue.status !== EInboxIssueStatus.PENDING) {
+          // Changed from PENDING to something else: decrement
+          const currentCount = this.store.projectRoot.project.projectMap[this.projectId]?.intake_count ?? 0;
+          set(this.store.projectRoot.project.projectMap, [this.projectId, "intake_count"], Math.max(0, currentCount - 1));
+        } else if (previousStatus !== EInboxIssueStatus.PENDING && inboxIssue.status === EInboxIssueStatus.PENDING) {
+          // Changed from something else to PENDING: increment
+          const currentCount = this.store.projectRoot.project.projectMap[this.projectId]?.intake_count ?? 0;
+          set(this.store.projectRoot.project.projectMap, [this.projectId, "intake_count"], currentCount + 1);
+        }
+      });
 
       // If issue accepted sync issue to local db
       if (status === EInboxIssueStatus.ACCEPTED) {
@@ -120,6 +134,7 @@ export class InboxIssueStore implements IInboxIssueStore {
       duplicate_to: this.duplicate_to,
       duplicate_issue_detail: this.duplicate_issue_detail,
     };
+    const wasPending = this.status === EInboxIssueStatus.PENDING;
     try {
       if (!this.issue.id) return;
       const inboxIssue = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
@@ -130,6 +145,11 @@ export class InboxIssueStore implements IInboxIssueStore {
         set(this, "status", inboxIssue?.status);
         set(this, "duplicate_to", inboxIssue?.duplicate_to);
         set(this, "duplicate_issue_detail", inboxIssue?.duplicate_issue_detail);
+        // Decrement intake_count if the issue was PENDING
+        if (wasPending) {
+          const currentCount = this.store.projectRoot.project.projectMap[this.projectId]?.intake_count ?? 0;
+          set(this.store.projectRoot.project.projectMap, [this.projectId, "intake_count"], Math.max(0, currentCount - 1));
+        }
       });
     } catch {
       runInAction(() => {
@@ -146,6 +166,7 @@ export class InboxIssueStore implements IInboxIssueStore {
       status: this.status,
       snoozed_till: this.snoozed_till,
     };
+    const previousStatus = this.status;
     try {
       if (!this.issue.id) return;
       const inboxIssue = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
@@ -155,6 +176,14 @@ export class InboxIssueStore implements IInboxIssueStore {
       runInAction(() => {
         set(this, "status", inboxIssue?.status);
         set(this, "snoozed_till", inboxIssue?.snoozed_till);
+        // Handle intake_count transitions
+        if (previousStatus === EInboxIssueStatus.PENDING && inboxIssue.status === EInboxIssueStatus.SNOOZED) {
+          const currentCount = this.store.projectRoot.project.projectMap[this.projectId]?.intake_count ?? 0;
+          set(this.store.projectRoot.project.projectMap, [this.projectId, "intake_count"], Math.max(0, currentCount - 1));
+        } else if (previousStatus !== EInboxIssueStatus.PENDING && inboxIssue.status === EInboxIssueStatus.PENDING) {
+          const currentCount = this.store.projectRoot.project.projectMap[this.projectId]?.intake_count ?? 0;
+          set(this.store.projectRoot.project.projectMap, [this.projectId, "intake_count"], currentCount + 1);
+        }
       });
     } catch {
       runInAction(() => {
