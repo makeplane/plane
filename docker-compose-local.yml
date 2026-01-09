@@ -134,6 +134,8 @@ services:
     command: ./bin/docker-entrypoint-api-local.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-1073741824}
     depends_on:
       - plane-db
       - plane-redis
@@ -155,6 +157,8 @@ services:
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-1073741824}
     depends_on:
       - api
       - plane-db
@@ -174,6 +178,8 @@ services:
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-1073741824}
     depends_on:
       - api
       - plane-db
@@ -193,6 +199,8 @@ services:
     command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
     env_file:
       - ./apps/api/.env
+    environment:
+      MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-1073741824}
     depends_on:
       - plane-db
       - plane-redis

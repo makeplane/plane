@@ -1,9 +1,11 @@
 # Python imports
 import json
+import logging
 import os
 import re
 import shutil
 import tempfile
+import subprocess
 from pathlib import Path
 
 # Django imports
@@ -16,6 +18,7 @@ from rest_framework.serializers import ValidationError
 MANIFEST_VERSION = 1
 
 _SEGMENT_RE = re.compile(r"^[A-Za-z0-9_-]+$")
+logger = logging.getLogger(__name__)
 
 
 def _now_iso() -> str:
@@ -119,3 +122,141 @@ def delete_project_library(project_id: str) -> bool:
         return False
     shutil.rmtree(root)
     return True
+
+
+class MediaLibraryTranscodeError(RuntimeError):
+    pass
+
+
+def transcode_mp4_to_hls(
+    file_obj,
+    output_dir: Path,
+    segment_seconds: int = 6,
+    thumbnail_path: Path | None = None,
+) -> tuple[Path, Path | None]:
+    if shutil.which("ffmpeg") is None:
+        raise MediaLibraryTranscodeError("ffmpeg is not installed.")
+
+    output_dir.mkdir(parents=True, exist_ok=False)
+    tmp_input_path = None
+    success = False
+
+    def _render_ffmpeg_error(exc: subprocess.CalledProcessError) -> str:
+        detail = (exc.stderr or exc.stdout or "").strip()
+        if detail:
+            detail = detail.replace("\n", " ")
+            if len(detail) > 500:
+                detail = f"{detail[:500]}..."
+        return detail
+
+    def _run_ffmpeg(cmd: list[str]) -> None:
+        subprocess.run(cmd, check=True, cwd=str(output_dir), capture_output=True, text=True)
+
+    def _reset_output_dir() -> None:
+        if not output_dir.exists():
+            return
+        for entry in output_dir.iterdir():
+            if entry.is_dir():
+                shutil.rmtree(entry, ignore_errors=True)
+            else:
+                try:
+                    entry.unlink()
+                except OSError:
+                    pass
+
+    try:
+        with tempfile.NamedTemporaryFile(dir=output_dir.parent, suffix=".mp4", delete=False) as handle:
+            tmp_input_path = Path(handle.name)
+            for chunk in file_obj.chunks():
+                handle.write(chunk)
+
+        playlist_name = "index.m3u8"
+        base_cmd = [
+            "ffmpeg",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-y",
+            "-i",
+            str(tmp_input_path),
+            "-hls_time",
+            str(segment_seconds),
+            "-hls_list_size",
+            "0",
+            "-hls_flags",
+            "independent_segments",
+            "-hls_segment_filename",
+            "segment_%05d.ts",
+            playlist_name,
+        ]
+
+        try:
+            _run_ffmpeg([*base_cmd[:7], "-c", "copy", *base_cmd[7:]])
+        except subprocess.CalledProcessError as exc:
+            detail = _render_ffmpeg_error(exc)
+            if detail:
+                logger.info("ffmpeg stream copy failed, falling back to encode: %s", detail)
+            else:
+                logger.info("ffmpeg stream copy failed, falling back to encode.")
+            _reset_output_dir()
+            encode_cmd = [
+                *base_cmd[:7],
+                "-c:v",
+                "libx264",
+                "-preset",
+                "veryfast",
+                "-c:a",
+                "aac",
+                "-b:a",
+                "128k",
+                *base_cmd[7:],
+            ]
+            _run_ffmpeg(encode_cmd)
+
+        created_thumbnail = None
+        if thumbnail_path:
+            try:
+                thumb_cmd = [
+                    "ffmpeg",
+                    "-hide_banner",
+                    "-loglevel",
+                    "error",
+                    "-y",
+                    "-ss",
+                    "00:00:00.000",
+                    "-i",
+                    str(tmp_input_path),
+                    "-frames:v",
+                    "1",
+                    "-q:v",
+                    "2",
+                    str(thumbnail_path),
+                ]
+                _run_ffmpeg(thumb_cmd)
+                created_thumbnail = thumbnail_path
+            except subprocess.CalledProcessError as exc:
+                detail = _render_ffmpeg_error(exc)
+                if detail:
+                    logger.error("ffmpeg thumbnail failed: %s", detail)
+                else:
+                    logger.error("ffmpeg thumbnail failed with exit code %s", exc.returncode)
+        success = True
+        return output_dir / playlist_name, created_thumbnail
+    except FileNotFoundError as exc:
+        logger.error("ffmpeg is not installed.", exc_info=exc)
+        raise MediaLibraryTranscodeError("ffmpeg is not installed.") from exc
+    except subprocess.CalledProcessError as exc:
+        detail = _render_ffmpeg_error(exc)
+        if detail:
+            logger.error("ffmpeg failed: %s", detail)
+            raise MediaLibraryTranscodeError(f"Video conversion failed: {detail}") from exc
+        logger.error("ffmpeg failed with exit code %s", exc.returncode)
+        raise MediaLibraryTranscodeError("Video conversion failed.") from exc
+    finally:
+        if tmp_input_path and tmp_input_path.exists():
+            try:
+                tmp_input_path.unlink()
+            except OSError:
+                pass
+        if not success and output_dir.exists():
+            shutil.rmtree(output_dir, ignore_errors=True)

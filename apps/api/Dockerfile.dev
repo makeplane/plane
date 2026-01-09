@@ -12,6 +12,7 @@ RUN apk --no-cache add \
     "libxslt" \
     "nodejs-current" \
     "xmlsec" \
+    "ffmpeg" \
     "libffi-dev" \
     "bash~=5.2" \
     "g++" \

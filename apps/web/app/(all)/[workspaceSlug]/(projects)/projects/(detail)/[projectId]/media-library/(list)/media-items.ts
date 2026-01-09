@@ -7,6 +7,7 @@ import type { TMediaArtifact } from "@/services/media-library.service";
 export type TMediaItem = {
   id: string;
   title: string;
+  format: string;
   author: string;
   createdAt: string;
   views: number;
@@ -138,7 +139,15 @@ export const mapArtifactsToMediaItems = (
     return rightTime - leftTime;
   });
 
-  return sortedArtifacts.map((artifact) => {
+  const displayArtifacts = sortedArtifacts.filter((artifact) => {
+    const format = (artifact.format ?? "").toLowerCase();
+    if ((artifact.action === "preview" || format === "thumbnail") && artifact.link) {
+      return false;
+    }
+    return true;
+  });
+
+  return displayArtifacts.map((artifact) => {
     const format = (artifact.format ?? "").toLowerCase();
     const mediaType = getMediaType(format);
     const meta = getMetaObject(artifact.meta);
@@ -166,12 +175,13 @@ export const mapArtifactsToMediaItems = (
       (mediaType === "image" ? resolvedPath : "")
     );
 
-    return {
-      id: artifact.name,
-      title: artifact.title,
-      author,
-      createdAt,
-      views,
+  return {
+    id: artifact.name,
+    title: artifact.title,
+    format,
+    author,
+    createdAt,
+    views,
       duration,
       primaryTag,
       secondaryTag,

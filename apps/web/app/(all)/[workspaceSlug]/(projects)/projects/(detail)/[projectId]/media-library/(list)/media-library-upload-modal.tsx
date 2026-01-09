@@ -4,10 +4,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { FileImage, FileText, FileVideo, UploadCloud, X } from "lucide-react";
 import { Button, ToggleSwitch } from "@plane/ui";
+import { useInstance } from "@/hooks/store/use-instance";
 import { MediaLibraryService } from "@/services/media-library.service";
 import { useMediaLibrary } from "./media-library-context";
 
-const MAX_FILE_SIZE = 100 * 1024 * 1024;
+const DEFAULT_MEDIA_LIBRARY_MAX_FILE_SIZE = 1024 * 1024 * 1024;
 const IMAGE_FORMATS = new Set(["jpg", "jpeg", "png", "svg"]);
 const VIDEO_FORMATS = new Set(["mp4", "m3u8"]);
 const DOC_FORMATS = new Set(["json", "csv", "pdf", "docx", "xlsx", "pptx", "txt"]);
@@ -15,7 +16,8 @@ const DOC_FORMATS = new Set(["json", "csv", "pdf", "docx", "xlsx", "pptx", "txt"
 type TUploadItem = {
   id: string;
   file: File;
-  status: "ready" | "failed";
+  status: "ready" | "uploading" | "failed";
+  progress?: number;
   error?: string;
 };
 
@@ -39,14 +41,34 @@ const resolveArtifactFormat = (fileName: string) => {
   return "";
 };
 
+const updateUploadEntry = (
+  prev: TUploadItem[],
+  id: string,
+  updates: Partial<TUploadItem>
+): TUploadItem[] => prev.map((item) => (item.id === id ? { ...item, ...updates } : item));
+
+const formatFileSize = (value: number) => {
+  if (!Number.isFinite(value) || value <= 0) return "0MB";
+  const sizeInMb = value / (1024 * 1024);
+  if (sizeInMb >= 1024) {
+    const sizeInGb = sizeInMb / 1024;
+    return `${sizeInGb.toFixed(sizeInGb >= 10 ? 0 : 1)}GB`;
+  }
+  return `${sizeInMb.toFixed(0)}MB`;
+};
+
 export const MediaLibraryUploadModal = () => {
   const { isUploadOpen, closeUpload, refreshLibrary } = useMediaLibrary();
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
+  const { config } = useInstance();
   const [isDragging, setIsDragging] = useState(false);
   const [allowMultiple, setAllowMultiple] = useState(false);
   const [uploads, setUploads] = useState<TUploadItem[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
+  const maxFileSize = config?.media_library_file_size_limit ?? DEFAULT_MEDIA_LIBRARY_MAX_FILE_SIZE;
+  const maxSizeLabel = formatFileSize(maxFileSize);
+  const hasUploading = uploads.some((item) => item.status === "uploading");
 
   const handleClose = () => {
     setUploads([]);
@@ -65,13 +87,14 @@ export const MediaLibraryUploadModal = () => {
     if (files.length === 0) return;
     const filesToAdd = allowMultiple ? files : files.slice(0, 1);
     const nextItems = filesToAdd.map((file) => {
-      const tooLarge = file.size > MAX_FILE_SIZE;
+      const tooLarge = file.size > maxFileSize;
       const unsupported = !resolveArtifactFormat(file.name);
       return {
         id: `${file.name}-${file.size}-${file.lastModified}`,
         file,
         status: tooLarge || unsupported ? "failed" : "ready",
-        error: tooLarge ? "File exceeds 100MB limit" : unsupported ? "Unsupported file type" : undefined,
+        progress: 0,
+        error: tooLarge ? `File exceeds ${maxSizeLabel} limit` : unsupported ? "Unsupported file type" : undefined,
       } as TUploadItem;
     });
     setUploads((prev) => (allowMultiple ? [...prev, ...nextItems] : nextItems));
@@ -126,6 +149,7 @@ export const MediaLibraryUploadModal = () => {
       const title = getTitleFromFile(file.name) || "Untitled Upload";
       const action = VIDEO_FORMATS.has(format) ? "play" : IMAGE_FORMATS.has(format) ? "view" : "download";
       try {
+        setUploads((prev) => updateUploadEntry(prev, item.id, { status: "uploading", progress: 0 }));
         await mediaLibraryService.uploadArtifact(
           workspaceSlug,
           projectId,
@@ -138,8 +162,15 @@ export const MediaLibraryUploadModal = () => {
             action,
             meta: { category: "Uploads", source: "web" },
           },
-          file
+          file,
+          (progressEvent) => {
+            const total = progressEvent.total ?? 0;
+            if (!total) return;
+            const percent = Math.min(100, Math.round((progressEvent.loaded / total) * 100));
+            setUploads((prev) => updateUploadEntry(prev, item.id, { progress: percent, status: "uploading" }));
+          }
         );
+        setUploads((prev) => updateUploadEntry(prev, item.id, { progress: 100 }));
         successCount += 1;
       } catch {
         failedItems.push({
@@ -147,6 +178,7 @@ export const MediaLibraryUploadModal = () => {
           status: "failed",
           error: "Upload failed",
         });
+        setUploads((prev) => updateUploadEntry(prev, item.id, { status: "failed", error: "Upload failed" }));
       }
     }
 
@@ -245,8 +277,20 @@ export const MediaLibraryUploadModal = () => {
                     {getFileIcon(item.file)}
                     <div>
                       <div className="text-xs text-custom-text-300">
-                        {item.status === "ready" ? "Ready to upload" : item.error}
+                        {item.status === "uploading"
+                          ? `Uploading... ${item.progress ?? 0}%`
+                          : item.status === "ready"
+                          ? "Ready to upload"
+                          : item.error}
                       </div>
+                      {item.status === "uploading" ? (
+                        <div className="mt-2 h-1.5 w-40 overflow-hidden rounded-full bg-custom-border-200">
+                          <div
+                            className="h-full rounded-full bg-custom-primary-100 transition-[width]"
+                            style={{ width: `${item.progress ?? 0}%` }}
+                          />
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -257,7 +301,9 @@ export const MediaLibraryUploadModal = () => {
                         onClick={() =>
                           setUploads((prev) =>
                             prev.map((entry) =>
-                              entry.id === item.id ? { ...entry, status: "ready", error: undefined } : entry
+                              entry.id === item.id
+                                ? { ...entry, status: "ready", error: undefined, progress: 0 }
+                                : entry
                             )
                           )
                         }
@@ -265,11 +311,14 @@ export const MediaLibraryUploadModal = () => {
                         Retry
                       </Button>
                     ) : (
-                      <div className="text-xs text-custom-primary-100">Ready</div>
+                      <div className="text-xs text-custom-primary-100">
+                        {item.status === "uploading" ? "Uploading" : "Ready"}
+                      </div>
                     )}
                     <Button
                       variant="neutral-primary"
                       size="sm"
+                      disabled={item.status === "uploading"}
                       onClick={() => setUploads((prev) => prev.filter((entry) => entry.id !== item.id))}
                     >
                       Remove
@@ -287,7 +336,8 @@ export const MediaLibraryUploadModal = () => {
 
         <div className="flex items-center justify-between border-t border-custom-border-200 px-5 py-3 text-xs text-custom-text-300">
           <span>
-            Supported formats: MP4, M3U8, JPG, PNG, SVG, PDF, CSV, JSON, DOCX, XLSX, PPTX, TXT (Max size: 100MB)
+            Supported formats: MP4, M3U8, JPG, PNG, SVG, PDF, CSV, JSON, DOCX, XLSX, PPTX, TXT (Max size:{" "}
+            {maxSizeLabel})
           </span>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
@@ -313,7 +363,7 @@ export const MediaLibraryUploadModal = () => {
               variant="primary"
               size="sm"
               onClick={handleUpload}
-              disabled={!uploads.some((item) => item.status === "ready")}
+              disabled={hasUploading || !uploads.some((item) => item.status === "ready")}
             >
               Upload
             </Button>

@@ -5,6 +5,7 @@ import type { TMediaItem } from "./media-items";
 type TStoredUpload = {
   id: string;
   title: string;
+  format: string;
   author: string;
   createdAt: string;
   views: number;
@@ -56,6 +57,7 @@ export const loadUploadedMediaItems = async (): Promise<TMediaItem[]> => {
       return {
         id: item.id,
         title: item.title,
+        format: item.format ?? "",
         author: item.author,
         createdAt: item.createdAt,
         views: item.views,
@@ -74,10 +76,12 @@ export const loadUploadedMediaItems = async (): Promise<TMediaItem[]> => {
 };
 
 export const persistUploadedMediaItem = async (item: TMediaItem, file: File) => {
+  const format = item.format || file.name.split(".").pop()?.toLowerCase() || "";
   const db = await openDatabase();
   const stored: TStoredUpload = {
     id: item.id,
     title: item.title,
+    format,
     author: item.author,
     createdAt: item.createdAt,
     views: item.views,

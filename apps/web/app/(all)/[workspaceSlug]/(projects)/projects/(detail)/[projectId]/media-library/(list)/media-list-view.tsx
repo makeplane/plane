@@ -9,55 +9,54 @@ type TMediaSection = {
   items: TMediaItem[];
 };
 
-const MediaListRow = ({
-  item,
-  getItemHref,
-}: {
-  item: TMediaItem;
-  getItemHref?: (item: TMediaItem) => string;
-}) => (
-  <Link
-    href={getItemHref ? getItemHref(item) : `./${encodeURIComponent(item.id)}`}
-    className="grid w-full items-center gap-4 rounded-lg border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-left text-xs text-custom-text-300 hover:border-custom-border-300"
-    style={{ gridTemplateColumns: "140px minmax(200px, 2fr) 1fr 1fr 1fr 1fr" }}
-  >
-    <div className="relative h-16 w-28 overflow-hidden rounded-md bg-custom-background-90">
-      {item.mediaType === "image" ? (
-        <img
-          src={item.thumbnail}
-          alt={item.title}
-          loading="lazy"
-          decoding="async"
-          className="h-full w-full object-cover"
-        />
-      ) : item.mediaType === "video" ? (
-        <video
-          src={item.videoSrc ?? ""}
-          poster={item.thumbnail}
-          muted
-          playsInline
-          preload="metadata"
-          className="h-full w-full object-cover"
-        />
-      ) : (
-        <div className="flex h-full w-full items-center justify-center text-custom-text-300">
-          <FileText className="h-5 w-5" />
-        </div>
-      )}
-    </div>
-    <div className="min-w-0">
-      <div className="line-clamp-1 text-sm font-semibold text-custom-text-100">{item.title}</div>
-      <div className="text-[11px] text-custom-text-300">
-        {item.primaryTag} Aú {item.secondaryTag} Aú {item.itemsCount} items
-      </div>
-    </div>
-    <div className="truncate">{item.author}</div>
-    <div>{item.createdAt}</div>
-    <div>{item.mediaType === "image" ? "Image" : item.duration}</div>
-    <div className="text-right">Views {item.views}</div>
-  </Link>
-);
+const MediaListRow = ({ item, getItemHref }: { item: TMediaItem; getItemHref?: (item: TMediaItem) => string }) => {
+  const isHls = item.mediaType === "video" && item.format.toLowerCase() === "m3u8";
 
+  return (
+    <Link
+      href={getItemHref ? getItemHref(item) : `./${encodeURIComponent(item.id)}`}
+      className="grid w-full items-center gap-4 rounded-lg border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-left text-xs text-custom-text-300 hover:border-custom-border-300"
+      style={{ gridTemplateColumns: "140px minmax(200px, 2fr) 1fr 1fr 1fr 1fr" }}
+    >
+      <div className="relative h-16 w-28 overflow-hidden rounded-md bg-custom-background-90">
+        {item.mediaType === "image" ? (
+          <img src={item.thumbnail} alt={item.title} className="h-full w-full object-cover" />
+        ) : item.mediaType === "video" ? (
+          isHls ? (
+            item.thumbnail ? (
+              <img src={item.thumbnail} alt={item.title} className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-custom-text-300">Stream</div>
+            )
+          ) : (
+            <video
+              src={item.videoSrc ?? ""}
+              poster={item.thumbnail}
+              muted
+              playsInline
+              preload="metadata"
+              className="h-full w-full object-cover"
+            />
+          )
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-custom-text-300">
+            <FileText className="h-5 w-5" />
+          </div>
+        )}
+      </div>
+      <div className="min-w-0">
+        <div className="line-clamp-1 text-sm font-semibold text-custom-text-100">{item.title}</div>
+        <div className="text-[11px] text-custom-text-300">
+          {item.primaryTag} Aú {item.secondaryTag} Aú {item.itemsCount} items
+        </div>
+      </div>
+      <div className="truncate">{item.author}</div>
+      <div>{item.createdAt}</div>
+      <div>{item.mediaType === "image" ? "Image" : item.duration}</div>
+      <div className="text-right">Views {item.views}</div>
+    </Link>
+  );
+};
 
 const MediaListSection = ({
   section,

@@ -42,6 +42,7 @@
     "dotenv": "^16.0.3",
     "emoji-picker-react": "^4.5.16",
     "export-to-csv": "^1.4.0",
+    "hls.js": "^1.5.13",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",
     "mobx": "catalog:",

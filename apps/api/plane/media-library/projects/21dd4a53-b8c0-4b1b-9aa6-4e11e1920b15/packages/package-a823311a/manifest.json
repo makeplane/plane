@@ -6,7 +6,7 @@
   "name": "package-a823311a",
   "title": "Media Library Package",
   "createdAt": "2026-01-08T12:16:40Z",
-  "updatedAt": "2026-01-09T05:24:30Z",
+  "updatedAt": "2026-01-09T12:39:53Z",
   "artifacts": [
     {
       "name": "milky-way-67504_1280-1767936180972-0",
@@ -35,6 +35,66 @@
       },
       "created_at": "2026-01-09T05:24:30Z",
       "updated_at": "2026-01-09T05:24:30Z"
+    },
+    {
+      "name": "26351-357839093_small-1767946914545-0",
+      "title": "26351-357839093_small",
+      "format": "mp4",
+      "path": "projects/21dd4a53-b8c0-4b1b-9aa6-4e11e1920b15/packages/package-a823311a/artifacts/26351-357839093_small-1767946914545-0.mp4",
+      "link": null,
+      "action": "play",
+      "meta": {
+        "category": "Uploads",
+        "source": "web"
+      },
+      "created_at": "2026-01-09T08:21:54Z",
+      "updated_at": "2026-01-09T08:21:54Z"
+    },
+    {
+      "name": "50109-459915579_small-1767959660341-0",
+      "title": "50109-459915579_small",
+      "format": "m3u8",
+      "path": "projects/21dd4a53-b8c0-4b1b-9aa6-4e11e1920b15/packages/package-a823311a/artifacts/50109-459915579_small-1767959660341-0/index.m3u8",
+      "link": null,
+      "action": "play",
+      "meta": {
+        "category": "Uploads",
+        "source": "web",
+        "source_format": "mp4",
+        "hls": true
+      },
+      "created_at": "2026-01-09T11:54:20Z",
+      "updated_at": "2026-01-09T11:54:20Z"
+    },
+    {
+      "name": "sensational-last-minute-moments-1767962382780-0",
+      "title": "Sensational Last Minute Moments",
+      "format": "m3u8",
+      "path": "projects/21dd4a53-b8c0-4b1b-9aa6-4e11e1920b15/packages/package-a823311a/artifacts/sensational-last-minute-moments-1767962382780-0/index.m3u8",
+      "link": null,
+      "action": "play",
+      "meta": {
+        "category": "Uploads",
+        "source": "web",
+        "source_format": "mp4",
+        "hls": true
+      },
+      "created_at": "2026-01-09T12:39:43Z",
+      "updated_at": "2026-01-09T12:39:43Z"
+    },
+    {
+      "name": "sensational-last-minute-moments-1767962382780-0-thumbnail",
+      "title": "Sensational Last Minute Moments Thumbnail",
+      "format": "thumbnail",
+      "path": "projects/21dd4a53-b8c0-4b1b-9aa6-4e11e1920b15/packages/package-a823311a/artifacts/sensational-last-minute-moments-1767962382780-0/thumbnail.jpg",
+      "link": "sensational-last-minute-moments-1767962382780-0",
+      "action": "preview",
+      "meta": {
+        "source": "generated",
+        "category": "Uploads"
+      },
+      "created_at": "2026-01-09T12:39:43Z",
+      "updated_at": "2026-01-09T12:39:43Z"
     }
   ]
 }

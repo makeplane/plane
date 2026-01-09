@@ -30,6 +30,11 @@ urlpatterns = [
         name="media-library-artifacts",
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/artifacts/<str:artifact_id>/file/<path:artifact_path>/",
+        MediaArtifactFileAPIView.as_view(),
+        name="media-library-artifact-file-path",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/artifacts/<str:artifact_id>/file/",
         MediaArtifactFileAPIView.as_view(),
         name="media-library-artifact-file",

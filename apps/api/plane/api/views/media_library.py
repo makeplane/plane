@@ -18,6 +18,8 @@ from plane.utils.media_library import (
     manifest_path,
     package_root,
     read_manifest,
+    MediaLibraryTranscodeError,
+    transcode_mp4_to_hls,
     validate_segment,
     write_manifest_atomic,
 )
@@ -104,6 +106,11 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
         is_bulk = isinstance(payload, list) or (isinstance(payload, dict) and "artifacts" in payload)
         artifacts_payload = []
         file_path = None
+        artifact_dir = None
+        should_transcode = False
+        thumbnail_name = None
+        thumbnail_path = None
+        thumbnail_relative_path = None
         timestamp = _now_iso()
 
         if file_obj:
@@ -119,18 +126,11 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
             format_value = (request.data.get("format") or extension).lower()
             artifact_name = request.data.get("name") or base_name
             title = request.data.get("title") or base_name
+            primary_artifact_name = artifact_name
+            primary_title = title
             link = request.data.get("link")
             if isinstance(link, str) and link.strip().lower() in {"", "null"}:
                 link = None
-
-            action = request.data.get("action")
-            if not action:
-                if format_value in _VIDEO_FORMATS:
-                    action = "play"
-                elif format_value in _IMAGE_FORMATS:
-                    action = "view"
-                else:
-                    action = "download"
 
             meta = request.data.get("meta") or {}
             if isinstance(meta, str):
@@ -146,12 +146,40 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
 
             created_at = request.data.get("created_at") or timestamp
             updated_at = request.data.get("updated_at") or created_at
-            artifact_file_name = f"{artifact_name}.{extension}"
+            primary_created_at = created_at
+            primary_updated_at = updated_at
             artifacts_root = package_root(project_id_str, package_id) / "artifacts"
-            file_path = artifacts_root / artifact_file_name
-            relative_path = (
-                f"projects/{project_id_str}/packages/{package_id}/artifacts/{artifact_file_name}"
-            )
+            should_transcode = extension == "mp4"
+            if should_transcode:
+                format_value = "m3u8"
+                artifact_dir = artifacts_root / primary_artifact_name
+                artifact_file_name = "index.m3u8"
+                file_path = artifact_dir / artifact_file_name
+                relative_path = (
+                    f"projects/{project_id_str}/packages/{package_id}/artifacts/{primary_artifact_name}/{artifact_file_name}"
+                )
+                thumbnail_name = f"{primary_artifact_name}-thumbnail"
+                thumbnail_path = artifact_dir / "thumbnail.jpg"
+                thumbnail_relative_path = (
+                    f"projects/{project_id_str}/packages/{package_id}/artifacts/{primary_artifact_name}/thumbnail.jpg"
+                )
+                meta.setdefault("source_format", extension)
+                meta.setdefault("hls", True)
+            else:
+                artifact_file_name = f"{artifact_name}.{extension}"
+                file_path = artifacts_root / artifact_file_name
+                relative_path = (
+                    f"projects/{project_id_str}/packages/{package_id}/artifacts/{artifact_file_name}"
+                )
+
+            action = request.data.get("action")
+            if not action:
+                if format_value in _VIDEO_FORMATS:
+                    action = "play"
+                elif format_value in _IMAGE_FORMATS:
+                    action = "view"
+                else:
+                    action = "download"
             artifacts_payload = [
                 {
                     "name": artifact_name,
@@ -207,13 +235,58 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                 )
             incoming_names.add(artifact_name)
 
+        if thumbnail_name:
+            validate_segment(thumbnail_name, "artifactId")
+            if thumbnail_name in existing_names:
+                return Response({"error": "Artifact already exists."}, status=status.HTTP_409_CONFLICT)
+            if thumbnail_name in incoming_names:
+                return Response(
+                    {"error": "Duplicate artifact name in request."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            incoming_names.add(thumbnail_name)
+
         if file_obj and file_path:
-            if file_path.exists():
-                return Response({"error": "Artifact file already exists."}, status=status.HTTP_409_CONFLICT)
-            file_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(file_path, "wb") as handle:
-                for chunk in file_obj.chunks():
-                    handle.write(chunk)
+            if should_transcode:
+                if not artifact_dir:
+                    return Response({"error": "Artifact directory missing."}, status=status.HTTP_400_BAD_REQUEST)
+                if artifact_dir.exists():
+                    return Response({"error": "Artifact file already exists."}, status=status.HTTP_409_CONFLICT)
+                try:
+                    _, created_thumbnail = transcode_mp4_to_hls(
+                        file_obj,
+                        artifact_dir,
+                        thumbnail_path=thumbnail_path,
+                    )
+                except FileExistsError:
+                    return Response({"error": "Artifact file already exists."}, status=status.HTTP_409_CONFLICT)
+                except MediaLibraryTranscodeError as exc:
+                    return Response(
+                        {"error": str(exc)},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    )
+                if created_thumbnail and thumbnail_relative_path and thumbnail_name:
+                    thumbnail_entry = {
+                        "name": thumbnail_name,
+                        "title": f"{primary_title} Thumbnail",
+                        "format": "thumbnail",
+                        "path": thumbnail_relative_path,
+                        "link": primary_artifact_name,
+                        "action": "preview",
+                        "meta": {"source": "generated"},
+                        "created_at": primary_created_at,
+                        "updated_at": primary_updated_at,
+                    }
+                    thumbnail_serializer = MediaArtifactSerializer(data=thumbnail_entry)
+                    thumbnail_serializer.is_valid(raise_exception=True)
+                    validated_artifacts.append(thumbnail_serializer.validated_data)
+            else:
+                if file_path.exists():
+                    return Response({"error": "Artifact file already exists."}, status=status.HTTP_409_CONFLICT)
+                file_path.parent.mkdir(parents=True, exist_ok=True)
+                with open(file_path, "wb") as handle:
+                    for chunk in file_obj.chunks():
+                        handle.write(chunk)
 
         existing_artifacts.extend(validated_artifacts)
         manifest["artifacts"] = existing_artifacts

@@ -7,6 +7,7 @@ import { ArrowLeft, Calendar, FileText, User } from "lucide-react";
 import type { TMediaItem } from "../(list)/media-items";
 import { loadUploadedMediaItems } from "../(list)/media-uploads";
 import { useMediaLibraryItems } from "../(list)/use-media-library-items";
+import { HlsVideo } from "../hls-video";
 import { TagsSection } from "./tags-section";
 
 const formatMetaValue = (value: unknown) => {
@@ -48,6 +49,7 @@ const MediaDetailPage = () => {
     const normalizedId = decodeURIComponent(mediaId);
     return allItems.find((entry) => entry.id === normalizedId) ?? null;
   }, [allItems, mediaId]);
+  const isHls = item?.mediaType === "video" && item?.format?.toLowerCase() === "m3u8";
   const handlePlay = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -105,9 +107,18 @@ const MediaDetailPage = () => {
         <div className="rounded-lg  bg-custom-background-100 p-4 ">
           {item.mediaType === "video" ? (
             <div className="mx-auto h-[505px] w-100 max-w-full overflow-hidden rounded-lg border border-custom-border-200 bg-black">
-              <video ref={videoRef} controls poster={item.thumbnail} className="h-full w-full object-contain">
-                <source src={item.videoSrc ?? ""} type="video/mp4" />
-              </video>
+              {isHls ? (
+                <HlsVideo
+                  src={item.videoSrc ?? ""}
+                  poster={item.thumbnail}
+                  className="h-full w-full object-contain"
+                  videoRef={videoRef}
+                />
+              ) : (
+                <video ref={videoRef} controls poster={item.thumbnail} className="h-full w-full object-contain">
+                  <source src={item.videoSrc ?? ""} type="video/mp4" />
+                </video>
+              )}
             </div>
           ) : item.mediaType === "image" ? (
             <div className="overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90">
