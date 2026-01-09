@@ -35,6 +35,7 @@ export function CustomCalloutBlock(props: CustomCalloutNodeViewProps) {
       }}
     >
       <CalloutBlockLogoSelector
+        key={node.attrs["id"]}
         blockAttributes={node.attrs}
         disabled={!editor.isEditable}
         isOpen={isEmojiPickerOpen}

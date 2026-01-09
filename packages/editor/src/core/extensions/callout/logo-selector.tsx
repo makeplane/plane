@@ -33,7 +33,7 @@ export function CalloutBlockLogoSelector(props: Props) {
   return (
     <div contentEditable={false}>
       <EmojiPicker
-        closeOnSelect={false}
+        closeOnSelect={true}
         isOpen={isOpen}
         handleToggle={handleOpen}
         className="flex-shrink-0 grid place-items-center"

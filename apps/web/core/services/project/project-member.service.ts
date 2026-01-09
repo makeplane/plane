@@ -1,12 +1,6 @@
 // types
 import { API_BASE_URL } from "@plane/constants";
-import type {
-  IProjectBulkAddFormData,
-  IProjectMemberPreferencesFullResponse,
-  IProjectMemberPreferencesResponse,
-  IProjectMemberPreferencesUpdate,
-  TProjectMembership,
-} from "@plane/types";
+import type { IProjectBulkAddFormData, TProjectMembership } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -66,31 +60,6 @@ export class ProjectMemberService extends APIService {
 
   async deleteProjectMember(workspaceSlug: string, projectId: string, memberId: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getProjectMemberPreferences(
-    workspaceSlug: string,
-    projectId: string,
-    memberId: string
-  ): Promise<IProjectMemberPreferencesFullResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/preferences/member/${memberId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async updateProjectMemberPreferences(
-    workspaceSlug: string,
-    projectId: string,
-    memberId: string,
-    data: IProjectMemberPreferencesUpdate
-  ): Promise<IProjectMemberPreferencesResponse> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/preferences/member/${memberId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
