@@ -14,8 +14,7 @@ import { PageHead } from "@/components/core/page-title";
 import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
 import { ProfileSettingContentWrapper } from "@/components/profile/profile-setting-content-wrapper";
 // helpers
-import { authErrorHandler } from "@/helpers/authentication.helper";
-import type { EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
+import { authErrorHandler, EAuthenticationErrorCodes, passwordErrors } from "@/helpers/authentication.helper";
 // hooks
 import { useUser } from "@/hooks/store/user";
 // services
@@ -54,6 +53,7 @@ function SecurityPage() {
     control,
     handleSubmit,
     watch,
+    setError,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<FormValues>({ defaultValues });
@@ -98,6 +98,13 @@ function SecurityPage() {
         message:
           typeof errorInfo?.message === "string" ? errorInfo.message : t("auth.common.password.toast.error.message"),
       });
+
+      if (passwordErrors.includes(code as EAuthenticationErrorCodes)) {
+        setError("new_password", {
+          type: "manual",
+          message: errorInfo?.message?.toString() || t("auth.common.password.toast.error.message"),
+        });
+      }
     }
   };
 
@@ -198,6 +205,9 @@ function SecurityPage() {
                 )}
               </div>
               {passwordSupport}
+              {errors.new_password && (
+                <span className="text-11 text-danger-primary">{errors.new_password.message}</span>
+              )}
               {isNewPasswordSameAsOldPassword && !isPasswordInputFocused && (
                 <span className="text-11 text-danger-primary">
                   {t("new_password_must_be_different_from_old_password")}

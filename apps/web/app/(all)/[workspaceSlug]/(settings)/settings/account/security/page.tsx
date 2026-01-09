@@ -13,8 +13,8 @@ import { getPasswordStrength } from "@plane/utils";
 import { PageHead } from "@/components/core/page-title";
 import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
 // helpers
-import { authErrorHandler } from "@/helpers/authentication.helper";
-import type { EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
+import { authErrorHandler, passwordErrors } from "@/helpers/authentication.helper";
+import { EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser } from "@/hooks/store/user";
 // services
@@ -53,6 +53,7 @@ function SecurityPage() {
     control,
     handleSubmit,
     watch,
+    setError,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<FormValues>({ defaultValues });
@@ -88,12 +89,9 @@ function SecurityPage() {
         message: t("auth.common.password.toast.change_password.success.message"),
       });
     } catch (error: unknown) {
-      let errorInfo = undefined;
-      if (error instanceof Error) {
-        const err = error as Error & { error_code?: string };
-        const code = err.error_code?.toString();
-        errorInfo = code ? authErrorHandler(code as EAuthenticationErrorCodes) : undefined;
-      }
+      const err = error as Error & { error_code?: string };
+      const code = err.error_code?.toString();
+      const errorInfo = code ? authErrorHandler(code as EAuthenticationErrorCodes) : undefined;
 
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -101,6 +99,13 @@ function SecurityPage() {
         message:
           typeof errorInfo?.message === "string" ? errorInfo.message : t("auth.common.password.toast.error.message"),
       });
+
+      if (passwordErrors.includes(code as EAuthenticationErrorCodes)) {
+        setError("new_password", {
+          type: "manual",
+          message: errorInfo?.message?.toString() || t("auth.common.password.toast.error.message"),
+        });
+      }
     }
   };
 
@@ -200,6 +205,7 @@ function SecurityPage() {
               )}
             </div>
             {passwordSupport}
+            {errors.new_password && <span className="text-11 text-danger-primary">{errors.new_password.message}</span>}
             {isNewPasswordSameAsOldPassword && !isPasswordInputFocused && (
               <span className="text-11 text-danger-primary">
                 {t("new_password_must_be_different_from_old_password")}

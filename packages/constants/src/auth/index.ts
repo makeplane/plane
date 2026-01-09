@@ -108,6 +108,7 @@ export enum EAuthErrorCodes {
   USER_ACCOUNT_DEACTIVATED = "5019",
   // Password strength
   INVALID_PASSWORD = "5020",
+  PASSWORD_TOO_WEAK = "5021",
   SMTP_NOT_CONFIGURED = "5025",
   // Sign Up
   USER_ALREADY_EXIST = "5030",
