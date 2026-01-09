@@ -2,6 +2,11 @@
 
 import type { ReactNode } from "react";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { FilterInstance } from "@plane/shared-state";
+import type { TFilterConfig } from "@plane/types";
+
+import type { TMediaLibraryExternalFilter, TMediaLibraryFilterProperty } from "./media-library-filters";
+import { mediaLibraryFiltersAdapter } from "./media-library-filters";
 import type { TMediaItem } from "./media-items";
 import { loadUploadedMediaItems, persistUploadedMediaItem } from "./media-uploads";
 
@@ -13,6 +18,8 @@ type TMediaLibraryContext = {
   refreshLibrary: () => void;
   uploadedItems: TMediaItem[];
   addUploadedItem: (item: TMediaItem, file: File) => Promise<void>;
+  mediaFilters: FilterInstance<TMediaLibraryFilterProperty, TMediaLibraryExternalFilter>;
+  setMediaFilterConfigs: (configs: TFilterConfig<TMediaLibraryFilterProperty, string>[]) => void;
 };
 
 const MediaLibraryContext = createContext<TMediaLibraryContext | null>(null);
@@ -21,6 +28,7 @@ export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [libraryVersion, setLibraryVersion] = useState(0);
   const [uploadedItems, setUploadedItems] = useState<TMediaItem[]>([]);
+  const [filterConfigs, setFilterConfigs] = useState<TFilterConfig<TMediaLibraryFilterProperty, string>[]>([]);
 
   const openUpload = useCallback(() => setIsUploadOpen(true), []);
   const closeUpload = useCallback(() => setIsUploadOpen(false), []);
@@ -29,6 +37,18 @@ export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
     await persistUploadedMediaItem(item, file);
     setUploadedItems((prev) => [item, ...prev]);
   }, []);
+  const mediaFilters = useMemo(
+    () =>
+      new FilterInstance<TMediaLibraryFilterProperty, TMediaLibraryExternalFilter>({
+        adapter: mediaLibraryFiltersAdapter,
+      }),
+    []
+  );
+
+  useEffect(() => {
+    mediaFilters.configManager.setAreConfigsReady(true);
+    mediaFilters.configManager.registerAll(filterConfigs);
+  }, [filterConfigs, mediaFilters]);
 
   useEffect(() => {
     let isMounted = true;
@@ -53,8 +73,10 @@ export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
       refreshLibrary,
       uploadedItems,
       addUploadedItem,
+      mediaFilters,
+      setMediaFilterConfigs: setFilterConfigs,
     }),
-    [isUploadOpen, openUpload, closeUpload, libraryVersion, refreshLibrary, uploadedItems, addUploadedItem]
+    [isUploadOpen, openUpload, closeUpload, libraryVersion, refreshLibrary, uploadedItems, addUploadedItem,  mediaFilters]
   );
 
   return <MediaLibraryContext.Provider value={value}>{children}</MediaLibraryContext.Provider>;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { observer } from "mobx-react";
 import {
   useParams,
   usePathname,
@@ -15,6 +16,7 @@ import { Breadcrumbs, Header, Tooltip } from "@plane/ui";
 
 // Components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { FiltersToggle } from "@/components/rich-filters/filters-toggle";
 
 
 // Hooks
@@ -55,11 +57,11 @@ const DEFAULT_LAYOUTS: LayoutItem[] = [
 /* COMPONENT */
 /* ------------------------------------------------------------------ */
 
-export const MediaLibraryListHeader: React.FC<Props> = ({
+export const MediaLibraryListHeader: React.FC<Props> = observer(({
   layouts = DEFAULT_LAYOUTS,
 }) => {
   const { isMobile } = usePlatformOS();
-  const { openUpload } = useMediaLibrary();
+  const { openUpload, mediaFilters } = useMediaLibrary();
   const { loader } = useProject();
 
   const { workspaceSlug, projectId } = useParams() as {
@@ -72,6 +74,7 @@ export const MediaLibraryListHeader: React.FC<Props> = ({
   const searchParams = useSearchParams();
 
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
+  const mediaType = searchParams.get("mediaType") ?? "";
   const activeLayout = useMemo(() => {
     const viewParam = searchParams.get("view");
     return viewParam === MediaLayoutTypes.LIST ? MediaLayoutTypes.LIST : MediaLayoutTypes.GRID;
@@ -80,6 +83,8 @@ export const MediaLibraryListHeader: React.FC<Props> = ({
     () => layouts.filter((layout) => Object.values(MediaLayoutTypes).includes(layout.key)),
     [layouts]
   );
+  const hasFilterOptions =
+    mediaFilters.configManager.allAvailableConfigs.length > 0 || mediaFilters.allConditionsForDisplay.length > 0;
 
   /* ------------------------------------------------------------------ */
   /* SYNC QUERY */
@@ -183,6 +188,18 @@ export const MediaLibraryListHeader: React.FC<Props> = ({
               </Tooltip>
             ))}
           </div>
+          {hasFilterOptions ? <FiltersToggle filter={mediaFilters} /> : null}
+          <select
+            aria-label="Filter by media type"
+            value={mediaType}
+            onChange={(event) => updateQuery("mediaType", event.target.value)}
+            className="h-7 rounded-md border border-custom-border-200 bg-custom-background-100 px-2 text-xs text-custom-text-100"
+          >
+            <option value="">All types</option>
+            <option value="image">Image</option>
+            <option value="video">Video</option>
+            <option value="document">Document</option>
+          </select>
            {/* Upload */}
           <Button
             variant="primary"
@@ -197,4 +214,4 @@ export const MediaLibraryListHeader: React.FC<Props> = ({
       </Header.RightItem>
     </Header>
   );
-};
+});
