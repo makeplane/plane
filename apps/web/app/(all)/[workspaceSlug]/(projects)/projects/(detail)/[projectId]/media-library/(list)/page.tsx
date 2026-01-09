@@ -14,9 +14,9 @@ import { MediaCard } from "./media-card";
 import type { TMediaItem, TMediaSection } from "./media-items";
 import { groupMediaItemsByTag } from "./media-items";
 import { useMediaLibrary } from "./media-library-context";
+import { buildMetaFilterConfigs, collectMetaFilterOptions, matchesMediaLibraryFilters } from "./media-library-filters";
 import { MediaListView } from "./media-list-view";
 import { useMediaLibraryItems } from "./use-media-library-items";
-import { buildMetaFilterConfigs, collectMetaFilterOptions, matchesMediaLibraryFilters } from "./media-library-filters";
 
 const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHref: (item: TMediaItem) => string }) => {
   const rowId = useId().replace(/:/g, "");
@@ -107,30 +107,34 @@ const MediaLibraryListPage = observer(() => {
     setMediaFilterConfigs(filterConfigs);
   }, [filterConfigs, setMediaFilterConfigs]);
 
-  const filteredSections = useMemo(() => {
-    return mediaSections
-      .map((section) => ({
-        ...section,
-        items: section.items.filter((item) => {
-          const haystack = [
-            item.title,
-            item.author,
-            item.createdAt,
-            item.views.toString(),
-            item.primaryTag,
-            item.secondaryTag,
-            item.itemsCount.toString(),
-            item.docs.join(" "),
-          ]
-            .join(" ")
-            .toLowerCase();
-          const matchesQuery = !query || haystack.includes(query);
-          const matchesType = !mediaTypeFilter || item.mediaType === mediaTypeFilter;
-          return matchesQuery && matchesType && matchesMediaLibraryFilters(item, mediaFilters.allConditionsForDisplay);
-        }),
-      }))
-      .filter((section) => section.items.length > 0);
-  }, [mediaFilters.allConditionsForDisplay, mediaSections, mediaTypeFilter, query]);
+  const filteredSections = useMemo(
+    () =>
+      mediaSections
+        .map((section) => ({
+          ...section,
+          items: section.items.filter((item) => {
+            const haystack = [
+              item.title,
+              item.author,
+              item.createdAt,
+              item.views.toString(),
+              item.primaryTag,
+              item.secondaryTag,
+              item.itemsCount.toString(),
+              item.docs.join(" "),
+            ]
+              .join(" ")
+              .toLowerCase();
+            const matchesQuery = !query || haystack.includes(query);
+            const matchesType = !mediaTypeFilter || item.mediaType === mediaTypeFilter;
+            return (
+              matchesQuery && matchesType && matchesMediaLibraryFilters(item, mediaFilters.allConditionsForDisplay)
+            );
+          }),
+        }))
+        .filter((section) => section.items.length > 0),
+    [mediaFilters.allConditionsForDisplay, mediaSections, mediaTypeFilter, query]
+  );
 
   const getItemHref = (item: TMediaItem) =>
     `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
