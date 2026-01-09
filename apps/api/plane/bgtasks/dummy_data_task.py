@@ -231,7 +231,7 @@ def create_pages(workspace, project, user_id, pages_count):
                 description_html=f"<p>{text}</p>",
                 archived_at=None,
                 is_locked=False,
-                sort_order=Page.DEFAULT_SORT_ORDER * index + 10000,
+                sort_order=index * 10000,
             )
         )
     # Bulk create pages

@@ -107,7 +107,7 @@ class Page(BaseModel):
                     if project_pages:
                         ProjectPage.objects.bulk_update(project_pages, ["sort_order"])
 
-        super(Page, self).save(*args, **kwargs)
+                    super(Page, self).save(*args, **kwargs)
 
 
 class PageLog(BaseModel):
