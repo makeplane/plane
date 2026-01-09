@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -9,15 +10,17 @@ import { ToggleSwitch } from "@plane/ui";
 import { SettingsControlItem } from "@/components/settings/control-item";
 // services
 import { UserService } from "@/services/user.service";
-interface IEmailNotificationFormProps {
+
+type Props = {
   data: IUserEmailNotificationSettings;
-}
+};
 
 // services
 const userService = new UserService();
 
-export function NotificationsProfileSettingsForm(props: IEmailNotificationFormProps) {
+export const NotificationsProfileSettingsForm = observer(function NotificationsProfileSettingsForm(props: Props) {
   const { data } = props;
+  // translation
   const { t } = useTranslation();
   // form data
   const { control, reset } = useForm<IUserEmailNotificationSettings>({
@@ -155,4 +158,4 @@ export function NotificationsProfileSettingsForm(props: IEmailNotificationFormPr
       />
     </div>
   );
-}
+});

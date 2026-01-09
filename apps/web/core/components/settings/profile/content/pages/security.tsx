@@ -10,7 +10,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Input, PasswordStrengthIndicator } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
-import SettingsHeading from "@/components/settings/heading";
+import { SettingsHeading } from "@/components/settings/heading";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
 import type { EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
@@ -89,8 +89,7 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
     } catch (error: unknown) {
       let errorInfo = undefined;
       if (error instanceof Error) {
-        const err = error as Error & { error_code?: string };
-        const code = err.error_code?.toString();
+        const code = "error_code" in error ? error.error_code?.toString() : undefined;
         errorInfo = code ? authErrorHandler(code as EAuthenticationErrorCodes) : undefined;
       }
 
