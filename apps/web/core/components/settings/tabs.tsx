@@ -5,11 +5,6 @@ import { cn } from "@plane/utils";
 import { useProject } from "@/hooks/store/use-project";
 
 const TABS = {
-  account: {
-    key: "account",
-    label: "Account",
-    href: `/settings/account/`,
-  },
   workspace: {
     key: "workspace",
     label: "Workspace",
@@ -29,11 +24,7 @@ const SettingsTabs = observer(function SettingsTabs() {
   // store hooks
   const { joinedProjectIds } = useProject();
 
-  const currentTab = pathname.includes(TABS.projects.href)
-    ? TABS.projects
-    : pathname.includes(TABS.account.href)
-      ? TABS.account
-      : TABS.workspace;
+  const currentTab = pathname.includes(TABS.projects.href) ? TABS.projects : TABS.workspace;
 
   return (
     <div className="flex w-fit min-w-fit items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-layer-2">

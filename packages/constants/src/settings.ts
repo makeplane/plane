@@ -1,3 +1,6 @@
+// plane imports
+import type { TProfileSettingsTabs } from "@plane/types";
+// local imports
 import { PROFILE_SETTINGS } from "./profile";
 import { WORKSPACE_SETTINGS } from "./workspace";
 
@@ -22,7 +25,7 @@ export const WORKSPACE_SETTINGS_CATEGORIES = [
   WORKSPACE_SETTINGS_CATEGORY.DEVELOPER,
 ];
 
-export const PROFILE_SETTINGS_CATEGORIES = [
+export const PROFILE_SETTINGS_CATEGORIES: PROFILE_SETTINGS_CATEGORY[] = [
   PROFILE_SETTINGS_CATEGORY.YOUR_PROFILE,
   PROFILE_SETTINGS_CATEGORY.DEVELOPER,
 ];
@@ -40,9 +43,12 @@ export const GROUPED_WORKSPACE_SETTINGS = {
   [WORKSPACE_SETTINGS_CATEGORY.DEVELOPER]: [WORKSPACE_SETTINGS["webhooks"]],
 };
 
-export const GROUPED_PROFILE_SETTINGS = {
+export const GROUPED_PROFILE_SETTINGS: Record<
+  PROFILE_SETTINGS_CATEGORY,
+  { key: TProfileSettingsTabs; i18n_label: string }[]
+> = {
   [PROFILE_SETTINGS_CATEGORY.YOUR_PROFILE]: [
-    PROFILE_SETTINGS["profile"],
+    PROFILE_SETTINGS["general"],
     PROFILE_SETTINGS["preferences"],
     PROFILE_SETTINGS["notifications"],
     PROFILE_SETTINGS["security"],

@@ -24,15 +24,10 @@ export function SettingsHeading({
   className,
 }: Props) {
   return (
-    <div
-      className={cn(
-        "flex flex-col md:flex-row gap-2 items-start md:items-center justify-between border-b border-subtle pb-3.5",
-        className
-      )}
-    >
+    <div className={cn("flex flex-col md:flex-row gap-2 items-start md:items-center justify-between", className)}>
       <div className="flex flex-col items-start gap-1">
-        {typeof title === "string" ? <h3 className="text-18 font-medium">{title}</h3> : title}
-        {description && <div className="text-13 text-tertiary">{description}</div>}
+        {typeof title === "string" ? <h6 className="text-h6-medium text-primary">{title}</h6> : title}
+        {description && <p className="text-body-xs-regular text-tertiary">{description}</p>}
       </div>
       {showButton && customButton}
       {button && showButton && (

@@ -6,7 +6,6 @@ import type { I_THEME_OPTION } from "@plane/constants";
 import { THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
-import { applyCustomTheme } from "@plane/utils";
 // components
 import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
 import { ThemeSwitch } from "@/components/core/theme/theme-switch";
@@ -34,44 +33,26 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
   }, [userProfile?.theme?.theme]);
 
   const handleThemeChange = useCallback(
-    async (themeOption: I_THEME_OPTION) => {
+    (themeOption: I_THEME_OPTION) => {
       try {
         setTheme(themeOption.value);
-
-        // If switching to custom theme and user has saved custom colors, apply them immediately
-        if (
-          themeOption.value === "custom" &&
-          userProfile?.theme?.primary &&
-          userProfile?.theme?.background &&
-          userProfile?.theme?.darkPalette !== undefined
-        ) {
-          applyCustomTheme(
-            userProfile.theme.primary,
-            userProfile.theme.background,
-            userProfile.theme.darkPalette ? "dark" : "light"
-          );
-        }
-
         const updatePromise = updateUserTheme({ theme: themeOption.value });
         setPromiseToast(updatePromise, {
           loading: "Updating theme...",
           success: {
-            title: "Theme updated",
-            message: () => "Reloading to apply changes...",
+            title: "Success!",
+            message: () => "Theme updated successfully!",
           },
           error: {
             title: "Error!",
-            message: () => "Failed to update theme. Please try again.",
+            message: () => "Failed to update the theme",
           },
         });
-        // Wait for the promise to resolve, then reload after showing toast
-        await updatePromise;
-        window.location.reload();
       } catch (error) {
         console.error("Error updating theme:", error);
       }
     },
-    [setTheme, updateUserTheme, userProfile]
+    [updateUserTheme]
   );
 
   if (!userProfile) return null;
@@ -81,14 +62,7 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
       <SettingsControlItem
         title={t(props.option.title)}
         description={t(props.option.description)}
-        control={
-          <ThemeSwitch
-            value={currentTheme}
-            onChange={(themeOption) => {
-              void handleThemeChange(themeOption);
-            }}
-          />
-        }
+        control={<ThemeSwitch value={currentTheme} onChange={handleThemeChange} />}
       />
       {userProfile.theme?.theme === "custom" && <CustomThemeSelector />}
     </>

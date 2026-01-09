@@ -1,8 +1,11 @@
-import { observable, action, makeObservable } from "mobx";
+import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
 import type { TCreateModalStoreTypes, TCreatePageModal } from "@plane/constants";
 import { DEFAULT_CREATE_PAGE_MODAL_DATA, EPageAccess } from "@plane/constants";
+import type { TProfileSettingsTabs } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
+// lib
 import { store } from "@/lib/store-context";
 
 export interface ModalData {
@@ -22,6 +25,10 @@ export interface IBaseCommandPaletteStore {
   isBulkDeleteIssueModalOpen: boolean;
   createIssueStoreType: TCreateModalStoreTypes;
   createWorkItemAllowedProjectIds: string[] | undefined;
+  profileSettingsModal: {
+    activeTab: TProfileSettingsTabs | null;
+    isOpen: boolean;
+  };
   allStickiesModal: boolean;
   projectListOpenMap: Record<string, boolean>;
   getIsProjectListOpen: (projectId: string) => boolean;
@@ -36,6 +43,7 @@ export interface IBaseCommandPaletteStore {
   toggleBulkDeleteIssueModal: (value?: boolean) => void;
   toggleAllStickiesModal: (value?: boolean) => void;
   toggleProjectListOpen: (projectId: string, value?: boolean) => void;
+  toggleProfileSettingsModal: (value: { activeTab?: TProfileSettingsTabs | null; isOpen?: boolean }) => void;
 }
 
 export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStore {
@@ -50,6 +58,10 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   createPageModal: TCreatePageModal = DEFAULT_CREATE_PAGE_MODAL_DATA;
   createIssueStoreType: TCreateModalStoreTypes = EIssuesStoreType.PROJECT;
   createWorkItemAllowedProjectIds: IBaseCommandPaletteStore["createWorkItemAllowedProjectIds"] = undefined;
+  profileSettingsModal: IBaseCommandPaletteStore["profileSettingsModal"] = {
+    activeTab: "general",
+    isOpen: false,
+  };
   allStickiesModal: boolean = false;
   projectListOpenMap: Record<string, boolean> = {};
 
@@ -66,6 +78,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       createPageModal: observable,
       createIssueStoreType: observable,
       createWorkItemAllowedProjectIds: observable,
+      profileSettingsModal: observable,
       allStickiesModal: observable,
       projectListOpenMap: observable,
       // toggle actions
@@ -79,6 +92,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       toggleBulkDeleteIssueModal: action,
       toggleAllStickiesModal: action,
       toggleProjectListOpen: action,
+      toggleProfileSettingsModal: action,
     });
   }
 
@@ -239,5 +253,21 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
     } else {
       this.allStickiesModal = !this.allStickiesModal;
     }
+  };
+
+  /**
+   * Toggles the profile settings modal
+   * @param value
+   * @returns
+   */
+  toggleProfileSettingsModal: IBaseCommandPaletteStore["toggleProfileSettingsModal"] = (payload) => {
+    const updatedSettings: IBaseCommandPaletteStore["profileSettingsModal"] = {
+      ...this.profileSettingsModal,
+      ...payload,
+    };
+
+    runInAction(() => {
+      this.profileSettingsModal = updatedSettings;
+    });
   };
 }
