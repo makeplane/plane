@@ -67,7 +67,6 @@
     "react-pdf-html": "^2.1.2",
     "react-popper": "^2.3.0",
     "react-router": "catalog:",
-    "react-router-dom": "catalog:",
     "recharts": "^2.12.7",
     "serve": "14.2.5",
     "smooth-scroll-into-view-if-needed": "^2.0.2",

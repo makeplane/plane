@@ -62,7 +62,9 @@ Retrieves variable declarators from the current collection.
 - **Parameters**: `callback` (Function)
 - **Example**:
   ```javascript
-  const variableDeclarators = j.find(j.Identifier).getVariableDeclarators((path) => path.value.name);
+  const variableDeclarators = j
+    .find(j.Identifier)
+    .getVariableDeclarators((path) => path.value.name);
   ```
 
 #### `findVariableDeclarators`
@@ -82,7 +84,9 @@ Filters nodes based on a predicate function.
 - **Parameters**: `predicate` (Function)
 - **Example**:
   ```javascript
-  const constDeclarations = j.find(j.VariableDeclaration).filter((path) => path.node.kind === "const");
+  const constDeclarations = j
+    .find(j.VariableDeclaration)
+    .filter((path) => path.node.kind === "const");
   ```
 
 #### `forEach`
@@ -104,7 +108,9 @@ Checks if at least one element in the collection passes the test.
 - **Parameters**: `callback` (Function)
 - **Example**:
   ```javascript
-  const hasVariableA = root.find(j.VariableDeclarator).some((path) => path.node.id.name === "a");
+  const hasVariableA = root
+    .find(j.VariableDeclarator)
+    .some((path) => path.node.id.name === "a");
   ```
 
 #### `every`
@@ -114,7 +120,9 @@ Checks if all elements in the collection pass the test.
 - **Parameters**: `callback` (Function)
 - **Example**:
   ```javascript
-  const allAreConst = root.find(j.VariableDeclaration).every((path) => path.node.kind === "const");
+  const allAreConst = root
+    .find(j.VariableDeclaration)
+    .every((path) => path.node.kind === "const");
   ```
 
 #### `map`
@@ -124,7 +132,9 @@ Maps each node in the collection to a new value.
 - **Parameters**: `callback` (Function)
 - **Example**:
   ```javascript
-  const variableNames = j.find(j.VariableDeclaration).map((path) => path.node.declarations.map((decl) => decl.id.name));
+  const variableNames = j
+    .find(j.VariableDeclaration)
+    .map((path) => path.node.declarations.map((decl) => decl.id.name));
   ```
 
 #### `size`
@@ -207,7 +217,10 @@ Checks if the node in the collection is of a specific type.
 - **Parameters**: `type` (String)
 - **Example**:
   ```javascript
-  const isVariableDeclarator = root.find(j.VariableDeclarator).at(0).isOfType("VariableDeclarator");
+  const isVariableDeclarator = root
+    .find(j.VariableDeclarator)
+    .at(0)
+    .isOfType("VariableDeclarator");
   ```
 
 ### Node Transformation APIs
@@ -219,7 +232,9 @@ Replaces the current node(s) with a new node.
 - **Parameters**: `newNode` (Node or Function)
 - **Example**:
   ```javascript
-  j.find(j.Identifier).replaceWith((path) => j.identifier(path.node.name.toUpperCase()));
+  j.find(j.Identifier).replaceWith((path) =>
+    j.identifier(path.node.name.toUpperCase())
+  );
   ```
 
 #### `insertBefore`
@@ -229,7 +244,9 @@ Inserts a node before the current node.
 - **Parameters**: `newNode` (Node)
 - **Example**:
   ```javascript
-  j.find(j.FunctionDeclaration).insertBefore(j.expressionStatement(j.stringLiteral("Inserted before")));
+  j.find(j.FunctionDeclaration).insertBefore(
+    j.expressionStatement(j.stringLiteral("Inserted before"))
+  );
   ```
 
 #### `insertAfter`
@@ -239,7 +256,9 @@ Inserts a node after the current node.
 - **Parameters**: `newNode` (Node)
 - **Example**:
   ```javascript
-  j.find(j.FunctionDeclaration).insertAfter(j.expressionStatement(j.stringLiteral("Inserted after")));
+  j.find(j.FunctionDeclaration).insertAfter(
+    j.expressionStatement(j.stringLiteral("Inserted after"))
+  );
   ```
 
 #### `remove`

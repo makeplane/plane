@@ -82,11 +82,8 @@ catalogs:
       specifier: 18.3.1
       version: 18.3.1
     react-router:
-      specifier: 7.9.5
-      version: 7.9.5
-    react-router-dom:
-      specifier: 7.9.5
-      version: 7.9.5
+      specifier: 7.12.0
+      version: 7.12.0
     swr:
       specifier: 2.2.4
       version: 2.2.4
@@ -115,6 +112,7 @@ overrides:
   '@types/express': 4.17.23
   typescript: 5.8.3
   vite: 7.1.11
+  qs: 6.14.1
 
 importers:
 
@@ -227,10 +225,10 @@ importers:
         version: link:../../packages/utils
       '@react-router/node':
         specifier: 'catalog:'
-        version: 7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
+        version: 7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       '@sentry/react-router':
         specifier: 'catalog:'
-        version: 10.27.0(@react-router/node@7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+        version: 10.27.0(@react-router/node@7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@tanstack/react-virtual':
         specifier: ^3.13.12
         version: 3.13.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -269,10 +267,7 @@ importers:
         version: 7.51.5(react@18.3.1)
       react-router:
         specifier: 'catalog:'
-        version: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-router-dom:
-        specifier: 'catalog:'
-        version: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       serve:
         specifier: 14.2.5
         version: 14.2.5
@@ -294,7 +289,7 @@ importers:
         version: link:../../packages/typescript-config
       '@react-router/dev':
         specifier: 'catalog:'
-        version: 7.9.5(@react-router/serve@7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(@types/node@22.12.0)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(terser@5.43.1)(typescript@5.8.3)(vite@7.1.11(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(yaml@2.8.1))(yaml@2.8.1)
+        version: 7.9.5(@react-router/serve@7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(@types/node@22.12.0)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(terser@5.43.1)(typescript@5.8.3)(vite@7.1.11(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(yaml@2.8.1))(yaml@2.8.1)
       '@types/lodash-es':
         specifier: 'catalog:'
         version: 4.17.12
@@ -475,13 +470,13 @@ importers:
         version: 2.11.8
       '@react-router/node':
         specifier: 'catalog:'
-        version: 7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
+        version: 7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       '@react-router/serve':
         specifier: 'catalog:'
-        version: 7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
+        version: 7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       '@sentry/react-router':
         specifier: 'catalog:'
-        version: 10.27.0(@react-router/node@7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+        version: 10.27.0(@react-router/node@7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       axios:
         specifier: 'catalog:'
         version: 1.12.0
@@ -529,10 +524,7 @@ importers:
         version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-router:
         specifier: 'catalog:'
-        version: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-router-dom:
-        specifier: 'catalog:'
-        version: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       swr:
         specifier: 'catalog:'
         version: 2.2.4(react@18.3.1)
@@ -551,7 +543,7 @@ importers:
         version: link:../../packages/typescript-config
       '@react-router/dev':
         specifier: 'catalog:'
-        version: 7.9.5(@react-router/serve@7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(@types/node@22.12.0)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(terser@5.43.1)(typescript@5.8.3)(vite@7.1.11(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(yaml@2.8.1))(yaml@2.8.1)
+        version: 7.9.5(@react-router/serve@7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(@types/node@22.12.0)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(terser@5.43.1)(typescript@5.8.3)(vite@7.1.11(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(yaml@2.8.1))(yaml@2.8.1)
       '@tailwindcss/typography':
         specifier: 0.5.19
         version: 0.5.19
@@ -644,10 +636,10 @@ importers:
         version: 3.4.5(react@18.3.1)
       '@react-router/node':
         specifier: 'catalog:'
-        version: 7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
+        version: 7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       '@sentry/react-router':
         specifier: 'catalog:'
-        version: 10.27.0(@react-router/node@7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+        version: 10.27.0(@react-router/node@7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -728,10 +720,7 @@ importers:
         version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-router:
         specifier: 'catalog:'
-        version: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-router-dom:
-        specifier: 'catalog:'
-        version: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       recharts:
         specifier: ^2.12.7
         version: 2.15.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -762,7 +751,7 @@ importers:
         version: link:../../packages/typescript-config
       '@react-router/dev':
         specifier: 'catalog:'
-        version: 7.9.5(@react-router/serve@7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(@types/node@22.12.0)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(terser@5.43.1)(typescript@5.8.3)(vite@7.1.11(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(yaml@2.8.1))(yaml@2.8.1)
+        version: 7.9.5(@react-router/serve@7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(@types/node@22.12.0)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(terser@5.43.1)(typescript@5.8.3)(vite@7.1.11(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(yaml@2.8.1))(yaml@2.8.1)
       '@tailwindcss/typography':
         specifier: 0.5.19
         version: 0.5.19
@@ -7871,12 +7860,8 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
-  qs@6.13.0:
-    resolution: {integrity: sha512-+38qI9SOr8tfZ4QmJNplMUxqjbe7LKvvZgWdExBOmd+egZTtjLB67Gu0HRX3u/XOq7UU2Nx6nsjvS16Z9uwfpg==}
-    engines: {node: '>=0.6'}
-
-  qs@6.14.0:
-    resolution: {integrity: sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==}
+  qs@6.14.1:
+    resolution: {integrity: sha512-4EK3+xJl8Ts67nLYNwqw/dsFVnCf+qR7RgXSK9jEEm9unao3njwMDdmsdvoKBKHzxd7tCYz5e5M+SnMjdtXGQQ==}
     engines: {node: '>=0.6'}
 
   quansync@0.2.11:
@@ -8020,15 +8005,8 @@ packages:
       '@types/react':
         optional: true
 
-  react-router-dom@7.9.5:
-    resolution: {integrity: sha512-mkEmq/K8tKN63Ae2M7Xgz3c9l9YNbY+NHH6NNeUmLA3kDkhKXRsNb/ZpxaEunvGo2/3YXdk5EJU3Hxp3ocaBPw==}
-    engines: {node: '>=20.0.0'}
-    peerDependencies:
-      react: '>=18'
-      react-dom: '>=18'
-
-  react-router@7.9.5:
-    resolution: {integrity: sha512-JmxqrnBZ6E9hWmf02jzNn9Jm3UqyeimyiwzD69NjxGySG6lIz/1LVPsoTCwN7NBX2XjCEa1LIX5EMz1j2b6u6A==}
+  react-router@7.12.0:
+    resolution: {integrity: sha512-kTPDYPFzDVGIIGNLS5VJykK0HfHLY5MF3b+xj0/tTyNYL1gF1qs7u67Z9jEhQk2sQ98SUaHxlG31g1JtF7IfVw==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: '>=18'
@@ -11005,7 +10983,7 @@ snapshots:
       '@react-pdf/primitives': 4.1.1
       '@react-pdf/stylesheet': 6.1.0
 
-  '@react-router/dev@7.9.5(@react-router/serve@7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(@types/node@22.12.0)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(terser@5.43.1)(typescript@5.8.3)(vite@7.1.11(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(yaml@2.8.1))(yaml@2.8.1)':
+  '@react-router/dev@7.9.5(@react-router/serve@7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(@types/node@22.12.0)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(terser@5.43.1)(typescript@5.8.3)(vite@7.1.11(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(yaml@2.8.1))(yaml@2.8.1)':
     dependencies:
       '@babel/core': 7.28.4
       '@babel/generator': 7.28.5
@@ -11015,7 +10993,7 @@ snapshots:
       '@babel/traverse': 7.28.4
       '@babel/types': 7.28.5
       '@npmcli/package-json': 4.0.1
-      '@react-router/node': 7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
+      '@react-router/node': 7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       '@remix-run/node-fetch-server': 0.9.0
       arg: 5.0.2
       babel-dead-code-elimination: 1.0.10
@@ -11031,14 +11009,14 @@ snapshots:
       picocolors: 1.1.1
       prettier: 3.7.4
       react-refresh: 0.14.2
-      react-router: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-router: 7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       semver: 7.7.3
       tinyglobby: 0.2.15
       valibot: 1.2.0(typescript@5.8.3)
       vite: 7.1.11(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(yaml@2.8.1)
       vite-node: 3.2.4(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(yaml@2.8.1)
     optionalDependencies:
-      '@react-router/serve': 7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
+      '@react-router/serve': 7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       typescript: 5.8.3
     transitivePeerDependencies:
       - '@types/node'
@@ -11056,31 +11034,31 @@ snapshots:
       - tsx
       - yaml
 
-  '@react-router/express@7.9.5(express@4.22.0)(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)':
+  '@react-router/express@7.9.5(express@4.22.0)(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)':
     dependencies:
-      '@react-router/node': 7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
+      '@react-router/node': 7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       express: 4.22.0
-      react-router: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-router: 7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     optionalDependencies:
       typescript: 5.8.3
 
-  '@react-router/node@7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)':
+  '@react-router/node@7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)':
     dependencies:
       '@mjackson/node-fetch-server': 0.2.0
-      react-router: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-router: 7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     optionalDependencies:
       typescript: 5.8.3
 
-  '@react-router/serve@7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)':
+  '@react-router/serve@7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)':
     dependencies:
       '@mjackson/node-fetch-server': 0.2.0
-      '@react-router/express': 7.9.5(express@4.22.0)(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
-      '@react-router/node': 7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
+      '@react-router/express': 7.9.5(express@4.22.0)(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
+      '@react-router/node': 7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       compression: 1.8.1
       express: 4.22.0
       get-port: 5.1.1
       morgan: 1.10.1
-      react-router: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-router: 7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       source-map-support: 0.5.21
     transitivePeerDependencies:
       - supports-color
@@ -11378,13 +11356,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@sentry/react-router@10.27.0(@react-router/node@7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
+  '@sentry/react-router@10.27.0(@react-router/node@7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 2.2.0(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.208.0(@opentelemetry/api@1.9.0)
       '@opentelemetry/semantic-conventions': 1.37.0
-      '@react-router/node': 7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
+      '@react-router/node': 7.9.5(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       '@sentry/browser': 10.27.0
       '@sentry/cli': 2.58.2
       '@sentry/core': 10.27.0
@@ -11393,7 +11371,7 @@ snapshots:
       '@sentry/vite-plugin': 4.6.0
       glob: 11.1.0
       react: 18.3.1
-      react-router: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-router: 7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -13180,7 +13158,7 @@ snapshots:
       http-errors: 2.0.0
       iconv-lite: 0.4.24
       on-finished: 2.4.1
-      qs: 6.13.0
+      qs: 6.14.1
       raw-body: 2.5.2
       type-is: 1.6.18
       unpipe: 1.0.0
@@ -14357,7 +14335,7 @@ snapshots:
       parseurl: 1.3.3
       path-to-regexp: 0.1.12
       proxy-addr: 2.0.7
-      qs: 6.14.0
+      qs: 6.14.1
       range-parser: 1.2.1
       safe-buffer: 5.2.1
       send: 0.19.0
@@ -16746,11 +16724,7 @@ snapshots:
 
   punycode@2.3.1: {}
 
-  qs@6.13.0:
-    dependencies:
-      side-channel: 1.1.0
-
-  qs@6.14.0:
+  qs@6.14.1:
     dependencies:
       side-channel: 1.1.0
 
@@ -16945,13 +16919,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.3.11
 
-  react-router-dom@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-router: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-
-  react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       cookie: 1.0.2
       react: 18.3.1
@@ -18136,7 +18104,7 @@ snapshots:
   url@0.11.4:
     dependencies:
       punycode: 1.4.1
-      qs: 6.14.0
+      qs: 6.14.1
 
   use-callback-ref@1.3.3(@types/react@18.3.11)(react@18.3.1):
     dependencies:
