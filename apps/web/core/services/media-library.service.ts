@@ -1,3 +1,4 @@
+import type { AxiosRequestConfig } from "axios";
 import { API_BASE_URL } from "@plane/constants";
 
 import { APIService } from "@/services/api.service";
@@ -87,7 +88,8 @@ export class MediaLibraryService extends APIService {
     projectId: string,
     packageId: string,
     payload: TMediaArtifactPayload,
-    file: File
+    file: File,
+    onUploadProgress?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TMediaArtifact> {
     const formData = new FormData();
     formData.append("file", file);
@@ -105,7 +107,8 @@ export class MediaLibraryService extends APIService {
 
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/`,
-      formData
+      formData,
+      { onUploadProgress }
     )
       .then((response) => response?.data as TMediaArtifact)
       .catch((error) => {

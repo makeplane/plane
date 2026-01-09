@@ -47,7 +47,7 @@ COPY --from=backend-img /code /app/backend
 COPY --from=backend-img /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
 COPY --from=backend-img /usr/local/bin/ /usr/local/bin/
 
-RUN apk add --no-cache nss-tools bash curl uuidgen ncdu vim
+RUN apk add --no-cache nss-tools bash curl uuidgen ncdu vim ffmpeg
 
 RUN pip install supervisor
 RUN mkdir -p /etc/supervisor/conf.d
