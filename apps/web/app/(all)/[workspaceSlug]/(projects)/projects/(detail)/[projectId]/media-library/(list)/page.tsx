@@ -1,11 +1,14 @@
 "use client";
 
-import { useId, useMemo } from "react";
+import { useEffect, useId, useMemo } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { Navigation, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+
+import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 
 import { MediaCard } from "./media-card";
 import type { TMediaItem, TMediaSection } from "./media-items";
@@ -13,6 +16,7 @@ import { groupMediaItemsByTag } from "./media-items";
 import { useMediaLibrary } from "./media-library-context";
 import { MediaListView } from "./media-list-view";
 import { useMediaLibraryItems } from "./use-media-library-items";
+import { buildMetaFilterConfigs, collectMetaFilterOptions, matchesMediaLibraryFilters } from "./media-library-filters";
 
 const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHref: (item: TMediaItem) => string }) => {
   const rowId = useId().replace(/:/g, "");
@@ -76,13 +80,15 @@ const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHre
   );
 };
 
-export default function MediaLibraryListPage() {
+const MediaLibraryListPage = observer(() => {
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
-  const { uploadedItems } = useMediaLibrary();
+  const { uploadedItems, mediaFilters, setMediaFilterConfigs } = useMediaLibrary();
   const searchParams = useSearchParams();
   const query = (searchParams.get("q") ?? "").trim().toLowerCase();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
   const { items: libraryItems } = useMediaLibraryItems(workspaceSlug, projectId);
+  const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
+  const allItems = useMemo(() => [...uploadedItems, ...libraryItems], [libraryItems, uploadedItems]);
   const uploadedSection = useMemo(
     () => (uploadedItems.length > 0 ? [{ title: "Uploads", items: uploadedItems }] : []),
     [uploadedItems]
@@ -91,8 +97,16 @@ export default function MediaLibraryListPage() {
     () => [...uploadedSection, ...groupMediaItemsByTag(libraryItems)],
     [libraryItems, uploadedSection]
   );
+  const filterConfigs = useMemo(
+    () => buildMetaFilterConfigs(collectMetaFilterOptions(allItems), operatorConfigs),
+    [allItems, operatorConfigs]
+  );
+
+  useEffect(() => {
+    setMediaFilterConfigs(filterConfigs);
+  }, [filterConfigs, setMediaFilterConfigs]);
+
   const filteredSections = useMemo(() => {
-    if (!query) return mediaSections;
     return mediaSections
       .map((section) => ({
         ...section,
@@ -109,11 +123,12 @@ export default function MediaLibraryListPage() {
           ]
             .join(" ")
             .toLowerCase();
-          return haystack.includes(query);
+          const matchesQuery = !query || haystack.includes(query);
+          return matchesQuery && matchesMediaLibraryFilters(item, mediaFilters.allConditionsForDisplay);
         }),
       }))
       .filter((section) => section.items.length > 0);
-  }, [mediaSections, query]);
+  }, [mediaFilters.allConditionsForDisplay, mediaSections, query]);
 
   const getItemHref = (item: TMediaItem) =>
     `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
@@ -142,4 +157,6 @@ export default function MediaLibraryListPage() {
       </div>
     </div>
   );
-}
+});
+
+export default MediaLibraryListPage;
