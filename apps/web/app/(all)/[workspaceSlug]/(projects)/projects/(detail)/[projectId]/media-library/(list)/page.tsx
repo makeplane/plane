@@ -85,6 +85,7 @@ const MediaLibraryListPage = observer(() => {
   const { uploadedItems, mediaFilters, setMediaFilterConfigs } = useMediaLibrary();
   const searchParams = useSearchParams();
   const query = (searchParams.get("q") ?? "").trim().toLowerCase();
+  const mediaTypeFilter = (searchParams.get("mediaType") ?? "").trim();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
   const { items: libraryItems } = useMediaLibraryItems(workspaceSlug, projectId);
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
@@ -124,11 +125,12 @@ const MediaLibraryListPage = observer(() => {
             .join(" ")
             .toLowerCase();
           const matchesQuery = !query || haystack.includes(query);
-          return matchesQuery && matchesMediaLibraryFilters(item, mediaFilters.allConditionsForDisplay);
+          const matchesType = !mediaTypeFilter || item.mediaType === mediaTypeFilter;
+          return matchesQuery && matchesType && matchesMediaLibraryFilters(item, mediaFilters.allConditionsForDisplay);
         }),
       }))
       .filter((section) => section.items.length > 0);
-  }, [mediaFilters.allConditionsForDisplay, mediaSections, query]);
+  }, [mediaFilters.allConditionsForDisplay, mediaSections, mediaTypeFilter, query]);
 
   const getItemHref = (item: TMediaItem) =>
     `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;

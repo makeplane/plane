@@ -74,6 +74,7 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({
   const searchParams = useSearchParams();
 
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
+  const mediaType = searchParams.get("mediaType") ?? "";
   const activeLayout = useMemo(() => {
     const viewParam = searchParams.get("view");
     return viewParam === MediaLayoutTypes.LIST ? MediaLayoutTypes.LIST : MediaLayoutTypes.GRID;
@@ -188,6 +189,17 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({
             ))}
           </div>
           {hasFilterOptions ? <FiltersToggle filter={mediaFilters} /> : null}
+          <select
+            aria-label="Filter by media type"
+            value={mediaType}
+            onChange={(event) => updateQuery("mediaType", event.target.value)}
+            className="h-7 rounded-md border border-custom-border-200 bg-custom-background-100 px-2 text-xs text-custom-text-100"
+          >
+            <option value="">All types</option>
+            <option value="image">Image</option>
+            <option value="video">Video</option>
+            <option value="document">Document</option>
+          </select>
            {/* Upload */}
           <Button
             variant="primary"
