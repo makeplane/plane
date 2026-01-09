@@ -6,7 +6,7 @@ import { MediaLibraryService } from "@/services/media-library.service";
 import type { TMediaItem } from "./media-items";
 import { mapArtifactsToMediaItems } from "./media-items";
 
-export const useMediaLibraryItems = (workspaceSlug?: string, projectId?: string) => {
+export const useMediaLibraryItems = (workspaceSlug?: string, projectId?: string, refreshKey?: number) => {
   const [items, setItems] = useState<TMediaItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
@@ -40,7 +40,7 @@ export const useMediaLibraryItems = (workspaceSlug?: string, projectId?: string)
     return () => {
       isMounted = false;
     };
-  }, [mediaLibraryService, projectId, workspaceSlug]);
+  }, [mediaLibraryService, projectId, refreshKey, workspaceSlug]);
 
   return { items, isLoading };
 };

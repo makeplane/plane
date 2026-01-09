@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useParams } from "next/navigation";
 import { FileImage, FileText, FileVideo, UploadCloud, X } from "lucide-react";
 import { Button, ToggleSwitch } from "@plane/ui";
-import type { TMediaItem } from "./media-items";
+import { MediaLibraryService } from "@/services/media-library.service";
 import { useMediaLibrary } from "./media-library-context";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
+const IMAGE_FORMATS = new Set(["jpg", "jpeg", "png", "svg"]);
+const VIDEO_FORMATS = new Set(["mp4", "m3u8"]);
+const DOC_FORMATS = new Set(["json", "csv", "pdf", "docx", "xlsx", "pptx", "txt"]);
 
 type TUploadItem = {
   id: string;
@@ -16,13 +20,33 @@ type TUploadItem = {
 };
 
 const getTitleFromFile = (fileName: string) => fileName.replace(/\.[^/.]+$/, "");
+const getFileExtension = (fileName: string) => fileName.split(".").pop()?.toLowerCase() ?? "";
+
+const buildArtifactName = (fileName: string, uploadedAt: number, index: number) => {
+  const base = getTitleFromFile(fileName)
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, "-")
+    .replace(/(^-+|-+$)/g, "");
+  const suffix = `${uploadedAt}-${index}`;
+  return base ? `${base}-${suffix}` : `artifact-${suffix}`;
+};
+
+const resolveArtifactFormat = (fileName: string) => {
+  const extension = getFileExtension(fileName);
+  if (IMAGE_FORMATS.has(extension)) return extension;
+  if (VIDEO_FORMATS.has(extension)) return extension;
+  if (DOC_FORMATS.has(extension)) return extension;
+  return "";
+};
 
 export const MediaLibraryUploadModal = () => {
-  const { isUploadOpen, closeUpload, addUploadedItem } = useMediaLibrary();
+  const { isUploadOpen, closeUpload, refreshLibrary } = useMediaLibrary();
+  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   const [isDragging, setIsDragging] = useState(false);
   const [allowMultiple, setAllowMultiple] = useState(false);
   const [uploads, setUploads] = useState<TUploadItem[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
 
   const handleClose = () => {
     setUploads([]);
@@ -42,11 +66,12 @@ export const MediaLibraryUploadModal = () => {
     const filesToAdd = allowMultiple ? files : files.slice(0, 1);
     const nextItems = filesToAdd.map((file) => {
       const tooLarge = file.size > MAX_FILE_SIZE;
+      const unsupported = !resolveArtifactFormat(file.name);
       return {
         id: `${file.name}-${file.size}-${file.lastModified}`,
         file,
-        status: tooLarge ? "failed" : "ready",
-        error: tooLarge ? "File exceeds 100MB limit" : undefined,
+        status: tooLarge || unsupported ? "failed" : "ready",
+        error: tooLarge ? "File exceeds 100MB limit" : unsupported ? "Unsupported file type" : undefined,
       } as TUploadItem;
     });
     setUploads((prev) => (allowMultiple ? [...prev, ...nextItems] : nextItems));
@@ -54,35 +79,80 @@ export const MediaLibraryUploadModal = () => {
 
   const handleUpload = async () => {
     const readyItems = uploads.filter((item) => item.status === "ready");
-    if (readyItems.length === 0) return;
-    const createdAt = new Date().toLocaleDateString("en-US");
+    if (readyItems.length === 0 || !workspaceSlug || !projectId) return;
+    const failedItems = uploads.filter((item) => item.status === "failed");
     const uploadedAt = Date.now();
+    let packageId: string | null = null;
+
+    try {
+      const manifest = await mediaLibraryService.ensureProjectLibrary(workspaceSlug, projectId);
+      packageId = typeof manifest?.id === "string" ? manifest.id : null;
+    } catch {
+      setUploads(
+        readyItems.map((item) => ({
+          ...item,
+          status: "failed",
+          error: "Unable to initialize media library",
+        }))
+      );
+      return;
+    }
+
+    if (!packageId) {
+      setUploads(
+        readyItems.map((item) => ({
+          ...item,
+          status: "failed",
+          error: "Media library package not available",
+        }))
+      );
+      return;
+    }
+
+    let successCount = 0;
     for (const [index, item] of readyItems.entries()) {
       const file = item.file;
-      const isImage = file.type.startsWith("image/");
-      const isVideo = file.type.startsWith("video/");
-      const mediaType = isImage ? "image" : isVideo ? "video" : "document";
-      const objectUrl = URL.createObjectURL(file);
-      const newItem: TMediaItem = {
-        id: `upload-${uploadedAt}-${index}-${file.name}`,
-        title: getTitleFromFile(file.name) || "Untitled Upload",
-        author: "You",
-        createdAt,
-        views: 0,
-        duration: mediaType === "image" ? "Image" : mediaType === "video" ? "0:00" : "Document",
-        primaryTag: "Game",
-        secondaryTag: "Upload",
-        itemsCount: 1,
-        mediaType,
-        thumbnail: mediaType === "image" ? objectUrl : "",
-        videoSrc: mediaType === "video" ? objectUrl : undefined,
-        fileSrc: mediaType === "document" ? objectUrl : undefined,
-        docs: ["Upload"],
-      };
-      await addUploadedItem(newItem, file);
+      const format = resolveArtifactFormat(file.name);
+      if (!format) {
+        failedItems.push({
+          ...item,
+          status: "failed",
+          error: "Unsupported file type",
+        });
+        continue;
+      }
+
+      const artifactName = buildArtifactName(file.name, uploadedAt, index);
+      const title = getTitleFromFile(file.name) || "Untitled Upload";
+      const action = VIDEO_FORMATS.has(format) ? "play" : IMAGE_FORMATS.has(format) ? "view" : "download";
+      try {
+        await mediaLibraryService.uploadArtifact(
+          workspaceSlug,
+          projectId,
+          packageId,
+          {
+            name: artifactName,
+            title,
+            format,
+            link: null,
+            action,
+            meta: { category: "Uploads", source: "web" },
+          },
+          file
+        );
+        successCount += 1;
+      } catch {
+        failedItems.push({
+          ...item,
+          status: "failed",
+          error: "Upload failed",
+        });
+      }
     }
-    setUploads([]);
-    if (!allowMultiple) {
+
+    if (successCount > 0) refreshLibrary();
+    setUploads(failedItems);
+    if (!allowMultiple && failedItems.length === 0) {
       handleClose();
     }
   };
@@ -216,7 +286,9 @@ export const MediaLibraryUploadModal = () => {
         </div>
 
         <div className="flex items-center justify-between border-t border-custom-border-200 px-5 py-3 text-xs text-custom-text-300">
-          <span>Supported formats: All file types (Max size: 100MB)</span>
+          <span>
+            Supported formats: MP4, M3U8, JPG, PNG, SVG, PDF, CSV, JSON, DOCX, XLSX, PPTX, TXT (Max size: 100MB)
+          </span>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <span className="text-xs text-custom-text-300">Upload more</span>
@@ -237,7 +309,12 @@ export const MediaLibraryUploadModal = () => {
             <Button variant="neutral-primary" size="sm" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="primary" size="sm" onClick={handleUpload} disabled={uploads.length === 0}>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={handleUpload}
+              disabled={!uploads.some((item) => item.status === "ready")}
+            >
               Upload
             </Button>
           </div>
