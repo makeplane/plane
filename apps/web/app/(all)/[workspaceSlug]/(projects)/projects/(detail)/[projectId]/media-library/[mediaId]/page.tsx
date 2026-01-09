@@ -19,6 +19,7 @@ const MediaDetailPage = () => {
   const { items: libraryItems } = useMediaLibraryItems(workspaceSlug, projectId);
   const [activeTab, setActiveTab] = useState<"details" | "tags">("details");
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [isImageZoomOpen, setIsImageZoomOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -97,7 +98,16 @@ const MediaDetailPage = () => {
             </div>
           ) : item.mediaType === "image" ? (
             <div className="overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90">
-              <img src={item.thumbnail} alt={item.title} className="h-[505px] w-full object-cover" />
+              <button
+                type="button"
+                className="h-full w-full cursor-zoom-in"
+                onClick={() => {
+                  setIsImageZoomOpen(true);
+                }}
+                aria-label="Zoom image"
+              >
+                <img src={item.thumbnail} alt={item.title} className="h-[505px] w-full object-cover" />
+              </button>
             </div>
           ) : (
             <div className="flex h-80 flex-col items-center justify-center gap-3 rounded-lg border border-custom-border-200 bg-custom-background-90 text-custom-text-300">
@@ -125,6 +135,28 @@ const MediaDetailPage = () => {
           </div>
           <hr className="border-t border-custom-border-200" />
         </div>
+
+        {isImageZoomOpen && item.mediaType === "image" && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+            onClick={() => setIsImageZoomOpen(false)}
+            role="dialog"
+            aria-modal="true"
+          >
+            <button
+              type="button"
+              onClick={() => setIsImageZoomOpen(false)}
+              className="absolute right-4 top-4 rounded-full border border-white/30 px-3 py-1 text-xs text-white hover:border-white"
+            >
+              Close
+            </button>
+            <img
+              src={item.thumbnail}
+              alt={item.title}
+              className="h-[90vh] w-[90vw] object-contain"
+            />
+          </div>
+        )}
 
         <div className="flex flex-col gap-4 rounded-2xl border border-custom-border-200 bg-custom-background-100 p-4">
           <div className="flex items-center gap-2 rounded-full border border-custom-border-200 bg-custom-background-90 p-1 text-[11px] text-custom-text-300">
