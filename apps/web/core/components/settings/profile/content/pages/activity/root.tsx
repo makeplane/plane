@@ -10,7 +10,7 @@ import darkActivityAsset from "@/app/assets/empty-state/profile/activity-dark.we
 import lightActivityAsset from "@/app/assets/empty-state/profile/activity-light.webp?url";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { SettingsHeading } from "@/components/settings/heading";
+import { ProfileSettingsHeading } from "@/components/settings/profile/heading";
 // local imports
 import { ActivityProfileSettingsList } from "./activity-list";
 
@@ -55,7 +55,7 @@ export const ActivityProfileSettings = observer(function ActivityProfileSettings
   if (isEmpty) {
     return (
       <div className="size-full flex flex-col gap-y-7">
-        <SettingsHeading
+        <ProfileSettingsHeading
           title={t("account_settings.activity.heading")}
           description={t("account_settings.activity.description")}
         />
@@ -72,7 +72,7 @@ export const ActivityProfileSettings = observer(function ActivityProfileSettings
 
   return (
     <div className="size-full">
-      <SettingsHeading
+      <ProfileSettingsHeading
         title={t("account_settings.activity.heading")}
         description={t("account_settings.activity.description")}
       />

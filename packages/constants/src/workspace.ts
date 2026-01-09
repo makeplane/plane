@@ -118,14 +118,6 @@ export const WORKSPACE_SETTINGS_ACCESS = Object.fromEntries(
   Object.entries(WORKSPACE_SETTINGS).map(([_, { href, access }]) => [href, access])
 );
 
-export const WORKSPACE_SETTINGS_LINKS: TWorkspaceSettingsItem[] = [
-  WORKSPACE_SETTINGS["general"],
-  WORKSPACE_SETTINGS["members"],
-  WORKSPACE_SETTINGS["billing-and-plans"],
-  WORKSPACE_SETTINGS["export"],
-  WORKSPACE_SETTINGS["webhooks"],
-];
-
 export const ROLE = {
   [EUserWorkspaceRoles.GUEST]: "Guest",
   [EUserWorkspaceRoles.MEMBER]: "Member",

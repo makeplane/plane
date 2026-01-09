@@ -10,7 +10,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Input, PasswordStrengthIndicator } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
-import { SettingsHeading } from "@/components/settings/heading";
+import { ProfileSettingsHeading } from "@/components/settings/profile/heading";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
 import type { EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
@@ -119,7 +119,7 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
 
   return (
     <div className="size-full">
-      <SettingsHeading title={t("auth.common.password.change_password.label.default")} />
+      <ProfileSettingsHeading title={t("auth.common.password.change_password.label.default")} />
       <form onSubmit={handleSubmit(handleChangePassword)} className="mt-7 flex flex-col gap-8">
         <div className="flex flex-col gap-y-7">
           {oldPasswordRequired && (

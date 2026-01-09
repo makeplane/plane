@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
-import { SettingsHeading } from "@/components/settings/heading";
+import { ProfileSettingsHeading } from "@/components/settings/profile/heading";
 import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
 // services
 import { UserService } from "@/services/user.service";
@@ -25,7 +25,7 @@ export const NotificationsProfileSettings = observer(function NotificationsProfi
 
   return (
     <div className="size-full">
-      <SettingsHeading
+      <ProfileSettingsHeading
         title={t("account_settings.notifications.heading")}
         description={t("account_settings.notifications.description")}
       />

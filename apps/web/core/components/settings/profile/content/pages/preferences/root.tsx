@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
-import { SettingsHeading } from "@/components/settings/heading";
+import { ProfileSettingsHeading } from "@/components/settings/profile/heading";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 // local imports
@@ -18,7 +18,7 @@ export const PreferencesProfileSettings = observer(function PreferencesProfileSe
 
   return (
     <div className="size-full">
-      <SettingsHeading
+      <ProfileSettingsHeading
         title={t("account_settings.preferences.heading")}
         description={t("account_settings.preferences.description")}
       />

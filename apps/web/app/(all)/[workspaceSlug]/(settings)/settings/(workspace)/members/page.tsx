@@ -103,12 +103,12 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
         onSubmit={handleWorkspaceInvite}
       />
       <section
-        className={cn("w-full h-full", {
+        className={cn("size-full", {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >
         <div className="flex justify-between gap-4 pb-3.5 items-center">
-          <h4 className="flex items-center gap-2.5 text-h5-medium">
+          <h4 className="flex items-center gap-2.5 text-h3-medium">
             {t("workspace_settings.settings.members.title")}
             {workspaceMemberIds && workspaceMemberIds.length > 0 && (
               <CountChip count={workspaceMemberIds.length} className="h-5 m-auto" />

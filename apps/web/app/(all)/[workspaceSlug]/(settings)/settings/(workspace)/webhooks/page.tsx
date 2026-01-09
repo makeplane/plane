@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-import { SettingsHeading } from "@/components/settings/heading";
+import { WorkspaceSettingsHeading } from "@/components/settings/workspace/heading";
 import { WebhookSettingsLoader } from "@/components/ui/loader/settings/web-hook";
 import { WorkspaceSettingsContentWrapper } from "@/components/settings/workspace/content-wrapper";
 import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";
@@ -67,7 +67,7 @@ function WebhooksListPage({ params }: Route.ComponentProps) {
             setShowCreateWebhookModal(false);
           }}
         />
-        <SettingsHeading
+        <WorkspaceSettingsHeading
           title={t("workspace_settings.settings.webhooks.title")}
           description={t("workspace_settings.settings.webhooks.description")}
           button={{
@@ -78,7 +78,7 @@ function WebhooksListPage({ params }: Route.ComponentProps) {
           }}
         />
         {Object.keys(webhooks).length > 0 ? (
-          <div className="flex h-full w-full flex-col">
+          <div className="mt-4">
             <WebhooksList />
           </div>
         ) : (

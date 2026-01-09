@@ -1,11 +1,12 @@
 import { observer } from "mobx-react";
-// components
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+// components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { IntegrationGuide } from "@/components/integration/guide";
+import { WorkspaceSettingsHeading } from "@/components/settings/workspace/heading";
 // hooks
-import { SettingsHeading } from "@/components/settings/heading";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 
@@ -24,7 +25,7 @@ function ImportsPage() {
     <>
       <PageHead title={pageTitle} />
       <section className="w-full">
-        <SettingsHeading title="Imports" />
+        <WorkspaceSettingsHeading title="Imports" />
         <IntegrationGuide />
       </section>
     </>

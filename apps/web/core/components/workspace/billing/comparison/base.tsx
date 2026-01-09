@@ -35,7 +35,7 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
   const getSubscriptionType = (planKey: TPlanePlans) => planDetails[planKey].id;
 
   return (
-    <div className="size-full px-2 overflow-x-auto horizontal-scrollbar scrollbar-sm">
+    <div className="size-full overflow-x-auto horizontal-scrollbar scrollbar-sm">
       <div className="max-w-full" style={{ minWidth: `${numberOfPlansToRender * 280}px` }}>
         <div className="h-full flex flex-col gap-y-10">
           <div
