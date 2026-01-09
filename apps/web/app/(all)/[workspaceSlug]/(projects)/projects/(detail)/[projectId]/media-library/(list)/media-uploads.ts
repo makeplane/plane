@@ -12,6 +12,7 @@ type TStoredUpload = {
   primaryTag: string;
   secondaryTag: string;
   itemsCount: number;
+  meta?: Record<string, unknown>;
   mediaType: "video" | "image" | "document";
   docs: string[];
   uploadedAt: number;
@@ -62,6 +63,7 @@ export const loadUploadedMediaItems = async (): Promise<TMediaItem[]> => {
         primaryTag: item.primaryTag,
         secondaryTag: item.secondaryTag,
         itemsCount: item.itemsCount,
+        meta: item.meta ?? {},
         mediaType: item.mediaType,
         thumbnail: item.mediaType === "image" ? objectUrl : "",
         videoSrc: item.mediaType === "video" ? objectUrl : undefined,
@@ -83,6 +85,7 @@ export const persistUploadedMediaItem = async (item: TMediaItem, file: File) => 
     primaryTag: item.primaryTag,
     secondaryTag: item.secondaryTag,
     itemsCount: item.itemsCount,
+    meta: item.meta ?? {},
     mediaType: item.mediaType,
     docs: item.docs,
     uploadedAt: Date.now(),

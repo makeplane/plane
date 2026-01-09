@@ -17,6 +17,8 @@ export const MediaCard = ({ item, href, className }: { item: TMediaItem; href: s
           <img
             src={item.thumbnail}
             alt={item.title}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         ) : item.mediaType === "video" ? (

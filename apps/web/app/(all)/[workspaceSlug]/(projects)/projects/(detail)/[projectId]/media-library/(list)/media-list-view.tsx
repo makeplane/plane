@@ -23,7 +23,13 @@ const MediaListRow = ({
   >
     <div className="relative h-16 w-28 overflow-hidden rounded-md bg-custom-background-90">
       {item.mediaType === "image" ? (
-        <img src={item.thumbnail} alt={item.title} className="h-full w-full object-cover" />
+        <img
+          src={item.thumbnail}
+          alt={item.title}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover"
+        />
       ) : item.mediaType === "video" ? (
         <video
           src={item.videoSrc ?? ""}
@@ -42,7 +48,7 @@ const MediaListRow = ({
     <div className="min-w-0">
       <div className="line-clamp-1 text-sm font-semibold text-custom-text-100">{item.title}</div>
       <div className="text-[11px] text-custom-text-300">
-        {item.primaryTag} · {item.secondaryTag} · {item.itemsCount} items
+        {item.primaryTag} Aú {item.secondaryTag} Aú {item.itemsCount} items
       </div>
     </div>
     <div className="truncate">{item.author}</div>
@@ -51,6 +57,7 @@ const MediaListRow = ({
     <div className="text-right">Views {item.views}</div>
   </Link>
 );
+
 
 const MediaListSection = ({
   section,

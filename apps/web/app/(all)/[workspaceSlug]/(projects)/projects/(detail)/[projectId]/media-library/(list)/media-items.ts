@@ -14,6 +14,7 @@ export type TMediaItem = {
   primaryTag: string;
   secondaryTag: string;
   itemsCount: number;
+  meta: Record<string, unknown>;
   mediaType: "video" | "image" | "document";
   thumbnail: string;
   videoSrc?: string;
@@ -175,6 +176,7 @@ export const mapArtifactsToMediaItems = (
       primaryTag,
       secondaryTag,
       itemsCount,
+      meta,
       mediaType,
       thumbnail,
       videoSrc: mediaType === "video" ? resolvedPath : undefined,

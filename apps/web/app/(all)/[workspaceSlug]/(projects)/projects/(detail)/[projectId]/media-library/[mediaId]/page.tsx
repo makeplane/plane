@@ -9,6 +9,13 @@ import { loadUploadedMediaItems } from "../(list)/media-uploads";
 import { useMediaLibraryItems } from "../(list)/use-media-library-items";
 import { TagsSection } from "./tags-section";
 
+const formatMetaValue = (value: unknown) => {
+  if (value === null || value === undefined) return "--";
+  if (typeof value === "string") return value.trim() ? value : "--";
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  return JSON.stringify(value);
+};
+
 const MediaDetailPage = () => {
   const { mediaId, workspaceSlug, projectId } = useParams() as {
     mediaId: string;
@@ -54,6 +61,12 @@ const MediaDetailPage = () => {
       </div>
     );
   }
+  const meta = item.meta ?? {};
+  const metaEntries = Object.entries(meta)
+    .filter(([key]) => key !== "duration_sec" && key !== "durationSec")
+    .sort(([left], [right]) => left.localeCompare(right));
+  const durationLabel = formatMetaValue(meta.duration ?? item.duration);
+  const durationSecLabel = formatMetaValue(meta.duration_sec ?? meta.durationSec);
 
   return (
     <div className="flex flex-col gap-6 px-3 py-3">
@@ -106,7 +119,13 @@ const MediaDetailPage = () => {
                 }}
                 aria-label="Zoom image"
               >
-                <img src={item.thumbnail} alt={item.title} className="h-[505px] w-full object-cover" />
+                <img
+                  src={item.thumbnail}
+                  alt={item.title}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-[505px] w-full object-cover"
+                />
               </button>
             </div>
           ) : (
@@ -209,8 +228,12 @@ const MediaDetailPage = () => {
                   </div>
                   <div className="space-y-2 px-4 py-3 text-xs text-custom-text-300">
                     <div className="flex items-center justify-between">
-                      <span>Video duration</span>
-                      <span>{item.duration}</span>
+                      <span>Duration</span>
+                      <span>{durationLabel}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Duration (sec)</span>
+                      <span>{durationSecLabel}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span>Shared with</span>
@@ -241,18 +264,16 @@ const MediaDetailPage = () => {
                   Team info
                 </div>
                 <div className="space-y-2 px-4 py-3 text-xs text-custom-text-300">
-                  <div className="flex items-center justify-between">
-                    <span>{item.primaryTag}</span>
-                    <span>{item.secondaryTag}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Items</span>
-                    <span>{item.itemsCount}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Views</span>
-                    <span>{item.views}</span>
-                  </div>
+                  {metaEntries.length === 0 ? (
+                    <div className="text-xs text-custom-text-400">No metadata available.</div>
+                  ) : (
+                    metaEntries.map(([key, value]) => (
+                      <div key={key} className="flex items-center justify-between gap-3">
+                        <span className="truncate text-custom-text-200">{key}</span>
+                        <span className="max-w-[55%] truncate text-right">{formatMetaValue(value)}</span>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </>

@@ -73,6 +73,7 @@ export const MediaLibraryUploadModal = () => {
         primaryTag: "Game",
         secondaryTag: "Upload",
         itemsCount: 1,
+        meta: {},
         mediaType,
         thumbnail: mediaType === "image" ? objectUrl : "",
         videoSrc: mediaType === "video" ? objectUrl : undefined,
