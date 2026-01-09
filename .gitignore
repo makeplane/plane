@@ -84,6 +84,7 @@ package-lock.json
 
 .secrets
 tmp/
+apps/api/plane/media-library/
 
 ## packages
 dist

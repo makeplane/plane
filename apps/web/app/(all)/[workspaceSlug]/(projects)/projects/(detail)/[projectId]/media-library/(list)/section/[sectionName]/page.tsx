@@ -21,8 +21,8 @@ export default function MediaLibrarySectionPage() {
     projectId: string;
     sectionName: string;
   };
-  const { uploadedItems } = useMediaLibrary();
-  const { items: libraryItems } = useMediaLibraryItems(workspaceSlug, projectId);
+  const { uploadedItems, libraryVersion } = useMediaLibrary();
+  const { items: libraryItems } = useMediaLibraryItems(workspaceSlug, projectId, libraryVersion);
   const searchParams = useSearchParams();
   const query = (searchParams.get("q") ?? "").trim().toLowerCase();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";

@@ -9,6 +9,8 @@ type TMediaLibraryContext = {
   isUploadOpen: boolean;
   openUpload: () => void;
   closeUpload: () => void;
+  libraryVersion: number;
+  refreshLibrary: () => void;
   uploadedItems: TMediaItem[];
   addUploadedItem: (item: TMediaItem, file: File) => Promise<void>;
 };
@@ -17,10 +19,12 @@ const MediaLibraryContext = createContext<TMediaLibraryContext | null>(null);
 
 export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [libraryVersion, setLibraryVersion] = useState(0);
   const [uploadedItems, setUploadedItems] = useState<TMediaItem[]>([]);
 
   const openUpload = useCallback(() => setIsUploadOpen(true), []);
   const closeUpload = useCallback(() => setIsUploadOpen(false), []);
+  const refreshLibrary = useCallback(() => setLibraryVersion((prev) => prev + 1), []);
   const addUploadedItem = useCallback(async (item: TMediaItem, file: File) => {
     await persistUploadedMediaItem(item, file);
     setUploadedItems((prev) => [item, ...prev]);
@@ -45,10 +49,12 @@ export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
       isUploadOpen,
       openUpload,
       closeUpload,
+      libraryVersion,
+      refreshLibrary,
       uploadedItems,
       addUploadedItem,
     }),
-    [isUploadOpen, openUpload, closeUpload, uploadedItems, addUploadedItem]
+    [isUploadOpen, openUpload, closeUpload, libraryVersion, refreshLibrary, uploadedItems, addUploadedItem]
   );
 
   return <MediaLibraryContext.Provider value={value}>{children}</MediaLibraryContext.Provider>;

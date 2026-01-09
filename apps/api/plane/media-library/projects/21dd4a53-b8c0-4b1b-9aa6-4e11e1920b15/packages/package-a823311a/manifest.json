@@ -6,6 +6,35 @@
   "name": "package-a823311a",
   "title": "Media Library Package",
   "createdAt": "2026-01-08T12:16:40Z",
-  "updatedAt": "2026-01-08T12:16:40Z",
-  "artifacts": []
+  "updatedAt": "2026-01-09T05:24:30Z",
+  "artifacts": [
+    {
+      "name": "milky-way-67504_1280-1767936180972-0",
+      "title": "milky-way-67504_1280",
+      "format": "jpg",
+      "path": "projects/21dd4a53-b8c0-4b1b-9aa6-4e11e1920b15/packages/package-a823311a/artifacts/milky-way-67504_1280-1767936180972-0.jpg",
+      "link": null,
+      "action": "view",
+      "meta": {
+        "category": "Uploads",
+        "source": "web"
+      },
+      "created_at": "2026-01-09T05:23:00Z",
+      "updated_at": "2026-01-09T05:23:00Z"
+    },
+    {
+      "name": "detail-section-views-1-1767936270155-0",
+      "title": "Detail Section Views (1)",
+      "format": "pdf",
+      "path": "projects/21dd4a53-b8c0-4b1b-9aa6-4e11e1920b15/packages/package-a823311a/artifacts/detail-section-views-1-1767936270155-0.pdf",
+      "link": null,
+      "action": "download",
+      "meta": {
+        "category": "Uploads",
+        "source": "web"
+      },
+      "created_at": "2026-01-09T05:24:30Z",
+      "updated_at": "2026-01-09T05:24:30Z"
+    }
+  ]
 }

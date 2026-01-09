@@ -78,11 +78,11 @@ const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHre
 
 export default function MediaLibraryListPage() {
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
-  const { uploadedItems } = useMediaLibrary();
+  const { uploadedItems, libraryVersion } = useMediaLibrary();
   const searchParams = useSearchParams();
   const query = (searchParams.get("q") ?? "").trim().toLowerCase();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
-  const { items: libraryItems } = useMediaLibraryItems(workspaceSlug, projectId);
+  const { items: libraryItems } = useMediaLibraryItems(workspaceSlug, projectId, libraryVersion);
   const uploadedSection = useMemo(
     () => (uploadedItems.length > 0 ? [{ title: "Uploads", items: uploadedItems }] : []),
     [uploadedItems]
