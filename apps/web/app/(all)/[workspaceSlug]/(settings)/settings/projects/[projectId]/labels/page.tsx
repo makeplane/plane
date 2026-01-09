@@ -8,7 +8,6 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 import { PageHead } from "@/components/core/page-title";
 import { ProjectSettingsLabelList } from "@/components/labels";
 // hooks
-import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 
@@ -45,12 +44,12 @@ function LabelsSettingsPage() {
   }
 
   return (
-    <SettingsContentWrapper>
+    <>
       <PageHead title={pageTitle} />
       <div ref={scrollableContainerRef} className="h-full w-full gap-10">
         <ProjectSettingsLabelList />
       </div>
-    </SettingsContentWrapper>
+    </>
   );
 }
 

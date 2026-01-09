@@ -9,7 +9,6 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 import { AutoArchiveAutomation, AutoCloseAutomation } from "@/components/automation";
 import { PageHead } from "@/components/core/page-title";
 // hooks
-import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -51,7 +50,7 @@ function AutomationSettingsPage({ params }: Route.ComponentProps) {
   }
 
   return (
-    <SettingsContentWrapper size="lg">
+    <>
       <PageHead title={pageTitle} />
       <section className={`w-full ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
         <SettingsHeading
@@ -62,7 +61,7 @@ function AutomationSettingsPage({ params }: Route.ComponentProps) {
         <AutoCloseAutomation handleChange={handleChange} />
       </section>
       <CustomAutomationsRoot projectId={projectId} workspaceSlug={workspaceSlug} />
-    </SettingsContentWrapper>
+    </>
   );
 }
 

@@ -10,7 +10,6 @@ import { ProjectDetailsFormLoader } from "@/components/project/form-loader";
 import { ArchiveRestoreProjectModal } from "@/components/project/settings/archive-project/archive-restore-modal";
 import { ArchiveProjectSelection } from "@/components/project/settings/archive-project/selection";
 import { DeleteProjectSection } from "@/components/project/settings/delete-project-section";
-import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -31,7 +30,7 @@ function ProjectSettingsPage({ params }: Route.ComponentProps) {
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - General Settings` : undefined;
 
   return (
-    <SettingsContentWrapper>
+    <>
       <PageHead title={pageTitle} />
       {currentProjectDetails && (
         <>
@@ -75,7 +74,7 @@ function ProjectSettingsPage({ params }: Route.ComponentProps) {
           </>
         )}
       </div>
-    </SettingsContentWrapper>
+    </>
   );
 }
 

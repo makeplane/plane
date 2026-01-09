@@ -1,9 +1,14 @@
-import type { TStaticViewTypes, IWorkspaceSearchResults } from "@plane/types";
+import type {
+  TStaticViewTypes,
+  IWorkspaceSearchResults,
+  TWorkspaceSettingsTabs,
+  TWorkspaceSettingsItem,
+} from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
 
-export const ORGANIZATION_SIZE = ["Just myself", "2-10", "11-50", "51-200", "201-500", "500+"];
+export const ORGANIZATION_SIZE: string[] = ["Just myself", "2-10", "11-50", "51-200", "201-500", "500+"];
 
-export const RESTRICTED_URLS = [
+export const RESTRICTED_URLS: string[] = [
   "404",
   "accounts",
   "api",
@@ -71,7 +76,7 @@ export const RESTRICTED_URLS = [
   "instance",
 ];
 
-export const WORKSPACE_SETTINGS = {
+export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettingsItem> = {
   general: {
     key: "general",
     i18n_label: "workspace_settings.settings.general.title",
@@ -113,13 +118,7 @@ export const WORKSPACE_SETTINGS_ACCESS = Object.fromEntries(
   Object.entries(WORKSPACE_SETTINGS).map(([_, { href, access }]) => [href, access])
 );
 
-export const WORKSPACE_SETTINGS_LINKS: {
-  key: string;
-  i18n_label: string;
-  href: string;
-  access: EUserWorkspaceRoles[];
-  highlight: (pathname: string, baseUrl: string) => boolean;
-}[] = [
+export const WORKSPACE_SETTINGS_LINKS: TWorkspaceSettingsItem[] = [
   WORKSPACE_SETTINGS["general"],
   WORKSPACE_SETTINGS["members"],
   WORKSPACE_SETTINGS["billing-and-plans"],

@@ -8,7 +8,6 @@ import { PageHead } from "@/components/core/page-title";
 // hooks
 import { ProjectMemberList } from "@/components/project/member-list";
 import { ProjectSettingsMemberDefaults } from "@/components/project/project-settings-member-defaults";
-import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -39,13 +38,13 @@ function MembersSettingsPage({ params }: Route.ComponentProps) {
   }
 
   return (
-    <SettingsContentWrapper size="lg">
+    <>
       <PageHead title={pageTitle} />
       <SettingsHeading title={t(getProjectSettingsPageLabelI18nKey("members", "common.members"))} />
       <ProjectSettingsMemberDefaults projectId={projectId} workspaceSlug={workspaceSlug} />
       <ProjectTeamspaceList projectId={projectId} workspaceSlug={workspaceSlug} />
       <ProjectMemberList projectId={projectId} workspaceSlug={workspaceSlug} />
-    </SettingsContentWrapper>
+    </>
   );
 }
 

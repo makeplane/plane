@@ -138,7 +138,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
           />
         )}
       />
-      <div className={`w-full md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
+      <div className={`w-full ${isAdmin ? "" : "opacity-60"}`}>
         <div className="flex gap-5 border-b border-subtle pb-7 items-start">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>

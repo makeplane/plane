@@ -6,7 +6,6 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 import { PageHead } from "@/components/core/page-title";
 import { ProjectStateRoot } from "@/components/project-states";
 // hook
-import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -33,7 +32,7 @@ function StatesSettingsPage({ params }: Route.ComponentProps) {
   }
 
   return (
-    <SettingsContentWrapper>
+    <>
       <PageHead title={pageTitle} />
       <div className="w-full">
         <SettingsHeading
@@ -42,7 +41,7 @@ function StatesSettingsPage({ params }: Route.ComponentProps) {
         />
         <ProjectStateRoot workspaceSlug={workspaceSlug} projectId={projectId} />
       </div>
-    </SettingsContentWrapper>
+    </>
   );
 }
 
