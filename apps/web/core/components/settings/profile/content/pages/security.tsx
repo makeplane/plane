@@ -152,6 +152,7 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                       placeholder={t("old_password")}
                       className="w-full"
                       hasError={Boolean(errors.old_password)}
+                      autoComplete="current-password"
                     />
                   )}
                 />
@@ -193,6 +194,7 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                       hasError={Boolean(errors.new_password)}
                       onFocus={() => setIsPasswordInputFocused(true)}
                       onBlur={() => setIsPasswordInputFocused(false)}
+                      autoComplete="new-password"
                     />
                   )}
                 />
@@ -238,6 +240,7 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                       hasError={Boolean(errors.confirm_password)}
                       onFocus={() => setIsRetryPasswordInputFocused(true)}
                       onBlur={() => setIsRetryPasswordInputFocused(false)}
+                      autoComplete="new-password"
                     />
                   )}
                 />

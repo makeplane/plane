@@ -107,7 +107,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder={t("auth.common.email.placeholder")}
             className="disable-autofill-style h-10 w-full placeholder:text-placeholder border-0"
-            autoComplete="on"
+            autoComplete="off"
             disabled
           />
           {uniqueCodeFormData.email.length > 0 && (
@@ -134,6 +134,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
           onChange={(e) => handleFormChange("code", e.target.value)}
           placeholder={t("auth.common.unique_code.placeholder")}
           className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
+          autoComplete="off"
           autoFocus
         />
         <div className="flex w-full items-center justify-between px-1 text-11 pt-1">

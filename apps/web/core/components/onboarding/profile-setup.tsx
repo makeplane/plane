@@ -390,7 +390,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             className="w-full border-[0.5px] border-subtle pr-12 placeholder:text-placeholder"
                             onFocus={() => setIsPasswordInputFocused(true)}
                             onBlur={() => setIsPasswordInputFocused(false)}
-                            autoComplete="on"
+                            autoComplete="new-password"
                           />
                           {showPassword.password ? (
                             <EyeOff
@@ -431,6 +431,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             hasError={Boolean(errors.confirm_password)}
                             placeholder={t("auth.common.password.confirm_password.placeholder")}
                             className="w-full border-subtle pr-12 placeholder:text-placeholder"
+                            autoComplete="new-password"
                           />
                           {showPassword.retypePassword ? (
                             <EyeOff

@@ -210,7 +210,7 @@ export function InstanceSetupForm() {
                 value={formData.email}
                 onChange={(e) => handleFormChange("email", e.target.value)}
                 hasError={errorData.type && errorData.type === EErrorCodes.INVALID_EMAIL ? true : false}
-                autoComplete="on"
+                autoComplete="off"
               />
               {errorData.type && errorData.type === EErrorCodes.INVALID_EMAIL && errorData.message && (
                 <p className="px-1 text-11 text-danger-primary">{errorData.message}</p>
@@ -250,7 +250,7 @@ export function InstanceSetupForm() {
                   hasError={errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD ? true : false}
                   onFocus={() => setIsPasswordInputFocused(true)}
                   onBlur={() => setIsPasswordInputFocused(false)}
-                  autoComplete="on"
+                  autoComplete="new-password"
                 />
                 {showPassword.password ? (
                   <button
@@ -294,6 +294,7 @@ export function InstanceSetupForm() {
                   className="w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
                   onFocus={() => setIsRetryPasswordInputFocused(true)}
                   onBlur={() => setIsRetryPasswordInputFocused(false)}
+                  autoComplete="new-password"
                 />
                 {showPassword.retypePassword ? (
                   <button

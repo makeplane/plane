@@ -10,17 +10,16 @@ import { cn, getPasswordStrength } from "@plane/utils";
 import { PasswordStrengthIndicator } from "../form-fields/password/indicator";
 import { AuthInput } from "./auth-input";
 
-export interface AuthPasswordInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "autoComplete"> {
+export type TAuthPasswordInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   error?: string;
   showPasswordStrength?: boolean;
   showPasswordToggle?: boolean;
   containerClassName?: string;
   errorClassName?: string;
-  autoComplete?: "on" | "off";
   onPasswordChange?: (password: string) => void;
   onPasswordStrengthChange?: (strength: E_PASSWORD_STRENGTH) => void;
-}
+};
 
 export function AuthPasswordInput({
   label = "Password",
@@ -35,7 +34,7 @@ export function AuthPasswordInput({
   onPasswordChange,
   onPasswordStrengthChange,
   ...props
-}: AuthPasswordInputProps) {
+}: TAuthPasswordInputProps) {
   const [isFocused, setIsFocused] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,7 +72,7 @@ export function AuthPasswordInput({
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        autoComplete="on"
+        autoComplete="off"
       />
       {showPasswordStrength && value && isFocused && (
         <PasswordStrengthIndicator password={value as string} showCriteria />
