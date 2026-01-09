@@ -43,6 +43,8 @@ ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP = {
         "Return Invoice Amount",
         "Empty Return Freight Amount",
         "Total Amount",
+        "Return Type",
+        "Return Detail",
     ],
     "heineken-br1-dev": [
         "Stays (in days)",
@@ -52,6 +54,8 @@ ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP = {
         "Return Invoice Amount",
         "Empty Return Freight Amount",
         "Total Amount",
+        "Return Type",
+        "Return Detail",
     ],
     "heineken-br1-test": [
         "Stays (in days)",
@@ -61,6 +65,8 @@ ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP = {
         "Return Invoice Amount",
         "Empty Return Freight Amount",
         "Total Amount",
+        "Return Type",
+        "Return Detail",
     ],
     "heineken-br1": [
         "Stays (in days)",
@@ -70,5 +76,7 @@ ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP = {
         "Return Invoice Amount",
         "Empty Return Freight Amount",
         "Total Amount",
+        "Return Type",
+        "Return Detail",
     ]
 }
