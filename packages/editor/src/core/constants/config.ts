@@ -26,6 +26,7 @@ export const ACCEPTED_ATTACHMENT_MIME_TYPES = [
   "application/vnd.ms-powerpoint",
   "application/vnd.openxmlformats-officedocument.presentationml.presentation",
   "text/plain",
+  "text/markdown",
   "application/rtf",
   "audio/mpeg",
   "audio/wav",
