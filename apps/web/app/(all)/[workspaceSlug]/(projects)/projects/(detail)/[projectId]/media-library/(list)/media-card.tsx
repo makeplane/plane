@@ -1,24 +1,48 @@
 "use client";
 
+import type { MouseEvent } from "react";
 import Link from "next/link";
 import { Calendar, Clock, FileText } from "lucide-react";
 
 import type { TMediaItem } from "./media-items";
 import { useVideoDuration } from "./use-video-duration";
 
-export const MediaCard = ({ item, href, className }: { item: TMediaItem; href: string; className?: string }) => {
+export const MediaCard = ({
+  item,
+  href,
+  className,
+  forceThumbnail,
+  label,
+  onClick,
+}: {
+  item: TMediaItem;
+  href: string;
+  className?: string;
+  forceThumbnail?: boolean;
+  label?: string;
+  onClick?: (event: MouseEvent<HTMLAnchorElement>, item: TMediaItem) => void;
+}) => {
   const isHls = item.mediaType === "video" && item.format.toLowerCase() === "m3u8";
   const durationLabel = useVideoDuration(item);
+  const previewLabel =
+    label ?? (item.mediaType === "image" ? "Image" : item.mediaType === "video" ? durationLabel : "Document");
+  const shouldShowThumbnail = forceThumbnail || item.mediaType === "image" || isHls;
 
   return (
-    <Link href={href} className="text-left">
+    <Link
+      href={href}
+      className="text-left"
+      onClick={(event) => {
+        onClick?.(event, item);
+      }}
+    >
       <div
         className={`group w-[220px] flex-shrink-0 sm:w-[240px] md:w-[260px] lg:w-[280px] xl:w-[300px] ${
           className ?? ""
         }`.trim()}
       >
         <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-custom-background-90">
-          {item.mediaType === "image" ? (
+          {shouldShowThumbnail ? (
             <img
               src={item.thumbnail}
               alt={item.title}
@@ -52,7 +76,7 @@ export const MediaCard = ({ item, href, className }: { item: TMediaItem; href: s
             </div>
           )}
           <div className="absolute bottom-2 right-2 rounded-full bg-black/70 px-2 py-1 text-[11px] text-white">
-            {item.mediaType === "image" ? "Image" : item.mediaType === "video" ? durationLabel : "Document"}
+            {previewLabel}
           </div>
         </div>
         <div className="mt-2 space-y-1">

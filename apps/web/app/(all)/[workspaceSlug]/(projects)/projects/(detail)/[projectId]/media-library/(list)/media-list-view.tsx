@@ -1,5 +1,6 @@
 "use client";
 
+import type { MouseEvent } from "react";
 import Link from "next/link";
 import type { TMediaItem } from "./media-items";
 import { useVideoDuration } from "./use-video-duration";
@@ -9,11 +10,25 @@ type TMediaSection = {
   items: TMediaItem[];
 };
 
-const MediaListRow = ({ item, getItemHref }: { item: TMediaItem; getItemHref?: (item: TMediaItem) => string }) => {
+const MediaListRow = ({
+  item,
+  getItemHref,
+  onItemClick,
+  getItemTypeLabel,
+}: {
+  item: TMediaItem;
+  getItemHref?: (item: TMediaItem) => string;
+  onItemClick?: (event: MouseEvent<HTMLAnchorElement>, item: TMediaItem) => void;
+  getItemTypeLabel?: (item: TMediaItem) => string;
+}) => {
   const durationLabel = useVideoDuration(item);
+  const typeLabel = getItemTypeLabel ? getItemTypeLabel(item) : item.mediaType;
   return (
     <Link
       href={getItemHref ? getItemHref(item) : `./${encodeURIComponent(item.id)}`}
+      onClick={(event) => {
+      onItemClick?.(event, item);
+      }}
       className="grid w-full items-center gap-4 rounded-lg border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-left text-xs text-custom-text-300 hover:border-custom-border-300"
       style={{ gridTemplateColumns: "120px minmax(200px, 2fr) 1fr 1fr 1fr" }}
     >
@@ -27,7 +42,7 @@ const MediaListRow = ({ item, getItemHref }: { item: TMediaItem; getItemHref?: (
       <div className="min-w-0">
         <div className="line-clamp-1 text-sm font-semibold text-custom-text-100">{item.title}</div>
       </div>
-      <div className="capitalize">{item.mediaType}</div>
+      <div className="capitalize">{typeLabel}</div>
       <div>{item.createdAt}</div>
       <div>{durationLabel}</div>
     </Link>
@@ -37,9 +52,13 @@ const MediaListRow = ({ item, getItemHref }: { item: TMediaItem; getItemHref?: (
 const MediaListSection = ({
   section,
   getItemHref,
+  onItemClick,
+  getItemTypeLabel,
 }: {
   section: TMediaSection;
   getItemHref?: (item: TMediaItem) => string;
+  onItemClick?: (event: MouseEvent<HTMLAnchorElement>, item: TMediaItem) => void;
+  getItemTypeLabel?: (item: TMediaItem) => string;
 }) => (
   <section className="flex flex-col gap-3">
     <div className="text-sm font-semibold text-custom-text-100">{section.title}</div>
@@ -55,7 +74,13 @@ const MediaListSection = ({
     </div>
     <div className="flex flex-col gap-3">
       {section.items.map((item) => (
-        <MediaListRow key={`${section.title}-${item.id}`} item={item} getItemHref={getItemHref} />
+        <MediaListRow
+          key={`${section.title}-${item.id}`}
+          item={item}
+          getItemHref={getItemHref}
+          onItemClick={onItemClick}
+          getItemTypeLabel={getItemTypeLabel}
+        />
       ))}
     </div>
   </section>
@@ -64,13 +89,23 @@ const MediaListSection = ({
 export const MediaListView = ({
   sections,
   getItemHref,
+  onItemClick,
+  getItemTypeLabel,
 }: {
   sections: TMediaSection[];
   getItemHref?: (item: TMediaItem) => string;
+  onItemClick?: (event: MouseEvent<HTMLAnchorElement>, item: TMediaItem) => void;
+  getItemTypeLabel?: (item: TMediaItem) => string;
 }) => (
   <div className="flex flex-col gap-8 p-10">
     {sections.map((section) => (
-      <MediaListSection key={section.title} section={section} getItemHref={getItemHref} />
+      <MediaListSection
+        key={section.title}
+        section={section}
+        getItemHref={getItemHref}
+        onItemClick={onItemClick}
+        getItemTypeLabel={getItemTypeLabel}
+      />
     ))}
   </div>
 );

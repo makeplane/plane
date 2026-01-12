@@ -48,6 +48,7 @@
     "mobx": "catalog:",
     "mobx-react": "catalog:",
     "mobx-utils": "catalog:",
+    "mammoth": "^1.7.2",
     "next": "catalog:",
     "next-themes": "^0.2.1",
     "posthog-js": "^1.131.3",
@@ -69,7 +70,8 @@
     "tailwind-merge": "^2.0.0",
     "use-font-face-observer": "^1.2.2",
     "uuid": "catalog:",
-    "video.js": "^8.23.4"
+    "video.js": "^8.23.4",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",

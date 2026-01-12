@@ -2,13 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
-import {  LayoutGrid, List, Search, Upload, X } from "lucide-react";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import { LayoutGrid, List, Search, Upload, X } from "lucide-react";
 
 // UI
 import { Button } from "@plane/propel/button";
@@ -18,13 +13,11 @@ import { Breadcrumbs, Header, Tooltip } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { FiltersToggle } from "@/components/rich-filters/filters-toggle";
 
-
 // Hooks
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { useMediaLibrary } from "./media-library-context";
-
 
 /* ------------------------------------------------------------------ */
 /* TYPES */
@@ -57,9 +50,7 @@ const DEFAULT_LAYOUTS: LayoutItem[] = [
 /* COMPONENT */
 /* ------------------------------------------------------------------ */
 
-export const MediaLibraryListHeader: React.FC<Props> = observer(({
-  layouts = DEFAULT_LAYOUTS,
-}) => {
+export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEFAULT_LAYOUTS }) => {
   const { isMobile } = usePlatformOS();
   const { openUpload, mediaFilters } = useMediaLibrary();
   const { loader } = useProject();
@@ -96,7 +87,6 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({
     setQuery(nextQuery);
     setDebouncedQuery(nextQuery);
   }, [searchParams]);
-
 
   const updateQuery = useCallback(
     (key: string, value?: string) => {
@@ -137,13 +127,8 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({
       {/* LEFT */}
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-          />
-          <Breadcrumbs.Item
-            component={<BreadcrumbLink label="Media Library" isLast />}
-          />
+          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug} projectId={projectId} />
+          <Breadcrumbs.Item component={<BreadcrumbLink label="Media Library" isLast />} />
         </Breadcrumbs>
       </Header.LeftItem>
 
@@ -182,11 +167,7 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({
           {/* Layout Toggle */}
           <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
             {normalizedLayouts.map((layout) => (
-              <Tooltip
-                key={layout.key}
-                tooltipContent={layout.i18n_title}
-                isMobile={isMobile}
-              >
+              <Tooltip key={layout.key} tooltipContent={layout.i18n_title} isMobile={isMobile}>
                 <button
                   type="button"
                   onClick={() => handleLayoutChange(layout.key)}
@@ -200,7 +181,7 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({
                   {layout.key === MediaLayoutTypes.GRID ? (
                     <LayoutGrid size={14} strokeWidth={2} className="text-custom-text-100" />
                   ) : (
-                    <List  size={14} strokeWidth={2} className="text-custom-text-100" />
+                    <List size={14} strokeWidth={2} className="text-custom-text-100" />
                   )}
                 </button>
               </Tooltip>
@@ -219,13 +200,8 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({
             <option value="hls">HLS</option>
             <option value="document">Document</option>
           </select>
-           {/* Upload */}
-          <Button
-            variant="primary"
-            size="sm"
-            className="gap-1.5"
-            onClick={openUpload}
-          >
+          {/* Upload */}
+          <Button variant="primary" size="sm" className="gap-1.5" onClick={openUpload}>
             <Upload size={16} className="h-3.5 w-3.5" />
             Upload
           </Button>
