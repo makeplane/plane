@@ -46,11 +46,10 @@ class ProjectViewSet(BaseViewSet):
     use_read_replica = True
 
     def get_queryset(self):
-        sort_order = ProjectMember.objects.filter(
-            member=self.request.user,
+        sort_order = ProjectUserProperty.objects.filter(
+            user=self.request.user,
             project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
-            is_active=True,
         ).values("sort_order")
         return self.filter_queryset(
             super()
