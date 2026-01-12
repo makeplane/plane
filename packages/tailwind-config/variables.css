@@ -506,7 +506,7 @@
       --border-success-subtle: var(--green-200);
       --border-warning-strong: var(--amber-400);
       --border-warning-subtle: var(--amber-200);
-      --border-danger-strong: var(--red-400);
+      --border-danger-strong: var(--red-700);
       --border-danger-subtle: var(--red-200);
       /* Text colors */
       --txt-primary: var(--neutral-1200);
@@ -1059,42 +1059,42 @@
   --text-h4-bold--letter-spacing: var(--tracking-default);
   --text-h4-bold--font-weight: var(--font-weight-bold);
 
-  --text-h5-regular: var(--text-16);
+  --text-h5-regular: var(--text-18);
   --text-h5-regular--line-height: 1.2;
   --text-h5-regular--letter-spacing: var(--tracking-default);
   --text-h5-regular--font-weight: var(--font-weight-regular);
 
-  --text-h5-medium: var(--text-16);
+  --text-h5-medium: var(--text-18);
   --text-h5-medium--line-height: 1.2;
   --text-h5-medium--letter-spacing: var(--tracking-default);
   --text-h5-medium--font-weight: var(--font-weight-medium);
 
-  --text-h5-semibold: var(--text-16);
+  --text-h5-semibold: var(--text-18);
   --text-h5-semibold--line-height: 1.2;
   --text-h5-semibold--letter-spacing: var(--tracking-default);
   --text-h5-semibold--font-weight: var(--font-weight-semibold);
 
-  --text-h5-bold: var(--text-16);
+  --text-h5-bold: var(--text-18);
   --text-h5-bold--line-height: 1.2;
   --text-h5-bold--letter-spacing: var(--tracking-default);
   --text-h5-bold--font-weight: var(--font-weight-bold);
 
-  --text-h6-regular: var(--text-14);
+  --text-h6-regular: var(--text-16);
   --text-h6-regular--line-height: 1.2;
   --text-h6-regular--letter-spacing: var(--tracking-default);
   --text-h6-regular--font-weight: var(--font-weight-regular);
 
-  --text-h6-medium: var(--text-14);
+  --text-h6-medium: var(--text-16);
   --text-h6-medium--line-height: 1.2;
   --text-h6-medium--letter-spacing: var(--tracking-default);
   --text-h6-medium--font-weight: var(--font-weight-medium);
 
-  --text-h6-semibold: var(--text-14);
+  --text-h6-semibold: var(--text-16);
   --text-h6-semibold--line-height: 1.2;
   --text-h6-semibold--letter-spacing: var(--tracking-default);
   --text-h6-semibold--font-weight: var(--font-weight-semibold);
 
-  --text-h6-bold: var(--text-14);
+  --text-h6-bold: var(--text-16);
   --text-h6-bold--line-height: 1.2;
   --text-h6-bold--letter-spacing: var(--tracking-default);
   --text-h6-bold--font-weight: var(--font-weight-bold);
