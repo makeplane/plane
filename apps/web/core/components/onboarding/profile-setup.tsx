@@ -17,7 +17,7 @@ import type { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
 import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 // components
-import { cn, getFileURL, getPasswordStrength } from "@plane/utils";
+import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // hooks
 import { useUser, useUserProfile } from "@/hooks/store/user";
@@ -303,9 +303,10 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     name="first_name"
                     rules={{
                       required: "First name is required",
+                      validate: validatePersonName,
                       maxLength: {
-                        value: 24,
-                        message: "First name must be within 24 characters.",
+                        value: 50,
+                        message: "First name must be within 50 characters.",
                       },
                     }}
                     render={({ field: { value, onChange, ref } }) => (
@@ -340,9 +341,10 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     name="last_name"
                     rules={{
                       required: "Last name is required",
+                      validate: validatePersonName,
                       maxLength: {
-                        value: 24,
-                        message: "Last name must be within 24 characters.",
+                        value: 50,
+                        message: "Last name must be within 50 characters.",
                       },
                     }}
                     render={({ field: { value, onChange, ref } }) => (
