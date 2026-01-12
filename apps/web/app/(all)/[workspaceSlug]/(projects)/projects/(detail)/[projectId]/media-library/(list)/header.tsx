@@ -74,6 +74,7 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({
   const searchParams = useSearchParams();
 
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
   const mediaType = searchParams.get("mediaType") ?? "";
   const activeLayout = useMemo(() => {
     const viewParam = searchParams.get("view");
@@ -91,8 +92,11 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({
   /* ------------------------------------------------------------------ */
 
   useEffect(() => {
-    setQuery(searchParams.get("q") ?? "");
+    const nextQuery = searchParams.get("q") ?? "";
+    setQuery(nextQuery);
+    setDebouncedQuery(nextQuery);
   }, [searchParams]);
+
 
   const updateQuery = useCallback(
     (key: string, value?: string) => {
@@ -105,6 +109,20 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({
     },
     [pathname, router, searchParams]
   );
+
+  useEffect(() => {
+    const handle = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300);
+    return () => clearTimeout(handle);
+  }, [query]);
+
+  useEffect(() => {
+    const currentQuery = searchParams.get("q") ?? "";
+    if (debouncedQuery !== currentQuery) {
+      updateQuery("q", debouncedQuery);
+    }
+  }, [debouncedQuery, searchParams, updateQuery]);
 
   const handleLayoutChange = (layout: MediaLayoutTypes) => {
     updateQuery("view", layout);
@@ -140,7 +158,6 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
-              updateQuery("q", e.target.value);
             }}
           />
           {query && (
@@ -148,6 +165,7 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({
               type="button"
               onClick={() => {
                 setQuery("");
+                setDebouncedQuery("");
                 updateQuery("q");
               }}
               className="absolute right-2 top-1/2 -translate-y-1/2 text-custom-text-300 hover:text-custom-text-100"
@@ -193,11 +211,12 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({
             aria-label="Filter by media type"
             value={mediaType}
             onChange={(event) => updateQuery("mediaType", event.target.value)}
-            className="h-7 rounded-md border border-custom-border-200 bg-custom-background-100 px-2 text-xs text-custom-text-100"
+            className="h-7 rounded-md border border-custom-border-200 bg-custom-background-100 px-2 text-xs text-custom-text-100 focus:outline-none focus:ring-0 focus:border-custom-border-200"
           >
             <option value="">All types</option>
             <option value="image">Image</option>
             <option value="video">Video</option>
+            <option value="hls">HLS</option>
             <option value="document">Document</option>
           </select>
            {/* Upload */}

@@ -20,7 +20,15 @@ export type TMediaLibraryExternalFilter = {
 
 const META_PROPERTY_PREFIX = "meta.";
 
-export const META_FILTER_EXCLUDED_KEYS = new Set(["duration", "duration_sec", "durationSec"]);
+export const META_FILTER_EXCLUDED_KEYS = new Set([
+  "duration",
+  "duration_sec",
+  "durationSec",
+  "hls",
+  "source",
+  "source_format",
+  "source format",
+]);
 
 const toMetaProperty = (key: string) => `${META_PROPERTY_PREFIX}${key}`;
 

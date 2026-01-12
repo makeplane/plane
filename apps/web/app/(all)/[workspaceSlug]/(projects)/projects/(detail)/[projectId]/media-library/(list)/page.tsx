@@ -87,7 +87,7 @@ const MediaLibraryListPage = observer(() => {
   const query = (searchParams.get("q") ?? "").trim().toLowerCase();
   const mediaTypeFilter = (searchParams.get("mediaType") ?? "").trim();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
-  const { items: libraryItems } = useMediaLibraryItems(workspaceSlug, projectId, libraryVersion);
+  const { items: libraryItems, isLoading } = useMediaLibraryItems(workspaceSlug, projectId, libraryVersion);
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
   const allItems = useMemo(() => [...uploadedItems, ...libraryItems], [libraryItems, uploadedItems]);
   const uploadedSection = useMemo(
@@ -126,7 +126,9 @@ const MediaLibraryListPage = observer(() => {
               .join(" ")
               .toLowerCase();
             const matchesQuery = !query || haystack.includes(query);
-            const matchesType = !mediaTypeFilter || item.mediaType === mediaTypeFilter;
+            const matchesType =
+              !mediaTypeFilter ||
+              (mediaTypeFilter === "hls" ? item.format.toLowerCase() === "m3u8" : item.mediaType === mediaTypeFilter);
             return (
               matchesQuery && matchesType && matchesMediaLibraryFilters(item, mediaFilters.allConditionsForDisplay)
             );
@@ -139,6 +141,8 @@ const MediaLibraryListPage = observer(() => {
   const getItemHref = (item: TMediaItem) =>
     `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
 
+  const showSkeleton = isLoading && allItems.length === 0;
+
   return (
     <div className="flex flex-col gap-8">
       {/* <div className="flex flex-wrap items-center justify-between gap-3">
@@ -149,7 +153,60 @@ const MediaLibraryListPage = observer(() => {
       </div> */}
 
       <div className="flex flex-col gap-8 px-6 py-4">
-        {filteredSections.length === 0 ? (
+        {showSkeleton ? (
+          viewMode === "list" ? (
+            <div className="flex flex-col gap-8 p-10 animate-pulse">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <section key={`skeleton-list-${index}`} className="flex flex-col gap-3">
+                  <div className="h-4 w-32 rounded bg-custom-background-90" />
+                  <div
+                    className="grid w-full gap-4 rounded-lg border border-custom-border-200 bg-custom-background-90 px-3 py-2"
+                    style={{ gridTemplateColumns: "120px minmax(200px, 2fr) 1fr 1fr 1fr" }}
+                  >
+                    {Array.from({ length: 5 }).map((__, cellIndex) => (
+                      <div key={`skeleton-list-header-${cellIndex}`} className="h-3 rounded bg-custom-background-80" />
+                    ))}
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    {Array.from({ length: 4 }).map((__, rowIndex) => (
+                      <div
+                        key={`skeleton-list-row-${rowIndex}`}
+                        className="grid items-center gap-4 rounded-lg border border-custom-border-200 bg-custom-background-100 px-3 py-2"
+                        style={{ gridTemplateColumns: "120px minmax(200px, 2fr) 1fr 1fr 1fr" }}
+                      >
+                        <div className="h-16 w-28 rounded bg-custom-background-90" />
+                        <div className="h-4 w-3/4 rounded bg-custom-background-90" />
+                        <div className="h-3 w-16 rounded bg-custom-background-90" />
+                        <div className="h-3 w-20 rounded bg-custom-background-90" />
+                        <div className="h-3 w-16 rounded bg-custom-background-90" />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-8 px-6 py-4 animate-pulse">
+              {Array.from({ length: 3 }).map((_, sectionIndex) => (
+                <section key={`skeleton-grid-${sectionIndex}`} className="flex flex-col gap-3">
+                  <div className="h-4 w-32 rounded bg-custom-background-90" />
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {Array.from({ length: 6 }).map((__, cardIndex) => (
+                      <div
+                        key={`skeleton-card-${cardIndex}`}
+                        className="rounded-lg border border-custom-border-200 bg-custom-background-100 p-3"
+                      >
+                        <div className="aspect-[16/9] w-full rounded bg-custom-background-90" />
+                        <div className="mt-3 h-4 w-3/4 rounded bg-custom-background-90" />
+                        <div className="mt-2 h-3 w-1/2 rounded bg-custom-background-90" />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+          )
+        ) : filteredSections.length === 0 ? (
           <div className="rounded-lg border border-dashed border-custom-border-200 bg-custom-background-100 p-6 text-center text-sm text-custom-text-300">
             No media matches your search.
           </div>

@@ -24,6 +24,15 @@ const DB_NAME = "media-library";
 const DB_VERSION = 1;
 const STORE_NAME = "uploads";
 
+const formatUploadDate = (value: number) => {
+  if (!Number.isFinite(value)) return "";
+  const date = new Date(value);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 const openDatabase = () =>
   new Promise<IDBDatabase>((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -54,12 +63,13 @@ export const loadUploadedMediaItems = async (): Promise<TMediaItem[]> => {
     .sort((a, b) => b.uploadedAt - a.uploadedAt)
     .map((item) => {
       const objectUrl = URL.createObjectURL(item.blob);
+      const createdAt = formatUploadDate(item.uploadedAt) || item.createdAt;
       return {
         id: item.id,
         title: item.title,
         format: item.format ?? "",
         author: item.author,
-        createdAt: item.createdAt,
+        createdAt,
         views: item.views,
         duration: item.duration,
         primaryTag: item.primaryTag,

@@ -65,7 +65,11 @@ const resolveArtifactSource = (artifact: TMediaArtifact, context?: TArtifactCont
 const formatDateLabel = (value: string) => {
   const parsed = Date.parse(value);
   if (Number.isNaN(parsed)) return value;
-  return new Date(parsed).toLocaleDateString();
+  const date = new Date(parsed);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
 };
 
 const getMetaObject = (meta: unknown) => {

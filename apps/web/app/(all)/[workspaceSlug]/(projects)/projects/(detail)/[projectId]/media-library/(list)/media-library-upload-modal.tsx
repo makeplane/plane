@@ -250,8 +250,8 @@ export const MediaLibraryUploadModal = () => {
           </div>
 
           <hr className="my-4 border-0 border-t border-custom-border-200/60" />
-
-          {/* <div className="mt-4 flex flex-col gap-3 text-sm text-custom-text-200">
+{/* 
+         <div className="mt-4 flex flex-col gap-3 text-sm text-custom-text-200">
             <label className="flex flex-col gap-1">
               <span className="text-xs text-custom-text-300">Title</span>
               <input
@@ -262,7 +262,7 @@ export const MediaLibraryUploadModal = () => {
                 className="h-9 rounded-md border border-custom-border-200 bg-custom-background-100 px-3 text-sm text-custom-text-100"
               />
             </label>
-          </div> */}
+          </div>  */}
 
           <div className="mt-4 rounded-lg border border-custom-border-200">
             {uploads.length === 0 ? (

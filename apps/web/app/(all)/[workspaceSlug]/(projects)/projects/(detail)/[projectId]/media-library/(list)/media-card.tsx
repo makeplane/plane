@@ -4,9 +4,11 @@ import Link from "next/link";
 import { Calendar, Clock, FileText } from "lucide-react";
 
 import type { TMediaItem } from "./media-items";
+import { useVideoDuration } from "./use-video-duration";
 
 export const MediaCard = ({ item, href, className }: { item: TMediaItem; href: string; className?: string }) => {
   const isHls = item.mediaType === "video" && item.format.toLowerCase() === "m3u8";
+  const durationLabel = useVideoDuration(item);
 
   return (
     <Link href={href} className="text-left">
@@ -50,7 +52,7 @@ export const MediaCard = ({ item, href, className }: { item: TMediaItem; href: s
             </div>
           )}
           <div className="absolute bottom-2 right-2 rounded-full bg-black/70 px-2 py-1 text-[11px] text-white">
-            {item.mediaType === "image" ? "Image" : item.mediaType === "video" ? item.duration : "Document"}
+            {item.mediaType === "image" ? "Image" : item.mediaType === "video" ? durationLabel : "Document"}
           </div>
         </div>
         <div className="mt-2 space-y-1">
@@ -62,10 +64,12 @@ export const MediaCard = ({ item, href, className }: { item: TMediaItem; href: s
               <Calendar className="h-3.5 w-3.5 text-custom-text-300" />
               {item.createdAt}
             </span>
-            <span className="inline-flex items-center gap-1">
-              <Clock className="h-3.5 w-3.5 text-custom-text-300" />
-              {item.duration}
-            </span>
+            {item.mediaType === "video" ? (
+              <span className="inline-flex items-center gap-1">
+                <Clock className="h-3.5 w-3.5 text-custom-text-300" />
+                {durationLabel}
+              </span>
+            ) : null}
             <span>Views {item.views}</span>
           </div>
           <div className="flex flex-wrap items-center gap-2 text-[11px]">

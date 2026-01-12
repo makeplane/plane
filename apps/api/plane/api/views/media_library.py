@@ -1,5 +1,6 @@
 # Python imports
 import json
+import shutil
 from pathlib import Path
 from uuid import uuid4
 
@@ -151,6 +152,11 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
             artifacts_root = package_root(project_id_str, package_id) / "artifacts"
             should_transcode = extension == "mp4"
             if should_transcode:
+                if shutil.which("ffmpeg") is None:
+                    return Response(
+                        {"error": "ffmpeg is not installed. Install ffmpeg or upload a non-mp4 file."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
                 format_value = "m3u8"
                 artifact_dir = artifacts_root / primary_artifact_name
                 artifact_file_name = "index.m3u8"
