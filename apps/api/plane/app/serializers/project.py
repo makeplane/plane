@@ -1,6 +1,9 @@
 # Third party imports
 from rest_framework import serializers
 
+# Python imports
+import re
+
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
 from django.db.models import Max
@@ -19,6 +22,11 @@ from plane.utils.content_validator import (
     validate_html_content,
 )
 
+# Regex pattern to block the following special characters in names and identifiers:
+# & + , : ; $ ^ } { * = ? @ # | ' < > . ( ) % !
+
+FORBIDDEN_NAME_CHARS_PATTERN = r"^.*[&+,:;$^}{*=?@#|'<>.()%!].*$"
+
 
 class ProjectSerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
@@ -32,6 +40,9 @@ class ProjectSerializer(BaseSerializer):
     def validate_name(self, name):
         project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]
+
+        if re.match(FORBIDDEN_NAME_CHARS_PATTERN, name):
+            raise serializers.ValidationError("Project name cannot contain special characters.")
 
         project = Project.objects.filter(name=name, workspace_id=workspace_id)
 
@@ -48,6 +59,9 @@ class ProjectSerializer(BaseSerializer):
     def validate_identifier(self, identifier):
         project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]
+
+        if re.match(FORBIDDEN_NAME_CHARS_PATTERN, identifier):
+            raise serializers.ValidationError("Project identifier cannot contain special characters.")
 
         project = Project.objects.filter(identifier=identifier, workspace_id=workspace_id)
 
