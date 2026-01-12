@@ -1,5 +1,5 @@
 // local imports
-import type { EUserPermissions } from "./enums";
+import type { EUserProjectRoles } from ".";
 import type { EUserWorkspaceRoles } from "./workspace";
 
 export type TProfileSettingsTabs = "general" | "preferences" | "activity" | "notifications" | "security" | "api-tokens";
@@ -27,6 +27,6 @@ export type TProjectSettingsItem = {
   key: TProjectSettingsTabs;
   i18n_label: string;
   href: string;
-  access: EUserPermissions[];
+  access: EUserProjectRoles[];
   highlight: (pathname: string, baseUrl: string) => boolean;
 };

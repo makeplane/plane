@@ -1,5 +1,4 @@
-import { GROUPED_WORKSPACE_SETTINGS } from "@plane/constants";
-import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
+import { GROUPED_WORKSPACE_SETTINGS, PROJECT_SETTINGS_FLAT_MAP } from "@plane/constants";
 
 const hrefToLabelMap = (options: Record<string, Array<{ href: string; i18n_label: string; [key: string]: any }>>) =>
   Object.values(options)
@@ -14,7 +13,7 @@ const hrefToLabelMap = (options: Record<string, Array<{ href: string; i18n_label
 
 const workspaceHrefToLabelMap = hrefToLabelMap(GROUPED_WORKSPACE_SETTINGS);
 
-const projectHrefToLabelMap = PROJECT_SETTINGS_LINKS.reduce(
+const projectHrefToLabelMap = PROJECT_SETTINGS_FLAT_MAP.reduce(
   (acc, setting) => {
     acc[setting.href] = setting.i18n_label;
     return acc;
