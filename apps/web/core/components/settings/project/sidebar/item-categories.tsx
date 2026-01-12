@@ -36,9 +36,9 @@ export const ProjectSettingsSidebarItemCategories = observer(function ProjectSet
             <div className="flex flex-col">
               {categoryItems.map((item) => {
                 const isItemActive =
-                  item.href === "/settings"
-                    ? pathname === `/${workspaceSlug}${item.href}/settings/projects/${projectId}/`
-                    : new RegExp(`^/${workspaceSlug}${item.href}/settings/projects/${projectId}/`).test(pathname);
+                  item.href === ""
+                    ? pathname === `/${workspaceSlug}/settings/projects/${projectId}${item.href}/`
+                    : new RegExp(`^/${workspaceSlug}/settings/projects/${projectId}${item.href}/`).test(pathname);
 
                 return (
                   <SettingsSidebarItem

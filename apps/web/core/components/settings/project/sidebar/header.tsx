@@ -1,14 +1,15 @@
+import { ArrowLeft } from "lucide-react";
 import { observer } from "mobx-react";
 // plane imports
 import { ROLE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { IconButton } from "@plane/propel/icon-button";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-import { useWorkspace } from "@/hooks/store/use-workspace";
-// plane web imports
-import { SubscriptionPill } from "@/plane-web/components/common/subscription/subscription-pill";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { useProject } from "@/hooks/store/use-project";
-import { Logo } from "@plane/propel/emoji-icon-picker";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   projectId: string;
@@ -16,6 +17,8 @@ type Props = {
 
 export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSidebarHeader(props: Props) {
   const { projectId } = props;
+  // router
+  const router = useAppRouter();
   // store hooks
   const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
@@ -32,19 +35,22 @@ export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSid
 
   return (
     <div className="shrink-0 px-5">
-      <div className="py-3 text-body-md-medium">{t(ROLE_DETAILS[currentProjectRole].i18n_title)} settings</div>
-      <div className="flex items-center justify-between gap-2 py-0.5">
-        <div className="flex items-center gap-2 truncate">
-          <div className="shrink-0 size-9 grid place-items-center bg-layer-2 rounded">
-            <Logo logo={projectDetails?.logo_props} size={20} />
-          </div>
-          <div className="truncate">
-            <p className="text-body-sm-medium truncate">{projectDetails?.name}</p>
-            <p className="text-caption-md-regular truncate">{t(ROLE_DETAILS[currentProjectRole].i18n_title)}</p>
-          </div>
+      <div className="py-3 flex items-center gap-1 text-body-md-medium">
+        <IconButton
+          variant="ghost"
+          size="base"
+          icon={ArrowLeft}
+          onClick={() => router.push(`/${currentWorkspace?.slug}/projects/${projectId}/issues/`)}
+        />
+        <p>{t(ROLE_DETAILS[currentProjectRole].i18n_title)} settings</p>
+      </div>
+      <div className="flex items-center gap-2 py-0.5 truncate">
+        <div className="shrink-0 size-8 grid place-items-center bg-layer-2 rounded">
+          <Logo logo={projectDetails?.logo_props} size={20} />
         </div>
-        <div className="shrink-0">
-          <SubscriptionPill />
+        <div className="truncate">
+          <p className="text-body-sm-medium truncate">{projectDetails?.name}</p>
+          <p className="text-caption-md-regular truncate">{t(ROLE_DETAILS[currentProjectRole].i18n_title)}</p>
         </div>
       </div>
     </div>

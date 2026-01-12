@@ -2,11 +2,9 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { CircleUserRound } from "lucide-react";
-import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import type { IUser, TUserProfile } from "@plane/types";
@@ -18,6 +16,7 @@ import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 import { ChangeEmailModal } from "@/components/core/modals/change-email-modal";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 import { CoverImage } from "@/components/common/cover-image";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // helpers
 import { handleCoverImageChange } from "@/helpers/cover-image.helper";
 // hooks
@@ -189,7 +188,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
         )}
       />
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-        <div className="flex w-full flex-col gap-6">
+        <div className="flex w-full flex-col gap-7">
           <div className="relative h-44 w-full">
             <CoverImage
               src={userCover}
@@ -374,45 +373,24 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center justify-between pt-6 pb-8">
-              <Button variant="primary" type="submit" loading={isLoading}>
-                {isLoading ? t("saving") : t("save_changes")}
-              </Button>
-            </div>
+          <div>
+            <Button variant="primary" type="submit" loading={isLoading}>
+              {isLoading ? t("saving") : t("save_changes")}
+            </Button>
           </div>
         </div>
       </form>
-      <Disclosure as="div" className="border-t border-subtle w-full">
-        {({ open }) => (
-          <>
-            <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
-              <span className="text-16 font-medium tracking-tight">{t("deactivate_account")}</span>
-              <ChevronDownIcon className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
-            </Disclosure.Button>
-            <Transition
-              show={open}
-              enter="transition duration-100 ease-out"
-              enterFrom="transform opacity-0"
-              enterTo="transform opacity-100"
-              leave="transition duration-75 ease-out"
-              leaveFrom="transform opacity-100"
-              leaveTo="transform opacity-0"
-            >
-              <Disclosure.Panel>
-                <div className="flex flex-col gap-8">
-                  <span className="text-13 tracking-tight">{t("deactivate_account_description")}</span>
-                  <div>
-                    <Button variant="error-fill" onClick={() => setDeactivateAccountModal(true)}>
-                      {t("deactivate_account")}
-                    </Button>
-                  </div>
-                </div>
-              </Disclosure.Panel>
-            </Transition>
-          </>
-        )}
-      </Disclosure>
+      <div className="mt-10">
+        <SettingsBoxedControlItem
+          title={t("deactivate_account")}
+          description={t("deactivate_account_description")}
+          control={
+            <Button variant="error-outline" onClick={() => setDeactivateAccountModal(true)}>
+              {t("deactivate_account")}
+            </Button>
+          }
+        />
+      </div>
     </>
   );
 });

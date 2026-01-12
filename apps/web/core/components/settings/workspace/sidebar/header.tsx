@@ -1,16 +1,21 @@
+import { ArrowLeft } from "lucide-react";
 import { observer } from "mobx-react";
 // plane imports
 import { ROLE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { IconButton } from "@plane/propel/icon-button";
 // components
 import { WorkspaceLogo } from "@/components/workspace/logo";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { SubscriptionPill } from "@/plane-web/components/common/subscription/subscription-pill";
 
 export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSettingsSidebarHeader() {
+  // router
+  const router = useAppRouter();
   // store hooks
   const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
@@ -25,7 +30,15 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
 
   return (
     <div className="shrink-0 px-5">
-      <div className="py-3 text-body-md-medium">{t(ROLE_DETAILS[currentWorkspaceRole].i18n_title)} settings</div>
+      <div className="py-3 flex items-center gap-1 text-body-md-medium">
+        <IconButton
+          variant="ghost"
+          size="base"
+          icon={ArrowLeft}
+          onClick={() => router.push(`/${currentWorkspace?.slug}/`)}
+        />
+        <p>{t(ROLE_DETAILS[currentWorkspaceRole].i18n_title)} settings</p>
+      </div>
       <div className="flex items-center justify-between gap-2 py-0.5">
         <div className="flex items-center gap-2 truncate">
           <WorkspaceLogo

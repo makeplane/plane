@@ -4,11 +4,11 @@ import { useParams } from "react-router";
 // plane imports
 import { GROUPED_WORKSPACE_SETTINGS, WORKSPACE_SETTINGS_CATEGORIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { joinUrlPath } from "@plane/utils";
 // components
 import { SettingsSidebarItem } from "@/components/settings/sidebar/item";
 // local imports
 import { WORKSPACE_SETTINGS_ICONS } from "./item-icon";
-import { joinUrlPath } from "@plane/utils";
 
 export const WorkspaceSettingsSidebarItemCategories = observer(function WorkspaceSettingsSidebarItemCategories() {
   // params

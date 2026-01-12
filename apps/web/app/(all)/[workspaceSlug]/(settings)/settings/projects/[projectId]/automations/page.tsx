@@ -52,7 +52,7 @@ function AutomationSettingsPage({ params }: Route.ComponentProps) {
   }
 
   return (
-    <SettingsContentWrapper header={<AutomationsProjectSettingsHeader />}>
+    <SettingsContentWrapper header={<AutomationsProjectSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
       <section className={`w-full ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
         <SettingsHeading
