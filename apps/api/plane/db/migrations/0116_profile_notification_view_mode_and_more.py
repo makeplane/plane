@@ -11,13 +11,17 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='notification_view_mode',
-            field=models.CharField(choices=[('full', 'Full'), ('compact', 'Compact')], default='full', max_length=255),
+            model_name="profile",
+            name="notification_view_mode",
+            field=models.CharField(
+                choices=[("full", "Full"), ("compact", "Compact")],
+                default="full",
+                max_length=255,
+            ),
         ),
         migrations.AddField(
-            model_name='user',
-            name='is_password_reset_required',
+            model_name="user",
+            name="is_password_reset_required",
             field=models.BooleanField(default=False),
         ),
     ]
