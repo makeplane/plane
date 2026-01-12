@@ -13,6 +13,7 @@ import { SelectMonthModal } from "@/components/automation";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+import { SettingsControlItem } from "../settings/control-item";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -61,25 +62,22 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
         handleClose={() => setmonthModal(false)}
         handleChange={handleChange}
       />
-      <div className="flex flex-col gap-4 border-b border-subtle py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-start gap-3">
-            <div className="flex items-center justify-center rounded-sm bg-layer-3 p-3">
-              <ArchiveRestore className="h-4 w-4 flex-shrink-0 text-primary" />
-            </div>
-            <div className="">
-              <h4 className="text-13 font-medium">{t("project_settings.automations.auto-archive.title")}</h4>
-              <p className="text-13 tracking-tight text-tertiary">
-                {t("project_settings.automations.auto-archive.description")}
-              </p>
-            </div>
+      <div className="flex flex-col gap-4 border-b border-subtle py-2">
+        <div className="flex items-center gap-3">
+          <div className="shrink-0 size-10 grid place-items-center rounded-sm bg-layer-2">
+            <ArchiveRestore className="shrink-0 size-4 text-primary" />
           </div>
-          <ToggleSwitch value={autoArchiveStatus} onChange={handleToggleArchive} size="sm" disabled={!isAdmin} />
+          <SettingsControlItem
+            title={t("project_settings.automations.auto-archive.title")}
+            description={t("project_settings.automations.auto-archive.description")}
+            control={
+              <ToggleSwitch value={autoArchiveStatus} onChange={handleToggleArchive} size="sm" disabled={!isAdmin} />
+            }
+          />
         </div>
-
         {currentProjectDetails ? (
           autoArchiveStatus && (
-            <div className="mx-6">
+            <div className="ml-13">
               <div className="flex w-full items-center justify-between gap-2 rounded-sm border border-subtle bg-surface-2 px-5 py-4">
                 <div className="w-1/2 text-13 font-medium">
                   {t("project_settings.automations.auto-archive.duration")}

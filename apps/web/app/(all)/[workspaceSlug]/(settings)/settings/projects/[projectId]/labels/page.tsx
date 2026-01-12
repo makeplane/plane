@@ -7,9 +7,12 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { ProjectSettingsLabelList } from "@/components/labels";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { LabelsProjectSettingsHeader } from "./header";
 
 function LabelsSettingsPage() {
   // store hooks
@@ -44,12 +47,12 @@ function LabelsSettingsPage() {
   }
 
   return (
-    <>
+    <SettingsContentWrapper header={<LabelsProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
-      <div ref={scrollableContainerRef} className="h-full w-full gap-10">
+      <div ref={scrollableContainerRef} className="size-full">
         <ProjectSettingsLabelList />
       </div>
-    </>
+    </SettingsContentWrapper>
   );
 }
 

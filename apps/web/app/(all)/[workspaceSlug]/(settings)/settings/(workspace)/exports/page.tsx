@@ -6,8 +6,8 @@ import { cn } from "@plane/utils";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { ExportGuide } from "@/components/exporter/guide";
-import { WorkspaceSettingsContentWrapper } from "@/components/settings/workspace/content-wrapper";
-import { WorkspaceSettingsHeading } from "@/components/settings/workspace/heading";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -35,20 +35,20 @@ function ExportsPage() {
   }
 
   return (
-    <WorkspaceSettingsContentWrapper header={<ExportsWorkspaceSettingsHeader />} hugging>
+    <SettingsContentWrapper header={<ExportsWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
       <div
         className={cn("w-full flex flex-col gap-y-6", {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >
-        <WorkspaceSettingsHeading
+        <SettingsHeading
           title={t("workspace_settings.settings.exports.heading")}
           description={t("workspace_settings.settings.exports.description")}
         />
         <ExportGuide />
       </div>
-    </WorkspaceSettingsContentWrapper>
+    </SettingsContentWrapper>
   );
 }
 

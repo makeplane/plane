@@ -6,7 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { IWorkspace } from "@plane/types";
 // components
-import { WorkspaceSettingsControlItem } from "@/components/settings/workspace/control-item";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // local imports
 import { DeleteWorkspaceModal } from "./delete-workspace-modal";
 
@@ -28,7 +28,7 @@ export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(p
         isOpen={deleteWorkspaceModal}
         onClose={() => setDeleteWorkspaceModal(false)}
       />
-      <WorkspaceSettingsControlItem
+      <SettingsBoxedControlItem
         title={t("workspace_settings.settings.general.delete_workspace")}
         description={t("workspace_settings.settings.general.delete_workspace_description")}
         control={

@@ -9,14 +9,16 @@ type Props = {
   hugging?: boolean;
 };
 
-export function WorkspaceSettingsContentWrapper(props: Props) {
+export function SettingsContentWrapper(props: Props) {
   const { children, header, hugging = false } = props;
 
   return (
     <div className="grow size-full flex flex-col">
-      <AppHeader header={header} />
+      <div className="shrink-0 w-full">
+        <AppHeader header={header} />
+      </div>
       <div
-        className={cn("py-9 px-page-x", {
+        className={cn("grow py-9 px-page-x overflow-y-scroll", {
           "lg:px-12 w-full": hugging,
           "w-full max-w-225 mx-auto": !hugging,
         })}

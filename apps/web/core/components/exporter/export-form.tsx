@@ -21,7 +21,8 @@ import { CustomSearchSelect, CustomSelect } from "@plane/ui";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { ProjectExportService } from "@/services/project/project-export.service";
-import { WorkspaceSettingsControlItem } from "../settings/workspace/control-item";
+// local imports
+import { SettingsBoxedControlItem } from "../settings/boxed-control-item";
 
 type Props = {
   workspaceSlug: string;
@@ -139,7 +140,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
     >
       <div className="rounded-lg border border-subtle bg-layer-2">
         {/* Project Selector */}
-        <WorkspaceSettingsControlItem
+        <SettingsBoxedControlItem
           className="rounded-none border-0 border-b"
           title={t("workspace_settings.settings.exports.exporting_projects")}
           control={
@@ -173,7 +174,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
           }
         />
         {/* Format Selector */}
-        <WorkspaceSettingsControlItem
+        <SettingsBoxedControlItem
           className="rounded-none border-0 border-b"
           title={t("workspace_settings.settings.exports.format")}
           control={

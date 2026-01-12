@@ -3,11 +3,14 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { ProjectFeaturesList } from "@/plane-web/components/projects/settings/features-list";
+// local imports
 import type { Route } from "./+types/page";
+import { FeaturesProjectSettingsHeader } from "./header";
 
 function FeaturesSettingsPage({ params }: Route.ComponentProps) {
   const { workspaceSlug, projectId } = params;
@@ -24,7 +27,7 @@ function FeaturesSettingsPage({ params }: Route.ComponentProps) {
   }
 
   return (
-    <>
+    <SettingsContentWrapper header={<FeaturesProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
       <section className={`w-full ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
         <ProjectFeaturesList
@@ -33,7 +36,7 @@ function FeaturesSettingsPage({ params }: Route.ComponentProps) {
           isAdmin={canPerformProjectAdminActions}
         />
       </section>
-    </>
+    </SettingsContentWrapper>
   );
 }
 

@@ -84,8 +84,7 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
         }}
         showButton={isEditable}
       />
-
-      <div className="w-full py-2">
+      <div className="w-full mt-6">
         {showLabelForm && (
           <div className="my-2 w-full rounded-sm border border-subtle px-3.5 py-2">
             <CreateUpdateLabelInline
@@ -120,41 +119,37 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
               rootClassName="py-20"
             />
           ) : (
-            projectLabelsTree && (
-              <div className="mt-3">
-                {projectLabelsTree.map((label, index) => {
-                  if (label.children && label.children.length) {
-                    return (
-                      <ProjectSettingLabelGroup
-                        key={label.id}
-                        label={label}
-                        labelChildren={label.children || []}
-                        handleLabelDelete={(label: IIssueLabel) => setSelectDeleteLabel(label)}
-                        isUpdating={isUpdating}
-                        setIsUpdating={setIsUpdating}
-                        isLastChild={index === projectLabelsTree.length - 1}
-                        onDrop={onDrop}
-                        isEditable={isEditable}
-                        labelOperationsCallbacks={labelOperationsCallbacks}
-                      />
-                    );
-                  }
-                  return (
-                    <ProjectSettingLabelItem
-                      label={label}
-                      key={label.id}
-                      setIsUpdating={setIsUpdating}
-                      handleLabelDelete={(label) => setSelectDeleteLabel(label)}
-                      isChild={false}
-                      isLastChild={index === projectLabelsTree.length - 1}
-                      onDrop={onDrop}
-                      isEditable={isEditable}
-                      labelOperationsCallbacks={labelOperationsCallbacks}
-                    />
-                  );
-                })}
-              </div>
-            )
+            projectLabelsTree?.map((label, index) => {
+              if (label.children && label.children.length) {
+                return (
+                  <ProjectSettingLabelGroup
+                    key={label.id}
+                    label={label}
+                    labelChildren={label.children || []}
+                    handleLabelDelete={(label: IIssueLabel) => setSelectDeleteLabel(label)}
+                    isUpdating={isUpdating}
+                    setIsUpdating={setIsUpdating}
+                    isLastChild={index === projectLabelsTree.length - 1}
+                    onDrop={onDrop}
+                    isEditable={isEditable}
+                    labelOperationsCallbacks={labelOperationsCallbacks}
+                  />
+                );
+              }
+              return (
+                <ProjectSettingLabelItem
+                  label={label}
+                  key={label.id}
+                  setIsUpdating={setIsUpdating}
+                  handleLabelDelete={(label) => setSelectDeleteLabel(label)}
+                  isChild={false}
+                  isLastChild={index === projectLabelsTree.length - 1}
+                  onDrop={onDrop}
+                  isEditable={isEditable}
+                  labelOperationsCallbacks={labelOperationsCallbacks}
+                />
+              );
+            })
           )
         ) : (
           !showLabelForm && (

@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -41,22 +40,22 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
     async () => workspaceSlug && projectId && getProjectEstimates(workspaceSlug, projectId)
   );
 
+  if (loader === "init-loader" || isSWRLoading) {
+    return <EstimateLoaderScreen />;
+  }
+
   return (
-    <div className="container mx-auto">
-      {loader === "init-loader" || isSWRLoading ? (
-        <EstimateLoaderScreen />
-      ) : (
-        <div className="space-y-2">
-          {/* header */}
-
-          <SettingsHeading
-            title={t("project_settings.estimates.heading")}
-            description={t("project_settings.estimates.description")}
-          />
-
+    <>
+      <div>
+        {/* header */}
+        <SettingsHeading
+          title={t("project_settings.estimates.heading")}
+          description={t("project_settings.estimates.description")}
+        />
+        <div className="mt-6">
           {/* current active estimate section */}
           {currentActiveEstimateId ? (
-            <div className="">
+            <>
               {/* estimates activated deactivated section */}
               <div className="relative border-b border-subtle pb-4 flex justify-between items-center gap-3">
                 <div className="space-y-1">
@@ -74,7 +73,7 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
                 onEditClick={(estimateId: string) => setEstimateToUpdate(estimateId)}
                 onDeleteClick={(estimateId: string) => setEstimateToDelete(estimateId)}
               />
-            </div>
+            </>
           ) : (
             <EmptyStateCompact
               assetKey="estimate"
@@ -91,7 +90,6 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
               rootClassName="py-20"
             />
           )}
-
           {/* archived estimates section */}
           {archivedEstimateIds && archivedEstimateIds.length > 0 && (
             <div className="">
@@ -114,8 +112,7 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
             </div>
           )}
         </div>
-      )}
-
+      </div>
       {/* CRUD modals */}
       <CreateEstimateModal
         workspaceSlug={workspaceSlug}
@@ -137,6 +134,6 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
         isOpen={estimateToDelete ? true : false}
         handleClose={() => setEstimateToDelete(undefined)}
       />
-    </div>
+    </>
   );
 });

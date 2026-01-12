@@ -1,7 +1,7 @@
 type Props = {
   control: React.ReactNode;
   description: string;
-  title: string;
+  title: React.ReactNode;
 };
 
 export function SettingsControlItem(props: Props) {

@@ -258,7 +258,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
           </div>
         </div>
       </div>
-      <div className="my-8 flex flex-col gap-8">
+      <div className="mt-8 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
           <h4 className="text-13">{t("common.project_name")}</h4>
           <Controller

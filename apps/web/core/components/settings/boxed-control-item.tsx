@@ -8,7 +8,7 @@ type Props = {
   title: string;
 };
 
-export function WorkspaceSettingsControlItem(props: Props) {
+export function SettingsBoxedControlItem(props: Props) {
   const { className, control, description, title } = props;
 
   return (

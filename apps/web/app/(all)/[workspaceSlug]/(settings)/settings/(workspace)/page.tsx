@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // components
 import { PageHead } from "@/components/core/page-title";
-import { WorkspaceSettingsContentWrapper } from "@/components/settings/workspace/content-wrapper";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { WorkspaceDetails } from "@/components/workspace/settings/workspace-details";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -20,10 +20,10 @@ function GeneralWorkspaceSettingsPage() {
     : undefined;
 
   return (
-    <WorkspaceSettingsContentWrapper header={<GeneralWorkspaceSettingsHeader />}>
+    <SettingsContentWrapper header={<GeneralWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
       <WorkspaceDetails />
-    </WorkspaceSettingsContentWrapper>
+    </SettingsContentWrapper>
   );
 }
 

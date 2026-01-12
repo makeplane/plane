@@ -1,41 +1,5 @@
 // plane imports
-import type { TProfileSettingsTabs } from "@plane/types";
 import { EStartOfTheWeek } from "@plane/types";
-
-export const PROFILE_SETTINGS: Record<
-  TProfileSettingsTabs,
-  {
-    key: TProfileSettingsTabs;
-    i18n_label: string;
-  }
-> = {
-  general: {
-    key: "general",
-    i18n_label: "profile.actions.profile",
-  },
-  security: {
-    key: "security",
-    i18n_label: "profile.actions.security",
-  },
-  activity: {
-    key: "activity",
-    i18n_label: "profile.actions.activity",
-  },
-  preferences: {
-    key: "preferences",
-    i18n_label: "profile.actions.preferences",
-  },
-  notifications: {
-    key: "notifications",
-    i18n_label: "profile.actions.notifications",
-  },
-  "api-tokens": {
-    key: "api-tokens",
-    i18n_label: "profile.actions.api-tokens",
-  },
-};
-
-export const PROFILE_SETTINGS_TABS: TProfileSettingsTabs[] = Object.keys(PROFILE_SETTINGS) as TProfileSettingsTabs[];
 
 export const PROFILE_VIEWER_TAB = [
   {

@@ -5,11 +5,14 @@ import { useTranslation } from "@plane/i18n";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { ProjectStateRoot } from "@/components/project-states";
-// hook
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
+// hook
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+// local imports
 import type { Route } from "./+types/page";
+import { StatesProjectSettingsHeader } from "./header";
 
 function StatesSettingsPage({ params }: Route.ComponentProps) {
   const { workspaceSlug, projectId } = params;
@@ -32,16 +35,18 @@ function StatesSettingsPage({ params }: Route.ComponentProps) {
   }
 
   return (
-    <>
+    <SettingsContentWrapper header={<StatesProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
       <div className="w-full">
         <SettingsHeading
           title={t("project_settings.states.heading")}
           description={t("project_settings.states.description")}
         />
-        <ProjectStateRoot workspaceSlug={workspaceSlug} projectId={projectId} />
+        <div className="mt-6">
+          <ProjectStateRoot workspaceSlug={workspaceSlug} projectId={projectId} />
+        </div>
       </div>
-    </>
+    </SettingsContentWrapper>
   );
 }
 

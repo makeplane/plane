@@ -8,7 +8,7 @@ import type { IWebhook } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
-import { WorkspaceSettingsContentWrapper } from "@/components/settings/workspace/content-wrapper";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "@/components/web-hooks";
 // hooks
 import { useWebhook } from "@/hooks/store/use-webhook";
@@ -89,7 +89,7 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
     );
 
   return (
-    <WorkspaceSettingsContentWrapper header={<WebhookDetailsWorkspaceSettingsHeader />}>
+    <SettingsContentWrapper header={<WebhookDetailsWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
       <DeleteWebhookModal isOpen={deleteWebhookModal} onClose={() => setDeleteWebhookModal(false)} />
       <div className="w-full space-y-8 overflow-y-auto">
@@ -98,7 +98,7 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
         </div>
         {currentWebhook && <WebhookDeleteSection openDeleteModal={() => setDeleteWebhookModal(true)} />}
       </div>
-    </WorkspaceSettingsContentWrapper>
+    </SettingsContentWrapper>
   );
 }
 

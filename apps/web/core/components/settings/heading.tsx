@@ -1,3 +1,4 @@
+// plane imports
 import { Button } from "@plane/propel/button";
 import { cn } from "@plane/ui";
 
@@ -26,7 +27,7 @@ export function SettingsHeading({
   return (
     <div className={cn("flex flex-col md:flex-row gap-2 items-start md:items-center justify-between", className)}>
       <div className="flex flex-col items-start gap-1">
-        {typeof title === "string" ? <h6 className="text-h6-medium text-primary">{title}</h6> : title}
+        {typeof title === "string" ? <h3 className="text-h3-medium text-primary">{title}</h3> : title}
         {description && <p className="text-body-xs-regular text-tertiary">{description}</p>}
       </div>
       {showButton && customButton}
@@ -39,5 +40,3 @@ export function SettingsHeading({
     </div>
   );
 }
-
-export default SettingsHeading;

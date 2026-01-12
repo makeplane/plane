@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-import { WorkspaceSettingsContentWrapper } from "@/components/settings/workspace/content-wrapper";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -25,10 +25,10 @@ function BillingSettingsPage() {
   }
 
   return (
-    <WorkspaceSettingsContentWrapper header={<BillingWorkspaceSettingsHeader />} hugging>
+    <SettingsContentWrapper header={<BillingWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
       <BillingRoot />
-    </WorkspaceSettingsContentWrapper>
+    </SettingsContentWrapper>
   );
 }
 

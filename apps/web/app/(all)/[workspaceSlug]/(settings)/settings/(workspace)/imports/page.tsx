@@ -5,7 +5,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { IntegrationGuide } from "@/components/integration/guide";
-import { WorkspaceSettingsHeading } from "@/components/settings/workspace/heading";
+import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -25,7 +25,7 @@ function ImportsPage() {
     <>
       <PageHead title={pageTitle} />
       <section className="w-full">
-        <WorkspaceSettingsHeading title="Imports" />
+        <SettingsHeading title="Imports" />
         <IntegrationGuide />
       </section>
     </>

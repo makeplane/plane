@@ -6,10 +6,10 @@ import { useTranslation } from "@plane/i18n";
 import type { TBillingFrequency, TProductBillingFrequency } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
 // components
-import { WorkspaceSettingsHeading } from "@/components/settings/workspace/heading";
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
+import { SettingsHeading } from "@/components/settings/heading";
 // local imports
 import { PlansComparison } from "./comparison/root";
-import { WorkspaceSettingsControlItem } from "@/components/settings/workspace/control-item";
 
 export const BillingRoot = observer(function BillingRoot() {
   const [isCompareAllFeaturesSectionOpen, setIsCompareAllFeaturesSectionOpen] = useState(false);
@@ -40,12 +40,12 @@ export const BillingRoot = observer(function BillingRoot() {
   return (
     <section className="relative size-full overflow-y-auto scrollbar-hide">
       <div>
-        <WorkspaceSettingsHeading
+        <SettingsHeading
           title={t("workspace_settings.settings.billing_and_plans.heading")}
           description={t("workspace_settings.settings.billing_and_plans.description")}
         />
         <div className="mt-6">
-          <WorkspaceSettingsControlItem
+          <SettingsBoxedControlItem
             title="Community"
             description="Unlimited projects, issues, cycles, modules, pages, and storage"
           />
