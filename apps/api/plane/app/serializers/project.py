@@ -42,7 +42,7 @@ class ProjectSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
 
         if re.match(FORBIDDEN_NAME_CHARS_PATTERN, name):
-            raise serializers.ValidationError("Project name cannot contain special characters.")
+            raise serializers.ValidationError(detail="PROJECT_NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS")
 
         project = Project.objects.filter(name=name, workspace_id=workspace_id)
 
@@ -61,7 +61,7 @@ class ProjectSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
 
         if re.match(FORBIDDEN_NAME_CHARS_PATTERN, identifier):
-            raise serializers.ValidationError("Project identifier cannot contain special characters.")
+            raise serializers.ValidationError(detail="PROJECT_IDENTIFIER_CANNOT_CONTAIN_SPECIAL_CHARACTERS")
 
         project = Project.objects.filter(identifier=identifier, workspace_id=workspace_id)
 
