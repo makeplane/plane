@@ -136,11 +136,10 @@ class ProjectViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
-        sort_order = ProjectMember.objects.filter(
-            member=self.request.user,
+        sort_order = ProjectUserProperty.objects.filter(
+            user=self.request.user,
             project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
-            is_active=True,
         ).values("sort_order")
 
         projects = (
