@@ -100,7 +100,7 @@ function SecurityPage() {
           typeof errorInfo?.message === "string" ? errorInfo.message : t("auth.common.password.toast.error.message"),
       });
 
-      if (passwordErrors.includes(code as EAuthenticationErrorCodes)) {
+      if (code && passwordErrors.includes(code as EAuthenticationErrorCodes)) {
         setError("new_password", {
           type: "manual",
           message: errorInfo?.message?.toString() || t("auth.common.password.toast.error.message"),
