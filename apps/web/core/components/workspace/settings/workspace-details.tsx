@@ -15,7 +15,7 @@ import { EditIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
 import { CustomSelect, Input } from "@plane/ui";
-import { cn, copyUrlToClipboard, getFileURL } from "@plane/utils";
+import { cn, copyUrlToClipboard, getFileURL, validateWorkspaceName } from "@plane/utils";
 // components
 import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
 import { TimezoneSelect } from "@/components/global/timezone-select";
@@ -195,11 +195,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                 control={control}
                 name="name"
                 rules={{
-                  required: t("workspace_settings.settings.general.errors.name.required"),
-                  maxLength: {
-                    value: 80,
-                    message: t("workspace_settings.settings.general.errors.name.max_length"),
-                  },
+                  validate: (value) => validateWorkspaceName(value, true),
                 }}
                 render={({ field: { value, onChange, ref } }) => (
                   <Input
@@ -216,6 +212,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                   />
                 )}
               />
+              {errors.name && <p className="text-caption-sm-regular text-danger-primary">{errors.name.message}</p>}
             </div>
             <div className="flex flex-col gap-2">
               <h4 className="text-body-sm-medium text-tertiary">
