@@ -25,7 +25,7 @@ export function SettingsHeading({
   className,
 }: Props) {
   return (
-    <div className={cn("flex flex-col md:flex-row gap-2 items-start md:items-center justify-between", className)}>
+    <div className={cn("flex flex-col md:flex-row gap-4 items-start md:items-center justify-between", className)}>
       <div className="flex flex-col items-start gap-1">
         {typeof title === "string" ? <h3 className="text-h3-medium text-primary">{title}</h3> : title}
         {description && <p className="text-body-xs-regular text-tertiary">{description}</p>}

@@ -5,6 +5,7 @@ import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
 // components
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -13,7 +14,6 @@ import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
 // local imports
 import { ProjectFeatureToggle } from "./helper";
-import { SettingsControlItem } from "@/components/settings/control-item";
 
 type Props = {
   workspaceSlug: string;
@@ -59,41 +59,35 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
       {Object.entries(PROJECT_FEATURES_LIST).map(([featureSectionKey, feature]) => (
         <div key={featureSectionKey}>
           <SettingsHeading title={t(feature.key)} description={t(`${feature.key}_description`)} />
-          <div className="mt-6">
+          <div className="mt-6 flex flex-col gap-y-4">
             {Object.entries(feature.featureList).map(([featureItemKey, featureItem]) => (
-              <div key={featureItemKey} className="gap-x-8 gap-y-2 py-2 border-b border-subtle bg-surface-1">
-                <div className="flex items-center gap-3">
-                  <div className="shrink-0 size-10 grid place-items-center rounded-sm bg-layer-2">
-                    {featureItem.icon}
-                  </div>
-                  <SettingsControlItem
-                    title={
-                      <span className="flex items-center gap-2">
-                        {t(featureItem.key)}
-                        {featureItem.isPro && (
-                          <Tooltip tooltipContent="Pro feature" position="top">
-                            <UpgradeBadge className="rounded-sm" />
-                          </Tooltip>
-                        )}
-                      </span>
-                    }
-                    description={t(`${featureItem.key}_description`)}
-                    control={
-                      <ProjectFeatureToggle
-                        workspaceSlug={workspaceSlug}
-                        projectId={projectId}
-                        featureItem={featureItem}
-                        value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
-                        handleSubmit={handleSubmit}
-                        disabled={!isAdmin}
-                      />
-                    }
-                  />
-                </div>
-                <div className="pl-14">
-                  {currentProjectDetails?.[featureItem.property as keyof IProject] &&
-                    featureItem.renderChildren?.(currentProjectDetails, workspaceSlug)}
-                </div>
+              <div key={featureItemKey}>
+                <SettingsBoxedControlItem
+                  title={
+                    <span className="flex items-center gap-2">
+                      {t(featureItem.key)}
+                      {featureItem.isPro && (
+                        <Tooltip tooltipContent="Pro feature" position="top">
+                          <UpgradeBadge className="rounded-sm" />
+                        </Tooltip>
+                      )}
+                    </span>
+                  }
+                  description={t(`${featureItem.key}_description`)}
+                  control={
+                    <ProjectFeatureToggle
+                      workspaceSlug={workspaceSlug}
+                      projectId={projectId}
+                      featureItem={featureItem}
+                      value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
+                      handleSubmit={handleSubmit}
+                      disabled={!isAdmin}
+                    />
+                  }
+                />
+                {currentProjectDetails?.[featureItem.property as keyof IProject] && (
+                  <div className="pl-14">{featureItem.renderChildren?.(currentProjectDetails, workspaceSlug)}</div>
+                )}
               </div>
             ))}
           </div>

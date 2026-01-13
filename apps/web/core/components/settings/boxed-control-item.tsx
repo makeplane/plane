@@ -5,7 +5,7 @@ type Props = {
   className?: string;
   control?: React.ReactNode;
   description?: string;
-  title: string;
+  title: React.ReactNode;
 };
 
 export function SettingsBoxedControlItem(props: Props) {
