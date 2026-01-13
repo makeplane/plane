@@ -1198,6 +1198,9 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const issueId = issue?.id ?? issueBeforeUpdate?.id;
     if (!issueId) return;
 
+    // Get display filters to check if 'Show sub Work items' is enabled - Donot add Work item to main list if disabled.
+    const isShowWorkItemsEnabled = this.issueFilterStore.issueFilters?.displayFilters?.sub_issue ?? false;
+
     // get issueUpdates from another method by passing down the three arguments
     // issueUpdates is nothing but an array of objects that contain the path of the issueId list that need updating and also the action that needs to be performed at the path
     const issueUpdates = this.getUpdateDetails(issue, issueBeforeUpdate, action);
@@ -1207,6 +1210,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       for (const issueUpdate of issueUpdates) {
         //if update is add, add it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.ADD) {
+          const isSubIssue = issue?.parent_id;
+          if (isSubIssue && !isShowWorkItemsEnabled) continue;
           // add issue Id at the path
           update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) =>
             this.issuesSortWithOrderBy(uniq(concat(issueIds, issueId)), this.orderBy)
