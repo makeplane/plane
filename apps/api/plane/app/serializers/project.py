@@ -22,11 +22,6 @@ from plane.utils.content_validator import (
     validate_html_content,
 )
 
-# Regex pattern to block the following special characters in names and identifiers:
-# & + , : ; $ ^ } { * = ? @ # | ' < > . ( ) % !
-
-FORBIDDEN_NAME_CHARS_PATTERN = r"^.*[&+,:;$^}{*=?@#|'<>.()%!].*$"
-
 
 class ProjectSerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
@@ -41,7 +36,7 @@ class ProjectSerializer(BaseSerializer):
         project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]
 
-        if re.match(FORBIDDEN_NAME_CHARS_PATTERN, name):
+        if re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, name):
             raise serializers.ValidationError(detail="PROJECT_NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS")
 
         project = Project.objects.filter(name=name, workspace_id=workspace_id)
@@ -60,7 +55,7 @@ class ProjectSerializer(BaseSerializer):
         project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]
 
-        if re.match(FORBIDDEN_NAME_CHARS_PATTERN, identifier):
+        if re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, identifier):
             raise serializers.ValidationError(detail="PROJECT_IDENTIFIER_CANNOT_CONTAIN_SPECIAL_CHARACTERS")
 
         project = Project.objects.filter(identifier=identifier, workspace_id=workspace_id)

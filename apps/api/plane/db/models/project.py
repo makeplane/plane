@@ -136,6 +136,8 @@ class Project(BaseModel):
         """Return name of the project"""
         return f"{self.name} <{self.workspace.name}>"
 
+    FORBIDDEN_IDENTIFIER_CHARS_PATTERN = r"^.*[&+,:;$^}{*=?@#|'<>.()%!-].*$"
+
     class Meta:
         unique_together = [
             ["identifier", "workspace", "deleted_at"],
