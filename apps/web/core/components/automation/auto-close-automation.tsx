@@ -1,23 +1,19 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
 import { ArchiveX } from "lucide-react";
-// types
+// plane imports
 import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel, EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { StateGroupIcon, StatePropertyIcon } from "@plane/propel/icons";
 import type { IProject } from "@plane/types";
-// ui
 import { CustomSelect, CustomSearchSelect, ToggleSwitch, Loader } from "@plane/ui";
-// component
 import { SelectMonthModal } from "@/components/automation";
-// constants
+import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
-import { SettingsControlItem } from "../settings/control-item";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -94,11 +90,11 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
             control={
               <ToggleSwitch
                 value={autoCloseStatus}
-                onChange={async () => {
+                onChange={() => {
                   if (currentProjectDetails?.close_in === 0) {
-                    await handleChange({ close_in: 1, default_state: defaultState });
+                    void handleChange({ close_in: 1, default_state: defaultState });
                   } else {
-                    await handleChange({ close_in: 0, default_state: null });
+                    void handleChange({ close_in: 0, default_state: null });
                   }
                 }}
                 size="sm"
@@ -122,9 +118,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                       label={`${currentProjectDetails?.close_in} ${
                         currentProjectDetails?.close_in === 1 ? "month" : "months"
                       }`}
-                      onChange={(val: number) => {
-                        handleChange({ close_in: val });
-                      }}
+                      onChange={(val: number) => void handleChange({ close_in: val })}
                       input
                       disabled={!isAdmin}
                     >
@@ -175,9 +169,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                             : (currentDefaultState?.name ?? <span className="text-secondary">{t("state")}</span>)}
                         </div>
                       }
-                      onChange={(val: string) => {
-                        handleChange({ default_state: val });
-                      }}
+                      onChange={(val: string) => void handleChange({ default_state: val })}
                       options={options}
                       disabled={!multipleOptions}
                       input
@@ -188,7 +180,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
             </div>
           )
         ) : (
-          <Loader className="mx-6">
+          <Loader className="ml-13">
             <Loader.Item height="50px" />
           </Loader>
         )}

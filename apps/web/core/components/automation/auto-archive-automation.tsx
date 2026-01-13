@@ -2,18 +2,17 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveRestore } from "lucide-react";
-// types
+// plane imports
 import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IProject } from "@plane/types";
-// ui
 import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 // component
 import { SelectMonthModal } from "@/components/automation";
+import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { SettingsControlItem } from "../settings/control-item";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -88,9 +87,7 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
                     label={`${currentProjectDetails?.archive_in} ${
                       currentProjectDetails?.archive_in === 1 ? "month" : "months"
                     }`}
-                    onChange={(val: number) => {
-                      handleChange({ archive_in: val });
-                    }}
+                    onChange={(val: number) => void handleChange({ archive_in: val })}
                     input
                     disabled={!isAdmin}
                   >
@@ -115,7 +112,7 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
             </div>
           )
         ) : (
-          <Loader className="mx-6">
+          <Loader className="ml-13">
             <Loader.Item height="50px" />
           </Loader>
         )}

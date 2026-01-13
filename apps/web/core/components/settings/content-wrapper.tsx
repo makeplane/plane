@@ -5,7 +5,7 @@ import { AppHeader } from "@/components/core/app-header";
 
 type Props = {
   children: React.ReactNode;
-  header: React.ReactNode;
+  header?: React.ReactNode;
   hugging?: boolean;
 };
 
@@ -13,14 +13,16 @@ export function SettingsContentWrapper(props: Props) {
   const { children, header, hugging = false } = props;
 
   return (
-    <div className="grow size-full flex flex-col">
-      <div className="shrink-0 w-full">
-        <AppHeader header={header} />
-      </div>
+    <div className="@container grow size-full flex flex-col overflow-hidden">
+      {header && (
+        <div className="shrink-0 w-full">
+          <AppHeader header={header} />
+        </div>
+      )}
       <div
-        className={cn("grow py-9 px-page-x overflow-y-scroll", {
-          "lg:px-12 w-full": hugging,
-          "w-full max-w-225 mx-auto": !hugging,
+        className={cn("grow py-9 overflow-y-scroll", {
+          "px-page-x lg:px-12 w-full": hugging,
+          "w-full max-w-225 mx-auto px-page-x @min-[58.95rem]:px-0": !hugging, // 58.95rem = max-width(56.25rem) + padding-x(1.35rem * 2)
         })}
       >
         {children}

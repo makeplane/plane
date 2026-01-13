@@ -1,4 +1,3 @@
-import React from "react";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -7,7 +6,8 @@ import type { IWorkspaceIntegration } from "@plane/types";
 import GithubLogo from "@/app/assets/logos/github-square.png?url";
 import SlackLogo from "@/app/assets/services/slack.png?url";
 // components
-import { SelectRepository, SelectChannel } from "@/components/integration";
+import { SelectChannel } from "@/components/integration/slack/select-channel";
+import { SelectRepository } from "@/components/integration/github/select-repository";
 // constants
 import { PROJECT_GITHUB_REPOSITORY } from "@/constants/fetch-keys";
 // services
