@@ -4,7 +4,7 @@ import { cn } from "@plane/ui";
 type Props = {
   className?: string;
   control?: React.ReactNode;
-  description?: string;
+  description?: React.ReactNode;
   title: string | React.ReactNode;
 };
 
