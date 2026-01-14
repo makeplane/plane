@@ -66,7 +66,9 @@ export const MediaLibraryUploadModal = () => {
   const [uploads, setUploads] = useState<TUploadItem[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
-  const maxFileSize = config?.media_library_file_size_limit ?? DEFAULT_MEDIA_LIBRARY_MAX_FILE_SIZE;
+  const maxFileSize =
+    (config as { media_library_file_size_limit?: number } | undefined)?.media_library_file_size_limit ??
+    DEFAULT_MEDIA_LIBRARY_MAX_FILE_SIZE;
   const maxSizeLabel = formatFileSize(maxFileSize);
   const hasUploading = uploads.some((item) => item.status === "uploading");
 
@@ -242,6 +244,7 @@ export const MediaLibraryUploadModal = () => {
               accept="*/*"
               multiple={allowMultiple}
               className="hidden"
+              aria-label="Upload files"
               onChange={(event) => {
                 addFiles(Array.from(event.target.files ?? []));
                 event.currentTarget.value = "";

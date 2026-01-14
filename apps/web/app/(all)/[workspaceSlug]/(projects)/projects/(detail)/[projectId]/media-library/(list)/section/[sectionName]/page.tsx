@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo } from "react";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { MediaCard } from "../../media-card";
 import type { TMediaItem, TMediaSection } from "../../media-items";
 import { groupMediaItemsByTag } from "../../media-items";
+import { matchesMediaLibraryFilters } from "../../media-library-filters";
 import { useMediaLibrary } from "../../media-library-context";
 import { MediaListView } from "../../media-list-view";
 import { useMediaLibraryItems } from "../../use-media-library-items";
@@ -18,22 +19,29 @@ export default function MediaLibrarySectionPage() {
     projectId: string;
     sectionName: string;
   };
-  const { libraryVersion } = useMediaLibrary();
+  const { libraryVersion, uploadedItems, mediaFilters } = useMediaLibrary();
   const { items: libraryItems, isLoading } = useMediaLibraryItems(workspaceSlug, projectId, libraryVersion);
   const searchParams = useSearchParams();
   const query = (searchParams.get("q") ?? "").trim().toLowerCase();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
   const decodedSection = decodeURIComponent(sectionName ?? "");
 
-  const mediaSections = useMemo<TMediaSection[]>(() => groupMediaItemsByTag(libraryItems), [libraryItems]);
+  const uploadedSection = useMemo(
+    () => (uploadedItems.length > 0 ? [{ title: "Uploads", items: uploadedItems }] : []),
+    [uploadedItems]
+  );
+  const mediaSections = useMemo<TMediaSection[]>(
+    () => [...uploadedSection, ...groupMediaItemsByTag(libraryItems)],
+    [libraryItems, uploadedSection]
+  );
 
   const section = useMemo(() => {
     const target = mediaSections.find((entry) => entry.title === decodedSection);
     if (!target) return null;
-    if (!query) return target;
     return {
       ...target,
       items: target.items.filter((item) => {
+        if (item.format !== "thumbnail") return false;
         const haystack = [
           item.title,
           item.author,
@@ -47,13 +55,20 @@ export default function MediaLibrarySectionPage() {
           .join(" ")
           .toLowerCase();
         const matchesQuery = !query || haystack.includes(query);
-        return matchesQuery;
+        return matchesQuery && matchesMediaLibraryFilters(item, mediaFilters.allConditionsForDisplay);
       }),
     };
-  }, [decodedSection, mediaSections, query]);
+  }, [decodedSection, mediaFilters.allConditionsForDisplay, mediaSections, query]);
 
-  const getItemHref = (item: TMediaItem) =>
-    `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
+  const getItemHref = (item: TMediaItem) => {
+    if (item.link) {
+      return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.link)}`;
+    }
+    if ((item.action === "download" || item.action === "view") && item.fileSrc) {
+      return item.fileSrc;
+    }
+    return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
+  };
 
   if (!section && isLoading) {
     return viewMode === "list" ? (
@@ -124,7 +139,7 @@ export default function MediaLibrarySectionPage() {
     <div className="flex flex-col gap-6 p-3">
       <div className="flex items-center gap-3">
         <Link
-          href={`/${workspaceSlug}/projects/${projectId}/media-library`}
+          href={`/${workspaceSlug}/projects/${projectId}/media-library${viewMode === "list" ? "?view=list" : ""}`}
           className="rounded-md border border-custom-border-200 bg-custom-background-100 p-0.5 text-custom-text-300 hover:text-custom-text-100"
           aria-label="Back to media library"
         >
@@ -137,12 +152,7 @@ export default function MediaLibrarySectionPage() {
       ) : (
         <div className="flex flex-wrap gap-4">
           {section.items.map((item) => (
-            <MediaCard
-              key={`${section.title}-${item.id}`}
-              item={item}
-              href={getItemHref(item)}
-              forceThumbnail
-            />
+            <MediaCard key={`${section.title}-${item.id}`} item={item} href={getItemHref(item)} forceThumbnail />
           ))}
         </div>
       )}

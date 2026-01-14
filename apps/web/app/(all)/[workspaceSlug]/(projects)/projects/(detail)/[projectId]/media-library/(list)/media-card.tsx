@@ -101,12 +101,12 @@ export const MediaCard = ({
           <span className="rounded-full bg-custom-primary-100/20 px-2 py-0.5 text-custom-primary-100">
             {item.primaryTag}
           </span>
-          <span className="rounded-full bg-custom-background-90 px-2 py-0.5 text-custom-text-300">
+          {/* <span className="rounded-full bg-custom-background-90 px-2 py-0.5 text-custom-text-300">
             {item.secondaryTag}
-          </span>
-          <span className="rounded-full border border-custom-border-200 px-2 py-0.5 text-custom-text-300">
+          </span> */}
+          {/* <span className="rounded-full border border-custom-border-200 px-2 py-0.5 text-custom-text-300">
             {item.itemsCount}
-          </span>
+          </span> */}
         </div>
       </div>
     </div>

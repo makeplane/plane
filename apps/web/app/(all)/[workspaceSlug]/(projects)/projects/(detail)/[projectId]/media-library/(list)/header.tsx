@@ -152,6 +152,8 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
                 setDebouncedQuery("");
                 updateQuery("q");
               }}
+              aria-label="Clear search"
+              title="Clear search"
               className="absolute right-2 top-1/2 -translate-y-1/2 text-custom-text-300 hover:text-custom-text-100"
             >
               <X className="h-4 w-4" />

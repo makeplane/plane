@@ -22,7 +22,11 @@ const MediaListRow = ({
   getItemTypeLabel?: (item: TMediaItem) => string;
 }) => {
   const durationLabel = useVideoDuration(item);
-  const typeLabel = getItemTypeLabel ? getItemTypeLabel(item) : item.mediaType;
+  const typeLabel = getItemTypeLabel
+    ? getItemTypeLabel(item)
+    : item.linkedMediaType && item.mediaType === "image"
+      ? item.linkedMediaType
+      : item.mediaType;
   const showLinkedTypeIndicator = item.mediaType === "image" && Boolean(item.link) && Boolean(item.linkedMediaType);
   const linkedTypeLabel = showLinkedTypeIndicator
     ? item.linkedMediaType === "video"
@@ -67,14 +71,26 @@ const MediaListSection = ({
   getItemHref,
   onItemClick,
   getItemTypeLabel,
+  getSectionHref,
 }: {
   section: TMediaSection;
   getItemHref?: (item: TMediaItem) => string;
   onItemClick?: (event: MouseEvent<HTMLAnchorElement>, item: TMediaItem) => void;
   getItemTypeLabel?: (item: TMediaItem) => string;
+  getSectionHref?: (section: TMediaSection) => string;
 }) => (
   <section className="flex flex-col gap-3">
-    <div className="text-sm font-semibold text-custom-text-100">{section.title}</div>
+    <div className="flex items-center justify-between">
+      <div className="text-sm font-semibold text-custom-text-100">{section.title}</div>
+      {getSectionHref ? (
+        <Link
+          href={getSectionHref(section)}
+          className="text-xs uppercase tracking-wider text-custom-text-300 hover:text-custom-text-100"
+        >
+          View all
+        </Link>
+      ) : null}
+    </div>
     <div
       className="grid w-full gap-4 rounded-lg border border-custom-border-200 bg-custom-background-90 px-3 py-2 text-[11px] font-semibold text-custom-text-300"
       style={{ gridTemplateColumns: "120px minmax(200px, 2fr) 1fr 1fr 1fr" }}
@@ -104,11 +120,13 @@ export const MediaListView = ({
   getItemHref,
   onItemClick,
   getItemTypeLabel,
+  getSectionHref,
 }: {
   sections: TMediaSection[];
   getItemHref?: (item: TMediaItem) => string;
   onItemClick?: (event: MouseEvent<HTMLAnchorElement>, item: TMediaItem) => void;
   getItemTypeLabel?: (item: TMediaItem) => string;
+  getSectionHref?: (section: TMediaSection) => string;
 }) => (
   <div className="flex flex-col gap-8 p-10">
     {sections.map((section) => (
@@ -118,6 +136,7 @@ export const MediaListView = ({
         getItemHref={getItemHref}
         onItemClick={onItemClick}
         getItemTypeLabel={getItemTypeLabel}
+        getSectionHref={getSectionHref}
       />
     ))}
   </div>

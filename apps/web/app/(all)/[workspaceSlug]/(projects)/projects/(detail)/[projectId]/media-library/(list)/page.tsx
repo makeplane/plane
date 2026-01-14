@@ -23,7 +23,7 @@ const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHre
   const prevId = `media-prev-${rowId}`;
   const nextId = `media-next-${rowId}`;
   const scrollbarId = `media-scrollbar-${rowId}`;
-  const hasVideo = section.items.some((item) => item.mediaType === "video");
+  const hasScrollableItems = section.items.length > 1;
 
   return (
     <section className="flex flex-col gap-3">
@@ -41,9 +41,9 @@ const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHre
           modules={[Navigation, Scrollbar]}
           slidesPerView="auto"
           spaceBetween={16}
-          navigation={hasVideo ? { prevEl: `#${prevId}`, nextEl: `#${nextId}` } : undefined}
+          navigation={hasScrollableItems ? { prevEl: `#${prevId}`, nextEl: `#${nextId}` } : undefined}
           scrollbar={{ el: `#${scrollbarId}`, draggable: true }}
-          allowTouchMove={!hasVideo}
+          allowTouchMove={!hasScrollableItems}
           watchOverflow
           className="media-swiper pb-3"
         >
@@ -53,7 +53,7 @@ const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHre
             </SwiperSlide>
           ))}
         </Swiper>
-        {hasVideo ? (
+        {hasScrollableItems ? (
           <>
             <button
               id={prevId}
@@ -126,9 +126,7 @@ const MediaLibraryListPage = observer(() => {
               .join(" ")
               .toLowerCase();
             const matchesQuery = !query || haystack.includes(query);
-            return (
-              matchesQuery && matchesMediaLibraryFilters(item, mediaFilters.allConditionsForDisplay)
-            );
+            return matchesQuery && matchesMediaLibraryFilters(item, mediaFilters.allConditionsForDisplay);
           }),
         }))
         .filter((section) => section.items.length > 0),
@@ -149,13 +147,6 @@ const MediaLibraryListPage = observer(() => {
 
   return (
     <div className="flex flex-col gap-8">
-      {/* <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-lg font-semibold text-custom-text-100">Sports Media Library</h1>
-        </div>
-        <div className="text-xs text-custom-text-300">{mediaCount} items</div>
-      </div> */}
-
       <div className="flex flex-col gap-8 px-6 py-4">
         {showSkeleton ? (
           viewMode === "list" ? (
@@ -215,7 +206,11 @@ const MediaLibraryListPage = observer(() => {
             No media matches your search.
           </div>
         ) : viewMode === "list" ? (
-          <MediaListView sections={filteredSections} getItemHref={getItemHref} />
+          <MediaListView
+            sections={filteredSections}
+            getItemHref={getItemHref}
+            getSectionHref={(section) => `./section/${encodeURIComponent(section.title)}?view=list`}
+          />
         ) : (
           filteredSections.map((section) => (
             <MediaRow key={section.title} section={section} getItemHref={getItemHref} />
