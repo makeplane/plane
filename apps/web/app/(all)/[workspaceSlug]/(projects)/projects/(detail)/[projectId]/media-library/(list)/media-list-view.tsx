@@ -22,6 +22,7 @@ const MediaListRow = ({
   getItemTypeLabel?: (item: TMediaItem) => string;
 }) => {
   const durationLabel = useVideoDuration(item);
+  const typeLabel = getItemTypeLabel ? getItemTypeLabel(item) : item.mediaType;
   const showLinkedTypeIndicator = item.mediaType === "image" && Boolean(item.link) && Boolean(item.linkedMediaType);
   const linkedTypeLabel = showLinkedTypeIndicator
     ? item.linkedMediaType === "video"
@@ -34,7 +35,7 @@ const MediaListRow = ({
     <Link
       href={getItemHref ? getItemHref(item) : `./${encodeURIComponent(item.id)}`}
       onClick={(event) => {
-      onItemClick?.(event, item);
+        onItemClick?.(event, item);
       }}
       className="grid w-full items-center gap-4 rounded-lg border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-left text-xs text-custom-text-300 hover:border-custom-border-300"
       style={{ gridTemplateColumns: "120px minmax(200px, 2fr) 1fr 1fr 1fr" }}
@@ -86,7 +87,13 @@ const MediaListSection = ({
     </div>
     <div className="flex flex-col gap-3">
       {section.items.map((item, index) => (
-        <MediaListRow key={`${section.title}-${item.id}-${index}`} item={item} getItemHref={getItemHref} />
+        <MediaListRow
+          key={`${section.title}-${item.id}-${index}`}
+          item={item}
+          getItemHref={getItemHref}
+          onItemClick={onItemClick}
+          getItemTypeLabel={getItemTypeLabel}
+        />
       ))}
     </div>
   </section>
