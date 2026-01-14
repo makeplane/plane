@@ -1,5 +1,6 @@
 # Python imports
 import json
+import logging
 import shutil
 import mimetypes
 import os
@@ -23,6 +24,7 @@ from plane.utils.media_library import (
     create_manifest,
     ensure_project_library,
     filter_media_library_artifacts,
+    get_document_icon_source,
     manifest_path,
     media_library_root,
     MediaLibraryTranscodeError,
@@ -35,6 +37,7 @@ from plane.utils.media_library import (
 
 _IMAGE_FORMATS = {"jpg", "jpeg", "png", "svg", "thumbnail"}
 _VIDEO_FORMATS = {"mp4", "m3u8"}
+logger = logging.getLogger(__name__)
 
 mimetypes.add_type("application/vnd.apple.mpegurl", ".m3u8")
 mimetypes.add_type("application/x-mpegURL", ".m3u8")
@@ -60,6 +63,8 @@ class MediaPackageCreateAPIView(BaseAPIView):
             return Response({"error": "Package already exists."}, status=status.HTTP_409_CONFLICT)
 
         (root / "artifacts").mkdir(parents=True, exist_ok=False)
+        (root / "attachment").mkdir(parents=True, exist_ok=False)
+        (root / "attachment").mkdir(parents=True, exist_ok=False)
 
         manifest = create_manifest(
             project_id=project_id_str,
@@ -101,6 +106,8 @@ class MediaLibraryInitAPIView(BaseAPIView):
         package_id = f"package-{uuid4().hex[:8]}"
         root = package_root(project_id_str, package_id)
         (root / "artifacts").mkdir(parents=True, exist_ok=False)
+        (root / "attachment").mkdir(parents=True, exist_ok=False)
+        (root / "attachment").mkdir(parents=True, exist_ok=False)
         manifest = create_manifest(
             project_id=project_id_str,
             package_id=package_id,
@@ -257,6 +264,13 @@ class MediaArtifactsListAPIView(BaseAPIView):
         thumbnail_name = None
         thumbnail_path = None
         thumbnail_relative_path = None
+        doc_thumbnail_name = None
+        doc_thumbnail_file_name = None
+        doc_thumbnail_path = None
+        doc_thumbnail_relative_path = None
+        doc_thumbnail_source = None
+        doc_thumbnail_action = None
+        doc_thumbnail_category = None
         timestamp = _now_iso()
 
         if file_obj:
@@ -295,6 +309,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
             primary_created_at = created_at
             primary_updated_at = updated_at
             artifacts_root = package_root(project_id_str, package_id) / "artifacts"
+            attachment_root = package_root(project_id_str, package_id) / "attachment"
             should_transcode = extension == "mp4"
             if should_transcode:
                 if shutil.which("ffmpeg") is None:
@@ -322,6 +337,25 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 relative_path = (
                     f"projects/{project_id_str}/packages/{package_id}/artifacts/{artifact_file_name}"
                 )
+                if format_value not in _VIDEO_FORMATS and format_value not in _IMAGE_FORMATS:
+                    thumbnail_hint = meta.get("thumbnail") if isinstance(meta, dict) else None
+                    doc_thumbnail_source = get_document_icon_source(format_value, thumbnail_hint)
+                    if doc_thumbnail_source:
+                        doc_thumbnail_name = f"{primary_artifact_name}-thumb"
+                        doc_thumbnail_file_name = None
+                        if isinstance(thumbnail_hint, str):
+                            hint_name = Path(thumbnail_hint).name
+                            if hint_name:
+                                doc_thumbnail_file_name = hint_name
+                        if not doc_thumbnail_file_name:
+                            doc_thumbnail_file_name = (
+                                f"{primary_artifact_name}-thumbnail{doc_thumbnail_source.suffix}"
+                            )
+                        doc_thumbnail_path = attachment_root / doc_thumbnail_file_name
+                        doc_thumbnail_relative_path = (
+                            f"projects/{project_id_str}/packages/{package_id}/attachment/{doc_thumbnail_file_name}"
+                        )
+                        doc_thumbnail_category = meta.get("category") if isinstance(meta, dict) else None
 
             action = request.data.get("action")
             if not action:
@@ -331,6 +365,8 @@ class MediaArtifactsListAPIView(BaseAPIView):
                     action = "view"
                 else:
                     action = "download"
+            if doc_thumbnail_name:
+                doc_thumbnail_action = "open_pdf" if format_value == "pdf" else action
             artifacts_payload = [
                 {
                     "name": artifact_name,
@@ -396,6 +432,16 @@ class MediaArtifactsListAPIView(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             incoming_names.add(thumbnail_name)
+        if doc_thumbnail_name:
+            validate_segment(doc_thumbnail_name, "artifactId")
+            if doc_thumbnail_name in existing_names:
+                return Response({"error": "Artifact already exists."}, status=status.HTTP_409_CONFLICT)
+            if doc_thumbnail_name in incoming_names:
+                return Response(
+                    {"error": "Duplicate artifact name in request."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            incoming_names.add(doc_thumbnail_name)
 
         if file_obj and file_path:
             if should_transcode:
@@ -438,6 +484,36 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 with open(file_path, "wb") as handle:
                     for chunk in file_obj.chunks():
                         handle.write(chunk)
+                if doc_thumbnail_name and doc_thumbnail_relative_path and doc_thumbnail_source and doc_thumbnail_path:
+                    try:
+                        if not doc_thumbnail_path.exists():
+                            doc_thumbnail_path.parent.mkdir(parents=True, exist_ok=True)
+                            shutil.copyfile(doc_thumbnail_source, doc_thumbnail_path)
+                        if doc_thumbnail_path.exists():
+                            thumbnail_entry = {
+                                "name": doc_thumbnail_name,
+                                "title": f"{primary_title} Thumbnail",
+                                "format": "thumbnail",
+                                "path": doc_thumbnail_relative_path,
+                                "link": primary_artifact_name,
+                                "action": doc_thumbnail_action or "download",
+                                "meta": {
+                                    "category": doc_thumbnail_category or "Documents",
+                                    "kind": "thumbnail",
+                                    "for": primary_artifact_name,
+                                },
+                                "created_at": primary_created_at,
+                                "updated_at": primary_updated_at,
+                            }
+                            thumbnail_serializer = MediaArtifactSerializer(data=thumbnail_entry)
+                            thumbnail_serializer.is_valid(raise_exception=True)
+                            validated_artifacts.append(thumbnail_serializer.validated_data)
+                    except OSError as exc:
+                        logger.exception(
+                            "Failed to write document thumbnail for %s.",
+                            primary_artifact_name,
+                            exc_info=exc,
+                        )
 
         existing_artifacts.extend(validated_artifacts)
         manifest["artifacts"] = existing_artifacts

@@ -29,6 +29,10 @@ MEDIA_LIBRARY_ACTION_CHOICES = (
     "preview",
     "edit",
     "navigate",
+    "play_hls",
+    "open_mp4",
+    "open_pdf",
+    "attach_captions",
 )
 
 

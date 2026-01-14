@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo } from "react";
 import Link from "next/link";
@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { MediaCard } from "../../media-card";
 import type { TMediaItem, TMediaSection } from "../../media-items";
+import { groupMediaItemsByTag, resolveMediaItemActionHref } from "../../media-items";
 import { useMediaLibrary } from "../../media-library-context";
 import { MediaListView } from "../../media-list-view";
 import { useMediaLibraryItems } from "../../use-media-library-items";
@@ -35,17 +36,28 @@ export default function MediaLibrarySectionPage() {
     [decodedSection, libraryItems]
   );
 
+  // const getItemHref = (item: TMediaItem) => {
+  //   if (item.link) {
+  //     return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.link)}`;
+  //   }
+  //   if ((item.action === "download" || item.action === "view") && item.fileSrc) {
+  //     return item.fileSrc;
+  //   }
+  //   return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
+  // };
+
   const getItemHref = (item: TMediaItem) => {
     if (item.link) {
       return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.link)}`;
     }
-    if ((item.action === "download" || item.action === "view") && item.fileSrc) {
-      return item.fileSrc;
+    const actionHref = resolveMediaItemActionHref(item);
+    if (actionHref) {
+      return actionHref;
     }
     return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
   };
 
-  if (isLoading && libraryItems.length === 0) {
+  if (!section && isLoading) {
     return viewMode === "list" ? (
       <div className="flex flex-col gap-8 p-10 animate-pulse">
         <section className="flex flex-col gap-3">
