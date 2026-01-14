@@ -131,10 +131,12 @@ export const mapArtifactsToMediaItems = (
   const thumbnailByLink = new Map<string, string>();
   const mediaTypeByName = new Map<string, TMediaItem["mediaType"]>();
 
+  const normalizeKey = (value: string) => value.trim().toLowerCase();
+
   for (const artifact of artifacts) {
     const format = (artifact.format ?? "").toLowerCase();
     if (artifact.name) {
-      mediaTypeByName.set(artifact.name, getMediaType(format));
+      mediaTypeByName.set(normalizeKey(artifact.name), getMediaType(format));
     }
     if (!artifact.link || !IMAGE_FORMATS.has(format)) continue;
     const isPreview = artifact.action === "preview" || format === "thumbnail";
@@ -162,7 +164,14 @@ export const mapArtifactsToMediaItems = (
     const duration = getMetaDuration(meta, ["duration"], "");
 
     const primaryTag = getMetaString(meta, ["category", "sport", "program"], "Library");
-    const linkedMediaType = artifact.link ? mediaTypeByName.get(artifact.link) : undefined;
+    const linkTarget = artifact.link
+      ? normalizeKey(artifact.link)
+      : normalizeKey(getMetaString(meta, ["for"], ""));
+    const inferredLinkedMediaType =
+      artifact.action === "play" ? "video" : artifact.action === "view" ? "image" : "document";
+    const linkedMediaType = linkTarget
+      ? mediaTypeByName.get(linkTarget) ?? inferredLinkedMediaType
+      : undefined;
     const secondaryTag = getMetaString(meta, ["season", "level", "coach"], "Media");
     const itemsCount = getMetaNumber(meta, ["itemsCount", "items_count"], 1);
     const author = getMetaString(meta, ["coach", "author", "creator"], "Media Library");
