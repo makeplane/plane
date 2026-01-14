@@ -22,7 +22,14 @@ const MediaListRow = ({
   getItemTypeLabel?: (item: TMediaItem) => string;
 }) => {
   const durationLabel = useVideoDuration(item);
-  const typeLabel = getItemTypeLabel ? getItemTypeLabel(item) : item.mediaType;
+  const showLinkedTypeIndicator = item.mediaType === "image" && Boolean(item.link) && Boolean(item.linkedMediaType);
+  const linkedTypeLabel = showLinkedTypeIndicator
+    ? item.linkedMediaType === "video"
+      ? "Video"
+      : item.linkedMediaType === "image"
+        ? "Image"
+        : "Document"
+    : "";
   return (
     <Link
       href={getItemHref ? getItemHref(item) : `./${encodeURIComponent(item.id)}`}
@@ -38,6 +45,11 @@ const MediaListRow = ({
         ) : (
           <div className="flex h-full w-full items-center justify-center text-custom-text-300">No preview</div>
         )}
+        {showLinkedTypeIndicator ? (
+          <span className="absolute right-2 bottom-2 rounded-full bg-custom-background-100/80 px-2 py-0.5 text-[9px] font-semibold text-custom-text-300 backdrop-blur">
+            {linkedTypeLabel}
+          </span>
+        ) : null}
       </div>
       <div className="min-w-0">
         <div className="line-clamp-1 text-sm font-semibold text-custom-text-100">{item.title}</div>
@@ -73,14 +85,8 @@ const MediaListSection = ({
       <span>Duration</span>
     </div>
     <div className="flex flex-col gap-3">
-      {section.items.map((item) => (
-        <MediaListRow
-          key={`${section.title}-${item.id}`}
-          item={item}
-          getItemHref={getItemHref}
-          onItemClick={onItemClick}
-          getItemTypeLabel={getItemTypeLabel}
-        />
+      {section.items.map((item, index) => (
+        <MediaListRow key={`${section.title}-${item.id}-${index}`} item={item} getItemHref={getItemHref} />
       ))}
     </div>
   </section>

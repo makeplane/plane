@@ -47,8 +47,8 @@ const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHre
           watchOverflow
           className="media-swiper pb-3"
         >
-          {section.items.map((item) => (
-            <SwiperSlide key={item.id} className="!w-auto">
+          {section.items.map((item, index) => (
+            <SwiperSlide key={`${item.id}-${index}`} className="!w-auto">
               <MediaCard item={item} href={getItemHref(item)} />
             </SwiperSlide>
           ))}
@@ -113,6 +113,7 @@ const MediaLibraryListPage = observer(() => {
         .map((section) => ({
           ...section,
           items: section.items.filter((item) => {
+            if (item.format !== "thumbnail") return false;
             const haystack = [
               item.title,
               item.author,
@@ -138,8 +139,15 @@ const MediaLibraryListPage = observer(() => {
     [mediaFilters.allConditionsForDisplay, mediaSections, mediaTypeFilter, query]
   );
 
-  const getItemHref = (item: TMediaItem) =>
-    `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
+  const getItemHref = (item: TMediaItem) => {
+    if (item.link) {
+      return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.link)}`;
+    }
+    if ((item.action === "download" || item.action === "view") && item.fileSrc) {
+      return item.fileSrc;
+    }
+    return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
+  };
 
   const showSkeleton = isLoading && allItems.length === 0;
 

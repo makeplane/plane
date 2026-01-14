@@ -6,6 +6,8 @@ type TStoredUpload = {
   id: string;
   title: string;
   format: string;
+  action: string;
+  link?: string | null;
   author: string;
   createdAt: string;
   views: number;
@@ -64,10 +66,15 @@ export const loadUploadedMediaItems = async (): Promise<TMediaItem[]> => {
     .map((item) => {
       const objectUrl = URL.createObjectURL(item.blob);
       const createdAt = formatUploadDate(item.uploadedAt) || item.createdAt;
+      const action =
+        item.action ||
+        (item.mediaType === "video" ? "play" : item.mediaType === "image" ? "view" : "download");
       return {
         id: item.id,
         title: item.title,
         format: item.format ?? "",
+        action,
+        link: item.link ?? null,
         author: item.author,
         createdAt,
         views: item.views,
@@ -92,6 +99,8 @@ export const persistUploadedMediaItem = async (item: TMediaItem, file: File) => 
     id: item.id,
     title: item.title,
     format,
+    action: item.action,
+    link: item.link ?? null,
     author: item.author,
     createdAt: item.createdAt,
     views: item.views,
