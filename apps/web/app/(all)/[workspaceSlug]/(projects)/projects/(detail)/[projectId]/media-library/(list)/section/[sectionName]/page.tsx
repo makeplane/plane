@@ -12,8 +12,15 @@ import { useMediaLibrary } from "../../media-library-context";
 import { MediaListView } from "../../media-list-view";
 import { useMediaLibraryItems } from "../../use-media-library-items";
 
-const getItemHref = (workspaceSlug: string, projectId: string, item: TMediaItem) =>
-  `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
+const getItemHref = (workspaceSlug: string, projectId: string, item: TMediaItem) => {
+  if (item.link) {
+    return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.link)}`;
+  }
+  if ((item.action === "download" || item.action === "view") && item.fileSrc) {
+    return item.fileSrc;
+  }
+  return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
+};
 
 export default function MediaLibrarySectionPage() {
   const { workspaceSlug, projectId, sectionName } = useParams() as {
@@ -45,6 +52,7 @@ export default function MediaLibrarySectionPage() {
     return {
       ...target,
       items: target.items.filter((item) => {
+        if (item.format !== "thumbnail") return false;
         const haystack = [
           item.title,
           item.author,
@@ -147,9 +155,9 @@ export default function MediaLibrarySectionPage() {
         <MediaListView sections={[section]} getItemHref={(item) => getItemHref(workspaceSlug, projectId, item)} />
       ) : (
         <div className="flex flex-wrap gap-4">
-          {section.items.map((item) => (
+          {section.items.map((item, index) => (
             <MediaCard
-              key={`${section.title}-${item.id}`}
+              key={`${section.title}-${item.id}-${index}`}
               item={item}
               href={getItemHref(workspaceSlug, projectId, item)}
             />

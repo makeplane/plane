@@ -8,6 +8,8 @@ export type TMediaItem = {
   id: string;
   title: string;
   format: string;
+  action: string;
+  link?: string | null;
   author: string;
   createdAt: string;
   views: number;
@@ -17,6 +19,7 @@ export type TMediaItem = {
   itemsCount: number;
   meta: Record<string, unknown>;
   mediaType: "video" | "image" | "document";
+  linkedMediaType?: "video" | "image" | "document";
   thumbnail: string;
   videoSrc?: string;
   fileSrc?: string;
@@ -105,18 +108,20 @@ const getMetaStringArray = (meta: Record<string, unknown>, key: string) => {
   return value.filter((entry): entry is string => typeof entry === "string");
 };
 
+const getMetaDuration = (meta: Record<string, unknown>, keys: string[], fallback = "") => {
+  const stringValue = getMetaString(meta, keys, "");
+  if (stringValue) return stringValue;
+  for (const key of keys) {
+    const value = meta[key];
+    if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  }
+  return fallback;
+};
+
 const getMediaType = (format: string): TMediaItem["mediaType"] => {
   if (VIDEO_FORMATS.has(format)) return "video";
   if (IMAGE_FORMATS.has(format)) return "image";
   return "document";
-};
-
-/** ✅ NEW: convert seconds to m:ss */
-const formatDuration = (seconds: number): string => {
-  if (!Number.isFinite(seconds) || seconds <= 0) return "0:00";
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${String(secs).padStart(2, "0")}`;
 };
 
 export const mapArtifactsToMediaItems = (
@@ -124,9 +129,13 @@ export const mapArtifactsToMediaItems = (
   context?: TArtifactContext
 ): TMediaItem[] => {
   const thumbnailByLink = new Map<string, string>();
+  const mediaTypeByName = new Map<string, TMediaItem["mediaType"]>();
 
   for (const artifact of artifacts) {
     const format = (artifact.format ?? "").toLowerCase();
+    if (artifact.name) {
+      mediaTypeByName.set(artifact.name, getMediaType(format));
+    }
     if (!artifact.link || !IMAGE_FORMATS.has(format)) continue;
     const isPreview = artifact.action === "preview" || format === "thumbnail";
     if (isPreview) {
@@ -143,28 +152,17 @@ export const mapArtifactsToMediaItems = (
     return rightTime - leftTime;
   });
 
-  const displayArtifacts = sortedArtifacts.filter((artifact) => {
-    const format = (artifact.format ?? "").toLowerCase();
-    if ((artifact.action === "preview" || format === "thumbnail") && artifact.link) {
-      return false;
-    }
-    return true;
-  });
-
-  return displayArtifacts.map((artifact) => {
+  return sortedArtifacts.map((artifact) => {
     const format = (artifact.format ?? "").toLowerCase();
     const mediaType = getMediaType(format);
     const meta = getMetaObject(artifact.meta);
 
     const createdAt = formatDateLabel(artifact.created_at || artifact.updated_at || "");
     const views = getMetaNumber(meta, ["views"], 0);
-
-    /** ✅ FIXED duration mapping */
-    const duration =
-      getMetaString(meta, ["duration"], "") ||
-      formatDuration(getMetaNumber(meta, ["duration_sec", "durationSec"], 0));
+    const duration = getMetaDuration(meta, ["duration"], "");
 
     const primaryTag = getMetaString(meta, ["category", "sport", "program"], "Library");
+    const linkedMediaType = artifact.link ? mediaTypeByName.get(artifact.link) : undefined;
     const secondaryTag = getMetaString(meta, ["season", "level", "coach"], "Media");
     const itemsCount = getMetaNumber(meta, ["itemsCount", "items_count"], 1);
     const author = getMetaString(meta, ["coach", "author", "creator"], "Media Library");
@@ -179,19 +177,22 @@ export const mapArtifactsToMediaItems = (
       (mediaType === "image" ? resolvedPath : "")
     );
 
-  return {
-    id: artifact.name,
-    title: artifact.title,
-    format,
-    author,
-    createdAt,
-    views,
+    return {
+      id: artifact.name,
+      title: artifact.title,
+      format,
+      action: artifact.action,
+      link: artifact.link ?? null,
+      author,
+      createdAt,
+      views,
       duration,
       primaryTag,
       secondaryTag,
       itemsCount,
       meta,
       mediaType,
+      linkedMediaType,
       thumbnail,
       videoSrc: mediaType === "video" ? resolvedPath : undefined,
       fileSrc: mediaType === "document" ? resolvedPath : undefined,
