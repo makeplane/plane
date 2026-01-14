@@ -22,7 +22,6 @@ export default function MediaLibrarySectionPage() {
   const { items: libraryItems, isLoading } = useMediaLibraryItems(workspaceSlug, projectId, libraryVersion);
   const searchParams = useSearchParams();
   const query = (searchParams.get("q") ?? "").trim().toLowerCase();
-  const mediaTypeFilter = (searchParams.get("mediaType") ?? "").trim();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
   const decodedSection = decodeURIComponent(sectionName ?? "");
 
@@ -31,7 +30,7 @@ export default function MediaLibrarySectionPage() {
   const section = useMemo(() => {
     const target = mediaSections.find((entry) => entry.title === decodedSection);
     if (!target) return null;
-    if (!query && !mediaTypeFilter) return target;
+    if (!query) return target;
     return {
       ...target,
       items: target.items.filter((item) => {
@@ -48,13 +47,10 @@ export default function MediaLibrarySectionPage() {
           .join(" ")
           .toLowerCase();
         const matchesQuery = !query || haystack.includes(query);
-        const matchesType =
-          !mediaTypeFilter ||
-          (mediaTypeFilter === "hls" ? item.format.toLowerCase() === "m3u8" : item.mediaType === mediaTypeFilter);
-        return matchesQuery && matchesType;
+        return matchesQuery;
       }),
     };
-  }, [decodedSection, mediaSections, mediaTypeFilter, query]);
+  }, [decodedSection, mediaSections, query]);
 
   const getItemHref = (item: TMediaItem) =>
     `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;

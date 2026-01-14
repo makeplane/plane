@@ -85,7 +85,6 @@ const MediaLibraryListPage = observer(() => {
   const { uploadedItems, libraryVersion, mediaFilters, setMediaFilterConfigs } = useMediaLibrary();
   const searchParams = useSearchParams();
   const query = (searchParams.get("q") ?? "").trim().toLowerCase();
-  const mediaTypeFilter = (searchParams.get("mediaType") ?? "").trim();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
   const { items: libraryItems, isLoading } = useMediaLibraryItems(workspaceSlug, projectId, libraryVersion);
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
@@ -127,16 +126,13 @@ const MediaLibraryListPage = observer(() => {
               .join(" ")
               .toLowerCase();
             const matchesQuery = !query || haystack.includes(query);
-            const matchesType =
-              !mediaTypeFilter ||
-              (mediaTypeFilter === "hls" ? item.format.toLowerCase() === "m3u8" : item.mediaType === mediaTypeFilter);
             return (
-              matchesQuery && matchesType && matchesMediaLibraryFilters(item, mediaFilters.allConditionsForDisplay)
+              matchesQuery && matchesMediaLibraryFilters(item, mediaFilters.allConditionsForDisplay)
             );
           }),
         }))
         .filter((section) => section.items.length > 0),
-    [mediaFilters.allConditionsForDisplay, mediaSections, mediaTypeFilter, query]
+    [mediaFilters.allConditionsForDisplay, mediaSections, query]
   );
 
   const getItemHref = (item: TMediaItem) => {
