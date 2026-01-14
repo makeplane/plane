@@ -7,8 +7,6 @@ import { ArrowLeft } from "lucide-react";
 
 import { MediaCard } from "../../media-card";
 import type { TMediaItem, TMediaSection } from "../../media-items";
-import { groupMediaItemsByTag } from "../../media-items";
-import { matchesMediaLibraryFilters } from "../../media-library-filters";
 import { useMediaLibrary } from "../../media-library-context";
 import { MediaListView } from "../../media-list-view";
 import { useMediaLibraryItems } from "../../use-media-library-items";
@@ -19,46 +17,23 @@ export default function MediaLibrarySectionPage() {
     projectId: string;
     sectionName: string;
   };
-  const { libraryVersion, uploadedItems, mediaFilters } = useMediaLibrary();
-  const { items: libraryItems, isLoading } = useMediaLibraryItems(workspaceSlug, projectId, libraryVersion);
+  const { libraryVersion } = useMediaLibrary();
   const searchParams = useSearchParams();
-  const query = (searchParams.get("q") ?? "").trim().toLowerCase();
+  const query = (searchParams.get("q") ?? "").trim();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
   const decodedSection = decodeURIComponent(sectionName ?? "");
+  const { items: libraryItems, isLoading } = useMediaLibraryItems(workspaceSlug, projectId, libraryVersion, {
+    query,
+    section: decodedSection,
+  });
 
-  const uploadedSection = useMemo(
-    () => (uploadedItems.length > 0 ? [{ title: "Uploads", items: uploadedItems }] : []),
-    [uploadedItems]
+  const section = useMemo<TMediaSection>(
+    () => ({
+      title: decodedSection || "Upload",
+      items: libraryItems,
+    }),
+    [decodedSection, libraryItems]
   );
-  const mediaSections = useMemo<TMediaSection[]>(
-    () => [...uploadedSection, ...groupMediaItemsByTag(libraryItems)],
-    [libraryItems, uploadedSection]
-  );
-
-  const section = useMemo(() => {
-    const target = mediaSections.find((entry) => entry.title === decodedSection);
-    if (!target) return null;
-    return {
-      ...target,
-      items: target.items.filter((item) => {
-        if (item.format !== "thumbnail") return false;
-        const haystack = [
-          item.title,
-          item.author,
-          item.createdAt,
-          item.views.toString(),
-          item.primaryTag,
-          item.secondaryTag,
-          item.itemsCount.toString(),
-          item.docs.join(" "),
-        ]
-          .join(" ")
-          .toLowerCase();
-        const matchesQuery = !query || haystack.includes(query);
-        return matchesQuery && matchesMediaLibraryFilters(item, mediaFilters.allConditionsForDisplay);
-      }),
-    };
-  }, [decodedSection, mediaFilters.allConditionsForDisplay, mediaSections, query]);
 
   const getItemHref = (item: TMediaItem) => {
     if (item.link) {
@@ -70,7 +45,7 @@ export default function MediaLibrarySectionPage() {
     return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
   };
 
-  if (!section && isLoading) {
+  if (isLoading && libraryItems.length === 0) {
     return viewMode === "list" ? (
       <div className="flex flex-col gap-8 p-10 animate-pulse">
         <section className="flex flex-col gap-3">
@@ -119,7 +94,7 @@ export default function MediaLibrarySectionPage() {
     );
   }
 
-  if (!section) {
+  if (libraryItems.length === 0 && !query) {
     return (
       <div className="rounded-lg border border-dashed border-custom-border-200 bg-custom-background-100 p-6 text-center text-sm text-custom-text-300">
         Section not found.
@@ -127,7 +102,7 @@ export default function MediaLibrarySectionPage() {
     );
   }
 
-  if (section.items.length === 0) {
+  if (libraryItems.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-custom-border-200 bg-custom-background-100 p-6 text-center text-sm text-custom-text-300">
         No media matches your search.

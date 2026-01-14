@@ -32,6 +32,13 @@ export type TMediaLibraryManifest = {
   artifacts?: TMediaArtifact[];
 };
 
+type TMediaLibraryArtifactsQuery = {
+  q?: string;
+  filters?: string;
+  formats?: string;
+  section?: string;
+};
+
 type TMediaLibraryPackagePayload = {
   id?: string;
   name: string;
@@ -72,10 +79,12 @@ export class MediaLibraryService extends APIService {
   async getArtifacts(
     workspaceSlug: string,
     projectId: string,
-    packageId: string
+    packageId: string,
+    params?: TMediaLibraryArtifactsQuery
   ): Promise<TMediaArtifact[]> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/`
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/`,
+      params ? { params } : {}
     )
       .then((response) => response?.data ?? [])
       .catch((error) => {

@@ -14,7 +14,7 @@ import { MediaCard } from "./media-card";
 import type { TMediaItem, TMediaSection } from "./media-items";
 import { groupMediaItemsByTag } from "./media-items";
 import { useMediaLibrary } from "./media-library-context";
-import { buildMetaFilterConfigs, collectMetaFilterOptions, matchesMediaLibraryFilters } from "./media-library-filters";
+import { buildMetaFilterConfigs, collectMetaFilterOptions } from "./media-library-filters";
 import { MediaListView } from "./media-list-view";
 import { useMediaLibraryItems } from "./use-media-library-items";
 
@@ -82,56 +82,35 @@ const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHre
 
 const MediaLibraryListPage = observer(() => {
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
-  const { uploadedItems, libraryVersion, mediaFilters, setMediaFilterConfigs } = useMediaLibrary();
+  const { libraryVersion, mediaFilters, setMediaFilterConfigs } = useMediaLibrary();
   const searchParams = useSearchParams();
-  const query = (searchParams.get("q") ?? "").trim().toLowerCase();
+  const query = (searchParams.get("q") ?? "").trim();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
-  const { items: libraryItems, isLoading } = useMediaLibraryItems(workspaceSlug, projectId, libraryVersion);
+  const filterConditions = useMemo(
+    () =>
+      mediaFilters.allConditionsForDisplay.map(({ property, operator, value }) => ({
+        property,
+        operator,
+        value,
+      })),
+    [mediaFilters.allConditionsForDisplay]
+  );
+  const { items: libraryItems, isLoading } = useMediaLibraryItems(workspaceSlug, projectId, libraryVersion, {
+    query,
+    filters: filterConditions,
+    formats: "thumbnail",
+  });
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
-  const allItems = useMemo(() => [...uploadedItems, ...libraryItems], [libraryItems, uploadedItems]);
-  const uploadedSection = useMemo(
-    () => (uploadedItems.length > 0 ? [{ title: "Uploads", items: uploadedItems }] : []),
-    [uploadedItems]
-  );
-  const mediaSections = useMemo(
-    () => [...uploadedSection, ...groupMediaItemsByTag(libraryItems)],
-    [libraryItems, uploadedSection]
-  );
+  const mediaSections = useMemo(() => groupMediaItemsByTag(libraryItems), [libraryItems]);
+  console.log("Media Sections:", libraryItems);
   const filterConfigs = useMemo(
-    () => buildMetaFilterConfigs(collectMetaFilterOptions(allItems), operatorConfigs),
-    [allItems, operatorConfigs]
+    () => buildMetaFilterConfigs(collectMetaFilterOptions(libraryItems), operatorConfigs),
+    [libraryItems, operatorConfigs]
   );
 
   useEffect(() => {
     setMediaFilterConfigs(filterConfigs);
   }, [filterConfigs, setMediaFilterConfigs]);
-
-  const filteredSections = useMemo(
-    () =>
-      mediaSections
-        .map((section) => ({
-          ...section,
-          items: section.items.filter((item) => {
-            if (item.format !== "thumbnail") return false;
-            const haystack = [
-              item.title,
-              item.author,
-              item.createdAt,
-              item.views.toString(),
-              item.primaryTag,
-              item.secondaryTag,
-              item.itemsCount.toString(),
-              item.docs.join(" "),
-            ]
-              .join(" ")
-              .toLowerCase();
-            const matchesQuery = !query || haystack.includes(query);
-            return matchesQuery && matchesMediaLibraryFilters(item, mediaFilters.allConditionsForDisplay);
-          }),
-        }))
-        .filter((section) => section.items.length > 0),
-    [mediaFilters.allConditionsForDisplay, mediaSections, query]
-  );
 
   const getItemHref = (item: TMediaItem) => {
     if (item.link) {
@@ -143,7 +122,7 @@ const MediaLibraryListPage = observer(() => {
     return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
   };
 
-  const showSkeleton = isLoading && allItems.length === 0;
+  const showSkeleton = isLoading && libraryItems.length === 0;
 
   return (
     <div className="flex flex-col gap-8">
@@ -201,18 +180,14 @@ const MediaLibraryListPage = observer(() => {
               ))}
             </div>
           )
-        ) : filteredSections.length === 0 ? (
+        ) : mediaSections.length === 0 ? (
           <div className="rounded-lg border border-dashed border-custom-border-200 bg-custom-background-100 p-6 text-center text-sm text-custom-text-300">
             No media matches your search.
           </div>
         ) : viewMode === "list" ? (
-          <MediaListView
-            sections={filteredSections}
-            getItemHref={getItemHref}
-            getSectionHref={(section) => `./section/${encodeURIComponent(section.title)}?view=list`}
-          />
+          <MediaListView sections={mediaSections} getItemHref={getItemHref} />
         ) : (
-          filteredSections.map((section) => (
+          mediaSections.map((section) => (
             <MediaRow key={section.title} section={section} getItemHref={getItemHref} />
           ))
         )}

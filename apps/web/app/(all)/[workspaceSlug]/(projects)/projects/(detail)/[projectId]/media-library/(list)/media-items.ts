@@ -203,7 +203,7 @@ export const mapArtifactsToMediaItems = (
 
 export const groupMediaItemsByTag = (
   items: TMediaItem[],
-  fallbackTitle = "Library"
+  fallbackTitle = "Upload"
 ): TMediaSection[] => {
   const grouped = new Map<string, TMediaItem[]>();
   for (const item of items) {
@@ -212,6 +212,8 @@ export const groupMediaItemsByTag = (
     if (group) group.push(item);
     else grouped.set(key, [item]);
   }
+
+  console.log("Grouped Items:", items);
 
   return Array.from(grouped.entries()).map(([title, sectionItems]) => ({
     title,

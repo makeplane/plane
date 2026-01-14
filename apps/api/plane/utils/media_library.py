@@ -19,6 +19,164 @@ MANIFEST_VERSION = 1
 
 _SEGMENT_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 logger = logging.getLogger(__name__)
+META_FILTER_EXCLUDED_KEYS = {
+    "duration",
+    "duration_sec",
+    "durationSec",
+    "for",
+    "hls",
+    "kind",
+    "source",
+    "source_format",
+    "source format",
+}
+
+
+def _get_meta_dict(meta: object) -> dict:
+    return meta if isinstance(meta, dict) else {}
+
+
+def _normalize_meta_values(value: object) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, str):
+        trimmed = value.strip()
+        return [trimmed] if trimmed else []
+    if isinstance(value, (int, float, bool)):
+        return [str(value)]
+    if isinstance(value, list):
+        results: list[str] = []
+        for entry in value:
+            results.extend(_normalize_meta_values(entry))
+        return results
+    return [json.dumps(value)]
+
+
+def _get_meta_string(meta: dict, keys: list[str], fallback: str = "") -> str:
+    for key in keys:
+        value = meta.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return fallback
+
+
+def _get_primary_tag(meta: dict) -> str:
+    return _get_meta_string(meta, ["category", "sport", "program"], "Library")
+
+
+def _get_secondary_tag(meta: dict) -> str:
+    return _get_meta_string(meta, ["season", "level", "coach"], "Media")
+
+
+def _get_author(meta: dict) -> str:
+    return _get_meta_string(meta, ["coach", "author", "creator"], "Media Library")
+
+
+def _stringify_value(value: object) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value
+    return str(value)
+
+
+def _build_query_haystack(artifact: dict) -> str:
+    meta = _get_meta_dict(artifact.get("meta"))
+    docs = meta.get("docs")
+    docs_text = ""
+    if isinstance(docs, list):
+        docs_text = " ".join([entry for entry in docs if isinstance(entry, str)])
+
+    items_count = meta.get("itemsCount")
+    if items_count is None:
+        items_count = meta.get("items_count")
+
+    values = [
+        _stringify_value(artifact.get("title")),
+        _get_author(meta),
+        _stringify_value(artifact.get("created_at") or artifact.get("updated_at")),
+        _stringify_value(meta.get("views")),
+        _get_primary_tag(meta),
+        _get_secondary_tag(meta),
+        _stringify_value(items_count),
+        docs_text,
+    ]
+    return " ".join([value for value in values if value]).lower()
+
+
+def filter_media_library_artifacts(
+    artifacts: list[dict],
+    query: str | None = None,
+    filters: list[dict] | None = None,
+    section: str | None = None,
+    formats: list[str] | None = None,
+) -> list[dict]:
+    if not artifacts:
+        return []
+
+    normalized_query = (query or "").strip().lower()
+    normalized_section = (section or "").strip()
+    normalized_formats = {
+        str(entry).lower() for entry in (formats or []) if str(entry).strip()
+    }
+
+    def matches_filters(artifact: dict) -> bool:
+        if not filters:
+            return True
+        if not isinstance(filters, list):
+            return True
+        meta = _get_meta_dict(artifact.get("meta"))
+        for condition in filters:
+            if not isinstance(condition, dict):
+                continue
+            property_name = condition.get("property")
+            if not isinstance(property_name, str) or not property_name.startswith("meta."):
+                continue
+            meta_key = property_name[len("meta."):]
+            if not meta_key or meta_key in META_FILTER_EXCLUDED_KEYS:
+                continue
+            item_values = _normalize_meta_values(meta.get(meta_key))
+            if not item_values:
+                return False
+            value = condition.get("value")
+            condition_values = value if isinstance(value, list) else [value]
+            condition_values = [
+                str(entry)
+                for entry in condition_values
+                if entry is not None and str(entry).strip()
+            ]
+            if not condition_values:
+                continue
+            operator = condition.get("operator")
+            if operator in ("exact", "in"):
+                if not any(entry in item_values for entry in condition_values):
+                    return False
+        return True
+
+    def matches_section(artifact: dict) -> bool:
+        if not normalized_section:
+            return True
+        meta = _get_meta_dict(artifact.get("meta"))
+        return _get_primary_tag(meta) == normalized_section
+
+    def matches_query(artifact: dict) -> bool:
+        if not normalized_query:
+            return True
+        return normalized_query in _build_query_haystack(artifact)
+
+    def matches_format(artifact: dict) -> bool:
+        if not normalized_formats:
+            return True
+        return str(artifact.get("format") or "").lower() in normalized_formats
+
+    return [
+        artifact
+        for artifact in artifacts
+        if matches_format(artifact)
+        and matches_section(artifact)
+        and matches_query(artifact)
+        and matches_filters(artifact)
+    ]
 
 
 def _now_iso() -> str:
