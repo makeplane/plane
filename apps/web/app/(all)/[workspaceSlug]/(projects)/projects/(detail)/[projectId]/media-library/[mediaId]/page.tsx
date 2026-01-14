@@ -5,8 +5,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, Calendar, FileText, User } from "lucide-react";
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import type { TMediaItem } from "../(list)/media-items";
-import { loadUploadedMediaItems } from "../(list)/media-uploads";
 import { useMediaLibraryItems } from "../(list)/use-media-library-items";
 import { HlsVideo } from "../hls-video";
 import { TagsSection } from "./tags-section";
@@ -78,7 +76,6 @@ const MediaDetailPage = () => {
     workspaceSlug: string;
     projectId: string;
   };
-  const [uploadedItems, setUploadedItems] = useState<TMediaItem[]>([]);
   const { items: libraryItems } = useMediaLibraryItems(workspaceSlug, projectId);
   const [activeTab, setActiveTab] = useState<"details" | "tags">("details");
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -91,26 +88,11 @@ const MediaDetailPage = () => {
   const [documentPreviewError, setDocumentPreviewError] = useState<string | null>(null);
   const [isDocumentPreviewLoading, setIsDocumentPreviewLoading] = useState(false);
 
-  useEffect(() => {
-    let isMounted = true;
-    loadUploadedMediaItems()
-      .then((items) => {
-        if (isMounted) setUploadedItems(items);
-      })
-      .catch(() => {
-        if (isMounted) setUploadedItems([]);
-      });
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const allItems = useMemo(() => [...uploadedItems, ...libraryItems], [libraryItems, uploadedItems]);
   const item = useMemo(() => {
     if (!mediaId) return null;
     const normalizedId = decodeURIComponent(mediaId);
-    return allItems.find((entry) => entry.id === normalizedId) ?? null;
-  }, [allItems, mediaId]);
+    return libraryItems.find((entry) => entry.id === normalizedId) ?? null;
+  }, [libraryItems, mediaId]);
   const isHls = item?.mediaType === "video" && item?.format?.toLowerCase() === "m3u8";
   const documentFormat = item?.format?.toLowerCase() ?? "";
   const isPdf = item?.mediaType === "document" && documentFormat === "pdf";

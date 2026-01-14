@@ -8,14 +8,17 @@ from uuid import uuid4
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from django.conf import settings
 
 # Module imports
 from plane.api.serializers.media_library import MediaArtifactSerializer, MediaPackageCreateSerializer
 from plane.api.views.base import BaseAPIView
 from plane.app.permissions import ProjectLitePermission
+from plane.utils.exception_logger import log_exception
 from plane.utils.media_library import (
     _now_iso,
     create_manifest,
+    filter_media_library_artifacts,
     manifest_path,
     package_root,
     read_manifest,
@@ -82,16 +85,49 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectLitePermission]
 
     def get(self, request, slug, project_id, package_id):
-        project_id_str = str(project_id)
-        validate_segment(project_id_str, "projectId")
-        validate_segment(package_id, "packageId")
+        try:
+            project_id_str = str(project_id)
+            validate_segment(project_id_str, "projectId")
+            validate_segment(package_id, "packageId")
 
-        manifest_file = manifest_path(project_id_str, package_id)
-        if not manifest_file.exists():
-            raise NotFound("Manifest not found.")
+            manifest_file = manifest_path(project_id_str, package_id)
+            if not manifest_file.exists():
+                raise NotFound("Manifest not found.")
 
-        manifest = read_manifest(manifest_file)
-        return Response(manifest.get("artifacts", []), status=status.HTTP_200_OK)
+            manifest = read_manifest(manifest_file)
+            artifacts = manifest.get("artifacts", [])
+            query = request.query_params.get("q") or ""
+            section = request.query_params.get("section") or ""
+            format_values = request.query_params.getlist("formats")
+            if not format_values:
+                format_param = request.query_params.get("formats") or ""
+                format_values = [entry.strip() for entry in format_param.split(",") if entry.strip()]
+            filters_raw = request.query_params.get("filters")
+            filters = None
+            if filters_raw:
+                try:
+                    filters = json.loads(filters_raw)
+                except json.JSONDecodeError:
+                    return Response(
+                        {"error": "Filters must be valid JSON."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+            try:
+                artifacts = filter_media_library_artifacts(
+                    artifacts,
+                    query=query,
+                    filters=filters,
+                    section=section,
+                    formats=format_values,
+                )
+            except Exception as exc:
+                log_exception(exc)
+            return Response(artifacts, status=status.HTTP_200_OK)
+        except Exception as exc:
+            log_exception(exc)
+            message = str(exc) if settings.DEBUG else "Something went wrong please try again later"
+            return Response({"error": message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request, slug, project_id, package_id):
         project_id_str = str(project_id)
