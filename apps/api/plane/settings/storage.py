@@ -62,20 +62,15 @@ class S3Storage(S3Boto3Storage):
         """Generate a presigned URL to upload an S3 object"""
         if expiration is None:
             expiration = self.signed_url_expiration
-        fields = {"Content-Type": file_type}
+        fields = {
+            "Content-Type": file_type,
+            "bucket": self.aws_storage_bucket_name,
+        }
 
         conditions = [
-            {"bucket": self.aws_storage_bucket_name},
             ["content-length-range", 1, file_size],
             {"Content-Type": file_type},
         ]
-
-        # Add condition for the object name (key)
-        if object_name.startswith("${filename}"):
-            conditions.append(["starts-with", "$key", object_name[: -len("${filename}")]])
-        else:
-            fields["key"] = object_name
-            conditions.append({"key": object_name})
 
         # Generate the presigned POST URL
         try:
