@@ -178,6 +178,27 @@ def filter_media_library_artifacts(
         and matches_filters(artifact)
     ]
 
+_DOCUMENT_ICON_MAP = {
+  "pdf": "pdf-icon.png",
+  "doc": "doc-icon.png",
+  "docx": "doc-icon.png",
+  "ppt": "doc-icon.png",
+  "pptx": "doc-icon.png",
+  "xls": "excel-icon.png",
+  "xlsx": "excel-icon.png",
+    "csv": "csv-icon.png",
+    "txt": "txt-icon.png",
+    "json": "txt-icon.png",
+    "md": "txt-icon.png",
+    "log": "txt-icon.png",
+    "xml": "txt-icon.png",
+    "yml": "txt-icon.png",
+    "yaml": "txt-icon.png",
+    "html": "html-icon.png",
+    "css": "css-icon.png",
+}
+_DOCUMENT_ICON_DEFAULT = "default-icon.png"
+
 
 def _now_iso() -> str:
     return timezone.now().replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -191,6 +212,57 @@ def validate_segment(value: str, field: str) -> str:
 
 def media_library_root() -> Path:
     return Path(settings.MEDIA_LIBRARY_ROOT).resolve(strict=False)
+
+
+def get_document_icon_source(format_value: str, thumbnail_hint: str | None = None) -> Path | None:
+    base_public_dirs: list[Path] = []
+    base_from_settings = Path(settings.BASE_DIR).parent.parent / "web" / "public"
+    base_public_dirs.append(base_from_settings)
+    base_from_repo = None
+    resolved_path = Path(__file__).resolve()
+    for parent in resolved_path.parents:
+        candidate = parent / "apps" / "web" / "public"
+        if candidate.exists():
+            base_from_repo = candidate
+            break
+    if base_from_repo and base_from_repo != base_from_settings:
+        base_public_dirs.append(base_from_repo)
+    base_from_static = Path(settings.BASE_DIR) / "static"
+    if base_from_static not in base_public_dirs:
+        base_public_dirs.append(base_from_static)
+
+    for base_public_dir in base_public_dirs:
+        if not base_public_dir.exists():
+            continue
+        if thumbnail_hint and isinstance(thumbnail_hint, str):
+            normalized_hint = thumbnail_hint.lstrip("/").replace("\\", "/")
+            candidate = (base_public_dir / normalized_hint).resolve(strict=False)
+            try:
+                if (
+                    os.path.commonpath([str(base_public_dir), str(candidate)]) == str(base_public_dir)
+                    and candidate.exists()
+                ):
+                    return candidate
+            except ValueError:
+                continue
+
+    if not format_value:
+        return None
+
+    for base_public_dir in base_public_dirs:
+        attachment_dir = base_public_dir / "attachment"
+        if not attachment_dir.exists():
+            continue
+        key = format_value.lower()
+        icon_name = _DOCUMENT_ICON_MAP.get(key, _DOCUMENT_ICON_DEFAULT)
+        icon_path = attachment_dir / icon_name
+        if icon_path.exists():
+            return icon_path
+        fallback_path = attachment_dir / _DOCUMENT_ICON_DEFAULT
+        if fallback_path.exists():
+            return fallback_path
+
+    return None
 
 
 def safe_join(base: Path, *segments: str) -> Path:
@@ -251,8 +323,11 @@ def create_manifest(project_id: str, package_id: str, name: str, title: str, art
 def read_manifest(path: Path) -> dict:
     if not path.exists():
         raise ValidationError({"manifest": "Manifest not found."})
-    with open(path, "r", encoding="utf-8") as handle:
-        data = json.load(handle)
+    with open(path, "r", encoding="utf-8-sig") as handle:
+        try:
+            data = json.load(handle)
+        except json.JSONDecodeError as exc:
+            raise ValidationError({"manifest": "Invalid manifest JSON."}) from exc
     if not isinstance(data.get("artifacts"), list):
         raise ValidationError({"manifest": "Invalid manifest: artifacts must be a list."})
     return data

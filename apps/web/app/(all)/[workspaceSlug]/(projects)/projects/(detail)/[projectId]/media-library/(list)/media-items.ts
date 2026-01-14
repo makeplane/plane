@@ -39,6 +39,23 @@ type TArtifactContext = {
 
 const VIDEO_FORMATS = new Set(["mp4", "m3u8"]);
 const IMAGE_FORMATS = new Set(["jpg", "jpeg", "png", "svg", "thumbnail"]);
+const DOCUMENT_THUMBNAILS: Record<string, string> = {
+  pdf: "attachment/pdf-icon.png",
+  doc: "attachment/doc-icon.png",
+  docx: "attachment/doc-icon.png",
+  xls: "attachment/excel-icon.png",
+  xlsx: "attachment/excel-icon.png",
+  csv: "attachment/csv-icon.png",
+  txt: "attachment/txt-icon.png",
+  json: "attachment/txt-icon.png",
+  md: "attachment/txt-icon.png",
+  log: "attachment/txt-icon.png",
+  xml: "attachment/txt-icon.png",
+  yml: "attachment/txt-icon.png",
+  yaml: "attachment/txt-icon.png",
+  html: "attachment/html-icon.png",
+  css: "attachment/css-icon.png",
+};
 
 const resolveArtifactPath = (path: string) => {
   if (!path) return "";
@@ -124,17 +141,43 @@ const getMediaType = (format: string): TMediaItem["mediaType"] => {
   return "document";
 };
 
+export const getDocumentThumbnailPath = (format?: string) => {
+  const key = (format ?? "").toLowerCase();
+  return DOCUMENT_THUMBNAILS[key] ?? "attachment/default-icon.png";
+};
+
+export const resolveMediaItemActionHref = (item: TMediaItem) => {
+  const action = (item.action ?? "").toLowerCase();
+
+  if (action === "play_hls" && item.videoSrc) {
+    return `/player?src=${encodeURIComponent(item.videoSrc)}&type=m3u8`;
+  }
+  if (action === "open_mp4" && item.videoSrc) {
+    return `/player?src=${encodeURIComponent(item.videoSrc)}&type=mp4`;
+  }
+  if (action === "open_pdf" && item.fileSrc) {
+    return `/viewer?src=${encodeURIComponent(item.fileSrc)}&type=pdf`;
+  }
+  if ((action === "download" || action === "view") && item.fileSrc) {
+    return item.fileSrc;
+  }
+
+  return null;
+};
+
 export const mapArtifactsToMediaItems = (
   artifacts: TMediaArtifact[],
   context?: TArtifactContext
 ): TMediaItem[] => {
   const thumbnailByLink = new Map<string, string>();
   const mediaTypeByName = new Map<string, TMediaItem["mediaType"]>();
+  const artifactByName = new Map<string, TMediaArtifact>();
 
   for (const artifact of artifacts) {
     const format = (artifact.format ?? "").toLowerCase();
     if (artifact.name) {
       mediaTypeByName.set(artifact.name, getMediaType(format));
+      artifactByName.set(artifact.name, artifact);
     }
     if (!artifact.link || !IMAGE_FORMATS.has(format)) continue;
     const isPreview = artifact.action === "preview" || format === "thumbnail";
@@ -156,6 +199,9 @@ export const mapArtifactsToMediaItems = (
     const format = (artifact.format ?? "").toLowerCase();
     const mediaType = getMediaType(format);
     const meta = getMetaObject(artifact.meta);
+    const linkedArtifact = artifact.link ? artifactByName.get(artifact.link) : undefined;
+    const displayTitle =
+      format === "thumbnail" && linkedArtifact?.title ? linkedArtifact.title : artifact.title;
 
     const createdAt = formatDateLabel(artifact.created_at || artifact.updated_at || "");
     const views = getMetaNumber(meta, ["views"], 0);
@@ -163,6 +209,7 @@ export const mapArtifactsToMediaItems = (
 
     const primaryTag = getMetaString(meta, ["category", "sport", "program"], "Library");
     const linkedMediaType = artifact.link ? mediaTypeByName.get(artifact.link) : undefined;
+    console.log("linkedMediaType", artifact.link, linkedMediaType);
     const secondaryTag = getMetaString(meta, ["season", "level", "coach"], "Media");
     const itemsCount = getMetaNumber(meta, ["itemsCount", "items_count"], 1);
     const author = getMetaString(meta, ["coach", "author", "creator"], "Media Library");
@@ -171,15 +218,13 @@ export const mapArtifactsToMediaItems = (
     const resolvedPath = resolveArtifactSource(artifact, context);
 
     const metaThumbnail = getMetaString(meta, ["thumbnail"], "");
-    const thumbnail = resolveArtifactPath(
-      metaThumbnail ||
-      thumbnailByLink.get(artifact.name) ||
-      (mediaType === "image" ? resolvedPath : "")
-    );
+    const fallbackThumbnail =
+      mediaType === "image" ? resolvedPath : mediaType === "document" ? getDocumentThumbnailPath(format) : "";
+    const thumbnail = resolveArtifactPath(metaThumbnail || thumbnailByLink.get(artifact.name) || fallbackThumbnail);
 
     return {
       id: artifact.name,
-      title: artifact.title,
+      title: displayTitle,
       format,
       action: artifact.action,
       link: artifact.link ?? null,

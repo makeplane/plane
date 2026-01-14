@@ -6,6 +6,7 @@ import { FileImage, FileText, FileVideo, UploadCloud, X } from "lucide-react";
 import { Button, ToggleSwitch } from "@plane/ui";
 import { useInstance } from "@/hooks/store/use-instance";
 import { MediaLibraryService } from "@/services/media-library.service";
+import { getDocumentThumbnailPath } from "./media-items";
 import { useMediaLibrary } from "./media-library-context";
 
 const DEFAULT_MEDIA_LIBRARY_MAX_FILE_SIZE = 1024 * 1024 * 1024;
@@ -41,11 +42,8 @@ const resolveArtifactFormat = (fileName: string) => {
   return "";
 };
 
-const updateUploadEntry = (
-  prev: TUploadItem[],
-  id: string,
-  updates: Partial<TUploadItem>
-): TUploadItem[] => prev.map((item) => (item.id === id ? { ...item, ...updates } : item));
+const updateUploadEntry = (prev: TUploadItem[], id: string, updates: Partial<TUploadItem>): TUploadItem[] =>
+  prev.map((item) => (item.id === id ? { ...item, ...updates } : item));
 
 const formatFileSize = (value: number) => {
   if (!Number.isFinite(value) || value <= 0) return "0MB";
@@ -150,6 +148,14 @@ export const MediaLibraryUploadModal = () => {
       const artifactName = buildArtifactName(file.name, uploadedAt, index);
       const title = getTitleFromFile(file.name) || "Untitled Upload";
       const action = VIDEO_FORMATS.has(format) ? "play" : IMAGE_FORMATS.has(format) ? "view" : "download";
+      const meta: Record<string, unknown> = { category: "Uploads", source: "web" };
+      if (DOC_FORMATS.has(format)) {
+        meta.kind = "document_file";
+        meta.category = "Uploads";
+        meta.file_size = file.size;
+        meta.file_type = file.type || format;
+        meta.thumbnail = getDocumentThumbnailPath(format);
+      }
       try {
         setUploads((prev) => updateUploadEntry(prev, item.id, { status: "uploading", progress: 0 }));
         await mediaLibraryService.uploadArtifact(
@@ -162,7 +168,7 @@ export const MediaLibraryUploadModal = () => {
             format,
             link: null,
             action,
-            meta: { category: "Uploads", source: "web" },
+            meta,
           },
           file,
           (progressEvent) => {
@@ -253,7 +259,7 @@ export const MediaLibraryUploadModal = () => {
           </div>
 
           <hr className="my-4 border-0 border-t border-custom-border-200/60" />
-{/* 
+          {/*
          <div className="mt-4 flex flex-col gap-3 text-sm text-custom-text-200">
             <label className="flex flex-col gap-1">
               <span className="text-xs text-custom-text-300">Title</span>
@@ -283,8 +289,8 @@ export const MediaLibraryUploadModal = () => {
                         {item.status === "uploading"
                           ? `Uploading... ${item.progress ?? 0}%`
                           : item.status === "ready"
-                          ? "Ready to upload"
-                          : item.error}
+                            ? "Ready to upload"
+                            : item.error}
                       </div>
                       {item.status === "uploading" ? (
                         <div className="mt-2 h-1.5 w-40 overflow-hidden rounded-full bg-custom-border-200">
@@ -339,8 +345,8 @@ export const MediaLibraryUploadModal = () => {
 
         <div className="flex items-center justify-between border-t border-custom-border-200 px-5 py-3 text-xs text-custom-text-300">
           <span>
-            Supported formats: MP4, M3U8, JPG, PNG, SVG, PDF, CSV, JSON, DOCX, XLSX, PPTX, TXT (Max size:{" "}
-            {maxSizeLabel})
+            Supported formats: MP4, M3U8, JPG, PNG, SVG, PDF, CSV, JSON, DOCX, XLSX, PPTX, TXT (Max size: {maxSizeLabel}
+            )
           </span>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
