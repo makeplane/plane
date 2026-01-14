@@ -12,7 +12,7 @@ import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-fi
 
 import { MediaCard } from "./media-card";
 import type { TMediaItem, TMediaSection } from "./media-items";
-import { groupMediaItemsByTag } from "./media-items";
+import { groupMediaItemsByTag, resolveMediaItemActionHref } from "./media-items";
 import { useMediaLibrary } from "./media-library-context";
 import { buildMetaFilterConfigs, collectMetaFilterOptions, matchesMediaLibraryFilters } from "./media-library-filters";
 import { MediaListView } from "./media-list-view";
@@ -143,8 +143,9 @@ const MediaLibraryListPage = observer(() => {
     if (item.link) {
       return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.link)}`;
     }
-    if ((item.action === "download" || item.action === "view") && item.fileSrc) {
-      return item.fileSrc;
+    const actionHref = resolveMediaItemActionHref(item);
+    if (actionHref) {
+      return actionHref;
     }
     return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
   };

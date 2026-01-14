@@ -26,6 +26,8 @@ export const MediaCard = ({
   const durationLabel = useVideoDuration(item);
   const isExternal = /^https?:\/\//i.test(href);
   const showLinkedTypeIndicator = item.mediaType === "image" && Boolean(item.link) && Boolean(item.linkedMediaType);
+  console.log("showLinkedTypeIndicator", item.linkedMediaType);
+  const isLinkedDocumentThumbnail = item.mediaType === "image" && item.linkedMediaType === "document";
   const linkedTypeLabel = showLinkedTypeIndicator
     ? item.linkedMediaType === "video"
       ? "Video"
@@ -50,7 +52,9 @@ export const MediaCard = ({
           <img
             src={item.thumbnail}
             alt={item.title}
-            className="h-full w-full object-cover transition-transform duration-300 "
+            className={`h-full w-full transition-transform duration-300 ${
+              isLinkedDocumentThumbnail ? "object-contain p-6" : "object-cover"
+            }`}
           />
         ) : item.mediaType === "video" ? (
           isHls ? (

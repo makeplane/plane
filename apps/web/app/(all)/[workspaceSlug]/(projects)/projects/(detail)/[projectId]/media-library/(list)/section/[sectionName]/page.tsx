@@ -7,7 +7,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { MediaCard } from "../../media-card";
 import type { TMediaItem, TMediaSection } from "../../media-items";
-import { groupMediaItemsByTag } from "../../media-items";
+import { groupMediaItemsByTag, resolveMediaItemActionHref } from "../../media-items";
 import { useMediaLibrary } from "../../media-library-context";
 import { MediaListView } from "../../media-list-view";
 import { useMediaLibraryItems } from "../../use-media-library-items";
@@ -56,8 +56,16 @@ export default function MediaLibrarySectionPage() {
     };
   }, [decodedSection, mediaSections, mediaTypeFilter, query]);
 
-  const getItemHref = (item: TMediaItem) =>
-    `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
+  const getItemHref = (item: TMediaItem) => {
+    if (item.link) {
+      return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.link)}`;
+    }
+    const actionHref = resolveMediaItemActionHref(item);
+    if (actionHref) {
+      return actionHref;
+    }
+    return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
+  };
 
   if (!section && isLoading) {
     return viewMode === "list" ? (

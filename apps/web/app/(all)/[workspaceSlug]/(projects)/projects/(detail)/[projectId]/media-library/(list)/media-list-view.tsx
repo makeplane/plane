@@ -22,8 +22,9 @@ const MediaListRow = ({
   getItemTypeLabel?: (item: TMediaItem) => string;
 }) => {
   const durationLabel = useVideoDuration(item);
-  const typeLabel = getItemTypeLabel ? getItemTypeLabel(item) : item.mediaType;
+  const typeLabel = getItemTypeLabel ? getItemTypeLabel(item) : item.linkedMediaType ?? item.mediaType;
   const showLinkedTypeIndicator = item.mediaType === "image" && Boolean(item.link) && Boolean(item.linkedMediaType);
+  const isLinkedDocumentThumbnail = item.mediaType === "image" && item.linkedMediaType === "document";
   const linkedTypeLabel = showLinkedTypeIndicator
     ? item.linkedMediaType === "video"
       ? "Video"
@@ -42,7 +43,11 @@ const MediaListRow = ({
     >
       <div className="relative h-16 w-28 overflow-hidden rounded-md bg-custom-background-90">
         {item.thumbnail ? (
-          <img src={item.thumbnail} alt={item.title} className="h-full w-full object-cover" />
+          <img
+            src={item.thumbnail}
+            alt={item.title}
+            className={`h-full w-full ${isLinkedDocumentThumbnail ? "object-contain p-3" : "object-cover"}`}
+          />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-custom-text-300">No preview</div>
         )}
