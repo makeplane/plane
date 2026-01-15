@@ -633,6 +633,7 @@ class IssueExpandSerializer(BaseSerializer):
     labels = serializers.SerializerMethodField()
     assignees = serializers.SerializerMethodField()
     state = StateLiteSerializer(read_only=True)
+    description = serializers.JSONField(source="description_json", read_only=True)
 
     def get_labels(self, obj):
         expand = self.context.get("expand", [])
