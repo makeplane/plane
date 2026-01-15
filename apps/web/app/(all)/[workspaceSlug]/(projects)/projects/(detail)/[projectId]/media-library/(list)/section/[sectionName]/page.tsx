@@ -18,14 +18,25 @@ export default function MediaLibrarySectionPage() {
     projectId: string;
     sectionName: string;
   };
-  const { libraryVersion } = useMediaLibrary();
+  const { libraryVersion, mediaFilters } = useMediaLibrary();
   const searchParams = useSearchParams();
   const query = (searchParams.get("q") ?? "").trim();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
   const decodedSection = decodeURIComponent(sectionName ?? "");
+  const filterConditions = useMemo(
+    () =>
+      mediaFilters.allConditionsForDisplay.map(({ property, operator, value }) => ({
+        property,
+        operator,
+        value,
+      })),
+    [mediaFilters.allConditionsForDisplay]
+  );
   const { items: libraryItems, isLoading } = useMediaLibraryItems(workspaceSlug, projectId, libraryVersion, {
     query,
     section: decodedSection,
+    filters: filterConditions,
+    formats: "thumbnail",
   });
 
   const section = useMemo<TMediaSection>(
