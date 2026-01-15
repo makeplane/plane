@@ -1,15 +1,14 @@
 "use client";
 
-import { useEffect, useId, useMemo } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
+import type { Swiper as SwiperInstance } from "swiper";
 import { Navigation, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
-
 import { MediaCard } from "./media-card";
 import type { TMediaItem, TMediaSection } from "./media-items";
 import { groupMediaItemsByTag, resolveMediaItemActionHref } from "./media-items";
@@ -24,6 +23,15 @@ const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHre
   const nextId = `media-next-${rowId}`;
   const scrollbarId = `media-scrollbar-${rowId}`;
   const hasScrollableItems = section.items.length > 1;
+  const [showNavigation, setShowNavigation] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const handleSwiperUpdate = (swiper: SwiperInstance) => {
+    const isScrollable = !swiper.isLocked;
+    setShowNavigation(isScrollable);
+    setCanScrollLeft(isScrollable && !swiper.isBeginning);
+    setCanScrollRight(isScrollable && !swiper.isEnd);
+  };
 
   return (
     <section className="flex flex-col gap-3">
@@ -43,8 +51,13 @@ const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHre
           spaceBetween={16}
           navigation={hasScrollableItems ? { prevEl: `#${prevId}`, nextEl: `#${nextId}` } : undefined}
           scrollbar={{ el: `#${scrollbarId}`, draggable: true }}
-          allowTouchMove={!hasScrollableItems}
+          allowTouchMove
           watchOverflow
+          onSwiper={handleSwiperUpdate}
+          onResize={handleSwiperUpdate}
+          onSlidesLengthChange={handleSwiperUpdate}
+          onSlideChange={handleSwiperUpdate}
+          onTransitionEnd={handleSwiperUpdate}
           className="media-swiper pb-3"
         >
           {section.items.map((item, index) => (
@@ -58,7 +71,9 @@ const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHre
             <button
               id={prevId}
               type="button"
-              className="absolute left-0 top-[40%] z-10 flex -translate-y-1/2 -translate-x-1/2 rounded-full border border-custom-border-200 bg-custom-background-100 p-2 text-custom-text-300 shadow-sm hover:text-custom-text-100"
+              className={`absolute left-0 top-[40%] z-10 flex -translate-y-1/2 -translate-x-1/2 rounded-full border border-custom-border-200 bg-custom-background-100 p-2 text-custom-text-300 shadow-sm hover:text-custom-text-100 ${
+                showNavigation && canScrollLeft ? "" : "hidden"
+              }`}
               aria-label={`Scroll ${section.title} left`}
             >
               <ChevronLeft className="h-5 w-5" />
@@ -66,7 +81,9 @@ const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHre
             <button
               id={nextId}
               type="button"
-              className="absolute right-0 top-[40%] z-10 flex -translate-y-1/2 translate-x-1/2 rounded-full border border-custom-border-200 bg-custom-background-100 p-2 text-custom-text-300 shadow-sm hover:text-custom-text-100"
+              className={`absolute right-0 top-[40%] z-10 flex -translate-y-1/2 translate-x-1/2 rounded-full border border-custom-border-200 bg-custom-background-100 p-2 text-custom-text-300 shadow-sm hover:text-custom-text-100 ${
+                showNavigation && canScrollRight ? "" : "hidden"
+              }`}
               aria-label={`Scroll ${section.title} right`}
             >
               <ChevronRight className="h-5 w-5" />
