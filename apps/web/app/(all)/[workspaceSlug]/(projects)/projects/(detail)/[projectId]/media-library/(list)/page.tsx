@@ -141,6 +141,12 @@ const MediaLibraryListPage = observer(() => {
   };
 
   const showSkeleton = isLoading && libraryItems.length === 0;
+  const getSectionHref = (section: TMediaSection) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("view", "list");
+    const paramsString = params.toString();
+    return `./section/${encodeURIComponent(section.title)}${paramsString ? `?${paramsString}` : ""}`;
+  };
 
   return (
     <div className="flex flex-col gap-8">
@@ -213,7 +219,7 @@ const MediaLibraryListPage = observer(() => {
             No media matches your search.
           </div>
         ) : viewMode === "list" ? (
-          <MediaListView sections={mediaSections} getItemHref={getItemHref} />
+          <MediaListView sections={mediaSections} getItemHref={getItemHref} getSectionHref={getSectionHref} />
         ) : (
           mediaSections.map((section) => (
             <MediaRow key={section.title} section={section} getItemHref={getItemHref} />
