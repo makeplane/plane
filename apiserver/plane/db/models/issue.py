@@ -204,6 +204,22 @@ class Issue(ProjectBaseModel):
         verbose_name_plural = "Issues"
         db_table = "issues"
         ordering = ("-created_at",)
+        indexes = [
+            # Index for ORDER BY created_at (most common ordering)
+            models.Index(fields=["-created_at"], name="issues_created_at_desc_idx"),
+            # Index for sub-issues count query
+            models.Index(fields=["parent", "deleted_at"], name="issues_parent_deleted_idx"),
+            # Composite index for common filtering pattern
+            models.Index(
+                fields=["project", "archived_at", "is_draft"],
+                name="issues_project_archived_draft_idx",
+            ),
+            # Index for workspace filtering with created_at ordering
+            models.Index(
+                fields=["workspace", "-created_at"],
+                name="issues_workspace_created_idx",
+            ),
+        ]
 
     def save(self, *args, **kwargs):
         if self.state is None:
@@ -765,6 +781,14 @@ class IssueCustomProperty(ProjectBaseModel):
         verbose_name_plural = "Issue Custom Properties"
         db_table = "issue_custom_properties"
         ordering = ("-created_at",)
+        indexes = [
+            # Index for custom property filtering by key and issue
+            models.Index(fields=["issue", "key"], name="issue_cp_issue_key_idx"),
+            # Index for data_type lookup by key
+            models.Index(fields=["key"], name="issue_cp_key_idx"),
+            # Index for value-based filtering
+            models.Index(fields=["key", "value"], name="issue_cp_key_value_idx"),
+        ]
 
     def __str__(self):
         return f"{self.issue.name} {self.key}"

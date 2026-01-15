@@ -213,12 +213,17 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         custom_filters = build_custom_property_q_objects(custom_properties)
         return (
             Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
+                # Use Issue.objects (base manager) instead of issue_objects to avoid
+                # unnecessary IssueManager filters on simple child count
+                sub_issues_count=Subquery(
+                    Issue.objects.filter(
+                        parent_id=OuterRef("id"),
+                        deleted_at__isnull=True,
+                    )
+                    .values("parent_id")
+                    .annotate(count=Count("id"))
+                    .values("count")
                 )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
             )
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(
@@ -226,7 +231,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 project__project_projectmember__is_active=True,
             )
             .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
@@ -397,23 +401,28 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             .filter(**filtersWithoutCustomProperties)
         )
 
-        # check for the project member role, if the role is 5 then check for the guest_view_all_features if it is true then show all the issues else show only the issues created by the user
+        # Role-based filtering for guests
+        # Note: member and is_active filters are already applied in get_queryset()
+        # Using Exists subquery to avoid duplicate JOINs on project_projectmember table
+        member_subquery = ProjectMember.objects.filter(
+            project_id=OuterRef("project_id"),
+            member=self.request.user,
+            is_active=True,
+        )
 
         issue_queryset = issue_queryset.filter(
             Q(
-                project__project_projectmember__role=5,
-                project__guest_view_all_features=True,
+                Exists(member_subquery.filter(role__gt=5))  # Admin/Member - show all
             )
             | Q(
-                project__project_projectmember__role=5,
-                project__guest_view_all_features=False,
-                created_by=self.request.user,
+                Exists(member_subquery.filter(role=5)),  # Guest role
+                project__guest_view_all_features=True,  # Guest can view all
             )
-            |
-            # For other roles (role < 5), show all issues
-            Q(project__project_projectmember__role__gt=5),
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
+            | Q(
+                Exists(member_subquery.filter(role=5)),  # Guest role
+                project__guest_view_all_features=False,
+                created_by=self.request.user,  # Guest can only see own issues
+            )
         )
 
         # Issue queryset
