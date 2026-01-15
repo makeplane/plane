@@ -2,6 +2,7 @@
 import json
 import logging
 import shutil
+import subprocess
 import mimetypes
 import os
 from pathlib import Path
@@ -35,9 +36,66 @@ from plane.utils.media_library import (
     write_manifest_atomic,
 )
 
-_IMAGE_FORMATS = {"jpg", "jpeg", "png", "svg", "thumbnail"}
-_VIDEO_FORMATS = {"mp4", "m3u8"}
+_IMAGE_FORMATS = {
+    "jpg",
+    "jpeg",
+    "png",
+    "svg",
+    "webp",
+    "gif",
+    "bmp",
+    "tif",
+    "tiff",
+    "avif",
+    "heic",
+    "heif",
+    "thumbnail",
+}
+_VIDEO_FORMATS = {"mp4", "m3u8", "mov", "webm", "avi", "mkv", "mpeg", "mpg", "m4v"}
 logger = logging.getLogger(__name__)
+
+
+def _render_ffmpeg_error(exc: subprocess.CalledProcessError) -> str:
+    detail = (exc.stderr or exc.stdout or "").strip()
+    if detail:
+        detail = detail.replace("\n", " ")
+        if len(detail) > 500:
+            detail = f"{detail[:500]}..."
+    return detail
+
+
+def _create_video_thumbnail(source_path: Path, thumbnail_path: Path) -> bool:
+    thumbnail_path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-hide_banner",
+                "-loglevel",
+                "error",
+                "-y",
+                "-ss",
+                "00:00:00.000",
+                "-i",
+                str(source_path),
+                "-frames:v",
+                "1",
+                "-q:v",
+                "2",
+                str(thumbnail_path),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError as exc:
+        detail = _render_ffmpeg_error(exc)
+        if detail:
+            logger.error("ffmpeg thumbnail failed: %s", detail)
+        else:
+            logger.error("ffmpeg thumbnail failed with exit code %s", exc.returncode)
+        return False
+    return thumbnail_path.exists()
 
 mimetypes.add_type("application/vnd.apple.mpegurl", ".m3u8")
 mimetypes.add_type("application/x-mpegURL", ".m3u8")
@@ -271,6 +329,15 @@ class MediaArtifactsListAPIView(BaseAPIView):
         doc_thumbnail_source = None
         doc_thumbnail_action = None
         doc_thumbnail_category = None
+        image_thumbnail_name = None
+        image_thumbnail_relative_path = None
+        image_thumbnail_category = None
+        image_thumbnail_action = None
+        video_thumbnail_name = None
+        video_thumbnail_path = None
+        video_thumbnail_relative_path = None
+        video_thumbnail_category = None
+        video_thumbnail_action = None
         timestamp = _now_iso()
 
         if file_obj:
@@ -337,6 +404,20 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 relative_path = (
                     f"projects/{project_id_str}/packages/{package_id}/artifacts/{artifact_file_name}"
                 )
+                if format_value in _VIDEO_FORMATS and format_value != "m3u8":
+                    video_thumbnail_name = f"{primary_artifact_name}-thumbnail"
+                    video_thumbnail_file_name = f"{primary_artifact_name}-thumbnail.jpg"
+                    video_thumbnail_path = artifacts_root / video_thumbnail_file_name
+                    video_thumbnail_relative_path = (
+                        f"projects/{project_id_str}/packages/{package_id}/artifacts/{video_thumbnail_file_name}"
+                    )
+                    video_thumbnail_category = meta.get("category") if isinstance(meta, dict) else None
+                    video_thumbnail_action = "preview"
+                if format_value in _IMAGE_FORMATS and format_value != "thumbnail":
+                    image_thumbnail_name = f"{primary_artifact_name}-thumbnail"
+                    image_thumbnail_relative_path = relative_path
+                    image_thumbnail_category = meta.get("category") if isinstance(meta, dict) else None
+                    image_thumbnail_action = "view"
                 if format_value not in _VIDEO_FORMATS and format_value not in _IMAGE_FORMATS:
                     thumbnail_hint = meta.get("thumbnail") if isinstance(meta, dict) else None
                     doc_thumbnail_source = get_document_icon_source(format_value, thumbnail_hint)
@@ -442,6 +523,26 @@ class MediaArtifactsListAPIView(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             incoming_names.add(doc_thumbnail_name)
+        if image_thumbnail_name:
+            validate_segment(image_thumbnail_name, "artifactId")
+            if image_thumbnail_name in existing_names:
+                return Response({"error": "Artifact already exists."}, status=status.HTTP_409_CONFLICT)
+            if image_thumbnail_name in incoming_names:
+                return Response(
+                    {"error": "Duplicate artifact name in request."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            incoming_names.add(image_thumbnail_name)
+        if video_thumbnail_name:
+            validate_segment(video_thumbnail_name, "artifactId")
+            if video_thumbnail_name in existing_names:
+                return Response({"error": "Artifact already exists."}, status=status.HTTP_409_CONFLICT)
+            if video_thumbnail_name in incoming_names:
+                return Response(
+                    {"error": "Duplicate artifact name in request."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            incoming_names.add(video_thumbnail_name)
 
         if file_obj and file_path:
             if should_transcode:
@@ -487,6 +588,47 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 with open(file_path, "wb") as handle:
                     for chunk in file_obj.chunks():
                         handle.write(chunk)
+                if video_thumbnail_name and video_thumbnail_path and video_thumbnail_relative_path:
+                    if shutil.which("ffmpeg") is None:
+                        logger.error("ffmpeg is not installed. Skipping video thumbnail for %s.", primary_artifact_name)
+                    else:
+                        created_thumbnail = _create_video_thumbnail(file_path, video_thumbnail_path)
+                        if created_thumbnail:
+                            thumbnail_entry = {
+                                "name": video_thumbnail_name,
+                                "title": f"{primary_title} Thumbnail",
+                                "format": "thumbnail",
+                                "path": video_thumbnail_relative_path,
+                                "link": primary_artifact_name,
+                                "action": video_thumbnail_action or "preview",
+                                "meta": {
+                                    "category": video_thumbnail_category or "Uploads",
+                                    "source": "generated",
+                                },
+                                "created_at": primary_created_at,
+                                "updated_at": primary_updated_at,
+                            }
+                            thumbnail_serializer = MediaArtifactSerializer(data=thumbnail_entry)
+                            thumbnail_serializer.is_valid(raise_exception=True)
+                            validated_artifacts.append(thumbnail_serializer.validated_data)
+                if image_thumbnail_name and image_thumbnail_relative_path:
+                    thumbnail_entry = {
+                        "name": image_thumbnail_name,
+                        "title": f"{primary_title} Thumbnail",
+                        "format": "thumbnail",
+                        "path": image_thumbnail_relative_path,
+                        "link": primary_artifact_name,
+                        "action": image_thumbnail_action or "view",
+                        "meta": {
+                            "category": image_thumbnail_category or "Uploads",
+                            "for": primary_artifact_name,
+                        },
+                        "created_at": primary_created_at,
+                        "updated_at": primary_updated_at,
+                    }
+                    thumbnail_serializer = MediaArtifactSerializer(data=thumbnail_entry)
+                    thumbnail_serializer.is_valid(raise_exception=True)
+                    validated_artifacts.append(thumbnail_serializer.validated_data)
                 if doc_thumbnail_name and doc_thumbnail_relative_path and doc_thumbnail_source and doc_thumbnail_path:
                     try:
                         if not doc_thumbnail_path.exists():
