@@ -7,14 +7,19 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --concurrency=18",
+    "build:packages": "turbo run build --filter='./packages/*'",
+    "clean:packages": "rm -rf packages/*/dist",
+    "dev": "node scripts/validate-workspace.js && turbo run dev --concurrency=18",
+    "dev:clean": "pnpm clean:packages && pnpm build:packages && pnpm dev",
+    "dev:fix": "node scripts/validate-workspace.js --fix || (pnpm build:packages && echo '✓ Workspace repaired, starting dev...' && pnpm dev)",
     "start": "turbo run start",
     "clean": "turbo run clean && rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "fix": "turbo run fix",
     "fix:format": "turbo run fix:format",
     "check": "turbo run check",
     "check:lint": "turbo run check:lint",
-    "check:format": "turbo run check:format"
+    "check:format": "turbo run check:format",
+    "validate": "node scripts/validate-workspace.js --verbose"
   },
   "devDependencies": {
     "prettier": "latest",

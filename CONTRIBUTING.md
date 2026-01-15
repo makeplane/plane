@@ -240,6 +240,98 @@ Before submitting your contribution, please ensure the following:
 
 Happy translating! 🌍✨
 
+## Troubleshooting development environment
+
+### Common issues and solutions
+
+#### Module resolution errors during `pnpm dev`
+
+**Symptom:**
+```
+[vite] Internal server error: Failed to resolve import "@plane/utils"
+or
+Cannot find module '@plane/hooks' or its corresponding type declarations
+```
+
+**Root Cause:**
+This happens when workspace package build artifacts are missing or corrupted, usually after:
+- Interrupting builds with `Ctrl+C`
+- Switching git branches without rebuilding
+- Package updates without reinstalling dependencies
+
+**Solutions:**
+
+1. **Quick fix** (rebuilds only workspace packages):
+   ```bash
+   pnpm build:packages
+   pnpm dev
+   ```
+
+2. **Auto-repair** (validates and fixes automatically):
+   ```bash
+   pnpm dev:fix
+   ```
+
+3. **Nuclear option** (cleans everything and rebuilds):
+   ```bash
+   pnpm dev:clean
+   ```
+
+4. **Manual validation** (check workspace health):
+   ```bash
+   pnpm validate
+   ```
+
+5. **Skip validation** (for advanced debugging):
+   ```bash
+   SKIP_VALIDATION=1 pnpm dev
+   ```
+
+#### Understanding workspace package builds
+
+Plane uses an **artifact-based** monorepo architecture. Most workspace packages (`@plane/utils`, `@plane/hooks`, `@plane/types`, etc.) must be built to `dist/` folders before apps can import them.
+
+**Key packages requiring builds:**
+- `@plane/constants` → `packages/constants/dist/`
+- `@plane/decorators` → `packages/decorators/dist/`
+- `@plane/editor` → `packages/editor/dist/`
+- `@plane/hooks` → `packages/hooks/dist/`
+- `@plane/i18n` → `packages/i18n/dist/`
+- `@plane/logger` → `packages/logger/dist/`
+- `@plane/propel` → `packages/propel/dist/`
+- `@plane/services` → `packages/services/dist/`
+- `@plane/types` → `packages/types/dist/`
+- `@plane/ui` → `packages/ui/dist/`
+- `@plane/utils` → `packages/utils/dist/`
+
+**Exception:** `@plane/shared-state` uses source resolution (no build required).
+
+#### New commands for workspace management
+
+| Command | Purpose | Use When |
+|---------|---------|----------|
+| `pnpm validate` | Check workspace package artifacts | Diagnosing import issues |
+| `pnpm build:packages` | Build only workspace packages (fast) | After git branch switch |
+| `pnpm clean:packages` | Remove package dist/ folders | Clearing corrupted builds |
+| `pnpm dev:clean` | Full cleanup + rebuild + dev | Nuclear reset option |
+| `pnpm dev:fix` | Auto-repair and start dev | Quick recovery |
+
+#### Preventing future issues
+
+The `pnpm dev` command now automatically validates workspace packages before starting. If validation fails, you'll see:
+
+```
+⚠️  Workspace validation failed!
+
+Missing or corrupted build artifacts detected.
+🔧 To fix, run one of these commands:
+   pnpm build:packages  - Rebuild workspace packages only (fast)
+   pnpm build          - Full build including apps (slower)
+   pnpm dev:clean      - Clean everything and start fresh
+```
+
+Follow the suggested commands to resolve the issue.
+
 ## Need help? Questions and suggestions
 
 Questions, suggestions, and thoughts are most welcome. We can also be reached in our [Discord Server](https://discord.com/invite/A92xrEGCge).
