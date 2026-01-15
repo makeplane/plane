@@ -272,83 +272,72 @@ export const MediaLibraryUploadModal = () => {
           </div>
 
           <hr className="my-4 border-0 border-t border-custom-border-200/60" />
-          {/*
-         <div className="mt-4 flex flex-col gap-3 text-sm text-custom-text-200">
-            <label className="flex flex-col gap-1">
-              <span className="text-xs text-custom-text-300">Title</span>
-              <input
-                type="text"
-                value={title}
-                placeholder="Use a custom title or keep the file name"
-                onChange={(event) => setTitle(event.target.value)}
-                className="h-9 rounded-md border border-custom-border-200 bg-custom-background-100 px-3 text-sm text-custom-text-100"
-              />
-            </label>
-          </div>  */}
 
           <div className="mt-4 rounded-lg border border-custom-border-200">
-            {uploads.length === 0 ? (
-              <div className="px-4 py-3 text-xs text-custom-text-300">No files selected.</div>
-            ) : (
-              uploads.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between border-b border-custom-border-200 px-4 py-3 last:border-b-0"
-                >
-                  <div className="flex items-center gap-3">
-                    {getFileIcon(item.file)}
-                    <div>
-                      <div className="text-xs text-custom-text-300">
-                        {item.status === "uploading"
-                          ? `Uploading... ${item.progress ?? 0}%`
-                          : item.status === "ready"
-                            ? "Ready to upload"
-                            : item.error}
-                      </div>
-                      {item.status === "uploading" ? (
-                        <div className="mt-2 h-1.5 w-40 overflow-hidden rounded-full bg-custom-border-200">
-                          <div
-                            className="h-full rounded-full bg-custom-primary-100 transition-[width]"
-                            style={{ width: `${item.progress ?? 0}%` }}
-                          />
+            <div className="max-h-[40vh] overflow-y-scroll">
+              {uploads.length === 0 ? (
+                <div className="px-4 py-3 text-xs text-custom-text-300">No files selected.</div>
+              ) : (
+                uploads.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between border-b border-custom-border-200 px-4 py-3 last:border-b-0"
+                  >
+                    <div className="flex items-center gap-3">
+                      {getFileIcon(item.file)}
+                      <div>
+                        <div className="text-xs text-custom-text-300">
+                          {item.status === "uploading"
+                            ? `Uploading... ${item.progress ?? 0}%`
+                            : item.status === "ready"
+                              ? "Ready to upload"
+                              : item.error}
                         </div>
-                      ) : null}
+                        {item.status === "uploading" ? (
+                          <div className="mt-2 h-1.5 w-40 overflow-hidden rounded-full bg-custom-border-200">
+                            <div
+                              className="h-full rounded-full bg-custom-primary-100 transition-[width]"
+                              style={{ width: `${item.progress ?? 0}%` }}
+                            />
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {item.status === "failed" ? (
+                    <div className="flex items-center gap-2">
+                      {item.status === "failed" ? (
+                        <Button
+                          variant="neutral-primary"
+                          size="sm"
+                          onClick={() =>
+                            setUploads((prev) =>
+                              prev.map((entry) =>
+                                entry.id === item.id
+                                  ? { ...entry, status: "ready", error: undefined, progress: 0 }
+                                  : entry
+                              )
+                            )
+                          }
+                        >
+                          Retry
+                        </Button>
+                      ) : (
+                        <div className="text-xs text-custom-primary-100">
+                          {item.status === "uploading" ? "Uploading" : "Ready"}
+                        </div>
+                      )}
                       <Button
                         variant="neutral-primary"
                         size="sm"
-                        onClick={() =>
-                          setUploads((prev) =>
-                            prev.map((entry) =>
-                              entry.id === item.id
-                                ? { ...entry, status: "ready", error: undefined, progress: 0 }
-                                : entry
-                            )
-                          )
-                        }
+                        disabled={item.status === "uploading"}
+                        onClick={() => setUploads((prev) => prev.filter((entry) => entry.id !== item.id))}
                       >
-                        Retry
+                        Remove
                       </Button>
-                    ) : (
-                      <div className="text-xs text-custom-primary-100">
-                        {item.status === "uploading" ? "Uploading" : "Ready"}
-                      </div>
-                    )}
-                    <Button
-                      variant="neutral-primary"
-                      size="sm"
-                      disabled={item.status === "uploading"}
-                      onClick={() => setUploads((prev) => prev.filter((entry) => entry.id !== item.id))}
-                    >
-                      Remove
-                    </Button>
+                    </div>
                   </div>
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </div>
           </div>
 
           <hr className="my-4 border-0 border-t border-custom-border-200/60" />
