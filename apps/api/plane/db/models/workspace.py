@@ -214,6 +214,9 @@ class WorkspaceMember(BaseModel):
     default_props = models.JSONField(default=get_default_props)
     issue_props = models.JSONField(default=get_issue_props)
     is_active = models.BooleanField(default=True)
+    getting_started_checklist = models.JSONField(default=dict)
+    tips = models.JSONField(default=dict)
+    explored_features = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["workspace", "member", "deleted_at"]
