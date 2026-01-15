@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane types
 import type { IPartialProject } from "@plane/types";
@@ -13,7 +11,7 @@ type Props = {
   handleSelect: (project: IPartialProject) => void;
 };
 
-export const PowerKOpenProjectMenu: React.FC<Props> = observer((props) => {
+export const PowerKOpenProjectMenu = observer(function PowerKOpenProjectMenu(props: Props) {
   const { handleSelect } = props;
   // store hooks
   const { loader, joinedProjectIds, getPartialProjectById } = useProject();

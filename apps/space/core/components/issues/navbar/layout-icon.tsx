@@ -2,11 +2,11 @@ import type { TIssueLayout } from "@plane/constants";
 import { ListLayoutIcon, BoardLayoutIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
 
-export const IssueLayoutIcon = ({
+export function IssueLayoutIcon({
   layout,
   size,
   ...props
-}: { layout: TIssueLayout; size?: number } & Omit<ISvgIcons, "width" | "height">) => {
+}: { layout: TIssueLayout; size?: number } & Omit<ISvgIcons, "width" | "height">) {
   const iconProps = {
     ...props,
     ...(size && { width: size, height: size }),
@@ -20,4 +20,4 @@ export const IssueLayoutIcon = ({
     default:
       return null;
   }
-};
+}

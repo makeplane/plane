@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -19,7 +17,7 @@ type OnboardingHeaderProps = {
   hasInvitations: boolean;
 };
 
-export const OnboardingHeader: FC<OnboardingHeaderProps> = observer((props) => {
+export const OnboardingHeader = observer(function OnboardingHeader(props: OnboardingHeaderProps) {
   const { currentStep, updateCurrentStep, hasInvitations } = props;
   // store hooks
   const { data: user } = useUser();
@@ -58,14 +56,18 @@ export const OnboardingHeader: FC<OnboardingHeaderProps> = observer((props) => {
   // derived values
   const currentStepNumber = getCurrentStepNumber();
   const totalSteps = hasInvitations ? 4 : 5; // 4 if invites available, 5 if not
-  const userName = user?.display_name ?? `${user?.first_name} ${user?.last_name}` ?? user?.email;
+  const userName = user?.display_name
+    ? user?.display_name
+    : user?.first_name
+      ? `${user?.first_name} ${user?.last_name ?? ""}`
+      : user?.email;
 
   return (
     <div className="flex flex-col gap-4 sticky top-0 z-10">
-      <div className="h-1.5 rounded-t-lg w-full bg-custom-background-100 overflow-hidden cursor-pointer">
+      <div className="h-1.5 rounded-t-lg w-full bg-surface-1 overflow-hidden cursor-pointer">
         <Tooltip tooltipContent={`${currentStepNumber}/${totalSteps}`} position="bottom-end">
           <div
-            className="h-full bg-custom-primary-100 transition-all duration-700 ease-out"
+            className="h-full bg-accent-primary transition-all duration-700 ease-out"
             style={{ width: `${(currentStepNumber / totalSteps) * 100}%` }}
           />
         </Tooltip>
@@ -74,10 +76,10 @@ export const OnboardingHeader: FC<OnboardingHeaderProps> = observer((props) => {
         <div className="flex items-center gap-2.5">
           {canGoBack && (
             <button onClick={handleStepBack} className="cursor-pointer" type="button" disabled={!canGoBack}>
-              <ChevronLeftIcon className="size-6 text-custom-text-400" />
+              <ChevronLeftIcon className="size-6 text-placeholder" />
             </button>
           )}
-          <PlaneLockup height={20} width={95} className="text-custom-text-100" />
+          <PlaneLockup height={20} width={95} className="text-primary" />
         </div>
         <SwitchAccountDropdown fullName={userName} />
       </div>

@@ -1,8 +1,5 @@
-"use client";
-
-import type { FC, ReactNode } from "react";
 import { lazy, Suspense } from "react";
-import { useTheme, ThemeProvider } from "next-themes";
+import { useTheme } from "next-themes";
 import { SWRConfig } from "swr";
 // Plane Imports
 import { WEB_SWR_CONFIG } from "@plane/constants";
@@ -12,48 +9,51 @@ import { Toast } from "@plane/propel/toast";
 import { resolveGeneralTheme } from "@plane/utils";
 // polyfills
 import "@/lib/polyfills";
-// progress bar
-import { AppProgressBar } from "@/lib/b-progress";
 // mobx store provider
 import { StoreProvider } from "@/lib/store-context";
-// wrappers
-import { InstanceWrapper } from "@/lib/wrappers/instance-wrapper";
+
 // lazy imports
-const StoreWrapper = lazy(() => import("@/lib/wrappers/store-wrapper"));
-const PostHogProvider = lazy(() => import("@/lib/posthog-provider"));
-const IntercomProvider = lazy(() => import("@/lib/intercom-provider"));
+const AppProgressBar = lazy(function AppProgressBar() {
+  return import("@/lib/b-progress/AppProgressBar");
+});
+
+const StoreWrapper = lazy(function StoreWrapper() {
+  return import("@/lib/wrappers/store-wrapper");
+});
+
+const InstanceWrapper = lazy(function InstanceWrapper() {
+  return import("@/lib/wrappers/instance-wrapper");
+});
+
+const ChatSupportModal = lazy(function ChatSupportModal() {
+  return import("@/components/global/chat-support-modal");
+});
 
 export interface IAppProvider {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-const ToastWithTheme = () => {
-  const { resolvedTheme } = useTheme();
-  return <Toast theme={resolveGeneralTheme(resolvedTheme)} />;
-};
-
-export const AppProvider: FC<IAppProvider> = (props) => {
+export function AppProvider(props: IAppProvider) {
   const { children } = props;
   // themes
+  const { resolvedTheme } = useTheme();
+
   return (
     <StoreProvider>
-      <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
+      <>
         <AppProgressBar />
         <TranslationProvider>
-          <ToastWithTheme />
+          <Toast theme={resolveGeneralTheme(resolvedTheme)} />
           <StoreWrapper>
             <InstanceWrapper>
               <Suspense>
-                <IntercomProvider>
-                  <PostHogProvider>
-                    <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
-                  </PostHogProvider>
-                </IntercomProvider>
+                <ChatSupportModal />
+                <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
               </Suspense>
             </InstanceWrapper>
           </StoreWrapper>
         </TranslationProvider>
-      </ThemeProvider>
+      </>
     </StoreProvider>
   );
-};
+}

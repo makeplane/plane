@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -35,7 +33,7 @@ export interface IIssueProperties {
   className: string;
 }
 
-export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props) => {
+export const DraftIssueProperties = observer(function DraftIssueProperties(props: IIssueProperties) {
   const { issue, updateIssue, className } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -195,9 +193,9 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
           icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
           buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
           buttonClassName={
-            shouldHighlightIssueDueDate(issue?.target_date || null, stateDetails?.group) ? "text-red-500" : ""
+            shouldHighlightIssueDueDate(issue?.target_date || null, stateDetails?.group) ? "text-danger-primary" : ""
           }
-          clearIconClassName="!text-custom-text-100"
+          clearIconClassName="!text-primary"
           optionsClassName="z-10"
           renderByDefault={isMobile}
           showTooltip

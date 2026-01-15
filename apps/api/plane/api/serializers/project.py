@@ -3,13 +3,7 @@ import random
 from rest_framework import serializers
 
 # Module imports
-from plane.db.models import (
-    Project,
-    ProjectIdentifier,
-    WorkspaceMember,
-    State,
-    Estimate,
-)
+from plane.db.models import Project, ProjectIdentifier, WorkspaceMember, State, Estimate
 
 from plane.utils.content_validator import (
     validate_html_content,
@@ -123,6 +117,7 @@ class ProjectCreateSerializer(BaseSerializer):
 
     def create(self, validated_data):
         identifier = validated_data.get("identifier", "").strip().upper()
+
         if identifier == "":
             raise serializers.ValidationError(detail="Project Identifier is required")
 
@@ -171,7 +166,7 @@ class ProjectUpdateSerializer(ProjectCreateSerializer):
 
         if (
             validated_data.get("estimate", None) is not None
-            and not Estimate.objects.filter(project=instance, id=validated_data.get("estimate")).exists()
+            and not Estimate.objects.filter(project=instance, id=validated_data.get("estimate").id).exists()
         ):
             # Check if the estimate is a estimate in the project
             raise serializers.ValidationError("Estimate should be a estimate in the project")

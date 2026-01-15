@@ -1,10 +1,8 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { Check, MoreVerticalIcon } from "lucide-react";
+import { MoreVerticalIcon } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
 // ui
@@ -12,7 +10,7 @@ import { Popover, Transition } from "@headlessui/react";
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
 import { EIssueFilterType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronUpIcon } from "@plane/propel/icons";
+import { CheckIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { TCalendarLayouts, TSupportedFilterForUpdate } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // types
@@ -27,12 +25,7 @@ import type { IProjectIssuesFilter } from "@/store/issue/project";
 import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 
 interface ICalendarHeader {
-  issuesFilterStore:
-    | IProjectIssuesFilter
-    | IModuleIssuesFilter
-    | ICycleIssuesFilter
-    | IProjectViewIssuesFilter
-    | IProjectEpicsFilter;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   updateFilters?: (
     projectId: string,
     filterType: TSupportedFilterTypeForUpdate,
@@ -40,7 +33,7 @@ interface ICalendarHeader {
   ) => Promise<void>;
 }
 
-export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((props) => {
+export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown(props: ICalendarHeader) {
   const { issuesFilterStore, updateFilters } = props;
 
   const { t } = useTranslation();
@@ -106,8 +99,8 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
           <Popover.Button as={React.Fragment}>
             <button type="button" ref={setReferenceElement}>
               <div
-                className={`hidden md:flex items-center gap-1.5 rounded bg-custom-background-80 px-2.5 py-1 text-xs outline-none hover:bg-custom-background-80 ${
-                  open ? "text-custom-text-100" : "text-custom-text-200"
+                className={`hidden md:flex items-center gap-1.5 rounded-sm bg-layer-1 px-2.5 py-1 text-11 outline-none hover:bg-layer-1 ${
+                  open ? "text-primary" : "text-secondary"
                 }`}
               >
                 <div className="font-medium">{t("common.options")}</div>
@@ -118,7 +111,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                 </div>
               </div>
               <div className="md:hidden">
-                <MoreVerticalIcon className="h-4 text-custom-text-200" strokeWidth={2} />
+                <MoreVerticalIcon className="h-4 text-secondary" strokeWidth={2} />
               </div>
             </button>
           </Popover.Button>
@@ -136,23 +129,23 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                 ref={setPopperElement}
                 style={styles.popper}
                 {...attributes.popper}
-                className="absolute right-0 z-10 mt-1 min-w-[12rem] overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 p-1 shadow-custom-shadow-sm"
+                className="absolute right-0 z-10 mt-1 min-w-[12rem] overflow-hidden rounded-sm border border-subtle bg-surface-1 p-1 shadow-raised-200"
               >
                 <div>
                   {Object.entries(CALENDAR_LAYOUTS).map(([layout, layoutDetails]) => (
                     <button
                       key={layout}
                       type="button"
-                      className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
+                      className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-left text-11 hover:bg-layer-1"
                       onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
                     >
                       {layoutDetails.title}
-                      {calendarLayout === layout && <Check size={12} strokeWidth={2} />}
+                      {calendarLayout === layout && <CheckIcon width={12} height={12} strokeWidth={2} />}
                     </button>
                   ))}
                   <button
                     type="button"
-                    className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
+                    className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-left text-11 hover:bg-layer-1"
                     onClick={handleToggleWeekends}
                   >
                     {t("common.actions.show_weekends")}

@@ -1,19 +1,15 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceView } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
+import { useViewMenuItems } from "@/components/common/quick-actions-helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { useViewMenuItems } from "@/plane-web/components/views/helper";
 // local imports
 import { DeleteGlobalViewModal } from "./delete-view-modal";
 import { CreateUpdateWorkspaceViewModal } from "./modal";
@@ -23,7 +19,7 @@ type Props = {
   view: IWorkspaceView;
 };
 
-export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
+export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickActions(props: Props) {
   const { workspaceSlug, view } = props;
   // states
   const [updateViewModal, setUpdateViewModal] = useState(false);
@@ -36,26 +32,26 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const viewLink = `${workspaceSlug}/workspace-views/${view.id}`;
-  const handleCopyText = () =>
-    copyUrlToClipboard(viewLink).then(() => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "View link copied to clipboard.",
-      });
+  const handleCopyText = async () => {
+    await copyUrlToClipboard(viewLink);
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: "Link Copied!",
+      message: "View link copied to clipboard.",
     });
+  };
+
   const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
 
-  const MENU_ITEMS: TContextMenuItem[] = useViewMenuItems({
+  const MENU_ITEMS = useViewMenuItems({
     isOwner,
     isAdmin,
-    setDeleteViewModal,
-    setCreateUpdateViewModal: setUpdateViewModal,
+    handleDelete: () => setDeleteViewModal(true),
+    handleEdit: () => setUpdateViewModal(true),
     handleOpenInNewTab,
-    handleCopyText,
-    isLocked: view.is_locked,
+    handleCopyLink: handleCopyText,
     workspaceSlug,
-    viewId: view.id,
+    view,
   });
 
   return (
@@ -66,23 +62,20 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
         ellipsis
         placement="bottom-end"
         closeOnSelect
-        buttonClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+        buttonClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
       >
-        {MENU_ITEMS.map((item) => {
+        {MENU_ITEMS.items.map((item) => {
           if (item.shouldRender === false) return null;
           return (
             <CustomMenu.MenuItem
               key={item.key}
               onClick={() => {
-                captureClick({
-                  elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.QUICK_ACTIONS,
-                });
                 item.action();
               }}
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -93,8 +86,8 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("text-tertiary whitespace-pre-line", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // plane imports
 import type { I_THEME_OPTION } from "@plane/constants";
@@ -14,9 +12,11 @@ type Props = {
   onChange: (value: I_THEME_OPTION) => void;
 };
 
-export const ThemeSwitch: FC<Props> = (props) => {
+export function ThemeSwitch(props: Props) {
   const { value, onChange } = props;
+  // translation
   const { t } = useTranslation();
+
   return (
     <CustomSelect
       value={value}
@@ -24,7 +24,7 @@ export const ThemeSwitch: FC<Props> = (props) => {
         value ? (
           <div className="flex items-center gap-2">
             <div
-              className="border-1 relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full border"
+              className="border-1 relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full"
               style={{
                 borderColor: value.icon.border,
               }}
@@ -50,6 +50,7 @@ export const ThemeSwitch: FC<Props> = (props) => {
         )
       }
       onChange={onChange}
+      placement="bottom-end"
       input
     >
       {THEME_OPTIONS.map((themeOption) => (
@@ -81,4 +82,4 @@ export const ThemeSwitch: FC<Props> = (props) => {
       ))}
     </CustomSelect>
   );
-};
+}

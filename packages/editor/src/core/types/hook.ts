@@ -11,6 +11,7 @@ type TCoreHookProps = Pick<
   | "extendedEditorProps"
   | "extensions"
   | "flaggedExtensions"
+  | "getEditorMetaData"
   | "handleEditorReady"
   | "isTouchDevice"
   | "onEditorFocus"
@@ -28,6 +29,7 @@ export type TEditorHookProps = TCoreHookProps &
     | "onChange"
     | "onTransaction"
     | "placeholder"
+    | "showPlaceholderOnEmpty"
     | "tabIndex"
     | "value"
   > & {
@@ -49,9 +51,13 @@ export type TCollaborativeEditorHookProps = TCoreHookProps &
     | "onChange"
     | "onTransaction"
     | "placeholder"
+    | "showPlaceholderOnEmpty"
     | "tabIndex"
   > &
   Pick<
     ICollaborativeDocumentEditorProps,
     "dragDropEnabled" | "extendedDocumentEditorProps" | "realtimeConfig" | "serverHandler" | "user"
-  >;
+  > & {
+    titleRef?: ICollaborativeDocumentEditorProps["titleRef"];
+    updatePageProperties?: ICollaborativeDocumentEditorProps["updatePageProperties"];
+  };

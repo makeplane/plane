@@ -1,5 +1,3 @@
-"use client";
-
 import type { MutableRefObject } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -68,7 +66,7 @@ interface IKanbanGroup {
   isEpic?: boolean;
 }
 
-export const KanbanGroup = observer((props: IKanbanGroup) => {
+export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
   const {
     groupId,
     sub_group_id,
@@ -257,7 +255,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
     <KanbanIssueBlockLoader />
   ) : (
     <div
-      className="w-full sticky bottom-0 p-3 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 hover:underline cursor-pointer"
+      className="w-full sticky bottom-0 p-3 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline cursor-pointer"
       onClick={loadMoreIssuesInThisGroup}
     >
       {t("common.load_more")} &darr;
@@ -270,14 +268,14 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   const canDragIssuesInCurrentGrouping =
     !!group_by &&
     DRAG_ALLOWED_GROUPS.includes(group_by) &&
-    (!!sub_group_by ? DRAG_ALLOWED_GROUPS.includes(sub_group_by) : true);
+    (sub_group_by ? DRAG_ALLOWED_GROUPS.includes(sub_group_by) : true);
 
   return (
     <div
       id={`${groupId}__${sub_group_id}`}
       className={cn(
         "relative h-full transition-all min-h-[120px]",
-        { "bg-custom-background-80 rounded": isDraggingOverColumn },
+        { "bg-layer-1 rounded-sm": isDraggingOverColumn },
         { "vertical-scrollbar scrollbar-md": !sub_group_by && !shouldOverlayBeVisible }
       )}
       ref={columnRef}
@@ -312,7 +310,7 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
       {enableQuickIssueCreate &&
         !disableIssueCreation &&
         !getIsWorkflowWorkItemCreationDisabled(groupId, sub_group_id) && (
-          <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">
+          <div className="w-full bg-surface-2 py-0.5 sticky bottom-0">
             <QuickAddIssueRoot
               layout={EIssueLayoutTypes.KANBAN}
               QuickAddButton={KanbanQuickAddIssueButton}

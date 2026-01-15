@@ -8,10 +8,11 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import Masonry from "react-masonry-component";
-import { Plus } from "lucide-react";
+
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { PlusIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // assets
 import darkStickiesAsset from "@/app/assets/empty-state/stickies/stickies-dark.webp?url";
@@ -40,7 +41,7 @@ type TProps = TStickiesLayout & {
   columnCount: number;
 };
 
-export const StickiesList = observer((props: TProps) => {
+export const StickiesList = observer(function StickiesList(props: TProps) {
   const { workspaceSlug, intersectionElement, columnCount } = props;
   // navigation
   const pathname = usePathname();
@@ -122,7 +123,7 @@ export const StickiesList = observer((props: TProps) => {
                 description={t("stickies.empty_state.general.description")}
                 assetPath={stickiesResolvedPath}
                 primaryButton={{
-                  prependIcon: <Plus className="size-4" />,
+                  prependIcon: <PlusIcon className="size-4" />,
                   text: t("stickies.empty_state.general.primary_button.text"),
                   onClick: () => {
                     toggleShowNewSticky(true);
@@ -166,7 +167,7 @@ export const StickiesList = observer((props: TProps) => {
   );
 });
 
-export const StickiesLayout = (props: TStickiesLayout) => {
+export function StickiesLayout(props: TStickiesLayout) {
   // states
   const [containerWidth, setContainerWidth] = useState<number | null>(null);
   // refs
@@ -203,4 +204,4 @@ export const StickiesLayout = (props: TStickiesLayout) => {
       <StickiesList {...props} columnCount={columnCount} />
     </div>
   );
-};
+}

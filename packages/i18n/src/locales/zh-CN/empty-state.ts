@@ -24,6 +24,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "您似乎无权访问该项目",
+      restricted_description: "请联系管理员申请访问权限，通过后您可以在此继续。",
+      join_description: "点击下方按钮加入该项目。",
+      cta_primary: "加入项目",
+      cta_loading: "正在加入项目",
+    },
+    invalid_project: {
+      title: "未找到项目",
+      description: "您查找的项目不存在。",
+    },
     work_items: {
       title: "从您的第一个工作项开始。",
       description: "工作项是项目的构建块 — 分配负责人、设置优先级并轻松跟踪进度。",
@@ -165,6 +176,11 @@ export default {
       title: "暂无个人令牌",
       description: "生成安全的 API 令牌以将工作空间与外部系统和应用程序连接。",
       cta_primary: "添加 API 令牌",
+    },
+    webhooks: {
+      title: "尚未添加 Webhook",
+      description: "在项目事件发生时自动向外部服务发送通知。",
+      cta_primary: "添加 webhook",
     },
   },
 } as const;

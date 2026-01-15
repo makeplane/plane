@@ -34,7 +34,7 @@ from plane.app.serializers import (
     IssueDetailSerializer,
     IssueListDetailSerializer,
     IssueSerializer,
-    IssueUserPropertySerializer,
+    ProjectUserPropertySerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
@@ -51,7 +51,7 @@ from plane.db.models import (
     IssueReaction,
     IssueRelation,
     IssueSubscriber,
-    IssueUserProperty,
+    ProjectUserProperty,
     ModuleIssue,
     Project,
     ProjectMember,
@@ -611,6 +611,10 @@ class IssueViewSet(BaseViewSet):
     def partial_update(self, request, slug, project_id, pk=None):
         queryset = self.get_queryset()
         queryset = self.apply_annotations(queryset)
+
+        skip_activity = request.data.pop("skip_activity", False)
+        is_description_update = request.data.get("description_html") is not None
+
         issue = (
             queryset.annotate(
                 label_ids=Coalesce(
@@ -659,32 +663,36 @@ class IssueViewSet(BaseViewSet):
         serializer = IssueCreateSerializer(issue, data=request.data, partial=True, context={"project_id": project_id})
         if serializer.is_valid():
             serializer.save()
-            issue_activity.delay(
-                type="issue.activity.updated",
-                requested_data=requested_data,
-                actor_id=str(request.user.id),
-                issue_id=str(pk),
-                project_id=str(project_id),
-                current_instance=current_instance,
-                epoch=int(timezone.now().timestamp()),
-                notification=True,
-                origin=base_host(request=request, is_app=True),
-            )
-            model_activity.delay(
-                model_name="issue",
-                model_id=str(serializer.data.get("id", None)),
-                requested_data=request.data,
-                current_instance=current_instance,
-                actor_id=request.user.id,
-                slug=slug,
-                origin=base_host(request=request, is_app=True),
-            )
-            # updated issue description version
-            issue_description_version_task.delay(
-                updated_issue=current_instance,
-                issue_id=str(serializer.data.get("id", None)),
-                user_id=request.user.id,
-            )
+            # Check if the update is a migration description update
+            is_migration_description_update = skip_activity and is_description_update
+            # Log all the updates
+            if not is_migration_description_update:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=requested_data,
+                    actor_id=str(request.user.id),
+                    issue_id=str(pk),
+                    project_id=str(project_id),
+                    current_instance=current_instance,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=base_host(request=request, is_app=True),
+                )
+                model_activity.delay(
+                    model_name="issue",
+                    model_id=str(serializer.data.get("id", None)),
+                    requested_data=request.data,
+                    current_instance=current_instance,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=base_host(request=request, is_app=True),
+                )
+                # updated issue description version
+                issue_description_version_task.delay(
+                    updated_issue=current_instance,
+                    issue_id=str(serializer.data.get("id", None)),
+                    user_id=request.user.id,
+                )
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -715,23 +723,33 @@ class IssueViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueUserDisplayPropertyEndpoint(BaseAPIView):
+class ProjectUserDisplayPropertyEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id):
-        issue_property = IssueUserProperty.objects.get(user=request.user, project_id=project_id)
+        try:
+            issue_property = ProjectUserProperty.objects.get(
+                user=request.user, 
+                project_id=project_id
+            )
+        except ProjectUserProperty.DoesNotExist:
+            issue_property = ProjectUserProperty.objects.create(
+                user=request.user, 
+                project_id=project_id
+            )
 
-        issue_property.rich_filters = request.data.get("rich_filters", issue_property.rich_filters)
-        issue_property.filters = request.data.get("filters", issue_property.filters)
-        issue_property.display_filters = request.data.get("display_filters", issue_property.display_filters)
-        issue_property.display_properties = request.data.get("display_properties", issue_property.display_properties)
-        issue_property.save()
-        serializer = IssueUserPropertySerializer(issue_property)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = ProjectUserPropertySerializer(
+            issue_property, 
+            data=request.data,
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
-        issue_property, _ = IssueUserProperty.objects.get_or_create(user=request.user, project_id=project_id)
-        serializer = IssueUserPropertySerializer(issue_property)
+        issue_property, _ = ProjectUserProperty.objects.get_or_create(user=request.user, project_id=project_id)
+        serializer = ProjectUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

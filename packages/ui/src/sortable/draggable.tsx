@@ -20,7 +20,8 @@ type Props = {
   data: any; //@todo make this generic
   className?: string;
 };
-const Draggable = ({ children, data, className }: Props) => {
+
+function Draggable({ children, data, className }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState<boolean>(false); // NEW
   const [isDraggedOver, setIsDraggedOver] = useState(false);
@@ -69,6 +70,6 @@ const Draggable = ({ children, data, className }: Props) => {
       {<DropIndicator isVisible={isDraggedOver && closestEdge === "bottom"} />}
     </div>
   );
-};
+}
 
 export { Draggable };

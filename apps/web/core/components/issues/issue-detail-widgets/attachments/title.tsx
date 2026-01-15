@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
@@ -20,7 +19,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueAttachmentsCollapsibleTitle: FC<Props> = observer((props) => {
+export const IssueAttachmentsCollapsibleTitle = observer(function IssueAttachmentsCollapsibleTitle(props: Props) {
   const { isOpen, workspaceSlug, projectId, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
   const { t } = useTranslation();
   // store hooks
@@ -36,7 +35,7 @@ export const IssueAttachmentsCollapsibleTitle: FC<Props> = observer((props) => {
   const indicatorElement = useMemo(
     () => (
       <span className="flex items-center justify-center ">
-        <p className="text-base text-custom-text-300 !leading-3">{attachmentCount}</p>
+        <p className="text-14 text-tertiary !leading-3">{attachmentCount}</p>
       </span>
     ),
     [attachmentCount]

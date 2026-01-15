@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
@@ -17,7 +15,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterModule: React.FC<Props> = observer((props) => {
+export const FilterModule = observer(function FilterModule(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // hooks
   const { projectId } = useParams();
@@ -73,7 +71,7 @@ export const FilterModule: React.FC<Props> = observer((props) => {
                 {sortedOptions.length > 5 && (
                   <button
                     type="button"
-                    className="ml-8 text-xs font-medium text-custom-primary-100"
+                    className="ml-8 text-11 font-medium text-accent-primary"
                     onClick={handleViewToggle}
                   >
                     {itemsToRender === sortedOptions.length ? "View less" : "View all"}
@@ -81,7 +79,7 @@ export const FilterModule: React.FC<Props> = observer((props) => {
                 )}
               </>
             ) : (
-              <p className="text-xs italic text-custom-text-400">No matches found</p>
+              <p className="text-11 italic text-placeholder">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // editor
@@ -18,7 +16,7 @@ type Props = {
   updateTitle: (title: string) => void;
 };
 
-export const PageEditorTitle: React.FC<Props> = observer((props) => {
+export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
   const { editorRef, readOnly, title, updateTitle } = props;
   // states
   const [isLengthVisible, setIsLengthVisible] = useState(false);
@@ -37,7 +35,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
           className={cn(
             titleFontClassName,
             {
-              "text-custom-text-400": !title,
+              "text-placeholder": !title,
             },
             "break-words"
           )}
@@ -64,7 +62,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
           />
           <div
             className={cn(
-              "pointer-events-none absolute bottom-1 right-1 z-[2] font-normal rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200 opacity-0 transition-opacity",
+              "pointer-events-none absolute bottom-1 right-1 z-[2] font-regular rounded-sm bg-surface-1 p-0.5 text-11 text-secondary opacity-0 transition-opacity",
               {
                 "opacity-100": isLengthVisible,
               }
@@ -72,7 +70,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
           >
             <span
               className={cn({
-                "text-red-500": title && title.length > 255,
+                "text-danger-primary": title && title.length > 255,
               })}
             >
               {title?.length}

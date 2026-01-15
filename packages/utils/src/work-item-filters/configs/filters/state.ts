@@ -48,7 +48,7 @@ export const getStateGroupMultiSelectConfig = (
 export const getStateGroupFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateStateGroupFilterParams> =>
   (params: TCreateStateGroupFilterParams) =>
-    createFilterConfig<P, TStateGroups>({
+    createFilterConfig<P>({
       id: key,
       label: "State Group",
       ...params,
@@ -102,7 +102,7 @@ export const getStateMultiSelectConfig = (params: TCreateStateFilterParams, sing
 export const getStateFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateStateFilterParams> =>
   (params: TCreateStateFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "State",
       ...params,

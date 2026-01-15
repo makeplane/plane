@@ -1,8 +1,6 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
-import { API_BASE_URL, AUTH_TRACKER_ELEMENTS, AUTH_TRACKER_EVENTS } from "@plane/constants";
+import { API_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Input, Spinner } from "@plane/ui";
@@ -10,7 +8,6 @@ import { Input, Spinner } from "@plane/ui";
 // helpers
 import { EAuthModes } from "@/helpers/authentication.helper";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import useTimer from "@/hooks/use-timer";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -37,7 +34,7 @@ const defaultValues: TUniqueCodeFormValues = {
   code: "",
 };
 
-export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
+export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
   const { mode, email, handleEmailClear, generateEmailUniqueCode, isExistingEmail, nextPath } = props;
   // derived values
   const defaultResetTimerValue = 5;
@@ -61,22 +58,10 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       setResendCodeTimer(defaultResetTimerValue);
       handleFormChange("code", uniqueCode?.code || "");
       setIsRequestingNewCode(false);
-      captureSuccess({
-        eventName: AUTH_TRACKER_EVENTS.new_code_requested,
-        payload: {
-          email: email,
-        },
-      });
     } catch {
       setResendCodeTimer(0);
       console.error("Error while requesting new code");
       setIsRequestingNewCode(false);
-      captureError({
-        eventName: AUTH_TRACKER_EVENTS.new_code_requested,
-        payload: {
-          email: email,
-        },
-      });
     }
   };
 
@@ -95,34 +80,19 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "magic-sign-in" : "magic-sign-up"}/`}
       onSubmit={() => {
         setIsSubmitting(true);
-        captureSuccess({
-          eventName: AUTH_TRACKER_EVENTS.code_verify,
-          payload: {
-            state: "SUCCESS",
-            first_time: !isExistingEmail,
-          },
-        });
       }}
       onError={() => {
         setIsSubmitting(false);
-        captureError({
-          eventName: AUTH_TRACKER_EVENTS.code_verify,
-          payload: {
-            state: "FAILED",
-          },
-        });
       }}
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <input type="hidden" value={uniqueCodeFormData.email} name="email" />
       {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
       <div className="space-y-1">
-        <label htmlFor="email" className="text-sm font-medium text-custom-text-300">
+        <label htmlFor="email" className="text-13 font-medium text-tertiary">
           {t("auth.common.email.label")}
         </label>
-        <div
-          className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-300`}
-        >
+        <div className={`relative flex items-center rounded-md bg-surface-1 border border-strong`}>
           <Input
             id="email"
             name="email"
@@ -130,7 +100,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
             value={uniqueCodeFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder={t("auth.common.email.placeholder")}
-            className="disable-autofill-style h-10 w-full placeholder:text-custom-text-400 border-0"
+            className="disable-autofill-style h-10 w-full placeholder:text-placeholder border-0"
             autoComplete="on"
             disabled
           />
@@ -141,14 +111,14 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
               aria-label={t("aria_labels.auth_forms.clear_email")}
               onClick={handleEmailClear}
             >
-              <XCircle className="size-5 stroke-custom-text-400" />
+              <XCircle className="size-5 stroke-placeholder" />
             </button>
           )}
         </div>
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="unique-code" className="text-sm font-medium text-custom-text-300">
+        <label htmlFor="unique-code" className="text-13 font-medium text-tertiary">
           {t("auth.common.unique_code.label")}
         </label>
         <Input
@@ -157,22 +127,21 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
           value={uniqueCodeFormData.code}
           onChange={(e) => handleFormChange("code", e.target.value)}
           placeholder={t("auth.common.unique_code.placeholder")}
-          className="disable-autofill-style h-10 w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+          className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
           autoFocus
         />
-        <div className="flex w-full items-center justify-between px-1 text-xs pt-1">
-          <p className="flex items-center gap-1 font-medium text-green-700">
+        <div className="flex w-full items-center justify-between px-1 text-11 pt-1">
+          <p className="flex items-center gap-1 font-medium text-success-primary">
             <CircleCheck height={12} width={12} />
             {t("auth.common.unique_code.paste_code")}
           </p>
           <button
             type="button"
-            data-ph-element={AUTH_TRACKER_ELEMENTS.REQUEST_NEW_CODE}
             onClick={() => generateNewCode(uniqueCodeFormData.email)}
             className={
               isRequestNewCodeDisabled
-                ? "text-custom-text-400"
-                : "font-medium text-custom-primary-300 hover:text-custom-primary-200"
+                ? "text-placeholder"
+                : "font-medium text-accent-secondary hover:text-accent-secondary"
             }
             disabled={isRequestNewCodeDisabled}
           >
@@ -186,14 +155,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       </div>
 
       <div className="space-y-2.5">
-        <Button
-          type="submit"
-          variant="primary"
-          className="w-full"
-          size="lg"
-          disabled={isButtonDisabled}
-          data-ph-element={AUTH_TRACKER_ELEMENTS.VERIFY_CODE}
-        >
+        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
           {isRequestingNewCode ? (
             t("auth.common.unique_code.sending_code")
           ) : isSubmitting ? (
@@ -205,4 +167,4 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       </div>
     </form>
   );
-};
+}

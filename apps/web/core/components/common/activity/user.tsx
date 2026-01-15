@@ -12,7 +12,7 @@ type TUser = {
   customUserName?: string;
 };
 
-export const User: FC<TUser> = observer((props) => {
+export const User = observer(function User(props: TUser) {
   const { activity, customUserName } = props;
   // store hooks
   const { getUserDetails } = useMember();
@@ -24,11 +24,11 @@ export const User: FC<TUser> = observer((props) => {
   return (
     <>
       {customUserName || actorDetail?.display_name.includes("-intake") ? (
-        <span className="text-custom-text-100 font-medium">{customUserName || "Plane"}</span>
+        <span className="text-primary font-medium">{customUserName || "Plane"}</span>
       ) : (
         <Link
           href={`/${workspaceDetail?.slug}/profile/${actorDetail?.id}`}
-          className="hover:underline text-custom-text-100 font-medium"
+          className="hover:underline text-primary font-medium"
         >
           {actorDetail?.display_name}
         </Link>

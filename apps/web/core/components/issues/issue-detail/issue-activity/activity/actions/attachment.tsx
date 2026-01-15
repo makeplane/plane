@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Paperclip } from "lucide-react";
 // hooks
@@ -8,7 +7,7 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 
 type TIssueAttachmentActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueAttachmentActivity: FC<TIssueAttachmentActivity> = observer((props) => {
+export const IssueAttachmentActivity = observer(function IssueAttachmentActivity(props: TIssueAttachmentActivity) {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {
@@ -20,7 +19,7 @@ export const IssueAttachmentActivity: FC<TIssueAttachmentActivity> = observer((p
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<Paperclip size={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<Paperclip size={14} className="text-secondary" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

@@ -1,21 +1,19 @@
-"use client";
-
-import type { FC } from "react";
 import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGiteaAuthenticationConfigurationKeys } from "@plane/types";
-import { Button, getButtonStyling } from "@plane/ui";
-import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
 import type { TControllerInputFormField } from "@/components/common/controller-input";
 import { ControllerInput } from "@/components/common/controller-input";
+import type { TControllerSwitchFormField } from "@/components/common/controller-switch";
+import { ControllerSwitch } from "@/components/common/controller-switch";
 import type { TCopyField } from "@/components/common/copy-field";
 import { CopyField } from "@/components/common/copy-field";
 // hooks
@@ -27,7 +25,7 @@ type Props = {
 
 type GiteaConfigFormValues = Record<TInstanceGiteaAuthenticationConfigurationKeys, string>;
 
-export const InstanceGiteaConfigForm: FC<Props> = (props) => {
+export function InstanceGiteaConfigForm(props: Props) {
   const { config } = props;
   // states
   const [isDiscardChangesModalOpen, setIsDiscardChangesModalOpen] = useState(false);
@@ -44,6 +42,7 @@ export const InstanceGiteaConfigForm: FC<Props> = (props) => {
       GITEA_HOST: config["GITEA_HOST"] || "https://gitea.com",
       GITEA_CLIENT_ID: config["GITEA_CLIENT_ID"],
       GITEA_CLIENT_SECRET: config["GITEA_CLIENT_SECRET"],
+      ENABLE_GITEA_SYNC: config["ENABLE_GITEA_SYNC"] || "0",
     },
   });
 
@@ -72,7 +71,7 @@ export const InstanceGiteaConfigForm: FC<Props> = (props) => {
             tabIndex={-1}
             href="https://gitea.com/user/settings/applications"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             Gitea OAuth application settings.
@@ -94,7 +93,7 @@ export const InstanceGiteaConfigForm: FC<Props> = (props) => {
             tabIndex={-1}
             href="https://gitea.com/user/settings/applications"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             Gitea OAuth application settings.
@@ -106,6 +105,11 @@ export const InstanceGiteaConfigForm: FC<Props> = (props) => {
       required: true,
     },
   ];
+
+  const GITEA_FORM_SWITCH_FIELD: TControllerSwitchFormField<GiteaConfigFormValues> = {
+    name: "ENABLE_GITEA_SYNC",
+    label: "Gitea",
+  };
 
   const GITEA_SERVICE_FIELD: TCopyField[] = [
     {
@@ -120,7 +124,7 @@ export const InstanceGiteaConfigForm: FC<Props> = (props) => {
             tabIndex={-1}
             href={`${control._formValues.GITEA_HOST || "https://gitea.com"}/user/settings/applications`}
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             here.
@@ -133,20 +137,22 @@ export const InstanceGiteaConfigForm: FC<Props> = (props) => {
   const onSubmit = async (formData: GiteaConfigFormValues) => {
     const payload: Partial<GiteaConfigFormValues> = { ...formData };
 
-    await updateInstanceConfigurations(payload)
-      .then((response = []) => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Done!",
-          message: "Your Gitea authentication is configured. You should test it now.",
-        });
-        reset({
-          GITEA_HOST: response.find((item) => item.key === "GITEA_HOST")?.value,
-          GITEA_CLIENT_ID: response.find((item) => item.key === "GITEA_CLIENT_ID")?.value,
-          GITEA_CLIENT_SECRET: response.find((item) => item.key === "GITEA_CLIENT_SECRET")?.value,
-        });
-      })
-      .catch((err) => console.error(err));
+    try {
+      const response = await updateInstanceConfigurations(payload);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Done!",
+        message: "Your Gitea authentication is configured. You should test it now.",
+      });
+      reset({
+        GITEA_HOST: response.find((item) => item.key === "GITEA_HOST")?.value,
+        GITEA_CLIENT_ID: response.find((item) => item.key === "GITEA_CLIENT_ID")?.value,
+        GITEA_CLIENT_SECRET: response.find((item) => item.key === "GITEA_CLIENT_SECRET")?.value,
+        ENABLE_GITEA_SYNC: response.find((item) => item.key === "ENABLE_GITEA_SYNC")?.value,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleGoBack = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -166,7 +172,7 @@ export const InstanceGiteaConfigForm: FC<Props> = (props) => {
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
           <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
-            <div className="pt-2.5 text-xl font-medium">Gitea-provided details for Plane</div>
+            <div className="pt-2.5 text-18 font-medium">Gitea-provided details for Plane</div>
             {GITEA_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -180,24 +186,27 @@ export const InstanceGiteaConfigForm: FC<Props> = (props) => {
                 required={field.required}
               />
             ))}
+            <ControllerSwitch control={control} field={GITEA_FORM_SWITCH_FIELD} />
             <div className="flex flex-col gap-1 pt-4">
               <div className="flex items-center gap-4">
-                <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isDirty}>
-                  {isSubmitting ? "Saving..." : "Save changes"}
-                </Button>
-                <Link
-                  href="/authentication"
-                  className={cn(getButtonStyling("neutral-primary", "md"), "font-medium")}
-                  onClick={handleGoBack}
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={(e) => void handleSubmit(onSubmit)(e)}
+                  loading={isSubmitting}
+                  disabled={!isDirty}
                 >
+                  {isSubmitting ? "Saving" : "Save changes"}
+                </Button>
+                <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
                   Go back
                 </Link>
               </div>
             </div>
           </div>
           <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-custom-background-80/60 rounded-lg">
-              <div className="pt-2 text-xl font-medium">Plane-provided details for Gitea</div>
+            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-layer-1 rounded-lg">
+              <div className="pt-2 text-18 font-medium">Plane-provided details for Gitea</div>
               {GITEA_SERVICE_FIELD.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
               ))}
@@ -207,4 +216,4 @@ export const InstanceGiteaConfigForm: FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

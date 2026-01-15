@@ -10,7 +10,10 @@ export type TControlLink = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   draggable?: boolean;
 };
 
-export const ControlLink = React.forwardRef<HTMLAnchorElement, TControlLink>((props, ref) => {
+export const ControlLink = React.forwardRef(function ControlLink(
+  props: TControlLink,
+  ref: React.ForwardedRef<HTMLAnchorElement>
+) {
   const { href, onClick, children, target = "_blank", disabled = false, className, draggable = false, ...rest } = props;
   const LEFT_CLICK_EVENT_CODE = 0;
 

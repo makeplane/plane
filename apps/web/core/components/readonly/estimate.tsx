@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -19,7 +17,7 @@ export type TReadonlyEstimateProps = {
   workspaceSlug: string;
 };
 
-export const ReadonlyEstimate: React.FC<TReadonlyEstimateProps> = observer((props) => {
+export const ReadonlyEstimate = observer(function ReadonlyEstimate(props: TReadonlyEstimateProps) {
   const { className, hideIcon = false, value, placeholder, projectId, workspaceSlug } = props;
 
   const { t } = useTranslation();
@@ -44,7 +42,7 @@ export const ReadonlyEstimate: React.FC<TReadonlyEstimateProps> = observer((prop
   }, [projectId, workspaceSlug]);
 
   return (
-    <div className={cn("flex items-center gap-1 text-sm", className)}>
+    <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
       {!hideIcon && <EstimatePropertyIcon className="size-4 flex-shrink-0" />}
       <span className="flex-grow truncate">{displayValue ?? placeholder ?? t("common.none")}</span>
     </div>

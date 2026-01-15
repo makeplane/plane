@@ -36,6 +36,7 @@ export interface IBaseUserPermissionStore {
     workspaceSlug: string,
     projectId?: string
   ) => EUserPermissions | undefined;
+  fetchWorkspaceLevelProjectEntities: (workspaceSlug: string, projectId: string) => void;
   allowPermissions: (
     allowPermissions: ETempUserRole[],
     level: TUserPermissionsLevel,
@@ -147,6 +148,15 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
     workspaceSlug: string,
     projectId?: string
   ) => EUserPermissions | undefined;
+
+  /**
+   * @description Fetches project-level entities that are not automatically loaded by the project wrapper.
+   * This is used when joining a project to ensure all necessary workspace-level project data is available.
+   * @param { string } workspaceSlug
+   * @param { string } projectId
+   * @returns { Promise<void> }
+   */
+  abstract fetchWorkspaceLevelProjectEntities: (workspaceSlug: string, projectId: string) => void;
 
   /**
    * @description Returns whether the user has the permission to access a page
@@ -309,6 +319,7 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
         runInAction(() => {
           set(this.workspaceProjectsPermissions, [workspaceSlug, projectId], projectMemberRole);
         });
+        void this.fetchWorkspaceLevelProjectEntities(workspaceSlug, projectId);
       }
     } catch (error) {
       console.error("Error user joining the project", error);

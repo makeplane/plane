@@ -24,7 +24,7 @@ type TAssigneeStatComponent = {
   isEditable?: boolean;
 };
 
-export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) => {
+export const AssigneeStatComponent = observer(function AssigneeStatComponent(props: TAssigneeStatComponent) {
   const { distribution, isEditable, selectedAssigneeIds, handleAssigneeFiltersUpdate } = props;
   const { t } = useTranslation();
   return (
@@ -55,7 +55,7 @@ export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) =>
                 key={`unassigned-${index}`}
                 title={
                   <div className="flex items-center gap-2">
-                    <div className="h-4 w-4 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
+                    <div className="h-4 w-4 rounded-full border-2 border-subtle bg-layer-1">
                       <img src={userImage} className="rounded-full w-full h-full object-cover" alt="User" />
                     </div>
                     <span>{t("no_assignee")}</span>
@@ -68,10 +68,10 @@ export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) =>
         })
       ) : (
         <div className="flex h-full flex-col items-center justify-center gap-2">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-layer-1">
             <img src={emptyMembers} className="h-12 w-12 object-contain" alt="empty members" />
           </div>
-          <h6 className="text-base text-custom-text-300">{t("no_assignee")}</h6>
+          <h6 className="text-14 text-tertiary">{t("no_assignee")}</h6>
         </div>
       )}
     </div>

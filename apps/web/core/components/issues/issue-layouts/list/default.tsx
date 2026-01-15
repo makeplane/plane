@@ -52,7 +52,7 @@ export interface IList {
   isEpic?: boolean;
 }
 
-export const List: React.FC<IList> = observer((props) => {
+export const List = observer(function List(props: IList) {
   const {
     groupedIssueIds,
     issuesMap,
@@ -134,7 +134,7 @@ export const List: React.FC<IList> = observer((props) => {
             <>
               <div
                 ref={containerRef}
-                className="size-full vertical-scrollbar scrollbar-lg relative overflow-auto vertical-scrollbar-margin-top-md"
+                className="size-full vertical-scrollbar scrollbar-lg relative overflow-auto bg-surface-1"
               >
                 {groups.map((group: IGroupByColumn) => (
                   <ListGroup

@@ -1,23 +1,18 @@
-"use client";
-
-import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useFormContext, Controller } from "react-hook-form";
-import { Plus } from "lucide-react";
-import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { PlusIcon } from "@plane/propel/icons";
 import type { IJiraImporterForm } from "@plane/types";
 // hooks
 // components
 import { CustomSelect, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "@plane/utils";
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 // types
 
-export const JiraGetImportDetail: React.FC = observer(() => {
+export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { workspaceProjectIds, getProjectById } = useProject();
@@ -32,10 +27,10 @@ export const JiraGetImportDetail: React.FC = observer(() => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Personal Access Token</h3>
-          <p className="text-sm text-custom-text-200">
+          <p className="text-13 text-secondary">
             Get to know your access token by navigating to{" "}
             <Link href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" rel="noreferrer">
-              <span className="text-custom-primary underline">Atlassian Settings</span>
+              <span className="text-accent-primary underline">Atlassian Settings</span>
             </Link>
           </p>
         </div>
@@ -61,14 +56,15 @@ export const JiraGetImportDetail: React.FC = observer(() => {
               />
             )}
           />
-          {errors.metadata?.api_token && <p className="text-xs text-red-500">{errors.metadata.api_token.message}</p>}
+          {errors.metadata?.api_token && (
+            <p className="text-11 text-danger-primary">{errors.metadata.api_token.message}</p>
+          )}
         </div>
       </div>
-
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Project Key</h3>
-          <p className="text-sm text-custom-text-200">If XXX-123 is your work item, then enter XXX</p>
+          <p className="text-13 text-secondary">If XXX-123 is your work item, then enter XXX</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -91,15 +87,14 @@ export const JiraGetImportDetail: React.FC = observer(() => {
             )}
           />
           {errors.metadata?.project_key && (
-            <p className="text-xs text-red-500">{errors.metadata.project_key.message}</p>
+            <p className="text-11 text-danger-primary">{errors.metadata.project_key.message}</p>
           )}
         </div>
       </div>
-
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Email Address</h3>
-          <p className="text-sm text-custom-text-200">Enter the Email account that you use in Jira account</p>
+          <p className="text-13 text-secondary">Enter the Email account that you use in Jira account</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -122,14 +117,13 @@ export const JiraGetImportDetail: React.FC = observer(() => {
               />
             )}
           />
-          {errors.metadata?.email && <p className="text-xs text-red-500">{errors.metadata.email.message}</p>}
+          {errors.metadata?.email && <p className="text-11 text-danger-primary">{errors.metadata.email.message}</p>}
         </div>
       </div>
-
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Installation or Cloud Host Name</h3>
-          <p className="text-sm text-custom-text-200">Enter your companies cloud host name</p>
+          <p className="text-13 text-secondary">Enter your companies cloud host name</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -152,15 +146,14 @@ export const JiraGetImportDetail: React.FC = observer(() => {
             )}
           />
           {errors.metadata?.cloud_hostname && (
-            <p className="text-xs text-red-500">{errors.metadata.cloud_hostname.message}</p>
+            <p className="text-11 text-danger-primary">{errors.metadata.cloud_hostname.message}</p>
           )}
         </div>
       </div>
-
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Import to project</h3>
-          <p className="text-sm text-custom-text-200">Select which project you want to import to.</p>
+          <p className="text-13 text-secondary">Select which project you want to import to.</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -177,7 +170,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                     {value && value.trim() !== "" ? (
                       getProjectById(value)?.name
                     ) : (
-                      <span className="text-custom-text-200">Select a project</span>
+                      <span className="text-secondary">Select a project</span>
                     )}
                   </span>
                 }
@@ -195,21 +188,19 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                     );
                   })
                 ) : (
-                  <div className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200">
+                  <div className="flex cursor-pointer select-none items-center space-x-2 truncate rounded-sm px-1 py-1.5 text-secondary">
                     <p>You don{"'"}t have any project. Please create a project first.</p>
                   </div>
                 )}
                 <div>
                   <button
                     type="button"
-                    data-ph-element={PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON}
                     onClick={() => {
-                      captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.CREATE_PROJECT_JIRA_IMPORT_DETAIL_PAGE });
                       toggleCreateProjectModal(true);
                     }}
-                    className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"
+                    className="flex cursor-pointer select-none items-center space-x-2 truncate rounded-sm px-1 py-1.5 text-secondary"
                   >
-                    <Plus className="h-4 w-4 text-custom-text-200" />
+                    <PlusIcon className="h-4 w-4 text-secondary" />
                     <span>Create new project</span>
                   </button>
                 </div>

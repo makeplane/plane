@@ -11,11 +11,12 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-# Module imports
-from .base import BaseAPIView
+from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.db.models import DeployBoard, FileAsset
 from plane.settings.storage import S3Storage
-from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+
+# Module imports
+from .base import BaseAPIView
 
 
 class EntityAssetEndpoint(BaseAPIView):
@@ -167,7 +168,7 @@ class EntityAssetEndpoint(BaseAPIView):
 class AssetRestoreEndpoint(BaseAPIView):
     """Endpoint to restore a deleted assets."""
 
-    def post(self, request, anchor, asset_id):
+    def post(self, request, anchor, pk):
         # Get the deploy board
         deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name="project").first()
         # Check if the project is published
@@ -175,7 +176,7 @@ class AssetRestoreEndpoint(BaseAPIView):
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
         # Get the asset
-        asset = FileAsset.all_objects.get(id=asset_id, workspace=deploy_board.workspace)
+        asset = FileAsset.all_objects.get(id=pk, workspace=deploy_board.workspace)
         asset.is_deleted = False
         asset.deleted_at = None
         asset.save(update_fields=["is_deleted", "deleted_at"])

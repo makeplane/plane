@@ -1,20 +1,14 @@
-"use client";
-
-import React from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
-// types
-import { WORKSPACE_TRACKER_EVENTS } from "@plane/constants";
+// Plane Imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
-// ui
 import { Input } from "@plane/ui";
-// hooks
 import { cn } from "@plane/utils";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserSettings } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -29,7 +23,7 @@ const defaultValues = {
   confirmDelete: "",
 };
 
-export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
+export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: Props) {
   const { data, onClose } = props;
   // router
   const router = useAppRouter();
@@ -61,33 +55,23 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
   const onSubmit = async () => {
     if (!data || !canDelete) return;
 
-    await deleteWorkspace(data.slug)
-      .then(async () => {
-        await fetchCurrentUserSettings();
-        handleClose();
-        router.push(getWorkspaceRedirectionUrl());
-        captureSuccess({
-          eventName: WORKSPACE_TRACKER_EVENTS.delete,
-          payload: { slug: data.slug },
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("workspace_settings.settings.general.delete_modal.success_title"),
-          message: t("workspace_settings.settings.general.delete_modal.success_message"),
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("workspace_settings.settings.general.delete_modal.error_title"),
-          message: t("workspace_settings.settings.general.delete_modal.error_message"),
-        });
-        captureError({
-          eventName: WORKSPACE_TRACKER_EVENTS.delete,
-          payload: { slug: data.slug },
-          error: new Error("Error deleting workspace"),
-        });
+    try {
+      await deleteWorkspace(data.slug);
+      await fetchCurrentUserSettings();
+      handleClose();
+      router.push(getWorkspaceRedirectionUrl());
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("workspace_settings.settings.general.delete_modal.success_title"),
+        message: t("workspace_settings.settings.general.delete_modal.success_message"),
       });
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("workspace_settings.settings.general.delete_modal.error_title"),
+        message: t("workspace_settings.settings.general.delete_modal.error_message"),
+      });
+    }
   };
 
   return (
@@ -95,23 +79,23 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
         <span
           className={cn(
-            "flex-shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-red-500/20 text-red-100"
+            "shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-danger-subtle text-danger-primary"
           )}
         >
-          <AlertTriangle className="size-5 text-red-600" aria-hidden="true" />
+          <AlertTriangle className="size-5 text-danger-primary" aria-hidden="true" />
         </span>
         <div>
           <div className="text-center sm:text-left">
-            <h3 className="text-lg font-medium">{t("workspace_settings.settings.general.delete_modal.title")}</h3>
-            <p className="mt-1 text-sm text-custom-text-200">
-              You are about to delete the workspace <span className="break-words font-semibold">{data?.name}</span>. If
-              you confirm, you will lose access to all your work data in this workspace without any way to restore it.
-              Tread very carefully.
+            <h3 className="text-h5-medium">{t("workspace_settings.settings.general.delete_modal.title")}</h3>
+            <p className="mt-1 text-body-xs-regular text-secondary">
+              You are about to delete the workspace{" "}
+              <span className="break-words text-body-xs-semibold">{data?.name}</span>. If you confirm, you will lose
+              access to all your work data in this workspace without any way to restore it. Tread very carefully.
             </p>
           </div>
 
-          <div className="text-custom-text-200 mt-4">
-            <p className="break-words text-sm ">Type in this workspace&apos;s name to continue.</p>
+          <div className="text-secondary mt-4">
+            <p className="break-words text-body-xs-regular ">Type in this workspace&apos;s name to continue.</p>
             <Controller
               control={control}
               name="workspaceName"
@@ -132,10 +116,10 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
             />
           </div>
 
-          <div className="text-custom-text-200 mt-4">
-            <p className="text-sm">
+          <div className="text-secondary mt-4">
+            <p className="text-body-xs-regular">
               For final confirmation, type{" "}
-              <span className="font-medium text-custom-text-100">delete my workspace </span>
+              <span className="text-body-xs-medium text-primary">delete my workspace </span>
               below.
             </p>
             <Controller
@@ -161,10 +145,10 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
       </div>
 
       <div className="flex justify-end gap-2">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="secondary" size="lg" onClick={handleClose}>
           {t("cancel")}
         </Button>
-        <Button variant="danger" size="sm" type="submit" disabled={!canDelete} loading={isSubmitting}>
+        <Button variant="error-fill" size="lg" type="submit" disabled={!canDelete} loading={isSubmitting}>
           {isSubmitting ? t("deleting") : t("confirm")}
         </Button>
       </div>

@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane types
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -16,7 +14,7 @@ type Props = {
   handleSelect: (href: string) => void;
 };
 
-export const PowerKOpenProjectSettingsMenu: React.FC<Props> = observer((props) => {
+export const PowerKOpenProjectSettingsMenu = observer(function PowerKOpenProjectSettingsMenu(props: Props) {
   const { context, handleSelect } = props;
   // plane hooks
   const { t } = useTranslation();

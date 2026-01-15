@@ -15,13 +15,13 @@ import { InboxIssueOrderByDropdown } from "./sorting/order-by";
 const smallButton = <ListFilter className="size-3 " />;
 
 const largeButton = (
-  <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
+  <div className={cn(getButtonStyling("secondary", "base"), "px-2 text-tertiary")}>
     <ListFilter className="size-3 " />
     <span>Filters</span>
     <ChevronDownIcon className="size-3" strokeWidth={2} />
   </div>
 );
-export const FiltersRoot: FC = () => {
+export function FiltersRoot() {
   const windowSize = useSize();
 
   return (
@@ -36,4 +36,4 @@ export const FiltersRoot: FC = () => {
       </div>
     </div>
   );
-};
+}

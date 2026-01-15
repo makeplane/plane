@@ -1,16 +1,8 @@
-import type { FC } from "react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
-import { useTheme } from "next-themes";
 // plane imports
-import { API_BASE_URL } from "@plane/constants";
 import { OAuthOptions } from "@plane/ui";
-// assets
-import GithubLightLogo from "@/app/assets/logos/github-black.png?url";
-import GithubDarkLogo from "@/app/assets/logos/github-dark.svg?url";
-import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
-import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import {
@@ -21,7 +13,7 @@ import {
   authErrorHandler,
 } from "@/helpers/authentication.helper";
 // hooks
-import { useInstance } from "@/hooks/store/use-instance";
+import { useOAuthConfig } from "@/hooks/oauth";
 // local imports
 import { TermsAndConditions } from "../terms-and-conditions";
 import { AuthBanner } from "./auth-banner";
@@ -32,7 +24,7 @@ type TAuthRoot = {
   authMode: EAuthModes;
 };
 
-export const AuthRoot: FC<TAuthRoot> = observer((props) => {
+export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   //router
   const searchParams = useSearchParams();
   // query params
@@ -40,8 +32,6 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const invitation_id = searchParams.get("invitation_id");
   const workspaceSlug = searchParams.get("slug");
   const error_code = searchParams.get("error_code");
-  const next_path = searchParams.get("next_path");
-  const { resolvedTheme } = useTheme();
   // props
   const { authMode: currentAuthMode } = props;
   // states
@@ -49,13 +39,9 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
-
-  // hooks
-  const { config } = useInstance();
-
   // derived values
-  const isOAuthEnabled =
-    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
+  const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
+  const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
@@ -105,49 +91,11 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
 
   if (!authMode) return <></>;
 
-  const OauthButtonContent = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
-
-  const OAuthConfig = [
-    {
-      id: "google",
-      text: `${OauthButtonContent} with Google`,
-      icon: <img src={GoogleLogo} className="h-4 w-4 object-contain" alt="Google Logo" />,
-      onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/google/${next_path ? `?next_path=${next_path}` : ``}`);
-      },
-      enabled: config?.is_google_enabled,
-    },
-    {
-      id: "github",
-      text: `${OauthButtonContent} with GitHub`,
-      icon: (
-        <img
-          src={resolvedTheme === "dark" ? GithubDarkLogo : GithubLightLogo}
-          className="h-4 w-4 object-contain"
-          alt="GitHub Logo"
-        />
-      ),
-      onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/github/${next_path ? `?next_path=${next_path}` : ``}`);
-      },
-      enabled: config?.is_github_enabled,
-    },
-    {
-      id: "gitlab",
-      text: `${OauthButtonContent} with GitLab`,
-      icon: <img src={GitlabLogo} className="h-4 w-4 object-contain" alt="GitLab Logo" />,
-      onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
-      },
-      enabled: config?.is_gitlab_enabled,
-    },
-  ];
-
   return (
     <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
       <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
         {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-          <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
+          <AuthBanner message={errorInfo.message} handleBannerData={(value) => setErrorInfo(value)} />
         )}
         <AuthHeader
           workspaceSlug={workspaceSlug?.toString() || undefined}
@@ -157,7 +105,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
           currentAuthStep={authStep}
         />
 
-        {isOAuthEnabled && <OAuthOptions options={OAuthConfig} compact={authStep === EAuthSteps.PASSWORD} />}
+        {isOAuthEnabled && <OAuthOptions options={oAuthOptions} compact={authStep === EAuthSteps.PASSWORD} />}
 
         <AuthFormRoot
           authStep={authStep}

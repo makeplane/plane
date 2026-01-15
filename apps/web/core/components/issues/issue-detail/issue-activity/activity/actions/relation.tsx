@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -10,7 +9,7 @@ import { IssueActivityBlockComponent } from "./";
 
 type TIssueRelationActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
-export const IssueRelationActivity: FC<TIssueRelationActivity> = observer((props) => {
+export const IssueRelationActivity = observer(function IssueRelationActivity(props: TIssueRelationActivity) {
   const { activityId, ends } = props;
   // hooks
   const {
@@ -30,9 +29,9 @@ export const IssueRelationActivity: FC<TIssueRelationActivity> = observer((props
     >
       {activityContent}
       {activity.old_value === "" ? (
-        <span className="font-medium text-custom-text-100">{activity.new_value}.</span>
+        <span className="font-medium text-primary">{activity.new_value}.</span>
       ) : (
-        <span className="font-medium text-custom-text-100">{activity.old_value}.</span>
+        <span className="font-medium text-primary">{activity.old_value}.</span>
       )}
     </IssueActivityBlockComponent>
   );

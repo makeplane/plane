@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
@@ -21,7 +18,7 @@ type TNotificationItem = {
   notificationId: string;
 };
 
-export const NotificationItem: FC<TNotificationItem> = observer((props) => {
+export const NotificationItem = observer(function NotificationItem(props: TNotificationItem) {
   const { workspaceSlug, notificationId } = props;
   // hooks
   const { currentSelectedNotificationId, setCurrentSelectedNotificationId } = useWorkspaceNotifications();
@@ -55,7 +52,9 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
       }
 
       if (notification?.is_inbox_issue === false) {
-        !getIsIssuePeeked(issueId) && setPeekIssue({ workspaceSlug, projectId, issueId });
+        if (!getIsIssuePeeked(issueId)) {
+          setPeekIssue({ workspaceSlug, projectId, issueId });
+        }
       }
     }
   };
@@ -66,32 +65,34 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
   return (
     <Row
       className={cn(
-        "relative py-4 flex items-center gap-2 border-b border-custom-border-200 cursor-pointer transition-all group",
-        currentSelectedNotificationId === notification?.id ? "bg-custom-background-80/30" : "",
-        notification.read_at === null ? "bg-custom-primary-100/5" : ""
+        "relative py-4 flex items-center gap-2 border-b border-subtle cursor-pointer transition-all group",
+        {
+          "bg-layer-1/30": currentSelectedNotificationId === notification?.id,
+          "bg-accent-primary/5": notification.read_at === null,
+        }
       )}
       onClick={handleNotificationIssuePeekOverview}
     >
       {notification.read_at === null && (
-        <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-custom-primary-100 absolute top-[50%] left-2" />
+        <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-accent-primary absolute top-[50%] left-2" />
       )}
 
       <div className="relative w-full flex gap-2">
-        <div className="flex-shrink-0 relative flex justify-center items-center w-12 h-12 bg-custom-background-80 rounded-full">
+        <div className="flex-shrink-0 relative flex justify-center items-center w-12 h-12 bg-layer-1 rounded-full">
           {notificationTriggeredBy && (
             <Avatar
               name={notificationTriggeredBy.display_name || notificationTriggeredBy?.first_name}
               src={getFileURL(notificationTriggeredBy.avatar_url)}
               size={42}
               shape="circle"
-              className="!text-base !bg-custom-background-80"
+              className="text-body-sm-medium bg-layer-1"
             />
           )}
         </div>
 
         <div className="w-full space-y-1 -mt-2">
           <div className="relative flex items-center gap-3 h-8">
-            <div className="w-full overflow-hidden whitespace-normal break-all truncate line-clamp-1 text-sm text-custom-text-100">
+            <div className="w-full overflow-hidden whitespace-normal break-all truncate line-clamp-1 text-body-xs-medium text-primary">
               <NotificationContent
                 notification={notification}
                 workspaceId={workspace.id}
@@ -109,14 +110,14 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
             />
           </div>
 
-          <div className="relative flex items-center gap-3 text-xs text-custom-text-200">
+          <div className="relative flex items-center gap-3 text-caption-sm-regular text-secondary">
             <div className="w-full overflow-hidden whitespace-normal break-words truncate line-clamp-1">
               {notification?.data?.issue?.identifier}-{notification?.data?.issue?.sequence_id}&nbsp;
               {notification?.data?.issue?.name}
             </div>
             <div className="flex-shrink-0">
               {notification?.snoozed_till ? (
-                <p className="flex flex-shrink-0 items-center justify-end gap-x-1 text-custom-text-300">
+                <p className="flex flex-shrink-0 items-center justify-end gap-x-1 text-tertiary">
                   <Clock className="h-4 w-4" />
                   <span>
                     Till {renderFormattedDate(notification.snoozed_till)},&nbsp;
@@ -124,7 +125,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
                   </span>
                 </p>
               ) : (
-                <p className="mt-auto flex-shrink-0 text-custom-text-300">
+                <p className="mt-auto flex-shrink-0 text-tertiary">
                   {notification.created_at && calculateTimeAgo(notification.created_at)}
                 </p>
               )}

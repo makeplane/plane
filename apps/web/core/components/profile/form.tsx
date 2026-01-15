@@ -1,26 +1,27 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { CircleUserRound, InfoIcon } from "lucide-react";
+import { CircleUserRound } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, getButtonStyling } from "@plane/propel/button";
+import { Button } from "@plane/propel/button";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
+import { EFileAssetType } from "@plane/types";
 import type { IUser, TUserProfile } from "@plane/types";
 import { Input } from "@plane/ui";
-import { cn, getFileURL } from "@plane/utils";
+import { getFileURL } from "@plane/utils";
 // components
 import { DeactivateAccountModal } from "@/components/account/deactivate-account-modal";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
+import { ChangeEmailModal } from "@/components/core/modals/change-email-modal";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
+import { CoverImage } from "@/components/common/cover-image";
 // helpers
-import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
+import { handleCoverImageChange } from "@/helpers/cover-image.helper";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 
 type TUserProfileForm = {
@@ -42,13 +43,13 @@ export type TProfileFormProps = {
   profile: TUserProfile;
 };
 
-export const ProfileForm = observer((props: TProfileFormProps) => {
+export const ProfileForm = observer(function ProfileForm(props: TProfileFormProps) {
   const { user, profile } = props;
-  const { workspaceSlug } = useParams();
   // states
   const [isLoading, setIsLoading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [deactivateAccountModal, setDeactivateAccountModal] = useState(false);
+  const [isChangeEmailModalOpen, setIsChangeEmailModalOpen] = useState(false);
   // language support
   const { t } = useTranslation();
   // form info
@@ -78,6 +79,9 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
   // store hooks
   const { data: currentUser, updateCurrentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
+  const { config } = useInstance();
+
+  const isSMTPConfigured = config?.is_smtp_configured || false;
 
   const handleProfilePictureDelete = async (url: string | null | undefined) => {
     if (!url) return;
@@ -91,6 +95,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
           message: "Profile picture deleted successfully.",
         });
         setValue("avatar_url", "");
+        return;
       })
       .catch(() => {
         setToast({
@@ -112,11 +117,26 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
       avatar_url: formData.avatar_url,
       display_name: formData?.display_name,
     };
-    // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
-    if (formData.cover_image_url?.startsWith("http")) {
-      userPayload.cover_image_url = formData.cover_image_url;
-      userPayload.cover_image = formData.cover_image_url;
-      userPayload.cover_image_asset = null;
+
+    try {
+      const coverImagePayload = await handleCoverImageChange(user.cover_image_url, formData.cover_image_url, {
+        entityIdentifier: "",
+        entityType: EFileAssetType.USER_COVER,
+        isUserAsset: true,
+      });
+
+      if (coverImagePayload) {
+        Object.assign(userPayload, coverImagePayload);
+      }
+    } catch (error) {
+      console.error("Error handling cover image:", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: error instanceof Error ? error.message : "Failed to process cover image",
+      });
+      setIsLoading(false);
+      return;
     }
 
     const profilePayload: Partial<TUserProfile> = {
@@ -142,20 +162,15 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
     });
     updateUserAndProfile
       .then(() => {
-        captureSuccess({
-          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.update_profile,
-        });
+        return;
       })
-      .catch(() => {
-        captureError({
-          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.update_profile,
-        });
-      });
+      .catch(() => {});
   };
 
   return (
     <>
       <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
+      <ChangeEmailModal isOpen={isChangeEmailModalOpen} onClose={() => setIsChangeEmailModalOpen(false)} />
       <Controller
         control={control}
         name="avatar_url"
@@ -173,31 +188,21 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
           />
         )}
       />
-      <div className="w-full flex text-custom-primary-200 bg-custom-primary-100/10 rounded-md p-2 gap-2 items-center mb-4">
-        <InfoIcon className="h-4 w-4 flex-shrink-0" />
-        <div className="text-sm font-medium flex-1">{t("settings_moved_to_preferences")}</div>
-        <Link
-          href={`/${workspaceSlug}/settings/account/preferences`}
-          className={cn(getButtonStyling("neutral-primary", "sm"))}
-        >
-          {t("go_to_preferences")}
-        </Link>
-      </div>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         <div className="flex w-full flex-col gap-6">
           <div className="relative h-44 w-full">
-            <img
-              src={userCover ? getFileURL(userCover) : "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
-              className="h-44 w-full rounded-lg object-cover"
+            <CoverImage
+              src={userCover}
+              className="h-44 w-full rounded-lg"
               alt={currentUser?.first_name ?? "Cover image"}
             />
             <div className="absolute -bottom-6 left-6 flex items-end justify-between">
               <div className="flex gap-3">
-                <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-custom-background-90">
+                <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-surface-2">
                   <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                     {!userAvatar || userAvatar === "" ? (
-                      <div className="h-16 w-16 rounded-md bg-custom-background-80 p-2">
-                        <CircleUserRound className="h-full w-full text-custom-text-200" />
+                      <div className="h-16 w-16 rounded-md bg-layer-1 p-2">
+                        <CircleUserRound className="h-full w-full text-secondary" />
                       </div>
                     ) : (
                       <div className="relative h-16 w-16 overflow-hidden">
@@ -221,9 +226,9 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                 render={({ field: { value, onChange } }) => (
                   <ImagePickerPopover
                     label={t("change_cover")}
-                    onChange={(imageUrl) => onChange(imageUrl)}
                     control={control}
-                    value={value ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
+                    onChange={(imageUrl) => onChange(imageUrl)}
+                    value={value}
                     isProfileCover
                   />
                 )}
@@ -232,18 +237,18 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
           </div>
           <div className="item-center mt-6 flex justify-between">
             <div className="flex flex-col">
-              <div className="item-center flex text-lg font-medium text-custom-text-200">
+              <div className="item-center flex text-16 font-medium text-secondary">
                 <span>{`${watch("first_name")} ${watch("last_name")}`}</span>
               </div>
-              <span className="text-sm text-custom-text-300 tracking-tight">{watch("email")}</span>
+              <span className="text-13 text-tertiary tracking-tight">{watch("email")}</span>
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-4">
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-custom-text-200">
+                <h4 className="text-13 font-medium text-secondary">
                   {t("first_name")}&nbsp;
-                  <span className="text-red-500">*</span>
+                  <span className="text-danger-primary">*</span>
                 </h4>
                 <Controller
                   control={control}
@@ -261,16 +266,16 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                       ref={ref}
                       hasError={Boolean(errors.first_name)}
                       placeholder="Enter your first name"
-                      className={`w-full rounded-md ${errors.first_name ? "border-red-500" : ""}`}
+                      className={`w-full rounded-md ${errors.first_name ? "border-danger-strong" : ""}`}
                       maxLength={24}
                       autoComplete="on"
                     />
                   )}
                 />
-                {errors.first_name && <span className="text-xs text-red-500">{errors.first_name.message}</span>}
+                {errors.first_name && <span className="text-11 text-danger-primary">{errors.first_name.message}</span>}
               </div>
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-custom-text-200">{t("last_name")}</h4>
+                <h4 className="text-13 font-medium text-secondary">{t("last_name")}</h4>
                 <Controller
                   control={control}
                   name="last_name"
@@ -292,9 +297,9 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-custom-text-200">
+                <h4 className="text-13 font-medium text-secondary">
                   {t("display_name")}&nbsp;
-                  <span className="text-red-500">*</span>
+                  <span className="text-danger-primary">*</span>
                 </h4>
                 <Controller
                   control={control}
@@ -320,17 +325,19 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                       ref={ref}
                       hasError={Boolean(errors?.display_name)}
                       placeholder="Enter your display name"
-                      className={`w-full ${errors?.display_name ? "border-red-500" : ""}`}
+                      className={`w-full ${errors?.display_name ? "border-danger-strong" : ""}`}
                       maxLength={24}
                     />
                   )}
                 />
-                {errors?.display_name && <span className="text-xs text-red-500">{errors?.display_name?.message}</span>}
+                {errors?.display_name && (
+                  <span className="text-11 text-danger-primary">{errors?.display_name?.message}</span>
+                )}
               </div>
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-custom-text-200">
+                <h4 className="text-13 font-medium text-secondary">
                   {t("auth.common.email.label")}&nbsp;
-                  <span className="text-red-500">*</span>
+                  <span className="text-danger-primary">*</span>
                 </h4>
                 <Controller
                   control={control}
@@ -347,36 +354,40 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                       ref={ref}
                       hasError={Boolean(errors.email)}
                       placeholder="Enter your email"
-                      className={`w-full cursor-not-allowed rounded-md !bg-custom-background-90 ${
-                        errors.email ? "border-red-500" : ""
+                      className={`w-full cursor-not-allowed rounded-md !bg-surface-2 ${
+                        errors.email ? "border-danger-strong" : ""
                       }`}
                       autoComplete="on"
                       disabled
                     />
                   )}
                 />
+                {isSMTPConfigured && (
+                  <button
+                    type="button"
+                    className="text-11 underline btn w-fit text-secondary"
+                    onClick={() => setIsChangeEmailModalOpen(true)}
+                  >
+                    {t("account_settings.profile.change_email_modal.title")}
+                  </button>
+                )}
               </div>
             </div>
           </div>
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between pt-6 pb-8">
-              <Button
-                variant="primary"
-                type="submit"
-                loading={isLoading}
-                data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.SAVE_CHANGES_BUTTON}
-              >
+              <Button variant="primary" type="submit" loading={isLoading}>
                 {isLoading ? t("saving") : t("save_changes")}
               </Button>
             </div>
           </div>
         </div>
       </form>
-      <Disclosure as="div" className="border-t border-custom-border-100 w-full">
+      <Disclosure as="div" className="border-t border-subtle w-full">
         {({ open }) => (
           <>
             <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
-              <span className="text-lg font-medium tracking-tight">{t("deactivate_account")}</span>
+              <span className="text-16 font-medium tracking-tight">{t("deactivate_account")}</span>
               <ChevronDownIcon className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
             </Disclosure.Button>
             <Transition
@@ -390,13 +401,9 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
             >
               <Disclosure.Panel>
                 <div className="flex flex-col gap-8">
-                  <span className="text-sm tracking-tight">{t("deactivate_account_description")}</span>
+                  <span className="text-13 tracking-tight">{t("deactivate_account_description")}</span>
                   <div>
-                    <Button
-                      variant="danger"
-                      onClick={() => setDeactivateAccountModal(true)}
-                      data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.DEACTIVATE_ACCOUNT_BUTTON}
-                    >
+                    <Button variant="error-fill" onClick={() => setDeactivateAccountModal(true)}>
                       {t("deactivate_account")}
                     </Button>
                   </div>

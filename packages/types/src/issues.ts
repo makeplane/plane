@@ -2,7 +2,7 @@ import type { ICycle } from "./cycle";
 import type { TIssue } from "./issues/issue";
 import type { IModule } from "./module";
 import type { IProjectLite } from "./project";
-import type { IStateLite } from "./state";
+import type { TStateGroups } from "./state";
 import type { IUserLite } from "./users";
 import type {
   IIssueDisplayProperties,
@@ -11,7 +11,7 @@ import type {
   TIssueGroupingFilters,
   TIssueOrderByOptions,
 } from "./view-props";
-import type { IWorkspaceLite, Properties } from "./workspace";
+import type { IWorkspaceLite } from "./workspace";
 
 export interface IIssueCycle {
   id: string;
@@ -39,23 +39,6 @@ export interface IIssueModule {
   workspace: string;
 }
 
-export interface IIssueParent {
-  description: any;
-  id: string;
-  name: string;
-  priority: string | null;
-  project_detail: IProjectLite;
-  sequence_id: number;
-  start_date: string | null;
-  state_detail: IStateLite;
-  target_date: string | null;
-}
-
-export interface IIssueLink {
-  title: string;
-  url: string;
-}
-
 export interface ILinkDetails {
   created_at: Date;
   created_by: string;
@@ -65,36 +48,10 @@ export interface ILinkDetails {
   url: string;
 }
 
-export interface ISubIssuesState {
-  backlog: number;
-  unstarted: number;
-  started: number;
-  completed: number;
-  cancelled: number;
-}
-
 export interface ISubIssueResponse {
-  state_distribution: ISubIssuesState;
+  state_distribution: Record<TStateGroups, number>;
   sub_issues: TIssue[];
 }
-
-export interface BlockeIssueDetail {
-  id: string;
-  name: string;
-  sequence_id: number;
-  project_detail: IProjectLite;
-}
-
-export type IssuePriorities = {
-  id: string;
-  created_at: Date;
-  updated_at: Date;
-  uuid: string;
-  properties: Properties;
-  created_by: number;
-  updated_by: number;
-  user: string;
-};
 
 export interface IIssueLabel {
   id: string;
@@ -145,31 +102,6 @@ export interface IIssueActivity {
   workspace_detail?: IWorkspaceLite;
 }
 
-export interface IIssueLite {
-  id: string;
-  name: string;
-  project_id: string;
-  start_date?: string | null;
-  target_date?: string | null;
-  workspace__slug: string;
-}
-
-export interface IIssueAttachment {
-  asset: string;
-  attributes: {
-    name: string;
-    size: number;
-  };
-  created_at: string;
-  created_by: string;
-  id: string;
-  issue: string;
-  project: string;
-  updated_at: string;
-  updated_by: string;
-  workspace: string;
-}
-
 export type TIssuePriorities = "urgent" | "high" | "medium" | "low" | "none";
 
 export interface ViewFlags {
@@ -206,15 +138,6 @@ export interface IGroupByColumn {
 
 export interface IIssueMap {
   [key: string]: TIssue;
-}
-
-export interface IIssueListRow {
-  id: string;
-  groupId: string;
-  type: "HEADER" | "NO_ISSUES" | "QUICK_ADD" | "ISSUE";
-  name?: string;
-  icon?: React.ReactElement | undefined;
-  payload?: Partial<TIssue>;
 }
 
 export interface ILayoutDisplayFiltersOptions {

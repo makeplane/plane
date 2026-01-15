@@ -1,5 +1,3 @@
-"use client";
-
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { Triangle } from "lucide-react";
@@ -19,7 +17,7 @@ type Props = {
   workItemDetails: TIssue;
 };
 
-export const PowerKWorkItemEstimatesMenu: React.FC<Props> = observer((props) => {
+export const PowerKWorkItemEstimatesMenu = observer(function PowerKWorkItemEstimatesMenu(props: Props) {
   const { handleSelect, workItemDetails } = props;
   // store hooks
   const { currentActiveEstimateIdByProjectId, getEstimateById } = useProjectEstimates();

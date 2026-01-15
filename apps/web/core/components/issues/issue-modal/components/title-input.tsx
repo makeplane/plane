@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import type { Control, FormState } from "react-hook-form";
@@ -23,7 +21,7 @@ type TIssueTitleInputProps = {
   handleFormChange: () => void;
 };
 
-export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props) => {
+export const IssueTitleInput = observer(function IssueTitleInput(props: TIssueTitleInputProps) {
   const {
     control,
     issueTitleRef,
@@ -68,13 +66,13 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
             ref={issueTitleRef || ref}
             hasError={Boolean(errors.name)}
             placeholder={t("title")}
-            className="w-full text-base"
+            className="w-full text-body-sm-regular"
             autoFocus
             tabIndex={getIndex("name")}
           />
         )}
       />
-      <span className="text-xs font-medium text-red-500">{errors?.name?.message}</span>
+      <span className="text-caption-sm-medium text-danger-primary">{errors?.name?.message}</span>
     </div>
   );
 });

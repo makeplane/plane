@@ -1,11 +1,8 @@
-"use client";
-
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
-import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
 import { detectContextFromURL } from "./core/context-detector";
 import { ShortcutHandler } from "./core/shortcut-handler";
@@ -21,10 +18,9 @@ type GlobalShortcutsProps = {
  * Global shortcuts component - sets up keyboard listeners and context detection
  * Should be mounted once at the app root level
  */
-export const GlobalShortcutsProvider = observer((props: GlobalShortcutsProps) => {
+export const GlobalShortcutsProvider = observer(function GlobalShortcutsProvider(props: GlobalShortcutsProps) {
   const { context, commands } = props;
   // router
-  const router = useAppRouter();
   const params = useParams();
   // store hooks
   const { commandRegistry, isShortcutsListModalOpen, setActiveContext, togglePowerKModal, toggleShortcutsListModal } =
@@ -42,21 +38,40 @@ export const GlobalShortcutsProvider = observer((props: GlobalShortcutsProps) =>
     commandRegistry.registerMultiple(commands);
   }, [commandRegistry, commands]);
 
-  // Setup global shortcut handler
+  // Store context in ref to avoid recreation on context changes
+  const contextRef = useRef(context);
   useEffect(() => {
-    const handler = new ShortcutHandler(
+    contextRef.current = context;
+  }, [context]);
+
+  // Store handler in ref to avoid recreation on context changes
+  const handlerRef = useRef<ShortcutHandler | null>(null);
+
+  // Setup global shortcut handler - only recreate when commandRegistry or togglePowerKModal changes
+  useEffect(() => {
+    // Clean up previous handler if it exists
+    if (handlerRef.current) {
+      document.removeEventListener("keydown", handlerRef.current.handleKeyDown);
+      handlerRef.current.destroy();
+    }
+
+    // Create new handler with function that reads from ref
+    handlerRef.current = new ShortcutHandler(
       commandRegistry,
-      () => context,
+      () => contextRef.current,
       () => togglePowerKModal(true)
     );
 
-    document.addEventListener("keydown", handler.handleKeyDown);
+    document.addEventListener("keydown", handlerRef.current.handleKeyDown);
 
     return () => {
-      document.removeEventListener("keydown", handler.handleKeyDown);
-      handler.destroy();
+      if (handlerRef.current) {
+        document.removeEventListener("keydown", handlerRef.current.handleKeyDown);
+        handlerRef.current.destroy();
+        handlerRef.current = null;
+      }
     };
-  }, [context, router, commandRegistry, togglePowerKModal]);
+  }, [commandRegistry, togglePowerKModal]);
 
   return <ShortcutsModal isOpen={isShortcutsListModalOpen} onClose={() => toggleShortcutsListModal(false)} />;
 });

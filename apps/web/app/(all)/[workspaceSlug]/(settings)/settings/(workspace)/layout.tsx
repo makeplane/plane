@@ -1,28 +1,30 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Outlet } from "react-router";
-// constants
-import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
-import type { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
 import { SettingsMobileNav } from "@/components/settings/mobile";
+// plane imports
+import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
+import type { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // local components
 import { WorkspaceSettingsSidebar } from "./sidebar";
 
-function WorkspaceSettingLayout() {
+import type { Route } from "./+types/layout";
+
+const WorkspaceSettingLayout = observer(function WorkspaceSettingLayout({ params }: Route.ComponentProps) {
+  // router
+  const { workspaceSlug } = params;
   // store hooks
   const { workspaceUserInfo, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   // next hooks
   const pathname = usePathname();
   // derived values
-  const { workspaceSlug, accessKey } = pathnameToAccessKey(pathname);
-  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
+  const { accessKey } = pathnameToAccessKey(pathname);
+  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
 
   let isAuthorized: boolean | string = false;
   if (pathname && workspaceSlug && userWorkspaceRole) {
@@ -49,6 +51,6 @@ function WorkspaceSettingLayout() {
       </div>
     </>
   );
-}
+});
 
-export default observer(WorkspaceSettingLayout);
+export default WorkspaceSettingLayout;

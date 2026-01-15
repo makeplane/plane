@@ -26,6 +26,18 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "Parece que você não tem acesso a este projeto",
+      restricted_description:
+        "Entre em contato com o administrador para solicitar acesso e você poderá continuar aqui.",
+      join_description: "Clique no botão abaixo para participar.",
+      cta_primary: "Participar do projeto",
+      cta_loading: "Participando do projeto",
+    },
+    invalid_project: {
+      title: "Projeto não encontrado",
+      description: "O projeto que você está procurando não existe.",
+    },
     work_items: {
       title: "Comece com seu primeiro item de trabalho.",
       description:
@@ -180,6 +192,11 @@ export default {
       description:
         "Gere tokens de API seguros para conectar seu espaço de trabalho com sistemas e aplicativos externos.",
       cta_primary: "Adicionar token de API",
+    },
+    webhooks: {
+      title: "Ainda não foi adicionado nenhum Webhook",
+      description: "Automatize notificações para serviços externos quando ocorrerem eventos do projeto.",
+      cta_primary: "Adicionar webhook",
     },
   },
 } as const;

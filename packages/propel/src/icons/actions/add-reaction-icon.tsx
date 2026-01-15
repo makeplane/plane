@@ -3,7 +3,7 @@ import * as React from "react";
 import { IconWrapper } from "../icon-wrapper";
 import type { ISvgIcons } from "../type";
 
-export const AddReactionIcon: React.FC<ISvgIcons> = ({ color = "currentColor", ...rest }) => {
+export function AddReactionIcon({ color = "currentColor", ...rest }: ISvgIcons) {
   const clipPathId = React.useId();
 
   return (
@@ -18,4 +18,4 @@ export const AddReactionIcon: React.FC<ISvgIcons> = ({ color = "currentColor", .
       />
     </IconWrapper>
   );
-};
+}

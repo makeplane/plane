@@ -11,7 +11,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>((props, ref) => {
+const Card = React.forwardRef(function Card(props: CardProps, ref: React.ForwardedRef<HTMLDivElement>) {
   const {
     variant = ECardVariant.WITH_SHADOW,
     direction = ECardDirection.COLUMN,

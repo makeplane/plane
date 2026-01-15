@@ -345,13 +345,13 @@ export default {
   project_id_must_be_at_most_5_characters: "El ID del proyecto debe tener como máximo 5 caracteres",
   project_id: "ID del proyecto",
   project_id_tooltip_content:
-    "Te ayuda a identificar elementos de trabajo en el proyecto de manera única. Máximo 5 caracteres.",
+    "Te ayuda a identificar elementos de trabajo en el proyecto de manera única. Máximo 10 caracteres.",
   description_placeholder: "Descripción",
   only_alphanumeric_non_latin_characters_allowed: "Solo se permiten caracteres alfanuméricos y no latinos.",
   project_id_is_required: "El ID del proyecto es requerido",
   project_id_allowed_char: "Solo se permiten caracteres alfanuméricos y no latinos.",
   project_id_min_char: "El ID del proyecto debe tener al menos 1 carácter",
-  project_id_max_char: "El ID del proyecto debe tener como máximo 5 caracteres",
+  project_id_max_char: "El ID del proyecto debe tener como máximo 10 caracteres",
   project_description_placeholder: "Ingresa la descripción del proyecto",
   select_network: "Seleccionar red",
   lead: "Líder",
@@ -1544,6 +1544,47 @@ export default {
         "Si confirmas, todas las opciones de ordenación, filtro y visualización + el diseño que has elegido para esta vista se eliminarán permanentemente sin posibilidad de restaurarlas.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Cambiar correo electrónico",
+        description: "Introduce una nueva dirección de correo electrónico para recibir un enlace de verificación.",
+        toasts: {
+          success_title: "¡Éxito!",
+          success_message: "Correo electrónico actualizado correctamente. Inicia sesión de nuevo.",
+        },
+        form: {
+          email: {
+            label: "Nuevo correo electrónico",
+            placeholder: "Introduce tu correo electrónico",
+            errors: {
+              required: "El correo electrónico es obligatorio",
+              invalid: "El correo electrónico no es válido",
+              exists: "El correo electrónico ya existe. Usa uno diferente.",
+              validation_failed: "La validación del correo electrónico falló. Inténtalo de nuevo.",
+            },
+          },
+          code: {
+            label: "Código único",
+            placeholder: "123456",
+            helper_text: "Código de verificación enviado a tu nuevo correo electrónico.",
+            errors: {
+              required: "El código único es obligatorio",
+              invalid: "Código de verificación inválido. Inténtalo de nuevo.",
+            },
+          },
+        },
+        actions: {
+          continue: "Continuar",
+          confirm: "Confirmar",
+          cancel: "Cancelar",
+        },
+        states: {
+          sending: "Enviando…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Configuración del espacio de trabajo",
     page_label: "{workspace} - Configuración general",
@@ -1559,6 +1600,7 @@ export default {
         name: "Nombre del espacio de trabajo",
         company_size: "Tamaño de la empresa",
         url: "URL del espacio de trabajo",
+        workspace_timezone: "Zona horaria del espacio de trabajo",
         update_workspace: "Actualizar espacio de trabajo",
         delete_workspace: "Eliminar este espacio de trabajo",
         delete_workspace_description:

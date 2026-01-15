@@ -8,7 +8,7 @@ type TUpgradeBadge = {
   size?: "sm" | "md";
 };
 
-export const UpgradeBadge: FC<TUpgradeBadge> = (props) => {
+export function UpgradeBadge(props: TUpgradeBadge) {
   const { className, size = "sm" } = props;
 
   const { t } = useTranslation();
@@ -16,10 +16,10 @@ export const UpgradeBadge: FC<TUpgradeBadge> = (props) => {
   return (
     <div
       className={cn(
-        "w-fit cursor-pointer rounded-2xl text-custom-primary-200 bg-custom-primary-100/20 text-center font-medium outline-none",
+        "w-fit cursor-pointer rounded-2xl text-accent-secondary bg-accent-primary/20 text-center font-medium outline-none",
         {
-          "text-sm px-3": size === "md",
-          "text-xs px-2": size === "sm",
+          "text-13 px-3": size === "md",
+          "text-11 px-2": size === "sm",
         },
         className
       )}
@@ -27,4 +27,4 @@ export const UpgradeBadge: FC<TUpgradeBadge> = (props) => {
       {t("sidebar.pro")}
     </div>
   );
-};
+}

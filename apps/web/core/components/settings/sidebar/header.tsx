@@ -8,7 +8,9 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { SubscriptionPill } from "@/plane-web/components/common/subscription/subscription-pill";
 
-export const SettingsSidebarHeader = observer((props: { customHeader?: React.ReactNode }) => {
+export const SettingsSidebarHeader = observer(function SettingsSidebarHeader(props: {
+  customHeader?: React.ReactNode;
+}) {
   const { customHeader } = props;
   const { currentWorkspace } = useWorkspace();
   return customHeader
@@ -19,13 +21,13 @@ export const SettingsSidebarHeader = observer((props: { customHeader?: React.Rea
             <WorkspaceLogo
               logo={currentWorkspace.logo_url ?? ""}
               name={currentWorkspace.name ?? ""}
-              classNames="size-8 border border-custom-border-200"
+              classNames="size-8 border border-subtle"
             />
             <div className="w-full overflow-hidden">
-              <div className="text-base font-medium text-custom-text-200 truncate text-ellipsis ">
+              <div className="text-14 font-medium text-secondary truncate text-ellipsis ">
                 {currentWorkspace.name ?? "Workspace"}
               </div>
-              <div className="text-sm text-custom-text-300 capitalize">
+              <div className="text-13 text-tertiary capitalize">
                 {getUserRole(currentWorkspace.role)?.toLowerCase() || "guest"}
               </div>
             </div>

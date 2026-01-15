@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -14,7 +12,7 @@ type Props = {
   userProfile: IUserProfileData | undefined;
 };
 
-export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
+export function ProfileStats({ userProfile }: Props) {
   const { workspaceSlug, userId } = useParams();
 
   const { t } = useTranslation();
@@ -42,18 +40,18 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-lg font-medium">{t("profile.stats.overview")}</h3>
+      <h3 className="text-16 font-medium">{t("profile.stats.overview")}</h3>
       {userProfile ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {overviewCards.map((card) => (
             <Link key={card.route} href={`/${workspaceSlug}/profile/${userId}/${card.route}`}>
               <Card direction={ECardDirection.ROW} spacing={ECardSpacing.SM} className="h-full">
-                <div className="grid h-11 w-11 place-items-center rounded bg-custom-background-90">
+                <div className="grid h-11 w-11 place-items-center rounded-sm bg-surface-2">
                   <card.icon className="h-5 w-5" />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-custom-text-400">{t(card.i18n_title)}</p>
-                  <p className="text-xl font-semibold">{card.value}</p>
+                  <p className="text-13 text-placeholder">{t(card.i18n_title)}</p>
+                  <p className="text-18 font-semibold">{card.value}</p>
                 </div>
               </Card>
             </Link>
@@ -68,4 +66,4 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
       )}
     </div>
   );
-};
+}

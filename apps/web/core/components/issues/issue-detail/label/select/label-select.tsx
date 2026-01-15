@@ -1,12 +1,13 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Loader, Search } from "lucide-react";
+import { Loader } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LabelPropertyIcon } from "@plane/propel/icons";
+import { Button } from "@plane/propel/button";
+import { CheckIcon, SearchIcon, PlusIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // helpers
@@ -25,7 +26,7 @@ export interface IIssueLabelSelect {
   onAddLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => Promise<any>;
 }
 
-export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) => {
+export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssueLabelSelect) {
   const { workspaceSlug, projectId, issueId, values, onSelect, onAddLabel } = props;
   const { t } = useTranslation();
   // store hooks
@@ -72,7 +73,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-end",
+    placement: "bottom-start",
     modifiers: [
       {
         name: "preventOverflow",
@@ -85,16 +86,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
 
   const issueLabels = values ?? [];
 
-  const label = (
-    <div
-      className={`relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-custom-border-100 p-0.5 px-2 py-0.5 text-xs text-custom-text-300 transition-all hover:bg-custom-background-90 hover:text-custom-text-200`}
-    >
-      <div className="flex-shrink-0">
-        <LabelPropertyIcon className="h-2.5 w-2.5" />
-      </div>
-      <div className="flex-shrink-0">{t("label.select")}</div>
-    </div>
-  );
+  const label = <span className="text-body-xs-medium text-placeholder">{t("label.select")}</span>;
 
   const searchInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (query !== "" && e.key === "Escape") {
@@ -123,34 +115,36 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
     <>
       <Combobox
         as="div"
-        className={`w-auto max-w-full flex-shrink-0 text-left`}
+        className="size-full flex-shrink-0 text-left"
         value={issueLabels}
         onChange={(value) => onSelect(value)}
         multiple
       >
         <Combobox.Button as={Fragment}>
-          <button
+          <Button
             ref={setReferenceElement}
             type="button"
-            className="cursor-pointer rounded"
+            variant="tertiary"
+            size="sm"
+            prependIcon={<PlusIcon />}
             onClick={() => !projectLabels && fetchLabels()}
           >
             {label}
-          </button>
+          </Button>
         </Combobox.Button>
 
         <Combobox.Options className="fixed z-10">
           <div
-            className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none`}
+            className={`z-10 my-1 w-48 whitespace-nowrap rounded-sm border border-strong bg-surface-1 py-2.5 text-11 shadow-raised-200 focus:outline-none`}
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
             <div className="px-2">
-              <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
-                <Search className="h-3.5 w-3.5 text-custom-text-300" />
+              <div className="flex w-full items-center justify-start rounded-sm border border-subtle bg-surface-2 px-2">
+                <SearchIcon className="h-3.5 w-3.5 text-tertiary" />
                 <Combobox.Input
-                  className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                  className="w-full bg-transparent px-2 py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("common.search.label")}
@@ -162,15 +156,15 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
             </div>
             <div className={`vertical-scrollbar scrollbar-sm mt-2 max-h-48 space-y-1 overflow-y-scroll px-2 pr-0`}>
               {isLoading ? (
-                <p className="text-center text-custom-text-200">{t("common.loading")}</p>
+                <p className="text-center text-secondary">{t("common.loading")}</p>
               ) : filteredOptions.length > 0 ? (
                 filteredOptions.map((option) => (
                   <Combobox.Option
                     key={option.value}
                     value={option.value}
                     className={({ selected }) =>
-                      `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
-                        selected ? "text-custom-text-100" : "text-custom-text-200"
+                      `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 hover:bg-layer-1 ${
+                        selected ? "text-primary" : "text-secondary"
                       }`
                     }
                   >
@@ -179,7 +173,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
                         {option.content}
                         {selected && (
                           <div className="flex-shrink-0">
-                            <Check className={`h-3.5 w-3.5`} />
+                            <CheckIcon className={`h-3.5 w-3.5`} />
                           </div>
                         )}
                       </>
@@ -197,19 +191,19 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
                     if (!query.length) return;
                     handleAddLabel(query);
                   }}
-                  className={`text-left text-custom-text-200 ${query.length ? "cursor-pointer" : "cursor-default"}`}
+                  className={`text-left text-secondary ${query.length ? "cursor-pointer" : "cursor-default"}`}
                 >
                   {query.length ? (
                     <>
-                      {/* TODO: Translate here */}+ Add{" "}
-                      <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
+                      {/* TODO: Translate here */}+ Add <span className="text-primary">&quot;{query}&quot;</span> to
+                      labels
                     </>
                   ) : (
                     t("label.create.type")
                   )}
                 </Combobox.Option>
               ) : (
-                <p className="text-left text-custom-text-200 ">{t("common.search.no_matching_results")}</p>
+                <p className="text-left text-secondary ">{t("common.search.no_matching_results")}</p>
               )}
             </div>
           </div>

@@ -3,11 +3,17 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import { EUserPermissions } from "@plane/constants";
-import type { EUserProjectRoles, IProjectBulkAddFormData, IUserLite, TProjectMembership } from "@plane/types";
+import type {
+  EUserProjectRoles,
+  IProjectBulkAddFormData,
+  IProjectUserPropertiesResponse,
+  IUserLite,
+  TProjectMembership,
+} from "@plane/types";
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
-import { ProjectMemberService } from "@/services/project";
+import { ProjectMemberService, ProjectService } from "@/services/project";
 // store
 import type { IProjectStore } from "@/store/project/project.store";
 import type { IRouterStore } from "@/store/router.store";
@@ -30,6 +36,9 @@ export interface IBaseProjectMemberStore {
   projectMemberMap: {
     [projectId: string]: Record<string, TProjectMembership>;
   };
+  projectUserPropertiesMap: {
+    [projectId: string]: IProjectUserPropertiesResponse;
+  };
   // filters store
   filters: IProjectMemberFiltersStore;
   // computed
@@ -39,12 +48,20 @@ export interface IBaseProjectMemberStore {
   getProjectMemberDetails: (userId: string, projectId: string) => IProjectMemberDetails | null;
   getProjectMemberIds: (projectId: string, includeGuestUsers: boolean) => string[] | null;
   getFilteredProjectMemberDetails: (userId: string, projectId: string) => IProjectMemberDetails | null;
+  getProjectUserProperties: (projectId: string) => IProjectUserPropertiesResponse | null;
   // fetch actions
   fetchProjectMembers: (
     workspaceSlug: string,
     projectId: string,
     clearExistingMembers?: boolean
   ) => Promise<TProjectMembership[]>;
+  fetchProjectUserProperties: (workspaceSlug: string, projectId: string) => Promise<IProjectUserPropertiesResponse>;
+  // update actions
+  updateProjectUserProperties: (
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<IProjectUserPropertiesResponse>
+  ) => Promise<IProjectUserPropertiesResponse>;
   // bulk operation actions
   bulkAddMembersToProject: (
     workspaceSlug: string,
@@ -69,6 +86,9 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
   projectMemberMap: {
     [projectId: string]: Record<string, TProjectMembership>;
   } = {};
+  projectUserPropertiesMap: {
+    [projectId: string]: IProjectUserPropertiesResponse;
+  } = {};
   // filters store
   filters: IProjectMemberFiltersStore;
   // stores
@@ -79,15 +99,19 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
   rootStore: RootStore;
   // services
   projectMemberService;
+  projectService;
 
   constructor(_memberRoot: IMemberRootStore, _rootStore: RootStore) {
     makeObservable(this, {
       // observables
       projectMemberMap: observable,
+      projectUserPropertiesMap: observable,
       // computed
       projectMemberIds: computed,
       // actions
       fetchProjectMembers: action,
+      fetchProjectUserProperties: action,
+      updateProjectUserProperties: action,
       bulkAddMembersToProject: action,
       updateMemberRole: action,
       removeMemberFromProject: action,
@@ -101,6 +125,7 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
     this.filters = new ProjectMemberFiltersStore();
     // services
     this.projectMemberService = new ProjectMemberService();
+    this.projectService = new ProjectService();
   }
 
   /**
@@ -406,5 +431,62 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
         this.processMemberRemoval(projectId, userId);
       });
     });
+  };
+
+  /**
+   * @description get project member preferences
+   * @param projectId
+   */
+  getProjectUserProperties = computedFn(
+    (projectId: string): IProjectUserPropertiesResponse | null => this.projectUserPropertiesMap[projectId] || null
+  );
+
+  /**
+   * @description fetch project member preferences
+   * @param workspaceSlug
+   * @param projectId
+   * @param data
+   */
+  fetchProjectUserProperties = async (
+    workspaceSlug: string,
+    projectId: string
+  ): Promise<IProjectUserPropertiesResponse> => {
+    const response = await this.projectService.getProjectUserProperties(workspaceSlug, projectId);
+    runInAction(() => {
+      set(this.projectUserPropertiesMap, [projectId], response);
+    });
+    return response;
+  };
+
+  /**
+   * @description update project member preferences
+   * @param workspaceSlug
+   * @param projectId
+   * @param data
+   */
+  updateProjectUserProperties = async (
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<IProjectUserPropertiesResponse>
+  ): Promise<IProjectUserPropertiesResponse> => {
+    const previousProperties = this.projectUserPropertiesMap[projectId];
+    try {
+      // Optimistically update the store
+      runInAction(() => {
+        set(this.projectUserPropertiesMap, [projectId], data);
+      });
+      const response = await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, data);
+      return response;
+    } catch (error) {
+      // Revert on error
+      runInAction(() => {
+        if (previousProperties) {
+          set(this.projectUserPropertiesMap, [projectId], previousProperties);
+        } else {
+          unset(this.projectUserPropertiesMap, [projectId]);
+        }
+      });
+      throw error;
+    }
   };
 }

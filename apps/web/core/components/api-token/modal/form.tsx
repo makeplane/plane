@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
@@ -66,7 +64,7 @@ const getFormattedDate = (date: Date): Date => {
   return add(date, { hours, minutes, seconds });
 };
 
-export const CreateApiTokenForm: React.FC<Props> = (props) => {
+export function CreateApiTokenForm(props: Props) {
   const { handleClose, neverExpires, toggleNeverExpires, onSubmit } = props;
   // states
   const [customDate, setCustomDate] = useState<Date | null>(null);
@@ -122,7 +120,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">
+        <h3 className="text-18 font-medium text-secondary">
           {t("workspace_settings.settings.api_tokens.create_token")}
         </h3>
         <div className="space-y-3">
@@ -145,11 +143,11 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                   onChange={onChange}
                   hasError={Boolean(errors.label)}
                   placeholder={t("title")}
-                  className="w-full text-base"
+                  className="w-full text-14"
                 />
               )}
             />
-            {errors.label && <span className="text-xs text-red-500">{errors.label.message}</span>}
+            {errors.label && <span className="text-11 text-danger-primary">{errors.label.message}</span>}
           </div>
           <Controller
             control={control}
@@ -160,7 +158,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                 onChange={onChange}
                 hasError={Boolean(errors.description)}
                 placeholder={t("description")}
-                className="w-full text-base resize-none min-h-24"
+                className="w-full text-14 resize-none min-h-24"
               />
             )}
           />
@@ -177,9 +175,9 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                       customButton={
                         <div
                           className={cn(
-                            "h-7 flex items-center gap-2 rounded border-[0.5px] border-custom-border-300 px-2 py-0.5",
+                            "h-7 flex items-center gap-2 rounded-sm border-[0.5px] border-strong px-2 py-0.5",
                             {
-                              "text-custom-text-400": neverExpires,
+                              "text-placeholder": neverExpires,
                             }
                           )}
                         >
@@ -220,7 +218,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
               )}
             </div>
             {!neverExpires && (
-              <span className="text-xs text-custom-text-400">
+              <span className="text-11 text-placeholder">
                 {expiredAt === "custom"
                   ? customDate
                     ? `Expires ${renderFormattedDate(customDateFormatted ?? "")} at ${renderFormattedTime(customDateFormatted ?? "")}`
@@ -233,18 +231,18 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200">
+      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle">
         <div className="flex cursor-pointer items-center gap-1.5" onClick={toggleNeverExpires}>
           <div className="flex cursor-pointer items-center justify-center">
             <ToggleSwitch value={neverExpires} onChange={() => {}} size="sm" />
           </div>
-          <span className="text-xs">{t("workspace_settings.settings.api_tokens.never_expires")}</span>
+          <span className="text-11">{t("workspace_settings.settings.api_tokens.never_expires")}</span>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+          <Button variant="secondary" onClick={handleClose}>
             {t("cancel")}
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+          <Button variant="primary" type="submit" loading={isSubmitting}>
             {isSubmitting
               ? t("workspace_settings.settings.api_tokens.generating")
               : t("workspace_settings.settings.api_tokens.generate_token")}
@@ -253,4 +251,4 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+}

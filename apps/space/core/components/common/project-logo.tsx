@@ -8,7 +8,7 @@ type Props = {
   logo: TLogoProps;
 };
 
-export const ProjectLogo: React.FC<Props> = (props) => {
+export function ProjectLogo(props: Props) {
   const { className, logo } = props;
 
   if (logo.in_use === "icon" && logo.icon)
@@ -17,7 +17,7 @@ export const ProjectLogo: React.FC<Props> = (props) => {
         style={{
           color: logo.icon.color,
         }}
-        className={cn("material-symbols-rounded text-base", className)}
+        className={cn("material-symbols-rounded text-14", className)}
       >
         {logo.icon.name}
       </span>
@@ -25,10 +25,10 @@ export const ProjectLogo: React.FC<Props> = (props) => {
 
   if (logo.in_use === "emoji" && logo.emoji)
     return (
-      <span className={cn("text-base", className)}>
+      <span className={cn("text-14", className)}>
         {logo.emoji.value?.split("-").map((emoji) => String.fromCodePoint(parseInt(emoji, 10)))}
       </span>
     );
 
   return <span />;
-};
+}

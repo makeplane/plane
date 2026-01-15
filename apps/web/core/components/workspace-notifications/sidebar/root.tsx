@@ -1,7 +1,4 @@
-"use client";
-import type { FC } from "react";
 import { useCallback } from "react";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -15,7 +12,7 @@ import { CountChip } from "@/components/common/count-chip";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-
+// plane web components
 import { NotificationListRoot } from "@/plane-web/components/workspace-notifications/list-root";
 // local imports
 import { NotificationEmptyState } from "./empty-state";
@@ -23,7 +20,7 @@ import { AppliedFilters } from "./filters/applied-filter";
 import { NotificationSidebarHeader } from "./header";
 import { NotificationsLoader } from "./loader";
 
-export const NotificationsSidebarRoot: FC = observer(() => {
+export const NotificationsSidebarRoot = observer(function NotificationsSidebarRoot() {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
@@ -55,12 +52,12 @@ export const NotificationsSidebarRoot: FC = observer(() => {
   return (
     <div
       className={cn(
-        "relative border-0 md:border-r border-custom-border-200 z-[10] flex-shrink-0 bg-custom-background-100 h-full transition-all max-md:overflow-hidden",
-        currentSelectedNotificationId ? "w-0 md:w-2/6" : "w-full md:w-2/6"
+        "relative border-0 md:border-r border-subtle z-[10] flex-shrink-0 bg-surface-1 h-full transition-all max-md:overflow-hidden",
+        currentSelectedNotificationId ? "w-0 md:w-3/12" : "w-full md:w-3/12"
       )}
     >
       <div className="relative w-full h-full flex flex-col">
-        <Row className="h-header border-b border-custom-border-200 flex flex-shrink-0">
+        <Row className="h-header border-b border-subtle flex flex-shrink-0">
           <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
         </Row>
 
@@ -73,10 +70,11 @@ export const NotificationsSidebarRoot: FC = observer(() => {
             >
               <div
                 className={cn(
-                  `relative h-full flex justify-center items-center gap-1 text-sm transition-all`,
-                  currentNotificationTab === tab.value
-                    ? "text-custom-primary-100"
-                    : "text-custom-text-100 hover:text-custom-text-200"
+                  "relative h-full flex justify-center items-center gap-1 text-body-xs-medium transition-all",
+                  {
+                    "text-accent-primary": currentNotificationTab === tab.value,
+                    "text-primary hover:text-secondary": currentNotificationTab !== tab.value,
+                  }
                 )}
               >
                 <div className="font-medium">{t(tab.i18n_label)}</div>
@@ -85,7 +83,7 @@ export const NotificationsSidebarRoot: FC = observer(() => {
                 )}
               </div>
               {currentNotificationTab === tab.value && (
-                <div className="border absolute bottom-0 right-0 left-0 rounded-t-md border-custom-primary-100" />
+                <div className="border absolute bottom-0 right-0 left-0 rounded-t-md border-accent-strong" />
               )}
             </div>
           ))}

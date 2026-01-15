@@ -1,12 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
-import { Check } from "lucide-react";
 import type { EditorRefApi } from "@plane/editor";
-import { CloseIcon } from "@plane/propel/icons";
+import { CheckIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
-import { isCommentEmpty } from "@plane/utils";
+import { cn, isCommentEmpty } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
 
@@ -21,7 +20,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const CommentCardEditForm: React.FC<Props> = observer((props) => {
+export const CommentCardEditForm = observer(function CommentCardEditForm(props: Props) {
   const {
     activityOperations,
     comment,
@@ -46,7 +45,7 @@ export const CommentCardEditForm: React.FC<Props> = observer((props) => {
   });
   const commentHTML = watch("comment_html");
 
-  const isEmpty = isCommentEmpty(commentHTML ?? undefined);
+  const isEmpty = isCommentEmpty(commentHTML);
   const isEditorReadyToDiscard = editorRef.current?.isEditorReadyToDiscard();
   const isSubmitButtonDisabled = isSubmitting || !isEditorReadyToDiscard;
   const isDisabled = isSubmitting || isEmpty || isSubmitButtonDisabled;
@@ -94,37 +93,44 @@ export const CommentCardEditForm: React.FC<Props> = observer((props) => {
             const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file, comment.id);
             return asset_id;
           }}
+          duplicateFile={async (assetId: string) => {
+            const { asset_id } = await activityOperations.duplicateCommentAsset(assetId, comment.id);
+            return asset_id;
+          }}
           projectId={projectId}
-          parentClassName="p-2"
+          parentClassName="p-2 bg-surface-1"
           displayConfig={{
             fontSize: "small-font",
           }}
         />
       </div>
-      <div className="flex gap-1 self-end">
+      <div className="flex gap-2 self-end">
         {!isEmpty && (
           <button
             type="button"
             onClick={handleSubmit(onEnter)}
             disabled={isDisabled}
-            className={`group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300  ${
-              isEmpty ? "cursor-not-allowed bg-gray-200" : "hover:bg-green-500"
-            }`}
+            className={cn(
+              "group rounded-lg border border-success-subtle size-7 grid place-items-center shadow-raised-100 bg-success-subtle duration-300",
+              isDisabled ? "" : "hover:bg-success-subtle-1"
+            )}
           >
-            <Check
-              className={`h-3 w-3 text-green-500 duration-300 ${isEmpty ? "text-black" : "group-hover:text-white"}`}
-            />
+            <CheckIcon className="size-4 text-success-primary" />
           </button>
         )}
         <button
           type="button"
-          className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
+          disabled={isSubmitting}
+          className={cn(
+            "group rounded-lg border border-danger-subtle size-7 grid place-items-center shadow-raised-100 bg-danger-subtle duration-300",
+            isSubmitting ? "" : "hover:bg-danger-subtle-hover"
+          )}
           onClick={() => {
             setIsEditing(false);
             editorRef.current?.setEditorValue(comment.comment_html ?? "<p></p>");
           }}
         >
-          <CloseIcon className="size-3 text-red-500 duration-300 group-hover:text-white" />
+          <CloseIcon className="size-4 text-danger-primary" />
         </button>
       </div>
     </form>

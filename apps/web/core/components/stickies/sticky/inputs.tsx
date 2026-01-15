@@ -23,7 +23,7 @@ type TProps = {
   handleDelete: () => void;
 };
 
-export const StickyInput = (props: TProps) => {
+export function StickyInput(props: TProps) {
   const { stickyData, workspaceSlug, handleUpdate, stickyId, handleDelete, handleChange, showToolbar } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -80,12 +80,13 @@ export const StickyInput = (props: TProps) => {
               return "Click to type here";
             }}
             containerClassName={cn(
-              "w-full min-h-[256px] max-h-[540px] overflow-y-scroll vertical-scrollbar scrollbar-sm p-4 text-base",
+              "w-full min-h-[256px] max-h-[540px] overflow-y-scroll vertical-scrollbar scrollbar-sm p-4 text-14",
               {
                 "max-h-[588px]": isStickiesPage,
               }
             )}
             uploadFile={async () => ""}
+            duplicateFile={async () => ""}
             showToolbar={showToolbar}
             parentClassName="border-none p-0"
             handleDelete={handleDelete}
@@ -96,4 +97,4 @@ export const StickyInput = (props: TProps) => {
       />
     </div>
   );
-};
+}

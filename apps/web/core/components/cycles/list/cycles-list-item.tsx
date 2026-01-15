@@ -1,9 +1,8 @@
-"use client";
-import type { FC, MouseEvent } from "react";
+import type { MouseEvent } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Check } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 // plane imports
 import type { TCycleGroups } from "@plane/types";
 import { CircularProgressIndicator } from "@plane/ui";
@@ -29,7 +28,7 @@ type TCyclesListItem = {
   className?: string;
 };
 
-export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
+export const CyclesListItem = observer(function CyclesListItem(props: TCyclesListItem) {
   const { cycleId, workspaceSlug, projectId, className = "" } = props;
   // refs
   const parentRef = useRef(null);
@@ -83,9 +82,9 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
       prependTitleElement={
         <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
           {progress === 100 ? (
-            <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
+            <CheckIcon className="h-3 w-3 stroke-2" />
           ) : (
-            <span className="text-[9px] text-custom-text-100">{`${progress}%`}</span>
+            <span className="text-9 text-primary">{`${progress}%`}</span>
           )}
         </CircularProgressIndicator>
       }

@@ -23,7 +23,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
+export const PageVersionsMainContent = observer(function PageVersionsMainContent(props: Props) {
   const {
     activeVersion,
     editorComponent,
@@ -80,40 +80,34 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
       {versionDetailsError ? (
         <div className="flex-grow grid place-items-center">
           <div className="flex flex-col items-center gap-4 text-center">
-            <span className="flex-shrink-0 grid place-items-center size-11 text-custom-text-300">
+            <span className="flex-shrink-0 grid place-items-center size-11 text-tertiary">
               <TriangleAlert className="size-10" />
             </span>
             <div>
-              <h6 className="text-lg font-semibold">Something went wrong!</h6>
-              <p className="text-sm text-custom-text-300">The version could not be loaded, please try again.</p>
+              <h6 className="text-16 font-semibold">Something went wrong!</h6>
+              <p className="text-13 text-tertiary">The version could not be loaded, please try again.</p>
             </div>
-            <Button variant="link-primary" onClick={handleRetry} loading={isRetrying}>
+            <Button variant="link" onClick={handleRetry} loading={isRetrying}>
               Try again
             </Button>
           </div>
         </div>
       ) : (
         <>
-          <div className="min-h-14 py-3 px-5 border-b border-custom-border-200 flex items-center justify-between gap-2">
+          <div className="min-h-14 py-3 px-5 border-b border-subtle flex items-center justify-between gap-2">
             <div className="flex items-center gap-4">
-              <h6 className="text-base font-medium">
+              <h6 className="text-14 font-medium">
                 {versionDetails
                   ? `${renderFormattedDate(versionDetails.last_saved_at)} ${renderFormattedTime(versionDetails.last_saved_at)}`
                   : "Loading version details"}
               </h6>
-              <span className="flex-shrink-0 flex items-center gap-1 text-xs font-medium text-custom-primary-100 bg-custom-primary-100/20 py-1 px-1.5 rounded">
+              <span className="flex-shrink-0 flex items-center gap-1 text-11 font-medium text-accent-primary bg-accent-primary/20 py-1 px-1.5 rounded-sm">
                 <EyeIcon className="flex-shrink-0 size-3" />
                 View only
               </span>
             </div>
             {restoreEnabled && (
-              <Button
-                variant="primary"
-                size="sm"
-                className="flex-shrink-0"
-                onClick={handleRestoreVersion}
-                loading={isRestoring}
-              >
+              <Button variant="primary" className="flex-shrink-0" onClick={handleRestoreVersion} loading={isRestoring}>
                 {isRestoring ? "Restoring" : "Restore"}
               </Button>
             )}

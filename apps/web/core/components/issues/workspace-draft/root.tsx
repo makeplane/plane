@@ -1,17 +1,13 @@
-"use client";
-
-import type { FC } from "react";
 import { Fragment } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissionsLevel, EDraftIssuePaginationType, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel, EDraftIssuePaginationType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
@@ -27,7 +23,7 @@ type TWorkspaceDraftIssuesRoot = {
   workspaceSlug: string;
 };
 
-export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer((props) => {
+export const WorkspaceDraftIssuesRoot = observer(function WorkspaceDraftIssuesRoot(props: TWorkspaceDraftIssuesRoot) {
   const { workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -74,7 +70,6 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
             label: t("workspace_projects.empty_state.no_projects.primary_button.text"),
             onClick: () => {
               toggleCreateProjectModal(true);
-              captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
             },
             disabled: !hasMemberLevelPermission,
             variant: "primary",
@@ -99,13 +94,10 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
             <WorkspaceDraftIssuesLoader items={1} />
           ) : (
             <div
-              className={cn(
-                "h-11 pl-6 p-3 text-sm font-medium bg-custom-background-100 border-b border-custom-border-200 transition-all",
-                {
-                  "text-custom-primary-100 hover:text-custom-primary-200 cursor-pointer underline-offset-2 hover:underline":
-                    paginationInfo?.next_page_results,
-                }
-              )}
+              className={cn("h-11 pl-6 p-3 text-13 font-medium bg-surface-1 border-b border-subtle transition-all", {
+                "text-accent-primary hover:text-accent-secondary cursor-pointer underline-offset-2 hover:underline":
+                  paginationInfo?.next_page_results,
+              })}
               onClick={handleNextIssues}
             >
               Load More &darr;

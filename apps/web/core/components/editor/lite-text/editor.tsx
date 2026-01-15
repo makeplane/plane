@@ -13,6 +13,7 @@ import { IssueCommentToolbar } from "@/components/editor/lite-text/toolbar";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // plane web service
@@ -22,7 +23,7 @@ const workspaceService = new WorkspaceService();
 
 type LiteTextEditorWrapperProps = MakeOptional<
   Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "extendedEditorProps">,
-  "disabledExtensions" | "flaggedExtensions"
+  "disabledExtensions" | "flaggedExtensions" | "getEditorMetaData"
 > & {
   workspaceSlug: string;
   workspaceId: string;
@@ -37,6 +38,7 @@ type LiteTextEditorWrapperProps = MakeOptional<
   issue_id?: string;
   parentClassName?: string;
   editorClassName?: string;
+  submitButtonText?: string;
 } & (
     | {
         editable: false;
@@ -44,10 +46,14 @@ type LiteTextEditorWrapperProps = MakeOptional<
     | {
         editable: true;
         uploadFile: TFileHandler["upload"];
+        duplicateFile: TFileHandler["duplicate"];
       }
   );
 
-export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
+export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
+  props: LiteTextEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const { t } = useTranslation();
   const {
     containerClassName,
@@ -67,6 +73,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     placeholder = t("issue.comments.placeholder"),
     disabledExtensions: additionalDisabledExtensions = [],
     editorClassName = "",
+    showPlaceholderOnEmpty = true,
+    submitButtonText = "common.comment",
     ...rest
   } = props;
   // states
@@ -76,10 +84,16 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const [editorRef, setEditorRef] = useState<EditorRefApi | null>(null);
   // editor flaggings
   const { liteText: liteTextEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug,
+    projectId,
   });
   // store hooks
   const { getUserDetails } = useMember();
+  // parse content
+  const { getEditorMetaData } = useParseEditorContent({
+    projectId,
+    workspaceSlug,
+  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: async (payload) =>
@@ -100,7 +114,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   return (
     <div
       className={cn(
-        "relative border border-custom-border-200 rounded",
+        "relative border border-subtle rounded-sm",
         {
           "p-3": editable && !isLiteVariant,
         },
@@ -121,9 +135,11 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
             fileHandler={getEditorFileHandlers({
               projectId,
               uploadFile: editable ? props.uploadFile : async () => "",
+              duplicateFile: editable ? props.duplicateFile : async () => "",
               workspaceId,
               workspaceSlug,
             })}
+            getEditorMetaData={getEditorMetaData}
             handleEditorReady={(ready) => {
               if (ready) {
                 setEditorRef(isMutableRefObject<EditorRefApi>(ref) ? ref.current : null);
@@ -141,6 +157,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
               }),
             }}
             placeholder={placeholder}
+            showPlaceholderOnEmpty={showPlaceholderOnEmpty}
             containerClassName={cn(containerClassName, "relative", {
               "p-2": !editable,
             })}
@@ -193,6 +210,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
             showAccessSpecifier={showAccessSpecifier}
             editorRef={editorRef}
             showSubmitButton={showSubmitButton}
+            submitButtonText={submitButtonText}
           />
         </div>
       )}

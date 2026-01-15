@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -15,6 +13,7 @@ import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-stat
 import { ProfileActivityListPage } from "@/components/profile/activity/profile-activity-list";
 // hooks
 import { SettingsHeading } from "@/components/settings/heading";
+import { ChevronDown } from "lucide-react";
 
 const PER_PAGE = 100;
 
@@ -65,8 +64,8 @@ function ProfileActivityPage() {
           title={""}
           description={""}
           assetPath={resolvedPath}
-          className="w-full !p-0 justify-center mx-auto min-h-fit"
-          size="md"
+          className="w-full p-0! justify-center mx-auto min-h-fit"
+          size="base"
         />
       </div>
     );
@@ -81,8 +80,8 @@ function ProfileActivityPage() {
       />
       <div className="w-full">{activityPages}</div>
       {isLoadMoreVisible && (
-        <div className="flex w-full items-center justify-center text-xs">
-          <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
+        <div className="flex w-full items-center justify-center mt-4">
+          <Button variant="ghost" onClick={handleLoadMore} appendIcon={<ChevronDown />}>
             {t("load_more")}
           </Button>
         </div>

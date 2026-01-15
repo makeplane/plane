@@ -15,7 +15,7 @@ type TWorkItemLabelSelectProps = Omit<TWorkItemLabelSelectBaseProps, "labelIds" 
   projectId: string | undefined;
 };
 
-export const IssueLabelSelect: React.FC<TWorkItemLabelSelectProps> = observer((props) => {
+export const IssueLabelSelect = observer(function IssueLabelSelect(props: TWorkItemLabelSelectProps) {
   const { projectId } = props;
   // router
   const { workspaceSlug } = useParams();

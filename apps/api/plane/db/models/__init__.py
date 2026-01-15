@@ -34,7 +34,6 @@ from .issue import (
     IssueLabel,
     IssueLink,
     IssueMention,
-    IssueUserProperty,
     IssueReaction,
     IssueRelation,
     IssueSequence,
@@ -52,12 +51,14 @@ from .project import (
     ProjectIdentifier,
     ProjectMember,
     ProjectMemberInvite,
+    ProjectNetwork,
     ProjectPublicMember,
+    ProjectUserProperty,
 )
 from .session import Session
 from .social_connection import SocialLoginConnection
-from .state import State
-from .user import Account, Profile, User
+from .state import State, StateGroup, DEFAULT_STATES
+from .user import Account, Profile, User, BotTypeEnum
 from .view import IssueView
 from .webhook import Webhook, WebhookLog
 from .workspace import (

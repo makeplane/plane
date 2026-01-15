@@ -1,14 +1,8 @@
-"use client";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useParams, useRouter } from "next/navigation";
-import {
-  EUserPermissionsLevel,
-  EPageAccess,
-  PROJECT_PAGE_TRACKER_ELEMENTS,
-  PROJECT_PAGE_TRACKER_EVENTS,
-} from "@plane/constants";
+import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -16,7 +10,6 @@ import type { TPage, TPageNavigationTabs } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { PageLoader } from "@/components/pages/loaders/page-loader";
-import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
@@ -28,13 +21,13 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PagesListMainContent: React.FC<Props> = observer((props) => {
+export const PagesListMainContent = observer(function PagesListMainContent(props: Props) {
   const { children, pageType, storeType } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { currentProjectDetails } = useProject();
-  const { isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, filters, loader } =
+  const { isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, loader } =
     usePageStore(storeType);
   const { allowPermissions } = useUserPermissions();
   const { createPage } = usePageStore(EPageStoreType.PROJECT);
@@ -61,23 +54,10 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
 
     await createPage(payload)
       .then((res) => {
-        captureSuccess({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            id: res?.id,
-            state: "SUCCESS",
-          },
-        });
         const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
         router.push(pageId);
       })
       .catch((err) => {
-        captureError({
-          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-          payload: {
-            state: "ERROR",
-          },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -101,7 +81,6 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
               label: t("project_empty_state.pages.cta_primary"),
               onClick: () => {
                 handleCreatePage();
-                captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
               },
               variant: "primary",
               disabled: !canPerformEmptyStateActions || isCreatingPage,
@@ -121,7 +100,6 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
               label: t("project_empty_state.pages.cta_primary"),
               onClick: () => {
                 handleCreatePage();
-                captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
               },
               variant: "primary",
               disabled: !canPerformEmptyStateActions || isCreatingPage,
@@ -140,7 +118,6 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
               label: t("project_empty_state.pages.cta_primary"),
               onClick: () => {
                 handleCreatePage();
-                captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
               },
               variant: "primary",
               disabled: !canPerformEmptyStateActions || isCreatingPage,

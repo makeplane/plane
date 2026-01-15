@@ -38,6 +38,7 @@ class Webhook(BaseModel):
     cycle = models.BooleanField(default=False)
     issue_comment = models.BooleanField(default=False)
     is_internal = models.BooleanField(default=False)
+    version = models.CharField(default="v1", max_length=50)
 
     def __str__(self):
         return f"{self.workspace.slug} {self.url}"

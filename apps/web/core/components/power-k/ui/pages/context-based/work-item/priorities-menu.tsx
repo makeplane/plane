@@ -1,5 +1,3 @@
-"use client";
-
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 // plane imports
@@ -14,7 +12,7 @@ type Props = {
   workItemDetails: TIssue;
 };
 
-export const PowerKWorkItemPrioritiesMenu: React.FC<Props> = observer((props) => {
+export const PowerKWorkItemPrioritiesMenu = observer(function PowerKWorkItemPrioritiesMenu(props: Props) {
   const { handleSelect, workItemDetails } = props;
 
   return (

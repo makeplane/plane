@@ -5,7 +5,7 @@ interface IRadialProgressBar {
   progress: number;
 }
 
-export const RadialProgressBar: FC<IRadialProgressBar> = (props) => {
+export function RadialProgressBar(props: IRadialProgressBar) {
   const { progress } = props;
   const [circumference, setCircumference] = useState(0);
 
@@ -43,4 +43,4 @@ export const RadialProgressBar: FC<IRadialProgressBar> = (props) => {
       </svg>
     </div>
   );
-};
+}

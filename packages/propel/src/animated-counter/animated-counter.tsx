@@ -8,12 +8,12 @@ export interface AnimatedCounterProps {
 }
 
 const sizeClasses = {
-  sm: "text-xs",
-  md: "text-sm",
-  lg: "text-base",
+  sm: "text-11",
+  md: "text-13",
+  lg: "text-14",
 };
 
-export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ count, className, size = "md" }) => {
+export function AnimatedCounter({ count, className, size = "md" }: AnimatedCounterProps) {
   // states
   const [displayCount, setDisplayCount] = useState(count);
   const [prevCount, setPrevCount] = useState(count);
@@ -51,17 +51,15 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ count, classNa
           key={`prev-${animationKey}`}
           className={cn(
             "absolute inset-0 flex items-center justify-center font-medium",
-            "animate-[slideOut_0.25s_ease-out_forwards]",
+            "animate-slide-out",
             direction === "up" && "[--slide-out-dir:-100%]",
             direction === "down" && "[--slide-out-dir:100%]",
-            sizeClass
+            sizeClass,
+            {
+              "animate-slide-out animate-fade-out": isAnimating && direction === "up",
+              "animate-slide-out-down animate-fade-out": isAnimating && direction === "down",
+            }
           )}
-          style={{
-            animation:
-              direction === "up"
-                ? "slideOut 0.25s ease-out forwards, fadeOut 0.25s ease-out forwards"
-                : "slideOutDown 0.25s ease-out forwards, fadeOut 0.25s ease-out forwards",
-          }}
         >
           {prevCount}
         </span>
@@ -72,24 +70,17 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ count, classNa
         key={`current-${animationKey}`}
         className={cn(
           "flex items-center justify-center font-medium",
-          isAnimating && "animate-[slideIn_0.25s_ease-out_forwards]",
           !isAnimating && "opacity-100",
           sizeClass,
+          {
+            "animate-slide-in-from-bottom": isAnimating && direction === "up",
+            "animate-slide-in-from-top": isAnimating && direction === "down",
+          },
           className
         )}
-        style={
-          isAnimating
-            ? {
-                animation:
-                  direction === "up"
-                    ? "slideInFromBottom 0.25s ease-out forwards"
-                    : "slideInFromTop 0.25s ease-out forwards",
-              }
-            : undefined
-        }
       >
         {displayCount}
       </span>
     </div>
   );
-};
+}

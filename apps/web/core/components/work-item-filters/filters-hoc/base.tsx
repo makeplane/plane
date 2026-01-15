@@ -20,7 +20,7 @@ type TAdditionalWorkItemFiltersProps = {
 
 type TWorkItemFiltersHOCProps = TSharedWorkItemFiltersHOCProps & TAdditionalWorkItemFiltersProps;
 
-export const WorkItemFiltersHOC = observer((props: TWorkItemFiltersHOCProps) => {
+export const WorkItemFiltersHOC = observer(function WorkItemFiltersHOC(props: TWorkItemFiltersHOCProps) {
   const { children, initialWorkItemFilters } = props;
 
   // Only initialize filter instance when initial work item filters are defined
@@ -40,7 +40,7 @@ type TWorkItemFilterProps = TSharedWorkItemFiltersProps &
     children: React.ReactNode | ((props: { filter: IWorkItemFilterInstance }) => React.ReactNode);
   };
 
-const WorkItemFilterRoot = observer((props: TWorkItemFilterProps) => {
+const WorkItemFilterRoot = observer(function WorkItemFilterRoot(props: TWorkItemFilterProps) {
   const {
     children,
     entityType,

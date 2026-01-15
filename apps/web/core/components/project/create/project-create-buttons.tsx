@@ -13,7 +13,7 @@ type Props = {
   isMobile?: boolean;
 };
 
-const ProjectCreateButtons: React.FC<Props> = (props) => {
+function ProjectCreateButtons(props: Props) {
   const { t } = useTranslation();
   const { handleClose, isMobile = false } = props;
   const {
@@ -23,15 +23,15 @@ const ProjectCreateButtons: React.FC<Props> = (props) => {
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
 
   return (
-    <div className="flex justify-end gap-2 py-4 border-t border-custom-border-100">
-      <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
+    <div className="flex justify-end gap-2 py-4 border-t border-subtle">
+      <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
         {t("common.cancel")}
       </Button>
-      <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={getIndex("submit")}>
+      <Button variant="primary" size="lg" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
         {isSubmitting ? t("creating") : t("create_project")}
       </Button>
     </div>
   );
-};
+}
 
 export default ProjectCreateButtons;

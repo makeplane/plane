@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { Fragment, useState } from "react";
 // components
@@ -12,7 +10,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
 import { useUserPermissions } from "@/hooks/store/user";
 
-export const WorkspaceDraftEmptyState: FC = observer(() => {
+export const WorkspaceDraftEmptyState = observer(function WorkspaceDraftEmptyState() {
   // state
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   // store hooks
@@ -37,7 +35,6 @@ export const WorkspaceDraftEmptyState: FC = observer(() => {
           title={t("workspace_empty_state.drafts.title")}
           description={t("workspace_empty_state.drafts.description")}
           assetKey="draft"
-          assetClassName="size-20"
           actions={[
             {
               label: t("workspace_empty_state.drafts.cta_primary"),

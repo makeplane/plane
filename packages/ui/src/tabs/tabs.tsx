@@ -28,7 +28,7 @@ type TTabsProps = {
   storeInLocalStorage?: boolean;
 };
 
-export const Tabs: FC<TTabsProps> = (props: TTabsProps) => {
+export function Tabs(props: TTabsProps) {
   const {
     tabs,
     storageKey,
@@ -87,4 +87,4 @@ export const Tabs: FC<TTabsProps> = (props: TTabsProps) => {
       </Tab.Group>
     </div>
   );
-};
+}

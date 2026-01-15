@@ -10,7 +10,7 @@ type Props = {
   targetDate: string | null;
 };
 
-export const WorkItemPreviewCardDate: React.FC<Props> = (props) => {
+export function WorkItemPreviewCardDate(props: Props) {
   const { startDate, stateGroup, targetDate } = props;
   // derived values
   const isDateRangeEnabled = Boolean(startDate && targetDate);
@@ -19,11 +19,11 @@ export const WorkItemPreviewCardDate: React.FC<Props> = (props) => {
   if (!startDate && !targetDate) return null;
 
   return (
-    <div className="text-xs h-full rounded px-1 text-custom-text-200">
+    <div className="text-11 h-full rounded-sm px-1 text-secondary">
       {isDateRangeEnabled ? (
         <div
           className={cn("h-full flex items-center gap-1", {
-            "text-red-500": shouldHighlightDate,
+            "text-danger-primary": shouldHighlightDate,
           })}
         >
           <CalendarDays className="shrink-0 size-3" />
@@ -39,7 +39,7 @@ export const WorkItemPreviewCardDate: React.FC<Props> = (props) => {
       ) : (
         <div
           className={cn("h-full flex items-center gap-1", {
-            "text-red-500": shouldHighlightDate,
+            "text-danger-primary": shouldHighlightDate,
           })}
         >
           <DueDatePropertyIcon className="shrink-0 size-3" />
@@ -48,4 +48,4 @@ export const WorkItemPreviewCardDate: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

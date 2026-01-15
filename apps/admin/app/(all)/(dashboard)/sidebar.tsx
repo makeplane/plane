@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane helpers
@@ -11,7 +9,7 @@ import { AdminSidebarDropdown } from "./sidebar-dropdown";
 import { AdminSidebarHelpSection } from "./sidebar-help-section";
 import { AdminSidebarMenu } from "./sidebar-menu";
 
-export const AdminSidebar = observer(() => {
+export const AdminSidebar = observer(function AdminSidebar() {
   // store
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
 
@@ -40,7 +38,7 @@ export const AdminSidebar = observer(() => {
 
   return (
     <div
-      className={`inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300
+      className={`inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-subtle bg-surface-1 duration-300
         fixed md:relative
         ${isSidebarCollapsed ? "-ml-[290px]" : ""}
         sm:${isSidebarCollapsed ? "-ml-[290px]" : ""}

@@ -17,6 +17,13 @@ export enum EPillSize {
   XS = "xs",
 }
 
+export enum ERadius {
+  SQUARE = "square",
+  CIRCLE = "circle",
+}
+
+export type TRadius = ERadius.SQUARE | ERadius.CIRCLE;
+
 export type TPillVariant =
   | EPillVariant.DEFAULT
   | EPillVariant.PRIMARY
@@ -31,26 +38,42 @@ export interface PillProps extends React.HTMLAttributes<HTMLSpanElement> {
   size?: TPillSize;
   className?: string;
   children: React.ReactNode;
+  radius?: TRadius;
 }
 
 const pillVariants = {
-  [EPillVariant.DEFAULT]: "bg-custom-background-90 text-custom-text-200 border border-custom-border-200",
-  [EPillVariant.PRIMARY]: "bg-custom-primary-100/10 text-custom-primary-100 border border-custom-primary-100/20",
-  [EPillVariant.SUCCESS]: "bg-green-50 text-green-700 border border-green-200",
+  [EPillVariant.DEFAULT]: "bg-surface-2 text-secondary border border-subtle-1",
+  [EPillVariant.PRIMARY]: "bg-accent-primary/10 text-accent-primary border border-accent-strong/20",
+  [EPillVariant.SUCCESS]: "bg-green-50 text-success-primary border border-success-subtle",
   [EPillVariant.WARNING]: "bg-amber-50 text-amber-700 border border-amber-200",
-  [EPillVariant.ERROR]: "bg-red-50 text-red-700 border border-red-200",
+  [EPillVariant.ERROR]: "bg-red-50 text-danger-primary border border-danger-subtle",
   [EPillVariant.INFO]: "bg-blue-50 text-blue-700 border border-blue-200",
 };
 
 const pillSizes = {
-  [EPillSize.XS]: "px-1.5 py-0.5 text-xs",
-  [EPillSize.SM]: "px-2 py-0.5 text-xs",
-  [EPillSize.MD]: "px-2.5 py-1 text-sm",
-  [EPillSize.LG]: "px-3 py-1.5 text-base",
+  [EPillSize.XS]: "px-1.5 py-0.5 text-11",
+  [EPillSize.SM]: "px-2 py-0.5 text-11",
+  [EPillSize.MD]: "px-2.5 py-1 text-13",
+  [EPillSize.LG]: "px-3 py-1.5 text-14",
 };
 
-const Pill = React.forwardRef<HTMLSpanElement, PillProps>(
-  ({ variant = EPillVariant.DEFAULT, size = EPillSize.MD, className, children, ...props }, ref) => (
+const pillRadius = {
+  [ERadius.SQUARE]: "rounded",
+  [ERadius.CIRCLE]: "rounded-full",
+};
+
+const Pill = React.forwardRef(function Pill(
+  {
+    variant = EPillVariant.DEFAULT,
+    size = EPillSize.MD,
+    radius = ERadius.CIRCLE,
+    className,
+    children,
+    ...props
+  }: PillProps,
+  ref: React.ForwardedRef<HTMLSpanElement>
+) {
+  return (
     <span
       ref={ref}
       className={cn(
@@ -60,14 +83,16 @@ const Pill = React.forwardRef<HTMLSpanElement, PillProps>(
         pillVariants[variant],
         // Size styles
         pillSizes[size],
+        // Radius styles
+        pillRadius[radius],
         className
       )}
       {...props}
     >
       {children}
     </span>
-  )
-);
+  );
+});
 
 Pill.displayName = "Pill";
 

@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { GANTT_TIMELINE_TYPE } from "@plane/types";
@@ -14,7 +12,9 @@ import { TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { GanttChartRoot } from "@/components/gantt-chart/root";
 import { BaseGanttSidebar } from "./sidebar";
 
-export const BaseGanttLayout = observer(<T extends IBaseLayoutsGanttItem>(props: IBaseLayoutsGanttProps<T>) => {
+export const BaseGanttLayout = observer(function BaseGanttLayout<T extends IBaseLayoutsGanttItem>(
+  props: IBaseLayoutsGanttProps<T>
+) {
   const {
     items,
     groupedItemIds,

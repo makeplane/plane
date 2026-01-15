@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane types
 import { StateGroupIcon } from "@plane/propel/icons";
@@ -15,7 +13,9 @@ export type TPowerKProjectStatesMenuItemsProps = {
   workspaceSlug: string;
 };
 
-export const PowerKProjectStatesMenuItems: React.FC<TPowerKProjectStatesMenuItemsProps> = observer((props) => {
+export const PowerKProjectStatesMenuItems = observer(function PowerKProjectStatesMenuItems(
+  props: TPowerKProjectStatesMenuItemsProps
+) {
   const { handleSelect, selectedStateId, states } = props;
 
   return (

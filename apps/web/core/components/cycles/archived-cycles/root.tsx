@@ -16,7 +16,7 @@ import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 import { CycleAppliedFiltersList } from "../applied-filters";
 import { ArchivedCyclesView } from "./view";
 
-export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
+export const ArchivedCycleLayoutRoot = observer(function ArchivedCycleLayoutRoot() {
   // router
   const { workspaceSlug, projectId } = useParams();
   // plane hooks
@@ -57,7 +57,7 @@ export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
   return (
     <>
       {calculateTotalFilters(currentProjectArchivedFilters ?? {}) !== 0 && (
-        <div className="border-b border-custom-border-200 px-5 py-3">
+        <div className="border-b border-subtle px-5 py-3">
           <CycleAppliedFiltersList
             appliedFilters={currentProjectArchivedFilters ?? {}}
             handleClearAllFilters={() => clearAllFilters(projectId.toString(), "archived")}

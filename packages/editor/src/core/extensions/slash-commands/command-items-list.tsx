@@ -215,14 +215,7 @@ export const getSlashCommandFilteredSections =
             title: "Default",
             description: "Change text color",
             searchTerms: ["color", "text", "default"],
-            icon: (
-              <ALargeSmall
-                className="size-3.5"
-                style={{
-                  color: "rgba(var(--color-text-100))",
-                }}
-              />
-            ),
+            icon: <ALargeSmall className="size-3.5 text-primary" />,
             command: ({ editor, range }) => toggleTextColor(undefined, editor, range),
           },
           ...COLORS_LIST.map(
@@ -233,6 +226,7 @@ export const getSlashCommandFilteredSections =
                 title: color.label,
                 description: "Change text color",
                 searchTerms: ["color", "text", color.label],
+
                 icon: (
                   <ALargeSmall
                     className="size-3.5"
@@ -241,6 +235,7 @@ export const getSlashCommandFilteredSections =
                     }}
                   />
                 ),
+
                 command: ({ editor, range }) => toggleTextColor(color.key, editor, range),
               }) as ISlashCommandItem
           ),
@@ -259,8 +254,8 @@ export const getSlashCommandFilteredSections =
             icon: <ALargeSmall className="size-3.5" />,
             iconContainerStyle: {
               borderRadius: "4px",
-              backgroundColor: "rgba(var(--color-background-100))",
-              border: "1px solid rgba(var(--color-border-300))",
+              backgroundColor: "var(--background-color-surface-1)",
+              border: "1px solid var(--border-color-strong)",
             },
             command: ({ editor, range }) => toggleTextColor(undefined, editor, range),
           },
@@ -273,10 +268,12 @@ export const getSlashCommandFilteredSections =
                 description: "Change background color",
                 searchTerms: ["color", "bg", "background", color.label],
                 icon: <ALargeSmall className="size-3.5" />,
+
                 iconContainerStyle: {
                   borderRadius: "4px",
                   backgroundColor: color.backgroundColor,
                 },
+
                 command: ({ editor, range }) => toggleBackgroundColor(color.key, editor, range),
               }) as ISlashCommandItem
           ),

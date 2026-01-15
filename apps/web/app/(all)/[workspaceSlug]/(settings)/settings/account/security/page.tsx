@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -129,7 +127,7 @@ function SecurityPage() {
         <div className="flex flex-col gap-10 w-full">
           {oldPasswordRequired && (
             <div className="space-y-1">
-              <h4 className="text-sm">{t("auth.common.password.current_password.label")}</h4>
+              <h4 className="text-13">{t("auth.common.password.current_password.label")}</h4>
               <div className="relative flex items-center rounded-md">
                 <Controller
                   control={control}
@@ -151,21 +149,23 @@ function SecurityPage() {
                 />
                 {showPassword?.oldPassword ? (
                   <EyeOff
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                     onClick={() => handleShowPassword("oldPassword")}
                   />
                 ) : (
                   <Eye
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                     onClick={() => handleShowPassword("oldPassword")}
                   />
                 )}
               </div>
-              {errors.old_password && <span className="text-xs text-red-500">{errors.old_password.message}</span>}
+              {errors.old_password && (
+                <span className="text-11 text-danger-primary">{errors.old_password.message}</span>
+              )}
             </div>
           )}
           <div className="space-y-1">
-            <h4 className="text-sm">{t("auth.common.password.new_password.label")}</h4>
+            <h4 className="text-13">{t("auth.common.password.new_password.label")}</h4>
             <div className="relative flex items-center rounded-md">
               <Controller
                 control={control}
@@ -189,23 +189,25 @@ function SecurityPage() {
               />
               {showPassword?.password ? (
                 <EyeOff
-                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                   onClick={() => handleShowPassword("password")}
                 />
               ) : (
                 <Eye
-                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                   onClick={() => handleShowPassword("password")}
                 />
               )}
             </div>
             {passwordSupport}
             {isNewPasswordSameAsOldPassword && !isPasswordInputFocused && (
-              <span className="text-xs text-red-500">{t("new_password_must_be_different_from_old_password")}</span>
+              <span className="text-11 text-danger-primary">
+                {t("new_password_must_be_different_from_old_password")}
+              </span>
             )}
           </div>
           <div className="space-y-1">
-            <h4 className="text-sm">{t("auth.common.password.confirm_password.label")}</h4>
+            <h4 className="text-13">{t("auth.common.password.confirm_password.label")}</h4>
             <div className="relative flex items-center rounded-md">
               <Controller
                 control={control}
@@ -229,18 +231,18 @@ function SecurityPage() {
               />
               {showPassword?.confirmPassword ? (
                 <EyeOff
-                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                   onClick={() => handleShowPassword("confirmPassword")}
                 />
               ) : (
                 <Eye
-                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                  className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
                   onClick={() => handleShowPassword("confirmPassword")}
                 />
               )}
             </div>
             {!!confirmPassword && password !== confirmPassword && renderPasswordMatchError && (
-              <span className="text-sm text-red-500">{t("auth.common.password.errors.match")}</span>
+              <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
             )}
           </div>
         </div>

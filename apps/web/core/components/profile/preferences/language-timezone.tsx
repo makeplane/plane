@@ -1,13 +1,11 @@
 import { observer } from "mobx-react";
-import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { SUPPORTED_LANGUAGES, useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { CustomSelect } from "@plane/ui";
 import { TimezoneSelect } from "@/components/global";
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 
-export const LanguageTimezone = observer(() => {
+export const LanguageTimezone = observer(function LanguageTimezone() {
   // store hooks
   const {
     data: user,
@@ -17,81 +15,38 @@ export const LanguageTimezone = observer(() => {
   const { updateUserProfile } = useUserProfile();
   const { t } = useTranslation();
 
-  const handleTimezoneChange = (value: string) => {
-    updateCurrentUser({ user_timezone: value })
-      .then(() => {
-        captureElementAndEvent({
-          element: {
-            elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.TIMEZONE_DROPDOWN,
-          },
-          event: {
-            eventName: PROFILE_SETTINGS_TRACKER_EVENTS.timezone_updated,
-            payload: {
-              timezone: value,
-            },
-            state: "SUCCESS",
-          },
-        });
-        setToast({
-          title: "Success!",
-          message: "Timezone updated successfully",
-          type: TOAST_TYPE.SUCCESS,
-        });
-      })
-      .catch(() => {
-        captureElementAndEvent({
-          element: {
-            elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.TIMEZONE_DROPDOWN,
-          },
-          event: {
-            eventName: PROFILE_SETTINGS_TRACKER_EVENTS.timezone_updated,
-            state: "ERROR",
-          },
-        });
-        setToast({
-          title: "Error!",
-          message: "Failed to update timezone",
-          type: TOAST_TYPE.ERROR,
-        });
+  const handleTimezoneChange = async (value: string) => {
+    try {
+      await updateCurrentUser({ user_timezone: value });
+      setToast({
+        title: "Success!",
+        message: "Timezone updated successfully",
+        type: TOAST_TYPE.SUCCESS,
       });
+    } catch (_error) {
+      setToast({
+        title: "Error!",
+        message: "Failed to update timezone",
+        type: TOAST_TYPE.ERROR,
+      });
+    }
   };
-  const handleLanguageChange = (value: string) => {
-    updateUserProfile({ language: value })
-      .then(() => {
-        captureElementAndEvent({
-          element: {
-            elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.LANGUAGE_DROPDOWN,
-          },
-          event: {
-            eventName: PROFILE_SETTINGS_TRACKER_EVENTS.language_updated,
-            payload: {
-              language: value,
-            },
-            state: "SUCCESS",
-          },
-        });
-        setToast({
-          title: "Success!",
-          message: "Language updated successfully",
-          type: TOAST_TYPE.SUCCESS,
-        });
-      })
-      .catch(() => {
-        captureElementAndEvent({
-          element: {
-            elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.LANGUAGE_DROPDOWN,
-          },
-          event: {
-            eventName: PROFILE_SETTINGS_TRACKER_EVENTS.language_updated,
-            state: "ERROR",
-          },
-        });
-        setToast({
-          title: "Error!",
-          message: "Failed to update language",
-          type: TOAST_TYPE.ERROR,
-        });
+
+  const handleLanguageChange = async (value: string) => {
+    try {
+      await updateUserProfile({ language: value });
+      setToast({
+        title: "Success!",
+        message: "Language updated successfully",
+        type: TOAST_TYPE.SUCCESS,
       });
+    } catch (_error) {
+      setToast({
+        title: "Error!",
+        message: "Failed to update language",
+        type: TOAST_TYPE.ERROR,
+      });
+    }
   };
 
   const getLanguageLabel = (value: string) => {
@@ -106,8 +61,8 @@ export const LanguageTimezone = observer(() => {
         <div className="flex flex-col gap-1">
           <div className="flex gap-4 sm:gap-16 w-full justify-between">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-base font-medium text-custom-text-100"> {t("timezone")}&nbsp;</h4>
-              <p className="text-sm text-custom-text-200">{t("timezone_setting")}</p>
+              <h4 className="text-14 font-medium text-primary"> {t("timezone")}&nbsp;</h4>
+              <p className="text-13 text-secondary">{t("timezone_setting")}</p>
             </div>
             <div className="col-span-12 sm:col-span-6 my-auto">
               <TimezoneSelect value={user?.user_timezone || "Asia/Kolkata"} onChange={handleTimezoneChange} />
@@ -117,8 +72,8 @@ export const LanguageTimezone = observer(() => {
         <div className="flex flex-col gap-1">
           <div className="flex gap-4 sm:gap-16 w-full justify-between">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-base font-medium text-custom-text-100"> {t("language")}&nbsp;</h4>
-              <p className="text-sm text-custom-text-200">{t("language_setting")}</p>
+              <h4 className="text-14 font-medium text-primary"> {t("language")}&nbsp;</h4>
+              <p className="text-13 text-secondary">{t("language_setting")}</p>
             </div>
             <div className="col-span-12 sm:col-span-6 my-auto">
               <CustomSelect
@@ -126,7 +81,7 @@ export const LanguageTimezone = observer(() => {
                 label={profile?.language ? getLanguageLabel(profile?.language) : "Select a language"}
                 onChange={handleLanguageChange}
                 buttonClassName={"border-none"}
-                className="rounded-md border !border-custom-border-200"
+                className="rounded-md border !border-subtle"
                 input
               >
                 {SUPPORTED_LANGUAGES.map((item) => (

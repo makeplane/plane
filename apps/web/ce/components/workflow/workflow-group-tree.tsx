@@ -6,4 +6,6 @@ type Props = {
   groupId: string | undefined;
 };
 
-export const WorkFlowGroupTree = (props: Props) => <></>;
+export function WorkFlowGroupTree(props: Props) {
+  return <></>;
+}

@@ -10,12 +10,12 @@ export const CustomStarterKitExtension = (args: TArgs) => {
   return StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
-        class: "list-disc pl-7 space-y-[--list-spacing-y]",
+        class: "list-disc pl-7 space-y-(--list-spacing-y)",
       },
     },
     orderedList: {
       HTMLAttributes: {
-        class: "list-decimal pl-7 space-y-[--list-spacing-y]",
+        class: "list-decimal pl-7 space-y-(--list-spacing-y)",
       },
     },
     listItem: {
@@ -39,7 +39,7 @@ export const CustomStarterKitExtension = (args: TArgs) => {
     },
     dropcursor: {
       class:
-        "text-custom-text-300 transition-all motion-reduce:transition-none motion-reduce:hover:transform-none duration-200 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)]",
+        "text-tertiary transition-all motion-reduce:transition-none motion-reduce:hover:transform-none duration-200 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)]",
     },
     ...(enableHistory ? {} : { history: false }),
   });

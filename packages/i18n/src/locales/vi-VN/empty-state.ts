@@ -25,6 +25,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "Có vẻ như bạn không có quyền truy cập vào Dự án này",
+      restricted_description: "Liên hệ với quản trị viên để yêu cầu quyền truy cập và bạn có thể tiếp tục tại đây.",
+      join_description: "Nhấn nút bên dưới để tham gia.",
+      cta_primary: "Tham gia dự án",
+      cta_loading: "Đang tham gia dự án",
+    },
+    invalid_project: {
+      title: "Không tìm thấy dự án",
+      description: "Dự án bạn đang tìm kiếm không tồn tại.",
+    },
     work_items: {
       title: "Bắt đầu với mục công việc đầu tiên của bạn.",
       description:
@@ -179,6 +190,11 @@ export default {
       description:
         "Tạo token API an toàn để kết nối không gian làm việc của bạn với các hệ thống và ứng dụng bên ngoài.",
       cta_primary: "Thêm token API",
+    },
+    webhooks: {
+      title: "Chưa thêm Webhook",
+      description: "Tự động hóa thông báo đến các dịch vụ bên ngoài khi sự kiện dự án xảy ra.",
+      cta_primary: "Thêm webhook",
     },
   },
 } as const;

@@ -1,25 +1,20 @@
-"use client";
-
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { STATE_TRACKER_EVENTS, STATE_GROUPS } from "@plane/constants";
+import { STATE_GROUPS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 // components
 import { StateForm } from "@/components/project-states";
-// hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
 type TStateCreate = {
   groupKey: TStateGroups;
-  shouldTrackEvents: boolean;
+  shouldTrackEvents?: boolean;
   createStateCallback: TStateOperationsCallbacks["createState"];
   handleClose: () => void;
 };
 
-export const StateCreate: FC<TStateCreate> = observer((props) => {
-  const { groupKey, shouldTrackEvents, createStateCallback, handleClose } = props;
+export const StateCreate = observer(function StateCreate(props: TStateCreate) {
+  const { groupKey, createStateCallback, handleClose } = props;
 
   // states
   const [loader, setLoader] = useState(false);
@@ -34,14 +29,7 @@ export const StateCreate: FC<TStateCreate> = observer((props) => {
 
     try {
       const response = await createStateCallback({ ...formData, group: groupKey });
-      if (shouldTrackEvents)
-        captureSuccess({
-          eventName: STATE_TRACKER_EVENTS.create,
-          payload: {
-            state_group: groupKey,
-            id: response.id,
-          },
-        });
+
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
@@ -50,14 +38,7 @@ export const StateCreate: FC<TStateCreate> = observer((props) => {
       handleClose();
       return { status: "success" };
     } catch (error) {
-      const errorStatus = error as unknown as { status: number; data: { error: string } };
-      if (shouldTrackEvents)
-        captureError({
-          eventName: STATE_TRACKER_EVENTS.create,
-          payload: {
-            state_group: groupKey,
-          },
-        });
+      const errorStatus = error as { status: number; data: { error: string } };
       if (errorStatus?.status === 400) {
         setToast({
           type: TOAST_TYPE.ERROR,

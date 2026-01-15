@@ -26,7 +26,7 @@ type Props = {
   updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
 };
 
-export const GanttChartBlock: React.FC<Props> = observer((props) => {
+export const GanttChartBlock = observer(function GanttChartBlock(props: Props) {
   const {
     blockId,
     showAllBlocks,
@@ -77,7 +77,7 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
           horizontalOffset={100}
           verticalOffset={200}
           classNames="flex h-full w-full items-center"
-          placeholderChildren={<div className="h-8 w-full bg-custom-background-80 rounded" />}
+          placeholderChildren={<div className="h-8 w-full bg-layer-1 rounded-sm" />}
           shouldRecordHeights={false}
           forceRender={isCurrentDependencyDragging}
         >

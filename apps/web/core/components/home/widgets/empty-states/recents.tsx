@@ -27,14 +27,14 @@ const getDisplayContent = (type: string): { assetKey: CompactAssetType; text: st
   }
 };
 
-export const RecentsEmptyState = ({ type }: { type: string }) => {
+export function RecentsEmptyState({ type }: { type: string }) {
   const { t } = useTranslation();
 
   const { assetKey, text } = getDisplayContent(type);
 
   return (
-    <div className="flex items-center justify-center py-10 bg-custom-background-90 w-full">
+    <div className="flex items-center justify-center py-10 bg-layer-1 w-full rounded-lg">
       <EmptyStateCompact assetKey={assetKey} assetClassName="size-20" title={t(text)} />
     </div>
   );
-};
+}

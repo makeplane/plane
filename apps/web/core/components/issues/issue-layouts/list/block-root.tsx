@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, MutableRefObject } from "react";
 import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -44,7 +42,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const IssueBlockRoot: FC<Props> = observer((props) => {
+export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
   const {
     issueId,
     issuesMap,
@@ -132,7 +130,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
       <RenderIfVisible
         key={`${issueId}`}
         root={containerRef}
-        classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-custom-border-200"}`}
+        classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-subtle"}`}
         verticalOffset={100}
         defaultValue={shouldRenderByDefault || isIssueNew(issuesMap[issueId])}
         placeholderChildren={<ListLoaderItemRow shouldAnimate={false} renderForPlaceHolder defaultPropertyCount={4} />}

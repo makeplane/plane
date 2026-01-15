@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { MoveRight } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -11,7 +9,7 @@ type TIssuePeekOverviewLoader = {
   removeRoutePeekId: () => void;
 };
 
-export const IssuePeekOverviewLoader: FC<TIssuePeekOverviewLoader> = (props) => {
+export function IssuePeekOverviewLoader(props: TIssuePeekOverviewLoader) {
   const { removeRoutePeekId } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -22,7 +20,7 @@ export const IssuePeekOverviewLoader: FC<TIssuePeekOverviewLoader> = (props) => 
         <div className="flex items-center gap-2">
           <Tooltip tooltipContent="Close the peek view" isMobile={isMobile}>
             <button onClick={removeRoutePeekId}>
-              <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+              <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary" />
             </button>
           </Tooltip>
           <Loader.Item width="30px" height="30px" />
@@ -104,4 +102,4 @@ export const IssuePeekOverviewLoader: FC<TIssuePeekOverviewLoader> = (props) => 
       </div>
     </Loader>
   );
-};
+}

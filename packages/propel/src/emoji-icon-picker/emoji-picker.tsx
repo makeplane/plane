@@ -8,7 +8,7 @@ import type { TCustomEmojiPicker } from "./helper";
 import { emojiToString, EmojiIconPickerTypes } from "./helper";
 import { IconRoot } from "./icon/icon-root";
 
-export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
+export function EmojiPicker(props: TCustomEmojiPicker) {
   const {
     isOpen,
     handleToggle,
@@ -100,14 +100,24 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
       </Popover.Button>
       <Popover.Panel
         positionerClassName="z-50"
-        className={cn(
-          "w-80 bg-custom-background-100 rounded-md border-[0.5px] border-custom-border-300 overflow-hidden",
-          dropdownClassName
-        )}
+        className={cn("w-80 bg-surface-1 rounded-md border-[0.5px] border-strong overflow-hidden", dropdownClassName)}
         side={finalSide}
         align={finalAlign}
         sideOffset={8}
         data-prevent-outside-click="true"
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+        onFocus={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (e.key === "Tab") {
+            return;
+          }
+          if (e.key === "Escape") {
+            handleToggle(false);
+            return;
+          }
+          e.stopPropagation();
+        }}
       >
         <Tabs.Root defaultValue={defaultOpen}>
           <Tabs.List className="grid grid-cols-2 gap-1 px-3.5 pt-3">
@@ -116,9 +126,9 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
                 key={tab.key}
                 value={tab.key}
                 className={({ selected }) =>
-                  cn("py-1 text-sm rounded border border-custom-border-200 bg-custom-background-80", {
-                    "bg-custom-background-100 text-custom-text-100": selected,
-                    "text-custom-text-400 hover:text-custom-text-300 hover:bg-custom-background-80/60": !selected,
+                  cn("py-1 text-13 rounded-sm border border-subtle bg-layer-1", {
+                    "bg-surface-1 text-primary": selected,
+                    "text-placeholder hover:text-tertiary hover:bg-layer-1/60": !selected,
                   })
                 }
               >
@@ -135,4 +145,4 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
       </Popover.Panel>
     </Popover>
   );
-};
+}

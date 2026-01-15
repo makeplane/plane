@@ -1,10 +1,8 @@
-"use client";
-
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IIssueLabel } from "@plane/types";
@@ -17,13 +15,12 @@ import {
   ProjectSettingLabelItem,
 } from "@/components/labels";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useLabel } from "@/hooks/store/use-label";
 import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { SettingsHeading } from "../settings/heading";
 
-export const ProjectSettingsLabelList: React.FC = observer(() => {
+export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelList() {
   // router
   const { workspaceSlug, projectId } = useParams();
   // refs
@@ -83,9 +80,6 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
           label: t("common.add_label"),
           onClick: () => {
             newLabel();
-            captureClick({
-              elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_HEADER_CREATE_BUTTON,
-            });
           },
         }}
         showButton={isEditable}
@@ -93,7 +87,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
 
       <div className="w-full py-2">
         {showLabelForm && (
-          <div className="my-2 w-full rounded border border-custom-border-200 px-3.5 py-2">
+          <div className="my-2 w-full rounded-sm border border-subtle px-3.5 py-2">
             <CreateUpdateLabelInline
               labelForm={showLabelForm}
               setLabelForm={setLabelForm}
@@ -119,9 +113,6 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                   label: t("settings_empty_state.labels.cta_primary"),
                   onClick: () => {
                     newLabel();
-                    captureClick({
-                      elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_EMPTY_STATE_CREATE_BUTTON,
-                    });
                   },
                 },
               ]}

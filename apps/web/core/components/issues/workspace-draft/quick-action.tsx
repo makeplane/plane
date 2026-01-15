@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -13,7 +11,7 @@ export interface Props {
   MENU_ITEMS: TContextMenuItem[];
 }
 
-export const WorkspaceDraftIssueQuickActions: React.FC<Props> = observer((props) => {
+export const WorkspaceDraftIssueQuickActions = observer(function WorkspaceDraftIssueQuickActions(props: Props) {
   const { parentRef, MENU_ITEMS } = props;
 
   const { t } = useTranslation();
@@ -38,7 +36,7 @@ export const WorkspaceDraftIssueQuickActions: React.FC<Props> = observer((props)
             className={cn(
               "flex items-center gap-2",
               {
-                "text-custom-text-400": item.disabled,
+                "text-placeholder": item.disabled,
               },
               item.className
             )}
@@ -49,8 +47,8 @@ export const WorkspaceDraftIssueQuickActions: React.FC<Props> = observer((props)
               <h5>{t(item.title || "")}</h5>
               {item.description && (
                 <p
-                  className={cn("text-custom-text-300 whitespace-pre-line", {
-                    "text-custom-text-400": item.disabled,
+                  className={cn("text-tertiary whitespace-pre-line", {
+                    "text-placeholder": item.disabled,
                   })}
                 >
                   {item.description}

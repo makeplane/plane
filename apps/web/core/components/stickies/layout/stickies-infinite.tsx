@@ -9,7 +9,7 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useSticky } from "@/hooks/use-stickies";
 import { StickiesLayout } from "./stickies-list";
 
-export const StickiesInfinite = observer(() => {
+export const StickiesInfinite = observer(function StickiesInfinite() {
   const { workspaceSlug } = useParams();
   // hooks
   const { fetchWorkspaceStickies, fetchNextWorkspaceStickies, getWorkspaceStickyIds, loader, paginationInfo } =
@@ -48,7 +48,7 @@ export const StickiesInfinite = observer(() => {
               ref={setElementRef}
               id="intersection-element"
             >
-              <div className="flex w-full rounded min-h-[300px]">
+              <div className="flex w-full rounded-sm min-h-[300px]">
                 <Loader className="w-full h-full">
                   <Loader.Item height="100%" width="100%" />
                 </Loader>

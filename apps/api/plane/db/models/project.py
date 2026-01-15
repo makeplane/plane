@@ -12,7 +12,6 @@ from django.db.models import Q
 # Module imports
 from plane.db.mixins import AuditModel
 
-# Module imports
 from .base import BaseModel
 
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
@@ -59,7 +58,7 @@ def get_default_props():
 
 
 def get_default_preferences():
-    return {"pages": {"block_display": True}}
+    return {"pages": {"block_display": True}, "navigation": {"default_tab": "work_items", "hide_in_more_menu": []}}
 
 
 class Project(BaseModel):
@@ -116,6 +115,11 @@ class Project(BaseModel):
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
 
+    def __init__(self, *args, **kwargs):
+        # Track if timezone is provided, if so, don't override it with the workspace timezone when saving
+        self.is_timezone_provided = kwargs.get("timezone") is not None
+        super().__init__(*args, **kwargs)
+
     @property
     def cover_image_url(self):
         # Return cover image url
@@ -155,7 +159,15 @@ class Project(BaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
+        from plane.db.models import Workspace
+
         self.identifier = self.identifier.strip().upper()
+        is_creating = self._state.adding
+
+        if is_creating and not self.is_timezone_provided:
+            workspace = Workspace.objects.get(id=self.workspace_id)
+            self.timezone = workspace.timezone
+
         return super().save(*args, **kwargs)
 
 
@@ -206,14 +218,20 @@ class ProjectMember(ProjectBaseModel):
     is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        if self._state.adding:
-            smallest_sort_order = ProjectMember.objects.filter(
-                workspace_id=self.project.workspace_id, member=self.member
-            ).aggregate(smallest=models.Min("sort_order"))["smallest"]
+        if self._state.adding and self.member:
+            # Get the minimum sort_order for this member in the workspace
+            min_sort_order_result = ProjectUserProperty.objects.filter(
+                workspace_id=self.project.workspace_id, user=self.member
+            ).aggregate(min_sort_order=models.Min("sort_order"))
+            min_sort_order = min_sort_order_result.get("min_sort_order")
 
-            # Project ordering
-            if smallest_sort_order is not None:
-                self.sort_order = smallest_sort_order - 10000
+            # create project user property with project sort order
+            ProjectUserProperty.objects.create(
+                workspace_id=self.project.workspace_id,
+                project=self.project,
+                user=self.member,
+                sort_order=(min_sort_order - 10000 if min_sort_order is not None else 65535),
+            )
 
         super(ProjectMember, self).save(*args, **kwargs)
 
@@ -313,3 +331,37 @@ class ProjectPublicMember(ProjectBaseModel):
         verbose_name_plural = "Project Public Members"
         db_table = "project_public_members"
         ordering = ("-created_at",)
+
+
+class ProjectUserProperty(ProjectBaseModel):
+    from .issue import get_default_filters, get_default_display_filters, get_default_display_properties
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="project_property_user",
+    )
+    filters = models.JSONField(default=get_default_filters)
+    display_filters = models.JSONField(default=get_default_display_filters)
+    display_properties = models.JSONField(default=get_default_display_properties)
+    rich_filters = models.JSONField(default=dict)
+    preferences = models.JSONField(default=get_default_preferences)
+    sort_order = models.FloatField(default=65535)
+
+    class Meta:
+        verbose_name = "Project User Property"
+        verbose_name_plural = "Project User Properties"
+        db_table = "project_user_properties"
+        ordering = ("-created_at",)
+        unique_together = ["user", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "project"],
+                condition=Q(deleted_at__isnull=True),
+                name="project_user_property_unique_user_project_when_deleted_at_null",
+            )
+        ]
+
+    def __str__(self):
+        """Return properties status of the project"""
+        return str(self.user)

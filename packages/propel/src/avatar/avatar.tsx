@@ -26,31 +26,31 @@ export const getSizeInfo = (size: TAvatarSize) => {
     case "sm":
       return {
         avatarSize: "h-4 w-4",
-        fontSize: "text-xs",
+        fontSize: "text-11",
         spacing: "-space-x-1",
       };
     case "md":
       return {
         avatarSize: "h-5 w-5",
-        fontSize: "text-xs",
+        fontSize: "text-11",
         spacing: "-space-x-1",
       };
     case "base":
       return {
         avatarSize: "h-6 w-6",
-        fontSize: "text-sm",
+        fontSize: "text-13",
         spacing: "-space-x-1.5",
       };
     case "lg":
       return {
         avatarSize: "h-7 w-7",
-        fontSize: "text-sm",
+        fontSize: "text-13",
         spacing: "-space-x-1.5",
       };
     default:
       return {
         avatarSize: "h-5 w-5",
-        fontSize: "text-xs",
+        fontSize: "text-11",
         spacing: "-space-x-1",
       };
   }
@@ -66,7 +66,7 @@ export const getBorderRadius = (shape: "circle" | "square") => {
     case "circle":
       return "rounded-full";
     case "square":
-      return "rounded";
+      return "rounded-sm";
     default:
       return "rounded-full";
   }
@@ -79,7 +79,7 @@ export const getBorderRadius = (shape: "circle" | "square") => {
  */
 export const isAValidNumber = (value: unknown): value is number => typeof value === "number" && !Number.isNaN(value);
 
-export const Avatar: React.FC<Props> = (props) => {
+export function Avatar(props: Props) {
   const {
     name,
     fallbackBackgroundColor,
@@ -107,8 +107,8 @@ export const Avatar: React.FC<Props> = (props) => {
         <AvatarPrimitive.Fallback
           className={cn(sizeInfo.fontSize, "grid h-full w-full place-items-center", getBorderRadius(shape), className)}
           style={{
-            backgroundColor: fallbackBackgroundColor ?? "rgba(var(--color-primary-500))",
-            color: fallbackTextColor ?? "#ffffff",
+            backgroundColor: fallbackBackgroundColor ?? "var(--background-color-accent-primary)",
+            color: fallbackTextColor ?? "var(--text-color-on-color)",
           }}
         >
           {fallbackLetter}
@@ -116,4 +116,4 @@ export const Avatar: React.FC<Props> = (props) => {
       </AvatarPrimitive.Root>
     </div>
   );
-};
+}

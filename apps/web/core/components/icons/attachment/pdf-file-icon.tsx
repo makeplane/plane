@@ -4,6 +4,6 @@ import PDFFileIcon from "@/app/assets/attachment/pdf-icon.png?url";
 // type
 import type { ImageIconPros } from "../types";
 
-export const PdfIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <img src={PDFFileIcon} width={width} height={height} alt="PDFFileIcon" />
-);
+export function PdfIcon({ width, height }: ImageIconPros) {
+  return <img src={PDFFileIcon} width={width} height={height} alt="PDFFileIcon" />;
+}

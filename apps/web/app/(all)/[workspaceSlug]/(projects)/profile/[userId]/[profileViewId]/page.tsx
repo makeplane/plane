@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 // components
 import { PageHead } from "@/components/core/page-title";

@@ -22,7 +22,7 @@ interface Props {
   isEpic?: boolean;
 }
 
-export const IssueBlocksList: FC<Props> = (props) => {
+export function IssueBlocksList(props: Props) {
   const {
     issueIds,
     issuesMap,
@@ -64,4 +64,4 @@ export const IssueBlocksList: FC<Props> = (props) => {
         ))}
     </div>
   );
-};
+}

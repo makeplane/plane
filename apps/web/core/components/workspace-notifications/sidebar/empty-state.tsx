@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ENotificationTab } from "@plane/constants";
@@ -11,7 +8,9 @@ type TNotificationEmptyStateProps = {
   currentNotificationTab: ENotificationTab;
 };
 
-export const NotificationEmptyState: FC<TNotificationEmptyStateProps> = observer(({ currentNotificationTab }) => {
+export const NotificationEmptyState = observer(function NotificationEmptyState({
+  currentNotificationTab,
+}: TNotificationEmptyStateProps) {
   // plane imports
   const { t } = useTranslation();
 

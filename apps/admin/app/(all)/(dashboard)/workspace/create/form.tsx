@@ -15,7 +15,7 @@ import { useWorkspace } from "@/hooks/store";
 
 const instanceWorkspaceService = new InstanceWorkspaceService();
 
-export const WorkspaceCreateForm = () => {
+export function WorkspaceCreateForm() {
   // router
   const router = useRouter();
   // states
@@ -84,7 +84,7 @@ export const WorkspaceCreateForm = () => {
     <div className="space-y-8">
       <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-start justify-between gap-x-10 gap-y-6 lg:grid-cols-2">
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm text-custom-text-300">Name your workspace</h4>
+          <h4 className="text-13 text-tertiary">Name your workspace</h4>
           <div className="flex flex-col gap-1">
             <Controller
               control={control}
@@ -118,13 +118,13 @@ export const WorkspaceCreateForm = () => {
                 />
               )}
             />
-            <span className="text-xs text-red-500">{errors?.name?.message}</span>
+            <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
           </div>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm text-custom-text-300">Set your workspace&apos;s URL</h4>
-          <div className="flex gap-0.5 w-full items-center rounded-md border-[0.5px] border-custom-border-200 px-3">
-            <span className="whitespace-nowrap text-sm text-custom-text-200">{workspaceBaseURL}</span>
+          <h4 className="text-13 text-tertiary">Set your workspace&apos;s URL</h4>
+          <div className="flex gap-0.5 w-full items-center rounded-md border-[0.5px] border-subtle px-3">
+            <span className="whitespace-nowrap text-13 text-secondary">{workspaceBaseURL}</span>
             <Controller
               control={control}
               name="slug"
@@ -148,19 +148,19 @@ export const WorkspaceCreateForm = () => {
                   ref={ref}
                   hasError={Boolean(errors.slug)}
                   placeholder="workspace-name"
-                  className="block w-full rounded-md border-none bg-transparent !px-0 py-2 text-sm"
+                  className="block w-full rounded-md border-none bg-transparent !px-0 py-2 text-13"
                 />
               )}
             />
           </div>
-          {slugError && <p className="text-sm text-red-500">This URL is taken. Try something else.</p>}
+          {slugError && <p className="text-13 text-danger-primary">This URL is taken. Try something else.</p>}
           {invalidSlug && (
-            <p className="text-sm text-red-500">{`URLs can contain only ( - ), ( _ ) and alphanumeric characters.`}</p>
+            <p className="text-13 text-danger-primary">{`URLs can contain only ( - ), ( _ ) and alphanumeric characters.`}</p>
           )}
-          {errors.slug && <span className="text-xs text-red-500">{errors.slug.message}</span>}
+          {errors.slug && <span className="text-11 text-danger-primary">{errors.slug.message}</span>}
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm text-custom-text-300">How many people will use this workspace?</h4>
+          <h4 className="text-13 text-tertiary">How many people will use this workspace?</h4>
           <div className="w-full">
             <Controller
               name="organization_size"
@@ -172,12 +172,11 @@ export const WorkspaceCreateForm = () => {
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-custom-text-400">Select a range</span>
+                      <span className="text-placeholder">Select a range</span>
                     )
                   }
-                  buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
+                  buttonClassName="!border-[0.5px] !border-subtle !shadow-none"
                   input
-                  optionsClassName="w-full"
                 >
                   {ORGANIZATION_SIZE.map((item) => (
                     <CustomSelect.Option key={item} value={item}>
@@ -188,7 +187,7 @@ export const WorkspaceCreateForm = () => {
               )}
             />
             {errors.organization_size && (
-              <span className="text-sm text-red-500">{errors.organization_size.message}</span>
+              <span className="text-13 text-danger-primary">{errors.organization_size.message}</span>
             )}
           </div>
         </div>
@@ -196,17 +195,17 @@ export const WorkspaceCreateForm = () => {
       <div className="flex max-w-4xl items-center py-1 gap-4">
         <Button
           variant="primary"
-          size="sm"
+          size="lg"
           onClick={handleSubmit(handleCreateWorkspace)}
           disabled={!isValid}
           loading={isSubmitting}
         >
           {isSubmitting ? "Creating workspace" : "Create workspace"}
         </Button>
-        <Link className={getButtonStyling("neutral-primary", "sm")} href="/workspace">
+        <Link className={getButtonStyling("secondary", "lg")} href="/workspace">
           Go back
         </Link>
       </div>
     </div>
   );
-};
+}

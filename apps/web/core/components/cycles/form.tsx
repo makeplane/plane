@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
@@ -34,7 +32,7 @@ const defaultValues: Partial<ICycle> = {
   end_date: null,
 };
 
-export const CycleForm: React.FC<Props> = (props) => {
+export function CycleForm(props: Props) {
   const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data, isMobile = false } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -92,7 +90,7 @@ export const CycleForm: React.FC<Props> = (props) => {
               )}
             />
           )}
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-18 font-medium text-secondary">
             {status ? t("project_cycles.update_cycle") : t("project_cycles.create_cycle")}
           </h3>
         </div>
@@ -113,7 +111,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                   name="name"
                   type="text"
                   placeholder={t("title")}
-                  className="w-full text-base"
+                  className="w-full text-14"
                   value={value}
                   inputSize="md"
                   onChange={onChange}
@@ -123,7 +121,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                 />
               )}
             />
-            <span className="text-xs text-red-500">{errors?.name?.message}</span>
+            <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
           </div>
           <div>
             <Controller
@@ -133,7 +131,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                 <TextArea
                   name="description"
                   placeholder={t("description")}
-                  className="w-full text-base resize-none min-h-24"
+                  className="w-full text-14 resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
@@ -179,11 +177,11 @@ export const CycleForm: React.FC<Props> = (props) => {
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
+      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+        <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
           {t("common.cancel")}
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
+        <Button variant="primary" size="lg" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
           {data
             ? isSubmitting
               ? t("common.updating")
@@ -195,4 +193,4 @@ export const CycleForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+}

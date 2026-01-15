@@ -1,24 +1,22 @@
-"use client";
-
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
-import { DEFAULT_PROJECT_FORM_VALUES, PROJECT_TRACKER_EVENTS } from "@plane/constants";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// ui
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-// constants
+import { EFileAssetType } from "@plane/types";
+// components
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 import ProjectCreateButtons from "@/components/project/create/project-create-buttons";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web types
 import type { TProject } from "@/plane-web/types/projects";
-import ProjectAttributes from "./attributes";
+import { ProjectAttributes } from "./attributes";
+import { getProjectFormValues } from "./utils";
 
 export type TCreateProjectFormProps = {
   setToFavorite?: boolean;
@@ -30,16 +28,16 @@ export type TCreateProjectFormProps = {
   updateCoverImageStatus: (projectId: string, coverImage: string) => Promise<void>;
 };
 
-export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) => {
+export const CreateProjectForm = observer(function CreateProjectForm(props: TCreateProjectFormProps) {
   const { setToFavorite, workspaceSlug, data, onClose, handleNextStep, updateCoverImageStatus } = props;
   // store
   const { t } = useTranslation();
-  const { addProjectToFavorites, createProject } = useProject();
+  const { addProjectToFavorites, createProject, updateProject } = useProject();
   // states
-  const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
+  const [shouldAutoSyncIdentifier, setShouldAutoSyncIdentifier] = useState(true);
   // form info
   const methods = useForm<TProject>({
-    defaultValues: { ...DEFAULT_PROJECT_FORM_VALUES, ...data },
+    defaultValues: { ...getProjectFormValues(), ...data },
     reValidateMode: "onChange",
   });
   const { handleSubmit, reset, setValue } = methods;
@@ -60,23 +58,43 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
     // Upper case identifier
     formData.identifier = formData.identifier?.toUpperCase();
     const coverImage = formData.cover_image_url;
-    // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
-    if (coverImage?.startsWith("http")) {
-      formData.cover_image = coverImage;
-      formData.cover_image_asset = null;
+    let uploadedAssetUrl: string | null = null;
+
+    if (coverImage) {
+      const imageType = getCoverImageType(coverImage);
+
+      if (imageType === "local_static") {
+        try {
+          uploadedAssetUrl = await uploadCoverImage(coverImage, {
+            workspaceSlug: workspaceSlug.toString(),
+            entityIdentifier: "",
+            entityType: EFileAssetType.PROJECT_COVER,
+            isUserAsset: false,
+          });
+        } catch (error) {
+          console.error("Error uploading cover image:", error);
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: error instanceof Error ? error.message : "Failed to upload cover image",
+          });
+          return Promise.reject(error);
+        }
+      } else {
+        formData.cover_image = coverImage;
+        formData.cover_image_asset = null;
+      }
     }
 
     return createProject(workspaceSlug.toString(), formData)
       .then(async (res) => {
-        if (coverImage) {
+        if (uploadedAssetUrl) {
+          await updateCoverImageStatus(res.id, uploadedAssetUrl);
+          await updateProject(workspaceSlug.toString(), res.id, { cover_image_url: uploadedAssetUrl });
+        } else if (coverImage && coverImage.startsWith("http")) {
           await updateCoverImageStatus(res.id, coverImage);
+          await updateProject(workspaceSlug.toString(), res.id, { cover_image_url: coverImage });
         }
-        captureSuccess({
-          eventName: PROJECT_TRACKER_EVENTS.create,
-          payload: {
-            identifier: formData.identifier,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("success"),
@@ -90,13 +108,6 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
       })
       .catch((err) => {
         try {
-          captureError({
-            eventName: PROJECT_TRACKER_EVENTS.create,
-            payload: {
-              identifier: formData.identifier,
-            },
-          });
-
           // Handle the new error format where codes are nested in arrays under field names
           const errorData = err?.data ?? {};
 
@@ -140,7 +151,7 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
 
   const handleClose = () => {
     onClose();
-    setIsChangeInIdentifierRequired(true);
+    setShouldAutoSyncIdentifier(true);
     setTimeout(() => {
       reset();
     }, 300);
@@ -155,8 +166,8 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
           <ProjectCommonAttributes
             setValue={setValue}
             isMobile={isMobile}
-            isChangeInIdentifierRequired={isChangeInIdentifierRequired}
-            setIsChangeInIdentifierRequired={setIsChangeInIdentifierRequired}
+            shouldAutoSyncIdentifier={shouldAutoSyncIdentifier}
+            setShouldAutoSyncIdentifier={setShouldAutoSyncIdentifier}
           />
           <ProjectAttributes isMobile={isMobile} />
         </div>

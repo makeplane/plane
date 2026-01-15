@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -32,7 +30,7 @@ type TModuleDropdownProps = TDropdownProps & {
       }
   );
 
-export const ModuleDropdown: React.FC<TModuleDropdownProps> = observer((props) => {
+export const ModuleDropdown = observer(function ModuleDropdown(props: TModuleDropdownProps) {
   const { projectId } = props;
   // router
   const { workspaceSlug } = useParams();

@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -37,7 +35,7 @@ const WORKSPACE_ACTION_LINKS = [
   },
 ];
 
-const ProjectActionIcons = ({ type, size, className = "" }: { type: string; size?: number; className?: string }) => {
+function ProjectActionIcons({ type, size, className = "" }: { type: string; size?: number; className?: string }) {
   const icons = {
     profile: CircleUser,
     security: KeyRound,
@@ -51,8 +49,9 @@ const ProjectActionIcons = ({ type, size, className = "" }: { type: string; size
   const Icon = icons[type as keyof typeof icons];
   if (!Icon) return null;
   return <Icon size={size} className={className} />;
-};
-export const ProfileLayoutSidebar = observer(() => {
+}
+
+export const ProfileLayoutSidebar = observer(function ProfileLayoutSidebar() {
   // states
   const [isSigningOut, setIsSigningOut] = useState(false);
   // router
@@ -117,7 +116,7 @@ export const ProfileLayoutSidebar = observer(() => {
 
   return (
     <div
-      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300 md:relative 
+      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-subtle bg-surface-1 duration-300 md:relative 
         ${sidebarCollapsed ? "-ml-[250px]" : ""}
         sm:${sidebarCollapsed ? "-ml-[250px]" : ""}
         md:ml-0 ${sidebarCollapsed ? "w-[70px]" : "w-[250px]"}
@@ -134,13 +133,13 @@ export const ProfileLayoutSidebar = observer(() => {
               <ChevronLeftIcon className="h-5 w-5" strokeWidth={1} />
             </span>
             {!sidebarCollapsed && (
-              <h4 className="truncate text-lg font-semibold text-custom-text-200">{t("profile_settings")}</h4>
+              <h4 className="truncate text-16 font-semibold text-secondary">{t("profile_settings")}</h4>
             )}
           </div>
         </Link>
         <div className="flex flex-shrink-0 flex-col overflow-x-hidden">
           {!sidebarCollapsed && (
-            <h6 className="rounded px-6 text-sm font-semibold text-custom-sidebar-text-400">{t("your_account")}</h6>
+            <h6 className="rounded-sm px-6 text-13 font-semibold text-placeholder">{t("your_account")}</h6>
           )}
           <div className="vertical-scrollbar scrollbar-sm mt-2 px-4 h-full space-y-1 overflow-y-auto">
             {PROFILE_ACTION_LINKS.map((link) => {
@@ -163,7 +162,7 @@ export const ProfileLayoutSidebar = observer(() => {
                       <div className="flex items-center gap-1.5 py-[1px]">
                         <ProjectActionIcons type={link.key} size={16} />
 
-                        {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(link.i18n_label)}</p>}
+                        {!sidebarCollapsed && <p className="text-13 leading-5 font-medium">{t(link.i18n_label)}</p>}
                       </div>
                     </SidebarNavItem>
                   </Tooltip>
@@ -174,7 +173,7 @@ export const ProfileLayoutSidebar = observer(() => {
         </div>
         <div className="flex flex-col overflow-x-hidden">
           {!sidebarCollapsed && (
-            <h6 className="rounded px-6 text-sm font-semibold text-custom-sidebar-text-400">{t("workspaces")}</h6>
+            <h6 className="rounded-sm px-6 text-13 font-semibold text-placeholder">{t("workspaces")}</h6>
           )}
           {workspacesList && workspacesList.length > 0 && (
             <div
@@ -187,34 +186,32 @@ export const ProfileLayoutSidebar = observer(() => {
                 <Link
                   key={workspace.id}
                   href={`/${workspace.slug}`}
-                  className={`flex flex-grow cursor-pointer select-none items-center truncate text-left text-sm font-medium ${
+                  className={`flex flex-grow cursor-pointer select-none items-center truncate text-left text-13 font-medium ${
                     sidebarCollapsed ? "justify-center" : `justify-between`
                   }`}
                   onClick={handleItemClick}
                 >
                   <span
-                    className={`flex w-full flex-grow items-center gap-x-2 truncate rounded-md px-3 py-1 hover:bg-custom-sidebar-background-80 ${
+                    className={`flex w-full flex-grow items-center gap-x-2 truncate rounded-md px-3 py-1 hover:bg-layer-1 ${
                       sidebarCollapsed ? "justify-center" : ""
                     }`}
                   >
                     <span
-                      className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-xs uppercase ${
-                        !workspace?.logo_url && "rounded bg-custom-primary-500 text-white"
+                      className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-11 uppercase ${
+                        !workspace?.logo_url && "rounded-sm bg-accent-primary text-on-color"
                       }`}
                     >
                       {workspace?.logo_url && workspace.logo_url !== "" ? (
                         <img
                           src={getFileURL(workspace.logo_url)}
-                          className="absolute left-0 top-0 h-full w-full rounded object-cover"
+                          className="absolute left-0 top-0 h-full w-full rounded-sm object-cover"
                           alt="Workspace Logo"
                         />
                       ) : (
                         (workspace?.name?.charAt(0) ?? "...")
                       )}
                     </span>
-                    {!sidebarCollapsed && (
-                      <p className="truncate text-sm text-custom-sidebar-text-200">{workspace.name}</p>
-                    )}
+                    {!sidebarCollapsed && <p className="truncate text-13 text-secondary">{workspace.name}</p>}
                   </span>
                 </Link>
               ))}
@@ -231,7 +228,7 @@ export const ProfileLayoutSidebar = observer(() => {
                   isMobile={isMobile}
                 >
                   <div
-                    className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-custom-sidebar-text-200 outline-none hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
+                    className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-13 font-medium text-secondary outline-none hover:bg-layer-1 focus:bg-layer-1 ${
                       sidebarCollapsed ? "justify-center" : ""
                     }`}
                   >
@@ -252,7 +249,7 @@ export const ProfileLayoutSidebar = observer(() => {
             <button
               type="button"
               onClick={handleSignOut}
-              className="flex items-center justify-center gap-2 text-sm font-medium text-red-500"
+              className="flex items-center justify-center gap-2 text-13 font-medium text-danger-primary"
               disabled={isSigningOut}
             >
               <LogOut className="h-3.5 w-3.5" />
@@ -260,14 +257,14 @@ export const ProfileLayoutSidebar = observer(() => {
             </button>
             <button
               type="button"
-              className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:hidden"
+              className="grid place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-surface-2 hover:text-primary md:hidden"
               onClick={() => toggleSidebar()}
             >
               <MoveLeft className="h-3.5 w-3.5" />
             </button>
             <button
               type="button"
-              className={`ml-auto hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
+              className={`ml-auto hidden place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-surface-2 hover:text-primary md:grid ${
                 sidebarCollapsed ? "w-full" : ""
               }`}
               onClick={() => toggleSidebar()}

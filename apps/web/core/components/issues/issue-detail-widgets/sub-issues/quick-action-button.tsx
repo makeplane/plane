@@ -1,16 +1,12 @@
-"use client";
-import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { WorkItemsIcon } from "@plane/propel/icons";
+import { PlusIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type Props = {
@@ -20,7 +16,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const SubIssuesActionButton: FC<Props> = observer((props) => {
+export const SubIssuesActionButton = observer(function SubIssuesActionButton(props: Props) {
   const { issueId, customButton, disabled = false, issueServiceType } = props;
   // translation
   const { t } = useTranslation();
@@ -55,13 +51,11 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
   };
 
   const handleCreateNew = () => {
-    captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.sub_issue.create });
     handleIssueCrudState("create", issueId, null);
     toggleCreateIssueModal(true);
   };
 
   const handleAddExisting = () => {
-    captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.sub_issue.add_existing });
     handleIssueCrudState("existing", issueId, null);
     toggleSubIssuesModal(issue.id);
   };
@@ -70,7 +64,7 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
   const optionItems = [
     {
       i18n_label: "common.create_new",
-      icon: <Plus className="h-3 w-3" />,
+      icon: <PlusIcon className="h-3 w-3" />,
       onClick: handleCreateNew,
     },
     {
@@ -81,7 +75,7 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
   ];
 
   // button element
-  const customButtonElement = customButton ? <>{customButton}</> : <Plus className="h-4 w-4" />;
+  const customButtonElement = customButton ? <>{customButton}</> : <PlusIcon className="h-4 w-4" />;
 
   return (
     <CustomMenu customButton={customButtonElement} placement="bottom-start" disabled={disabled} closeOnSelect>

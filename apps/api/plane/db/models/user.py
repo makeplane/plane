@@ -35,6 +35,10 @@ def get_mobile_default_onboarding():
     }
 
 
+class BotTypeEnum(models.TextChoices):
+    WORKSPACE_SEED = "WORKSPACE_SEED", "Workspace Seed"
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
     username = models.CharField(max_length=128, unique=True)
@@ -80,7 +84,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_email_verified = models.BooleanField(default=False)
     is_password_autoset = models.BooleanField(default=False)
-
+    is_password_reset_required = models.BooleanField(default=False)
     # random token generated
     token = models.CharField(max_length=64, blank=True)
 
@@ -143,6 +147,11 @@ class User(AbstractBaseUser, PermissionsMixin):
             return self.cover_image
         return None
 
+    @property
+    def full_name(self):
+        """Return user's full name (first + last)."""
+        return f"{self.first_name} {self.last_name}".strip()
+
     def save(self, *args, **kwargs):
         self.email = self.email.lower().strip()
         self.mobile_number = self.mobile_number
@@ -163,6 +172,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         super(User, self).save(*args, **kwargs)
 
+    @classmethod
+    def get_display_name(cls, email):
+        if not email:
+            return "".join(random.choice(string.ascii_letters) for _ in range(6))
+        return (
+            email.split("@")[0]
+            if len(email.split("@")) == 2
+            else "".join(random.choice(string.ascii_letters) for _ in range(6))
+        )
+
 
 class Profile(TimeAuditModel):
     SUNDAY = 0
@@ -172,6 +191,10 @@ class Profile(TimeAuditModel):
     THURSDAY = 4
     FRIDAY = 5
     SATURDAY = 6
+
+    class NotificationViewMode(models.TextChoices):
+        FULL = "full", "Full"
+        COMPACT = "compact", "Compact"
 
     START_OF_THE_WEEK_CHOICES = (
         (SUNDAY, "Sunday"),
@@ -202,7 +225,9 @@ class Profile(TimeAuditModel):
     billing_address = models.JSONField(null=True)
     has_billing_address = models.BooleanField(default=False)
     company_name = models.CharField(max_length=255, blank=True)
-
+    notification_view_mode = models.CharField(
+        max_length=255, choices=NotificationViewMode.choices, default=NotificationViewMode.FULL
+    )
     is_smooth_cursor_enabled = models.BooleanField(default=False)
     # mobile
     is_mobile_onboarded = models.BooleanField(default=False)
@@ -214,8 +239,12 @@ class Profile(TimeAuditModel):
     goals = models.JSONField(default=dict)
     background_color = models.CharField(max_length=255, default=get_random_color)
 
+    # navigation tour
+    is_navigation_tour_completed = models.BooleanField(default=False)
+
     # marketing
     has_marketing_email_consent = models.BooleanField(default=False)
+    is_subscribed_to_changelog = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Profile"

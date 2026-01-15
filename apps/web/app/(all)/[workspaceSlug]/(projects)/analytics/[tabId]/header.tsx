@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { AnalyticsIcon } from "@plane/propel/icons";
@@ -8,7 +6,7 @@ import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 
-export const WorkspaceAnalyticsHeader = observer(() => {
+export const WorkspaceAnalyticsHeader = observer(function WorkspaceAnalyticsHeader() {
   const { t } = useTranslation();
   return (
     <Header>
@@ -18,7 +16,7 @@ export const WorkspaceAnalyticsHeader = observer(() => {
             component={
               <BreadcrumbLink
                 label={t("workspace_analytics.label")}
-                icon={<AnalyticsIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<AnalyticsIcon className="h-4 w-4 text-tertiary" />}
               />
             }
           />

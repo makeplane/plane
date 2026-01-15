@@ -254,19 +254,12 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
     labelTranslationKey: "views",
     href: `/workspace-views/all-issues/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-    highlight: (pathname: string, url: string) => pathname === url,
+    highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   analytics: {
     key: "analytics",
     labelTranslationKey: "analytics",
     href: `/analytics/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    highlight: (pathname: string, url: string) => pathname.includes(url),
-  },
-  drafts: {
-    key: "drafts",
-    labelTranslationKey: "drafts",
-    href: `/drafts/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
@@ -280,10 +273,9 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
 };
 
 export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["views"]!,
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["analytics"]!,
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["drafts"]!,
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["archives"]!,
+  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["views"],
+  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["analytics"],
+  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["archives"],
 ];
 
 export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
@@ -308,6 +300,20 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspac
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
+  stickies: {
+    key: "stickies",
+    labelTranslationKey: "sidebar.stickies",
+    href: `/stickies/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
+  drafts: {
+    key: "drafts",
+    labelTranslationKey: "drafts",
+    href: `/drafts/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
   projects: {
     key: "projects",
     labelTranslationKey: "projects",
@@ -318,13 +324,11 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspac
 };
 
 export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
-  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["home"]!,
-  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["inbox"]!,
-  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["your-work"]!,
+  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["home"],
 ];
 
 export const WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
-  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"]!,
+  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"],
 ];
 
 export const IS_FAVORITE_MENU_OPEN = "is_favorite_menu_open";

@@ -8,7 +8,7 @@ type TIssueUser = {
   customUserName?: string;
 };
 
-export const IssueCreatorDisplay: FC<TIssueUser> = (props) => {
+export function IssueCreatorDisplay(props: TIssueUser) {
   const { activityId, customUserName } = props;
   // hooks
   const {
@@ -22,15 +22,15 @@ export const IssueCreatorDisplay: FC<TIssueUser> = (props) => {
   return (
     <>
       {customUserName ? (
-        <span className="text-custom-text-100 font-medium">{customUserName || "Plane"}</span>
+        <span className="text-primary font-medium">{customUserName || "Plane"}</span>
       ) : (
         <Link
           href={`/${activity?.workspace_detail?.slug}/profile/${activity?.actor_detail?.id}`}
-          className="hover:underline text-custom-text-100 font-medium"
+          className="hover:underline text-primary font-medium"
         >
           {activity.actor_detail?.display_name}
         </Link>
       )}
     </>
   );
-};
+}

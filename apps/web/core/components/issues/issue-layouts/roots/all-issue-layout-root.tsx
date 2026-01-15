@@ -27,7 +27,7 @@ type Props = {
   toggleLoading: (value: boolean) => void;
 };
 
-export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
+export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Props) {
   const { isDefaultView, isLoading = false, toggleLoading } = props;
   // router
   const router = useAppRouter();
@@ -141,8 +141,8 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
         workspaceSlug={workspaceSlug}
       >
         {({ filter: globalWorkItemsFilter }) => (
-          <div className="h-full overflow-hidden bg-custom-background-100">
-            <div className="flex h-full w-full flex-col border-b border-custom-border-300">
+          <div className="h-full overflow-hidden bg-surface-1">
+            <div className="flex h-full w-full flex-col border-b border-strong">
               {globalWorkItemsFilter && (
                 <WorkItemFiltersRow
                   filter={globalWorkItemsFilter}

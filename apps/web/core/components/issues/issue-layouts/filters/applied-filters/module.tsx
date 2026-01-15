@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // hooks
 import { CloseIcon, ModuleIcon } from "@plane/propel/icons";
@@ -12,7 +10,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedModuleFilters: React.FC<Props> = observer((props) => {
+export const AppliedModuleFilters = observer(function AppliedModuleFilters(props: Props) {
   const { handleRemove, values, editable } = props;
   // store hooks
   const { getModuleById } = useModule();
@@ -25,13 +23,13 @@ export const AppliedModuleFilters: React.FC<Props> = observer((props) => {
         if (!moduleDetails) return null;
 
         return (
-          <div key={moduleId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs truncate">
+          <div key={moduleId} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11 truncate">
             <ModuleIcon className="h-3 w-3 flex-shrink-0" />
             <span className="normal-case truncate">{moduleDetails.name}</span>
             {editable && (
               <button
                 type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(moduleId)}
               >
                 <CloseIcon height={10} width={10} strokeWidth={2} />

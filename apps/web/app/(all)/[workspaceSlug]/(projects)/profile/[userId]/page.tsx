@@ -1,5 +1,3 @@
-"use client";
-
 import useSWR from "swr";
 // plane imports
 import { GROUP_CHOICES } from "@plane/constants";

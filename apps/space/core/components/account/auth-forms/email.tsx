@@ -1,5 +1,3 @@
-"use client";
-
 import type { FormEvent } from "react";
 import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -19,7 +17,7 @@ type TAuthEmailForm = {
   onSubmit: (data: IEmailCheckData) => Promise<void>;
 };
 
-export const AuthEmailForm: React.FC<TAuthEmailForm> = observer((props) => {
+export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailForm) {
   const { onSubmit, defaultEmail } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,13 +46,13 @@ export const AuthEmailForm: React.FC<TAuthEmailForm> = observer((props) => {
   return (
     <form onSubmit={handleFormSubmit} className="mt-5 space-y-4">
       <div className="space-y-1">
-        <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
+        <label className="text-13 text-tertiary font-medium" htmlFor="email">
           Email
         </label>
         <div
           className={cn(
-            `relative flex items-center rounded-md bg-custom-background-100 border`,
-            !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-custom-border-100`
+            `relative flex items-center rounded-md bg-surface-1 border`,
+            !isFocused && Boolean(emailError?.email) ? `border-danger-strong` : `border-subtle`
           )}
           onFocus={() => {
             setIsFocused(true);
@@ -70,7 +68,7 @@ export const AuthEmailForm: React.FC<TAuthEmailForm> = observer((props) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
+            className={`disable-autofill-style h-10 w-full placeholder:text-placeholder autofill:bg-danger-subtle border-0 focus:bg-none active:bg-transparent`}
             autoComplete="on"
             autoFocus
             ref={inputRef}
@@ -85,18 +83,18 @@ export const AuthEmailForm: React.FC<TAuthEmailForm> = observer((props) => {
               }}
               tabIndex={-1}
             >
-              <XCircle className="h-10 w-11 px-3 stroke-custom-text-400 hover:cursor-pointer text-xs" />
+              <XCircle className="h-10 w-11 px-3 stroke-placeholder hover:cursor-pointer text-11" />
             </button>
           )}
         </div>
         {emailError?.email && !isFocused && (
-          <p className="flex items-center gap-1 text-xs text-red-600 px-0.5">
+          <p className="flex items-center gap-1 text-11 text-danger-primary px-0.5">
             <CircleAlert height={12} width={12} />
             {emailError.email}
           </p>
         )}
       </div>
-      <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+      <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
         {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
       </Button>
     </form>

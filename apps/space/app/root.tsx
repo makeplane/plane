@@ -1,6 +1,5 @@
 import * as Sentry from "@sentry/react-router";
 import { Links, Meta, Outlet, Scripts } from "react-router";
-import type { HeadersFunction, LinksFunction } from "react-router";
 // assets
 import appleTouchIcon from "@/app/assets/favicon/apple-touch-icon.png?url";
 import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
@@ -14,22 +13,33 @@ import type { Route } from "./+types/root";
 // local imports
 import ErrorPage from "./error";
 import { AppProviders } from "./providers";
+// fonts
+import "@fontsource-variable/inter";
+import interVariableWoff2 from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import "@fontsource/material-symbols-rounded";
+import "@fontsource/ibm-plex-mono";
 
 const APP_TITLE = "Plane Publish | Make your Plane boards public with one-click";
 const APP_DESCRIPTION = "Plane Publish is a customer feedback management tool built on top of plane.so";
 
-export const links: LinksFunction = () => [
+export const links: Route.LinksFunction = () => [
   { rel: "apple-touch-icon", sizes: "180x180", href: appleTouchIcon },
   { rel: "icon", type: "image/png", sizes: "32x32", href: favicon32 },
   { rel: "icon", type: "image/png", sizes: "16x16", href: favicon16 },
   { rel: "shortcut icon", href: faviconIco },
   { rel: "manifest", href: siteWebmanifest },
   { rel: "stylesheet", href: globalStyles },
+  {
+    rel: "preload",
+    href: interVariableWoff2,
+    as: "font",
+    type: "font/woff2",
+    crossOrigin: "anonymous",
+  },
 ];
 
-export const headers: HeadersFunction = () => ({
+export const headers: Route.HeadersFunction = () => ({
   "Referrer-Policy": "origin-when-cross-origin",
-  "X-Frame-Options": "SAMEORIGIN",
   "X-Content-Type-Options": "nosniff",
   "X-DNS-Prefetch-Control": "on",
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
@@ -74,7 +84,7 @@ export default function Root() {
 
 export function HydrateFallback() {
   return (
-    <div className="relative flex h-screen w-full items-center justify-center">
+    <div className="bg-surface-1 relative flex h-screen w-full items-center justify-center">
       <LogoSpinner />
     </div>
   );

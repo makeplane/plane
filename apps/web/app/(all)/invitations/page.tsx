@@ -1,13 +1,11 @@
-"use client";
-
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 
 import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
 // plane imports
-import { ROLE, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS, GROUP_WORKSPACE_TRACKER_EVENT } from "@plane/constants";
+import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
@@ -21,9 +19,7 @@ import emptyInvitation from "@/app/assets/empty-state/invitation.svg?url";
 import { EmptyState } from "@/components/common/empty-state";
 import { WorkspaceLogo } from "@/components/workspace/logo";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
-// helpers
 // hooks
-import { captureError, captureSuccess, joinEventGroup } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -81,18 +77,6 @@ function UserInvitationsPage() {
         const firstInviteId = invitationsRespond[0];
         const invitation = invitations?.find((i) => i.id === firstInviteId);
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
-        if (redirectWorkspace?.id) {
-          joinEventGroup(GROUP_WORKSPACE_TRACKER_EVENT, redirectWorkspace?.id, {
-            date: new Date().toDateString(),
-            workspace_id: redirectWorkspace?.id,
-          });
-        }
-        captureSuccess({
-          eventName: MEMBER_TRACKER_EVENTS.accept,
-          payload: {
-            member_id: invitation?.id,
-          },
-        });
         updateUserProfile({ last_workspace_id: redirectWorkspace?.id })
           .then(() => {
             setIsJoiningWorkspaces(false);
@@ -109,14 +93,7 @@ function UserInvitationsPage() {
             setIsJoiningWorkspaces(false);
           });
       })
-      .catch((err) => {
-        captureError({
-          eventName: MEMBER_TRACKER_EVENTS.accept,
-          payload: {
-            member_id: invitationsRespond?.[0],
-          },
-          error: err,
-        });
+      .catch((_err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("error"),
@@ -130,14 +107,14 @@ function UserInvitationsPage() {
     <AuthenticationWrapper>
       <div className="flex h-full flex-col gap-y-2 overflow-hidden sm:flex-row sm:gap-y-0">
         <div className="relative h-1/6 flex-shrink-0 sm:w-2/12 md:w-3/12 lg:w-1/5">
-          <div className="absolute left-0 top-1/2 h-[0.5px] w-full -translate-y-1/2 border-b-[0.5px] border-custom-border-200 sm:left-1/2 sm:top-0 sm:h-screen sm:w-[0.5px] sm:-translate-x-1/2 sm:translate-y-0 sm:border-r-[0.5px] md:left-1/3" />
+          <div className="absolute left-0 top-1/2 h-[0.5px] w-full -translate-y-1/2 border-b-[0.5px] border-subtle sm:left-1/2 sm:top-0 sm:h-screen sm:w-[0.5px] sm:-translate-x-1/2 sm:translate-y-0 sm:border-r-[0.5px] md:left-1/3" />
           <Link
             href="/"
-            className="absolute left-5 top-1/2 grid -translate-y-1/2 place-items-center bg-custom-background-100 px-3 sm:left-1/2 sm:top-12 sm:-translate-x-[15px] sm:translate-y-0 sm:px-0 sm:py-5 md:left-1/3 z-10"
+            className="absolute left-5 top-1/2 grid -translate-y-1/2 place-items-center px-3 sm:left-1/2 sm:top-12 sm:-translate-x-[15px] sm:translate-y-0 sm:px-0 sm:py-5 md:left-1/3 z-10"
           >
-            <PlaneLogo className="h-9 w-auto text-custom-text-100" />
+            <PlaneLogo className="h-9 w-auto text-primary" />
           </Link>
-          <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-custom-text-100 sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
+          <div className="absolute right-4 top-1/4 -translate-y-1/2 text-13 text-primary sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
             {currentUser?.email}
           </div>
         </div>
@@ -145,8 +122,8 @@ function UserInvitationsPage() {
           invitations.length > 0 ? (
             <div className="relative flex h-full justify-center px-8 pb-8 sm:w-10/12 sm:items-center sm:justify-start sm:p-0 sm:pr-[8.33%] md:w-9/12 lg:w-4/5">
               <div className="w-full space-y-10">
-                <h5 className="text-lg">{t("we_see_that_someone_has_invited_you_to_join_a_workspace")}</h5>
-                <h4 className="text-2xl font-semibold">{t("join_a_workspace")}</h4>
+                <h5 className="text-16">{t("we_see_that_someone_has_invited_you_to_join_a_workspace")}</h5>
+                <h4 className="text-20 font-semibold">{t("join_a_workspace")}</h4>
                 <div className="max-h-[37vh] space-y-4 overflow-y-auto md:w-3/5">
                   {invitations.map((invitation) => {
                     const isSelected = invitationsRespond.includes(invitation.id);
@@ -154,10 +131,8 @@ function UserInvitationsPage() {
                     return (
                       <div
                         key={invitation.id}
-                        className={`flex cursor-pointer items-center gap-2 rounded border px-3.5 py-5 ${
-                          isSelected
-                            ? "border-custom-primary-100"
-                            : "border-custom-border-200 hover:bg-custom-background-80"
+                        className={`flex cursor-pointer items-center gap-2 rounded-sm border px-3.5 py-5 ${
+                          isSelected ? "border-accent-strong" : "border-subtle hover:bg-layer-1"
                         }`}
                         onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                       >
@@ -169,12 +144,10 @@ function UserInvitationsPage() {
                           />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-sm font-medium">{truncateText(invitation.workspace.name, 30)}</div>
-                          <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
+                          <div className="text-13 font-medium">{truncateText(invitation.workspace.name, 30)}</div>
+                          <p className="text-11 text-secondary">{ROLE[invitation.role]}</p>
                         </div>
-                        <span
-                          className={`flex-shrink-0 ${isSelected ? "text-custom-primary-100" : "text-custom-text-200"}`}
-                        >
+                        <span className={`flex-shrink-0 ${isSelected ? "text-accent-primary" : "text-secondary"}`}>
                           <CheckCircle2 className="h-5 w-5" />
                         </span>
                       </div>
@@ -185,17 +158,16 @@ function UserInvitationsPage() {
                   <Button
                     variant="primary"
                     type="submit"
-                    size="md"
+                    size="lg"
                     onClick={submitInvitations}
                     disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                     loading={isJoiningWorkspaces}
-                    data-ph-element={MEMBER_TRACKER_ELEMENTS.ACCEPT_INVITATION_BUTTON}
                   >
                     {t("accept_and_join")}
                   </Button>
                   <Link href={`/${redirectWorkspaceSlug}`}>
                     <span>
-                      <Button variant="neutral-primary" size="md">
+                      <Button variant="secondary" size="lg">
                         {t("go_home")}
                       </Button>
                     </span>

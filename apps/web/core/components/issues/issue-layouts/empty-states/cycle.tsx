@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
@@ -13,14 +11,13 @@ import type { ISearchIssueResponse } from "@plane/types";
 import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
 
-export const CycleEmptyState: React.FC = observer(() => {
+export const CycleEmptyState = observer(function CycleEmptyState() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, cycleId: routerCycleId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
@@ -36,7 +33,7 @@ export const CycleEmptyState: React.FC = observer(() => {
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const cycleWorkItemFilter = cycleId ? useWorkItemFilterInstance(EIssuesStoreType.CYCLE, cycleId) : undefined;
+  const cycleWorkItemFilter = useWorkItemFilterInstance(EIssuesStoreType.CYCLE, cycleId);
   const cycleDetails = cycleId ? getCycleById(cycleId) : undefined;
   const isCompletedCycleSnapshotAvailable = !isEmpty(cycleDetails?.progress_snapshot ?? {});
   const isCompletedAndEmpty = isCompletedCycleSnapshotAvailable || cycleDetails?.status?.toLowerCase() === "completed";
@@ -96,7 +93,7 @@ export const CycleEmptyState: React.FC = observer(() => {
                 label: "Clear filters",
                 onClick: cycleWorkItemFilter?.clearFilters,
                 disabled: !canPerformEmptyStateActions || !cycleWorkItemFilter,
-                variant: "outline-primary",
+                variant: "secondary",
               },
             ]}
           />
@@ -109,7 +106,6 @@ export const CycleEmptyState: React.FC = observer(() => {
               {
                 label: t("project_empty_state.cycle_work_items.cta_primary"),
                 onClick: () => {
-                  captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE });
                   toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                 },
                 disabled: !canPerformEmptyStateActions,
@@ -120,7 +116,7 @@ export const CycleEmptyState: React.FC = observer(() => {
                 label: t("project_empty_state.cycle_work_items.cta_secondary"),
                 onClick: () => setCycleIssuesListModal(true),
                 disabled: !canPerformEmptyStateActions,
-                variant: "outline-primary",
+                variant: "secondary",
                 "data-ph-element": WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE,
               },
             ]}

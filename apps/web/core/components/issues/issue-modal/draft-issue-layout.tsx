@@ -1,19 +1,12 @@
-"use client";
-
-import React, { useState } from "react";
+import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { useTranslation } from "@plane/i18n";
-// types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
-// ui
-// components
 import { isEmptyHtmlString } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
@@ -27,7 +20,7 @@ export interface DraftIssueProps extends IssueFormProps {
   onChange: (formData: Partial<TIssue> | null) => void;
 }
 
-export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
+export const DraftIssueLayout = observer(function DraftIssueLayout(props: DraftIssueProps) {
   const { changesMade, data, onChange, onClose, projectId } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);
@@ -92,25 +85,16 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
           title: `${t("success")}!`,
           message: t("workspace_draft_issues.toasts.created.success"),
         });
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.draft.create,
-          payload: { id: res?.id },
-        });
         onChange(null);
         setIssueDiscardModal(false);
         onClose();
         return res;
       })
-      .catch((error) => {
+      .catch((_error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: `${t("error")}!`,
           message: t("workspace_draft_issues.toasts.created.error"),
-        });
-        captureError({
-          eventName: WORK_ITEM_TRACKER_EVENTS.draft.create,
-          payload: { id: payload.id },
-          error,
         });
       });
 

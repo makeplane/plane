@@ -6,8 +6,6 @@ import useSWR from "swr";
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Row, ERowVariant } from "@plane/ui";
-// components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
@@ -21,7 +19,7 @@ import { ModuleKanBanLayout } from "../kanban/roots/module-root";
 import { ModuleListLayout } from "../list/roots/module-root";
 import { ModuleSpreadsheetLayout } from "../spreadsheet/roots/module-root";
 
-const ModuleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined; moduleId: string }) => {
+function ModuleIssueLayout(props: { activeLayout: EIssueLayoutTypes | undefined; moduleId: string }) {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <ModuleListLayout />;
@@ -36,9 +34,9 @@ const ModuleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined;
     default:
       return null;
   }
-};
+}
 
-export const ModuleLayoutRoot: React.FC = observer(() => {
+export const ModuleLayoutRoot = observer(function ModuleLayoutRoot() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, moduleId: routerModuleId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
@@ -50,7 +48,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
   const workItemFilters = moduleId ? issuesFilter?.getIssueFilters(moduleId) : undefined;
   const activeLayout = workItemFilters?.displayFilters?.layout || undefined;
 
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && projectId && moduleId
       ? `MODULE_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}_${moduleId.toString()}`
       : null,
@@ -62,15 +60,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  if (!workspaceSlug || !projectId || !moduleId) return <></>;
-
-  if (isLoading && !workItemFilters)
-    return (
-      <div className="h-full w-full flex items-center justify-center">
-        <LogoSpinner />
-      </div>
-    );
-
+  if (!workspaceSlug || !projectId || !moduleId || !workItemFilters) return <></>;
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.MODULE}>
       <ProjectLevelWorkItemFiltersHOC

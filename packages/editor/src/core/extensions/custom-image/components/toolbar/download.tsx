@@ -1,12 +1,12 @@
 import { Download } from "lucide-react";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 
 type Props = {
   src: string;
 };
 
-export const ImageDownloadAction: React.FC<Props> = (props) => {
+export function ImageDownloadAction(props: Props) {
   const { src } = props;
 
   return (
@@ -21,4 +21,4 @@ export const ImageDownloadAction: React.FC<Props> = (props) => {
       </button>
     </Tooltip>
   );
-};
+}

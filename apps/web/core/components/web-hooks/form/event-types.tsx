@@ -18,13 +18,13 @@ const WEBHOOK_EVENT_TYPES: { key: TWebhookEventTypes; i18n_label: string }[] = [
   },
 ];
 
-export const WebhookOptions: React.FC<Props> = (props) => {
+export function WebhookOptions(props: Props) {
   const { value, onChange } = props;
   const { t } = useTranslation();
 
   return (
     <>
-      <h6 className="text-sm font-medium">{t("workspace_settings.settings.webhooks.modal.question")}</h6>
+      <h6 className="text-13 font-medium">{t("workspace_settings.settings.webhooks.modal.question")}</h6>
       <div className="space-y-3">
         {WEBHOOK_EVENT_TYPES.map((option) => (
           <div key={option.key} className="flex items-center gap-2">
@@ -35,7 +35,7 @@ export const WebhookOptions: React.FC<Props> = (props) => {
               checked={value == option.key}
               onChange={() => onChange(option.key)}
             />
-            <label className="text-sm" htmlFor={option.key}>
+            <label className="text-13" htmlFor={option.key}>
               {t(option.i18n_label)}
             </label>
           </div>
@@ -43,4 +43,4 @@ export const WebhookOptions: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

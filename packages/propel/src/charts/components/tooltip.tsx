@@ -13,7 +13,7 @@ type Props = {
   itemDotColors: Record<string, string>;
 };
 
-export const CustomTooltip = React.memo((props: Props) => {
+export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
   const { active, activeKey, label, payload, itemKeys, itemLabels, itemDotColors } = props;
   // derived values
   const filteredPayload = payload?.filter((item) => item.dataKey && itemKeys.includes(`${item.dataKey}`));
@@ -25,31 +25,29 @@ export const CustomTooltip = React.memo((props: Props) => {
       className="flex flex-col max-h-[40vh] w-[12rem] overflow-y-scroll vertical-scrollbar scrollbar-sm"
       spacing={ECardSpacing.SM}
     >
-      <p className="flex-shrink-0 text-xs text-custom-text-100 font-medium border-b border-custom-border-200 pb-2 truncate">
-        {label}
-      </p>
+      <p className="flex-shrink-0 text-11 text-primary font-medium border-b border-subtle pb-2 truncate">{label}</p>
       {filteredPayload.map((item) => {
         if (!item.dataKey) return null;
 
         return (
           <div
             key={item?.dataKey}
-            className={cn("flex items-center gap-2 text-xs transition-opacity", {
+            className={cn("flex items-center gap-2 text-11 transition-opacity", {
               "opacity-20": activeKey && item.dataKey !== activeKey,
             })}
           >
             <div className="flex items-center gap-2 truncate">
               {itemDotColors[item?.dataKey] && (
                 <div
-                  className="flex-shrink-0 size-2 rounded-sm"
+                  className="flex-shrink-0 size-2 rounded-xs"
                   style={{
                     backgroundColor: itemDotColors[item?.dataKey],
                   }}
                 />
               )}
-              <span className="text-custom-text-300 truncate">{itemLabels[item?.dataKey]}:</span>
+              <span className="text-tertiary truncate">{itemLabels[item?.dataKey]}:</span>
             </div>
-            <span className="flex-shrink-0 font-medium text-custom-text-200">{item?.value}</span>
+            <span className="flex-shrink-0 font-medium text-secondary">{item?.value}</span>
           </div>
         );
       })}

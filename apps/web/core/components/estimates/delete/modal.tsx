@@ -1,15 +1,10 @@
-"use client";
-
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
-import { PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useEstimate } from "@/hooks/store/estimates/use-estimate";
 import { useProject } from "@/hooks/store/use-project";
@@ -22,7 +17,7 @@ type TDeleteEstimateModal = {
   handleClose: () => void;
 };
 
-export const DeleteEstimateModal: FC<TDeleteEstimateModal> = observer((props) => {
+export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: TDeleteEstimateModal) {
   // props
   const { workspaceSlug, projectId, estimateId, isOpen, handleClose } = props;
   // hooks
@@ -36,18 +31,11 @@ export const DeleteEstimateModal: FC<TDeleteEstimateModal> = observer((props) =>
     try {
       if (!workspaceSlug || !projectId || !estimateId) return;
       setButtonLoader(true);
-
       await deleteEstimate(workspaceSlug, projectId, estimateId);
       if (areEstimateEnabledByProjectId(projectId)) {
         await updateProject(workspaceSlug, projectId, { estimate: null });
       }
       setButtonLoader(false);
-      captureSuccess({
-        eventName: PROJECT_SETTINGS_TRACKER_EVENTS.estimate_deleted,
-        payload: {
-          id: estimateId,
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Estimate deleted",
@@ -56,12 +44,6 @@ export const DeleteEstimateModal: FC<TDeleteEstimateModal> = observer((props) =>
       handleClose();
     } catch (error) {
       setButtonLoader(false);
-      captureError({
-        eventName: PROJECT_SETTINGS_TRACKER_EVENTS.estimate_deleted,
-        payload: {
-          id: estimateId,
-        },
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Estimate creation failed",
@@ -75,23 +57,23 @@ export const DeleteEstimateModal: FC<TDeleteEstimateModal> = observer((props) =>
       <div className="relative space-y-6 py-5">
         {/* heading */}
         <div className="relative flex justify-between items-center gap-2 px-5">
-          <div className="text-xl font-medium text-custom-text-100">Delete Estimate System</div>
+          <div className="text-18 font-medium text-primary">Delete Estimate System</div>
         </div>
 
         {/* estimate steps */}
         <div className="px-5">
-          <div className="text-base text-custom-text-200">
-            Deleting the estimate <span className="font-bold text-custom-text-100">{estimate?.name}</span>
+          <div className="text-14 text-secondary">
+            Deleting the estimate <span className="font-bold text-primary">{estimate?.name}</span>
             &nbsp;system will remove it from all work items permanently. This action cannot be undone. If you add
             estimates again, you will need to update all the work items.
           </div>
         </div>
 
-        <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose} disabled={buttonLoader}>
+        <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-subtle">
+          <Button variant="secondary" size="lg" onClick={handleClose} disabled={buttonLoader}>
             Cancel
           </Button>
-          <Button variant="danger" size="sm" onClick={handleDeleteEstimate} disabled={buttonLoader}>
+          <Button variant="error-fill" size="lg" onClick={handleDeleteEstimate} disabled={buttonLoader}>
             {buttonLoader ? "Deleting" : "Delete Estimate"}
           </Button>
         </div>

@@ -9,7 +9,7 @@ type Props = {
   classNames?: string;
 };
 
-export const WorkspaceLogo = observer((props: Props) => {
+export const WorkspaceLogo = observer(function WorkspaceLogo(props: Props) {
   // translation
   const { t } = useTranslation();
 
@@ -17,7 +17,7 @@ export const WorkspaceLogo = observer((props: Props) => {
     <div
       className={cn(
         `relative grid h-6 w-6 flex-shrink-0 place-items-center uppercase ${
-          !props.logo && "rounded-md bg-[#026292] text-white"
+          !props.logo && "rounded-md bg-accent-primary text-on-color"
         } ${props.classNames ? props.classNames : ""}`
       )}
     >

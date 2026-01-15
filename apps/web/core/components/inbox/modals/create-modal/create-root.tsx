@@ -1,10 +1,8 @@
-"use client";
-
-import type { FC, FormEvent } from "react";
+import type { FormEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { ETabIndices, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -12,8 +10,6 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
@@ -54,7 +50,7 @@ export const defaultIssueData: Partial<TIssue> = {
   target_date: "",
 };
 
-export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) => {
+export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props: TInboxIssueCreateRoot) {
   const { workspaceSlug, projectId, handleModalClose, isDuplicateModalOpen, handleDuplicateIssueModal } = props;
   // states
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
@@ -172,12 +168,6 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           descriptionEditorRef?.current?.clearEditor();
           setFormData(defaultIssueData);
         }
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.create,
-          payload: {
-            id: res?.issue?.id,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: `Success!`,
@@ -186,13 +176,6 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
       })
       .catch((error) => {
         console.error(error);
-        captureError({
-          eventName: WORK_ITEM_TRACKER_EVENTS.create,
-          payload: {
-            id: formData?.id,
-          },
-          error: error as Error,
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: `Error!`,
@@ -211,9 +194,9 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
     <div className="flex gap-2 bg-transparent w-full">
       <div className="rounded-lg w-full">
         <form ref={formRef} onSubmit={handleFormSubmit} className="flex flex-col w-full">
-          <div className="space-y-5 p-5 rounded-t-lg bg-custom-background-100">
+          <div className="space-y-5 p-5 rounded-t-lg bg-surface-1">
             <div className="flex items-center justify-between gap-2">
-              <h3 className="text-xl font-medium text-custom-text-200">{t("inbox_issue.modal.title")}</h3>
+              <h3 className="text-18 font-medium text-secondary">{t("inbox_issue.modal.title")}</h3>
               {duplicateIssues?.length > 0 && (
                 <DeDupeButtonRoot
                   workspaceSlug={workspaceSlug}
@@ -236,14 +219,14 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
                 data={formData}
                 handleData={handleFormData}
                 editorRef={descriptionEditorRef}
-                containerClassName="border-[0.5px] border-custom-border-200 py-3 min-h-[150px]"
+                containerClassName="bg-layer-2 border-[0.5px] border-subtle-1 py-3 min-h-[150px]"
                 onEnterKeyPress={() => submitBtnRef?.current?.click()}
                 onAssetUpload={(assetId) => setUploadedAssetIds((prev) => [...prev, assetId])}
               />
               <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
             </div>
           </div>
-          <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200 rounded-b-lg bg-custom-background-100">
+          <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle rounded-b-lg bg-surface-1">
             <div
               className="inline-flex items-center gap-1.5 cursor-pointer"
               onClick={() => setCreateMore((prevData) => !prevData)}
@@ -251,12 +234,12 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
               tabIndex={getIndex("create_more")}
             >
               <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
-              <span className="text-xs">{t("create_more")}</span>
+              <span className="text-11">{t("create_more")}</span>
             </div>
             <div className="flex items-center gap-3">
               <Button
-                variant="neutral-primary"
-                size="sm"
+                variant="secondary"
+                size="lg"
                 type="button"
                 onClick={() => {
                   if (descriptionEditorRef.current?.isEditorReadyToDiscard()) {
@@ -276,11 +259,11 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
               <Button
                 variant="primary"
                 ref={submitBtnRef}
-                size="sm"
                 type="submit"
                 loading={formSubmitting}
                 disabled={isTitleLengthMoreThan255Character}
                 tabIndex={getIndex("submit_button")}
+                size="lg"
               >
                 {formSubmitting ? t("creating") : t("create_work_item")}
               </Button>

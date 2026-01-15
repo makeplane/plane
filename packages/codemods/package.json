@@ -1,0 +1,17 @@
+{
+  "name": "@plane/codemods",
+  "version": "1.2.0",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "function-declaration": "jscodeshift -t ./function-declaration.ts --extensions=tsx --parser=tsx ../../apps/*/app ../../apps/*/ce ../../apps/*/core ../../apps/*/ee ../../apps/*/helpers ../../packages/*/src --ignore-pattern='**/node_modules/**' --ignore-pattern='**/dist/**' --ignore-pattern='**/build/**' --ignore-pattern='**/*.d.ts'",
+    "remove-directives": "jscodeshift -t ./remove-directives.ts --extensions=ts,tsx --parser=tsx ../../apps/*/app ../../apps/*/ce ../../apps/*/core ../../apps/*/ee ../../apps/*/helpers ../../apps/*/src ../../packages/*/src --ignore-pattern='**/node_modules/**' --ignore-pattern='**/dist/**' --ignore-pattern='**/build/**' --ignore-pattern='**/*.d.ts'"
+  },
+  "devDependencies": {
+    "@hypermod/utils": "^0.7.1",
+    "@types/jscodeshift": "^17.3.0",
+    "ast-types": "0.14.2",
+    "jscodeshift": "^17.3.0",
+    "vitest": "^4.0.8"
+  }
+}

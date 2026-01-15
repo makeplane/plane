@@ -5,6 +5,71 @@ from django.db.models import Q
 
 # Module imports
 from .project import ProjectBaseModel
+from plane.db.mixins import SoftDeletionManager
+
+class StateGroup(models.TextChoices):
+    BACKLOG = "backlog", "Backlog"
+    UNSTARTED = "unstarted", "Unstarted"
+    STARTED = "started", "Started"
+    COMPLETED = "completed", "Completed"
+    CANCELLED = "cancelled", "Cancelled"
+    TRIAGE = "triage", "Triage"
+
+
+# Default states
+DEFAULT_STATES = [
+    {
+        "name": "Backlog",
+        "color": "#60646C",
+        "sequence": 15000,
+        "group": StateGroup.BACKLOG.value,
+        "default": True,
+    },
+    {
+        "name": "Todo",
+        "color": "#60646C",
+        "sequence": 25000,
+        "group": StateGroup.UNSTARTED.value,
+    },
+    {
+        "name": "In Progress",
+        "color": "#F59E0B",
+        "sequence": 35000,
+        "group": StateGroup.STARTED.value,
+    },
+    {
+        "name": "Done",
+        "color": "#46A758",
+        "sequence": 45000,
+        "group": StateGroup.COMPLETED.value,
+    },
+    {
+        "name": "Cancelled",
+        "color": "#9AA4BC",
+        "sequence": 55000,
+        "group": StateGroup.CANCELLED.value,
+    },
+    {
+        "name": "Triage",
+        "color": "#4E5355",
+        "sequence": 65000,
+        "group": StateGroup.TRIAGE.value,
+    },
+]
+
+
+class StateManager(SoftDeletionManager):
+    """Default manager - excludes triage states"""
+
+    def get_queryset(self):
+        return super().get_queryset().exclude(group=StateGroup.TRIAGE.value)
+
+
+class TriageStateManager(SoftDeletionManager):
+    """Manager for triage states only"""
+
+    def get_queryset(self):
+        return super().get_queryset().filter(group=StateGroup.TRIAGE.value)
 
 
 class State(ProjectBaseModel):
@@ -14,21 +79,18 @@ class State(ProjectBaseModel):
     slug = models.SlugField(max_length=100, blank=True)
     sequence = models.FloatField(default=65535)
     group = models.CharField(
-        choices=(
-            ("backlog", "Backlog"),
-            ("unstarted", "Unstarted"),
-            ("started", "Started"),
-            ("completed", "Completed"),
-            ("cancelled", "Cancelled"),
-            ("triage", "Triage"),
-        ),
-        default="backlog",
+        choices=StateGroup.choices,
+        default=StateGroup.BACKLOG,
         max_length=20,
     )
     is_triage = models.BooleanField(default=False)
     default = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+
+    objects = StateManager()
+    all_state_objects = models.Manager()
+    triage_objects = TriageStateManager()
 
     def __str__(self):
         """Return name of the state"""

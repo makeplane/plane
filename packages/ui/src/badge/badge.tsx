@@ -15,7 +15,7 @@ export interface BadgeProps extends React.ButtonHTMLAttributes<HTMLButtonElement
   children: React.ReactNode;
 }
 
-const Badge = React.forwardRef<HTMLButtonElement, BadgeProps>((props, ref) => {
+const Badge = React.forwardRef(function Badge(props: BadgeProps, ref: React.ForwardedRef<HTMLButtonElement>) {
   const {
     variant = "primary",
     size = "md",

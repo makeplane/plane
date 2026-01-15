@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { CustomSearchSelect } from "@plane/ui";
@@ -18,7 +16,7 @@ type TTimezoneSelect = {
   disabled?: boolean;
 };
 
-export const TimezoneSelect: FC<TTimezoneSelect> = observer((props) => {
+export const TimezoneSelect = observer(function TimezoneSelect(props: TTimezoneSelect) {
   // props
   const {
     value,
@@ -41,9 +39,9 @@ export const TimezoneSelect: FC<TTimezoneSelect> = observer((props) => {
         options={isDisabled || disabled ? [] : timezones}
         onChange={onChange}
         buttonClassName={cn(buttonClassName, {
-          "border-red-500": error,
+          "border-danger-strong": error,
         })}
-        className={cn("rounded-md border-[0.5px] !border-custom-border-200", className)}
+        className={cn("rounded-md border-[0.5px] !border-subtle", className)}
         optionsClassName={cn("w-72", optionsClassName)}
         input
         disabled={isDisabled || disabled}

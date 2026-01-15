@@ -58,7 +58,7 @@ export class ProjectMemberService extends APIService {
       });
   }
 
-  async deleteProjectMember(workspaceSlug: string, projectId: string, memberId: string): Promise<any> {
+  async deleteProjectMember(workspaceSlug: string, projectId: string, memberId: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`)
       .then((response) => response?.data)
       .catch((error) => {

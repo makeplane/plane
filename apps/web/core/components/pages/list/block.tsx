@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
@@ -21,7 +18,7 @@ type TPageListBlock = {
   storeType: EPageStoreType;
 };
 
-export const PageListBlock: FC<TPageListBlock> = observer((props) => {
+export const PageListBlock = observer(function PageListBlock(props: TPageListBlock) {
   const { pageId, storeType } = props;
   // refs
   const parentRef = useRef(null);
@@ -43,7 +40,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
           {logo_props?.in_use ? (
             <Logo logo={logo_props} size={16} type="lucide" />
           ) : (
-            <PageIcon className="h-4 w-4 text-custom-text-300" />
+            <PageIcon className="h-4 w-4 text-tertiary" />
           )}
         </>
       }

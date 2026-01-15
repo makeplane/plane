@@ -1,13 +1,8 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // plane imports
-import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Tooltip } from "@plane/propel/tooltip";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // store
@@ -20,7 +15,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageLockControl = observer(({ page }: Props) => {
+export const PageLockControl = observer(function PageLockControl({ page }: Props) {
   // Initial state: if locked, then "locked", otherwise default to "neutral"
   const [displayState, setDisplayState] = useState<LockDisplayState>(page.is_locked ? "locked" : "neutral");
   // derived values
@@ -81,8 +76,7 @@ export const PageLockControl = observer(({ page }: Props) => {
           <button
             type="button"
             onClick={toggleLock}
-            data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.LOCK_BUTTON}
-            className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors"
+            className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-secondary hover:text-primary hover:bg-layer-1 transition-colors"
             aria-label="Lock"
           >
             <LockKeyhole className="size-3.5" />
@@ -94,12 +88,11 @@ export const PageLockControl = observer(({ page }: Props) => {
         <button
           type="button"
           onClick={toggleLock}
-          data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.LOCK_BUTTON}
-          className="h-6 flex items-center gap-1 px-2 rounded text-custom-primary-100 bg-custom-primary-100/20 hover:bg-custom-primary-100/30 transition-colors"
+          className="h-6 flex items-center gap-1 px-2 rounded-sm text-accent-primary bg-accent-primary/20 hover:bg-accent-primary/30 transition-colors"
           aria-label="Locked"
         >
           <LockKeyhole className="flex-shrink-0 size-3.5 animate-lock-icon" />
-          <span className="text-xs font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out animate-text-slide-in">
+          <span className="text-11 font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out animate-text-slide-in">
             Locked
           </span>
         </button>
@@ -107,11 +100,11 @@ export const PageLockControl = observer(({ page }: Props) => {
 
       {displayState === "unlocked" && (
         <div
-          className="h-6 flex items-center gap-1 px-2 rounded text-custom-text-200 animate-fade-out"
+          className="h-6 flex items-center gap-1 px-2 rounded-sm text-secondary animate-fade-out"
           aria-label="Unlocked"
         >
           <LockKeyholeOpen className="flex-shrink-0 size-3.5 animate-unlock-icon" />
-          <span className="text-xs font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out animate-text-slide-in animate-text-fade-out">
+          <span className="text-11 font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out animate-text-slide-in animate-text-fade-out">
             Unlocked
           </span>
         </div>

@@ -91,7 +91,7 @@ If you would like to _implement_ it, an issue with your proposal must be submitt
 To ensure consistency throughout the source code, please keep these rules in mind as you are working:
 
 - All features or bug fixes must be tested by one or more specs (unit-tests).
-- We use [Eslint default rule guide](https://eslint.org/docs/rules/), with minor changes. An automated formatter is available using prettier.
+- We lint with [ESLint 9](https://eslint.org/docs/latest/) using the shared `eslint.config.mjs` (type-aware via `typescript-eslint`) and format with [Prettier](https://prettier.io/) using `prettier.config.cjs`.
 
 ## Ways to contribute
 
@@ -187,18 +187,19 @@ Adding a new language involves several steps to ensure it integrates seamlessly 
     Add the new language to the TLanguage type in the language definitions file:
 
 ```ts
-      // packages/i18n/src/types/language.ts
-      export type TLanguage = "en" | "fr" | "your-lang";
+// packages/i18n/src/types/language.ts
+export type TLanguage = "en" | "fr" | "your-lang";
 ```
 
 1.  **Add language configuration**
     Include the new language in the list of supported languages:
+
 ```ts
-      // packages/i18n/src/constants/language.ts
-      export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
-      { label: "English", value: "en" },
-      { label: "Your Language", value: "your-lang" }
-      ];
+// packages/i18n/src/constants/language.ts
+export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
+  { label: "English", value: "en" },
+  { label: "Your Language", value: "your-lang" },
+];
 ```
 
 2.  **Create translation files**
@@ -210,6 +211,7 @@ Adding a new language involves several steps to ensure it integrates seamlessly 
 
 3.  **Update import logic**
     Modify the language import logic to include your new language:
+
 ```ts
       private importLanguageFile(language: TLanguage): Promise<any> {
       switch (language) {

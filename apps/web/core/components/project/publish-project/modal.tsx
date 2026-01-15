@@ -1,13 +1,12 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { Check, ExternalLink, Globe2 } from "lucide-react";
+
 // types
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { GlobeIcon, NewTabIcon, CheckIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
@@ -42,7 +41,7 @@ const VIEW_OPTIONS: {
   { key: "kanban", label: "Kanban" },
 ];
 
-export const PublishProjectModal: React.FC<Props> = observer((props) => {
+export const PublishProjectModal = observer(function PublishProjectModal(props: Props) {
   const { isOpen, onClose, projectId } = props;
   // states
   const [isUnPublishing, setIsUnPublishing] = useState(false);
@@ -175,9 +174,14 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="flex items-center justify-between gap-2 p-5">
-          <h5 className="text-xl font-medium text-custom-text-200">Publish project</h5>
+          <h5 className="text-18 font-medium text-secondary">Publish project</h5>
           {isProjectPublished && (
-            <Button variant="danger" onClick={() => handleUnPublishProject(watch("id") ?? "")} loading={isUnPublishing}>
+            <Button
+              variant="error-fill"
+              size="lg"
+              onClick={() => handleUnPublishProject(watch("id") ?? "")}
+              loading={isUnPublishing}
+            >
               {isUnPublishing ? "Unpublishing" : "Unpublish"}
             </Button>
           )}
@@ -195,10 +199,10 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
           <div className="px-5 space-y-4">
             {isProjectPublished && projectPublishSettings && (
               <>
-                <div className="bg-custom-background-80 border border-custom-border-300 rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
+                <div className="border border-strong rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
                   <a
                     href={publishLink}
-                    className="text-sm text-custom-text-200 truncate"
+                    className="text-13 text-secondary truncate"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -207,25 +211,25 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                   <div className="flex-shrink-0 flex items-center gap-1">
                     <a
                       href={publishLink}
-                      className="size-8 grid place-items-center bg-custom-background-90 hover:bg-custom-background-100 rounded"
+                      className="size-8 grid place-items-center bg-layer-3 hover:bg-layer-3-hover rounded-sm"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <ExternalLink className="size-4" />
+                      <NewTabIcon className="size-4" />
                     </a>
                     <button
                       type="button"
-                      className="h-8 bg-custom-background-90 hover:bg-custom-background-100 rounded text-xs font-medium py-2 px-3"
+                      className="h-8 bg-layer-3 hover:bg-layer-3-hover rounded-sm text-11 font-medium py-2 px-3"
                       onClick={handleCopyLink}
                     >
                       Copy link
                     </button>
                   </div>
                 </div>
-                <p className="text-sm font-medium text-custom-primary-100 flex items-center gap-1 mt-3">
+                <p className="text-13 font-medium text-accent-primary flex items-center gap-1 mt-3">
                   <span className="relative grid place-items-center size-2.5">
-                    <span className="animate-ping absolute inline-flex size-full rounded-full bg-custom-primary-100 opacity-75" />
-                    <span className="relative inline-flex rounded-full size-1.5 bg-custom-primary-100" />
+                    <span className="animate-ping absolute inline-flex size-full rounded-full bg-accent-primary opacity-75" />
+                    <span className="relative inline-flex rounded-full size-1.5 bg-accent-primary" />
                   </span>
                   This project is now live on web
                 </p>
@@ -233,7 +237,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
             )}
             <div className="space-y-4">
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-sm">Views</div>
+                <div className="text-13">Views</div>
                 <Controller
                   control={control}
                   name="view_props"
@@ -260,7 +264,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                           className="flex items-center justify-between gap-2"
                         >
                           {option.label}
-                          {selectedLayouts.includes(option.key) && <Check className="size-3.5 flex-shrink-0" />}
+                          {selectedLayouts.includes(option.key) && <CheckIcon className="size-3.5 flex-shrink-0" />}
                         </CustomSelect.Option>
                       ))}
                     </CustomSelect>
@@ -268,7 +272,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-sm">Allow comments</div>
+                <div className="text-13">Allow comments</div>
                 <Controller
                   control={control}
                   name="is_comments_enabled"
@@ -278,7 +282,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-sm">Allow reactions</div>
+                <div className="text-13">Allow reactions</div>
                 <Controller
                   control={control}
                   name="is_reactions_enabled"
@@ -288,7 +292,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                 />
               </div>
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-sm">Allow voting</div>
+                <div className="text-13">Allow voting</div>
                 <Controller
                   control={control}
                   name="is_votes_enabled"
@@ -302,24 +306,24 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
         )}
 
         {/* modal handlers */}
-        <div className="relative flex items-center justify-between border-t border-custom-border-200 px-5 py-4 mt-4">
-          <div className="flex items-center gap-1 text-sm text-custom-text-400">
-            <Globe2 className="size-3.5" />
-            <div className="text-sm">Anyone with the link can access</div>
+        <div className="relative flex items-center justify-between border-t border-subtle px-5 py-4 mt-4">
+          <div className="flex items-center gap-1 text-13 text-placeholder">
+            <GlobeIcon className="size-3.5" />
+            <div className="text-13">Anyone with the link can access</div>
           </div>
           {!fetchSettingsLoader && (
             <div className="relative flex items-center gap-2">
-              <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+              <Button variant="secondary" size="lg" onClick={handleClose}>
                 Cancel
               </Button>
               {isProjectPublished ? (
                 isDirty && (
-                  <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+                  <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
                     {isSubmitting ? "Updating" : "Update settings"}
                   </Button>
                 )
               ) : (
-                <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+                <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
                   {isSubmitting ? "Publishing" : "Publish"}
                 </Button>
               )}

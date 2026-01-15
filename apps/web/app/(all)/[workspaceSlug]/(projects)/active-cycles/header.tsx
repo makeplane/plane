@@ -1,4 +1,3 @@
-"use client";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -9,7 +8,7 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 
-export const WorkspaceActiveCycleHeader = observer(() => {
+export const WorkspaceActiveCycleHeader = observer(function WorkspaceActiveCycleHeader() {
   const { t } = useTranslation();
   return (
     <Header>
@@ -19,7 +18,7 @@ export const WorkspaceActiveCycleHeader = observer(() => {
             component={
               <BreadcrumbLink
                 label={t("active_cycles")}
-                icon={<CycleIcon className="h-4 w-4 text-custom-text-300 rotate-180" />}
+                icon={<CycleIcon className="h-4 w-4 text-tertiary rotate-180" />}
               />
             }
           />

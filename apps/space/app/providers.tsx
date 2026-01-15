@@ -1,5 +1,3 @@
-"use client";
-
 import { ThemeProvider } from "next-themes";
 // components
 import { TranslationProvider } from "@plane/i18n";

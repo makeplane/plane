@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -46,7 +44,7 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
     storeType,
   });
   const { getWorkspaceBySlug } = useWorkspace();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // derived values
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug)?.id ?? "") : "";
   const { canCurrentUserAccessPage, id, name, updateDescription } = page ?? {};
@@ -115,11 +113,21 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
           });
           return asset_id;
         },
+        duplicateFile: async (assetId: string) => {
+          const { asset_id } = await duplicateEditorAsset({
+            assetId,
+            entityId: id,
+            entityType: EFileAssetType.PAGE_DESCRIPTION,
+            projectId,
+            workspaceSlug,
+          });
+          return asset_id;
+        },
         workspaceId,
         workspaceSlug,
       }),
     }),
-    [getEditorFileHandlers, id, uploadEditorAsset, projectId, workspaceId, workspaceSlug]
+    [getEditorFileHandlers, projectId, workspaceId, workspaceSlug, uploadEditorAsset, id, duplicateEditorAsset]
   );
 
   const webhookConnectionParams: TWebhookConnectionQueryParams = useMemo(
@@ -147,13 +155,13 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
   if (pageDetailsError || !canCurrentUserAccessPage)
     return (
       <div className="h-full w-full flex flex-col items-center justify-center">
-        <h3 className="text-lg font-semibold text-center">Page not found</h3>
-        <p className="text-sm text-custom-text-200 text-center mt-3">
+        <h3 className="text-16 font-semibold text-center">Page not found</h3>
+        <p className="text-13 text-secondary text-center mt-3">
           The page you are trying to access doesn{"'"}t exist or you don{"'"}t have permission to view it.
         </p>
         <Link
           href={`/${workspaceSlug}/projects/${projectId}/pages`}
-          className={cn(getButtonStyling("neutral-primary", "md"), "mt-5")}
+          className={cn(getButtonStyling("secondary", "base"), "mt-5")}
         >
           View other Pages
         </Link>

@@ -1,10 +1,10 @@
-"use client";
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
-// plane imports
+
 import { useTranslation } from "@plane/i18n";
+import { PlusIcon } from "@plane/propel/icons";
+// plane imports
 import type { TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
@@ -20,7 +20,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const RelationActionButton: FC<Props> = observer((props) => {
+export const RelationActionButton = observer(function RelationActionButton(props: Props) {
   const { customButton, issueId, disabled = false, issueServiceType } = props;
   const { t } = useTranslation();
   // store hooks
@@ -35,7 +35,7 @@ export const RelationActionButton: FC<Props> = observer((props) => {
   };
 
   // button element
-  const customButtonElement = customButton ? <>{customButton}</> : <Plus className="h-4 w-4" />;
+  const customButtonElement = customButton ? <>{customButton}</> : <PlusIcon className="h-4 w-4" />;
 
   return (
     <CustomMenu
@@ -52,7 +52,7 @@ export const RelationActionButton: FC<Props> = observer((props) => {
           <CustomMenu.MenuItem
             key={index}
             onClick={() => {
-              handleOnClick(item.key as TIssueRelationTypes);
+              handleOnClick(item.key);
             }}
           >
             <div className="flex items-center gap-2">

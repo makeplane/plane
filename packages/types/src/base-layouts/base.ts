@@ -79,8 +79,7 @@ export interface IBaseLayoutsBaseProps<T extends IBaseLayoutsBaseItem> extends I
 // Group Props
 
 export interface IBaseLayoutsBaseGroupProps<T extends IBaseLayoutsBaseItem>
-  extends IDragDropHandlers<T>,
-    IRenderProps<T> {
+  extends IDragDropHandlers<T>, IRenderProps<T> {
   group: IBaseLayoutsBaseGroup;
   itemIds: string[];
   items: Record<string, T>;
@@ -92,8 +91,7 @@ export interface IBaseLayoutsBaseGroupProps<T extends IBaseLayoutsBaseItem>
 // Item Props
 
 export interface IBaseLayoutsBaseItemProps<T extends IBaseLayoutsBaseItem>
-  extends IDragDropHandlers<T>,
-    IItemRenderProps<T> {
+  extends IDragDropHandlers<T>, IItemRenderProps<T> {
   item: T;
   index: number;
   groupId: string;

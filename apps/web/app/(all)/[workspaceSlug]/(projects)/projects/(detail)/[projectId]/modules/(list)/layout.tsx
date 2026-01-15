@@ -1,5 +1,3 @@
-"use client";
-
 import { Outlet } from "react-router";
 // components
 import { AppHeader } from "@/components/core/app-header";

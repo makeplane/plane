@@ -1,10 +1,8 @@
-"use client";
-
-import type { FC } from "react";
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { Pencil, ExternalLink, Link, Trash2 } from "lucide-react";
+
 import { useTranslation } from "@plane/i18n";
+import { LinkIcon, NewTabIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { LinkItemBlock } from "@plane/ui";
@@ -20,7 +18,7 @@ export type TProjectLinkDetail = {
   linkOperations: TLinkOperations;
 };
 
-export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
+export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TProjectLinkDetail) {
   // props
   const { linkId, linkOperations } = props;
   // hooks
@@ -30,8 +28,7 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
   const { t } = useTranslation();
   // derived values
   const linkDetail = getLinkById(linkId);
-
-  if (!linkDetail) return null;
+  const linkUrl = linkDetail?.url;
 
   // handlers
   const handleEdit = useCallback(
@@ -43,18 +40,19 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
   );
 
   const handleCopyText = useCallback(() => {
-    copyTextToClipboard(linkDetail.url).then(() => {
+    if (!linkUrl) return;
+    copyTextToClipboard(linkUrl).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("link_copied"),
         message: t("view_link_copied_to_clipboard"),
       });
     });
-  }, [linkDetail.url, t]);
+  }, [linkUrl, t]);
 
   const handleOpenInNewTab = useCallback(() => {
-    window.open(linkDetail.url, "_blank", "noopener,noreferrer");
-  }, [linkDetail.url]);
+    window.open(linkUrl, "_blank", "noopener,noreferrer");
+  }, [linkUrl]);
 
   const handleDelete = useCallback(() => {
     linkOperations.remove(linkId);
@@ -67,29 +65,31 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
         key: "edit",
         action: () => handleEdit(true),
         title: t("edit"),
-        icon: Pencil,
+        icon: EditIcon,
       },
       {
         key: "open-new-tab",
         action: handleOpenInNewTab,
         title: t("open_in_new_tab"),
-        icon: ExternalLink,
+        icon: NewTabIcon,
       },
       {
         key: "copy-link",
         action: handleCopyText,
         title: t("copy_link"),
-        icon: Link,
+        icon: LinkIcon,
       },
       {
         key: "delete",
         action: handleDelete,
         title: t("delete"),
-        icon: Trash2,
+        icon: TrashIcon,
       },
     ],
     [handleEdit, handleOpenInNewTab, handleCopyText, handleDelete, t]
   );
+
+  if (!linkDetail) return null;
 
   return (
     <LinkItemBlock
