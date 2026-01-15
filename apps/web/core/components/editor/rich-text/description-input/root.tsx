@@ -22,6 +22,7 @@ const workspaceService = new WorkspaceService();
 type TFormData = {
   id: string;
   description_html: string;
+  description_json?: object;
   isMigrationUpdate: boolean;
 };
 
@@ -57,7 +58,13 @@ type Props = {
   /**
    * @description Submit handler, the actual function which will be called when the form is submitted
    */
-  onSubmit: (value: string, isMigrationUpdate?: boolean) => Promise<void>;
+  onSubmit: (
+    value: {
+      description_html: string;
+      description_json: object | undefined;
+    },
+    isMigrationUpdate?: boolean
+  ) => Promise<void>;
   /**
    * @description Placeholder, if not provided, the placeholder will be the default placeholder
    */
@@ -97,13 +104,13 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
     entityId,
     fileAssetType,
     initialValue,
+    issueSequenceId,
     onSubmit,
     placeholder,
     projectId,
     setIsSubmitting,
     swrDescription,
     workspaceSlug,
-    issueSequenceId,
   } = props;
   // states
   const [localDescription, setLocalDescription] = useState<TFormData>({
@@ -132,7 +139,13 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
   // submit handler
   const handleDescriptionFormSubmit = useCallback(
     async (formData: TFormData) => {
-      await onSubmit(formData.description_html, formData.isMigrationUpdate);
+      await onSubmit(
+        {
+          description_html: formData.description_html,
+          description_json: formData.description_json,
+        },
+        formData.isMigrationUpdate
+      );
     },
     [onSubmit]
   );
@@ -203,7 +216,6 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
               editable={!disabled}
               ref={editorRef}
               id={entityId}
-              issueSequenceId={issueSequenceId}
               disabledExtensions={disabledExtensions}
               initialValue={localDescription.description_html ?? "<p></p>"}
               value={swrDescription ?? null}
@@ -211,10 +223,11 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
               workspaceId={workspaceDetails.id}
               projectId={projectId}
               dragDropEnabled
-              onChange={(_description, description_html, options) => {
+              onChange={(description_json, description_html, options) => {
                 setIsSubmitting("submitting");
                 onChange(description_html);
                 setValue("isMigrationUpdate", options?.isMigrationUpdate ?? false);
+                setValue("description_json", description_json);
                 hasUnsavedChanges.current = true;
                 debouncedFormSave();
               }}
