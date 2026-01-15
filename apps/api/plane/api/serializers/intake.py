@@ -19,7 +19,7 @@ class IssueForIntakeSerializer(BaseSerializer):
         model = Issue
         fields = [
             "name",
-            "description",  # Depricated
+            "description",  # Deprecated
             "description_json",
             "description_html",
             "priority",
