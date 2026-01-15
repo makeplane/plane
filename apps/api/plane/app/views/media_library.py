@@ -470,7 +470,10 @@ class MediaArtifactsListAPIView(BaseAPIView):
                         "path": thumbnail_relative_path,
                         "link": primary_artifact_name,
                         "action": "preview",
-                        "meta": {"source": "generated"},
+                        "meta": {
+                            "category": meta.get("category") if isinstance(meta, dict) and meta.get("category") else "Uploads",
+                            "source": "generated",
+                        },
                         "created_at": primary_created_at,
                         "updated_at": primary_updated_at,
                     }

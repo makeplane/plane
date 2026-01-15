@@ -232,7 +232,7 @@ export const mapArtifactsToMediaItems = (
     const views = getMetaNumber(meta, ["views"], 0);
     const duration = getMetaDuration(meta, ["duration"], "");
 
-    const primaryTag = getMetaString(meta, ["category", "sport", "program"], "Library");
+    const primaryTag = getMetaString(meta, ["category", "sport", "program"], "Uploads");
     const linkValue = artifact.link ?? getMetaString(meta, ["for"], "");
     const linkTarget = linkValue ? normalizeKey(linkValue) : "";
     const linkFormat = getFormatFromPath(linkValue);
@@ -241,9 +241,9 @@ export const mapArtifactsToMediaItems = (
     const metaSource = getMetaString(meta, ["source"], "").toLowerCase();
     const inferredLinkedMediaType =
       normalizedAction === "play" ||
-      normalizedAction === "preview" ||
-      normalizedAction === "play_hls" ||
-      normalizedAction === "open_mp4"
+        normalizedAction === "preview" ||
+        normalizedAction === "play_hls" ||
+        normalizedAction === "open_mp4"
         ? "video"
         : normalizedAction === "view" || normalizedAction === "open_image"
           ? "image"
