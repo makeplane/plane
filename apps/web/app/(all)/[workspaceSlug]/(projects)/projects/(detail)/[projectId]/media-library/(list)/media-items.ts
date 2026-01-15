@@ -53,6 +53,16 @@ const IMAGE_FORMATS = new Set([
   "heif",
   "thumbnail",
 ]);
+const GENERIC_FORMAT_VALUES = new Set(["application/octet-stream", "application", "video", "image", "binary", "octet-stream"]);
+const FORMAT_OVERRIDES: Record<string, string> = {
+  "application/vnd.apple.mpegurl": "m3u8",
+  "application/x-mpegurl": "m3u8",
+  "video/quicktime": "mov",
+  "video/x-msvideo": "avi",
+  "video/x-matroska": "mkv",
+  "image/svg+xml": "svg",
+};
+const VIDEO_ACTIONS = new Set(["play", "play_hls", "open_mp4"]);
 const DOCUMENT_THUMBNAILS: Record<string, string> = {
   pdf: "attachment/pdf-icon.png",
   doc: "attachment/doc-icon.png",
@@ -159,9 +169,47 @@ const getFormatFromPath = (value?: string) => {
   return fileName.slice(dotIndex + 1).toLowerCase();
 };
 
-const getMediaType = (format: string): TMediaItem["mediaType"] => {
+const inferFormatFromPaths = (...paths: Array<string | null | undefined>) => {
+  for (const path of paths) {
+    if (!path) continue;
+    const inferred = getFormatFromPath(path);
+    if (inferred) return inferred;
+  }
+  return "";
+};
+
+const normalizeFormat = (value: string | null | undefined, ...fallbackPaths: Array<string | null | undefined>) => {
+  const rawValue = (value ?? "").trim().toLowerCase();
+  const cleaned = rawValue.replace(/^\./, "");
+  if (cleaned) {
+    const override = FORMAT_OVERRIDES[cleaned];
+    if (override) return override;
+    if (GENERIC_FORMAT_VALUES.has(cleaned)) {
+      return inferFormatFromPaths(...fallbackPaths);
+    }
+    if (cleaned.includes("/")) {
+      const [, subtype = ""] = cleaned.split("/");
+      if (subtype === "vnd.apple.mpegurl" || subtype === "x-mpegurl" || subtype === "mpegurl") return "m3u8";
+      if (subtype === "quicktime") return "mov";
+      if (subtype === "x-matroska") return "mkv";
+      if (subtype === "x-msvideo") return "avi";
+      if (subtype === "svg+xml") return "svg";
+      return subtype.replace(/^x-/, "");
+    }
+    return cleaned;
+  }
+  return inferFormatFromPaths(...fallbackPaths);
+};
+
+const getMediaType = (format: string, rawFormat = "", action = ""): TMediaItem["mediaType"] => {
   if (VIDEO_FORMATS.has(format)) return "video";
   if (IMAGE_FORMATS.has(format)) return "image";
+  const normalizedRaw = rawFormat.trim().toLowerCase();
+  if (normalizedRaw.startsWith("video/") || normalizedRaw === "video" || normalizedRaw.includes("mpegurl")) {
+    return "video";
+  }
+  if (normalizedRaw.startsWith("image/") || normalizedRaw === "image") return "image";
+  if (VIDEO_ACTIONS.has(action.trim().toLowerCase())) return "video";
   return "document";
 };
 
@@ -173,12 +221,7 @@ export const getDocumentThumbnailPath = (format?: string) => {
 export const resolveMediaItemActionHref = (item: TMediaItem) => {
   const action = (item.action ?? "").toLowerCase();
 
-  if (action === "play_hls" && item.videoSrc) {
-    return `/player?src=${encodeURIComponent(item.videoSrc)}&type=m3u8`;
-  }
-  if (action === "open_mp4" && item.videoSrc) {
-    return `/player?src=${encodeURIComponent(item.videoSrc)}&type=mp4`;
-  }
+  if (item.mediaType === "video" || VIDEO_ACTIONS.has(action)) return null;
   if (action === "open_pdf" && item.fileSrc) {
     return `/viewer?src=${encodeURIComponent(item.fileSrc)}&type=pdf`;
   }
@@ -200,9 +243,13 @@ export const mapArtifactsToMediaItems = (
   const normalizeKey = (value: string) => value.trim().toLowerCase();
 
   for (const artifact of artifacts) {
-    const format = (artifact.format ?? "").toLowerCase();
+    const rawFormat = artifact.format ?? "";
+    const normalizedAction = (artifact.action ?? "").toLowerCase();
+    const actionFormat =
+      normalizedAction === "play_hls" ? "m3u8" : normalizedAction === "open_mp4" ? "mp4" : "";
+    const format = normalizeFormat(rawFormat, artifact.path, artifact.name, artifact.link) || actionFormat;
     if (artifact.name) {
-      mediaTypeByName.set(normalizeKey(artifact.name), getMediaType(format));
+      mediaTypeByName.set(normalizeKey(artifact.name), getMediaType(format, rawFormat, artifact.action ?? ""));
     }
     if (!artifact.link || !IMAGE_FORMATS.has(format)) continue;
     const isPreview = artifact.action === "preview" || format === "thumbnail";
@@ -221,8 +268,12 @@ export const mapArtifactsToMediaItems = (
   });
 
   return sortedArtifacts.map((artifact) => {
-    const format = (artifact.format ?? "").toLowerCase();
-    const mediaType = getMediaType(format);
+    const rawFormat = artifact.format ?? "";
+    const normalizedAction = (artifact.action ?? "").toLowerCase();
+    const actionFormat =
+      normalizedAction === "play_hls" ? "m3u8" : normalizedAction === "open_mp4" ? "mp4" : "";
+    const format = normalizeFormat(rawFormat, artifact.path, artifact.name, artifact.link) || actionFormat;
+    const mediaType = getMediaType(format, rawFormat, artifact.action ?? "");
     const meta = getMetaObject(artifact.meta);
     const linkedArtifact = artifact.link ? artifactByName.get(artifact.link) : undefined;
     const displayTitle =
@@ -236,7 +287,6 @@ export const mapArtifactsToMediaItems = (
     const linkValue = artifact.link ?? getMetaString(meta, ["for"], "");
     const linkTarget = linkValue ? normalizeKey(linkValue) : "";
     const linkFormat = getFormatFromPath(linkValue);
-    const normalizedAction = (artifact.action ?? "").toLowerCase();
     const metaKind = getMetaString(meta, ["kind"], "").toLowerCase();
     const metaSource = getMetaString(meta, ["source"], "").toLowerCase();
     const inferredLinkedMediaType =

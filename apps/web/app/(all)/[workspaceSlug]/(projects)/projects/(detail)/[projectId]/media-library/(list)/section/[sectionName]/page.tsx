@@ -153,9 +153,15 @@ export default function MediaLibrarySectionPage() {
       {viewMode === "list" ? (
         <MediaListView sections={[section]} getItemHref={getItemHref} />
       ) : (
-        <div className="flex flex-wrap gap-4">
+        <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(240px,1fr))]">
           {section.items.map((item) => (
-            <MediaCard key={`${section.title}-${item.id}`} item={item} href={getItemHref(item)} forceThumbnail />
+            <MediaCard
+              key={`${section.title}-${item.id}`}
+              item={item}
+              href={getItemHref(item)}
+              forceThumbnail
+              className="w-full sm:w-full md:w-full lg:w-full xl:w-full"
+            />
           ))}
         </div>
       )}

@@ -70,6 +70,18 @@ const DOCUMENT_PREVIEW_STYLE = `
 </style>
 `;
 
+const getVideoMimeType = (format: string) => {
+  const normalized = format.toLowerCase();
+  if (normalized === "mp4" || normalized === "m4v") return "video/mp4";
+  if (normalized === "m3u8") return "application/x-mpegURL";
+  if (normalized === "mov") return "video/quicktime";
+  if (normalized === "webm") return "video/webm";
+  if (normalized === "avi") return "video/x-msvideo";
+  if (normalized === "mkv") return "video/x-matroska";
+  if (normalized === "mpeg" || normalized === "mpg") return "video/mpeg";
+  return "";
+};
+
 const MediaDetailPage = () => {
   const { mediaId, workspaceSlug, projectId } = useParams() as {
     mediaId: string;
@@ -93,15 +105,14 @@ const MediaDetailPage = () => {
     const normalizedId = decodeURIComponent(mediaId);
     return libraryItems.find((entry) => entry.id === normalizedId) ?? null;
   }, [libraryItems, mediaId]);
-  const isHls = item?.mediaType === "video" && item?.format?.toLowerCase() === "m3u8";
   const documentFormat = item?.format?.toLowerCase() ?? "";
+  const isHls = item?.mediaType === "video" && documentFormat === "m3u8";
   const isPdf = item?.mediaType === "document" && documentFormat === "pdf";
   const isTextDocument =
     item?.mediaType === "document" &&
     new Set(["txt", "csv", "json", "md", "log", "yaml", "yml", "xml"]).has(documentFormat);
   const isDocx = item?.mediaType === "document" && documentFormat === "docx";
-  const isXlsx =
-    item?.mediaType === "document" && new Set(["xlsx", "xls"]).has(documentFormat);
+  const isXlsx = item?.mediaType === "document" && new Set(["xlsx", "xls"]).has(documentFormat);
   const isPptx = item?.mediaType === "document" && documentFormat === "pptx";
   const isBinaryDocument = item?.mediaType === "document" && !isTextDocument;
 
@@ -182,8 +193,7 @@ const MediaDetailPage = () => {
         }
         if (isDocx) {
           const mammothModule = await import("mammoth");
-          const convertToHtml =
-            mammothModule.convertToHtml ?? mammothModule.default?.convertToHtml;
+          const convertToHtml = mammothModule.convertToHtml ?? mammothModule.default?.convertToHtml;
           if (!convertToHtml) throw new Error("Document preview is unavailable.");
           const arrayBuffer = await blob.arrayBuffer();
           const result = await convertToHtml({ arrayBuffer });
@@ -242,6 +252,8 @@ const MediaDetailPage = () => {
   const durationLabel = formatMetaValue(meta.duration ?? item.duration);
   const durationSecLabel = formatMetaValue(meta.duration_sec ?? meta.durationSec);
 
+  console.log("Rendering MediaDetailPage for item:", item.videoSrc);
+
   return (
     <div className="flex flex-col gap-6 px-3 py-3">
       <div className="flex items-center justify-between gap-4">
@@ -288,7 +300,7 @@ const MediaDetailPage = () => {
                 />
               ) : (
                 <video ref={videoRef} controls poster={item.thumbnail} className="h-full w-full object-contain">
-                  <source src={item.videoSrc ?? ""} type="video/mp4" />
+                  <source src={item.videoSrc ?? ""} type={getVideoMimeType(documentFormat) || undefined} />
                 </video>
               )}
             </div>
@@ -333,11 +345,7 @@ const MediaDetailPage = () => {
                       />
                     </div>
                   ) : documentPreviewUrl ? (
-                    <iframe
-                      src={documentPreviewUrl}
-                      title={item.title}
-                      className="h-full w-full rounded-lg bg-white"
-                    />
+                    <iframe src={documentPreviewUrl} title={item.title} className="h-full w-full rounded-lg bg-white" />
                   ) : (
                     <div className="flex h-full items-center justify-center text-xs text-custom-text-300">
                       No preview available for this file.
@@ -358,11 +366,7 @@ const MediaDetailPage = () => {
                   )}
                 </div>
               ) : item.fileSrc ? (
-                <iframe
-                  src={item.fileSrc}
-                  title={item.title}
-                  className="h-[505px] w-full rounded-lg bg-white"
-                />
+                <iframe src={item.fileSrc} title={item.title} className="h-[505px] w-full rounded-lg bg-white" />
               ) : (
                 <div className="flex h-80 flex-col items-center justify-center gap-3 rounded-lg text-custom-text-300">
                   <div className="flex flex-col items-center gap-2 text-sm">
