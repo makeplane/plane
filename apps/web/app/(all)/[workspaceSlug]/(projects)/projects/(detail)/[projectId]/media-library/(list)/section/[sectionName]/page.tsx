@@ -101,7 +101,7 @@ export default function MediaLibrarySectionPage() {
     ) : (
       <div className="flex flex-col gap-6 p-3 animate-pulse">
         <div className="h-4 w-32 rounded bg-custom-background-90" />
-        <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, cardIndex) => (
             <div
               key={`section-skeleton-card-${cardIndex}`}
@@ -148,15 +148,9 @@ export default function MediaLibrarySectionPage() {
       {viewMode === "list" ? (
         <MediaListView sections={[section]} getItemHref={getItemHref} />
       ) : (
-        <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <div className="flex flex-wrap gap-4">
           {section.items.map((item) => (
-            <MediaCard
-              key={`${section.title}-${item.id}`}
-              item={item}
-              href={getItemHref(item)}
-              forceThumbnail
-              className="w-full"
-            />
+            <MediaCard key={`${section.title}-${item.id}`} item={item} href={getItemHref(item)} forceThumbnail />
           ))}
         </div>
       )}
