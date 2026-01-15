@@ -138,7 +138,7 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
           <input
             type="text"
             placeholder="Search media"
-            className="h-8 w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-8 text-center text-xs text-custom-text-100 placeholder:text-custom-text-300 focus:outline-none"
+            className="h-8 w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-8 text-left text-xs text-custom-text-100 placeholder:text-custom-text-300 focus:outline-none"
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
