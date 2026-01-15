@@ -5,6 +5,13 @@ from django.utils.dateparse import parse_datetime
 from rest_framework import serializers
 
 MEDIA_LIBRARY_FORMAT_CHOICES = (
+    "mov",
+    "webm",
+    "avi",
+    "mkv",
+    "mpeg",
+    "mpg",
+    "m4v",
     "mp4",
     "m3u8",
     "json",
@@ -17,6 +24,14 @@ MEDIA_LIBRARY_FORMAT_CHOICES = (
     "jpeg",
     "png",
     "svg",
+    "webp",
+    "gif",
+    "bmp",
+    "tif",
+    "tiff",
+    "avif",
+    "heic",
+    "heif",
     "thumbnail",
     "txt",
 )
