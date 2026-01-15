@@ -425,7 +425,7 @@ const MediaDetailPage = () => {
             >
               Details
             </button>
-            <button
+            {/* <button
               type="button"
               onClick={() => setActiveTab("tags")}
               className={`rounded-full px-3 py-1 ${
@@ -435,7 +435,7 @@ const MediaDetailPage = () => {
               }`}
             >
               Tags
-            </button>
+            </button> */}
           </div>
 
           {activeTab === "details" ? (
