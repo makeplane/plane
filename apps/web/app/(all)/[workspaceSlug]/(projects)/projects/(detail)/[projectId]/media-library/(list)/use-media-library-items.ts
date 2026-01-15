@@ -39,6 +39,10 @@ export const useMediaLibraryItems = (
   const queryParam = options?.query?.trim() ?? "";
   const formatsParam = options?.formats?.trim() ?? "";
   const sectionParam = options?.section?.trim() ?? "";
+  const desiredFormats = useMemo(
+    () => formatsParam.split(",").map((entry) => entry.trim().toLowerCase()).filter(Boolean),
+    [formatsParam]
+  );
 
   useEffect(() => {
     if (!workspaceSlug || !projectId) return;
@@ -56,11 +60,17 @@ export const useMediaLibraryItems = (
         const params: Record<string, string> = {};
         if (queryParam) params.q = queryParam;
         if (filtersParam) params.filters = filtersParam;
-        if (formatsParam) params.formats = formatsParam;
+        if (formatsParam && !desiredFormats.includes("thumbnail")) {
+          params.formats = formatsParam;
+        }
         if (sectionParam) params.section = sectionParam;
         const artifacts = await mediaLibraryService.getArtifacts(workspaceSlug, projectId, packageId, params);
         if (isMounted) {
-          setItems(mapArtifactsToMediaItems(artifacts, { workspaceSlug, projectId, packageId }));
+          const mappedItems = mapArtifactsToMediaItems(artifacts, { workspaceSlug, projectId, packageId });
+          const filteredItems = desiredFormats.length
+            ? mappedItems.filter((item) => desiredFormats.includes(item.format))
+            : mappedItems;
+          setItems(filteredItems);
         }
       } catch {
         if (isMounted) setItems([]);

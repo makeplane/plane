@@ -37,8 +37,22 @@ type TArtifactContext = {
   packageId: string;
 };
 
-const VIDEO_FORMATS = new Set(["mp4", "m3u8"]);
-const IMAGE_FORMATS = new Set(["jpg", "jpeg", "png", "svg", "thumbnail"]);
+const VIDEO_FORMATS = new Set(["mp4", "m3u8", "mov", "webm", "avi", "mkv", "mpeg", "mpg", "m4v"]);
+const IMAGE_FORMATS = new Set([
+  "jpg",
+  "jpeg",
+  "png",
+  "svg",
+  "webp",
+  "gif",
+  "bmp",
+  "tif",
+  "tiff",
+  "avif",
+  "heic",
+  "heif",
+  "thumbnail",
+]);
 const DOCUMENT_THUMBNAILS: Record<string, string> = {
   pdf: "attachment/pdf-icon.png",
   doc: "attachment/doc-icon.png",
@@ -135,6 +149,16 @@ const getMetaDuration = (meta: Record<string, unknown>, keys: string[], fallback
   return fallback;
 };
 
+const getFormatFromPath = (value?: string) => {
+  const rawValue = value?.trim();
+  if (!rawValue) return "";
+  const withoutQuery = rawValue.split("?")[0].split("#")[0];
+  const fileName = withoutQuery.split("/").pop() ?? "";
+  const dotIndex = fileName.lastIndexOf(".");
+  if (dotIndex <= 0 || dotIndex === fileName.length - 1) return "";
+  return fileName.slice(dotIndex + 1).toLowerCase();
+};
+
 const getMediaType = (format: string): TMediaItem["mediaType"] => {
   if (VIDEO_FORMATS.has(format)) return "video";
   if (IMAGE_FORMATS.has(format)) return "image";
@@ -209,13 +233,29 @@ export const mapArtifactsToMediaItems = (
     const duration = getMetaDuration(meta, ["duration"], "");
 
     const primaryTag = getMetaString(meta, ["category", "sport", "program"], "Library");
-    const linkTarget = artifact.link
-      ? normalizeKey(artifact.link)
-      : normalizeKey(getMetaString(meta, ["for"], ""));
+    const linkValue = artifact.link ?? getMetaString(meta, ["for"], "");
+    const linkTarget = linkValue ? normalizeKey(linkValue) : "";
+    const linkFormat = getFormatFromPath(linkValue);
+    const normalizedAction = (artifact.action ?? "").toLowerCase();
+    const metaKind = getMetaString(meta, ["kind"], "").toLowerCase();
+    const metaSource = getMetaString(meta, ["source"], "").toLowerCase();
     const inferredLinkedMediaType =
-      artifact.action === "play" ? "video" : artifact.action === "view" ? "image" : "document";
+      normalizedAction === "play" ||
+      normalizedAction === "preview" ||
+      normalizedAction === "play_hls" ||
+      normalizedAction === "open_mp4"
+        ? "video"
+        : normalizedAction === "view" || normalizedAction === "open_image"
+          ? "image"
+          : format === "thumbnail" && metaKind === "thumbnail"
+            ? "document"
+            : format === "thumbnail" && metaSource === "generated"
+              ? "video"
+              : format === "thumbnail"
+                ? "image"
+                : "document";
     const linkedMediaType = linkTarget
-      ? mediaTypeByName.get(linkTarget) ?? inferredLinkedMediaType
+      ? mediaTypeByName.get(linkTarget) ?? (linkFormat ? getMediaType(linkFormat) : inferredLinkedMediaType)
       : undefined;
     const secondaryTag = getMetaString(meta, ["season", "level", "coach"], "Media");
     const itemsCount = getMetaNumber(meta, ["itemsCount", "items_count"], 1);
