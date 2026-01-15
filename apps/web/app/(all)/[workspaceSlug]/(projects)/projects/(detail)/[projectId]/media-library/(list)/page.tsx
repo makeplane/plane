@@ -181,19 +181,29 @@ const MediaLibraryListPage = observer(() => {
             <div className="flex flex-col gap-8 px-6 py-4 animate-pulse">
               {Array.from({ length: 3 }).map((_, sectionIndex) => (
                 <section key={`skeleton-grid-${sectionIndex}`} className="flex flex-col gap-3">
-                  <div className="h-4 w-32 rounded bg-custom-background-90" />
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {Array.from({ length: 6 }).map((__, cardIndex) => (
+                  <div className="flex items-center justify-between">
+                    <div className="h-4 w-32 rounded bg-custom-background-90" />
+                    <div className="h-3 w-16 rounded bg-custom-background-90" />
+                  </div>
+                  <div className="flex gap-4 overflow-hidden pb-3">
+                    {Array.from({ length: 5 }).map((__, cardIndex) => (
                       <div
                         key={`skeleton-card-${cardIndex}`}
-                        className="rounded-lg border border-custom-border-200 bg-custom-background-100 p-3"
+                        className="w-[220px] flex-shrink-0 sm:w-[240px] md:w-[260px] lg:w-[280px] xl:w-[300px]"
                       >
-                        <div className="aspect-[16/9] w-full rounded bg-custom-background-90" />
-                        <div className="mt-3 h-4 w-3/4 rounded bg-custom-background-90" />
-                        <div className="mt-2 h-3 w-1/2 rounded bg-custom-background-90" />
+                        <div className="aspect-[16/9] w-full rounded-lg bg-custom-background-90" />
+                        <div className="mt-2 space-y-2">
+                          <div className="h-4 w-3/4 rounded bg-custom-background-90" />
+                          <div className="h-3 w-2/3 rounded bg-custom-background-80" />
+                          <div className="flex gap-2">
+                            <div className="h-4 w-14 rounded-full bg-custom-background-90" />
+                            <div className="h-4 w-20 rounded-full bg-custom-background-90" />
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
+                  <hr className="border-0 border-t border-custom-border-300/60" />
                 </section>
               ))}
             </div>
