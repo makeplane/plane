@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { MediaCard } from "../../media-card";
 import type { TMediaItem, TMediaSection } from "../../media-items";
@@ -21,6 +21,10 @@ export default function MediaLibrarySectionPage() {
   const searchParams = useSearchParams();
   const query = (searchParams.get("q") ?? "").trim();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
+  const pathname = usePathname();
+  const pageParam = Number(searchParams.get("page") ?? "1");
+  const pageSize = viewMode === "list" ? 10 : 12;
+  const requestedPage = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
   const decodedSection = decodeURIComponent(sectionName ?? "");
   const filterConditions = useMemo(
     () =>
@@ -31,12 +35,19 @@ export default function MediaLibrarySectionPage() {
       })),
     [mediaFilters.allConditionsForDisplay]
   );
-  const { items: libraryItems, isLoading } = useMediaLibraryItems(workspaceSlug, projectId, libraryVersion, {
-    query,
-    section: decodedSection,
-    filters: filterConditions,
-    formats: "thumbnail",
-  });
+  const { items: libraryItems, isLoading, pagination } = useMediaLibraryItems(
+    workspaceSlug,
+    projectId,
+    libraryVersion,
+    {
+      query,
+      section: decodedSection,
+      filters: filterConditions,
+      formats: "thumbnail",
+      page: requestedPage,
+      perPage: pageSize,
+    }
+  );
 
   const section = useMemo<TMediaSection>(
     () => ({
@@ -46,6 +57,61 @@ export default function MediaLibrarySectionPage() {
     [decodedSection, libraryItems]
   );
   const showSkeleton = isLoading && libraryItems.length === 0;
+  const totalItems = pagination?.totalResults ?? libraryItems.length;
+  const totalPages = pagination?.totalPages ?? 1;
+  const currentPage = Math.min(requestedPage, totalPages);
+  const showPagination = totalPages > 1;
+  const paginationItems = useMemo(() => {
+    if (!showPagination) return [];
+
+    const items: Array<{ type: "page" | "ellipsis"; value?: number; key: string }> = [];
+    const pages = new Set<number>();
+
+    pages.add(1);
+    pages.add(totalPages);
+
+    for (let page = currentPage - 1; page <= currentPage + 1; page += 1) {
+      if (page > 1 && page < totalPages) pages.add(page);
+    }
+
+    if (currentPage <= 3) {
+      pages.add(2);
+      pages.add(3);
+      pages.add(4);
+    }
+
+    if (currentPage >= totalPages - 2) {
+      pages.add(totalPages - 1);
+      pages.add(totalPages - 2);
+      pages.add(totalPages - 3);
+    }
+
+    const sortedPages = Array.from(pages)
+      .filter((page) => page >= 1 && page <= totalPages)
+      .sort((a, b) => a - b);
+
+    let previousPage = 0;
+    for (const page of sortedPages) {
+      if (previousPage && page - previousPage > 1) {
+        items.push({ type: "ellipsis", key: `ellipsis-${previousPage}-${page}` });
+      }
+      items.push({ type: "page", value: page, key: `page-${page}` });
+      previousPage = page;
+    }
+
+    return items;
+  }, [currentPage, showPagination, totalPages]);
+
+  const getPageHref = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (page <= 1) {
+      params.delete("page");
+    } else {
+      params.set("page", String(page));
+    }
+    const queryString = params.toString();
+    return queryString ? `${pathname}?${queryString}` : pathname;
+  };
 
   const getItemHref = (item: TMediaItem) => {
     if (item.link) {
@@ -165,6 +231,64 @@ export default function MediaLibrarySectionPage() {
           ))}
         </div>
       )}
+      {showPagination ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-custom-border-200 pt-4 text-xs text-custom-text-300">
+          <div>
+            Page {currentPage} of {totalPages} · {totalItems} items
+          </div>
+          <div className="flex items-center gap-2">
+            {currentPage > 1 ? (
+              <Link
+                href={getPageHref(currentPage - 1)}
+                className="rounded-md border border-custom-border-200 bg-custom-background-100 px-2 py-1 text-custom-text-300 hover:text-custom-text-100"
+              >
+                Previous
+              </Link>
+            ) : (
+              <span className="rounded-md border border-custom-border-200 bg-custom-background-100 px-2 py-1 text-custom-text-300 opacity-50">
+                Previous
+              </span>
+            )}
+            <div className="flex items-center gap-1">
+              {paginationItems.map((item) =>
+                item.type === "ellipsis" ? (
+                  <span key={item.key} className="px-2 py-1 text-custom-text-300">
+                    ...
+                  </span>
+                ) : item.value === currentPage ? (
+                  <span
+                    key={item.key}
+                    className="rounded-md border border-custom-border-200 bg-custom-background-90 px-2 py-1 text-custom-text-100"
+                    aria-current="page"
+                  >
+                    {item.value}
+                  </span>
+                ) : (
+                  <Link
+                    key={item.key}
+                    href={getPageHref(item.value ?? 1)}
+                    className="rounded-md border border-custom-border-200 bg-custom-background-100 px-2 py-1 text-custom-text-300 hover:text-custom-text-100"
+                  >
+                    {item.value}
+                  </Link>
+                )
+              )}
+            </div>
+            {currentPage < totalPages ? (
+              <Link
+                href={getPageHref(currentPage + 1)}
+                className="rounded-md border border-custom-border-200 bg-custom-background-100 px-2 py-1 text-custom-text-300 hover:text-custom-text-100"
+              >
+                Next
+              </Link>
+            ) : (
+              <span className="rounded-md border border-custom-border-200 bg-custom-background-100 px-2 py-1 text-custom-text-300 opacity-50">
+                Next
+              </span>
+            )}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

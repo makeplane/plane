@@ -1,5 +1,6 @@
 # Python imports
 import json
+import math
 import logging
 import shutil
 import subprocess
@@ -35,6 +36,7 @@ from plane.utils.media_library import (
     validate_segment,
     write_manifest_atomic,
 )
+from plane.utils.paginator import BadPaginationError, Cursor, CursorResult
 
 _IMAGE_FORMATS = {
     "jpg",
@@ -53,6 +55,41 @@ _IMAGE_FORMATS = {
 }
 _VIDEO_FORMATS = {"mp4", "m3u8", "mov", "webm", "avi", "mkv", "mpeg", "mpg", "m4v"}
 logger = logging.getLogger(__name__)
+
+
+class ListPaginator:
+    def __init__(self, items):
+        self.items = items
+
+    def get_result(self, limit=1000, cursor=None):
+        if cursor is None:
+            cursor = Cursor(limit, 0, 0)
+
+        if limit <= 0:
+            raise BadPaginationError("Pagination limit must be positive")
+
+        total_count = len(self.items)
+        page = cursor.offset
+        if page < 0:
+            raise BadPaginationError("Pagination offset cannot be negative")
+
+        offset = page * limit
+        stop = offset + limit + 1
+        page_items = self.items[offset:stop]
+        has_next = len(page_items) > limit
+
+        results = page_items[:limit]
+        next_cursor = Cursor(limit, page + 1, False, has_next)
+        prev_cursor = Cursor(limit, page - 1, True, page > 0)
+        max_hits = math.ceil(total_count / limit) if limit else 0
+
+        return CursorResult(
+            results=results,
+            next=next_cursor,
+            prev=prev_cursor,
+            hits=total_count,
+            max_hits=max_hits,
+        )
 
 
 def _render_ffmpeg_error(exc: subprocess.CalledProcessError) -> str:
@@ -296,6 +333,8 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 )
             except Exception as exc:
                 log_exception(exc)
+            if "cursor" in request.query_params or "per_page" in request.query_params:
+                return self.paginate(request=request, paginator=ListPaginator(artifacts))
             return Response(artifacts, status=status.HTTP_200_OK)
         except Exception as exc:
             log_exception(exc)

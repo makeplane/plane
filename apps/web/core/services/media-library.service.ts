@@ -32,11 +32,27 @@ export type TMediaLibraryManifest = {
   artifacts?: TMediaArtifact[];
 };
 
+export type TMediaArtifactsPaginatedResponse = {
+  results: TMediaArtifact[];
+  total_results?: number;
+  total_count?: number;
+  total_pages?: number;
+  next_cursor?: string;
+  prev_cursor?: string;
+  next_page_results?: boolean;
+  prev_page_results?: boolean;
+  count?: number;
+};
+
+export type TMediaArtifactsResponse = TMediaArtifact[] | TMediaArtifactsPaginatedResponse;
+
 type TMediaLibraryArtifactsQuery = {
   q?: string;
   filters?: string;
   formats?: string;
   section?: string;
+  cursor?: string;
+  per_page?: string;
 };
 
 type TMediaLibraryPackagePayload = {
@@ -81,7 +97,7 @@ export class MediaLibraryService extends APIService {
     projectId: string,
     packageId: string,
     params?: TMediaLibraryArtifactsQuery
-  ): Promise<TMediaArtifact[]> {
+  ): Promise<TMediaArtifactsResponse> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/`,
       params ? { params } : {}
