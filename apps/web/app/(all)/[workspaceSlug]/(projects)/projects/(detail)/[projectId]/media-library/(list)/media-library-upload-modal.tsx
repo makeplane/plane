@@ -24,7 +24,7 @@ const IMAGE_FORMATS = new Set([
   "heic",
   "heif",
 ]);
-const VIDEO_FORMATS = new Set(["mp4", "m3u8", "mov", "webm", "avi", "mkv", "mpeg", "mpg", "m4v"]);
+const VIDEO_FORMATS = new Set(["mp4", "m3u8"]);
 const DOC_FORMATS = new Set(["json", "csv", "pdf", "docx", "xlsx", "pptx", "txt"]);
 
 type TUploadItem = {
@@ -252,7 +252,7 @@ export const MediaLibraryUploadModal = () => {
             <input
               ref={inputRef}
               type="file"
-              accept="*/*"
+              accept=".mp4,.m3u8,video/mp4,application/vnd.apple.mpegurl,application/x-mpegurl,image/*,application/pdf,text/csv,application/json,.docx,.xlsx,.pptx,.txt"
               multiple
               className="hidden"
               aria-label="Upload files"
@@ -349,8 +349,8 @@ export const MediaLibraryUploadModal = () => {
 
         <div className="flex items-center justify-between border-t border-custom-border-200 px-5 py-3 text-xs text-custom-text-300">
           <span>
-            Supported formats: MP4, HLS, MOV, WEBM, AVI, MKV, JPG, JPEG, PNG, SVG, WEBP, GIF, PDF, CSV, JSON, DOCX,
-            XLSX, PPTX, TXT (Max size: {maxSizeLabel})
+            Supported formats: MP4, HLS, JPG, JPEG, PNG, SVG, WEBP, GIF, PDF, CSV, JSON, DOCX, XLSX, PPTX, TXT (Max
+            size: {maxSizeLabel})
           </span>
           <div className="flex items-center gap-3">
             <Button variant="neutral-primary" size="sm" onClick={handleClose}>

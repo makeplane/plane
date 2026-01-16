@@ -105,11 +105,16 @@ const MediaDetailPage = () => {
     const normalizedId = decodeURIComponent(mediaId);
     return libraryItems.find((entry) => entry.id === normalizedId) ?? null;
   }, [libraryItems, mediaId]);
+  const normalizedAction = (item?.action ?? "").toLowerCase();
   const documentFormat = item?.format?.toLowerCase() ?? "";
+  const isVideoAction = new Set(["play", "play_hls", "play_streaming", "open_mp4"]).has(normalizedAction);
+  const isVideoFormat = new Set(["mp4", "m4v", "m3u8", "mov", "webm", "avi", "mkv", "mpeg", "mpg", "stream"]).has(
+    documentFormat
+  );
+  const isVideo = item?.mediaType === "video" || item?.linkedMediaType === "video" || isVideoAction || isVideoFormat;
   const isHls =
-    item?.mediaType === "video" &&
-    (documentFormat === "m3u8" ||
-      (documentFormat === "stream" && (item?.action ?? "").toLowerCase() === "play_streaming"));
+    isVideo && (documentFormat === "m3u8" || (documentFormat === "stream" && normalizedAction === "play_streaming"));
+  const videoSrc = item?.videoSrc ?? item?.fileSrc ?? "";
   const isPdf = item?.mediaType === "document" && documentFormat === "pdf";
   const isTextDocument =
     item?.mediaType === "document" &&
@@ -292,18 +297,18 @@ const MediaDetailPage = () => {
 
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         <div className="rounded-lg  bg-custom-background-100 p-4 ">
-          {item.mediaType === "video" ? (
+          {isVideo ? (
             <div className="mx-auto h-[505px] w-100 max-w-full overflow-hidden rounded-lg border border-custom-border-200 bg-black">
               {isHls ? (
                 <HlsVideo
-                  src={item.videoSrc ?? ""}
+                  src={videoSrc}
                   poster={item.thumbnail}
                   className="h-full w-full object-contain"
                   videoRef={videoRef}
                 />
               ) : (
                 <video ref={videoRef} controls poster={item.thumbnail} className="h-full w-full object-contain">
-                  <source src={item.videoSrc ?? ""} type={getVideoMimeType(documentFormat) || undefined} />
+                  <source src={videoSrc} type={getVideoMimeType(documentFormat) || undefined} />
                 </video>
               )}
             </div>
