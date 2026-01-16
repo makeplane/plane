@@ -278,7 +278,14 @@ export const MediaLibraryUploadModal = () => {
                     <div className="flex items-center gap-3">
                       {getFileIcon(item.file)}
                       <div>
-                        <div className="text-xs font-medium text-custom-text-100">{item.file.name}</div>
+                        <div className="text-xs font-medium text-custom-text-100">
+                          {item.file.name}
+                          <span className="ml-2 text-[11px] font-normal text-custom-text-300">
+                            {item.file.size >= 1024 * 1024
+                              ? `${(item.file.size / (1024 * 1024)).toFixed(2)} MB`
+                              : `${(item.file.size / 1024).toFixed(2)} KB`}
+                          </span>
+                        </div>
                         {item.status !== "ready" ? (
                           <div className="text-xs text-custom-text-300">
                             {item.status === "uploading"
