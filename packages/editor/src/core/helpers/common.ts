@@ -3,7 +3,7 @@ import type { EditorState, Selection } from "@tiptap/pm/state";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 
 type EditorClassNameArgs = {
   noBorder?: boolean;

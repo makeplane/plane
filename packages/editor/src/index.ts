@@ -13,9 +13,6 @@ export * from "@/constants/common";
 export * from "@/helpers/common";
 export * from "@/helpers/yjs-utils";
 
-export { CORE_EXTENSIONS } from "@/constants/extension";
-export { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
-
 // types
 export * from "@/types";
 

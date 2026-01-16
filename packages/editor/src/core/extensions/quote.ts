@@ -1,6 +1,6 @@
 import Blockquote from "@tiptap/extension-blockquote";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 
 export const CustomQuoteExtension = Blockquote.extend({
   addKeyboardShortcuts() {

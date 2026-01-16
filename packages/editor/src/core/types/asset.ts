@@ -1,5 +1,5 @@
-// constants
-import type { CORE_EXTENSIONS } from "@/constants/extension";
+// plane imports
+import type { CORE_EXTENSIONS } from "@plane/utils";
 // plane editor imports
 import type { TAdditionalEditorAsset } from "@/plane-editor/types/asset";
 

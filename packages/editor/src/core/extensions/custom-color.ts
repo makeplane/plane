@@ -1,7 +1,7 @@
 import { Mark, mergeAttributes } from "@tiptap/core";
 // constants
 import { COLORS_LIST } from "@/constants/common";
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {

@@ -6,7 +6,7 @@ import { ChevronRightIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // constants
 import { COLORS_LIST } from "@/constants/common";
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 
 // TODO: implement text color selector
 

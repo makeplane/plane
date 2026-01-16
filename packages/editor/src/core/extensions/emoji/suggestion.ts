@@ -2,7 +2,7 @@ import type { EmojiOptions, EmojiStorage } from "@tiptap/extension-emoji";
 import { ReactRenderer } from "@tiptap/react";
 import type { Editor } from "@tiptap/react";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // helpers
 import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
 import type { CommandListInstance } from "@/helpers/tippy";

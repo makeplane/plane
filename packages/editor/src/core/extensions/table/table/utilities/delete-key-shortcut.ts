@@ -4,7 +4,7 @@ import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import type { CellSelection } from "@tiptap/pm/tables";
 import { TableMap } from "@tiptap/pm/tables";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // extensions
 import { isCellEmpty, isCellSelection } from "@/extensions/table/table/utilities/helpers";
 

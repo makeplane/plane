@@ -1,6 +1,6 @@
 import { mergeAttributes, Node } from "@tiptap/core";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 
 export const WorkItemEmbedExtensionConfig = Node.create({
   name: CORE_EXTENSIONS.WORK_ITEM_EMBED,

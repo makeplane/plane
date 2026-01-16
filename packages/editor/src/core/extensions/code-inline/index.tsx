@@ -1,6 +1,6 @@
 import { Mark, markInputRule, markPasteRule, mergeAttributes } from "@tiptap/core";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 
 type InlineCodeOptions = {
   HTMLAttributes: Record<string, unknown>;

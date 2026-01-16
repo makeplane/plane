@@ -1,7 +1,7 @@
 import { isNodeSelection, mergeAttributes, Node, nodeInputRule } from "@tiptap/core";
 import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 
 type HorizontalRuleOptions = {
   HTMLAttributes: Record<string, unknown>;

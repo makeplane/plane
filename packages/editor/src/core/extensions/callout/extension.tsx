@@ -1,7 +1,7 @@
 import { findParentNodeClosestToPos, ReactNodeViewRenderer } from "@tiptap/react";
 import type { Predicate } from "@tiptap/react";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // local imports

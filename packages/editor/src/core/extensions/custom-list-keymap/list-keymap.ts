@@ -1,6 +1,6 @@
 import { Extension } from "@tiptap/core";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // extensions
 import { handleBackspace, handleDelete } from "@/extensions/custom-list-keymap/list-helpers";
 

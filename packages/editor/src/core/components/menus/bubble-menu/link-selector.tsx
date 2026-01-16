@@ -6,7 +6,7 @@ import { LinkIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 import { setLinkEditor, unsetLinkEditor } from "@/helpers/editor-commands";

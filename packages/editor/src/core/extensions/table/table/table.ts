@@ -20,7 +20,7 @@ import {
   toggleHeaderCell,
 } from "@tiptap/pm/tables";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // local imports
 import { TableColumnDragHandlePlugin } from "../plugins/drag-handles/column/plugin";
 import { TableRowDragHandlePlugin } from "../plugins/drag-handles/row/plugin";

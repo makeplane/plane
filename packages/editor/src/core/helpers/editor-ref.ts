@@ -7,7 +7,7 @@ import { convertHTMLToMarkdown } from "@plane/utils";
 // components
 import { getEditorMenuItems } from "@/components/menus";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 import { CORE_EDITOR_META } from "@/constants/meta";
 // types
 import type { EditorRefApi, IEditorProps, TEditorCommands } from "@/types";

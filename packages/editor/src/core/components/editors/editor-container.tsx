@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { cn } from "@plane/utils";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // components
 import type { TCollabValue } from "@/contexts";
 import { LinkContainer } from "@/plane-editor/components/link-container";

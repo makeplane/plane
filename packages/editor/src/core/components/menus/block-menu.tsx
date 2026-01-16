@@ -15,7 +15,7 @@ import { CopyIcon, TrashIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // types
 import type { IEditorProps } from "@/types";
 // components

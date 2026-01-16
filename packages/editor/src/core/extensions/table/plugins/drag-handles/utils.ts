@@ -1,6 +1,6 @@
 import type { Editor } from "@tiptap/core";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 import { CORE_EDITOR_META } from "@/constants/meta";
 
 /**

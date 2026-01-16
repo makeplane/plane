@@ -1,7 +1,7 @@
 import { mergeAttributes, Node } from "@tiptap/core";
 import { TableMap } from "@tiptap/pm/tables";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // helpers
 import { findParentNodeOfType } from "@/helpers/common";
 // local imports

@@ -16,7 +16,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // extensions
 import {
   findTable,

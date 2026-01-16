@@ -1,7 +1,7 @@
 import type { KeyboardShortcutCommand } from "@tiptap/core";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 
 type Direction = "up" | "down";
 

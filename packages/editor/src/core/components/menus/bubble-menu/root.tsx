@@ -22,7 +22,7 @@ import {
 } from "@/components/menus";
 // constants
 import { COLORS_LIST } from "@/constants/common";
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
 // types

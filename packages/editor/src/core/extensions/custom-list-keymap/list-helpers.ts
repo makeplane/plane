@@ -3,7 +3,7 @@ import { getNodeType, getNodeAtPosition, isAtEndOfNode, isAtStartOfNode, isNodeA
 import type { Node, NodeType } from "@tiptap/pm/model";
 import type { EditorState } from "@tiptap/pm/state";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 
 const findListItemPos = (typeOrName: string | NodeType, state: EditorState) => {
   const { $from } = state.selection;

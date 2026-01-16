@@ -1,6 +1,6 @@
 import { Extension } from "@tiptap/core";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 
 export const EnterKeyExtension = (onEnterKeyPress?: () => void) =>
   Extension.create({

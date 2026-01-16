@@ -1,6 +1,6 @@
 import type { Editor } from "@tiptap/core";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // types
 import type { TFileHandler } from "@/types";
 

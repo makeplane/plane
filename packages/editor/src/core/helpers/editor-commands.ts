@@ -1,6 +1,6 @@
 import type { Editor, Range } from "@tiptap/core";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // extensions
 import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-with-text";
 import type { InsertImageComponentProps } from "@/extensions/custom-image/types";

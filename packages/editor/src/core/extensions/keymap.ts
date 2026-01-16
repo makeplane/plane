@@ -4,7 +4,7 @@ import type { Transaction } from "@tiptap/pm/state";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { canJoin } from "@tiptap/pm/transform";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {

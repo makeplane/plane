@@ -1,3 +1,1 @@
-export enum ADDITIONAL_EXTENSIONS {}
-
 export const ADDITIONAL_BLOCK_NODE_TYPES = [];

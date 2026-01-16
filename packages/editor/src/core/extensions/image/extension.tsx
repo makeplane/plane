@@ -1,6 +1,6 @@
 import { ReactNodeViewRenderer } from "@tiptap/react";
-// constants
-import type { CORE_EXTENSIONS } from "@/constants/extension";
+// plane imports
+import type { CORE_EXTENSIONS } from "@plane/utils";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // types

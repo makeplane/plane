@@ -4,7 +4,7 @@ import { ReactRenderer } from "@tiptap/react";
 import Suggestion from "@tiptap/suggestion";
 import type { SuggestionOptions } from "@tiptap/suggestion";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // helpers
 import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
 import type { CommandListInstance } from "@/helpers/tippy";

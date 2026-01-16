@@ -3,7 +3,7 @@ import { Fragment, Slice } from "@tiptap/pm/model";
 import { NodeSelection } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // extensions
 import type { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
 

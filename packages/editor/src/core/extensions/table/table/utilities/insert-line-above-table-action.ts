@@ -1,6 +1,6 @@
 import type { KeyboardShortcutCommand } from "@tiptap/core";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // helpers
 import { findParentNodeOfType } from "@/helpers/common";
 

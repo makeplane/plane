@@ -1,7 +1,7 @@
 import { Extension } from "@tiptap/core";
 import codemark from "prosemirror-codemark";
 // helpers
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 import { restorePublicImages } from "@/helpers/image-helpers";
 // plugins
 import type { TAdditionalActiveDropbarExtensions } from "@/plane-editor/types/utils";

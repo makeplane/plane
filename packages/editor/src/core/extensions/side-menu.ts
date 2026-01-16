@@ -2,7 +2,7 @@ import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // plugins
 import { AIHandlePlugin } from "@/plugins/ai-handle";
 import { DragHandlePlugin, nodeDOMAtCoords } from "@/plugins/drag-handle";

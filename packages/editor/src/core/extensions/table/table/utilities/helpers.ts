@@ -5,7 +5,7 @@ import type { EditorState, Selection, Transaction } from "@tiptap/pm/state";
 import { CellSelection, TableMap } from "@tiptap/pm/tables";
 import type { Rect } from "@tiptap/pm/tables";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 
 /**
  * @description Check if the selection is a cell selection

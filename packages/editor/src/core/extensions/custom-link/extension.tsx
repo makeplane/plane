@@ -3,7 +3,7 @@ import { Mark, markPasteRule, mergeAttributes } from "@tiptap/core";
 import type { Plugin } from "@tiptap/pm/state";
 import { find, registerCustomProtocol, reset } from "linkifyjs";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 // local imports

@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { cn } from "@plane/utils";
 // constants
 import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // helpers
 import type { EFileError } from "@/helpers/file";
 // hooks

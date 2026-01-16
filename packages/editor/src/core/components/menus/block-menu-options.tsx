@@ -3,7 +3,7 @@ import { TableMap } from "@tiptap/pm/tables";
 import type { Editor } from "@tiptap/react";
 import { MoveHorizontal } from "lucide-react";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // types
 import type { BlockMenuOption } from "./block-menu";
 
