@@ -73,7 +73,7 @@ const DOCUMENT_PREVIEW_STYLE = `
 const getVideoMimeType = (format: string) => {
   const normalized = format.toLowerCase();
   if (normalized === "mp4" || normalized === "m4v") return "video/mp4";
-  if (normalized === "m3u8") return "application/x-mpegURL";
+  if (normalized === "m3u8" || normalized === "stream") return "application/x-mpegURL";
   if (normalized === "mov") return "video/quicktime";
   if (normalized === "webm") return "video/webm";
   if (normalized === "avi") return "video/x-msvideo";
@@ -106,7 +106,10 @@ const MediaDetailPage = () => {
     return libraryItems.find((entry) => entry.id === normalizedId) ?? null;
   }, [libraryItems, mediaId]);
   const documentFormat = item?.format?.toLowerCase() ?? "";
-  const isHls = item?.mediaType === "video" && documentFormat === "m3u8";
+  const isHls =
+    item?.mediaType === "video" &&
+    (documentFormat === "m3u8" ||
+      (documentFormat === "stream" && (item?.action ?? "").toLowerCase() === "play_streaming"));
   const isPdf = item?.mediaType === "document" && documentFormat === "pdf";
   const isTextDocument =
     item?.mediaType === "document" &&
@@ -252,7 +255,7 @@ const MediaDetailPage = () => {
   const durationLabel = formatMetaValue(meta.duration ?? item.duration);
   const durationSecLabel = formatMetaValue(meta.duration_sec ?? meta.durationSec);
 
-  console.log("Rendering MediaDetailPage for item:", item.videoSrc);
+  console.log("Rendering MediaDetailPage for item:", item);
 
   return (
     <div className="flex flex-col gap-6 px-3 py-3">

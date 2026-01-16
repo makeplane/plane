@@ -62,7 +62,7 @@ const FORMAT_OVERRIDES: Record<string, string> = {
   "video/x-matroska": "mkv",
   "image/svg+xml": "svg",
 };
-const VIDEO_ACTIONS = new Set(["play", "play_hls", "open_mp4"]);
+const VIDEO_ACTIONS = new Set(["play", "play_hls", "play_streaming", "open_mp4"]);
 const DOCUMENT_THUMBNAILS: Record<string, string> = {
   pdf: "attachment/pdf-icon.png",
   doc: "attachment/doc-icon.png",
@@ -246,7 +246,11 @@ export const mapArtifactsToMediaItems = (
     const rawFormat = artifact.format ?? "";
     const normalizedAction = (artifact.action ?? "").toLowerCase();
     const actionFormat =
-      normalizedAction === "play_hls" ? "m3u8" : normalizedAction === "open_mp4" ? "mp4" : "";
+      normalizedAction === "play_hls" || normalizedAction === "play_streaming"
+        ? "m3u8"
+        : normalizedAction === "open_mp4"
+          ? "mp4"
+          : "";
     const format = normalizeFormat(rawFormat, artifact.path, artifact.name, artifact.link) || actionFormat;
     if (artifact.name) {
       mediaTypeByName.set(normalizeKey(artifact.name), getMediaType(format, rawFormat, artifact.action ?? ""));
@@ -271,7 +275,11 @@ export const mapArtifactsToMediaItems = (
     const rawFormat = artifact.format ?? "";
     const normalizedAction = (artifact.action ?? "").toLowerCase();
     const actionFormat =
-      normalizedAction === "play_hls" ? "m3u8" : normalizedAction === "open_mp4" ? "mp4" : "";
+      normalizedAction === "play_hls" || normalizedAction === "play_streaming"
+        ? "m3u8"
+        : normalizedAction === "open_mp4"
+          ? "mp4"
+          : "";
     const format = normalizeFormat(rawFormat, artifact.path, artifact.name, artifact.link) || actionFormat;
     const mediaType = getMediaType(format, rawFormat, artifact.action ?? "");
     const meta = getMetaObject(artifact.meta);
@@ -293,6 +301,7 @@ export const mapArtifactsToMediaItems = (
       normalizedAction === "play" ||
         normalizedAction === "preview" ||
         normalizedAction === "play_hls" ||
+        normalizedAction === "play_streaming" ||
         normalizedAction === "open_mp4"
         ? "video"
         : normalizedAction === "view" || normalizedAction === "open_image"
