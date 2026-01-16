@@ -503,7 +503,7 @@ const MediaDetailPage = () => {
 
               <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
                 <div className="border-b border-custom-border-200 px-4 py-2 text-xs font-semibold text-custom-text-100">
-                  Team info
+                  Media info
                 </div>
                 <div className="space-y-2 px-4 py-3 text-xs text-custom-text-300">
                   {metaEntries.length === 0 ? (
