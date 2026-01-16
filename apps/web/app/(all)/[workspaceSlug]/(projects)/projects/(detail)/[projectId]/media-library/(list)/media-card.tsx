@@ -2,7 +2,7 @@
 
 import type { MouseEvent } from "react";
 import Link from "next/link";
-import { Calendar, Clock, FileText } from "lucide-react";
+import { Calendar, Clock, File, Image, Video } from "lucide-react";
 
 import type { TMediaItem } from "./media-items";
 import { useVideoDuration } from "./use-video-duration";
@@ -26,7 +26,6 @@ export const MediaCard = ({
   const durationLabel = useVideoDuration(item);
   const isExternal = /^https?:\/\//i.test(href);
   const showLinkedTypeIndicator = item.mediaType === "image" && Boolean(item.link) && Boolean(item.linkedMediaType);
-  console.log("showLinkedTypeIndicator", item.linkedMediaType);
   const isLinkedDocumentThumbnail = item.mediaType === "image" && item.linkedMediaType === "document";
   const linkedTypeLabel = showLinkedTypeIndicator
     ? item.linkedMediaType === "video"
@@ -35,6 +34,25 @@ export const MediaCard = ({
         ? "Image"
         : "Document"
     : "";
+  const LinkedTypeIcon = showLinkedTypeIndicator
+    ? item.linkedMediaType === "video"
+      ? Video
+      : item.linkedMediaType === "image"
+        ? Image
+        : File
+    : null;
+
+  const mediaTypeLabel = (item.linkedMediaType ?? item.mediaType) === "video"
+    ? "Video"
+    : (item.linkedMediaType ?? item.mediaType) === "image"
+      ? "Image"
+      : "Document";
+  const MediaTypeIcon =
+    (item.linkedMediaType ?? item.mediaType) === "video"
+      ? Video
+      : (item.linkedMediaType ?? item.mediaType) === "image"
+        ? Image
+        : File;
 
   const cardBody = (
     <div
@@ -43,9 +61,10 @@ export const MediaCard = ({
       }`.trim()}
     >
       <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-custom-background-90">
-        {showLinkedTypeIndicator ? (
-          <span className="absolute right-2 bottom-2 rounded-full bg-custom-background-100/80 px-2 py-0.5 text-[10px] font-semibold text-custom-text-300 backdrop-blur">
-            {linkedTypeLabel}
+        {showLinkedTypeIndicator && LinkedTypeIcon ? (
+          <span className="absolute right-2 bottom-2 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-100/80 text-custom-text-300 backdrop-blur">
+            <span className="sr-only">{linkedTypeLabel}</span>
+            <LinkedTypeIcon className="h-4 w-4" strokeWidth={3.5} />
           </span>
         ) : null}
         {item.mediaType === "image" ? (
@@ -80,7 +99,7 @@ export const MediaCard = ({
           )
         ) : (
           <div className="flex h-full w-full items-center justify-center text-custom-text-300">
-            <FileText className="h-6 w-6" />
+            <File className="h-6 w-6" strokeWidth={3.5} />
           </div>
         )}
       </div>
@@ -105,9 +124,10 @@ export const MediaCard = ({
           <span className="rounded-full bg-custom-primary-100/20 px-2 py-0.5 text-custom-primary-100">
             {item.primaryTag}
           </span>
-          {/* <span className="rounded-full bg-custom-background-90 px-2 py-0.5 text-custom-text-300">
-            {item.secondaryTag}
-          </span> */}
+          <span className="inline-flex items-center gap-1 rounded-full bg-custom-background-90 px-2 py-0.5 text-custom-text-300">
+            <MediaTypeIcon className="h-3 w-3" strokeWidth={3.5} />
+            {mediaTypeLabel}
+          </span>
           {/* <span className="rounded-full border border-custom-border-200 px-2 py-0.5 text-custom-text-300">
             {item.itemsCount}
           </span> */}

@@ -2,6 +2,7 @@
 
 import type { MouseEvent } from "react";
 import Link from "next/link";
+import { File, Image, Video } from "lucide-react";
 import type { TMediaItem } from "./media-items";
 import { useVideoDuration } from "./use-video-duration";
 
@@ -32,6 +33,13 @@ const MediaListRow = ({
         ? "Image"
         : "Document"
     : "";
+  const LinkedTypeIcon = showLinkedTypeIndicator
+    ? item.linkedMediaType === "video"
+      ? Video
+      : item.linkedMediaType === "image"
+        ? Image
+        : File
+    : null;
   return (
     <Link
       href={getItemHref ? getItemHref(item) : `./${encodeURIComponent(item.id)}`}
@@ -51,9 +59,10 @@ const MediaListRow = ({
         ) : (
           <div className="flex h-full w-full items-center justify-center text-custom-text-300">No preview</div>
         )}
-        {showLinkedTypeIndicator ? (
-          <span className="absolute right-2 bottom-2 rounded-full bg-custom-background-100/80 px-2 py-0.5 text-[9px] font-semibold text-custom-text-300 backdrop-blur">
-            {linkedTypeLabel}
+        {showLinkedTypeIndicator && LinkedTypeIcon ? (
+          <span className="absolute right-2 bottom-2 flex h-6 w-6 items-center justify-center rounded-full bg-custom-background-100/80 text-custom-text-300 backdrop-blur">
+            <span className="sr-only">{linkedTypeLabel}</span>
+            <LinkedTypeIcon className="h-3.5 w-3.5" strokeWidth={3.5} />
           </span>
         ) : null}
       </div>

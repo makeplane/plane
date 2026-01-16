@@ -132,7 +132,7 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
       </Header.LeftItem>
 
       {/* CENTER SEARCH */}
-      <div className="pointer-events-auto absolute left-1/2 top-1/2 w-[320px] -translate-x-1/2 -translate-y-1/2">
+      <div className="pointer-events-auto absolute left-1/2 top-1/2 max-w-[320px] -translate-x-1/2 -translate-y-1/2">
         <div className="relative">
           <Search className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-300" />
           <input
