@@ -137,8 +137,7 @@ export const MediaLibraryUploadModal = () => {
       return;
     }
 
-    let successCount = 0;
-    for (const [index, item] of readyItems.entries()) {
+    const uploadSingle = async (item: TUploadItem, index: number) => {
       const file = item.file;
       const format = resolveArtifactFormat(file.name);
       if (!format) {
@@ -147,7 +146,8 @@ export const MediaLibraryUploadModal = () => {
           status: "failed",
           error: "Unsupported file type",
         });
-        continue;
+        setUploads((prev) => updateUploadEntry(prev, item.id, { status: "failed", error: "Unsupported file type" }));
+        return false;
       }
 
       const artifactName = buildArtifactName(file.name, uploadedAt, index);
@@ -184,7 +184,7 @@ export const MediaLibraryUploadModal = () => {
           }
         );
         setUploads((prev) => updateUploadEntry(prev, item.id, { progress: 100 }));
-        successCount += 1;
+        return true;
       } catch {
         failedItems.push({
           ...item,
@@ -192,8 +192,14 @@ export const MediaLibraryUploadModal = () => {
           error: "Upload failed",
         });
         setUploads((prev) => updateUploadEntry(prev, item.id, { status: "failed", error: "Upload failed" }));
+        return false;
       }
-    }
+    };
+
+    const results = await Promise.allSettled(readyItems.map((item, index) => uploadSingle(item, index)));
+    const successCount = results.filter(
+      (result): result is PromiseFulfilledResult<boolean> => result.status === "fulfilled" && result.value
+    ).length;
 
     if (successCount > 0) refreshLibrary();
     setUploads(failedItems);
