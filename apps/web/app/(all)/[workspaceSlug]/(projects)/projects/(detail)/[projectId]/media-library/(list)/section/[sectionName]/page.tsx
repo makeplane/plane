@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams, usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -23,9 +23,15 @@ export default function MediaLibrarySectionPage() {
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
   const pathname = usePathname();
   const pageParam = Number(searchParams.get("page") ?? "1");
-  const pageSize = viewMode === "list" ? 10 : 12;
+  const listPageSize = 10;
+  const [gridPageSize, setGridPageSize] = useState(12);
+  const pageSize = viewMode === "list" ? listPageSize : gridPageSize;
   const requestedPage = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
   const decodedSection = decodeURIComponent(sectionName ?? "");
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const headerRef = useRef<HTMLDivElement | null>(null);
+  const gridRef = useRef<HTMLDivElement | null>(null);
+  const paginationRef = useRef<HTMLDivElement | null>(null);
   const filterConditions = useMemo(
     () =>
       mediaFilters.allConditionsForDisplay.map(({ property, operator, value }) => ({
@@ -101,6 +107,71 @@ export default function MediaLibrarySectionPage() {
 
     return items;
   }, [currentPage, showPagination, totalPages]);
+
+  useEffect(() => {
+    if (viewMode !== "grid") return;
+
+    const container = containerRef.current;
+    const grid = gridRef.current;
+    if (!container || !grid) return;
+    const parent = container.parentElement;
+    if (!parent) return;
+
+    let frame = 0;
+    const scheduleMeasure = () => {
+      if (frame) {
+        cancelAnimationFrame(frame);
+      }
+      frame = window.requestAnimationFrame(() => {
+        const sampleCard = grid.firstElementChild as HTMLElement | null;
+        if (!sampleCard) return;
+
+        const parentHeight = parent.clientHeight;
+        if (!parentHeight) return;
+
+        const gridStyles = window.getComputedStyle(grid);
+        const gridColumns = gridStyles.gridTemplateColumns
+          .split(" ")
+          .filter((value) => value.trim().length > 0);
+        const columnCount = Math.max(1, gridColumns.length);
+        const rowGap = parseFloat(gridStyles.rowGap || gridStyles.gap || "0") || 0;
+
+        const headerHeight = headerRef.current?.getBoundingClientRect().height ?? 0;
+        const paginationHeight = paginationRef.current?.getBoundingClientRect().height ?? 0;
+        const containerStyles = window.getComputedStyle(container);
+        const paddingTop = parseFloat(containerStyles.paddingTop || "0") || 0;
+        const paddingBottom = parseFloat(containerStyles.paddingBottom || "0") || 0;
+
+        const availableHeight = parentHeight - headerHeight - paginationHeight - paddingTop - paddingBottom;
+        if (availableHeight <= 0) return;
+
+        const cardHeight = sampleCard.getBoundingClientRect().height;
+        if (!cardHeight) return;
+
+        const rowHeight = cardHeight + rowGap;
+        const rows = Math.max(1, Math.floor((availableHeight + rowGap) / rowHeight));
+        const nextPageSize = Math.max(1, columnCount * rows);
+
+        setGridPageSize((prev) => (prev === nextPageSize ? prev : nextPageSize));
+      });
+    };
+
+    scheduleMeasure();
+
+    const observer = new ResizeObserver(scheduleMeasure);
+    observer.observe(parent);
+    observer.observe(grid);
+    if (headerRef.current) observer.observe(headerRef.current);
+    if (paginationRef.current) observer.observe(paginationRef.current);
+
+    window.addEventListener("resize", scheduleMeasure);
+
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener("resize", scheduleMeasure);
+    };
+  }, [section.items.length, showPagination, viewMode]);
 
   const getPageHref = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -205,8 +276,8 @@ export default function MediaLibrarySectionPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-3">
-      <div className="flex items-center gap-3">
+    <div ref={containerRef} className="flex flex-col gap-6 p-3">
+      <div ref={headerRef} className="flex items-center gap-3">
         <Link
           href={`/${workspaceSlug}/projects/${projectId}/media-library${viewMode === "list" ? "?view=list" : ""}`}
           className="rounded-md border border-custom-border-200 bg-custom-background-100 p-0.5 text-custom-text-300 hover:text-custom-text-100"
@@ -219,7 +290,10 @@ export default function MediaLibrarySectionPage() {
       {viewMode === "list" ? (
         <MediaListView sections={[section]} getItemHref={getItemHref} />
       ) : (
-        <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div
+          ref={gridRef}
+          className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+        >
           {section.items.map((item) => (
             <MediaCard
               key={`${section.title}-${item.id}`}
@@ -232,7 +306,10 @@ export default function MediaLibrarySectionPage() {
         </div>
       )}
       {showPagination ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-custom-border-200 pt-4 text-xs text-custom-text-300">
+        <div
+          ref={paginationRef}
+          className="flex flex-wrap items-center justify-between gap-3 border-t border-custom-border-200 pt-4 text-xs text-custom-text-300"
+        >
           <div>
             Page {currentPage} of {totalPages} · {totalItems} items
           </div>
