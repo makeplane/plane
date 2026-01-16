@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { FileImage, FileText, FileVideo, UploadCloud, X } from "lucide-react";
-import { Button, ToggleSwitch } from "@plane/ui";
+import { Button } from "@plane/ui";
 import { useInstance } from "@/hooks/store/use-instance";
 import { MediaLibraryService } from "@/services/media-library.service";
 import { getDocumentThumbnailPath } from "./media-items";
@@ -73,7 +73,6 @@ export const MediaLibraryUploadModal = () => {
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   const { config } = useInstance();
   const [isDragging, setIsDragging] = useState(false);
-  const [allowMultiple, setAllowMultiple] = useState(false);
   const [uploads, setUploads] = useState<TUploadItem[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
@@ -90,16 +89,9 @@ export const MediaLibraryUploadModal = () => {
     closeUpload();
   };
 
-  useEffect(() => {
-    if (isUploadOpen) {
-      setAllowMultiple(false);
-    }
-  }, [isUploadOpen]);
-
   const addFiles = (files: File[]) => {
     if (files.length === 0) return;
-    const filesToAdd = allowMultiple ? files : files.slice(0, 1);
-    const nextItems = filesToAdd.map((file) => {
+    const nextItems = files.map((file) => {
       const tooLarge = file.size > maxFileSize;
       const unsupported = !resolveArtifactFormat(file.name);
       return {
@@ -110,7 +102,7 @@ export const MediaLibraryUploadModal = () => {
         error: tooLarge ? `File exceeds ${maxSizeLabel} limit` : unsupported ? "Unsupported file type" : undefined,
       } as TUploadItem;
     });
-    setUploads((prev) => (allowMultiple ? [...prev, ...nextItems] : nextItems));
+    setUploads((prev) => [...prev, ...nextItems]);
   };
 
   const handleUpload = async () => {
@@ -205,9 +197,7 @@ export const MediaLibraryUploadModal = () => {
 
     if (successCount > 0) refreshLibrary();
     setUploads(failedItems);
-    if (!allowMultiple && failedItems.length === 0) {
-      handleClose();
-    }
+    if (failedItems.length === 0) handleClose();
   };
 
   const getFileIcon = (file: File) => {
@@ -254,14 +244,16 @@ export const MediaLibraryUploadModal = () => {
             <UploadCloud className="mx-auto h-10 w-10 text-custom-text-300" />
             <div className="mt-2 text-sm font-medium text-custom-text-100">Drag and drop your files here</div>
             <div className="mt-1 text-xs text-custom-text-300">or</div>
-            <Button variant="primary" size="sm" className="mt-3" onClick={() => inputRef.current?.click()}>
+            <div className="flex justify-center items-center ">
+            <Button variant="primary" size="sm" className="mt-3 flex items-center"  onClick={() => inputRef.current?.click()}>
               Browse Files
             </Button>
+            </div>
             <input
               ref={inputRef}
               type="file"
               accept="*/*"
-              multiple={allowMultiple}
+              multiple
               className="hidden"
               aria-label="Upload files"
               onChange={(event) => {
@@ -286,13 +278,16 @@ export const MediaLibraryUploadModal = () => {
                     <div className="flex items-center gap-3">
                       {getFileIcon(item.file)}
                       <div>
-                        <div className="text-xs text-custom-text-300">
-                          {item.status === "uploading"
-                            ? `Uploading... ${item.progress ?? 0}%`
-                            : item.status === "ready"
-                              ? "Ready to upload"
+                        <div className="text-xs font-medium text-custom-text-100">{item.file.name}</div>
+                        {item.status !== "ready" ? (
+                          <div className="text-xs text-custom-text-300">
+                            {item.status === "uploading"
+                              ? item.progress === 100
+                                ? "Success"
+                                : `Uploading... ${item.progress ?? 0}%`
                               : item.error}
-                        </div>
+                          </div>
+                        ) : null}
                         {item.status === "uploading" ? (
                           <div className="mt-2 h-1.5 w-40 overflow-hidden rounded-full bg-custom-border-200">
                             <div
@@ -320,9 +315,9 @@ export const MediaLibraryUploadModal = () => {
                         >
                           Retry
                         </Button>
-                      ) : (
+                      ) : item.status === "ready" ? null : (
                         <div className="text-xs text-custom-primary-100">
-                          {item.status === "uploading" ? "Uploading" : "Ready"}
+                          {item.progress === 100 ? "Success" : "Uploading"}
                         </div>
                       )}
                       <Button
@@ -351,22 +346,6 @@ export const MediaLibraryUploadModal = () => {
             XLSX, PPTX, TXT (Max size: {maxSizeLabel})
           </span>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-custom-text-300">Upload more</span>
-              <ToggleSwitch
-                value={allowMultiple}
-                onChange={() =>
-                  setAllowMultiple((prev) => {
-                    const next = !prev;
-                    if (!next && uploads.length > 1) {
-                      setUploads([uploads[0]]);
-                    }
-                    return next;
-                  })
-                }
-                size="sm"
-              />
-            </div>
             <Button variant="neutral-primary" size="sm" onClick={handleClose}>
               Cancel
             </Button>
