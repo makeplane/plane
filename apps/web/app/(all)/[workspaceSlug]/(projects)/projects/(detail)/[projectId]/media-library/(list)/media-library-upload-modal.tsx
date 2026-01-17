@@ -37,6 +37,7 @@ type TUploadItem = {
 
 const getTitleFromFile = (fileName: string) => fileName.replace(/\.[^/.]+$/, "");
 const getFileExtension = (fileName: string) => fileName.split(".").pop()?.toLowerCase() ?? "";
+const buildUploadId = (file: File) => `${file.name}-${file.size}-${file.lastModified}`;
 
 const buildArtifactName = (fileName: string, uploadedAt: number, index: number) => {
   const base = getTitleFromFile(fileName)
@@ -74,6 +75,7 @@ export const MediaLibraryUploadModal = () => {
   const { config } = useInstance();
   const [isDragging, setIsDragging] = useState(false);
   const [uploads, setUploads] = useState<TUploadItem[]>([]);
+  const [selectionError, setSelectionError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
   const maxFileSize =
@@ -85,24 +87,49 @@ export const MediaLibraryUploadModal = () => {
   const handleClose = () => {
     setUploads([]);
     setIsDragging(false);
+    setSelectionError(null);
     if (inputRef.current) inputRef.current.value = "";
     closeUpload();
   };
 
   const addFiles = (files: File[]) => {
     if (files.length === 0) return;
-    const nextItems = files.map((file) => {
+    const existingIds = new Set(uploads.map((item) => item.id));
+    const duplicateNames: string[] = [];
+    const nextItems: TUploadItem[] = [];
+
+    files.forEach((file) => {
+      const id = buildUploadId(file);
+      if (existingIds.has(id)) {
+        duplicateNames.push(file.name);
+        return;
+      }
+
+      existingIds.add(id);
       const tooLarge = file.size > maxFileSize;
       const unsupported = !resolveArtifactFormat(file.name);
-      return {
-        id: `${file.name}-${file.size}-${file.lastModified}`,
+      nextItems.push({
+        id,
         file,
         status: tooLarge || unsupported ? "failed" : "ready",
         progress: 0,
         error: tooLarge ? `File exceeds ${maxSizeLabel} limit` : unsupported ? "Unsupported file type" : undefined,
-      } as TUploadItem;
+      });
     });
-    setUploads((prev) => [...prev, ...nextItems]);
+
+    if (duplicateNames.length > 0) {
+      setSelectionError(
+        duplicateNames.length === 1
+          ? `"${duplicateNames[0]}" is already selected.`
+          : `${duplicateNames.length} files are already selected.`
+      );
+    } else {
+      setSelectionError(null);
+    }
+
+    if (nextItems.length > 0) {
+      setUploads((prev) => [...prev, ...nextItems]);
+    }
   };
 
   const handleUpload = async () => {
@@ -255,6 +282,7 @@ export const MediaLibraryUploadModal = () => {
               Browse Files
             </Button>
             </div>
+            {selectionError ? <div className="mt-2 text-xs text-red-500">{selectionError}</div> : null}
             <input
               ref={inputRef}
               type="file"
