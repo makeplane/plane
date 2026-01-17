@@ -1,8 +1,9 @@
 "use client";
 
 import type { MouseEvent } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { Calendar, Clock, File, Image, Video } from "lucide-react";
+import { Calendar, Clock, File, Image as ImageIcon, Video } from "lucide-react";
 
 import type { TMediaItem } from "./media-items";
 import { useVideoDuration } from "./use-video-duration";
@@ -38,20 +39,21 @@ export const MediaCard = ({
     ? item.linkedMediaType === "video"
       ? Video
       : item.linkedMediaType === "image"
-        ? Image
+        ? ImageIcon
         : File
     : null;
 
-  const mediaTypeLabel = (item.linkedMediaType ?? item.mediaType) === "video"
-    ? "Video"
-    : (item.linkedMediaType ?? item.mediaType) === "image"
-      ? "Image"
-      : "Document";
+  const mediaTypeLabel =
+    (item.linkedMediaType ?? item.mediaType) === "video"
+      ? "Video"
+      : (item.linkedMediaType ?? item.mediaType) === "image"
+        ? "Image"
+        : "Document";
   const MediaTypeIcon =
     (item.linkedMediaType ?? item.mediaType) === "video"
       ? Video
       : (item.linkedMediaType ?? item.mediaType) === "image"
-        ? Image
+        ? ImageIcon
         : File;
 
   const cardBody = (
@@ -62,15 +64,18 @@ export const MediaCard = ({
     >
       <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-custom-background-90">
         {showLinkedTypeIndicator && LinkedTypeIcon ? (
-          <span className="absolute right-2 bottom-2 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-100/80 text-custom-text-300 backdrop-blur">
+          <span className="absolute right-2 bottom-1 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-100/80 text-custom-text-200 backdrop-blur">
             <span className="sr-only">{linkedTypeLabel}</span>
-            <LinkedTypeIcon className="h-4 w-4" strokeWidth={3.5} />
+            <LinkedTypeIcon className="h-4 w-4" strokeWidth={3.5}  />
           </span>
         ) : null}
         {item.mediaType === "image" ? (
-          <img
+          <Image
             src={item.thumbnail}
             alt={item.title}
+            width={100}
+            height={100}
+            loading="lazy"
             className={`h-full w-full transition-transform duration-300 ${
               isLinkedDocumentThumbnail ? "object-contain p-6" : "object-cover"
             }`}
@@ -78,9 +83,12 @@ export const MediaCard = ({
         ) : item.mediaType === "video" ? (
           isHls ? (
             item.thumbnail ? (
-              <img
+              <Image
                 src={item.thumbnail}
                 alt={item.title}
+                 width={100}
+                 height={100}
+                 loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-300 "
               />
             ) : (
