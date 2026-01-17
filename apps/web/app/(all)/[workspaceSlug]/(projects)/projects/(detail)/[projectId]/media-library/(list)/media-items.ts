@@ -253,6 +253,10 @@ export const mapArtifactsToMediaItems = (
           : "";
     const format = normalizeFormat(rawFormat, artifact.path, artifact.name, artifact.link) || actionFormat;
     if (artifact.name) {
+      // const normalizedName = normalizeKey(artifact.name);
+      // mediaTypeByName.set(normalizedName, getMediaType(format, rawFormat, artifact.action ?? ""));
+      // artifactByName.set(normalizedName, artifact);
+
       mediaTypeByName.set(normalizeKey(artifact.name), getMediaType(format, rawFormat, artifact.action ?? ""));
     }
     if (!artifact.link || !IMAGE_FORMATS.has(format)) continue;
@@ -283,7 +287,7 @@ export const mapArtifactsToMediaItems = (
     const format = normalizeFormat(rawFormat, artifact.path, artifact.name, artifact.link) || actionFormat;
     const mediaType = getMediaType(format, rawFormat, artifact.action ?? "");
     const meta = getMetaObject(artifact.meta);
-    const linkedArtifact = artifact.link ? artifactByName.get(artifact.link) : undefined;
+    const linkedArtifact = artifact.link ? artifactByName.get(normalizeKey(artifact.link)) : undefined;
     const displayTitle =
       format === "thumbnail" && linkedArtifact?.title ? linkedArtifact.title : artifact.title;
 

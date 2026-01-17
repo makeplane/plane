@@ -39,6 +39,7 @@
     "cmdk": "^1.0.0",
     "comlink": "^4.4.1",
     "date-fns": "^4.1.0",
+    "dompurify": "3.2.7",
     "dotenv": "^16.0.3",
     "emoji-picker-react": "^4.5.16",
     "export-to-csv": "^1.4.0",

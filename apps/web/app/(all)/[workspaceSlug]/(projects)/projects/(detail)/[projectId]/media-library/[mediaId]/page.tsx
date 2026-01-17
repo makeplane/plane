@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import DOMPurify from "dompurify";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, Calendar, FileText, User } from "lucide-react";
@@ -88,7 +89,7 @@ const MediaDetailPage = () => {
     workspaceSlug: string;
     projectId: string;
   };
-  const { items: libraryItems } = useMediaLibraryItems(workspaceSlug, projectId);
+  const { items: libraryItems, isLoading } = useMediaLibraryItems(workspaceSlug, projectId);
   const [activeTab, setActiveTab] = useState<"details" | "tags">("details");
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isImageZoomOpen, setIsImageZoomOpen] = useState(false);
@@ -99,6 +100,10 @@ const MediaDetailPage = () => {
   const [documentPreviewHtml, setDocumentPreviewHtml] = useState<string | null>(null);
   const [documentPreviewError, setDocumentPreviewError] = useState<string | null>(null);
   const [isDocumentPreviewLoading, setIsDocumentPreviewLoading] = useState(false);
+  const sanitizedDocumentPreviewHtml = useMemo(
+    () => (documentPreviewHtml ? DOMPurify.sanitize(documentPreviewHtml, { USE_PROFILES: { html: true } }) : ""),
+    [documentPreviewHtml]
+  );
 
   const item = useMemo(() => {
     if (!mediaId) return null;
@@ -246,6 +251,17 @@ const MediaDetailPage = () => {
     video.scrollIntoView({ behavior: "smooth", block: "center" });
     video.play().catch(() => undefined);
   }, []);
+  if (!item && isLoading) {
+    return (
+      <div className="rounded-lg border border-custom-border-200 bg-custom-background-100 p-6 text-center text-sm text-custom-text-300">
+        <div className="flex flex-col items-center gap-2">
+          <LogoSpinner />
+          <span>Loading media...</span>
+        </div>
+      </div>
+    );
+  }
+
   if (!item) {
     return (
       <div className="rounded-lg border border-dashed border-custom-border-200 bg-custom-background-100 p-6 text-center text-sm text-custom-text-300">
@@ -348,7 +364,7 @@ const MediaDetailPage = () => {
                     <div className="h-full overflow-auto rounded-lg bg-white p-4">
                       <div
                         dangerouslySetInnerHTML={{
-                          __html: `${DOCUMENT_PREVIEW_STYLE}<div class="document-preview">${documentPreviewHtml}</div>`,
+                          __html: `${DOCUMENT_PREVIEW_STYLE}<div class="document-preview">${sanitizedDocumentPreviewHtml}</div>`,
                         }}
                       />
                     </div>
