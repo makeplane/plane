@@ -1,23 +1,26 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useSearchParams, usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { MediaCard } from "../../media-card";
 import type { TMediaItem, TMediaSection } from "../../media-items";
 import { resolveMediaItemActionHref } from "../../media-items";
 import { useMediaLibrary } from "../../media-library-context";
+import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../../media-library-filters";
 import { MediaListView } from "../../media-list-view";
 import { useMediaLibraryItems } from "../../use-media-library-items";
 
-export default function MediaLibrarySectionPage() {
+const MediaLibrarySectionPage = observer(() => {
   const { workspaceSlug, projectId, sectionName } = useParams() as {
     workspaceSlug: string;
     projectId: string;
     sectionName: string;
   };
-  const { libraryVersion, mediaFilters } = useMediaLibrary();
+  const { libraryVersion, mediaFilters, setMediaFilterConfigs } = useMediaLibrary();
   const searchParams = useSearchParams();
   const query = (searchParams.get("q") ?? "").trim();
   const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
@@ -54,6 +57,24 @@ export default function MediaLibrarySectionPage() {
       perPage: pageSize,
     }
   );
+  const lastPaginationRef = useRef<typeof pagination>(null);
+  const resolvedPagination = pagination ?? lastPaginationRef.current;
+  const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
+  const filterConfigs = useMemo(
+    () =>
+      buildMetaFilterConfigs(collectMetaFilterOptions(libraryItems), operatorConfigs).filter(
+        (config) => config.id !== "meta.category"
+      ),
+    [libraryItems, operatorConfigs]
+  );
+
+  useEffect(() => {
+    if (pagination) lastPaginationRef.current = pagination;
+  }, [pagination]);
+
+  useEffect(() => {
+    setMediaFilterConfigs(filterConfigs);
+  }, [filterConfigs, setMediaFilterConfigs]);
 
   const section = useMemo<TMediaSection>(
     () => ({
@@ -63,8 +84,8 @@ export default function MediaLibrarySectionPage() {
     [decodedSection, libraryItems]
   );
   const showSkeleton = isLoading && libraryItems.length === 0;
-  const totalItems = pagination?.totalResults ?? libraryItems.length;
-  const totalPages = pagination?.totalPages ?? 1;
+  const totalItems = resolvedPagination?.totalResults ?? libraryItems.length;
+  const totalPages = resolvedPagination?.totalPages ?? 1;
   const currentPage = Math.min(requestedPage, totalPages);
   const showPagination = totalPages > 1;
   const paginationItems = useMemo(() => {
@@ -368,4 +389,6 @@ export default function MediaLibrarySectionPage() {
       ) : null}
     </div>
   );
-}
+});
+
+export default MediaLibrarySectionPage;

@@ -1,7 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useParams } from "next/navigation";
 import { FilterInstance } from "@plane/shared-state";
 import type { TFilterConfig } from "@plane/types";
 
@@ -21,25 +22,47 @@ type TMediaLibraryContext = {
 const MediaLibraryContext = createContext<TMediaLibraryContext | null>(null);
 
 export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
+  const { sectionName } = useParams() as { sectionName?: string | string[] };
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [libraryVersion, setLibraryVersion] = useState(0);
-  const [filterConfigs, setFilterConfigs] = useState<TFilterConfig<TMediaLibraryFilterProperty, string>[]>([]);
+  const filterInstancesRef = useRef(
+    new Map<string, FilterInstance<TMediaLibraryFilterProperty, TMediaLibraryExternalFilter>>()
+  );
+  const filterConfigsRef = useRef(new Map<string, TFilterConfig<TMediaLibraryFilterProperty, string>[]>());
 
   const openUpload = useCallback(() => setIsUploadOpen(true), []);
   const closeUpload = useCallback(() => setIsUploadOpen(false), []);
   const refreshLibrary = useCallback(() => setLibraryVersion((prev) => prev + 1), []);
-  const mediaFilters = useMemo(
-    () =>
-      new FilterInstance<TMediaLibraryFilterProperty, TMediaLibraryExternalFilter>({
-        adapter: mediaLibraryFiltersAdapter,
-      }),
-    []
-  );
+  const activeScopeKey = useMemo(() => {
+    if (typeof sectionName === "string" && sectionName.trim()) {
+      return `section:${decodeURIComponent(sectionName)}`;
+    }
+    return "all";
+  }, [sectionName]);
+  const mediaFilters = useMemo(() => {
+    const existing = filterInstancesRef.current.get(activeScopeKey);
+    if (existing) return existing;
+    const nextInstance = new FilterInstance<TMediaLibraryFilterProperty, TMediaLibraryExternalFilter>({
+      adapter: mediaLibraryFiltersAdapter,
+    });
+    filterInstancesRef.current.set(activeScopeKey, nextInstance);
+    return nextInstance;
+  }, [activeScopeKey]);
 
   useEffect(() => {
+    const configs = filterConfigsRef.current.get(activeScopeKey) ?? [];
     mediaFilters.configManager.setAreConfigsReady(true);
-    mediaFilters.configManager.registerAll(filterConfigs);
-  }, [filterConfigs, mediaFilters]);
+    mediaFilters.configManager.registerAll(configs);
+  }, [activeScopeKey, mediaFilters]);
+
+  const setMediaFilterConfigs = useCallback(
+    (configs: TFilterConfig<TMediaLibraryFilterProperty, string>[]) => {
+      filterConfigsRef.current.set(activeScopeKey, configs);
+      mediaFilters.configManager.setAreConfigsReady(true);
+      mediaFilters.configManager.registerAll(configs);
+    },
+    [activeScopeKey, mediaFilters]
+  );
 
   const value = useMemo(
     () => ({
@@ -49,9 +72,9 @@ export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
       libraryVersion,
       refreshLibrary,
       mediaFilters,
-      setMediaFilterConfigs: setFilterConfigs,
+      setMediaFilterConfigs,
     }),
-    [isUploadOpen, openUpload, closeUpload, libraryVersion, refreshLibrary, mediaFilters]
+    [isUploadOpen, openUpload, closeUpload, libraryVersion, refreshLibrary, mediaFilters, setMediaFilterConfigs]
   );
 
   return <MediaLibraryContext.Provider value={value}>{children}</MediaLibraryContext.Provider>;
