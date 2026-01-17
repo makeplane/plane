@@ -1,19 +1,20 @@
 # Python imports
 import requests
+from django.db import DatabaseError, IntegrityError
 
 # Django imports
 from django.utils import timezone
-from django.db import DatabaseError, IntegrityError
+
+from plane.authentication.adapter.error import (
+    AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
+)
 
 # Module imports
 from plane.db.models import Account
+from plane.utils.exception_logger import log_exception
 
 from .base import Adapter
-from plane.authentication.adapter.error import (
-    AuthenticationException,
-    AUTHENTICATION_ERROR_CODES,
-)
-from plane.utils.exception_logger import log_exception
 
 
 class OauthAdapter(Adapter):
@@ -50,6 +51,8 @@ class OauthAdapter(Adapter):
             return "GITLAB_OAUTH_PROVIDER_ERROR"
         elif self.provider == "gitea":
             return "GITEA_OAUTH_PROVIDER_ERROR"
+        elif self.provider == "oidc":
+            return "OIDC_PROVIDER_ERROR"
         else:
             return "OAUTH_NOT_CONFIGURED"
 

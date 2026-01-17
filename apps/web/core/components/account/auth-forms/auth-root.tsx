@@ -11,6 +11,7 @@ import GithubLightLogo from "@/app/assets/logos/github-black.png?url";
 import GithubDarkLogo from "@/app/assets/logos/github-dark.svg?url";
 import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
 import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
+import OIDCLogo from "@/app/assets/logos/oidc-logo.svg?url";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import {
@@ -55,7 +56,12 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
 
   // derived values
   const isOAuthEnabled =
-    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
+    (config &&
+      (config?.is_google_enabled ||
+        config?.is_github_enabled ||
+        config?.is_gitlab_enabled ||
+        config?.is_oidc_enabled)) ||
+    false;
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
@@ -140,6 +146,15 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
         window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
       },
       enabled: config?.is_gitlab_enabled,
+    },
+    {
+      id: "oidc",
+      text: `${OauthButtonContent} with OIDC`,
+      icon: <img src={OIDCLogo} className="h-4 w-4 object-contain" alt="OIDC Logo" />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/oidc/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_oidc_enabled,
     },
   ];
 

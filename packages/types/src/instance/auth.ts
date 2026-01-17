@@ -14,7 +14,8 @@ export type TInstanceAuthenticationMethodKeys =
   | "IS_GOOGLE_ENABLED"
   | "IS_GITHUB_ENABLED"
   | "IS_GITLAB_ENABLED"
-  | "IS_GITEA_ENABLED";
+  | "IS_GITEA_ENABLED"
+  | "IS_OIDC_ENABLED";
 
 export type TInstanceGoogleAuthenticationConfigurationKeys = "GOOGLE_CLIENT_ID" | "GOOGLE_CLIENT_SECRET";
 
@@ -30,11 +31,14 @@ export type TInstanceGitlabAuthenticationConfigurationKeys =
 
 export type TInstanceGiteaAuthenticationConfigurationKeys = "GITEA_HOST" | "GITEA_CLIENT_ID" | "GITEA_CLIENT_SECRET";
 
+export type TInstanceOidcAuthenticationConfigurationKeys = "OIDC_CLIENT_ID" | "OIDC_CLIENT_SECRET" | "OIDC_ISSUER_URL";
+
 export type TInstanceAuthenticationConfigurationKeys =
   | TInstanceGoogleAuthenticationConfigurationKeys
   | TInstanceGithubAuthenticationConfigurationKeys
   | TInstanceGitlabAuthenticationConfigurationKeys
-  | TInstanceGiteaAuthenticationConfigurationKeys;
+  | TInstanceGiteaAuthenticationConfigurationKeys
+  | TInstanceOidcAuthenticationConfigurationKeys;
 
 export type TInstanceAuthenticationKeys = TInstanceAuthenticationMethodKeys | TInstanceAuthenticationConfigurationKeys;
 
@@ -44,4 +48,4 @@ export type TGetBaseAuthenticationModeProps = {
   resolvedTheme: string | undefined;
 };
 
-export type TCoreLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google" | "gitea";
+export type TCoreLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google" | "gitea" | "oidc";

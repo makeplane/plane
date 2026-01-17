@@ -2,20 +2,17 @@
 
 # Python imports
 import os
-from urllib.parse import urlparse
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 # Third party imports
 import dj_database_url
+from corsheaders.defaults import default_headers
 
 # Django imports
 from django.core.management.utils import get_random_secret_key
-from corsheaders.defaults import default_headers
-
 
 # Module imports
 from plane.utils.url import is_valid_url
-
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -177,6 +174,17 @@ if os.environ.get("ENABLE_READ_REPLICA", "0") == "1":
 REDIS_URL = os.environ.get("REDIS_URL")
 REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
 
+# Cache Configuration
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
+
 if REDIS_SSL:
     CACHES = {
         "default": {
@@ -309,6 +317,7 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 # Cookie Settings
 SESSION_COOKIE_SECURE = secure_origins
 SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"  # Lax allows GET requests from external sites
 SESSION_ENGINE = "plane.db.models.session"
 SESSION_COOKIE_AGE = int(os.environ.get("SESSION_COOKIE_AGE", 604800))
 SESSION_COOKIE_NAME = os.environ.get("SESSION_COOKIE_NAME", "session-id")
