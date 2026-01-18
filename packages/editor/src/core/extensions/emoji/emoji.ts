@@ -375,6 +375,11 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
 
         // replace text emojis with emoji node on any change
         appendTransaction: (transactions, oldState, newState) => {
+          // Skip during IME composition to avoid interfering with Chinese/Japanese/Korean input
+          if (this.editor.view.composing) {
+            return;
+          }
+
           const docChanges =
             transactions.some((transaction) => transaction.docChanged) && !oldState.doc.eq(newState.doc);
 

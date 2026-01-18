@@ -30,11 +30,17 @@ export const TrailingNode = Extension.create<TrailingNodeOptions>({
     const disabledNodes = Object.entries(this.editor.schema.nodes)
       .map(([, value]) => value)
       .filter((node) => this.options.notAfter.includes(node.name));
+    const editor = this.editor;
 
     return [
       new Plugin({
         key: plugin,
         appendTransaction: (_, __, state) => {
+          // Skip during IME composition to avoid interfering with Chinese/Japanese/Korean input
+          if (editor.view.composing) {
+            return;
+          }
+
           const { doc, tr, schema } = state;
           const shouldInsertNodeAtEnd = plugin.getState(state);
           const endPosition = doc.content.size;
