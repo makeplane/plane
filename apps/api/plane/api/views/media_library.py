@@ -548,7 +548,7 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                 if created_thumbnail and thumbnail_relative_path and thumbnail_name:
                     thumbnail_entry = {
                         "name": thumbnail_name,
-                        "title": f"{primary_title} Thumbnail",
+                        "title": f"{primary_title}",
                         "format": "thumbnail",
                         "path": thumbnail_relative_path,
                         "link": primary_artifact_name,
@@ -578,7 +578,7 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                         if created_thumbnail:
                             thumbnail_entry = {
                                 "name": video_thumbnail_name,
-                                "title": f"{primary_title} Thumbnail",
+                                "title": f"{primary_title}",
                                 "format": "thumbnail",
                                 "path": video_thumbnail_relative_path,
                                 "link": primary_artifact_name,
@@ -596,7 +596,7 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                 if image_thumbnail_name and image_thumbnail_relative_path:
                     thumbnail_entry = {
                         "name": image_thumbnail_name,
-                        "title": f"{primary_title} Thumbnail",
+                        "title": f"{primary_title}",
                         "format": "thumbnail",
                         "path": image_thumbnail_relative_path,
                         "link": primary_artifact_name,
@@ -619,7 +619,7 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                         if doc_thumbnail_path.exists():
                             thumbnail_entry = {
                                 "name": doc_thumbnail_name,
-                                "title": f"{primary_title} Thumbnail",
+                                "title": f"{primary_title}",
                                 "format": "thumbnail",
                                 "path": doc_thumbnail_relative_path,
                                 "link": primary_artifact_name,
