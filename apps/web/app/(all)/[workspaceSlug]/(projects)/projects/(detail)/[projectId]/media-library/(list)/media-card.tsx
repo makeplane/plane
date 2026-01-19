@@ -23,6 +23,7 @@ export const MediaCard = ({
   label?: string;
   onClick?: (event: MouseEvent<HTMLAnchorElement>, item: TMediaItem) => void;
 }) => {
+  console.log("Rendering MediaCard for item:", item);
   const isHls = item.mediaType === "video" && item.format.toLowerCase() === "m3u8";
   const durationLabel = useVideoDuration(item);
   const isExternal = /^https?:\/\//i.test(href);
@@ -66,7 +67,7 @@ export const MediaCard = ({
         {showLinkedTypeIndicator && LinkedTypeIcon ? (
           <span className="absolute right-2 bottom-1 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-100/80 text-custom-text-200 backdrop-blur">
             <span className="sr-only">{linkedTypeLabel}</span>
-            <LinkedTypeIcon className="h-4 w-4" strokeWidth={3.5}  />
+            <LinkedTypeIcon className="h-4 w-4" strokeWidth={3.5} />
           </span>
         ) : null}
         {item.mediaType === "image" ? (
@@ -86,9 +87,9 @@ export const MediaCard = ({
               <Image
                 src={item.thumbnail}
                 alt={item.title}
-                 width={100}
-                 height={100}
-                 loading="lazy"
+                width={100}
+                height={100}
+                loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-300 "
               />
             ) : (
@@ -132,10 +133,10 @@ export const MediaCard = ({
           <span className="rounded-full bg-custom-primary-100/20 px-2 py-0.5 text-custom-primary-100">
             {item.primaryTag}
           </span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-custom-background-90 px-2 py-0.5 text-custom-text-300">
+          {/* <span className="inline-flex items-center gap-1 rounded-full bg-custom-background-90 px-2 py-0.5 text-custom-text-300">
             <MediaTypeIcon className="h-3 w-3" strokeWidth={3.5} />
             {mediaTypeLabel}
-          </span>
+          </span> */}
           {/* <span className="rounded-full border border-custom-border-200 px-2 py-0.5 text-custom-text-300">
             {item.itemsCount}
           </span> */}
