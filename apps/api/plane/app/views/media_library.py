@@ -195,16 +195,7 @@ class MediaLibraryInitAPIView(BaseAPIView):
                             name=package_dir.name,
                             title="Media Library Package",
                         )
-                        write_manifest_atomic(manifest_file, manifest)
                     return Response(manifest, status=status.HTTP_200_OK)
-                manifest = create_manifest(
-                    project_id=project_id_str,
-                    package_id=package_dir.name,
-                    name=package_dir.name,
-                    title="Media Library Package",
-                )
-                write_manifest_atomic(manifest_file, manifest)
-                return Response(manifest, status=status.HTTP_200_OK)
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         package_id = f"package-{uuid4().hex[:8]}"
