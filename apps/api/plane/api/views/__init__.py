@@ -56,6 +56,7 @@ from .user import UserEndpoint
 
 from .media_library import (
     MediaArtifactsListAPIEndpoint,
+    MediaLibraryInitAPIEndpoint,
     MediaManifestDetailAPIEndpoint,
     MediaPackageCreateAPIEndpoint,
 )

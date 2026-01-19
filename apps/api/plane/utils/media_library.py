@@ -6,6 +6,8 @@ import re
 import shutil
 import tempfile
 import subprocess
+import time
+from contextlib import contextmanager
 from pathlib import Path
 
 # Django imports
@@ -347,6 +349,35 @@ def write_manifest_atomic(path: Path, data: dict) -> None:
                 os.remove(tmp_path)
             except OSError:
                 pass
+
+
+@contextmanager
+def manifest_write_lock(path: Path, timeout: float = 10.0, poll_interval: float = 0.1):
+    lock_path = Path(f"{path}.lock")
+    start = time.monotonic()
+    while True:
+        try:
+            fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.close(fd)
+            break
+        except FileExistsError:
+            try:
+                age = time.time() - lock_path.stat().st_mtime
+                if age > timeout:
+                    lock_path.unlink(missing_ok=True)
+                    continue
+            except FileNotFoundError:
+                continue
+            if time.monotonic() - start >= timeout:
+                raise TimeoutError("Timed out waiting for manifest lock.")
+            time.sleep(poll_interval)
+    try:
+        yield
+    finally:
+        try:
+            lock_path.unlink(missing_ok=True)
+        except OSError:
+            pass
 
 
 def delete_project_library(project_id: str) -> bool:

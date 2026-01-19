@@ -21,9 +21,11 @@ from plane.utils.exception_logger import log_exception
 from plane.utils.media_library import (
     _now_iso,
     create_manifest,
+    ensure_project_library,
     filter_media_library_artifacts,
     get_document_icon_source,
     manifest_path,
+    manifest_write_lock,
     package_root,
     read_manifest,
     MediaLibraryTranscodeError,
@@ -161,6 +163,55 @@ class MediaPackageCreateAPIEndpoint(BaseAPIView):
         )
         write_manifest_atomic(manifest_file, manifest)
 
+        return Response(manifest, status=status.HTTP_201_CREATED)
+
+
+class MediaLibraryInitAPIEndpoint(BaseAPIView):
+    permission_classes = [ProjectLitePermission]
+
+    def post(self, request, slug, project_id):
+        project_id_str = str(project_id)
+        validate_segment(project_id_str, "projectId")
+        packages_root = ensure_project_library(project_id_str)
+
+        package_dirs = [path for path in packages_root.iterdir() if path.is_dir()]
+        if package_dirs:
+            for package_dir in sorted(package_dirs, key=lambda path: path.name):
+                manifest_file = package_dir / "manifest.json"
+                if manifest_file.exists():
+                    try:
+                        manifest = read_manifest(manifest_file)
+                    except Exception as exc:
+                        log_exception(exc)
+                        manifest = create_manifest(
+                            project_id=project_id_str,
+                            package_id=package_dir.name,
+                            name=package_dir.name,
+                            title="Media Library Package",
+                        )
+                        write_manifest_atomic(manifest_file, manifest)
+                    return Response(manifest, status=status.HTTP_200_OK)
+                manifest = create_manifest(
+                    project_id=project_id_str,
+                    package_id=package_dir.name,
+                    name=package_dir.name,
+                    title="Media Library Package",
+                )
+                write_manifest_atomic(manifest_file, manifest)
+                return Response(manifest, status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        package_id = f"package-{uuid4().hex[:8]}"
+        root = package_root(project_id_str, package_id)
+        (root / "artifacts").mkdir(parents=True, exist_ok=False)
+        (root / "attachment").mkdir(parents=True, exist_ok=False)
+        manifest = create_manifest(
+            project_id=project_id_str,
+            package_id=package_id,
+            name=package_id,
+            title="Media Library Package",
+        )
+        write_manifest_atomic(manifest_path(project_id_str, package_id), manifest)
         return Response(manifest, status=status.HTTP_201_CREATED)
 
 
@@ -591,10 +642,19 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                             exc_info=exc,
                         )
 
-        existing_artifacts.extend(validated_artifacts)
-        manifest["artifacts"] = existing_artifacts
-        manifest["updatedAt"] = _now_iso()
-        write_manifest_atomic(manifest_file, manifest)
+        with manifest_write_lock(manifest_file):
+            manifest = read_manifest(manifest_file)
+            existing_artifacts = manifest.get("artifacts") or []
+            existing_names = {artifact.get("name") for artifact in existing_artifacts if artifact.get("name")}
+            for artifact in validated_artifacts:
+                artifact_name = artifact.get("name")
+                if artifact_name in existing_names:
+                    return Response({"error": "Artifact already exists."}, status=status.HTTP_409_CONFLICT)
+                existing_names.add(artifact_name)
+            existing_artifacts.extend(validated_artifacts)
+            manifest["artifacts"] = existing_artifacts
+            manifest["updatedAt"] = _now_iso()
+            write_manifest_atomic(manifest_file, manifest)
 
         response_payload = validated_artifacts if is_bulk else validated_artifacts[0]
         return Response(response_payload, status=status.HTTP_201_CREATED)
