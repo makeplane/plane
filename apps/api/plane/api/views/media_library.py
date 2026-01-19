@@ -304,7 +304,11 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
             primary_updated_at = updated_at
             artifacts_root = package_root(project_id_str, package_id) / "artifacts"
             attachment_root = package_root(project_id_str, package_id) / "attachment"
-            should_transcode = extension == "mp4"
+            hls_threshold = getattr(settings, "MEDIA_LIBRARY_HLS_SIZE_THRESHOLD", 100 * 1024 * 1024)
+            file_size = getattr(file_obj, "size", None)
+            should_transcode = extension == "mp4" and (file_size is None or file_size >= hls_threshold)
+            if extension == "mp4" and not should_transcode:
+                format_value = "mp4"
             if should_transcode:
                 if shutil.which("ffmpeg") is None:
                     return Response(
