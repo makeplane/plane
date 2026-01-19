@@ -37,7 +37,7 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
           icon={ArrowLeft}
           onClick={() => router.push(`/${currentWorkspace?.slug}/`)}
         />
-        <p>{t(ROLE_DETAILS[currentWorkspaceRole].i18n_title)} settings</p>
+        <p>Workspace settings</p>
       </div>
       <div className="flex items-center justify-between gap-2 py-0.5">
         <div className="flex items-center gap-2 truncate">
