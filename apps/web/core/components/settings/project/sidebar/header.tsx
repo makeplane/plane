@@ -42,7 +42,7 @@ export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSid
           icon={ArrowLeft}
           onClick={() => router.push(`/${currentWorkspace?.slug}/projects/${projectId}/issues/`)}
         />
-        <p>{t(ROLE_DETAILS[currentProjectRole].i18n_title)} settings</p>
+        <p>Project settings</p>
       </div>
       <div className="flex items-center gap-2 py-0.5 truncate">
         <div className="shrink-0 size-8 grid place-items-center bg-layer-2 rounded">
