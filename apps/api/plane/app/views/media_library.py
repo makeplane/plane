@@ -29,6 +29,7 @@ from plane.utils.media_library import (
     get_document_icon_source,
     manifest_path,
     media_library_root,
+    manifest_write_lock,
     MediaLibraryTranscodeError,
     package_root,
     read_manifest,
@@ -159,7 +160,6 @@ class MediaPackageCreateAPIView(BaseAPIView):
 
         (root / "artifacts").mkdir(parents=True, exist_ok=False)
         (root / "attachment").mkdir(parents=True, exist_ok=False)
-        (root / "attachment").mkdir(parents=True, exist_ok=False)
 
         manifest = create_manifest(
             project_id=project_id_str,
@@ -195,13 +195,21 @@ class MediaLibraryInitAPIView(BaseAPIView):
                             name=package_dir.name,
                             title="Media Library Package",
                         )
+                        write_manifest_atomic(manifest_file, manifest)
                     return Response(manifest, status=status.HTTP_200_OK)
+                manifest = create_manifest(
+                    project_id=project_id_str,
+                    package_id=package_dir.name,
+                    name=package_dir.name,
+                    title="Media Library Package",
+                )
+                write_manifest_atomic(manifest_file, manifest)
+                return Response(manifest, status=status.HTTP_201_CREATED)
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         package_id = f"package-{uuid4().hex[:8]}"
         root = package_root(project_id_str, package_id)
         (root / "artifacts").mkdir(parents=True, exist_ok=False)
-        (root / "attachment").mkdir(parents=True, exist_ok=False)
         (root / "attachment").mkdir(parents=True, exist_ok=False)
         manifest = create_manifest(
             project_id=project_id_str,
@@ -703,10 +711,19 @@ class MediaArtifactsListAPIView(BaseAPIView):
                             exc_info=exc,
                         )
 
-        existing_artifacts.extend(validated_artifacts)
-        manifest["artifacts"] = existing_artifacts
-        manifest["updatedAt"] = _now_iso()
-        write_manifest_atomic(manifest_file, manifest)
+        with manifest_write_lock(manifest_file):
+            manifest = read_manifest(manifest_file)
+            existing_artifacts = manifest.get("artifacts") or []
+            existing_names = {artifact.get("name") for artifact in existing_artifacts if artifact.get("name")}
+            for artifact in validated_artifacts:
+                artifact_name = artifact.get("name")
+                if artifact_name in existing_names:
+                    return Response({"error": "Artifact already exists."}, status=status.HTTP_409_CONFLICT)
+                existing_names.add(artifact_name)
+            existing_artifacts.extend(validated_artifacts)
+            manifest["artifacts"] = existing_artifacts
+            manifest["updatedAt"] = _now_iso()
+            write_manifest_atomic(manifest_file, manifest)
 
         response_payload = validated_artifacts if is_bulk else validated_artifacts[0]
         return Response(response_payload, status=status.HTTP_201_CREATED)
