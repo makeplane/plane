@@ -2,9 +2,10 @@ import { observer } from "mobx-react";
 // plane imports
 import { WORKSPACE_SETTINGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { SettingsPageHeader } from "@/components/settings/page-header";
 import { WORKSPACE_SETTINGS_ICONS } from "@/components/settings/workspace/sidebar/item-icon";
 
 export const MembersWorkspaceSettingsHeader = observer(function MembersWorkspaceSettingsHeader() {
@@ -15,8 +16,8 @@ export const MembersWorkspaceSettingsHeader = observer(function MembersWorkspace
   const Icon = WORKSPACE_SETTINGS_ICONS.members;
 
   return (
-    <Header>
-      <Header.LeftItem>
+    <SettingsPageHeader
+      leftItem={
         <div className="flex items-center gap-2">
           <Breadcrumbs>
             <Breadcrumbs.Item
@@ -29,7 +30,7 @@ export const MembersWorkspaceSettingsHeader = observer(function MembersWorkspace
             />
           </Breadcrumbs>
         </div>
-      </Header.LeftItem>
-    </Header>
+      }
+    />
   );
 });
