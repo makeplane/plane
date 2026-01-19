@@ -3,6 +3,7 @@ import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from
 // plane imports
 import { cn } from "@plane/utils";
 // local imports
+import { ECustomImageAttributeNames } from "../types";
 import type { Pixel, TCustomImageAttributes, TCustomImageSize } from "../types";
 import { ensurePixelString, getImageBlockId, isImageDuplicating } from "../utils";
 import type { CustomImageNodeViewProps } from "./node-view";
@@ -59,7 +60,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
   const [hasErroredOnFirstLoad, setHasErroredOnFirstLoad] = useState(false);
   const [hasTriedRestoringImageOnce, setHasTriedRestoringImageOnce] = useState(false);
   // extension options
-  const isTouchDevice = !!editor.storage.utility.isTouchDevice;
+  const isTouchDevice = !!(editor.storage.utility as { isTouchDevice?: boolean } | undefined)?.isTouchDevice;
 
   const updateAttributesSafely = useCallback(
     (attributes: Partial<TCustomImageAttributes>, errorMessage: string) => {
@@ -218,15 +219,20 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
 
   return (
     <div
-      id={getImageBlockId(node.attrs.id ?? "")}
+      id={getImageBlockId(node.attrs[ECustomImageAttributeNames.ID] ?? "")}
       className={cn("w-fit max-w-full transition-all", {
         "ml-[50%] -translate-x-1/2": nodeAlignment === "center",
         "ml-[100%] -translate-x-full": nodeAlignment === "right",
       })}
     >
       <div
+        role="button"
+        tabIndex={0}
         ref={containerRef}
         className="group/image-component relative inline-block max-w-full"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") handleImageMouseDown(e as unknown as React.MouseEvent);
+        }}
         onMouseDown={handleImageMouseDown}
         style={{
           width: size.width,
@@ -239,42 +245,45 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
         <img
           ref={imageRef}
           src={displayedImageSrc}
+          alt=""
           onLoad={handleImageLoad}
-          onError={async (e) => {
-            // for old image extension this command doesn't exist or if the image failed to load for the first time
-            if (!extension.options.restoreImage || hasTriedRestoringImageOnce) {
-              setFailedToLoadImage(true);
-              return;
-            }
+          onError={(e) =>
+            void (async () => {
+              // for old image extension this command doesn't exist or if the image failed to load for the first time
+              if (!extension.options.restoreImage || hasTriedRestoringImageOnce) {
+                setFailedToLoadImage(true);
+                return;
+              }
 
-            try {
-              setHasErroredOnFirstLoad(true);
-              // this is a type error from tiptap, don't remove await until it's fixed
-              if (!imgNodeSrc) {
-                throw new Error("No source image to restore from");
+              try {
+                setHasErroredOnFirstLoad(true);
+                // this is a type error from tiptap, don't remove await until it's fixed
+                if (!imgNodeSrc) {
+                  throw new Error("No source image to restore from");
+                }
+                await extension.options.restoreImage?.(imgNodeSrc);
+                if (!imageRef.current) {
+                  throw new Error("Image reference not found");
+                }
+                if (!resolvedImageSrc) {
+                  throw new Error("No resolved image source available");
+                }
+                if (isTouchDevice) {
+                  const refreshedSrc = await extension.options.getImageSource?.(imgNodeSrc);
+                  imageRef.current.src = refreshedSrc;
+                } else {
+                  imageRef.current.src = resolvedImageSrc;
+                }
+              } catch {
+                // if the image failed to even restore, then show the error state
+                setFailedToLoadImage(true);
+                console.error("Error while loading image", e);
+              } finally {
+                setHasErroredOnFirstLoad(false);
+                setHasTriedRestoringImageOnce(true);
               }
-              await extension.options.restoreImage?.(imgNodeSrc);
-              if (!imageRef.current) {
-                throw new Error("Image reference not found");
-              }
-              if (!resolvedImageSrc) {
-                throw new Error("No resolved image source available");
-              }
-              if (isTouchDevice) {
-                const refreshedSrc = await extension.options.getImageSource?.(imgNodeSrc);
-                imageRef.current.src = refreshedSrc;
-              } else {
-                imageRef.current.src = resolvedImageSrc;
-              }
-            } catch {
-              // if the image failed to even restore, then show the error state
-              setFailedToLoadImage(true);
-              console.error("Error while loading image", e);
-            } finally {
-              setHasErroredOnFirstLoad(false);
-              setHasTriedRestoringImageOnce(true);
-            }
-          }}
+            })()
+          }
           width={size.width}
           className={cn("image-component block rounded-md", {
             // hide the image while the background calculations of the image loader are in progress (to avoid flickering) and show the loader until then
@@ -287,7 +296,9 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
             ...(size.aspectRatio && { aspectRatio: size.aspectRatio }),
           }}
         />
-        {showUploadStatus && node.attrs.id && <ImageUploadStatus editor={editor} nodeId={node.attrs.id} />}
+        {showUploadStatus && node.attrs[ECustomImageAttributeNames.ID] && (
+          <ImageUploadStatus editor={editor} nodeId={node.attrs[ECustomImageAttributeNames.ID]} />
+        )}
         {showImageToolbar && (
           <ImageToolbarRoot
             alignment={nodeAlignment ?? "left"}
@@ -318,6 +329,9 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
               )}
             />
             <div
+              role="button"
+              tabIndex={0}
+              aria-label="Resize image"
               className={cn(
                 "absolute bottom-0 translate-y-1/2 size-4 rounded-full bg-accent-primary border-2 border-white transition-opacity duration-100 ease-in-out",
                 {
@@ -330,6 +344,9 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
               )}
               onMouseDown={handleResizeStart}
               onTouchStart={handleResizeStart}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") handleResizeStart(e as unknown as React.MouseEvent);
+              }}
             />
           </>
         )}
