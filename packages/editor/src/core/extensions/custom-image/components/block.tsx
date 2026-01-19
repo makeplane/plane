@@ -226,13 +226,8 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
       })}
     >
       <div
-        role="button"
-        tabIndex={0}
         ref={containerRef}
         className="group/image-component relative inline-block max-w-full"
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") handleImageMouseDown(e as unknown as React.MouseEvent);
-        }}
         onMouseDown={handleImageMouseDown}
         style={{
           width: size.width,
@@ -329,9 +324,6 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
               )}
             />
             <div
-              role="button"
-              tabIndex={0}
-              aria-label="Resize image"
               className={cn(
                 "absolute bottom-0 translate-y-1/2 size-4 rounded-full bg-accent-primary border-2 border-white transition-opacity duration-100 ease-in-out",
                 {
@@ -344,9 +336,6 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
               )}
               onMouseDown={handleResizeStart}
               onTouchStart={handleResizeStart}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") handleResizeStart(e as unknown as React.MouseEvent);
-              }}
             />
           </>
         )}
