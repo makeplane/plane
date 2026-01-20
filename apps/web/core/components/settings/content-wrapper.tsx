@@ -1,4 +1,5 @@
 // plane imports
+import { ScrollArea } from "@plane/propel/scrollarea";
 import { cn } from "@plane/utils";
 // components
 import { AppHeader } from "@/components/core/app-header";
@@ -19,14 +20,16 @@ export function SettingsContentWrapper(props: Props) {
           <AppHeader header={header} />
         </div>
       )}
-      <div
-        className={cn("grow py-9 overflow-y-scroll", {
-          "px-page-x lg:px-12 w-full": hugging,
-          "w-full max-w-225 mx-auto px-page-x @min-[58.95rem]:px-0": !hugging, // 58.95rem = max-width(56.25rem) + padding-x(1.35rem * 2)
-        })}
-      >
-        {children}
-      </div>
+      <ScrollArea scrollType="hover" orientation="vertical" size="sm" className="grow size-full overflow-y-scroll">
+        <div
+          className={cn("py-9", {
+            "px-page-x lg:px-12 w-full": hugging,
+            "w-full max-w-225 mx-auto px-page-x @min-[58.95rem]:px-0": !hugging, // 58.95rem = max-width(56.25rem) + padding-x(1.35rem * 2)
+          })}
+        >
+          {children}
+        </div>
+      </ScrollArea>
     </div>
   );
 }
