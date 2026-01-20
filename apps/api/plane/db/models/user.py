@@ -84,7 +84,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_email_verified = models.BooleanField(default=False)
     is_password_autoset = models.BooleanField(default=False)
-
+    is_password_reset_required = models.BooleanField(default=False)
     # random token generated
     token = models.CharField(max_length=64, blank=True)
 
@@ -192,6 +192,10 @@ class Profile(TimeAuditModel):
     FRIDAY = 5
     SATURDAY = 6
 
+    class NotificationViewMode(models.TextChoices):
+        FULL = "full", "Full"
+        COMPACT = "compact", "Compact"
+
     START_OF_THE_WEEK_CHOICES = (
         (SUNDAY, "Sunday"),
         (MONDAY, "Monday"),
@@ -221,7 +225,9 @@ class Profile(TimeAuditModel):
     billing_address = models.JSONField(null=True)
     has_billing_address = models.BooleanField(default=False)
     company_name = models.CharField(max_length=255, blank=True)
-
+    notification_view_mode = models.CharField(
+        max_length=255, choices=NotificationViewMode.choices, default=NotificationViewMode.FULL
+    )
     is_smooth_cursor_enabled = models.BooleanField(default=False)
     # mobile
     is_mobile_onboarded = models.BooleanField(default=False)

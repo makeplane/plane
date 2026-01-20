@@ -98,7 +98,7 @@ export const AuthRoot = observer(function AuthRoot() {
         }
 
         if (currentAuthMode === EAuthModes.SIGN_IN) {
-          if (response.is_password_autoset && isSMTPConfigured && isMagicLoginEnabled) {
+          if (isSMTPConfigured && isMagicLoginEnabled && response.status === "MAGIC_CODE") {
             setAuthStep(EAuthSteps.UNIQUE_CODE);
             generateEmailUniqueCode(data.email);
           } else if (isEmailPasswordEnabled) {
@@ -109,7 +109,7 @@ export const AuthRoot = observer(function AuthRoot() {
             setErrorInfo(errorhandler);
           }
         } else {
-          if (isSMTPConfigured && isMagicLoginEnabled) {
+          if (isSMTPConfigured && isMagicLoginEnabled && response.status === "MAGIC_CODE") {
             setAuthStep(EAuthSteps.UNIQUE_CODE);
             generateEmailUniqueCode(data.email);
           } else if (isEmailPasswordEnabled) {
@@ -119,6 +119,7 @@ export const AuthRoot = observer(function AuthRoot() {
             setErrorInfo(errorhandler);
           }
         }
+        return;
       })
       .catch((error) => {
         const errorhandler = authErrorHandler(error?.error_code?.toString(), data?.email || undefined);
