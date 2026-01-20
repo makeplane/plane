@@ -298,8 +298,24 @@ export const coreRoutes: RouteConfigEntry[] = [
             ),
             // Project Features
             route(
-              ":workspaceSlug/settings/projects/:projectId/features",
-              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/page.tsx"
+              ":workspaceSlug/settings/projects/:projectId/features/cycles",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/cycles/page.tsx"
+            ),
+            route(
+              ":workspaceSlug/settings/projects/:projectId/features/modules",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/modules/page.tsx"
+            ),
+            route(
+              ":workspaceSlug/settings/projects/:projectId/features/views",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/views/page.tsx"
+            ),
+            route(
+              ":workspaceSlug/settings/projects/:projectId/features/pages",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/pages/page.tsx"
+            ),
+            route(
+              ":workspaceSlug/settings/projects/:projectId/features/intake",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/intake/page.tsx"
             ),
             // Project States
             route(
