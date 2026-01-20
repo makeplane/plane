@@ -219,7 +219,11 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
 
   return (
     <div
-      id={getImageBlockId(node.attrs[ECustomImageAttributeNames.ID] ?? "")}
+      id={
+        node.attrs[ECustomImageAttributeNames.ID]
+          ? getImageBlockId(node.attrs[ECustomImageAttributeNames.ID])
+          : undefined
+      }
       className={cn("w-fit max-w-full transition-all", {
         "ml-[50%] -translate-x-1/2": nodeAlignment === "center",
         "ml-[100%] -translate-x-full": nodeAlignment === "right",
@@ -269,10 +273,10 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
                 } else {
                   imageRef.current.src = resolvedImageSrc;
                 }
-              } catch {
+              } catch (error) {
                 // if the image failed to even restore, then show the error state
                 setFailedToLoadImage(true);
-                console.error("Error while loading image", e);
+                console.error("Error while loading image", error);
               } finally {
                 setHasErroredOnFirstLoad(false);
                 setHasTriedRestoringImageOnce(true);
