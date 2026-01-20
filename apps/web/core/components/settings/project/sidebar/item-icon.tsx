@@ -2,7 +2,16 @@ import type { LucideIcon } from "lucide-react";
 import { Users, Zap } from "lucide-react";
 // plane imports
 import type { ISvgIcons } from "@plane/propel/icons";
-import { CycleIcon, EstimatePropertyIcon, IntakeIcon, LabelPropertyIcon, ModuleIcon, PageIcon, StatePropertyIcon, ViewsIcon } from "@plane/propel/icons";
+import {
+  CycleIcon,
+  EstimatePropertyIcon,
+  IntakeIcon,
+  LabelPropertyIcon,
+  ModuleIcon,
+  PageIcon,
+  StatePropertyIcon,
+  ViewsIcon,
+} from "@plane/propel/icons";
 import type { TProjectSettingsTabs } from "@plane/types";
 // components
 import { SettingIcon } from "@/components/icons/attachment";

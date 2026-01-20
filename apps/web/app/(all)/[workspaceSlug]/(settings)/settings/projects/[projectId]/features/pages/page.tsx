@@ -23,7 +23,9 @@ function FeaturesPagesSettingsPage({ params }: Route.ComponentProps) {
   // translation
   const { t } = useTranslation();
   // derived values
-  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} settings - ${t("project_settings.features.pages.short_title")}` : undefined;
+  const pageTitle = currentProjectDetails?.name
+    ? `${currentProjectDetails?.name} settings - ${t("project_settings.features.pages.short_title")}`
+    : undefined;
   const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   if (workspaceUserInfo && !canPerformProjectAdminActions) {
@@ -34,9 +36,19 @@ function FeaturesPagesSettingsPage({ params }: Route.ComponentProps) {
     <SettingsContentWrapper header={<FeaturesPagesProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
       <section className="w-full">
-        <SettingsHeading title={t("project_settings.features.pages.title")} description={t("project_settings.features.pages.description")} />
+        <SettingsHeading
+          title={t("project_settings.features.pages.title")}
+          description={t("project_settings.features.pages.description")}
+        />
         <div className="mt-7">
-        <ProjectSettingsFeatureControlItem title={t("project_settings.features.pages.toggle_title")} description={t("project_settings.features.pages.toggle_description")} featureProperty="page_view" projectId={projectId} value={!!currentProjectDetails?.page_view} workspaceSlug={workspaceSlug} />
+          <ProjectSettingsFeatureControlItem
+            title={t("project_settings.features.pages.toggle_title")}
+            description={t("project_settings.features.pages.toggle_description")}
+            featureProperty="page_view"
+            projectId={projectId}
+            value={!!currentProjectDetails?.page_view}
+            workspaceSlug={workspaceSlug}
+          />
         </div>
       </section>
     </SettingsContentWrapper>

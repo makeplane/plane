@@ -60,7 +60,7 @@ export const PROJECT_SETTINGS: Record<TProjectSettingsTabs, TProjectSettingsItem
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/features/pages/`,
   },
   features_intake: {
-    key: "features_intake", 
+    key: "features_intake",
     i18n_label: "project_settings.features.intake.short_title",
     href: `/features/intake`,
     access: [EUserProjectRoles.ADMIN],
@@ -99,10 +99,7 @@ export const PROJECT_SETTINGS: Record<TProjectSettingsTabs, TProjectSettingsItem
 export const PROJECT_SETTINGS_FLAT_MAP: TProjectSettingsItem[] = Object.values(PROJECT_SETTINGS);
 
 export const GROUPED_PROJECT_SETTINGS: Record<PROJECT_SETTINGS_CATEGORY, TProjectSettingsItem[]> = {
-  [PROJECT_SETTINGS_CATEGORY.GENERAL]: [
-    PROJECT_SETTINGS["general"],
-    PROJECT_SETTINGS["members"],
-  ],
+  [PROJECT_SETTINGS_CATEGORY.GENERAL]: [PROJECT_SETTINGS["general"], PROJECT_SETTINGS["members"]],
   [PROJECT_SETTINGS_CATEGORY.FEATURES]: [
     PROJECT_SETTINGS["features_cycles"],
     PROJECT_SETTINGS["features_modules"],

@@ -12,7 +12,7 @@ export const FeaturesPagesProjectSettingsHeader = observer(function FeaturesPage
   // translation
   const { t } = useTranslation();
   // derived values
-    const settingsDetails = PROJECT_SETTINGS.features_pages;
+  const settingsDetails = PROJECT_SETTINGS.features_pages;
   const Icon = PROJECT_SETTINGS_ICONS.features_pages;
 
   return (

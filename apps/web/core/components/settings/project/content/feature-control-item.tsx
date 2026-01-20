@@ -14,7 +14,7 @@ type Props = {
   disabled?: boolean;
   projectId: string;
   featureProperty: keyof IProject;
-  title:  React.ReactNode;
+  title: React.ReactNode;
   value: boolean;
   workspaceSlug: string;
 };
@@ -25,7 +25,7 @@ export const ProjectSettingsFeatureControlItem = observer(function ProjectSettin
   const { getProjectById, updateProject } = useProject();
   // derived values
   const currentProjectDetails = getProjectById(projectId);
-  
+
   const handleSubmit = () => {
     if (!workspaceSlug || !projectId || !currentProjectDetails) return;
 
@@ -53,17 +53,17 @@ export const ProjectSettingsFeatureControlItem = observer(function ProjectSettin
 
   return (
     <SettingsBoxedControlItem
-                  title={title}
-                  description={description}
-                  control={
-                    <ToggleSwitch
-                      value={value}
-                      onChange={handleSubmit}
-                      disabled={disabled}
-                      size="sm"
-                      data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE}
-                    />
-                  }
-                />
+      title={title}
+      description={description}
+      control={
+        <ToggleSwitch
+          value={value}
+          onChange={handleSubmit}
+          disabled={disabled}
+          size="sm"
+          data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE}
+        />
+      }
+    />
   );
 });

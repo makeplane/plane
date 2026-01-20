@@ -1879,7 +1879,7 @@ export default {
         toggle_title: "Enable intake",
         toggle_description: "Let project members create in app intake requests.",
       },
-    }
+    },
   },
   project_cycles: {
     add_cycle: "Add cycle",
