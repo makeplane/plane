@@ -15,29 +15,29 @@ Font.register({
   family: "Inter",
   fonts: [
     {
-      src: path.join(interFontDir, "files/inter-latin-400-normal.woff2"),
+      src: path.join(interFontDir, "files/inter-latin-400-normal.woff"),
       fontWeight: 400,
     },
     {
-      src: path.join(interFontDir, "files/inter-latin-400-italic.woff2"),
+      src: path.join(interFontDir, "files/inter-latin-400-italic.woff"),
       fontWeight: 400,
       fontStyle: "italic",
     },
     {
-      src: path.join(interFontDir, "files/inter-latin-600-normal.woff2"),
+      src: path.join(interFontDir, "files/inter-latin-600-normal.woff"),
       fontWeight: 600,
     },
     {
-      src: path.join(interFontDir, "files/inter-latin-600-italic.woff2"),
+      src: path.join(interFontDir, "files/inter-latin-600-italic.woff"),
       fontWeight: 600,
       fontStyle: "italic",
     },
     {
-      src: path.join(interFontDir, "files/inter-latin-700-normal.woff2"),
+      src: path.join(interFontDir, "files/inter-latin-700-normal.woff"),
       fontWeight: 700,
     },
     {
-      src: path.join(interFontDir, "files/inter-latin-700-italic.woff2"),
+      src: path.join(interFontDir, "files/inter-latin-700-italic.woff"),
       fontWeight: 700,
       fontStyle: "italic",
     },
