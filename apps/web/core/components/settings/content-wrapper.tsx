@@ -1,22 +1,35 @@
-import type { ReactNode } from "react";
-import { observer } from "mobx-react";
+// plane imports
+import { ScrollArea } from "@plane/propel/scrollarea";
 import { cn } from "@plane/utils";
+// components
+import { AppHeader } from "@/components/core/app-header";
 
-type TProps = {
-  children: ReactNode;
-  size?: "lg" | "md";
+type Props = {
+  children: React.ReactNode;
+  header?: React.ReactNode;
+  hugging?: boolean;
 };
-export const SettingsContentWrapper = observer(function SettingsContentWrapper(props: TProps) {
-  const { children, size = "md" } = props;
+
+export function SettingsContentWrapper(props: Props) {
+  const { children, header, hugging = false } = props;
 
   return (
-    <div
-      className={cn("flex flex-col w-full items-center mx-auto py-4 md:py-0", {
-        "md:px-4 max-w-[800px] 2xl:max-w-[1000px]": size === "md",
-        "md:px-16": size === "lg",
-      })}
-    >
-      <div className="pb-10 w-full">{children}</div>
+    <div className="@container grow size-full flex flex-col overflow-hidden">
+      {header && (
+        <div className="shrink-0 w-full">
+          <AppHeader header={header} />
+        </div>
+      )}
+      <ScrollArea scrollType="hover" orientation="vertical" size="sm" className="grow size-full overflow-y-scroll">
+        <div
+          className={cn("py-9", {
+            "px-page-x lg:px-12 w-full": hugging,
+            "w-full max-w-225 mx-auto px-page-x @min-[58.95rem]:px-0": !hugging, // 58.95rem = max-width(56.25rem) + padding-x(1.35rem * 2)
+          })}
+        >
+          {children}
+        </div>
+      </ScrollArea>
     </div>
   );
-});
+}
