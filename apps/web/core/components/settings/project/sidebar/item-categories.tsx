@@ -2,10 +2,12 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { useParams } from "react-router";
 // plane imports
-import { GROUPED_PROJECT_SETTINGS, PROJECT_SETTINGS_CATEGORIES } from "@plane/constants";
+import { EUserPermissionsLevel, GROUPED_PROJECT_SETTINGS, PROJECT_SETTINGS_CATEGORIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { SettingsSidebarItem } from "@/components/settings/sidebar/item";
+// hooks
+import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { PROJECT_SETTINGS_ICONS } from "./item-icon";
 
@@ -20,6 +22,8 @@ export const ProjectSettingsSidebarItemCategories = observer(function ProjectSet
   // params
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
+  // store hooks
+  const { allowPermissions } = useUserPermissions();
   // translation
   const { t } = useTranslation();
 
@@ -27,14 +31,17 @@ export const ProjectSettingsSidebarItemCategories = observer(function ProjectSet
     <div className="mt-3 flex flex-col divide-y divide-subtle px-3">
       {PROJECT_SETTINGS_CATEGORIES.map((category) => {
         const categoryItems = GROUPED_PROJECT_SETTINGS[category];
+        const accessibleItems = categoryItems.filter((item) =>
+          allowPermissions(item.access, EUserPermissionsLevel.PROJECT, workspaceSlug, projectId)
+        );
 
-        if (categoryItems.length === 0) return null;
+        if (accessibleItems.length === 0) return null;
 
         return (
           <div key={category} className="shrink-0 py-3 first:pt-0 last:pb-0">
             <div className="p-2 text-caption-md-medium text-tertiary capitalize">{t(category)}</div>
             <div className="flex flex-col">
-              {categoryItems.map((item) => {
+              {accessibleItems.map((item) => {
                 const isItemActive =
                   item.href === ""
                     ? pathname === `/${workspaceSlug}/settings/projects/${projectId}${item.href}/`
