@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
-import type { UseFormGetValues, UseFormSetValue } from "react-hook-form";
+import type { UseFormSetValue } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -8,53 +8,16 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IUserTheme } from "@plane/types";
 
 type Props = {
-  getValues: UseFormGetValues<IUserTheme>;
   handleUpdateTheme: (formData: IUserTheme) => Promise<void>;
   setValue: UseFormSetValue<IUserTheme>;
 };
 
-export const CustomThemeConfigHandler = observer(function CustomThemeConfigHandler(props: Props) {
-  const { getValues, handleUpdateTheme, setValue } = props;
+export const CustomThemeImportConfigButton = observer(function CustomThemeImportConfigButton(props: Props) {
+  const { handleUpdateTheme, setValue } = props;
   // refs
   const fileInputRef = useRef<HTMLInputElement>(null);
   // translation
   const { t } = useTranslation();
-
-  const handleDownloadConfig = () => {
-    try {
-      const currentValues = getValues();
-      const config = {
-        version: "1.0",
-        themeName: "Custom Theme",
-        primary: currentValues.primary,
-        background: currentValues.background,
-        darkPalette: currentValues.darkPalette,
-      };
-
-      const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `plane-theme-${Date.now()}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("success"),
-        message: "Theme configuration downloaded successfully.",
-      });
-    } catch (error) {
-      console.error("Failed to download config:", error);
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("error"),
-        message: "Failed to download theme configuration.",
-      });
-    }
-  };
 
   const handleUploadConfig = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -122,14 +85,11 @@ export const CustomThemeConfigHandler = observer(function CustomThemeConfigHandl
   };
 
   return (
-    <div className="flex gap-2">
+    <>
       <input ref={fileInputRef} type="file" accept=".json" onChange={handleUploadConfig} className="hidden" />
-      <Button variant="secondary" type="button" onClick={() => fileInputRef.current?.click()}>
+      <Button variant="secondary" size="lg" type="button" onClick={() => fileInputRef.current?.click()}>
         Import config
       </Button>
-      <Button variant="secondary" type="button" onClick={handleDownloadConfig}>
-        Download config
-      </Button>
-    </div>
+    </>
   );
 });
