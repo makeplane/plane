@@ -3,7 +3,7 @@ import { usePathname } from "next/navigation";
 import { Outlet } from "react-router";
 // components
 import { getProjectActivePath } from "@/components/settings/helper";
-import { SettingsMobileNav } from "@/components/settings/mobile";
+import { SettingsMobileNav } from "@/components/settings/mobile/nav";
 // plane web imports
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 // types
