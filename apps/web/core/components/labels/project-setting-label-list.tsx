@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IIssueLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -76,13 +77,11 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
       <SettingsHeading
         title={t("project_settings.labels.heading")}
         description={t("project_settings.labels.description")}
-        button={{
-          label: t("common.add_label"),
-          onClick: () => {
-            newLabel();
-          },
-        }}
-        showButton={isEditable}
+        control={
+          <Button variant="primary" size="lg" onClick={newLabel}>
+            {t("common.add_label")}
+          </Button>
+        }
       />
       <div className="w-full mt-6">
         {showLabelForm && (

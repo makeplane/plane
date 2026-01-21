@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { APITokenService } from "@plane/services";
 // components
@@ -33,12 +34,11 @@ export const APITokensProfileSettings = observer(function APITokensProfileSettin
       <ProfileSettingsHeading
         title={t("account_settings.api_tokens.heading")}
         description={t("account_settings.api_tokens.description")}
-        button={{
-          label: t("workspace_settings.settings.api_tokens.add_token"),
-          onClick: () => {
-            setIsCreateTokenModalOpen(true);
-          },
-        }}
+        control={
+          <Button variant="primary" size="lg" onClick={() => setIsCreateTokenModalOpen(true)}>
+            {t("workspace_settings.settings.api_tokens.add_token")}
+          </Button>
+        }
       />
       <div className="mt-7">
         {tokens.length > 0 ? (

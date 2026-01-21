@@ -102,7 +102,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector() {
       <div className="space-y-5">
         <ProfileSettingsHeading
           title={t("customize_your_theme")}
-          customButton={<CustomThemeImportConfigButton handleUpdateTheme={handleUpdateTheme} setValue={setValue} />}
+          control={<CustomThemeImportConfigButton handleUpdateTheme={handleUpdateTheme} setValue={setValue} />}
         />
         <CustomThemeModeSelector control={control} />
         {/* Color Inputs */}
