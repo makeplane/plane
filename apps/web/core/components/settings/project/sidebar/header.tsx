@@ -34,8 +34,8 @@ export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSid
   if (!currentProjectRole) return null;
 
   return (
-    <div className="shrink-0 px-5">
-      <div className="py-3 flex items-center gap-1 text-body-md-medium">
+    <div className="shrink-0">
+      <div className="py-3 pl-4 pr-5 flex items-center gap-1 text-body-md-medium">
         <IconButton
           variant="ghost"
           size="base"
@@ -44,7 +44,7 @@ export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSid
         />
         <p>Project settings</p>
       </div>
-      <div className="flex items-center gap-2 py-0.5 truncate">
+      <div className="mt-1.5 flex items-center gap-2 py-0.5 px-5 truncate">
         <div className="shrink-0 size-8 grid place-items-center bg-layer-2 rounded">
           <Logo logo={projectDetails?.logo_props} size={20} />
         </div>
