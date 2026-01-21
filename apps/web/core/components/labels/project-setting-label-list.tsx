@@ -78,9 +78,11 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
         title={t("project_settings.labels.heading")}
         description={t("project_settings.labels.description")}
         control={
-          <Button variant="primary" size="lg" onClick={newLabel}>
-            {t("common.add_label")}
-          </Button>
+          isEditable && (
+            <Button variant="primary" size="lg" onClick={newLabel}>
+              {t("common.add_label")}
+            </Button>
+          )
         }
       />
       <div className="w-full mt-6">
