@@ -263,30 +263,22 @@ This happens when workspace package build artifacts are missing or corrupted, us
 
 **Solutions:**
 
-1. **Quick fix** (rebuilds only workspace packages):
+1. **Automatic fix** (rebuilds packages during install):
+   ```bash
+   pnpm install
+   pnpm dev
+   ```
+   The `prepare` npm hook automatically builds all workspace packages after install.
+
+2. **Quick manual rebuild** (rebuilds only workspace packages):
    ```bash
    pnpm build:packages
    pnpm dev
    ```
 
-2. **Auto-repair** (validates and fixes automatically):
-   ```bash
-   pnpm dev:fix
-   ```
-
 3. **Nuclear option** (cleans everything and rebuilds):
    ```bash
    pnpm dev:clean
-   ```
-
-4. **Manual validation** (check workspace health):
-   ```bash
-   pnpm validate
-   ```
-
-5. **Skip validation** (for advanced debugging):
-   ```bash
-   SKIP_VALIDATION=1 pnpm dev
    ```
 
 #### Understanding workspace package builds
@@ -308,31 +300,31 @@ Plane uses an **artifact-based** monorepo architecture. Most workspace packages 
 
 **Exception:** `@plane/shared-state` uses source resolution (no build required).
 
-#### New commands for workspace management
+#### How the automatic fix works
+
+The `prepare` npm lifecycle hook in the root [package.json](package.json) automatically builds all workspace packages after `pnpm install` completes. This ensures:
+- Fresh clones have packages built immediately
+- Interrupted builds are repaired on next install
+- Branch switches followed by install rebuild packages
+- No manual intervention required in most cases
+
+Additionally, Turbo's dependency graph (configured in [turbo.json](turbo.json)) ensures that when you run `pnpm dev`, it checks if upstream packages need building and builds them first if necessary.
+
+#### Commands for workspace management
 
 | Command | Purpose | Use When |
 |---------|---------|----------|
-| `pnpm validate` | Check workspace package artifacts | Diagnosing import issues |
 | `pnpm build:packages` | Build only workspace packages (fast) | After git branch switch |
 | `pnpm clean:packages` | Remove package dist/ folders | Clearing corrupted builds |
 | `pnpm dev:clean` | Full cleanup + rebuild + dev | Nuclear reset option |
-| `pnpm dev:fix` | Auto-repair and start dev | Quick recovery |
 
 #### Preventing future issues
 
-The `pnpm dev` command now automatically validates workspace packages before starting. If validation fails, you'll see:
+After running `pnpm install`, all workspace packages are automatically built via the `prepare` hook. If you still encounter issues:
 
-```
-⚠️  Workspace validation failed!
-
-Missing or corrupted build artifacts detected.
-🔧 To fix, run one of these commands:
-   pnpm build:packages  - Rebuild workspace packages only (fast)
-   pnpm build          - Full build including apps (slower)
-   pnpm dev:clean      - Clean everything and start fresh
-```
-
-Follow the suggested commands to resolve the issue.
+1. Ensure you've run `pnpm install` after interrupting dev with Ctrl+C
+2. If packages are corrupted mid-build, run `pnpm clean:packages && pnpm build:packages`
+3. For persistent issues, use the nuclear option: `pnpm dev:clean`
 
 ## Need help? Questions and suggestions
 
