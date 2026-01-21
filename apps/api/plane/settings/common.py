@@ -302,7 +302,7 @@ POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", False)
 POSTHOG_HOST = os.environ.get("POSTHOG_HOST", False)
 
 # Skip environment variable configuration
-SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "0"
+SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
