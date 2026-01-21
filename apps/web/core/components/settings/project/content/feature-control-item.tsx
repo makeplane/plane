@@ -1,6 +1,5 @@
 import { observer } from "mobx-react";
 // plane imports
-import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
@@ -55,15 +54,7 @@ export const ProjectSettingsFeatureControlItem = observer(function ProjectSettin
     <SettingsBoxedControlItem
       title={title}
       description={description}
-      control={
-        <ToggleSwitch
-          value={value}
-          onChange={handleSubmit}
-          disabled={disabled}
-          size="sm"
-          data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE}
-        />
-      }
+      control={<ToggleSwitch value={value} onChange={handleSubmit} disabled={disabled} size="sm" />}
     />
   );
 });
