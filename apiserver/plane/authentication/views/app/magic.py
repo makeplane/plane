@@ -21,6 +21,7 @@ from plane.authentication.utils.redirection_path import get_redirection_path
 from plane.authentication.utils.user_auth_workflow import (
     post_user_auth_workflow,
 )
+from plane.authentication.utils.timezone import validate_timezone
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
@@ -191,6 +192,7 @@ class MagicSignInEndpoint(BaseAPIView):
         app_url = request.POST.get("app_url", "").strip().lower()
         workspace = request.POST.get("workspace", "").strip().lower()
         language = request.POST.get("language", "en").strip()  # Get language, default to 'en'
+        timezone = validate_timezone(request.POST.get("timezone", "").strip())
         next_path = request.POST.get("next_path")
         if code == "" or email == "":
             exc = AuthenticationException(
@@ -217,6 +219,7 @@ class MagicSignInEndpoint(BaseAPIView):
                     key=f"magic_{email}",
                     code=code,
                     callback=post_user_auth_workflow,
+                    timezone=timezone,
                 )
                 user = provider.authenticate()
                 profile, _ = Profile.objects.get_or_create(user=user)
@@ -241,6 +244,7 @@ class MagicSignInEndpoint(BaseAPIView):
                     key=f"magic_{email}",
                     code=code,
                     callback=post_user_auth_workflow,
+                    timezone=timezone,
                 )
                 user = provider.authenticate()
                 profile, _ = Profile.objects.get_or_create(user=user)
