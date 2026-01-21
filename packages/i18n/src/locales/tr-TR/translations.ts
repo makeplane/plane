@@ -1988,7 +1988,8 @@ export default {
       intake: {
         title: "Alım",
         short_title: "Alım",
-        description: "Üye olmayanların hataları, geri bildirimleri ve önerileri paylaşmasına izin verin; iş akışınızı aksatmadan.",
+        description:
+          "Üye olmayanların hataları, geri bildirimleri ve önerileri paylaşmasına izin verin; iş akışınızı aksatmadan.",
         toggle_title: "Alımı etkinleştir",
         toggle_description: "Proje üyelerinin uygulama içinde alım talepleri oluşturmasına izin verin.",
       },

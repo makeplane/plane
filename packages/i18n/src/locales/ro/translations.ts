@@ -1991,7 +1991,8 @@ export default {
       cycles: {
         title: "Cicluri",
         short_title: "Cicluri",
-        description: "Programați munca în perioade flexibile care se adaptează ritmului și ritmului unic al acestui proiect.",
+        description:
+          "Programați munca în perioade flexibile care se adaptează ritmului și ritmului unic al acestui proiect.",
         toggle_title: "Activați ciclurile",
         toggle_description: "Planificați munca în intervale de timp concentrate.",
       },
@@ -2019,7 +2020,8 @@ export default {
       intake: {
         title: "Recepție",
         short_title: "Recepție",
-        description: "Permiteți non-membrilor să partajeze erori, feedback și sugestii; fără a perturba fluxul de lucru.",
+        description:
+          "Permiteți non-membrilor să partajeze erori, feedback și sugestii; fără a perturba fluxul de lucru.",
         toggle_title: "Activați recepția",
         toggle_description: "Permiteți membrilor proiectului să creeze solicitări de recepție în aplicație.",
       },

@@ -2001,7 +2001,8 @@ export default {
       cycles: {
         title: "Cycles",
         short_title: "Cycles",
-        description: "Planifiez le travail dans des périodes flexibles qui s'adaptent au rythme et au tempo uniques de ce projet.",
+        description:
+          "Planifiez le travail dans des périodes flexibles qui s'adaptent au rythme et au tempo uniques de ce projet.",
         toggle_title: "Activer les cycles",
         toggle_description: "Planifiez le travail dans des périodes ciblées.",
       },
@@ -2015,7 +2016,8 @@ export default {
       views: {
         title: "Vues",
         short_title: "Vues",
-        description: "Enregistrez des tris, des filtres et des options d'affichage personnalisés ou partagez-les avec votre équipe.",
+        description:
+          "Enregistrez des tris, des filtres et des options d'affichage personnalisés ou partagez-les avec votre équipe.",
         toggle_title: "Activer les vues",
         toggle_description: "Les membres du projet pourront créer et modifier des vues.",
       },
@@ -2029,7 +2031,8 @@ export default {
       intake: {
         title: "Réception",
         short_title: "Réception",
-        description: "Permettez aux non-membres de partager des bugs, des commentaires et des suggestions ; sans perturber votre flux de travail.",
+        description:
+          "Permettez aux non-membres de partager des bugs, des commentaires et des suggestions ; sans perturber votre flux de travail.",
         toggle_title: "Activer la réception",
         toggle_description: "Permettre aux membres du projet de créer des demandes de réception dans l'application.",
       },

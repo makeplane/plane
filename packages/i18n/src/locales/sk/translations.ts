@@ -1971,7 +1971,8 @@ export default {
       cycles: {
         title: "Cykly",
         short_title: "Cykly",
-        description: "Naplánujte prácu v flexibilných obdobiach, ktoré sa prispôsobia jedinečnému rytmu a tempu tohto projektu.",
+        description:
+          "Naplánujte prácu v flexibilných obdobiach, ktoré sa prispôsobia jedinečnému rytmu a tempu tohto projektu.",
         toggle_title: "Povoliť cykly",
         toggle_description: "Naplánujte prácu v sústredenej časovej osi.",
       },

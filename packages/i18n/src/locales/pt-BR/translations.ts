@@ -2027,7 +2027,8 @@ export default {
       intake: {
         title: "Recepção",
         short_title: "Recepção",
-        description: "Permita que não membros compartilhem bugs, feedback e sugestões; sem interromper seu fluxo de trabalho.",
+        description:
+          "Permita que não membros compartilhem bugs, feedback e sugestões; sem interromper seu fluxo de trabalho.",
         toggle_title: "Ativar recepção",
         toggle_description: "Permitir que membros do projeto criem solicitações de recepção no aplicativo.",
       },

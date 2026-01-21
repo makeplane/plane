@@ -1986,7 +1986,8 @@ export default {
       cycles: {
         title: "Siklus",
         short_title: "Siklus",
-        description: "Jadwalkan pekerjaan dalam periode fleksibel yang menyesuaikan dengan ritme dan tempo unik proyek ini.",
+        description:
+          "Jadwalkan pekerjaan dalam periode fleksibel yang menyesuaikan dengan ritme dan tempo unik proyek ini.",
         toggle_title: "Aktifkan siklus",
         toggle_description: "Rencanakan pekerjaan dalam jangka waktu yang terfokus.",
       },

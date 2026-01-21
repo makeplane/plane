@@ -1973,7 +1973,8 @@ export default {
       cycles: {
         title: "Cykle",
         short_title: "Cykle",
-        description: "Planuj pracę w elastycznych okresach, które dostosowują się do unikalnego rytmu i tempa tego projektu.",
+        description:
+          "Planuj pracę w elastycznych okresach, które dostosowują się do unikalnego rytmu i tempa tego projektu.",
         toggle_title: "Włącz cykle",
         toggle_description: "Planuj pracę w skoncentrowanych ramach czasowych.",
       },
@@ -2001,7 +2002,8 @@ export default {
       intake: {
         title: "Odbiór",
         short_title: "Odbiór",
-        description: "Pozwól osobom niebędącym członkami dzielić się błędami, opiniami i sugestiami; bez zakłócania przepływu pracy.",
+        description:
+          "Pozwól osobom niebędącym członkami dzielić się błędami, opiniami i sugestiami; bez zakłócania przepływu pracy.",
         toggle_title: "Włącz odbiór",
         toggle_description: "Pozwól członkom projektu tworzyć żądania odbioru w aplikacji.",
       },

@@ -1994,7 +1994,8 @@ export default {
       cycles: {
         title: "Zyklen",
         short_title: "Zyklen",
-        description: "Planen Sie die Arbeit in flexiblen Zeiträumen, die sich dem einzigartigen Rhythmus und Tempo dieses Projekts anpassen.",
+        description:
+          "Planen Sie die Arbeit in flexiblen Zeiträumen, die sich dem einzigartigen Rhythmus und Tempo dieses Projekts anpassen.",
         toggle_title: "Zyklen aktivieren",
         toggle_description: "Planen Sie die Arbeit in fokussierten Zeiträumen.",
       },
@@ -2008,7 +2009,8 @@ export default {
       views: {
         title: "Ansichten",
         short_title: "Ansichten",
-        description: "Speichern Sie benutzerdefinierte Sortierungen, Filter und Anzeigeoptionen oder teilen Sie sie mit Ihrem Team.",
+        description:
+          "Speichern Sie benutzerdefinierte Sortierungen, Filter und Anzeigeoptionen oder teilen Sie sie mit Ihrem Team.",
         toggle_title: "Ansichten aktivieren",
         toggle_description: "Projektmitglieder können Ansichten erstellen und bearbeiten.",
       },
@@ -2022,7 +2024,8 @@ export default {
       intake: {
         title: "Aufnahme",
         short_title: "Aufnahme",
-        description: "Ermöglichen Sie Nicht-Mitgliedern, Fehler, Feedback und Vorschläge zu teilen, ohne Ihren Workflow zu unterbrechen.",
+        description:
+          "Ermöglichen Sie Nicht-Mitgliedern, Fehler, Feedback und Vorschläge zu teilen, ohne Ihren Workflow zu unterbrechen.",
         toggle_title: "Aufnahme aktivieren",
         toggle_description: "Projektmitgliedern erlauben, In-App-Aufnahmeanfragen zu erstellen.",
       },

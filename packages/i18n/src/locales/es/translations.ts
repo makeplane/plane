@@ -2003,7 +2003,8 @@ export default {
       cycles: {
         title: "Ciclos",
         short_title: "Ciclos",
-        description: "Programa el trabajo en períodos flexibles que se adaptan al ritmo y al tempo únicos de este proyecto.",
+        description:
+          "Programa el trabajo en períodos flexibles que se adaptan al ritmo y al tempo únicos de este proyecto.",
         toggle_title: "Habilitar ciclos",
         toggle_description: "Planifica el trabajo en períodos de tiempo enfocados.",
       },
@@ -2017,7 +2018,8 @@ export default {
       views: {
         title: "Vistas",
         short_title: "Vistas",
-        description: "Guarda ordenaciones, filtros y opciones de visualización personalizadas o compártelos con tu equipo.",
+        description:
+          "Guarda ordenaciones, filtros y opciones de visualización personalizadas o compártelos con tu equipo.",
         toggle_title: "Habilitar vistas",
         toggle_description: "Los miembros del proyecto podrán crear y editar vistas.",
       },
@@ -2031,7 +2033,8 @@ export default {
       intake: {
         title: "Recepción",
         short_title: "Recepción",
-        description: "Permite que los no miembros compartan errores, comentarios y sugerencias; sin interrumpir tu flujo de trabajo.",
+        description:
+          "Permite que los no miembros compartan errores, comentarios y sugerencias; sin interrumpir tu flujo de trabajo.",
         toggle_title: "Habilitar recepción",
         toggle_description: "Permitir a los miembros del proyecto crear solicitudes de recepción en la aplicación.",
       },

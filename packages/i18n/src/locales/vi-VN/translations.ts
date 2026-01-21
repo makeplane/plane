@@ -1984,7 +1984,8 @@ export default {
       cycles: {
         title: "Chu kỳ",
         short_title: "Chu kỳ",
-        description: "Lên lịch công việc trong các khoảng thời gian linh hoạt thích ứng với nhịp điệu và tốc độ độc đáo của dự án này.",
+        description:
+          "Lên lịch công việc trong các khoảng thời gian linh hoạt thích ứng với nhịp điệu và tốc độ độc đáo của dự án này.",
         toggle_title: "Bật chu kỳ",
         toggle_description: "Lập kế hoạch công việc trong khung thời gian tập trung.",
       },
@@ -2012,7 +2013,8 @@ export default {
       intake: {
         title: "Tiếp nhận",
         short_title: "Tiếp nhận",
-        description: "Cho phép những người không phải thành viên chia sẻ lỗi, phản hồi và đề xuất; mà không làm gián đoạn quy trình làm việc của bạn.",
+        description:
+          "Cho phép những người không phải thành viên chia sẻ lỗi, phản hồi và đề xuất; mà không làm gián đoạn quy trình làm việc của bạn.",
         toggle_title: "Bật tiếp nhận",
         toggle_description: "Cho phép thành viên dự án tạo yêu cầu tiếp nhận trong ứng dụng.",
       },
