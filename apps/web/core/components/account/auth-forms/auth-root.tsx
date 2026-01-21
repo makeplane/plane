@@ -14,10 +14,11 @@ import {
 } from "@/helpers/authentication.helper";
 // hooks
 import { useOAuthConfig } from "@/hooks/oauth";
+import { useInstance } from "@/hooks/store/use-instance";
 // local imports
 import { TermsAndConditions } from "../terms-and-conditions";
 import { AuthBanner } from "./auth-banner";
-import { AuthHeader } from "./auth-header";
+import { AuthHeader, AuthHeaderBase } from "./auth-header";
 import { AuthFormRoot } from "./form-root";
 
 type TAuthRoot = {
@@ -39,9 +40,13 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
+  // store hooks
+  const { config } = useInstance();
   // derived values
   const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
   const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
+  const isEmailBasedAuthEnabled = config?.is_email_password_enabled || config?.is_magic_login_enabled;
+  const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled;
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
@@ -91,22 +96,37 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
 
   if (!authMode) return <></>;
 
-  return (
-    <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
-      <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
-        {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-          <AuthBanner message={errorInfo.message} handleBannerData={(value) => setErrorInfo(value)} />
-        )}
-        <AuthHeader
-          workspaceSlug={workspaceSlug?.toString() || undefined}
-          invitationId={invitation_id?.toString() || undefined}
-          invitationEmail={email || undefined}
-          authMode={authMode}
-          currentAuthStep={authStep}
+  if (noAuthMethodsAvailable) {
+    return (
+      <AuthContainer>
+        <AuthHeaderBase
+          header="No authentication methods available"
+          subHeader="Please contact your administrator to enable authentication for your instance."
         />
+      </AuthContainer>
+    );
+  }
 
-        {isOAuthEnabled && <OAuthOptions options={oAuthOptions} compact={authStep === EAuthSteps.PASSWORD} />}
-
+  return (
+    <AuthContainer>
+      {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
+        <AuthBanner message={errorInfo.message} handleBannerData={(value) => setErrorInfo(value)} />
+      )}
+      <AuthHeader
+        workspaceSlug={workspaceSlug?.toString() || undefined}
+        invitationId={invitation_id?.toString() || undefined}
+        invitationEmail={email || undefined}
+        authMode={authMode}
+        currentAuthStep={authStep}
+      />
+      {isOAuthEnabled && (
+        <OAuthOptions
+          options={oAuthOptions}
+          compact={authStep === EAuthSteps.PASSWORD}
+          showDivider={isEmailBasedAuthEnabled}
+        />
+      )}
+      {isEmailBasedAuthEnabled && (
         <AuthFormRoot
           authStep={authStep}
           authMode={authMode}
@@ -117,8 +137,16 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
           setErrorInfo={(errorInfo) => setErrorInfo(errorInfo)}
           currentAuthMode={currentAuthMode}
         />
-        <TermsAndConditions authType={authMode} />
-      </div>
-    </div>
+      )}
+      <TermsAndConditions authType={authMode} />
+    </AuthContainer>
   );
 });
+
+function AuthContainer({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
+      <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">{children}</div>
+    </div>
+  );
+}
