@@ -9,7 +9,7 @@ import {
   haveTableRelatedChanges,
 } from "@/extensions/table/table/utilities/helpers";
 // local imports
-import { createColumnDragHandle } from "./drag-handle-vanilla";
+import { createColumnDragHandle } from "./drag-handle";
 
 type DragHandleInstance = {
   element: HTMLElement;
