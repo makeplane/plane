@@ -25,14 +25,24 @@ RUN apk --no-cache add \
 
 WORKDIR /code
 
-COPY requirements.txt ./requirements.txt
-COPY requirements ./requirements
+# Note: Build context should be apps/api for local builds
+# Railway builds from root, so use full path
+COPY apps/api/requirements.txt ./requirements.txt
+COPY apps/api/requirements ./requirements
 
 # Install the local development settings
 RUN pip install -r requirements/local.txt --compile --no-cache-dir
 
-
-COPY . .
+# Copy API application files (works from both root and apps/api contexts)
+COPY apps/api/manage.py manage.py
+COPY apps/api/plane plane/
+COPY apps/api/templates templates/
+COPY apps/api/package.json package.json
+COPY apps/api/bin ./bin/
+COPY apps/api/pyproject.toml pyproject.toml
+COPY apps/api/pytest.ini pytest.ini
+COPY apps/api/run_tests.py run_tests.py
+COPY apps/api/run_tests.sh run_tests.sh
 
 RUN mkdir -p /code/plane/logs
 RUN chmod -R +x /code/bin

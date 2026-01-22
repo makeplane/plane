@@ -39,7 +39,9 @@ COPY --from=live-img /app /app/live
 RUN rm -rf /app/space/apps/space/.next/cache
 
 COPY --from=proxy-img /usr/bin/caddy /usr/bin/caddy
-COPY dist/Caddyfile /app/proxy/Caddyfile
+# Note: Build context should be deployments/aio/community for local builds
+# Railway builds from root, so use full path
+COPY deployments/aio/community/dist/Caddyfile /app/proxy/Caddyfile
 
 COPY --from=backend-img /code /app/backend
 COPY --from=backend-img /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
@@ -50,9 +52,9 @@ RUN apk add --no-cache nss-tools bash curl uuidgen ncdu vim
 RUN pip install supervisor
 RUN mkdir -p /etc/supervisor/conf.d
 
-COPY start.sh /app/start.sh
-COPY dist/plane.env /app/plane.env
-COPY supervisor.conf /etc/supervisor/conf.d/supervisor.conf
+COPY deployments/aio/community/start.sh /app/start.sh
+COPY deployments/aio/community/dist/plane.env /app/plane.env
+COPY deployments/aio/community/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 
 RUN mkdir -p /app/logs/access && \
     mkdir -p /app/logs/error && \

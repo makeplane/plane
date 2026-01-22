@@ -11,4 +11,6 @@ RUN apk add --no-cache nss-tools bash curl
 
 COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 
-COPY Caddyfile.ce /etc/caddy/Caddyfile
+# Note: Build context should be apps/proxy for local builds
+# Railway builds from root, so use full path
+COPY apps/proxy/Caddyfile.ce /etc/caddy/Caddyfile

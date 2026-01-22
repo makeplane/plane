@@ -155,8 +155,8 @@ services:
   proxy:
     container_name: proxy
     build:
-      context: ./apps/proxy
-      dockerfile: Dockerfile.ce
+      context: .
+      dockerfile: ./apps/proxy/Dockerfile.ce
     restart: always
     ports:
       - ${LISTEN_HTTP_PORT}:80
