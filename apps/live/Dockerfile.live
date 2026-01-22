@@ -60,6 +60,9 @@ COPY --from=installer /app/apps/live/node_modules ./apps/live/node_modules
 COPY --from=installer /app/node_modules ./node_modules
 COPY --from=installer /app/apps/live/package.json ./apps/live/package.json
 
+# Create empty .env to satisfy --env-file requirement if pnpm start is used
+RUN touch apps/live/.env
+
 ENV TURBO_TELEMETRY_DISABLED=1
 
 EXPOSE 3000
