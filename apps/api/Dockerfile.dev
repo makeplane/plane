@@ -26,7 +26,7 @@ RUN apk --no-cache add \
 WORKDIR /code
 
 COPY requirements.txt ./requirements.txt
-ADD requirements ./requirements
+COPY requirements ./requirements
 
 # Install the local development settings
 RUN pip install -r requirements/local.txt --compile --no-cache-dir

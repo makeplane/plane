@@ -10,6 +10,4 @@ EXPOSE 3003
 
 ENV TURBO_TELEMETRY_DISABLED=1
 
-VOLUME [ "/app/node_modules", "/app/live/node_modules"]
-
 CMD ["pnpm","dev", "--filter=live"]

@@ -59,8 +59,6 @@ RUN mkdir -p /app/logs/access && \
     mkdir -p /app/data && \
     chmod +x /app/start.sh
 
-VOLUME ['/app/data', '/app/logs']
-
 EXPOSE 80 443
 
 CMD ["/app/start.sh"] 

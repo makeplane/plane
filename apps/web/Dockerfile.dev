@@ -9,5 +9,4 @@ RUN corepack enable pnpm && pnpm add -g turbo
 RUN pnpm install
 
 EXPOSE 3000
-VOLUME [ "/app/node_modules", "/app/web/node_modules" ]
 CMD ["pnpm", "dev", "--filter=web"]
