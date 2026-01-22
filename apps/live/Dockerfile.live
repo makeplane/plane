@@ -40,8 +40,8 @@ COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
 # Fetch dependencies to cache store, then install offline with dev deps
-RUN --mount=type=cache,id=key=live-pnpm-store,sharing=locked,target=/pnpm/store pnpm fetch --store-dir=/pnpm/store
-RUN --mount=type=cache,id=key=live-pnpm-store,sharing=locked,target=/pnpm/store CI=true pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store
+RUN --mount=type=cache,id=live-pnpm-store,sharing=locked,target=/pnpm/store pnpm fetch --store-dir=/pnpm/store
+RUN --mount=type=cache,id=live-pnpm-store,sharing=locked,target=/pnpm/store CI=true pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store
 
 ENV TURBO_TELEMETRY_DISABLED=1
 
