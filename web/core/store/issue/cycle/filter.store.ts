@@ -133,9 +133,19 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
   fetchFilters = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     const _filters = await this.issueFilterService.fetchCycleIssueFilters(workspaceSlug, projectId, cycleId);
 
-    const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
+    let filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
     const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
     const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
+
+    // Sync hub_codes with current user data
+    const rootStore = this.rootIssueStore.rootStore;
+    const { syncedCodes } = this.syncHubCodesWithUserData(rootStore, filters.hub_code);
+    if (syncedCodes.length > 0) {
+      filters = { ...filters, hub_code: syncedCodes };
+    } else if (filters.hub_code && filters.hub_code.length === 0) {
+      // If user has no hub_codes, ensure it's null
+      filters = { ...filters, hub_code: null };
+    }
 
     // fetching the kanban toggle helpers in the local storage
     const kanbanFilters = {
@@ -182,6 +192,18 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
       switch (type) {
         case EIssueFilterType.FILTERS: {
           const updatedFilters = filters as IIssueFilterOptions;
+          
+          // If hub_code is being updated, ensure locked codes are preserved
+          if (updatedFilters.hub_code !== undefined) {
+            const rootStore = this.rootIssueStore.rootStore;
+            const lockedCodes = this.getLockedHubCodes(rootStore);
+            const newHubCodes = updatedFilters.hub_code || [];
+            
+            // Merge locked codes with new codes (locked codes cannot be removed)
+            const mergedHubCodes = [...new Set([...lockedCodes, ...newHubCodes])];
+            updatedFilters.hub_code = mergedHubCodes.length > 0 ? mergedHubCodes : null;
+          }
+          
           _filters.filters = { ..._filters.filters, ...updatedFilters };
 
           runInAction(() => {

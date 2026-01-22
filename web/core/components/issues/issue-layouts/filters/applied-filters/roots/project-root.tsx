@@ -7,7 +7,7 @@ import { Header, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-import { useLabel, useProjectState, useUserPermissions } from "@/hooks/store";
+import { useLabel, useProjectState, useUser, useUserPermissions } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
@@ -25,8 +25,12 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT);
   const { allowPermissions } = useUserPermissions();
+  const { data: userData } = useUser();
 
   const { projectStates } = useProjectState();
+  
+  // Get locked hub codes from user data
+  const lockedHubCodes = userData?.hub_codes?.filter((code) => code != null && code !== "") || [];
   // derived values
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -62,7 +66,12 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
     if (!workspaceSlug || !projectId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = [];
+      // Preserve locked hub_codes when clearing filters
+      if (key === "hub_code" && lockedHubCodes.length > 0) {
+        newFilters[key as keyof IIssueFilterOptions] = lockedHubCodes;
+      } else {
+        newFilters[key as keyof IIssueFilterOptions] = [];
+      }
     });
     updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.FILTERS, { ...newFilters });
   };
@@ -79,6 +88,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
           handleRemoveFilter={handleRemoveFilter}
           labels={projectLabels ?? []}
           states={projectStates}
+          lockedHubCodes={lockedHubCodes}
         />
       </Header.LeftItem>
       <Header.RightItem>
