@@ -220,7 +220,7 @@ export const createRowInsertButton = (editor: Editor, tableInfo: TableInfo): HTM
 export const findAllTables = (editor: Editor): TableInfo[] => {
   const tables: TableInfo[] = [];
 
-  // More efficient: iterate through document once instead of DOM + doc for each table
+  // Iterate through document to look for tables
   editor.state.doc.descendants((node, pos) => {
     if (node.type.spec.tableRole === "table") {
       try {
