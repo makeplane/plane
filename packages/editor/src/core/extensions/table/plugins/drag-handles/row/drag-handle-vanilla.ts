@@ -331,8 +331,6 @@ export function createRowDragHandle(config: RowDragHandleConfig): {
     const dropMarker = tableElement instanceof HTMLElement ? getDropMarker(tableElement) : null;
     const dragMarker = tableElement instanceof HTMLElement ? getRowDragMarker(tableElement) : null;
 
-    console.log("Row drag markers found:", { dropMarker: !!dropMarker, dragMarker: !!dragMarker });
-
     const handleFinish = (): void => {
       // Clean up markers if they exist
       if (dropMarker && dragMarker) {

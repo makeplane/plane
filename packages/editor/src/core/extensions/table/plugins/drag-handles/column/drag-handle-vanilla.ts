@@ -331,8 +331,6 @@ export function createColumnDragHandle(config: ColumnDragHandleConfig): {
     const dropMarker = tableElement instanceof HTMLElement ? getDropMarker(tableElement) : null;
     const dragMarker = tableElement instanceof HTMLElement ? getColDragMarker(tableElement) : null;
 
-    console.log("Column drag markers found:", { dropMarker: !!dropMarker, dragMarker: !!dragMarker });
-
     const handleFinish = (): void => {
       // Clean up markers if they exist
       if (dropMarker && dragMarker) {

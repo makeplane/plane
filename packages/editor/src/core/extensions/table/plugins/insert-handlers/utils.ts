@@ -219,16 +219,11 @@ export const createRowInsertButton = (editor: Editor, tableInfo: TableInfo): HTM
 
 export const findAllTables = (editor: Editor): TableInfo[] => {
   const tables: TableInfo[] = [];
-  const tableElements = editor.view.dom.querySelectorAll("table");
 
-  tableElements.forEach((tableElement) => {
-    // Find the table's ProseMirror position
-    let tablePos = -1;
-    let tableNode: ProseMirrorNode | null = null;
-
-    // Walk through the document to find matching table nodes
-    editor.state.doc.descendants((node, pos) => {
-      if (node.type.spec.tableRole === "table") {
+  // More efficient: iterate through document once instead of DOM + doc for each table
+  editor.state.doc.descendants((node, pos) => {
+    if (node.type.spec.tableRole === "table") {
+      try {
         const domAtPos = editor.view.domAtPos(pos + 1);
         let domTable = domAtPos.node;
 
@@ -241,20 +236,17 @@ export const findAllTables = (editor: Editor): TableInfo[] => {
           domTable = domTable.parentNode;
         }
 
-        if (domTable === tableElement) {
-          tablePos = pos;
-          tableNode = node;
-          return false; // Stop iteration
+        if (domTable instanceof HTMLElement && domTable.tagName === "TABLE") {
+          tables.push({
+            tableElement: domTable,
+            tableNode: node,
+            tablePos: pos,
+          });
         }
+      } catch (error) {
+        // Skip tables that fail to resolve
+        console.error("Error finding table:", error);
       }
-    });
-
-    if (tablePos !== -1 && tableNode) {
-      tables.push({
-        tableElement,
-        tableNode,
-        tablePos,
-      });
     }
   });
 
