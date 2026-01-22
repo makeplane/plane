@@ -41,7 +41,7 @@ RUN rm -rf /app/space/apps/space/.next/cache
 COPY --from=proxy-img /usr/bin/caddy /usr/bin/caddy
 # Note: Build context should be deployments/aio/community for local builds
 # Railway builds from root, so use full path
-COPY deployments/aio/community/dist/Caddyfile /app/proxy/Caddyfile
+COPY apps/proxy/Caddyfile.aio.ce /app/proxy/Caddyfile
 
 COPY --from=backend-img /code /app/backend
 COPY --from=backend-img /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
@@ -53,7 +53,7 @@ RUN pip install supervisor
 RUN mkdir -p /etc/supervisor/conf.d
 
 COPY deployments/aio/community/start.sh /app/start.sh
-COPY deployments/aio/community/dist/plane.env /app/plane.env
+COPY deployments/aio/community/variables.env /app/plane.env
 COPY deployments/aio/community/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 
 RUN mkdir -p /app/logs/access && \
