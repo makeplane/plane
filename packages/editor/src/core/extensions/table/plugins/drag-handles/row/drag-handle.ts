@@ -67,6 +67,7 @@ export function createRowDragHandle(config: RowDragHandleConfig): {
   let dropdownElement: HTMLElement | null = null;
   let backdropElement: HTMLElement | null = null;
   let cleanupFloating: (() => void) | null = null;
+  let backdropClickHandler: (() => void) | null = null;
 
   // Track drag event listeners for cleanup
   let dragListeners: {
@@ -98,11 +99,16 @@ export function createRowDragHandle(config: RowDragHandleConfig): {
       dropdownElement = null;
     }
     if (backdropElement) {
+      // Remove backdrop listener before removing element
+      if (backdropClickHandler) {
+        backdropElement.removeEventListener("click", backdropClickHandler);
+        backdropClickHandler = null;
+      }
       backdropElement.remove();
       backdropElement = null;
     }
 
-    // Cleanup floating UI
+    // Cleanup floating UI (this also removes keydown listener)
     if (cleanupFloating) {
       cleanupFloating();
       cleanupFloating = null;
@@ -129,7 +135,8 @@ export function createRowDragHandle(config: RowDragHandleConfig): {
     // Create backdrop
     backdropElement = document.createElement("div");
     backdropElement.style.cssText = "position: fixed; inset: 0; z-index: 99;";
-    backdropElement.addEventListener("click", closeDropdown);
+    backdropClickHandler = closeDropdown;
+    backdropElement.addEventListener("click", backdropClickHandler);
     document.body.appendChild(backdropElement);
 
     // Create dropdown
