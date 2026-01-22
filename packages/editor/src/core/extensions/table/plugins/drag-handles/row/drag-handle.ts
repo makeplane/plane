@@ -53,8 +53,7 @@ export function createRowDragHandle(config: RowDragHandleConfig): {
   // Create button
   const button = document.createElement("button");
   button.type = "button";
-  button.className =
-    "py-1 bg-layer-1 border border-strong-1 rounded-sm outline-none transition-all duration-200 hover:bg-layer-1-hover";
+  button.className = "default-state";
 
   // Create icon (Ellipsis lucide icon as SVG)
   const icon = createSvgElement(DRAG_HANDLE_ICONS.ellipsis, "size-4 text-primary");
@@ -89,9 +88,8 @@ export function createRowDragHandle(config: RowDragHandleConfig): {
 
     isDropdownOpen = false;
 
-    // Reset button to closed state
-    button.className =
-      "py-1 bg-layer-1 border border-strong-1 rounded-sm outline-none transition-all duration-200 hover:bg-layer-1-hover";
+    // Reset button to default state
+    button.className = "default-state";
 
     // Remove dropdown and backdrop
     if (dropdownElement) {
@@ -126,15 +124,16 @@ export function createRowDragHandle(config: RowDragHandleConfig): {
     isDropdownOpen = true;
 
     // Update button to open state
-    button.className =
-      "py-1 bg-layer-1 border border-strong-1 rounded-sm outline-none transition-all duration-200 opacity-100 bg-accent-primary border-accent-strong";
+    button.className = "open-state";
 
     // Add active dropdown extension
     editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.TABLE);
 
     // Create backdrop
     backdropElement = document.createElement("div");
-    backdropElement.style.cssText = "position: fixed; inset: 0; z-index: 99;";
+    backdropElement.style.position = "fixed";
+    backdropElement.style.inset = "0";
+    backdropElement.style.zIndex = "99";
     backdropClickHandler = closeDropdown;
     backdropElement.addEventListener("click", backdropClickHandler);
     document.body.appendChild(backdropElement);
@@ -143,7 +142,8 @@ export function createRowDragHandle(config: RowDragHandleConfig): {
     dropdownElement = document.createElement("div");
     dropdownElement.className =
       "max-h-[90vh] w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-raised-200";
-    dropdownElement.style.cssText = "position: fixed; z-index: 100;";
+    dropdownElement.style.position = "fixed";
+    dropdownElement.style.zIndex = "100";
 
     // Create and append dropdown content
     const content = createDropdownContent(getDropdownOptions());
