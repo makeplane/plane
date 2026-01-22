@@ -4,6 +4,12 @@ FROM --platform=$BUILDPLATFORM tonistiigi/binfmt AS binfmt
 # **************************************************
 #  STAGE 0: Image Loading
 # **************************************************
+FROM caddy:2.10.0-builder-alpine AS caddy-builder
+RUN xcaddy build \
+    --with github.com/caddy-dns/cloudflare@v0.2.1 \
+    --with github.com/caddy-dns/digitalocean@04bde2867106aa1b44c2f9da41a285fa02e629c5 \
+    --with github.com/mholt/caddy-l4@4d3c80e89c5f80438a3e048a410d5543ff5fb9f4
+
 FROM node:22-alpine AS node
 
 FROM artifacts.plane.so/makeplane/plane-frontend:${PLANE_VERSION} AS web-img
@@ -11,7 +17,7 @@ FROM artifacts.plane.so/makeplane/plane-backend:${PLANE_VERSION} AS backend-img
 FROM artifacts.plane.so/makeplane/plane-space:${PLANE_VERSION} AS space-img
 FROM artifacts.plane.so/makeplane/plane-admin:${PLANE_VERSION} AS admin-img
 FROM artifacts.plane.so/makeplane/plane-live:${PLANE_VERSION} AS live-img
-FROM artifacts.plane.so/makeplane/plane-proxy:${PLANE_VERSION} AS proxy-img
+# FROM artifacts.plane.so/makeplane/plane-proxy:${PLANE_VERSION} AS proxy-img (Replaced by local build)
 
 # **************************************************
 #  STAGE 1: Runner
@@ -38,7 +44,7 @@ COPY --from=live-img /app /app/live
 
 RUN rm -rf /app/space/apps/space/.next/cache
 
-COPY --from=proxy-img /usr/bin/caddy /usr/bin/caddy
+COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 # Note: Build context should be deployments/aio/community for local builds
 # Railway builds from root, so use full path
 COPY apps/proxy/Caddyfile.aio.ce /app/proxy/Caddyfile
