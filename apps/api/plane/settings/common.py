@@ -447,6 +447,8 @@ ATTACHMENT_MIME_TYPES = [
     "application/x-sql",
     # Gzip
     "application/x-gzip",
+    # Markdown
+    "text/markdown",
 ]
 
 # Seed directory path
