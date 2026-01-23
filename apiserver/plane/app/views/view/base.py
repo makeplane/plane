@@ -211,7 +211,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
     def get_queryset(self, filters):
         custom_properties = filters.get("custom_properties", {})
         custom_filters = build_custom_property_q_objects(custom_properties)
-        return (
+        queryset = (
             Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
