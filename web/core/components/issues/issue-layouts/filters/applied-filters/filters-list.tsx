@@ -33,7 +33,6 @@ type Props = {
   states?: IState[] | undefined;
   alwaysAllowEditing?: boolean;
   disableEditing?: boolean;
-  lockedHubCodes?: string[];
 };
 
 const membersFilters = ["assignees", "mentions", "created_by", "subscriber"];
@@ -49,7 +48,6 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
     states,
     alwaysAllowEditing,
     disableEditing = false,
-    lockedHubCodes = [],
   } = props;
   // store hooks
   const { allowPermissions } = useUserPermissions();
@@ -143,7 +141,6 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
                 editable={isEditingAllowed}
                 handleRemove={(val) => handleRemoveFilter(filterKey, val)}
                 values={value}
-                lockedValues={filterKey === "hub_code" ? lockedHubCodes : undefined}
               />
             )}
             {isEditingAllowed && (

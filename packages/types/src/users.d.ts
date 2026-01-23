@@ -31,6 +31,9 @@ export interface IUser extends IUserLite {
   cover_image: string;
   cover_image_asset: any;
   hub_codes?: string[] | null;
+  hub_names?: string[] | null;
+  extra_hubs?: boolean;
+  employee_permissions?: string[] | null;
 }
 
 export interface IUserAccount {

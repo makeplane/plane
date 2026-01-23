@@ -3,33 +3,28 @@
 import { observer } from "mobx-react";
 
 // icons
-import { Lock, X } from "lucide-react";
+import { X } from "lucide-react";
 
 type Props = {
   handleRemove: (val: string) => void;
   values: string[];
   editable: boolean | undefined;
-  lockedValues?: string[];
 };
 
 export const AppliedAdditionalPropertiesFilters: React.FC<Props> = observer((props) => {
-  const { handleRemove, values, editable, lockedValues = [] } = props;
+  const { handleRemove, values, editable } = props;
 
   return (
     <>
       {values.map((element) => {
-        const isLocked = lockedValues.includes(element);
-        const canRemove = editable && !isLocked;
+        const canRemove = editable;
 
         return (
           <div
             key={element}
-            className={`flex items-center gap-1 rounded p-1 text-xs ${
-              isLocked ? "bg-custom-background-90" : "bg-custom-background-80"
-            }`}
+            className="flex items-center gap-1 rounded p-1 text-xs bg-custom-background-80"
           >
-            {isLocked && <Lock size={10} className="text-custom-text-400" strokeWidth={2} />}
-            <span className={isLocked ? "text-custom-text-400" : ""}>{element}</span>
+            <span>{element}</span>
             {canRemove && (
               <button
                 type="button"

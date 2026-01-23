@@ -908,3 +908,53 @@ def issue_filters(query_params, method, prefix=""):
             
     filter_character_fields(query_params, issue_filter, method, prefix)
     return issue_filter
+
+
+def apply_user_hub_filters(issue_queryset, user):
+    """
+    Apply hub filtering based on user's extra_hubs flag and hub_codes/hub_names.
+    
+    Args:
+        issue_queryset: Django queryset of Issue objects
+        user: User instance with hub_codes, hub_names, extra_hubs, employee_permissions fields
+        
+    Returns:
+        Filtered queryset based on user's hub access
+    """
+    # If extra_hubs is True, user can see all tickets - no filtering needed
+    if user.extra_hubs:
+        return issue_queryset
+    
+    # Get user's hub_codes and hub_names (can be empty lists)
+    hub_codes = user.hub_codes or []
+    hub_names = user.hub_names or []
+    
+    # Build Q object for hub filtering
+    # Both hub_code AND hub_name must match user's lists
+    hub_filter = Q()
+    
+    # If user has hub_codes, filter by hub_code
+    if hub_codes:
+        hub_filter &= Q(hub_code__in=hub_codes)
+    else:
+        # If hub_codes is empty, no tickets will match unless permission allows null
+        hub_filter &= Q(hub_code__in=[])
+    
+    # If user has hub_names, filter by hub_name
+    if hub_names:
+        hub_filter &= Q(hub_name__in=hub_names)
+    else:
+        # If hub_names is empty, no tickets will match unless permission allows null
+        hub_filter &= Q(hub_name__in=[])
+    
+    # Check if user has permission to view tickets with null hub_code/hub_name
+    employee_permissions = user.employee_permissions or []
+    has_no_hubs_permission = "VIEW_NO_HUBS_TICKETS_PLANE" in employee_permissions
+    
+    if has_no_hubs_permission:
+        # Include tickets with null hub_code or hub_name
+        null_hub_filter = Q(hub_code__isnull=True) | Q(hub_name__isnull=True)
+        hub_filter = hub_filter | null_hub_filter
+    
+    # Apply the filter to queryset
+    return issue_queryset.filter(hub_filter)

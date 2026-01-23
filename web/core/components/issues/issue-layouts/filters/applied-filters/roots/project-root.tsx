@@ -29,8 +29,6 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
 
   const { projectStates } = useProjectState();
   
-  // Get locked hub codes from user data
-  const lockedHubCodes = userData?.hub_codes?.filter((code) => code != null && code !== "") || [];
   // derived values
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -66,12 +64,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
     if (!workspaceSlug || !projectId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
-      // Preserve locked hub_codes when clearing filters
-      if (key === "hub_code" && lockedHubCodes.length > 0) {
-        newFilters[key as keyof IIssueFilterOptions] = lockedHubCodes;
-      } else {
-        newFilters[key as keyof IIssueFilterOptions] = [];
-      }
+      newFilters[key as keyof IIssueFilterOptions] = [];
     });
     updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.FILTERS, { ...newFilters });
   };
@@ -88,7 +81,6 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
           handleRemoveFilter={handleRemoveFilter}
           labels={projectLabels ?? []}
           states={projectStates}
-          lockedHubCodes={lockedHubCodes}
         />
       </Header.LeftItem>
       <Header.RightItem>

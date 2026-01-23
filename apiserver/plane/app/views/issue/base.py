@@ -56,7 +56,7 @@ from plane.utils.grouper import (
     issue_on_results,
     issue_queryset_grouper,
 )
-from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects
+from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects, apply_user_hub_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.constants import ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP
 from plane.utils.paginator import (
@@ -110,6 +110,8 @@ class IssueListEndpoint(BaseAPIView):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
+        )
+        queryset = apply_user_hub_filters(queryset, request.user)
             .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
@@ -293,6 +295,14 @@ class IssueViewSet(BaseViewSet):
                 *custom_filters
             )
         ).distinct()
+    
+    def get_queryset_with_hub_filters(self, filters={}):
+        """
+        Get queryset with hub filters applied.
+        This is a wrapper around get_queryset that applies user hub filtering.
+        """
+        queryset = self.get_queryset(filters)
+        return apply_user_hub_filters(queryset, self.request.user)
 
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -309,7 +319,7 @@ class IssueViewSet(BaseViewSet):
         filtersWithoutCustomProperties.pop('custom_properties', None)
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset(filters).filter(**filtersWithoutCustomProperties, **extra_filters)
+        issue_queryset = self.get_queryset_with_hub_filters(filters).filter(**filtersWithoutCustomProperties, **extra_filters)
         # Custom ordering for priority and state
 
         # Issue queryset
@@ -876,7 +886,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             workspace__slug=workspace_slug, project_id=project_id
         )
 
-        return (
+        queryset = (
             issue_queryset.select_related(
                 "workspace", "project", "state", "parent"
             )
@@ -912,6 +922,7 @@ class IssuePaginatedViewSet(BaseViewSet):
                 .values("count")
             )
         ).distinct()
+        return apply_user_hub_filters(queryset, self.request.user)
 
     def process_paginated_result(self, fields, results, timezone):
         paginated_data = results.values(*fields)
@@ -1049,6 +1060,8 @@ class IssueDetailEndpoint(BaseAPIView):
             )
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
+        )
+        issue = apply_user_hub_filters(issue, request.user)
             .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
@@ -1254,10 +1267,34 @@ class SearchAPIEndpoint(BaseAPIView):
         # Fetch values dynamically based on the requested field
         filter_criteria = {f"{field}__icontains": query} if query else {}
 
-        values = Issue.objects.filter(
+        values_queryset = Issue.objects.filter(
             Q(workspace__slug=slug) & Q(**filter_criteria)
+        )
+        
+        values_queryset = apply_user_hub_filters(values_queryset, request.user)
+        
+        if field in ["hub_code", "hub_name"]:
+            if request.user.extra_hubs:
+                # User can see all options - no additional filtering needed
+                pass
+            else:
+                # Filter to only show user's accessible hub_codes or hub_names
+                if field == "hub_code":
+                    user_hubs = request.user.hub_codes or []
+                    if user_hubs:
+                        values_queryset = values_queryset.filter(hub_code__in=user_hubs)
+                    else:
+                        # If user has no hub_codes, return empty list
+                        values_queryset = values_queryset.none()
+                elif field == "hub_name":
+                    user_hubs = request.user.hub_names or []
+                    if user_hubs:
+                        values_queryset = values_queryset.filter(hub_name__in=user_hubs)
+                    else:
+                        # If user has no hub_names, return empty list
+                        values_queryset = values_queryset.none()
 
-        ).values_list(field, flat=True)
+        values = values_queryset.values_list(field, flat=True)
 
         unique_values = list(set(filter(None, values)))  # Remove duplicates and nulls
 

@@ -79,6 +79,9 @@ class UserMeSerializer(BaseSerializer):
             "is_email_verified",
             "last_login_medium",
             "hub_codes",
+            "hub_names",
+            "extra_hubs",
+            "employee_permissions",
         ]
         read_only_fields = fields
 

@@ -49,7 +49,7 @@ from plane.utils.grouper import (
     issue_on_results,
     issue_queryset_grouper,
 )
-from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects
+from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects, apply_user_hub_filters
 from plane.utils.constants import ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import (
@@ -312,6 +312,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 *custom_filters
             )
         )
+        return apply_user_hub_filters(queryset, self.request.user)
 
     @method_decorator(gzip_page)
     @allow_permission(

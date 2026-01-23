@@ -42,9 +42,6 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   const { captureEvent } = useEventTracker();
   const { data } = useUser();
   const { allowPermissions } = useUserPermissions();
-  
-  // Get locked hub codes from user data
-  const lockedHubCodes = data?.hub_codes?.filter((code) => code != null && code !== "") || [];
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -91,12 +88,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
     if (!workspaceSlug || !globalViewId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
-      // Preserve locked hub_codes when clearing filters
-      if (key === "hub_code" && lockedHubCodes.length > 0) {
-        newFilters[key as keyof IIssueFilterOptions] = lockedHubCodes;
-      } else {
-        newFilters[key as keyof IIssueFilterOptions] = [];
-      }
+      newFilters[key as keyof IIssueFilterOptions] = [];
     });
     updateFilters(
       workspaceSlug.toString(),
@@ -169,7 +161,6 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
         handleRemoveFilter={handleRemoveFilter}
         disableEditing={isLocked}
         alwaysAllowEditing
-        lockedHubCodes={lockedHubCodes}
       />
 
       {!isDefaultView ? (
