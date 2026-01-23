@@ -111,7 +111,8 @@ class IssueListEndpoint(BaseAPIView):
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
         )
-        queryset = apply_user_hub_filters(queryset, request.user).annotate(
+        queryset = apply_user_hub_filters(queryset, request.user)
+        queryset = queryset.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
@@ -141,7 +142,7 @@ class IssueListEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-        ).distinct()
+        queryset = queryset.distinct()
 
         filters = issue_filters(request.query_params, "GET")
 
@@ -1060,7 +1061,8 @@ class IssueDetailEndpoint(BaseAPIView):
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
         )
-        issue = apply_user_hub_filters(issue, request.user).annotate(
+        issue = apply_user_hub_filters(issue, request.user)
+        issue = issue.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
