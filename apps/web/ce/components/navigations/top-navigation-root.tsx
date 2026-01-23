@@ -74,7 +74,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
         <HelpMenuRoot />
         <StarUsOnGitHubLink />
         <div className="flex items-center justify-center size-8 hover:bg-layer-1-hover rounded-md">
-          <UserMenuRoot size="xs" />
+          <UserMenuRoot />
         </div>
       </div>
     </div>

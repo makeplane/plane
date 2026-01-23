@@ -50,6 +50,7 @@ export function ThemeSwitch(props: Props) {
         )
       }
       onChange={onChange}
+      buttonClassName="border border-subtle-1"
       placement="bottom-end"
       input
     >

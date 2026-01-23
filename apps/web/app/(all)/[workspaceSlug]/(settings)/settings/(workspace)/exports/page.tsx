@@ -1,17 +1,18 @@
 import { observer } from "mobx-react";
-// components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
+// components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-import ExportGuide from "@/components/exporter/guide";
-// helpers
-// hooks
+import { ExportGuide } from "@/components/exporter/guide";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
-import SettingsHeading from "@/components/settings/heading";
+import { SettingsHeading } from "@/components/settings/heading";
+// hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { ExportsWorkspaceSettingsHeader } from "./header";
 
 function ExportsPage() {
   // store hooks
@@ -34,10 +35,10 @@ function ExportsPage() {
   }
 
   return (
-    <SettingsContentWrapper size="lg">
+    <SettingsContentWrapper header={<ExportsWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
       <div
-        className={cn("w-full", {
+        className={cn("w-full flex flex-col gap-y-6", {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >

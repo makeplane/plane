@@ -1,56 +1,5 @@
+// plane imports
 import { EStartOfTheWeek } from "@plane/types";
-
-export const PROFILE_SETTINGS = {
-  profile: {
-    key: "profile",
-    i18n_label: "profile.actions.profile",
-    href: `/settings/account`,
-    highlight: (pathname: string) => pathname === "/settings/account/",
-  },
-  security: {
-    key: "security",
-    i18n_label: "profile.actions.security",
-    href: `/settings/account/security`,
-    highlight: (pathname: string) => pathname === "/settings/account/security/",
-  },
-  activity: {
-    key: "activity",
-    i18n_label: "profile.actions.activity",
-    href: `/settings/account/activity`,
-    highlight: (pathname: string) => pathname === "/settings/account/activity/",
-  },
-  preferences: {
-    key: "preferences",
-    i18n_label: "profile.actions.preferences",
-    href: `/settings/account/preferences`,
-    highlight: (pathname: string) => pathname === "/settings/account/preferences",
-  },
-  notifications: {
-    key: "notifications",
-    i18n_label: "profile.actions.notifications",
-    href: `/settings/account/notifications`,
-    highlight: (pathname: string) => pathname === "/settings/account/notifications/",
-  },
-  "api-tokens": {
-    key: "api-tokens",
-    i18n_label: "profile.actions.api-tokens",
-    href: `/settings/account/api-tokens`,
-    highlight: (pathname: string) => pathname === "/settings/account/api-tokens/",
-  },
-};
-export const PROFILE_ACTION_LINKS: {
-  key: string;
-  i18n_label: string;
-  href: string;
-  highlight: (pathname: string) => boolean;
-}[] = [
-  PROFILE_SETTINGS["profile"],
-  PROFILE_SETTINGS["security"],
-  PROFILE_SETTINGS["activity"],
-  PROFILE_SETTINGS["preferences"],
-  PROFILE_SETTINGS["notifications"],
-  PROFILE_SETTINGS["api-tokens"],
-];
 
 export const PROFILE_VIEWER_TAB = [
   {
@@ -97,11 +46,6 @@ export const PREFERENCE_OPTIONS: {
     id: "theme",
     title: "theme",
     description: "select_or_customize_your_interface_color_scheme",
-  },
-  {
-    id: "start_of_week",
-    title: "First day of the week",
-    description: "This will change how all calendars in your app look.",
   },
 ];
 

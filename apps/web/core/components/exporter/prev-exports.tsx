@@ -59,11 +59,9 @@ export const PrevExports = observer(function PrevExports(props: Props) {
 
   return (
     <div>
-      <div className="flex items-center justify-between border-b border-subtle pb-3.5 pt-7">
+      <div className="flex items-center justify-between border-b border-subtle pb-3.5">
         <div className="flex items-center gap-2">
-          <h3 className="flex gap-2 text-18 font-medium">
-            {t("workspace_settings.settings.exports.previous_exports")}
-          </h3>
+          <h3 className="text-h6-medium text-primary">{t("workspace_settings.settings.exports.previous_exports")}</h3>
           <Button variant="tertiary" className="shrink-0" onClick={handleRefresh}>
             <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />
             {refreshing ? t("refreshing") : t("refresh_status")}
@@ -92,7 +90,6 @@ export const PrevExports = observer(function PrevExports(props: Props) {
           </div>
         )}
       </div>
-
       <div className="flex flex-col">
         {exporterServices && exporterServices?.results ? (
           exporterServices?.results?.length > 0 ? (

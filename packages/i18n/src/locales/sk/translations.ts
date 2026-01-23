@@ -1967,6 +1967,44 @@ export default {
         primary_button: "Pridať systém odhadov",
       },
     },
+    features: {
+      cycles: {
+        title: "Cykly",
+        short_title: "Cykly",
+        description:
+          "Naplánujte prácu v flexibilných obdobiach, ktoré sa prispôsobia jedinečnému rytmu a tempu tohto projektu.",
+        toggle_title: "Povoliť cykly",
+        toggle_description: "Naplánujte prácu v sústredenej časovej osi.",
+      },
+      modules: {
+        title: "Moduly",
+        short_title: "Moduly",
+        description: "Organizujte prácu do podprojektov s vyčlenenými vedúcimi a priradenými osobami.",
+        toggle_title: "Povoliť moduly",
+        toggle_description: "Členovia projektu budú môcť vytvárať a upravovať moduly.",
+      },
+      views: {
+        title: "Zobrazenia",
+        short_title: "Zobrazenia",
+        description: "Uložte vlastné triedenia, filtre a možnosti zobrazenia alebo ich zdieľajte so svojím tímom.",
+        toggle_title: "Povoliť zobrazenia",
+        toggle_description: "Členovia projektu budú môcť vytvárať a upravovať zobrazenia.",
+      },
+      pages: {
+        title: "Stránky",
+        short_title: "Stránky",
+        description: "Vytvárajte a upravujte voľný obsah: poznámky, dokumenty, čokoľvek.",
+        toggle_title: "Povoliť stránky",
+        toggle_description: "Členovia projektu budú môcť vytvárať a upravovať stránky.",
+      },
+      intake: {
+        title: "Príjem",
+        short_title: "Príjem",
+        description: "Umožnite nečlenom zdieľať chyby, spätnú väzbu a návrhy; bez narušenia vášho pracovného postupu.",
+        toggle_title: "Povoliť príjem",
+        toggle_description: "Povoliť členom projektu vytvárať žiadosti o príjem v aplikácii.",
+      },
+    },
   },
   project_cycles: {
     add_cycle: "Pridať cyklus",

@@ -1997,6 +1997,46 @@ export default {
         primary_button: "Ajouter un système d’estimation",
       },
     },
+    features: {
+      cycles: {
+        title: "Cycles",
+        short_title: "Cycles",
+        description:
+          "Planifiez le travail dans des périodes flexibles qui s'adaptent au rythme et au tempo uniques de ce projet.",
+        toggle_title: "Activer les cycles",
+        toggle_description: "Planifiez le travail dans des périodes ciblées.",
+      },
+      modules: {
+        title: "Modules",
+        short_title: "Modules",
+        description: "Organisez le travail en sous-projets avec des chefs de projet et des responsables dédiés.",
+        toggle_title: "Activer les modules",
+        toggle_description: "Les membres du projet pourront créer et modifier des modules.",
+      },
+      views: {
+        title: "Vues",
+        short_title: "Vues",
+        description:
+          "Enregistrez des tris, des filtres et des options d'affichage personnalisés ou partagez-les avec votre équipe.",
+        toggle_title: "Activer les vues",
+        toggle_description: "Les membres du projet pourront créer et modifier des vues.",
+      },
+      pages: {
+        title: "Pages",
+        short_title: "Pages",
+        description: "Créez et modifiez du contenu libre : notes, documents, n'importe quoi.",
+        toggle_title: "Activer les pages",
+        toggle_description: "Les membres du projet pourront créer et modifier des pages.",
+      },
+      intake: {
+        title: "Réception",
+        short_title: "Réception",
+        description:
+          "Permettez aux non-membres de partager des bugs, des commentaires et des suggestions ; sans perturber votre flux de travail.",
+        toggle_title: "Activer la réception",
+        toggle_description: "Permettre aux membres du projet de créer des demandes de réception dans l'application.",
+      },
+    },
   },
   project_cycles: {
     add_cycle: "Ajouter un cycle",

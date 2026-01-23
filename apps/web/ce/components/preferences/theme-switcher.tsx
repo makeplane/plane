@@ -10,8 +10,7 @@ import { applyCustomTheme } from "@plane/utils";
 // components
 import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
 import { ThemeSwitch } from "@/components/core/theme/theme-switch";
-// helpers
-import { PreferencesSection } from "@/components/preferences/section";
+import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 
@@ -79,18 +78,16 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
 
   return (
     <>
-      <PreferencesSection
+      <SettingsControlItem
         title={t(props.option.title)}
         description={t(props.option.description)}
         control={
-          <div>
-            <ThemeSwitch
-              value={currentTheme}
-              onChange={(themeOption) => {
-                void handleThemeChange(themeOption);
-              }}
-            />
-          </div>
+          <ThemeSwitch
+            value={currentTheme}
+            onChange={(themeOption) => {
+              void handleThemeChange(themeOption);
+            }}
+          />
         }
       />
       {userProfile.theme?.theme === "custom" && <CustomThemeSelector />}

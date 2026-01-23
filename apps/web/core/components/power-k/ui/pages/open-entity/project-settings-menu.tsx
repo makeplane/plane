@@ -1,13 +1,13 @@
 import { observer } from "mobx-react";
-// plane types
-import { EUserPermissionsLevel } from "@plane/constants";
-// components
+// plane imports
+import { EUserPermissionsLevel, PROJECT_SETTINGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+// components
 import type { TPowerKContext } from "@/components/power-k/core/types";
 import { PowerKSettingsMenu } from "@/components/power-k/menus/settings";
+import { PROJECT_SETTINGS_ICONS } from "@/components/settings/project/sidebar/item-icon";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-import { PROJECT_SETTINGS } from "@/plane-web/constants/project";
 
 type Props = {
   context: TPowerKContext;
@@ -35,7 +35,7 @@ export const PowerKOpenProjectSettingsMenu = observer(function PowerKOpenProject
   const settingsListWithIcons = settingsList.map((setting) => ({
     ...setting,
     label: t(setting.i18n_label),
-    icon: setting.Icon,
+    icon: PROJECT_SETTINGS_ICONS[setting.key],
   }));
 
   return <PowerKSettingsMenu settings={settingsListWithIcons} onSelect={(setting) => handleSelect(setting.href)} />;

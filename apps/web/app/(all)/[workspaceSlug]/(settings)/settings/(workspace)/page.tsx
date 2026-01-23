@@ -7,8 +7,10 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { WorkspaceDetails } from "@/components/workspace/settings/workspace-details";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
+// local imports
+import { GeneralWorkspaceSettingsHeader } from "./header";
 
-function WorkspaceSettingsPage() {
+function GeneralWorkspaceSettingsPage() {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
@@ -18,11 +20,11 @@ function WorkspaceSettingsPage() {
     : undefined;
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<GeneralWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
       <WorkspaceDetails />
     </SettingsContentWrapper>
   );
 }
 
-export default observer(WorkspaceSettingsPage);
+export default observer(GeneralWorkspaceSettingsPage);
