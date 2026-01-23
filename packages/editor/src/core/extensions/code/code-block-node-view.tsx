@@ -9,6 +9,9 @@ import { CopyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
+// types
+import type { TCodeBlockAttributes } from "./types";
+import { ECodeBlockAttributeNames } from "./types";
 
 // we just have ts support for now
 const lowlight = createLowlight(common);
@@ -20,6 +23,8 @@ type Props = {
 
 export function CodeBlockComponent({ node }: Props) {
   const [copied, setCopied] = useState(false);
+  // derived values
+  const attrs = node.attrs as TCodeBlockAttributes;
 
   const copyToClipboard = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     try {
@@ -34,7 +39,7 @@ export function CodeBlockComponent({ node }: Props) {
   };
 
   return (
-    <NodeViewWrapper className="code-block relative group/code">
+    <NodeViewWrapper key={attrs[ECodeBlockAttributeNames.ID]} className="code-block relative group/code">
       <Tooltip tooltipContent="Copy code">
         <button
           type="button"
@@ -44,7 +49,7 @@ export function CodeBlockComponent({ node }: Props) {
               "bg-success-subtle hover:bg-success-subtle-1 active:bg-success-subtle-1": copied,
             }
           )}
-          onClick={copyToClipboard}
+          onClick={(e) => void copyToClipboard(e)}
         >
           {copied ? (
             <CheckIcon className="h-3 w-3 text-success-primary" strokeWidth={3} />

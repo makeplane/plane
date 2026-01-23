@@ -6,6 +6,7 @@ import type { TCalloutBlockAttributes, TCalloutBlockEmojiAttributes, TCalloutBlo
 import { ECalloutAttributeNames } from "./types";
 
 export const DEFAULT_CALLOUT_BLOCK_ATTRIBUTES: TCalloutBlockAttributes = {
+  [ECalloutAttributeNames.ID]: null,
   [ECalloutAttributeNames.LOGO_IN_USE]: "emoji",
   [ECalloutAttributeNames.ICON_COLOR]: undefined,
   [ECalloutAttributeNames.ICON_NAME]: undefined,
@@ -31,7 +32,7 @@ export const getStoredLogo = (): TStoredLogoValue => {
     if (storedData) {
       let parsedData: TLogoProps;
       try {
-        parsedData = JSON.parse(storedData);
+        parsedData = JSON.parse(storedData) as TLogoProps;
       } catch (error) {
         console.error(`Error parsing stored callout logo, stored value- ${storedData}`, error);
         localStorage.removeItem("editor-calloutComponent-logo");
