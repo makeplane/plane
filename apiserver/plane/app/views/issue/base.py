@@ -111,8 +111,7 @@ class IssueListEndpoint(BaseAPIView):
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
         )
-        queryset = apply_user_hub_filters(queryset, request.user)
-            .annotate(
+        queryset = apply_user_hub_filters(queryset, request.user).annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
@@ -1061,8 +1060,7 @@ class IssueDetailEndpoint(BaseAPIView):
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
         )
-        issue = apply_user_hub_filters(issue, request.user)
-            .annotate(
+        issue = apply_user_hub_filters(issue, request.user).annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
