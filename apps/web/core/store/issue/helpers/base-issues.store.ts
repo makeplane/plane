@@ -1469,7 +1469,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // if the key for accumulator is not the current action,
     // Meaning if the key already has an action ADD and the current one is REMOVE,
-    // The the key is deleted as both the actions cancel each other out
+    // The key is deleted as both the actions cancel each other out
     if (accumulator[key] !== action) {
       delete accumulator[key];
     }
