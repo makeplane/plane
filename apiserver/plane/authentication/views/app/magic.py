@@ -52,7 +52,6 @@ class MagicGenerateEndpoint(BaseAPIView):
         # Check if instance is configured
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
-            print("[MAGIC_GENERATE] Instance not configured")
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES[
                     "INSTANCE_NOT_CONFIGURED"
@@ -69,26 +68,18 @@ class MagicGenerateEndpoint(BaseAPIView):
             username = request.data.get("username", False)
             if username:
                 email = username + "@plane-shipsy.com"
-        
-        print(f"[MAGIC_GENERATE] Request received - email: {email}, origin: {origin}, username: {request.data.get('username', 'N/A')}")
-        
+        print(email)
         try:
             # Clean up the email
             email = email.strip().lower()
             validate_email(email)
-            print(f"[MAGIC_GENERATE] Email validated - email: {email}")
-            
             adapter = MagicCodeProvider(request=request, key=email)
             key, token = adapter.initiate()
-            
-            print(f"[MAGIC_GENERATE] Token generated successfully - email: {email}, key: {key}, token: {token}")
-            
             # If the smtp is configured send through here
             # magic_link.delay(email, key, token, origin)
             return Response({"key": str(key), "token": token}, status=status.HTTP_200_OK)
         except AuthenticationException as e:
             params = e.get_error_dict()
-            print(f"[MAGIC_GENERATE] AuthenticationException - email: {email}, error: {params}")
             return Response(
                 params,
                 status=status.HTTP_400_BAD_REQUEST,
@@ -131,7 +122,7 @@ class MagicSignInEndpoint(BaseAPIView):
             return hub_codes
         except (json.JSONDecodeError, TypeError, ValueError) as e:
             # Log error but don't break authentication flow
-            print(f"[MAGIC_SIGNIN] Error parsing hub_list: {e}")
+            print(f"Error parsing hub_list: {e}")
             return []
     
     def extract_hub_names_from_hub_list(self, hub_list_str):
@@ -161,7 +152,7 @@ class MagicSignInEndpoint(BaseAPIView):
             
             return hub_names
         except (json.JSONDecodeError, TypeError, ValueError) as e:
-            print(f"[MAGIC_SIGNIN] Error parsing hub_list for names: {e}")
+            print(f"Error parsing hub_list for names: {e}")
             return []
     
     def add_user_to_workspace(self, user, workspace_slug):
@@ -195,7 +186,7 @@ class MagicSignInEndpoint(BaseAPIView):
                 user.save()
                 user.profile.save()
             except Exception as e:
-                print(f"[MAGIC_SIGNIN] Error updating user profile: {e}")
+                print(e)
 
     def add_to_project(self, project, user):
         pm = ProjectMember.objects.filter(
@@ -257,9 +248,7 @@ class MagicSignInEndpoint(BaseAPIView):
 
     def post(self, request):
         # set the referer as session to redirect after login
-        base_host_url = base_host(request=request, is_app=True)
-        print(f"[MAGIC_SIGNIN] Request received - base_host: {base_host_url}")
-        
+        print(base_host(request=request, is_app=True))
         code = request.POST.get("code", "").strip()
         email = request.POST.get("email", "").strip().lower()
         app_url = request.POST.get("app_url", "").strip().lower()
@@ -269,8 +258,6 @@ class MagicSignInEndpoint(BaseAPIView):
         hub_list_str = request.POST.get("hub_list")
         extra_hubs_str = request.POST.get("extra_hubs", "false").strip().lower()
         employee_permissions_str = request.POST.get("employee_permissions")
-        
-        print(f"[MAGIC_SIGNIN] Request parameters - email: {email}, code: {code}, workspace: {workspace}, app_url: {app_url}, next_path: {next_path}, language: {language}")
         
         hub_codes = None
         hub_names = None
@@ -290,10 +277,9 @@ class MagicSignInEndpoint(BaseAPIView):
                 if not isinstance(employee_permissions, list):
                     employee_permissions = []
             except (json.JSONDecodeError, TypeError, ValueError) as e:
-                print(f"[MAGIC_SIGNIN] Error parsing employee_permissions: {e}")
+                print(f"Error parsing employee_permissions: {e}")
                 employee_permissions = []
         if code == "" or email == "":
-            print(f"[MAGIC_SIGNIN] Missing required parameters - email: {email}, code: {code}")
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES[
                     "MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED"
@@ -312,19 +298,14 @@ class MagicSignInEndpoint(BaseAPIView):
         # Existing User
         try:
             existing_user = User.objects.filter(email=email).first()
-            print(f"[MAGIC_SIGNIN] User lookup - email: {email}, user_exists: {existing_user is not None}")
-            
             if not existing_user:
-                print(f"[MAGIC_SIGNIN] New user sign-in flow - email: {email}, code: {code}")
                 provider = MagicCodeProvider(
                     request=request,
                     key=f"magic_{email}",
                     code=code,
                     callback=post_user_auth_workflow,
                 )
-                print(f"[MAGIC_SIGNIN] Attempting authentication for new user - email: {email}, redis_key: magic_{email}")
                 user = provider.authenticate()
-                print(f"[MAGIC_SIGNIN] Authentication successful for new user - email: {email}, user_id: {user.id}")
                 
                 profile, _ = Profile.objects.get_or_create(user=user)
                 profile.language = language
@@ -356,19 +337,15 @@ class MagicSignInEndpoint(BaseAPIView):
                 url = urljoin(base_host(request=request, is_app=True), path)
                 if app_url:
                     url = urljoin(app_url, path)
-                print(f"[MAGIC_SIGNIN] New user sign-in complete - email: {email}, redirect_url: {url}")
                 return HttpResponseRedirect(url)
             else:
-                print(f"[MAGIC_SIGNIN] Existing user sign-in flow - email: {email}, code: {code}, user_id: {existing_user.id}")
                 provider = MagicCodeProvider(
                     request=request,
                     key=f"magic_{email}",
                     code=code,
                     callback=post_user_auth_workflow,
                 )
-                print(f"[MAGIC_SIGNIN] Attempting authentication for existing user - email: {email}, redis_key: magic_{email}")
                 user = provider.authenticate()
-                print(f"[MAGIC_SIGNIN] Authentication successful for existing user - email: {email}, user_id: {user.id}")
                 
                 profile, _ = Profile.objects.get_or_create(user=user)
                 profile.language = language
@@ -402,12 +379,11 @@ class MagicSignInEndpoint(BaseAPIView):
                 if app_url:
                     url = urljoin(app_url, path)
                 
-                print(f"[MAGIC_SIGNIN] Existing user sign-in complete - email: {email}, redirect_url: {url}")
                 return HttpResponseRedirect(url)
 
         except AuthenticationException as e:
             params = e.get_error_dict()
-            print(f"[MAGIC_SIGNIN] AuthenticationException - email: {email}, code: {code}, error_code: {params.get('error_code')}, error_message: {params.get('error_message')}, error_dict: {params}")
+            print(params)
             if next_path:
                 params["next_path"] = str(next_path)
             path = "sign-in?" + urlencode(params)
@@ -417,7 +393,6 @@ class MagicSignInEndpoint(BaseAPIView):
             )
             if app_url:
                 url = urljoin(app_url, path)
-            print(f"[MAGIC_SIGNIN] Redirecting to error page - url: {url}")
             return HttpResponseRedirect(url)
 
 
