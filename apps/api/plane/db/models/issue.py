@@ -155,13 +155,6 @@ class Issue(ProjectBaseModel):
     is_draft = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
-    type = models.ForeignKey(
-        "db.IssueType",
-        on_delete=models.SET_NULL,
-        related_name="issue_type",
-        null=True,
-        blank=True,
-    )
 
     issue_objects = IssueManager()
 
@@ -240,20 +233,6 @@ class Issue(ProjectBaseModel):
     def __str__(self):
         """Return name of the issue"""
         return f"{self.name} <{self.project.name}>"
-
-
-class IssueBlocker(ProjectBaseModel):
-    block = models.ForeignKey(Issue, related_name="blocker_issues", on_delete=models.CASCADE)
-    blocked_by = models.ForeignKey(Issue, related_name="blocked_issues", on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = "Issue Blocker"
-        verbose_name_plural = "Issue Blockers"
-        db_table = "issue_blockers"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        return f"{self.block.name} {self.blocked_by.name}"
 
 
 class IssueRelationChoices(models.TextChoices):

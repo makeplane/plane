@@ -10,7 +10,6 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
     WorkspaceMemberInvite,
-    WorkspaceTheme,
     WorkspaceUserProperties,
     WorkspaceUserLink,
     UserRecentVisit,
@@ -123,13 +122,6 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
             "updated_at",
             "invite_link",
         ]
-
-
-class WorkspaceThemeSerializer(BaseSerializer):
-    class Meta:
-        model = WorkspaceTheme
-        fields = "__all__"
-        read_only_fields = ["workspace", "actor"]
 
 
 class WorkspaceUserPropertiesSerializer(BaseSerializer):
