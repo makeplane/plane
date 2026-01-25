@@ -20,7 +20,7 @@ type Props = {
 
 const PEEK_MODES: {
   key: IPeekMode;
-  icon: any;
+  icon: React.FC<React.SVGProps<SVGSVGElement>>;
   label: string;
 }[] = [
   { key: "side", icon: SidePanelIcon, label: "Side Peek" },

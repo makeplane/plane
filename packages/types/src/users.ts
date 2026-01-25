@@ -53,6 +53,13 @@ export interface IUserAccount {
   updated_at: Date;
 }
 
+export const NOTIFICATION_VIEW_MODES = [
+  { key: "full", label: "Full" },
+  { key: "compact", label: "Compact" },
+] as const;
+
+export type TNotificationsViewMode = (typeof NOTIFICATION_VIEW_MODES)[number]["key"];
+
 export type TUserProfile = {
   id: string | undefined;
   user: string | undefined;
@@ -76,6 +83,7 @@ export type TUserProfile = {
   created_at: Date | string;
   updated_at: Date | string;
   start_of_the_week: EStartOfTheWeek;
+  notification_view_mode: TNotificationsViewMode;
 };
 
 export interface IInstanceAdminStatus {

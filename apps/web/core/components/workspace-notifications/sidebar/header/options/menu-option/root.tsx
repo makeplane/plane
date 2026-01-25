@@ -73,7 +73,7 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
   return (
     <PopoverMenu
       data={popoverMenuOptions}
-      button={<IconButton size="base" variant="ghost" icon={MoreVertical} />}
+      button={<IconButton size="base" variant="secondary" icon={MoreVertical} />}
       keyExtractor={(item: TPopoverMenuOptions) => item.key}
       panelClassName="p-0 py-2 rounded-md border border-subtle bg-surface-1 space-y-1"
       render={(item: TPopoverMenuOptions) => <NotificationMenuOptionItem {...item} />}
