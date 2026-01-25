@@ -42,6 +42,7 @@ from plane.db.models import (
     UserRecentVisit,
 )
 from plane.utils.error_codes import ERROR_CODES
+from plane.utils.page_filters import page_filters
 
 # Local imports
 from ..base import BaseAPIView, BaseViewSet
@@ -96,9 +97,7 @@ class PageViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("owned_by")
             .annotate(is_favorite=Exists(subquery))
-            .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
-            .order_by("-is_favorite", "-created_at")
             .annotate(
                 project=Exists(
                     ProjectPage.objects.filter(page_id=OuterRef("id"), project_id=self.kwargs.get("project_id"))
@@ -285,8 +284,9 @@ class PageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def list(self, request, slug, project_id):
-        queryset = self.get_queryset()
         project = Project.objects.get(pk=project_id)
+        queryset = self.get_queryset()
+        
         if (
             ProjectMember.objects.filter(
                 workspace__slug=slug,
@@ -298,8 +298,34 @@ class PageViewSet(BaseViewSet):
             and not project.guest_view_all_features
         ):
             queryset = queryset.filter(owned_by=request.user)
-        pages = PageSerializer(queryset, many=True).data
-        return Response(pages, status=status.HTTP_200_OK)
+        
+        # Filter by page type (public, private, archived)
+        page_type = request.GET.get("type", "public")
+        if page_type == "private":
+            queryset = queryset.filter(access=1, archived_at__isnull=True)
+        elif page_type == "archived":
+            queryset = queryset.filter(archived_at__isnull=False)
+        elif page_type == "public":
+            queryset = queryset.filter(access=0, archived_at__isnull=True)
+        
+        # Apply additional filters from query params
+        filters = page_filters(request.query_params, "GET")
+        queryset = queryset.filter(**filters)
+        
+        order_by_param = request.GET.get("order_by", "-created_at")
+        ALLOWED_ORDER_FIELDS = {"created_at", "-created_at", "updated_at", "-updated_at", "name", "-name"}
+
+        if order_by_param not in ALLOWED_ORDER_FIELDS:
+            order_by_param = "-created_at"
+        queryset = queryset.order_by(order_by_param)
+
+        return self.paginate(
+            request=request,
+            queryset=queryset,
+            on_results=lambda pages: PageSerializer(pages, many=True).data,
+            default_per_page=20,
+            max_per_page=100,
+        )
 
     def archive(self, request, slug, project_id, page_id):
         page = Page.objects.get(
