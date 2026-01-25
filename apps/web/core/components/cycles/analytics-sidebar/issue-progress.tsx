@@ -141,9 +141,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
                             cycleId
                           )}
                           isEditable={Boolean(!peekCycle) && cycleFilter !== undefined}
-                          noBackground={false}
                           plotType={plotType}
-                          roundedTab={false}
                           selectedFilters={{
                             assignees: selectedAssignees,
                             labels: selectedLabels,

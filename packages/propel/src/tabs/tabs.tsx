@@ -1,3 +1,54 @@
+/**
+ * Tabs Component
+ *
+ * A flexible tab navigation component built on top of Base UI's Tabs primitive.
+ *
+ * @example
+ * ```tsx
+ * import { Tabs } from "@plane/propel/tabs";
+ *
+ * // Basic usage
+ * <Tabs defaultValue="tab1">
+ *   <Tabs.List>
+ *     <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab2">Tab 2</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab3">Tab 3</Tabs.Trigger>
+ *   </Tabs.List>
+ *   <Tabs.Content value="tab1">Content for Tab 1</Tabs.Content>
+ *   <Tabs.Content value="tab2">Content for Tab 2</Tabs.Content>
+ *   <Tabs.Content value="tab3">Content for Tab 3</Tabs.Content>
+ * </Tabs>
+ *
+ * // With variant and size options
+ * <Tabs defaultValue="overview" variant="contained">
+ *   <Tabs.List background="contained">
+ *     <Tabs.Trigger value="overview" size="sm">Overview</Tabs.Trigger>
+ *     <Tabs.Trigger value="settings" size="sm">Settings</Tabs.Trigger>
+ *   </Tabs.List>
+ *   <Tabs.Content value="overview">Overview content</Tabs.Content>
+ *   <Tabs.Content value="settings">Settings content</Tabs.Content>
+ * </Tabs>
+ *
+ * // Controlled usage
+ * const [activeTab, setActiveTab] = useState("tab1");
+ *
+ * <Tabs value={activeTab} onValueChange={setActiveTab}>
+ *   <Tabs.List>
+ *     <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab2">Tab 2</Tabs.Trigger>
+ *   </Tabs.List>
+ *   <Tabs.Content value="tab1">Content 1</Tabs.Content>
+ *   <Tabs.Content value="tab2">Content 2</Tabs.Content>
+ * </Tabs>
+ * ```
+ *
+ * @props
+ * - `Tabs` (Root): Accepts all props from Base UI's Tabs.Root plus `variant`
+ * - `Tabs.List`: Container for triggers. `background?: "contained"` adds bg color
+ * - `Tabs.Trigger`: Tab button. `size?: "sm" | "md" | "lg"` controls text size
+ * - `Tabs.Content`: Tab panel content
+ * - `Tabs.Indicator`: Optional animated indicator element
+ */
 import * as React from "react";
 import { Tabs as TabsPrimitive } from "@base-ui-components/react/tabs";
 import { cn } from "../utils/classname";
@@ -132,6 +183,53 @@ const TabsIndicator = React.forwardRef(function TabsIndicator(
   );
 });
 
+/**
+ * A compound Tabs component built on Base UI primitives.
+ *
+ * @example
+ * ```tsx
+ * import { Tabs } from "@plane/propel";
+ *
+ * // Basic usage
+ * <Tabs defaultValue="tab1">
+ *   <Tabs.List>
+ *     <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab2">Tab 2</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab3">Tab 3</Tabs.Trigger>
+ *   </Tabs.List>
+ *   <Tabs.Content value="tab1">Content for Tab 1</Tabs.Content>
+ *   <Tabs.Content value="tab2">Content for Tab 2</Tabs.Content>
+ *   <Tabs.Content value="tab3">Content for Tab 3</Tabs.Content>
+ * </Tabs>
+ *
+ * // With size variants (sm | md | lg)
+ * <Tabs defaultValue="tab1">
+ *   <Tabs.List>
+ *     <Tabs.Trigger value="tab1" size="sm">Small</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab2" size="md">Medium</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab3" size="lg">Large</Tabs.Trigger>
+ *   </Tabs.List>
+ *   <Tabs.Content value="tab1">Small tab content</Tabs.Content>
+ *   <Tabs.Content value="tab2">Medium tab content</Tabs.Content>
+ *   <Tabs.Content value="tab3">Large tab content</Tabs.Content>
+ * </Tabs>
+ *
+ * // With contained background variant
+ * <Tabs defaultValue="tab1" variant="contained">
+ *   <Tabs.List background="contained">
+ *     <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+ *     <Tabs.Trigger value="tab2">Tab 2</Tabs.Trigger>
+ *   </Tabs.List>
+ *   <Tabs.Content value="tab1">Content 1</Tabs.Content>
+ *   <Tabs.Content value="tab2">Content 2</Tabs.Content>
+ * </Tabs>
+ * ```
+ *
+ * @property {Tabs.List} List - Container for tab triggers with optional background variant
+ * @property {Tabs.Trigger} Trigger - Individual tab button with size variants (sm, md, lg)
+ * @property {Tabs.Content} Content - Panel content associated with each tab
+ * @property {Tabs.Indicator} Indicator - Animated indicator for active tab selection
+ */
 export const Tabs = Object.assign(TabsRoot, {
   List: TabsList,
   Trigger: TabsTrigger,
