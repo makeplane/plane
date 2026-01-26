@@ -1,3 +1,14 @@
+{
+	{$CERT_EMAIL}
+	acme_ca {$CERT_ACME_CA:https://acme-v02.api.letsencrypt.org/directory} 
+	{$CERT_ACME_DNS}
+	servers {
+		max_header_size 25MB
+		client_ip_headers X-Forwarded-For X-Real-IP
+		trusted_proxies static {$TRUSTED_PROXIES:0.0.0.0/0}
+	}
+}
+
 (plane_proxy) {
 	request_body {
 		max_size {$FILE_SIZE_LIMIT}
@@ -21,17 +32,6 @@
 	reverse_proxy /{$BUCKET_NAME} plane-minio:9000
 
 	reverse_proxy /* web:3000
-}
-
-{
-	{$CERT_EMAIL}
-	acme_ca {$CERT_ACME_CA:https://acme-v02.api.letsencrypt.org/directory} 
-	{$CERT_ACME_DNS}
-	servers {
-		max_header_size 25MB
-		client_ip_headers X-Forwarded-For X-Real-IP
-		trusted_proxies static {$TRUSTED_PROXIES:0.0.0.0/0}
-	}
 }
 
 {$SITE_ADDRESS} {
