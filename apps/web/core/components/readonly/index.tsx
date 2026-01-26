@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // Readonly components for displaying single values instead of interactive dropdowns
 // These components handle their own data fetching using internal hooks
 export { ReadonlyState, type TReadonlyStateProps } from "./state";

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export enum EModalPosition {
   TOP = "flex items-center justify-center text-center mx-4 my-10 md:my-20",
   CENTER = "flex items-end sm:items-center justify-center p-4 min-h-full",

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { ContextMenu as ContextMenuPrimitive } from "@base-ui-components/react/context-menu";
 import { cn } from "../utils";
