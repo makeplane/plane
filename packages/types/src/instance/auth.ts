@@ -1,5 +1,3 @@
-import type { TExtendedInstanceAuthenticationModeKeys } from "./auth-ee";
-
 export type TCoreInstanceAuthenticationModeKeys =
   | "unique-codes"
   | "passwords-login"
@@ -8,9 +6,7 @@ export type TCoreInstanceAuthenticationModeKeys =
   | "gitlab"
   | "gitea";
 
-export type TInstanceAuthenticationModeKeys =
-  | TCoreInstanceAuthenticationModeKeys
-  | TExtendedInstanceAuthenticationModeKeys;
+export type TInstanceAuthenticationModeKeys = TCoreInstanceAuthenticationModeKeys;
 
 export type TInstanceAuthenticationModes = {
   key: TInstanceAuthenticationModeKeys;
@@ -18,6 +14,7 @@ export type TInstanceAuthenticationModes = {
   description: string;
   icon: React.ReactNode;
   config: React.ReactNode;
+  enabledConfigKey: TInstanceAuthenticationMethodKeys;
   unavailable?: boolean;
 };
 
