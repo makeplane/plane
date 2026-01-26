@@ -398,6 +398,67 @@ class IssueAttachment(ProjectBaseModel):
         return f"{self.issue.name} {self.asset}"
 
 
+class TimeEntry(ProjectBaseModel):
+    """
+    Time tracking entries for issues.
+    Stores time logged by users on specific issues.
+    """
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="time_entries")
+    # User who logged the time (can be different from created_by for manual entries)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="time_entries",
+        null=True,
+        blank=True,
+    )
+    # Time spent in seconds
+    time_spent = models.IntegerField(verbose_name="Time Spent (seconds)", validators=[MinValueValidator(0)])
+    # Optional description/note for the time entry
+    description = models.TextField(blank=True, null=True)
+    # Start time for timer-based entries
+    started_at = models.DateTimeField(null=True, blank=True)
+    # End time for timer-based entries
+    ended_at = models.DateTimeField(null=True, blank=True)
+    # Whether this entry was created via timer (true) or manually (false)
+    is_timer = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "Time Entry"
+        verbose_name_plural = "Time Entries"
+        db_table = "time_entries"
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["issue", "deleted_at"], name="time_entry_issue_idx"),
+            models.Index(fields=["user", "deleted_at"], name="time_entry_user_idx"),
+            models.Index(fields=["created_at"], name="time_entry_created_at_idx"),
+        ]
+
+    def __str__(self):
+        hours = self.time_spent // 3600
+        minutes = (self.time_spent % 3600) // 60
+        return f"{self.issue.name} - {hours}h {minutes}m"
+
+    @property
+    def time_spent_hours(self):
+        """Return time spent in hours as a float"""
+        return round(self.time_spent / 3600.0, 2)
+
+    @property
+    def time_spent_formatted(self):
+        """Return formatted time string (e.g., '2h 30m')"""
+        hours = self.time_spent // 3600
+        minutes = (self.time_spent % 3600) // 60
+        if hours > 0 and minutes > 0:
+            return f"{hours}h {minutes}m"
+        elif hours > 0:
+            return f"{hours}h"
+        elif minutes > 0:
+            return f"{minutes}m"
+        else:
+            return "0m"
+
+
 class IssueActivity(ProjectBaseModel):
     issue = models.ForeignKey(Issue, on_delete=models.DO_NOTHING, null=True, related_name="issue_activity")
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")

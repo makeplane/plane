@@ -38,6 +38,7 @@ from plane.db.models import (
     IssueDescriptionVersion,
     ProjectMember,
     EstimatePoint,
+    TimeEntry,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -637,6 +638,62 @@ class IssueAttachmentLiteSerializer(DynamicBaseSerializer):
             "updated_at",
             "updated_by",
             "asset_url",
+        ]
+        read_only_fields = fields
+
+
+class TimeEntrySerializer(BaseSerializer):
+    user_detail = UserLiteSerializer(read_only=True, source="user")
+    time_spent_hours = serializers.FloatField(read_only=True)
+    time_spent_formatted = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = TimeEntry
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
+    def validate_time_spent(self, value):
+        """Ensure time_spent is positive"""
+        if value < 0:
+            raise serializers.ValidationError("Time spent must be a positive number.")
+        return value
+
+    def create(self, validated_data):
+        # If user is not provided, use created_by
+        if "user" not in validated_data or validated_data.get("user") is None:
+            validated_data["user"] = self.context.get("request").user
+        return TimeEntry.objects.create(**validated_data)
+
+
+class TimeEntryLiteSerializer(DynamicBaseSerializer):
+    user_detail = UserLiteSerializer(read_only=True, source="user")
+    time_spent_hours = serializers.FloatField(read_only=True)
+    time_spent_formatted = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = TimeEntry
+        fields = [
+            "id",
+            "issue_id",
+            "user",
+            "user_detail",
+            "time_spent",
+            "time_spent_hours",
+            "time_spent_formatted",
+            "description",
+            "started_at",
+            "ended_at",
+            "is_timer",
+            "created_at",
+            "updated_at",
+            "created_by",
         ]
         read_only_fields = fields
 
