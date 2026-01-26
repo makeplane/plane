@@ -200,6 +200,7 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
           control={control}
           render={({ field: { onChange } }) => (
             <RichTextEditor
+              key={entityId}
               editable={!disabled}
               ref={editorRef}
               id={entityId}
