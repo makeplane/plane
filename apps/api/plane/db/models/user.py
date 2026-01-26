@@ -35,6 +35,16 @@ def get_mobile_default_onboarding():
     }
 
 
+def get_default_product_tour():
+    return {
+        "work_items": False,
+        "cycles": False,
+        "modules": False,
+        "intake": False,
+        "pages": False,
+    }
+
+
 class BotTypeEnum(models.TextChoices):
     WORKSPACE_SEED = "WORKSPACE_SEED", "Workspace Seed"
 
@@ -245,6 +255,7 @@ class Profile(TimeAuditModel):
     # marketing
     has_marketing_email_consent = models.BooleanField(default=False)
     is_subscribed_to_changelog = models.BooleanField(default=False)
+    product_tour = models.JSONField(default=get_default_product_tour)
 
     class Meta:
         verbose_name = "Profile"
