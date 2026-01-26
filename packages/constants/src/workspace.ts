@@ -1,9 +1,9 @@
 import type { TStaticViewTypes, IWorkspaceSearchResults } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
 
-export const ORGANIZATION_SIZE = ["Just myself", "2-10", "11-50", "51-200", "201-500", "500+"];
+export const ORGANIZATION_SIZE: string[] = ["Just myself", "2-10", "11-50", "51-200", "201-500", "500+"];
 
-export const RESTRICTED_URLS = [
+export const RESTRICTED_URLS: string[] = [
   "404",
   "accounts",
   "api",
@@ -69,62 +69,6 @@ export const RESTRICTED_URLS = [
   "licenses",
   "instances",
   "instance",
-];
-
-export const WORKSPACE_SETTINGS = {
-  general: {
-    key: "general",
-    i18n_label: "workspace_settings.settings.general.title",
-    href: `/settings`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/`,
-  },
-  members: {
-    key: "members",
-    i18n_label: "workspace_settings.settings.members.title",
-    href: `/settings/members`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members/`,
-  },
-  "billing-and-plans": {
-    key: "billing-and-plans",
-    i18n_label: "workspace_settings.settings.billing_and_plans.title",
-    href: `/settings/billing`,
-    access: [EUserWorkspaceRoles.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/billing/`,
-  },
-  export: {
-    key: "export",
-    i18n_label: "workspace_settings.settings.exports.title",
-    href: `/settings/exports`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/exports/`,
-  },
-  webhooks: {
-    key: "webhooks",
-    i18n_label: "workspace_settings.settings.webhooks.title",
-    href: `/settings/webhooks`,
-    access: [EUserWorkspaceRoles.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/webhooks/`,
-  },
-};
-
-export const WORKSPACE_SETTINGS_ACCESS = Object.fromEntries(
-  Object.entries(WORKSPACE_SETTINGS).map(([_, { href, access }]) => [href, access])
-);
-
-export const WORKSPACE_SETTINGS_LINKS: {
-  key: string;
-  i18n_label: string;
-  href: string;
-  access: EUserWorkspaceRoles[];
-  highlight: (pathname: string, baseUrl: string) => boolean;
-}[] = [
-  WORKSPACE_SETTINGS["general"],
-  WORKSPACE_SETTINGS["members"],
-  WORKSPACE_SETTINGS["billing-and-plans"],
-  WORKSPACE_SETTINGS["export"],
-  WORKSPACE_SETTINGS["webhooks"],
 ];
 
 export const ROLE = {

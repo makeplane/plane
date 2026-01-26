@@ -4,19 +4,22 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 // components
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { WebhookSettingsLoader } from "@/components/ui/loader/settings/web-hook";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";
 // hooks
 import { useWebhook } from "@/hooks/store/use-webhook";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
+// local imports
 import type { Route } from "./+types/page";
+import { WebhooksWorkspaceSettingsHeader } from "./header";
 
 function WebhooksListPage({ params }: Route.ComponentProps) {
   // states
@@ -53,7 +56,7 @@ function WebhooksListPage({ params }: Route.ComponentProps) {
   if (!webhooks) return <WebhookSettingsLoader />;
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<WebhooksWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
       <div className="w-full">
         <CreateWebhookModal
@@ -68,15 +71,14 @@ function WebhooksListPage({ params }: Route.ComponentProps) {
         <SettingsHeading
           title={t("workspace_settings.settings.webhooks.title")}
           description={t("workspace_settings.settings.webhooks.description")}
-          button={{
-            label: t("workspace_settings.settings.webhooks.add_webhook"),
-            onClick: () => {
-              setShowCreateWebhookModal(true);
-            },
-          }}
+          control={
+            <Button variant="primary" size="lg" onClick={() => setShowCreateWebhookModal(true)}>
+              {t("workspace_settings.settings.webhooks.add_webhook")}
+            </Button>
+          }
         />
         {Object.keys(webhooks).length > 0 ? (
-          <div className="flex h-full w-full flex-col">
+          <div className="mt-4">
             <WebhooksList />
           </div>
         ) : (

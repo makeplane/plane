@@ -5,10 +5,11 @@ import { EUserPermissionsLevel, WORKSPACE_SETTINGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TPowerKContext } from "@/components/power-k/core/types";
 import { PowerKSettingsMenu } from "@/components/power-k/menus/settings";
+import { WORKSPACE_SETTINGS_ICONS } from "@/components/settings/workspace/sidebar/item-icon";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
-import { WORKSPACE_SETTINGS_ICONS } from "app/(all)/[workspaceSlug]/(settings)/settings/(workspace)/sidebar";
 
 type Props = {
   context: TPowerKContext;
@@ -31,7 +32,7 @@ export const PowerKOpenWorkspaceSettingsMenu = observer(function PowerKOpenWorks
   const settingsListWithIcons = settingsList.map((setting) => ({
     ...setting,
     label: t(setting.i18n_label),
-    icon: WORKSPACE_SETTINGS_ICONS[setting.key as keyof typeof WORKSPACE_SETTINGS_ICONS],
+    icon: WORKSPACE_SETTINGS_ICONS[setting.key],
   }));
 
   return <PowerKSettingsMenu settings={settingsListWithIcons} onSelect={(setting) => handleSelect(setting.href)} />;

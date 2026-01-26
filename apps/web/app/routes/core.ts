@@ -279,34 +279,6 @@ export const coreRoutes: RouteConfigEntry[] = [
         ]),
 
         // --------------------------------------------------------------------
-        // ACCOUNT SETTINGS
-        // --------------------------------------------------------------------
-
-        layout("./(all)/[workspaceSlug]/(settings)/settings/account/layout.tsx", [
-          route(":workspaceSlug/settings/account", "./(all)/[workspaceSlug]/(settings)/settings/account/page.tsx"),
-          route(
-            ":workspaceSlug/settings/account/activity",
-            "./(all)/[workspaceSlug]/(settings)/settings/account/activity/page.tsx"
-          ),
-          route(
-            ":workspaceSlug/settings/account/preferences",
-            "./(all)/[workspaceSlug]/(settings)/settings/account/preferences/page.tsx"
-          ),
-          route(
-            ":workspaceSlug/settings/account/notifications",
-            "./(all)/[workspaceSlug]/(settings)/settings/account/notifications/page.tsx"
-          ),
-          route(
-            ":workspaceSlug/settings/account/security",
-            "./(all)/[workspaceSlug]/(settings)/settings/account/security/page.tsx"
-          ),
-          route(
-            ":workspaceSlug/settings/account/api-tokens",
-            "./(all)/[workspaceSlug]/(settings)/settings/account/api-tokens/page.tsx"
-          ),
-        ]),
-
-        // --------------------------------------------------------------------
         // PROJECT SETTINGS
         // --------------------------------------------------------------------
 
@@ -326,8 +298,24 @@ export const coreRoutes: RouteConfigEntry[] = [
             ),
             // Project Features
             route(
-              ":workspaceSlug/settings/projects/:projectId/features",
-              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/page.tsx"
+              ":workspaceSlug/settings/projects/:projectId/features/cycles",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/cycles/page.tsx"
+            ),
+            route(
+              ":workspaceSlug/settings/projects/:projectId/features/modules",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/modules/page.tsx"
+            ),
+            route(
+              ":workspaceSlug/settings/projects/:projectId/features/views",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/views/page.tsx"
+            ),
+            route(
+              ":workspaceSlug/settings/projects/:projectId/features/pages",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/pages/page.tsx"
+            ),
+            route(
+              ":workspaceSlug/settings/projects/:projectId/features/intake",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/intake/page.tsx"
             ),
             // Project States
             route(
@@ -363,12 +351,8 @@ export const coreRoutes: RouteConfigEntry[] = [
     // PROFILE SETTINGS
     // --------------------------------------------------------------------
 
-    layout("./(all)/profile/layout.tsx", [
-      route("profile", "./(all)/profile/page.tsx"),
-      route("profile/activity", "./(all)/profile/activity/page.tsx"),
-      route("profile/appearance", "./(all)/profile/appearance/page.tsx"),
-      route("profile/notifications", "./(all)/profile/notifications/page.tsx"),
-      route("profile/security", "./(all)/profile/security/page.tsx"),
+    layout("./(all)/settings/profile/layout.tsx", [
+      route("settings/profile/:profileTabId", "./(all)/settings/profile/[profileTabId]/page.tsx"),
     ]),
   ]),
 
@@ -389,7 +373,7 @@ export const coreRoutes: RouteConfigEntry[] = [
   route(":workspaceSlug/analytics", "routes/redirects/core/analytics.tsx"),
 
   // API tokens redirect: /:workspaceSlug/settings/api-tokens
-  // → /:workspaceSlug/settings/account/api-tokens
+  // → /settings/profile/api-tokens
   route(":workspaceSlug/settings/api-tokens", "routes/redirects/core/api-tokens.tsx"),
 
   // Inbox redirect: /:workspaceSlug/projects/:projectId/inbox
@@ -406,4 +390,10 @@ export const coreRoutes: RouteConfigEntry[] = [
 
   // Register redirect
   route("register", "routes/redirects/core/register.tsx"),
+
+  // Profile settings redirects
+  route("profile/*", "routes/redirects/core/profile-settings.tsx"),
+
+  // Account settings redirects
+  route(":workspaceSlug/settings/account/*", "routes/redirects/core/workspace-account-settings.tsx"),
 ] satisfies RouteConfig;

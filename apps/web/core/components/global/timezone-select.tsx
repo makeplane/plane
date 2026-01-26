@@ -1,5 +1,5 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { CustomSearchSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
@@ -38,13 +38,14 @@ export const TimezoneSelect = observer(function TimezoneSelect(props: TTimezoneS
         label={value && selectedValue ? selectedValue(value) : label}
         options={isDisabled || disabled ? [] : timezones}
         onChange={onChange}
-        buttonClassName={cn(buttonClassName, {
+        buttonClassName={cn(buttonClassName, "border border-subtle-1", {
           "border-danger-strong": error,
         })}
-        className={cn("rounded-md border-[0.5px] !border-subtle", className)}
+        className={cn("rounded-md", className)}
         optionsClassName={cn("w-72", optionsClassName)}
         input
         disabled={isDisabled || disabled}
+        placement="bottom-end"
       />
     </div>
   );

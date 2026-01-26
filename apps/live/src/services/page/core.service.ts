@@ -224,5 +224,4 @@ export abstract class PageCoreService extends APIService {
 
     return urlMap;
   }
-
 }

@@ -26,7 +26,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { CoverImage } from "@/components/common/cover-image";
 import { DeleteProjectModal } from "./delete-project-modal";
 import { JoinProjectModal } from "./join-project-modal";
-import { ArchiveRestoreProjectModal } from "./settings/archive-project/archive-restore-modal";
+import { ArchiveRestoreProjectModal } from "./archive-restore-modal";
 
 type Props = {
   project: IProject;

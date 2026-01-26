@@ -13,7 +13,6 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 import { CountChip } from "@/components/common/count-chip";
 import { PageHead } from "@/components/core/page-title";
 import { MemberListFiltersDropdown } from "@/components/project/dropdowns/filters/member-list";
-import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { WorkspaceMembersList } from "@/components/workspace/settings/members-list";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -22,7 +21,10 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
 import { SendWorkspaceInvitationModal, MembersActivityButton } from "@/plane-web/components/workspace/members";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+// local imports
 import type { Route } from "./+types/page";
+import { MembersWorkspaceSettingsHeader } from "./header";
 
 const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
   // states
@@ -93,7 +95,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   }
 
   return (
-    <SettingsContentWrapper size="lg">
+    <SettingsContentWrapper header={<MembersWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
       <SendWorkspaceInvitationModal
         isOpen={inviteModal}
@@ -101,12 +103,12 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
         onSubmit={handleWorkspaceInvite}
       />
       <section
-        className={cn("w-full h-full", {
+        className={cn("size-full", {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >
         <div className="flex justify-between gap-4 pb-3.5 items-center">
-          <h4 className="flex items-center gap-2.5 text-h5-medium">
+          <h4 className="flex items-center gap-2.5 text-h3-medium">
             {t("workspace_settings.settings.members.title")}
             {workspaceMemberIds && workspaceMemberIds.length > 0 && (
               <CountChip count={workspaceMemberIds.length} className="h-5 m-auto" />

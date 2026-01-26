@@ -218,7 +218,7 @@ export const removeNillKeys = <T,>(obj: T) =>
   Object.fromEntries(Object.entries(obj ?? {}).filter(([key, value]) => key && !isNil(value)));
 
 /**
- * This Method returns if the the grouped values are subGrouped
+ * This Method returns if the grouped values are subGrouped
  * @param groupedIssueIds
  * @returns
  */

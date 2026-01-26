@@ -13,11 +13,14 @@ class IssueForIntakeSerializer(BaseSerializer):
     content validation and priority assignment for triage workflows.
     """
 
+    description = serializers.JSONField(source="description_json", required=False, allow_null=True)
+
     class Meta:
         model = Issue
         fields = [
             "name",
-            "description",
+            "description",  # Deprecated
+            "description_json",
             "description_html",
             "priority",
         ]

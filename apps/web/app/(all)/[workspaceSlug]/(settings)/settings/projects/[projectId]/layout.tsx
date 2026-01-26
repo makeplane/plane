@@ -3,12 +3,12 @@ import { usePathname } from "next/navigation";
 import { Outlet } from "react-router";
 // components
 import { getProjectActivePath } from "@/components/settings/helper";
-import { SettingsMobileNav } from "@/components/settings/mobile";
-import { ProjectSettingsSidebar } from "@/components/settings/project/sidebar";
+import { SettingsMobileNav } from "@/components/settings/mobile/nav";
 // plane web imports
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 // types
 import type { Route } from "./+types/layout";
+import { ProjectSettingsSidebarRoot } from "@/components/settings/project/sidebar";
 
 function ProjectDetailSettingsLayout({ params }: Route.ComponentProps) {
   const { workspaceSlug, projectId } = params;
@@ -17,14 +17,19 @@ function ProjectDetailSettingsLayout({ params }: Route.ComponentProps) {
 
   return (
     <>
-      <SettingsMobileNav hamburgerContent={ProjectSettingsSidebar} activePath={getProjectActivePath(pathname) || ""} />
-      <div className="relative flex h-full w-full">
-        <div className="hidden md:block">{projectId && <ProjectSettingsSidebar />}</div>
-        <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
-          <div className="w-full h-full overflow-y-scroll md:pt-page-y">
-            <Outlet />
+      <SettingsMobileNav
+        hamburgerContent={(props) => <ProjectSettingsSidebarRoot {...props} projectId={projectId} />}
+        activePath={getProjectActivePath(pathname) || ""}
+      />
+      <div className="inset-y-0 flex flex-row w-full h-full">
+        <div className="relative flex size-full">
+          <div className="shrink-0 h-full hidden md:block">
+            <ProjectSettingsSidebarRoot projectId={projectId} />
           </div>
-        </ProjectAuthWrapper>
+          <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
+            <Outlet />
+          </ProjectAuthWrapper>
+        </div>
       </div>
     </>
   );

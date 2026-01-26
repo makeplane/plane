@@ -62,13 +62,11 @@ export const ProjectStateRoot = observer(function ProjectStateRoot(props: TProje
   if (!groupedProjectStates) return <ProjectStateLoader />;
 
   return (
-    <div className="py-3">
-      <GroupList
-        groupedStates={groupedProjectStates}
-        stateOperationsCallbacks={stateOperationsCallbacks}
-        isEditable={isEditable}
-        shouldTrackEvents
-      />
-    </div>
+    <GroupList
+      groupedStates={groupedProjectStates}
+      stateOperationsCallbacks={stateOperationsCallbacks}
+      isEditable={isEditable}
+      shouldTrackEvents
+    />
   );
 });
