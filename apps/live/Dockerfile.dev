@@ -7,12 +7,12 @@ COPY . .
 RUN corepack enable pnpm && pnpm add -g turbo
 RUN pnpm install
 
-# Create empty .env to satisfy dotenvx requirement (Railway provides env vars directly)
-RUN touch apps/live/.env
+# Build the live service
+RUN pnpm turbo run build --filter=live
 
 EXPOSE 3000
 
 ENV TURBO_TELEMETRY_DISABLED=1
 
-# Use start instead of dev for Railway (dev uses --watch which isn't needed)
-CMD ["pnpm", "run", "start", "--filter=live"]
+# Run node directly instead of through pnpm/turbo to ensure env vars pass through
+CMD ["node", "apps/live/dist/start.mjs"]
