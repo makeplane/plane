@@ -78,7 +78,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" href={icon512} />
         <link rel="apple-touch-icon" sizes="180x180" href={icon180} />
         <link rel="apple-touch-icon" sizes="512x512" href={icon512} />
-        <link rel="manifest" href={joinUrlPath(WEB_BASE_PATH, "manifest.json")} />
       </head>
       <body>
         <div id="context-menu-portal" />

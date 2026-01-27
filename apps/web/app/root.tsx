@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import React, { type ReactNode } from "react";
+import React from "react";
+import type {ReactNode} from "react";
 import * as Sentry from "@sentry/react-router";
 import Script from "next/script";
 import { Links, Meta, Outlet, Scripts } from "react-router";
@@ -46,7 +47,7 @@ export const links: LinksFunction = () => [
   { rel: "apple-touch-icon", href: icon512 },
   { rel: "apple-touch-icon", sizes: "180x180", href: icon180 },
   { rel: "apple-touch-icon", sizes: "512x512", href: icon512 },
-  { rel: "manifest", href: joinUrlPath(WEB_BASE_PATH, "manifest.json") },
+
   { rel: "stylesheet", href: globalStyles },
   {
     rel: "preload",
