@@ -1,7 +1,13 @@
 import * as dotenv from "@dotenvx/dotenvx";
 import { z } from "zod";
 
-dotenv.config();
+// Try to load .env file, but don't fail if it doesn't exist
+// Railway provides env vars directly, not via .env files
+try {
+  dotenv.config();
+} catch (e) {
+  // Ignore errors - Railway env vars are already in process.env
+}
 
 // Environment variable validation
 const envSchema = z.object({
