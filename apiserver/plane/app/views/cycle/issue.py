@@ -30,7 +30,7 @@ from plane.utils.grouper import (
     issue_on_results,
     issue_queryset_grouper,
 )
-from plane.utils.issue_filters import issue_filters
+from plane.utils.issue_filters import issue_filters, apply_user_hub_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import (
     GroupedOffsetPaginator,
@@ -140,6 +140,8 @@ class CycleIssueViewSet(BaseViewSet):
 
         order_by_param = request.GET.get("order_by", "-created_at")
         issue_queryset = issue_queryset.filter(**filters)
+        # Apply hub filters after all annotations
+        issue_queryset = apply_user_hub_filters(issue_queryset, request.user)
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
             issue_queryset=issue_queryset,

@@ -30,7 +30,7 @@ from plane.utils.grouper import (
     issue_on_results,
     issue_queryset_grouper,
 )
-from plane.utils.issue_filters import issue_filters
+from plane.utils.issue_filters import issue_filters, apply_user_hub_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import (
     GroupedOffsetPaginator,
@@ -93,6 +93,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 .values("count")
             )
         ).distinct()
+        return apply_user_hub_filters(queryset, self.request.user)
 
     @method_decorator(gzip_page)
     @allow_permission(

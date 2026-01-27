@@ -952,8 +952,8 @@ def apply_user_hub_filters(issue_queryset, user):
     has_view_no_hub_issues_permission = "VIEW_NO_HUB_TICKETS_IN_PLANE" in employee_permissions
     
     if has_view_no_hub_issues_permission:
-        # Include tickets with null hub_code or hub_name
-        null_hub_filter = Q(hub_code__isnull=True) | Q(hub_name__isnull=True)
+        # Include tickets with null hub_code AND hub_name
+        null_hub_filter = Q(hub_code__isnull=True) & Q(hub_name__isnull=True)
         hub_filter = hub_filter | null_hub_filter
     
     # Apply the filter to queryset
