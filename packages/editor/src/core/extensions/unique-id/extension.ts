@@ -131,6 +131,6 @@ export const UniqueID = Extension.create<UniqueIDOptions>({
       return [];
     }
 
-    return [createUniqueIDPlugin(this.options)];
+    return [createUniqueIDPlugin(this.options, this.editor)];
   },
 });
