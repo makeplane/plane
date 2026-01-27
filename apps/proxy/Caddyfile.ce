@@ -1,39 +1,41 @@
+# Plane Community Edition Caddyfile
+# Works on Railway (uses PORT env var, no ACME needed)
+# Works locally with docker-compose (uses SITE_ADDRESS)
+
 {
-	{$CERT_EMAIL}
-	acme_ca {$CERT_ACME_CA:https://acme-v02.api.letsencrypt.org/directory} 
-	{$CERT_ACME_DNS}
 	servers {
 		max_header_size 25MB
 		client_ip_headers X-Forwarded-For X-Real-IP
-		trusted_proxies static {$TRUSTED_PROXIES:0.0.0.0/0}
+		trusted_proxies static 0.0.0.0/0
 	}
+	auto_https off
 }
 
-(plane_proxy) {
+:{$PORT:80} {
 	request_body {
-		max_size {$FILE_SIZE_LIMIT}
+		max_size {$FILE_SIZE_LIMIT:5242880}
 	}
 
-  redir /spaces /spaces/ permanent
-	reverse_proxy /spaces/* space:3000
+	# Space (public pages)
+	redir /spaces /spaces/ permanent
+	reverse_proxy /spaces/* {$SPACE_HOST:space}:{$SPACE_PORT:3000}
 
-  redir /god-mode /god-mode/ permanent
-	reverse_proxy /god-mode/* admin:3000
+	# Admin panel
+	redir /god-mode /god-mode/ permanent
+	reverse_proxy /god-mode/* {$ADMIN_HOST:admin}:{$ADMIN_PORT:3000}
 	
-	reverse_proxy /live/* live:3000
+	# Live/WebSocket
+	reverse_proxy /live/* {$LIVE_HOST:live}:{$LIVE_PORT:3000}
 
-	reverse_proxy /api/* api:8000
+	# API
+	reverse_proxy /api/* {$API_HOST:api}:{$API_PORT:8000}
+	reverse_proxy /auth/* {$API_HOST:api}:{$API_PORT:8000}
+	reverse_proxy /static/* {$API_HOST:api}:{$API_PORT:8000}
 
-	reverse_proxy /auth/* api:8000
+	# MinIO/S3 uploads
+	reverse_proxy /{$BUCKET_NAME:uploads}/* {$MINIO_HOST:plane-minio}:{$MINIO_PORT:9000}
+	reverse_proxy /{$BUCKET_NAME:uploads} {$MINIO_HOST:plane-minio}:{$MINIO_PORT:9000}
 
-	reverse_proxy /static/* api:8000
-
-	reverse_proxy /{$BUCKET_NAME}/* plane-minio:9000
-	reverse_proxy /{$BUCKET_NAME} plane-minio:9000
-
-	reverse_proxy /* web:3000
-}
-
-{$SITE_ADDRESS} {
-	import plane_proxy
+	# Default: Web frontend
+	reverse_proxy /* {$WEB_HOST:web}:{$WEB_PORT:3000}
 }
