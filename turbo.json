@@ -85,7 +85,8 @@
     },
     "start": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "passThroughEnv": ["*"]
     },
     "test": {
       "dependsOn": ["^build"],
