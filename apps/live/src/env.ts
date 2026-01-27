@@ -1,13 +1,7 @@
-import * as dotenv from "@dotenvx/dotenvx";
 import { z } from "zod";
 
-// Try to load .env file, but don't fail if it doesn't exist
-// Railway provides env vars directly, not via .env files
-try {
-  dotenv.config();
-} catch (e) {
-  // Ignore errors - Railway env vars are already in process.env
-}
+// Skip dotenvx entirely - Railway provides env vars directly in process.env
+// dotenvx was causing issues by not inheriting Railway's injected env vars
 
 // Environment variable validation
 const envSchema = z.object({
@@ -34,6 +28,7 @@ const validateEnv = () => {
   const result = envSchema.safeParse(process.env);
   if (!result.success) {
     console.error("❌ Invalid environment variables:", JSON.stringify(result.error.format(), null, 4));
+    console.error("Available env vars:", Object.keys(process.env).filter(k => !k.startsWith('npm_')).join(', '));
     process.exit(1);
   }
   return result.data;
