@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { TPowerKCommandGroup } from "../../core/types";
 
 export const POWER_K_GROUP_PRIORITY: Record<TPowerKCommandGroup, number> = {

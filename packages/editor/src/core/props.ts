@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { DOMParser } from "@tiptap/pm/model";
 import type { EditorProps } from "@tiptap/pm/view";
 // plane utils
