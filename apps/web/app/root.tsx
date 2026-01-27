@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import React from "react";
+import type {ReactNode} from "react";
 import * as Sentry from "@sentry/react-router";
 import Script from "next/script";
 import { Links, Meta, Outlet, Scripts } from "react-router";
@@ -6,7 +7,7 @@ import type { LinksFunction } from "react-router";
 import { ThemeProvider, useTheme } from "next-themes";
 // plane imports
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
-import { cn } from "@plane/utils";
+import { cn, joinUrlPath } from "@plane/utils";
 // types
 // assets
 import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
@@ -29,16 +30,18 @@ import "@fontsource/material-symbols-rounded";
 import "@fontsource/ibm-plex-mono";
 
 const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
+const WEB_BASE_PATH =
+  (typeof import.meta !== "undefined" && import.meta.env?.BASE_URL) || process.env.VITE_WEB_BASE_PATH || "/";
 
 export const links: LinksFunction = () => [
   { rel: "icon", type: "image/png", sizes: "32x32", href: favicon32 },
   { rel: "icon", type: "image/png", sizes: "16x16", href: favicon16 },
   { rel: "shortcut icon", href: faviconIco },
-  { rel: "manifest", href: "/site.webmanifest.json" },
+  { rel: "manifest", href: joinUrlPath(WEB_BASE_PATH, "site.webmanifest.json") },
   { rel: "apple-touch-icon", href: icon512 },
   { rel: "apple-touch-icon", sizes: "180x180", href: icon180 },
   { rel: "apple-touch-icon", sizes: "512x512", href: icon512 },
-  { rel: "manifest", href: "/manifest.json" },
+  { rel: "manifest", href: joinUrlPath(WEB_BASE_PATH, "manifest.json") },
   { rel: "stylesheet", href: globalStyles },
   {
     rel: "preload",
@@ -129,9 +132,14 @@ export default function Root() {
 
 export function HydrateFallback() {
   const { resolvedTheme } = useTheme();
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // if we are on the server or the theme is not resolved, return an empty div
-  if (typeof window === "undefined" || resolvedTheme === undefined) return <div />;
+  if (typeof window === "undefined" || !isMounted || resolvedTheme === undefined) return <div />;
 
   return (
     <div className="relative flex bg-canvas h-screen w-full items-center justify-center">
