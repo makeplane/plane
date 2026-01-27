@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { RootStore } from "@/plane-web/store/root.store";
 import { IssuesTimeLineStore } from "@/store/timeline/issues-timeline.store";
 import type { IIssuesTimeLineStore } from "@/store/timeline/issues-timeline.store";

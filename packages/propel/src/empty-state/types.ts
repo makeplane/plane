@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { TButtonVariant } from "../button/helper";
 import type { TAlign } from "../utils/placement";
 import type { CompactAssetType, DetailedAssetType } from "./assets/asset-types";
