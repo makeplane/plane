@@ -6,8 +6,13 @@ WORKDIR /app
 COPY . .
 RUN corepack enable pnpm && pnpm add -g turbo
 RUN pnpm install
-EXPOSE 3003
+
+# Create empty .env to satisfy dotenvx requirement (Railway provides env vars directly)
+RUN touch apps/live/.env
+
+EXPOSE 3000
 
 ENV TURBO_TELEMETRY_DISABLED=1
 
-CMD ["pnpm","dev", "--filter=live"]
+# Use start instead of dev for Railway (dev uses --watch which isn't needed)
+CMD ["pnpm", "run", "start", "--filter=live"]
