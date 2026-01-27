@@ -14,6 +14,7 @@ import { cn, createIssuePayload } from "@plane/utils";
 import { QuickAddIssueFormRoot } from "@/plane-web/components/issues/quick-add";
 // local imports
 import { CreateIssueToastActionItems } from "../../create-issue-toast-action-items";
+import { WorkspaceQuickAddIssueRoot } from "./workspace-root";
 
 export type TQuickAddIssueForm = {
   ref: React.RefObject<HTMLFormElement>;
@@ -61,7 +62,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
   // i18n
   const { t } = useTranslation();
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId, globalViewId } = useParams();
   // states
   const [isOpen, setIsOpen] = useState(isQuickAddOpen ?? false);
   // form info
@@ -128,6 +129,24 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
     }
   };
 
+  // For workspace-level views (no projectId but has globalViewId), use workspace quick add
+  if (!projectId && globalViewId) {
+    return (
+      <WorkspaceQuickAddIssueRoot
+        isQuickAddOpen={isQuickAddOpen}
+        layout={layout}
+        prePopulatedData={prePopulatedData}
+        QuickAddButton={QuickAddButton}
+        customQuickAddButton={customQuickAddButton}
+        containerClassName={containerClassName}
+        setIsQuickAddOpen={setIsQuickAddOpen}
+        quickAddCallback={quickAddCallback}
+        isEpic={isEpic}
+      />
+    );
+  }
+
+  // No project context and not workspace level - can't quick add
   if (!projectId) return null;
 
   return (

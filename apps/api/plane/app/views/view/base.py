@@ -38,6 +38,12 @@ from plane.db.models import (
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
+from plane.utils.grouper import (
+    issue_group_values,
+    issue_on_results,
+    issue_queryset_grouper,
+)
+from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from .. import BaseViewSet
 from plane.db.models import UserFavorite
@@ -132,6 +138,16 @@ class WorkspaceViewViewSet(BaseViewSet):
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
+    """
+    ViewSet for workspace-level issue queries with optional grouped pagination.
+
+    Backward Compatibility:
+    - Without group_by parameter: Returns flat list of issues (same as original behavior)
+    - With group_by parameter: Returns grouped structure with per-group pagination
+    - Response fields are identical in both cases, matching the original ViewIssueListSerializer
+    - Follows the same pattern as IssueViewSet for project-level issues
+    """
+
     filter_backends = (ComplexFilterBackend,)
     filterset_class = IssueFilterSet
 
@@ -227,9 +243,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         # Apply project permission filters to the issue queryset
         issue_queryset = issue_queryset.filter(permission_filters)
 
-        # Base query for the counts
-        total_issue_count_queryset = copy.deepcopy(issue_queryset)
-        total_issue_count_queryset = total_issue_count_queryset.only("id")
+        # Keeping a copy of the queryset before applying annotations (for counts)
+        filtered_issue_queryset = copy.deepcopy(issue_queryset)
 
         # Apply annotations to the issue queryset
         issue_queryset = self.apply_annotations(issue_queryset)
@@ -239,14 +254,89 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             issue_queryset=issue_queryset, order_by_param=order_by_param
         )
 
-        # List Paginate
-        return self.paginate(
-            order_by=order_by_param,
-            request=request,
-            queryset=issue_queryset,
-            on_results=lambda issues: ViewIssueListSerializer(issues, many=True).data,
-            total_count_queryset=total_issue_count_queryset,
+        # Group by
+        group_by = request.GET.get("group_by", False)
+        sub_group_by = request.GET.get("sub_group_by", False)
+
+        # Apply grouper to issue queryset
+        issue_queryset = issue_queryset_grouper(
+            queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
         )
+
+        if group_by:
+            if sub_group_by:
+                if group_by == sub_group_by:
+                    return Response(
+                        {"error": "Group by and sub group by cannot have same parameters"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                else:
+                    # Sub-grouped paginate
+                    return self.paginate(
+                        request=request,
+                        order_by=order_by_param,
+                        queryset=issue_queryset,
+                        total_count_queryset=filtered_issue_queryset,
+                        on_results=lambda issues: issue_on_results(
+                            group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                        ),
+                        paginator_cls=SubGroupedOffsetPaginator,
+                        group_by_fields=issue_group_values(
+                            field=group_by,
+                            slug=slug,
+                            project_id=None,
+                            filters=filters,
+                            queryset=filtered_issue_queryset,
+                        ),
+                        sub_group_by_fields=issue_group_values(
+                            field=sub_group_by,
+                            slug=slug,
+                            project_id=None,
+                            filters=filters,
+                            queryset=filtered_issue_queryset,
+                        ),
+                        group_by_field_name=group_by,
+                        sub_group_by_field_name=sub_group_by,
+                        count_filter=Q(
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+            else:
+                # Group paginate
+                return self.paginate(
+                    request=request,
+                    order_by=order_by_param,
+                    queryset=issue_queryset,
+                    total_count_queryset=filtered_issue_queryset,
+                    on_results=lambda issues: issue_on_results(
+                        group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                    ),
+                    paginator_cls=GroupedOffsetPaginator,
+                    group_by_fields=issue_group_values(
+                        field=group_by,
+                        slug=slug,
+                        project_id=None,
+                        filters=filters,
+                        queryset=filtered_issue_queryset,
+                    ),
+                    group_by_field_name=group_by,
+                    count_filter=Q(
+                        archived_at__isnull=True,
+                        is_draft=False,
+                    ),
+                )
+        else:
+            # List paginate (no grouping)
+            return self.paginate(
+                order_by=order_by_param,
+                request=request,
+                queryset=issue_queryset,
+                total_count_queryset=filtered_issue_queryset,
+                on_results=lambda issues: issue_on_results(
+                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                ),
+            )
 
 
 class IssueViewViewSet(BaseViewSet):

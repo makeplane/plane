@@ -153,6 +153,10 @@ class IssueFilterSet(BaseFilterSet):
     subscriber_id = filters.UUIDFilter(method="filter_subscriber_id")
     subscriber_id__in = UUIDInFilter(method="filter_subscriber_id_in", lookup_expr="in")
 
+    # Date null filters for "none" handling
+    target_date__isnull = filters.BooleanFilter(field_name="target_date", lookup_expr="isnull")
+    start_date__isnull = filters.BooleanFilter(field_name="start_date", lookup_expr="isnull")
+
     class Meta:
         model = Issue
         fields = {

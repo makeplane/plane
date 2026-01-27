@@ -685,9 +685,10 @@ const useGlobalIssueActions = () => {
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.GLOBAL);
 
   const fetchIssues = useCallback(
-    async (loadType: TLoader, options: IssuePaginationOptions) => {
-      if (!workspaceSlug || !globalViewId) return;
-      return issues.fetchIssues(workspaceSlug.toString(), globalViewId.toString(), loadType, options);
+    async (loadType: TLoader, options: IssuePaginationOptions, viewId?: string) => {
+      const effectiveViewId = viewId ?? globalViewId;
+      if (!workspaceSlug || !effectiveViewId) return;
+      return issues.fetchIssues(workspaceSlug.toString(), effectiveViewId.toString(), loadType, options);
     },
     [issues.fetchIssues, workspaceSlug, globalViewId]
   );
@@ -720,11 +721,26 @@ const useGlobalIssueActions = () => {
     },
     [issues.removeIssue, workspaceSlug]
   );
+  const archiveIssue = useCallback(
+    async (projectId: string | undefined | null, issueId: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return await issues.archiveIssue(workspaceSlug, projectId, issueId);
+    },
+    [issues.archiveIssue, workspaceSlug]
+  );
+  const quickAddIssue = useCallback(
+    async (projectId: string | undefined | null, data: TIssue) => {
+      if (!workspaceSlug || !projectId) return;
+      return await issues.quickAddIssue(workspaceSlug, projectId, data);
+    },
+    [issues.quickAddIssue, workspaceSlug]
+  );
 
   const updateFilters = useCallback(
-    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+    async (_projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       if (!globalViewId || !workspaceSlug) return;
-      return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters, globalViewId);
+      // _projectId is ignored for workspace-level filters, but kept in signature for interface compatibility
+      return await issuesFilter.updateFilters(workspaceSlug, undefined, filterType, filters, globalViewId);
     },
     [issuesFilter.updateFilters, globalViewId, workspaceSlug]
   );
@@ -734,11 +750,13 @@ const useGlobalIssueActions = () => {
       fetchIssues,
       fetchNextIssues,
       createIssue,
+      quickAddIssue,
       updateIssue,
       removeIssue,
+      archiveIssue,
       updateFilters,
     }),
-    [createIssue, updateIssue, removeIssue, updateFilters]
+    [fetchIssues, fetchNextIssues, createIssue, quickAddIssue, updateIssue, removeIssue, archiveIssue, updateFilters]
   );
 };
 
@@ -793,7 +811,7 @@ const useWorkspaceDraftIssueActions = () => {
   // );
 
   const updateFilters = useCallback(
-    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+    async (_projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
       filters = filters as IIssueDisplayFilterOptions | IIssueDisplayProperties;
       if (!globalViewId || !workspaceSlug) return;
       return await issuesFilter.updateFilters(workspaceSlug, filterType, filters);

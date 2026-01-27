@@ -43,8 +43,9 @@ export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
   const { issues } = useIssues(storeType);
 
   const issueCount = issues.getGroupIssueCount(undefined, undefined, false);
+  const loader = issues?.getIssueLoader();
 
-  if (issues?.getIssueLoader() === "init-loader" || issueCount === undefined) {
+  if (loader === "init-loader" || issueCount === undefined) {
     return <ActiveLoader layout={layout} />;
   }
 

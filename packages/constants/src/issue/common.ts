@@ -86,6 +86,7 @@ export const ISSUE_PRIORITIES: {
 
 export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
   "state",
+  "state_detail.group",
   "priority",
   "assignees",
   "labels",

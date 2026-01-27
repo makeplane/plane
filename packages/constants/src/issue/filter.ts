@@ -37,6 +37,12 @@ export type TSupportedFilterTypeForUpdate =
   | EIssueFilterType.DISPLAY_PROPERTIES
   | EIssueFilterType.KANBAN_FILTERS;
 
+/**
+ * Valid group_by options for workspace-level Kanban views.
+ * Uses state_detail.group instead of state since states are project-specific.
+ */
+export const WORKSPACE_KANBAN_GROUP_BY_OPTIONS = ["state_detail.group", "priority", "project", "labels"] as const;
+
 export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
   [key in TIssueLayout]: Record<"filters", TIssueFilterKeys[]>;
 } = {
@@ -122,7 +128,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       kanban: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state_detail.group", "priority", "project", "labels"],
+          group_by: [...WORKSPACE_KANBAN_GROUP_BY_OPTIONS],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
           type: ["active", "backlog"],
         },
@@ -192,6 +198,28 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         },
         extra_options: {
           access: false,
+          values: [],
+        },
+      },
+      kanban: {
+        display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          group_by: [...WORKSPACE_KANBAN_GROUP_BY_OPTIONS],
+          order_by: ["-created_at", "-updated_at", "start_date", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["show_empty_groups"],
+        },
+      },
+      calendar: {
+        display_properties: ["key", "issue_type"],
+        display_filters: {
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
           values: [],
         },
       },

@@ -19,7 +19,8 @@ type DNDStoreType =
   | EIssuesStoreType.TEAM
   | EIssuesStoreType.TEAM_VIEW
   | EIssuesStoreType.EPIC
-  | EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS;
+  | EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS
+  | EIssuesStoreType.GLOBAL;
 
 export const useGroupIssuesDragNDrop = (
   storeType: DNDStoreType,
