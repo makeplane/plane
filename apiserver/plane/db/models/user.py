@@ -109,7 +109,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_bot = models.BooleanField(default=False)
     hub_codes = models.JSONField(default=list, blank=True, null=True)
     hub_names = models.JSONField(default=list, blank=True, null=True)
-    extra_hubs = models.BooleanField(default=False)
+    is_super_admin = models.BooleanField(default=False)
     employee_permissions = models.JSONField(default=list, blank=True, null=True)
 
     # timezone

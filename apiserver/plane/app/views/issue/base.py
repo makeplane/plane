@@ -1277,7 +1277,7 @@ class SearchAPIEndpoint(BaseAPIView):
         values_queryset = apply_user_hub_filters(values_queryset, request.user)
         
         if field in ["hub_code", "hub_name"]:
-            if request.user.extra_hubs:
+            if getattr(request.user, 'is_super_admin', False):
                 # User can see all options - no additional filtering needed
                 pass
             else:

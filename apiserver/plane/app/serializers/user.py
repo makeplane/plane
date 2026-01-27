@@ -80,7 +80,7 @@ class UserMeSerializer(BaseSerializer):
             "last_login_medium",
             "hub_codes",
             "hub_names",
-            "extra_hubs",
+            "is_super_admin",
             "employee_permissions",
         ]
         read_only_fields = fields

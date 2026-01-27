@@ -912,17 +912,17 @@ def issue_filters(query_params, method, prefix=""):
 
 def apply_user_hub_filters(issue_queryset, user):
     """
-    Apply hub filtering based on user's extra_hubs flag and hub_codes/hub_names.
+    Apply hub filtering based on user's is_super_admin flag and hub_codes/hub_names.
     
     Args:
         issue_queryset: Django queryset of Issue objects
-        user: User instance with hub_codes, hub_names, extra_hubs, employee_permissions fields
+        user: User instance with hub_codes, hub_names, is_super_admin, employee_permissions fields
         
     Returns:
         Filtered queryset based on user's hub access
     """
-    # If extra_hubs is True, user can see all tickets - no filtering needed
-    if user.extra_hubs:
+    # If is_super_admin is True, user can see all tickets - no filtering needed
+    if getattr(user, 'is_super_admin', False):
         return issue_queryset
     
     # Get user's hub_codes and hub_names (can be empty lists)

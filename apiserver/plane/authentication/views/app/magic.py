@@ -256,20 +256,20 @@ class MagicSignInEndpoint(BaseAPIView):
         language = request.POST.get("language", "en").strip()  # Get language, default to 'en'
         next_path = request.POST.get("next_path")
         hub_list_str = request.POST.get("hub_list")
-        extra_hubs_str = request.POST.get("extra_hubs", "false").strip().lower()
+        is_super_admin_str = request.POST.get("is_super_admin", "false").strip().lower()
         employee_permissions_str = request.POST.get("employee_permissions")
         
         hub_codes = None
         hub_names = None
-        extra_hubs = None
+        is_super_admin = None
         employee_permissions = None
         
         if hub_list_str is not None:
             hub_codes = self.extract_hub_codes_from_hub_list(hub_list_str)
             hub_names = self.extract_hub_names_from_hub_list(hub_list_str)
         
-        if extra_hubs_str:
-            extra_hubs = extra_hubs_str == "true"
+        if is_super_admin_str:
+            is_super_admin = is_super_admin_str == "true"
         
         if employee_permissions_str:
             try:
@@ -317,9 +317,9 @@ class MagicSignInEndpoint(BaseAPIView):
                 if hub_names is not None:
                     user.hub_names = hub_names
                     update_fields.append("hub_names")
-                if extra_hubs is not None:
-                    user.extra_hubs = extra_hubs
-                    update_fields.append("extra_hubs")
+                if is_super_admin is not None:
+                    user.is_super_admin = is_super_admin
+                    update_fields.append("is_super_admin")
                 if employee_permissions is not None:
                     user.employee_permissions = employee_permissions
                     update_fields.append("employee_permissions")
@@ -357,9 +357,9 @@ class MagicSignInEndpoint(BaseAPIView):
                 if hub_names is not None:
                     user.hub_names = hub_names
                     update_fields.append("hub_names")
-                if extra_hubs is not None:
-                    user.extra_hubs = extra_hubs
-                    update_fields.append("extra_hubs")
+                if is_super_admin is not None:
+                    user.is_super_admin = is_super_admin
+                    update_fields.append("is_super_admin")
                 if employee_permissions is not None:
                     user.employee_permissions = employee_permissions
                     update_fields.append("employee_permissions")
