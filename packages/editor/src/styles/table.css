@@ -57,7 +57,31 @@
       .table-col-handle-container,
       .table-row-handle-container {
         & > button {
-          opacity: 0;
+          @apply opacity-0 rounded-sm outline-none;
+
+          &.default-state {
+            @apply bg-layer-1 hover:bg-layer-1-hover border border-strong-1;
+          }
+
+          &.open-state {
+            @apply opacity-100! bg-accent-primary border-accent-strong;
+          }
+        }
+      }
+
+      .table-col-handle-container {
+        & > button {
+          @apply px-1;
+
+          svg {
+            @apply rotate-90;
+          }
+        }
+      }
+
+      .table-row-handle-container {
+        & > button {
+          @apply py-1;
         }
       }
 

@@ -72,6 +72,18 @@ export const TableInsertPlugin = (editor: Editor): Plugin => {
     });
   };
 
+  let updateScheduled = false;
+
+  const scheduleUpdate = () => {
+    if (updateScheduled) return;
+    updateScheduled = true;
+
+    requestAnimationFrame(() => {
+      updateScheduled = false;
+      updateAllTables();
+    });
+  };
+
   return new Plugin({
     key: TABLE_INSERT_PLUGIN_KEY,
 
@@ -80,9 +92,9 @@ export const TableInsertPlugin = (editor: Editor): Plugin => {
 
       return {
         update(view, prevState) {
-          // Update when document changes
+          // Debounce updates using RAF to batch multiple changes
           if (!prevState.doc.eq(view.state.doc)) {
-            updateAllTables();
+            scheduleUpdate();
           }
         },
         destroy() {
