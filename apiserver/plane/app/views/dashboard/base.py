@@ -75,7 +75,7 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__is_active=True,
         )
     )
-    assigned_issues = apply_user_hub_filters(assigned_issues, request.user).count()
+    assigned_issues = apply_user_hub_filters(assigned_issues, request.user, workspace_slug=slug).count()
 
     pending_issues_count = (
         Issue.issue_objects.filter(
@@ -103,7 +103,7 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__is_active=True,
         )
     )
-    pending_issues_count = apply_user_hub_filters(pending_issues_count, request.user).count()
+    pending_issues_count = apply_user_hub_filters(pending_issues_count, request.user, workspace_slug=slug).count()
 
     created_issues_count = (
         Issue.issue_objects.filter(
@@ -129,7 +129,7 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__is_active=True,
         )
     )
-    created_issues_count = apply_user_hub_filters(created_issues_count, request.user).count()
+    created_issues_count = apply_user_hub_filters(created_issues_count, request.user, workspace_slug=slug).count()
 
     completed_issues_count = (
         Issue.issue_objects.filter(
@@ -156,7 +156,7 @@ def dashboard_overview_stats(self, request, slug):
             project__project_projectmember__is_active=True,
         )
     )
-    completed_issues_count = apply_user_hub_filters(completed_issues_count, request.user).count()
+    completed_issues_count = apply_user_hub_filters(completed_issues_count, request.user, workspace_slug=slug).count()
 
     return Response(
         {
@@ -280,7 +280,7 @@ def dashboard_assigned_issues(self, request, slug):
     ).order_by("priority_order")
     
     # Apply hub filters after all annotations
-    assigned_issues = apply_user_hub_filters(assigned_issues, request.user)
+    assigned_issues = apply_user_hub_filters(assigned_issues, request.user, workspace_slug=slug)
 
     if issue_type == "pending":
         pending_issues_count = assigned_issues.filter(
@@ -456,7 +456,7 @@ def dashboard_created_issues(self, request, slug):
     ).order_by("priority_order")
     
     # Apply hub filters after all annotations
-    created_issues = apply_user_hub_filters(created_issues, request.user)
+    created_issues = apply_user_hub_filters(created_issues, request.user, workspace_slug=slug)
 
     if issue_type == "pending":
         pending_issues_count = created_issues.filter(
@@ -552,7 +552,7 @@ def dashboard_issues_by_state_groups(self, request, slug):
         )
         .filter(**filters, **extra_filters)
     )
-    issues_by_state_groups = apply_user_hub_filters(issues_by_state_groups, request.user)
+    issues_by_state_groups = apply_user_hub_filters(issues_by_state_groups, request.user, workspace_slug=slug)
     issues_by_state_groups = issues_by_state_groups.values("state__group").annotate(count=Count("id"))
 
     # default state
@@ -592,7 +592,7 @@ def dashboard_issues_by_priority(self, request, slug):
         )
         .filter(**filters, **extra_filters)
     )
-    issues_by_priority = apply_user_hub_filters(issues_by_priority, request.user)
+    issues_by_priority = apply_user_hub_filters(issues_by_priority, request.user, workspace_slug=slug)
     issues_by_priority = issues_by_priority.values("priority").annotate(count=Count("id"))
 
     # default priority
@@ -671,7 +671,7 @@ def dashboard_recent_collaborators(self, request, slug):
         project__project_projectmember__is_active=True,
         state__group__in=["unstarted", "started"],
     )
-    filtered_issues = apply_user_hub_filters(filtered_issues, request.user)
+    filtered_issues = apply_user_hub_filters(filtered_issues, request.user, workspace_slug=slug)
     filtered_issue_ids = filtered_issues.values_list("id", flat=True)
     
     project_members_with_activities = (

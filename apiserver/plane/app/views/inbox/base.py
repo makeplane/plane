@@ -181,7 +181,7 @@ class InboxIssueViewSet(BaseViewSet):
                 ),
             )
         ).distinct()
-        return apply_user_hub_filters(queryset, self.request.user)
+        return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
@@ -196,7 +196,7 @@ class InboxIssueViewSet(BaseViewSet):
             project_id=project_id,
             workspace__slug=slug,
         )
-        filtered_issues = apply_user_hub_filters(filtered_issues, request.user)
+        filtered_issues = apply_user_hub_filters(filtered_issues, request.user, workspace_slug=slug)
         filtered_issue_ids = filtered_issues.values_list("id", flat=True)
         
         inbox_issue = (

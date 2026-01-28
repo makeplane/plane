@@ -111,7 +111,7 @@ class IssueListEndpoint(BaseAPIView):
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
         )
-        queryset = apply_user_hub_filters(queryset, request.user)
+        queryset = apply_user_hub_filters(queryset, request.user, workspace_slug=slug)
         queryset = (
             queryset.annotate(
                 cycle_id=Subquery(
@@ -304,7 +304,7 @@ class IssueViewSet(BaseViewSet):
         This is a wrapper around get_queryset that applies user hub filtering.
         """
         queryset = self.get_queryset(filters)
-        return apply_user_hub_filters(queryset, self.request.user)
+        return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
 
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -924,7 +924,7 @@ class IssuePaginatedViewSet(BaseViewSet):
                 .values("count")
             )
         ).distinct()
-        return apply_user_hub_filters(queryset, self.request.user)
+        return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
 
     def process_paginated_result(self, fields, results, timezone):
         paginated_data = results.values(*fields)
@@ -1063,7 +1063,7 @@ class IssueDetailEndpoint(BaseAPIView):
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
         )
-        issue = apply_user_hub_filters(issue, request.user)
+        issue = apply_user_hub_filters(issue, request.user, workspace_slug=slug)
         issue = (
             issue.annotate(
                 cycle_id=Subquery(
@@ -1274,7 +1274,7 @@ class SearchAPIEndpoint(BaseAPIView):
             Q(workspace__slug=slug) & Q(**filter_criteria)
         )
         
-        values_queryset = apply_user_hub_filters(values_queryset, request.user)
+        values_queryset = apply_user_hub_filters(values_queryset, request.user, workspace_slug=slug)
         
         if field in ["hub_code", "hub_name"]:
             if getattr(request.user, 'is_super_admin', False):

@@ -93,7 +93,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 .values("count")
             )
         ).distinct()
-        return apply_user_hub_filters(queryset, self.request.user)
+        return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
 
     @method_decorator(gzip_page)
     @allow_permission(

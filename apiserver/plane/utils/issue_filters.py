@@ -4,7 +4,7 @@ from datetime import timedelta, datetime
 
 from django.utils import timezone
 from django.db.models import Q, OuterRef
-from plane.db.models import IssueCustomProperty
+from plane.db.models import IssueCustomProperty, Workspace
 # The date from pattern
 pattern = re.compile(r"\d+_(weeks|months)$")
 
@@ -910,7 +910,7 @@ def issue_filters(query_params, method, prefix=""):
     return issue_filter
 
 
-def apply_user_hub_filters(issue_queryset, user):
+def apply_user_hub_filters(issue_queryset, user, workspace_slug=None):
     """
     Apply hub filtering based on workspace's scoped_issue_access flag and user's permissions.
     For app/views: Always includes tickets created by user or where user is assignee.
@@ -918,15 +918,15 @@ def apply_user_hub_filters(issue_queryset, user):
     Args:
         issue_queryset: Django queryset of Issue objects
         user: User instance with hub_codes, hub_names, is_super_admin, employee_permissions fields
+        workspace_slug: Workspace slug to check scoped_issue_access flag
         
     Returns:
         Filtered queryset based on workspace settings and user's hub access
     """
     
-    first_issue = issue_queryset.first()
-    if first_issue:
-        workspace = first_issue.workspace
-        if not getattr(workspace, 'scoped_issue_access', False):
+    if workspace_slug:
+        workspace_data = Workspace.objects.filter(slug=workspace_slug).values('scoped_issue_access').first()
+        if workspace_data and not workspace_data.get('scoped_issue_access', True):
             return issue_queryset
     
     # If is_super_admin is True, user can see all tickets - no filtering needed

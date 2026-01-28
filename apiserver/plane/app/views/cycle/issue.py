@@ -141,7 +141,7 @@ class CycleIssueViewSet(BaseViewSet):
         order_by_param = request.GET.get("order_by", "-created_at")
         issue_queryset = issue_queryset.filter(**filters)
         # Apply hub filters after all annotations
-        issue_queryset = apply_user_hub_filters(issue_queryset, request.user)
+        issue_queryset = apply_user_hub_filters(issue_queryset, request.user, workspace_slug=slug)
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
             issue_queryset=issue_queryset,

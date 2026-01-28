@@ -95,7 +95,7 @@ class IssueSearchEndpoint(BaseAPIView):
             issues = issues.filter(created_by=self.request.user)
         
         # Apply hub filters
-        issues = apply_user_hub_filters(issues, self.request.user)
+        issues = apply_user_hub_filters(issues, self.request.user, workspace_slug=slug)
 
         return Response(
             issues.values(
