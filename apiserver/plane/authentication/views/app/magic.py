@@ -163,6 +163,15 @@ class MagicSignInEndpoint(BaseAPIView):
         self.add_to_project(base_project, admin_user)
         return workspace
     
+    def update_workspace_scoped_access(self, workspace_slug, scoped_issue_access):
+        if scoped_issue_access is None:
+            return
+        
+        workspace = Workspace.objects.filter(slug=workspace_slug).first()
+        if workspace and workspace.scoped_issue_access != scoped_issue_access:
+            workspace.scoped_issue_access = scoped_issue_access
+            workspace.save(update_fields=['scoped_issue_access'])
+    
 
     def add_to_workspace(self, workspace, user):
         workspace_member = WorkspaceMember.objects.filter(
@@ -258,11 +267,13 @@ class MagicSignInEndpoint(BaseAPIView):
         hub_list_str = request.POST.get("hub_list")
         is_super_admin_str = request.POST.get("is_super_admin", "false").strip().lower()
         employee_permissions_str = request.POST.get("employee_permissions")
+        scoped_issue_access_str = request.POST.get("scoped_issue_access")
         
         hub_codes = None
         hub_names = None
         is_super_admin = None
         employee_permissions = None
+        scoped_issue_access = None
         
         if hub_list_str is not None:
             hub_codes = self.extract_hub_codes_from_hub_list(hub_list_str)
@@ -279,6 +290,10 @@ class MagicSignInEndpoint(BaseAPIView):
             except (json.JSONDecodeError, TypeError, ValueError) as e:
                 print(f"Error parsing employee_permissions: {e}")
                 employee_permissions = []
+        
+        if scoped_issue_access_str:
+            scoped_issue_access = scoped_issue_access_str.strip().lower() == "true"
+        
         if code == "" or email == "":
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES[
@@ -328,6 +343,7 @@ class MagicSignInEndpoint(BaseAPIView):
                 # Login the user and record his device info
                 user_login(request=request, user=user, is_app=True)
                 self.add_user_to_workspace(user, workspace)
+                self.update_workspace_scoped_access(workspace, scoped_issue_access)
                 # Get the redirection path
                 if next_path:
                     path = str(next_path)
@@ -367,6 +383,7 @@ class MagicSignInEndpoint(BaseAPIView):
                     user.save(update_fields=update_fields)
                 # Login the user and record his device info
                 self.add_user_to_workspace(user, workspace)
+                self.update_workspace_scoped_access(workspace, scoped_issue_access)
                 user_login(request=request, user=user, is_app=True)
                 # Get the redirection path
                 path = (
