@@ -61,7 +61,7 @@ from plane.db.models import (
     Workspace,
     User
 )
-from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects
+from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects, apply_user_hub_filters
 from .base import BaseAPIView
 from datetime import datetime
 
@@ -101,7 +101,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             .prefetch_related("labels")
             .order_by(self.kwargs.get("order_by", "-created_at"))
         ).distinct()
-        return queryset
+        return apply_user_hub_filters(queryset, self.request.user)
 
     def get(
         self, request, slug, project__identifier=None, issue__identifier=None
@@ -175,7 +175,7 @@ class IssueAPIEndpoint(BaseAPIView):
             .prefetch_related("assignees")
             .prefetch_related("labels")
             .order_by(self.kwargs.get("order_by", "-created_at"))).distinct()
-        return queryset
+        return apply_user_hub_filters(queryset, self.request.user)
         
 
     def get(self, request, slug, project_id, pk=None):
