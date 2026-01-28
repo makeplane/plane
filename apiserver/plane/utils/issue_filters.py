@@ -922,13 +922,22 @@ def apply_user_hub_filters(issue_queryset, user):
     Returns:
         Filtered queryset based on user's hub access
     """
+    # Log user details for debugging
+    print(f"[HUB_FILTER_DEBUG] User: {user.username} (ID: {user.id}, Email: {user.email})")
+    print(f"[HUB_FILTER_DEBUG] is_super_admin: {getattr(user, 'is_super_admin', None)}")
+    print(f"[HUB_FILTER_DEBUG] hub_codes: {user.hub_codes}")
+    print(f"[HUB_FILTER_DEBUG] hub_names: {user.hub_names}")
+    print(f"[HUB_FILTER_DEBUG] employee_permissions: {user.employee_permissions}")
+    
     # If is_super_admin is True, user can see all tickets - no filtering needed
     if getattr(user, 'is_super_admin', False):
+        print(f"[HUB_FILTER_DEBUG] User is super admin - no filtering applied")
         return issue_queryset
     
     # Get user's hub_codes and hub_names
     hub_codes = user.hub_codes
     hub_names = user.hub_names
+    print(f"[HUB_FILTER_DEBUG] Processing hub filters - hub_codes: {hub_codes}, hub_names: {hub_names}")
     
     # Build Q object for hub filtering
     hub_filter = Q()
@@ -958,6 +967,8 @@ def apply_user_hub_filters(issue_queryset, user):
     
     user_tickets_filter = Q(created_by=user) | Q(assignees__in=[user])
     hub_filter = hub_filter | user_tickets_filter
+    
+    print(f"[HUB_FILTER_DEBUG] Final hub_filter applied: {hub_filter}")
     
     # Apply the filter to queryset
     return issue_queryset.filter(hub_filter).distinct()
