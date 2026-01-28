@@ -1,0 +1,41 @@
+# Railway-compatible Caddyfile
+# Railway handles SSL termination, so we only need to listen on :80
+
+{
+	servers {
+		max_header_size 25MB
+		client_ip_headers X-Forwarded-For X-Real-IP
+		trusted_proxies static 0.0.0.0/0
+	}
+	# Disable HTTPS redirect since Railway handles SSL
+	auto_https off
+}
+
+:80 {
+	request_body {
+		max_size {$FILE_SIZE_LIMIT:5242880}
+	}
+
+	# Space routes
+	redir /spaces /spaces/ permanent
+	reverse_proxy /spaces/* space.railway.internal:3000
+
+	# Admin routes
+	redir /god-mode /god-mode/ permanent
+	reverse_proxy /god-mode/* admin.railway.internal:3000
+	
+	# Live/WebSocket routes
+	reverse_proxy /live/* live.railway.internal:3000
+
+	# API routes
+	reverse_proxy /api/* api.railway.internal:8000
+	reverse_proxy /auth/* api.railway.internal:8000
+	reverse_proxy /static/* api.railway.internal:8000
+
+	# MinIO/S3 uploads
+	reverse_proxy /uploads/* plane-minio.railway.internal:9000
+	reverse_proxy /uploads plane-minio.railway.internal:9000
+
+	# Default to web frontend
+	reverse_proxy /* web.railway.internal:3000
+}

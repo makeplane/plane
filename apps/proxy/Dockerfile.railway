@@ -1,0 +1,10 @@
+FROM caddy:2.10.0-alpine
+
+RUN apk add --no-cache nss-tools bash curl
+
+# Railway builds from root, so use full path
+COPY apps/proxy/Caddyfile.railway /etc/caddy/Caddyfile
+
+EXPOSE 80
+
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]
