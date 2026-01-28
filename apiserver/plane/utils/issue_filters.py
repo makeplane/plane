@@ -922,12 +922,6 @@ def apply_user_hub_filters(issue_queryset, user):
     Returns:
         Filtered queryset based on user's hub access
     """
-    # Log user details for debugging
-    print(f"[HUB_FILTER_DEBUG] User: {user.username} (ID: {user.id}, Email: {user.email}, Is Authenticated: {user.is_authenticated})")
-    print(f"[HUB_FILTER_DEBUG] is_super_admin: {getattr(user, 'is_super_admin', None)}")
-    print(f"[HUB_FILTER_DEBUG] hub_codes: {user.hub_codes}")
-    print(f"[HUB_FILTER_DEBUG] hub_names: {user.hub_names}")
-    print(f"[HUB_FILTER_DEBUG] employee_permissions: {user.employee_permissions}")
     
     # If is_super_admin is True, user can see all tickets - no filtering needed
     if getattr(user, 'is_super_admin', False):
