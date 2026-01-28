@@ -17,12 +17,14 @@ export function PageNavigationPaneOutlineTabPanel(props: Props) {
   } = page;
 
   return (
-    <div className="size-full pt-3 space-y-1">
-      <PageContentBrowser
-        className="mt-0"
-        editorRef={editorRef}
-        emptyState={<PageNavigationPaneOutlineTabEmptyState />}
-      />
+    <div className="size-full overflow-y-auto vertical-scrollbar scrollbar-sm">
+        <div className="mt-3">
+          <PageContentBrowser
+            className="mt-0"
+            editorRef={editorRef}
+            emptyState={<PageNavigationPaneOutlineTabEmptyState />}
+          />
+        </div>
     </div>
   );
 }
