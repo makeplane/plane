@@ -1283,18 +1283,20 @@ class SearchAPIEndpoint(BaseAPIView):
             else:
                 # Filter to only show user's accessible hub_codes or hub_names
                 if field == "hub_code":
-                    user_hubs = request.user.hub_codes or []
-                    if user_hubs:
+                    user_hubs = request.user.hub_codes
+                    if user_hubs is None:
+                        pass
+                    elif user_hubs:
                         values_queryset = values_queryset.filter(hub_code__in=user_hubs)
                     else:
-                        # If user has no hub_codes, return empty list
                         values_queryset = values_queryset.none()
                 elif field == "hub_name":
-                    user_hubs = request.user.hub_names or []
-                    if user_hubs:
+                    user_hubs = request.user.hub_names
+                    if user_hubs is None:
+                        pass
+                    elif user_hubs:
                         values_queryset = values_queryset.filter(hub_name__in=user_hubs)
                     else:
-                        # If user has no hub_names, return empty list
                         values_queryset = values_queryset.none()
 
         values = values_queryset.values_list(field, flat=True)
