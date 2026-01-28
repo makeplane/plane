@@ -4,7 +4,7 @@ from datetime import timedelta, datetime
 
 from django.utils import timezone
 from django.db.models import Q, OuterRef
-from plane.db.models import IssueCustomProperty, Workspace
+from plane.db.models import IssueCustomProperty
 # The date from pattern
 pattern = re.compile(r"\d+_(weeks|months)$")
 
@@ -925,6 +925,7 @@ def apply_user_hub_filters(issue_queryset, user, workspace_slug=None):
     """
     
     if workspace_slug:
+        from plane.db.models import Workspace
         workspace_data = Workspace.objects.filter(slug=workspace_slug).values('scoped_issue_access').first()
         if workspace_data and not workspace_data.get('scoped_issue_access', True):
             return issue_queryset
