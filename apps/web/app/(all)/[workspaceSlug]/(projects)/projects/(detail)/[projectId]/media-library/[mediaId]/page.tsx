@@ -418,6 +418,9 @@ const MediaDetailPage = () => {
             <p className="mt-1 text-xs text-custom-text-300">
               Uploaded by {item.author} - {item.createdAt}
             </p>
+            {item.description ? (
+              <p className="mt-2 text-sm text-custom-text-200">{item.description}</p>
+            ) : null}
           </div>
           <hr className="border-t border-custom-border-200" />
         </div>

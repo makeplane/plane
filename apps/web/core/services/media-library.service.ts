@@ -6,6 +6,7 @@ import { APIService } from "@/services/api.service";
 export type TMediaArtifact = {
   name: string;
   title: string;
+  description?: string | null;
   format: string;
   path: string;
   link: string | null;
@@ -18,6 +19,7 @@ export type TMediaArtifact = {
 export type TMediaArtifactPayload = {
   name: string;
   title: string;
+  description?: string | null;
   format: string;
   link?: string | null;
   action: string;
@@ -120,6 +122,9 @@ export class MediaLibraryService extends APIService {
     formData.append("file", file);
     formData.append("name", payload.name);
     formData.append("title", payload.title);
+    if (payload.description !== undefined) {
+      formData.append("description", payload.description ?? "");
+    }
     formData.append("format", payload.format);
     formData.append("action", payload.action);
     formData.append("meta", JSON.stringify(payload.meta ?? {}));

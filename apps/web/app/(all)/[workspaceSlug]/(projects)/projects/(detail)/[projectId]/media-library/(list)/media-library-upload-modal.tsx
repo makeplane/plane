@@ -179,6 +179,7 @@ export const MediaLibraryUploadModal = () => {
 
       const artifactName = buildArtifactName(file.name, uploadedAt, index);
       const title = getTitleFromFile(file.name) || "Untitled Upload";
+      const description = `Uploaded file: ${title}`;
       const action = VIDEO_FORMATS.has(format) ? "play" : IMAGE_FORMATS.has(format) ? "view" : "download";
       const meta: Record<string, unknown> = { category: "Uploads", source: "web" };
       if (DOC_FORMATS.has(format)) {
@@ -197,6 +198,7 @@ export const MediaLibraryUploadModal = () => {
           {
             name: artifactName,
             title,
+            description,
             format,
             link: null,
             action,

@@ -7,6 +7,7 @@ import type { TMediaArtifact } from "@/services/media-library.service";
 export type TMediaItem = {
   id: string;
   title: string;
+  description?: string;
   format: string;
   action: string;
   link?: string | null;
@@ -290,6 +291,8 @@ export const mapArtifactsToMediaItems = (
     const linkedArtifact = artifact.link ? artifactByName.get(normalizeKey(artifact.link)) : undefined;
     const displayTitle =
       format === "thumbnail" && linkedArtifact?.title ? linkedArtifact.title : artifact.title;
+    const baseDescription = (artifact.description ?? getMetaString(meta, ["description", "summary"], "")).trim();
+    const description = format === "thumbnail" ? "" : baseDescription;
 
     const createdAt = formatDateLabel(artifact.created_at || artifact.updated_at || "");
     const views = getMetaNumber(meta, ["views"], 0);
@@ -335,6 +338,7 @@ export const mapArtifactsToMediaItems = (
     return {
       id: artifact.name,
       title: displayTitle,
+      description,
       format,
       action: artifact.action,
       link: artifact.link ?? null,

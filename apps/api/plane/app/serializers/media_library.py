@@ -60,6 +60,7 @@ def _validate_iso_datetime(value: str) -> str:
 class MediaArtifactSerializer(serializers.Serializer):
     name = serializers.CharField()
     title = serializers.CharField()
+    description = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     format = serializers.ChoiceField(choices=MEDIA_LIBRARY_FORMAT_CHOICES)
     path = serializers.CharField()
     link = serializers.CharField(allow_null=True)
