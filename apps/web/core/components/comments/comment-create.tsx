@@ -61,15 +61,18 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
     getValues,
     handleSubmit,
     control,
-    watch,
     formState: { isSubmitting },
     reset,
+    watch,
   } = useForm<Partial<TIssueComment>>();
   // local storage
   const commentId = "add_comment_" + entityId;
   const { storedValue: storedCommentDescription, setValue: setStoredCommentDescription } = useLocalStorage<
     string | undefined
   >(commentId, undefined);
+  // derived form values
+  const commentHTML = watch("comment_html");
+  const isEmpty = isCommentEmpty(commentHTML);
 
   const onSubmit = async (formData: Partial<TIssueComment>) => {
     try {
@@ -92,23 +95,26 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
       console.error(error);
     } finally {
       reset({
-        comment_html: "<p></p>",
+        comment_html: "",
       });
       editorRef.current?.clearEditor();
     }
   };
 
-  const commentHTML = watch("comment_html");
-  const isEmpty = isCommentEmpty(commentHTML ?? undefined);
-
-  // auto save comment description to local storage on unmount
+  // auto save comment description to local storage on unmount and page reload/close
   useEffect(() => {
-    return () => {
+    const saveCommentToLocalStorage = () => {
       const latestDescription = getValues("comment_html");
       const isLatestDescriptionEmpty = isCommentEmpty(latestDescription);
       if (latestDescription && !isLatestDescriptionEmpty) {
         setStoredCommentDescription(latestDescription);
       }
+    };
+
+    window.addEventListener("beforeunload", saveCommentToLocalStorage);
+    return () => {
+      saveCommentToLocalStorage();
+      window.removeEventListener("beforeunload", saveCommentToLocalStorage);
     };
     // react-hook-form methods should not be included in the dependency array
     // eslint-disable-next-line react-hooks/exhaustive-deps
