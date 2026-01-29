@@ -15,16 +15,16 @@ export function PageNavigationPaneOutlineTabPanel(props: Props) {
   const {
     editor: { editorRef },
   } = page;
-    
+
   return (
     <div className="size-full overflow-y-auto hide-scrollbar">
-        <div className="mt-3">
-          <PageContentBrowser
-            className="mt-0"
-            editorRef={editorRef}
-            emptyState={<PageNavigationPaneOutlineTabEmptyState />}
-          />
-        </div>
+      <div className="mt-3">
+        <PageContentBrowser
+          className="mt-0"
+          editorRef={editorRef}
+          emptyState={<PageNavigationPaneOutlineTabEmptyState />}
+        />
+      </div>
     </div>
   );
 }
