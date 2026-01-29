@@ -1,18 +1,25 @@
 /**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
- * SPDX-License-Identifier: AGPL-3.0-only
- * See the LICENSE file for details.
+ * SPDX-FileCopyrightText: 2023-present Plane Software, Inc.
+ * SPDX-License-Identifier: LicenseRef-Plane-Commercial
+ *
+ * Licensed under the Plane Commercial License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * https://plane.so/legals/eula
+ *
+ * DO NOT remove or modify this notice.
+ * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
 // plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
+import { useLocalStorage } from "@plane/hooks";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
-import { cn, isCommentEmpty } from "@plane/utils";
+import { isCommentEmpty } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
 // hooks
@@ -51,16 +58,18 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug)?.id as string;
   // form info
   const {
+    getValues,
     handleSubmit,
     control,
     watch,
     formState: { isSubmitting },
     reset,
-  } = useForm<Partial<TIssueComment>>({
-    defaultValues: {
-      comment_html: "<p></p>",
-    },
-  });
+  } = useForm<Partial<TIssueComment>>();
+  // local storage
+  const commentId = "add_comment_" + entityId;
+  const { storedValue: storedCommentDescription, setValue: setStoredCommentDescription } = useLocalStorage<
+    string | undefined
+  >(commentId, undefined);
 
   const onSubmit = async (formData: Partial<TIssueComment>) => {
     try {
@@ -78,6 +87,7 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
         }
         setUploadedAssetIds([]);
       }
+      setStoredCommentDescription(undefined);
     } catch (error) {
       console.error(error);
     } finally {
@@ -91,9 +101,23 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
   const commentHTML = watch("comment_html");
   const isEmpty = isCommentEmpty(commentHTML ?? undefined);
 
+  // auto save comment description to local storage on unmount
+  useEffect(() => {
+    return () => {
+      const latestDescription = getValues("comment_html");
+      const isLatestDescriptionEmpty = isCommentEmpty(latestDescription);
+      if (latestDescription && !isLatestDescriptionEmpty) {
+        setStoredCommentDescription(latestDescription);
+      }
+    };
+    // react-hook-form methods should not be included in the dependency array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setStoredCommentDescription]);
+
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
-      className={cn("sticky bottom-0 z-[4] bg-surface-1 sm:static")}
+      className="sticky sm:static bottom-0 z-4 bg-surface-1"
       onKeyDown={(e) => {
         if (
           e.key === "Enter" &&
@@ -104,7 +128,7 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
           !isSubmitting &&
           editorRef.current?.isEditorReadyToDiscard()
         )
-          handleSubmit(onSubmit)(e);
+          void handleSubmit(onSubmit)(e);
       }}
     >
       <Controller
@@ -114,23 +138,22 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
           <Controller
             name="comment_html"
             control={control}
-            render={({ field: { value, onChange } }) => (
+            render={({ field: { onChange } }) => (
               <LiteTextEditor
                 editable
                 workspaceId={workspaceId}
-                id={"add_comment_" + entityId}
-                value={"<p></p>"}
+                id={commentId}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 onEnterKeyPress={(e) => {
                   if (!isEmpty && !isSubmitting) {
-                    handleSubmit(onSubmit)(e);
+                    void handleSubmit(onSubmit)(e);
                   }
                 }}
                 ref={editorRef}
-                initialValue={value ?? "<p></p>"}
+                initialValue={storedCommentDescription || "<p></p>"}
                 containerClassName="min-h-min"
-                onChange={(comment_json, comment_html) => onChange(comment_html)}
+                onChange={(_comment_json, comment_html) => onChange(comment_html)}
                 accessSpecifier={accessValue ?? EIssueCommentAccessSpecifier.INTERNAL}
                 handleAccessChange={onAccessChange}
                 isSubmitting={isSubmitting}
