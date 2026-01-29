@@ -114,9 +114,9 @@
         padding-top: 0 !important;
       }
 
-      &.content-hidden > * {
+      /* &.content-hidden > * {
         visibility: hidden;
-      }
+      } */
     }
 
     th {

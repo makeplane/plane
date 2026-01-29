@@ -53,7 +53,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
             )
             .annotate(
                 completed_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="completed",
                         issue_module__issue__archived_at__isnull=True,
@@ -65,7 +65,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
             )
             .annotate(
                 cancelled_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="cancelled",
                         issue_module__issue__archived_at__isnull=True,
@@ -77,7 +77,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
             )
             .annotate(
                 started_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="started",
                         issue_module__issue__archived_at__isnull=True,
@@ -89,7 +89,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
             )
             .annotate(
                 unstarted_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="unstarted",
                         issue_module__issue__archived_at__isnull=True,
@@ -101,7 +101,7 @@ class WorkspaceModulesEndpoint(BaseAPIView):
             )
             .annotate(
                 backlog_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="backlog",
                         issue_module__issue__archived_at__isnull=True,

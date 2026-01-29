@@ -70,7 +70,8 @@ export const TableHeader = Node.create<TableHeaderOptions>({
     return [
       "th",
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        class: node.attrs.hideContent ? "content-hidden" : "",
+        // TODO: add a better logic to hide a cell while dragging
+        // class: node.attrs.hideContent ? "content-hidden" : "",
         style: `background-color: ${node.attrs.background};`,
       }),
       0,
