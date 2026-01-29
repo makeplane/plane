@@ -1,3 +1,5 @@
+// plane imports
+import { ScrollArea } from "@plane/propel/scrollarea";
 // plane web imports
 import { PageNavigationPaneOutlineTabEmptyState } from "@/plane-web/components/pages/navigation-pane/tab-panels/empty-states/outline";
 // store
@@ -17,14 +19,18 @@ export function PageNavigationPaneOutlineTabPanel(props: Props) {
   } = page;
 
   return (
-    <div className="size-full overflow-y-auto hide-scrollbar">
-      <div className="mt-3">
-        <PageContentBrowser
-          className="mt-0"
-          editorRef={editorRef}
-          emptyState={<PageNavigationPaneOutlineTabEmptyState />}
-        />
-      </div>
-    </div>
+    <ScrollArea
+      orientation="vertical"
+      size="sm"
+      scrollType="hover"
+      className="size-full overflow-y-auto hide-scrollbar"
+      viewportClassName="px-4"
+    >
+      <PageContentBrowser
+        className="mt-0"
+        editorRef={editorRef}
+        emptyState={<PageNavigationPaneOutlineTabEmptyState />}
+      />
+    </ScrollArea>
   );
 }
