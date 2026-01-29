@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -5,17 +11,19 @@ import { useTranslation } from "@plane/i18n";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-// hooks
 import { ProjectMemberList } from "@/components/project/member-list";
 import { ProjectSettingsMemberDefaults } from "@/components/project/project-settings-member-defaults";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
+// hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { ProjectTeamspaceList } from "@/plane-web/components/projects/teamspaces/teamspace-list";
 import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";
+// local imports
 import type { Route } from "./+types/page";
+import { MembersProjectSettingsHeader } from "./header";
 
 function MembersSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -39,7 +47,7 @@ function MembersSettingsPage({ params }: Route.ComponentProps) {
   }
 
   return (
-    <SettingsContentWrapper size="lg">
+    <SettingsContentWrapper header={<MembersProjectSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
       <SettingsHeading title={t(getProjectSettingsPageLabelI18nKey("members", "common.members"))} />
       <ProjectSettingsMemberDefaults projectId={projectId} workspaceSlug={workspaceSlug} />

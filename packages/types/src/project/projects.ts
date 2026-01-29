@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { TLogoProps } from "../common";
 import type { TUserPermissions } from "../enums";
 import type { TStateGroups } from "../state";
@@ -73,12 +79,6 @@ export interface IProjectLite {
   identifier: string;
   logo_props: TLogoProps;
 }
-
-export type ProjectPreferences = {
-  pages: {
-    block_display: boolean;
-  };
-};
 
 export interface IProjectMap {
   [id: string]: IProject;

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import os
 import json
@@ -21,7 +25,7 @@ from plane.db.models import (
     WorkspaceMember,
     Project,
     ProjectMember,
-    IssueUserProperty,
+    ProjectUserProperty,
     State,
     Label,
     Issue,
@@ -122,9 +126,9 @@ def create_project_and_member(workspace: Workspace, bot_user: User) -> Dict[int,
         )
 
         # Create issue user properties
-        IssueUserProperty.objects.bulk_create(
+        ProjectUserProperty.objects.bulk_create(
             [
-                IssueUserProperty(
+                ProjectUserProperty(
                     project=project,
                     user_id=workspace_member["member_id"],
                     workspace_id=workspace.id,
@@ -359,7 +363,7 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_us
             is_global=False,
             access=page_seed.get("access", Page.PUBLIC_ACCESS),
             name=page_seed.get("name"),
-            description=page_seed.get("description", {}),
+            description_json=page_seed.get("description_json", {}),
             description_html=page_seed.get("description_html", "<p></p>"),
             description_binary=page_seed.get("description_binary", None),
             description_stripped=page_seed.get("description_stripped", None),
