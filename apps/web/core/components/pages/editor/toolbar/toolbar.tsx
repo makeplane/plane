@@ -1,8 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useState, useCallback } from "react";
-import { Check } from "lucide-react";
-// plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { ChevronDownIcon } from "@plane/propel/icons";
+// plane imports
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -154,7 +159,7 @@ export function PageToolbar(props: Props) {
               <item.icon className="size-3" />
               {item.name}
             </span>
-            {activeTypography?.itemKey === item.itemKey && <Check className="size-3 text-tertiary shrink-0" />}
+            {activeTypography?.itemKey === item.itemKey && <CheckIcon className="size-3 text-tertiary shrink-0" />}
           </CustomMenu.MenuItem>
         ))}
       </CustomMenu>

@@ -1,11 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Info, Lock } from "lucide-react";
-import { NETWORK_CHOICES, PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
+import { Info } from "lucide-react";
+import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
+import { LockIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EFileAssetType } from "@plane/types";
@@ -17,7 +24,6 @@ import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 import { TimezoneSelect } from "@/components/global";
 // helpers
 import { handleCoverImageChange } from "@/helpers/cover-image.helper";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -86,12 +92,6 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
     if (!workspaceSlug || !project) return;
     return updateProject(workspaceSlug.toString(), project.id, payload)
       .then(() => {
-        captureSuccess({
-          eventName: PROJECT_TRACKER_EVENTS.update,
-          payload: {
-            id: projectId,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("toast.success"),
@@ -100,13 +100,6 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
       })
       .catch((err) => {
         try {
-          captureError({
-            eventName: PROJECT_TRACKER_EVENTS.update,
-            payload: {
-              id: projectId,
-            },
-          });
-
           // Handle the new error format where codes are nested in arrays under field names
           const errorData = err ?? {};
 
@@ -247,7 +240,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               <span className="flex items-center gap-2 text-13">
                 <span>{watch("identifier")} .</span>
                 <span className="flex items-center gap-1.5">
-                  {project.network === 0 && <Lock className="h-2.5 w-2.5 text-on-color " />}
+                  {project.network === 0 && <LockIcon className="h-2.5 w-2.5 text-on-color " />}
                   {currentNetwork && t(currentNetwork?.i18n_label)}
                 </span>
               </span>
@@ -273,7 +266,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
           </div>
         </div>
       </div>
-      <div className="my-8 flex flex-col gap-8">
+      <div className="mt-8 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
           <h4 className="text-13">{t("common.project_name")}</h4>
           <Controller
@@ -301,7 +294,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               />
             )}
           />
-          <span className="text-11 text-red-500">{errors?.name?.message}</span>
+          <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
         </div>
         <div className="flex flex-col gap-1">
           <h4 className="text-13">{t("description")}</h4>
@@ -365,7 +358,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 <Info className="absolute right-2 top-2.5 h-4 w-4 text-placeholder" />
               </Tooltip>
             </div>
-            <span className="text-11 text-red-500">
+            <span className="text-11 text-danger-primary">
               <>{errors?.identifier?.message}</>
             </span>
           </div>
@@ -433,19 +426,12 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 </>
               )}
             />
-            {errors.timezone && <span className="text-11 text-red-500">{errors.timezone.message}</span>}
+            {errors.timezone && <span className="text-11 text-danger-primary">{errors.timezone.message}</span>}
           </div>
         </div>
         <div className="flex items-center justify-between py-2">
           <>
-            <Button
-              data-ph-element={PROJECT_TRACKER_ELEMENTS.UPDATE_PROJECT_BUTTON}
-              variant="primary"
-              size="lg"
-              type="submit"
-              loading={isLoading}
-              disabled={!isAdmin}
-            >
+            <Button variant="primary" size="lg" type="submit" loading={isLoading} disabled={!isAdmin}>
               {isLoading ? t("updating") : t("common.update_project")}
             </Button>
             <span className="text-13 italic text-placeholder">

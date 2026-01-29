@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
@@ -187,7 +193,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
           {!!resetFormData.confirm_password &&
             resetFormData.password !== resetFormData.confirm_password &&
             renderPasswordMatchError && (
-              <span className="text-13 text-red-500">{t("auth.common.password.errors.match")}</span>
+              <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
             )}
         </div>
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>

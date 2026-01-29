@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { route } from "@react-router/dev/routes";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
 
@@ -14,7 +20,7 @@ export const coreRedirectRoutes: RouteConfigEntry[] = [
   route(":workspaceSlug/analytics", "routes/redirects/core/analytics.tsx"),
 
   // API tokens redirect: /:workspaceSlug/settings/api-tokens
-  // → /:workspaceSlug/settings/account/api-tokens
+  // → /settings/profile/api-tokens
   route(":workspaceSlug/settings/api-tokens", "routes/redirects/core/api-tokens.tsx"),
 
   // Inbox redirect: /:workspaceSlug/projects/:projectId/inbox

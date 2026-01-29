@@ -1,16 +1,24 @@
-import { useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane internal packages
-import { setPromiseToast } from "@plane/propel/toast";
-import type { TInstanceConfigurationKeys } from "@plane/types";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TInstanceConfigurationKeys, TInstanceAuthenticationModes } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, resolveGeneralTheme } from "@plane/utils";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
-// hooks
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
+// helpers
+import { canDisableAuthMethod } from "@/helpers/authentication";
+// hooks
 import { useAuthenticationModes } from "@/hooks/oauth";
 import { useInstance } from "@/hooks/store";
 // types
@@ -19,48 +27,87 @@ import type { Route } from "./+types/page";
 const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(_props: Route.ComponentProps) {
   // theme
   const { resolvedTheme: resolvedThemeAdmin } = useTheme();
-  // store
-  const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
+  const resolvedTheme = resolveGeneralTheme(resolvedThemeAdmin);
+  // Ref to store authentication modes for validation (avoids circular dependency)
+  const authenticationModesRef = useRef<TInstanceAuthenticationModes[]>([]);
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  // store hooks
+  const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // derived values
   const enableSignUpConfig = formattedConfig?.ENABLE_SIGNUP ?? "";
-  const resolvedTheme = resolveGeneralTheme(resolvedThemeAdmin);
 
   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
-  const updateConfig = async (key: TInstanceConfigurationKeys, value: string) => {
-    setIsSubmitting(true);
+  // Create updateConfig with validation - uses authenticationModesRef for current modes
+  const updateConfig = useCallback(
+    (key: TInstanceConfigurationKeys, value: string): void => {
+      // Check if trying to disable (value === "0")
+      if (value === "0") {
+        // Check if this key is an authentication method key
+        const currentAuthModes = authenticationModesRef.current;
+        const isAuthMethodKey = currentAuthModes.some((method) => method.enabledConfigKey === key);
 
-    const payload = {
-      [key]: value,
-    };
+        // Only validate if this is an authentication method key
+        if (isAuthMethodKey) {
+          const canDisable = canDisableAuthMethod(key, currentAuthModes, formattedConfig);
 
-    const updateConfigPromise = updateInstanceConfigurations(payload);
+          if (!canDisable) {
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: "Cannot disable authentication",
+              message:
+                "At least one authentication method must remain enabled. Please enable another method before disabling this one.",
+            });
+            return;
+          }
+        }
+      }
 
-    setPromiseToast(updateConfigPromise, {
-      loading: "Saving configuration",
-      success: {
-        title: "Success",
-        message: () => "Configuration saved successfully",
-      },
-      error: {
-        title: "Error",
-        message: () => "Failed to save configuration",
-      },
-    });
+      // Proceed with the update
+      setIsSubmitting(true);
 
-    await updateConfigPromise
-      .then(() => {
-        setIsSubmitting(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setIsSubmitting(false);
+      const payload = {
+        [key]: value,
+      };
+
+      const updateConfigPromise = updateInstanceConfigurations(payload);
+
+      setPromiseToast(updateConfigPromise, {
+        loading: "Saving configuration",
+        success: {
+          title: "Success",
+          message: () => "Configuration saved successfully",
+        },
+        error: {
+          title: "Error",
+          message: () => "Failed to save configuration",
+        },
       });
-  };
 
-  const authenticationModes = useAuthenticationModes({ disabled: isSubmitting, updateConfig, resolvedTheme });
+      void updateConfigPromise
+        .then(() => {
+          setIsSubmitting(false);
+          return undefined;
+        })
+        .catch((err) => {
+          console.error(err);
+          setIsSubmitting(false);
+        });
+    },
+    [formattedConfig, updateInstanceConfigurations]
+  );
+
+  // Get authentication modes - this will use updateConfig which includes validation
+  const authenticationModes = useAuthenticationModes({
+    disabled: isSubmitting,
+    updateConfig,
+    resolvedTheme,
+  });
+
+  // Update ref with latest authentication modes
+  authenticationModesRef.current = authenticationModes;
+
   return (
     <PageWrapper
       header={{

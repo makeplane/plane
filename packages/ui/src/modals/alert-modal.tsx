@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { LucideIcon } from "lucide-react";
 import { AlertTriangle, Info } from "lucide-react";
 import React from "react";
@@ -42,7 +48,7 @@ const BUTTON_VARIANTS: Record<TModalVariant, TButtonVariant> = {
 };
 
 const VARIANT_CLASSES: Record<TModalVariant, string> = {
-  danger: "bg-red-500/20 text-red-500",
+  danger: "bg-danger-subtle text-danger-primary",
   primary: "bg-accent-primary/20 text-accent-primary",
 };
 

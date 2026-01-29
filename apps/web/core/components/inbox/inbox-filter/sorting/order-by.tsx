@@ -1,10 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 import { INBOX_ISSUE_ORDER_BY_OPTIONS, INBOX_ISSUE_SORT_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TInboxIssueSortingOrderByKeys, TInboxIssueSortingSortByKeys } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // constants
@@ -52,7 +58,7 @@ export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDrop
           onClick={() => handleInboxIssueSorting("order_by", option.key as TInboxIssueSortingOrderByKeys)}
         >
           {t(option.i18n_label)}
-          {inboxSorting?.order_by?.includes(option.key) && <Check className="size-3" />}
+          {inboxSorting?.order_by?.includes(option.key) && <CheckIcon className="size-3" />}
         </CustomMenu.MenuItem>
       ))}
       <hr className="my-2 border-subtle" />
@@ -63,7 +69,7 @@ export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDrop
           onClick={() => handleInboxIssueSorting("sort_by", option.key as TInboxIssueSortingSortByKeys)}
         >
           {t(option.i18n_label)}
-          {inboxSorting?.sort_by?.includes(option.key) && <Check className="size-3" />}
+          {inboxSorting?.sort_by?.includes(option.key) && <CheckIcon className="size-3" />}
         </CustomMenu.MenuItem>
       ))}
     </CustomMenu>

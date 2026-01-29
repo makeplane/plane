@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { isNil } from "lodash-es";
 // types
 import { EIconSize, ISSUE_PRIORITIES } from "@plane/constants";
@@ -218,7 +224,7 @@ export const removeNillKeys = <T,>(obj: T) =>
   Object.fromEntries(Object.entries(obj ?? {}).filter(([key, value]) => key && !isNil(value)));
 
 /**
- * This Method returns if the the grouped values are subGrouped
+ * This Method returns if the grouped values are subGrouped
  * @param groupedIssueIds
  * @returns
  */

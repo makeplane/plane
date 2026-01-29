@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Module imports
 from .base import BaseSerializer
 from .issue import IssueExpandSerializer
@@ -13,11 +17,14 @@ class IssueForIntakeSerializer(BaseSerializer):
     content validation and priority assignment for triage workflows.
     """
 
+    description = serializers.JSONField(source="description_json", required=False, allow_null=True)
+
     class Meta:
         model = Issue
         fields = [
             "name",
-            "description",
+            "description",  # Deprecated
+            "description_json",
             "description_html",
             "priority",
         ]

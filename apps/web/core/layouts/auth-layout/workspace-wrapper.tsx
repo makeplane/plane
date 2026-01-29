@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -24,6 +30,7 @@ import {
   WORKSPACE_FAVORITE,
   WORKSPACE_STATES,
   WORKSPACE_SIDEBAR_PREFERENCES,
+  WORKSPACE_PROJECT_NAVIGATION_PREFERENCES,
 } from "@/constants/fetch-keys";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
@@ -50,7 +57,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const {
     workspace: { fetchWorkspaceMembers },
   } = useMember();
-  const { workspaces, fetchSidebarNavigationPreferences } = useWorkspace();
+  const { workspaces, fetchSidebarNavigationPreferences, fetchProjectNavigationPreferences } = useWorkspace();
   const { isMobile } = usePlatformOS();
   const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
@@ -113,6 +120,13 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
+  // fetch workspace project navigation preferences
+  useSWR(
+    workspaceSlug ? WORKSPACE_PROJECT_NAVIGATION_PREFERENCES(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => fetchProjectNavigationPreferences(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
   const handleSignOut = async () => {
     await signOut().catch(() =>
       setToast({
@@ -170,15 +184,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
                 </Link>
               )}
               {allWorkspaces?.length > 0 && (
-                <Link
-                  href={`/${allWorkspaces[0].slug}/settings/account`}
-                  className={cn(getButtonStyling("secondary", "base"))}
-                >
+                <Link href="/settings/profile/general/" className={cn(getButtonStyling("secondary", "base"))}>
                   Visit Profile
                 </Link>
               )}
               {allWorkspaces && allWorkspaces.length === 0 && (
-                <Link href={`/`} className={cn(getButtonStyling("secondary", "base"))}>
+                <Link href="/create-workspace/" className={cn(getButtonStyling("secondary", "base"))}>
                   Create new workspace
                 </Link>
               )}

@@ -1,6 +1,12 @@
-import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { Image, BrainCog, Cog, Mail } from "lucide-react";
 // plane imports
-import { WorkspaceIcon } from "@plane/propel/icons";
+import { LockIcon, WorkspaceIcon } from "@plane/propel/icons";
 // types
 import type { TSidebarMenuItem } from "./types";
 
@@ -26,7 +32,7 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     href: `/workspace/`,
   },
   authentication: {
-    Icon: Lock,
+    Icon: LockIcon,
     name: "Authentication",
     description: "Configure authentication modes.",
     href: `/authentication/`,

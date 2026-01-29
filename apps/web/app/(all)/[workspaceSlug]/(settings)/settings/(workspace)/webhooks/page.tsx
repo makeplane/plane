@@ -1,23 +1,31 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 // components
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { WebhookSettingsLoader } from "@/components/ui/loader/settings/web-hook";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useWebhook } from "@/hooks/store/use-webhook";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
+// local imports
 import type { Route } from "./+types/page";
+import { WebhooksWorkspaceSettingsHeader } from "./header";
 
 function WebhooksListPage({ params }: Route.ComponentProps) {
   // states
@@ -54,7 +62,7 @@ function WebhooksListPage({ params }: Route.ComponentProps) {
   if (!webhooks) return <WebhookSettingsLoader />;
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<WebhooksWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
       <div className="w-full">
         <CreateWebhookModal
@@ -69,18 +77,14 @@ function WebhooksListPage({ params }: Route.ComponentProps) {
         <SettingsHeading
           title={t("workspace_settings.settings.webhooks.title")}
           description={t("workspace_settings.settings.webhooks.description")}
-          button={{
-            label: t("workspace_settings.settings.webhooks.add_webhook"),
-            onClick: () => {
-              captureClick({
-                elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.HEADER_ADD_WEBHOOK_BUTTON,
-              });
-              setShowCreateWebhookModal(true);
-            },
-          }}
+          control={
+            <Button variant="primary" size="lg" onClick={() => setShowCreateWebhookModal(true)}>
+              {t("workspace_settings.settings.webhooks.add_webhook")}
+            </Button>
+          }
         />
         {Object.keys(webhooks).length > 0 ? (
-          <div className="flex h-full w-full flex-col">
+          <div className="mt-4">
             <WebhooksList />
           </div>
         ) : (
@@ -94,9 +98,6 @@ function WebhooksListPage({ params }: Route.ComponentProps) {
                   {
                     label: t("settings_empty_state.webhooks.cta_primary"),
                     onClick: () => {
-                      captureClick({
-                        elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.EMPTY_STATE_ADD_WEBHOOK_BUTTON,
-                      });
                       setShowCreateWebhookModal(true);
                     },
                   },

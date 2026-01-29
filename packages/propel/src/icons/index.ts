@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export type { ISvgIcons } from "./type";
 export type { IconName } from "./registry";
 export { ICON_REGISTRY } from "./registry";
@@ -32,12 +38,12 @@ export * from "./icon-wrapper";
 export * from "./icon";
 export * from "./in-progress-icon";
 export * from "./info-fill-icon";
-export * from "./info-icon";
 export * from "./intake";
 export * from "./layer-stack";
 export * from "./layers-icon";
 export * from "./layouts";
 export * from "./lead-icon";
+export * from "./misc";
 export * from "./module";
 export * from "./monospace-icon";
 export * from "./multiple-sticky";

@@ -50,7 +50,6 @@
     "react-hook-form": "7.51.5",
     "react-popper": "^2.3.0",
     "react-router": "catalog:",
-    "react-router-dom": "catalog:",
     "swr": "catalog:",
     "uuid": "catalog:"
   },

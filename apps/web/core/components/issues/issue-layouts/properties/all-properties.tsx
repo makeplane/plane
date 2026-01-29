@@ -1,15 +1,19 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { SyntheticEvent } from "react";
 import { useCallback, useMemo } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Link, Paperclip } from "lucide-react";
-// types
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { Paperclip } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
+import { LinkIcon, StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
@@ -29,8 +33,6 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
-// helpers
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -105,44 +107,20 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
     [workspaceSlug, issue, changeModulesInIssue, addCycleToIssue, removeCycleFromIssue]
   );
 
-  const handleState = (stateId: string) => {
-    if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { state_id: stateId }).then(() => {
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload: { id: issue.id },
-        });
-      });
+  const handleState = async (stateId: string) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, { state_id: stateId });
   };
 
-  const handlePriority = (value: TIssuePriorities) => {
-    if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { priority: value }).then(() => {
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload: { id: issue.id },
-        });
-      });
+  const handlePriority = async (value: TIssuePriorities) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, { priority: value });
   };
 
-  const handleLabel = (ids: string[]) => {
-    if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { label_ids: ids }).then(() => {
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload: { id: issue.id },
-        });
-      });
+  const handleLabel = async (ids: string[]) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, { label_ids: ids });
   };
 
-  const handleAssignee = (ids: string[]) => {
-    if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { assignee_ids: ids }).then(() => {
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload: { id: issue.id },
-        });
-      });
+  const handleAssignee = async (ids: string[]) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, { assignee_ids: ids });
   };
 
   const handleModule = useCallback(
@@ -157,11 +135,6 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         else modulesToAdd.push(moduleId);
       if (modulesToAdd.length > 0) issueOperations.addModulesToIssue(modulesToAdd);
       if (modulesToRemove.length > 0) issueOperations.removeModulesFromIssue(modulesToRemove);
-
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: { id: issue.id },
-      });
     },
     [issueOperations, issue]
   );
@@ -171,47 +144,22 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       if (!issue || issue.cycle_id === cycleId) return;
       if (cycleId) issueOperations.addIssueToCycle?.(cycleId);
       else issueOperations.removeIssueFromCycle?.();
-
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: { id: issue.id },
-      });
     },
     [issue, issueOperations]
   );
 
-  const handleStartDate = (date: Date | null) => {
+  const handleStartDate = async (date: Date | null) => {
     if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { start_date: date ? renderFormattedPayloadDate(date) : null }).then(
-        () => {
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issue.id },
-          });
-        }
-      );
+      await updateIssue(issue.project_id, issue.id, { start_date: date ? renderFormattedPayloadDate(date) : null });
   };
 
-  const handleTargetDate = (date: Date | null) => {
+  const handleTargetDate = async (date: Date | null) => {
     if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null }).then(
-        () => {
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issue.id },
-          });
-        }
-      );
+      await updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null });
   };
 
-  const handleEstimate = (value: string | undefined) => {
-    if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { estimate_point: value }).then(() => {
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload: { id: issue.id },
-        });
-      });
+  const handleEstimate = async (value: string | undefined) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, { estimate_point: value });
   };
 
   const workItemLink = generateWorkItemLink({
@@ -298,8 +246,10 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             isClearable
             mergeDates
             buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger" : ""}
-            clearIconClassName="!text-primary"
+            buttonClassName={
+              shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger-primary" : ""
+            }
+            clearIconClassName="text-primary!"
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip
@@ -344,10 +294,12 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onChange={handleTargetDate}
             minDate={minDate}
             placeholder={t("common.order_by.due_date")}
-            icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
+            icon={<DueDatePropertyIcon className="h-3 w-3 shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger" : ""}
-            clearIconClassName="!text-primary"
+            buttonClassName={
+              shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger-primary" : ""
+            }
+            clearIconClassName="text-primary!"
             optionsClassName="z-10"
             disabled={isReadOnly}
             renderByDefault={isMobile}
@@ -513,7 +465,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
-            <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <LinkIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-caption-sm-regular">{issue.link_count}</div>
           </div>
         </Tooltip>

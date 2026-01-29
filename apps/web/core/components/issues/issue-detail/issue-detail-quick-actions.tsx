@@ -1,7 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CopyLinkIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
@@ -9,8 +14,6 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 import { generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -69,15 +72,21 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
   });
 
   // handlers
-  const handleCopyText = () => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(`${originURL}${workItemLink}`).then(() => {
+  const handleCopyText = async () => {
+    try {
+      const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+      await copyTextToClipboard(`${originURL}${workItemLink}`);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("common.link_copied"),
         message: t("common.copied_to_clipboard"),
       });
-    });
+    } catch (_error) {
+      setToast({
+        title: t("toast.error"),
+        type: TOAST_TYPE.ERROR,
+      });
+    }
   };
 
   const handleDeleteIssue = async () => {
@@ -87,23 +96,13 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
         ? `/${workspaceSlug}/projects/${projectId}/archives/issues`
         : `/${workspaceSlug}/projects/${projectId}/issues`;
 
-      return deleteIssue(workspaceSlug, projectId, issueId).then(() => {
-        router.push(redirectionPath);
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-          payload: { id: issueId },
-        });
-      });
-    } catch (error) {
+      await deleteIssue(workspaceSlug, projectId, issueId);
+      router.push(redirectionPath);
+    } catch (_error) {
       setToast({
         title: t("toast.error "),
         type: TOAST_TYPE.ERROR,
         message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
-      });
-      captureError({
-        eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-        payload: { id: issueId },
-        error: error as Error,
       });
     }
   };
@@ -112,38 +111,32 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
     try {
       await archiveIssue(workspaceSlug, projectId, issueId);
       router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-        payload: { id: issueId },
-      });
-    } catch (error) {
-      captureError({
-        eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-        payload: { id: issueId },
-        error: error as Error,
+    } catch (_error) {
+      setToast({
+        title: t("toast.error"),
+        type: TOAST_TYPE.ERROR,
+        message: t("issue.archive.failed.message"),
       });
     }
   };
 
   const handleRestore = async () => {
     if (!workspaceSlug || !projectId || !issueId) return;
-
-    await restoreIssue(workspaceSlug.toString(), projectId.toString(), issueId.toString())
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("issue.restore.success.title"),
-          message: t("issue.restore.success.message"),
-        });
-        router.push(workItemLink);
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("toast.error"),
-          message: t("issue.restore.failed.message"),
-        });
+    try {
+      await restoreIssue(workspaceSlug.toString(), projectId.toString(), issueId.toString());
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("issue.restore.success.title"),
+        message: t("issue.restore.success.message"),
       });
+      router.push(workItemLink);
+    } catch (_error) {
+      setToast({
+        title: t("toast.error"),
+        type: TOAST_TYPE.ERROR,
+        message: t("issue.restore.failed.message"),
+      });
+    }
   };
 
   return (

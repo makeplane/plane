@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
@@ -55,8 +61,8 @@ export const ConfirmWorkspaceMemberRemove = observer(function ConfirmWorkspaceMe
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 text-left shadow-raised-200 transition-all sm:my-8 sm:w-[40rem]">
                 <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
-                    <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                      <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
+                    <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-danger-subtle sm:mx-0 sm:h-10 sm:w-10">
+                      <AlertTriangle className="h-6 w-6 text-danger-primary" aria-hidden="true" />
                     </div>
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                       <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">

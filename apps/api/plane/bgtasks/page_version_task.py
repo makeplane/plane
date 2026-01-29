@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 
@@ -28,7 +32,7 @@ def page_version(page_id, existing_instance, user_id):
                 description_binary=page.description_binary,
                 owned_by_id=user_id,
                 last_saved_at=page.updated_at,
-                description_json=page.description,
+                description_json=page.description_json,
                 description_stripped=page.description_stripped,
             )
 

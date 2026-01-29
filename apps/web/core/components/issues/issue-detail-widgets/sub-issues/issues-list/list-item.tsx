@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
-import { Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
+import { Link as Loader } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { LinkIcon, EditIcon, TrashIcon, CloseIcon, ChevronRightIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
@@ -192,7 +198,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+                      <EditIcon className="h-3.5 w-3.5" strokeWidth={2} />
                       <span>{t("issue.edit")}</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -233,7 +239,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <Trash className="h-3.5 w-3.5" strokeWidth={2} />
+                      <TrashIcon className="h-3.5 w-3.5" strokeWidth={2} />
                       <span>{t("issue.delete.label")}</span>
                     </div>
                   </CustomMenu.MenuItem>

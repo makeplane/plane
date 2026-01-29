@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -72,6 +78,7 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
           title: t("success"),
           message: t("favorite_created_successfully"),
         });
+        return;
       })
       .catch(() => {
         setToast({
@@ -110,6 +117,7 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
           title: t("success"),
           message: t("favorite_updated_successfully"),
         });
+        return;
       })
       .catch(() => {
         setToast({
@@ -131,7 +139,7 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
   });
   return (
     <div className="flex items-center gap-1.5 py-[1px] px-2" ref={ref}>
-      <FavoriteFolderIcon className="w-[16px]" />
+      <FavoriteFolderIcon className="size-4" />
       <form onSubmit={handleSubmit(actionType === "create" ? handleAddNewFolder : handleRenameFolder)}>
         <Controller
           name="name"

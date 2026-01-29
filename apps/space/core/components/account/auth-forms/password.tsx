@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
@@ -201,7 +207,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           </div>
           {!!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
-            renderPasswordMatchError && <span className="text-13 text-red-500">Passwords don{"'"}t match</span>}
+            renderPasswordMatchError && <span className="text-13 text-danger-primary">Passwords don{"'"}t match</span>}
         </div>
       )}
 

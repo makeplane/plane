@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -187,7 +193,7 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
             />
           )}
           {/* {isEstimatePointError && (
-            <div className="pt-5 text-13 text-red-500">
+            <div className="pt-5 text-13 text-danger-primary">
               Estimate points can&apos;t be empty. Enter a value in each field or remove those you don&apos;t have
               values for.
             </div>

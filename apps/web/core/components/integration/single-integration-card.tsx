@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -114,7 +120,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
           <h3 className="flex items-center gap-2 text-body-xs-medium">
             {integration.title}
             {workspaceIntegrations
-              ? isInstalled && <CheckCircle className="h-3.5 w-3.5 fill-transparent text-green-500" />
+              ? isInstalled && <CheckCircle className="h-3.5 w-3.5 fill-transparent text-success-primary" />
               : null}
           </h3>
           <p className="text-body-xs-regular text-secondary">

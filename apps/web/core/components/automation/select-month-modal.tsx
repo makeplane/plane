@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useParams } from "next/navigation";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
@@ -76,7 +82,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                   />
 
                   {errors.close_in && (
-                    <span className="px-1 text-13 text-red-500">Select a month between 1 and 12.</span>
+                    <span className="px-1 text-13 text-danger-primary">Select a month between 1 and 12.</span>
                   )}
                 </>
               ) : (
@@ -109,7 +115,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                     )}
                   />
                   {errors.archive_in && (
-                    <span className="px-1 text-13 text-red-500">Select a month between 1 and 12.</span>
+                    <span className="px-1 text-13 text-danger-primary">Select a month between 1 and 12.</span>
                   )}
                 </>
               )}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
@@ -152,7 +158,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
           className={cn(
             "block w-full resize-none overflow-hidden rounded-sm border-none bg-transparent px-3 py-0 text-20 font-medium outline-none ring-0",
             {
-              "ring-1 ring-red-400 mx-2.5": title?.length === 0,
+              "ring-1 ring-danger-strong mx-2.5": title?.length === 0,
             },
             className
           )}
@@ -172,11 +178,15 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
             }
           )}
         >
-          <span className={`${title.length === 0 || title.length > 255 ? "text-red-500" : ""}`}>{title.length}</span>
+          <span className={`${title.length === 0 || title.length > 255 ? "text-danger-primary" : ""}`}>
+            {title.length}
+          </span>
           /255
         </div>
       </div>
-      {title?.length === 0 && <span className="text-13 font-medium text-red-500">{t("form.title.required")}</span>}
+      {title?.length === 0 && (
+        <span className="text-13 font-medium text-danger-primary">{t("form.title.required")}</span>
+      )}
     </div>
   );
 });

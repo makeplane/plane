@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { clone, isNil, pull, uniq, concat } from "lodash-es";
@@ -589,7 +595,7 @@ export const removeNillKeys = <T,>(obj: T) =>
   Object.fromEntries(Object.entries(obj ?? {}).filter(([key, value]) => key && !isNil(value)));
 
 /**
- * This Method returns if the the grouped values are subGrouped
+ * This Method returns if the grouped values are subGrouped
  * @param groupedIssueIds
  * @returns
  */

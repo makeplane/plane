@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Projek",
@@ -1980,6 +1986,44 @@ export default {
         title: "Belum ada sistem perkiraan",
         description: "Buat serangkaian perkiraan untuk mengkomunikasikan jumlah pekerjaan per item kerja.",
         primary_button: "Tambah sistem perkiraan",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Siklus",
+        short_title: "Siklus",
+        description:
+          "Jadwalkan pekerjaan dalam periode fleksibel yang menyesuaikan dengan ritme dan tempo unik proyek ini.",
+        toggle_title: "Aktifkan siklus",
+        toggle_description: "Rencanakan pekerjaan dalam jangka waktu yang terfokus.",
+      },
+      modules: {
+        title: "Modul",
+        short_title: "Modul",
+        description: "Atur pekerjaan menjadi sub-proyek dengan pemimpin dan penerima tugas khusus.",
+        toggle_title: "Aktifkan modul",
+        toggle_description: "Anggota proyek akan dapat membuat dan mengedit modul.",
+      },
+      views: {
+        title: "Tampilan",
+        short_title: "Tampilan",
+        description: "Simpan pengurutan, filter, dan opsi tampilan kustom atau bagikan dengan tim Anda.",
+        toggle_title: "Aktifkan tampilan",
+        toggle_description: "Anggota proyek akan dapat membuat dan mengedit tampilan.",
+      },
+      pages: {
+        title: "Halaman",
+        short_title: "Halaman",
+        description: "Buat dan edit konten bebas: catatan, dokumen, apa saja.",
+        toggle_title: "Aktifkan halaman",
+        toggle_description: "Anggota proyek akan dapat membuat dan mengedit halaman.",
+      },
+      intake: {
+        title: "Penerimaan",
+        short_title: "Penerimaan",
+        description: "Biarkan non-anggota berbagi bug, umpan balik, dan saran; tanpa mengganggu alur kerja Anda.",
+        toggle_title: "Aktifkan penerimaan",
+        toggle_description: "Izinkan anggota proyek membuat permintaan penerimaan dalam aplikasi.",
       },
     },
   },

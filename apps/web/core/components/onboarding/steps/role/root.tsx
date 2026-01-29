@@ -1,16 +1,18 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Box, Check, PenTool, Rocket, Monitor, RefreshCw } from "lucide-react";
+import { Box, PenTool, Rocket, Monitor, RefreshCw } from "lucide-react";
 // plane imports
-import { ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { ViewsIcon } from "@plane/propel/icons";
+import { CheckIcon, ViewsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
-// helpers
-import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 // local components
@@ -61,22 +63,12 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
         updateUserProfile(profileUpdatePayload),
         // totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
-      captureSuccess({
-        eventName: USER_TRACKER_EVENTS.add_details,
-        payload: {
-          use_case: formData.use_case,
-          role: formData.role,
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",
         message: "Profile setup completed!",
       });
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -87,12 +79,8 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
 
   const onSubmit = async (formData: TProfileSetupFormValues) => {
     if (!profile) return;
-    captureView({
-      elementName: ONBOARDING_TRACKER_ELEMENTS.PROFILE_SETUP_FORM,
-    });
-    await handleSubmitUserPersonalization(formData).then(() => {
-      handleStepChange(EOnboardingSteps.ROLE_SETUP);
-    });
+    await handleSubmitUserPersonalization(formData);
+    handleStepChange(EOnboardingSteps.ROLE_SETUP);
   };
 
   const handleSkip = () => {
@@ -143,7 +131,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                         <button
                           className={`size-4 rounded-sm border-2 flex items-center justify-center bg-accent-primary border-blue-500`}
                         >
-                          <Check className="w-3 h-3 text-on-color" />
+                          <CheckIcon className="w-3 h-3 text-on-color" />
                         </button>
                       </>
                     )}
@@ -153,7 +141,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
             </div>
           )}
         />
-        {errors.role && <span className="text-13 text-red-500">{errors.role.message}</span>}
+        {errors.role && <span className="text-13 text-danger-primary">{errors.role.message}</span>}
       </div>
       {/* Action Buttons */}
       <div className="space-y-3">

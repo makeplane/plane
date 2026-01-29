@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState, useEffect, useCallback, createContext, useContext } from "react";
 import { Collapsible as BaseCollapsible } from "@base-ui-components/react/collapsible";
 import clsx from "clsx";

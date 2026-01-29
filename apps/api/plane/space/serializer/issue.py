@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.utils import timezone
 
@@ -193,7 +197,7 @@ class IssueFlatSerializer(BaseSerializer):
         fields = [
             "id",
             "name",
-            "description",
+            "description_json",
             "description_html",
             "priority",
             "start_date",

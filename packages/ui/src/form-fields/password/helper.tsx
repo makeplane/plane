@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 
 export interface StrengthInfo {
@@ -20,7 +26,7 @@ export const getStrengthInfo = (strength: E_PASSWORD_STRENGTH): StrengthInfo => 
     case E_PASSWORD_STRENGTH.LENGTH_NOT_VALID:
       return {
         message: "Password is too short",
-        textColor: "text-red-500",
+        textColor: "text-danger-primary",
         activeFragments: 1,
       };
     case E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID:
@@ -32,7 +38,7 @@ export const getStrengthInfo = (strength: E_PASSWORD_STRENGTH): StrengthInfo => 
     case E_PASSWORD_STRENGTH.STRENGTH_VALID:
       return {
         message: "Password is strong",
-        textColor: "text-green-500",
+        textColor: "text-success-primary",
         activeFragments: 3,
       };
     default:
@@ -54,11 +60,11 @@ export const getFragmentColor = (fragmentIndex: number, activeFragments: number)
 
   switch (activeFragments) {
     case 1:
-      return "bg-red-500";
+      return "bg-danger-primary";
     case 2:
       return "bg-orange-500";
     case 3:
-      return "bg-green-500";
+      return "bg-success-primary";
     default:
       return "bg-layer-1";
   }

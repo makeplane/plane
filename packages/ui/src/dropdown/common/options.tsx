@@ -1,6 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Combobox } from "@headlessui/react";
-import { Check } from "lucide-react";
+
 import React from "react";
+import { CheckIcon } from "@plane/propel/icons";
 // helpers
 import { cn } from "../../utils";
 // types
@@ -69,7 +76,7 @@ export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSele
                       ) : (
                         <>
                           <span className="flex-grow truncate">{option.value}</span>
-                          {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                          {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                         </>
                       )}
                     </>

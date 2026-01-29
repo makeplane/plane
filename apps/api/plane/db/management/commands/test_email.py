@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.management import BaseCommand, CommandError
 from django.template.loader import render_to_string

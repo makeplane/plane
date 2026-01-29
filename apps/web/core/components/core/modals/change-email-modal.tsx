@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -154,12 +160,15 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
                 ref={ref}
                 hasError={Boolean(errors.email)}
                 placeholder={changeEmailT("form.email.placeholder")}
-                className={cn({ "border-red-500": errors.email }, { "cursor-not-allowed !bg-surface-2": secondStep })}
+                className={cn(
+                  { "border-danger-strong": errors.email },
+                  { "cursor-not-allowed !bg-surface-2": secondStep }
+                )}
                 disabled={secondStep}
               />
             )}
           />
-          {errors?.email && <span className="text-11 text-red-500">{errors?.email?.message}</span>}
+          {errors?.email && <span className="text-11 text-danger-primary">{errors?.email?.message}</span>}
         </div>
 
         {secondStep && (
@@ -177,15 +186,15 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
                   onChange={onChange}
                   ref={ref}
                   placeholder={changeEmailT("form.code.placeholder")}
-                  className={cn({ "border-red-500": errors.code })}
+                  className={cn({ "border-danger-strong": errors.code })}
                   autoFocus
                 />
               )}
             />
             {errors?.code ? (
-              <span className="text-11 text-red-500">{errors?.code?.message}</span>
+              <span className="text-11 text-danger-primary">{errors?.code?.message}</span>
             ) : (
-              <span className="text-11 text-green-700">{changeEmailT("form.code.helper_text")}</span>
+              <span className="text-11 text-success-primary">{changeEmailT("form.code.helper_text")}</span>
             )}
           </div>
         )}

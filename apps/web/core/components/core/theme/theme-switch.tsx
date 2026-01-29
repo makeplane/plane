@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 // plane imports
 import type { I_THEME_OPTION } from "@plane/constants";
@@ -50,6 +56,7 @@ export function ThemeSwitch(props: Props) {
         )
       }
       onChange={onChange}
+      buttonClassName="border border-subtle-1"
       placement="bottom-end"
       input
     >

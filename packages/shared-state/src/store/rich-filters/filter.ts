@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { cloneDeep, isEqual } from "lodash-es";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { computedFn } from "mobx-utils";

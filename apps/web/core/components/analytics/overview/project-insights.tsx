@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { lazy, Suspense } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -72,8 +78,8 @@ const ProjectInsights = observer(function ProjectInsights() {
                   {
                     key: "count",
                     name: "Count",
-                    fill: "var(--color-brand-default)",
-                    stroke: "var(--color-brand-default)",
+                    fill: "var(--text-color-accent-primary)",
+                    stroke: "var(--text-color-accent-primary)",
                     fillOpacity: 0.6,
                     dot: {
                       r: 4,

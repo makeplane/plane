@@ -1,5 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo, useState } from "react";
-import { Plus } from "lucide-react";
+
+import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssueLink } from "@plane/types";
@@ -125,7 +132,7 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
               onClick={() => toggleIssueLinkModal(true)}
               disabled={disabled}
             >
-              <Plus className="h-4 w-4" />
+              <PlusIcon className="h-4 w-4" />
             </button>
           )}
         </div>

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.db import models
 from django.template.defaultfilters import slugify
@@ -5,7 +9,7 @@ from django.db.models import Q
 
 # Module imports
 from .project import ProjectBaseModel
-
+from plane.db.mixins import SoftDeletionManager
 
 class StateGroup(models.TextChoices):
     BACKLOG = "backlog", "Backlog"
@@ -58,14 +62,14 @@ DEFAULT_STATES = [
 ]
 
 
-class StateManager(models.Manager):
+class StateManager(SoftDeletionManager):
     """Default manager - excludes triage states"""
 
     def get_queryset(self):
         return super().get_queryset().exclude(group=StateGroup.TRIAGE.value)
 
 
-class TriageStateManager(models.Manager):
+class TriageStateManager(SoftDeletionManager):
     """Manager for triage states only"""
 
     def get_queryset(self):

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // services
 import { API_BASE_URL } from "@plane/constants";
 import type { IIssueFiltersResponse } from "@plane/types";
@@ -27,26 +33,6 @@ export class IssueFiltersService extends APIService {
   //       throw error?.response?.data;
   //     });
   // }
-
-  // project issue filters
-  async fetchProjectIssueFilters(workspaceSlug: string, projectId: string): Promise<IIssueFiltersResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-properties/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-  async patchProjectIssueFilters(
-    workspaceSlug: string,
-    projectId: string,
-    data: Partial<IIssueFiltersResponse>
-  ): Promise<any> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-properties/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
 
   // epic issue filters
   async fetchProjectEpicFilters(workspaceSlug: string, projectId: string): Promise<IIssueFiltersResponse> {

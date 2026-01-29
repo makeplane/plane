@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { EUserPermissions, IJiraMetadata } from "@plane/types";
 
 const paramsToKey = (params: any) => {
@@ -82,6 +88,9 @@ export const WORKSPACE_STATES = (workspaceSlug: string) => `WORKSPACE_STATES_${w
 
 export const WORKSPACE_SIDEBAR_PREFERENCES = (workspaceSlug: string) =>
   `WORKSPACE_SIDEBAR_PREFERENCES_${workspaceSlug.toUpperCase()}`;
+
+export const WORKSPACE_PROJECT_NAVIGATION_PREFERENCES = (workspaceSlug: string) =>
+  `WORKSPACE_PROJECT_NAVIGATION_PREFERENCES_${workspaceSlug.toUpperCase()}`;
 
 export const PROJECT_GITHUB_REPOSITORY = (projectId: string) => `PROJECT_GITHUB_REPOSITORY_${projectId.toUpperCase()}`;
 

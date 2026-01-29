@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { set, sortBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -11,10 +17,10 @@ import { WorkspaceService } from "@/plane-web/services";
 import type { IRouterStore } from "@/store/router.store";
 import type { IUserStore } from "@/store/user";
 // store
-import type { CoreRootStore } from "../../root.store";
 import type { IMemberRootStore } from "../index.ts";
 import type { IWorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
 import { WorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IWorkspaceMembership {
   id: string;
@@ -72,7 +78,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   // services
   workspaceService;
 
-  constructor(_memberRoot: IMemberRootStore, _rootStore: CoreRootStore) {
+  constructor(_memberRoot: IMemberRootStore, _rootStore: RootStore) {
     makeObservable(this, {
       // observables
       workspaceMemberMap: observable,

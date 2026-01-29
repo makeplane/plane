@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { IProjectMemberNavigationPreferences } from "./project";
 import type { TIssue } from "./issues/issue";
 import type { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
 import type { CompleteOrEmpty } from "./utils";
@@ -192,6 +199,22 @@ export interface IIssueFiltersResponse {
   rich_filters: TWorkItemFilterExpression;
   display_filters: IIssueDisplayFilterOptions;
   display_properties: IIssueDisplayProperties;
+}
+
+export interface IProjectUserPropertiesResponse extends IIssueFiltersResponse {
+  sort_order: number;
+  preferences: {
+    pages: {
+      block_display: boolean;
+    };
+    navigation: IProjectMemberNavigationPreferences;
+  };
+}
+
+export interface IWorkspaceUserPropertiesResponse extends IIssueFiltersResponse {
+  navigation_project_limit?: number;
+  navigation_control_preference?: "ACCORDION" | "TABBED";
+  // Note: show_limited_projects is derived from navigation_project_limit (0 = false, >0 = true)
 }
 
 export interface IWorkspaceIssueFilterOptions {

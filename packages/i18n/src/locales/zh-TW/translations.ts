@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "專案",
@@ -1947,6 +1953,43 @@ export default {
         title: "尚無評估系統",
         description: "建立一組評估以傳達每個工作事項的工作量。",
         primary_button: "新增評估系統",
+      },
+    },
+    features: {
+      cycles: {
+        title: "週期",
+        short_title: "週期",
+        description: "在靈活的時間段內安排工作，以適應該專案獨特的節奏和步調。",
+        toggle_title: "啟用週期",
+        toggle_description: "在集中的時間段內規劃工作。",
+      },
+      modules: {
+        title: "模組",
+        short_title: "模組",
+        description: "將工作組織成具有專門負責人和受讓人的子專案。",
+        toggle_title: "啟用模組",
+        toggle_description: "專案成員將能夠建立和編輯模組。",
+      },
+      views: {
+        title: "檢視",
+        short_title: "檢視",
+        description: "儲存自訂排序、篩選器和顯示選項，或與團隊共享。",
+        toggle_title: "啟用檢視",
+        toggle_description: "專案成員將能夠建立和編輯檢視。",
+      },
+      pages: {
+        title: "頁面",
+        short_title: "頁面",
+        description: "建立和編輯自由格式的內容：筆記、文件、任何內容。",
+        toggle_title: "啟用頁面",
+        toggle_description: "專案成員將能夠建立和編輯頁面。",
+      },
+      intake: {
+        title: "接收",
+        short_title: "接收",
+        description: "讓非成員分享錯誤、回饋和建議；而不會中斷您的工作流程。",
+        toggle_title: "啟用接收",
+        toggle_description: "允許專案成員在應用程式中建立接收請求。",
       },
     },
   },

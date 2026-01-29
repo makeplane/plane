@@ -1,10 +1,16 @@
-import type { FC, FormEvent } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FormEvent } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Check, Info } from "lucide-react";
+import { Info } from "lucide-react";
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { CheckIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
@@ -171,7 +177,7 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
       <div
         className={cn(
           "relative w-full border rounded-sm flex items-center my-1",
-          estimatePointError?.message ? `border-red-500` : `border-subtle`
+          estimatePointError?.message ? `border-danger-strong` : `border-subtle`
         )}
       >
         <EstimateInputRoot
@@ -181,7 +187,7 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
         />
         {estimatePointError?.message && (
           <Tooltip tooltipContent={estimatePointError?.message} position="bottom">
-            <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-red-500">
+            <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-danger-primary">
               <Info size={14} />
             </div>
           </Tooltip>
@@ -191,10 +197,10 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
       {estimateInputValue && estimateInputValue.length > 0 && (
         <button
           type="submit"
-          className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer text-green-500"
+          className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer text-success-primary"
           disabled={loader}
         >
-          {loader ? <Spinner className="w-4 h-4" /> : <Check size={14} />}
+          {loader ? <Spinner className="w-4 h-4" /> : <CheckIcon width={14} height={14} />}
         </button>
       )}
       <button

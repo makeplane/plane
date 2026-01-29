@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { lazy, Suspense, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { SWRConfig } from "swr";
@@ -27,10 +33,6 @@ const InstanceWrapper = lazy(function InstanceWrapper() {
 
 const ChatSupportModal = lazy(function ChatSupportModal() {
   return import("@/components/global/chat-support-modal");
-});
-
-const PostHogProvider = lazy(function PostHogProvider() {
-  return import("@/lib/posthog-provider");
 });
 
 export interface IAppProvider {
@@ -65,9 +67,7 @@ export function AppProvider(props: IAppProvider) {
             <InstanceWrapper>
               <Suspense>
                 <ChatSupportModal />
-                <PostHogProvider>
-                  <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
-                </PostHogProvider>
+                <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
               </Suspense>
             </InstanceWrapper>
           </StoreWrapper>

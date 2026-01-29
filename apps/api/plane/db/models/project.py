@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import pytz
 from uuid import uuid4
@@ -12,7 +16,6 @@ from django.db.models import Q
 # Module imports
 from plane.db.mixins import AuditModel
 
-# Module imports
 from .base import BaseModel
 
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
@@ -219,14 +222,20 @@ class ProjectMember(ProjectBaseModel):
     is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        if self._state.adding:
-            smallest_sort_order = ProjectMember.objects.filter(
-                workspace_id=self.project.workspace_id, member=self.member
-            ).aggregate(smallest=models.Min("sort_order"))["smallest"]
+        if self._state.adding and self.member:
+            # Get the minimum sort_order for this member in the workspace
+            min_sort_order_result = ProjectUserProperty.objects.filter(
+                workspace_id=self.project.workspace_id, user=self.member
+            ).aggregate(min_sort_order=models.Min("sort_order"))
+            min_sort_order = min_sort_order_result.get("min_sort_order")
 
-            # Project ordering
-            if smallest_sort_order is not None:
-                self.sort_order = smallest_sort_order - 10000
+            # create project user property with project sort order
+            ProjectUserProperty.objects.create(
+                workspace_id=self.project.workspace_id,
+                project=self.project,
+                user=self.member,
+                sort_order=(min_sort_order - 10000 if min_sort_order is not None else 65535),
+            )
 
         super(ProjectMember, self).save(*args, **kwargs)
 
@@ -326,3 +335,37 @@ class ProjectPublicMember(ProjectBaseModel):
         verbose_name_plural = "Project Public Members"
         db_table = "project_public_members"
         ordering = ("-created_at",)
+
+
+class ProjectUserProperty(ProjectBaseModel):
+    from .issue import get_default_filters, get_default_display_filters, get_default_display_properties
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="project_property_user",
+    )
+    filters = models.JSONField(default=get_default_filters)
+    display_filters = models.JSONField(default=get_default_display_filters)
+    display_properties = models.JSONField(default=get_default_display_properties)
+    rich_filters = models.JSONField(default=dict)
+    preferences = models.JSONField(default=get_default_preferences)
+    sort_order = models.FloatField(default=65535)
+
+    class Meta:
+        verbose_name = "Project User Property"
+        verbose_name_plural = "Project User Properties"
+        db_table = "project_user_properties"
+        ordering = ("-created_at",)
+        unique_together = ["user", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "project"],
+                condition=Q(deleted_at__isnull=True),
+                name="project_user_property_unique_user_project_when_deleted_at_null",
+            )
+        ]
+
+    def __str__(self):
+        """Return properties status of the project"""
+        return str(self.user)

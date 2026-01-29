@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 from uuid import uuid4
 
@@ -32,6 +36,7 @@ class APIToken(BaseModel):
     workspace = models.ForeignKey("db.Workspace", related_name="api_tokens", on_delete=models.CASCADE, null=True)
     expired_at = models.DateTimeField(blank=True, null=True)
     is_service = models.BooleanField(default=False)
+    allowed_rate_limit = models.CharField(max_length=255, default="60/min")
 
     class Meta:
         verbose_name = "API Token"

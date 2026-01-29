@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -80,7 +86,7 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
                 <WebhookInput value={value} onChange={onChange} hasError={Boolean(errors.url)} />
               )}
             />
-            {errors.url && <div className="text-11 text-red-500">{errors.url.message}</div>}
+            {errors.url && <div className="text-11 text-danger-primary">{errors.url.message}</div>}
           </div>
           {data && <WebhookToggle control={control} />}
           <WebhookOptions value={webhookEventType} onChange={(val) => setWebhookEventType(val)} />

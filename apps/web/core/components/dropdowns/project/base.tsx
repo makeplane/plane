@@ -1,13 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ProjectIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon, SearchIcon, ProjectIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -238,7 +243,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-              <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+              <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
@@ -268,7 +273,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
                         {({ selected }) => (
                           <>
                             <span className="flex-grow truncate">{option.content}</span>
-                            {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                            {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                           </>
                         )}
                       </Combobox.Option>

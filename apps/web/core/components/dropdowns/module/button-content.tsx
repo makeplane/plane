@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { CloseIcon, ModuleIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -93,7 +99,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
                           onChange(newModuleIds);
                         }}
                       >
-                        <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-red-500" />
+                        <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-danger-primary" />
                       </button>
                     </Tooltip>
                   )}

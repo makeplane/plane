@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
@@ -129,7 +135,7 @@ export function InstanceSignInForm() {
 
             <div className="w-full space-y-1">
               <label className="text-13 text-tertiary font-medium" htmlFor="email">
-                Email <span className="text-red-500">*</span>
+                Email <span className="text-danger-primary">*</span>
               </label>
               <Input
                 className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
@@ -147,7 +153,7 @@ export function InstanceSignInForm() {
 
             <div className="w-full space-y-1">
               <label className="text-13 text-tertiary font-medium" htmlFor="password">
-                Password <span className="text-red-500">*</span>
+                Password <span className="text-danger-primary">*</span>
               </label>
               <div className="relative">
                 <Input

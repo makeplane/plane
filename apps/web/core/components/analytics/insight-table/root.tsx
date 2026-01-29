@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ColumnDef, Row, Table } from "@tanstack/react-table";
 import { Download } from "lucide-react";
 import { useTranslation } from "@plane/i18n";

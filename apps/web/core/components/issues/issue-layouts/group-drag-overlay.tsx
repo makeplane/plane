@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef } from "react";
 import { AlertCircle } from "lucide-react";
 // plane imports
@@ -47,8 +53,8 @@ export function GroupDragOverlay(props: Props) {
       className={cn(
         `absolute top-0 left-0 h-full w-full items-center text-13 font-medium text-tertiary rounded-sm bg-layer-1/85 ${dragColumnOrientation}`,
         {
-          "flex flex-col border-[1px] border-strong z-[2]": shouldOverlayBeVisible,
-          "bg-red-200/60": workflowDisabledSource && isDropDisabled,
+          "flex flex-col border-[1px] border-strong z-2": shouldOverlayBeVisible,
+          "bg-danger-subtle": workflowDisabledSource && isDropDisabled,
         },
         { hidden: !shouldOverlayBeVisible }
       )}

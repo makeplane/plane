@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Proyectos",
@@ -1997,6 +2003,46 @@ export default {
         title: "Aún no hay sistemas de estimación",
         description: "Crea un conjunto de estimaciones para comunicar el volumen de trabajo por elemento de trabajo.",
         primary_button: "Agregar sistema de estimación",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Ciclos",
+        short_title: "Ciclos",
+        description:
+          "Programa el trabajo en períodos flexibles que se adaptan al ritmo y al tempo únicos de este proyecto.",
+        toggle_title: "Habilitar ciclos",
+        toggle_description: "Planifica el trabajo en períodos de tiempo enfocados.",
+      },
+      modules: {
+        title: "Módulos",
+        short_title: "Módulos",
+        description: "Organiza el trabajo en subproyectos con líderes y responsables dedicados.",
+        toggle_title: "Habilitar módulos",
+        toggle_description: "Los miembros del proyecto podrán crear y editar módulos.",
+      },
+      views: {
+        title: "Vistas",
+        short_title: "Vistas",
+        description:
+          "Guarda ordenaciones, filtros y opciones de visualización personalizadas o compártelos con tu equipo.",
+        toggle_title: "Habilitar vistas",
+        toggle_description: "Los miembros del proyecto podrán crear y editar vistas.",
+      },
+      pages: {
+        title: "Páginas",
+        short_title: "Páginas",
+        description: "Crea y edita contenido libre: notas, documentos, cualquier cosa.",
+        toggle_title: "Habilitar páginas",
+        toggle_description: "Los miembros del proyecto podrán crear y editar páginas.",
+      },
+      intake: {
+        title: "Recepción",
+        short_title: "Recepción",
+        description:
+          "Permite que los no miembros compartan errores, comentarios y sugerencias; sin interrumpir tu flujo de trabajo.",
+        toggle_title: "Habilitar recepción",
+        toggle_description: "Permitir a los miembros del proyecto crear solicitudes de recepción en la aplicación.",
       },
     },
   },

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Settings, User, Bell } from "lucide-react";
@@ -252,7 +258,7 @@ export const DynamicTabs: Story = {
                       e.stopPropagation();
                       removeTab(tab.value);
                     }}
-                    className="ml-2 hover:text-red-500"
+                    className="ml-2 hover:text-danger-primary"
                   >
                     ×
                   </button>

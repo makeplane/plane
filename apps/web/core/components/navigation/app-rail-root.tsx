@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 "use client";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { Check, SettingsIcon } from "lucide-react";
+import { SettingsIcon } from "lucide-react";
 import { ContextMenu } from "@plane/propel/context-menu";
+import { CheckIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // components
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
@@ -16,13 +23,13 @@ import { AppSidebarItemsRoot } from "./items-root";
 
 export const AppRailRoot = observer(() => {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
   // preferences
   const { preferences, updateDisplayMode } = useAppRailPreferences();
   const { isCollapsed, toggleAppRail } = useAppRailVisibility();
-
-  const isSettingsPath = pathname.includes(`/${workspaceSlug}/settings`);
+  // derived values
+  const isWorkspaceSettingsPath = pathname.includes(`/${workspaceSlug}/settings`) && !projectId;
   const showLabel = preferences.displayMode === "icon_with_label";
   const railWidth = showLabel ? "3.75rem" : "3rem";
 
@@ -51,7 +58,7 @@ export const AppRailRoot = observer(() => {
                   label: "Settings",
                   icon: <SettingsIcon className="size-5" />,
                   href: `/${workspaceSlug}/settings`,
-                  isActive: isSettingsPath,
+                  isActive: isWorkspaceSettingsPath,
                   showLabel,
                 }}
               />
@@ -63,13 +70,13 @@ export const AppRailRoot = observer(() => {
             <ContextMenu.Item onClick={() => updateDisplayMode("icon_only")}>
               <div className="flex items-center justify-between w-full gap-2">
                 <span className="text-11">Icon only</span>
-                {preferences.displayMode === "icon_only" && <Check className="size-3.5" />}
+                {preferences.displayMode === "icon_only" && <CheckIcon className="size-3.5" />}
               </div>
             </ContextMenu.Item>
             <ContextMenu.Item onClick={() => updateDisplayMode("icon_with_label")}>
               <div className="flex items-center justify-between w-full gap-2">
                 <span className="text-11">Icon with name</span>
-                {preferences.displayMode === "icon_with_label" && <Check className="size-3.5" />}
+                {preferences.displayMode === "icon_with_label" && <CheckIcon className="size-3.5" />}
               </div>
             </ContextMenu.Item>
             <ContextMenu.Separator />

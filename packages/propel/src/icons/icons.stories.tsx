@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   ActionsIconsMap,
   ArrowsIconsMap,
   LayoutIconsMap,
+  MiscIconsMap,
   ProjectIconsMap,
   PropertyIconsMap,
   SubBrandIconsMap,
@@ -111,6 +118,18 @@ export const AllIcons: Story = {
             <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
               <div className="text-secondary">{item.icon}</div>
               <p className="text-11 text-tertiary text-center">{item.title}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-custom-text-100">Misc Icons</h3>
+        <div className="grid grid-cols-12 gap-6 w-full">
+          {MiscIconsMap.map((item) => (
+            <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+              <div className="text-custom-text-200">{item.icon}</div>
+              <p className="text-xs text-custom-text-300 text-center">{item.title}</p>
             </div>
           ))}
         </div>

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 AUTHENTICATION_ERROR_CODES = {
     # Global
     "INSTANCE_NOT_CONFIGURED": 5000,

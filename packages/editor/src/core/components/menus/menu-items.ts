@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Editor } from "@tiptap/react";
 import {
   BoldIcon,
@@ -21,9 +27,9 @@ import {
   MinusSquare,
   Palette,
   AlignCenter,
-  LinkIcon,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { LinkIcon } from "@plane/propel/icons";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
@@ -50,7 +56,7 @@ import {
 } from "@/helpers/editor-commands";
 // types
 import type { TCommandWithProps, TEditorCommands } from "@/types";
-
+import type { ISvgIcons } from "@plane/propel/icons";
 type isActiveFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => boolean;
 type commandFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => void;
 
@@ -58,7 +64,7 @@ export type EditorMenuItem<T extends TEditorCommands> = {
   key: T;
   name: string;
   command: commandFunction<T>;
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   isActive: isActiveFunction<T>;
 };
 

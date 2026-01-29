@@ -1,12 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 // constants
-import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import type { IWebhook } from "@plane/types";
 // ui
 import { ToggleSwitch } from "@plane/ui";
-// hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 
 interface IWebHookToggle {
   control: Control<IWebhook, any>;
@@ -23,9 +26,6 @@ export function WebhookToggle({ control }: IWebHookToggle) {
           <ToggleSwitch
             value={value}
             onChange={(val: boolean) => {
-              captureClick({
-                elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_DETAILS_PAGE_TOGGLE_SWITCH,
-              });
               onChange(val);
             }}
             size="sm"

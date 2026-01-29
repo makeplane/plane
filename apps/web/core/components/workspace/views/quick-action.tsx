@@ -1,14 +1,19 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceView } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 import { useViewMenuItems } from "@/components/common/quick-actions-helper";
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // local imports
@@ -33,14 +38,15 @@ export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickAct
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const viewLink = `${workspaceSlug}/workspace-views/${view.id}`;
-  const handleCopyText = () =>
-    copyUrlToClipboard(viewLink).then(() => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "View link copied to clipboard.",
-      });
+  const handleCopyText = async () => {
+    await copyUrlToClipboard(viewLink);
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: "Link Copied!",
+      message: "View link copied to clipboard.",
     });
+  };
+
   const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
 
   const MENU_ITEMS = useViewMenuItems({
@@ -70,9 +76,6 @@ export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickAct
             <CustomMenu.MenuItem
               key={item.key}
               onClick={() => {
-                captureClick({
-                  elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.QUICK_ACTIONS,
-                });
                 item.action();
               }}
               className={cn(

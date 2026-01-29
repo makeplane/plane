@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { Check } from "lucide-react";
 // plane imports
 import { ISSUE_LAYOUT_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CheckIcon } from "@plane/propel/icons";
 import { EIssueLayoutTypes } from "@plane/types";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -55,7 +61,7 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
           <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3 text-secondary`} />
           <span className="font-medium text-11">{t(dropdownValue.i18n_label)}</span>
         </div>
-        {props.selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+        {props.selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
       </div>
     );
   }, []);

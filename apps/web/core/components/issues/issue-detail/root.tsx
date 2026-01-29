@@ -1,8 +1,13 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
@@ -12,7 +17,6 @@ import emptyIssue from "@/app/assets/empty-state/issue.svg?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -90,17 +94,8 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
       update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-          });
         } catch (error) {
           console.log("Error in updating issue:", error);
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-            error: error as Error,
-          });
           setToast({
             title: t("common.error.label"),
             type: TOAST_TYPE.ERROR,
@@ -117,10 +112,6 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
             type: TOAST_TYPE.SUCCESS,
             message: t("entity.delete.success", { entity: t("issue.label") }),
           });
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-            payload: { id: issueId },
-          });
         } catch (error) {
           console.log("Error in deleting issue:", error);
           setToast({
@@ -128,66 +119,34 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
             type: TOAST_TYPE.ERROR,
             message: t("entity.delete.failed", { entity: t("issue.label") }),
           });
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-            payload: { id: issueId },
-            error: error as Error,
-          });
         }
       },
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-            payload: { id: issueId },
-          });
         } catch (error) {
           console.log("Error in archiving issue:", error);
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-            payload: { id: issueId },
-            error: error as Error,
-          });
         }
       },
       addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
           await addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-          });
-        } catch (error) {
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("common.error.label"),
             message: t("issue.add.cycle.failed"),
-          });
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-            error: error as Error,
           });
         }
       },
       addIssueToCycle: async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
         try {
           await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-          });
-        } catch (error) {
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("common.error.label"),
             message: t("issue.add.cycle.failed"),
-          });
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-            error: error as Error,
           });
         }
       },
@@ -206,16 +165,8 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
             },
           });
           await removeFromCyclePromise;
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-          });
         } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-            error: error as Error,
-          });
+          console.log("Error in removing issue from cycle:", error);
         }
       },
       removeIssueFromModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
@@ -233,16 +184,8 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
             },
           });
           await removeFromModulePromise;
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-          });
         } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-            error: error as Error,
-          });
+          console.log("Error in removing issue from module:", error);
         }
       },
       changeModulesInIssue: async (
@@ -253,10 +196,6 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
         removeModuleIds: string[]
       ) => {
         const promise = await changeModulesInIssue(workspaceSlug, projectId, issueId, addModuleIds, removeModuleIds);
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload: { id: issueId },
-        });
         return promise;
       },
     }),
@@ -273,7 +212,6 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
       changeModulesInIssue,
       removeIssueFromModule,
       t,
-      issueId,
     ]
   );
 

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { forwardRef, memo, useMemo } from "react";
 import { Dialog as BaseDialog } from "@base-ui-components/react";
 import { cn } from "../utils/classname";

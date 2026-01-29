@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { isEqual, concat, get, indexOf, isEmpty, orderBy, pull, set, uniq, update, clone } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -1469,7 +1475,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // if the key for accumulator is not the current action,
     // Meaning if the key already has an action ADD and the current one is REMOVE,
-    // The the key is deleted as both the actions cancel each other out
+    // The key is deleted as both the actions cancel each other out
     if (accumulator[key] !== action) {
       delete accumulator[key];
     }

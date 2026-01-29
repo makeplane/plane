@@ -1,11 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
-import { Trash2 } from "lucide-react";
+
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
-import { SuspendedUserIcon } from "@plane/propel/icons";
+import { TrashIcon, SuspendedUserIcon } from "@plane/propel/icons";
 import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspaceMember } from "@plane/types";
@@ -16,8 +22,6 @@ import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { useWorkspace } from "@/hooks/store/use-workspace";
-// plane web constants
 
 export interface RowData {
   member: IWorkspaceMember;
@@ -96,7 +100,7 @@ export function NameColumn(props: NameProps) {
                     }}
                     data-ph-element={MEMBER_TRACKER_ELEMENTS.WORKSPACE_MEMBER_TABLE_CONTEXT_MENU}
                   >
-                    <Trash2 className="size-3.5 align-middle" /> {id === currentUser?.id ? "Leave " : "Remove "}
+                    <TrashIcon className="size-3.5 align-middle" /> {id === currentUser?.id ? "Leave " : "Remove "}
                   </div>
                 )}
               />
@@ -121,7 +125,6 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
   const {
     workspace: { updateMember },
   } = useMember();
-  const { mutateWorkspaceMembersActivity } = useWorkspace();
   const { data: currentUser } = useUser();
 
   // derived values
@@ -156,7 +159,6 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
                   await updateMember(workspaceSlug.toString(), rowData.member.id, {
                     role: value as unknown as EUserPermissions,
                   });
-                  void mutateWorkspaceMembersActivity(workspaceSlug);
                 } catch (err: unknown) {
                   const error = err as { error?: string | string[] };
                   const errorString = Array.isArray(error?.error) ? error.error[0] : error?.error;
@@ -173,7 +175,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
                   <span>{ROLE[rowData.role]}</span>
                 </div>
               }
-              buttonClassName={`!px-0 !justify-start hover:bg-surface-1 ${errors.role ? "border-red-500" : "border-none"}`}
+              buttonClassName={`!px-0 !justify-start hover:bg-surface-1 ${errors.role ? "border-danger-strong" : "border-none"}`}
               className="rounded-md p-0 w-32"
               input
             >

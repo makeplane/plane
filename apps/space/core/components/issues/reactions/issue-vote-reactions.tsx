@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { observer } from "mobx-react";
@@ -144,7 +150,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border focus:outline-none hover:bg-layer-transparent-hover",
             votingDimensions,
             {
-              "border-red-600 text-red-600": isDownVotedByUser,
+              "border-danger-strong text-danger-primary": isDownVotedByUser,
               "border-strong": !isDownVotedByUser,
               "cursor-default": isInIframe,
             }

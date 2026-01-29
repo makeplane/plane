@@ -1,11 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { PRODUCT_TOUR_TRACKER_EVENTS } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
-// helpers
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 import { useUserProfile, useUser } from "@/hooks/store/user";
@@ -33,26 +36,19 @@ export const WorkspaceHomeView = observer(function WorkspaceHomeView() {
     }
   );
 
-  const handleTourCompleted = () => {
-    updateTourCompleted()
-      .then(() => {
-        captureSuccess({
-          eventName: PRODUCT_TOUR_TRACKER_EVENTS.complete,
-          payload: {
-            user_id: currentUser?.id,
-          },
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  const handleTourCompleted = async () => {
+    try {
+      await updateTourCompleted();
+    } catch (error) {
+      console.error("Error updating tour completed", error);
+    }
   };
 
   // TODO: refactor loader implementation
   return (
     <>
       {currentUserProfile && !currentUserProfile.is_tour_completed && (
-        <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-backdrop bg-opacity-50 transition-opacity overflow-y-auto">
+        <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-backdrop transition-opacity overflow-y-auto">
           <TourRoot onComplete={handleTourCompleted} />
         </div>
       )}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // Due to some weird issue with the import order, the import of useFontFaceObserver
 // should be after the imported here rather than some below helper functions as it is in the original file
 

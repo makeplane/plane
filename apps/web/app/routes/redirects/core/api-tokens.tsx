@@ -1,9 +1,13 @@
-import { redirect } from "react-router";
-import type { Route } from "./+types/api-tokens";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-export const clientLoader = ({ params }: Route.ClientLoaderArgs) => {
-  const { workspaceSlug } = params;
-  throw redirect(`/${workspaceSlug}/settings/account/api-tokens/`);
+import { redirect } from "react-router";
+
+export const clientLoader = () => {
+  throw redirect(`/settings/profile/api-tokens/`);
 };
 
 export default function ApiTokens() {

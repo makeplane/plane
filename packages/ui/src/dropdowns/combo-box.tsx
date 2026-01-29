@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Combobox } from "@headlessui/react";
 import type { ElementType, KeyboardEventHandler, ReactNode, Ref } from "react";
 import React, { Fragment, forwardRef, useEffect, useRef, useState } from "react";

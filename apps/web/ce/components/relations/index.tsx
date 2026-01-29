@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { CircleDot, XCircle } from "lucide-react";
 import { RelatedIcon, DuplicatePropertyIcon } from "@plane/propel/icons";
 import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
@@ -23,7 +29,7 @@ export const ISSUE_RELATION_OPTIONS: Record<TIssueRelationTypes, TRelationObject
   blocked_by: {
     key: "blocked_by",
     i18n_label: "issue.relation.blocked_by",
-    className: "bg-red-500/20 text-red-700",
+    className: "bg-danger-subtle text-danger-primary",
     icon: (size) => <CircleDot size={size} className="text-secondary" />,
     placeholder: "None",
   },

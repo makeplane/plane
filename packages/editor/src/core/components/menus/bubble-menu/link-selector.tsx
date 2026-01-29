@@ -1,7 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Editor } from "@tiptap/core";
-import { Check, Link, Trash2 } from "lucide-react";
+
 import type { FC } from "react";
 import { useCallback, useRef, useState } from "react";
+import { LinkIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
@@ -58,7 +65,7 @@ export function BubbleMenuLinkSelector(props: Props) {
       menuButton={
         <>
           Link
-          <Link className="shrink-0 size-3" />
+          <LinkIcon className="shrink-0 size-3" />
         </>
       }
       options={options}
@@ -66,7 +73,7 @@ export function BubbleMenuLinkSelector(props: Props) {
       <div className="w-60 mt-1 rounded-md bg-surface-1 shadow-raised-200">
         <div
           className={cn("flex rounded-sm  border-[0.5px] border-strong transition-colors", {
-            "border-red-500": error,
+            "border-danger-strong": error,
           })}
         >
           <input
@@ -89,14 +96,14 @@ export function BubbleMenuLinkSelector(props: Props) {
           {editor.getAttributes("link").href ? (
             <button
               type="button"
-              className="grid place-items-center rounded-xs p-1 text-red-500 hover:bg-red-500/20 transition-all"
+              className="grid place-items-center rounded-xs p-1 text-danger-primary hover:bg-danger-subtle-hover transition-all"
               onClick={(e) => {
                 unsetLinkEditor(editor);
                 e.stopPropagation();
                 context.onOpenChange(false);
               }}
             >
-              <Trash2 className="size-4" />
+              <TrashIcon className="size-4" />
             </button>
           ) : (
             <button
@@ -107,12 +114,12 @@ export function BubbleMenuLinkSelector(props: Props) {
                 handleLinkSubmit();
               }}
             >
-              <Check className="size-4" />
+              <CheckIcon className="size-4" />
             </button>
           )}
         </div>
         {error && (
-          <p className="text-11 text-red-500 my-1 px-2 pointer-events-none animate-in fade-in slide-in-from-top-0">
+          <p className="text-11 text-danger-primary my-1 px-2 pointer-events-none animate-in fade-in slide-in-from-top-0">
             Please enter a valid URL
           </p>
         )}

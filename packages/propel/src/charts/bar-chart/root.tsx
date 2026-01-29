@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback, useMemo, useState } from "react";
 import {
@@ -174,7 +180,7 @@ export const BarChart = React.memo(function BarChart<K extends string, T extends
           {showTooltip && (
             <Tooltip
               cursor={{
-                fill: "var(--color-alpha-black-300)",
+                fill: "var(--alpha-black-300)",
                 className: "bg-layer-1 cursor-pointer",
               }}
               wrapperStyle={{

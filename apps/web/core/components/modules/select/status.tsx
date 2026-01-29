@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 
 // react hook form
@@ -31,14 +37,16 @@ export function ModuleStatusSelect({ control, error, tabIndex }: Props) {
           <CustomSelect
             value={value}
             label={
-              <div className={`flex items-center justify-center gap-2 text-11 py-0.5 ${error ? "text-red-500" : ""}`}>
+              <div
+                className={`flex items-center justify-center gap-2 text-11 py-0.5 ${error ? "text-danger-primary" : ""}`}
+              >
                 {value ? (
                   <ModuleStatusIcon status={value} />
                 ) : (
-                  <StatePropertyIcon className={`h-3 w-3 ${error ? "text-red-500" : "text-secondary"}`} />
+                  <StatePropertyIcon className={`h-3 w-3 ${error ? "text-danger-primary" : "text-secondary"}`} />
                 )}
                 {(selectedValue && t(selectedValue?.i18n_label)) ?? (
-                  <span className={`${error ? "text-red-500" : "text-secondary"}`}>Status</span>
+                  <span className={`${error ? "text-danger-primary" : "text-secondary"}`}>Status</span>
                 )}
               </div>
             }

@@ -1,13 +1,15 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { USER_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceMemberInvitation, TOnboardingStep, TOnboardingSteps, TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
-// helpers
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserProfile } from "@/hooks/store/user";
@@ -34,24 +36,15 @@ export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [
   // complete onboarding
   const finishOnboarding = useCallback(async () => {
     if (!user) return;
-
-    await finishUserOnboarding()
-      .then(() => {
-        captureSuccess({
-          eventName: USER_TRACKER_EVENTS.onboarding_complete,
-          payload: {
-            email: user.email,
-            user_id: user.id,
-          },
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Failed",
-          message: "Failed to finish onboarding, Please try again later.",
-        });
+    try {
+      await finishUserOnboarding();
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Failed",
+        message: "Failed to finish onboarding, Please try again later.",
       });
+    }
   }, [user, finishUserOnboarding]);
 
   // handle step change

@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { Command as CommandPrimitive } from "cmdk";
-import { SearchIcon } from "lucide-react";
+import { SearchIcon } from "../icons";
 import { cn } from "../utils/classname";
 
 function CommandComponent({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {

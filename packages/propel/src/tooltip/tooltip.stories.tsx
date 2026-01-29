@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { HelpCircle } from "lucide-react";
 import { Tooltip } from "./root";
@@ -237,7 +243,7 @@ export const IconButtons: Story = {
         <Tooltip tooltipContent="Delete" position="top">
           <button className="rounded-sm p-2 hover:bg-gray-100">
             <svg
-              className="h-5 w-5 text-red-600"
+              className="h-5 w-5 text-danger-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

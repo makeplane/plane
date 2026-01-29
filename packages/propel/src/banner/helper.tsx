@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export type TBannerVariant = "success" | "error" | "warning" | "info";
 
 export interface IBannerStyling {
@@ -14,8 +20,8 @@ export const bannerSizeStyling = {
 // TODO: update this with new color once its implemented
 // Banner variant styling
 export const bannerStyling: IBannerStyling = {
-  success: "bg-green-500/10",
-  error: "bg-red-500/10",
+  success: "bg-success-subtle",
+  error: "bg-danger-subtle",
   warning: "bg-yellow-500/10",
   info: "bg-blue-500/10",
 };

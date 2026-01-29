@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import type {
   DropTargetRecord,
@@ -8,10 +14,11 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import Masonry from "react-masonry-component";
-import { Plus } from "lucide-react";
+
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { PlusIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // assets
 import darkStickiesAsset from "@/app/assets/empty-state/stickies/stickies-dark.webp?url";
@@ -122,7 +129,7 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
                 description={t("stickies.empty_state.general.description")}
                 assetPath={stickiesResolvedPath}
                 primaryButton={{
-                  prependIcon: <Plus className="size-4" />,
+                  prependIcon: <PlusIcon className="size-4" />,
                   text: t("stickies.empty_state.general.primary_button.text"),
                   onClick: () => {
                     toggleShowNewSticky(true);

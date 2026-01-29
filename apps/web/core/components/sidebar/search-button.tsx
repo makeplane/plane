@@ -1,4 +1,10 @@
-import { Search } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { SearchIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -16,7 +22,7 @@ export function SidebarSearchButton(props: Props) {
         }
       )}
     >
-      <Search
+      <SearchIcon
         className={cn("size-4 text-tertiary", {
           "text-accent-secondary": isActive,
         })}

@@ -6,6 +6,7 @@
     "noImplicitOverride": false,
     "noImplicitReturns": false,
     "noUnusedLocals": false,
+    "jsx": "react-jsx",
 
     "paths": {
       "@/*": ["./src/*"],
@@ -14,6 +15,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["src"],
+  "include": ["src", "tests"],
   "exclude": ["node_modules", "dist"]
 }

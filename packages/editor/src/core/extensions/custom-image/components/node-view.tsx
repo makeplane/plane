@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { NodeViewWrapper } from "@tiptap/react";
 import type { NodeViewProps } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
 // local imports
 import type { CustomImageExtensionType, TCustomImageAttributes } from "../types";
-import { ECustomImageStatus } from "../types";
+import { ECustomImageAttributeNames, ECustomImageStatus } from "../types";
 import { hasImageDuplicationFailed } from "../utils";
 import { CustomImageBlock } from "./block";
 import { CustomImageUploader } from "./uploader";
@@ -71,8 +77,9 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
         setFailedToLoadImage(true);
       }
     };
-    getImageSource();
-  }, [imgNodeSrc, extension.options]);
+    void getImageSource();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imgNodeSrc, extension.options.getImageSource, extension.options.getImageDownloadSource]);
 
   useEffect(() => {
     const handleDuplication = async () => {
@@ -106,7 +113,8 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
       }
     };
 
-    handleDuplication();
+    void handleDuplication();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, imgNodeSrc, extension.options.duplicateImage, updateAttributes]);
 
   useEffect(() => {
@@ -129,7 +137,7 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
   const shouldShowBlock = hasValidImageSource && !failedToLoadImage && !hasDuplicationFailed;
 
   return (
-    <NodeViewWrapper>
+    <NodeViewWrapper key={node.attrs[ECustomImageAttributeNames.ID]}>
       <div className="p-0 mx-0 my-2" data-drag-handle ref={imageComponentRef}>
         {shouldShowBlock && !hasDuplicationFailed ? (
           <CustomImageBlock
@@ -146,7 +154,7 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
             failedToLoadImage={failedToLoadImage}
             hasDuplicationFailed={hasDuplicationFailed}
             loadImageFromFileSystem={setImageFromFileSystem}
-            maxFileSize={editor.storage.imageComponent?.maxFileSize}
+            maxFileSize={(editor.storage.imageComponent as { maxFileSize?: number } | undefined)?.maxFileSize ?? 0}
             setIsUploaded={setIsUploaded}
             {...props}
           />

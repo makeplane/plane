@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import copy
 import json
@@ -34,7 +38,7 @@ from plane.app.serializers import (
     IssueDetailSerializer,
     IssueListDetailSerializer,
     IssueSerializer,
-    IssueUserPropertySerializer,
+    ProjectUserPropertySerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
@@ -51,7 +55,7 @@ from plane.db.models import (
     IssueReaction,
     IssueRelation,
     IssueSubscriber,
-    IssueUserProperty,
+    ProjectUserProperty,
     ModuleIssue,
     Project,
     ProjectMember,
@@ -723,23 +727,33 @@ class IssueViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueUserDisplayPropertyEndpoint(BaseAPIView):
+class ProjectUserDisplayPropertyEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id):
-        issue_property = IssueUserProperty.objects.get(user=request.user, project_id=project_id)
+        try:
+            issue_property = ProjectUserProperty.objects.get(
+                user=request.user, 
+                project_id=project_id
+            )
+        except ProjectUserProperty.DoesNotExist:
+            issue_property = ProjectUserProperty.objects.create(
+                user=request.user, 
+                project_id=project_id
+            )
 
-        issue_property.rich_filters = request.data.get("rich_filters", issue_property.rich_filters)
-        issue_property.filters = request.data.get("filters", issue_property.filters)
-        issue_property.display_filters = request.data.get("display_filters", issue_property.display_filters)
-        issue_property.display_properties = request.data.get("display_properties", issue_property.display_properties)
-        issue_property.save()
-        serializer = IssueUserPropertySerializer(issue_property)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = ProjectUserPropertySerializer(
+            issue_property, 
+            data=request.data,
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
-        issue_property, _ = IssueUserProperty.objects.get_or_create(user=request.user, project_id=project_id)
-        serializer = IssueUserPropertySerializer(issue_property)
+        issue_property, _ = ProjectUserProperty.objects.get_or_create(user=request.user, project_id=project_id)
+        serializer = ProjectUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

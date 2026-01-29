@@ -1,18 +1,21 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import type { UseFormRegister } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import { PlusIcon } from "lucide-react";
 // plane imports
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { PlusIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";
 import { cn, createIssuePayload } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { QuickAddIssueFormRoot } from "@/plane-web/components/issues/quick-add";
 // local imports
@@ -127,20 +130,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
         },
       });
 
-      await quickAddPromise
-        .then((res) => {
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.create,
-            payload: { id: res?.id },
-          });
-        })
-        .catch((error) => {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.create,
-            payload: { id: payload.id },
-            error: error as Error,
-          });
-        });
+      await quickAddPromise;
     }
   };
 
@@ -150,7 +140,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
     <div
       className={cn(
         containerClassName,
-        errors && errors?.name && errors?.name?.message ? `border-red-500 bg-red-500/10` : ``
+        errors && errors?.name && errors?.name?.message ? `border-danger-strong bg-danger-subtle` : ``
       )}
     >
       {isOpen ? (

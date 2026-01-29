@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useArgs } from "storybook/preview-api";
@@ -185,7 +191,7 @@ export const Interactive: Story = {
           <p className="text-13 text-gray-700">
             Status: <span className="font-semibold">{enabled ? "Enabled" : "Disabled"}</span>
           </p>
-          {enabled && <p className="mt-2 text-11 text-green-600">Feature is now active and ready to use!</p>}
+          {enabled && <p className="mt-2 text-11 text-success-primary">Feature is now active and ready to use!</p>}
         </div>
       </div>
     );

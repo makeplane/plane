@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { MouseEvent } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Check } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 // plane imports
 import type { TCycleGroups } from "@plane/types";
 import { CircularProgressIndicator } from "@plane/ui";
@@ -82,7 +88,7 @@ export const CyclesListItem = observer(function CyclesListItem(props: TCyclesLis
       prependTitleElement={
         <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
           {progress === 100 ? (
-            <Check className="h-3 w-3 stroke-2" />
+            <CheckIcon className="h-3 w-3 stroke-2" />
           ) : (
             <span className="text-9 text-primary">{`${progress}%`}</span>
           )}

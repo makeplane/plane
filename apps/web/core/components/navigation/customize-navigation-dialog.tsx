@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -265,9 +271,9 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                     <input
                       type="radio"
                       name="navigation-mode"
-                      value="accordion"
-                      checked={projectPreferences.navigationMode === "accordion"}
-                      onChange={() => updateNavigationMode("accordion")}
+                      value="ACCORDION"
+                      checked={projectPreferences.navigationMode === "ACCORDION"}
+                      onChange={() => updateNavigationMode("ACCORDION")}
                       className="size-4 text-accent-primary focus:ring-accent-strong mt-1"
                     />
                     <div className="flex-1">
@@ -282,9 +288,9 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                     <input
                       type="radio"
                       name="navigation-mode"
-                      value="horizontal"
-                      checked={projectPreferences.navigationMode === "horizontal"}
-                      onChange={() => updateNavigationMode("horizontal")}
+                      value="TABBED"
+                      checked={projectPreferences.navigationMode === "TABBED"}
+                      onChange={() => updateNavigationMode("TABBED")}
                       className="size-4 text-accent-primary focus:ring-accent-strong mt-1"
                     />
                     <div className="flex-1">
@@ -324,12 +330,12 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
                               "text-secondary",
                               parseInt(projectCountInput) >= 1
                                 ? "border-strong focus:border-accent-strong focus:ring-1 focus:ring-accent-strong"
-                                : "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                                : "border-danger-strong focus:border-danger-strong focus:ring-1 focus:ring-danger-strong"
                             )}
                           />
                         </div>
                         {parseInt(projectCountInput) < 1 && projectCountInput !== "" && (
-                          <span className="text-11 text-red-500 pl-0.5">Minimum value is 1</span>
+                          <span className="text-11 text-danger-primary pl-0.5">Minimum value is 1</span>
                         )}
                       </div>
                     </div>

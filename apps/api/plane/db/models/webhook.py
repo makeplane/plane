@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 from uuid import uuid4
 from urllib.parse import urlparse
@@ -38,6 +42,7 @@ class Webhook(BaseModel):
     cycle = models.BooleanField(default=False)
     issue_comment = models.BooleanField(default=False)
     is_internal = models.BooleanField(default=False)
+    version = models.CharField(default="v1", max_length=50)
 
     def __str__(self):
         return f"{self.workspace.slug} {self.url}"

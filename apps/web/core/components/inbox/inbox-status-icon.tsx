@@ -1,4 +1,11 @@
-import { AlertTriangle, CheckCircle2, Clock, Copy, XCircle } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { AlertTriangle, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { CopyIcon } from "@plane/propel/icons";
 import type { TInboxIssueStatus } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -16,8 +23,8 @@ export const ICON_PROPERTIES = {
   },
   [EInboxIssueStatus.SNOOZED]: {
     icon: Clock,
-    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "text-red-500" : "text-placeholder"),
-    bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "bg-red-500/10" : "bg-[#E0E1E6]"),
+    textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "text-danger-primary" : "text-placeholder"),
+    bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "bg-danger-subtle" : "bg-[#E0E1E6]"),
   },
   [EInboxIssueStatus.ACCEPTED]: {
     icon: CheckCircle2,
@@ -25,7 +32,7 @@ export const ICON_PROPERTIES = {
     bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-[#E9F6E9]"),
   },
   [EInboxIssueStatus.DUPLICATE]: {
-    icon: Copy,
+    icon: CopyIcon,
     textColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "text-secondary"),
     bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-gray-500/10"),
   },

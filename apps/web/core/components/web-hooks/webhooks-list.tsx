@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // hooks
 import { useWebhook } from "@/hooks/store/use-webhook";
@@ -9,7 +15,7 @@ export const WebhooksList = observer(function WebhooksList() {
   const { webhooks } = useWebhook();
 
   return (
-    <div className="h-full w-full overflow-y-auto">
+    <div className="size-full bg-layer-1 p-3 rounded-lg border border-subtle flex flex-col gap-y-2 overflow-y-auto">
       {Object.values(webhooks ?? {}).map((webhook) => (
         <WebhooksListItem key={webhook.id} webhook={webhook} />
       ))}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useRef } from "react";
 // helpers
 import { useAutoResizeTextArea } from "../hooks/use-auto-resize-textarea";
@@ -46,8 +52,8 @@ const TextArea = React.forwardRef(function TextArea(
           "px-1.5 py-1": textAreaSize === "xs",
           "px-3 py-2": textAreaSize === "sm",
           "p-3": textAreaSize === "md",
-          "border-red-500": hasError,
-          "bg-red-100": hasError && mode === "primary",
+          "border-danger-strong": hasError,
+          "bg-danger-subtle": hasError && mode === "primary",
         },
         className
       )}

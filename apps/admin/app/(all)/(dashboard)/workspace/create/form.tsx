@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -118,7 +124,7 @@ export function WorkspaceCreateForm() {
                 />
               )}
             />
-            <span className="text-11 text-red-500">{errors?.name?.message}</span>
+            <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
           </div>
         </div>
         <div className="flex flex-col gap-1">
@@ -153,11 +159,11 @@ export function WorkspaceCreateForm() {
               )}
             />
           </div>
-          {slugError && <p className="text-13 text-red-500">This URL is taken. Try something else.</p>}
+          {slugError && <p className="text-13 text-danger-primary">This URL is taken. Try something else.</p>}
           {invalidSlug && (
-            <p className="text-13 text-red-500">{`URLs can contain only ( - ), ( _ ) and alphanumeric characters.`}</p>
+            <p className="text-13 text-danger-primary">{`URLs can contain only ( - ), ( _ ) and alphanumeric characters.`}</p>
           )}
-          {errors.slug && <span className="text-11 text-red-500">{errors.slug.message}</span>}
+          {errors.slug && <span className="text-11 text-danger-primary">{errors.slug.message}</span>}
         </div>
         <div className="flex flex-col gap-1">
           <h4 className="text-13 text-tertiary">How many people will use this workspace?</h4>
@@ -187,7 +193,7 @@ export function WorkspaceCreateForm() {
               )}
             />
             {errors.organization_size && (
-              <span className="text-13 text-red-500">{errors.organization_size.message}</span>
+              <span className="text-13 text-danger-primary">{errors.organization_size.message}</span>
             )}
           </div>
         </div>

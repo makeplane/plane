@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 from datetime import datetime
@@ -128,7 +132,7 @@ class PageViewSet(BaseViewSet):
             context={
                 "project_id": project_id,
                 "owned_by_id": request.user.id,
-                "description": request.data.get("description", {}),
+                "description_json": request.data.get("description_json", {}),
                 "description_binary": request.data.get("description_binary", None),
                 "description_html": request.data.get("description_html", "<p></p>"),
             },
