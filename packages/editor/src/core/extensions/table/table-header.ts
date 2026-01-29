@@ -45,9 +45,6 @@ export const TableHeader = Node.create<TableHeaderOptions>({
       background: {
         default: "none",
       },
-      hideContent: {
-        default: false,
-      },
     };
   },
 
@@ -63,7 +60,6 @@ export const TableHeader = Node.create<TableHeaderOptions>({
     return [
       "th",
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        class: node.attrs.hideContent ? "content-hidden" : "",
         style: `background-color: ${node.attrs.background};`,
       }),
       0,
