@@ -128,11 +128,13 @@ const MediaDetailPage = () => {
   const isXlsx = item?.mediaType === "document" && new Set(["xlsx", "xls"]).has(documentFormat);
   const isPptx = item?.mediaType === "document" && documentFormat === "pptx";
   const isBinaryDocument = item?.mediaType === "document" && !isTextDocument;
+  const isSupportedDocument = item?.mediaType === "document" && (isPdf || isXlsx);
+  const isUnsupportedDocument = item?.mediaType === "document" && !isSupportedDocument;
 
   useEffect(() => {
     let isMounted = true;
     const fileSrc = item?.fileSrc;
-    if (!item || item.mediaType !== "document" || !fileSrc || !isTextDocument) {
+    if (!item || item.mediaType !== "document" || !fileSrc || !isTextDocument || isUnsupportedDocument) {
       setTextPreview(null);
       setTextPreviewError(null);
       setIsTextPreviewLoading(false);
@@ -180,7 +182,7 @@ const MediaDetailPage = () => {
     let objectUrl: string | null = null;
     const fileSrc = item?.fileSrc;
 
-    if (!item || !fileSrc || !isBinaryDocument) {
+    if (!item || !fileSrc || !isBinaryDocument || isUnsupportedDocument) {
       setDocumentPreviewUrl(null);
       setDocumentPreviewHtml(null);
       setDocumentPreviewError(null);
@@ -244,7 +246,18 @@ const MediaDetailPage = () => {
       isMounted = false;
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [isBinaryDocument, isDocx, isPptx, isXlsx, item?.fileSrc, item?.mediaType]);
+  }, [isBinaryDocument, isDocx, isPptx, isUnsupportedDocument, isXlsx, item?.fileSrc, item?.mediaType]);
+
+  useEffect(() => {
+    if (!isUnsupportedDocument) return;
+    setTextPreview(null);
+    setTextPreviewError(null);
+    setIsTextPreviewLoading(false);
+    setDocumentPreviewUrl(null);
+    setDocumentPreviewHtml(null);
+    setIsDocumentPreviewLoading(false);
+    setDocumentPreviewError("Only PDF and XLSX files are supported.");
+  }, [isUnsupportedDocument]);
   const handlePlay = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -349,7 +362,11 @@ const MediaDetailPage = () => {
             </div>
           ) : (
             <div className="rounded-lg border border-custom-border-200 bg-custom-background-90">
-              {isBinaryDocument ? (
+              {isUnsupportedDocument ? (
+                <div className="flex h-[505px] items-center justify-center rounded-lg bg-custom-background-100 text-xs text-custom-text-300">
+                  Only PDF and XLSX files are supported.
+                </div>
+              ) : isBinaryDocument ? (
                 <div className="h-[505px] rounded-lg bg-custom-background-100">
                   {isDocumentPreviewLoading ? (
                     <div className="flex h-full flex-col items-center justify-center gap-2 text-xs text-custom-text-300">
@@ -399,7 +416,7 @@ const MediaDetailPage = () => {
                   </div>
                 </div>
               )}
-              {item.fileSrc ? (
+              {item.fileSrc && !isUnsupportedDocument ? (
                 <div className="flex justify-end border-t border-custom-border-200 p-3">
                   <a
                     href={item.fileSrc}

@@ -14,6 +14,8 @@ import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../../media-li
 import { MediaListView } from "../../media-list-view";
 import { useMediaLibraryItems } from "../../use-media-library-items";
 
+const BLOCKED_DOCUMENT_FORMATS = new Set(["doc", "docx", "txt"]);
+
 const MediaLibrarySectionPage = observer(() => {
   const { workspaceSlug, projectId, sectionName } = useParams() as {
     workspaceSlug: string;
@@ -57,15 +59,26 @@ const MediaLibrarySectionPage = observer(() => {
       perPage: pageSize,
     }
   );
+  const filteredItems = useMemo(
+    () =>
+      libraryItems.filter((item) => {
+        const format = item.format?.toLowerCase() ?? "";
+        const linkedFormat = item.linkedFormat?.toLowerCase() ?? "";
+        if (BLOCKED_DOCUMENT_FORMATS.has(format)) return false;
+        if (format === "thumbnail" && linkedFormat && BLOCKED_DOCUMENT_FORMATS.has(linkedFormat)) return false;
+        return true;
+      }),
+    [libraryItems]
+  );
   const lastPaginationRef = useRef<typeof pagination>(null);
   const resolvedPagination = pagination ?? lastPaginationRef.current;
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
   const filterConfigs = useMemo(
     () =>
-      buildMetaFilterConfigs(collectMetaFilterOptions(libraryItems), operatorConfigs).filter(
+      buildMetaFilterConfigs(collectMetaFilterOptions(filteredItems), operatorConfigs).filter(
         (config) => config.id !== "meta.category"
       ),
-    [libraryItems, operatorConfigs]
+    [filteredItems, operatorConfigs]
   );
 
   useEffect(() => {
@@ -79,12 +92,12 @@ const MediaLibrarySectionPage = observer(() => {
   const section = useMemo<TMediaSection>(
     () => ({
       title: decodedSection || "Upload",
-      items: libraryItems,
+      items: filteredItems,
     }),
-    [decodedSection, libraryItems]
+    [decodedSection, filteredItems]
   );
-  const showSkeleton = isLoading && libraryItems.length === 0;
-  const totalItems = resolvedPagination?.totalResults ?? libraryItems.length;
+  const showSkeleton = isLoading && filteredItems.length === 0;
+  const totalItems = resolvedPagination?.totalResults ?? filteredItems.length;
   const totalPages = resolvedPagination?.totalPages ?? 1;
   const currentPage = Math.min(requestedPage, totalPages);
   const showPagination = totalPages > 1;

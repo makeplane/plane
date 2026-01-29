@@ -9,6 +9,7 @@ export type TMediaItem = {
   title: string;
   description?: string;
   format: string;
+  linkedFormat?: string;
   action: string;
   link?: string | null;
   author: string;
@@ -254,11 +255,8 @@ export const mapArtifactsToMediaItems = (
           : "";
     const format = normalizeFormat(rawFormat, artifact.path, artifact.name, artifact.link) || actionFormat;
     if (artifact.name) {
-      // const normalizedName = normalizeKey(artifact.name);
-      // mediaTypeByName.set(normalizedName, getMediaType(format, rawFormat, artifact.action ?? ""));
-      // artifactByName.set(normalizedName, artifact);
-
       mediaTypeByName.set(normalizeKey(artifact.name), getMediaType(format, rawFormat, artifact.action ?? ""));
+      artifactByName.set(normalizeKey(artifact.name), artifact);
     }
     if (!artifact.link || !IMAGE_FORMATS.has(format)) continue;
     const isPreview = artifact.action === "preview" || format === "thumbnail";
@@ -302,6 +300,10 @@ export const mapArtifactsToMediaItems = (
     const linkValue = artifact.link ?? getMetaString(meta, ["for"], "");
     const linkTarget = linkValue ? normalizeKey(linkValue) : "";
     const linkFormat = getFormatFromPath(linkValue);
+    const linkedFormat = linkedArtifact
+      ? normalizeFormat(linkedArtifact.format, linkedArtifact.path, linkedArtifact.name, linkedArtifact.link) ||
+        linkFormat
+      : linkFormat || undefined;
     const metaKind = getMetaString(meta, ["kind"], "").toLowerCase();
     const metaSource = getMetaString(meta, ["source"], "").toLowerCase();
     const inferredLinkedMediaType =
@@ -340,6 +342,7 @@ export const mapArtifactsToMediaItems = (
       title: displayTitle,
       description,
       format,
+      linkedFormat,
       action: artifact.action,
       link: artifact.link ?? null,
       author,
