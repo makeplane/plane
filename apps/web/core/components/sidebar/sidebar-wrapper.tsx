@@ -7,7 +7,6 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/hooks";
 import { PreferencesIcon } from "@plane/propel/icons";
 import { ScrollArea } from "@plane/propel/scrollarea";
 // components
@@ -35,12 +34,6 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
   const windowSize = useSize();
   // refs
   const ref = useRef<HTMLDivElement>(null);
-
-  useOutsideClickDetector(ref, () => {
-    if (sidebarCollapsed === false && window.innerWidth < 768) {
-      toggleSidebar();
-    }
-  });
 
   useEffect(() => {
     if (windowSize[0] < 768 && !sidebarCollapsed) toggleSidebar();
