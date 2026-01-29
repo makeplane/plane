@@ -62,7 +62,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
               rel="noopener noreferrer"
               className="flex-1 w-0 text-body-xs-regular cursor-pointer flex items-center"
             >
-              <span className="truncate flex-1 w-0">
+              <span className="truncate flex-1 w-0 text-start" dir="auto">
                 {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
                 {linkTitle && linkTitle !== "" && (
                   <span className="text-placeholder text-caption-sm-regular"> {linkTitle}</span>

@@ -44,12 +44,18 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
   return (
     <div className="relative flex flex-col rounded-md bg-layer-3 p-2.5">
       <div className="flex w-full items-start justify-between gap-2">
-        <div className="flex items-start gap-2 truncate">
+        <div className="flex items-start gap-2 truncate flex-grow">
           <span className="py-1">
             <Icon className="size-3 stroke-2 text-tertiary group-hover:text-primary shrink-0" />
           </span>
           <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url} isMobile={isMobile}>
-            <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer truncate text-11">
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cursor-pointer truncate text-11 text-start block flex-grow"
+              dir="auto"
+            >
               {link.title && link.title !== "" ? link.title : link.url}
             </a>
           </Tooltip>

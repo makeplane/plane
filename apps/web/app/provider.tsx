@@ -1,9 +1,9 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { SWRConfig } from "swr";
 // Plane Imports
 import { WEB_SWR_CONFIG } from "@plane/constants";
-import { TranslationProvider } from "@plane/i18n";
+import { TranslationProvider, useTranslation } from "@plane/i18n";
 import { Toast } from "@plane/propel/toast";
 // helpers
 import { resolveGeneralTheme } from "@plane/utils";
@@ -37,6 +37,18 @@ export interface IAppProvider {
   children: React.ReactNode;
 }
 
+const AppDirection = () => {
+  const { currentLocale } = useTranslation();
+
+  useEffect(() => {
+    const dir = currentLocale === "fa-IR" ? "rtl" : "ltr";
+    document.documentElement.setAttribute("dir", dir);
+    document.documentElement.setAttribute("lang", currentLocale);
+  }, [currentLocale]);
+
+  return null;
+};
+
 export function AppProvider(props: IAppProvider) {
   const { children } = props;
   // themes
@@ -47,6 +59,7 @@ export function AppProvider(props: IAppProvider) {
       <>
         <AppProgressBar />
         <TranslationProvider>
+          <AppDirection />
           <Toast theme={resolveGeneralTheme(resolvedTheme)} />
           <StoreWrapper>
             <InstanceWrapper>
