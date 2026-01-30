@@ -28,7 +28,7 @@ export const ProjectIssuesHeader = observer(() => {
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   // store hooks
   const {
-    issues: { getGroupIssueCount },
+    issues: { getGroupIssueCount, getPaginationData },
   } = useIssues(EIssuesStoreType.PROJECT);
 
   const { currentProjectDetails, loader } = useProject();
@@ -42,6 +42,7 @@ export const ProjectIssuesHeader = observer(() => {
   const publishedURL = `${SPACE_APP_URL}/issues/${currentProjectDetails?.anchor}`;
 
   const issuesCount = getGroupIssueCount(undefined, undefined, false);
+  const paginationData = getPaginationData(undefined, undefined);
   const canUserCreateIssue = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
@@ -80,13 +81,17 @@ export const ProjectIssuesHeader = observer(() => {
               link={<BreadcrumbLink label="Issues" icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
-          {issuesCount && issuesCount > 0 ? (
+          {(issuesCount && issuesCount > 0) || paginationData?.nextPageResults ? (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "issues" : "issue"} in this project`}
+              tooltipContent={
+                issuesCount !== null && issuesCount !== undefined && issuesCount > 0
+                  ? `There are ${issuesCount} ${issuesCount > 1 ? "issues" : "issue"} in this project`
+                  : `There are 100+ issues in this project`
+              }
               position="bottom"
             >
-              <CountChip count={issuesCount} />
+              <CountChip count={issuesCount} hasMore={!!paginationData?.nextPageResults} />
             </Tooltip>
           ) : null}
         </div>

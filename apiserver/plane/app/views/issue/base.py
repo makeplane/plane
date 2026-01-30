@@ -402,6 +402,7 @@ class IssueViewSet(BaseViewSet):
                             archived_at__isnull=True,
                             is_draft=False,
                         ),
+                        skip_count=True,
                     )
             else:
                 # Group paginate
@@ -430,6 +431,7 @@ class IssueViewSet(BaseViewSet):
                         archived_at__isnull=True,
                         is_draft=False,
                     ),
+                    skip_count=True,
                 )
         else:
             return self.paginate(
@@ -439,6 +441,7 @@ class IssueViewSet(BaseViewSet):
                 on_results=lambda issues: issue_on_results(
                     group_by=group_by, issues=issues, sub_group_by=sub_group_by
                 ),
+                skip_count=True,
             )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])

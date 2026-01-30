@@ -20,6 +20,7 @@ from plane.license.utils.instance_value import get_configuration_value
 from .error import AuthenticationException, AUTHENTICATION_ERROR_CODES
 from plane.bgtasks.user_activation_email_task import user_activation_email
 from plane.authentication.utils.host import base_host
+from plane.authentication.utils.timezone import validate_timezone
 
 
 class Adapter:
@@ -176,6 +177,11 @@ class Adapter:
             user.avatar = avatar if avatar else ""
             user.first_name = first_name if first_name else ""
             user.last_name = last_name if last_name else ""
+            
+            timezone_str = self.user_data.get("timezone")
+            if timezone_str:
+                user.user_timezone = validate_timezone(timezone_str)
+            
             user.save()
 
             # Create profile

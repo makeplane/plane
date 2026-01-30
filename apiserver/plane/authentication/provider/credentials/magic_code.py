@@ -26,6 +26,7 @@ class MagicCodeProvider(CredentialAdapter):
         key,
         code=None,
         callback=None,
+        timezone=None,
     ):
 
         (
@@ -65,6 +66,7 @@ class MagicCodeProvider(CredentialAdapter):
         )
         self.key = key
         self.code = code
+        self.timezone = timezone
 
     def initiate(self):
         ## Generate a random token
@@ -138,19 +140,21 @@ class MagicCodeProvider(CredentialAdapter):
             username = data["username"]
 
             if str(token) == str(self.code):
-                super().set_user_data(
-                    {
-                        "email": email,
-                        "user": {
-                            "username": username,
-                            "avatar": "",
-                            "first_name": "",
-                            "last_name": "",
-                            "provider_id": "",
-                            "is_password_autoset": False,
-                        },
-                    }
-                )
+                user_data = {
+                    "email": email,
+                    "user": {
+                        "username": username,
+                        "avatar": "",
+                        "first_name": "",
+                        "last_name": "",
+                        "provider_id": "",
+                        "is_password_autoset": False,
+                    },
+                }
+                # Add timezone if provided
+                if self.timezone:
+                    user_data["timezone"] = self.timezone
+                super().set_user_data(user_data)
                 # Delete the token from redis if the code match is successful
                 ri.delete(self.key)
                 return

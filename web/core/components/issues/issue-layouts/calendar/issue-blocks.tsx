@@ -51,7 +51,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   const isPaginating = !!getIssueLoader(formattedDatePayload);
 
   const shouldLoadMore =
-    nextPageResults === undefined && dayIssueCount !== undefined
+    nextPageResults === undefined && dayIssueCount !== undefined && dayIssueCount !== null
       ? issueIdList?.length < dayIssueCount
       : !!nextPageResults;
 

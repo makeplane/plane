@@ -99,9 +99,10 @@ export type TIssuesResponse = {
   prev_cursor: string;
   next_page_results: boolean;
   prev_page_results: boolean;
-  total_count: number;
+  total_count: number | null;
   count: number;
-  total_pages: number;
+  total_pages: number | null;
+  total_results: number | null;
   extra_stats: null;
   results: TIssueResponseResults;
 };

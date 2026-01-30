@@ -39,7 +39,7 @@ export type TIssuePaginationData = {
 };
 
 export type TGroupedIssueCount = {
-  [group_id: string]: number;
+  [group_id: string]: number | null;
 };
 
 export type TUnGroupedIssues = string[];

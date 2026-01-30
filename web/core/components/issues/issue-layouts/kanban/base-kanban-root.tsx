@@ -92,6 +92,14 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     [fetchNextIssues]
   );
 
+  const getGroupIssueCount = useCallback(
+    (groupId: string | undefined, subGroupId: string | undefined, isSubGroupCumulative: boolean) => {
+      const count = issues?.getGroupIssueCount(groupId, subGroupId, isSubGroupCumulative);
+      return count === null ? undefined : count;
+    },
+    [issues?.getGroupIssueCount]
+  );
+
   const groupedIssueIds = issues?.groupedIssueIds;
 
   const userDisplayFilters = displayFilters || null;
@@ -254,7 +262,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
             <KanBanView
               issuesMap={issueMap}
               groupedIssueIds={groupedIssueIds ?? {}}
-              getGroupIssueCount={issues.getGroupIssueCount}
+              getGroupIssueCount={getGroupIssueCount}
               displayProperties={displayProperties}
               sub_group_by={sub_group_by}
               group_by={group_by}
