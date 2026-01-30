@@ -11,6 +11,7 @@ export type TMediaArtifact = {
   link: string | null;
   action: string;
   meta: Record<string, unknown>;
+  work_item_id?: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -22,6 +23,7 @@ export type TMediaArtifactPayload = {
   link?: string | null;
   action: string;
   meta: Record<string, unknown>;
+  work_item_id?: string | null;
   created_at?: string;
   updated_at?: string;
   path?: string;
@@ -123,6 +125,9 @@ export class MediaLibraryService extends APIService {
     formData.append("format", payload.format);
     formData.append("action", payload.action);
     formData.append("meta", JSON.stringify(payload.meta ?? {}));
+    if (payload.work_item_id !== undefined) {
+      formData.append("work_item_id", payload.work_item_id ?? "");
+    }
     if (payload.link !== undefined) {
       formData.append("link", payload.link ?? "");
     }

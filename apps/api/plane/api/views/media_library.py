@@ -336,6 +336,9 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
             link = request.data.get("link")
             if isinstance(link, str) and link.strip().lower() in {"", "null"}:
                 link = None
+            work_item_id = request.data.get("work_item_id")
+            if isinstance(work_item_id, str) and not work_item_id.strip():
+                work_item_id = None
 
             meta = request.data.get("meta") or {}
             if isinstance(meta, str):
@@ -430,19 +433,20 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                     action = "download"
             if doc_thumbnail_name:
                 doc_thumbnail_action = "open_pdf" if format_value == "pdf" else action
-            artifacts_payload = [
-                {
-                    "name": artifact_name,
-                    "title": title,
-                    "format": format_value,
-                    "path": relative_path,
-                    "link": link,
-                    "action": action,
-                    "meta": meta,
-                    "created_at": created_at,
-                    "updated_at": updated_at,
-                }
-            ]
+            primary_entry = {
+                "name": artifact_name,
+                "title": title,
+                "format": format_value,
+                "path": relative_path,
+                "link": link,
+                "action": action,
+                "meta": meta,
+                "created_at": created_at,
+                "updated_at": updated_at,
+            }
+            if work_item_id is not None:
+                primary_entry["work_item_id"] = work_item_id
+            artifacts_payload = [primary_entry]
             is_bulk = False
         elif isinstance(payload, list):
             artifacts_payload = payload
@@ -546,6 +550,11 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     )
                 if created_thumbnail and thumbnail_relative_path and thumbnail_name:
+                    thumbnail_meta = meta.copy() if isinstance(meta, dict) else {}
+                    thumbnail_meta["category"] = (
+                        meta.get("category") if isinstance(meta, dict) and meta.get("category") else "Uploads"
+                    )
+                    thumbnail_meta["source"] = "generated"
                     thumbnail_entry = {
                         "name": thumbnail_name,
                         "title": f"{primary_title}",
@@ -553,13 +562,12 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                         "path": thumbnail_relative_path,
                         "link": primary_artifact_name,
                         "action": "preview",
-                        "meta": {
-                            "category": meta.get("category") if isinstance(meta, dict) and meta.get("category") else "Uploads",
-                            "source": "generated",
-                        },
+                        "meta": thumbnail_meta,
                         "created_at": primary_created_at,
                         "updated_at": primary_updated_at,
                     }
+                    if work_item_id is not None:
+                        thumbnail_entry["work_item_id"] = work_item_id
                     thumbnail_serializer = MediaArtifactSerializer(data=thumbnail_entry)
                     thumbnail_serializer.is_valid(raise_exception=True)
                     validated_artifacts.append(thumbnail_serializer.validated_data)
@@ -576,6 +584,13 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                     else:
                         created_thumbnail = _create_video_thumbnail(file_path, video_thumbnail_path)
                         if created_thumbnail:
+                            thumbnail_meta = meta.copy() if isinstance(meta, dict) else {}
+                            thumbnail_meta["category"] = (
+                                video_thumbnail_category
+                                or thumbnail_meta.get("category")
+                                or "Uploads"
+                            )
+                            thumbnail_meta["source"] = "generated"
                             thumbnail_entry = {
                                 "name": video_thumbnail_name,
                                 "title": f"{primary_title}",
@@ -583,17 +598,23 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                                 "path": video_thumbnail_relative_path,
                                 "link": primary_artifact_name,
                                 "action": video_thumbnail_action or "preview",
-                                "meta": {
-                                    "category": video_thumbnail_category or "Uploads",
-                                    "source": "generated",
-                                },
+                                "meta": thumbnail_meta,
                                 "created_at": primary_created_at,
                                 "updated_at": primary_updated_at,
                             }
+                            if work_item_id is not None:
+                                thumbnail_entry["work_item_id"] = work_item_id
                             thumbnail_serializer = MediaArtifactSerializer(data=thumbnail_entry)
                             thumbnail_serializer.is_valid(raise_exception=True)
                             validated_artifacts.append(thumbnail_serializer.validated_data)
                 if image_thumbnail_name and image_thumbnail_relative_path:
+                    thumbnail_meta = meta.copy() if isinstance(meta, dict) else {}
+                    thumbnail_meta["category"] = (
+                        image_thumbnail_category
+                        or thumbnail_meta.get("category")
+                        or "Uploads"
+                    )
+                    thumbnail_meta["for"] = primary_artifact_name
                     thumbnail_entry = {
                         "name": image_thumbnail_name,
                         "title": f"{primary_title}",
@@ -601,13 +622,12 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                         "path": image_thumbnail_relative_path,
                         "link": primary_artifact_name,
                         "action": image_thumbnail_action or "view",
-                        "meta": {
-                            "category": image_thumbnail_category or "Uploads",
-                            "for": primary_artifact_name,
-                        },
+                        "meta": thumbnail_meta,
                         "created_at": primary_created_at,
                         "updated_at": primary_updated_at,
                     }
+                    if work_item_id is not None:
+                        thumbnail_entry["work_item_id"] = work_item_id
                     thumbnail_serializer = MediaArtifactSerializer(data=thumbnail_entry)
                     thumbnail_serializer.is_valid(raise_exception=True)
                     validated_artifacts.append(thumbnail_serializer.validated_data)
@@ -617,6 +637,14 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                             doc_thumbnail_path.parent.mkdir(parents=True, exist_ok=True)
                             shutil.copyfile(doc_thumbnail_source, doc_thumbnail_path)
                         if doc_thumbnail_path.exists():
+                            thumbnail_meta = meta.copy() if isinstance(meta, dict) else {}
+                            thumbnail_meta["category"] = (
+                                doc_thumbnail_category
+                                or thumbnail_meta.get("category")
+                                or "Documents"
+                            )
+                            thumbnail_meta["kind"] = "thumbnail"
+                            thumbnail_meta["for"] = primary_artifact_name
                             thumbnail_entry = {
                                 "name": doc_thumbnail_name,
                                 "title": f"{primary_title}",
@@ -624,14 +652,12 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                                 "path": doc_thumbnail_relative_path,
                                 "link": primary_artifact_name,
                                 "action": doc_thumbnail_action or "download",
-                                "meta": {
-                                    "category": doc_thumbnail_category or "Documents",
-                                    "kind": "thumbnail",
-                                    "for": primary_artifact_name,
-                                },
+                                "meta": thumbnail_meta,
                                 "created_at": primary_created_at,
                                 "updated_at": primary_updated_at,
                             }
+                            if work_item_id is not None:
+                                thumbnail_entry["work_item_id"] = work_item_id
                             thumbnail_serializer = MediaArtifactSerializer(data=thumbnail_entry)
                             thumbnail_serializer.is_valid(raise_exception=True)
                             validated_artifacts.append(thumbnail_serializer.validated_data)

@@ -65,6 +65,7 @@ class MediaArtifactSerializer(serializers.Serializer):
     link = serializers.CharField(allow_null=True)
     action = serializers.ChoiceField(choices=MEDIA_LIBRARY_ACTION_CHOICES)
     meta = serializers.JSONField()
+    work_item_id = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     created_at = serializers.CharField()
     updated_at = serializers.CharField()
 
