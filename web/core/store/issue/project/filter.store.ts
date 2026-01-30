@@ -123,7 +123,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
     try {
       const _filters = await this.issueFilterService.fetchProjectIssueFilters(workspaceSlug, projectId);
 
-      let filters = this.computedFilters(_filters?.filters);
+      const filters = this.computedFilters(_filters?.filters);
       const displayFilters = this.computedDisplayFilters(_filters?.display_filters);
       const displayProperties = this.computedDisplayProperties(_filters?.display_properties);
 

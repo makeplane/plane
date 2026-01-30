@@ -133,7 +133,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
   fetchFilters = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     const _filters = await this.issueFilterService.fetchCycleIssueFilters(workspaceSlug, projectId, cycleId);
 
-    let filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
+    const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
     const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
     const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
 

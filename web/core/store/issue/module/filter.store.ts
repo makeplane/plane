@@ -134,7 +134,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
     try {
       const _filters = await this.issueFilterService.fetchModuleIssueFilters(workspaceSlug, projectId, moduleId);
 
-      let filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
+      const filters: IIssueFilterOptions = this.computedFilters(_filters?.filters);
       const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
       const displayProperties: IIssueDisplayProperties = this.computedDisplayProperties(_filters?.display_properties);
 

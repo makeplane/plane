@@ -7,7 +7,7 @@ import { Header, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
 // constants
 import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-import { useLabel, useProjectState, useUser, useUserPermissions } from "@/hooks/store";
+import { useLabel, useProjectState, useUserPermissions } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
@@ -25,10 +25,8 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT);
   const { allowPermissions } = useUserPermissions();
-  const { data: userData } = useUser();
 
   const { projectStates } = useProjectState();
-  
   // derived values
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],

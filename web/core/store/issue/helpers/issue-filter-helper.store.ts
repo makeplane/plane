@@ -50,11 +50,6 @@ export interface IIssueFilterHelperStore {
     defaultValues?: IIssueDisplayFilterOptions
   ): IIssueDisplayFilterOptions;
   computedDisplayProperties(filters: IIssueDisplayProperties): IIssueDisplayProperties;
-  getLockedHubCodes(rootStore: any): string[];
-  syncHubCodesWithUserData(
-    rootStore: any,
-    existingHubCodes: string[] | null | undefined
-  ): { lockedCodes: string[]; syncedCodes: string[] };
 }
 
 export class IssueFilterHelperStore implements IIssueFilterHelperStore {
@@ -224,41 +219,6 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
    */
   computedDisplayProperties = (displayProperties: IIssueDisplayProperties): IIssueDisplayProperties =>
     getComputedDisplayProperties(displayProperties);
-
-  /**
-   * @description Get locked hub_codes from user data in store
-   * @param rootStore - Root store instance with user data
-   * @returns Array of locked hub_codes
-   */
-  getLockedHubCodes = (rootStore: any): string[] => {
-    const userHubCodes = rootStore?.user?.data?.hub_codes;
-    if (!userHubCodes || !Array.isArray(userHubCodes)) return [];
-    return userHubCodes.filter((code: any) => code != null && code !== "");
-  };
-
-  /**
-   * @description Sync hub_codes with current user data - removes codes no longer in user's hub_codes
-   * @param rootStore - Root store instance with user data
-   * @param existingHubCodes - Current hub_codes in filters
-   * @returns Object with lockedCodes (from user) and syncedCodes (merged with existing, removing removed ones)
-   */
-  syncHubCodesWithUserData = (
-    rootStore: any,
-    existingHubCodes: string[] | null | undefined
-  ): { lockedCodes: string[]; syncedCodes: string[] } => {
-    const lockedCodes = this.getLockedHubCodes(rootStore);
-    const existingCodes = existingHubCodes || [];
-
-    // Remove codes that are no longer in user's hub_codes
-    // Keep codes that are either locked OR user-added (not in locked but in existing)
-    const userAddedCodes = existingCodes.filter((code) => !lockedCodes.includes(code));
-    const syncedCodes = [...new Set([...lockedCodes, ...userAddedCodes])];
-
-    return {
-      lockedCodes,
-      syncedCodes,
-    };
-  };
 
   handleIssuesLocalFilters = {
     fetchFiltersFromStorage: () => {
