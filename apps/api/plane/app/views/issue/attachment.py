@@ -174,6 +174,8 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
                 disposition="attachment",
                 filename=asset.attributes.get("name"),
             )
+            if request.query_params.get("response") == "json":
+                return Response({"url": presigned_url}, status=status.HTTP_200_OK)
             return HttpResponseRedirect(presigned_url)
 
         # Get all the attachments

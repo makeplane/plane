@@ -19,7 +19,6 @@ import { ProgramDropdown } from "@/components/dropdowns/program-property";
 import SportDropdown from "@/components/dropdowns/sport-property";
 import { TimeDropdown } from "@/components/dropdowns/time-picker";
 import { YearRangeDropdown } from "@/components/dropdowns/year-property";
-
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
