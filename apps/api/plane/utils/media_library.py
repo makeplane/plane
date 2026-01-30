@@ -95,6 +95,7 @@ def _build_query_haystack(artifact: dict) -> str:
 
     values = [
         _stringify_value(artifact.get("title")),
+        _stringify_value(artifact.get("description")),
         _get_author(meta),
         _stringify_value(artifact.get("created_at") or artifact.get("updated_at")),
         _stringify_value(meta.get("views")),

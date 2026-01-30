@@ -505,6 +505,9 @@ class MediaArtifactsListAPIView(BaseAPIView):
             primary_entry = {
                 "name": artifact_name,
                 "title": title,
+                "description": f"This asset was uploaded to the media library and is ready for use.\n"
+                     f"It can be previewed, downloaded, or used in projects as needed.\n"
+                     f"File name: {title}",
                 "format": format_value,
                 "path": relative_path,
                 "link": link,
@@ -532,6 +535,13 @@ class MediaArtifactsListAPIView(BaseAPIView):
             if not isinstance(artifact, dict):
                 return Response({"error": "Each artifact must be an object."}, status=status.HTTP_400_BAD_REQUEST)
             entry = artifact.copy()
+            if entry.get("format") == "thumbnail":
+                entry.pop("description", None)
+            elif not entry.get("description"):
+                title_value = entry.get("title") or "Uploaded file"
+                entry["description"] = (f"This asset was uploaded to the media library and is ready for use.\n"
+                     f"It can be previewed, downloaded, or used in projects as needed.\n"
+                     f"File name: {title_value}")
             if not entry.get("created_at"):
                 entry["created_at"] = timestamp
             if not entry.get("updated_at"):

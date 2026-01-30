@@ -7,7 +7,9 @@ import type { TMediaArtifact } from "@/services/media-library.service";
 export type TMediaItem = {
   id: string;
   title: string;
+  description?: string;
   format: string;
+  linkedFormat?: string;
   action: string;
   link?: string | null;
   author: string;
@@ -253,11 +255,8 @@ export const mapArtifactsToMediaItems = (
           : "";
     const format = normalizeFormat(rawFormat, artifact.path, artifact.name, artifact.link) || actionFormat;
     if (artifact.name) {
-      // const normalizedName = normalizeKey(artifact.name);
-      // mediaTypeByName.set(normalizedName, getMediaType(format, rawFormat, artifact.action ?? ""));
-      // artifactByName.set(normalizedName, artifact);
-
       mediaTypeByName.set(normalizeKey(artifact.name), getMediaType(format, rawFormat, artifact.action ?? ""));
+      artifactByName.set(normalizeKey(artifact.name), artifact);
     }
     if (!artifact.link || !IMAGE_FORMATS.has(format)) continue;
     const isPreview = artifact.action === "preview" || format === "thumbnail";
@@ -290,6 +289,8 @@ export const mapArtifactsToMediaItems = (
     const linkedArtifact = artifact.link ? artifactByName.get(normalizeKey(artifact.link)) : undefined;
     const displayTitle =
       format === "thumbnail" && linkedArtifact?.title ? linkedArtifact.title : artifact.title;
+    const baseDescription = (artifact.description ?? getMetaString(meta, ["description", "summary"], "")).trim();
+    const description = format === "thumbnail" ? "" : baseDescription;
 
     const createdAt = formatDateLabel(artifact.created_at || artifact.updated_at || "");
     const views = getMetaNumber(meta, ["views"], 0);
@@ -299,6 +300,10 @@ export const mapArtifactsToMediaItems = (
     const linkValue = artifact.link ?? getMetaString(meta, ["for"], "");
     const linkTarget = linkValue ? normalizeKey(linkValue) : "";
     const linkFormat = getFormatFromPath(linkValue);
+    const linkedFormat = linkedArtifact
+      ? normalizeFormat(linkedArtifact.format, linkedArtifact.path, linkedArtifact.name, linkedArtifact.link) ||
+        linkFormat
+      : linkFormat || undefined;
     const metaKind = getMetaString(meta, ["kind"], "").toLowerCase();
     const metaSource = getMetaString(meta, ["source"], "").toLowerCase();
     const inferredLinkedMediaType =
@@ -335,7 +340,9 @@ export const mapArtifactsToMediaItems = (
     return {
       id: artifact.name,
       title: displayTitle,
+      description,
       format,
+      linkedFormat,
       action: artifact.action,
       link: artifact.link ?? null,
       author,

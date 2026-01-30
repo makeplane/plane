@@ -116,6 +116,9 @@ export const MediaCard = ({
         <div className="flex items-center justify-between gap-2">
           <div className="line-clamp-1 text-sm font-semibold text-custom-text-100">{item.title}</div>
         </div>
+        {item.description ? (
+          <div className="line-clamp-2 text-[11px] text-custom-text-300">{item.description}</div>
+        ) : null}
         <div className="flex flex-wrap items-center gap-3 text-[11px] text-custom-text-300">
           <span className="inline-flex items-center gap-1">
             <Calendar className="h-3.5 w-3.5 text-custom-text-300" />

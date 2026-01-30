@@ -97,6 +97,8 @@ const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHre
   );
 };
 
+const BLOCKED_DOCUMENT_FORMATS = new Set(["doc", "docx", "txt","csv", "pptx"]);
+
 const MediaLibraryListPage = observer(() => {
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   const { libraryVersion, mediaFilters, setMediaFilterConfigs } = useMediaLibrary();
@@ -118,11 +120,22 @@ const MediaLibraryListPage = observer(() => {
     formats: "thumbnail",
   });
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
-  const mediaSections = useMemo(() => groupMediaItemsByTag(libraryItems), [libraryItems]);
+  const filteredItems = useMemo(
+    () =>
+      libraryItems.filter((item) => {
+        const format = item.format?.toLowerCase() ?? "";
+        const linkedFormat = item.linkedFormat?.toLowerCase() ?? "";
+        if (BLOCKED_DOCUMENT_FORMATS.has(format)) return false;
+        if (format === "thumbnail" && linkedFormat && BLOCKED_DOCUMENT_FORMATS.has(linkedFormat)) return false;
+        return true;
+      }),
+    [libraryItems]
+  );
+  const mediaSections = useMemo(() => groupMediaItemsByTag(filteredItems), [filteredItems]);
   console.log("Media Sections:", libraryItems);
   const filterConfigs = useMemo(
-    () => buildMetaFilterConfigs(collectMetaFilterOptions(libraryItems), operatorConfigs),
-    [libraryItems, operatorConfigs]
+    () => buildMetaFilterConfigs(collectMetaFilterOptions(filteredItems), operatorConfigs),
+    [filteredItems, operatorConfigs]
   );
 
   useEffect(() => {
@@ -140,7 +153,7 @@ const MediaLibraryListPage = observer(() => {
     return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
   };
 
-  const showSkeleton = isLoading && libraryItems.length === 0;
+  const showSkeleton = isLoading && filteredItems.length === 0;
   const getSectionHref = (section: TMediaSection) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("view", "list");

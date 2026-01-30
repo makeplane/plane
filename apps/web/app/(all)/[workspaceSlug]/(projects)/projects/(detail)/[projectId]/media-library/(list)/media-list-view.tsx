@@ -68,6 +68,9 @@ const MediaListRow = ({
       </div>
       <div className="min-w-0">
         <div className="line-clamp-1 text-sm font-semibold text-custom-text-100">{item.title}</div>
+        {item.description ? (
+          <div className="line-clamp-1 text-[11px] text-custom-text-300">{item.description}</div>
+        ) : null}
       </div>
       <div className="capitalize">{typeLabel}</div>
       <div>{item.createdAt}</div>
