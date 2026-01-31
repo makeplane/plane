@@ -11,7 +11,8 @@ export type TMediaArtifact = {
   path: string;
   link: string | null;
   action: string;
-  meta: Record<string, unknown>;
+  metadata_ref?: string | null;
+  meta?: Record<string, unknown>;
   work_item_id?: string | null;
   created_at: string;
   updated_at: string;
@@ -24,7 +25,8 @@ export type TMediaArtifactPayload = {
   format: string;
   link?: string | null;
   action: string;
-  meta: Record<string, unknown>;
+  metadata_ref?: string | null;
+  meta?: Record<string, unknown>;
   work_item_id?: string | null;
   created_at?: string;
   updated_at?: string;
@@ -34,6 +36,7 @@ export type TMediaArtifactPayload = {
 export type TMediaLibraryManifest = {
   id?: string;
   artifacts?: TMediaArtifact[];
+  metadata?: Record<string, Record<string, unknown>>;
 };
 
 export type TMediaArtifactsPaginatedResponse = {

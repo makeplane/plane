@@ -77,6 +77,10 @@ export const useMediaLibraryItems = (
       try {
         const manifest = await mediaLibraryService.ensureProjectLibrary(workspaceSlug, projectId);
         const packageId = typeof manifest?.id === "string" ? manifest.id : null;
+        const metadataMap =
+          manifest && typeof manifest === "object" && manifest.metadata && typeof manifest.metadata === "object"
+            ? (manifest.metadata as Record<string, Record<string, unknown>>)
+            : undefined;
         if (!packageId) {
           if (isMounted) setItems([]);
           return;
@@ -101,7 +105,12 @@ export const useMediaLibraryItems = (
             ? artifactsResponse
             : [];
         if (isMounted) {
-          const mappedItems = mapArtifactsToMediaItems(artifacts, { workspaceSlug, projectId, packageId });
+          const mappedItems = mapArtifactsToMediaItems(artifacts, {
+            workspaceSlug,
+            projectId,
+            packageId,
+            metadata: metadataMap,
+          });
           const filteredItems = desiredFormats.length
             ? mappedItems.filter((item) => desiredFormats.includes(item.format))
             : mappedItems;
