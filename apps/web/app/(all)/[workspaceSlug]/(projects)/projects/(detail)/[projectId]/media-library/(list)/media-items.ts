@@ -37,6 +37,7 @@ type TArtifactContext = {
   workspaceSlug: string;
   projectId: string;
   packageId: string;
+  metadata?: Record<string, Record<string, unknown>>;
 };
 
 const VIDEO_FORMATS = new Set(["mp4", "m3u8", "mov", "webm", "avi", "mkv", "mpeg", "mpg", "m4v"]);
@@ -123,6 +124,13 @@ const getMetaObject = (meta: unknown) => {
     return meta as Record<string, unknown>;
   }
   return {};
+};
+
+const resolveArtifactMeta = (artifact: TMediaArtifact, metadata?: Record<string, Record<string, unknown>>) => {
+  const directMeta = getMetaObject(artifact.meta);
+  if (Object.keys(directMeta).length > 0) return directMeta;
+  const ref = (artifact.metadata_ref ?? "").trim() || artifact.name;
+  return getMetaObject(metadata?.[ref]);
 };
 
 const getMetaString = (meta: Record<string, unknown>, keys: string[], fallback = "") => {
@@ -285,7 +293,7 @@ export const mapArtifactsToMediaItems = (
           : "";
     const format = normalizeFormat(rawFormat, artifact.path, artifact.name, artifact.link) || actionFormat;
     const mediaType = getMediaType(format, rawFormat, artifact.action ?? "");
-    const meta = getMetaObject(artifact.meta);
+    const meta = resolveArtifactMeta(artifact, context?.metadata);
     const linkedArtifact = artifact.link ? artifactByName.get(normalizeKey(artifact.link)) : undefined;
     const displayTitle =
       format === "thumbnail" && linkedArtifact?.title ? linkedArtifact.title : artifact.title;

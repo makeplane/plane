@@ -258,6 +258,7 @@ const MediaDetailPage = () => {
     setIsDocumentPreviewLoading(false);
     setDocumentPreviewError("Only PDF and XLSX files are supported.");
   }, [isUnsupportedDocument]);
+
   const handlePlay = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;

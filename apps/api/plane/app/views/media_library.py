@@ -27,9 +27,12 @@ from plane.utils.media_library import (
     ensure_project_library,
     filter_media_library_artifacts,
     get_document_icon_source,
+    hydrate_artifacts_with_meta,
     manifest_path,
     media_library_root,
     manifest_write_lock,
+    normalize_manifest_metadata,
+    normalize_metadata_ref,
     MediaLibraryTranscodeError,
     package_root,
     read_manifest,
@@ -314,6 +317,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
 
             manifest = read_manifest(manifest_file)
             artifacts = manifest.get("artifacts", [])
+            metadata = manifest.get("metadata") if isinstance(manifest, dict) else {}
             query = request.query_params.get("q") or ""
             section = request.query_params.get("section") or ""
             format_values = request.query_params.getlist("formats")
@@ -338,12 +342,14 @@ class MediaArtifactsListAPIView(BaseAPIView):
                     filters=filters,
                     section=section,
                     formats=format_values,
+                    metadata=metadata,
                 )
             except Exception as exc:
                 log_exception(exc)
             if "cursor" in request.query_params or "per_page" in request.query_params:
-                return self.paginate(request=request, paginator=ListPaginator(artifacts))
-            return Response(artifacts, status=status.HTTP_200_OK)
+                hydrated = hydrate_artifacts_with_meta(artifacts, metadata)
+                return self.paginate(request=request, paginator=ListPaginator(hydrated))
+            return Response(hydrate_artifacts_with_meta(artifacts, metadata), status=status.HTTP_200_OK)
         except Exception as exc:
             log_exception(exc)
             message = str(exc) if settings.DEBUG else "Something went wrong please try again later"
@@ -375,15 +381,12 @@ class MediaArtifactsListAPIView(BaseAPIView):
         doc_thumbnail_relative_path = None
         doc_thumbnail_source = None
         doc_thumbnail_action = None
-        doc_thumbnail_category = None
         image_thumbnail_name = None
         image_thumbnail_relative_path = None
-        image_thumbnail_category = None
         image_thumbnail_action = None
         video_thumbnail_name = None
         video_thumbnail_path = None
         video_thumbnail_relative_path = None
-        video_thumbnail_category = None
         video_thumbnail_action = None
         timestamp = _now_iso()
 
@@ -410,6 +413,13 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 work_item_id = None
 
             meta = request.data.get("meta") or {}
+            raw_metadata_ref = request.data.get("metadata_ref") or request.data.get("metadataRef")
+            metadata_ref = normalize_metadata_ref(raw_metadata_ref)
+            if raw_metadata_ref and not metadata_ref:
+                return Response(
+                    {"error": "metadata_ref must be a valid identifier."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             if isinstance(meta, str):
                 try:
                     meta = json.loads(meta)
@@ -465,12 +475,10 @@ class MediaArtifactsListAPIView(BaseAPIView):
                     video_thumbnail_relative_path = (
                         f"projects/{project_id_str}/packages/{package_id}/artifacts/{video_thumbnail_file_name}"
                     )
-                    video_thumbnail_category = meta.get("category") if isinstance(meta, dict) else None
                     video_thumbnail_action = "preview"
                 if format_value in _IMAGE_FORMATS and format_value != "thumbnail":
                     image_thumbnail_name = f"{primary_artifact_name}-thumbnail"
                     image_thumbnail_relative_path = relative_path
-                    image_thumbnail_category = meta.get("category") if isinstance(meta, dict) else None
                     image_thumbnail_action = "view"
                 if format_value not in _VIDEO_FORMATS and format_value not in _IMAGE_FORMATS:
                     thumbnail_hint = meta.get("thumbnail") if isinstance(meta, dict) else None
@@ -490,7 +498,6 @@ class MediaArtifactsListAPIView(BaseAPIView):
                         doc_thumbnail_relative_path = (
                             f"projects/{project_id_str}/packages/{package_id}/attachment/{doc_thumbnail_file_name}"
                         )
-                        doc_thumbnail_category = meta.get("category") if isinstance(meta, dict) else None
 
             action = request.data.get("action")
             if not action:
@@ -502,6 +509,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
                     action = "download"
             if doc_thumbnail_name:
                 doc_thumbnail_action = "open_pdf" if format_value == "pdf" else action
+            primary_metadata_ref = metadata_ref or artifact_name
             primary_entry = {
                 "name": artifact_name,
                 "title": title,
@@ -512,6 +520,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 "path": relative_path,
                 "link": link,
                 "action": action,
+                "metadata_ref": primary_metadata_ref,
                 "meta": meta,
                 "created_at": created_at,
                 "updated_at": updated_at,
@@ -535,6 +544,8 @@ class MediaArtifactsListAPIView(BaseAPIView):
             if not isinstance(artifact, dict):
                 return Response({"error": "Each artifact must be an object."}, status=status.HTTP_400_BAD_REQUEST)
             entry = artifact.copy()
+            if "metadata_ref" not in entry and "metadataRef" in entry:
+                entry["metadata_ref"] = entry.pop("metadataRef")
             if entry.get("format") == "thumbnail":
                 entry.pop("description", None)
             elif not entry.get("description"):
@@ -546,11 +557,18 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 entry["created_at"] = timestamp
             if not entry.get("updated_at"):
                 entry["updated_at"] = entry["created_at"]
+            if not entry.get("metadata_ref") and entry.get("format") == "thumbnail":
+                link_ref = normalize_metadata_ref(entry.get("link"))
+                if link_ref:
+                    entry["metadata_ref"] = link_ref
             prepared_payload.append(entry)
 
         serializer = MediaArtifactSerializer(data=prepared_payload, many=True)
         serializer.is_valid(raise_exception=True)
         validated_artifacts = serializer.validated_data
+        for artifact in validated_artifacts:
+            if not artifact.get("metadata_ref"):
+                artifact["metadata_ref"] = artifact.get("name")
 
         manifest = read_manifest(manifest_file)
         existing_artifacts = manifest.get("artifacts") or []
@@ -629,11 +647,6 @@ class MediaArtifactsListAPIView(BaseAPIView):
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     )
                 if created_thumbnail and thumbnail_relative_path and thumbnail_name:
-                    thumbnail_meta = meta.copy() if isinstance(meta, dict) else {}
-                    thumbnail_meta["category"] = (
-                        meta.get("category") if isinstance(meta, dict) and meta.get("category") else "Uploads"
-                    )
-                    thumbnail_meta["source"] = "generated"
                     thumbnail_entry = {
                         "name": thumbnail_name,
                         "title": f"{primary_title}",
@@ -641,7 +654,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
                         "path": thumbnail_relative_path,
                         "link": primary_artifact_name,
                         "action": "preview",
-                        "meta": thumbnail_meta,
+                        "metadata_ref": primary_metadata_ref,
                         "created_at": primary_created_at,
                         "updated_at": primary_updated_at,
                     }
@@ -663,13 +676,6 @@ class MediaArtifactsListAPIView(BaseAPIView):
                     else:
                         created_thumbnail = _create_video_thumbnail(file_path, video_thumbnail_path)
                         if created_thumbnail:
-                            thumbnail_meta = meta.copy() if isinstance(meta, dict) else {}
-                            thumbnail_meta["category"] = (
-                                video_thumbnail_category
-                                or thumbnail_meta.get("category")
-                                or "Uploads"
-                            )
-                            thumbnail_meta["source"] = "generated"
                             thumbnail_entry = {
                                 "name": video_thumbnail_name,
                                 "title": f"{primary_title}",
@@ -677,7 +683,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
                                 "path": video_thumbnail_relative_path,
                                 "link": primary_artifact_name,
                                 "action": video_thumbnail_action or "preview",
-                                "meta": thumbnail_meta,
+                                "metadata_ref": primary_metadata_ref,
                                 "created_at": primary_created_at,
                                 "updated_at": primary_updated_at,
                             }
@@ -687,13 +693,6 @@ class MediaArtifactsListAPIView(BaseAPIView):
                             thumbnail_serializer.is_valid(raise_exception=True)
                             validated_artifacts.append(thumbnail_serializer.validated_data)
                 if image_thumbnail_name and image_thumbnail_relative_path:
-                    thumbnail_meta = meta.copy() if isinstance(meta, dict) else {}
-                    thumbnail_meta["category"] = (
-                        image_thumbnail_category
-                        or thumbnail_meta.get("category")
-                        or "Uploads"
-                    )
-                    thumbnail_meta["for"] = primary_artifact_name
                     thumbnail_entry = {
                         "name": image_thumbnail_name,
                         "title": f"{primary_title}",
@@ -701,7 +700,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
                         "path": image_thumbnail_relative_path,
                         "link": primary_artifact_name,
                         "action": image_thumbnail_action or "view",
-                        "meta": thumbnail_meta,
+                        "metadata_ref": primary_metadata_ref,
                         "created_at": primary_created_at,
                         "updated_at": primary_updated_at,
                     }
@@ -716,14 +715,6 @@ class MediaArtifactsListAPIView(BaseAPIView):
                             doc_thumbnail_path.parent.mkdir(parents=True, exist_ok=True)
                             shutil.copyfile(doc_thumbnail_source, doc_thumbnail_path)
                         if doc_thumbnail_path.exists():
-                            thumbnail_meta = meta.copy() if isinstance(meta, dict) else {}
-                            thumbnail_meta["category"] = (
-                                doc_thumbnail_category
-                                or thumbnail_meta.get("category")
-                                or "Documents"
-                            )
-                            thumbnail_meta["kind"] = "thumbnail"
-                            thumbnail_meta["for"] = primary_artifact_name
                             thumbnail_entry = {
                                 "name": doc_thumbnail_name,
                                 "title": f"{primary_title}",
@@ -731,7 +722,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
                                 "path": doc_thumbnail_relative_path,
                                 "link": primary_artifact_name,
                                 "action": doc_thumbnail_action or "download",
-                                "meta": thumbnail_meta,
+                                "metadata_ref": primary_metadata_ref,
                                 "created_at": primary_created_at,
                                 "updated_at": primary_updated_at,
                             }
@@ -756,9 +747,11 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 if artifact_name in existing_names:
                     return Response({"error": "Artifact already exists."}, status=status.HTTP_409_CONFLICT)
                 existing_names.add(artifact_name)
-            existing_artifacts.extend(validated_artifacts)
+            artifacts_for_manifest = [artifact.copy() for artifact in validated_artifacts]
+            existing_artifacts.extend(artifacts_for_manifest)
             manifest["artifacts"] = existing_artifacts
             manifest["updatedAt"] = _now_iso()
+            normalize_manifest_metadata(manifest)
             write_manifest_atomic(manifest_file, manifest)
 
         response_payload = validated_artifacts if is_bulk else validated_artifacts[0]

@@ -8,10 +8,13 @@ from django.core.management.base import BaseCommand
 # Module imports
 from plane.utils.media_library import (
     _now_iso,
+    ensure_manifest_metadata,
     get_document_icon_source,
     media_library_root,
+    normalize_metadata_ref,
     package_root,
     read_manifest,
+    resolve_artifact_metadata,
     write_manifest_atomic,
 )
 
@@ -69,6 +72,7 @@ class Command(BaseCommand):
 
             manifest = read_manifest(manifest_file)
             artifacts = manifest.get("artifacts") or []
+            metadata = ensure_manifest_metadata(manifest)
             existing_names = {item.get("name") for item in artifacts if item.get("name")}
             existing_for = set()
             existing_thumbnails = {}
@@ -78,7 +82,7 @@ class Command(BaseCommand):
                     if link:
                         existing_for.add(link)
                         existing_thumbnails.setdefault(link, item)
-                    meta = item.get("meta") or {}
+                    meta = resolve_artifact_metadata(item, metadata)
                     if isinstance(meta, dict) and meta.get("for"):
                         existing_for.add(meta.get("for"))
                         existing_thumbnails.setdefault(meta.get("for"), item)
@@ -93,7 +97,7 @@ class Command(BaseCommand):
                     continue
                 thumb_name = f"{name}-thumb"
 
-                meta = item.get("meta") or {}
+                meta = resolve_artifact_metadata(item, metadata)
                 thumbnail_hint = meta.get("thumbnail") if isinstance(meta, dict) else None
                 icon_source = get_document_icon_source(format_value, thumbnail_hint)
                 existing_thumb = existing_thumbnails.get(name)
@@ -145,7 +149,9 @@ class Command(BaseCommand):
                 created_at = item.get("created_at") or _now_iso()
                 updated_at = item.get("updated_at") or created_at
                 action = "open_pdf" if (format_value or "").lower() == "pdf" else item.get("action") or "download"
-                category = meta.get("category") if isinstance(meta, dict) else None
+                thumbnail_metadata_ref = normalize_metadata_ref(item.get("metadata_ref")) or normalize_metadata_ref(name)
+                if thumbnail_metadata_ref and thumbnail_metadata_ref not in metadata:
+                    metadata[thumbnail_metadata_ref] = {}
                 thumbnail_entry = {
                     "name": thumb_name,
                     "title": f"{item.get('title') or name} Thumbnail",
@@ -153,11 +159,7 @@ class Command(BaseCommand):
                     "path": f"projects/{project_id}/packages/{package_id}/attachment/{file_name}",
                     "link": name,
                     "action": action,
-                    "meta": {
-                        "category": category or "Documents",
-                        "kind": "thumbnail",
-                        "for": name,
-                    },
+                    "metadata_ref": thumbnail_metadata_ref,
                     "created_at": created_at,
                     "updated_at": updated_at,
                 }
@@ -170,6 +172,7 @@ class Command(BaseCommand):
 
             if updated:
                 manifest["artifacts"] = artifacts
+                manifest["metadata"] = metadata
                 manifest["updatedAt"] = _now_iso()
                 if not dry_run:
                     write_manifest_atomic(manifest_file, manifest)

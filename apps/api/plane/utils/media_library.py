@@ -34,8 +34,94 @@ META_FILTER_EXCLUDED_KEYS = {
 }
 
 
-def _get_meta_dict(meta: object) -> dict:
-    return meta if isinstance(meta, dict) else {}
+def normalize_metadata_ref(value: object) -> str | None:
+    if not isinstance(value, str):
+        return None
+    trimmed = value.strip()
+    if not trimmed:
+        return None
+    if not _SEGMENT_RE.match(trimmed):
+        return None
+    return trimmed
+
+
+def ensure_manifest_metadata(manifest: dict) -> dict:
+    metadata = manifest.get("metadata")
+    if not isinstance(metadata, dict):
+        metadata = {}
+        manifest["metadata"] = metadata
+    return metadata
+
+
+def normalize_manifest_metadata(manifest: dict) -> dict:
+    metadata = ensure_manifest_metadata(manifest)
+    artifacts = manifest.get("artifacts") or []
+    normalized_artifacts: list[dict] = []
+    for artifact in artifacts:
+        if not isinstance(artifact, dict):
+            normalized_artifacts.append(artifact)
+            continue
+        meta = artifact.pop("meta", None)
+        metadata_ref = normalize_metadata_ref(artifact.get("metadata_ref"))
+        if not metadata_ref:
+            metadata_ref = normalize_metadata_ref(artifact.get("name"))
+        if metadata_ref:
+            artifact["metadata_ref"] = metadata_ref
+            if isinstance(meta, dict) and meta:
+                existing = metadata.get(metadata_ref)
+                if isinstance(existing, dict):
+                    merged = dict(existing)
+                    merged.update(meta)
+                    metadata[metadata_ref] = merged
+                else:
+                    metadata[metadata_ref] = dict(meta)
+            elif metadata_ref not in metadata:
+                metadata[metadata_ref] = {}
+        else:
+            if isinstance(meta, dict):
+                artifact["meta"] = meta
+        normalized_artifacts.append(artifact)
+    manifest["artifacts"] = normalized_artifacts
+    manifest["metadata"] = metadata
+    return manifest
+
+
+def resolve_artifact_metadata(artifact: dict, metadata: dict | None = None) -> dict:
+    direct_meta = artifact.get("meta")
+    if isinstance(direct_meta, dict):
+        return direct_meta
+    metadata_ref = normalize_metadata_ref(artifact.get("metadata_ref"))
+    if not metadata_ref:
+        metadata_ref = normalize_metadata_ref(artifact.get("name"))
+    if metadata and metadata_ref:
+        meta = metadata.get(metadata_ref)
+        if isinstance(meta, dict):
+            return meta
+    return {}
+
+
+def hydrate_artifacts_with_meta(
+    artifacts: list[dict],
+    metadata: dict | None = None,
+) -> list[dict]:
+    if not metadata:
+        return artifacts
+    hydrated: list[dict] = []
+    for artifact in artifacts:
+        if not isinstance(artifact, dict):
+            hydrated.append(artifact)
+            continue
+        if isinstance(artifact.get("meta"), dict):
+            hydrated.append(artifact)
+            continue
+        meta = resolve_artifact_metadata(artifact, metadata)
+        if meta:
+            entry = artifact.copy()
+            entry["meta"] = meta
+            hydrated.append(entry)
+        else:
+            hydrated.append(artifact)
+    return hydrated
 
 
 def _normalize_meta_values(value: object) -> list[str]:
@@ -82,8 +168,8 @@ def _stringify_value(value: object) -> str:
     return str(value)
 
 
-def _build_query_haystack(artifact: dict) -> str:
-    meta = _get_meta_dict(artifact.get("meta"))
+def _build_query_haystack(artifact: dict, metadata: dict | None = None) -> str:
+    meta = resolve_artifact_metadata(artifact, metadata)
     docs = meta.get("docs")
     docs_text = ""
     if isinstance(docs, list):
@@ -113,6 +199,7 @@ def filter_media_library_artifacts(
     filters: list[dict] | None = None,
     section: str | None = None,
     formats: list[str] | None = None,
+    metadata: dict | None = None,
 ) -> list[dict]:
     if not artifacts:
         return []
@@ -128,7 +215,7 @@ def filter_media_library_artifacts(
             return True
         if not isinstance(filters, list):
             return True
-        meta = _get_meta_dict(artifact.get("meta"))
+        meta = resolve_artifact_metadata(artifact, metadata)
         for condition in filters:
             if not isinstance(condition, dict):
                 continue
@@ -159,13 +246,13 @@ def filter_media_library_artifacts(
     def matches_section(artifact: dict) -> bool:
         if not normalized_section:
             return True
-        meta = _get_meta_dict(artifact.get("meta"))
+        meta = resolve_artifact_metadata(artifact, metadata)
         return _get_primary_tag(meta) == normalized_section
 
     def matches_query(artifact: dict) -> bool:
         if not normalized_query:
             return True
-        return normalized_query in _build_query_haystack(artifact)
+        return normalized_query in _build_query_haystack(artifact, metadata)
 
     def matches_format(artifact: dict) -> bool:
         if not normalized_formats:
@@ -310,7 +397,7 @@ def manifest_path(project_id: str, package_id: str) -> Path:
 
 def create_manifest(project_id: str, package_id: str, name: str, title: str, artifacts=None) -> dict:
     timestamp = _now_iso()
-    return {
+    manifest = {
         "manifestVersion": MANIFEST_VERSION,
         "id": package_id,
         "type": "package",
@@ -320,7 +407,11 @@ def create_manifest(project_id: str, package_id: str, name: str, title: str, art
         "createdAt": timestamp,
         "updatedAt": timestamp,
         "artifacts": list(artifacts) if artifacts else [],
+        "metadata": {},
     }
+    if artifacts:
+        normalize_manifest_metadata(manifest)
+    return manifest
 
 
 def read_manifest(path: Path) -> dict:
@@ -333,7 +424,7 @@ def read_manifest(path: Path) -> dict:
             raise ValidationError({"manifest": "Invalid manifest JSON."}) from exc
     if not isinstance(data.get("artifacts"), list):
         raise ValidationError({"manifest": "Invalid manifest: artifacts must be a list."})
-    return data
+    return normalize_manifest_metadata(data)
 
 
 def write_manifest_atomic(path: Path, data: dict) -> None:
