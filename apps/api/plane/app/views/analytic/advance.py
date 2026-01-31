@@ -330,7 +330,7 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
         )
 
         completed_work_items_subquery = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 project_id=OuterRef("pk"),
                 state__group="completed",
                 **self.filters["base_filters"],
