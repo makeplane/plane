@@ -130,7 +130,7 @@ export const WorkspaceCalendarRoot = observer(function WorkspaceCalendarRoot(pro
           target_date__isnull: "true",
         };
 
-        const response: TIssuesResponse = await workspaceService.getViewIssues(workspaceSlug.toString(), params);
+        const response = await workspaceService.getViewIssues(workspaceSlug.toString(), params);
 
         if (response && response.results) {
           const results = response.results;
