@@ -78,13 +78,14 @@ export const WorkspaceQuickAddIssueRoot = observer(function WorkspaceQuickAddIss
     const projectStates = getProjectStates(selectedProjectId);
     const targetState = findStateByGroup(projectStates, stateGroup);
 
+    // Always strip state_detail.group from the payload — the API doesn't accept it
+    const { "state_detail.group": _removed, ...rest } = prePopulatedData as Record<string, unknown>;
+
     if (targetState) {
-      // Return prePopulatedData with state_id set and state_detail.group removed
-      const { "state_detail.group": _removed, ...rest } = prePopulatedData as Record<string, unknown>;
       return { ...rest, state_id: targetState.id } as Partial<TIssue>;
     }
 
-    return prePopulatedData;
+    return rest as Partial<TIssue>;
   }, [selectedProjectId, prePopulatedData, getProjectStates]);
   // form info
   const {
