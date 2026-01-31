@@ -827,7 +827,6 @@ useEffect(() => {
       </div>
     );
   }
-  const meta = item.meta ?? {};
   const category = getMetaString(meta, ["category", "event_category"], "");
   const sport = getMetaString(meta, ["sport"], "");
   const program = getMetaString(meta, ["program"], "");
