@@ -318,32 +318,49 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
         project_ids = [p["id"] for p in base_projects]
 
         # --- Subqueries for Issue-related counts ---
-        issue_subquery = (
+        # Each metric needs its own subquery to work correctly with OuterRef
+        total_work_items_subquery = (
             Issue.objects.filter(
+                project_id=OuterRef("pk"),
                 **self.filters["base_filters"],
             )
             .values("project_id")
-            .annotate(
-                total_work_items=Count("id", distinct=True),
-                completed_work_items=Count(
-                    "id",
-                    filter=Q(state__group="completed"),
-                    distinct=True,
-                ),
-                total_epics=Count(
-                    "id",
-                    filter=Q(type__is_epic=True),
-                    distinct=True,
-                ),
-                total_intake=Count(
-                    "id",
-                    filter=Q(
-                        issue_intake__isnull=False,
-                        issue_intake__status__in=["-2", "-1", "0", "1", "2"],
-                    ),
-                    distinct=True,
-                ),
+            .annotate(count=Count("id", distinct=True))
+            .values("count")
+        )
+
+        completed_work_items_subquery = (
+            Issue.objects.filter(
+                project_id=OuterRef("pk"),
+                state__group="completed",
+                **self.filters["base_filters"],
             )
+            .values("project_id")
+            .annotate(count=Count("id", distinct=True))
+            .values("count")
+        )
+
+        total_epics_subquery = (
+            Issue.objects.filter(
+                project_id=OuterRef("pk"),
+                type__is_epic=True,
+                **self.filters["base_filters"],
+            )
+            .values("project_id")
+            .annotate(count=Count("id", distinct=True))
+            .values("count")
+        )
+
+        total_intake_subquery = (
+            Issue.objects.filter(
+                project_id=OuterRef("pk"),
+                issue_intake__isnull=False,
+                issue_intake__status__in=["-2", "-1", "0", "1", "2"],
+                **self.filters["base_filters"],
+            )
+            .values("project_id")
+            .annotate(count=Count("id", distinct=True))
+            .values("count")
         )
 
         # --- Subqueries for other related models ---
@@ -394,13 +411,10 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
         projects_qs = (
             Project.objects.filter(id__in=project_ids)
             .annotate(
-                total_work_items=Coalesce(Subquery(issue_subquery.values("total_work_items")[:1]), Value(0)),
-                completed_work_items=Coalesce(
-                    Subquery(issue_subquery.values("completed_work_items")[:1]),
-                    Value(0),
-                ),
-                total_epics=Coalesce(Subquery(issue_subquery.values("total_epics")[:1]), Value(0)),
-                total_intake=Coalesce(Subquery(issue_subquery.values("total_intake")[:1]), Value(0)),
+                total_work_items=Coalesce(Subquery(total_work_items_subquery[:1]), Value(0)),
+                completed_work_items=Coalesce(Subquery(completed_work_items_subquery[:1]), Value(0)),
+                total_epics=Coalesce(Subquery(total_epics_subquery[:1]), Value(0)),
+                total_intake=Coalesce(Subquery(total_intake_subquery[:1]), Value(0)),
                 total_cycles=Coalesce(Subquery(cycle_subquery.values("total_cycles")[:1]), Value(0)),
                 total_modules=Coalesce(Subquery(module_subquery.values("total_modules")[:1]), Value(0)),
                 total_members=Coalesce(Subquery(member_subquery.values("total_members")[:1]), Value(0)),
