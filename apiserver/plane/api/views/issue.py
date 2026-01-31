@@ -4,7 +4,8 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
-from django.db import IntegrityError
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError, transaction
 from django.db.models import (
     Case,
     CharField,
@@ -36,7 +37,8 @@ from plane.api.serializers import (
     IssueSerializer,
     LabelSerializer,
     IssueTypeSerializer,
-    IssueCustomPropertySerializer
+    IssueCustomPropertySerializer,
+    IssueBulkUpdateSerializer
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -59,8 +61,10 @@ from plane.db.models import (
     IssueCustomProperty,
     IssueTypeCustomProperty,
     Workspace,
-    User
+    User,
+    IssueAssignee
 )
+from plane.api.utils.update_resolver import resolve_update_values
 from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects
 from .base import BaseAPIView
 from datetime import datetime
@@ -1348,3 +1352,115 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
             epoch=epoch_timestamp,
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class IssueBulkUpdateAPIEndpoint(BaseAPIView):
+    """
+    Bulk update issues based on filter criteria.
+    Endpoint: PATCH /workspaces/{slug}/projects/{project_id}/issues/bulk-update/
+    """
+    permission_classes = [ProjectEntityPermission]
+    
+    def patch(self, request, slug, project_id):
+        # 1. Validate request
+        serializer = IssueBulkUpdateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                {"success": False, "error": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        filters = serializer.validated_data['filters']
+        updates = serializer.validated_data['updates']
+        
+        # 2. Use issue_filters() utility to resolve filters
+        try:
+            resolved_filters = issue_filters(filters, method="POST")
+        except Exception as e:
+            return Response(
+                {"success": False, "error": f"Filter resolution failed: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # 3. Begin atomic transaction
+        try:
+            with transaction.atomic():
+                # Query issues with lock
+                issues = Issue.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    **resolved_filters
+                ).select_for_update()
+                
+                # 4. Check if any issues matched
+                count = issues.count()
+                
+                # If no matches, return success with count 0 (idempotent operation)
+                if count == 0:
+                    return Response(
+                        {
+                            "success": True,
+                            "count": 0,
+                            "message": "No issues found matching the provided filters. No updates performed."
+                        },
+                        status=status.HTTP_200_OK
+                    )
+                
+                issue_ids = list(issues.values_list('id', flat=True))
+                
+                # 5. Get workspace_id
+                workspace_id = Workspace.objects.filter(slug=slug).values_list('id', flat=True).first()
+                
+                # 6. Resolve update values
+                try:
+                    scalar_updates, m2m_updates = resolve_update_values(updates, workspace_id, project_id)
+                except ValidationError as e:
+                    return Response(
+                        {"success": False, "error": str(e)},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                
+                # 7. Perform scalar updates
+                if scalar_updates:
+                    scalar_updates['updated_at'] = timezone.now()
+                    Issue.objects.filter(id__in=issue_ids).update(**scalar_updates)
+                
+                # 8. Perform M2M updates (assignees)
+                if 'assignees' in m2m_updates:
+                    assignee_ids = m2m_updates['assignees']
+                    
+                    # Delete existing assignees
+                    IssueAssignee.objects.filter(issue_id__in=issue_ids).delete()
+                    
+                    # Bulk create new assignees
+                    assignee_records = [
+                        IssueAssignee(
+                            issue_id=issue_id,
+                            assignee_id=assignee_id,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
+                            created_by_id=request.user.id,
+                            updated_by_id=request.user.id
+                        )
+                        for issue_id in issue_ids
+                        for assignee_id in assignee_ids
+                    ]
+                    IssueAssignee.objects.bulk_create(assignee_records, batch_size=10)
+                
+                # 9. Return success response
+                return Response(
+                    {
+                        "success": True,
+                        "count": count,
+                        "message": f"Successfully updated {count} issue{'s' if count != 1 else ''}"
+                    },
+                    status=status.HTTP_200_OK
+                )
+        
+        except IntegrityError as e:
+            return Response(
+                {"success": False, "error": "Database constraint violation. One or more update values are invalid."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            # Let BaseAPIView.handle_exception() handle other exceptions
+            raise

@@ -8,7 +8,8 @@ from plane.api.views import (
     WorkspaceIssueAPIEndpoint,
     IssueAttachmentV2Endpoint,
     IssueTypeAPIEndpoint,
-    IssueCustomPropertyUpdateAPIView
+    IssueCustomPropertyUpdateAPIView,
+    IssueBulkUpdateAPIEndpoint,
 )
 
 urlpatterns = [
@@ -16,6 +17,11 @@ urlpatterns = [
         "workspaces/<str:slug>/issues/<str:project__identifier>-<str:issue__identifier>/",
         WorkspaceIssueAPIEndpoint.as_view(),
         name="issue-by-identifier",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<str:project_id>/issues/bulk-update/",
+        IssueBulkUpdateAPIEndpoint.as_view(),
+        name="issue-bulk-update",
     ),
     path(
         "workspaces/<str:slug>/projects/<str:project_id>/issues/",

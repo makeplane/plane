@@ -302,6 +302,47 @@ def filter_created_by_username(params, issue_filter, method, prefix=""):
     return issue_filter
 
 
+def filter_assignees_by_username(params, issue_filter, method, prefix=""):
+    """Filter issues by assignee usernames using Django ORM relationship traversal"""
+    if method == "GET":
+        assignee_usernames = [
+            item
+            for item in params.get("assignees_by_username").split(",")
+            if item != "null"
+        ]
+        if len(assignee_usernames) and "" not in assignee_usernames:
+            issue_filter[f"{prefix}assignees__username__in"] = assignee_usernames
+    else:
+        if (
+            params.get("assignees_by_username", None)
+            and len(params.get("assignees_by_username"))
+        ):
+            issue_filter[f"{prefix}assignees__username__in"] = params.get("assignees_by_username")
+    return issue_filter
+
+
+def filter_state_name(params, issue_filter, method, prefix=""):
+    """Filter issues by state names using Django ORM relationship traversal"""
+    if method == "GET":
+        state_names = [
+            item
+            for item in params.get("state_name").split(",")
+            if item != "null"
+        ]
+        if len(state_names) and "" not in state_names:
+            issue_filter[f"{prefix}state__name__in"] = state_names
+    else:
+        if (
+            params.get("state_name", None)
+            and len(params.get("state_name"))
+        ):
+            if isinstance(params.get("state_name"), list):
+                issue_filter[f"{prefix}state__name__in"] = params.get("state_name")
+            else:
+                issue_filter[f"{prefix}state__name__in"] = [params.get("state_name")]
+    return issue_filter
+
+
 def filter_name(params, issue_filter, method, prefix=""):
     if params.get("name", "") != "":
         issue_filter[f"{prefix}name__icontains"] = params.get("name")
@@ -871,11 +912,13 @@ def issue_filters(query_params, method, prefix=""):
     ISSUE_FILTER = {
         "state": filter_state,
         "state_group": filter_state_group,
+        "state_name": filter_state_name,
         "estimate_point": filter_estimate_point,
         "priority": filter_priority,
         "parent": filter_parent,
         "labels": filter_labels,
         "assignees": filter_assignees,
+        "assignees_by_username": filter_assignees_by_username,
         "mentions": filter_mentions,
         "created_by": filter_created_by,
         "created_by_username": filter_created_by_username,
