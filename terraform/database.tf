@@ -5,20 +5,21 @@ resource "google_sql_database_instance" "plane_db" {
   region           = var.region
   
   settings {
-    tier = "db-f1-micro" # Free tier eligible-ish
+    tier = "db-f1-micro"
     ip_configuration {
-      ipv4_enabled = true # Ideally private, but for simplicity
+      ipv4_enabled    = false
+      private_network = google_compute_network.vpc.id
     }
   }
   
-  deletion_protection = false # For dev
-  depends_on = [google_project_service.apis]
+  deletion_protection = false
+  depends_on = [google_project_service.apis, google_service_networking_connection.private_vpc_connection]
 }
 
 resource "google_sql_user" "plane_user" {
   name     = "plane"
   instance = google_sql_database_instance.plane_db.name
-  password = "changeme123" # Should use Secret Manager
+  password = "changeme123" 
 }
 
 resource "google_sql_database" "plane_database" {

@@ -5,11 +5,16 @@ resource "google_cloud_run_v2_service" "plane_web" {
   ingress = "INGRESS_TRAFFIC_ALL"
   
   template {
+    vpc_access {
+      connector = google_vpc_access_connector.connector.id
+      egress    = "ALL_TRAFFIC"
+    }
+    
     containers {
-      image = "us-docker.pkg.dev/cloudrun/container/hello" # Placeholder until we build
+      image = "us-docker.pkg.dev/cloudrun/container/hello" 
       env {
         name = "API_BASE_URL"
-        value = "CHANGE_ME"
+        value = "https://plane-api-PLACEHOLDER.a.run.app" # Needs to be updated after API creation or via specialized variable
       }
     }
   }
@@ -22,15 +27,27 @@ resource "google_cloud_run_v2_service" "plane_api" {
   location = var.region
   
   template {
+    vpc_access {
+      connector = google_vpc_access_connector.connector.id
+      egress    = "ALL_TRAFFIC"
+    }
+    
+    # Annotation for Cloud SQL
+    annotations = {
+      "run.googleapis.com/cloudsql-instances" = google_sql_database_instance.plane_db.connection_name
+    }
+
     containers {
-      image = "us-docker.pkg.dev/cloudrun/container/hello" # Placeholder
+      image = "us-docker.pkg.dev/cloudrun/container/hello"
+      
+      # Dynamic Injection
       env {
         name = "DATABASE_URL"
-        value = "CHANGE_ME"
+        value = "postgres://plane:changeme123@localhost:5432/plane?host=/cloudsql/${google_sql_database_instance.plane_db.connection_name}"
       }
       env {
         name = "REDIS_URL"
-        value = "CHANGE_ME"
+        value = "redis://${google_redis_instance.plane_redis.host}:${google_redis_instance.plane_redis.port}"
       }
     }
   }
