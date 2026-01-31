@@ -201,12 +201,10 @@ export const WorkspaceKanBanRoot = observer(function WorkspaceKanBanRoot(props: 
   const handleCollapsedGroups = useCallback(
     (toggle: "group_by" | "sub_group_by", value: string) => {
       if (workspaceSlug) {
-        let collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
-        if (collapsedGroups.includes(value)) {
-          collapsedGroups = collapsedGroups.filter((_value) => _value != value);
-        } else {
-          collapsedGroups.push(value);
-        }
+        const currentGroups = issuesFilter?.issueFilters?.kanbanFilters?.[toggle] || [];
+        const collapsedGroups = currentGroups.includes(value)
+          ? currentGroups.filter((_value) => _value != value)
+          : [...currentGroups, value];
         // projectId is not used for workspace-level filters
         void updateFilters("", EIssueFilterType.KANBAN_FILTERS, {
           [toggle]: collapsedGroups,
