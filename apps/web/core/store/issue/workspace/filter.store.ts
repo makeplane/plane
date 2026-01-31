@@ -262,6 +262,11 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
               _filters.displayFilters.group_by = "state_detail.group";
               updatedDisplayFilters.group_by = "state_detail.group";
             }
+            // Re-check: nullify sub_group_by if it now matches the normalized group_by
+            if (_filters.displayFilters.group_by === _filters.displayFilters.sub_group_by) {
+              _filters.displayFilters.sub_group_by = null;
+              updatedDisplayFilters.sub_group_by = null;
+            }
           }
           // Set calendar defaults if layout is switched to calendar
           if (_filters.displayFilters.layout === "calendar" && !_filters.displayFilters.calendar) {
