@@ -1361,9 +1361,16 @@ class IssueBulkUpdateAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
     
     def patch(self, request, slug, project_id):
+        print(
+            f"[BulkUpdate] Request received - workspace_slug: {slug}, project_id: {project_id}, "
+            f"user_id: {request.user.id if request.user.is_authenticated else 'anonymous'}"
+        )
+        
         # 1. Validate request
+        print(f"[BulkUpdate] Validating request data: {request.data}")
         serializer = IssueBulkUpdateSerializer(data=request.data)
         if not serializer.is_valid():
+            print(f"[BulkUpdate] WARNING: Validation failed: {serializer.errors}")
             return Response(
                 {"success": False, "error": serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST
@@ -1372,19 +1379,37 @@ class IssueBulkUpdateAPIEndpoint(BaseAPIView):
         filters = serializer.validated_data['filters']
         updates = serializer.validated_data['updates']
         
+        print(
+            f"[BulkUpdate] Request validated - filters: {list(filters.keys())}, "
+            f"updates: {list(updates.keys())}"
+        )
+        
         # 2. Use issue_filters() utility to resolve filters
+        print(f"[BulkUpdate] Resolving filters: {filters}")
         try:
             resolved_filters = issue_filters(filters, method="POST")
+            print(
+                f"[BulkUpdate] Filters resolved - resolved_filter_keys: {list(resolved_filters.keys())}"
+            )
+            print(f"[BulkUpdate] Resolved filters detail: {resolved_filters}")
         except Exception as e:
+            print(f"[BulkUpdate] ERROR: Filter resolution failed: {str(e)}")
+            import traceback
+            traceback.print_exc()
             return Response(
                 {"success": False, "error": f"Filter resolution failed: {str(e)}"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
         # 3. Begin atomic transaction
+        print(f"[BulkUpdate] Starting atomic transaction")
         try:
             with transaction.atomic():
                 # Query issues with lock
+                print(
+                    f"[BulkUpdate] Querying issues - workspace_slug: {slug}, project_id: {project_id}, "
+                    f"filters: {resolved_filters}"
+                )
                 issues = Issue.objects.filter(
                     workspace__slug=slug,
                     project_id=project_id,
@@ -1393,9 +1418,11 @@ class IssueBulkUpdateAPIEndpoint(BaseAPIView):
                 
                 # 4. Check if any issues matched
                 count = issues.count()
+                print(f"[BulkUpdate] Found {count} issue(s) matching filters")
                 
                 # If no matches, return success with count 0 (idempotent operation)
                 if count == 0:
+                    print("[BulkUpdate] No issues matched filters - returning success with count 0")
                     return Response(
                         {
                             "success": True,
@@ -1406,14 +1433,23 @@ class IssueBulkUpdateAPIEndpoint(BaseAPIView):
                     )
                 
                 issue_ids = list(issues.values_list('id', flat=True))
+                print(f"[BulkUpdate] Issue IDs to update: {issue_ids[:10]}{'...' if len(issue_ids) > 10 else ''} "
+                      f"(total: {len(issue_ids)})")
                 
                 # 5. Get workspace_id
                 workspace_id = Workspace.objects.filter(slug=slug).values_list('id', flat=True).first()
+                print(f"[BulkUpdate] Resolved workspace_id: {workspace_id}")
                 
                 # 6. Resolve update values
+                print(f"[BulkUpdate] Resolving update values for {len(updates)} field(s)")
                 try:
                     scalar_updates, m2m_updates = resolve_update_values(updates, workspace_id, project_id)
+                    print(
+                        f"[BulkUpdate] Update values resolved - scalar_fields: {list(scalar_updates.keys())}, "
+                        f"m2m_fields: {list(m2m_updates.keys())}"
+                    )
                 except ValidationError as e:
+                    print(f"[BulkUpdate] ERROR: Update value resolution failed: {str(e)}")
                     return Response(
                         {"success": False, "error": str(e)},
                         status=status.HTTP_400_BAD_REQUEST
@@ -1422,14 +1458,27 @@ class IssueBulkUpdateAPIEndpoint(BaseAPIView):
                 # 7. Perform scalar updates
                 if scalar_updates:
                     scalar_updates['updated_at'] = timezone.now()
-                    Issue.objects.filter(id__in=issue_ids).update(**scalar_updates)
+                    print(
+                        f"[BulkUpdate] Performing scalar updates on {len(issue_ids)} issue(s) - "
+                        f"fields: {list(scalar_updates.keys())}"
+                    )
+                    print(f"[BulkUpdate] Scalar update values: {scalar_updates}")
+                    updated_count = Issue.objects.filter(id__in=issue_ids).update(**scalar_updates)
+                    print(f"[BulkUpdate] Scalar updates completed - {updated_count} issue(s) updated")
+                else:
+                    print("[BulkUpdate] No scalar updates to perform")
                 
                 # 8. Perform M2M updates (assignees)
                 if 'assignees' in m2m_updates:
                     assignee_ids = m2m_updates['assignees']
+                    print(
+                        f"[BulkUpdate] Performing assignee updates on {len(issue_ids)} issue(s) - "
+                        f"assignee_ids: {assignee_ids}"
+                    )
                     
                     # Delete existing assignees
-                    IssueAssignee.objects.filter(issue_id__in=issue_ids).delete()
+                    deleted_count = IssueAssignee.objects.filter(issue_id__in=issue_ids).delete()[0]
+                    print(f"[BulkUpdate] Deleted {deleted_count} existing assignee record(s)")
                     
                     # Bulk create new assignees
                     assignee_records = [
@@ -1444,9 +1493,17 @@ class IssueBulkUpdateAPIEndpoint(BaseAPIView):
                         for issue_id in issue_ids
                         for assignee_id in assignee_ids
                     ]
+                    created_count = len(assignee_records)
                     IssueAssignee.objects.bulk_create(assignee_records, batch_size=10)
+                    print(f"[BulkUpdate] Created {created_count} new assignee record(s)")
+                else:
+                    print("[BulkUpdate] No assignee updates to perform")
                 
                 # 9. Return success response
+                print(
+                    f"[BulkUpdate] Successfully completed bulk update - workspace_slug: {slug}, "
+                    f"project_id: {project_id}, updated_count: {count}"
+                )
                 return Response(
                     {
                         "success": True,
@@ -1457,10 +1514,22 @@ class IssueBulkUpdateAPIEndpoint(BaseAPIView):
                 )
         
         except IntegrityError as e:
+            print(
+                f"[BulkUpdate] ERROR: IntegrityError occurred - workspace_slug: {slug}, project_id: {project_id}, "
+                f"error: {str(e)}"
+            )
+            import traceback
+            traceback.print_exc()
             return Response(
                 {"success": False, "error": "Database constraint violation. One or more update values are invalid."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
+            print(
+                f"[BulkUpdate] ERROR: Unexpected error - workspace_slug: {slug}, project_id: {project_id}, "
+                f"error: {str(e)}"
+            )
+            import traceback
+            traceback.print_exc()
             # Let BaseAPIView.handle_exception() handle other exceptions
             raise
