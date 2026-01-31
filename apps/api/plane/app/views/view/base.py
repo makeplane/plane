@@ -258,6 +258,23 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         group_by = request.GET.get("group_by", False)
         sub_group_by = request.GET.get("sub_group_by", False)
 
+        # Validate group_by and sub_group_by field names
+        ALLOWED_GROUP_BY_FIELDS = {
+            "state_id", "labels__id", "assignees__id", "issue_module__module_id",
+            "cycle_id", "project_id", "priority", "state__group",
+            "target_date", "start_date", "created_by",
+        }
+        if group_by and group_by not in ALLOWED_GROUP_BY_FIELDS:
+            return Response(
+                {"error": f"Invalid group_by field: {group_by}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if sub_group_by and sub_group_by not in ALLOWED_GROUP_BY_FIELDS:
+            return Response(
+                {"error": f"Invalid sub_group_by field: {sub_group_by}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Apply grouper to issue queryset
         issue_queryset = issue_queryset_grouper(
             queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
