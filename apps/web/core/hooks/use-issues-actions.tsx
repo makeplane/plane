@@ -28,7 +28,7 @@ export interface IssueActions {
     options: IssuePaginationOptions,
     viewId?: string
   ) => Promise<TIssuesResponse | undefined>;
-  fetchNextIssues: (groupId?: string, subGroupId?: string) => Promise<TIssuesResponse | undefined>;
+  fetchNextIssues: (groupId?: string, subGroupId?: string, viewId?: string) => Promise<TIssuesResponse | undefined>;
   removeIssue: (projectId: string | undefined | null, issueId: string) => Promise<void>;
   createIssue?: (projectId: string | undefined | null, data: Partial<TIssue>) => Promise<TIssue | undefined>;
   quickAddIssue?: (projectId: string | undefined | null, data: TIssue) => Promise<TIssue | undefined>;
@@ -693,11 +693,12 @@ const useGlobalIssueActions = () => {
     [issues.fetchIssues, workspaceSlug, globalViewId]
   );
   const fetchNextIssues = useCallback(
-    async (groupId?: string, subGroupId?: string) => {
-      if (!workspaceSlug || !globalViewId) return;
-      return issues.fetchNextIssues(workspaceSlug.toString(), globalViewId.toString(), groupId, subGroupId);
+    async (groupId?: string, subGroupId?: string, viewId?: string) => {
+      const effectiveViewId = viewId ?? globalViewId;
+      if (!workspaceSlug || !effectiveViewId) return;
+      return issues.fetchNextIssues(workspaceSlug.toString(), effectiveViewId.toString(), groupId, subGroupId);
     },
-    [issues.fetchIssues, workspaceSlug, globalViewId]
+    [issues.fetchNextIssues, workspaceSlug, globalViewId]
   );
 
   const createIssue = useCallback(
