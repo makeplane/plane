@@ -292,13 +292,13 @@ def filter_created_by_username(params, issue_filter, method, prefix=""):
         ]
         if len(created_bys) and "" not in created_bys:
             issue_filter[f"{prefix}created_by__username__in"] = created_bys
-    # else:
-    #     if (
-    #         params.get("created_by", None)
-    #         and len(params.get("created_by"))
-    #         and params.get("created_by") != "null"
-    #     ):
-    #         issue_filter[f"{prefix}created_by__in"] = params.get("created_by")
+    else:
+        if (
+            params.get("created_by_username", None)
+            and len(params.get("created_by_username"))
+            and params.get("created_by_username") != "null"
+        ):
+            issue_filter[f"{prefix}created_by__username__in"] = params.get("created_by_username")
     return issue_filter
 
 

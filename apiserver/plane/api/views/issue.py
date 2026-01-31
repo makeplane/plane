@@ -1477,7 +1477,9 @@ class IssueBulkUpdateAPIEndpoint(BaseAPIView):
                     )
                     
                     # Delete existing assignees
-                    deleted_count = IssueAssignee.objects.filter(issue_id__in=issue_ids).delete()[0]
+                    delete_result = IssueAssignee.objects.filter(issue_id__in=issue_ids).delete()
+                    # Handle both tuple (deleted_count, {model: count}) and int return formats
+                    deleted_count = delete_result[0] if isinstance(delete_result, tuple) else delete_result
                     print(f"[BulkUpdate] Deleted {deleted_count} existing assignee record(s)")
                     
                     # Bulk create new assignees
