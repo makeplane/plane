@@ -35,6 +35,7 @@ export type IssueDescriptionInputProps = {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   setIsSubmitting: (initialValue: TNameDescriptionLoader) => void;
   swrIssueDescription?: string | null | undefined;
+  onDescriptionChange?: (value: string) => void;
 };
 
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
@@ -50,6 +51,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     issueOperations,
     setIsSubmitting,
     placeholder,
+    onDescriptionChange,
   } = props;
   // states
   const [localIssueDescription, setLocalIssueDescription] = useState({
@@ -151,6 +153,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
               onChange={(_description: object, description_html: string) => {
                 setIsSubmitting("submitting");
                 onChange(description_html);
+                onDescriptionChange?.(description_html);
                 hasUnsavedChanges.current = true;
                 debouncedFormSave();
               }}

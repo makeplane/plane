@@ -153,4 +153,21 @@ export class MediaLibraryService extends APIService {
         throw error?.response?.data ?? error?.response ?? error;
       });
   }
+
+  async deleteArtifact(
+    workspaceSlug: string,
+    projectId: string,
+    packageId: string,
+    artifactId: string
+  ): Promise<void> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/${encodeURIComponent(
+        artifactId
+      )}/`
+    )
+      .then(() => undefined)
+      .catch((error) => {
+        throw error?.response?.data ?? error?.response ?? error;
+      });
+  }
 }

@@ -40,11 +40,13 @@ type Props = {
   isArchived: boolean;
   isSubmitting: TNameDescriptionLoader;
   setIsSubmitting: (value: TNameDescriptionLoader) => void;
+  onDescriptionChange?: (value: string) => void;
 };
 
 export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
   const { editorRef, workspaceSlug, issueId, issueOperations, disabled, isArchived, isSubmitting, setIsSubmitting } =
     props;
+  const { onDescriptionChange } = props;
   // store hooks
   const { data: currentUser } = useUser();
   const {
@@ -135,6 +137,7 @@ export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
         issueOperations={issueOperations}
         setIsSubmitting={(value) => setIsSubmitting(value)}
         containerClassName="-ml-3 border-none"
+        onDescriptionChange={onDescriptionChange}
       />
 
       <div className="flex items-center justify-between gap-2">

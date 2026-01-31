@@ -7,8 +7,10 @@ import { EIssueServiceType } from "@plane/types";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { MediaLibraryService } from "@/services/media-library.service";
 // types
 import type { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
+import { buildArtifactName, resolveAttachmentFileName } from "../media-library-utils";
 
 export type TAttachmentOperations = {
   create: (file: File) => Promise<void>;
@@ -31,8 +33,9 @@ export const useAttachmentOperations = (
   issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES
 ): TAttachmentHelpers => {
   const {
-    attachment: { createAttachment, removeAttachment, getAttachmentsUploadStatusByIssueId },
+    attachment: { createAttachment, removeAttachment, getAttachmentsUploadStatusByIssueId, getAttachmentById },
   } = useIssueDetail(issueServiceType);
+  const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
 
   const attachmentOperations: TAttachmentOperations = useMemo(
     () => ({
@@ -69,12 +72,25 @@ export const useAttachmentOperations = (
       remove: async (attachmentId) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
+          const attachment = getAttachmentById(attachmentId);
+          const artifactName = attachment ? buildArtifactName(resolveAttachmentFileName(attachment), attachmentId) : "";
           await removeAttachment(workspaceSlug, projectId, issueId, attachmentId);
           setToast({
             message: "The attachment has been successfully removed",
             type: TOAST_TYPE.SUCCESS,
             title: "Attachment removed",
           });
+          if (artifactName) {
+            try {
+              const manifest = await mediaLibraryService.ensureProjectLibrary(workspaceSlug, projectId);
+              const packageId = typeof manifest?.id === "string" ? manifest.id : null;
+              if (packageId) {
+                await mediaLibraryService.deleteArtifact(workspaceSlug, projectId, packageId, artifactName);
+              }
+            } catch {
+              // Ignore media library cleanup errors to avoid blocking attachment removal.
+            }
+          }
           captureSuccess({
             eventName: WORK_ITEM_TRACKER_EVENTS.attachment.remove,
             payload: { id: issueId },
@@ -93,7 +109,7 @@ export const useAttachmentOperations = (
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createAttachment, removeAttachment]
+    [workspaceSlug, projectId, issueId, createAttachment, removeAttachment, getAttachmentById, mediaLibraryService]
   );
   const attachmentsUploadStatus = getAttachmentsUploadStatusByIssueId(issueId);
 

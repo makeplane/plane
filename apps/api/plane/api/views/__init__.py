@@ -55,6 +55,7 @@ from .asset import UserAssetEndpoint, UserServerAssetEndpoint, GenericAssetEndpo
 from .user import UserEndpoint
 
 from .media_library import (
+    MediaArtifactDetailAPIEndpoint,
     MediaArtifactsListAPIEndpoint,
     MediaLibraryInitAPIEndpoint,
     MediaManifestDetailAPIEndpoint,

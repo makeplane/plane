@@ -1,30 +1,44 @@
 "use client";
 
 import type { FC } from "react";
-import { useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Link2, MoveDiagonal, MoveRight } from "lucide-react";
+import { Link2, MoveDiagonal, MoveRight, UploadCloud } from "lucide-react";
 // plane imports
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { API_BASE_URL, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import type { TNameDescriptionLoader } from "@plane/types";
+import type { TIssueAttachment, TNameDescriptionLoader } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
-import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
+import { copyUrlToClipboard, generateWorkItemLink, getAssetIdFromUrl, getFileName, getFileURL } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
+import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { MediaLibraryService } from "@/services/media-library.service";
 // local imports
 import { IssueSubscription } from "../issue-detail/subscription";
+import {
+  DOC_FORMATS,
+  IMAGE_FORMATS,
+  buildArtifactName,
+  buildEventMeta,
+  getErrorMessage,
+  isDuplicateArtifactError,
+  resolveArtifactAction,
+  resolveArtifactFormat,
+  resolveAttachmentDownloadUrl,
+  resolveAttachmentFileName,
+} from "../issue-detail-widgets/action-buttons";
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
 import { NameDescriptionUpdateStatus } from "../issue-update-status";
 
@@ -64,6 +78,179 @@ export type PeekOverviewHeaderProps = {
   toggleEditIssueModal: (value: boolean) => void;
   handleRestoreIssue: () => Promise<void>;
   isSubmitting: TNameDescriptionLoader;
+  descriptionImageUrls?: string[];
+};
+
+type TMediaLibraryAddResult = {
+  total: number;
+  successCount: number;
+  skippedCount: number;
+  failedCount: number;
+};
+
+const resolveInlineAssetUrl = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("data:") || trimmed.startsWith("blob:")) return trimmed;
+  return getFileURL(trimmed) ?? trimmed;
+};
+
+const normalizeUrlForCompare = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("data:") || trimmed.startsWith("blob:")) return trimmed;
+  if (typeof window === "undefined") return trimmed;
+  try {
+    const parsed = new URL(trimmed, window.location.origin);
+    parsed.search = "";
+    parsed.hash = "";
+    return parsed.toString();
+  } catch {
+    return trimmed;
+  }
+};
+
+const resolveInlineFileName = (value: string, index: number) => {
+  const trimmed = value.trim();
+  if (!trimmed) return `image-${index}.png`;
+  if (trimmed.startsWith("data:")) {
+    const match = /^data:([^;]+);/i.exec(trimmed);
+    const mime = match?.[1]?.toLowerCase() ?? "";
+    let extension = mime.startsWith("image/") ? mime.split("/")[1] : "png";
+    if (extension === "svg+xml") extension = "svg";
+    return `embedded-image-${index}.${extension}`;
+  }
+  if (typeof window !== "undefined") {
+    try {
+      const parsed = new URL(trimmed, window.location.origin);
+      const pathSegments = parsed.pathname.split("/").filter(Boolean);
+      const lastSegment = pathSegments[pathSegments.length - 1];
+      if (lastSegment) return decodeURIComponent(lastSegment);
+    } catch {
+      // ignore parse error
+    }
+  }
+  return `image-${index}.png`;
+};
+
+const resolveInlineFileId = (value: string, index: number) => {
+  const trimmed = value.trim();
+  if (!trimmed) return `inline-${index}`;
+  if (trimmed.startsWith("data:")) return `embedded-${index}`;
+  if (typeof window !== "undefined") {
+    try {
+      const parsed = new URL(trimmed, window.location.origin);
+      return getAssetIdFromUrl(parsed.pathname);
+    } catch {
+      return getAssetIdFromUrl(trimmed);
+    }
+  }
+  return getAssetIdFromUrl(trimmed);
+};
+
+const resolveInlineArtifactNames = (value: string, index: number) => {
+  const resolved = resolveInlineAssetUrl(value);
+  if (!resolved) return [];
+  const rawFileName = resolveInlineFileName(resolved, index + 1);
+  const fileId = resolveInlineFileId(resolved, index + 1);
+  if (!fileId) return [];
+
+  const names: string[] = [];
+  if (rawFileName) {
+    names.push(buildArtifactName(rawFileName, fileId));
+  }
+  if (rawFileName && !rawFileName.includes(".")) {
+    names.push(buildArtifactName(`${fileId}.asset`, fileId));
+  }
+  return names.filter(Boolean);
+};
+
+const resolveFormatFromMime = (mime: string) => {
+  if (!mime) return "";
+  const normalized = mime.toLowerCase();
+  if (normalized.startsWith("image/")) {
+    const subtype = normalized.split("/")[1] ?? "";
+    return subtype === "svg+xml" ? "svg" : subtype;
+  }
+  if (normalized.startsWith("video/")) return normalized.split("/")[1] ?? "";
+  if (normalized === "application/pdf") return "pdf";
+  if (normalized.includes("spreadsheet")) return "xlsx";
+  if (normalized.includes("msword")) return "doc";
+  return "";
+};
+
+const getApiOrigin = () => {
+  if (!API_BASE_URL) return "";
+  try {
+    return new URL(API_BASE_URL).origin;
+  } catch {
+    return "";
+  }
+};
+
+const shouldIncludeCredentialsForUrl = (url: string) => {
+  if (typeof window === "undefined") return false;
+  try {
+    const parsed = new URL(url, window.location.origin);
+    const apiOrigin = getApiOrigin();
+    return parsed.origin === window.location.origin || (apiOrigin && parsed.origin === apiOrigin);
+  } catch {
+    return false;
+  }
+};
+
+const appendJsonResponseParam = (url: string) => {
+  if (typeof window === "undefined") return url;
+  try {
+    const parsed = new URL(url, window.location.origin);
+    if (!parsed.searchParams.get("response")) {
+      parsed.searchParams.set("response", "json");
+    }
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+};
+
+const fetchInlineImageResponse = async (url: string) => {
+  if (!url) {
+    throw new Error("Unable to access inline image.");
+  }
+  const apiOrigin = getApiOrigin();
+  const parsedUrl = typeof window !== "undefined" ? new URL(url, window.location.origin) : null;
+  const isApiAssetUrl =
+    parsedUrl && apiOrigin && parsedUrl.origin === apiOrigin && parsedUrl.pathname.includes("/api/assets/v2/workspaces/");
+
+  const initialUrl = isApiAssetUrl ? appendJsonResponseParam(url) : url;
+  const response = await fetch(initialUrl, {
+    credentials: shouldIncludeCredentialsForUrl(initialUrl) ? "include" : "omit",
+  });
+  if (response.ok) {
+    const contentType = response.headers.get("content-type") ?? "";
+    if (contentType.includes("application/json")) {
+      const data = (await response.json()) as { asset_url?: string; url?: string };
+      const assetUrl = data.asset_url ?? data.url;
+      if (!assetUrl) {
+        throw new Error("Unable to access inline image.");
+      }
+      const assetResponse = await fetch(assetUrl, { credentials: "omit" });
+      if (!assetResponse.ok) {
+        throw new Error("Unable to access inline image.");
+      }
+      return assetResponse;
+    }
+    return response;
+  }
+
+  const fallbackUrl = await resolveAttachmentDownloadUrl(url);
+  if (!fallbackUrl) {
+    throw new Error("Unable to access inline image.");
+  }
+  const fallbackResponse = await fetch(fallbackUrl, { credentials: "omit" });
+  if (!fallbackResponse.ok) {
+    throw new Error("Unable to access inline image.");
+  }
+  return fallbackResponse;
 };
 
 export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((props) => {
@@ -83,6 +270,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     toggleEditIssueModal,
     handleRestoreIssue,
     isSubmitting,
+    descriptionImageUrls = [],
   } = props;
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
@@ -91,13 +279,18 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   const { data: currentUser } = useUser();
   const {
     issue: { getIssueById },
+    attachment,
+    fetchAttachments,
     setPeekIssue,
     removeIssue,
     archiveIssue,
     getIsIssuePeeked,
   } = useIssueDetail();
+  const { getUserDetails } = useMember();
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
+  const [isAddingToMediaLibrary, setIsAddingToMediaLibrary] = useState(false);
+  const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
   // derived values
   const issueDetails = getIssueById(issueId);
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
@@ -105,6 +298,78 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   const {
     issues: { removeIssue: removeArchivedIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
+  const createdByDetails = issueDetails?.created_by ? getUserDetails(issueDetails.created_by) : undefined;
+  const createdByName = createdByDetails?.display_name?.includes("-intake")
+    ? "Plane"
+    : createdByDetails?.display_name ?? issueDetails?.created_by ?? "";
+  const baseEventMeta = useMemo(() => buildEventMeta(issueDetails, createdByName), [issueDetails, createdByName]);
+  const attachmentIds = attachment.getAttachmentsByIssueId(issueId) ?? [];
+  const attachmentCount = issueDetails?.attachment_count ?? attachmentIds.length;
+  const normalizedDescriptionImages = useMemo(() => {
+    const uniqueImages = new Map<string, string>();
+    for (const rawValue of descriptionImageUrls) {
+      const resolved = resolveInlineAssetUrl(rawValue);
+      if (!resolved) continue;
+      const key = normalizeUrlForCompare(resolved);
+      if (!uniqueImages.has(key)) uniqueImages.set(key, resolved);
+    }
+    return Array.from(uniqueImages.values());
+  }, [descriptionImageUrls]);
+  const previousDescriptionImagesRef = useRef<string[]>([]);
+  const previousIssueIdRef = useRef(issueId);
+  const hasMediaAssets = attachmentCount > 0 || normalizedDescriptionImages.length > 0;
+
+  useEffect(() => {
+    if (previousIssueIdRef.current !== issueId) {
+      previousIssueIdRef.current = issueId;
+      previousDescriptionImagesRef.current = normalizedDescriptionImages;
+      return;
+    }
+
+    const previous = previousDescriptionImagesRef.current;
+    if (previous.length === 0) {
+      previousDescriptionImagesRef.current = normalizedDescriptionImages;
+      return;
+    }
+
+    const currentKeys = new Set(normalizedDescriptionImages.map((url) => normalizeUrlForCompare(url)));
+    const removedImages = previous
+      .map((url, index) => ({ url, index }))
+      .filter(({ url }) => !currentKeys.has(normalizeUrlForCompare(url)));
+
+    if (removedImages.length === 0) {
+      previousDescriptionImagesRef.current = normalizedDescriptionImages;
+      return;
+    }
+
+    previousDescriptionImagesRef.current = normalizedDescriptionImages;
+    if (!workspaceSlug || !projectId) return;
+
+    const cleanup = async () => {
+      try {
+        const manifest = await mediaLibraryService.ensureProjectLibrary(workspaceSlug, projectId);
+        const packageId = typeof manifest?.id === "string" ? manifest.id : null;
+        if (!packageId) return;
+        await Promise.all(
+          removedImages.map(async ({ url, index }) => {
+            const artifactNames = resolveInlineArtifactNames(url, index);
+            if (!artifactNames.length) return;
+            for (const artifactName of artifactNames) {
+              try {
+                await mediaLibraryService.deleteArtifact(workspaceSlug, projectId, packageId, artifactName);
+              } catch {
+                // ignore cleanup errors
+              }
+            }
+          })
+        );
+      } catch {
+        // ignore cleanup errors
+      }
+    };
+
+    void cleanup();
+  }, [issueId, normalizedDescriptionImages, mediaLibraryService, projectId, workspaceSlug]);
 
   const workItemLink = generateWorkItemLink({
     workspaceSlug,
@@ -126,6 +391,216 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
       });
     });
   };
+
+  const handleAddAssetsToMediaLibrary = useCallback(async (): Promise<TMediaLibraryAddResult> => {
+    if (!workspaceSlug || !projectId || !issueId) {
+      throw new Error("Missing required fields.");
+    }
+
+    setIsAddingToMediaLibrary(true);
+    try {
+      let resolvedAttachments = attachmentIds
+        .map((attachmentId) => attachment.getAttachmentById(attachmentId))
+        .filter((item): item is TIssueAttachment => Boolean(item));
+
+      if (resolvedAttachments.length === 0) {
+        resolvedAttachments = await fetchAttachments(workspaceSlug, projectId, issueId);
+      }
+
+      if (resolvedAttachments.length === 0 && normalizedDescriptionImages.length === 0) {
+        throw new Error("No attachments or inline images found for this work item.");
+      }
+
+      const manifest = await mediaLibraryService.ensureProjectLibrary(workspaceSlug, projectId);
+      const packageId = typeof manifest?.id === "string" ? manifest.id : null;
+      if (!packageId) {
+        throw new Error("Media library package not available.");
+      }
+
+      const attachmentUrlKeys = new Set(
+        resolvedAttachments
+          .map((attachmentItem) => resolveInlineAssetUrl(attachmentItem?.asset_url ?? ""))
+          .filter(Boolean)
+          .map((url) => normalizeUrlForCompare(url))
+      );
+      const uniqueInlineImages = normalizedDescriptionImages.filter(
+        (url) => !attachmentUrlKeys.has(normalizeUrlForCompare(url))
+      );
+      const result: TMediaLibraryAddResult = {
+        total: resolvedAttachments.length + uniqueInlineImages.length,
+        successCount: 0,
+        skippedCount: 0,
+        failedCount: 0,
+      };
+
+      for (const attachmentItem of resolvedAttachments) {
+        const fileName = resolveAttachmentFileName(attachmentItem);
+        const format = resolveArtifactFormat(fileName);
+        if (!format) {
+          result.skippedCount += 1;
+          continue;
+        }
+
+        const assetUrl = resolveInlineAssetUrl(attachmentItem.asset_url ?? "");
+        if (!assetUrl) {
+          result.failedCount += 1;
+          continue;
+        }
+
+        try {
+          const downloadUrl = await resolveAttachmentDownloadUrl(assetUrl);
+          if (!downloadUrl) {
+            throw new Error(`Unable to fetch "${fileName}".`);
+          }
+          const response = await fetch(downloadUrl);
+          if (!response.ok) {
+            throw new Error(`Unable to fetch "${fileName}".`);
+          }
+          const blob = await response.blob();
+          const file = new File([blob], fileName, { type: blob.type || undefined });
+          const artifactName = buildArtifactName(fileName, attachmentItem.id);
+          const title = getFileName(fileName) || "Attachment";
+          const action = resolveArtifactAction(format);
+          const meta: Record<string, unknown> = { ...baseEventMeta };
+
+          if (DOC_FORMATS.has(format)) {
+            meta.kind = "document_file";
+            meta.file_size = attachmentItem.attributes?.size;
+            meta.file_type = format;
+          }
+
+          await mediaLibraryService.uploadArtifact(
+            workspaceSlug,
+            projectId,
+            packageId,
+            {
+              name: artifactName,
+              title,
+              format,
+              link: null,
+              action,
+              meta,
+              work_item_id: issueId,
+            },
+            file
+          );
+          result.successCount += 1;
+        } catch (error) {
+          if (isDuplicateArtifactError(error)) {
+            result.skippedCount += 1;
+          } else {
+            result.failedCount += 1;
+          }
+        }
+      }
+
+      for (const [index, rawUrl] of uniqueInlineImages.entries()) {
+        const resolvedUrl = resolveInlineAssetUrl(rawUrl);
+        if (!resolvedUrl) {
+          result.failedCount += 1;
+          continue;
+        }
+        let fileName = resolveInlineFileName(resolvedUrl, index + 1);
+        let format = resolveArtifactFormat(fileName);
+
+        try {
+          const response = await fetchInlineImageResponse(resolvedUrl);
+          const blob = await response.blob();
+          if (!format) {
+            format = resolveFormatFromMime(blob.type || "");
+          }
+          if (!format || !IMAGE_FORMATS.has(format)) {
+            result.skippedCount += 1;
+            continue;
+          }
+          if (!fileName.toLowerCase().includes(".") && format) {
+            fileName = `${fileName}.${format}`;
+          }
+          const file = new File([blob], fileName, { type: blob.type || undefined });
+          const artifactName = buildArtifactName(fileName, resolveInlineFileId(resolvedUrl, index + 1));
+          const title = getFileName(fileName) || "Inline image";
+          const action = resolveArtifactAction(format);
+          const meta: Record<string, unknown> = {
+            ...baseEventMeta,
+            source: "work_item_description",
+          };
+
+          await mediaLibraryService.uploadArtifact(
+            workspaceSlug,
+            projectId,
+            packageId,
+            {
+              name: artifactName,
+              title,
+              format,
+              link: null,
+              action,
+              meta,
+              work_item_id: issueId,
+            },
+            file
+          );
+          result.successCount += 1;
+        } catch (error) {
+          if (isDuplicateArtifactError(error)) {
+            result.skippedCount += 1;
+          } else {
+            result.failedCount += 1;
+          }
+        }
+      }
+
+      if (result.successCount === 0) {
+        if (result.skippedCount > 0 && result.failedCount === 0) {
+          throw new Error("Assets already exist in the media library.");
+        }
+        if (result.skippedCount > 0 && result.failedCount > 0) {
+          throw new Error("Some assets could not be added to the media library.");
+        }
+        throw new Error("Unable to add assets to the media library.");
+      }
+
+      return result;
+    } finally {
+      setIsAddingToMediaLibrary(false);
+    }
+  }, [
+    attachment,
+    attachmentIds,
+    baseEventMeta,
+    fetchAttachments,
+    issueId,
+    mediaLibraryService,
+    normalizedDescriptionImages,
+    projectId,
+    workspaceSlug,
+  ]);
+
+  const handleAddAssetsClick = useCallback(() => {
+    if (disabled || isAddingToMediaLibrary || !hasMediaAssets) return;
+    const addAssetsPromise = handleAddAssetsToMediaLibrary();
+    setPromiseToast(addAssetsPromise, {
+      loading: "Adding assets to media library...",
+      success: {
+        title: "Assets added",
+        message: (data) => {
+          if (!data) return "Assets added to the media library.";
+          const { total, successCount, skippedCount, failedCount } = data;
+          if (failedCount === 0 && skippedCount === 0) {
+            return `${successCount} of ${total} assets added to the media library.`;
+          }
+          if (failedCount === 0) {
+            return `${successCount} of ${total} assets added. ${skippedCount} skipped.`;
+          }
+          return `${successCount} of ${total} assets added. ${skippedCount} skipped, ${failedCount} failed.`;
+        },
+      },
+      error: {
+        title: "Assets not added",
+        message: (error) => getErrorMessage(error) || "Unable to add assets to the media library.",
+      },
+    });
+  }, [disabled, handleAddAssetsToMediaLibrary, hasMediaAssets, isAddingToMediaLibrary]);
 
   const handleDeleteIssue = async () => {
     try {
@@ -226,6 +701,24 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
         <div className="flex items-center gap-4">
           {currentUser && !isArchived && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+          )}
+          {hasMediaAssets && (
+            <Tooltip tooltipContent="Add assets in media library" isMobile={isMobile}>
+              <button
+                type="button"
+                onClick={handleAddAssetsClick}
+                disabled={disabled || isAddingToMediaLibrary}
+                className="disabled:cursor-not-allowed"
+              >
+                <UploadCloud
+                  className={`h-4 w-4 ${
+                    disabled || isAddingToMediaLibrary
+                      ? "text-custom-text-400"
+                      : "text-custom-text-300 hover:text-custom-text-200"
+                  }`}
+                />
+              </button>
+            </Tooltip>
           )}
           <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
             <button type="button" onClick={handleCopyText}>

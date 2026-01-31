@@ -140,6 +140,42 @@ def _create_video_thumbnail(source_path: Path, thumbnail_path: Path) -> bool:
     return thumbnail_path.exists()
 
 
+def _resolve_artifact_disk_path(artifact: dict, base_root: Path) -> Path | None:
+    raw_path = artifact.get("path") or ""
+    if not raw_path:
+        return None
+    if isinstance(raw_path, str) and raw_path.lower().startswith(("http://", "https://")):
+        return None
+    candidate = Path(raw_path)
+    if not candidate.is_absolute():
+        candidate = (base_root / candidate).resolve(strict=False)
+    else:
+        candidate = candidate.resolve(strict=False)
+    if os.path.commonpath([str(base_root), str(candidate)]) != str(base_root):
+        return None
+    return candidate
+
+
+def _delete_artifact_disk_path(path: Path, artifact_name: str | None = None) -> None:
+    if not path.exists():
+        return
+    if path.is_dir():
+        shutil.rmtree(path, ignore_errors=True)
+        return
+    if artifact_name:
+        try:
+            parent = path.parent
+            if parent.name == artifact_name and parent.parent.name == "artifacts":
+                shutil.rmtree(parent, ignore_errors=True)
+                return
+        except OSError:
+            return
+    try:
+        path.unlink()
+    except FileNotFoundError:
+        return
+    except OSError:
+        return
 def _should_download_as_attachment(request) -> bool:
     value = request.query_params.get("download")
     if value is None:
@@ -347,6 +383,68 @@ class MediaArtifactFileAPIView(BaseAPIView):
             suffix = ".mp4" if is_video else (Path(file_path).suffix or "")
             response["Content-Disposition"] = f'attachment; filename="{download_name}{suffix}"'
         return response
+
+
+class MediaArtifactDetailAPIView(BaseAPIView):
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
+    def delete(self, request, slug, project_id, package_id, artifact_id):
+        project_id_str = str(project_id)
+        validate_segment(project_id_str, "projectId")
+        validate_segment(package_id, "packageId")
+        validate_segment(artifact_id, "artifactId")
+
+        manifest_file = manifest_path(project_id_str, package_id)
+        if not manifest_file.exists():
+            raise NotFound("Manifest not found.")
+
+        removed_artifacts: list[dict] = []
+        with manifest_write_lock(manifest_file):
+            manifest = read_manifest(manifest_file)
+            artifacts = manifest.get("artifacts") or []
+            if not artifacts:
+                raise NotFound("Artifact not found.")
+
+            related_names = {artifact_id}
+            for artifact in artifacts:
+                if artifact.get("link") == artifact_id and artifact.get("format") == "thumbnail":
+                    name = artifact.get("name")
+                    if name:
+                        related_names.add(name)
+
+            remaining_artifacts = []
+            for artifact in artifacts:
+                if artifact.get("name") in related_names:
+                    removed_artifacts.append(artifact)
+                else:
+                    remaining_artifacts.append(artifact)
+
+            if not removed_artifacts:
+                raise NotFound("Artifact not found.")
+
+            manifest["artifacts"] = remaining_artifacts
+            manifest["updatedAt"] = _now_iso()
+
+            metadata = manifest.get("metadata")
+            if not isinstance(metadata, dict):
+                metadata = {}
+            used_refs: set[str] = set()
+            for artifact in remaining_artifacts:
+                metadata_ref = normalize_metadata_ref(artifact.get("metadata_ref")) or normalize_metadata_ref(
+                    artifact.get("name")
+                )
+                if metadata_ref:
+                    used_refs.add(metadata_ref)
+            manifest["metadata"] = {key: value for key, value in metadata.items() if key in used_refs}
+            normalize_manifest_metadata(manifest)
+            write_manifest_atomic(manifest_file, manifest)
+
+        base_root = media_library_root().resolve(strict=False)
+        for artifact in removed_artifacts:
+            resolved_path = _resolve_artifact_disk_path(artifact, base_root)
+            if resolved_path:
+                _delete_artifact_disk_path(resolved_path, artifact.get("name"))
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class MediaArtifactsListAPIView(BaseAPIView):

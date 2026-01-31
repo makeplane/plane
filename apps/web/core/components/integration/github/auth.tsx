@@ -1,4 +1,4 @@
-"use client";
+  "use client";
 
 import { observer } from "mobx-react";
 // types

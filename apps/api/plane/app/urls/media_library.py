@@ -1,6 +1,7 @@
 from django.urls import path
 
 from plane.app.views.media_library import (
+    MediaArtifactDetailAPIView,
     MediaArtifactFileAPIView,
     MediaArtifactsListAPIView,
     MediaLibraryInitAPIView,
@@ -28,6 +29,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/artifacts/",
         MediaArtifactsListAPIView.as_view(),
         name="media-library-artifacts",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/artifacts/<str:artifact_id>/",
+        MediaArtifactDetailAPIView.as_view(),
+        name="media-library-artifact-detail",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/artifacts/<str:artifact_id>/file/<path:artifact_path>/",

@@ -17,6 +17,7 @@ type Props = {
   renderWidgetModals?: boolean;
   issueServiceType: TIssueServiceType;
   hideWidgets?: TWorkItemWidgets[];
+  hideMediaLibraryButton?: boolean;
 };
 
 export const IssueDetailWidgets: FC<Props> = (props) => {
@@ -28,6 +29,7 @@ export const IssueDetailWidgets: FC<Props> = (props) => {
     renderWidgetModals = true,
     issueServiceType,
     hideWidgets,
+    hideMediaLibraryButton,
   } = props;
 
   return (
@@ -40,6 +42,7 @@ export const IssueDetailWidgets: FC<Props> = (props) => {
           disabled={disabled}
           issueServiceType={issueServiceType}
           hideWidgets={hideWidgets}
+          hideMediaLibraryButton={hideMediaLibraryButton}
         />
         <IssueDetailWidgetCollapsibles
           workspaceSlug={workspaceSlug}

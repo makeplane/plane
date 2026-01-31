@@ -4,18 +4,152 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DOMPurify from "dompurify";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { ArrowLeft, Calendar, Clock, FileText, Mail, MapPin, Phone, User } from "lucide-react";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
-import { ArrowLeft, Calendar, FileText, User } from "lucide-react";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useMediaLibraryItems } from "../(list)/use-media-library-items";
 import { TagsSection } from "./tags-section";
 
 const formatMetaValue = (value: unknown) => {
   if (value === null || value === undefined) return "--";
+  if (Array.isArray(value)) {
+    const entries = value
+      .map((entry) => formatMetaValue(entry))
+      .filter((entry) => entry && entry !== "--");
+    return entries.length ? entries.join(", ") : "--";
+  }
   if (typeof value === "string") return value.trim() ? value : "--";
   if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (typeof value === "object") {
+    const namedValue = (value as Record<string, unknown>)?.name;
+    if (typeof namedValue === "string" && namedValue.trim()) return namedValue.trim();
+  }
   return JSON.stringify(value);
+};
+
+const formatMetaLabel = (value: string) => {
+  if (!value) return value;
+  return value
+    .replace(/[_-]+/g, " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((chunk) => chunk[0]?.toUpperCase() + chunk.slice(1))
+    .join(" ");
+};
+
+const getMetaString = (meta: Record<string, unknown>, keys: string[], fallback = "") => {
+  for (const key of keys) {
+    const value = meta[key];
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return fallback;
+};
+
+const getMetaNumber = (meta: Record<string, unknown>, keys: string[]) => {
+  for (const key of keys) {
+    const value = meta[key];
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+    if (typeof value === "string" && value.trim()) {
+      const parsed = Number(value);
+      if (!Number.isNaN(parsed)) return parsed;
+    }
+  }
+  return null;
+};
+
+const getMetaObject = (meta: Record<string, unknown>, keys: string[]) => {
+  for (const key of keys) {
+    const value = meta[key];
+    if (value && typeof value === "object" && !Array.isArray(value)) return value as Record<string, unknown>;
+  }
+  return null;
+};
+
+const formatFileSize = (value: unknown) => {
+  const size = typeof value === "number" ? value : typeof value === "string" ? Number(value) : NaN;
+  if (!Number.isFinite(size) || size <= 0) return "--";
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let unitIndex = 0;
+  let normalized = size;
+  while (normalized >= 1024 && unitIndex < units.length - 1) {
+    normalized /= 1024;
+    unitIndex += 1;
+  }
+  const precision = normalized >= 10 || unitIndex === 0 ? 0 : 1;
+  return `${normalized.toFixed(precision)} ${units[unitIndex]}`;
+};
+
+const parseDateValue = (value?: string | null) => {
+  if (!value) return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const dateOnlyMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (dateOnlyMatch) {
+    const year = Number(dateOnlyMatch[1]);
+    const month = Number(dateOnlyMatch[2]);
+    const day = Number(dateOnlyMatch[3]);
+    return { date: new Date(Date.UTC(year, month - 1, day)), isDateOnly: true };
+  }
+  const parsed = Date.parse(trimmed);
+  if (Number.isNaN(parsed)) return null;
+  return { date: new Date(parsed), isDateOnly: false };
+};
+
+const formatDateValue = (value?: string | null) => {
+  const parsed = parseDateValue(value);
+  if (!parsed) return value?.trim() || "--";
+  const baseOptions: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  };
+  const primaryOptions = parsed.isDateOnly ? { ...baseOptions, timeZone: "UTC" } : baseOptions;
+  try {
+    return parsed.date.toLocaleDateString(undefined, primaryOptions);
+  } catch {
+    try {
+      return parsed.date.toLocaleDateString(undefined, baseOptions);
+    } catch {
+      return parsed.date.toLocaleDateString();
+    }
+  }
+};
+
+const formatTimeValue = (value?: string | null) => {
+  const parsed = parseDateValue(value);
+  if (!parsed) return value?.trim() || "--";
+  if (parsed.isDateOnly) return "--";
+  const primaryOptions: Intl.DateTimeFormatOptions = {
+    hour: "numeric",
+    minute: "2-digit",
+  };
+  try {
+    return parsed.date.toLocaleTimeString(undefined, primaryOptions);
+  } catch {
+    try {
+      return parsed.date.toLocaleTimeString();
+    } catch {
+      return `${parsed.date.getHours().toString().padStart(2, "0")}:${parsed.date
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}`;
+    }
+  }
+};
+
+const resolveOppositionLogoUrl = (logo?: string | null) => {
+  if (!logo) return "";
+  if (/^https?:\/\//i.test(logo)) return logo;
+  const base = process.env.NEXT_PUBLIC_CP_SERVER_URL?.replace(/\/$/, "") ?? "";
+  if (!base) return "";
+  return `${base}/blobs/${logo.replace(/^\/+/, "")}`;
+};
+
+const isMeaningfulValue = (value: unknown) => {
+  if (value === null || value === undefined) return false;
+  if (typeof value === "string") return value.trim() !== "" && value !== "--";
+  return true;
 };
 
 const DOCUMENT_PREVIEW_STYLE = `
@@ -693,8 +827,76 @@ useEffect(() => {
       </div>
     );
   }
+  const meta = item.meta ?? {};
+  const category = getMetaString(meta, ["category", "event_category"], "");
+  const sport = getMetaString(meta, ["sport"], "");
+  const program = getMetaString(meta, ["program"], "");
+  const level = getMetaString(meta, ["level"], "");
+  const season = getMetaString(meta, ["season"], "");
+  const source = getMetaString(meta, ["source"], "");
+  const createdBy = getMetaString(meta, ["created_by", "createdBy"], "");
+  const startDate = getMetaString(meta, ["start_date", "startDate"], "");
+  const startTime = getMetaString(meta, ["start_time", "startTime"], "");
+  const fileType = getMetaString(meta, ["file_type", "fileType"], "");
+  const fileSize = getMetaNumber(meta, ["file_size", "fileSize"]);
+  const kind = getMetaString(meta, ["kind"], "");
+  const opposition = getMetaObject(meta, ["opposition"]);
+  const oppositionName = opposition ? getMetaString(opposition, ["name", "title"], "") : "";
+  const oppositionLogo = opposition ? getMetaString(opposition, ["logo"], "") : "";
+  const oppositionAddress = opposition ? getMetaString(opposition, ["address"], "") : "";
+  const oppositionHeadCoach = opposition ? getMetaString(opposition, ["head_coach_name"], "") : "";
+  const oppositionAsstCoach = opposition ? getMetaString(opposition, ["asst_coach_name"], "") : "";
+  const oppositionAthleticEmail = opposition ? getMetaString(opposition, ["athletic_email"], "") : "";
+  const oppositionAthleticPhone = opposition ? getMetaString(opposition, ["athletic_phone"], "") : "";
+  const oppositionAsstAthleticEmail = opposition ? getMetaString(opposition, ["asst_athletic_email"], "") : "";
+  const oppositionAsstAthleticPhone = opposition ? getMetaString(opposition, ["asst_athletic_phone"], "") : "";
+  const hasOppositionDetails = Boolean(
+    oppositionName ||
+      oppositionLogo ||
+      oppositionAddress ||
+      oppositionHeadCoach ||
+      oppositionAsstCoach ||
+      oppositionAthleticEmail ||
+      oppositionAthleticPhone ||
+      oppositionAsstAthleticEmail ||
+      oppositionAsstAthleticPhone
+  );
+  const createdByLabel = createdBy || item.author;
+  const eventDateLabel = startDate
+    ? formatDateValue(startDate)
+    : startTime
+      ? formatDateValue(startTime)
+      : item.createdAt;
+  const eventTimeLabel = startTime ? formatTimeValue(startTime) : "";
+  const fileTypeLabel = fileType || item.format;
+  const fileSizeLabel = formatFileSize(fileSize);
+  const oppositionLogoUrl = resolveOppositionLogoUrl(oppositionLogo);
+  const displayKeyExclusions = new Set([
+    "duration",
+    "duration_sec",
+    "durationSec",
+    "category",
+    "event_category",
+    "sport",
+    "program",
+    "level",
+    "season",
+    "source",
+    "created_by",
+    "createdBy",
+    "start_date",
+    "startDate",
+    "start_time",
+    "startTime",
+    "file_type",
+    "fileType",
+    "file_size",
+    "fileSize",
+    "kind",
+    "opposition",
+  ]);
   const metaEntries = Object.entries(meta)
-    .filter(([key]) => key !== "duration_sec" && key !== "durationSec")
+    .filter(([key]) => !displayKeyExclusions.has(key))
     .sort(([left], [right]) => left.localeCompare(right));
   const durationLabel = formatMetaValue(meta.duration ?? item.duration);
   const durationSecLabel = formatMetaValue(meta.duration_sec ?? meta.durationSec);
@@ -907,7 +1109,7 @@ useEffect(() => {
           <div className="mt-4">
             <h1 className="text-lg font-semibold text-custom-text-100">{item.title}</h1>
             <p className="mt-1 text-xs text-custom-text-300">
-              Uploaded by {item.author} - {item.createdAt}
+              Uploaded by {createdByLabel} - {item.createdAt}
             </p>
             {item.description ? (
               <p className="mt-2 text-sm text-custom-text-200">{item.description}</p>
@@ -946,7 +1148,7 @@ useEffect(() => {
             >
               Details
             </button>
-            {/* <button
+            <button
               type="button"
               onClick={() => setActiveTab("tags")}
               className={`rounded-full px-3 py-1 ${
@@ -956,7 +1158,7 @@ useEffect(() => {
               }`}
             >
               Tags
-            </button> */}
+            </button>
           </div>
 
           {activeTab === "details" ? (
@@ -966,16 +1168,152 @@ useEffect(() => {
                   Event details
                 </div>
                 <div className="space-y-2 px-4 py-3 text-xs text-custom-text-300">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-3.5 w-3.5" />
-                    <span>{item.createdAt}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <User className="h-3.5 w-3.5" />
-                    <span>{item.author}</span>
-                  </div>
+                  {isMeaningfulValue(eventDateLabel) ? (
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-3.5 w-3.5" />
+                      <span>{eventDateLabel}</span>
+                    </div>
+                  ) : null}
+                  {isMeaningfulValue(eventTimeLabel) ? (
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-3.5 w-3.5" />
+                      <span>{eventTimeLabel}</span>
+                    </div>
+                  ) : null}
+                  {isMeaningfulValue(category) ? (
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-custom-text-200">Category</span>
+                      <span className="text-right">{category}</span>
+                    </div>
+                  ) : null}
+                  {isMeaningfulValue(season) ? (
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-custom-text-200">Season</span>
+                      <span className="text-right">{season}</span>
+                    </div>
+                  ) : null}
+                  {isMeaningfulValue(createdByLabel) ? (
+                    <div className="flex items-center gap-2">
+                      <User className="h-3.5 w-3.5" />
+                      <span>{createdByLabel}</span>
+                    </div>
+                  ) : null}
                 </div>
               </div>
+
+              {isMeaningfulValue(sport) || isMeaningfulValue(program) || isMeaningfulValue(level) ? (
+                <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
+                  <div className="border-b border-custom-border-200 px-4 py-2 text-xs font-semibold text-custom-text-100">
+                    Team details
+                  </div>
+                  <div className="space-y-2 px-4 py-3 text-xs text-custom-text-300">
+                    {isMeaningfulValue(sport) ? (
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-custom-text-200">Sport</span>
+                        <span className="text-right">{sport}</span>
+                      </div>
+                    ) : null}
+                    {isMeaningfulValue(program) ? (
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-custom-text-200">Program</span>
+                        <span className="text-right">{program}</span>
+                      </div>
+                    ) : null}
+                    {isMeaningfulValue(level) ? (
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-custom-text-200">Level</span>
+                        <span className="text-right">{level}</span>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
+
+              {opposition && hasOppositionDetails ? (
+                <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
+                  <div className="border-b border-custom-border-200 px-4 py-2 text-xs font-semibold text-custom-text-100">
+                    Opposition
+                  </div>
+                  <div className="space-y-3 px-4 py-3 text-xs text-custom-text-300">
+                    {oppositionName || oppositionLogoUrl ? (
+                      <div className="flex items-center gap-3">
+                        {oppositionLogoUrl ? (
+                          <img
+                            src={oppositionLogoUrl}
+                            alt={oppositionName || "Opposition logo"}
+                            className="h-10 w-10 rounded-full border border-custom-border-200 object-cover"
+                          />
+                        ) : null}
+                        <div className="text-sm font-semibold text-custom-text-100">
+                          {oppositionName || "Opposition team"}
+                        </div>
+                      </div>
+                    ) : null}
+                    {oppositionHeadCoach ? (
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-custom-text-200">Head coach</span>
+                        <span className="text-right">{oppositionHeadCoach}</span>
+                      </div>
+                    ) : null}
+                    {oppositionAsstCoach ? (
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-custom-text-200">Assistant coach</span>
+                        <span className="text-right">{oppositionAsstCoach}</span>
+                      </div>
+                    ) : null}
+                    {oppositionAthleticEmail ? (
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-3.5 w-3.5" />
+                        <a
+                          href={`mailto:${oppositionAthleticEmail}`}
+                          className="text-custom-text-200 hover:text-custom-text-100"
+                        >
+                          {oppositionAthleticEmail}
+                        </a>
+                      </div>
+                    ) : null}
+                    {oppositionAthleticPhone ? (
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-3.5 w-3.5" />
+                        <a
+                          href={`tel:${oppositionAthleticPhone}`}
+                          className="text-custom-text-200 hover:text-custom-text-100"
+                        >
+                          {oppositionAthleticPhone}
+                        </a>
+                      </div>
+                    ) : null}
+                    {oppositionAsstAthleticEmail ? (
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-3.5 w-3.5" />
+                        <a
+                          href={`mailto:${oppositionAsstAthleticEmail}`}
+                          className="text-custom-text-200 hover:text-custom-text-100"
+                        >
+                          {oppositionAsstAthleticEmail}
+                        </a>
+                      </div>
+                    ) : null}
+                    {oppositionAsstAthleticPhone ? (
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-3.5 w-3.5" />
+                        <a
+                          href={`tel:${oppositionAsstAthleticPhone}`}
+                          className="text-custom-text-200 hover:text-custom-text-100"
+                        >
+                          {oppositionAsstAthleticPhone}
+                        </a>
+                      </div>
+                    ) : null}
+                    {oppositionAddress ? (
+                      <div className="flex items-start gap-2 text-custom-text-200">
+                        <MapPin className="mt-0.5 h-3.5 w-3.5" />
+                        <span className="leading-relaxed">{oppositionAddress}</span>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
 
               {item.mediaType === "video" ? (
                 <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
@@ -1020,12 +1358,36 @@ useEffect(() => {
                   Media info
                 </div>
                 <div className="space-y-2 px-4 py-3 text-xs text-custom-text-300">
+                  {isMeaningfulValue(fileTypeLabel) ? (
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-custom-text-200">File type</span>
+                      <span className="text-right">{formatMetaValue(fileTypeLabel)}</span>
+                    </div>
+                  ) : null}
+                  {isMeaningfulValue(fileSizeLabel) ? (
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-custom-text-200">File size</span>
+                      <span className="text-right">{fileSizeLabel}</span>
+                    </div>
+                  ) : null}
+                  {isMeaningfulValue(source) ? (
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-custom-text-200">Source</span>
+                      <span className="text-right">{source}</span>
+                    </div>
+                  ) : null}
+                  {isMeaningfulValue(kind) ? (
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-custom-text-200">Kind</span>
+                      <span className="text-right">{kind}</span>
+                    </div>
+                  ) : null}
                   {metaEntries.length === 0 ? (
                     <div className="text-xs text-custom-text-400">No metadata available.</div>
                   ) : (
                     metaEntries.map(([key, value]) => (
                       <div key={key} className="flex items-center justify-between gap-3">
-                        <span className="truncate text-custom-text-200">{key}</span>
+                        <span className="truncate text-custom-text-200">{formatMetaLabel(key)}</span>
                         <span className="max-w-[55%] truncate text-right">{formatMetaValue(value)}</span>
                       </div>
                     ))

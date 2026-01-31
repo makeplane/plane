@@ -618,6 +618,8 @@ class ProjectAssetEndpoint(BaseAPIView):
             disposition="attachment",
             filename=asset.attributes.get("name"),
         )
+        if request.query_params.get("response") == "json":
+            return Response({"url": signed_url}, status=status.HTTP_200_OK)
         # Redirect to the signed URL
         return HttpResponseRedirect(signed_url)
 

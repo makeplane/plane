@@ -1,12 +1,12 @@
 import type { FC } from "react";
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-import { cn } from "@plane/utils";
+import { cn, getEditorAssetSrc, getFileURL } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import useKeypress from "@/hooks/use-keypress";
@@ -21,6 +21,62 @@ import { IssuePeekOverviewHeader } from "./header";
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { IssuePeekOverviewLoader } from "./loader";
 import { PeekOverviewProperties } from "./properties";
+
+const resolveDescriptionImageSrc = (value: string, workspaceSlug: string, projectId: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("data:") || trimmed.startsWith("blob:") || trimmed.startsWith("http")) {
+    return trimmed;
+  }
+  if (!trimmed.includes("/") && workspaceSlug) {
+    return (
+      getEditorAssetSrc({
+        assetId: trimmed,
+        workspaceSlug,
+        projectId,
+      }) ?? trimmed
+    );
+  }
+  return getFileURL(trimmed) ?? trimmed;
+};
+
+const extractDescriptionImageUrls = (descriptionHtml: string | null | undefined, workspaceSlug: string, projectId: string) => {
+  if (!descriptionHtml) return [];
+  const sources = new Set<string>();
+
+  if (typeof window !== "undefined" && "DOMParser" in window) {
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(descriptionHtml, "text/html");
+      doc.querySelectorAll("img, image-component").forEach((element) => {
+        const src =
+          element.getAttribute("src")?.trim() ||
+          element.getAttribute("data-src")?.trim() ||
+          element.getAttribute("data-source")?.trim();
+        if (src) {
+          const resolved = resolveDescriptionImageSrc(src, workspaceSlug, projectId);
+          if (resolved) sources.add(resolved);
+        }
+      });
+    } catch {
+      // fall back to regex parsing
+    }
+  }
+
+  if (sources.size === 0) {
+    const regex = /<(?:img|image-component)[^>]+src=["']?([^"'>\s]+)["']?/gi;
+    let match = regex.exec(descriptionHtml);
+    while (match) {
+      if (match[1]) {
+        const resolved = resolveDescriptionImageSrc(match[1], workspaceSlug, projectId);
+        if (resolved) sources.add(resolved);
+      }
+      match = regex.exec(descriptionHtml);
+    }
+  }
+
+  return Array.from(sources);
+};
 
 interface IIssueView {
   workspaceSlug: string;
@@ -55,6 +111,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const [isArchiveIssueModalOpen, setIsArchiveIssueModalOpen] = useState(false);
   const [isDuplicateIssueModalOpen, setIsDuplicateIssueModalOpen] = useState(false);
   const [isEditIssueModalOpen, setIsEditIssueModalOpen] = useState(false);
+  const [descriptionHtmlOverride, setDescriptionHtmlOverride] = useState<string | null>(null);
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<EditorRefApi>(null);
@@ -66,6 +123,17 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   } = useIssueDetail();
   const { isAnyModalOpen: isAnyEpicModalOpen } = useIssueDetail(EIssueServiceType.EPICS);
   const issue = getIssueById(issueId);
+  useEffect(() => {
+    setDescriptionHtmlOverride(null);
+  }, [issueId]);
+  const descriptionHtmlSource = descriptionHtmlOverride ?? issue?.description_html ?? null;
+  const descriptionImageUrls = useMemo(
+    () => extractDescriptionImageUrls(descriptionHtmlSource, workspaceSlug, projectId),
+    [descriptionHtmlSource, projectId, workspaceSlug]
+  );
+  const handleDescriptionChange = useCallback((value: string) => {
+    setDescriptionHtmlOverride(value);
+  }, []);
   // remove peek id
   const removeRoutePeekId = () => {
     setPeekIssue(undefined);
@@ -166,6 +234,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 isSubmitting={isSubmitting}
                 disabled={disabled}
                 embedIssue={embedIssue}
+                descriptionImageUrls={descriptionImageUrls}
               />
               {/* content */}
               <div className="vertical-scrollbar scrollbar-md relative h-full w-full overflow-hidden overflow-y-auto">
@@ -181,6 +250,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                       isArchived={is_archived}
                       isSubmitting={isSubmitting}
                       setIsSubmitting={(value) => setIsSubmitting(value)}
+                      onDescriptionChange={handleDescriptionChange}
                     />
 
                     <div className="py-2">
@@ -190,6 +260,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         issueId={issueId}
                         disabled={disabled || is_archived}
                         issueServiceType={EIssueServiceType.ISSUES}
+                        hideMediaLibraryButton
                       />
                     </div>
 
@@ -222,6 +293,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           isArchived={is_archived}
                           isSubmitting={isSubmitting}
                           setIsSubmitting={(value) => setIsSubmitting(value)}
+                          onDescriptionChange={handleDescriptionChange}
                         />
 
                         <div className="py-2">
@@ -231,6 +303,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             issueId={issueId}
                             disabled={disabled}
                             issueServiceType={EIssueServiceType.ISSUES}
+                            hideMediaLibraryButton
                           />
                         </div>
 
