@@ -368,18 +368,14 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
             primary_updated_at = updated_at
             artifacts_root = package_root(project_id_str, package_id) / "artifacts"
             attachment_root = package_root(project_id_str, package_id) / "attachment"
-            hls_threshold = getattr(settings, "MEDIA_LIBRARY_HLS_SIZE_THRESHOLD", 100 * 1024 * 1024)
-            file_size = getattr(file_obj, "size", None)
-            should_transcode = extension == "mp4" and (file_size is None or file_size >= hls_threshold)
-            if extension == "mp4" and not should_transcode:
-                format_value = "mp4"
+            is_video_upload = format_value in _VIDEO_FORMATS or extension in _VIDEO_FORMATS
+            should_transcode = is_video_upload and format_value != "m3u8" and extension != "m3u8"
             if should_transcode:
                 if shutil.which("ffmpeg") is None:
                     return Response(
-                        {"error": "ffmpeg is not installed. Install ffmpeg or upload a non-mp4 file."},
+                        {"error": "ffmpeg is not installed. Install ffmpeg or upload a non-video file."},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-                format_value = "m3u8"
                 artifact_dir = artifacts_root / primary_artifact_name
                 artifact_file_name = "index.m3u8"
                 file_path = artifact_dir / artifact_file_name
