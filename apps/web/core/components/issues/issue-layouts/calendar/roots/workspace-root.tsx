@@ -114,8 +114,10 @@ export const WorkspaceCalendarRoot = observer(function WorkspaceCalendarRoot(pro
     const fetchNoDateIssues = async () => {
       try {
         // Get base params from the filter store for the current view
+        // Use a high perPageCount to fetch all no-date issues in one request.
+        // Full cursor-based pagination can be added if datasets grow significantly.
         const baseParams = issuesFilter.getFilterParams(
-          { canGroup: false, perPageCount: 50 },
+          { canGroup: false, perPageCount: 500 },
           globalViewId,
           undefined,
           undefined,
@@ -143,7 +145,7 @@ export const WorkspaceCalendarRoot = observer(function WorkspaceCalendarRoot(pro
             );
             const issueIds = issues.map((issue) => issue.id);
             setNoDateIssueIds(issueIds);
-            setNoDateTotalCount(issueIds.length);
+            setNoDateTotalCount(response.total_count ?? issueIds.length);
 
             // Add issues to the issue map so they can be displayed
             if (issues.length > 0) {
