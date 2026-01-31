@@ -36,6 +36,7 @@ from plane.utils.media_library import (
     MediaLibraryTranscodeError,
     package_root,
     read_manifest,
+    transcode_video_to_mp4,
     transcode_mp4_to_hls,
     validate_segment,
     write_manifest_atomic,
@@ -137,6 +138,15 @@ def _create_video_thumbnail(source_path: Path, thumbnail_path: Path) -> bool:
             logger.error("ffmpeg thumbnail failed with exit code %s", exc.returncode)
         return False
     return thumbnail_path.exists()
+
+
+def _should_download_as_attachment(request) -> bool:
+    value = request.query_params.get("download")
+    if value is None:
+        return False
+    if isinstance(value, str) and value.strip().lower() in {"0", "false", "no"}:
+        return False
+    return True
 
 mimetypes.add_type("application/vnd.apple.mpegurl", ".m3u8")
 mimetypes.add_type("application/x-mpegURL", ".m3u8")
@@ -299,8 +309,27 @@ class MediaArtifactFileAPIView(BaseAPIView):
         if not file_path or not file_path.exists():
             raise NotFound("Artifact file not found.")
 
+        download_requested = _should_download_as_attachment(request)
+        format_value = str(artifact.get("format") or "").lower()
+        is_video = format_value in _VIDEO_FORMATS
+        if download_requested and artifact_path is None and is_video:
+            mp4_path = file_path
+            if file_path.suffix.lower() != ".mp4":
+                mp4_path = file_path.with_suffix(".mp4")
+            if not mp4_path.exists():
+                try:
+                    transcode_video_to_mp4(file_path, mp4_path)
+                except MediaLibraryTranscodeError as exc:
+                    return Response({"error": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            file_path = mp4_path
+
         content_type, _ = mimetypes.guess_type(str(file_path))
-        return FileResponse(open(file_path, "rb"), content_type=content_type or "application/octet-stream")
+        response = FileResponse(open(file_path, "rb"), content_type=content_type or "application/octet-stream")
+        if download_requested and artifact_path is None:
+            download_name = artifact.get("name") or "media"
+            suffix = ".mp4" if is_video else (Path(file_path).suffix or "")
+            response["Content-Disposition"] = f'attachment; filename="{download_name}{suffix}"'
+        return response
 
 
 class MediaArtifactsListAPIView(BaseAPIView):
@@ -437,18 +466,14 @@ class MediaArtifactsListAPIView(BaseAPIView):
             primary_updated_at = updated_at
             artifacts_root = package_root(project_id_str, package_id) / "artifacts"
             attachment_root = package_root(project_id_str, package_id) / "attachment"
-            hls_threshold = getattr(settings, "MEDIA_LIBRARY_HLS_SIZE_THRESHOLD", 100 * 1024 * 1024)
-            file_size = getattr(file_obj, "size", None)
-            should_transcode = extension == "mp4" and (file_size is None or file_size >= hls_threshold)
-            if extension == "mp4" and not should_transcode:
-                format_value = "mp4"
+            is_video_upload = format_value in _VIDEO_FORMATS or extension in _VIDEO_FORMATS
+            should_transcode = is_video_upload and format_value != "m3u8" and extension != "m3u8"
             if should_transcode:
                 if shutil.which("ffmpeg") is None:
                     return Response(
-                        {"error": "ffmpeg is not installed. Install ffmpeg or upload a non-mp4 file."},
+                        {"error": "ffmpeg is not installed. Install ffmpeg or upload a non-video file."},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-                format_value = "m3u8"
                 artifact_dir = artifacts_root / primary_artifact_name
                 artifact_file_name = "index.m3u8"
                 file_path = artifact_dir / artifact_file_name

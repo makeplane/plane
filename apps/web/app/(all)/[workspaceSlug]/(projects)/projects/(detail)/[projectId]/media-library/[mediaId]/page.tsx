@@ -83,6 +83,12 @@ const getVideoMimeType = (format: string) => {
   return "";
 };
 
+const buildDownloadUrl = (src: string) => {
+  if (!src) return "";
+  const separator = src.includes("?") ? "&" : "?";
+  return `${src}${separator}download=1`;
+};
+
 const MediaDetailPage = () => {
   const { mediaId, workspaceSlug, projectId } = useParams() as {
     mediaId: string;
@@ -110,6 +116,7 @@ const MediaDetailPage = () => {
     const normalizedId = decodeURIComponent(mediaId);
     return libraryItems.find((entry) => entry.id === normalizedId) ?? null;
   }, [libraryItems, mediaId]);
+  const meta = (item?.meta ?? {}) as Record<string, unknown>;
   const normalizedAction = (item?.action ?? "").toLowerCase();
   const documentFormat = item?.format?.toLowerCase() ?? "";
   const isVideoAction = new Set(["play", "play_hls", "play_streaming", "open_mp4"]).has(normalizedAction);
@@ -118,8 +125,12 @@ const MediaDetailPage = () => {
   );
   const isVideo = item?.mediaType === "video" || item?.linkedMediaType === "video" || isVideoAction || isVideoFormat;
   const isHls =
-    isVideo && (documentFormat === "m3u8" || (documentFormat === "stream" && normalizedAction === "play_streaming"));
+    isVideo &&
+    (documentFormat === "m3u8" ||
+      Boolean(meta?.hls) ||
+      (documentFormat === "stream" && normalizedAction === "play_streaming"));
   const videoSrc = item?.videoSrc ?? item?.fileSrc ?? "";
+  const videoDownloadSrc = videoSrc ? buildDownloadUrl(videoSrc) : "";
   const isPdf = item?.mediaType === "document" && documentFormat === "pdf";
   const isTextDocument =
     item?.mediaType === "document" &&
@@ -283,7 +294,6 @@ const MediaDetailPage = () => {
       </div>
     );
   }
-  const meta = item.meta ?? {};
   const metaEntries = Object.entries(meta)
     .filter(([key]) => key !== "duration_sec" && key !== "durationSec")
     .sort(([left], [right]) => left.localeCompare(right));
@@ -328,19 +338,33 @@ const MediaDetailPage = () => {
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         <div className="rounded-lg  bg-custom-background-100 p-4 ">
           {isVideo ? (
-            <div className="mx-auto h-[505px] w-100 max-w-full overflow-hidden rounded-lg border border-custom-border-200 bg-black">
-              {isHls ? (
-                <HlsVideo
-                  src={videoSrc}
-                  poster={item.thumbnail}
-                  className="h-full w-full object-contain"
-                  videoRef={videoRef}
-                />
-              ) : (
-                <video ref={videoRef} controls poster={item.thumbnail} className="h-full w-full object-contain">
-                  <source src={videoSrc} type={getVideoMimeType(documentFormat) || undefined} />
-                </video>
-              )}
+            <div className="rounded-lg border border-custom-border-200 bg-black">
+              <div className="mx-auto h-[505px] w-100 max-w-full overflow-hidden">
+                {isHls ? (
+                  <HlsVideo
+                    src={videoSrc}
+                    poster={item.thumbnail}
+                    className="h-full w-full object-contain"
+                    videoRef={videoRef}
+                  />
+                ) : (
+                  <video ref={videoRef} controls poster={item.thumbnail} className="h-full w-full object-contain">
+                    <source src={videoSrc} type={getVideoMimeType(documentFormat) || undefined} />
+                  </video>
+                )}
+              </div>
+              {videoDownloadSrc ? (
+                <div className="flex justify-end border-t border-custom-border-200 bg-custom-background-100 px-3 py-2">
+                  <a
+                    href={videoDownloadSrc}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-full border border-custom-border-200 px-3 py-1 text-xs text-custom-text-300 hover:text-custom-text-100"
+                  >
+                    Download video
+                  </a>
+                </div>
+              ) : null}
             </div>
           ) : item.mediaType === "image" ? (
             <div className="overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90">

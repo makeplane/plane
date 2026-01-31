@@ -616,3 +616,82 @@ def transcode_mp4_to_hls(
                 pass
         if not success and output_dir.exists():
             shutil.rmtree(output_dir, ignore_errors=True)
+
+
+def transcode_video_to_mp4(input_path: Path, output_path: Path) -> Path:
+    if shutil.which("ffmpeg") is None:
+        raise MediaLibraryTranscodeError("ffmpeg is not installed.")
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp_output = tempfile.mkstemp(dir=output_path.parent, suffix=".tmp.mp4")
+    os.close(fd)
+    tmp_output_path = Path(tmp_output)
+
+    def _render_ffmpeg_error(exc: subprocess.CalledProcessError) -> str:
+        detail = (exc.stderr or exc.stdout or "").strip()
+        if detail:
+            detail = detail.replace("\n", " ")
+            if len(detail) > 500:
+                detail = f"{detail[:500]}..."
+        return detail
+
+    try:
+        copy_cmd = [
+            "ffmpeg",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-y",
+            "-i",
+            str(input_path),
+            "-c",
+            "copy",
+            "-movflags",
+            "+faststart",
+            str(tmp_output_path),
+        ]
+        try:
+            subprocess.run(copy_cmd, check=True, capture_output=True, text=True)
+        except subprocess.CalledProcessError as exc:
+            detail = _render_ffmpeg_error(exc)
+            if detail:
+                logger.info("ffmpeg stream copy failed, falling back to encode: %s", detail)
+            else:
+                logger.info("ffmpeg stream copy failed, falling back to encode.")
+            encode_cmd = [
+                "ffmpeg",
+                "-hide_banner",
+                "-loglevel",
+                "error",
+                "-y",
+                "-i",
+                str(input_path),
+                "-c:v",
+                "libx264",
+                "-preset",
+                "veryfast",
+                "-c:a",
+                "aac",
+                "-b:a",
+                "128k",
+                "-movflags",
+                "+faststart",
+                str(tmp_output_path),
+            ]
+            subprocess.run(encode_cmd, check=True, capture_output=True, text=True)
+
+        os.replace(tmp_output_path, output_path)
+        return output_path
+    except subprocess.CalledProcessError as exc:
+        detail = _render_ffmpeg_error(exc)
+        if detail:
+            logger.error("ffmpeg failed: %s", detail)
+            raise MediaLibraryTranscodeError(f"Video conversion failed: {detail}") from exc
+        logger.error("ffmpeg failed with exit code %s", exc.returncode)
+        raise MediaLibraryTranscodeError("Video conversion failed.") from exc
+    finally:
+        if tmp_output_path.exists():
+            try:
+                tmp_output_path.unlink()
+            except OSError:
+                pass
