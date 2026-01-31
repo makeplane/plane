@@ -192,14 +192,10 @@ export const WorkspaceKanBanRoot = observer(function WorkspaceKanBanRoot(props: 
 
     if (!draggedIssueId || !draggedIssue) return;
 
-    try {
-      await removeIssue(draggedIssue.project_id, draggedIssueId);
+    await removeIssue(draggedIssue.project_id, draggedIssueId).finally(() => {
       setDeleteIssueModal(false);
       setDraggedIssueId(undefined);
-    } catch (_error) {
-      setDeleteIssueModal(false);
-      setDraggedIssueId(undefined);
-    }
+    });
   };
 
   const handleCollapsedGroups = useCallback(
