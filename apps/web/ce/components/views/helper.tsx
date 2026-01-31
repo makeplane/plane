@@ -8,7 +8,6 @@ import { WorkspaceKanBanRoot } from "@/components/issues/issue-layouts/kanban/ro
 export type TLayoutSelectionProps = {
   onChange: (layout: EIssueLayoutTypes) => void;
   selectedLayout: EIssueLayoutTypes;
-  workspaceSlug: string;
 };
 
 // Supported layouts for workspace views: Spreadsheet, Calendar, Kanban
