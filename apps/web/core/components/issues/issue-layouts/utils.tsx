@@ -565,7 +565,10 @@ export const handleGroupDragDrop = async (
     // Special handling for state_detail.group - need to map to actual state_id
     if (groupBy === "state_detail.group") {
       const { getProjectStates } = store.state;
-      const projectStates = sourceIssue.project_id ? getProjectStates(sourceIssue.project_id) : undefined;
+      if (!sourceIssue.project_id) {
+        throw new Error("Cannot resolve state group without a project context");
+      }
+      const projectStates = getProjectStates(sourceIssue.project_id);
       const targetState = findStateByGroup(projectStates, destination.groupId);
 
       if (targetState) {
@@ -574,8 +577,7 @@ export const handleGroupDragDrop = async (
           ADD: [targetState.id],
           REMOVE: sourceIssue.state_id ? [sourceIssue.state_id] : [],
         };
-      } else if (projectStates) {
-        // No matching state found in project - cannot complete drag
+      } else {
         throw new Error(`No state found for group "${destination.groupId}" in project`);
       }
     } else {
@@ -603,7 +605,10 @@ export const handleGroupDragDrop = async (
     // Special handling for state_detail.group as subGroupBy - need to map to actual state_id
     if (subGroupBy === "state_detail.group") {
       const { getProjectStates } = store.state;
-      const projectStates = sourceIssue.project_id ? getProjectStates(sourceIssue.project_id) : undefined;
+      if (!sourceIssue.project_id) {
+        throw new Error("Cannot resolve state group without a project context");
+      }
+      const projectStates = getProjectStates(sourceIssue.project_id);
       const targetState = findStateByGroup(projectStates, destination.subGroupId);
 
       if (targetState) {
@@ -612,7 +617,7 @@ export const handleGroupDragDrop = async (
           ADD: [targetState.id],
           REMOVE: sourceIssue.state_id ? [sourceIssue.state_id] : [],
         };
-      } else if (projectStates) {
+      } else {
         throw new Error(`No state found for group "${destination.subGroupId}" in project`);
       }
     } else {
