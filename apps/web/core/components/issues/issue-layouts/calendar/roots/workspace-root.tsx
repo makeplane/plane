@@ -48,8 +48,8 @@ export const WorkspaceCalendarRoot = observer(function WorkspaceCalendarRoot(pro
 
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
 
-  // Check if user can create issues in at least one project
-  const canCreateIssues = useCallback(() => {
+  // Check if user can create issues in at least one project (computed once per render)
+  const canCreateIssues = useMemo(() => {
     if (!joinedProjectIds || joinedProjectIds.length === 0) return false;
     return joinedProjectIds.some((projectId) =>
       allowPermissions(
@@ -271,8 +271,8 @@ export const WorkspaceCalendarRoot = observer(function WorkspaceCalendarRoot(pro
         // Workspace views are filter-based, not container-based like cycles/modules.
         // Issues appear based on their properties, not by being explicitly added to a view.
         addIssuesToView={undefined}
-        enableQuickIssueCreate={enableQuickAdd && canCreateIssues()}
-        disableIssueCreation={!enableIssueCreation || !canCreateIssues()}
+        enableQuickIssueCreate={enableQuickAdd && canCreateIssues}
+        disableIssueCreation={!enableIssueCreation || !canCreateIssues}
         quickAddCallback={handleQuickAddIssue}
         readOnly={false}
         updateFilters={updateFilters}

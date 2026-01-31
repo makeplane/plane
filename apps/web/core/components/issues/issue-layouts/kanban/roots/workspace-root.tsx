@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -78,8 +78,8 @@ export const WorkspaceKanBanRoot = observer(function WorkspaceKanBanRoot(props: 
 
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
 
-  // Check if user can create issues in at least one project
-  const canCreateIssues = useCallback(() => {
+  // Check if user can create issues in at least one project (computed once per render)
+  const canCreateIssues = useMemo(() => {
     if (!joinedProjectIds || joinedProjectIds.length === 0) return false;
     return joinedProjectIds.some((projectId) =>
       allowPermissions(
@@ -267,10 +267,10 @@ export const WorkspaceKanBanRoot = observer(function WorkspaceKanBanRoot(props: 
                 quickActions={renderQuickActions}
                 handleCollapsedGroups={handleCollapsedGroups}
                 collapsedGroups={collapsedGroups}
-                enableQuickIssueCreate={enableQuickAdd && canCreateIssues()}
+                enableQuickIssueCreate={enableQuickAdd && canCreateIssues}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
                 quickAddCallback={handleQuickAddIssue}
-                disableIssueCreation={!enableIssueCreation || !canCreateIssues()}
+                disableIssueCreation={!enableIssueCreation || !canCreateIssues}
                 canEditProperties={canEditProperties}
                 // Workspace views are filter-based, not container-based like cycles/modules.
                 // Issues appear based on their properties, not by being explicitly added to a view.
