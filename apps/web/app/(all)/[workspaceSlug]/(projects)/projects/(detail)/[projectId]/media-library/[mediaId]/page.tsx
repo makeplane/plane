@@ -5,6 +5,7 @@ import DOMPurify from "dompurify";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, Calendar, FileText, User } from "lucide-react";
+import { API_BASE_URL } from "@plane/constants";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useMediaLibraryItems } from "../(list)/use-media-library-items";
 import { HlsVideo } from "../hls-video";
@@ -89,6 +90,17 @@ const buildDownloadUrl = (src: string) => {
   return `${src}${separator}download=1`;
 };
 
+const buildArtifactDownloadUrl = (
+  workspaceSlug: string,
+  projectId: string,
+  packageId: string,
+  artifactId: string
+) => {
+  const base = API_BASE_URL?.replace(/\/$/, "") ?? "";
+  const artifactParam = encodeURIComponent(artifactId);
+  return `${base}/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/${artifactParam}/file/?download=1`;
+};
+
 const MediaDetailPage = () => {
   const { mediaId, workspaceSlug, projectId } = useParams() as {
     mediaId: string;
@@ -130,7 +142,12 @@ const MediaDetailPage = () => {
       Boolean(meta?.hls) ||
       (documentFormat === "stream" && normalizedAction === "play_streaming"));
   const videoSrc = item?.videoSrc ?? item?.fileSrc ?? "";
-  const videoDownloadSrc = videoSrc ? buildDownloadUrl(videoSrc) : "";
+  const videoDownloadSrc =
+    item?.id && item?.packageId
+      ? buildArtifactDownloadUrl(workspaceSlug, projectId, item.packageId, item.id)
+      : videoSrc
+        ? buildDownloadUrl(videoSrc)
+        : "";
   const isPdf = item?.mediaType === "document" && documentFormat === "pdf";
   const isTextDocument =
     item?.mediaType === "document" &&

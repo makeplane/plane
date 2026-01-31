@@ -273,7 +273,10 @@ class MediaArtifactFileAPIView(BaseAPIView):
         base_root = media_library_root().resolve(strict=False)
         file_path = None
         raw_path = artifact.get("path") or ""
-        if raw_path:
+        external_url = None
+        if isinstance(raw_path, str) and raw_path.startswith(("http://", "https://")):
+            external_url = raw_path
+        elif raw_path:
             candidate = Path(raw_path)
             if not candidate.is_absolute():
                 candidate = (base_root / candidate).resolve(strict=False)
@@ -306,12 +309,26 @@ class MediaArtifactFileAPIView(BaseAPIView):
                 if matches:
                     file_path = matches[0].resolve(strict=False)
 
-        if not file_path or not file_path.exists():
-            raise NotFound("Artifact file not found.")
-
         download_requested = _should_download_as_attachment(request)
         format_value = str(artifact.get("format") or "").lower()
-        is_video = format_value in _VIDEO_FORMATS
+        action_value = str(artifact.get("action") or "").lower()
+        is_video = (
+            format_value in _VIDEO_FORMATS
+            or format_value == "stream"
+            or action_value in {"play_streaming", "play_hls", "play", "open_mp4"}
+        )
+        if not file_path or not file_path.exists():
+            if external_url and download_requested and artifact_path is None and is_video:
+                mp4_path = package_root(project_id_str, package_id) / "artifacts" / f"{artifact_id}.mp4"
+                if not mp4_path.exists():
+                    try:
+                        transcode_video_to_mp4(external_url, mp4_path)
+                    except MediaLibraryTranscodeError as exc:
+                        return Response({"error": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                file_path = mp4_path
+            else:
+                raise NotFound("Artifact file not found.")
+
         if download_requested and artifact_path is None and is_video:
             mp4_path = file_path
             if file_path.suffix.lower() != ".mp4":

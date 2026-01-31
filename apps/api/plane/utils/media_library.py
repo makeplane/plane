@@ -618,9 +618,19 @@ def transcode_mp4_to_hls(
             shutil.rmtree(output_dir, ignore_errors=True)
 
 
-def transcode_video_to_mp4(input_path: Path, output_path: Path) -> Path:
+def transcode_video_to_mp4(input_path: str | Path, output_path: Path) -> Path:
     if shutil.which("ffmpeg") is None:
         raise MediaLibraryTranscodeError("ffmpeg is not installed.")
+
+    source_value = str(input_path)
+    if isinstance(input_path, Path):
+        if not input_path.exists():
+            raise MediaLibraryTranscodeError("Source video not found.")
+    elif not source_value.startswith(("http://", "https://")):
+        candidate = Path(source_value)
+        if not candidate.exists():
+            raise MediaLibraryTranscodeError("Source video not found.")
+        source_value = str(candidate)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp_output = tempfile.mkstemp(dir=output_path.parent, suffix=".tmp.mp4")
@@ -643,7 +653,7 @@ def transcode_video_to_mp4(input_path: Path, output_path: Path) -> Path:
             "error",
             "-y",
             "-i",
-            str(input_path),
+            source_value,
             "-c",
             "copy",
             "-movflags",
@@ -665,7 +675,7 @@ def transcode_video_to_mp4(input_path: Path, output_path: Path) -> Path:
                 "error",
                 "-y",
                 "-i",
-                str(input_path),
+                source_value,
                 "-c:v",
                 "libx264",
                 "-preset",

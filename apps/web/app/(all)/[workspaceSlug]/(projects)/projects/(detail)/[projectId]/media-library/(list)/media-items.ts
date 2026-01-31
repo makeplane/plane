@@ -6,6 +6,7 @@ import type { TMediaArtifact } from "@/services/media-library.service";
 
 export type TMediaItem = {
   id: string;
+  packageId?: string;
   title: string;
   description?: string;
   format: string;
@@ -347,6 +348,7 @@ export const mapArtifactsToMediaItems = (
 
     return {
       id: artifact.name,
+      packageId: context?.packageId,
       title: displayTitle,
       description,
       format,
