@@ -120,7 +120,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
         },
       })
     );
-  }, [dayTileRef?.current, formattedDatePayload]);
+  }, [formattedDatePayload, handleDragAndDrop, issues]);
 
   if (!formattedDatePayload) return null;
   const issueIds = groupedIssueIds?.[formattedDatePayload];
