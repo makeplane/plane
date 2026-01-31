@@ -4,11 +4,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DOMPurify from "dompurify";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import videojs from "video.js";
+import "video.js/dist/video-js.css";
 import { ArrowLeft, Calendar, FileText, User } from "lucide-react";
-import { API_BASE_URL } from "@plane/constants";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useMediaLibraryItems } from "../(list)/use-media-library-items";
-import { HlsVideo } from "../hls-video";
 import { TagsSection } from "./tags-section";
 
 const formatMetaValue = (value: unknown) => {
@@ -84,21 +84,63 @@ const getVideoMimeType = (format: string) => {
   return "";
 };
 
+const getVideoFormatFromSrc = (src: string) => {
+  const match = src.toLowerCase().match(/\.(mp4|m4v|m3u8|mov|webm|avi|mkv|mpeg|mpg)(\?.*)?$/);
+  return match?.[1] ?? "";
+};
+
+type TCaptionTrack = {
+  src: string;
+  label?: string;
+  srclang?: string;
+  kind?: "captions" | "subtitles";
+  default?: boolean;
+};
+
+const getCaptionTracks = (meta: unknown): TCaptionTrack[] => {
+  if (!meta || typeof meta !== "object") return [];
+  const raw = (meta as Record<string, unknown>).captions ?? (meta as Record<string, unknown>).subtitles;
+  if (!raw) return [];
+  const tracks = Array.isArray(raw) ? raw : [raw];
+  return tracks
+    .map((entry) => {
+      if (typeof entry === "string") {
+        return { src: entry, label: "CC", kind: "captions" } as TCaptionTrack;
+      }
+      if (!entry || typeof entry !== "object") return null;
+      const data = entry as Record<string, unknown>;
+      const src = typeof data.src === "string" ? data.src : "";
+      if (!src) return null;
+      return {
+        src,
+        label: typeof data.label === "string" ? data.label : undefined,
+        srclang: typeof data.srclang === "string" ? data.srclang : undefined,
+        kind: data.kind === "subtitles" ? "subtitles" : "captions",
+        default: Boolean(data.default),
+      } as TCaptionTrack;
+    })
+    .filter((entry): entry is TCaptionTrack => Boolean(entry?.src));
+};
+
+const getVideoRepresentations = (player: any) => {
+  const tech = player?.tech?.(true);
+  const vhs = tech?.vhs;
+  const reps = typeof vhs?.representations === "function" ? vhs.representations() : [];
+  return Array.isArray(reps) ? reps : [];
+};
+
+const getQualitySelection = (representations: any[]) => {
+  const enabled = representations.filter((rep) => rep?.enabled?.());
+  if (enabled.length === 1) {
+    return { isAuto: false, activeRep: enabled[0] };
+  }
+  return { isAuto: true, activeRep: null };
+};
+
 const buildDownloadUrl = (src: string) => {
   if (!src) return "";
   const separator = src.includes("?") ? "&" : "?";
   return `${src}${separator}download=1`;
-};
-
-const buildArtifactDownloadUrl = (
-  workspaceSlug: string,
-  projectId: string,
-  packageId: string,
-  artifactId: string
-) => {
-  const base = API_BASE_URL?.replace(/\/$/, "") ?? "";
-  const artifactParam = encodeURIComponent(artifactId);
-  return `${base}/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/${artifactParam}/file/?download=1`;
 };
 
 const MediaDetailPage = () => {
@@ -110,6 +152,7 @@ const MediaDetailPage = () => {
   const { items: libraryItems, isLoading } = useMediaLibraryItems(workspaceSlug, projectId);
   const [activeTab, setActiveTab] = useState<"details" | "tags">("details");
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const playerRef = useRef<ReturnType<typeof videojs> | null>(null);
   const [isImageZoomOpen, setIsImageZoomOpen] = useState(false);
   const [textPreview, setTextPreview] = useState<string | null>(null);
   const [textPreviewError, setTextPreviewError] = useState<string | null>(null);
@@ -131,23 +174,33 @@ const MediaDetailPage = () => {
   const meta = (item?.meta ?? {}) as Record<string, unknown>;
   const normalizedAction = (item?.action ?? "").toLowerCase();
   const documentFormat = item?.format?.toLowerCase() ?? "";
+  const videoSrc = item?.videoSrc ?? item?.fileSrc ?? "";
+  const resolvedVideoFormat = documentFormat || getVideoFormatFromSrc(videoSrc);
   const isVideoAction = new Set(["play", "play_hls", "play_streaming", "open_mp4"]).has(normalizedAction);
   const isVideoFormat = new Set(["mp4", "m4v", "m3u8", "mov", "webm", "avi", "mkv", "mpeg", "mpg", "stream"]).has(
-    documentFormat
+    resolvedVideoFormat
   );
   const isVideo = item?.mediaType === "video" || item?.linkedMediaType === "video" || isVideoAction || isVideoFormat;
   const isHls =
     isVideo &&
-    (documentFormat === "m3u8" ||
-      Boolean(meta?.hls) ||
-      (documentFormat === "stream" && normalizedAction === "play_streaming"));
-  const videoSrc = item?.videoSrc ?? item?.fileSrc ?? "";
-  const videoDownloadSrc =
-    item?.id && item?.packageId
-      ? buildArtifactDownloadUrl(workspaceSlug, projectId, item.packageId, item.id)
-      : videoSrc
-        ? buildDownloadUrl(videoSrc)
-        : "";
+    (resolvedVideoFormat === "m3u8" ||
+      resolvedVideoFormat === "stream" ||
+      videoSrc.toLowerCase().includes(".m3u8") ||
+      normalizedAction === "play_streaming" ||
+      Boolean(meta?.hls));
+  const proxiedVideoSrc = useMemo(() => {
+    if (!videoSrc) return videoSrc;
+    if (!isHls) return videoSrc;
+    try {
+      const base = typeof window !== "undefined" ? window.location.origin : "http://localhost";
+      const url = new URL(videoSrc, base);
+      if (url.origin === base) return videoSrc;
+      return `/api/hls?url=${encodeURIComponent(url.toString())}`;
+    } catch {
+      return videoSrc;
+    }
+  }, [isHls, videoSrc]);
+  const videoDownloadSrc = videoSrc ? buildDownloadUrl(videoSrc) : "";
   const isPdf = item?.mediaType === "document" && documentFormat === "pdf";
   const isTextDocument =
     item?.mediaType === "document" &&
@@ -277,6 +330,331 @@ const MediaDetailPage = () => {
   }, [isBinaryDocument, isDocx, isPptx, isUnsupportedDocument, isXlsx, item?.fileSrc, item?.mediaType]);
 
   useEffect(() => {
+    if (!isVideo) {
+      if (playerRef.current) {
+        playerRef.current.dispose();
+        playerRef.current = null;
+      }
+      return;
+    }
+
+    const videoElement = videoRef.current;
+    if (!videoElement) return;
+
+    if (!playerRef.current) {
+      playerRef.current = videojs(videoElement, {
+        controls: true,
+        autoplay: true,
+        preload: "auto",
+        playsinline: true,
+        playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 2],
+        html5: {
+          vhs: {
+            withCredentials: true,
+          },
+        },
+        controlBar: {
+          progressControl: true,
+          playToggle: true,
+          volumePanel: true,
+          currentTimeDisplay: true,
+          timeDivider: true,
+          durationDisplay: true,
+          playbackRateMenuButton: true,
+          fullscreenToggle: true,
+        },
+      });
+
+      const player = playerRef.current as any;
+      if (!player) return;
+
+      const Button = videojs.getComponent("Button");
+      const MenuButton = videojs.getComponent("MenuButton");
+      const MenuItem = videojs.getComponent("MenuItem");
+
+      const ensureSkipButtons = () => {
+        const SkipBase = class extends (Button as any) {
+          seconds: number;
+          constructor(playerInstance: any, options: any) {
+            super(playerInstance, options);
+            this.seconds = options?.seconds ?? 0;
+            const label = this.seconds > 0 ? `+${this.seconds}s` : `${this.seconds}s`;
+            this.controlText(`Skip ${label}`);
+            this.addClass("vjs-skip-button");
+            this.addClass(this.seconds > 0 ? "vjs-skip-forward" : "vjs-skip-backward");
+            this.el().textContent = "";
+            this.addClass(this.seconds > 0 ? "vjs-icon-next-item" : "vjs-icon-previous-item");
+          }
+
+          handleClick() {
+            const playerInstance = this.player();
+            if (!playerInstance) return;
+            const current = playerInstance.currentTime() ?? 0;
+            const seekable = playerInstance.seekable && playerInstance.seekable();
+            let target = current + this.seconds;
+            const duration = playerInstance.duration?.();
+            if (Number.isFinite(duration) && duration > 0) {
+              target = Math.min(duration, Math.max(0, target));
+            } else if (seekable && seekable.length) {
+              const start = seekable.start(0);
+              const end = seekable.end(0);
+              target = Math.min(end, Math.max(start, target));
+            } else {
+              target = Math.max(0, target);
+            }
+            playerInstance.currentTime(target);
+            const afterSet = playerInstance.currentTime() ?? 0;
+            if (Math.abs(afterSet - target) < 0.1) return;
+            if (!Number.isFinite(duration) && (!seekable || !seekable.length)) {
+              const readyState = playerInstance.readyState?.() ?? 0;
+              if (readyState < 1) {
+                const pendingTarget = target;
+                const retrySeek = () => {
+                  const nextDuration = playerInstance.duration?.();
+                  const nextTarget =
+                    Number.isFinite(nextDuration) && nextDuration > 0
+                      ? Math.min(nextDuration, Math.max(0, pendingTarget))
+                      : Math.max(0, pendingTarget);
+                  playerInstance.currentTime(nextTarget);
+                };
+                playerInstance.one("loadedmetadata", retrySeek);
+                playerInstance.one("canplay", retrySeek);
+              }
+            }
+          }
+        };
+
+        const skipBackName = "SkipBack5";
+        const skipForwardName = "SkipForward5";
+
+        if (!videojs.getComponent(skipBackName)) {
+          const SkipBack = class extends SkipBase {};
+          videojs.registerComponent(skipBackName, SkipBack as any);
+        }
+        if (!videojs.getComponent(skipForwardName)) {
+          const SkipForward = class extends SkipBase {};
+          videojs.registerComponent(skipForwardName, SkipForward as any);
+        }
+
+        const controlBar = player.controlBar;
+        if (!controlBar) return;
+
+        if (!controlBar.getChild(skipBackName)) {
+          const children = controlBar.children();
+          let playToggleIndex = children.findIndex((child: any) => child?.name?.() === "PlayToggle");
+          const baseIndex = playToggleIndex >= 0 ? playToggleIndex : 0;
+          // Add skip back before play toggle.
+          controlBar.addChild(skipBackName, { seconds: -5 }, baseIndex);
+          // Recompute play toggle index since children shifted.
+          playToggleIndex = controlBar.children().findIndex((child: any) => child?.name?.() === "PlayToggle");
+          const forwardIndex = playToggleIndex >= 0 ? playToggleIndex + 1 : controlBar.children().length;
+          controlBar.addChild(skipForwardName, { seconds: 5 }, forwardIndex);
+        }
+      };
+
+      player.ready(() => {
+        ensureSkipButtons();
+      });
+      player.on("loadedmetadata", ensureSkipButtons);
+
+      let qualityButton: any = null;
+      let qualityRetryId: ReturnType<typeof setTimeout> | null = null;
+      const qualityButtonName = "QualityMenuButton";
+
+      const ensureQualityMenu = () => {
+        const representations = getVideoRepresentations(player);
+        if (representations.length === 0 && isHls && !qualityRetryId) {
+          qualityRetryId = setTimeout(() => {
+            qualityRetryId = null;
+            if (playerRef.current === player) ensureQualityMenu();
+          }, 500);
+        }
+        if (representations.length === 0) {
+          if (qualityButton && player.controlBar) {
+            player.controlBar.removeChild(qualityButton);
+            qualityButton = null;
+          }
+          return;
+        }
+
+        if (!videojs.getComponent(qualityButtonName)) {
+          const QualityMenuItem = class extends (MenuItem as any) {
+            rep?: any;
+            isAuto: boolean;
+
+            constructor(playerInstance: any, options: any) {
+              super(playerInstance, options);
+              this.rep = options?.rep;
+              this.isAuto = Boolean(options?.isAuto);
+              this.on("click", this.handleClick);
+            }
+
+            handleClick() {
+              const playerInstance = this.player();
+              const reps = getVideoRepresentations(playerInstance);
+              if (!reps.length) return;
+              if (this.isAuto) {
+                reps.forEach((rep) => rep?.enabled?.(true));
+              } else {
+                reps.forEach((rep) => rep?.enabled?.(rep === this.rep));
+              }
+              playerInstance.trigger("qualitychange");
+              const button = playerInstance?.controlBar?.getChild?.(qualityButtonName) as any;
+              button?.update?.();
+            }
+          };
+
+          const QualityMenuButton = class extends (MenuButton as any) {
+            items: any[] = [];
+            constructor(playerInstance: any, options: any) {
+              super(playerInstance, options);
+              this.controlText("Quality");
+              this.addClass("vjs-quality-selector");
+              this.addClass("vjs-icon-cog");
+              this.addClass("vjs-menu-button-popup");
+            }
+
+            createItems() {
+              const playerInstance = this.player();
+              const reps = getVideoRepresentations(playerInstance);
+              if (!reps.length) {
+                return [
+                  new QualityMenuItem(playerInstance, {
+                    label: "Auto",
+                    selectable: false,
+                    selected: true,
+                    isAuto: true,
+                  }),
+                ];
+              }
+              const { isAuto, activeRep } = getQualitySelection(reps);
+
+              const sorted = reps
+                .map((rep, index) => ({
+                  rep,
+                  height: rep?.height ?? 0,
+                  bandwidth: rep?.bandwidth ?? rep?.bitrate ?? 0,
+                  index,
+                }))
+                .sort((left, right) => {
+                  if (left.height !== right.height) return right.height - left.height;
+                  if (left.bandwidth !== right.bandwidth) return right.bandwidth - left.bandwidth;
+                  return left.index - right.index;
+                });
+
+              const items = [
+                new QualityMenuItem(playerInstance, {
+                  label: "Auto",
+                  selectable: true,
+                  selected: isAuto,
+                  isAuto: true,
+                }),
+              ];
+
+              sorted.forEach(({ rep, height, bandwidth }) => {
+                const label = height
+                  ? `${height}p`
+                  : bandwidth
+                    ? `${Math.round(bandwidth / 1000)} kbps`
+                    : "Source";
+                items.push(
+                  new QualityMenuItem(playerInstance, {
+                    label,
+                    selectable: true,
+                    selected: !isAuto && activeRep === rep,
+                    rep,
+                    isAuto: false,
+                  })
+                );
+              });
+
+              this.items = items;
+              return items;
+            }
+
+            update() {
+              const reps = getVideoRepresentations(this.player());
+              if (!reps.length) return;
+              const { isAuto, activeRep } = getQualitySelection(reps);
+              this.items?.forEach((item) => {
+                if (item?.isAuto) {
+                  item.selected?.(isAuto);
+                } else if (item?.rep) {
+                  item.selected?.(activeRep === item.rep);
+                }
+              });
+            }
+          };
+
+          videojs.registerComponent(qualityButtonName, QualityMenuButton as any);
+        }
+
+        if (!qualityButton && player.controlBar) {
+          qualityButton = player.controlBar.addChild(qualityButtonName, {});
+          const fullscreenToggle = player.controlBar.getChild("FullscreenToggle");
+          if (fullscreenToggle && qualityButton?.el && player.controlBar.el) {
+            player.controlBar.el().insertBefore(qualityButton.el(), fullscreenToggle.el());
+          }
+        }
+
+        qualityButton?.update?.();
+      };
+
+      player.ready(() => {
+        ensureQualityMenu();
+      });
+      player.on("loadedmetadata", ensureQualityMenu);
+      player.on("loadeddata", ensureQualityMenu);
+      player.on("canplay", ensureQualityMenu);
+      player.on("play", ensureQualityMenu);
+      player.on("qualitychange", ensureQualityMenu);
+      void MenuButton;
+      void MenuItem;
+    }
+
+    return () => {
+      if (playerRef.current) {
+        playerRef.current.dispose();
+        playerRef.current = null;
+      }
+    };
+  }, [isVideo, isHls]);
+
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player || !proxiedVideoSrc) return;
+    const type = getVideoMimeType(resolvedVideoFormat);
+    const source = type ? { src: proxiedVideoSrc, type } : { src: proxiedVideoSrc };
+    player.src(source);
+    player.poster(item?.thumbnail ?? "");
+  }, [item?.thumbnail, proxiedVideoSrc, resolvedVideoFormat]);
+
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player) return;
+    const tracks = getCaptionTracks(item?.meta);
+    const existing = player.remoteTextTracks?.();
+    if (existing && existing.length) {
+      for (let i = existing.length - 1; i >= 0; i -= 1) {
+        player.removeRemoteTextTrack(existing[i]);
+      }
+    }
+    if (!tracks.length) return;
+    tracks.forEach((track) => {
+      player.addRemoteTextTrack(
+        {
+          kind: track.kind ?? "captions",
+          src: track.src,
+          srclang: track.srclang,
+          label: track.label ?? "CC",
+          default: track.default ?? false,
+        },
+        false
+      );
+    });
+  }, [item?.meta]);
+
+useEffect(() => {
     if (!isUnsupportedDocument) return;
     setTextPreview(null);
     setTextPreviewError(null);
@@ -291,6 +669,10 @@ const MediaDetailPage = () => {
     const video = videoRef.current;
     if (!video) return;
     video.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (playerRef.current) {
+      Promise.resolve(playerRef.current.play?.()).catch(() => undefined);
+      return;
+    }
     video.play().catch(() => undefined);
   }, []);
   if (!item && isLoading) {
@@ -328,6 +710,11 @@ const MediaDetailPage = () => {
         >
           <ArrowLeft className="size-md h-3.2 w-3.2" />
         </Link>
+
+
+        {/* Currently not using this section */}
+
+        
         {/* <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-1 py-1 text-[11px] text-custom-text-300">
             <button
@@ -355,23 +742,68 @@ const MediaDetailPage = () => {
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         <div className="rounded-lg  bg-custom-background-100 p-4 ">
           {isVideo ? (
-            <div className="rounded-lg border border-custom-border-200 bg-black">
-              <div className="mx-auto h-[505px] w-100 max-w-full overflow-hidden">
-                {isHls ? (
-                  <HlsVideo
-                    src={videoSrc}
-                    poster={item.thumbnail}
-                    className="h-full w-full object-contain"
-                    videoRef={videoRef}
-                  />
-                ) : (
-                  <video ref={videoRef} controls poster={item.thumbnail} className="h-full w-full object-contain">
-                    <source src={videoSrc} type={getVideoMimeType(documentFormat) || undefined} />
-                  </video>
-                )}
+            <>
+              <div className="media-player mx-auto h-[505px] w-100 max-w-full overflow-hidden rounded-lg border border-custom-border-200 bg-black">
+                <video
+                  ref={videoRef}
+                  className="video-js vjs-default-skin h-full w-full"
+                  poster={item.thumbnail}
+                  playsInline
+                  preload="auto"
+                  crossOrigin="use-credentials"
+                />
+                <style jsx global>{`
+                  .media-player .video-js .vjs-control-bar {
+                    display: flex;
+                    align-items: center;
+                  }
+                  .media-player .video-js .vjs-control {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  }
+                  .media-player .video-js .vjs-control .vjs-icon-placeholder {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100%;
+                  }
+                  .media-player .video-js .vjs-quality-selector,
+                  .media-player .video-js .vjs-hls-quality-selector,
+                  .media-player .video-js .vjs-quality-menu,
+                  .media-player .video-js .vjs-menu-button.vjs-icon-cog {
+                    height: 100%;
+               
+                    padding: 0;
+                    line-height: 1;
+                    margin-left: 8px;
+                  }
+                  .media-player .video-js .vjs-quality-selector .vjs-icon-placeholder:before,
+                  .media-player .video-js .vjs-hls-quality-selector .vjs-icon-placeholder:before,
+                  .media-player .video-js .vjs-quality-menu .vjs-icon-placeholder:before,
+                  .media-player .video-js .vjs-menu-button.vjs-icon-cog .vjs-icon-placeholder:before {
+                    line-height: 1;
+                    display: block;
+                  }
+                  .media-player .video-js .vjs-quality-selector .vjs-icon-placeholder:before,
+                  .media-player .video-js .vjs-hls-quality-selector .vjs-icon-placeholder:before,
+                  .media-player .video-js .vjs-quality-menu .vjs-icon-placeholder:before,
+                  .media-player .video-js .vjs-menu-button.vjs-icon-cog .vjs-icon-placeholder:before {
+                    transform: translateX(2px);
+                  }
+                  .media-player .video-js .vjs-live-control,
+                  .media-player .video-js .vjs-live-display,
+                  .media-player .video-js .vjs-live,
+                  .media-player .video-js .vjs-live-button {
+                    display: none !important;
+                  }
+                  .media-player .video-js .vjs-control-bar [class*="live"] {
+                    display: none !important;
+                  }
+                `}</style>
               </div>
               {videoDownloadSrc ? (
-                <div className="flex justify-end border-t border-custom-border-200 bg-custom-background-100 px-3 py-2">
+                <div className="flex justify-end border-t border-custom-border-200 p-3">
                   <a
                     href={videoDownloadSrc}
                     target="_blank"
@@ -382,7 +814,7 @@ const MediaDetailPage = () => {
                   </a>
                 </div>
               ) : null}
-            </div>
+            </>
           ) : item.mediaType === "image" ? (
             <div className="overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90">
               <button
@@ -507,11 +939,10 @@ const MediaDetailPage = () => {
             <button
               type="button"
               onClick={() => setActiveTab("details")}
-              className={`rounded-full px-3 py-1 ${
-                activeTab === "details"
+              className={`rounded-full px-3 py-1 ${activeTab === "details"
                   ? "border border-custom-border-200 bg-custom-background-100 text-custom-text-100"
                   : "hover:text-custom-text-100"
-              }`}
+                }`}
             >
               Details
             </button>
