@@ -320,7 +320,7 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
         # --- Subqueries for Issue-related counts ---
         # Each metric needs its own subquery to work correctly with OuterRef
         total_work_items_subquery = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 project_id=OuterRef("pk"),
                 **self.filters["base_filters"],
             )
