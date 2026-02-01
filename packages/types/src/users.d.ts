@@ -30,6 +30,10 @@ export interface IUser extends IUserLite {
   theme: IUserTheme;
   cover_image: string;
   cover_image_asset: any;
+  hub_codes?: string[] | null;
+  hub_names?: string[] | null;
+  is_super_admin?: boolean;
+  employee_permissions?: string[] | null;
 }
 
 export interface IUserAccount {

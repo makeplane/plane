@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from .base import BaseAPIView
 from plane.db.models import Issue, ProjectMember
 from plane.utils.issue_search import search_issues
+from plane.utils.issue_filters import apply_user_hub_filters
 
 
 class IssueSearchEndpoint(BaseAPIView):
@@ -92,6 +93,9 @@ class IssueSearchEndpoint(BaseAPIView):
             role=5,
         ).exists():
             issues = issues.filter(created_by=self.request.user)
+        
+        # Apply hub filters
+        issues = apply_user_hub_filters(issues, self.request.user, workspace_slug=slug)
 
         return Response(
             issues.values(

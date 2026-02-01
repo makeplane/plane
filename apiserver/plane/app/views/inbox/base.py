@@ -35,7 +35,7 @@ from plane.app.serializers import (
     InboxIssueSerializer,
     InboxIssueDetailSerializer,
 )
-from plane.utils.issue_filters import issue_filters
+from plane.utils.issue_filters import issue_filters, apply_user_hub_filters
 from plane.bgtasks.issue_activities_task import issue_activity
 
 
@@ -181,6 +181,7 @@ class InboxIssueViewSet(BaseViewSet):
                 ),
             )
         ).distinct()
+        return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
@@ -189,9 +190,18 @@ class InboxIssueViewSet(BaseViewSet):
         ).first()
         project = Project.objects.get(pk=project_id)
         filters = issue_filters(request.GET, "GET", "issue__")
+        
+        # Get filtered issue IDs based on hub permissions
+        filtered_issues = Issue.issue_objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+        )
+        filtered_issues = apply_user_hub_filters(filtered_issues, request.user, workspace_slug=slug)
+        filtered_issue_ids = filtered_issues.values_list("id", flat=True)
+        
         inbox_issue = (
             InboxIssue.objects.filter(
-                inbox_id=inbox_id.id, project_id=project_id, **filters
+                inbox_id=inbox_id.id, project_id=project_id, issue_id__in=filtered_issue_ids, **filters
             )
             .select_related("issue")
             .prefetch_related(

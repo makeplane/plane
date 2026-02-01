@@ -155,6 +155,10 @@ else:
 
 CORS_ALLOW_HEADERS = [*default_headers, "X-API-Key", "X-Assume-Role"]
 
+# Ticketing Tool Service integration settings
+TTS_SERVICE_URL = os.environ.get("TTS_SERVICE_URL", "")
+TTS_API_KEY = os.environ.get("TTS_API_KEY", "")
+
 # Application Settings
 WSGI_APPLICATION = "plane.wsgi.application"
 ASGI_APPLICATION = "plane.asgi.application"
