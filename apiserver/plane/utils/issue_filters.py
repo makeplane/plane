@@ -293,12 +293,15 @@ def filter_created_by_username(params, issue_filter, method, prefix=""):
         if len(created_bys) and "" not in created_bys:
             issue_filter[f"{prefix}created_by__username__in"] = created_bys
     else:
-        if (
-            params.get("created_by_username", None)
-            and len(params.get("created_by_username"))
-            and params.get("created_by_username") != "null"
-        ):
-            issue_filter[f"{prefix}created_by__username__in"] = params.get("created_by_username")
+        created_by_username = params.get("created_by_username", None)
+        if created_by_username:
+            if isinstance(created_by_username, list):
+                created_bys = [u for u in created_by_username if u and u != "null"]
+                if created_bys:
+                    issue_filter[f"{prefix}created_by__username__in"] = created_bys
+            else:
+                if created_by_username != "null":
+                    issue_filter[f"{prefix}created_by__username__in"] = [created_by_username]
     return issue_filter
 
 
