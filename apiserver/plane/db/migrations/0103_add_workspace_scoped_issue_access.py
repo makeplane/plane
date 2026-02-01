@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="workspace",
             name="scoped_issue_access",
-            field=models.BooleanField(default=True),
+            field=models.BooleanField(default=False),
         ),
     ]
