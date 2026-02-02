@@ -57,8 +57,8 @@ export const IntakePropertyValues = observer(function IntakePropertyValues(props
       {propertiesWithValues.map(({ property, propertyId, propertyTypeKey, displayValues }) => {
         const isUrlType = propertyTypeKey === "URL";
         return (
-          <div key={propertyId} className="flex gap-2 h-8">
-            <div className={cn("flex w-2/5 flex-shrink-0 gap-1.5 text-13 text-tertiary", "items-center")}>
+          <div key={propertyId} className="flex gap-2">
+            <div className="flex w-2/5 flex-shrink-0 gap-1.5 text-13 text-tertiary items-start">
               <PropertyDetail property={property} />
             </div>
             <div className="w-3/5 space-y-1 text-13 text-placeholder">
