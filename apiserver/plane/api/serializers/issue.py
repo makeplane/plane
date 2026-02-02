@@ -593,7 +593,7 @@ class IssueBulkUpdateSerializer(serializers.Serializer):
     
     # Allowed update fields (scalar fields + special update fields)
     ALLOWED_UPDATE_FIELDS = {
-        "assignees_by_username", "state_name", "priority",
+        "add_assignees_by_username", "remove_assignees_by_username", "state_name", "priority",
         "vendor_code", "hub_code", "customer_code", "worker_code",
         "reference_number", "trip_reference_number", "hub_name", "customer_name",
         "vendor_name", "worker_name", "business_type", "source", "name",
@@ -622,6 +622,15 @@ class IssueBulkUpdateSerializer(serializers.Serializer):
         if unknown_fields:
             raise serializers.ValidationError(
                 f"Unknown update fields: {', '.join(sorted(unknown_fields))}"
+            )
+        
+        # Reject if both add and remove contain same username
+        add_users = set(value.get('add_assignees_by_username', []))
+        remove_users = set(value.get('remove_assignees_by_username', []))
+        overlap = add_users & remove_users
+        if overlap:
+            raise serializers.ValidationError(
+                f"Cannot add and remove same users: {', '.join(sorted(overlap))}"
             )
         
         return value
