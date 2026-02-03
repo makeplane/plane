@@ -1,11 +1,13 @@
 "use client";
 
 import type { FC } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { Signal, Tag, CalendarClock, User, UserCircle2, Handshake, Volleyball, Calendar, Clock } from "lucide-react";
 
 // i18n
 import { useTranslation } from "@plane/i18n";
+import type { TIssue } from "@plane/types";
 
 // utils
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
@@ -23,6 +25,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { MediaLibraryService } from "@/services/media-library.service";
 
 import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 
@@ -47,6 +50,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   } = useIssueDetail();
   const { getStateById } = useProjectState();
   const { getUserDetails } = useMember();
+  const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
 
   // derived values
   const issue = getIssueById(issueId);
@@ -86,6 +90,47 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   // final disabled flag
   const isLocked = disabled || isPastEvent;
 
+  const buildManifestMeta = useCallback((currentIssue: TIssue) => {
+    return {
+      category: currentIssue.category || "Work items",
+      start_date: currentIssue.start_date ?? null,
+      start_time: currentIssue.start_time ?? null,
+      level: currentIssue.level ?? null,
+      program: currentIssue.program ?? null,
+      sport: currentIssue.sport ?? null,
+      opposition: currentIssue.opposition_team ?? null,
+      season: currentIssue.year ?? null,
+    };
+  }, []);
+
+  const updateManifestMeta = useCallback(
+    async (currentIssue: TIssue) => {
+      if (!workspaceSlug || !projectId || !issueId) return;
+      try {
+        const manifest = await mediaLibraryService.ensureProjectLibrary(workspaceSlug, projectId);
+        const packageId = typeof manifest?.id === "string" ? manifest.id : null;
+        if (!packageId) return;
+        await mediaLibraryService.updateManifestMetadata(workspaceSlug, projectId, packageId, {
+          work_item_id: issueId,
+          meta: buildManifestMeta(currentIssue),
+        });
+      } catch {
+        // Skip manifest updates if artifacts don't exist.
+      }
+    },
+    [buildManifestMeta, issueId, mediaLibraryService, projectId, workspaceSlug]
+  );
+
+  const handlePropertyUpdate = useCallback(
+    async (data: Partial<TIssue>) => {
+      await issueOperations.update(workspaceSlug, projectId, issueId, data);
+      const updatedIssue = getIssueById(issueId);
+      if (!updatedIssue) return;
+      await updateManifestMeta(updatedIssue);
+    },
+    [getIssueById, issueId, issueOperations, projectId, updateManifestMeta, workspaceSlug]
+  );
+
   return (
     <div>
       <h6 className="text-sm font-medium">Event Details</h6>
@@ -119,7 +164,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           <DateDropdown
             value={issue.start_date}
             onChange={(val) =>
-              issueOperations.update(workspaceSlug, projectId, issueId, {
+              void handlePropertyUpdate({
                 start_date: val ? renderFormattedPayloadDate(val) : null,
               })
             }
@@ -144,7 +189,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           <TimeDropdown
             value={issue.start_time}
             onChange={(val) => {
-              issueOperations.update(workspaceSlug, projectId, issueId, {
+              void handlePropertyUpdate({
                 start_time: val,
               });
             }}
@@ -169,7 +214,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           <LevelDropdown
             value={issue?.level}
             onChange={(level) => {
-              issueOperations.update(workspaceSlug, projectId, issueId, {
+              void handlePropertyUpdate({
                 level: level,
               });
             }}
@@ -194,7 +239,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           <ProgramDropdown
             value={issue?.program}
             onChange={(program) => {
-              issueOperations.update(workspaceSlug, projectId, issueId, {
+              void handlePropertyUpdate({
                 program: program,
               });
             }}
@@ -219,7 +264,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           <SportDropdown
             value={issue?.sport}
             onChange={(sport) => {
-              issueOperations.update(workspaceSlug, projectId, issueId, {
+              void handlePropertyUpdate({
                 sport: sport,
               });
             }}
@@ -245,7 +290,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             storageKey={`opp-team-${issueId}`}
             value={issue?.opposition_team}
             onChange={(team) =>
-              issueOperations.update(workspaceSlug, projectId, issueId, {
+              void handlePropertyUpdate({
                 opposition_team: team,
               })
             }
@@ -263,7 +308,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           <CategoryDropdown
             value={issue?.category}
             onChange={(category) => {
-              issueOperations.update(workspaceSlug, projectId, issueId, {
+              void handlePropertyUpdate({
                 category: category,
               });
             }}
@@ -288,7 +333,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           <YearRangeDropdown
             value={issue?.year}
             onChange={(year) => {
-              issueOperations.update(workspaceSlug, projectId, issueId, {
+              void handlePropertyUpdate({
                 year: year,
               });
             }}

@@ -33,6 +33,68 @@ META_FILTER_EXCLUDED_KEYS = {
     "source format",
 }
 
+EVENT_META_KEYS = {
+    "category",
+    "start_date",
+    "start_time",
+    "level",
+    "program",
+    "sport",
+    "opposition",
+    "season",
+}
+
+
+def _apply_event_meta(existing: dict, updates: dict) -> dict:
+    if not isinstance(existing, dict):
+        existing = {}
+    if not isinstance(updates, dict):
+        updates = {}
+    merged = dict(existing)
+    for key in EVENT_META_KEYS:
+        if key not in updates:
+            continue
+        value = updates.get(key)
+        if value is None or value == "":
+            merged.pop(key, None)
+        else:
+            merged[key] = value
+    return merged
+
+
+def update_manifest_event_meta(manifest: dict, work_item_id: str, updates: dict) -> int:
+    if not work_item_id or not isinstance(manifest, dict):
+        return 0
+    artifacts = manifest.get("artifacts") or []
+    if not isinstance(artifacts, list) or not artifacts:
+        return 0
+    metadata = ensure_manifest_metadata(manifest)
+    updated_refs: set[str] = set()
+    inline_updates = 0
+    for artifact in artifacts:
+        if not isinstance(artifact, dict):
+            continue
+        if str(artifact.get("work_item_id") or "") != work_item_id:
+            continue
+        metadata_ref = normalize_metadata_ref(artifact.get("metadata_ref")) or normalize_metadata_ref(artifact.get("name"))
+        if metadata_ref:
+            updated_refs.add(metadata_ref)
+            continue
+        existing_meta = artifact.get("meta")
+        if not isinstance(existing_meta, dict):
+            existing_meta = {}
+        next_meta = _apply_event_meta(existing_meta, updates)
+        if next_meta != existing_meta:
+            artifact["meta"] = next_meta
+            inline_updates += 1
+    for metadata_ref in updated_refs:
+        existing_entry = metadata.get(metadata_ref)
+        if not isinstance(existing_entry, dict):
+            existing_entry = {}
+        metadata[metadata_ref] = _apply_event_meta(existing_entry, updates)
+    manifest["metadata"] = metadata
+    return len(updated_refs) + inline_updates
+
 
 def normalize_metadata_ref(value: object) -> str | None:
     if not isinstance(value, str):

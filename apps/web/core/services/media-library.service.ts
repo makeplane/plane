@@ -62,6 +62,11 @@ type TMediaLibraryArtifactsQuery = {
   per_page?: string;
 };
 
+type TMediaManifestMetaUpdatePayload = {
+  work_item_id: string;
+  meta: Record<string, unknown>;
+};
+
 type TMediaLibraryPackagePayload = {
   id?: string;
   name: string;
@@ -182,6 +187,22 @@ export class MediaLibraryService extends APIService {
       )}/`
     )
       .then(() => undefined)
+      .catch((error) => {
+        throw error?.response?.data ?? error?.response ?? error;
+      });
+  }
+
+  async updateManifestMetadata(
+    workspaceSlug: string,
+    projectId: string,
+    packageId: string,
+    payload: TMediaManifestMetaUpdatePayload
+  ): Promise<{ updated?: number } | null> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/manifest/`,
+      payload
+    )
+      .then((response) => response?.data ?? null)
       .catch((error) => {
         throw error?.response?.data ?? error?.response ?? error;
       });

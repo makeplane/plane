@@ -36,6 +36,7 @@ from plane.utils.media_library import (
     manifest_write_lock,
     normalize_manifest_metadata,
     normalize_metadata_ref,
+    update_manifest_event_meta,
     MediaLibraryTranscodeError,
     package_root,
     read_manifest,
@@ -382,6 +383,35 @@ class MediaManifestDetailAPIView(BaseAPIView):
 
         manifest = read_manifest(manifest_file)
         return Response(manifest, status=status.HTTP_200_OK)
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
+    def patch(self, request, slug, project_id, package_id):
+        project_id_str = str(project_id)
+        validate_segment(project_id_str, "projectId")
+        validate_segment(package_id, "packageId")
+
+        payload = request.data or {}
+        work_item_id = payload.get("work_item_id") or payload.get("workItemId") or ""
+        if not work_item_id:
+            return Response({"error": "work_item_id is required."}, status=status.HTTP_400_BAD_REQUEST)
+        meta = payload.get("meta")
+        if not isinstance(meta, dict):
+            return Response({"error": "meta must be an object."}, status=status.HTTP_400_BAD_REQUEST)
+
+        manifest_file = manifest_path(project_id_str, package_id)
+        if not manifest_file.exists():
+            raise NotFound("Manifest not found.")
+
+        with manifest_write_lock(manifest_file):
+            manifest = read_manifest(manifest_file)
+            updated_count = update_manifest_event_meta(manifest, work_item_id, meta)
+            if updated_count <= 0:
+                return Response({"updated": 0}, status=status.HTTP_200_OK)
+            manifest["updatedAt"] = _now_iso()
+            normalize_manifest_metadata(manifest)
+            write_manifest_atomic(manifest_file, manifest)
+
+        return Response({"updated": updated_count}, status=status.HTTP_200_OK)
 
 
 class MediaArtifactFileAPIView(BaseAPIView):
