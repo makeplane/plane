@@ -9,6 +9,8 @@ import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useMediaLibraryItems } from "../(list)/use-media-library-items";
+import { PLAYER_STYLE } from "./player-styles";
+import { PlayerOverlay, PlayerSettingsPanel } from "./player-ui";
 import { TagsSection } from "./tags-section";
 
 const formatMetaValue = (value: unknown) => {
@@ -277,6 +279,8 @@ const buildDownloadUrl = (src: string) => {
   return `${src}${separator}download=1`;
 };
 
+
+
 const MediaDetailPage = () => {
   const { mediaId, workspaceSlug, projectId } = useParams() as {
     mediaId: string;
@@ -295,6 +299,11 @@ const MediaDetailPage = () => {
   const [documentPreviewHtml, setDocumentPreviewHtml] = useState<string | null>(null);
   const [documentPreviewError, setDocumentPreviewError] = useState<string | null>(null);
   const [isDocumentPreviewLoading, setIsDocumentPreviewLoading] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [playerTick, setPlayerTick] = useState(0);
+  const [qualitySelection, setQualitySelection] = useState<string | null>(null);
+  const settingsPanelRef = useRef<HTMLDivElement | null>(null);
   const sanitizedDocumentPreviewHtml = useMemo(
     () => (documentPreviewHtml ? DOMPurify.sanitize(documentPreviewHtml, { USE_PROFILES: { html: true } }) : ""),
     [documentPreviewHtml]
@@ -390,7 +399,7 @@ const MediaDetailPage = () => {
     return () => {
       isMounted = false;
     };
-  }, [documentFormat, isTextDocument, item?.fileSrc, item?.mediaType]);
+  }, [documentFormat, isTextDocument, isUnsupportedDocument, item?.fileSrc, item?.mediaType]);
 
   useEffect(() => {
     let isMounted = true;
@@ -463,6 +472,20 @@ const MediaDetailPage = () => {
     };
   }, [isBinaryDocument, isDocx, isPptx, isUnsupportedDocument, isXlsx, item?.fileSrc, item?.mediaType]);
 
+  const handleTogglePip = useCallback(async () => {
+    const video = videoRef.current as HTMLVideoElement | null;
+    if (!video || typeof document === "undefined") return;
+    try {
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+      } else if ((video as any).requestPictureInPicture) {
+        await (video as any).requestPictureInPicture();
+      }
+    } catch {
+      // ignore PiP errors
+    }
+  }, []);
+
   useEffect(() => {
     if (!isVideo) {
       if (playerRef.current) {
@@ -476,6 +499,42 @@ const MediaDetailPage = () => {
     if (!videoElement) return;
 
     if (!playerRef.current) {
+      const overflowButtonName = "OverflowMenuButton";
+      const pipButtonName = "PipToggleButton";
+      if (!videojs.getComponent(overflowButtonName)) {
+        const Button = videojs.getComponent("Button");
+        const OverflowMenuButton = class extends (Button as any) {
+          constructor(playerInstance: any, options: any) {
+            super(playerInstance, options);
+            this.controlText("More");
+            this.addClass("vjs-overflow-button");
+            this.addClass("vjs-menu-button");
+          }
+
+          handleClick() {
+            const playerInstance = this.player();
+            playerInstance?.trigger?.("overflowtoggle");
+          }
+        };
+        videojs.registerComponent(overflowButtonName, OverflowMenuButton as any);
+      }
+      if (!videojs.getComponent(pipButtonName)) {
+        const Button = videojs.getComponent("Button");
+        const PipToggleButton = class extends (Button as any) {
+          constructor(playerInstance: any, options: any) {
+            super(playerInstance, options);
+            this.controlText("Picture in Picture");
+            this.addClass("vjs-pip-toggle");
+          }
+
+          handleClick() {
+            const playerInstance = this.player();
+            playerInstance?.trigger?.("piptoggle");
+          }
+        };
+        videojs.registerComponent(pipButtonName, PipToggleButton as any);
+      }
+
       playerRef.current = videojs(videoElement, {
         controls: true,
         autoplay: true,
@@ -488,14 +547,15 @@ const MediaDetailPage = () => {
           },
         },
         controlBar: {
-          progressControl: true,
-          playToggle: true,
-          volumePanel: true,
-          currentTimeDisplay: true,
-          timeDivider: true,
-          durationDisplay: true,
-          playbackRateMenuButton: true,
-          fullscreenToggle: true,
+          children: [
+            "currentTimeDisplay",
+            "progressControl",
+            "durationDisplay",
+            "volumePanel",
+            "fullscreenToggle",
+            "PipToggleButton",
+            "OverflowMenuButton",
+          ],
         },
       });
 
@@ -505,91 +565,13 @@ const MediaDetailPage = () => {
       const Button = videojs.getComponent("Button");
       const MenuButton = videojs.getComponent("MenuButton");
       const MenuItem = videojs.getComponent("MenuItem");
-
-      const ensureSkipButtons = () => {
-        const SkipBase = class extends (Button as any) {
-          seconds: number;
-          constructor(playerInstance: any, options: any) {
-            super(playerInstance, options);
-            this.seconds = options?.seconds ?? 0;
-            const label = this.seconds > 0 ? `+${this.seconds}s` : `${this.seconds}s`;
-            this.controlText(`Skip ${label}`);
-            this.addClass("vjs-skip-button");
-            this.addClass(this.seconds > 0 ? "vjs-skip-forward" : "vjs-skip-backward");
-            this.el().textContent = "";
-            this.addClass(this.seconds > 0 ? "vjs-icon-next-item" : "vjs-icon-previous-item");
-          }
-
-          handleClick() {
-            const playerInstance = this.player();
-            if (!playerInstance) return;
-            const current = playerInstance.currentTime() ?? 0;
-            const seekable = playerInstance.seekable && playerInstance.seekable();
-            let target = current + this.seconds;
-            const duration = playerInstance.duration?.();
-            if (Number.isFinite(duration) && duration > 0) {
-              target = Math.min(duration, Math.max(0, target));
-            } else if (seekable && seekable.length) {
-              const start = seekable.start(0);
-              const end = seekable.end(0);
-              target = Math.min(end, Math.max(start, target));
-            } else {
-              target = Math.max(0, target);
-            }
-            playerInstance.currentTime(target);
-            const afterSet = playerInstance.currentTime() ?? 0;
-            if (Math.abs(afterSet - target) < 0.1) return;
-            if (!Number.isFinite(duration) && (!seekable || !seekable.length)) {
-              const readyState = playerInstance.readyState?.() ?? 0;
-              if (readyState < 1) {
-                const pendingTarget = target;
-                const retrySeek = () => {
-                  const nextDuration = playerInstance.duration?.();
-                  const nextTarget =
-                    Number.isFinite(nextDuration) && nextDuration > 0
-                      ? Math.min(nextDuration, Math.max(0, pendingTarget))
-                      : Math.max(0, pendingTarget);
-                  playerInstance.currentTime(nextTarget);
-                };
-                playerInstance.one("loadedmetadata", retrySeek);
-                playerInstance.one("canplay", retrySeek);
-              }
-            }
-          }
-        };
-
-        const skipBackName = "SkipBack5";
-        const skipForwardName = "SkipForward5";
-
-        if (!videojs.getComponent(skipBackName)) {
-          const SkipBack = class extends SkipBase {};
-          videojs.registerComponent(skipBackName, SkipBack as any);
-        }
-        if (!videojs.getComponent(skipForwardName)) {
-          const SkipForward = class extends SkipBase {};
-          videojs.registerComponent(skipForwardName, SkipForward as any);
-        }
-
-        const controlBar = player.controlBar;
-        if (!controlBar) return;
-
-        if (!controlBar.getChild(skipBackName)) {
-          const children = controlBar.children();
-          let playToggleIndex = children.findIndex((child: any) => child?.name?.() === "PlayToggle");
-          const baseIndex = playToggleIndex >= 0 ? playToggleIndex : 0;
-          // Add skip back before play toggle.
-          controlBar.addChild(skipBackName, { seconds: -5 }, baseIndex);
-          // Recompute play toggle index since children shifted.
-          playToggleIndex = controlBar.children().findIndex((child: any) => child?.name?.() === "PlayToggle");
-          const forwardIndex = playToggleIndex >= 0 ? playToggleIndex + 1 : controlBar.children().length;
-          controlBar.addChild(skipForwardName, { seconds: 5 }, forwardIndex);
-        }
-      };
-
-      player.ready(() => {
-        ensureSkipButtons();
-      });
-      player.on("loadedmetadata", ensureSkipButtons);
+      const controlBar = player.controlBar;
+      if (controlBar && !controlBar.getChild("PipToggleButton")) {
+        controlBar.addChild("PipToggleButton", {});
+      }
+      if (controlBar && !controlBar.getChild("OverflowMenuButton")) {
+        controlBar.addChild("OverflowMenuButton", {});
+      }
 
       let qualityButton: any = null;
       let qualityRetryId: ReturnType<typeof setTimeout> | null = null;
@@ -742,8 +724,12 @@ const MediaDetailPage = () => {
       player.on("canplay", ensureQualityMenu);
       player.on("play", ensureQualityMenu);
       player.on("qualitychange", ensureQualityMenu);
-      void MenuButton;
-      void MenuItem;
+      player.on("overflowtoggle", () => {
+        setIsSettingsOpen((prev) => !prev);
+      });
+      player.on("piptoggle", () => {
+        void handleTogglePip();
+      });
     }
 
     return () => {
@@ -752,7 +738,72 @@ const MediaDetailPage = () => {
         playerRef.current = null;
       }
     };
-  }, [isVideo, isHls]);
+  }, [handleTogglePip, isHls, isVideo]);
+
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player) return;
+    const handlePlayState = () => setIsPlaying(!player.paused());
+    player.on("play", handlePlayState);
+    player.on("pause", handlePlayState);
+    player.on("ended", handlePlayState);
+    player.on("loadedmetadata", handlePlayState);
+    handlePlayState();
+    return () => {
+      player.off("play", handlePlayState);
+      player.off("pause", handlePlayState);
+      player.off("ended", handlePlayState);
+      player.off("loadedmetadata", handlePlayState);
+    };
+  }, [isVideo, proxiedVideoSrc]);
+
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player) return;
+    const handleChange = () => setPlayerTick((value) => value + 1);
+    player.on("qualitychange", handleChange);
+    player.on("ratechange", handleChange);
+    return () => {
+      player.off("qualitychange", handleChange);
+      player.off("ratechange", handleChange);
+    };
+  }, [isVideo, proxiedVideoSrc]);
+
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player) return;
+    const handleReady = () => setPlayerTick((value) => value + 1);
+    player.on("loadedmetadata", handleReady);
+    player.on("loadeddata", handleReady);
+    player.on("canplay", handleReady);
+    player.on("play", handleReady);
+    return () => {
+      player.off("loadedmetadata", handleReady);
+      player.off("loadeddata", handleReady);
+      player.off("canplay", handleReady);
+      player.off("play", handleReady);
+    };
+  }, [isVideo, proxiedVideoSrc]);
+
+  useEffect(() => {
+    if (!isSettingsOpen) return;
+    const handlePointer = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+      if (settingsPanelRef.current?.contains(target)) return;
+      if (target.closest(".vjs-overflow-button")) return;
+      setIsSettingsOpen(false);
+    };
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsSettingsOpen(false);
+    };
+    document.addEventListener("mousedown", handlePointer);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handlePointer);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [isSettingsOpen]);
 
   useEffect(() => {
     const player = playerRef.current;
@@ -808,6 +859,130 @@ useEffect(() => {
       return;
     }
     video.play().catch(() => undefined);
+  }, []);
+
+  const handleOverlayToggle = useCallback(() => {
+    const player = playerRef.current;
+    if (!player) return;
+    if (player.paused()) {
+      Promise.resolve(player.play?.()).catch(() => undefined);
+    } else {
+      player.pause?.();
+    }
+  }, []);
+
+  const handleOverlaySeek = useCallback((delta: number) => {
+    const player = playerRef.current;
+    if (!player) return;
+    const current = player.currentTime() ?? 0;
+    const seekable = player.seekable && player.seekable();
+    let target = current + delta;
+    const duration = player.duration?.();
+    if (Number.isFinite(duration) && duration > 0) {
+      target = Math.min(duration, Math.max(0, target));
+    } else if (seekable && seekable.length) {
+      const start = seekable.start(0);
+      const end = seekable.end(0);
+      target = Math.min(end, Math.max(start, target));
+    } else {
+      target = Math.max(0, target);
+    }
+    player.currentTime(target);
+  }, []);
+
+  const qualityOptions = useMemo(() => {
+    const player = playerRef.current as any;
+    if (!player) {
+      return [{ key: "auto", label: "Auto", isAuto: true, selected: true, rep: null }];
+    }
+    const reps = getVideoRepresentations(player);
+    if (!reps.length) {
+      return [{ key: "auto", label: "Auto", isAuto: true, selected: true, rep: null, disabled: true }];
+    }
+    const { isAuto, activeRep } = getQualitySelection(reps);
+    const sorted = reps
+      .map((rep, index) => ({
+        rep,
+        height: rep?.height ?? 0,
+        bandwidth: rep?.bandwidth ?? rep?.bitrate ?? 0,
+        index,
+      }))
+      .sort((left, right) => {
+        if (left.height !== right.height) return right.height - left.height;
+        if (left.bandwidth !== right.bandwidth) return right.bandwidth - left.bandwidth;
+        return left.index - right.index;
+      });
+    const items: Array<{
+      key: string;
+      label: string;
+      isAuto: boolean;
+      selected: boolean;
+      rep: any;
+      disabled?: boolean;
+    }> = [];
+    const fallbackSelected = qualitySelection === null ? (isAuto ? "auto" : null) : qualitySelection;
+    if (sorted.length > 1) {
+      items.push({
+        key: "auto",
+        label: "Auto",
+        isAuto: true,
+        selected: fallbackSelected === "auto" || (qualitySelection === null && isAuto),
+        rep: null,
+      });
+    }
+    sorted.forEach(({ rep, height, bandwidth }) => {
+      const label = height ? `${height}p` : bandwidth ? `${Math.round(bandwidth / 1000)} kbps` : "Source";
+      const key = `${label}-${bandwidth}-${height}-${rep?.id ?? ""}`;
+      const isSelected =
+        qualitySelection === key ||
+        (qualitySelection === null && !isAuto && activeRep === rep);
+      items.push({
+        key,
+        label,
+        isAuto: false,
+        selected: isSelected,
+        rep,
+      });
+    });
+    if (sorted.length === 1 && !items.some((item) => item.selected)) {
+      items[0].selected = true;
+    }
+    return items;
+  }, [playerTick, qualitySelection]);
+
+  const playbackRates = useMemo(() => {
+    const player = playerRef.current as any;
+    const rates = player?.playbackRates?.();
+    return Array.isArray(rates) && rates.length ? rates : [0.5, 0.75, 1, 1.25, 1.5, 2];
+  }, [playerTick]);
+
+  const currentPlaybackRate = useMemo(() => {
+    const player = playerRef.current as any;
+    const rate = player?.playbackRate?.();
+    return typeof rate === "number" ? rate : 1;
+  }, [playerTick]);
+
+  const handleQualitySelect = useCallback((option: { isAuto: boolean; rep: any; key?: string }) => {
+    const player = playerRef.current as any;
+    if (!player) return;
+    const reps = getVideoRepresentations(player);
+    if (!reps.length) return;
+    if (option.isAuto) {
+      reps.forEach((rep) => rep?.enabled?.(true));
+      setQualitySelection("auto");
+    } else {
+      reps.forEach((rep) => rep?.enabled?.(rep === option.rep));
+      if (option.key) setQualitySelection(option.key);
+    }
+    player.trigger("qualitychange");
+    setPlayerTick((value) => value + 1);
+  }, []);
+
+  const handlePlaybackRate = useCallback((rate: number) => {
+    const player = playerRef.current as any;
+    if (!player) return;
+    player.playbackRate(rate);
+    setPlayerTick((value) => value + 1);
   }, []);
   if (!item && isLoading) {
     return (
@@ -900,8 +1075,6 @@ useEffect(() => {
   const durationLabel = formatMetaValue(meta.duration ?? item.duration);
   const durationSecLabel = formatMetaValue(meta.duration_sec ?? meta.durationSec);
 
-  console.log("Rendering MediaDetailPage for item:", item);
-
   return (
     <div className="flex flex-col gap-6 px-3 py-3">
       <div className="flex items-center justify-between gap-4">
@@ -953,55 +1126,18 @@ useEffect(() => {
                   preload="auto"
                   crossOrigin="use-credentials"
                 />
-                <style jsx global>{`
-                  .media-player .video-js .vjs-control-bar {
-                    display: flex;
-                    align-items: center;
-                  }
-                  .media-player .video-js .vjs-control {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                  }
-                  .media-player .video-js .vjs-control .vjs-icon-placeholder {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    height: 100%;
-                  }
-                  .media-player .video-js .vjs-quality-selector,
-                  .media-player .video-js .vjs-hls-quality-selector,
-                  .media-player .video-js .vjs-quality-menu,
-                  .media-player .video-js .vjs-menu-button.vjs-icon-cog {
-                    height: 100%;
-               
-                    padding: 0;
-                    line-height: 1;
-                    margin-left: 8px;
-                  }
-                  .media-player .video-js .vjs-quality-selector .vjs-icon-placeholder:before,
-                  .media-player .video-js .vjs-hls-quality-selector .vjs-icon-placeholder:before,
-                  .media-player .video-js .vjs-quality-menu .vjs-icon-placeholder:before,
-                  .media-player .video-js .vjs-menu-button.vjs-icon-cog .vjs-icon-placeholder:before {
-                    line-height: 1;
-                    display: block;
-                  }
-                  .media-player .video-js .vjs-quality-selector .vjs-icon-placeholder:before,
-                  .media-player .video-js .vjs-hls-quality-selector .vjs-icon-placeholder:before,
-                  .media-player .video-js .vjs-quality-menu .vjs-icon-placeholder:before,
-                  .media-player .video-js .vjs-menu-button.vjs-icon-cog .vjs-icon-placeholder:before {
-                    transform: translateX(2px);
-                  }
-                  .media-player .video-js .vjs-live-control,
-                  .media-player .video-js .vjs-live-display,
-                  .media-player .video-js .vjs-live,
-                  .media-player .video-js .vjs-live-button {
-                    display: none !important;
-                  }
-                  .media-player .video-js .vjs-control-bar [class*="live"] {
-                    display: none !important;
-                  }
-                `}</style>
+                <PlayerOverlay isPlaying={isPlaying} onToggle={handleOverlayToggle} onSeek={handleOverlaySeek} />
+                <PlayerSettingsPanel
+                  isOpen={isSettingsOpen}
+                  onClose={() => setIsSettingsOpen(false)}
+                  qualityOptions={qualityOptions}
+                  playbackRates={playbackRates}
+                  currentPlaybackRate={currentPlaybackRate}
+                  onSelectQuality={handleQualitySelect}
+                  onSelectRate={handlePlaybackRate}
+                  panelRef={settingsPanelRef}
+                />
+                <style jsx global>{PLAYER_STYLE}</style>
               </div>
               {videoDownloadSrc ? (
                 <div className="flex justify-end border-t border-custom-border-200 p-3">
@@ -1381,7 +1517,7 @@ useEffect(() => {
                       <span className="text-right">{kind}</span>
                     </div>
                   ) : null}
-                  {metaEntries.length === 0 ? (
+                  {metaEntries.length < 0 ? (
                     <div className="text-xs text-custom-text-400">No metadata available.</div>
                   ) : (
                     metaEntries.map(([key, value]) => (
