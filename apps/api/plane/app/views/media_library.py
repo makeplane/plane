@@ -3,7 +3,6 @@ import json
 import math
 import logging
 import shutil
-import subprocess
 import mimetypes
 import os
 from urllib.parse import urlparse
@@ -29,6 +28,7 @@ from plane.utils.media_library import (
     create_manifest,
     ensure_project_library,
     filter_media_library_artifacts,
+    generate_thumbnail,
     get_document_icon_source,
     hydrate_artifacts_with_meta,
     manifest_path,
@@ -101,83 +101,14 @@ class ListPaginator:
         )
 
 
-def _render_ffmpeg_error(exc: subprocess.CalledProcessError) -> str:
-    detail = (exc.stderr or exc.stdout or "").strip()
-    if detail:
-        detail = detail.replace("\n", " ")
-        if len(detail) > 500:
-            detail = f"{detail[:500]}..."
-    return detail
-
-
 def _create_video_thumbnail(source_path: Path, thumbnail_path: Path) -> bool:
-    thumbnail_path.parent.mkdir(parents=True, exist_ok=True)
-    try:
-        subprocess.run(
-            [
-                "ffmpeg",
-                "-hide_banner",
-                "-loglevel",
-                "error",
-                "-y",
-                "-ss",
-                "00:00:00.000",
-                "-i",
-                str(source_path),
-                "-frames:v",
-                "1",
-                "-q:v",
-                "2",
-                str(thumbnail_path),
-            ],
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-    except subprocess.CalledProcessError as exc:
-        detail = _render_ffmpeg_error(exc)
-        if detail:
-            logger.error("ffmpeg thumbnail failed: %s", detail)
-        else:
-            logger.error("ffmpeg thumbnail failed with exit code %s", exc.returncode)
-        return False
-    return thumbnail_path.exists()
+    return generate_thumbnail(source_path, thumbnail_path, seek="00:00:00.000")
 
 
 def _create_video_thumbnail_from_source(source: str, thumbnail_path: Path) -> bool:
     if not source:
         return False
-    thumbnail_path.parent.mkdir(parents=True, exist_ok=True)
-    try:
-        subprocess.run(
-            [
-                "ffmpeg",
-                "-hide_banner",
-                "-loglevel",
-                "error",
-                "-y",
-                "-ss",
-                "00:00:00.000",
-                "-i",
-                source,
-                "-frames:v",
-                "1",
-                "-q:v",
-                "2",
-                str(thumbnail_path),
-            ],
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-    except subprocess.CalledProcessError as exc:
-        detail = _render_ffmpeg_error(exc)
-        if detail:
-            logger.error("ffmpeg thumbnail failed: %s", detail)
-        else:
-            logger.error("ffmpeg thumbnail failed with exit code %s", exc.returncode)
-        return False
-    return thumbnail_path.exists()
+    return generate_thumbnail(source, thumbnail_path, seek="00:00:00.000")
 
 
 def _extract_asset_id_from_url(value: str) -> str | None:
@@ -238,6 +169,25 @@ def _resolve_external_video_sources(path: str, request, project_id: str) -> list
         if candidate and candidate not in deduped:
             deduped.append(candidate)
     return deduped
+
+
+def _pick_transcode_source(sources: list[str]) -> str | None:
+    if not sources:
+        return None
+    internal_endpoint = os.environ.get("AWS_S3_INTERNAL_ENDPOINT_URL") or os.environ.get("MINIO_INTERNAL_ENDPOINT_URL")
+    if internal_endpoint:
+        try:
+            internal_host = urlparse(internal_endpoint).netloc
+        except ValueError:
+            internal_host = ""
+        if internal_host:
+            for source in sources:
+                try:
+                    if urlparse(source).netloc == internal_host:
+                        return source
+                except ValueError:
+                    continue
+    return sources[0]
 
 
 def _resolve_artifact_disk_path(artifact: dict, base_root: Path) -> Path | None:
@@ -487,7 +437,12 @@ class MediaArtifactFileAPIView(BaseAPIView):
                 mp4_path = package_root(project_id_str, package_id) / "artifacts" / f"{artifact_id}.mp4"
                 if not mp4_path.exists():
                     try:
-                        transcode_video_to_mp4(external_url, mp4_path)
+                        source_url = external_url
+                        resolved_sources = _resolve_external_video_sources(external_url, request, project_id_str)
+                        picked_source = _pick_transcode_source(resolved_sources)
+                        if picked_source:
+                            source_url = picked_source
+                        transcode_video_to_mp4(source_url, mp4_path)
                     except MediaLibraryTranscodeError as exc:
                         return Response({"error": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 file_path = mp4_path
@@ -655,6 +610,8 @@ class MediaArtifactsListAPIView(BaseAPIView):
         doc_thumbnail_source = None
         doc_thumbnail_action = None
         image_thumbnail_name = None
+        image_thumbnail_file_name = None
+        image_thumbnail_path = None
         image_thumbnail_relative_path = None
         image_thumbnail_action = None
         video_thumbnail_name = None
@@ -725,9 +682,9 @@ class MediaArtifactsListAPIView(BaseAPIView):
                     f"projects/{project_id_str}/packages/{package_id}/artifacts/{primary_artifact_name}/{artifact_file_name}"
                 )
                 thumbnail_name = f"{primary_artifact_name}-thumbnail"
-                thumbnail_path = artifact_dir / "thumbnail.jpg"
+                thumbnail_path = artifact_dir / "thumbnail.webp"
                 thumbnail_relative_path = (
-                    f"projects/{project_id_str}/packages/{package_id}/artifacts/{primary_artifact_name}/thumbnail.jpg"
+                    f"projects/{project_id_str}/packages/{package_id}/artifacts/{primary_artifact_name}/thumbnail.webp"
                 )
                 meta.setdefault("source_format", extension)
                 meta.setdefault("hls", True)
@@ -739,7 +696,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 )
                 if format_value in _VIDEO_FORMATS and format_value != "m3u8":
                     video_thumbnail_name = f"{primary_artifact_name}-thumbnail"
-                    video_thumbnail_file_name = f"{primary_artifact_name}-thumbnail.jpg"
+                    video_thumbnail_file_name = f"{primary_artifact_name}-thumbnail.webp"
                     video_thumbnail_path = artifacts_root / video_thumbnail_file_name
                     video_thumbnail_relative_path = (
                         f"projects/{project_id_str}/packages/{package_id}/artifacts/{video_thumbnail_file_name}"
@@ -747,7 +704,11 @@ class MediaArtifactsListAPIView(BaseAPIView):
                     video_thumbnail_action = "preview"
                 if format_value in _IMAGE_FORMATS and format_value != "thumbnail":
                     image_thumbnail_name = f"{primary_artifact_name}-thumbnail"
-                    image_thumbnail_relative_path = relative_path
+                    image_thumbnail_file_name = f"{primary_artifact_name}-thumbnail.webp"
+                    image_thumbnail_path = artifacts_root / image_thumbnail_file_name
+                    image_thumbnail_relative_path = (
+                        f"projects/{project_id_str}/packages/{package_id}/artifacts/{image_thumbnail_file_name}"
+                    )
                     image_thumbnail_action = "view"
                 if format_value not in _VIDEO_FORMATS and format_value not in _IMAGE_FORMATS:
                     thumbnail_hint = meta.get("thumbnail") if isinstance(meta, dict) else None
@@ -758,11 +719,9 @@ class MediaArtifactsListAPIView(BaseAPIView):
                         if isinstance(thumbnail_hint, str):
                             hint_name = Path(thumbnail_hint).name
                             if hint_name:
-                                doc_thumbnail_file_name = hint_name
+                                doc_thumbnail_file_name = f"{Path(hint_name).stem}.webp"
                         if not doc_thumbnail_file_name:
-                            doc_thumbnail_file_name = (
-                                f"{primary_artifact_name}-thumbnail{doc_thumbnail_source.suffix}"
-                            )
+                            doc_thumbnail_file_name = f"{primary_artifact_name}-thumbnail.webp"
                         doc_thumbnail_path = attachment_root / doc_thumbnail_file_name
                         doc_thumbnail_relative_path = (
                             f"projects/{project_id_str}/packages/{package_id}/attachment/{doc_thumbnail_file_name}"
@@ -962,50 +921,53 @@ class MediaArtifactsListAPIView(BaseAPIView):
                             thumbnail_serializer.is_valid(raise_exception=True)
                             validated_artifacts.append(thumbnail_serializer.validated_data)
                 if image_thumbnail_name and image_thumbnail_relative_path:
-                    thumbnail_entry = {
-                        "name": image_thumbnail_name,
-                        "title": f"{primary_title}",
-                        "format": "thumbnail",
-                        "path": image_thumbnail_relative_path,
-                        "link": primary_artifact_name,
-                        "action": image_thumbnail_action or "view",
-                        "metadata_ref": primary_metadata_ref,
-                        "created_at": primary_created_at,
-                        "updated_at": primary_updated_at,
-                    }
-                    if work_item_id is not None:
-                        thumbnail_entry["work_item_id"] = work_item_id
-                    thumbnail_serializer = MediaArtifactSerializer(data=thumbnail_entry)
-                    thumbnail_serializer.is_valid(raise_exception=True)
-                    validated_artifacts.append(thumbnail_serializer.validated_data)
-                if doc_thumbnail_name and doc_thumbnail_relative_path and doc_thumbnail_source and doc_thumbnail_path:
+                    max_bytes = getattr(settings, "MEDIA_LIBRARY_THUMBNAIL_MAX_BYTES", 51200)
+                    thumbnail_relative_path = image_thumbnail_relative_path
+                    use_existing = False
                     try:
-                        if not doc_thumbnail_path.exists():
-                            doc_thumbnail_path.parent.mkdir(parents=True, exist_ok=True)
-                            shutil.copyfile(doc_thumbnail_source, doc_thumbnail_path)
-                        if doc_thumbnail_path.exists():
-                            thumbnail_entry = {
-                                "name": doc_thumbnail_name,
-                                "title": f"{primary_title}",
-                                "format": "thumbnail",
-                                "path": doc_thumbnail_relative_path,
-                                "link": primary_artifact_name,
-                                "action": doc_thumbnail_action or "download",
-                                "metadata_ref": primary_metadata_ref,
-                                "created_at": primary_created_at,
-                                "updated_at": primary_updated_at,
-                            }
-                            if work_item_id is not None:
-                                thumbnail_entry["work_item_id"] = work_item_id
-                            thumbnail_serializer = MediaArtifactSerializer(data=thumbnail_entry)
-                            thumbnail_serializer.is_valid(raise_exception=True)
-                            validated_artifacts.append(thumbnail_serializer.validated_data)
-                    except OSError as exc:
-                        logger.exception(
-                            "Failed to write document thumbnail for %s.",
-                            primary_artifact_name,
-                            exc_info=exc,
-                        )
+                        if file_path.suffix.lower() == ".webp" and file_path.stat().st_size <= max_bytes:
+                            thumbnail_relative_path = relative_path
+                            use_existing = True
+                    except OSError:
+                        pass
+                    if not use_existing:
+                        if not (image_thumbnail_path and generate_thumbnail(file_path, image_thumbnail_path, seek=None)):
+                            thumbnail_relative_path = None
+                    if thumbnail_relative_path:
+                        thumbnail_entry = {
+                            "name": image_thumbnail_name,
+                            "title": f"{primary_title}",
+                            "format": "thumbnail",
+                            "path": thumbnail_relative_path,
+                            "link": primary_artifact_name,
+                            "action": image_thumbnail_action or "view",
+                            "metadata_ref": primary_metadata_ref,
+                            "created_at": primary_created_at,
+                            "updated_at": primary_updated_at,
+                        }
+                        if work_item_id is not None:
+                            thumbnail_entry["work_item_id"] = work_item_id
+                        thumbnail_serializer = MediaArtifactSerializer(data=thumbnail_entry)
+                        thumbnail_serializer.is_valid(raise_exception=True)
+                        validated_artifacts.append(thumbnail_serializer.validated_data)
+                if doc_thumbnail_name and doc_thumbnail_relative_path and doc_thumbnail_source and doc_thumbnail_path:
+                    if generate_thumbnail(doc_thumbnail_source, doc_thumbnail_path, seek=None):
+                        thumbnail_entry = {
+                            "name": doc_thumbnail_name,
+                            "title": f"{primary_title}",
+                            "format": "thumbnail",
+                            "path": doc_thumbnail_relative_path,
+                            "link": primary_artifact_name,
+                            "action": doc_thumbnail_action or "download",
+                            "metadata_ref": primary_metadata_ref,
+                            "created_at": primary_created_at,
+                            "updated_at": primary_updated_at,
+                        }
+                        if work_item_id is not None:
+                            thumbnail_entry["work_item_id"] = work_item_id
+                        thumbnail_serializer = MediaArtifactSerializer(data=thumbnail_entry)
+                        thumbnail_serializer.is_valid(raise_exception=True)
+                        validated_artifacts.append(thumbnail_serializer.validated_data)
 
         if not file_obj:
             artifacts_root = package_root(project_id_str, package_id) / "artifacts"
@@ -1036,7 +998,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
                     if not source_urls:
                         continue
                     artifacts_root.mkdir(parents=True, exist_ok=True)
-                    thumbnail_file_name = f"{artifact.get('name')}-thumbnail.jpg"
+                    thumbnail_file_name = f"{artifact.get('name')}-thumbnail.webp"
                     thumbnail_path = artifacts_root / thumbnail_file_name
                     created_thumbnail = False
                     for source_url in source_urls:
@@ -1081,11 +1043,51 @@ class MediaArtifactsListAPIView(BaseAPIView):
                     validate_segment(thumbnail_name, "artifactId")
                     if thumbnail_name in existing_names or thumbnail_name in incoming_names:
                         continue
+                    artifacts_root.mkdir(parents=True, exist_ok=True)
+                    thumbnail_file_name = f"{artifact.get('name')}-thumbnail.webp"
+                    thumbnail_path = artifacts_root / thumbnail_file_name
+                    max_bytes = getattr(settings, "MEDIA_LIBRARY_THUMBNAIL_MAX_BYTES", 51200)
+
+                    resolved_path = _resolve_artifact_disk_path(artifact, media_library_root())
+                    created_thumbnail = False
+                    thumbnail_relative_path = None
+
+                    if resolved_path and resolved_path.exists():
+                        try:
+                            if (
+                                resolved_path.suffix.lower() == ".webp"
+                                and resolved_path.stat().st_size <= max_bytes
+                            ):
+                                thumbnail_relative_path = raw_path
+                                created_thumbnail = True
+                        except OSError:
+                            pass
+                        if not created_thumbnail:
+                            if generate_thumbnail(resolved_path, thumbnail_path, seek=None):
+                                created_thumbnail = True
+                    else:
+                        source_urls = _resolve_external_video_sources(raw_path, request, project_id_str)
+                        for source_url in source_urls:
+                            try:
+                                if thumbnail_path.exists():
+                                    thumbnail_path.unlink()
+                            except OSError:
+                                pass
+                            if generate_thumbnail(source_url, thumbnail_path, seek=None):
+                                created_thumbnail = True
+                                break
+
+                    if not created_thumbnail:
+                        continue
+                    if not thumbnail_relative_path:
+                        thumbnail_relative_path = (
+                            f"projects/{project_id_str}/packages/{package_id}/artifacts/{thumbnail_file_name}"
+                        )
                     thumbnail_entry = {
                         "name": thumbnail_name,
                         "title": artifact.get("title") or "Image thumbnail",
                         "format": "thumbnail",
-                        "path": raw_path,
+                        "path": thumbnail_relative_path,
                         "link": artifact.get("name"),
                         "action": "view",
                         "metadata_ref": artifact.get("metadata_ref") or artifact.get("name"),
@@ -1116,22 +1118,11 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 if isinstance(thumbnail_hint, str):
                     hint_name = Path(thumbnail_hint).name
                     if hint_name:
-                        doc_thumbnail_file_name = hint_name
+                        doc_thumbnail_file_name = f"{Path(hint_name).stem}.webp"
                 if not doc_thumbnail_file_name:
-                    doc_thumbnail_file_name = f"{artifact.get('name')}-thumbnail{doc_thumbnail_source.suffix}"
+                    doc_thumbnail_file_name = f"{artifact.get('name')}-thumbnail.webp"
                 doc_thumbnail_path = attachment_root / doc_thumbnail_file_name
-                try:
-                    if not doc_thumbnail_path.exists():
-                        doc_thumbnail_path.parent.mkdir(parents=True, exist_ok=True)
-                        shutil.copyfile(doc_thumbnail_source, doc_thumbnail_path)
-                except OSError as exc:
-                    logger.exception(
-                        "Failed to write document thumbnail for %s.",
-                        artifact.get("name"),
-                        exc_info=exc,
-                    )
-                    continue
-                if not doc_thumbnail_path.exists():
+                if not generate_thumbnail(doc_thumbnail_source, doc_thumbnail_path, seek=None):
                     continue
                 doc_thumbnail_relative_path = (
                     f"projects/{project_id_str}/packages/{package_id}/attachment/{doc_thumbnail_file_name}"

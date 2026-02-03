@@ -6,15 +6,15 @@ import Link from "next/link";
 import { useParams, useSearchParams, usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
-import { MediaCard } from "../../components/media-card";
-import type { TMediaItem, TMediaSection } from "../../types";
-import { resolveMediaItemActionHref } from "../../utils/media-items";
-import { useMediaLibrary } from "../../state/media-library-context";
-import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../../utils/media-library-filters";
-import { MediaListView } from "../../components/media-list-view";
-import { useMediaLibraryItems } from "../../hooks/use-media-library-items";
+import { MediaCard } from "../../../components/media-card";
+import type { TMediaItem, TMediaSection } from "../../../types";
+import { resolveMediaItemActionHref } from "../../../utils/media-items";
+import { useMediaLibrary } from "../../../state/media-library-context";
+import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../../../utils/media-library-filters";
+import { MediaListView } from "../../../components/media-list-view";
+import { useMediaLibraryItems } from "../../../hooks/use-media-library-items";
 
-const BLOCKED_DOCUMENT_FORMATS = new Set(["doc", "docx", "txt"]);
+const BLOCKED_DOCUMENT_FORMATS = new Set(["doc", "docx", "txt", "pptx", "ppt", "csv"]);
 
 const MediaLibrarySectionPage = observer(() => {
   const { workspaceSlug, projectId, sectionName } = useParams() as {
@@ -33,6 +33,10 @@ const MediaLibrarySectionPage = observer(() => {
   const pageSize = viewMode === "list" ? listPageSize : gridPageSize;
   const requestedPage = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
   const decodedSection = decodeURIComponent(sectionName ?? "");
+  const currentPath = useMemo(() => {
+    const params = searchParams.toString();
+    return params ? `${pathname}?${params}` : pathname;
+  }, [pathname, searchParams]);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLDivElement | null>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
@@ -219,14 +223,17 @@ const MediaLibrarySectionPage = observer(() => {
   };
 
   const getItemHref = (item: TMediaItem) => {
-    if (item.link) {
-      return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.link)}`;
-    }
+    const detailTarget = item.link ?? item.id;
+    const detailPath = `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(detailTarget)}`;
+    const params = new URLSearchParams();
+    if (currentPath) params.set("from", currentPath);
+    const detailHref = params.toString() ? `${detailPath}?${params}` : detailPath;
+
     const actionHref = resolveMediaItemActionHref(item);
     if (actionHref) {
       return actionHref;
     }
-    return `/${workspaceSlug}/projects/${projectId}/media-library/${encodeURIComponent(item.id)}`;
+    return detailHref;
   };
 
   if (showSkeleton) {

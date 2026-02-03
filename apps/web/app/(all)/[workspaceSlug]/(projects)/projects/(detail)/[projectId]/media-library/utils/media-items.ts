@@ -295,13 +295,15 @@ export const mapArtifactsToMediaItems = (
         ? "video"
         : normalizedAction === "view" || normalizedAction === "open_image"
           ? "image"
-          : format === "thumbnail" && metaKind === "thumbnail"
+          : format === "thumbnail" && (normalizedAction === "open_pdf" || normalizedAction === "download")
             ? "document"
-            : format === "thumbnail" && metaSource === "generated"
-              ? "video"
-              : format === "thumbnail"
-                ? "image"
-                : "document";
+            : format === "thumbnail" && metaKind === "thumbnail"
+              ? "document"
+              : format === "thumbnail" && metaSource === "generated"
+                ? "video"
+                : format === "thumbnail"
+                  ? "image"
+                  : "document";
     const linkedMediaType = linkTarget
       ? mediaTypeByName.get(linkTarget) ?? (linkFormat ? getMediaType(linkFormat) : inferredLinkedMediaType)
       : undefined;

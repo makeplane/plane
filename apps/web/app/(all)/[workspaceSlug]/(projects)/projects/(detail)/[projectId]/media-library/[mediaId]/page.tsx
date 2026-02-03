@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DOMPurify from "dompurify";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { ArrowLeft, Calendar, Clock, FileText, Mail, MapPin, Phone, User } from "lucide-react";
+import { useParams, useSearchParams } from "next/navigation";
+import { ArrowLeft, Calendar, Clock, Download, FileText, Mail, MapPin, Phone, User } from "lucide-react";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import { API_BASE_URL } from "@plane/constants";
@@ -282,6 +282,21 @@ const buildDownloadUrl = (src: string) => {
   return `${src}${separator}download=1`;
 };
 
+const buildMediaLibraryDownloadUrl = (args: {
+  workspaceSlug?: string;
+  projectId?: string;
+  packageId?: string;
+  artifactId?: string;
+}) => {
+  const { workspaceSlug, projectId, packageId, artifactId } = args;
+  if (!API_BASE_URL || !workspaceSlug || !projectId || !packageId || !artifactId) return "";
+  const base = API_BASE_URL.replace(/\/$/, "");
+  const path = `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/${encodeURIComponent(
+    artifactId
+  )}/file/`;
+  return `${base}${path}?download=1`;
+};
+
 const addInlineDisposition = (src: string) => {
   if (!src) return "";
   try {
@@ -300,6 +315,14 @@ const MediaDetailPage = () => {
     workspaceSlug: string;
     projectId: string;
   };
+  const searchParams = useSearchParams();
+  const fromParam = searchParams.get("from") ?? "";
+  const backHref = useMemo(() => {
+    const defaultHref = `/${workspaceSlug}/projects/${projectId}/media-library`;
+    if (!fromParam || !fromParam.startsWith("/") || fromParam.startsWith("//")) return defaultHref;
+    if (!fromParam.startsWith(defaultHref)) return defaultHref;
+    return fromParam;
+  }, [fromParam, projectId, workspaceSlug]);
   const { items: libraryItems, isLoading } = useMediaLibraryItems(workspaceSlug, projectId);
   const [activeTab, setActiveTab] = useState<"details" | "tags">("details");
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -419,7 +442,13 @@ const MediaDetailPage = () => {
     [effectiveVideoSrc, shouldUseCredentials]
   );
   const crossOrigin = useCredentials ? "use-credentials" : "anonymous";
-  const videoDownloadSrc = videoSrc ? buildDownloadUrl(videoSrc) : "";
+  const mediaLibraryDownloadSrc = buildMediaLibraryDownloadUrl({
+    workspaceSlug,
+    projectId,
+    packageId: item?.packageId,
+    artifactId: item?.id,
+  });
+  const videoDownloadSrc = mediaLibraryDownloadSrc || (videoSrc ? buildDownloadUrl(videoSrc) : "");
   const effectiveDocumentSrc = isDocumentAssetApiUrl ? resolvedDocumentSrc : resolvedDocumentSrc || item?.fileSrc || "";
   const useDocumentCredentials = useMemo(
     () => shouldUseCredentials(effectiveDocumentSrc),
@@ -446,7 +475,7 @@ const MediaDetailPage = () => {
     }
 
     if (!isVideoAssetApiUrl) {
-      setResolvedVideoSrc(videoSrc);
+      setResolvedVideoSrc("");
       return () => {
         isMounted = false;
       };
@@ -1275,7 +1304,7 @@ useEffect(() => {
     <div className="flex flex-col gap-6 px-3 py-3">
       <div className="flex items-center justify-between gap-4">
         <Link
-          href={`/${workspaceSlug}/projects/${projectId}/media-library`}
+          href={backHref}
           className="inline-flex items-center gap-2 rounded-full px-4 py-1 text-xs text-custom-text-300 hover:text-custom-text-100"
         >
           <ArrowLeft className="size-md h-3.2 w-3.2" />
@@ -1341,9 +1370,10 @@ useEffect(() => {
                     href={videoDownloadSrc}
                     target="_blank"
                     rel="noreferrer"
-                    className="rounded-full border border-custom-border-200 px-3 py-1 text-xs text-custom-text-300 hover:text-custom-text-100"
+                    className="inline-flex items-center gap-1.5 rounded bg-custom-primary-100 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-custom-primary-200"
                   >
-                    Download video
+                    <Download className="h-3.5 w-3.5" />
+                    Download
                   </a>
                 </div>
               ) : null}
@@ -1435,9 +1465,10 @@ useEffect(() => {
                     href={effectiveDocumentSrc}
                     target="_blank"
                     rel="noreferrer"
-                    className="rounded-full border border-custom-border-200 px-3 py-1 text-xs text-custom-text-300 hover:text-custom-text-100"
+                      className="inline-flex items-center gap-1.5 rounded bg-custom-primary-100 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-custom-primary-200"
                   >
-                    Open document
+                    <Download className="h-3.5 w-3.5" />
+                    Download
                   </a>
                 </div>
               ) : null}

@@ -32,6 +32,18 @@ META_FILTER_EXCLUDED_KEYS = {
     "source_format",
     "source format",
 }
+THUMBNAIL_MAX_BYTES = int(getattr(settings, "MEDIA_LIBRARY_THUMBNAIL_MAX_BYTES", 51200))
+THUMBNAIL_PRESETS: tuple[tuple[int, int], ...] = (
+    (480, 82),
+    (400, 78),
+    (320, 74),
+    (256, 70),
+    (200, 66),
+    (160, 60),
+    (128, 54),
+    (96, 48),
+    (64, 42),
+)
 
 EVENT_META_KEYS = {
     "category",
@@ -329,6 +341,87 @@ def filter_media_library_artifacts(
         and matches_query(artifact)
         and matches_filters(artifact)
     ]
+
+
+def _thumbnail_within_limit(path: Path, max_bytes: int) -> bool:
+    try:
+        return path.stat().st_size <= max_bytes
+    except OSError:
+        return False
+
+
+def _thumbnail_scale_filter(max_dim: int) -> str:
+    return (
+        "scale="
+        f"'min({max_dim},iw)':'min({max_dim},ih)':"
+        "force_original_aspect_ratio=decrease"
+    )
+
+
+def generate_thumbnail(
+    source: str | Path,
+    thumbnail_path: Path,
+    *,
+    max_bytes: int | None = None,
+    seek: str | None = "00:00:00.000",
+) -> bool:
+    if shutil.which("ffmpeg") is None:
+        logger.error("ffmpeg is not installed. Skipping thumbnail generation for %s.", source)
+        return False
+
+    effective_max = max_bytes if isinstance(max_bytes, int) and max_bytes > 0 else THUMBNAIL_MAX_BYTES
+    thumbnail_path.parent.mkdir(parents=True, exist_ok=True)
+
+    for max_dim, quality in THUMBNAIL_PRESETS:
+        cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y"]
+        if seek:
+            cmd.extend(["-ss", seek])
+        cmd.extend(
+            [
+                "-i",
+                str(source),
+                "-vf",
+                _thumbnail_scale_filter(max_dim),
+                "-frames:v",
+                "1",
+                "-vcodec",
+                "libwebp",
+                "-lossless",
+                "0",
+                "-compression_level",
+                "4",
+                "-q:v",
+                str(quality),
+                str(thumbnail_path),
+            ]
+        )
+        try:
+            subprocess.run(cmd, check=True, capture_output=True, text=True)
+        except subprocess.CalledProcessError as exc:
+            detail = (exc.stderr or exc.stdout or "").strip()
+            if detail:
+                detail = detail.replace("\n", " ")
+                if len(detail) > 500:
+                    detail = f"{detail[:500]}..."
+                logger.error("ffmpeg thumbnail failed: %s", detail)
+            else:
+                logger.error("ffmpeg thumbnail failed with exit code %s", exc.returncode)
+            if thumbnail_path.exists():
+                try:
+                    thumbnail_path.unlink()
+                except OSError:
+                    pass
+            return False
+
+        if _thumbnail_within_limit(thumbnail_path, effective_max):
+            return True
+
+    if thumbnail_path.exists() and not _thumbnail_within_limit(thumbnail_path, effective_max):
+        try:
+            thumbnail_path.unlink()
+        except OSError:
+            pass
+    return False
 
 _DOCUMENT_ICON_MAP = {
   "pdf": "pdf-icon.png",
@@ -633,31 +726,8 @@ def transcode_mp4_to_hls(
 
         created_thumbnail = None
         if thumbnail_path:
-            try:
-                thumb_cmd = [
-                    "ffmpeg",
-                    "-hide_banner",
-                    "-loglevel",
-                    "error",
-                    "-y",
-                    "-ss",
-                    "00:00:00.000",
-                    "-i",
-                    str(tmp_input_path),
-                    "-frames:v",
-                    "1",
-                    "-q:v",
-                    "2",
-                    str(thumbnail_path),
-                ]
-                _run_ffmpeg(thumb_cmd)
+            if generate_thumbnail(tmp_input_path, thumbnail_path):
                 created_thumbnail = thumbnail_path
-            except subprocess.CalledProcessError as exc:
-                detail = _render_ffmpeg_error(exc)
-                if detail:
-                    logger.error("ffmpeg thumbnail failed: %s", detail)
-                else:
-                    logger.error("ffmpeg thumbnail failed with exit code %s", exc.returncode)
         success = True
         return output_dir / playlist_name, created_thumbnail
     except FileNotFoundError as exc:
