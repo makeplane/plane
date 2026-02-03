@@ -6,8 +6,8 @@ import { FileImage, FileText, FileVideo, UploadCloud, X } from "lucide-react";
 import { Button } from "@plane/ui";
 import { useInstance } from "@/hooks/store/use-instance";
 import { MediaLibraryService } from "@/services/media-library.service";
-import { getDocumentThumbnailPath } from "./media-items";
-import { useMediaLibrary } from "./media-library-context";
+import { getDocumentThumbnailPath } from "../utils/media-items";
+import { useMediaLibrary } from "../state/media-library-context";
 
 const DEFAULT_MEDIA_LIBRARY_MAX_FILE_SIZE = 1024 * 1024 * 1024;
 const IMAGE_FORMATS = new Set([

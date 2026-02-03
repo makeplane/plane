@@ -3,13 +3,8 @@
 import type { MouseEvent } from "react";
 import Link from "next/link";
 import { File, Image, Video } from "lucide-react";
-import type { TMediaItem } from "./media-items";
-import { useVideoDuration } from "./use-video-duration";
-
-type TMediaSection = {
-  title: string;
-  items: TMediaItem[];
-};
+import type { TMediaItem, TMediaSection } from "../types";
+import { useVideoDuration } from "../hooks/use-video-duration";
 
 const MediaListRow = ({
   item,

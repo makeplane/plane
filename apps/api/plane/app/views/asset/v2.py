@@ -196,6 +196,15 @@ class UserAssetsV2Endpoint(BaseAPIView):
 class WorkspaceFileAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload cover images/logos etc for workspace, projects and users."""
 
+    def _resolve_disposition(self, request):
+        download = request.query_params.get("download")
+        disposition = request.query_params.get("disposition")
+        if disposition:
+            return "attachment" if str(disposition).lower() == "attachment" else "inline"
+        if download is None:
+            return "inline"
+        return "attachment" if str(download).lower() in {"1", "true", "yes"} else "inline"
+
     def get_entity_id_field(self, entity_type, entity_id):
         # Workspace Logo
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
@@ -417,7 +426,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # Generate a presigned URL to share an S3 object
         signed_url = storage.generate_presigned_url(
             object_name=asset.asset.name,
-            disposition="attachment",
+            disposition=self._resolve_disposition(request),
             filename=asset.attributes.get("name"),
         )
         # Redirect to the signed URL
@@ -503,6 +512,15 @@ class ProjectAssetEndpoint(BaseAPIView):
         if entity_type == FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION:
             return {"draft_issue_id": entity_id}
         return {}
+
+    def _resolve_disposition(self, request):
+        download = request.query_params.get("download")
+        disposition = request.query_params.get("disposition")
+        if disposition:
+            return "attachment" if str(disposition).lower() == "attachment" else "inline"
+        if download is None:
+            return "inline"
+        return "attachment" if str(download).lower() in {"1", "true", "yes"} else "inline"
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id):
@@ -615,7 +633,7 @@ class ProjectAssetEndpoint(BaseAPIView):
         # Generate a presigned URL to share an S3 object
         signed_url = storage.generate_presigned_url(
             object_name=asset.asset.name,
-            disposition="attachment",
+            disposition=self._resolve_disposition(request),
             filename=asset.attributes.get("name"),
         )
         if request.query_params.get("response") == "json":

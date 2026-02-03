@@ -4,9 +4,10 @@ import type { MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Calendar, Clock, File, Image as ImageIcon, Video } from "lucide-react";
+import { API_BASE_URL } from "@plane/constants";
 
-import type { TMediaItem } from "./media-items";
-import { useVideoDuration } from "./use-video-duration";
+import type { TMediaItem } from "../types";
+import { useVideoDuration } from "../hooks/use-video-duration";
 
 export const MediaCard = ({
   item,
@@ -23,7 +24,7 @@ export const MediaCard = ({
   label?: string;
   onClick?: (event: MouseEvent<HTMLAnchorElement>, item: TMediaItem) => void;
 }) => {
-  console.log("Rendering MediaCard for item:", item);
+  // console.log("Rendering MediaCard for item:", item);
   const isHls = item.mediaType === "video" && item.format.toLowerCase() === "m3u8";
   const durationLabel = useVideoDuration(item);
   const isExternal = /^https?:\/\//i.test(href);
@@ -36,6 +37,27 @@ export const MediaCard = ({
         ? "Image"
         : "Document"
     : "";
+  const shouldUseCredentials = (src: string) => {
+    if (!src) return false;
+    if (src.startsWith("/")) return true;
+    if (!/^https?:\/\//i.test(src)) return true;
+    try {
+      const url = new URL(src);
+      if (typeof window !== "undefined" && url.origin === window.location.origin) return true;
+      if (API_BASE_URL) {
+        try {
+          return url.origin === new URL(API_BASE_URL).origin;
+        } catch {
+          return false;
+        }
+      }
+    } catch {
+      return false;
+    }
+    return false;
+  };
+  const useCredentials = shouldUseCredentials(item.videoSrc ?? "");
+  const crossOrigin = useCredentials ? "use-credentials" : "anonymous";
   const LinkedTypeIcon = showLinkedTypeIndicator
     ? item.linkedMediaType === "video"
       ? Video
@@ -103,6 +125,7 @@ export const MediaCard = ({
               loop
               playsInline
               preload="metadata"
+              crossOrigin={crossOrigin}
               className="h-full w-full object-cover transition-transform duration-300 "
             />
           )

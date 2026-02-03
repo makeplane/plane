@@ -17,7 +17,7 @@ import { FiltersToggle } from "@/components/rich-filters/filters-toggle";
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-import { useMediaLibrary } from "./media-library-context";
+import { useMediaLibrary } from "../state/media-library-context";
 
 /* ------------------------------------------------------------------ */
 /* TYPES */

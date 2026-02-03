@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 
 import type { TMediaArtifactsPaginatedResponse } from "@/services/media-library.service";
 import { MediaLibraryService } from "@/services/media-library.service";
-import type { TMediaItem } from "./media-items";
-import { mapArtifactsToMediaItems } from "./media-items";
+import type { TMediaItem } from "../types";
+import { mapArtifactsToMediaItems } from "../utils/media-items";
 
 type TMediaLibraryFilterCondition = {
   property: string;

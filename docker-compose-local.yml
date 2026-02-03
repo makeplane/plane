@@ -22,6 +22,9 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
   plane-minio:
     image: minio/minio
@@ -34,7 +37,9 @@ services:
       minio server /export --console-address ':9090' &
       sleep 5 &&
       mc alias set myminio http://localhost:9000 ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} &&
-      mc mb myminio/${AWS_S3_BUCKET_NAME} -p || true
+      mc mb myminio/${AWS_S3_BUCKET_NAME} -p || true &&
+      printf '%s\n' '[{"AllowedOrigins":["http://localhost:3000","http://localhost:3001","http://localhost:3002","http://localhost:3100","http://localhost:8000"],"AllowedMethods":["GET","HEAD","PUT","POST","DELETE"],"AllowedHeaders":["*"],"ExposeHeaders":["ETag","Content-Length","Content-Range","Accept-Ranges","Content-Disposition"],"MaxAgeSeconds":3000}]' > /tmp/minio-cors.json &&
+      mc cors set myminio/${AWS_S3_BUCKET_NAME} /tmp/minio-cors.json || true
       && tail -f /dev/null
       "
     volumes:
@@ -136,6 +141,7 @@ services:
       - ./apps/api/.env
     environment:
       MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-1073741824}
+      RABBITMQ_HOST: plane-mq
     depends_on:
       - plane-db
       - plane-redis
@@ -159,6 +165,7 @@ services:
       - ./apps/api/.env
     environment:
       MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-1073741824}
+      RABBITMQ_HOST: plane-mq
     depends_on:
       - api
       - plane-db
@@ -180,6 +187,7 @@ services:
       - ./apps/api/.env
     environment:
       MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-1073741824}
+      RABBITMQ_HOST: plane-mq
     depends_on:
       - api
       - plane-db
@@ -201,6 +209,7 @@ services:
       - ./apps/api/.env
     environment:
       MEDIA_LIBRARY_FILE_SIZE_LIMIT: ${MEDIA_LIBRARY_FILE_SIZE_LIMIT:-1073741824}
+      RABBITMQ_HOST: plane-mq
     depends_on:
       - plane-db
       - plane-redis

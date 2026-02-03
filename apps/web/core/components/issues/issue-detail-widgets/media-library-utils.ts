@@ -56,6 +56,56 @@ export const resolveAttachmentFileName = (attachment: TIssueAttachment) => {
   return segments[segments.length - 1] || "attachment";
 };
 
+const resolveAbsoluteAssetUrl = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  const origin =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : API_BASE_URL
+        ? (() => {
+            try {
+              return new URL(API_BASE_URL).origin;
+            } catch {
+              return API_BASE_URL;
+            }
+          })()
+        : "";
+  if (!origin) return trimmed;
+  try {
+    return new URL(trimmed, origin).toString();
+  } catch {
+    return trimmed;
+  }
+};
+
+export const resolveArtifactPathFromAssetUrl = (rawUrl: string) => {
+  const trimmed = rawUrl.trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("data:") || trimmed.startsWith("blob:")) return "";
+  const absolute = resolveAbsoluteAssetUrl(trimmed);
+  if (!/^https?:\/\//i.test(absolute)) return "";
+  const origins = new Set<string>();
+  if (typeof window !== "undefined") {
+    origins.add(window.location.origin);
+  }
+  if (API_BASE_URL) {
+    try {
+      origins.add(new URL(API_BASE_URL).origin);
+    } catch {
+      // ignore invalid API base url
+    }
+  }
+  try {
+    const parsed = new URL(absolute);
+    if (!origins.has(parsed.origin)) return "";
+  } catch {
+    return "";
+  }
+  return absolute;
+};
+
 export const getErrorMessage = (error: unknown) => {
   if (!error) return "";
   if (typeof error === "string") return error;
@@ -68,13 +118,25 @@ export const getErrorMessage = (error: unknown) => {
   return "";
 };
 
-export const resolveAttachmentDownloadUrl = async (rawUrl: string) => {
+const toAbsoluteApiUrl = (rawUrl: string) => {
   if (!rawUrl) return "";
-  if (!API_BASE_URL || !rawUrl.startsWith(API_BASE_URL)) {
+  if (/^https?:\/\//i.test(rawUrl)) return rawUrl;
+  if (!API_BASE_URL) return rawUrl;
+  try {
+    return new URL(rawUrl, API_BASE_URL).toString();
+  } catch {
     return rawUrl;
   }
+};
 
-  const url = new URL(rawUrl);
+export const resolveAttachmentDownloadUrl = async (rawUrl: string) => {
+  if (!rawUrl) return "";
+  const normalizedUrl = toAbsoluteApiUrl(rawUrl);
+  if (!API_BASE_URL || !normalizedUrl.startsWith(API_BASE_URL)) {
+    return normalizedUrl || rawUrl;
+  }
+
+  const url = new URL(normalizedUrl);
   url.searchParams.set("response", "json");
   const response = await fetch(url.toString(), { credentials: "include" });
   if (!response.ok) {

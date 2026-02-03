@@ -6,8 +6,8 @@ import { useParams } from "next/navigation";
 import { FilterInstance } from "@plane/shared-state";
 import type { TFilterConfig } from "@plane/types";
 
-import type { TMediaLibraryExternalFilter, TMediaLibraryFilterProperty } from "./media-library-filters";
-import { mediaLibraryFiltersAdapter } from "./media-library-filters";
+import type { TMediaLibraryExternalFilter, TMediaLibraryFilterProperty } from "../utils/media-library-filters";
+import { mediaLibraryFiltersAdapter } from "../utils/media-library-filters";
 
 type TMediaLibraryContext = {
   isUploadOpen: boolean;

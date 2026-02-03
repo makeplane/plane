@@ -6,13 +6,13 @@ import Link from "next/link";
 import { useParams, useSearchParams, usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
-import { MediaCard } from "../../media-card";
-import type { TMediaItem, TMediaSection } from "../../media-items";
-import { resolveMediaItemActionHref } from "../../media-items";
-import { useMediaLibrary } from "../../media-library-context";
-import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../../media-library-filters";
-import { MediaListView } from "../../media-list-view";
-import { useMediaLibraryItems } from "../../use-media-library-items";
+import { MediaCard } from "../../components/media-card";
+import type { TMediaItem, TMediaSection } from "../../types";
+import { resolveMediaItemActionHref } from "../../utils/media-items";
+import { useMediaLibrary } from "../../state/media-library-context";
+import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../../utils/media-library-filters";
+import { MediaListView } from "../../components/media-list-view";
+import { useMediaLibraryItems } from "../../hooks/use-media-library-items";
 
 const BLOCKED_DOCUMENT_FORMATS = new Set(["doc", "docx", "txt"]);
 

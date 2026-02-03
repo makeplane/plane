@@ -10,7 +10,7 @@ import { COLLECTION_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
 import { FilterAdapter } from "@plane/shared-state";
 import { createFilterConfig, createOperatorConfigEntry, getMultiSelectConfig, getSingleSelectConfig } from "@plane/utils";
 
-import type { TMediaItem } from "./media-items";
+import type { TMediaItem } from "../types";
 
 export type TMediaLibraryFilterProperty = string;
 

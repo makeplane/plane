@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { FileText, Image as ImageIcon, Video } from "lucide-react";
-import type { TMediaItem } from "../(list)/media-items";
+import type { TMediaItem } from "../types";
 
 type TagsSectionProps = {
   item: TMediaItem;

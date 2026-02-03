@@ -154,6 +154,22 @@ export class MediaLibraryService extends APIService {
       });
   }
 
+  async createArtifact(
+    workspaceSlug: string,
+    projectId: string,
+    packageId: string,
+    payload: TMediaArtifactPayload | TMediaArtifactPayload[]
+  ): Promise<TMediaArtifact | TMediaArtifact[]> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/`,
+      payload
+    )
+      .then((response) => response?.data ?? null)
+      .catch((error) => {
+        throw error?.response?.data ?? error?.response ?? error;
+      });
+  }
+
   async deleteArtifact(
     workspaceSlug: string,
     projectId: string,

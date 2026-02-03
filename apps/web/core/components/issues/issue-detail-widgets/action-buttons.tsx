@@ -30,6 +30,7 @@ import {
   isDuplicateArtifactError,
   resolveArtifactAction,
   resolveArtifactFormat,
+  resolveArtifactPathFromAssetUrl,
   resolveAttachmentDownloadUrl,
   resolveAttachmentFileName,
 } from "./media-library-utils";
@@ -64,6 +65,7 @@ export {
   isDuplicateArtifactError,
   resolveArtifactAction,
   resolveArtifactFormat,
+  resolveArtifactPathFromAssetUrl,
   resolveAttachmentDownloadUrl,
   resolveAttachmentFileName,
 };
@@ -140,16 +142,7 @@ export const IssueDetailWidgetActionButtons: FC<Props> = observer((props) => {
         }
 
         try {
-          const downloadUrl = await resolveAttachmentDownloadUrl(assetUrl);
-          if (!downloadUrl) {
-            throw new Error(`Unable to fetch "${fileName}".`);
-          }
-          const response = await fetch(downloadUrl);
-          if (!response.ok) {
-            throw new Error(`Unable to fetch "${fileName}".`);
-          }
-          const blob = await response.blob();
-          const file = new File([blob], fileName, { type: blob.type || undefined });
+          const directPath = resolveArtifactPathFromAssetUrl(assetUrl);
           const artifactName = buildArtifactName(fileName, attachmentItem.id);
           const title = getFileName(fileName) || "Attachment";
           const action = resolveArtifactAction(format);
@@ -160,6 +153,32 @@ export const IssueDetailWidgetActionButtons: FC<Props> = observer((props) => {
             meta.file_size = attachmentItem.attributes?.size;
             meta.file_type = format;
           }
+
+          if (directPath) {
+            await mediaLibraryService.createArtifact(workspaceSlug, projectId, packageId, {
+              name: artifactName,
+              title,
+              format,
+              link: null,
+              action,
+              meta,
+              work_item_id: issueId,
+              path: directPath,
+            });
+            result.successCount += 1;
+            continue;
+          }
+
+          const downloadUrl = await resolveAttachmentDownloadUrl(assetUrl);
+          if (!downloadUrl) {
+            throw new Error(`Unable to fetch "${fileName}".`);
+          }
+          const response = await fetch(downloadUrl);
+          if (!response.ok) {
+            throw new Error(`Unable to fetch "${fileName}".`);
+          }
+          const blob = await response.blob();
+          const file = new File([blob], fileName, { type: blob.type || undefined });
 
           await mediaLibraryService.uploadArtifact(
             workspaceSlug,

@@ -84,6 +84,15 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
     model = FileAsset
 
+    def _resolve_disposition(self, request):
+        download = request.query_params.get("download")
+        disposition = request.query_params.get("disposition")
+        if disposition:
+            return "attachment" if str(disposition).lower() == "attachment" else "inline"
+        if download is None:
+            return "inline"
+        return "attachment" if str(download).lower() in {"1", "true", "yes"} else "inline"
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, issue_id):
         name = request.data.get("name")
@@ -171,7 +180,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
             storage = S3Storage(request=request)
             presigned_url = storage.generate_presigned_url(
                 object_name=asset.asset.name,
-                disposition="attachment",
+                disposition=self._resolve_disposition(request),
                 filename=asset.attributes.get("name"),
             )
             if request.query_params.get("response") == "json":

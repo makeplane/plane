@@ -3,36 +3,7 @@
 import { API_BASE_URL } from "@plane/constants";
 
 import type { TMediaArtifact } from "@/services/media-library.service";
-
-export type TMediaItem = {
-  id: string;
-  packageId?: string;
-  title: string;
-  description?: string;
-  format: string;
-  linkedFormat?: string;
-  action: string;
-  link?: string | null;
-  author: string;
-  createdAt: string;
-  views: number;
-  duration: string;
-  primaryTag: string;
-  secondaryTag: string;
-  itemsCount: number;
-  meta: Record<string, unknown>;
-  mediaType: "video" | "image" | "document";
-  linkedMediaType?: "video" | "image" | "document";
-  thumbnail: string;
-  videoSrc?: string;
-  fileSrc?: string;
-  docs: string[];
-};
-
-export type TMediaSection = {
-  title: string;
-  items: TMediaItem[];
-};
+import type { TMediaItem, TMediaSection } from "../types";
 
 type TArtifactContext = {
   workspaceSlug: string;
@@ -385,7 +356,7 @@ export const groupMediaItemsByTag = (
     else grouped.set(key, [item]);
   }
 
-  console.log("Grouped Items:", items);
+  // console.log("Grouped Items:", items);
 
   return Array.from(grouped.entries()).map(([title, sectionItems]) => ({
     title,

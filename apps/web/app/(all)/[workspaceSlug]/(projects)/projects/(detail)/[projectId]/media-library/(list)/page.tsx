@@ -9,13 +9,13 @@ import { Navigation, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
-import { MediaCard } from "./media-card";
-import type { TMediaItem, TMediaSection } from "./media-items";
-import { groupMediaItemsByTag, resolveMediaItemActionHref } from "./media-items";
-import { useMediaLibrary } from "./media-library-context";
-import { buildMetaFilterConfigs, collectMetaFilterOptions } from "./media-library-filters";
-import { MediaListView } from "./media-list-view";
-import { useMediaLibraryItems } from "./use-media-library-items";
+import { MediaCard } from "../components/media-card";
+import type { TMediaItem, TMediaSection } from "../types";
+import { groupMediaItemsByTag, resolveMediaItemActionHref } from "../utils/media-items";
+import { useMediaLibrary } from "../state/media-library-context";
+import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../utils/media-library-filters";
+import { MediaListView } from "../components/media-list-view";
+import { useMediaLibraryItems } from "../hooks/use-media-library-items";
 
 const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHref: (item: TMediaItem) => string }) => {
   const rowId = useId().replace(/:/g, "");
@@ -132,7 +132,7 @@ const MediaLibraryListPage = observer(() => {
     [libraryItems]
   );
   const mediaSections = useMemo(() => groupMediaItemsByTag(filteredItems), [filteredItems]);
-  console.log("Media Sections:", libraryItems);
+  // console.log("Media Sections:", libraryItems);
   const filterConfigs = useMemo(
     () => buildMetaFilterConfigs(collectMetaFilterOptions(filteredItems), operatorConfigs),
     [filteredItems, operatorConfigs]

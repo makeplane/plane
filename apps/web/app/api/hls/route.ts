@@ -1,16 +1,51 @@
 "use server";
 
+import net from "node:net";
+
 const getAllowedHosts = () => {
-  const raw = process.env.HLS_PROXY_ALLOWED_HOSTS ?? "drake.in,localhost,127.0.0.1";
+  const raw = process.env.HLS_PROXY_ALLOWED_HOSTS ?? "drake.in,localhost,192.168.1.55,127.0.0.1";
   return raw
     .split(",")
     .map((host) => host.trim())
     .filter(Boolean);
 };
 
-const isAllowedHost = (url: URL, allowedHosts: string[]) => {
-  if (allowedHosts.length === 0) return false;
-  return allowedHosts.some((host) => url.hostname === host || url.hostname.endsWith(`.${host}`));
+const isPrivateHostname = (hostname: string) => {
+  if (hostname === "localhost") return true;
+  const ipVersion = net.isIP(hostname);
+  if (ipVersion === 4) {
+    const [first, second] = hostname.split(".").map((part) => Number(part));
+    if (first === 10) return true;
+    if (first === 127) return true;
+    if (first === 169 && second === 254) return true;
+    if (first === 172 && second >= 16 && second <= 31) return true;
+    if (first === 192 && second === 168) return true;
+    if (first === 100 && second >= 64 && second <= 127) return true;
+    return false;
+  }
+  if (ipVersion === 6) {
+    const normalized = hostname.toLowerCase();
+    return (
+      normalized === "::1" || normalized.startsWith("fe80:") || normalized.startsWith("fc") || normalized.startsWith("fd")
+    );
+  }
+  return false;
+};
+
+const isAllowedHost = (url: URL, allowedHosts: string[], requestHostname?: string | null) => {
+  if (allowedHosts.length > 0) {
+    const matchesAllowList = allowedHosts.some(
+      (host) => url.hostname === host || url.hostname.endsWith(`.${host}`)
+    );
+    if (matchesAllowList) return true;
+  }
+
+  if (process.env.NODE_ENV !== "production") {
+    if (requestHostname && url.hostname === requestHostname) return true;
+    if (isPrivateHostname(url.hostname)) return true;
+  }
+
+  return false;
 };
 
 const toProxyUrl = (value: string, baseUrl: URL) => {
@@ -62,7 +97,8 @@ export async function GET(request: Request) {
   }
 
   const allowedHosts = getAllowedHosts();
-  if (!isAllowedHost(targetUrl, allowedHosts)) {
+  const requestHostname = request.headers.get("host")?.split(":")[0] ?? null;
+  if (!isAllowedHost(targetUrl, allowedHosts, requestHostname)) {
     return new Response("Host not allowed.", { status: 403 });
   }
 

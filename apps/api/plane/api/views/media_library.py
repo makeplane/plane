@@ -5,8 +5,9 @@ import logging
 import os
 import shutil
 import subprocess
+from urllib.parse import urlparse
 from pathlib import Path
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 # Third party imports
 from rest_framework import status
@@ -18,6 +19,8 @@ from django.conf import settings
 from plane.api.serializers.media_library import MediaArtifactSerializer, MediaPackageCreateSerializer
 from plane.api.views.base import BaseAPIView
 from plane.app.permissions import ProjectLitePermission
+from plane.db.models import FileAsset
+from plane.settings.storage import S3Storage
 from plane.utils.exception_logger import log_exception
 from plane.utils.media_library import (
     _now_iso,
@@ -135,6 +138,102 @@ def _create_video_thumbnail(source_path: Path, thumbnail_path: Path) -> bool:
             logger.error("ffmpeg thumbnail failed with exit code %s", exc.returncode)
         return False
     return thumbnail_path.exists()
+
+
+def _create_video_thumbnail_from_source(source: str, thumbnail_path: Path) -> bool:
+    if not source:
+        return False
+    thumbnail_path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-hide_banner",
+                "-loglevel",
+                "error",
+                "-y",
+                "-ss",
+                "00:00:00.000",
+                "-i",
+                source,
+                "-frames:v",
+                "1",
+                "-q:v",
+                "2",
+                str(thumbnail_path),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError as exc:
+        detail = _render_ffmpeg_error(exc)
+        if detail:
+            logger.error("ffmpeg thumbnail failed: %s", detail)
+        else:
+            logger.error("ffmpeg thumbnail failed with exit code %s", exc.returncode)
+        return False
+    return thumbnail_path.exists()
+
+
+def _extract_asset_id_from_url(value: str) -> str | None:
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        parsed = urlparse(value)
+        path = parsed.path or ""
+    except ValueError:
+        path = value
+    if not path or ("/api/assets/" not in path and "/assets/v2/" not in path):
+        return None
+    segments = [segment for segment in path.split("/") if segment]
+    if not segments:
+        return None
+    candidate = segments[-1]
+    try:
+        return str(UUID(candidate))
+    except ValueError:
+        return None
+
+
+def _resolve_external_video_sources(path: str, request, project_id: str) -> list[str]:
+    if not isinstance(path, str) or not path:
+        return []
+    source = path
+    if source.startswith("/"):
+        try:
+            source = request.build_absolute_uri(source)
+        except Exception:
+            source = path
+    candidates: list[str] = []
+    asset_id = _extract_asset_id_from_url(source)
+    if asset_id:
+        asset = FileAsset.objects.filter(id=asset_id, project_id=project_id, is_deleted=False).first()
+        if asset and asset.is_uploaded:
+            if request is not None:
+                storage = S3Storage(request=request)
+                candidates.append(
+                    storage.generate_presigned_url(
+                        object_name=asset.asset.name,
+                        disposition="inline",
+                        filename=asset.attributes.get("name"),
+                    )
+                )
+            storage_internal = S3Storage()
+            candidates.append(
+                storage_internal.generate_presigned_url(
+                    object_name=asset.asset.name,
+                    disposition="inline",
+                    filename=asset.attributes.get("name"),
+                )
+            )
+    if source.startswith(("http://", "https://")):
+        candidates.append(source)
+    deduped: list[str] = []
+    for candidate in candidates:
+        if candidate and candidate not in deduped:
+            deduped.append(candidate)
+    return deduped
 
 
 def _resolve_artifact_disk_path(artifact: dict, base_root: Path) -> Path | None:
@@ -769,6 +868,129 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
                             primary_artifact_name,
                             exc_info=exc,
                         )
+
+        if not file_obj:
+            artifacts_root = package_root(project_id_str, package_id) / "artifacts"
+            attachment_root = package_root(project_id_str, package_id) / "attachment"
+            for artifact in list(validated_artifacts):
+                format_value = str(artifact.get("format") or "").lower()
+                if format_value == "thumbnail":
+                    continue
+                action_value = str(artifact.get("action") or "").lower()
+                is_video = (
+                    format_value in _VIDEO_FORMATS
+                    or format_value == "stream"
+                    or action_value in {"play_streaming", "play_hls", "play", "open_mp4"}
+                )
+                raw_path = artifact.get("path") or ""
+
+                if is_video:
+                    if not isinstance(raw_path, str) or not raw_path.startswith(("http://", "https://", "/")):
+                        continue
+                    thumbnail_name = f"{artifact.get('name')}-thumbnail"
+                    validate_segment(thumbnail_name, "artifactId")
+                    if thumbnail_name in existing_names or thumbnail_name in incoming_names:
+                        continue
+                    if shutil.which("ffmpeg") is None:
+                        logger.error("ffmpeg is not installed. Skipping video thumbnail for %s.", artifact.get("name"))
+                        continue
+                    source_urls = _resolve_external_video_sources(raw_path, request, project_id_str)
+                    if not source_urls:
+                        continue
+                    artifacts_root.mkdir(parents=True, exist_ok=True)
+                    thumbnail_file_name = f"{artifact.get('name')}-thumbnail.jpg"
+                    thumbnail_path = artifacts_root / thumbnail_file_name
+                    created_thumbnail = False
+                    for source_url in source_urls:
+                        try:
+                            if thumbnail_path.exists():
+                                thumbnail_path.unlink()
+                        except OSError:
+                            pass
+                        if _create_video_thumbnail_from_source(source_url, thumbnail_path):
+                            created_thumbnail = True
+                            break
+                    if not created_thumbnail:
+                        continue
+                    thumbnail_relative_path = (
+                        f"projects/{project_id_str}/packages/{package_id}/artifacts/{thumbnail_file_name}"
+                    )
+                    thumbnail_entry = {
+                        "name": thumbnail_name,
+                        "title": artifact.get("title") or "Video thumbnail",
+                        "format": "thumbnail",
+                        "path": thumbnail_relative_path,
+                        "link": artifact.get("name"),
+                        "action": "preview",
+                        "metadata_ref": artifact.get("metadata_ref") or artifact.get("name"),
+                        "created_at": artifact.get("created_at") or timestamp,
+                        "updated_at": artifact.get("updated_at") or artifact.get("created_at") or timestamp,
+                    }
+                    work_item_id = artifact.get("work_item_id")
+                    if work_item_id is not None:
+                        thumbnail_entry["work_item_id"] = work_item_id
+                    thumbnail_serializer = MediaArtifactSerializer(data=thumbnail_entry)
+                    thumbnail_serializer.is_valid(raise_exception=True)
+                    validated_artifacts.append(thumbnail_serializer.validated_data)
+                    incoming_names.add(thumbnail_name)
+                    continue
+
+                if format_value in _IMAGE_FORMATS:
+                    continue
+
+                thumbnail_name = f"{artifact.get('name')}-thumb"
+                validate_segment(thumbnail_name, "artifactId")
+                if thumbnail_name in existing_names or thumbnail_name in incoming_names:
+                    continue
+                thumbnail_hint = None
+                meta_value = artifact.get("meta")
+                if isinstance(meta_value, dict):
+                    thumbnail_hint = meta_value.get("thumbnail")
+                doc_thumbnail_source = get_document_icon_source(format_value, thumbnail_hint)
+                if not doc_thumbnail_source:
+                    continue
+                doc_thumbnail_file_name = None
+                if isinstance(thumbnail_hint, str):
+                    hint_name = Path(thumbnail_hint).name
+                    if hint_name:
+                        doc_thumbnail_file_name = hint_name
+                if not doc_thumbnail_file_name:
+                    doc_thumbnail_file_name = f"{artifact.get('name')}-thumbnail{doc_thumbnail_source.suffix}"
+                doc_thumbnail_path = attachment_root / doc_thumbnail_file_name
+                try:
+                    if not doc_thumbnail_path.exists():
+                        doc_thumbnail_path.parent.mkdir(parents=True, exist_ok=True)
+                        shutil.copyfile(doc_thumbnail_source, doc_thumbnail_path)
+                except OSError as exc:
+                    logger.exception(
+                        "Failed to write document thumbnail for %s.",
+                        artifact.get("name"),
+                        exc_info=exc,
+                    )
+                    continue
+                if not doc_thumbnail_path.exists():
+                    continue
+                doc_thumbnail_relative_path = (
+                    f"projects/{project_id_str}/packages/{package_id}/attachment/{doc_thumbnail_file_name}"
+                )
+                thumbnail_entry = {
+                    "name": thumbnail_name,
+                    "title": artifact.get("title") or "Document thumbnail",
+                    "format": "thumbnail",
+                    "path": doc_thumbnail_relative_path,
+                    "link": artifact.get("name"),
+                    "action": "open_pdf" if format_value == "pdf" else action_value or "download",
+                    "metadata_ref": artifact.get("metadata_ref") or artifact.get("name"),
+                    "created_at": artifact.get("created_at") or timestamp,
+                    "updated_at": artifact.get("updated_at") or artifact.get("created_at") or timestamp,
+                }
+                work_item_id = artifact.get("work_item_id")
+                if work_item_id is not None:
+                    thumbnail_entry["work_item_id"] = work_item_id
+                thumbnail_serializer = MediaArtifactSerializer(data=thumbnail_entry)
+                thumbnail_serializer.is_valid(raise_exception=True)
+                validated_artifacts.append(thumbnail_serializer.validated_data)
+                incoming_names.add(thumbnail_name)
 
         with manifest_write_lock(manifest_file):
             manifest = read_manifest(manifest_file)
