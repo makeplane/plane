@@ -4,310 +4,30 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DOMPurify from "dompurify";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { ArrowLeft, Calendar, Clock, Download, FileText, Mail, MapPin, Phone, User } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
-import { API_BASE_URL } from "@plane/constants";
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import { resolveAttachmentDownloadUrl } from "@/components/issues/issue-detail-widgets/media-library-utils";
 import { useMediaLibraryItems } from "../hooks/use-media-library-items";
-import { TagsSection } from "../components/tags-section";
 import { PLAYER_STYLE } from "./player-styles";
-import { PlayerOverlay, PlayerSettingsPanel } from "./player-ui";
-
-
-const formatMetaValue = (value: unknown) => {
-  if (value === null || value === undefined) return "--";
-  if (Array.isArray(value)) {
-    const entries = value
-      .map((entry) => formatMetaValue(entry))
-      .filter((entry) => entry && entry !== "--");
-    return entries.length ? entries.join(", ") : "--";
-  }
-  if (typeof value === "string") return value.trim() ? value : "--";
-  if (typeof value === "number" || typeof value === "boolean") return String(value);
-  if (typeof value === "object") {
-    const namedValue = (value as Record<string, unknown>)?.name;
-    if (typeof namedValue === "string" && namedValue.trim()) return namedValue.trim();
-  }
-  return JSON.stringify(value);
-};
-
-const formatMetaLabel = (value: string) => {
-  if (!value) return value;
-  return value
-    .replace(/[_-]+/g, " ")
-    .split(" ")
-    .filter(Boolean)
-    .map((chunk) => chunk[0]?.toUpperCase() + chunk.slice(1))
-    .join(" ");
-};
-
-const getMetaString = (meta: Record<string, unknown>, keys: string[], fallback = "") => {
-  for (const key of keys) {
-    const value = meta[key];
-    if (typeof value === "string" && value.trim()) return value.trim();
-  }
-  return fallback;
-};
-
-const getMetaNumber = (meta: Record<string, unknown>, keys: string[]) => {
-  for (const key of keys) {
-    const value = meta[key];
-    if (typeof value === "number" && Number.isFinite(value)) return value;
-    if (typeof value === "string" && value.trim()) {
-      const parsed = Number(value);
-      if (!Number.isNaN(parsed)) return parsed;
-    }
-  }
-  return null;
-};
-
-const getMetaObject = (meta: Record<string, unknown>, keys: string[]) => {
-  for (const key of keys) {
-    const value = meta[key];
-    if (value && typeof value === "object" && !Array.isArray(value)) return value as Record<string, unknown>;
-  }
-  return null;
-};
-
-const formatFileSize = (value: unknown) => {
-  const size = typeof value === "number" ? value : typeof value === "string" ? Number(value) : NaN;
-  if (!Number.isFinite(size) || size <= 0) return "--";
-  const units = ["B", "KB", "MB", "GB", "TB"];
-  let unitIndex = 0;
-  let normalized = size;
-  while (normalized >= 1024 && unitIndex < units.length - 1) {
-    normalized /= 1024;
-    unitIndex += 1;
-  }
-  const precision = normalized >= 10 || unitIndex === 0 ? 0 : 1;
-  return `${normalized.toFixed(precision)} ${units[unitIndex]}`;
-};
-
-const parseDateValue = (value?: string | null) => {
-  if (!value) return null;
-  const trimmed = value.trim();
-  if (!trimmed) return null;
-  const dateOnlyMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (dateOnlyMatch) {
-    const year = Number(dateOnlyMatch[1]);
-    const month = Number(dateOnlyMatch[2]);
-    const day = Number(dateOnlyMatch[3]);
-    return { date: new Date(Date.UTC(year, month - 1, day)), isDateOnly: true };
-  }
-  const parsed = Date.parse(trimmed);
-  if (Number.isNaN(parsed)) return null;
-  return { date: new Date(parsed), isDateOnly: false };
-};
-
-const formatDateValue = (value?: string | null) => {
-  const parsed = parseDateValue(value);
-  if (!parsed) return value?.trim() || "--";
-  const baseOptions: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  };
-  const primaryOptions = parsed.isDateOnly ? { ...baseOptions, timeZone: "UTC" } : baseOptions;
-  try {
-    return parsed.date.toLocaleDateString(undefined, primaryOptions);
-  } catch {
-    try {
-      return parsed.date.toLocaleDateString(undefined, baseOptions);
-    } catch {
-      return parsed.date.toLocaleDateString();
-    }
-  }
-};
-
-const formatTimeValue = (value?: string | null) => {
-  const parsed = parseDateValue(value);
-  if (!parsed) return value?.trim() || "--";
-  if (parsed.isDateOnly) return "--";
-  const primaryOptions: Intl.DateTimeFormatOptions = {
-    hour: "numeric",
-    minute: "2-digit",
-  };
-  try {
-    return parsed.date.toLocaleTimeString(undefined, primaryOptions);
-  } catch {
-    try {
-      return parsed.date.toLocaleTimeString();
-    } catch {
-      return `${parsed.date.getHours().toString().padStart(2, "0")}:${parsed.date
-        .getMinutes()
-        .toString()
-        .padStart(2, "0")}`;
-    }
-  }
-};
-
-const resolveOppositionLogoUrl = (logo?: string | null) => {
-  if (!logo) return "";
-  if (/^https?:\/\//i.test(logo)) return logo;
-  const base = process.env.NEXT_PUBLIC_CP_SERVER_URL?.replace(/\/$/, "") ?? "";
-  if (!base) return "";
-  return `${base}/blobs/${logo.replace(/^\/+/, "")}`;
-};
-
-const isMeaningfulValue = (value: unknown) => {
-  if (value === null || value === undefined) return false;
-  if (typeof value === "string") return value.trim() !== "" && value !== "--";
-  return true;
-};
-
-const DOCUMENT_PREVIEW_STYLE = `
-<style>
-  .document-preview {
-    color: #111827;
-    font-size: 14px;
-    line-height: 1.6;
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Roboto", "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
-  }
-  .document-preview h1,
-  .document-preview h2,
-  .document-preview h3,
-  .document-preview h4,
-  .document-preview h5,
-  .document-preview h6 {
-    font-weight: 600;
-    margin: 0 0 0.75rem;
-  }
-  .document-preview p {
-    margin: 0 0 0.75rem;
-  }
-  .document-preview ul,
-  .document-preview ol {
-    padding-left: 1.25rem;
-    margin: 0 0 0.75rem;
-  }
-  .document-preview table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 0.75rem 0;
-  }
-  .document-preview th,
-  .document-preview td {
-    border: 1px solid #e5e7eb;
-    padding: 6px 8px;
-    vertical-align: top;
-  }
-  .document-preview tr:nth-child(even) {
-    background: #f9fafb;
-  }
-  .document-preview pre,
-  .document-preview code {
-    background: #f3f4f6;
-    border-radius: 4px;
-  }
-  .document-preview pre {
-    padding: 8px 10px;
-    overflow: auto;
-  }
-  .document-preview code {
-    padding: 2px 4px;
-  }
-</style>
-`;
-
-const getVideoMimeType = (format: string) => {
-  const normalized = format.toLowerCase();
-  if (normalized === "mp4" || normalized === "m4v") return "video/mp4";
-  if (normalized === "m3u8" || normalized === "stream") return "application/x-mpegURL";
-  if (normalized === "mov") return "video/quicktime";
-  if (normalized === "webm") return "video/webm";
-  if (normalized === "avi") return "video/x-msvideo";
-  if (normalized === "mkv") return "video/x-matroska";
-  if (normalized === "mpeg" || normalized === "mpg") return "video/mpeg";
-  return "";
-};
-
-const getVideoFormatFromSrc = (src: string) => {
-  const match = src.toLowerCase().match(/\.(mp4|m4v|m3u8|mov|webm|avi|mkv|mpeg|mpg)(\?.*)?$/);
-  return match?.[1] ?? "";
-};
-
-type TCaptionTrack = {
-  src: string;
-  label?: string;
-  srclang?: string;
-  kind?: "captions" | "subtitles";
-  default?: boolean;
-};
-
-const getCaptionTracks = (meta: unknown): TCaptionTrack[] => {
-  if (!meta || typeof meta !== "object") return [];
-  const raw = (meta as Record<string, unknown>).captions ?? (meta as Record<string, unknown>).subtitles;
-  if (!raw) return [];
-  const tracks = Array.isArray(raw) ? raw : [raw];
-  return tracks
-    .map((entry) => {
-      if (typeof entry === "string") {
-        return { src: entry, label: "CC", kind: "captions" } as TCaptionTrack;
-      }
-      if (!entry || typeof entry !== "object") return null;
-      const data = entry as Record<string, unknown>;
-      const src = typeof data.src === "string" ? data.src : "";
-      if (!src) return null;
-      return {
-        src,
-        label: typeof data.label === "string" ? data.label : undefined,
-        srclang: typeof data.srclang === "string" ? data.srclang : undefined,
-        kind: data.kind === "subtitles" ? "subtitles" : "captions",
-        default: Boolean(data.default),
-      } as TCaptionTrack;
-    })
-    .filter((entry): entry is TCaptionTrack => Boolean(entry?.src));
-};
-
-const getVideoRepresentations = (player: any) => {
-  const tech = player?.tech?.(true);
-  const vhs = tech?.vhs;
-  const reps = typeof vhs?.representations === "function" ? vhs.representations() : [];
-  return Array.isArray(reps) ? reps : [];
-};
-
-const getQualitySelection = (representations: any[]) => {
-  const enabled = representations.filter((rep) => rep?.enabled?.());
-  if (enabled.length === 1) {
-    return { isAuto: false, activeRep: enabled[0] };
-  }
-  return { isAuto: true, activeRep: null };
-};
-
-const buildDownloadUrl = (src: string) => {
-  if (!src) return "";
-  const separator = src.includes("?") ? "&" : "?";
-  return `${src}${separator}download=1`;
-};
-
-const buildMediaLibraryDownloadUrl = (args: {
-  workspaceSlug?: string;
-  projectId?: string;
-  packageId?: string;
-  artifactId?: string;
-}) => {
-  const { workspaceSlug, projectId, packageId, artifactId } = args;
-  if (!API_BASE_URL || !workspaceSlug || !projectId || !packageId || !artifactId) return "";
-  const base = API_BASE_URL.replace(/\/$/, "");
-  const path = `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/${encodeURIComponent(
-    artifactId
-  )}/file/`;
-  return `${base}${path}?download=1`;
-};
-
-const addInlineDisposition = (src: string) => {
-  if (!src) return "";
-  try {
-    const url = new URL(src);
-    url.searchParams.set("disposition", "inline");
-    return url.toString();
-  } catch {
-    const separator = src.includes("?") ? "&" : "?";
-    return `${src}${separator}disposition=inline`;
-  }
-};
+import { useDocumentPreview, useResolvedMediaSources } from "./media-detail-hooks";
+import { MediaDetailPreview } from "./media-detail-preview";
+import { MediaDetailSidebar } from "./media-detail-sidebar";
+import {
+  formatDateValue,
+  formatFileSize,
+  formatMetaValue,
+  formatTimeValue,
+  getCaptionTracks,
+  getMetaNumber,
+  getMetaObject,
+  getMetaString,
+  getQualitySelection,
+  getVideoMimeType,
+  getVideoRepresentations,
+  isMeaningfulValue,
+  resolveOppositionLogoUrl,
+} from "./media-detail-utils";
 
 const MediaDetailPage = () => {
   const { mediaId, workspaceSlug, projectId } = useParams() as {
@@ -328,22 +48,12 @@ const MediaDetailPage = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<ReturnType<typeof videojs> | null>(null);
   const [isImageZoomOpen, setIsImageZoomOpen] = useState(false);
-  const [textPreview, setTextPreview] = useState<string | null>(null);
-  const [textPreviewError, setTextPreviewError] = useState<string | null>(null);
-  const [isTextPreviewLoading, setIsTextPreviewLoading] = useState(false);
-  const [documentPreviewUrl, setDocumentPreviewUrl] = useState<string | null>(null);
-  const [documentPreviewHtml, setDocumentPreviewHtml] = useState<string | null>(null);
-  const [documentPreviewError, setDocumentPreviewError] = useState<string | null>(null);
-  const [isDocumentPreviewLoading, setIsDocumentPreviewLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [playerTick, setPlayerTick] = useState(0);
   const [qualitySelection, setQualitySelection] = useState<string | null>(null);
   const settingsPanelRef = useRef<HTMLDivElement | null>(null);
-  const sanitizedDocumentPreviewHtml = useMemo(
-    () => (documentPreviewHtml ? DOMPurify.sanitize(documentPreviewHtml, { USE_PROFILES: { html: true } }) : ""),
-    [documentPreviewHtml]
-  );
+  const pipCaptionModesRef = useRef<Array<{ track: TextTrack; mode: TextTrackMode }>>([]);
 
   const item = useMemo(() => {
     if (!mediaId) return null;
@@ -353,107 +63,26 @@ const MediaDetailPage = () => {
   const meta = (item?.meta ?? {}) as Record<string, unknown>;
   const normalizedAction = (item?.action ?? "").toLowerCase();
   const documentFormat = item?.format?.toLowerCase() ?? "";
-  const videoSrc = item?.videoSrc ?? item?.fileSrc ?? "";
-  const [resolvedVideoSrc, setResolvedVideoSrc] = useState<string>("");
-  const [resolvedDocumentSrc, setResolvedDocumentSrc] = useState<string>("");
-  const [resolvedImageSrc, setResolvedImageSrc] = useState<string>("");
-  const isVideoAssetApiUrl = useMemo(
-    () =>
-      Boolean(API_BASE_URL) &&
-      typeof videoSrc === "string" &&
-      videoSrc.startsWith(API_BASE_URL) &&
-      videoSrc.includes("/api/assets/v2/"),
-    [videoSrc]
-  );
-  const rawImageSrc = item?.mediaType === "image" ? item.thumbnail : "";
-  const isImageAssetApiUrl = useMemo(
-    () =>
-      Boolean(API_BASE_URL) &&
-      typeof rawImageSrc === "string" &&
-      rawImageSrc.startsWith(API_BASE_URL) &&
-      rawImageSrc.includes("/api/assets/v2/"),
-    [rawImageSrc]
-  );
-  const isDocumentAssetApiUrl = useMemo(
-    () =>
-      Boolean(API_BASE_URL) &&
-      typeof item?.fileSrc === "string" &&
-      item.fileSrc.startsWith(API_BASE_URL) &&
-      item.fileSrc.includes("/api/assets/v2/"),
-    [item?.fileSrc]
-  );
-  const resolvedVideoFormat = documentFormat || getVideoFormatFromSrc(videoSrc);
-  const isVideoAction = new Set(["play", "play_hls", "play_streaming", "open_mp4"]).has(normalizedAction);
-  const isVideoFormat = new Set(["mp4", "m4v", "m3u8", "mov", "webm", "avi", "mkv", "mpeg", "mpg", "stream"]).has(
-    resolvedVideoFormat
-  );
-  const isVideo = item?.mediaType === "video" || item?.linkedMediaType === "video" || isVideoAction || isVideoFormat;
-  const isHls =
-    isVideo &&
-    (resolvedVideoFormat === "m3u8" ||
-      resolvedVideoFormat === "stream" ||
-      videoSrc.toLowerCase().includes(".m3u8") ||
-      normalizedAction === "play_streaming" ||
-      Boolean(meta?.hls));
-  const proxiedVideoSrc = useMemo(() => {
-    if (!videoSrc) return videoSrc;
-    if (!isHls) return videoSrc;
-    try {
-      const base = typeof window !== "undefined" ? window.location.origin : "http://localhost";
-      const url = new URL(videoSrc, base);
-      if (url.origin === base) return videoSrc;
-      return `/api/hls?url=${encodeURIComponent(url.toString())}`;
-    } catch {
-      return videoSrc;
-    }
-  }, [isHls, videoSrc]);
-  const effectiveVideoSrc = isVideoAssetApiUrl ? resolvedVideoSrc : resolvedVideoSrc || proxiedVideoSrc || videoSrc;
-  const effectiveImageSrc = isImageAssetApiUrl ? resolvedImageSrc : resolvedImageSrc || rawImageSrc;
-  const credentialOrigins = useMemo(() => {
-    const origins = new Set<string>();
-    if (typeof window !== "undefined") {
-      origins.add(window.location.origin);
-    }
-    if (API_BASE_URL) {
-      try {
-        origins.add(new URL(API_BASE_URL).origin);
-      } catch {
-        // ignore invalid API base URL
-      }
-    }
-    return origins;
-  }, []);
-  const shouldUseCredentials = useCallback(
-    (src: string) => {
-      if (!src) return true;
-      if (src.startsWith("/")) return true;
-      if (!/^https?:\/\//i.test(src)) return true;
-      try {
-        const url = new URL(src);
-        return credentialOrigins.has(url.origin);
-      } catch {
-        return true;
-      }
-    },
-    [credentialOrigins]
-  );
-  const useCredentials = useMemo(
-    () => shouldUseCredentials(effectiveVideoSrc),
-    [effectiveVideoSrc, shouldUseCredentials]
-  );
-  const crossOrigin = useCredentials ? "use-credentials" : "anonymous";
-  const mediaLibraryDownloadSrc = buildMediaLibraryDownloadUrl({
-    workspaceSlug,
-    projectId,
-    packageId: item?.packageId,
-    artifactId: item?.id,
+  const {
+    resolvedVideoFormat,
+    isVideoAction,
+    isVideoFormat,
+    isVideo,
+    isHls,
+    proxiedVideoSrc,
+    effectiveVideoSrc,
+    effectiveImageSrc,
+    effectiveDocumentSrc,
+    useCredentials,
+    crossOrigin,
+    useDocumentCredentials,
+    videoDownloadSrc,
+  } = useResolvedMediaSources({
+    item,
+    meta,
+    documentFormat,
+    normalizedAction,
   });
-  const videoDownloadSrc = mediaLibraryDownloadSrc || (videoSrc ? buildDownloadUrl(videoSrc) : "");
-  const effectiveDocumentSrc = isDocumentAssetApiUrl ? resolvedDocumentSrc : resolvedDocumentSrc || item?.fileSrc || "";
-  const useDocumentCredentials = useMemo(
-    () => shouldUseCredentials(effectiveDocumentSrc),
-    [effectiveDocumentSrc, shouldUseCredentials]
-  );
   const isPdf = item?.mediaType === "document" && documentFormat === "pdf";
   const isTextDocument =
     item?.mediaType === "document" &&
@@ -465,231 +94,33 @@ const MediaDetailPage = () => {
   const isSupportedDocument = item?.mediaType === "document" && (isPdf || isXlsx);
   const isUnsupportedDocument = item?.mediaType === "document" && !isSupportedDocument;
 
-  useEffect(() => {
-    let isMounted = true;
-    if (!isVideo || !videoSrc) {
-      setResolvedVideoSrc("");
-      return () => {
-        isMounted = false;
-      };
-    }
-
-    if (!isVideoAssetApiUrl) {
-      setResolvedVideoSrc("");
-      return () => {
-        isMounted = false;
-      };
-    }
-
-    setResolvedVideoSrc("");
-    const resolveUrl = async () => {
-      try {
-        const resolved = await resolveAttachmentDownloadUrl(addInlineDisposition(videoSrc));
-        if (isMounted) setResolvedVideoSrc(resolved || videoSrc);
-      } catch {
-        if (isMounted) setResolvedVideoSrc(videoSrc);
-      }
-    };
-
-    void resolveUrl();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isVideo, isVideoAssetApiUrl, videoSrc]);
-
-  useEffect(() => {
-    let isMounted = true;
-    if (!rawImageSrc || item?.mediaType !== "image") {
-      setResolvedImageSrc("");
-      return () => {
-        isMounted = false;
-      };
-    }
-
-    if (!isImageAssetApiUrl) {
-      setResolvedImageSrc(rawImageSrc);
-      return () => {
-        isMounted = false;
-      };
-    }
-
-    setResolvedImageSrc("");
-    const resolveUrl = async () => {
-      try {
-        const resolved = await resolveAttachmentDownloadUrl(addInlineDisposition(rawImageSrc));
-        if (isMounted) setResolvedImageSrc(resolved || rawImageSrc);
-      } catch {
-        if (isMounted) setResolvedImageSrc(rawImageSrc);
-      }
-    };
-
-    void resolveUrl();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isImageAssetApiUrl, item?.mediaType, rawImageSrc]);
-
-  useEffect(() => {
-    let isMounted = true;
-    const fileSrc = item?.fileSrc;
-    if (!item || item.mediaType !== "document" || !fileSrc) {
-      setResolvedDocumentSrc("");
-      return () => {
-        isMounted = false;
-      };
-    }
-
-    if (!isDocumentAssetApiUrl) {
-      setResolvedDocumentSrc(fileSrc);
-      return () => {
-        isMounted = false;
-      };
-    }
-
-    setResolvedDocumentSrc("");
-    const resolveUrl = async () => {
-      try {
-        const resolved = await resolveAttachmentDownloadUrl(addInlineDisposition(fileSrc));
-        if (isMounted) setResolvedDocumentSrc(resolved || fileSrc);
-      } catch {
-        if (isMounted) setResolvedDocumentSrc(fileSrc);
-      }
-    };
-
-    void resolveUrl();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isDocumentAssetApiUrl, item?.fileSrc, item?.mediaType]);
-
-  useEffect(() => {
-    let isMounted = true;
-    const fileSrc = effectiveDocumentSrc;
-    if (!item || item.mediaType !== "document" || !fileSrc || !isTextDocument || isUnsupportedDocument) {
-      setTextPreview(null);
-      setTextPreviewError(null);
-      setIsTextPreviewLoading(false);
-      return () => {
-        isMounted = false;
-      };
-    }
-
-    const loadTextPreview = async () => {
-      try {
-        setIsTextPreviewLoading(true);
-        const response = await fetch(fileSrc, { credentials: useDocumentCredentials ? "include" : "omit" });
-        if (!response.ok) {
-          throw new Error(`Failed to load document preview (status ${response.status}).`);
-        }
-        const rawText = await response.text();
-        let formattedText = rawText;
-        if (documentFormat === "json") {
-          try {
-            formattedText = JSON.stringify(JSON.parse(rawText), null, 2);
-          } catch {
-            formattedText = rawText;
-          }
-        }
-        if (isMounted) setTextPreview(formattedText);
-      } catch (error) {
-        if (isMounted) {
-          setTextPreviewError(error instanceof Error ? error.message : "Unable to load preview.");
-          setTextPreview(null);
-        }
-      } finally {
-        if (isMounted) setIsTextPreviewLoading(false);
-      }
-    };
-
-    void loadTextPreview();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [documentFormat, effectiveDocumentSrc, isTextDocument, item?.mediaType, isUnsupportedDocument, useDocumentCredentials]);
-
-  useEffect(() => {
-    let isMounted = true;
-    let objectUrl: string | null = null;
-    const fileSrc = effectiveDocumentSrc;
-
-    if (!item || !fileSrc || !isBinaryDocument || isUnsupportedDocument) {
-      setDocumentPreviewUrl(null);
-      setDocumentPreviewHtml(null);
-      setDocumentPreviewError(null);
-      setIsDocumentPreviewLoading(false);
-      return () => {
-        isMounted = false;
-        if (objectUrl) URL.revokeObjectURL(objectUrl);
-      };
-    }
-
-    const loadBinaryPreview = async () => {
-      try {
-        setIsDocumentPreviewLoading(true);
-        setDocumentPreviewError(null);
-        setDocumentPreviewHtml(null);
-        const response = await fetch(fileSrc, { credentials: useDocumentCredentials ? "include" : "omit" });
-        if (!response.ok) {
-          throw new Error(`Failed to load document preview (status ${response.status}).`);
-        }
-        const blob = await response.blob();
-        if (isPptx) {
-          throw new Error("Preview is not available for PowerPoint files.");
-        }
-        if (isDocx) {
-          const mammothModule = await import("mammoth");
-          const convertToHtml = mammothModule.convertToHtml ?? mammothModule.default?.convertToHtml;
-          if (!convertToHtml) throw new Error("Document preview is unavailable.");
-          const arrayBuffer = await blob.arrayBuffer();
-          const result = await convertToHtml({ arrayBuffer });
-          if (isMounted) setDocumentPreviewHtml(result.value);
-          return;
-        }
-        if (isXlsx) {
-          const xlsxModule = await import("xlsx");
-          const XLSX = "default" in xlsxModule ? xlsxModule.default : xlsxModule;
-          const arrayBuffer = await blob.arrayBuffer();
-          const workbook = XLSX.read(arrayBuffer, { type: "array" });
-          const sheetName = workbook.SheetNames[0];
-          const sheet = sheetName ? workbook.Sheets[sheetName] : undefined;
-          if (!sheet) throw new Error("Spreadsheet preview is unavailable.");
-          const html = XLSX.utils.sheet_to_html(sheet);
-          if (isMounted) setDocumentPreviewHtml(html);
-          return;
-        }
-        objectUrl = URL.createObjectURL(blob);
-        if (isMounted) setDocumentPreviewUrl(objectUrl);
-      } catch (error) {
-        if (isMounted) {
-          setDocumentPreviewError(error instanceof Error ? error.message : "Unable to load preview.");
-          setDocumentPreviewUrl(null);
-          setDocumentPreviewHtml(null);
-        }
-      } finally {
-        if (isMounted) setIsDocumentPreviewLoading(false);
-      }
-    };
-
-    void loadBinaryPreview();
-
-    return () => {
-      isMounted = false;
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, [
+  const {
+    textPreview,
+    textPreviewError,
+    isTextPreviewLoading,
+    documentPreviewUrl,
+    documentPreviewHtml,
+    documentPreviewError,
+    isDocumentPreviewLoading,
+  } = useDocumentPreview({
+    item,
+    documentFormat,
     effectiveDocumentSrc,
+    isTextDocument,
     isBinaryDocument,
-    isDocx,
-    isPptx,
     isUnsupportedDocument,
+    isDocx,
     isXlsx,
-    item?.mediaType,
+    isPptx,
     useDocumentCredentials,
-  ]);
+  });
+
+  const sanitizedDocumentPreviewHtml = useMemo(
+    () => (documentPreviewHtml ? DOMPurify.sanitize(documentPreviewHtml, { USE_PROFILES: { html: true } }) : ""),
+    [documentPreviewHtml]
+  );
+
+
 
   const handleTogglePip = useCallback(async () => {
     const video = videoRef.current as HTMLVideoElement | null;
@@ -703,7 +134,18 @@ const MediaDetailPage = () => {
     } catch {
       // ignore PiP errors
     }
-  }, []);
+  }, [
+
+
+
+
+
+
+
+
+
+    
+  ]);
 
   useEffect(() => {
     if (!isVideo) {
@@ -765,11 +207,14 @@ const MediaDetailPage = () => {
         preload: "metadata",
         playsinline: true,
         crossOrigin,
+        nativeTextTracks: false,
         playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 2],
         html5: {
           vhs: {
             withCredentials: useCredentials,
+            overrideNative: true,
           },
+          nativeTextTracks: false,
         },
         controlBar: {
           children: [
@@ -777,6 +222,7 @@ const MediaDetailPage = () => {
             "progressControl",
             "durationDisplay",
             "volumePanel",
+            "subsCapsButton",
             "fullscreenToggle",
             "PipToggleButton",
             "OverflowMenuButton",
@@ -1064,16 +510,43 @@ const MediaDetailPage = () => {
     });
   }, [item?.meta]);
 
-useEffect(() => {
-    if (!isUnsupportedDocument) return;
-    setTextPreview(null);
-    setTextPreviewError(null);
-    setIsTextPreviewLoading(false);
-    setDocumentPreviewUrl(null);
-    setDocumentPreviewHtml(null);
-    setIsDocumentPreviewLoading(false);
-    setDocumentPreviewError("Only PDF and XLSX files are supported.");
-  }, [isUnsupportedDocument]);
+  useEffect(() => {
+    if (!isVideo) return;
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleEnterPip = () => {
+      const tracks = video.textTracks;
+      if (!tracks || tracks.length === 0) return;
+      const previousModes: Array<{ track: TextTrack; mode: TextTrackMode }> = [];
+      for (let i = 0; i < tracks.length; i += 1) {
+        const track = tracks[i];
+        if (track && (track.kind === "captions" || track.kind === "subtitles")) {
+          previousModes.push({ track, mode: track.mode });
+          track.mode = "showing";
+        }
+      }
+      pipCaptionModesRef.current = previousModes;
+    };
+
+    const handleLeavePip = () => {
+      pipCaptionModesRef.current.forEach(({ track, mode }) => {
+        try {
+          track.mode = mode;
+        } catch {
+          // ignore restore failures
+        }
+      });
+      pipCaptionModesRef.current = [];
+    };
+
+    video.addEventListener("enterpictureinpicture", handleEnterPip);
+    video.addEventListener("leavepictureinpicture", handleLeavePip);
+    return () => {
+      video.removeEventListener("enterpictureinpicture", handleEnterPip);
+      video.removeEventListener("leavepictureinpicture", handleLeavePip);
+    };
+  }, [isVideo]);
 
   const handlePlay = useCallback(() => {
     const video = videoRef.current;
@@ -1339,440 +812,76 @@ useEffect(() => {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <div className="rounded-lg  bg-custom-background-100 p-4 ">
-          {isVideo ? (
-            <>
-              <div className="media-player mx-auto h-[505px] w-100 max-w-full overflow-hidden rounded-lg border border-custom-border-200 bg-black">
-                <video
-                  ref={videoRef}
-                  className="video-js vjs-default-skin h-full w-full"
-                  poster={item.thumbnail}
-                  playsInline
-                  preload="metadata"
-                  crossOrigin={crossOrigin}
-                />
-                <PlayerOverlay isPlaying={isPlaying} onToggle={handleOverlayToggle} onSeek={handleOverlaySeek} />
-                <PlayerSettingsPanel
-                  isOpen={isSettingsOpen}
-                  onClose={() => setIsSettingsOpen(false)}
-                  qualityOptions={qualityOptions}
-                  playbackRates={playbackRates}
-                  currentPlaybackRate={currentPlaybackRate}
-                  onSelectQuality={handleQualitySelect}
-                  onSelectRate={handlePlaybackRate}
-                  panelRef={settingsPanelRef}
-                />
-                <style jsx global>{PLAYER_STYLE}</style>
-              </div>
-              {videoDownloadSrc ? (
-                <div className="flex justify-end border-t border-custom-border-200 p-3">
-                  <a
-                    href={videoDownloadSrc}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded bg-custom-primary-100 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-custom-primary-200"
-                  >
-                    <Download className="h-3.5 w-3.5" />
-                    Download
-                  </a>
-                </div>
-              ) : null}
-            </>
-          ) : item.mediaType === "image" ? (
-            <div className="overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90">
-              <button
-                type="button"
-                className="h-full w-full cursor-zoom-in"
-                onClick={() => {
-                  setIsImageZoomOpen(true);
-                }}
-                aria-label="Zoom image"
-              >
-                {effectiveImageSrc ? (
-                  <img
-                    src={effectiveImageSrc}
-                    alt={item.title}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-[505px] w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-[505px] w-full items-center justify-center text-xs text-custom-text-300">
-                    Loading image...
-                  </div>
-                )}
-              </button>
-            </div>
-          ) : (
-            <div className="rounded-lg border border-custom-border-200 bg-custom-background-90">
-              {isUnsupportedDocument ? (
-                <div className="flex h-[505px] items-center justify-center rounded-lg bg-custom-background-100 text-xs text-custom-text-300">
-                  Only PDF and XLSX files are supported.
-                </div>
-              ) : isBinaryDocument ? (
-                <div className="h-[505px] rounded-lg bg-custom-background-100">
-                  {isDocumentPreviewLoading ? (
-                    <div className="flex h-full flex-col items-center justify-center gap-2 text-xs text-custom-text-300">
-                      <LogoSpinner />
-                      <span>Loading preview...</span>
-                    </div>
-                  ) : documentPreviewError ? (
-                    <div className="flex h-full items-center justify-center text-xs text-custom-text-300">
-                      {documentPreviewError}
-                    </div>
-                  ) : documentPreviewHtml ? (
-                    <div className="h-full overflow-auto rounded-lg bg-white p-4">
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: `${DOCUMENT_PREVIEW_STYLE}<div class="document-preview">${sanitizedDocumentPreviewHtml}</div>`,
-                        }}
-                      />
-                    </div>
-                  ) : documentPreviewUrl ? (
-                    <iframe src={documentPreviewUrl} title={item.title} className="h-full w-full rounded-lg bg-white" />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-xs text-custom-text-300">
-                      No preview available for this file.
-                    </div>
-                  )}
-                </div>
-              ) : isTextDocument ? (
-                <div className="h-[505px] overflow-auto rounded-lg bg-custom-background-100 p-4 text-xs text-custom-text-100">
-                  {isTextPreviewLoading ? (
-                    <div className="flex flex-col items-center gap-2 text-custom-text-300">
-                      <LogoSpinner />
-                      <span>Loading preview...</span>
-                    </div>
-                  ) : textPreviewError ? (
-                    <div className="text-custom-text-300">{textPreviewError}</div>
-                  ) : (
-                    <pre className="whitespace-pre-wrap break-words">{textPreview}</pre>
-                  )}
-                </div>
-              ) : effectiveDocumentSrc ? (
-                <iframe src={effectiveDocumentSrc} title={item.title} className="h-[505px] w-full rounded-lg bg-white" />
-              ) : (
-                <div className="flex h-80 flex-col items-center justify-center gap-3 rounded-lg text-custom-text-300">
-                  <div className="flex flex-col items-center gap-2 text-sm">
-                    <FileText className="h-8 w-8" />
-                    <span>No preview available for this file.</span>
-                  </div>
-                </div>
-              )}
-              {effectiveDocumentSrc && !isUnsupportedDocument ? (
-                <div className="flex justify-end border-t border-custom-border-200 p-3">
-                  <a
-                    href={effectiveDocumentSrc}
-                    target="_blank"
-                    rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded bg-custom-primary-100 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-custom-primary-200"
-                  >
-                    <Download className="h-3.5 w-3.5" />
-                    Download
-                  </a>
-                </div>
-              ) : null}
-            </div>
-          )}
-          <div className="mt-4">
-            <h1 className="text-lg font-semibold text-custom-text-100">{item.title}</h1>
-            <p className="mt-1 text-xs text-custom-text-300">
-              Uploaded by {createdByLabel} - {item.createdAt}
-            </p>
-            {item.description ? (
-              <p className="mt-2 text-sm text-custom-text-200">{item.description}</p>
-            ) : null}
-          </div>
-          <hr className="border-t border-custom-border-200" />
-        </div>
+        <MediaDetailPreview
+          item={item}
+          isVideo={isVideo}
+          isImageZoomOpen={isImageZoomOpen}
+          setIsImageZoomOpen={setIsImageZoomOpen}
+          videoRef={videoRef}
+          isPlaying={isPlaying}
+          onOverlayToggle={handleOverlayToggle}
+          onOverlaySeek={handleOverlaySeek}
+          isSettingsOpen={isSettingsOpen}
+          onCloseSettings={() => setIsSettingsOpen(false)}
+          qualityOptions={qualityOptions}
+          playbackRates={playbackRates}
+          currentPlaybackRate={currentPlaybackRate}
+          onSelectQuality={handleQualitySelect}
+          onSelectRate={handlePlaybackRate}
+          settingsPanelRef={settingsPanelRef}
+          crossOrigin={crossOrigin}
+          videoDownloadSrc={videoDownloadSrc}
+          effectiveImageSrc={effectiveImageSrc}
+          isUnsupportedDocument={isUnsupportedDocument}
+          isBinaryDocument={isBinaryDocument}
+          isDocumentPreviewLoading={isDocumentPreviewLoading}
+          documentPreviewError={documentPreviewError}
+          documentPreviewHtml={documentPreviewHtml}
+          sanitizedDocumentPreviewHtml={sanitizedDocumentPreviewHtml}
+          documentPreviewUrl={documentPreviewUrl}
+          isTextDocument={isTextDocument}
+          isTextPreviewLoading={isTextPreviewLoading}
+          textPreviewError={textPreviewError}
+          textPreview={textPreview}
+          effectiveDocumentSrc={effectiveDocumentSrc}
+          description={item.description ?? null}
+          createdByLabel={createdByLabel}
+          createdAt={item.createdAt}
+        />
+        {isVideo ? <style jsx global>{PLAYER_STYLE}</style> : null}
 
-        {isImageZoomOpen && item.mediaType === "image" && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-            onClick={() => setIsImageZoomOpen(false)}
-            role="dialog"
-            aria-modal="true"
-          >
-            <button
-              type="button"
-              onClick={() => setIsImageZoomOpen(false)}
-              className="absolute right-4 top-4 rounded-full border border-white/30 px-3 py-1 text-xs text-white hover:border-white"
-            >
-              Close
-            </button>
-            {effectiveImageSrc ? (
-              <img src={effectiveImageSrc} alt={item.title} className="h-[90vh] w-[90vw] object-contain" />
-            ) : (
-              <div className="flex h-[90vh] w-[90vw] items-center justify-center text-xs text-white">
-                Loading image...
-              </div>
-            )}
-          </div>
-        )}
-
-        <div className="flex flex-col gap-4 rounded-2xl border border-custom-border-200 bg-custom-background-100 p-4">
-          <div className="flex items-center gap-2 rounded-full border border-custom-border-200 bg-custom-background-90 p-1 text-[11px] text-custom-text-300">
-            <button
-              type="button"
-              onClick={() => setActiveTab("details")}
-              className={`rounded-full px-3 py-1 ${activeTab === "details"
-                  ? "border border-custom-border-200 bg-custom-background-100 text-custom-text-100"
-                  : "hover:text-custom-text-100"
-                }`}
-            >
-              Details
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("tags")}
-              className={`rounded-full px-3 py-1 ${
-                activeTab === "tags"
-                  ? "border border-custom-border-200 bg-custom-background-100 text-custom-text-100"
-                  : "hover:text-custom-text-100"
-              }`}
-            >
-              Tags
-            </button>
-          </div>
-
-          {activeTab === "details" ? (
-            <>
-              <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
-                <div className="border-b border-custom-border-200 px-4 py-2 text-xs font-semibold text-custom-text-100">
-                  Event details
-                </div>
-                <div className="space-y-2 px-4 py-3 text-xs text-custom-text-300">
-                  {isMeaningfulValue(eventDateLabel) ? (
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-3.5 w-3.5" />
-                      <span>{eventDateLabel}</span>
-                    </div>
-                  ) : null}
-                  {isMeaningfulValue(eventTimeLabel) ? (
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-3.5 w-3.5" />
-                      <span>{eventTimeLabel}</span>
-                    </div>
-                  ) : null}
-                  {isMeaningfulValue(category) ? (
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-custom-text-200">Category</span>
-                      <span className="text-right">{category}</span>
-                    </div>
-                  ) : null}
-                  {isMeaningfulValue(season) ? (
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-custom-text-200">Season</span>
-                      <span className="text-right">{season}</span>
-                    </div>
-                  ) : null}
-                  {isMeaningfulValue(createdByLabel) ? (
-                    <div className="flex items-center gap-2">
-                      <User className="h-3.5 w-3.5" />
-                      <span>{createdByLabel}</span>
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-
-              {isMeaningfulValue(sport) || isMeaningfulValue(program) || isMeaningfulValue(level) ? (
-                <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
-                  <div className="border-b border-custom-border-200 px-4 py-2 text-xs font-semibold text-custom-text-100">
-                    Team details
-                  </div>
-                  <div className="space-y-2 px-4 py-3 text-xs text-custom-text-300">
-                    {isMeaningfulValue(sport) ? (
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="text-custom-text-200">Sport</span>
-                        <span className="text-right">{sport}</span>
-                      </div>
-                    ) : null}
-                    {isMeaningfulValue(program) ? (
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="text-custom-text-200">Program</span>
-                        <span className="text-right">{program}</span>
-                      </div>
-                    ) : null}
-                    {isMeaningfulValue(level) ? (
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="text-custom-text-200">Level</span>
-                        <span className="text-right">{level}</span>
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-              ) : null}
-
-              {opposition && hasOppositionDetails ? (
-                <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
-                  <div className="border-b border-custom-border-200 px-4 py-2 text-xs font-semibold text-custom-text-100">
-                    Opposition
-                  </div>
-                  <div className="space-y-3 px-4 py-3 text-xs text-custom-text-300">
-                    {oppositionName || oppositionLogoUrl ? (
-                      <div className="flex items-center gap-3">
-                        {oppositionLogoUrl ? (
-                          <img
-                            src={oppositionLogoUrl}
-                            alt={oppositionName || "Opposition logo"}
-                            className="h-10 w-10 rounded-full border border-custom-border-200 object-cover"
-                          />
-                        ) : null}
-                        <div className="text-sm font-semibold text-custom-text-100">
-                          {oppositionName || "Opposition team"}
-                        </div>
-                      </div>
-                    ) : null}
-                    {oppositionHeadCoach ? (
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="text-custom-text-200">Head coach</span>
-                        <span className="text-right">{oppositionHeadCoach}</span>
-                      </div>
-                    ) : null}
-                    {oppositionAsstCoach ? (
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="text-custom-text-200">Assistant coach</span>
-                        <span className="text-right">{oppositionAsstCoach}</span>
-                      </div>
-                    ) : null}
-                    {oppositionAthleticEmail ? (
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-3.5 w-3.5" />
-                        <a
-                          href={`mailto:${oppositionAthleticEmail}`}
-                          className="text-custom-text-200 hover:text-custom-text-100"
-                        >
-                          {oppositionAthleticEmail}
-                        </a>
-                      </div>
-                    ) : null}
-                    {oppositionAthleticPhone ? (
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-3.5 w-3.5" />
-                        <a
-                          href={`tel:${oppositionAthleticPhone}`}
-                          className="text-custom-text-200 hover:text-custom-text-100"
-                        >
-                          {oppositionAthleticPhone}
-                        </a>
-                      </div>
-                    ) : null}
-                    {oppositionAsstAthleticEmail ? (
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-3.5 w-3.5" />
-                        <a
-                          href={`mailto:${oppositionAsstAthleticEmail}`}
-                          className="text-custom-text-200 hover:text-custom-text-100"
-                        >
-                          {oppositionAsstAthleticEmail}
-                        </a>
-                      </div>
-                    ) : null}
-                    {oppositionAsstAthleticPhone ? (
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-3.5 w-3.5" />
-                        <a
-                          href={`tel:${oppositionAsstAthleticPhone}`}
-                          className="text-custom-text-200 hover:text-custom-text-100"
-                        >
-                          {oppositionAsstAthleticPhone}
-                        </a>
-                      </div>
-                    ) : null}
-                    {oppositionAddress ? (
-                      <div className="flex items-start gap-2 text-custom-text-200">
-                        <MapPin className="mt-0.5 h-3.5 w-3.5" />
-                        <span className="leading-relaxed">{oppositionAddress}</span>
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-              ) : null}
-
-              {item.mediaType === "video" ? (
-                <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
-                  <div className="border-b border-custom-border-200 px-4 py-2 text-xs font-semibold text-custom-text-100">
-                    Duration &amp; sharing
-                  </div>
-                  <div className="space-y-2 px-4 py-3 text-xs text-custom-text-300">
-                    <div className="flex items-center justify-between">
-                      <span>Duration</span>
-                      <span>{durationLabel}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>Duration (sec)</span>
-                      <span>{durationSecLabel}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>Shared with</span>
-                      <span>--</span>
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-
-              {item.docs.length > 0 ? (
-                <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
-                  <div className="border-b border-custom-border-200 px-4 py-2 text-xs font-semibold text-custom-text-100">
-                    Documents
-                  </div>
-                  <div className="space-y-2 px-4 py-3 text-xs text-custom-text-300">
-                    {item.docs.map((doc) => (
-                      <div key={doc} className="flex items-center gap-2">
-                        <FileText className="h-3.5 w-3.5" />
-                        <span>{doc}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-
-              <div className="rounded-xl border border-custom-border-200 bg-custom-background-90">
-                <div className="border-b border-custom-border-200 px-4 py-2 text-xs font-semibold text-custom-text-100">
-                  Media info
-                </div>
-                <div className="space-y-2 px-4 py-3 text-xs text-custom-text-300">
-                  {isMeaningfulValue(fileTypeLabel) ? (
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-custom-text-200">File type</span>
-                      <span className="text-right">{formatMetaValue(fileTypeLabel)}</span>
-                    </div>
-                  ) : null}
-                  {isMeaningfulValue(fileSizeLabel) ? (
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-custom-text-200">File size</span>
-                      <span className="text-right">{fileSizeLabel}</span>
-                    </div>
-                  ) : null}
-                  {isMeaningfulValue(source) ? (
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-custom-text-200">Source</span>
-                      <span className="text-right">{source}</span>
-                    </div>
-                  ) : null}
-                  {isMeaningfulValue(kind) ? (
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-custom-text-200">Kind</span>
-                      <span className="text-right">{kind}</span>
-                    </div>
-                  ) : null}
-                  {metaEntries.length < 0 ? (
-                    <div className="text-xs text-custom-text-400">No metadata available.</div>
-                  ) : (
-                    metaEntries.map(([key, value]) => (
-                      <div key={key} className="flex items-center justify-between gap-3">
-                        <span className="truncate text-custom-text-200">{formatMetaLabel(key)}</span>
-                        <span className="max-w-[55%] truncate text-right">{formatMetaValue(value)}</span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </>
-          ) : (
-            <TagsSection item={item} onPlay={handlePlay} />
-          )}
-        </div>
+        <MediaDetailSidebar
+          item={item}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          eventDateLabel={eventDateLabel}
+          eventTimeLabel={eventTimeLabel}
+          category={category}
+          season={season}
+          createdByLabel={createdByLabel}
+          sport={sport}
+          program={program}
+          level={level}
+          opposition={opposition}
+          oppositionName={oppositionName}
+          oppositionLogoUrl={oppositionLogoUrl}
+          oppositionHeadCoach={oppositionHeadCoach}
+          oppositionAsstCoach={oppositionAsstCoach}
+          oppositionAthleticEmail={oppositionAthleticEmail}
+          oppositionAthleticPhone={oppositionAthleticPhone}
+          oppositionAsstAthleticEmail={oppositionAsstAthleticEmail}
+          oppositionAsstAthleticPhone={oppositionAsstAthleticPhone}
+          oppositionAddress={oppositionAddress}
+          hasOppositionDetails={hasOppositionDetails}
+          fileTypeLabel={fileTypeLabel}
+          fileSizeLabel={fileSizeLabel}
+          source={source}
+          kind={kind}
+          metaEntries={metaEntries}
+          durationLabel={durationLabel}
+          durationSecLabel={durationSecLabel}
+          onPlay={handlePlay}
+        />
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ export const PLAYER_STYLE = `
                     flex-wrap: nowrap;
                     background: rgba(0, 0, 0, 0.65);
                     border-radius: 0 0 12px 12px;
-                    height: 30px;
+                    height: 40px;
                     left: 0;
                     right: 0;
                     bottom: 0;
@@ -25,6 +25,9 @@ export const PLAYER_STYLE = `
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    height: 100%;
+                    padding: 0;
+                    line-height: 1;
                   }
                   .media-player .video-js .vjs-control-bar,
                   .media-player .video-js .vjs-time-control {
@@ -39,6 +42,7 @@ export const PLAYER_STYLE = `
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    height: 100%;
                   }
                   .media-player .video-js .vjs-time-divider {
                     padding: 0 2px;
@@ -49,9 +53,11 @@ export const PLAYER_STYLE = `
                     display: flex;
                     align-items: center;
                     min-width: 0;
+                    height: 100%;
                   }
                   .media-player .video-js .vjs-progress-control .vjs-progress-holder {
                     width: 100%;
+                    align-self: center;
                   }
                   .media-player .video-js .vjs-time-control {
                     flex: 0 0 auto;
@@ -83,7 +89,9 @@ export const PLAYER_STYLE = `
                     height: 24px;
                   }
                   .media-player .video-js .vjs-button .vjs-icon-placeholder:before {
-                    font-size: 1.1em;
+                    font-size: 22px;
+                    line-height: 1;
+                    display: block;
                   }
                   .media-player .video-js .vjs-volume-panel {
                     margin-left: 6px;
@@ -197,7 +205,7 @@ export const PLAYER_STYLE = `
                   .media-player .video-js .vjs-pip-toggle,
                   .media-player .video-js .vjs-fullscreen-control,
                   .media-player .video-js .vjs-overflow-button {
-                    margin-left: 2px;
+                    margin-left: 17px;
                   }
                   .media-player .video-js .vjs-overflow-button {
                     margin-left: 6px;

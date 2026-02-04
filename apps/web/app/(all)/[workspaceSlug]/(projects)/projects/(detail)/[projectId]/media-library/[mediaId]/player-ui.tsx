@@ -45,7 +45,7 @@ export const PlayerOverlay = ({ isPlaying, onToggle, onSeek }: TOverlayProps) =>
   </div>
 );
 
-type TQualityOption = {
+export type TQualityOption = {
   key: string;
   label: string;
   isAuto: boolean;
