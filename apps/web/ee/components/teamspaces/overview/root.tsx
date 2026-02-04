@@ -18,7 +18,7 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
 // local imports
@@ -34,10 +34,13 @@ export const TeamsOverviewRoot = observer(function TeamsOverviewRoot(props: TTea
   // router
   const { workspaceSlug } = useParams();
   // hooks
+  const { data: currentUser } = useUser();
   const { allowPermissions } = useUserPermissions();
-  const { isCurrentUserMemberOfTeamspace } = useTeamspaces();
+  const { isCurrentUserMemberOfTeamspace, getTeamspaceById } = useTeamspaces();
   // derived values
+  const teamspace = getTeamspaceById(teamspaceId);
   const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
+  const isTeamspaceLead = currentUser?.id === teamspace?.lead_id;
   const hasAdminLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE,
@@ -49,7 +52,7 @@ export const TeamsOverviewRoot = observer(function TeamsOverviewRoot(props: TTea
       <div className="flex w-full h-full">
         <TeamsOverviewContent
           teamspaceId={teamspaceId}
-          isEditingAllowed={hasAdminLevelPermissions && isTeamspaceMember}
+          isEditingAllowed={(hasAdminLevelPermissions || isTeamspaceLead) && isTeamspaceMember}
         />
         {isTeamspaceMember && <TeamsOverviewSidebar teamspaceId={teamspaceId} />}
       </div>

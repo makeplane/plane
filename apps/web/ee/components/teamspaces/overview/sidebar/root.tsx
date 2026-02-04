@@ -23,7 +23,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useTeamspaceUpdates } from "@/plane-web/hooks/store/teamspaces/use-teamspace-updates";
@@ -42,16 +42,19 @@ export const TeamsOverviewSidebar = observer(function TeamsOverviewSidebar(props
   // router
   const { workspaceSlug } = useParams();
   // hooks
+  const { data: currentUser } = useUser();
   const { allowPermissions } = useUserPermissions();
   const { isTeamSidebarCollapsed, getTeamspaceById, fetchTeamspaceEntities } = useTeamspaces();
   const { fetchTeamActivities, fetchTeamspaceComments } = useTeamspaceUpdates();
   // derived values
   const teamspace = getTeamspaceById(teamspaceId);
+  const isTeamspaceLead = currentUser?.id === teamspace?.lead_id;
   const hasAdminLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE,
     workspaceSlug?.toString()
   );
+  const isEditingAllowed = hasAdminLevelPermissions || isTeamspaceLead;
   const hasMemberLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE,
@@ -92,12 +95,12 @@ export const TeamsOverviewSidebar = observer(function TeamsOverviewSidebar(props
     {
       key: "properties",
       icon: InfoFillIcon,
-      content: <TeamsOverviewSidebarProperties teamspaceId={teamspaceId} isEditingAllowed={hasAdminLevelPermissions} />,
+      content: <TeamsOverviewSidebarProperties teamspaceId={teamspaceId} isEditingAllowed={isEditingAllowed} />,
     },
     {
       key: "members",
       icon: UsersRound,
-      content: <TeamsOverviewSidebarMembers teamspaceId={teamspaceId} isEditingAllowed={hasAdminLevelPermissions} />,
+      content: <TeamsOverviewSidebarMembers teamspaceId={teamspaceId} isEditingAllowed={isEditingAllowed} />,
     },
     {
       key: "comments",

@@ -14,7 +14,7 @@ import random
 import json
 
 # Django imports
-from django.db.models import OuterRef, Subquery, Exists
+from django.db.models import OuterRef, Subquery, Exists, Q
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.core.serializers.json import DjangoJSONEncoder
@@ -27,7 +27,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.ee.views.base import BaseAPIView
 from plane.ee.permissions import WorkspaceUserPermission
-from plane.db.models import Workspace
+from plane.db.models import Workspace, WorkspaceMember
 from plane.ee.models import Teamspace, TeamspaceProject, TeamspaceMember
 from plane.ee.serializers import TeamspaceSerializer
 from plane.payment.flags.flag import FeatureFlag
@@ -40,6 +40,28 @@ class TeamspaceBaseEndpoint(BaseAPIView):
     @property
     def team_space_id(self):
         return self.kwargs.get("team_space_id")
+
+    def is_admin_or_teamspace_lead(self, request, slug, team_space_id):
+        """Check if user is workspace admin, teamspace lead, or teamspace member"""
+        # Check if workspace admin
+        is_admin = WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.ADMIN.value,
+        ).exists()
+
+        if is_admin:
+            return True
+
+        # Check if teamspace lead
+        is_lead = Teamspace.objects.filter(
+            pk=team_space_id,
+            workspace__slug=slug,
+            lead=request.user,
+        ).exists()
+
+        return is_lead
 
 
 class TeamspaceEndpoint(TeamspaceBaseEndpoint):
@@ -68,9 +90,15 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
             .annotate(
                 is_member=Exists(
                     TeamspaceMember.objects.filter(team_space=OuterRef("pk"), member_id=self.request.user.id)
-                )
+                ),
+                is_workspace_admin=Exists(
+                    WorkspaceMember.objects.filter(
+                        workspace__slug=slug, member=self.request.user, role=ROLE.ADMIN.value, is_active=True
+                    )
+                ),
             )
-            .get(workspace__slug=slug, pk=team_space_id, is_member=True)
+            .filter(Q(is_member=True) | Q(is_workspace_admin=True))
+            .get(workspace__slug=slug, pk=team_space_id)
         )
 
     def get_team_spaces(self, slug):
@@ -180,10 +208,17 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN])
+    @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def patch(self, request, slug, team_space_id):
         try:
+            # # Check if user is workspace admin or teamspace lead
+            if not self.is_admin_or_teamspace_lead(request, slug, team_space_id):
+                return Response(
+                    {"error": "You don't have permission to edit this teamspace."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             # Get team space by pk
             team_space = self.get_team_space(slug, team_space_id)
             # Get workspace
@@ -256,17 +291,17 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
         except Teamspace.DoesNotExist:
             return Response({"error": "Team space not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN])
+    @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def delete(self, request, slug, team_space_id):
         """
         Delete team space by pk
         """
         try:
-            # The current deleting user should be part of the team space
-            if not TeamspaceMember.objects.filter(team_space_id=team_space_id, member_id=request.user).exists():
+            # # Check if user is workspace admin or teamspace lead
+            if not self.is_admin_or_teamspace_lead(request, slug, team_space_id):
                 return Response(
-                    {"error": "You are not part of the team space"},
+                    {"error": "You don't have permission to delete this teamspace."},
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
