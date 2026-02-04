@@ -6,9 +6,10 @@ import { X, Trash2, Archive, AlertTriangle } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { PriorityIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType, TIssuePriorities, TBulkOperationsPayload } from "@plane/types";
 // ui
-import { Button, Spinner, CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Spinner, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
