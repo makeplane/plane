@@ -71,6 +71,9 @@ COPY turbo.json turbo.json
 RUN --mount=type=cache,id=space-pnpm-store,sharing=locked,target=/pnpm/store pnpm fetch --store-dir=/pnpm/store
 RUN --mount=type=cache,id=space-pnpm-store,sharing=locked,target=/pnpm/store CI=true pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store --prod=false
 
+# Remove .env files to ensure build args are used instead
+RUN rm -f apps/admin/.env apps/web/.env apps/space/.env packages/*/.env 2>/dev/null || true
+
 # Build only the space package
 RUN pnpm turbo run build --filter=space
 

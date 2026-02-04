@@ -1,6 +1,8 @@
 .git
 *.pyc
 .env
+**/.env
+apps/*/.env
 venv
 .venv
 node_modules/

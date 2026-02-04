@@ -23,6 +23,17 @@ variable "region" {
   default     = "us-central1"
 }
 
+variable "domain" {
+  description = "Primary domain for Plane (e.g., plane.example.com)"
+  type        = string
+}
+
+variable "enable_iap" {
+  description = "Enable Identity-Aware Proxy for admin panel"
+  type        = bool
+  default     = true
+}
+
 # Enable APIs
 resource "google_project_service" "apis" {
   for_each = toset([
@@ -31,7 +42,11 @@ resource "google_project_service" "apis" {
     "servicenetworking.googleapis.com",
     "compute.googleapis.com",
     "redis.googleapis.com",
-    "secretmanager.googleapis.com"
+    "secretmanager.googleapis.com",
+    "vpcaccess.googleapis.com",
+    "iap.googleapis.com",
+    "certificatemanager.googleapis.com",
+    "monitoring.googleapis.com"
   ])
   project = var.project_id
   service = each.key

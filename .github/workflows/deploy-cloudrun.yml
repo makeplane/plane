@@ -1,0 +1,90 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: art-plane
+  REGION: us-central1
+  GAR_REPO: us-central1-docker.pkg.dev/art-plane/plane-repo
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Google Auth
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker Auth
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+
+      # Build and Push API
+      - name: Build and Push API
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/api
+          file: ./apps/api/Dockerfile.api
+          push: true
+          tags: ${{ env.GAR_REPO }}/api:latest
+          platforms: linux/amd64
+
+      # Build and Push Web
+      - name: Build and Push Web
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/web/Dockerfile.web
+          push: true
+          tags: ${{ env.GAR_REPO }}/web:latest
+          platforms: linux/amd64
+
+      # Build and Push Admin
+      - name: Build and Push Admin
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/admin/Dockerfile.admin
+          push: true
+          tags: ${{ env.GAR_REPO }}/admin:latest
+          platforms: linux/amd64
+
+      # Deploy to Cloud Run (Update Services)
+      - name: Deploy API
+        run: |
+          gcloud run services update plane-api \
+            --region ${{ env.REGION }} \
+            --image ${{ env.GAR_REPO }}/api:latest \
+            --quiet
+
+      - name: Deploy Web
+        run: |
+          gcloud run services update plane-web \
+            --region ${{ env.REGION }} \
+            --image ${{ env.GAR_REPO }}/web:latest \
+            --quiet
+
+      - name: Deploy Admin
+        run: |
+          gcloud run services update plane-admin \
+            --region ${{ env.REGION }} \
+            --image ${{ env.GAR_REPO }}/admin:latest \
+            --quiet
+

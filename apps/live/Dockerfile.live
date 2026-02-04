@@ -44,8 +44,12 @@ RUN --mount=type=cache,id=live-pnpm-store,sharing=locked,target=/pnpm/store pnpm
 RUN --mount=type=cache,id=live-pnpm-store,sharing=locked,target=/pnpm/store CI=true pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store
 
 ENV TURBO_TELEMETRY_DISABLED=1
+ENV TURBO_LOG_ORDER=stream
 
-RUN pnpm turbo run build --filter=live
+# Create .turbo directories to avoid race condition
+RUN mkdir -p packages/types/.turbo packages/hooks/.turbo packages/decorators/.turbo packages/logger/.turbo apps/live/.turbo
+
+RUN pnpm turbo run build --filter=live --concurrency=1
 
 # *****************************************************************************
 # STAGE 3: Run the project

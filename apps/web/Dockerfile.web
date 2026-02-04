@@ -70,6 +70,9 @@ ENV VITE_WEB_BASE_URL=$VITE_WEB_BASE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TURBO_TELEMETRY_DISABLED=1
 
+# Remove .env files to ensure build args are used instead
+RUN rm -f apps/admin/.env apps/web/.env apps/space/.env packages/*/.env 2>/dev/null || true
+
 RUN pnpm turbo run build --filter=web
 
 # *****************************************************************************
@@ -78,11 +81,20 @@ RUN pnpm turbo run build --filter=web
 FROM nginx:1.27-alpine AS production
 
 COPY apps/web/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY apps/web/entrypoint.sh /docker-entrypoint.d/99-custom-entrypoint.sh
 COPY --from=installer /app/apps/web/build/client /usr/share/nginx/html
+
+RUN chmod +x /docker-entrypoint.d/99-custom-entrypoint.sh
+
+# We use the default nginx entrypoint which runs scripts in /docker-entrypoint.d/
+# But to be safe and explicit with our sed logic:
+COPY apps/web/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD curl -fsS http://127.0.0.1:3000/ >/dev/null || exit 1
 
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]

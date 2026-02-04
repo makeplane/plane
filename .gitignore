@@ -110,3 +110,21 @@ build/
 .react-router/
 temp/
 scripts/
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+# Note: .terraform.lock.hcl IS committed per Terraform best practices for reproducibility
+
+# Environment files (production)
+.env.production
+**/.env.production

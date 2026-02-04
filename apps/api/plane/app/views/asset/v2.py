@@ -170,7 +170,11 @@ class UserAssetsV2Endpoint(BaseAPIView):
         asset.is_uploaded = True
         # get the storage metadata
         if not asset.storage_metadata:
-            get_asset_object_metadata.delay(asset_id=str(asset_id))
+            try:
+                get_asset_object_metadata.delay(asset_id=str(asset_id))
+            except Exception:
+                # Celery broker unavailable - skip metadata task
+                pass
         # get the entity and save the asset id for the request field
         self.entity_asset_save(
             asset_id=asset_id,
@@ -379,7 +383,11 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset.is_uploaded = True
         # get the storage metadata
         if not asset.storage_metadata:
-            get_asset_object_metadata.delay(asset_id=str(asset_id))
+            try:
+                get_asset_object_metadata.delay(asset_id=str(asset_id))
+            except Exception:
+                # Celery broker unavailable - skip metadata task
+                pass
         # get the entity and save the asset id for the request field
         self.entity_asset_save(
             asset_id=asset_id,
@@ -580,7 +588,11 @@ class ProjectAssetEndpoint(BaseAPIView):
         asset.is_uploaded = True
         # get the storage metadata
         if not asset.storage_metadata:
-            get_asset_object_metadata.delay(asset_id=str(pk))
+            try:
+                get_asset_object_metadata.delay(asset_id=str(pk))
+            except Exception:
+                # Celery broker unavailable - skip metadata task
+                pass
 
         # update the attributes
         asset.attributes = request.data.get("attributes", asset.attributes)
