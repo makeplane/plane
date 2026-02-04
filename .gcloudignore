@@ -1,0 +1,90 @@
+# Cloud Build ignore file
+# This controls what files are uploaded to Cloud Build
+
+# Git directory (not needed for build)
+.git/
+
+# Dependencies (will be installed during build)
+node_modules/
+**/node_modules/
+
+# Python
+*.pyc
+__pycache__/
+venv/
+.venv/
+
+# Build outputs (will be regenerated)
+.next/
+**/.next/
+.turbo/
+**/.turbo/
+dist/
+**/dist/
+build/
+**/build/
+out/
+**/out/
+.react-router/
+**/.react-router/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
+
+# Test/coverage output
+coverage/
+**/coverage/
+*.lcov
+.junit/
+test-results/
+
+# Caches
+.cache/
+**/.cache/
+storybook-static/
+*.tsbuildinfo
+
+# Local env files (secrets)
+.env
+**/.env
+.env.*
+**/.env.*
+.secrets
+
+# Temp files
+tmp/
+temp/
+
+# Database dumps
+*.rdb
+*.rdb.gz
+
+# Keys
+*.pem
+*.key
+
+# Terraform state (sensitive)
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/tfplan
+
+# Claude config
+.claude/
+**/.claude/
+
+# IMPORTANT: Do NOT exclude .gitignore - it's needed by the Dockerfile
+# The line below ensures .gitignore is included
+!.gitignore
