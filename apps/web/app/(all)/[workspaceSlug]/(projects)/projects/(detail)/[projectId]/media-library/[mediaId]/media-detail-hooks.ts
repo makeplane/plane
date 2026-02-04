@@ -49,19 +49,20 @@ export const useResolvedMediaSources = ({
     [item?.fileSrc]
   );
 
-  const resolvedVideoFormat = documentFormat || getVideoFormatFromSrc(videoSrc);
+  const detectedVideoFormat = documentFormat || getVideoFormatFromSrc(videoSrc);
   const isVideoAction = new Set(["play", "play_hls", "play_streaming", "open_mp4"]).has(normalizedAction);
   const isVideoFormat = new Set(["mp4", "m4v", "m3u8", "mov", "webm", "avi", "mkv", "mpeg", "mpg", "stream"]).has(
-    resolvedVideoFormat
+    detectedVideoFormat
   );
   const isVideo = item?.mediaType === "video" || item?.linkedMediaType === "video" || isVideoAction || isVideoFormat;
   const isHls =
     isVideo &&
-    (resolvedVideoFormat === "m3u8" ||
-      resolvedVideoFormat === "stream" ||
+    (detectedVideoFormat === "m3u8" ||
+      detectedVideoFormat === "stream" ||
       videoSrc.toLowerCase().includes(".m3u8") ||
       normalizedAction === "play_streaming" ||
       Boolean(meta?.hls));
+  const resolvedVideoFormat = isHls ? "m3u8" : detectedVideoFormat;
 
   const proxiedVideoSrc = useMemo(() => {
     if (!videoSrc) return videoSrc;
@@ -111,12 +112,20 @@ export const useResolvedMediaSources = ({
   );
 
   const useCredentials = useMemo(() => shouldUseCredentials(effectiveVideoSrc), [effectiveVideoSrc, shouldUseCredentials]);
-  const crossOrigin = useCredentials ? "use-credentials" : "anonymous";
+  const crossOrigin: "use-credentials" | "anonymous" | "" | undefined =
+  useCredentials ? "use-credentials" : "anonymous";
+
   const useDocumentCredentials = useMemo(
     () => shouldUseCredentials(effectiveDocumentSrc),
     [effectiveDocumentSrc, shouldUseCredentials]
   );
-  const videoDownloadSrc = videoSrc ? buildDownloadUrl(videoSrc) : "";
+  const videoDownloadSrc = useMemo(() => {
+    if (!isVideo) return "";
+    if (typeof item?.downloadSrc === "string" && item.downloadSrc) {
+      return buildDownloadUrl(item.downloadSrc);
+    }
+    return videoSrc ? buildDownloadUrl(videoSrc) : "";
+  }, [isVideo, item?.downloadSrc, videoSrc]);
 
   useEffect(() => {
     let isMounted = true;
@@ -128,7 +137,8 @@ export const useResolvedMediaSources = ({
     }
 
     if (!isVideoAssetApiUrl) {
-      setResolvedVideoSrc(videoSrc);
+      // Keep empty so HLS streams can still flow through `proxiedVideoSrc` when needed.
+      setResolvedVideoSrc("");
       return () => {
         isMounted = false;
       };

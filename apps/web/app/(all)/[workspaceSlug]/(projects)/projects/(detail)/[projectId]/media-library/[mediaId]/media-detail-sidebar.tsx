@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Clock, FileText, Mail, MapPin, Phone, User } from "lucide-react";
+import { Calendar, Clock, FileText, Mail, MapPin, Phone, Tag, User } from "lucide-react";
 import { TagsSection } from "../components/tags-section";
 import { formatMetaLabel, formatMetaValue, isMeaningfulValue } from "./media-detail-utils";
 
@@ -105,7 +105,10 @@ export const MediaDetailSidebar = ({
             ) : null}
             {isMeaningfulValue(category) ? (
               <div className="flex items-center justify-between gap-3">
-                <span className="text-custom-text-200">Category</span>
+                <span className="flex items-center gap-2 text-custom-text-200">
+                  <Tag className="h-3.5 w-3.5" />
+                  <span>Category</span>
+                </span>
                 <span className="text-right">{category}</span>
               </div>
             ) : null}

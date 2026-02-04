@@ -10,6 +10,48 @@ type TOverlayProps = {
   onSeek: (delta: number) => void;
 };
 
+const SkipIcon = ({ direction }: { direction: "back" | "forward" }) => (
+  <span className="player-skip-icon" aria-hidden="true">
+    {direction === "forward" ? (
+      <svg viewBox="0 0 24 24" className="player-skip-icon__svg" fill="none">
+        <path d="M13.98 4.46997L12 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M19.0899 7.79999C20.1999 9.27999 20.8899 11.11 20.8899 13.11C20.8899 18.02 16.9099 22 11.9999 22C7.08988 22 3.10986 18.02 3.10986 13.11C3.10986 8.19999 7.08988 4.21997 11.9999 4.21997C12.6799 4.21997 13.3399 4.31002 13.9799 4.46002"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M13.91 10.8301H10.85L10.0901 13.1201H12.3801C13.2201 13.1201 13.91 13.8001 13.91 14.6501C13.91 15.4901 13.2301 16.1801 12.3801 16.1801H10.0901"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ) : (
+      <svg viewBox="0 0 24 24" className="player-skip-icon__svg" fill="none">
+        <path
+          d="M13.91 10.8301H10.85L10.09 13.1201H12.38C13.22 13.1201 13.91 13.8001 13.91 14.6501C13.91 15.4901 13.23 16.1801 12.38 16.1801H10.09"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path d="M10.02 4.46997L12 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M4.91 7.79999C3.8 9.27999 3.10999 11.11 3.10999 13.11C3.10999 18.02 7.09 22 12 22C16.91 22 20.89 18.02 20.89 13.11C20.89 8.19999 16.91 4.21997 12 4.21997C11.32 4.21997 10.66 4.31002 10.02 4.46002"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    )}
+  </span>
+);
+
 export const PlayerOverlay = ({ isPlaying, onToggle, onSeek }: TOverlayProps) => (
   <div className="player-overlay-controls is-visible">
     <div className="player-overlay-box">
@@ -19,7 +61,7 @@ export const PlayerOverlay = ({ isPlaying, onToggle, onSeek }: TOverlayProps) =>
         onClick={() => onSeek(-5)}
         aria-label="Skip back 5 seconds"
       >
-        <Play className="player-overlay-icon player-overlay-icon--back" aria-hidden="true" />
+        <SkipIcon direction="back" />
       </button>
       <button
         type="button"
@@ -39,7 +81,7 @@ export const PlayerOverlay = ({ isPlaying, onToggle, onSeek }: TOverlayProps) =>
         onClick={() => onSeek(5)}
         aria-label="Skip forward 5 seconds"
       >
-        <Play className="player-overlay-icon" aria-hidden="true" />
+        <SkipIcon direction="forward" />
       </button>
     </div>
   </div>

@@ -45,6 +45,69 @@ THUMBNAIL_PRESETS: tuple[tuple[int, int], ...] = (
     (64, 42),
 )
 
+HLS_RENDITIONS: tuple[dict[str, str | int], ...] = (
+    {
+        "name": "480p",
+        "width": 854,
+        "height": 480,
+        "video_bitrate": "1400k",
+        "maxrate": "1498k",
+        "bufsize": "2100k",
+        "audio_bitrate": "96k",
+        "bandwidth": 1498000,
+    },
+    {
+        "name": "720p",
+        "width": 1280,
+        "height": 720,
+        "video_bitrate": "2800k",
+        "maxrate": "2996k",
+        "bufsize": "4200k",
+        "audio_bitrate": "128k",
+        "bandwidth": 2996000,
+    },
+    {
+        "name": "1080p",
+        "width": 1920,
+        "height": 1080,
+        "video_bitrate": "5000k",
+        "maxrate": "5350k",
+        "bufsize": "7500k",
+        "audio_bitrate": "128k",
+        "bandwidth": 5350000,
+    },
+    {
+        "name": "1440p",
+        "width": 2560,
+        "height": 1440,
+        "video_bitrate": "8000k",
+        "maxrate": "8560k",
+        "bufsize": "12000k",
+        "audio_bitrate": "160k",
+        "bandwidth": 8560000,
+    },
+    {
+        "name": "2160p",
+        "width": 3840,
+        "height": 2160,
+        "video_bitrate": "14000k",
+        "maxrate": "14980k",
+        "bufsize": "21000k",
+        "audio_bitrate": "192k",
+        "bandwidth": 14980000,
+    },
+    {
+        "name": "4320p",
+        "width": 7680,
+        "height": 4320,
+        "video_bitrate": "28000k",
+        "maxrate": "29960k",
+        "bufsize": "42000k",
+        "audio_bitrate": "192k",
+        "bandwidth": 29960000,
+    },
+)
+
 EVENT_META_KEYS = {
     "category",
     "start_date",
@@ -663,18 +726,6 @@ def transcode_mp4_to_hls(
     def _run_ffmpeg(cmd: list[str]) -> None:
         subprocess.run(cmd, check=True, cwd=str(output_dir), capture_output=True, text=True)
 
-    def _reset_output_dir() -> None:
-        if not output_dir.exists():
-            return
-        for entry in output_dir.iterdir():
-            if entry.is_dir():
-                shutil.rmtree(entry, ignore_errors=True)
-            else:
-                try:
-                    entry.unlink()
-                except OSError:
-                    pass
-
     try:
         with tempfile.NamedTemporaryFile(dir=output_dir.parent, suffix=".mp4", delete=False) as handle:
             tmp_input_path = Path(handle.name)
@@ -682,47 +733,72 @@ def transcode_mp4_to_hls(
                 handle.write(chunk)
 
         playlist_name = "index.m3u8"
-        base_cmd = [
-            "ffmpeg",
-            "-hide_banner",
-            "-loglevel",
-            "error",
-            "-y",
-            "-i",
-            str(tmp_input_path),
-            "-hls_time",
-            str(segment_seconds),
-            "-hls_list_size",
-            "0",
-            "-hls_flags",
-            "independent_segments",
-            "-hls_segment_filename",
-            "segment_%05d.ts",
-            playlist_name,
-        ]
-
-        try:
-            _run_ffmpeg([*base_cmd[:7], "-c", "copy", *base_cmd[7:]])
-        except subprocess.CalledProcessError as exc:
-            detail = _render_ffmpeg_error(exc)
-            if detail:
-                logger.info("ffmpeg stream copy failed, falling back to encode: %s", detail)
-            else:
-                logger.info("ffmpeg stream copy failed, falling back to encode.")
-            _reset_output_dir()
-            encode_cmd = [
-                *base_cmd[:7],
+        master_lines = ["#EXTM3U", "#EXT-X-VERSION:3"]
+        for rendition in HLS_RENDITIONS:
+            name = str(rendition["name"])
+            width = int(rendition["width"])
+            height = int(rendition["height"])
+            video_bitrate = str(rendition["video_bitrate"])
+            maxrate = str(rendition["maxrate"])
+            bufsize = str(rendition["bufsize"])
+            audio_bitrate = str(rendition["audio_bitrate"])
+            bandwidth = int(rendition["bandwidth"])
+            variant_playlist_name = f"{name}.m3u8"
+            segment_pattern = f"{name}_segment_%05d.ts"
+            scaling_filter = (
+                f"scale=w={width}:h={height}:force_original_aspect_ratio=decrease,"
+                f"pad={width}:{height}:(ow-iw)/2:(oh-ih)/2"
+            )
+            cmd = [
+                "ffmpeg",
+                "-hide_banner",
+                "-loglevel",
+                "error",
+                "-y",
+                "-i",
+                str(tmp_input_path),
+                "-map",
+                "0:v:0",
+                "-map",
+                "0:a?",
                 "-c:v",
                 "libx264",
                 "-preset",
                 "veryfast",
+                "-vf",
+                scaling_filter,
+                "-b:v",
+                video_bitrate,
+                "-maxrate",
+                maxrate,
+                "-bufsize",
+                bufsize,
                 "-c:a",
                 "aac",
+                "-ar",
+                "48000",
+                "-ac",
+                "2",
                 "-b:a",
-                "128k",
-                *base_cmd[7:],
+                audio_bitrate,
+                "-hls_time",
+                str(segment_seconds),
+                "-hls_list_size",
+                "0",
+                "-hls_flags",
+                "independent_segments",
+                "-hls_segment_filename",
+                segment_pattern,
+                "-f",
+                "hls",
+                variant_playlist_name,
             ]
-            _run_ffmpeg(encode_cmd)
+            _run_ffmpeg(cmd)
+            master_lines.append(
+                f"#EXT-X-STREAM-INF:BANDWIDTH={bandwidth},RESOLUTION={width}x{height}"
+            )
+            master_lines.append(variant_playlist_name)
+        (output_dir / playlist_name).write_text("\n".join(master_lines) + "\n", encoding="utf-8")
 
         created_thumbnail = None
         if thumbnail_path:

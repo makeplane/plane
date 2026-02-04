@@ -7,6 +7,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useMediaLibraryItems } from "../hooks/use-media-library-items";
 import { PLAYER_STYLE } from "./player-styles";
@@ -52,6 +53,7 @@ const MediaDetailPage = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [playerTick, setPlayerTick] = useState(0);
   const [qualitySelection, setQualitySelection] = useState<string | null>(null);
+  const [playerElement, setPlayerElement] = useState<HTMLElement | null>(null);
   const settingsPanelRef = useRef<HTMLDivElement | null>(null);
   const pipCaptionModesRef = useRef<Array<{ track: TextTrack; mode: TextTrackMode }>>([]);
 
@@ -83,6 +85,7 @@ const MediaDetailPage = () => {
     documentFormat,
     normalizedAction,
   });
+  console.log("Resolved Media Sources:", crossOrigin, useCredentials);
   const isPdf = item?.mediaType === "document" && documentFormat === "pdf";
   const isTextDocument =
     item?.mediaType === "document" &&
@@ -120,8 +123,6 @@ const MediaDetailPage = () => {
     [documentPreviewHtml]
   );
 
-
-
   const handleTogglePip = useCallback(async () => {
     const video = videoRef.current as HTMLVideoElement | null;
     if (!video || typeof document === "undefined") return;
@@ -131,21 +132,15 @@ const MediaDetailPage = () => {
       } else if ((video as any).requestPictureInPicture) {
         await (video as any).requestPictureInPicture();
       }
-    } catch {
-      // ignore PiP errors
+    } catch (error) {
+      console.error("Picture-in-Picture error:", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Picture-in-Picture failed",
+        message: "Your browser blocked Picture-in-Picture or it isn't supported for this media.",
+      });
     }
-  }, [
-
-
-
-
-
-
-
-
-
-    
-  ]);
+  }, []);
 
   useEffect(() => {
     if (!isVideo) {
@@ -232,6 +227,13 @@ const MediaDetailPage = () => {
 
       const player = playerRef.current as any;
       if (!player) return;
+      const resolvedPlayerElement = (() => {
+        const element = player?.el?.() as HTMLElement | undefined;
+        if (!element) return null;
+        if (element.tagName.toLowerCase() === "video") return element.parentElement;
+        return element;
+      })();
+      setPlayerElement(resolvedPlayerElement ?? null);
 
       const Button = videojs.getComponent("Button");
       const MenuButton = videojs.getComponent("MenuButton");
@@ -339,11 +341,7 @@ const MediaDetailPage = () => {
               ];
 
               sorted.forEach(({ rep, height, bandwidth }) => {
-                const label = height
-                  ? `${height}p`
-                  : bandwidth
-                    ? `${Math.round(bandwidth / 1000)} kbps`
-                    : "Source";
+                const label = height ? `${height}p` : bandwidth ? `${Math.round(bandwidth / 1000)} kbps` : "Source";
                 items.push(
                   new QualityMenuItem(playerInstance, {
                     label,
@@ -408,6 +406,7 @@ const MediaDetailPage = () => {
         playerRef.current.dispose();
         playerRef.current = null;
       }
+      setPlayerElement(null);
     };
   }, [handleTogglePip, isHls, isVideo]);
 
@@ -490,9 +489,12 @@ const MediaDetailPage = () => {
     if (!player) return;
     const tracks = getCaptionTracks(item?.meta);
     const existing = player.remoteTextTracks?.();
-    if (existing && existing.length) {
-      for (let i = existing.length - 1; i >= 0; i -= 1) {
-        player.removeRemoteTextTrack(existing[i]);
+    const trackList = existing as { length?: number; item?: (index: number) => TextTrack | null } | undefined;
+    const trackCount = typeof trackList?.length === "number" ? trackList.length : 0;
+    if (trackCount && typeof trackList?.item === "function") {
+      for (let i = trackCount - 1; i >= 0; i -= 1) {
+        const track = trackList.item(i);
+        if (track) player.removeRemoteTextTrack(track);
       }
     }
     if (!tracks.length) return;
@@ -576,7 +578,7 @@ const MediaDetailPage = () => {
     const seekable = player.seekable && player.seekable();
     let target = current + delta;
     const duration = player.duration?.();
-    if (Number.isFinite(duration) && duration > 0) {
+    if (typeof duration === "number" && Number.isFinite(duration) && duration > 0) {
       target = Math.min(duration, Math.max(0, target));
     } else if (seekable && seekable.length) {
       const start = seekable.start(0);
@@ -631,9 +633,7 @@ const MediaDetailPage = () => {
     sorted.forEach(({ rep, height, bandwidth }) => {
       const label = height ? `${height}p` : bandwidth ? `${Math.round(bandwidth / 1000)} kbps` : "Source";
       const key = `${label}-${bandwidth}-${height}-${rep?.id ?? ""}`;
-      const isSelected =
-        qualitySelection === key ||
-        (qualitySelection === null && !isAuto && activeRep === rep);
+      const isSelected = qualitySelection === key || (qualitySelection === null && !isAuto && activeRep === rep);
       items.push({
         key,
         label,
@@ -774,7 +774,8 @@ const MediaDetailPage = () => {
   const durationSecLabel = formatMetaValue(meta.duration_sec ?? meta.durationSec);
 
   return (
-    <div className="flex flex-col gap-6 px-3 py-3">
+    <div className="relative h-full w-full overflow-hidden overflow-y-auto">
+      <div className="flex min-h-full flex-col gap-6 px-3 py-3">
       <div className="flex items-center justify-between gap-4">
         <Link
           href={backHref}
@@ -783,10 +784,8 @@ const MediaDetailPage = () => {
           <ArrowLeft className="size-md h-3.2 w-3.2" />
         </Link>
 
-
         {/* Currently not using this section */}
 
-        
         {/* <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-1 py-1 text-[11px] text-custom-text-300">
             <button
@@ -829,6 +828,7 @@ const MediaDetailPage = () => {
           onSelectQuality={handleQualitySelect}
           onSelectRate={handlePlaybackRate}
           settingsPanelRef={settingsPanelRef}
+          playerElement={playerElement}
           crossOrigin={crossOrigin}
           videoDownloadSrc={videoDownloadSrc}
           effectiveImageSrc={effectiveImageSrc}
@@ -848,7 +848,11 @@ const MediaDetailPage = () => {
           createdByLabel={createdByLabel}
           createdAt={item.createdAt}
         />
-        {isVideo ? <style jsx global>{PLAYER_STYLE}</style> : null}
+        {isVideo ? (
+          <style jsx global>
+            {PLAYER_STYLE}
+          </style>
+        ) : null}
 
         <MediaDetailSidebar
           item={item}
@@ -882,6 +886,7 @@ const MediaDetailPage = () => {
           durationSecLabel={durationSecLabel}
           onPlay={handlePlay}
         />
+      </div>
       </div>
     </div>
   );

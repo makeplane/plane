@@ -49,6 +49,7 @@ from plane.api.serializers import (
     IssueLinkCreateSerializer,
     IssueLinkUpdateSerializer,
     LabelCreateUpdateSerializer,
+    MediaPackageCreateSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -72,6 +73,13 @@ from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
+from plane.utils.media_library import (
+    create_manifest,
+    manifest_path,
+    package_root,
+    validate_segment,
+    write_manifest_atomic,
+)
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
 from plane.utils.openapi import (
@@ -233,6 +241,120 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
                 IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
                 status=status.HTTP_200_OK,
             )
+
+
+class WorkspaceIssueCreatePackAPIEndpoint(BaseAPIView):
+    """
+    Create a media library package scoped to a work item identifier route.
+    """
+
+    permission_classes = [ProjectEntityPermission]
+
+    @property
+    def project_identifier(self):
+        return self.kwargs.get("project_identifier", None)
+
+    @property
+    def project_id(self):
+        project_id = super().project_id
+        if project_id:
+            return project_id
+        project_identifier = self.project_identifier
+        if not project_identifier:
+            return None
+        return (
+            Project.objects.filter(
+                workspace__slug=self.workspace_slug,
+                identifier__iexact=project_identifier,
+            )
+            .values_list("id", flat=True)
+            .first()
+        )
+
+    def post(self, request, slug, project_identifier=None, issue_identifier=None):
+        try:
+            issue_sequence_id = int(issue_identifier)
+        except (TypeError, ValueError):
+            return Response(
+                {"success": False, "error": "Invalid issue identifier."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        project = (
+            Project.objects.filter(
+                workspace__slug=slug,
+                identifier__iexact=project_identifier,
+            )
+            .only("id", "identifier")
+            .first()
+        )
+        if not project:
+            return Response(
+                {"success": False, "error": "Project not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        issue = (
+            Issue.issue_objects.filter(
+                workspace__slug=slug,
+                project_id=project.id,
+                sequence_id=issue_sequence_id,
+            )
+            .only("id")
+            .first()
+        )
+        if not issue:
+            return Response(
+                {"success": False, "error": "Work item not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = MediaPackageCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        project_id_str = str(project.id)
+        package_id = serializer.validated_data.get("id") or uuid.uuid4().hex
+
+        validate_segment(project_id_str, "projectId")
+        validate_segment(package_id, "packageId")
+
+        root = package_root(project_id_str, package_id)
+        manifest_file = manifest_path(project_id_str, package_id)
+
+        if root.exists() or manifest_file.exists():
+            return Response(
+                {"success": False, "error": "Package already exists."},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        (root / "artifacts").mkdir(parents=True, exist_ok=False)
+        (root / "attachment").mkdir(parents=True, exist_ok=False)
+
+        artifacts = serializer.validated_data.get("artifacts") or []
+        artifacts_with_work_item = []
+        for artifact in artifacts:
+            artifact_data = dict(artifact)
+            if not artifact_data.get("work_item_id"):
+                artifact_data["work_item_id"] = str(issue.id)
+            artifacts_with_work_item.append(artifact_data)
+
+        manifest = create_manifest(
+            project_id=project_id_str,
+            package_id=package_id,
+            name=serializer.validated_data["name"],
+            title=serializer.validated_data["title"],
+            artifacts=artifacts_with_work_item,
+        )
+        write_manifest_atomic(manifest_file, manifest)
+
+        return Response(
+            {
+                "success": True,
+                "message": "Package created successfully.",
+                "data": manifest,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class IssueListCreateAPIEndpoint(BaseAPIView):

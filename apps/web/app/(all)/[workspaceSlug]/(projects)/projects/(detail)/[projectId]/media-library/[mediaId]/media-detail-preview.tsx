@@ -1,7 +1,9 @@
 "use client";
 
 import type { RefObject } from "react";
-import { FileText } from "lucide-react";
+import { Download, FileText } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PlayerOverlay, PlayerSettingsPanel } from "./player-ui";
 import type { TQualityOption } from "./player-ui";
@@ -24,7 +26,8 @@ type TMediaDetailPreviewProps = {
   onSelectQuality: (option: TQualityOption) => void;
   onSelectRate: (rate: number) => void;
   settingsPanelRef: RefObject<HTMLDivElement>;
-  crossOrigin: string;
+  crossOrigin: "anonymous" | "use-credentials" | "" | undefined;
+  playerElement: HTMLElement | null;
   videoDownloadSrc: string;
   effectiveImageSrc: string;
   isUnsupportedDocument: boolean;
@@ -61,6 +64,7 @@ export const MediaDetailPreview = ({
   onSelectQuality,
   onSelectRate,
   settingsPanelRef,
+  playerElement,
   crossOrigin,
   videoDownloadSrc,
   effectiveImageSrc,
@@ -79,47 +83,133 @@ export const MediaDetailPreview = ({
   description,
   createdByLabel,
   createdAt,
-}: TMediaDetailPreviewProps) => (
-  <>
-    <div className="rounded-lg  bg-custom-background-100 p-4 ">
-      {isVideo ? (
-        <>
-          <div className="media-player mx-auto h-[505px] w-100 max-w-full overflow-hidden rounded-lg border border-custom-border-200 bg-black">
-            <video
-              ref={videoRef}
-              className="video-js vjs-default-skin h-full w-full"
-              poster={item.thumbnail}
-              playsInline
-              preload="metadata"
-              crossOrigin={crossOrigin}
-            />
-            <PlayerOverlay isPlaying={isPlaying} onToggle={onOverlayToggle} onSeek={onOverlaySeek} />
-            <PlayerSettingsPanel
-              isOpen={isSettingsOpen}
-              onClose={onCloseSettings}
-              qualityOptions={qualityOptions}
-              playbackRates={playbackRates}
-              currentPlaybackRate={currentPlaybackRate}
-              onSelectQuality={onSelectQuality}
-              onSelectRate={onSelectRate}
-              panelRef={settingsPanelRef}
-            />
-          </div>
+}: TMediaDetailPreviewProps) => {
+  const [isPointerOverlayVisible, setIsPointerOverlayVisible] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isTouchOverlayVisible, setIsTouchOverlayVisible] = useState(false);
+  const touchHideTimerRef = useRef<ReturnType<typeof window.setTimeout> | null>(null);
+
+  const scheduleTouchHide = () => {
+    if (touchHideTimerRef.current) {
+      window.clearTimeout(touchHideTimerRef.current);
+      touchHideTimerRef.current = null;
+    }
+    touchHideTimerRef.current = window.setTimeout(() => {
+      setIsTouchOverlayVisible(false);
+      touchHideTimerRef.current = null;
+    }, 2500);
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const hasTouch =
+      typeof navigator !== "undefined" &&
+      (navigator.maxTouchPoints > 0 || "ontouchstart" in window || (navigator as any)?.msMaxTouchPoints > 0);
+    setIsTouchDevice(Boolean(hasTouch));
+    if (!hasTouch) {
+      setIsTouchOverlayVisible(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isTouchDevice) return;
+    if (!isPlaying) {
+      if (touchHideTimerRef.current) {
+        window.clearTimeout(touchHideTimerRef.current);
+        touchHideTimerRef.current = null;
+      }
+      setIsTouchOverlayVisible(true);
+      return;
+    }
+    if (isTouchOverlayVisible) {
+      scheduleTouchHide();
+    }
+  }, [isPlaying, isTouchDevice, isTouchOverlayVisible]);
+
+  useEffect(() => {
+    return () => {
+      if (touchHideTimerRef.current) {
+        window.clearTimeout(touchHideTimerRef.current);
+        touchHideTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  const overlayContent = (
+    <>
+      <PlayerOverlay isPlaying={isPlaying} onToggle={onOverlayToggle} onSeek={onOverlaySeek} />
+      <PlayerSettingsPanel
+        isOpen={isSettingsOpen}
+        onClose={onCloseSettings}
+        qualityOptions={qualityOptions}
+        playbackRates={playbackRates}
+        currentPlaybackRate={currentPlaybackRate}
+        onSelectQuality={onSelectQuality}
+        onSelectRate={onSelectRate}
+        panelRef={settingsPanelRef}
+      />
+    </>
+  );
+
+  const previewHeightClass = "h-[220px] sm:h-[320px] md:h-[420px] lg:h-[505px]";
+  const overlayVisibilityClass = [
+    isPointerOverlayVisible ? "is-pointer-overlay-visible" : "",
+    isTouchDevice && isTouchOverlayVisible ? "is-touch-overlay-visible" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <>
+      <div className="rounded-lg bg-custom-background-100 p-3 sm:p-4">
+        {isVideo ? (
+          <>
+            <div
+              className={`media-player mx-auto ${previewHeightClass} w-full max-w-full overflow-hidden rounded-lg border border-custom-border-200 bg-black ${overlayVisibilityClass}`}
+              onPointerEnter={(event) => {
+                if (event.pointerType === "touch") return;
+                setIsPointerOverlayVisible(true);
+              }}
+              onPointerLeave={(event) => {
+                if (event.pointerType === "touch") return;
+                setIsPointerOverlayVisible(false);
+              }}
+              onTouchStart={() => {
+                if (!isTouchDevice) return;
+                setIsTouchOverlayVisible(true);
+                if (isPlaying) scheduleTouchHide();
+              }}
+            >
+              <video
+                ref={videoRef}
+                className="video-js vjs-default-skin h-full w-full"
+                poster={item.thumbnail}
+                playsInline
+                preload="metadata"
+                crossOrigin={crossOrigin}
+              />
+              {playerElement ? createPortal(overlayContent, playerElement) : overlayContent}
+            </div>
           {videoDownloadSrc ? (
             <div className="flex justify-end border-t border-custom-border-200 p-3">
               <a
                 href={videoDownloadSrc}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-custom-border-200 px-3 py-1 text-xs text-custom-text-300 hover:text-custom-text-100"
+                className="inline-flex items-center gap-3 rounded-md bg-custom-primary-100 px-2 py-1 text-sm font-medium text-custom-100"
               >
-                Download video
+                <span className="flex h-6 w-6 items-center justify-center">
+                  <Download className="h-4 w-4" />
+                </span>
+                Download
               </a>
             </div>
           ) : null}
         </>
       ) : item.mediaType === "image" ? (
-        <div className="overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90">
+        <div
+          className={`overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90 ${previewHeightClass}`}
+        >
           <button
             type="button"
             className="h-full w-full cursor-zoom-in"
@@ -134,10 +224,10 @@ export const MediaDetailPreview = ({
                 alt={item.title}
                 loading="lazy"
                 decoding="async"
-                className="h-[505px] w-full object-cover"
+                className="h-full w-full object-cover"
               />
             ) : (
-              <div className="flex h-[505px] w-full items-center justify-center text-xs text-custom-text-300">
+              <div className="flex h-full w-full items-center justify-center text-xs text-custom-text-300">
                 Loading image...
               </div>
             )}
@@ -146,11 +236,13 @@ export const MediaDetailPreview = ({
       ) : (
         <div className="rounded-lg border border-custom-border-200 bg-custom-background-90">
           {isUnsupportedDocument ? (
-            <div className="flex h-[505px] items-center justify-center rounded-lg bg-custom-background-100 text-xs text-custom-text-300">
+            <div
+              className={`flex ${previewHeightClass} items-center justify-center rounded-lg bg-custom-background-100 text-xs text-custom-text-300`}
+            >
               Only PDF and XLSX files are supported.
             </div>
           ) : isBinaryDocument ? (
-            <div className="h-[505px] rounded-lg bg-custom-background-100">
+            <div className={`${previewHeightClass} rounded-lg bg-custom-background-100`}>
               {isDocumentPreviewLoading ? (
                 <div className="flex h-full flex-col items-center justify-center gap-2 text-xs text-custom-text-300">
                   <LogoSpinner />
@@ -177,7 +269,7 @@ export const MediaDetailPreview = ({
               )}
             </div>
           ) : isTextDocument ? (
-            <div className="h-[505px] overflow-auto rounded-lg bg-custom-background-100 p-4 text-xs text-custom-text-100">
+            <div className={`${previewHeightClass} overflow-auto rounded-lg bg-custom-background-100 p-4 text-xs text-custom-text-100`}>
               {isTextPreviewLoading ? (
                 <div className="flex flex-col items-center gap-2 text-custom-text-300">
                   <LogoSpinner />
@@ -190,9 +282,11 @@ export const MediaDetailPreview = ({
               )}
             </div>
           ) : effectiveDocumentSrc ? (
-            <iframe src={effectiveDocumentSrc} title={item.title} className="h-[505px] w-full rounded-lg bg-white" />
+            <iframe src={effectiveDocumentSrc} title={item.title} className={`${previewHeightClass} w-full rounded-lg bg-white`} />
           ) : (
-            <div className="flex h-80 flex-col items-center justify-center gap-3 rounded-lg text-custom-text-300">
+            <div
+              className={`flex ${previewHeightClass} flex-col items-center justify-center gap-3 rounded-lg text-custom-text-300`}
+            >
               <div className="flex flex-col items-center gap-2 text-sm">
                 <FileText className="h-8 w-8" />
                 <span>No preview available for this file.</span>
@@ -205,17 +299,20 @@ export const MediaDetailPreview = ({
                 href={effectiveDocumentSrc}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-custom-border-200 px-3 py-1 text-xs text-custom-text-300 hover:text-custom-text-100"
+               className="inline-flex items-center gap-3 rounded-md bg-custom-primary-100 px-2 py-1 text-sm font-medium text-custom-100"
               >
-                Open document
-              </a>
+                <span className="flex h-6 w-6 items-center justify-center">
+                  <Download className="h-4 w-4" />
+                </span>
+                Download
+                </a>
             </div>
           ) : null}
         </div>
       )}
       <div className="mt-4">
-        <h1 className="text-lg font-semibold text-custom-text-100">{item.title}</h1>
-        <p className="mt-1 text-xs text-custom-text-300">
+        <h1 className="text-base font-semibold text-custom-text-100 sm:text-lg">{item.title}</h1>
+        <p className="mt-1 text-[11px] text-custom-text-300 sm:text-xs">
           Uploaded by {createdByLabel} - {createdAt}
         </p>
         {description ? <p className="mt-2 text-sm text-custom-text-200">{description}</p> : null}
@@ -246,5 +343,6 @@ export const MediaDetailPreview = ({
         )}
       </div>
     )}
-  </>
-);
+    </>
+  );
+};

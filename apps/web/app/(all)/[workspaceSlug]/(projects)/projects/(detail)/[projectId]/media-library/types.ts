@@ -20,6 +20,7 @@ export type TMediaItem = {
   thumbnail: string;
   videoSrc?: string;
   fileSrc?: string;
+  downloadSrc?: string;
   docs: string[];
 };
 

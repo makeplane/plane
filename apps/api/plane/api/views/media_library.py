@@ -533,7 +533,8 @@ class MediaArtifactsListAPIEndpoint(BaseAPIView):
             artifacts_root = package_root(project_id_str, package_id) / "artifacts"
             attachment_root = package_root(project_id_str, package_id) / "attachment"
             is_video_upload = format_value in _VIDEO_FORMATS or extension in _VIDEO_FORMATS
-            should_transcode = is_video_upload and format_value != "m3u8" and extension != "m3u8"
+            # Keep uploaded videos in their original format; do not auto-transcode to HLS on upload.
+            should_transcode = False
             if should_transcode:
                 if shutil.which("ffmpeg") is None:
                     return Response(
