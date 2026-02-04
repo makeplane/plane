@@ -653,6 +653,7 @@ class TimeEntrySerializer(BaseSerializer):
         read_only_fields = [
             "workspace",
             "project",
+            "issue",
             "created_by",
             "updated_by",
             "created_at",
