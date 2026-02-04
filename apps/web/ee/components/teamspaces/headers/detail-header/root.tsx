@@ -40,7 +40,7 @@ import {
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
@@ -61,12 +61,15 @@ export const TeamspaceDetailHeader = observer(function TeamspaceDetailHeader(pro
   const router = useAppRouter();
   const { workspaceSlug, teamspaceId } = useParams();
   // hooks
+  const { data: currentUser } = useUser();
   const { loader, isCurrentUserMemberOfTeamspace, getTeamspaceById, allTeamSpaceIds } = useTeamspaces();
   // hooks
   const { allowPermissions } = useUserPermissions();
   // derived values
   const teamspace = getTeamspaceById(teamspaceId?.toString());
   const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId?.toString());
+  const isTeamspaceLead = currentUser?.id === teamspace?.lead_id;
+
   const hasAdminLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE,
@@ -77,6 +80,8 @@ export const TeamspaceDetailHeader = observer(function TeamspaceDetailHeader(pro
     EUserPermissionsLevel.WORKSPACE,
     workspaceSlug?.toString()
   );
+
+  const isEditingAllowed = hasAdminLevelPermissions || isTeamspaceLead;
 
   const TEAMSPACE_SEARCH_OPTIONS: ICustomSearchSelectOption[] = useMemo(
     () =>
@@ -150,7 +155,7 @@ export const TeamspaceDetailHeader = observer(function TeamspaceDetailHeader(pro
           <TeamOverviewHeaderActions
             key={ETeamspaceNavigationItem.OVERVIEW}
             teamspaceId={teamspaceId?.toString()}
-            isEditingAllowed={hasAdminLevelPermissions}
+            isEditingAllowed={isEditingAllowed}
           />,
         ],
         [
@@ -183,7 +188,7 @@ export const TeamspaceDetailHeader = observer(function TeamspaceDetailHeader(pro
           <TeamspaceProjectListHeaderActions
             key={ETeamspaceNavigationItem.PROJECTS}
             teamspaceId={teamspaceId?.toString()}
-            isEditingAllowed={hasAdminLevelPermissions}
+            isEditingAllowed={isEditingAllowed}
           />,
         ],
       ]),

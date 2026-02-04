@@ -21,6 +21,7 @@ import { TeamsIcon } from "@plane/propel/icons";
 // components
 import { ListItem } from "@/components/core/list/list-item";
 // hooks
+import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces";
@@ -35,18 +36,21 @@ type TeamspaceListItemProps = {
 };
 
 export const TeamspaceListItem = observer(function TeamspaceListItem(props: TeamspaceListItemProps) {
-  const { teamspaceId, isEditingAllowed } = props;
+  const { teamspaceId, isEditingAllowed: isEditingAllowedProp } = props;
   // router
   const { workspaceSlug } = useParams();
   // refs
   const parentRef = useRef(null);
   // hooks
   const { isMobile } = usePlatformOS();
+  const { data: currentUser } = useUser();
   // plane web hooks
   const { getTeamspaceById, isCurrentUserMemberOfTeamspace } = useTeamspaces();
   // derived values
   const teamspace = getTeamspaceById(teamspaceId);
   const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
+  const isTeamspaceLead = currentUser?.id === teamspace?.lead_id;
+  const isEditingAllowed = isEditingAllowedProp || isTeamspaceLead;
 
   if (!teamspace) return null;
   return (
