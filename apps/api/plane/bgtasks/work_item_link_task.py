@@ -63,6 +63,9 @@ def validate_url_ip(url: str) -> None:
             raise ValueError("Access to private/internal networks is not allowed")
 
 
+MAX_REDIRECTS = 5
+
+
 def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
     """
     Crawls a URL to extract the title and favicon.
@@ -86,11 +89,23 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         validate_url_ip(final_url)
 
         try:
-            response = requests.get(final_url, headers=headers, timeout=1)
-            final_url = response.url  # Get the final URL after any redirects
+            # Manually follow redirects to validate each URL before requesting
+            redirect_count = 0
+            response = requests.get(final_url, headers=headers, timeout=1, allow_redirects=False)
 
-            # check for redirected url also
-            validate_url_ip(final_url)
+            while response.is_redirect and redirect_count < MAX_REDIRECTS:
+                redirect_url = response.headers.get("Location")
+                if not redirect_url:
+                    break
+                # Resolve relative redirects against current URL
+                final_url = urljoin(final_url, redirect_url)
+                # Validate the redirect target BEFORE making the request
+                validate_url_ip(final_url)
+                redirect_count += 1
+                response = requests.get(final_url, headers=headers, timeout=1, allow_redirects=False)
+
+            if redirect_count >= MAX_REDIRECTS:
+                logger.warning(f"Too many redirects for URL: {url}")
 
             soup = BeautifulSoup(response.content, "html.parser")
             title_tag = soup.find("title")
