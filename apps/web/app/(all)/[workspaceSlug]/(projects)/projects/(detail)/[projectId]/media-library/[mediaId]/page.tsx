@@ -56,6 +56,7 @@ const MediaDetailPage = () => {
   const [playerElement, setPlayerElement] = useState<HTMLElement | null>(null);
   const settingsPanelRef = useRef<HTMLDivElement | null>(null);
   const pipCaptionModesRef = useRef<Array<{ track: TextTrack; mode: TextTrackMode }>>([]);
+  const inactivityTimeoutRef = useRef<number | null>(null);
 
   const item = useMemo(() => {
     if (!mediaId) return null;
@@ -252,13 +253,19 @@ const MediaDetailPage = () => {
 
       const ensureQualityMenu = () => {
         const representations = getVideoRepresentations(player);
+        const hasRealQualityInfo = representations.some((rep) => {
+          const height = typeof rep?.height === "number" ? rep.height : 0;
+          const bandwidth =
+            typeof rep?.bandwidth === "number" ? rep.bandwidth : typeof rep?.bitrate === "number" ? rep.bitrate : 0;
+          return height > 0 || bandwidth > 0;
+        });
         if (representations.length === 0 && isHls && !qualityRetryId) {
           qualityRetryId = setTimeout(() => {
             qualityRetryId = null;
             if (playerRef.current === player) ensureQualityMenu();
           }, 500);
         }
-        if (representations.length === 0) {
+        if (!hasRealQualityInfo) {
           if (qualityButton && player.controlBar) {
             player.controlBar.removeChild(qualityButton);
             qualityButton = null;
@@ -456,6 +463,40 @@ const MediaDetailPage = () => {
   }, [isVideo, proxiedVideoSrc]);
 
   useEffect(() => {
+    const player = playerRef.current as any;
+    if (!player) return;
+    if (!isSettingsOpen) {
+      if (inactivityTimeoutRef.current !== null && typeof player.inactivityTimeout === "function") {
+        player.inactivityTimeout(inactivityTimeoutRef.current);
+        inactivityTimeoutRef.current = null;
+      }
+      return;
+    }
+
+    if (typeof player.inactivityTimeout === "function") {
+      if (inactivityTimeoutRef.current === null) {
+        inactivityTimeoutRef.current = player.inactivityTimeout();
+      }
+      player.inactivityTimeout(0);
+    }
+
+    const keepControlsActive = () => {
+      if (typeof player.userActive === "function") {
+        player.userActive(true);
+      }
+      player.addClass?.("vjs-user-active");
+      player.removeClass?.("vjs-user-inactive");
+      player.controlBar?.show?.();
+    };
+
+    keepControlsActive();
+    player.on?.("userinactive", keepControlsActive);
+    return () => {
+      player.off?.("userinactive", keepControlsActive);
+    };
+  }, [isSettingsOpen, isVideo, proxiedVideoSrc]);
+
+  useEffect(() => {
     if (!isSettingsOpen) return;
     const handlePointer = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
@@ -535,9 +576,7 @@ const MediaDetailPage = () => {
       pipCaptionModesRef.current.forEach(({ track, mode }) => {
         try {
           track.mode = mode;
-        } catch {
-          // ignore restore failures
-        }
+        } catch {}
       });
       pipCaptionModesRef.current = [];
     };
@@ -776,17 +815,17 @@ const MediaDetailPage = () => {
   return (
     <div className="relative h-full w-full overflow-hidden overflow-y-auto">
       <div className="flex min-h-full flex-col gap-6 px-3 py-3">
-      <div className="flex items-center justify-between gap-4">
-        <Link
-          href={backHref}
-          className="inline-flex items-center gap-2 rounded-full px-4 py-1 text-xs text-custom-text-300 hover:text-custom-text-100"
-        >
-          <ArrowLeft className="size-md h-3.2 w-3.2" />
-        </Link>
+        <div className="flex items-center justify-between gap-4">
+          <Link
+            href={backHref}
+            className="inline-flex items-center gap-2 rounded-full px-4 py-1 text-xs text-custom-text-300 hover:text-custom-text-100"
+          >
+            <ArrowLeft className="size-md h-3.2 w-3.2" />
+          </Link>
 
-        {/* Currently not using this section */}
+          {/* Currently not using this section */}
 
-        {/* <div className="flex items-center gap-3">
+          {/* <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-1 py-1 text-[11px] text-custom-text-300">
             <button
               type="button"
@@ -808,85 +847,85 @@ const MediaDetailPage = () => {
             </button>
           </div>
         </div> */}
-      </div>
+        </div>
 
-      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <MediaDetailPreview
-          item={item}
-          isVideo={isVideo}
-          isImageZoomOpen={isImageZoomOpen}
-          setIsImageZoomOpen={setIsImageZoomOpen}
-          videoRef={videoRef}
-          isPlaying={isPlaying}
-          onOverlayToggle={handleOverlayToggle}
-          onOverlaySeek={handleOverlaySeek}
-          isSettingsOpen={isSettingsOpen}
-          onCloseSettings={() => setIsSettingsOpen(false)}
-          qualityOptions={qualityOptions}
-          playbackRates={playbackRates}
-          currentPlaybackRate={currentPlaybackRate}
-          onSelectQuality={handleQualitySelect}
-          onSelectRate={handlePlaybackRate}
-          settingsPanelRef={settingsPanelRef}
-          playerElement={playerElement}
-          crossOrigin={crossOrigin}
-          videoDownloadSrc={videoDownloadSrc}
-          effectiveImageSrc={effectiveImageSrc}
-          isUnsupportedDocument={isUnsupportedDocument}
-          isBinaryDocument={isBinaryDocument}
-          isDocumentPreviewLoading={isDocumentPreviewLoading}
-          documentPreviewError={documentPreviewError}
-          documentPreviewHtml={documentPreviewHtml}
-          sanitizedDocumentPreviewHtml={sanitizedDocumentPreviewHtml}
-          documentPreviewUrl={documentPreviewUrl}
-          isTextDocument={isTextDocument}
-          isTextPreviewLoading={isTextPreviewLoading}
-          textPreviewError={textPreviewError}
-          textPreview={textPreview}
-          effectiveDocumentSrc={effectiveDocumentSrc}
-          description={item.description ?? null}
-          createdByLabel={createdByLabel}
-          createdAt={item.createdAt}
-        />
-        {isVideo ? (
-          <style jsx global>
-            {PLAYER_STYLE}
-          </style>
-        ) : null}
+        <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+          <MediaDetailPreview
+            item={item}
+            isVideo={isVideo}
+            isImageZoomOpen={isImageZoomOpen}
+            setIsImageZoomOpen={setIsImageZoomOpen}
+            videoRef={videoRef}
+            isPlaying={isPlaying}
+            onOverlayToggle={handleOverlayToggle}
+            onOverlaySeek={handleOverlaySeek}
+            isSettingsOpen={isSettingsOpen}
+            onCloseSettings={() => setIsSettingsOpen(false)}
+            qualityOptions={qualityOptions}
+            playbackRates={playbackRates}
+            currentPlaybackRate={currentPlaybackRate}
+            onSelectQuality={handleQualitySelect}
+            onSelectRate={handlePlaybackRate}
+            settingsPanelRef={settingsPanelRef}
+            playerElement={playerElement}
+            crossOrigin={crossOrigin}
+            videoDownloadSrc={videoDownloadSrc}
+            effectiveImageSrc={effectiveImageSrc}
+            isUnsupportedDocument={isUnsupportedDocument}
+            isBinaryDocument={isBinaryDocument}
+            isDocumentPreviewLoading={isDocumentPreviewLoading}
+            documentPreviewError={documentPreviewError}
+            documentPreviewHtml={documentPreviewHtml}
+            sanitizedDocumentPreviewHtml={sanitizedDocumentPreviewHtml}
+            documentPreviewUrl={documentPreviewUrl}
+            isTextDocument={isTextDocument}
+            isTextPreviewLoading={isTextPreviewLoading}
+            textPreviewError={textPreviewError}
+            textPreview={textPreview}
+            effectiveDocumentSrc={effectiveDocumentSrc}
+            description={item.description ?? null}
+            createdByLabel={createdByLabel}
+            createdAt={item.createdAt}
+          />
+          {isVideo ? (
+            <style jsx global>
+              {PLAYER_STYLE}
+            </style>
+          ) : null}
 
-        <MediaDetailSidebar
-          item={item}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          eventDateLabel={eventDateLabel}
-          eventTimeLabel={eventTimeLabel}
-          category={category}
-          season={season}
-          createdByLabel={createdByLabel}
-          sport={sport}
-          program={program}
-          level={level}
-          opposition={opposition}
-          oppositionName={oppositionName}
-          oppositionLogoUrl={oppositionLogoUrl}
-          oppositionHeadCoach={oppositionHeadCoach}
-          oppositionAsstCoach={oppositionAsstCoach}
-          oppositionAthleticEmail={oppositionAthleticEmail}
-          oppositionAthleticPhone={oppositionAthleticPhone}
-          oppositionAsstAthleticEmail={oppositionAsstAthleticEmail}
-          oppositionAsstAthleticPhone={oppositionAsstAthleticPhone}
-          oppositionAddress={oppositionAddress}
-          hasOppositionDetails={hasOppositionDetails}
-          fileTypeLabel={fileTypeLabel}
-          fileSizeLabel={fileSizeLabel}
-          source={source}
-          kind={kind}
-          metaEntries={metaEntries}
-          durationLabel={durationLabel}
-          durationSecLabel={durationSecLabel}
-          onPlay={handlePlay}
-        />
-      </div>
+          <MediaDetailSidebar
+            item={item}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            eventDateLabel={eventDateLabel}
+            eventTimeLabel={eventTimeLabel}
+            category={category}
+            season={season}
+            createdByLabel={createdByLabel}
+            sport={sport}
+            program={program}
+            level={level}
+            opposition={opposition}
+            oppositionName={oppositionName}
+            oppositionLogoUrl={oppositionLogoUrl}
+            oppositionHeadCoach={oppositionHeadCoach}
+            oppositionAsstCoach={oppositionAsstCoach}
+            oppositionAthleticEmail={oppositionAthleticEmail}
+            oppositionAthleticPhone={oppositionAthleticPhone}
+            oppositionAsstAthleticEmail={oppositionAsstAthleticEmail}
+            oppositionAsstAthleticPhone={oppositionAsstAthleticPhone}
+            oppositionAddress={oppositionAddress}
+            hasOppositionDetails={hasOppositionDetails}
+            fileTypeLabel={fileTypeLabel}
+            fileSizeLabel={fileSizeLabel}
+            source={source}
+            kind={kind}
+            metaEntries={metaEntries}
+            durationLabel={durationLabel}
+            durationSecLabel={durationSecLabel}
+            onPlay={handlePlay}
+          />
+        </div>
       </div>
     </div>
   );

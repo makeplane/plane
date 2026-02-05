@@ -21,6 +21,13 @@ export const PLAYER_STYLE = `
                     box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
                     gap: 8px;
                   }
+                  .media-player.is-settings-open .video-js .vjs-control-bar,
+                  .media-player.is-settings-open .video-js.vjs-user-inactive .vjs-control-bar {
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                    transform: none !important;
+                    pointer-events: auto !important;
+                  }
                   .media-player .video-js .vjs-control {
                     display: flex;
                     align-items: center;
@@ -233,15 +240,17 @@ export const PLAYER_STYLE = `
                     z-index: 5;
                     transition: opacity 160ms ease, visibility 160ms ease;
                   }
-                  .media-player:hover .player-overlay-controls,
-                  .media-player:focus-within .player-overlay-controls {
+                  .media-player:hover .player-overlay-controls {
                     opacity: 1;
                     visibility: visible;
                   }
-                  .media-player.is-pointer-overlay-visible .player-overlay-controls,
-                  .media-player.is-touch-overlay-visible .player-overlay-controls {
+                  .media-player.is-paused .player-overlay-controls {
                     opacity: 1;
                     visibility: visible;
+                  }
+                  .media-player .video-js.vjs-fullscreen.vjs-user-inactive .player-overlay-controls {
+                    opacity: 0 !important;
+                    visibility: hidden !important;
                   }
                   .media-player .player-overlay-box {
                     pointer-events: auto;

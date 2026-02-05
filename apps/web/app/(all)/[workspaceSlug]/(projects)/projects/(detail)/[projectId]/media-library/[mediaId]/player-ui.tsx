@@ -121,9 +121,11 @@ export const PlayerSettingsPanel = ({
 
   if (!isOpen) return null;
 
-  const hasRealQualityOption = qualityOptions.some((option) => !option.disabled && !option.isAuto);
+  const hasRealQualityOption = qualityOptions.some(
+    (option) => !option.disabled && !option.isAuto && option.label.toLowerCase() !== "source"
+  );
   const showQualityRow = openSection !== "speed" && hasRealQualityOption;
-  const showSpeedRow = openSection !== "quality";
+  const showSpeedRow = !hasRealQualityOption || openSection !== "quality";
 
   return (
     <div ref={panelRef} className="player-settings-panel" role="dialog" aria-label="Settings">
@@ -159,7 +161,7 @@ export const PlayerSettingsPanel = ({
                   <span className="player-settings-check">✓</span>
                   <span>{option.label}</span>
                 </button>
-              ))}
+              ))}         
             </div>
           ) : null}             
         </>

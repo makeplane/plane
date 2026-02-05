@@ -1,4 +1,4 @@
-export const formatMetaValue = (value: unknown) : string => {
+export const formatMetaValue = (value: unknown): string => {
   if (value === null || value === undefined) return "--";
   if (Array.isArray(value)) {
     const entries = value

@@ -10,7 +10,7 @@ from pathlib import Path
 from uuid import UUID, uuid4
 
 # Third party imports
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse, StreamingHttpResponse
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
@@ -233,6 +233,67 @@ def _should_download_as_attachment(request) -> bool:
     if isinstance(value, str) and value.strip().lower() in {"0", "false", "no"}:
         return False
     return True
+
+
+def _parse_http_range(value: str, file_size: int) -> tuple[int, int] | None:
+    if not value:
+        return None
+    raw = value.strip().lower()
+    if not raw.startswith("bytes="):
+        return None
+    raw = raw[len("bytes=") :]
+    if "," in raw:
+        raw = raw.split(",", 1)[0]
+    raw = raw.strip()
+    if "-" not in raw:
+        return None
+    start_str, end_str = raw.split("-", 1)
+    if not start_str and not end_str:
+        return None
+    if not start_str:
+        try:
+            length = int(end_str)
+        except (TypeError, ValueError):
+            return None
+        if length <= 0:
+            return None
+        if length > file_size:
+            length = file_size
+        start = max(file_size - length, 0)
+        end = file_size - 1
+        return (start, end)
+    try:
+        start = int(start_str)
+    except (TypeError, ValueError):
+        return None
+    if start < 0:
+        return None
+    if end_str:
+        try:
+            end = int(end_str)
+        except (TypeError, ValueError):
+            return None
+    else:
+        end = file_size - 1
+    if start >= file_size:
+        return None
+    if end < start:
+        return None
+    if end >= file_size:
+        end = file_size - 1
+    return (start, end)
+
+
+def _iter_file_range(path: Path, start: int, end: int, chunk_size: int = 8192):
+    with open(path, "rb") as handle:
+        handle.seek(start)
+        remaining = end - start + 1
+        while remaining > 0:
+            chunk = handle.read(min(chunk_size, remaining))
+            if not chunk:
+                break
+            yield chunk
+            remaining -= len(chunk)
 
 mimetypes.add_type("application/vnd.apple.mpegurl", ".m3u8")
 mimetypes.add_type("application/x-mpegURL", ".m3u8")
@@ -461,7 +522,28 @@ class MediaArtifactFileAPIView(BaseAPIView):
             file_path = mp4_path
 
         content_type, _ = mimetypes.guess_type(str(file_path))
-        response = FileResponse(open(file_path, "rb"), content_type=content_type or "application/octet-stream")
+        content_type = content_type or "application/octet-stream"
+        range_header = request.headers.get("range") or request.META.get("HTTP_RANGE")
+        if range_header and file_path.is_file():
+            file_size = file_path.stat().st_size
+            parsed = _parse_http_range(range_header, file_size)
+            if not parsed:
+                response = HttpResponse(status=416)
+                response["Content-Range"] = f"bytes */{file_size}"
+                response["Accept-Ranges"] = "bytes"
+                return response
+            start, end = parsed
+            response = StreamingHttpResponse(
+                _iter_file_range(file_path, start, end),
+                status=206,
+                content_type=content_type,
+            )
+            response["Content-Range"] = f"bytes {start}-{end}/{file_size}"
+            response["Content-Length"] = str(end - start + 1)
+            response["Accept-Ranges"] = "bytes"
+        else:
+            response = FileResponse(open(file_path, "rb"), content_type=content_type)
+            response["Accept-Ranges"] = "bytes"
         if download_requested and artifact_path is None:
             download_name = artifact.get("name") or "media"
             suffix = ".mp4" if is_video else (Path(file_path).suffix or "")

@@ -2,7 +2,7 @@
 
 import type { RefObject } from "react";
 import { Download, FileText } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { createPortal } from "react-dom";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PlayerOverlay, PlayerSettingsPanel } from "./player-ui";
@@ -84,57 +84,6 @@ export const MediaDetailPreview = ({
   createdByLabel,
   createdAt,
 }: TMediaDetailPreviewProps) => {
-  const [isPointerOverlayVisible, setIsPointerOverlayVisible] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-  const [isTouchOverlayVisible, setIsTouchOverlayVisible] = useState(false);
-  const touchHideTimerRef = useRef<ReturnType<typeof window.setTimeout> | null>(null);
-
-  const scheduleTouchHide = () => {
-    if (touchHideTimerRef.current) {
-      window.clearTimeout(touchHideTimerRef.current);
-      touchHideTimerRef.current = null;
-    }
-    touchHideTimerRef.current = window.setTimeout(() => {
-      setIsTouchOverlayVisible(false);
-      touchHideTimerRef.current = null;
-    }, 2500);
-  };
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const hasTouch =
-      typeof navigator !== "undefined" &&
-      (navigator.maxTouchPoints > 0 || "ontouchstart" in window || (navigator as any)?.msMaxTouchPoints > 0);
-    setIsTouchDevice(Boolean(hasTouch));
-    if (!hasTouch) {
-      setIsTouchOverlayVisible(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!isTouchDevice) return;
-    if (!isPlaying) {
-      if (touchHideTimerRef.current) {
-        window.clearTimeout(touchHideTimerRef.current);
-        touchHideTimerRef.current = null;
-      }
-      setIsTouchOverlayVisible(true);
-      return;
-    }
-    if (isTouchOverlayVisible) {
-      scheduleTouchHide();
-    }
-  }, [isPlaying, isTouchDevice, isTouchOverlayVisible]);
-
-  useEffect(() => {
-    return () => {
-      if (touchHideTimerRef.current) {
-        window.clearTimeout(touchHideTimerRef.current);
-        touchHideTimerRef.current = null;
-      }
-    };
-  }, []);
-
   const overlayContent = (
     <>
       <PlayerOverlay isPlaying={isPlaying} onToggle={onOverlayToggle} onSeek={onOverlaySeek} />
@@ -152,10 +101,7 @@ export const MediaDetailPreview = ({
   );
 
   const previewHeightClass = "h-[220px] sm:h-[320px] md:h-[420px] lg:h-[505px]";
-  const overlayVisibilityClass = [
-    isPointerOverlayVisible ? "is-pointer-overlay-visible" : "",
-    isTouchDevice && isTouchOverlayVisible ? "is-touch-overlay-visible" : "",
-  ]
+  const overlayVisibilityClass = [isSettingsOpen ? "is-settings-open" : "", !isPlaying ? "is-paused" : ""]
     .filter(Boolean)
     .join(" ");
 
@@ -166,19 +112,6 @@ export const MediaDetailPreview = ({
           <>
             <div
               className={`media-player mx-auto ${previewHeightClass} w-full max-w-full overflow-hidden rounded-lg border border-custom-border-200 bg-black ${overlayVisibilityClass}`}
-              onPointerEnter={(event) => {
-                if (event.pointerType === "touch") return;
-                setIsPointerOverlayVisible(true);
-              }}
-              onPointerLeave={(event) => {
-                if (event.pointerType === "touch") return;
-                setIsPointerOverlayVisible(false);
-              }}
-              onTouchStart={() => {
-                if (!isTouchDevice) return;
-                setIsTouchOverlayVisible(true);
-                if (isPlaying) scheduleTouchHide();
-              }}
             >
               <video
                 ref={videoRef}
