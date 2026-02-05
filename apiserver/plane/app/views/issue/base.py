@@ -240,7 +240,7 @@ class IssueViewSet(BaseViewSet):
     def get_queryset(self, filters={}):
         custom_properties = filters.get("custom_properties", {})
         custom_filters = build_custom_property_q_objects(custom_properties)
-        return (
+        queryset = (
             Issue.issue_objects.filter(
                 project_id=self.kwargs.get("project_id")
             )
@@ -297,6 +297,8 @@ class IssueViewSet(BaseViewSet):
                 *custom_filters
             )
         ).distinct()
+
+        return queryset
     
     def get_queryset_with_hub_filters(self, filters={}):
         """
@@ -982,9 +984,7 @@ class IssuePaginatedViewSet(BaseViewSet):
         # querying issues
         base_queryset = Issue.issue_objects.filter(
             workspace__slug=slug, project_id=project_id
-        )
-
-        base_queryset = base_queryset.order_by("updated_at")
+        ).order_by("updated_at")
         queryset = self.get_queryset().order_by("updated_at")
 
         # validation for guest user

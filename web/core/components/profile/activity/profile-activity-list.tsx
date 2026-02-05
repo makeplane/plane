@@ -166,6 +166,13 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                               <span className="text-gray font-medium">Plane</span>
                             ) : activityItem.actor_detail.is_bot ? (
                               <span className="text-gray font-medium">{activityItem.actor_detail.first_name} Bot</span>
+                            ) : activityItem.actor_detail.is_active === false ? (
+                              <span className="text-gray font-medium opacity-60 line-through">
+                                {currentUser?.id === activityItem.actor_detail.id
+                                  ? "You"
+                                  : activityItem.actor_detail.display_name}{" "}
+                                <span className="text-xs text-custom-text-400">(Deactivated)</span>
+                              </span>
                             ) : (
                               <Link
                                 href={`/${activityItem.workspace_detail.slug}/profile/${activityItem.actor_detail.id}`}

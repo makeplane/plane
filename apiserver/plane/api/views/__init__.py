@@ -30,7 +30,7 @@ from .module import (
     ModuleArchiveUnarchiveAPIEndpoint,
 )
 
-from .member import ProjectMemberAPIEndpoint
+from .member import ProjectMemberAPIEndpoint, ProjectMemberActivateEndpoint
 
 from .inbox import InboxIssueAPIEndpoint
 

@@ -19,5 +19,6 @@ class UserLiteSerializer(BaseSerializer):
             "hub_names",
             "is_super_admin",
             "employee_permissions",
+            "is_active",
         ]
         read_only_fields = fields

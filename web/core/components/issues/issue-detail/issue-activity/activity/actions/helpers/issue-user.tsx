@@ -19,10 +19,17 @@ export const IssueUser: FC<TIssueUser> = (props) => {
 
   if (!activity) return <></>;
 
+  const isDeactivated = activity?.actor_detail?.is_active === false;
+
   return (
     <>
       {customUserName ? (
         <span className="text-custom-text-100 font-medium">{customUserName}</span>
+      ) : isDeactivated ? (
+        <span className="text-custom-text-100 font-medium opacity-60 line-through">
+          {activity.actor_detail?.display_name}{" "}
+          <span className="text-xs text-custom-text-400">(Deactivated)</span>
+        </span>
       ) : (
         <Link
           href={`/${activity?.workspace_detail?.slug}/profile/${activity?.actor_detail?.id}`}

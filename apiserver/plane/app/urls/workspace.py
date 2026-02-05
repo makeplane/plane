@@ -28,6 +28,7 @@ from plane.app.views import (
     WorkspaceFavoriteEndpoint,
     WorkspaceFavoriteGroupEndpoint,
     WorkspaceDraftIssueViewSet,
+    WorkspaceIssueTypeEndpoint,
 )
 
 
@@ -229,6 +230,11 @@ urlpatterns = [
         "workspaces/<str:slug>/estimates/",
         WorkspaceEstimatesEndpoint.as_view(),
         name="workspace-estimate",
+    ),
+    path(
+        "workspaces/<str:slug>/issue-types/",
+        WorkspaceIssueTypeEndpoint.as_view(),
+        name="workspace-issue-types",
     ),
     path(
         "workspaces/<str:slug>/modules/",

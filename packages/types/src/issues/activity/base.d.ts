@@ -43,6 +43,7 @@ export type TIssueActivityUserDetail = {
   avatar_url: string;
   is_bot: boolean;
   display_name: string;
+  is_active?: boolean;
 };
 
 export type TIssueActivityComment =

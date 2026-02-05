@@ -19,5 +19,5 @@ urlpatterns = [
     *member_patterns,
     *issue_type_patterns,
     *search_patters,
-    *webhook_patters
+    *webhook_patters,
 ]

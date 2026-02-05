@@ -319,3 +319,11 @@ export const getComputedDisplayProperties = (
   worker_name: displayProperties?.worker_name ?? true,
   business_type: displayProperties?.business_type ?? true,
 });
+
+export const prependIssueTypeToTitle = (
+  title: string,
+  typeName: string | undefined | null
+): string => {
+  if (!typeName) return title;
+  return `${title} [${typeName}]`;
+};

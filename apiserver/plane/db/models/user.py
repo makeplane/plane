@@ -42,7 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # user fields
     mobile_number = models.CharField(max_length=255, blank=True, null=True)
     email = models.CharField(
-        max_length=255, null=True, blank=True, unique=True
+        max_length=255, null=True, blank=True, unique=True, db_index=True
     )
 
     # identity

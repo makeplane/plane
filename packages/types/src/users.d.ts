@@ -11,6 +11,7 @@ export interface IUserLite {
   first_name: string;
   id: string;
   is_bot: boolean;
+  is_active?: boolean;
   last_name: string;
 }
 export interface IUser extends IUserLite {
