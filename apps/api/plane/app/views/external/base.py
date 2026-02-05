@@ -104,15 +104,6 @@ def get_llm_config() -> Tuple[str | None, str | None, str | None]:
     if not model:
         model = provider.default_model
 
-    # Validate model is supported by provider
-    if model not in provider.models:
-        log_exception(
-            ValueError(
-                f"Model {model} not supported by {provider.name}. Supported models: {', '.join(provider.models)}"
-            )
-        )
-        return None, None, None
-
     return api_key, model, provider_key
 
 
