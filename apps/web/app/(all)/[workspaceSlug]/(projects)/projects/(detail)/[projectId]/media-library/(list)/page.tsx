@@ -97,7 +97,7 @@ const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHre
   );
 };
 
-const BLOCKED_DOCUMENT_FORMATS = new Set(["doc", "docx", "txt","csv", "pptx"]);
+const ALLOWED_DOCUMENT_FORMATS = new Set(["docx", "pdf", "xlsx", "csv"]);
 
 const MediaLibraryListPage = observer(() => {
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
@@ -125,8 +125,10 @@ const MediaLibraryListPage = observer(() => {
       libraryItems.filter((item) => {
         const format = item.format?.toLowerCase() ?? "";
         const linkedFormat = item.linkedFormat?.toLowerCase() ?? "";
-        if (BLOCKED_DOCUMENT_FORMATS.has(format)) return false;
-        if (format === "thumbnail" && linkedFormat && BLOCKED_DOCUMENT_FORMATS.has(linkedFormat)) return false;
+        const isDocument = item.mediaType === "document";
+        const isDocumentThumbnail = item.mediaType === "image" && item.linkedMediaType === "document";
+        if (isDocument) return ALLOWED_DOCUMENT_FORMATS.has(format);
+        if (format === "thumbnail" && isDocumentThumbnail) return ALLOWED_DOCUMENT_FORMATS.has(linkedFormat);
         return true;
       }),
     [libraryItems]

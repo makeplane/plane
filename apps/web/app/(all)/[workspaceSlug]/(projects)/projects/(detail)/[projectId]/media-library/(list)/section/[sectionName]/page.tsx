@@ -14,7 +14,7 @@ import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../../../utils
 import { MediaListView } from "../../../components/media-list-view";
 import { useMediaLibraryItems } from "../../../hooks/use-media-library-items";
 
-const BLOCKED_DOCUMENT_FORMATS = new Set(["doc", "docx", "txt", "pptx", "ppt", "csv"]);
+const ALLOWED_DOCUMENT_FORMATS = new Set(["docx", "pdf", "xlsx", "csv"]);
 
 const MediaLibrarySectionPage = observer(() => {
   const { workspaceSlug, projectId, sectionName } = useParams() as {
@@ -68,8 +68,10 @@ const MediaLibrarySectionPage = observer(() => {
       libraryItems.filter((item) => {
         const format = item.format?.toLowerCase() ?? "";
         const linkedFormat = item.linkedFormat?.toLowerCase() ?? "";
-        if (BLOCKED_DOCUMENT_FORMATS.has(format)) return false;
-        if (format === "thumbnail" && linkedFormat && BLOCKED_DOCUMENT_FORMATS.has(linkedFormat)) return false;
+        const isDocument = item.mediaType === "document";
+        const isDocumentThumbnail = item.mediaType === "image" && item.linkedMediaType === "document";
+        if (isDocument) return ALLOWED_DOCUMENT_FORMATS.has(format);
+        if (format === "thumbnail" && isDocumentThumbnail) return ALLOWED_DOCUMENT_FORMATS.has(linkedFormat);
         return true;
       }),
     [libraryItems]

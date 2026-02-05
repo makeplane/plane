@@ -255,7 +255,7 @@ type TUseDocumentPreviewArgs = {
   isBinaryDocument: boolean;
   isUnsupportedDocument: boolean;
   isDocx: boolean;
-  isXlsx: boolean;
+  isSpreadsheet: boolean;
   isPptx: boolean;
   useDocumentCredentials: boolean;
 };
@@ -268,7 +268,7 @@ export const useDocumentPreview = ({
   isBinaryDocument,
   isUnsupportedDocument,
   isDocx,
-  isXlsx,
+  isSpreadsheet,
   isPptx,
   useDocumentCredentials,
 }: TUseDocumentPreviewArgs) => {
@@ -279,6 +279,8 @@ export const useDocumentPreview = ({
   const [documentPreviewHtml, setDocumentPreviewHtml] = useState<string | null>(null);
   const [documentPreviewError, setDocumentPreviewError] = useState<string | null>(null);
   const [isDocumentPreviewLoading, setIsDocumentPreviewLoading] = useState(false);
+  const csvPreviewBytes = 512 * 1024;
+  const csvPreviewRows = 500;
 
   useEffect(() => {
     let isMounted = true;
@@ -347,15 +349,15 @@ export const useDocumentPreview = ({
         setIsDocumentPreviewLoading(true);
         setDocumentPreviewError(null);
         setDocumentPreviewHtml(null);
-        const response = await fetch(fileSrc, { credentials: useDocumentCredentials ? "include" : "omit" });
-        if (!response.ok) {
-          throw new Error(`Failed to load document preview (status ${response.status}).`);
-        }
-        const blob = await response.blob();
         if (isPptx) {
           throw new Error("Preview is not available for PowerPoint files.");
         }
         if (isDocx) {
+          const response = await fetch(fileSrc, { credentials: useDocumentCredentials ? "include" : "omit" });
+          if (!response.ok) {
+            throw new Error(`Failed to load document preview (status ${response.status}).`);
+          }
+          const blob = await response.blob();
           const mammothModule = await import("mammoth");
           const convertToHtml = mammothModule.convertToHtml ?? mammothModule.default?.convertToHtml;
           if (!convertToHtml) throw new Error("Document preview is unavailable.");
@@ -364,11 +366,33 @@ export const useDocumentPreview = ({
           if (isMounted) setDocumentPreviewHtml(result.value);
           return;
         }
-        if (isXlsx) {
+        if (isSpreadsheet) {
           const xlsxModule = await import("xlsx");
           const XLSX = "default" in xlsxModule ? xlsxModule.default : xlsxModule;
-          const arrayBuffer = await blob.arrayBuffer();
-          const workbook = XLSX.read(arrayBuffer, { type: "array" });
+          let workbook;
+          if (documentFormat === "csv") {
+            const headers: HeadersInit = { Range: `bytes=0-${csvPreviewBytes - 1}` };
+            let response = await fetch(fileSrc, {
+              credentials: useDocumentCredentials ? "include" : "omit",
+              headers,
+            });
+            if (!response.ok && response.status !== 206) {
+              response = await fetch(fileSrc, { credentials: useDocumentCredentials ? "include" : "omit" });
+            }
+            if (!response.ok) {
+              throw new Error(`Failed to load document preview (status ${response.status}).`);
+            }
+            const csvText = await response.text();
+            workbook = XLSX.read(csvText, { type: "string", sheetRows: csvPreviewRows });
+          } else {
+            const response = await fetch(fileSrc, { credentials: useDocumentCredentials ? "include" : "omit" });
+            if (!response.ok) {
+              throw new Error(`Failed to load document preview (status ${response.status}).`);
+            }
+            const blob = await response.blob();
+            const arrayBuffer = await blob.arrayBuffer();
+            workbook = XLSX.read(arrayBuffer, { type: "array" });
+          }
           const sheetName = workbook.SheetNames[0];
           const sheet = sheetName ? workbook.Sheets[sheetName] : undefined;
           if (!sheet) throw new Error("Spreadsheet preview is unavailable.");
@@ -376,6 +400,11 @@ export const useDocumentPreview = ({
           if (isMounted) setDocumentPreviewHtml(html);
           return;
         }
+        const response = await fetch(fileSrc, { credentials: useDocumentCredentials ? "include" : "omit" });
+        if (!response.ok) {
+          throw new Error(`Failed to load document preview (status ${response.status}).`);
+        }
+        const blob = await response.blob();
         objectUrl = URL.createObjectURL(blob);
         if (isMounted) setDocumentPreviewUrl(objectUrl);
       } catch (error) {
@@ -401,9 +430,10 @@ export const useDocumentPreview = ({
     isDocx,
     isPptx,
     isUnsupportedDocument,
-    isXlsx,
+    isSpreadsheet,
     item?.mediaType,
     useDocumentCredentials,
+    documentFormat,
   ]);
 
   useEffect(() => {
@@ -414,7 +444,7 @@ export const useDocumentPreview = ({
     setDocumentPreviewUrl(null);
     setDocumentPreviewHtml(null);
     setIsDocumentPreviewLoading(false);
-    setDocumentPreviewError("Only PDF and XLSX files are supported.");
+    setDocumentPreviewError("Only PDF, DOCX, XLSX, CSV, and text files are supported.");
   }, [isUnsupportedDocument]);
 
   return {

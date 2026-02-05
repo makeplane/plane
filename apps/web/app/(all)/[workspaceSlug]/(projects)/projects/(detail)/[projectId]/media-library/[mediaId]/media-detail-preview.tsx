@@ -172,7 +172,7 @@ export const MediaDetailPreview = ({
             <div
               className={`flex ${previewHeightClass} items-center justify-center rounded-lg bg-custom-background-100 text-xs text-custom-text-300`}
             >
-              Only PDF and XLSX files are supported.
+              Only PDF, DOCX, XLSX, CSV, and text files are supported.
             </div>
           ) : isBinaryDocument ? (
             <div className={`${previewHeightClass} rounded-lg bg-custom-background-100`}>
@@ -186,11 +186,12 @@ export const MediaDetailPreview = ({
                   {documentPreviewError}
                 </div>
               ) : documentPreviewHtml ? (
-                <div className="h-full overflow-auto rounded-lg bg-white p-4">
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: `${DOCUMENT_PREVIEW_STYLE}<div class="document-preview">${sanitizedDocumentPreviewHtml}</div>`,
-                    }}
+                <div className="h-full overflow-hidden rounded-lg bg-white">
+                  <iframe
+                    title={`${item.title}-preview`}
+                    className="h-full w-full"
+                    sandbox=""
+                    srcDoc={`<!doctype html><html><head>${DOCUMENT_PREVIEW_STYLE}</head><body><div class="document-preview">${sanitizedDocumentPreviewHtml}</div></body></html>`}
                   />
                 </div>
               ) : documentPreviewUrl ? (

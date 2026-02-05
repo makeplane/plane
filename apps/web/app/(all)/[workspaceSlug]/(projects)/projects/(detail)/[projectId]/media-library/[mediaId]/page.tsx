@@ -90,12 +90,12 @@ const MediaDetailPage = () => {
   const isPdf = item?.mediaType === "document" && documentFormat === "pdf";
   const isTextDocument =
     item?.mediaType === "document" &&
-    new Set(["txt", "csv", "json", "md", "log", "yaml", "yml", "xml"]).has(documentFormat);
+    new Set(["txt", "json", "md", "log", "yaml", "yml", "xml"]).has(documentFormat);
   const isDocx = item?.mediaType === "document" && documentFormat === "docx";
-  const isXlsx = item?.mediaType === "document" && new Set(["xlsx", "xls"]).has(documentFormat);
+  const isSpreadsheet = item?.mediaType === "document" && new Set(["xlsx", "xls", "csv"]).has(documentFormat);
   const isPptx = item?.mediaType === "document" && documentFormat === "pptx";
   const isBinaryDocument = item?.mediaType === "document" && !isTextDocument;
-  const isSupportedDocument = item?.mediaType === "document" && (isPdf || isXlsx);
+  const isSupportedDocument = item?.mediaType === "document" && (isPdf || isDocx || isSpreadsheet || isTextDocument);
   const isUnsupportedDocument = item?.mediaType === "document" && !isSupportedDocument;
 
   const {
@@ -114,7 +114,7 @@ const MediaDetailPage = () => {
     isBinaryDocument,
     isUnsupportedDocument,
     isDocx,
-    isXlsx,
+    isSpreadsheet,
     isPptx,
     useDocumentCredentials,
   });
