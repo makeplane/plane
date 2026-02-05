@@ -98,7 +98,7 @@ class InboxIssueViewSet(BaseViewSet):
     ]
 
     def get_queryset(self):
-        return (
+        queryset = (
             Issue.objects.filter(
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
