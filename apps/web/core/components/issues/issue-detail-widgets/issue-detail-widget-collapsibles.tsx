@@ -22,10 +22,19 @@ type Props = {
   disabled: boolean;
   issueServiceType: TIssueServiceType;
   hideWidgets?: TWorkItemWidgets[];
+  confirmManifestOnDelete?: boolean;
 };
 
 export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    issueId,
+    disabled,
+    issueServiceType,
+    hideWidgets,
+    confirmManifestOnDelete = false,
+  } = props;
   // store hooks
   const {
     issue: { getIssueById },
@@ -82,6 +91,7 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
           projectId={projectId}
           issueId={issueId}
           disabled={disabled}
+          confirmManifestOnDelete={confirmManifestOnDelete}
           issueServiceType={issueServiceType}
         />
       )}

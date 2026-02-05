@@ -48,6 +48,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { MediaLibraryService } from "@/services/media-library.service";
 // plane web components
 import { WorkItemLayoutAdditionalProperties } from "@/plane-web/components/issues/issue-layouts/additional-properties";
 // local components
@@ -82,6 +83,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
   const projectDetails = getProjectById(issue.project_id);
+  const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
 
   // router
   const router = useAppRouter();
@@ -111,6 +113,53 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       },
     }),
     [workspaceSlug, issue, changeModulesInIssue, addCycleToIssue, removeCycleFromIssue]
+  );
+
+  const buildManifestMeta = useCallback((currentIssue: TIssue) => {
+    return {
+      category: currentIssue.category || "Work items",
+      start_date: currentIssue.start_date ?? null,
+      start_time: currentIssue.start_time ?? null,
+      level: currentIssue.level ?? null,
+      program: currentIssue.program ?? null,
+      sport: currentIssue.sport ?? null,
+      opposition: currentIssue.opposition_team ?? null,
+      season: currentIssue.year ?? null,
+    };
+  }, []);
+
+  const updateManifestMeta = useCallback(
+    async (currentIssue: TIssue) => {
+      const resolvedWorkspace = workspaceSlug?.toString();
+      if (!resolvedWorkspace || !currentIssue.project_id || !currentIssue.id) return;
+      try {
+        const manifest = await mediaLibraryService.ensureProjectLibrary(resolvedWorkspace, currentIssue.project_id);
+        const packageId = typeof manifest?.id === "string" ? manifest.id : null;
+        if (!packageId) return;
+        await mediaLibraryService.updateManifestMetadata(resolvedWorkspace, currentIssue.project_id, packageId, {
+          work_item_id: currentIssue.id,
+          meta: buildManifestMeta(currentIssue),
+        });
+      } catch {
+        // Skip manifest updates if artifacts don't exist.
+      }
+    },
+    [buildManifestMeta, mediaLibraryService, workspaceSlug]
+  );
+
+  const handleEventPropertyUpdate = useCallback(
+    (data: Partial<TIssue>) => {
+      if (!updateIssue) return;
+      updateIssue(issue.project_id, issue.id, data).then(() => {
+        captureSuccess({
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
+          payload: { id: issue.id },
+        });
+        const nextIssue = { ...issue, ...data } as TIssue;
+        void updateManifestMeta(nextIssue);
+      });
+    },
+    [issue, updateIssue, updateManifestMeta]
   );
 
   const handleState = (stateId: string) => {
@@ -189,80 +238,35 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
   );
 
   const handleStartDate = (date: Date | null) => {
-    if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { start_date: date ? renderFormattedPayloadDate(date) : null }).then(
-        () => {
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issue.id },
-          });
-        }
-      );
+    handleEventPropertyUpdate({ start_date: date ? renderFormattedPayloadDate(date) : null });
   };
 
  const handleStartTime = (time: string | null) => {
-  if (!updateIssue) return;
-
-  updateIssue(issue.project_id, issue.id, {
+  handleEventPropertyUpdate({
     start_time: time ?? null, // time only (HH:mm)
-  }).then(() => {
-    captureSuccess({
-      eventName: WORK_ITEM_TRACKER_EVENTS.update,
-      payload: { id: issue.id },
-    });
   });
 };
 
 
   const handleSport = (sport: string | null) => {
-    if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { sport: sport ?? null}).then(() => {
-         captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload: { id: issue.id },
-         })
-      })
+    handleEventPropertyUpdate({ sport: sport ?? null });
   }
   const handleYear = (year: string | null) => {
-    if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { year: year ?? null}).then(() => {
-         captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload: { id: issue.id },
-         })
-      })
+    handleEventPropertyUpdate({ year: year ?? null });
   }
 
 
   const handleLevel = (level: string | null) => {
-    if(updateIssue)
-      updateIssue(issue.project_id, issue.id, {level: level ?? null}).then(() => {
-         captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload:{ id: issue.id },
-         })
-    })
+    handleEventPropertyUpdate({ level: level ?? null });
   }
 
 
-    const handleCategory = (category: string | null) => {
-    if(updateIssue)
-      updateIssue(issue.project_id, issue.id, {category: category ?? null}).then(() => {
-         captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload:{ id: issue.id },
-         })
-    })
+  const handleCategory = (category: string | null) => {
+    handleEventPropertyUpdate({ category: category ?? null });
   }
 
    const handleProgram = (program: string | null) => {
-    if(updateIssue)
-      updateIssue(issue.project_id, issue.id, {program: program ?? null}).then(() => {
-         captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload:{ id: issue.id },
-         })
-    })
+    handleEventPropertyUpdate({ program: program ?? null });
   }
 
   const handleTargetDate = (date: Date | null) => {

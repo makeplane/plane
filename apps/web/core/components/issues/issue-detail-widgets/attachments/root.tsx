@@ -16,11 +16,19 @@ type Props = {
   projectId: string;
   issueId: string;
   disabled?: boolean;
+  confirmManifestOnDelete?: boolean;
   issueServiceType: TIssueServiceType;
 };
 
 export const AttachmentsCollapsible: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled = false, issueServiceType } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    issueId,
+    disabled = false,
+    confirmManifestOnDelete = false,
+    issueServiceType,
+  } = props;
   // store hooks
   const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);
 
@@ -48,6 +56,7 @@ export const AttachmentsCollapsible: FC<Props> = observer((props) => {
         projectId={projectId}
         issueId={issueId}
         disabled={disabled}
+        confirmManifestOnDelete={confirmManifestOnDelete}
         issueServiceType={issueServiceType}
       />
     </Collapsible>

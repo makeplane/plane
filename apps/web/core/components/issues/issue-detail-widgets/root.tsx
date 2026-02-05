@@ -18,6 +18,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
   hideWidgets?: TWorkItemWidgets[];
   hideMediaLibraryButton?: boolean;
+  confirmManifestOnDelete?: boolean;
 };
 
 export const IssueDetailWidgets: FC<Props> = (props) => {
@@ -30,6 +31,7 @@ export const IssueDetailWidgets: FC<Props> = (props) => {
     issueServiceType,
     hideWidgets,
     hideMediaLibraryButton,
+    confirmManifestOnDelete = false,
   } = props;
 
   return (
@@ -51,6 +53,7 @@ export const IssueDetailWidgets: FC<Props> = (props) => {
           disabled={disabled}
           issueServiceType={issueServiceType}
           hideWidgets={hideWidgets}
+          confirmManifestOnDelete={confirmManifestOnDelete}
         />
       </div>
       {renderWidgetModals && (

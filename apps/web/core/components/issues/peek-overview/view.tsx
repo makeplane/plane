@@ -111,6 +111,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const [isArchiveIssueModalOpen, setIsArchiveIssueModalOpen] = useState(false);
   const [isDuplicateIssueModalOpen, setIsDuplicateIssueModalOpen] = useState(false);
   const [isEditIssueModalOpen, setIsEditIssueModalOpen] = useState(false);
+  const [isInlineCleanupModalOpen, setIsInlineCleanupModalOpen] = useState(false);
   const [descriptionHtmlOverride, setDescriptionHtmlOverride] = useState<string | null>(null);
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
@@ -149,13 +150,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const isAnyLocalModalOpen =
     isDeleteIssueModalOpen || isArchiveIssueModalOpen || isDuplicateIssueModalOpen || isEditIssueModalOpen;
+  const isAnyLocalModalOpenWithInline = isAnyLocalModalOpen || isInlineCleanupModalOpen;
 
   usePeekOverviewOutsideClickDetector(
     issuePeekOverviewRef,
     () => {
       const isAnyDropbarOpen = editorRef.current?.isAnyDropbarOpen();
       if (!embedIssue) {
-        if (!isAnyModalOpen && !isAnyEpicModalOpen && !isAnyLocalModalOpen && !isAnyDropbarOpen) {
+        if (!isAnyModalOpen && !isAnyEpicModalOpen && !isAnyLocalModalOpenWithInline && !isAnyDropbarOpen) {
           removeRoutePeekId();
         }
       }
@@ -235,6 +237,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 disabled={disabled}
                 embedIssue={embedIssue}
                 descriptionImageUrls={descriptionImageUrls}
+                onInlineCleanupModalChange={setIsInlineCleanupModalOpen}
               />
               {/* content */}
               <div className="vertical-scrollbar scrollbar-md relative h-full w-full overflow-hidden overflow-y-auto">
@@ -261,6 +264,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         disabled={disabled || is_archived}
                         issueServiceType={EIssueServiceType.ISSUES}
                         hideMediaLibraryButton
+                        confirmManifestOnDelete
                       />
                     </div>
 
@@ -304,6 +308,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             disabled={disabled}
                             issueServiceType={EIssueServiceType.ISSUES}
                             hideMediaLibraryButton
+                            confirmManifestOnDelete
                           />
                         </div>
 

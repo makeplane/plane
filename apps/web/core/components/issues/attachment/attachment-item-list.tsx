@@ -25,6 +25,7 @@ type TIssueAttachmentItemList = {
   projectId: string;
   issueId: string;
   attachmentHelpers: TAttachmentHelpers;
+  confirmManifestOnDelete?: boolean;
   disabled?: boolean;
   issueServiceType?: TIssueServiceType;
 };
@@ -35,6 +36,7 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
     projectId,
     issueId,
     attachmentHelpers,
+    confirmManifestOnDelete = false,
     disabled,
     issueServiceType = EIssueServiceType.ISSUES,
   } = props;
@@ -118,6 +120,7 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
               onClose={() => toggleDeleteAttachmentModal(null)}
               attachmentOperations={attachmentOperations}
               attachmentId={attachmentDeleteModalId}
+              confirmManifestOnDelete={confirmManifestOnDelete}
               issueServiceType={issueServiceType}
             />
           )}

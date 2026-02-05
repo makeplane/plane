@@ -13,11 +13,19 @@ type Props = {
   projectId: string;
   issueId: string;
   disabled: boolean;
+  confirmManifestOnDelete?: boolean;
   issueServiceType?: TIssueServiceType;
 };
 
 export const IssueAttachmentsCollapsibleContent: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    issueId,
+    disabled,
+    confirmManifestOnDelete = false,
+    issueServiceType = EIssueServiceType.ISSUES,
+  } = props;
   // helper
   const attachmentHelpers = useAttachmentOperations(workspaceSlug, projectId, issueId, issueServiceType);
   return (
@@ -27,6 +35,7 @@ export const IssueAttachmentsCollapsibleContent: FC<Props> = observer((props) =>
       issueId={issueId}
       disabled={disabled}
       attachmentHelpers={attachmentHelpers}
+      confirmManifestOnDelete={confirmManifestOnDelete}
       issueServiceType={issueServiceType}
     />
   );

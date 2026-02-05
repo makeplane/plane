@@ -13,7 +13,7 @@ import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssueAttachment, TNameDescriptionLoader } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { CustomSelect } from "@plane/ui";
+import { AlertModalCore, CustomSelect } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink, getAssetIdFromUrl, getFileName, getFileURL } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -80,6 +80,7 @@ export type PeekOverviewHeaderProps = {
   handleRestoreIssue: () => Promise<void>;
   isSubmitting: TNameDescriptionLoader;
   descriptionImageUrls?: string[];
+  onInlineCleanupModalChange?: (isOpen: boolean) => void;
 };
 
 type TMediaLibraryAddResult = {
@@ -109,6 +110,51 @@ const normalizeUrlForCompare = (value: string) => {
   } catch {
     return trimmed;
   }
+};
+
+const hashInlineSource = (value: string) => {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash << 5) - hash + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(16);
+};
+
+const normalizeInlineSourceKey = (value: string) => {
+  const resolved = resolveInlineAssetUrl(value);
+  if (!resolved) return "";
+  const normalized = normalizeUrlForCompare(resolved);
+  if (!normalized) return "";
+  if (normalized.startsWith("data:")) {
+    return `data:${hashInlineSource(normalized)}`;
+  }
+  return normalized;
+};
+
+const resolveInlineAssetId = (value: string) => {
+  const resolved = resolveInlineAssetUrl(value);
+  if (!resolved) return "";
+  if (resolved.startsWith("data:") || resolved.startsWith("blob:")) return "";
+  try {
+    const parsed = new URL(resolved, window.location.origin);
+    return getAssetIdFromUrl(parsed.pathname);
+  } catch {
+    return getAssetIdFromUrl(resolved);
+  }
+};
+
+const resolveManifestMeta = (
+  artifact: Record<string, unknown>,
+  metadata: Record<string, Record<string, unknown>> | undefined
+) => {
+  const direct = artifact.meta;
+  if (direct && typeof direct === "object" && !Array.isArray(direct)) return direct as Record<string, unknown>;
+  const metadataRef = (artifact.metadata_ref as string | undefined) || (artifact.name as string | undefined);
+  if (!metadataRef || !metadata || typeof metadata !== "object") return {};
+  const resolved = metadata[metadataRef];
+  if (resolved && typeof resolved === "object" && !Array.isArray(resolved)) return resolved;
+  return {};
 };
 
 const resolveInlineFileName = (value: string, index: number) => {
@@ -301,6 +347,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     handleRestoreIssue,
     isSubmitting,
     descriptionImageUrls = [],
+    onInlineCleanupModalChange,
   } = props;
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
@@ -320,6 +367,14 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
   const [isAddingToMediaLibrary, setIsAddingToMediaLibrary] = useState(false);
+  const [isInlineCleanupModalOpen, setIsInlineCleanupModalOpen] = useState(false);
+  const [isInlineCleanupSubmitting, setIsInlineCleanupSubmitting] = useState(false);
+  const [inlineCleanupCandidates, setInlineCleanupCandidates] = useState<
+    Array<{
+      url: string;
+      index: number;
+    }>
+  >([]);
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
   // derived values
   const issueDetails = getIssueById(issueId);
@@ -349,10 +404,20 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   const previousIssueIdRef = useRef(issueId);
   const hasMediaAssets = attachmentCount > 0 || normalizedDescriptionImages.length > 0;
 
+  const setInlineCleanupModalOpen = useCallback(
+    (next: boolean) => {
+      setIsInlineCleanupModalOpen(next);
+      onInlineCleanupModalChange?.(next);
+    },
+    [onInlineCleanupModalChange]
+  );
+
   useEffect(() => {
     if (previousIssueIdRef.current !== issueId) {
       previousIssueIdRef.current = issueId;
       previousDescriptionImagesRef.current = normalizedDescriptionImages;
+      setInlineCleanupCandidates([]);
+      setInlineCleanupModalOpen(false);
       return;
     }
 
@@ -375,31 +440,146 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     previousDescriptionImagesRef.current = normalizedDescriptionImages;
     if (!workspaceSlug || !projectId) return;
 
-    const cleanup = async () => {
-      try {
-        const manifest = await mediaLibraryService.ensureProjectLibrary(workspaceSlug, projectId);
-        const packageId = typeof manifest?.id === "string" ? manifest.id : null;
-        if (!packageId) return;
-        await Promise.all(
-          removedImages.map(async ({ url, index }) => {
-            const artifactNames = resolveInlineArtifactNames(url, index);
-            if (!artifactNames.length) return;
-            for (const artifactName of artifactNames) {
-              try {
-                await mediaLibraryService.deleteArtifact(workspaceSlug, projectId, packageId, artifactName);
-              } catch {
-                // ignore cleanup errors
+    const candidates = removedImages;
+    if (candidates.length === 0) return;
+    setInlineCleanupCandidates((prev) => {
+      const merged = new Map<string, { url: string; index: number }>();
+      prev.forEach((entry) => merged.set(`${entry.url}::${entry.index}`, entry));
+      candidates.forEach((entry) => merged.set(`${entry.url}::${entry.index}`, entry));
+      return Array.from(merged.values());
+    });
+    setInlineCleanupModalOpen(true);
+  }, [issueId, normalizedDescriptionImages, mediaLibraryService, projectId, workspaceSlug, setInlineCleanupModalOpen]);
+
+  const handleInlineCleanupClose = useCallback(() => {
+    setInlineCleanupModalOpen(false);
+    setInlineCleanupCandidates([]);
+    setIsInlineCleanupSubmitting(false);
+  }, [setInlineCleanupModalOpen]);
+
+  const handleInlineCleanupConfirm = useCallback(async () => {
+    if (!workspaceSlug || !projectId) {
+      handleInlineCleanupClose();
+      return;
+    }
+    setIsInlineCleanupSubmitting(true);
+    try {
+      const manifest = await mediaLibraryService.ensureProjectLibrary(workspaceSlug, projectId);
+      const packageId = typeof manifest?.id === "string" ? manifest.id : null;
+      if (!packageId) {
+        handleInlineCleanupClose();
+        return;
+      }
+      const inlineSourceKeys = new Set(
+        inlineCleanupCandidates.map(({ url }) => normalizeInlineSourceKey(url)).filter(Boolean)
+      );
+      const inlineUrlKeys = new Set(
+        inlineCleanupCandidates
+          .map(({ url }) => normalizeUrlForCompare(resolveInlineAssetUrl(url)))
+          .filter((entry) => entry && !entry.startsWith("data:"))
+      );
+      const inlineAssetIds = new Set(
+        inlineCleanupCandidates.map(({ url }) => resolveInlineAssetId(url)).filter(Boolean)
+      );
+      const currentInlineSourceKeys = new Set(
+        normalizedDescriptionImages.map((url) => normalizeInlineSourceKey(url)).filter(Boolean)
+      );
+      const currentInlineUrlKeys = new Set(
+        normalizedDescriptionImages
+          .map((url) => normalizeUrlForCompare(resolveInlineAssetUrl(url)))
+          .filter((entry) => entry && !entry.startsWith("data:"))
+      );
+      const currentInlineAssetIds = new Set(
+        normalizedDescriptionImages.map((url) => resolveInlineAssetId(url)).filter(Boolean)
+      );
+      const artifactNameCandidates = new Set<string>();
+      inlineCleanupCandidates.forEach(({ url, index }) => {
+        resolveInlineArtifactNames(url, index).forEach((name) => artifactNameCandidates.add(name));
+      });
+
+      const manifestArtifacts = Array.isArray(manifest?.artifacts) ? manifest?.artifacts : [];
+      const manifestMetadata =
+        manifest && typeof manifest === "object" && manifest.metadata && typeof manifest.metadata === "object"
+          ? (manifest.metadata as Record<string, Record<string, unknown>>)
+          : undefined;
+      const namesToDelete = new Set<string>();
+
+      if (manifestArtifacts.length > 0) {
+        for (const artifact of manifestArtifacts) {
+          if (!artifact || typeof artifact !== "object") continue;
+          const artifactName = (artifact as { name?: string }).name;
+          if (!artifactName) continue;
+          const workItemId = (artifact as { work_item_id?: string | null }).work_item_id ?? "";
+          if (workItemId && workItemId !== issueId) continue;
+
+          const meta = resolveManifestMeta(artifact as Record<string, unknown>, manifestMetadata);
+          const inlineSource = typeof meta.inline_source === "string" ? meta.inline_source : "";
+          if (inlineSource) {
+            if (currentInlineSourceKeys.has(inlineSource)) continue;
+            if (inlineSourceKeys.has(inlineSource)) {
+              namesToDelete.add(artifactName);
+            }
+            continue;
+          }
+
+          const rawPath = (artifact as { path?: string }).path ?? "";
+          if (rawPath && typeof rawPath === "string" && rawPath.startsWith("http")) {
+            const normalizedPath = normalizeUrlForCompare(rawPath);
+            if (normalizedPath) {
+              if (currentInlineUrlKeys.has(normalizedPath)) continue;
+              if (inlineUrlKeys.has(normalizedPath)) {
+                namesToDelete.add(artifactName);
+                continue;
               }
+            }
+          }
+
+          const lastSegment = artifactName.split("-").pop() ?? "";
+          if (lastSegment) {
+            if (currentInlineAssetIds.has(lastSegment)) continue;
+            if (inlineAssetIds.has(lastSegment)) {
+              namesToDelete.add(artifactName);
+              continue;
+            }
+          }
+
+          if (artifactNameCandidates.has(artifactName)) {
+            namesToDelete.add(artifactName);
+          }
+        }
+      }
+
+      if (namesToDelete.size === 0 && artifactNameCandidates.size > 0) {
+        artifactNameCandidates.forEach((name) => namesToDelete.add(name));
+      }
+
+      if (namesToDelete.size === 0 && normalizedDescriptionImages.length === 0 && manifestArtifacts.length > 0) {
+        for (const artifact of manifestArtifacts) {
+          if (!artifact || typeof artifact !== "object") continue;
+          const artifactName = (artifact as { name?: string }).name;
+          if (!artifactName) continue;
+          const meta = resolveManifestMeta(artifact as Record<string, unknown>, manifestMetadata);
+          const metaSource = typeof meta.source === "string" ? meta.source : "";
+          if (metaSource !== "work_item_description") continue;
+          namesToDelete.add(artifactName);
+        }
+      }
+
+      if (namesToDelete.size > 0) {
+        await Promise.all(
+          Array.from(namesToDelete).map(async (artifactName) => {
+            try {
+              await mediaLibraryService.deleteArtifact(workspaceSlug, projectId, packageId, artifactName);
+            } catch {
+              // ignore cleanup errors
             }
           })
         );
-      } catch {
-        // ignore cleanup errors
       }
-    };
-
-    void cleanup();
-  }, [issueId, normalizedDescriptionImages, mediaLibraryService, projectId, workspaceSlug]);
+    } finally {
+      handleInlineCleanupClose();
+    }
+  }, [handleInlineCleanupClose, inlineCleanupCandidates, mediaLibraryService, projectId, workspaceSlug]);
 
   const workItemLink = generateWorkItemLink({
     workspaceSlug,
@@ -555,6 +735,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           const meta: Record<string, unknown> = {
             ...baseEventMeta,
             source: "work_item_description",
+            inline_source: normalizeInlineSourceKey(resolvedUrl) || undefined,
           };
           const directPath = resolveArtifactPathFromAssetUrl(resolvedUrl);
 
@@ -721,100 +902,122 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   };
 
   return (
-    <div
-      className={`relative flex items-center justify-between p-4 ${
-        currentMode?.key === "full-screen" ? "border-b border-custom-border-200" : ""
-      }`}
-    >
-      <div className="flex items-center gap-4">
-        <Tooltip tooltipContent={t("common.close_peek_view")} isMobile={isMobile}>
-          <button onClick={removeRoutePeekId}>
-            <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
-          </button>
-        </Tooltip>
-
-        <Tooltip tooltipContent={t("issue.open_in_full_screen")} isMobile={isMobile}>
-          <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
-            <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
-          </Link>
-        </Tooltip>
-        {currentMode && embedIssue === false && (
-          <div className="flex flex-shrink-0 items-center gap-2">
-            <CustomSelect
-              value={currentMode}
-              onChange={(val: any) => setPeekMode(val)}
-              customButton={
-                <Tooltip tooltipContent={t("common.toggle_peek_view_layout")} isMobile={isMobile}>
-                  <button type="button" className="">
-                    <currentMode.icon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
-                  </button>
-                </Tooltip>
-              }
-            >
-              {PEEK_OPTIONS.map((mode) => (
-                <CustomSelect.Option key={mode.key} value={mode.key}>
-                  <div
-                    className={`flex items-center gap-1.5 ${
-                      currentMode.key === mode.key
-                        ? "text-custom-text-200"
-                        : "text-custom-text-400 hover:text-custom-text-200"
-                    }`}
-                  >
-                    <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />
-                    {t(mode.i18n_title)}
-                  </div>
-                </CustomSelect.Option>
-              ))}
-            </CustomSelect>
-          </div>
-        )}
-      </div>
-      <div className="flex items-center gap-x-4">
-        <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
+    <>
+      <AlertModalCore
+        isOpen={isInlineCleanupModalOpen}
+        handleClose={handleInlineCleanupClose}
+        handleSubmit={handleInlineCleanupConfirm}
+        isSubmitting={isInlineCleanupSubmitting}
+        title="Remove from media library?"
+        variant="danger"
+        primaryButtonText={{
+          default: "Remove",
+          loading: "Removing",
+        }}
+        secondaryButtonText="Keep"
+        content={
+          <>
+            You removed {inlineCleanupCandidates.length} inline image
+            {inlineCleanupCandidates.length === 1 ? "" : "s"} from the description. Do you want to also remove the
+            corresponding artifacts from the media library (manifest.json)?
+          </>
+        }
+      />
+      <div
+        className={`relative flex items-center justify-between p-4 ${
+          currentMode?.key === "full-screen" ? "border-b border-custom-border-200" : ""
+        }`}
+      >
         <div className="flex items-center gap-4">
-          {currentUser && !isArchived && (
-            <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
-          )}
-          {hasMediaAssets && (
-            <Tooltip tooltipContent="Add assets in media library" isMobile={isMobile}>
-              <button
-                type="button"
-                onClick={handleAddAssetsClick}
-                disabled={disabled || isAddingToMediaLibrary}
-                className="disabled:cursor-not-allowed"
-              >
-                <UploadCloud
-                  className={`h-4 w-4 ${
-                    disabled || isAddingToMediaLibrary
-                      ? "text-custom-text-400"
-                      : "text-custom-text-300 hover:text-custom-text-200"
-                  }`}
-                />
-              </button>
-            </Tooltip>
-          )}
-          <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
-            <button type="button" onClick={handleCopyText}>
-              <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
+          <Tooltip tooltipContent={t("common.close_peek_view")} isMobile={isMobile}>
+            <button onClick={removeRoutePeekId}>
+              <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
             </button>
           </Tooltip>
-          {issueDetails && (
-            <WorkItemDetailQuickActions
-              parentRef={parentRef}
-              issue={issueDetails}
-              handleDelete={handleDeleteIssue}
-              handleArchive={handleArchiveIssue}
-              handleRestore={handleRestoreIssue}
-              readOnly={disabled}
-              toggleDeleteIssueModal={toggleDeleteIssueModal}
-              toggleArchiveIssueModal={toggleArchiveIssueModal}
-              toggleDuplicateIssueModal={toggleDuplicateIssueModal}
-              toggleEditIssueModal={toggleEditIssueModal}
-              isPeekMode
-            />
+
+          <Tooltip tooltipContent={t("issue.open_in_full_screen")} isMobile={isMobile}>
+            <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
+              <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+            </Link>
+          </Tooltip>
+          {currentMode && embedIssue === false && (
+            <div className="flex flex-shrink-0 items-center gap-2">
+              <CustomSelect
+                value={currentMode}
+                onChange={(val: any) => setPeekMode(val)}
+                customButton={
+                  <Tooltip tooltipContent={t("common.toggle_peek_view_layout")} isMobile={isMobile}>
+                    <button type="button" className="">
+                      <currentMode.icon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+                    </button>
+                  </Tooltip>
+                }
+              >
+                {PEEK_OPTIONS.map((mode) => (
+                  <CustomSelect.Option key={mode.key} value={mode.key}>
+                    <div
+                      className={`flex items-center gap-1.5 ${
+                        currentMode.key === mode.key
+                          ? "text-custom-text-200"
+                          : "text-custom-text-400 hover:text-custom-text-200"
+                      }`}
+                    >
+                      <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />
+                      {t(mode.i18n_title)}
+                    </div>
+                  </CustomSelect.Option>
+                ))}
+              </CustomSelect>
+            </div>
           )}
         </div>
+        <div className="flex items-center gap-x-4">
+          <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
+          <div className="flex items-center gap-4">
+            {currentUser && !isArchived && (
+              <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+            )}
+            {hasMediaAssets && (
+              <Tooltip tooltipContent="Add assets in media library" isMobile={isMobile}>
+                <button
+                  type="button"
+                  onClick={handleAddAssetsClick}
+                  disabled={disabled || isAddingToMediaLibrary}
+                  className="disabled:cursor-not-allowed"
+                >
+                  <UploadCloud
+                    className={`h-4 w-4 ${
+                      disabled || isAddingToMediaLibrary
+                        ? "text-custom-text-400"
+                        : "text-custom-text-300 hover:text-custom-text-200"
+                    }`}
+                  />
+                </button>
+              </Tooltip>
+            )}
+            <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
+              <button type="button" onClick={handleCopyText}>
+                <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
+              </button>
+            </Tooltip>
+            {issueDetails && (
+              <WorkItemDetailQuickActions
+                parentRef={parentRef}
+                issue={issueDetails}
+                handleDelete={handleDeleteIssue}
+                handleArchive={handleArchiveIssue}
+                handleRestore={handleRestoreIssue}
+                readOnly={disabled}
+                toggleDeleteIssueModal={toggleDeleteIssueModal}
+                toggleArchiveIssueModal={toggleArchiveIssueModal}
+                toggleDuplicateIssueModal={toggleDuplicateIssueModal}
+                toggleEditIssueModal={toggleEditIssueModal}
+                isPeekMode
+              />
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 });

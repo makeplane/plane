@@ -14,7 +14,7 @@ import { buildArtifactName, resolveAttachmentFileName } from "../media-library-u
 
 export type TAttachmentOperations = {
   create: (file: File) => Promise<void>;
-  remove: (attachmentId: string) => Promise<void>;
+  remove: (attachmentId: string, options?: { removeFromManifest?: boolean }) => Promise<void>;
 };
 
 export type TAttachmentSnapshot = {
@@ -69,9 +69,10 @@ export const useAttachmentOperations = (
           throw error;
         }
       },
-      remove: async (attachmentId) => {
+      remove: async (attachmentId, options) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
+          const removeFromManifest = options?.removeFromManifest ?? true;
           const attachment = getAttachmentById(attachmentId);
           const artifactName = attachment ? buildArtifactName(resolveAttachmentFileName(attachment), attachmentId) : "";
           await removeAttachment(workspaceSlug, projectId, issueId, attachmentId);
@@ -80,7 +81,7 @@ export const useAttachmentOperations = (
             type: TOAST_TYPE.SUCCESS,
             title: "Attachment removed",
           });
-          if (artifactName) {
+          if (artifactName && removeFromManifest) {
             try {
               const manifest = await mediaLibraryService.ensureProjectLibrary(workspaceSlug, projectId);
               const packageId = typeof manifest?.id === "string" ? manifest.id : null;
