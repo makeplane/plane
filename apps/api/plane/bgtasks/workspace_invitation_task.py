@@ -15,7 +15,7 @@ from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.exception_logger import log_exception
 
 
-@shared_task
+@shared_task(rate_limit='1/s')
 def workspace_invitation(email, workspace_id, token, current_site, inviter):
     try:
         user = User.objects.get(email=inviter)

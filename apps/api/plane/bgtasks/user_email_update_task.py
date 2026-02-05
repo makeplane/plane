@@ -14,7 +14,7 @@ from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.exception_logger import log_exception
 
 
-@shared_task
+@shared_task(rate_limit='1/s')
 def send_email_update_magic_code(email, token):
     try:
         (
@@ -59,7 +59,7 @@ def send_email_update_magic_code(email, token):
         return
 
 
-@shared_task
+@shared_task(rate_limit='1/s')
 def send_email_update_confirmation(email):
     """
     Send a confirmation email to the user after their email address has been successfully updated.

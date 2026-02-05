@@ -284,32 +284,31 @@ class IssueSerializer(BaseSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        # Use prefetched data from queryset's prefetch_related() instead of
+        # making per-instance queries (fixes N+1 query problem)
         if "assignees" in self.fields:
             if "assignees" in self.expand:
                 from .user import UserLiteSerializer
 
                 data["assignees"] = UserLiteSerializer(
-                    User.objects.filter(
-                        pk__in=IssueAssignee.objects.filter(issue=instance).values_list("assignee_id", flat=True)
-                    ),
+                    instance.assignees.all(),
                     many=True,
                 ).data
             else:
                 data["assignees"] = [
-                    str(assignee)
-                    for assignee in IssueAssignee.objects.filter(issue=instance).values_list("assignee_id", flat=True)
+                    str(assignee.pk)
+                    for assignee in instance.assignees.all()
                 ]
         if "labels" in self.fields:
             if "labels" in self.expand:
                 data["labels"] = LabelSerializer(
-                    Label.objects.filter(
-                        pk__in=IssueLabel.objects.filter(issue=instance).values_list("label_id", flat=True)
-                    ),
+                    instance.labels.all(),
                     many=True,
                 ).data
             else:
                 data["labels"] = [
-                    str(label) for label in IssueLabel.objects.filter(issue=instance).values_list("label_id", flat=True)
+                    str(label.pk)
+                    for label in instance.labels.all()
                 ]
 
         return data

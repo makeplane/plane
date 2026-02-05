@@ -50,7 +50,7 @@ resource "google_cloud_run_v2_service" "plane_web" {
 
     vpc_access {
       connector = google_vpc_access_connector.connector.id
-      egress    = "ALL_TRAFFIC"
+      egress    = "PRIVATE_RANGES_ONLY"  # Internal via VPC, external (SMTP) direct
     }
 
     containers {
@@ -110,7 +110,7 @@ resource "google_cloud_run_v2_service" "plane_admin" {
 
     vpc_access {
       connector = google_vpc_access_connector.connector.id
-      egress    = "ALL_TRAFFIC"
+      egress    = "PRIVATE_RANGES_ONLY"  # Internal via VPC, external (SMTP) direct
     }
 
     containers {
@@ -162,7 +162,7 @@ resource "google_cloud_run_v2_service" "plane_space" {
 
     vpc_access {
       connector = google_vpc_access_connector.connector.id
-      egress    = "ALL_TRAFFIC"
+      egress    = "PRIVATE_RANGES_ONLY"  # Internal via VPC, external (SMTP) direct
     }
 
     containers {
@@ -214,7 +214,7 @@ resource "google_cloud_run_v2_service" "plane_live" {
 
     vpc_access {
       connector = google_vpc_access_connector.connector.id
-      egress    = "ALL_TRAFFIC"
+      egress    = "PRIVATE_RANGES_ONLY"  # Internal via VPC, external (SMTP) direct
     }
 
     containers {
@@ -280,7 +280,7 @@ resource "google_cloud_run_v2_service" "plane_api" {
 
     vpc_access {
       connector = google_vpc_access_connector.connector.id
-      egress    = "ALL_TRAFFIC"
+      egress    = "PRIVATE_RANGES_ONLY"  # Internal via VPC, external (SMTP) direct
     }
 
     volumes {
@@ -413,7 +413,7 @@ resource "google_cloud_run_v2_service" "plane_worker" {
 
     vpc_access {
       connector = google_vpc_access_connector.connector.id
-      egress    = "ALL_TRAFFIC"
+      egress    = "PRIVATE_RANGES_ONLY"  # Internal via VPC, external (SMTP) direct
     }
 
     volumes {
@@ -517,7 +517,7 @@ resource "google_cloud_run_v2_service" "plane_beat" {
 
     vpc_access {
       connector = google_vpc_access_connector.connector.id
-      egress    = "ALL_TRAFFIC"
+      egress    = "PRIVATE_RANGES_ONLY"  # Internal via VPC, external (SMTP) direct
     }
 
     volumes {
@@ -617,7 +617,7 @@ resource "google_cloud_run_v2_job" "plane_migrator" {
 
       vpc_access {
         connector = google_vpc_access_connector.connector.id
-        egress    = "ALL_TRAFFIC"
+        egress    = "PRIVATE_RANGES_ONLY"  # Internal via VPC, external (SMTP) direct
       }
 
       volumes {

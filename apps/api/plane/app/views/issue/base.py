@@ -1,5 +1,4 @@
 # Python imports
-import copy
 import json
 
 # Django imports
@@ -265,8 +264,8 @@ class IssueViewSet(BaseViewSet):
         # Apply legacy filters
         issue_queryset = issue_queryset.filter(**filters, **extra_filters)
 
-        # Keeping a copy of the queryset before applying annotations
-        filtered_issue_queryset = copy.deepcopy(issue_queryset)
+        # Lightweight copy before annotations are added (annotate returns new queryset)
+        filtered_issue_queryset = issue_queryset.all()
 
         # Applying annotations to the issue queryset
         issue_queryset = self.apply_annotations(issue_queryset)
@@ -1065,8 +1064,8 @@ class IssueDetailEndpoint(BaseAPIView):
         # Apply legacy filters
         issue = issue.filter(**filters)
 
-        # Total count queryset
-        total_issue_queryset = copy.deepcopy(issue)
+        # Lightweight copy before annotations (annotate returns new queryset)
+        total_issue_queryset = issue.all()
 
         # Applying annotations to the issue queryset
         issue = self.apply_annotations(issue)

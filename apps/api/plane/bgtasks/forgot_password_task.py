@@ -15,7 +15,7 @@ from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.exception_logger import log_exception
 
 
-@shared_task
+@shared_task(rate_limit='1/s')
 def forgot_password(first_name, email, uidb64, token, current_site):
     try:
         relative_link = f"/accounts/reset-password/?uidb64={uidb64}&token={token}&email={email}"

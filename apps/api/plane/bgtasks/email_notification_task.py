@@ -145,7 +145,7 @@ def process_html_content(content):
     return processed_content_list
 
 
-@shared_task
+@shared_task(rate_limit='1/s')
 def send_email_notification(issue_id, notification_data, receiver_id, email_notification_ids):
     # Convert UUIDs to a sorted, concatenated string
     sorted_ids = sorted(email_notification_ids)
