@@ -20,6 +20,7 @@ locals {
     USE_MINIO              = "0"
     FILE_SIZE_LIMIT        = "5242880"
     WEB_URL                = local.web_url
+    APP_BASE_URL           = local.web_url
     CORS_ALLOWED_ORIGINS   = local.cors_origins
     DEBUG                  = "0"
     DJANGO_SETTINGS_MODULE = "plane.settings.production"

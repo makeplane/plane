@@ -175,7 +175,7 @@ class InstanceEndpoint(BaseAPIView):
         data["app_base_url"] = settings.APP_BASE_URL
 
         data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
-        data["is_self_managed"] = settings.IS_SELF_MANAGED
+        data["is_self_managed"] = False
 
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() >= 1
