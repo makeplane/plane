@@ -1,4 +1,4 @@
-export const formatMetaValue = (value: unknown) => {
+export const formatMetaValue = (value: unknown) : string => {
   if (value === null || value === undefined) return "--";
   if (Array.isArray(value)) {
     const entries = value
@@ -12,7 +12,7 @@ export const formatMetaValue = (value: unknown) => {
     const namedValue = (value as Record<string, unknown>)?.name;
     if (typeof namedValue === "string" && namedValue.trim()) return namedValue.trim();
   }
-  return JSON.stringify(value);
+  return JSON.stringify(value) || "";
 };
 
 export const formatMetaLabel = (value: string) => {
