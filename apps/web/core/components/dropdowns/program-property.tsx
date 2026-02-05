@@ -21,6 +21,7 @@ type Props = TDropdownProps & {
   renderByDefault?: boolean;
   icon?: React.ReactNode;
   clearIconClassName?: string;
+  dropdownClassName?: string;
 };
 
 export const ProgramDropdown: React.FC<Props> = observer((props) => {
@@ -38,6 +39,7 @@ export const ProgramDropdown: React.FC<Props> = observer((props) => {
     disabled = false,
     value,
     onChange,
+    dropdownClassName = "",
   } = props;
 
   const [programs, setPrograms] = useState<string[]>([]);
@@ -156,9 +158,10 @@ export const ProgramDropdown: React.FC<Props> = observer((props) => {
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
-            className="my-1 w-52 bg-custom-background-100 shadow-custom-shadow-rg
-                       border-[0.5px] border-custom-border-300 rounded-md
-                       overflow-hidden z-30"
+            className={cn(
+              "my-1 w-52 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden z-30",
+              dropdownClassName
+            )}
           >
             {/* Search */}
             <div className="relative p-2">

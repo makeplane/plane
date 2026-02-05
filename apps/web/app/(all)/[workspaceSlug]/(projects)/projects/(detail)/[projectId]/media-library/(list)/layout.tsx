@@ -7,8 +7,8 @@ import { ContentWrapper } from "@/components/core/content-wrapper";
 import { FiltersRow } from "@/components/rich-filters/filters-row";
 // local components
 import { MediaLibraryListHeader } from "../components/media-library-header";
-import { MediaLibraryProvider, useMediaLibrary } from "../state/media-library-context";
 import { MediaLibraryUploadModal } from "../components/media-library-upload-modal";
+import { MediaLibraryProvider, useMediaLibrary } from "../state/media-library-context";
 
 const MediaLibraryFiltersRow = observer(() => {
   const { mediaFilters } = useMediaLibrary();

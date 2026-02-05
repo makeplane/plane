@@ -23,6 +23,7 @@ type Props = TDropdownProps & {
   closeOnSelect?: boolean;
   clearIconClassName?: string;
   renderByDefault?: boolean;
+  optionsClassName?: string;
 };
 
 export const TimeDropdown: React.FC<Props> = observer((props) => {
@@ -43,6 +44,7 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
     closeOnSelect = true,
     onChange,
     value,
+    optionsClassName = "",
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -164,7 +166,8 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
               style={styles.popper}
               {...attributes.popper}
               className={cn(
-                "my-1 bg-custom-background-100  shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden z-30"
+                "my-1 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden z-30",
+                optionsClassName
               )}
             >
               <div className="flex p-2 justify-between items-center space-x-2 min-w-[130px] ">
