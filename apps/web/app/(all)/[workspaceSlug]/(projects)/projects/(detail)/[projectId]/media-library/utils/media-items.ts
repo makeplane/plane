@@ -312,8 +312,10 @@ export const mapArtifactsToMediaItems = (
     const author = getMetaString(meta, ["coach", "author", "creator"], "Media Library");
     const docs = getMetaStringArray(meta, "docs");
 
+    const rawPath = artifact.path ?? "";
     const resolvedPath = resolveArtifactSource(artifact, context);
     const downloadablePath = context && artifact.name ? buildArtifactFileUrl(context, artifact.name) : "";
+    const directDownloadPath = rawPath && /^https?:\/\//i.test(rawPath) ? rawPath : "";
 
     const metaThumbnail = getMetaString(meta, ["thumbnail"], "");
     const fallbackThumbnail =
@@ -343,7 +345,7 @@ export const mapArtifactsToMediaItems = (
       videoSrc: mediaType === "video" ? resolvedPath : undefined,
       imageSrc: mediaType === "image" ? resolvedPath : undefined,
       fileSrc: mediaType === "document" ? resolvedPath : undefined,
-      downloadSrc: downloadablePath || undefined,
+      downloadSrc: directDownloadPath || downloadablePath || undefined,
       docs,
     };
   });

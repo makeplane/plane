@@ -305,12 +305,25 @@ export const MediaDetailSidebar = ({
             {metaEntries.length < 0 ? (
               <div className="text-xs text-custom-text-400">No metadata available.</div>
             ) : (
-              metaEntries.map(([key, value]) => (
-                <div key={key} className="flex items-center justify-between gap-3">
-                  <span className="truncate text-custom-text-200">{formatMetaLabel(key)}</span>
-                  <span className="max-w-[55%] truncate text-right">{formatMetaValue(value)}</span>
-                </div>
-              ))
+              metaEntries.map(([key, value]) => {
+                const formattedValue = formatMetaValue(value);
+                const isInlineSource = key.trim().toLowerCase() === "inline_source";
+                const inlineSummary =
+                  isInlineSource && formattedValue.length > 64
+                    ? `${formattedValue.slice(0, 61)}...`
+                    : formattedValue;
+                return (
+                  <div key={key} className="flex items-center justify-between gap-3">
+                    <span className="truncate text-custom-text-200">{formatMetaLabel(key)}</span>
+                    <span
+                      className="max-w-[55%] truncate text-right"
+                      title={isInlineSource ? formattedValue : undefined}
+                    >
+                      {inlineSummary}
+                    </span>
+                  </div>
+                );
+              })
             )}
           </div>
         </div>

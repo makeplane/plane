@@ -2,12 +2,14 @@
 
 import type { RefObject } from "react";
 import { Download, FileText } from "lucide-react";
-import { useRef } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { ImageFullScreenModal } from "@plane/editor";
+import { API_BASE_URL } from "@plane/constants";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PlayerOverlay, PlayerSettingsPanel } from "./player-ui";
 import type { TQualityOption } from "./player-ui";
-import { DOCUMENT_PREVIEW_STYLE } from "./media-detail-utils";
+import { buildDownloadUrl, DOCUMENT_PREVIEW_STYLE, getMetaNumber } from "./media-detail-utils";
 
 type TMediaDetailPreviewProps = {
   item: any;
@@ -84,6 +86,18 @@ export const MediaDetailPreview = ({
   createdByLabel,
   createdAt,
 }: TMediaDetailPreviewProps) => {
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
+  }, []);
+
+  useEffect(() => {
+    setImageDimensions(null);
+  }, [effectiveImageSrc]);
+
   const overlayContent = (
     <>
       <PlayerOverlay isPlaying={isPlaying} onToggle={onOverlayToggle} onSeek={onOverlaySeek} />
@@ -104,6 +118,36 @@ export const MediaDetailPreview = ({
   const overlayVisibilityClass = [isSettingsOpen ? "is-settings-open" : "", !isPlaying ? "is-paused" : ""]
     .filter(Boolean)
     .join(" ");
+  const meta = (item?.meta ?? {}) as Record<string, unknown>;
+  const metaWidth = getMetaNumber(meta, ["width", "image_width", "imageWidth", "w"]);
+  const metaHeight = getMetaNumber(meta, ["height", "image_height", "imageHeight", "h"]);
+  const rawWidth = imageDimensions?.width ?? metaWidth;
+  const rawHeight = imageDimensions?.height ?? metaHeight;
+  const resolvedImageWidth = rawWidth && rawWidth > 0 ? rawWidth : 1200;
+  const resolvedImageHeight = rawHeight && rawHeight > 0 ? rawHeight : 900;
+  const resolvedAspectRatio = resolvedImageHeight > 0 ? resolvedImageWidth / resolvedImageHeight : 1;
+  const rawImageSrc = item?.mediaType === "image" ? item.thumbnail : "";
+  const isWorkItemAttachment = meta.source === "work_item_attachment";
+  const downloadCandidate = item?.downloadSrc || rawImageSrc || effectiveImageSrc;
+  const isMediaLibraryDownload =
+    typeof downloadCandidate === "string" &&
+    (downloadCandidate.includes("/media-library/") ||
+      (downloadCandidate.includes("/packages/") && downloadCandidate.includes("/artifacts/") && downloadCandidate.includes("/file")));
+  const isApiAssetSrc =
+    typeof rawImageSrc === "string" &&
+    (rawImageSrc.includes("/api/assets/") || rawImageSrc.includes("/api/assets/v2/"));
+  const downloadBaseSrc =
+    isWorkItemAttachment || (isMediaLibraryDownload && isApiAssetSrc)
+      ? rawImageSrc || effectiveImageSrc
+      : downloadCandidate;
+  const isAbsoluteDownloadSrc = /^https?:\/\//i.test(downloadBaseSrc);
+  const isApiDownloadSrc =
+    Boolean(downloadBaseSrc) && (!isAbsoluteDownloadSrc || (API_BASE_URL && downloadBaseSrc.startsWith(API_BASE_URL)));
+  const imageDownloadSrc = downloadBaseSrc
+    ? isApiDownloadSrc
+      ? buildDownloadUrl(downloadBaseSrc)
+      : downloadBaseSrc
+    : "";
 
   return (
     <>
@@ -160,6 +204,11 @@ export const MediaDetailPreview = ({
                 loading="lazy"
                 decoding="async"
                 className="h-full w-full object-cover"
+                onLoad={(event) => {
+                  const target = event.currentTarget;
+                  if (!target.naturalWidth || !target.naturalHeight) return;
+                  setImageDimensions({ width: target.naturalWidth, height: target.naturalHeight });
+                }}
               />
            
             ) : (
@@ -257,31 +306,17 @@ export const MediaDetailPreview = ({
       <hr className="border-t border-custom-border-200" />
     </div>
 
-    {isImageZoomOpen && item.mediaType === "image" && (
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-        onClick={() => setIsImageZoomOpen(false)}
-        role="dialog"
-        aria-modal="true"
-      >
-        <button
-          type="button"
-          onClick={() => setIsImageZoomOpen(false)}
-          className="absolute right-4 top-4 rounded-full border border-white/30 px-3 py-1 text-xs text-white hover:border-white"
-        >
-          Close
-        </button>
-        {effectiveImageSrc ? (
-        
-          <img src={effectiveImageSrc} alt={item.title} className="h-[90vh] w-[90vw] object-contain" />
-        
-        ) : (
-          <div className="flex h-[90vh] w-[90vw] items-center justify-center text-xs text-white">
-            Loading image...
-          </div>
-        )}
-      </div>
-    )}
+    {item.mediaType === "image" ? (
+      <ImageFullScreenModal
+        aspectRatio={resolvedAspectRatio}
+        downloadSrc={imageDownloadSrc}
+        isFullScreenEnabled={isImageZoomOpen}
+        isTouchDevice={isTouchDevice}
+        src={effectiveImageSrc}
+        toggleFullScreenMode={setIsImageZoomOpen}
+        width={`${resolvedImageWidth}px`}
+      />
+    ) : null}
     </>
   );
 };

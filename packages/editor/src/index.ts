@@ -21,3 +21,4 @@ export * from "@/types";
 
 // additional exports
 export { TrailingNode } from "./core/extensions/trailing-node";
+export { ImageFullScreenModal } from "@/extensions/custom-image/components/toolbar/full-screen/modal";
