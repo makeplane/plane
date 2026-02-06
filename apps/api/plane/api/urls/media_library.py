@@ -31,7 +31,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/<str:package_id>/artifacts/<str:artifact_id>/",
-        MediaArtifactDetailAPIEndpoint.as_view(http_method_names=["delete"]),
+        MediaArtifactDetailAPIEndpoint.as_view(http_method_names=["get", "delete"]),
         name="media-library-artifact-detail",
     ),
 ]

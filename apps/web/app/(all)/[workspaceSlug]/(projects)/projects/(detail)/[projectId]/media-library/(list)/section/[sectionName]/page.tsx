@@ -14,7 +14,58 @@ import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../../../utils
 import { MediaListView } from "../../../components/media-list-view";
 import { useMediaLibraryItems } from "../../../hooks/use-media-library-items";
 
-const ALLOWED_DOCUMENT_FORMATS = new Set(["docx", "pdf", "xlsx", "csv"]);
+const ALLOWED_DOCUMENT_FORMATS = new Set([
+  "docx",
+  "pdf",
+  "xls",
+  "xlsx",
+  "csv",
+  "txt",
+  "json",
+  "md",
+  "log",
+  "yaml",
+  "yml",
+  "xml",
+]);
+
+const normalizeDocumentFormat = (value: string) => {
+  const normalized = value.trim().toLowerCase().replace(/^\./, "");
+  if (!normalized) return "";
+  if (normalized.includes("/")) {
+    const [, subtype = ""] = normalized.split("/");
+    if (!subtype || subtype === "octet-stream") return "";
+    if (subtype === "vnd.openxmlformats-officedocument.wordprocessingml.document") return "docx";
+    if (subtype === "msword") return "doc";
+    if (subtype === "vnd.ms-excel") return "xls";
+    if (subtype === "vnd.openxmlformats-officedocument.spreadsheetml.sheet") return "xlsx";
+    if (subtype === "csv") return "csv";
+    if (subtype === "plain") return "txt";
+    if (subtype === "json") return "json";
+    if (subtype === "xml") return "xml";
+    if (subtype === "pdf") return "pdf";
+    if (subtype === "x-yaml" || subtype === "yaml") return "yaml";
+    if (subtype === "x-markdown" || subtype === "markdown") return "md";
+    return subtype.replace(/^x-/, "");
+  }
+  return normalized;
+};
+
+const resolveDocumentFormat = (item: TMediaItem) => {
+  const linkedFormat = normalizeDocumentFormat(item.linkedFormat ?? "");
+  if (linkedFormat) return linkedFormat;
+  const meta = item.meta as Record<string, unknown> | undefined;
+  const metaFileType =
+    typeof meta?.file_type === "string"
+      ? meta.file_type
+      : typeof meta?.fileType === "string"
+        ? meta.fileType
+        : "";
+  const normalizedMetaType = normalizeDocumentFormat(metaFileType);
+  if (normalizedMetaType) return normalizedMetaType;
+  const format = normalizeDocumentFormat(item.format ?? "");
+  return format !== "thumbnail" ? format : "";
+};
 
 const MediaLibrarySectionPage = observer(() => {
   const { workspaceSlug, projectId, sectionName } = useParams() as {
@@ -67,11 +118,12 @@ const MediaLibrarySectionPage = observer(() => {
     () =>
       libraryItems.filter((item) => {
         const format = item.format?.toLowerCase() ?? "";
-        const linkedFormat = item.linkedFormat?.toLowerCase() ?? "";
+        const documentFormat = resolveDocumentFormat(item);
         const isDocument = item.mediaType === "document";
         const isDocumentThumbnail = item.mediaType === "image" && item.linkedMediaType === "document";
-        if (isDocument) return ALLOWED_DOCUMENT_FORMATS.has(format);
-        if (format === "thumbnail" && isDocumentThumbnail) return ALLOWED_DOCUMENT_FORMATS.has(linkedFormat);
+        const isAllowedDocument = !documentFormat || ALLOWED_DOCUMENT_FORMATS.has(documentFormat);
+        if (isDocument) return isAllowedDocument;
+        if (format === "thumbnail" && isDocumentThumbnail) return isAllowedDocument;
         return true;
       }),
     [libraryItems]

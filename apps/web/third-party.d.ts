@@ -23,7 +23,12 @@ declare module "xlsx" {
     Sheets: Record<string, unknown>;
   };
 
-  export function read(data: ArrayBuffer, options: { type: "array" }): WorkBook;
+  export type ReadOptions = {
+    type: "array";
+    sheetRows?: number;
+  };
+
+  export function read(data: ArrayBuffer, options: ReadOptions): WorkBook;
 
   export const utils: {
     sheet_to_html(sheet: unknown): string;

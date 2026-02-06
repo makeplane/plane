@@ -9,7 +9,7 @@ import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import { useMediaLibraryItems } from "../hooks/use-media-library-items";
+import { useMediaLibraryItem } from "../hooks/use-media-library-item";
 import { PLAYER_STYLE } from "./player-styles";
 import { useDocumentPreview, useResolvedMediaSources } from "./media-detail-hooks";
 import { MediaDetailPreview } from "./media-detail-preview";
@@ -44,7 +44,7 @@ const MediaDetailPage = () => {
     if (!fromParam.startsWith(defaultHref)) return defaultHref;
     return fromParam;
   }, [fromParam, projectId, workspaceSlug]);
-  const { items: libraryItems, isLoading } = useMediaLibraryItems(workspaceSlug, projectId);
+  const { item, isLoading } = useMediaLibraryItem(workspaceSlug, projectId, mediaId);
   const [activeTab, setActiveTab] = useState<"details" | "tags">("details");
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<ReturnType<typeof videojs> | null>(null);
@@ -58,11 +58,6 @@ const MediaDetailPage = () => {
   const pipCaptionModesRef = useRef<Array<{ track: TextTrack; mode: TextTrackMode }>>([]);
   const inactivityTimeoutRef = useRef<number | null>(null);
 
-  const item = useMemo(() => {
-    if (!mediaId) return null;
-    const normalizedId = decodeURIComponent(mediaId);
-    return libraryItems.find((entry) => entry.id === normalizedId) ?? null;
-  }, [libraryItems, mediaId]);
   const meta = (item?.meta ?? {}) as Record<string, unknown>;
   const normalizedAction = (item?.action ?? "").toLowerCase();
   const documentFormat = item?.format?.toLowerCase() ?? "";
@@ -199,7 +194,7 @@ const MediaDetailPage = () => {
 
       playerRef.current = videojs(videoElement, {
         controls: true,
-        autoplay: true,
+        autoplay: false,
         preload: "metadata",
         playsinline: true,
         crossOrigin,

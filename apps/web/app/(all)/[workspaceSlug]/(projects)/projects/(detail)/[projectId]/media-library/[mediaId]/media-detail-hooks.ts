@@ -64,9 +64,39 @@ export const useResolvedMediaSources = ({
       Boolean(meta?.hls));
   const resolvedVideoFormat = isHls ? "m3u8" : detectedVideoFormat;
 
+  const hlsProxyOverride = useMemo(() => {
+    const rawMeta = meta as Record<string, unknown> | undefined;
+    if (!rawMeta) return null;
+    const direct = rawMeta.hls_direct ?? rawMeta.hlsDirect;
+    if (typeof direct === "boolean") return direct ? false : true;
+    const proxy = rawMeta.hls_proxy ?? rawMeta.hlsProxy ?? rawMeta.use_hls_proxy ?? rawMeta.useHlsProxy;
+    if (typeof proxy === "boolean") return proxy;
+    return null;
+  }, [meta]);
+
+  const isCrossOriginHls = useMemo(() => {
+    if (!isHls || !videoSrc) return false;
+    if (videoSrc.startsWith("/")) return false;
+    if (!/^https?:\/\//i.test(videoSrc)) return false;
+    try {
+      const base = typeof window !== "undefined" ? window.location.origin : "http://localhost";
+      const url = new URL(videoSrc, base);
+      return url.origin !== base;
+    } catch {
+      return true;
+    }
+  }, [isHls, videoSrc]);
+
+  const shouldProxyHls = useMemo(() => {
+    if (!isHls) return false;
+    if (hlsProxyOverride === true) return true;
+    if (hlsProxyOverride === false) return false;
+    return isCrossOriginHls;
+  }, [hlsProxyOverride, isCrossOriginHls, isHls]);
+
   const proxiedVideoSrc = useMemo(() => {
     if (!videoSrc) return videoSrc;
-    if (!isHls) return videoSrc;
+    if (!isHls || !shouldProxyHls) return videoSrc;
     try {
       const base = typeof window !== "undefined" ? window.location.origin : "http://localhost";
       const url = new URL(videoSrc, base);
@@ -75,7 +105,7 @@ export const useResolvedMediaSources = ({
     } catch {
       return videoSrc;
     }
-  }, [isHls, videoSrc]);
+  }, [isHls, shouldProxyHls, videoSrc]);
 
   const effectiveVideoSrc = isVideoAssetApiUrl ? resolvedVideoSrc : resolvedVideoSrc || proxiedVideoSrc || videoSrc;
   const effectiveImageSrc = isImageAssetApiUrl ? resolvedImageSrc : resolvedImageSrc || rawImageSrc;
@@ -383,7 +413,8 @@ export const useDocumentPreview = ({
               throw new Error(`Failed to load document preview (status ${response.status}).`);
             }
             const csvText = await response.text();
-            workbook = XLSX.read(csvText, { type: "string", sheetRows: csvPreviewRows });
+            const csvBuffer = new TextEncoder().encode(csvText).buffer;
+            workbook = XLSX.read(csvBuffer, { type: "array", sheetRows: csvPreviewRows });
           } else {
             const response = await fetch(fileSrc, { credentials: useDocumentCredentials ? "include" : "omit" });
             if (!response.ok) {

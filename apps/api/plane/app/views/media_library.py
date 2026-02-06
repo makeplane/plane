@@ -552,6 +552,42 @@ class MediaArtifactFileAPIView(BaseAPIView):
 
 
 class MediaArtifactDetailAPIView(BaseAPIView):
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    def get(self, request, slug, project_id, package_id, artifact_id):
+        project_id_str = str(project_id)
+        validate_segment(project_id_str, "projectId")
+        validate_segment(package_id, "packageId")
+        validate_segment(artifact_id, "artifactId")
+
+        manifest_file = manifest_path(project_id_str, package_id)
+        if not manifest_file.exists():
+            raise NotFound("Manifest not found.")
+
+        manifest = read_manifest(manifest_file)
+        artifacts = manifest.get("artifacts") or []
+        if not artifacts:
+            raise NotFound("Artifact not found.")
+
+        target = None
+        related = []
+        for artifact in artifacts:
+            name = artifact.get("name")
+            if name == artifact_id:
+                target = artifact
+            link = artifact.get("link")
+            if link == artifact_id:
+                format_value = (artifact.get("format") or "").lower()
+                action_value = (artifact.get("action") or "").lower()
+                if format_value == "thumbnail" or action_value == "preview":
+                    related.append(artifact)
+
+        if not target:
+            raise NotFound("Artifact not found.")
+
+        metadata = manifest.get("metadata") if isinstance(manifest, dict) else {}
+        payload = hydrate_artifacts_with_meta([target, *related], metadata)
+        return Response(payload, status=status.HTTP_200_OK)
+
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
     def delete(self, request, slug, project_id, package_id, artifact_id):
         project_id_str = str(project_id)

@@ -120,6 +120,23 @@ export class MediaLibraryService extends APIService {
       });
   }
 
+  async getArtifactDetail(
+    workspaceSlug: string,
+    projectId: string,
+    packageId: string,
+    artifactId: string
+  ): Promise<TMediaArtifact[]> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/${encodeURIComponent(
+        artifactId
+      )}/`
+    )
+      .then((response) => response?.data ?? [])
+      .catch((error) => {
+        throw error?.response?.data ?? error?.response ?? error;
+      });
+  }
+
   async uploadArtifact(
     workspaceSlug: string,
     projectId: string,

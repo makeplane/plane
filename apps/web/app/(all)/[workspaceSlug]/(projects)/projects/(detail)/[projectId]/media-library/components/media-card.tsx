@@ -4,6 +4,7 @@ import type { MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Calendar, Clock, File, Image as ImageIcon, Video } from "lucide-react";
+import { ETagSize, ETagVariant, Tag } from "@plane/ui";
 import { API_BASE_URL } from "@plane/constants";
 
 import type { TMediaItem } from "../types";
@@ -156,9 +157,13 @@ export const MediaCard = ({
           <span>Views {item.views}</span>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-[11px]">
-          <span className="rounded-full bg-custom-primary-100/20 px-2 py-0.5 text-custom-primary-100">
+          <Tag
+            variant={ETagVariant.OUTLINED}
+            size={ETagSize.SM}
+            className="min-h-0 rounded-full border-0 bg-custom-primary-100/20 px-2 py-1 mt-2 text-[11px] font-medium text-custom-primary-100 cursor-default hover:text-custom-primary-100"
+          >
             {item.primaryTag}
-          </span>
+          </Tag>
           {/* <span className="inline-flex items-center gap-1 rounded-full bg-custom-background-90 px-2 py-0.5 text-custom-text-300">
             <MediaTypeIcon className="h-3 w-3" strokeWidth={3.5} />
             {mediaTypeLabel}
