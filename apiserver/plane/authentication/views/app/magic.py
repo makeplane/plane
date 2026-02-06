@@ -1,4 +1,5 @@
 # Python imports
+import json
 from urllib.parse import urlencode, urljoin
 
 # Django imports
@@ -93,6 +94,68 @@ class MagicSignInEndpoint(BaseAPIView):
     throttle_classes = [
         AuthenticationThrottle,
     ]
+    
+    def extract_hub_codes_from_hub_list(self, hub_list_str):
+        """
+        Extract hub codes from hub_list JSON string.
+        
+        Args:
+            hub_list_str: JSON string containing array of hub objects with 'code' field
+            
+        Returns:
+            List of hub codes (strings), empty list if parsing fails or no codes found
+        """
+        if not hub_list_str:
+            return []
+        
+        try:
+            hub_list = json.loads(hub_list_str)
+            if not isinstance(hub_list, list):
+                return []
+            
+            hub_codes = []
+            for hub in hub_list:
+                if isinstance(hub, dict) and "code" in hub:
+                    code = hub.get("code")
+                    if code:
+                        hub_codes.append(str(code))
+            
+            return hub_codes
+        except (json.JSONDecodeError, TypeError, ValueError) as e:
+            # Log error but don't break authentication flow
+            print(f"Error parsing hub_list: {e}")
+            return []
+    
+    def extract_hub_names_from_hub_list(self, hub_list_str):
+        """
+        Extract hub names from hub_list JSON string.
+        
+        Args:
+            hub_list_str: JSON string containing array of hub objects with 'name' field
+            
+        Returns:
+            List of hub names (strings), empty list if parsing fails or no names found
+        """
+        if not hub_list_str:
+            return []
+        
+        try:
+            hub_list = json.loads(hub_list_str)
+            if not isinstance(hub_list, list):
+                return []
+            
+            hub_names = []
+            for hub in hub_list:
+                if isinstance(hub, dict) and "name" in hub:
+                    name = hub.get("name")
+                    if name:
+                        hub_names.append(str(name))
+            
+            return hub_names
+        except (json.JSONDecodeError, TypeError, ValueError) as e:
+            print(f"Error parsing hub_list for names: {e}")
+            return []
+    
     def add_user_to_workspace(self, user, workspace_slug):
         admin_user = User.objects.filter(is_superuser=True).first()
         workspace, base_project = self.get_workspace(workspace_slug, admin_user)
@@ -100,6 +163,15 @@ class MagicSignInEndpoint(BaseAPIView):
         self.add_to_project(base_project, user)
         self.add_to_project(base_project, admin_user)
         return workspace
+    
+    def update_workspace_scoped_access(self, workspace_slug, scoped_issue_access):
+        if scoped_issue_access is None:
+            return
+        
+        workspace = Workspace.objects.filter(slug=workspace_slug).first()
+        if workspace and workspace.scoped_issue_access != scoped_issue_access:
+            workspace.scoped_issue_access = scoped_issue_access
+            workspace.save(update_fields=['scoped_issue_access'])
     
 
     def add_to_workspace(self, workspace, user):
@@ -194,6 +266,36 @@ class MagicSignInEndpoint(BaseAPIView):
         language = request.POST.get("language", "en").strip()  # Get language, default to 'en'
         timezone = validate_timezone(request.POST.get("timezone", "").strip())
         next_path = request.POST.get("next_path")
+        hub_list_str = request.POST.get("hub_list")
+        is_super_admin_str = request.POST.get("is_super_admin", "false").strip().lower()
+        employee_permissions_str = request.POST.get("employee_permissions")
+        scoped_issue_access_str = request.POST.get("scoped_issue_access")
+        
+        hub_codes = None
+        hub_names = None
+        is_super_admin = None
+        employee_permissions = None
+        scoped_issue_access = None
+        
+        if hub_list_str is not None:
+            hub_codes = self.extract_hub_codes_from_hub_list(hub_list_str)
+            hub_names = self.extract_hub_names_from_hub_list(hub_list_str)
+        
+        if is_super_admin_str:
+            is_super_admin = is_super_admin_str == "true"
+        
+        if employee_permissions_str:
+            try:
+                employee_permissions = json.loads(employee_permissions_str)
+                if not isinstance(employee_permissions, list):
+                    employee_permissions = []
+            except (json.JSONDecodeError, TypeError, ValueError) as e:
+                print(f"Error parsing employee_permissions: {e}")
+                employee_permissions = []
+        
+        if scoped_issue_access_str:
+            scoped_issue_access = scoped_issue_access_str.strip().lower() == "true"
+        
         if code == "" or email == "":
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES[
@@ -222,12 +324,29 @@ class MagicSignInEndpoint(BaseAPIView):
                     timezone=timezone,
                 )
                 user = provider.authenticate()
+                
                 profile, _ = Profile.objects.get_or_create(user=user)
                 profile.language = language
                 profile.save()
+                update_fields = []
+                if hub_codes is not None:
+                    user.hub_codes = hub_codes
+                    update_fields.append("hub_codes")
+                if hub_names is not None:
+                    user.hub_names = hub_names
+                    update_fields.append("hub_names")
+                if is_super_admin is not None:
+                    user.is_super_admin = is_super_admin
+                    update_fields.append("is_super_admin")
+                if employee_permissions is not None:
+                    user.employee_permissions = employee_permissions
+                    update_fields.append("employee_permissions")
+                if update_fields:
+                    user.save(update_fields=update_fields)
                 # Login the user and record his device info
                 user_login(request=request, user=user, is_app=True)
                 self.add_user_to_workspace(user, workspace)
+                self.update_workspace_scoped_access(workspace, scoped_issue_access)
                 # Get the redirection path
                 if next_path:
                     path = str(next_path)
@@ -247,11 +366,28 @@ class MagicSignInEndpoint(BaseAPIView):
                     timezone=timezone,
                 )
                 user = provider.authenticate()
+                
                 profile, _ = Profile.objects.get_or_create(user=user)
                 profile.language = language
                 profile.save()
+                update_fields = []
+                if hub_codes is not None:
+                    user.hub_codes = hub_codes
+                    update_fields.append("hub_codes")
+                if hub_names is not None:
+                    user.hub_names = hub_names
+                    update_fields.append("hub_names")
+                if is_super_admin is not None:
+                    user.is_super_admin = is_super_admin
+                    update_fields.append("is_super_admin")
+                if employee_permissions is not None:
+                    user.employee_permissions = employee_permissions
+                    update_fields.append("employee_permissions")
+                if update_fields:
+                    user.save(update_fields=update_fields)
                 # Login the user and record his device info
                 self.add_user_to_workspace(user, workspace)
+                self.update_workspace_scoped_access(workspace, scoped_issue_access)
                 user_login(request=request, user=user, is_app=True)
                 # Get the redirection path
                 path = (

@@ -13,6 +13,7 @@ export * from "./use-inbox-issues";
 export * from "./use-instance";
 export * from "./use-issue-detail";
 export * from "./use-issues";
+export * from "./use-issue-type";
 export * from "./use-kanban-view";
 export * from "./use-label";
 export * from "./use-member";

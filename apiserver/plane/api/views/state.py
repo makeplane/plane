@@ -93,9 +93,24 @@ class StateAPIEndpoint(BaseAPIView):
                 expand=self.expand,
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        # Filter by names (exact match) or search_name (substring match) if provided
+        queryset = self.get_queryset()
+        state_names_param = request.GET.get('names', None)
+        search_name = request.GET.get('search_name', None)
+        
+        if state_names_param:
+            # Support multiple names separated by comma (exact match)
+            state_names = [name.strip() for name in state_names_param.split(',')]
+            queryset = queryset.filter(name__in=state_names)
+        
+        if search_name:
+            # Case-insensitive substring matching
+            queryset = queryset.filter(name__icontains=search_name.strip())
+        
         return self.paginate(
             request=request,
-            queryset=(self.get_queryset()),
+            queryset=queryset,
             on_results=lambda states: StateSerializer(
                 states,
                 many=True,
@@ -111,6 +126,12 @@ class StateAPIEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
         )
+
+        if state.is_protected:
+            return Response(
+                {"error": "Protected states cannot be deleted"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         if state.default:
             return Response(

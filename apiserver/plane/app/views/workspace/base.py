@@ -45,6 +45,7 @@ from plane.db.models import (
 )
 from plane.app.permissions import ROLE, allow_permission
 from plane.utils.cache import cache_response, invalidate_cache
+from plane.utils.issue_filters import apply_user_hub_filters
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_cookie
@@ -290,26 +291,28 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             )
             .annotate(day_of_month=ExtractDay("completed_at"))
             .annotate(week_in_month=WeekInMonth(F("day_of_month")))
-            .values("week_in_month")
-            .annotate(completed_count=Count("id"))
-            .order_by("week_in_month")
         )
+        completed_issues = apply_user_hub_filters(completed_issues, request.user, workspace_slug=slug)
+        completed_issues = completed_issues.values("week_in_month").annotate(completed_count=Count("id")).order_by("week_in_month")
 
         assigned_issues = Issue.issue_objects.filter(
             workspace__slug=slug, assignees__in=[request.user]
-        ).count()
+        )
+        assigned_issues = apply_user_hub_filters(assigned_issues, request.user, workspace_slug=slug).count()
 
         pending_issues_count = Issue.issue_objects.filter(
             ~Q(state__group__in=["completed", "cancelled"]),
             workspace__slug=slug,
             assignees__in=[request.user],
-        ).count()
+        )
+        pending_issues_count = apply_user_hub_filters(pending_issues_count, request.user, workspace_slug=slug).count()
 
         completed_issues_count = Issue.issue_objects.filter(
             workspace__slug=slug,
             assignees__in=[request.user],
             state__group="completed",
-        ).count()
+        )
+        completed_issues_count = apply_user_hub_filters(completed_issues_count, request.user, workspace_slug=slug).count()
 
         issues_due_week = (
             Issue.issue_objects.filter(
@@ -318,18 +321,17 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             )
             .annotate(target_week=ExtractWeek("target_date"))
             .filter(target_week=timezone.now().date().isocalendar()[1])
-            .count()
         )
+        issues_due_week = apply_user_hub_filters(issues_due_week, request.user, workspace_slug=slug).count()
 
         state_distribution = (
             Issue.issue_objects.filter(
                 workspace__slug=slug, assignees__in=[request.user]
             )
             .annotate(state_group=F("state__group"))
-            .values("state_group")
-            .annotate(state_count=Count("state_group"))
-            .order_by("state_group")
         )
+        state_distribution = apply_user_hub_filters(state_distribution, request.user, workspace_slug=slug)
+        state_distribution = state_distribution.values("state_group").annotate(state_count=Count("state_group")).order_by("state_group")
 
         overdue_issues = Issue.issue_objects.filter(
             ~Q(state__group__in=["completed", "cancelled"]),
@@ -337,7 +339,8 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             assignees__in=[request.user],
             target_date__lt=timezone.now(),
             completed_at__isnull=True,
-        ).values("id", "name", "workspace__slug", "project_id", "target_date")
+        )
+        overdue_issues = apply_user_hub_filters(overdue_issues, request.user, workspace_slug=slug).values("id", "name", "workspace__slug", "project_id", "target_date")
 
         upcoming_issues = Issue.issue_objects.filter(
             ~Q(state__group__in=["completed", "cancelled"]),
@@ -345,7 +348,8 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             workspace__slug=slug,
             assignees__in=[request.user],
             completed_at__isnull=True,
-        ).values("id", "name", "workspace__slug", "project_id", "start_date")
+        )
+        upcoming_issues = apply_user_hub_filters(upcoming_issues, request.user, workspace_slug=slug).values("id", "name", "workspace__slug", "project_id", "start_date")
 
         return Response(
             {

@@ -56,7 +56,7 @@ from plane.utils.grouper import (
     issue_on_results,
     issue_queryset_grouper,
 )
-from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects
+from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects, apply_user_hub_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.constants import ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP
 from plane.utils.paginator import (
@@ -110,7 +110,10 @@ class IssueListEndpoint(BaseAPIView):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(
+        )
+        queryset = apply_user_hub_filters(queryset, request.user, workspace_slug=slug)
+        queryset = (
+            queryset.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
@@ -140,7 +143,8 @@ class IssueListEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-        ).distinct()
+            .distinct()
+        )
 
         filters = issue_filters(request.query_params, "GET")
 
@@ -236,7 +240,7 @@ class IssueViewSet(BaseViewSet):
     def get_queryset(self, filters={}):
         custom_properties = filters.get("custom_properties", {})
         custom_filters = build_custom_property_q_objects(custom_properties)
-        return (
+        queryset = (
             Issue.issue_objects.filter(
                 project_id=self.kwargs.get("project_id")
             )
@@ -294,6 +298,16 @@ class IssueViewSet(BaseViewSet):
             )
         ).distinct()
 
+        return queryset
+    
+    def get_queryset_with_hub_filters(self, filters={}):
+        """
+        Get queryset with hub filters applied.
+        This is a wrapper around get_queryset that applies user hub filtering.
+        """
+        queryset = self.get_queryset(filters)
+        return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
+
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
@@ -309,7 +323,7 @@ class IssueViewSet(BaseViewSet):
         filtersWithoutCustomProperties.pop('custom_properties', None)
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset(filters).filter(**filtersWithoutCustomProperties, **extra_filters)
+        issue_queryset = self.get_queryset_with_hub_filters(filters).filter(**filtersWithoutCustomProperties, **extra_filters)
         # Custom ordering for priority and state
 
         # Issue queryset
@@ -879,7 +893,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             workspace__slug=workspace_slug, project_id=project_id
         )
 
-        return (
+        queryset = (
             issue_queryset.select_related(
                 "workspace", "project", "state", "parent"
             )
@@ -915,6 +929,7 @@ class IssuePaginatedViewSet(BaseViewSet):
                 .values("count")
             )
         ).distinct()
+        return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
 
     def process_paginated_result(self, fields, results, timezone):
         paginated_data = results.values(*fields)
@@ -969,9 +984,7 @@ class IssuePaginatedViewSet(BaseViewSet):
         # querying issues
         base_queryset = Issue.issue_objects.filter(
             workspace__slug=slug, project_id=project_id
-        )
-
-        base_queryset = base_queryset.order_by("updated_at")
+        ).order_by("updated_at")
         queryset = self.get_queryset().order_by("updated_at")
 
         # validation for guest user
@@ -1052,7 +1065,10 @@ class IssueDetailEndpoint(BaseAPIView):
             )
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(
+        )
+        issue = apply_user_hub_filters(issue, request.user, workspace_slug=slug)
+        issue = (
+            issue.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
@@ -1257,10 +1273,36 @@ class SearchAPIEndpoint(BaseAPIView):
         # Fetch values dynamically based on the requested field
         filter_criteria = {f"{field}__icontains": query} if query else {}
 
-        values = Issue.objects.filter(
+        values_queryset = Issue.objects.filter(
             Q(workspace__slug=slug) & Q(**filter_criteria)
+        )
+        
+        values_queryset = apply_user_hub_filters(values_queryset, request.user, workspace_slug=slug)
+        
+        if field in ["hub_code", "hub_name"]:
+            if getattr(request.user, 'is_super_admin', False):
+                # User can see all options - no additional filtering needed
+                pass
+            else:
+                # Filter to only show user's accessible hub_codes or hub_names
+                if field == "hub_code":
+                    user_hubs = request.user.hub_codes
+                    if user_hubs is None:
+                        pass
+                    elif user_hubs:
+                        values_queryset = values_queryset.filter(hub_code__in=user_hubs)
+                    else:
+                        values_queryset = values_queryset.none()
+                elif field == "hub_name":
+                    user_hubs = request.user.hub_names
+                    if user_hubs is None:
+                        pass
+                    elif user_hubs:
+                        values_queryset = values_queryset.filter(hub_name__in=user_hubs)
+                    else:
+                        values_queryset = values_queryset.none()
 
-        ).values_list(field, flat=True)
+        values = values_queryset.values_list(field, flat=True)
 
         unique_values = list(set(filter(None, values)))  # Remove duplicates and nulls
 

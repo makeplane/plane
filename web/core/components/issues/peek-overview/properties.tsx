@@ -177,7 +177,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           <div className="flex w-full items-center gap-3 h-8">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
               <UserCircle2 className="h-4 w-4 flex-shrink-0" />
-              <span>{t("created_by")} by</span>
+              <span>{t("created_by")}</span>
             </div>
             <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
               <ButtonAvatars showTooltip userIds={createdByDetails?.id} />

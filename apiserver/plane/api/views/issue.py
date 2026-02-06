@@ -86,7 +86,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
         return self.kwargs.get("project__identifier", None)
 
     def get_queryset(self):
-        return (
+        queryset = (
             Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
@@ -105,6 +105,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             .prefetch_related("labels")
             .order_by(self.kwargs.get("order_by", "-created_at"))
         ).distinct()
+        return queryset
 
     def get(
         self, request, slug, project__identifier=None, issue__identifier=None
@@ -169,7 +170,7 @@ class IssueAPIEndpoint(BaseAPIView):
             if custom_filters:
                 query = query.filter(*custom_filters)
 
-        return (query
+        queryset = (query
             .filter(**filters)
             .select_related("project")
             .select_related("workspace")
@@ -178,6 +179,7 @@ class IssueAPIEndpoint(BaseAPIView):
             .prefetch_related("assignees")
             .prefetch_related("labels")
             .order_by(self.kwargs.get("order_by", "-created_at"))).distinct()
+        return queryset
         
 
     def get(self, request, slug, project_id, pk=None):

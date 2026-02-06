@@ -25,16 +25,16 @@ import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getTextContent } from "@/helpers/editor.helper";
-import { getChangedIssuefields } from "@/helpers/issue.helper";
+import { getChangedIssuefields, prependIssueTypeToTitle } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useIssueDetail, useProject, useProjectState, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useIssueDetail, useProject, useProjectState, useWorkspaceDraftIssues, useIssueType } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web components
 import { DeDupeIssueButtonLabel, DuplicateModalRoot } from "@/plane-web/components/de-dupe";
-import { IssueAdditionalProperties, IssueTypeSelect } from "@/plane-web/components/issues/issue-modal";
+import { IssueAdditionalProperties } from "@/plane-web/components/issues/issue-modal";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 
 const defaultValues: Partial<TIssue> = {
@@ -118,6 +118,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     useIssueModal();
   const { isMobile } = usePlatformOS();
   const { moveIssue } = useWorkspaceDraftIssues();
+  const { getIssueTypeById } = useIssueType();
 
   const {
     issue: { getIssueById },
@@ -206,6 +207,15 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       })
     )
       return;
+
+    // Prepend issue type name to title if type_id is set
+    const typeId = formData.type_id;
+    if (typeId) {
+      const issueType = getIssueTypeById(typeId);
+      if (issueType) {
+        formData.name = prependIssueTypeToTitle(formData.name ?? "", issueType.name);
+      }
+    }
 
     const submitData = !data?.id
       ? formData
@@ -342,15 +352,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     disabled={!!data?.id || !!data?.sourceIssueId}
                     handleFormChange={handleFormChange}
                   />
-                  {projectId && (
-                    <IssueTypeSelect
-                      control={control}
-                      projectId={projectId}
-                      disabled={!!data?.sourceIssueId}
-                      handleFormChange={handleFormChange}
-                      renderChevron
-                    />
-                  )}
                 </div>
                 {duplicateIssues.length > 0 && (
                   <button

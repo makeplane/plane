@@ -29,6 +29,7 @@ class State(ProjectBaseModel):
     )
     is_triage = models.BooleanField(default=False)
     default = models.BooleanField(default=False)
+    is_protected = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
 

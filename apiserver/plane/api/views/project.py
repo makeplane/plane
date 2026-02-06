@@ -67,30 +67,35 @@ def create_project(slug, origin, user, serializer, request_data):
                 "sequence": 15000,
                 "group": "backlog",
                 "default": True,
+                "is_protected": True,
             },
             {
                 "name": "Todo",
                 "color": "#3A3A3A",
                 "sequence": 25000,
                 "group": "unstarted",
+                "is_protected": True,
             },
             {
                 "name": "In Progress",
                 "color": "#F59E0B",
                 "sequence": 35000,
                 "group": "started",
+                "is_protected": True,
             },
             {
                 "name": "Done",
                 "color": "#16A34A",
                 "sequence": 45000,
                 "group": "completed",
+                "is_protected": True,
             },
             {
                 "name": "Cancelled",
                 "color": "#EF4444",
                 "sequence": 55000,
                 "group": "cancelled",
+                "is_protected": True,
             },
         ]
 
@@ -104,6 +109,7 @@ def create_project(slug, origin, user, serializer, request_data):
                     workspace=serializer.instance.workspace,
                     group=state["group"],
                     default=state.get("default", False),
+                    is_protected=state.get("is_protected", False),
                     created_by=user,
                 )
                 for state in states

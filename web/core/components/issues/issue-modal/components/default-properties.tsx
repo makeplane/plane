@@ -14,6 +14,7 @@ import {
   CycleDropdown,
   DateDropdown,
   EstimateDropdown,
+  IssueTypeDropdown,
   ModuleDropdown,
   PriorityDropdown,
   MemberDropdown,
@@ -86,6 +87,24 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
 
   return (
     <div className="flex flex-wrap items-center gap-2">
+      <Controller
+        control={control}
+        name="type_id"
+        render={({ field: { value, onChange } }) => (
+          <div className="h-7">
+            <IssueTypeDropdown
+              value={value}
+              onChange={(typeId) => {
+                onChange(typeId);
+                handleFormChange();
+              }}
+              workspaceSlug={workspaceSlug}
+              buttonVariant="border-with-text"
+              tabIndex={getIndex("type_id")}
+            />
+          </div>
+        )}
+      />
       <Controller
         control={control}
         name="state_id"

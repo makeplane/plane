@@ -11,6 +11,7 @@ export interface IUserLite {
   first_name: string;
   id: string;
   is_bot: boolean;
+  is_active?: boolean;
   last_name: string;
 }
 export interface IUser extends IUserLite {
@@ -30,6 +31,10 @@ export interface IUser extends IUserLite {
   theme: IUserTheme;
   cover_image: string;
   cover_image_asset: any;
+  hub_codes?: string[] | null;
+  hub_names?: string[] | null;
+  is_super_admin?: boolean;
+  employee_permissions?: string[] | null;
 }
 
 export interface IUserAccount {

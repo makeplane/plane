@@ -65,6 +65,9 @@ from .workspace.label import (
 from .workspace.state import (
     WorkspaceStatesEndpoint,
 )
+from .workspace.issue_type import (
+    WorkspaceIssueTypeEndpoint,
+)
 from .workspace.user import (
     UserLastProjectWithWorkspaceEndpoint,
     WorkspaceUserProfileIssuesEndpoint,

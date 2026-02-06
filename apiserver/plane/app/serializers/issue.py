@@ -34,6 +34,7 @@ from plane.db.models import (
     IssueRelation,
     IssueCustomProperty,
     State,
+    IssueType,
 )
 
 
@@ -83,6 +84,12 @@ class IssueCreateSerializer(BaseSerializer):
     parent_id = serializers.PrimaryKeyRelatedField(
         source="parent",
         queryset=Issue.objects.all(),
+        required=False,
+        allow_null=True,
+    )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type",
+        queryset=IssueType.objects.all(),
         required=False,
         allow_null=True,
     )
