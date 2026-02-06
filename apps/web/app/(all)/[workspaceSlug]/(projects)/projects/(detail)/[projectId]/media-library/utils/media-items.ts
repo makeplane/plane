@@ -341,6 +341,7 @@ export const mapArtifactsToMediaItems = (
       linkedMediaType,
       thumbnail,
       videoSrc: mediaType === "video" ? resolvedPath : undefined,
+      imageSrc: mediaType === "image" ? resolvedPath : undefined,
       fileSrc: mediaType === "document" ? resolvedPath : undefined,
       downloadSrc: downloadablePath || undefined,
       docs,

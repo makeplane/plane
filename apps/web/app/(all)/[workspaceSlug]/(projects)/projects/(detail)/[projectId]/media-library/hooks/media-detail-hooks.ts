@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { API_BASE_URL } from "@plane/constants";
 import { resolveAttachmentDownloadUrl } from "@/components/issues/issue-detail-widgets/media-library-utils";
-import { addInlineDisposition, buildDownloadUrl, getVideoFormatFromSrc } from "./media-detail-utils";
+import { addInlineDisposition, buildDownloadUrl, getVideoFormatFromSrc } from "../[mediaId]/media-detail-utils";
 
 type TUseResolvedMediaSourcesArgs = {
   item: any;
@@ -19,7 +19,7 @@ export const useResolvedMediaSources = ({
   normalizedAction,
 }: TUseResolvedMediaSourcesArgs) => {
   const videoSrc = item?.videoSrc ?? item?.fileSrc ?? "";
-  const rawImageSrc = item?.mediaType === "image" ? item.thumbnail : "";
+  const rawImageSrc = item?.mediaType === "image" ? item.imageSrc || item.thumbnail : "";
   const [resolvedVideoSrc, setResolvedVideoSrc] = useState<string>("");
   const [resolvedDocumentSrc, setResolvedDocumentSrc] = useState<string>("");
   const [resolvedImageSrc, setResolvedImageSrc] = useState<string>("");

@@ -11,7 +11,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useMediaLibraryItem } from "../hooks/use-media-library-item";
 import { PLAYER_STYLE } from "./player-styles";
-import { useDocumentPreview, useResolvedMediaSources } from "./media-detail-hooks";
+import { useDocumentPreview, useResolvedMediaSources } from "../hooks/media-detail-hooks";
 import { MediaDetailPreview } from "./media-detail-preview";
 import { MediaDetailSidebar } from "./media-detail-sidebar";
 import {

@@ -19,6 +19,7 @@ export type TMediaItem = {
   linkedMediaType?: "video" | "image" | "document";
   thumbnail: string;
   videoSrc?: string;
+  imageSrc?: string;
   fileSrc?: string;
   downloadSrc?: string;
   docs: string[];
