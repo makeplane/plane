@@ -25,7 +25,7 @@ import { ETabIndices } from "@/constants/tab-indices";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getTextContent } from "@/helpers/editor.helper";
-import { getChangedIssuefields, prependIssueTypeToTitle } from "@/helpers/issue.helper";
+import { getChangedIssuefields } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
@@ -187,6 +187,20 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, projectId]);
 
+  // Populate title with issue type name when type changes and title is empty
+  const typeId = watch("type_id");
+  useEffect(() => {
+    const currentName = watch("name");
+    if (!typeId || currentName) return;
+
+    const issueType = getIssueTypeById(typeId);
+    if (issueType?.name) {
+      setValue("name", issueType.name, { shouldValidate: true });
+      handleFormChange();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typeId]);
+
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
     // Check if the editor is ready to discard
     if (!editorRef.current?.isEditorReadyToDiscard()) {
@@ -207,15 +221,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       })
     )
       return;
-
-    // Prepend issue type name to title if type_id is set
-    const typeId = formData.type_id;
-    if (typeId) {
-      const issueType = getIssueTypeById(typeId);
-      if (issueType) {
-        formData.name = prependIssueTypeToTitle(formData.name ?? "", issueType.name);
-      }
-    }
 
     const submitData = !data?.id
       ? formData
