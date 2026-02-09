@@ -13,7 +13,7 @@ import { APIService } from "../api.service";
 export type TPageDescriptionPayload = {
   description_binary: string;
   description_html: string;
-  description: object;
+  description_json: object;
 };
 
 export type TUserMention = {
