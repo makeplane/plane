@@ -1,4 +1,7 @@
 # base requirements
+# pkg_resources (required by opentelemetry-instrumentation==0.48b0 at runtime)
+# Pin below 82 — setuptools 82+ removed pkg_resources entirely
+setuptools>=65.0.0,<82.0.0
 
 # django
 Django==4.2.14
