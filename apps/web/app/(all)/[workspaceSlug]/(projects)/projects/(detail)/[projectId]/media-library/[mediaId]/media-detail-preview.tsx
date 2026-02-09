@@ -88,6 +88,12 @@ export const MediaDetailPreview = ({
 }: TMediaDetailPreviewProps) => {
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
+  const [viewport, setViewport] = useState(() => {
+    if (typeof window === "undefined") {
+      return { width: 0, height: 0 };
+    }
+    return { width: window.innerWidth, height: window.innerHeight };
+  });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -97,6 +103,17 @@ export const MediaDetailPreview = ({
   useEffect(() => {
     setImageDimensions(null);
   }, [effectiveImageSrc]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleResize = () => {
+      setViewport({ width: window.innerWidth, height: window.innerHeight });
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const overlayContent = (
     <>
@@ -126,6 +143,15 @@ export const MediaDetailPreview = ({
   const resolvedImageWidth = rawWidth && rawWidth > 0 ? rawWidth : 1200;
   const resolvedImageHeight = rawHeight && rawHeight > 0 ? rawHeight : 900;
   const resolvedAspectRatio = resolvedImageHeight > 0 ? resolvedImageWidth / resolvedImageHeight : 1;
+  const modalWidth = (() => {
+    if (!viewport.width || !viewport.height || !Number.isFinite(resolvedAspectRatio) || resolvedAspectRatio <= 0) {
+      return resolvedImageWidth;
+    }
+    const maxWidth = viewport.width * 0.9;
+    const maxHeight = viewport.height * 0.75;
+    const fittedWidth = Math.min(maxWidth, maxHeight * resolvedAspectRatio);
+    return Math.max(320, Math.round(fittedWidth));
+  })();
   const rawImageSrc = item?.mediaType === "image" ? item.thumbnail : "";
   const isWorkItemAttachment = meta.source === "work_item_attachment";
   const downloadCandidate = item?.downloadSrc || rawImageSrc || effectiveImageSrc;
@@ -186,7 +212,9 @@ export const MediaDetailPreview = ({
             ) : null}
           </>
         ) : item.mediaType === "image" ? (
-          <div className={`overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90 ${previewHeightClass}`}>
+          <div
+            className={`overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90 ${previewHeightClass}`}
+          >
             <button
               type="button"
               className="h-full w-full cursor-zoom-in bg-custom-background-100"
@@ -338,7 +366,7 @@ export const MediaDetailPreview = ({
           isTouchDevice={isTouchDevice}
           src={effectiveImageSrc}
           toggleFullScreenMode={setIsImageZoomOpen}
-          width={`${resolvedImageWidth}px`}
+          width={`${modalWidth}px`}
         />
       ) : null}
     </>
