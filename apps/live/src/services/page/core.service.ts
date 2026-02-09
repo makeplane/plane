@@ -1,8 +1,31 @@
+import type { AxiosError } from "axios";
 import { logger } from "@plane/logger";
 import type { TPage } from "@plane/types";
 // services
 import { AppError } from "@/lib/errors";
 import { APIService } from "../api.service";
+
+/**
+ * Type guard to check if an error is an Axios error with a response
+ */
+function isAxiosErrorWithResponse(
+  error: unknown
+): error is AxiosError & { response: NonNullable<AxiosError["response"]> } {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "isAxiosError" in error &&
+    (error as AxiosError).isAxiosError === true &&
+    "response" in error &&
+    (error as AxiosError).response !== undefined
+  );
+}
+
+export type TUserMention = {
+  id: string;
+  display_name: string;
+  avatar_url?: string;
+};
 
 export type TPageDescriptionPayload = {
   description_binary: string;
@@ -115,5 +138,135 @@ export abstract class PageCoreService extends APIService {
         logger.error("Failed to update page description binary", appError);
         throw appError;
       });
+  }
+
+  /**
+   * Fetches user mentions for a page
+   * @param pageId - The page ID
+   * @returns Array of user mentions
+   */
+  async fetchUserMentions(pageId: string): Promise<TUserMention[]> {
+    try {
+      const response = await this.get(`${this.basePath}/pages/${pageId}/user-mentions/`, {
+        headers: this.getHeader(),
+      });
+      return (response?.data as TUserMention[]) || [];
+    } catch (error) {
+      logger.warn("Failed to fetch user mentions", {
+        pageId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return [];
+    }
+  }
+
+  /**
+   * Resolves an image asset ID to its actual URL (presigned URL)
+   * @param workspaceSlug - The workspace slug
+   * @param assetId - The asset UUID
+   * @param projectId - Optional project ID for project-specific assets
+   * @param apiBaseUrl - Optional API base URL for generating correct presigned URLs
+   * @returns The resolved URL or null if resolution fails
+   */
+  async resolveImageAssetUrl(
+    workspaceSlug: string,
+    assetId: string,
+    projectId?: string | null,
+    apiBaseUrl?: string
+  ): Promise<string | null> {
+    const assetPath = projectId
+      ? `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/?disposition=inline`
+      : `/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/?disposition=inline`;
+
+    try {
+      logger.debug("Resolving image asset URL", {
+        assetId,
+        workspaceSlug,
+        projectId: projectId ?? "(workspace-level)",
+        assetPath,
+        apiBaseUrl: apiBaseUrl ?? "(default)",
+      });
+
+      // If apiBaseUrl is provided and non-empty, use fetch directly to that URL
+      // This ensures the API sees the public host and generates correct presigned URLs
+      if (apiBaseUrl && apiBaseUrl.trim() !== "") {
+        const fullUrl = `${apiBaseUrl.replace(/\/$/, "")}${assetPath}`;
+        const response = await fetch(fullUrl, {
+          method: "GET",
+          headers: this.getHeader(),
+          redirect: "manual",
+        });
+
+        if (response.status === 302 || response.status === 301) {
+          const resolvedUrl = response.headers.get("location");
+          logger.debug("Image asset URL resolved (via apiBaseUrl)", {
+            assetId,
+            resolvedUrl: resolvedUrl ? `${resolvedUrl.substring(0, 80)}...` : null,
+          });
+          return resolvedUrl;
+        }
+        logger.warn("Unexpected response status when resolving asset URL", {
+          assetId,
+          status: response.status,
+          fullUrl,
+        });
+        return null;
+      }
+
+      // Fallback to axios-based request using internal API_BASE_URL
+      const path = projectId
+        ? `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/?disposition=inline`
+        : `/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/?disposition=inline`;
+      const response = await this.get(path, {
+        headers: this.getHeader(),
+        maxRedirects: 0,
+        validateStatus: (status: number) => status >= 200 && status < 400,
+      });
+      // If we get a 302, the Location header contains the presigned URL
+      if (response.status === 302 || response.status === 301) {
+        const resolvedUrl = response.headers?.location || null;
+        logger.debug("Image asset URL resolved", {
+          assetId,
+          resolvedUrl: resolvedUrl ? `${resolvedUrl.substring(0, 80)}...` : null,
+        });
+        return resolvedUrl;
+      }
+      logger.warn("Unexpected response status when resolving asset URL", {
+        assetId,
+        status: response.status,
+        apiPath: path,
+      });
+      return null;
+    } catch (error) {
+      // Axios throws on 3xx when maxRedirects is 0, so we need to handle the redirect from the error
+      if (isAxiosErrorWithResponse(error)) {
+        const { status, headers } = error.response;
+        if (status === 302 || status === 301) {
+          const resolvedUrl = (headers?.location as string) || null;
+          logger.debug("Image asset URL resolved (from redirect error)", {
+            assetId,
+            resolvedUrl: resolvedUrl ? `${resolvedUrl.substring(0, 80)}...` : null,
+          });
+          return resolvedUrl;
+        }
+        logger.error("Failed to resolve image asset URL", {
+          assetId,
+          workspaceSlug,
+          projectId: projectId ?? "(workspace-level)",
+          assetPath,
+          status,
+          error: error.message,
+        });
+        return null;
+      }
+      logger.error("Failed to resolve image asset URL", {
+        assetId,
+        workspaceSlug,
+        projectId: projectId ?? "(workspace-level)",
+        assetPath,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return null;
+    }
   }
 }

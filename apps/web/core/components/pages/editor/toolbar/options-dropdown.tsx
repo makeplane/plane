@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@plane/propel/switch";
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -50,7 +50,7 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
           customContent: (
             <>
               Full width
-              <ToggleSwitch value={isFullWidth} onChange={() => {}} />
+              <Switch value={isFullWidth} onChange={() => {}} />
             </>
           ),
           className: "flex items-center justify-between gap-2",
@@ -61,7 +61,7 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
           customContent: (
             <>
               Sticky toolbar
-              <ToggleSwitch value={isStickyToolbarEnabled} onChange={() => {}} />
+              <Switch value={isStickyToolbarEnabled} onChange={() => {}} />
             </>
           ),
           className: "flex items-center justify-between gap-2",
@@ -71,13 +71,12 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
           key: "copy-markdown",
           action: () => {
             if (!editorRef) return;
-            copyTextToClipboard(editorRef.getMarkDown()).then(() =>
-              setToast({
-                type: TOAST_TYPE.SUCCESS,
-                title: "Success!",
-                message: "Markdown copied to clipboard.",
-              })
-            );
+            editorRef.copyMarkdownToClipboard();
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
+              title: "Success!",
+              message: "Markdown copied to clipboard.",
+            });
           },
           title: "Copy markdown",
           icon: Clipboard,
@@ -127,18 +126,19 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
         pageTitle={name ?? ""}
+        pageId={page.id ?? ""}
       />
       <PageActions
         extraOptions={EXTRA_MENU_OPTIONS}
         optionsOrder={[
           "full-screen",
           "sticky-toolbar",
+          "copy-markdown",
+          "version-history",
           "make-a-copy",
-          "toggle-access",
           "archive-restore",
           "delete",
-          "version-history",
-          "copy-markdown",
+          "toggle-access",
           "export",
         ]}
         page={page}

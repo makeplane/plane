@@ -6,6 +6,7 @@
     "noImplicitOverride": false,
     "noImplicitReturns": false,
     "noUnusedLocals": false,
+    "jsx": "react-jsx",
 
     "paths": {
       "@/*": ["./src/*"],
