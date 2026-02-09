@@ -151,6 +151,57 @@ const getFormatFromPath = (value?: string) => {
   return fileName.slice(dotIndex + 1).toLowerCase();
 };
 
+const containsHtmlTags = (value: string) => /<\/?[a-z][^>]*>/i.test(value);
+
+const decodeHtmlEntities = (value: string) => {
+  if (!value) return "";
+  return value.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (_, entity: string) => {
+    const normalized = entity.toLowerCase();
+    if (normalized === "nbsp") return " ";
+    if (normalized === "amp") return "&";
+    if (normalized === "lt") return "<";
+    if (normalized === "gt") return ">";
+    if (normalized === "quot") return '"';
+    if (normalized === "apos") return "'";
+    if (normalized.startsWith("#x")) {
+      const code = Number.parseInt(normalized.slice(2), 16);
+      if (!Number.isFinite(code)) return "";
+      try {
+        return String.fromCodePoint(code);
+      } catch {
+        return "";
+      }
+    }
+    if (normalized.startsWith("#")) {
+      const code = Number.parseInt(normalized.slice(1), 10);
+      if (!Number.isFinite(code)) return "";
+      try {
+        return String.fromCodePoint(code);
+      } catch {
+        return "";
+      }
+    }
+    return "";
+  });
+};
+
+const htmlToPlainText = (value: string) => {
+  if (!value) return "";
+  if (!containsHtmlTags(value)) return value.trim();
+  return decodeHtmlEntities(
+    value
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<\/(p|div|li|ul|ol|h[1-6]|tr|blockquote|pre)>/gi, "\n")
+      .replace(/<li[^>]*>/gi, "- ")
+      .replace(/<[^>]+>/g, " ")
+  )
+    .replace(/\r/g, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+};
+
 const inferFormatFromPaths = (...paths: Array<string | null | undefined>) => {
   for (const path of paths) {
     if (!path) continue;
@@ -270,7 +321,9 @@ export const mapArtifactsToMediaItems = (
     const displayTitle =
       format === "thumbnail" && linkedArtifact?.title ? linkedArtifact.title : artifact.title;
     const baseDescription = (artifact.description ?? getMetaString(meta, ["description", "summary"], "")).trim();
-    const description = format === "thumbnail" ? "" : baseDescription;
+    const description = format === "thumbnail" ? "" : htmlToPlainText(baseDescription);
+    const descriptionHtml =
+      format === "thumbnail" || !containsHtmlTags(baseDescription) ? undefined : baseDescription;
 
     const createdAt = formatDateLabel(artifact.created_at || artifact.updated_at || "");
     const views = getMetaNumber(meta, ["views"], 0);
@@ -327,10 +380,12 @@ export const mapArtifactsToMediaItems = (
       packageId: context?.packageId,
       title: displayTitle,
       description,
+      descriptionHtml,
       format,
       linkedFormat,
       action: artifact.action,
       link: artifact.link ?? null,
+      workItemId: artifact.work_item_id ?? null,
       author,
       createdAt,
       views,

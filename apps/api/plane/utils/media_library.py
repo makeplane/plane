@@ -119,6 +119,11 @@ EVENT_META_KEYS = {
     "season",
 }
 
+ARTIFACT_FIELD_KEYS = {
+    "title",
+    "description",
+}
+
 
 def _apply_event_meta(existing: dict, updates: dict) -> dict:
     if not isinstance(existing, dict):
@@ -169,6 +174,44 @@ def update_manifest_event_meta(manifest: dict, work_item_id: str, updates: dict)
         metadata[metadata_ref] = _apply_event_meta(existing_entry, updates)
     manifest["metadata"] = metadata
     return len(updated_refs) + inline_updates
+
+
+def update_manifest_artifact_fields(
+    manifest: dict, updates: dict, work_item_id: str | None = None, artifact_id: str | None = None
+) -> int:
+    if not isinstance(manifest, dict):
+        return 0
+    artifacts = manifest.get("artifacts") or []
+    if not isinstance(artifacts, list) or not artifacts:
+        return 0
+    target_work_item = str(work_item_id or "")
+    target_artifact = str(artifact_id or "")
+    if not target_work_item and not target_artifact:
+        return 0
+    updated_count = 0
+    for artifact in artifacts:
+        if not isinstance(artifact, dict):
+            continue
+        if target_artifact:
+            if str(artifact.get("name") or "") != target_artifact:
+                continue
+        elif str(artifact.get("work_item_id") or "") != target_work_item:
+            continue
+        changed = False
+        for key in ARTIFACT_FIELD_KEYS:
+            if key not in updates:
+                continue
+            value = updates.get(key)
+            if value is None or value == "":
+                if key in artifact:
+                    artifact.pop(key, None)
+                    changed = True
+            elif artifact.get(key) != value:
+                artifact[key] = value
+                changed = True
+        if changed:
+            updated_count += 1
+    return updated_count
 
 
 def normalize_metadata_ref(value: object) -> str | None:

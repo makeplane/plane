@@ -3,10 +3,12 @@ export type TMediaItem = {
   packageId?: string;
   title: string;
   description?: string;
+  descriptionHtml?: string;
   format: string;
   linkedFormat?: string;
   action: string;
   link?: string | null;
+  workItemId?: string | null;
   author: string;
   createdAt: string;
   views: number;

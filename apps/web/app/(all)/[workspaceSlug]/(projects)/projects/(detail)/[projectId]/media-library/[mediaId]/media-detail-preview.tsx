@@ -82,9 +82,6 @@ export const MediaDetailPreview = ({
   textPreviewError,
   textPreview,
   effectiveDocumentSrc,
-  description,
-  createdByLabel,
-  createdAt,
 }: TMediaDetailPreviewProps) => {
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
@@ -327,35 +324,6 @@ export const MediaDetailPreview = ({
             ) : null}
           </div>
         )}
-        <div className="mt-4">
-          <h1 className="text-base font-semibold text-custom-text-100 sm:text-lg">{item.title}</h1>
-          <p className="mt-1 text-[11px] text-custom-text-300 sm:text-xs">
-            Uploaded by {createdByLabel} - {createdAt}
-          </p>
-          {description ? <p className="mt-2 text-sm text-custom-text-200">{description}</p> : null}
-          {(() => {
-            const tags = Array.isArray(item?.meta?.tags)
-              ? item.meta.tags.filter((tag: unknown): tag is string => typeof tag === "string" && tag.trim().length > 0)
-              : [];
-            if (tags.length === 0) return null;
-            return (
-              <div className="mt-3 rounded-lg border border-custom-border-200 bg-custom-background-90 px-3 py-2">
-                <div className="text-[11px] font-semibold text-custom-text-300">Tags</div>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-flex items-center rounded-full border border-custom-border-200 bg-custom-background-100 px-2.5 py-1 text-[11px] text-custom-text-100"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-        <hr className="border-t border-custom-border-200" />
       </div>
 
       {item.mediaType === "image" ? (

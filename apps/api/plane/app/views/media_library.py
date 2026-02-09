@@ -36,6 +36,7 @@ from plane.utils.media_library import (
     manifest_write_lock,
     normalize_manifest_metadata,
     normalize_metadata_ref,
+    update_manifest_artifact_fields,
     update_manifest_event_meta,
     MediaLibraryTranscodeError,
     package_root,
@@ -65,6 +66,15 @@ _IMAGE_FORMATS = {
 _VIDEO_FORMATS = {"mp4", "m3u8", "mov", "webm", "avi", "mkv", "mpeg", "mpg", "m4v"}
 _MP4_FASTSTART_FORMATS = {".mp4", ".m4v"}
 logger = logging.getLogger(__name__)
+
+
+def _default_artifact_description(title: str) -> str:
+    title_value = (title or "Uploaded file").strip() or "Uploaded file"
+    return (
+        "<p>This asset was uploaded to the media library and is ready for use.<br />"
+        "It can be previewed, downloaded, or used in projects as needed.<br />"
+        f"File name: {title_value}</p>"
+    )
 
 
 class ListPaginator:
@@ -493,11 +503,19 @@ class MediaManifestDetailAPIView(BaseAPIView):
 
         payload = request.data or {}
         work_item_id = payload.get("work_item_id") or payload.get("workItemId") or ""
-        if not work_item_id:
-            return Response({"error": "work_item_id is required."}, status=status.HTTP_400_BAD_REQUEST)
-        meta = payload.get("meta")
-        if not isinstance(meta, dict):
+        artifact_id = payload.get("artifact_id") or payload.get("artifactId") or ""
+        meta = payload.get("meta") if "meta" in payload else None
+        artifact_fields = payload.get("artifact") if "artifact" in payload else payload.get("artifact_fields")
+        if meta is None and artifact_fields is None:
+            return Response({"error": "meta or artifact fields are required."}, status=status.HTTP_400_BAD_REQUEST)
+        if meta is not None and not work_item_id:
+            return Response({"error": "work_item_id is required for meta updates."}, status=status.HTTP_400_BAD_REQUEST)
+        if meta is not None and not isinstance(meta, dict):
             return Response({"error": "meta must be an object."}, status=status.HTTP_400_BAD_REQUEST)
+        if artifact_fields is not None and not artifact_id:
+            return Response({"error": "artifact_id is required for artifact updates."}, status=status.HTTP_400_BAD_REQUEST)
+        if artifact_fields is not None and not isinstance(artifact_fields, dict):
+            return Response({"error": "artifact fields must be an object."}, status=status.HTTP_400_BAD_REQUEST)
 
         manifest_file = manifest_path(project_id_str, package_id)
         if not manifest_file.exists():
@@ -505,7 +523,11 @@ class MediaManifestDetailAPIView(BaseAPIView):
 
         with manifest_write_lock(manifest_file):
             manifest = read_manifest(manifest_file)
-            updated_count = update_manifest_event_meta(manifest, work_item_id, meta)
+            updated_count = 0
+            if meta is not None:
+                updated_count += update_manifest_event_meta(manifest, work_item_id, meta)
+            if artifact_fields is not None:
+                updated_count += update_manifest_artifact_fields(manifest, artifact_fields, artifact_id=artifact_id)
             if updated_count <= 0:
                 return Response({"updated": 0}, status=status.HTTP_200_OK)
             manifest["updatedAt"] = _now_iso()
@@ -958,9 +980,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
             primary_entry = {
                 "name": artifact_name,
                 "title": title,
-                "description": f"This asset was uploaded to the media library and is ready for use.\n"
-                     f"It can be previewed, downloaded, or used in projects as needed.\n"
-                     f"File name: {title}",
+                "description": _default_artifact_description(title),
                 "format": format_value,
                 "path": relative_path,
                 "link": link,
@@ -995,9 +1015,7 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 entry.pop("description", None)
             elif not entry.get("description"):
                 title_value = entry.get("title") or "Uploaded file"
-                entry["description"] = (f"This asset was uploaded to the media library and is ready for use.\n"
-                     f"It can be previewed, downloaded, or used in projects as needed.\n"
-                     f"File name: {title_value}")
+                entry["description"] = _default_artifact_description(title_value)
             if not entry.get("created_at"):
                 entry["created_at"] = timestamp
             if not entry.get("updated_at"):

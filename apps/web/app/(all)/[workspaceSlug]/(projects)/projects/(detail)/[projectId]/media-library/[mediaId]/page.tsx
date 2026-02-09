@@ -10,25 +10,21 @@ import "video.js/dist/video-js.css";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useMediaLibraryItem } from "../hooks/use-media-library-item";
+import type { TMediaItem } from "../types";
 import { PLAYER_STYLE } from "./player-styles";
 import { useDocumentPreview, useResolvedMediaSources } from "../hooks/media-detail-hooks";
 import { MediaDetailPreview } from "./media-detail-preview";
 import { MediaDetailSidebar } from "./media-detail-sidebar";
 import {
-  formatDateValue,
-  formatFileSize,
-  formatMetaValue,
-  formatTimeValue,
   getCaptionTracks,
-  getMetaNumber,
-  getMetaObject,
   getMetaString,
   getQualitySelection,
   getVideoMimeType,
   getVideoRepresentations,
-  isMeaningfulValue,
-  resolveOppositionLogoUrl,
 } from "./media-detail-utils";
+
+
+type TPipCaptionMode = "disabled" | "hidden" | "showing";
 
 const MediaDetailPage = () => {
   const { mediaId, workspaceSlug, projectId } = useParams() as {
@@ -44,8 +40,16 @@ const MediaDetailPage = () => {
     if (!fromParam.startsWith(defaultHref)) return defaultHref;
     return fromParam;
   }, [fromParam, projectId, workspaceSlug]);
-  const { item, isLoading } = useMediaLibraryItem(workspaceSlug, projectId, mediaId);
-  const [activeTab, setActiveTab] = useState<"details" | "tags">("details");
+  const { item: rawItem, isLoading } = useMediaLibraryItem(workspaceSlug, projectId, mediaId);
+  const [mediaItemOverrides, setMediaItemOverrides] = useState<Partial<TMediaItem> | null>(null);
+  const item = useMemo(
+    () => (rawItem ? { ...rawItem, ...(mediaItemOverrides ?? {}) } : rawItem),
+    [mediaItemOverrides, rawItem]
+  );
+  const handleMediaItemUpdated = useCallback((updates?: Partial<TMediaItem>) => {
+    if (!updates || Object.keys(updates).length === 0) return;
+    setMediaItemOverrides((prev) => ({ ...(prev ?? {}), ...updates }));
+  }, []);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<ReturnType<typeof videojs> | null>(null);
   const [isImageZoomOpen, setIsImageZoomOpen] = useState(false);
@@ -55,8 +59,11 @@ const MediaDetailPage = () => {
   const [qualitySelection, setQualitySelection] = useState<string | null>(null);
   const [playerElement, setPlayerElement] = useState<HTMLElement | null>(null);
   const settingsPanelRef = useRef<HTMLDivElement | null>(null);
-  const pipCaptionModesRef = useRef<Array<{ track: TextTrack; mode: TextTrackMode }>>([]);
+  const pipCaptionModesRef = useRef<Array<{ track: TextTrack; mode: TPipCaptionMode }>>([]);
   const inactivityTimeoutRef = useRef<number | null>(null);
+  useEffect(() => {
+    setMediaItemOverrides(null);
+  }, [rawItem?.id]);
 
   const meta = (item?.meta ?? {}) as Record<string, unknown>;
   const normalizedAction = (item?.action ?? "").toLowerCase();
@@ -556,7 +563,7 @@ const MediaDetailPage = () => {
     const handleEnterPip = () => {
       const tracks = video.textTracks;
       if (!tracks || tracks.length === 0) return;
-      const previousModes: Array<{ track: TextTrack; mode: TextTrackMode }> = [];
+      const previousModes: Array<{ track: TextTrack; mode: TPipCaptionMode }> = [];
       for (let i = 0; i < tracks.length; i += 1) {
         const track = tracks[i];
         if (track && (track.kind === "captions" || track.kind === "subtitles")) {
@@ -583,17 +590,6 @@ const MediaDetailPage = () => {
       video.removeEventListener("leavepictureinpicture", handleLeavePip);
     };
   }, [isVideo]);
-
-  const handlePlay = useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.scrollIntoView({ behavior: "smooth", block: "center" });
-    if (playerRef.current) {
-      Promise.resolve(playerRef.current.play?.()).catch(() => undefined);
-      return;
-    }
-    video.play().catch(() => undefined);
-  }, []);
 
   const handleOverlayToggle = useCallback(() => {
     const player = playerRef.current;
@@ -734,82 +730,12 @@ const MediaDetailPage = () => {
       </div>
     );
   }
-  const category = getMetaString(meta, ["category", "event_category"], "");
-  const sport = getMetaString(meta, ["sport"], "");
-  const program = getMetaString(meta, ["program"], "");
-  const level = getMetaString(meta, ["level"], "");
-  const season = getMetaString(meta, ["season"], "");
-  const source = getMetaString(meta, ["source"], "");
   const createdBy = getMetaString(meta, ["created_by", "createdBy"], "");
-  const startDate = getMetaString(meta, ["start_date", "startDate"], "");
-  const startTime = getMetaString(meta, ["start_time", "startTime"], "");
-  const fileType = getMetaString(meta, ["file_type", "fileType"], "");
-  const fileSize = getMetaNumber(meta, ["file_size", "fileSize"]);
-  const kind = getMetaString(meta, ["kind"], "");
-  const opposition = getMetaObject(meta, ["opposition"]);
-  const oppositionName = opposition ? getMetaString(opposition, ["name", "title"], "") : "";
-  const oppositionLogo = opposition ? getMetaString(opposition, ["logo"], "") : "";
-  const oppositionAddress = opposition ? getMetaString(opposition, ["address"], "") : "";
-  const oppositionHeadCoach = opposition ? getMetaString(opposition, ["head_coach_name"], "") : "";
-  const oppositionAsstCoach = opposition ? getMetaString(opposition, ["asst_coach_name"], "") : "";
-  const oppositionAthleticEmail = opposition ? getMetaString(opposition, ["athletic_email"], "") : "";
-  const oppositionAthleticPhone = opposition ? getMetaString(opposition, ["athletic_phone"], "") : "";
-  const oppositionAsstAthleticEmail = opposition ? getMetaString(opposition, ["asst_athletic_email"], "") : "";
-  const oppositionAsstAthleticPhone = opposition ? getMetaString(opposition, ["asst_athletic_phone"], "") : "";
-  const hasOppositionDetails = Boolean(
-    oppositionName ||
-      oppositionLogo ||
-      oppositionAddress ||
-      oppositionHeadCoach ||
-      oppositionAsstCoach ||
-      oppositionAthleticEmail ||
-      oppositionAthleticPhone ||
-      oppositionAsstAthleticEmail ||
-      oppositionAsstAthleticPhone
-  );
   const createdByLabel = createdBy || item.author;
-  const eventDateLabel = startDate
-    ? formatDateValue(startDate)
-    : startTime
-      ? formatDateValue(startTime)
-      : item.createdAt;
-  const eventTimeLabel = startTime ? formatTimeValue(startTime) : "";
-  const fileTypeLabel = fileType || item.format;
-  const fileSizeLabel = formatFileSize(fileSize);
-  const oppositionLogoUrl = resolveOppositionLogoUrl(oppositionLogo);
-  const displayKeyExclusions = new Set([
-    "duration",
-    "duration_sec",
-    "durationSec",
-    "category",
-    "event_category",
-    "sport",
-    "program",
-    "level",
-    "season",
-    "source",
-    "created_by",
-    "createdBy",
-    "start_date",
-    "startDate",
-    "start_time",
-    "startTime",
-    "file_type",
-    "fileType",
-    "file_size",
-    "fileSize",
-    "kind",
-    "opposition",
-  ]);
-  const metaEntries = Object.entries(meta)
-    .filter(([key]) => !displayKeyExclusions.has(key))
-    .sort(([left], [right]) => left.localeCompare(right));
-  const durationLabel = formatMetaValue(meta.duration ?? item.duration);
-  const durationSecLabel = formatMetaValue(meta.duration_sec ?? meta.durationSec);
 
   return (
-    <div className="relative h-full w-full overflow-hidden overflow-y-auto">
-      <div className="flex min-h-full flex-col gap-6 px-3 py-3">
+    <div className="relative h-full w-full overflow-x-hidden overflow-y-auto lg:overflow-y-hidden">
+      <div className="flex min-h-full flex-col gap-6 px-3 py-3 lg:h-full lg:min-h-0">
         <div className="flex items-center justify-between gap-4">
           <Link
             href={backHref}
@@ -844,7 +770,7 @@ const MediaDetailPage = () => {
         </div> */}
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+        <div className="grid gap-6 lg:min-h-0 lg:flex-1 lg:grid-cols-[2fr_1fr] lg:gap-0">
           <MediaDetailPreview
             item={item}
             isVideo={isVideo}
@@ -889,36 +815,10 @@ const MediaDetailPage = () => {
           ) : null}
 
           <MediaDetailSidebar
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
             item={item}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            eventDateLabel={eventDateLabel}
-            eventTimeLabel={eventTimeLabel}
-            category={category}
-            season={season}
-            createdByLabel={createdByLabel}
-            sport={sport}
-            program={program}
-            level={level}
-            opposition={opposition}
-            oppositionName={oppositionName}
-            oppositionLogoUrl={oppositionLogoUrl}
-            oppositionHeadCoach={oppositionHeadCoach}
-            oppositionAsstCoach={oppositionAsstCoach}
-            oppositionAthleticEmail={oppositionAthleticEmail}
-            oppositionAthleticPhone={oppositionAthleticPhone}
-            oppositionAsstAthleticEmail={oppositionAsstAthleticEmail}
-            oppositionAsstAthleticPhone={oppositionAsstAthleticPhone}
-            oppositionAddress={oppositionAddress}
-            hasOppositionDetails={hasOppositionDetails}
-            fileTypeLabel={fileTypeLabel}
-            fileSizeLabel={fileSizeLabel}
-            source={source}
-            kind={kind}
-            metaEntries={metaEntries}
-            durationLabel={durationLabel}
-            durationSecLabel={durationSecLabel}
-            onPlay={handlePlay}
+            onMediaItemUpdated={handleMediaItemUpdated}
           />
         </div>
       </div>

@@ -102,6 +102,13 @@ const formatFileSize = (value: number) => {
 
 const normalizeInputValue = (value: string | null | undefined) => (value ?? "").trim();
 const normalizeTagValue = (value: string) => value.trim();
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 const buildMetaPayload = (
   metaState: TMetaFormState,
   uploadTarget: TUploadTarget,
@@ -337,7 +344,7 @@ export const MediaLibraryUploadModal = () => {
 
       const artifactName = buildArtifactName(file.name, uploadedAt, index);
       const title = getTitleFromFile(file.name) || "Untitled Upload";
-      const description = `Uploaded file: ${title}`;
+      const description = `<p>Uploaded file: ${escapeHtml(title)}</p>`;
       const action = VIDEO_FORMATS.has(format) ? "play" : IMAGE_FORMATS.has(format) ? "view" : "download";
       const meta = buildMetaPayload(activeMeta, uploadTarget, activeWorkItem);
       if (DOC_FORMATS.has(format)) {
