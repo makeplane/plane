@@ -2,28 +2,21 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { FileImage, FileText, FileVideo, Search, UploadCloud, X } from "lucide-react";
+import { FileImage, FileText, FileVideo, UploadCloud, X } from "lucide-react";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
-import { renderFormattedPayloadDate } from "@plane/utils";
-import { CategoryDropdown } from "@/components/dropdowns/category-property";
-import { DateDropdown } from "@/components/dropdowns/date";
-import { LevelDropdown } from "@/components/dropdowns/level-property";
-import { ProgramDropdown } from "@/components/dropdowns/program-property";
-import SportDropdown from "@/components/dropdowns/sport-property";
-import { TimeDropdown } from "@/components/dropdowns/time-picker";
-import { YearRangeDropdown } from "@/components/dropdowns/year-property";
+import { Button } from "@plane/ui";
 import { useInstance } from "@/hooks/store/use-instance";
 import useDebounce from "@/hooks/use-debounce";
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
-
 import { IssueService } from "@/services/issue";
-
 import { MediaLibraryService } from "@/services/media-library.service";
 import { ProjectService } from "@/services/project";
 import { useMediaLibrary } from "../state/media-library-context";
-
 import { getDocumentThumbnailPath } from "../utils/media-items";
+import { MediaLibraryUploadMetaForm } from "./media-library-upload-meta";
+import { MediaLibraryUploadTabs } from "./media-library-upload-tabs";
+import type { TMetaFieldChange, TMetaFormState, TUploadTarget } from "./media-library-upload-types";
+import { MediaLibraryWorkItemSelector } from "./media-library-work-item-selector";
+
 
 const DEFAULT_MEDIA_LIBRARY_MAX_FILE_SIZE = 1024 * 1024 * 1024;
 const IMAGE_FORMATS = new Set([
@@ -43,24 +36,12 @@ const IMAGE_FORMATS = new Set([
 const VIDEO_FORMATS = new Set(["mp4", "m3u8"]);
 const DOC_FORMATS = new Set(["json", "csv", "pdf", "docx", "xlsx", "pptx", "txt"]);
 
-type TUploadTarget = "library" | "work-item";
-
 type TUploadItem = {
   id: string;
   file: File;
   status: "ready" | "uploading" | "failed";
   progress?: number;
   error?: string;
-};
-
-type TMetaFormState = {
-  category: string | null;
-  sport: string | null;
-  program: string | null;
-  level: string | null;
-  season: string | null;
-  startDate: string | null;
-  startTime: string | null;
 };
 
 const DEFAULT_LIBRARY_META: TMetaFormState = {
@@ -71,6 +52,7 @@ const DEFAULT_LIBRARY_META: TMetaFormState = {
   season: null,
   startDate: null,
   startTime: null,
+  tags: [],
 };
 
 const DEFAULT_WORK_ITEM_META: TMetaFormState = {
@@ -81,6 +63,7 @@ const DEFAULT_WORK_ITEM_META: TMetaFormState = {
   season: null,
   startDate: null,
   startTime: null,
+  tags: [],
 };
 
 const getTitleFromFile = (fileName: string) => fileName.replace(/\.[^/.]+$/, "");
@@ -118,6 +101,7 @@ const formatFileSize = (value: number) => {
 };
 
 const normalizeInputValue = (value: string | null | undefined) => (value ?? "").trim();
+const normalizeTagValue = (value: string) => value.trim();
 const buildMetaPayload = (
   metaState: TMetaFormState,
   uploadTarget: TUploadTarget,
@@ -140,6 +124,8 @@ const buildMetaPayload = (
 
   const season = normalizeInputValue(metaState.season) || normalizeInputValue(selectedWorkItem?.year);
   if (season) meta.season = season;
+
+  if (metaState.tags.length > 0) meta.tags = metaState.tags;
 
   if (uploadTarget === "work-item") {
     const startDate = normalizeInputValue(metaState.startDate) || normalizeInputValue(selectedWorkItem?.start_date);
@@ -171,6 +157,8 @@ export const MediaLibraryUploadModal = () => {
   const [isWorkItemLoading, setIsWorkItemLoading] = useState(false);
   const [isWorkItemDetailsLoading, setIsWorkItemDetailsLoading] = useState(false);
   const [selectedWorkItem, setSelectedWorkItem] = useState<ISearchIssueResponse | null>(null);
+  const [libraryTagDraft, setLibraryTagDraft] = useState("");
+  const [workItemTagDraft, setWorkItemTagDraft] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
   const issueService = useMemo(() => new IssueService(), []);
@@ -182,7 +170,7 @@ export const MediaLibraryUploadModal = () => {
   const hasUploading = uploads.some((item) => item.status === "uploading");
   const activeMeta = uploadTarget === "work-item" ? workItemMeta : libraryMeta;
   const isWorkItemMetaLocked = uploadTarget === "work-item" && Boolean(selectedWorkItem);
-  const showUploadForm = uploads.length > 0;
+  const activeTagDraft = uploadTarget === "work-item" ? workItemTagDraft : libraryTagDraft;
 
   useEffect(() => {
     setWorkItemError(null);
@@ -248,6 +236,8 @@ export const MediaLibraryUploadModal = () => {
     setUploadTarget("library");
     setLibraryMeta(DEFAULT_LIBRARY_META);
     setWorkItemMeta(DEFAULT_WORK_ITEM_META);
+    setLibraryTagDraft("");
+    setWorkItemTagDraft("");
     setSelectedWorkItem(null);
     setWorkItemQuery("");
     setWorkItemResults([]);
@@ -409,7 +399,7 @@ export const MediaLibraryUploadModal = () => {
     return <FileText className="h-5 w-5 text-custom-text-300" />;
   };
 
-  const updateMetaField = <K extends keyof TMetaFormState>(field: K, value: TMetaFormState[K]) => {
+  const updateMetaField: TMetaFieldChange = (field, value) => {
     if (uploadTarget === "work-item") {
       setWorkItemMeta((prev) => ({ ...prev, [field]: value }));
     } else {
@@ -417,13 +407,52 @@ export const MediaLibraryUploadModal = () => {
     }
   };
 
+  const updateTagDraft = (value: string) => {
+    if (uploadTarget === "work-item") {
+      setWorkItemTagDraft(value);
+    } else {
+      setLibraryTagDraft(value);
+    }
+  };
+
+  const updateMetaTags = (updater: (prev: string[]) => string[]) => {
+    if (uploadTarget === "work-item") {
+      setWorkItemMeta((prev) => ({ ...prev, tags: updater(prev.tags) }));
+    } else {
+      setLibraryMeta((prev) => ({ ...prev, tags: updater(prev.tags) }));
+    }
+  };
+
+  const handleAddTag = (rawValue: string) => {
+    const parts = rawValue
+      .split(",")
+      .map((entry) => normalizeTagValue(entry))
+      .filter(Boolean);
+    if (parts.length === 0) return;
+    updateMetaTags((prev) => {
+      const next = [...prev];
+      for (const part of parts) {
+        const exists = next.some((tag) => tag.toLowerCase() === part.toLowerCase());
+        if (!exists) next.push(part);
+      }
+      return next;
+    });
+    updateTagDraft("");
+  };
+
+  const handleRemoveTag = (value: string) => {
+    updateMetaTags((prev) => prev.filter((tag) => tag.toLowerCase() !== value.toLowerCase()));
+  };
+
   const uploadButtonLabel = uploadTarget === "work-item" ? "Upload to work item" : "Upload";
 
   if (!isUploadOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="w-full max-w-2xl overflow-hidden rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-lg">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 p-4 sm:items-center">
+      <div
+        className={`flex max-h-[calc(100dvh-2rem)] w-full max-w-4xl flex-col overflow-hidden rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-lg`}
+      >
         <div className="flex items-center justify-between border-b border-custom-border-200 px-5 py-3">
           <h2 className="text-lg font-semibold text-custom-text-100">Upload Files</h2>
           <button
@@ -436,262 +465,37 @@ export const MediaLibraryUploadModal = () => {
           </button>
         </div>
 
-        <div className="p-5">
-          {showUploadForm ? (
-            <>
-              <div className="mb-4">
-                <div
-                  role="tablist"
-                  aria-label="Upload options"
-                  className="flex items-center gap-1 rounded-lg border border-custom-border-200 bg-custom-background-90 p-1"
-                >
-                  {[
-                    { key: "library" as TUploadTarget, label: "Upload to library" },
-                    { key: "work-item" as TUploadTarget, label: "Add media to work item" },
-                  ].map((tab) => {
-                    const isActive = uploadTarget === tab.key;
-                    return (
-                      <button
-                        key={tab.key}
-                        type="button"
-                        role="tab"
-                        aria-selected={isActive}
-                        onClick={() => setUploadTarget(tab.key)}
-                        className={`flex-1 rounded-md px-3 py-2 text-xs font-semibold transition ${
-                          isActive
-                            ? "bg-custom-background-100 text-custom-text-100 shadow-custom-shadow-2xs"
-                            : "text-custom-text-300 hover:text-custom-text-100"
-                        }`}
-                      >
-                        {tab.label}
-                      </button>
-                    );
-                  })}
-                </div>
-                <div className="mt-2 text-[11px] text-custom-text-300">
-                  {uploadTarget === "work-item"
-                    ? "Link uploaded media to a work item in this project."
-                    : "Upload files to the project media library."}
-                </div>
-              </div>
-
-              {uploadTarget === "work-item" ? (
-                <div className="mb-4 rounded-lg border border-custom-border-200 bg-custom-background-90 p-4">
-                  <div className="text-xs font-semibold text-custom-text-100">Work item</div>
-                  {selectedWorkItem ? (
-                    <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-md border border-custom-border-200 bg-custom-background-100 px-3 py-2">
-                      <div className="flex min-w-0 items-center gap-2">
-                        <span
-                          className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
-                          style={{ backgroundColor: selectedWorkItem.state__color }}
-                        />
-                        <IssueIdentifier
-                          projectId={selectedWorkItem.project_id}
-                          issueTypeId={selectedWorkItem.type_id}
-                          projectIdentifier={selectedWorkItem.project__identifier}
-                          issueSequenceId={selectedWorkItem.sequence_id}
-                          textContainerClassName="text-xs text-custom-text-200"
-                        />
-                        <span className="truncate text-xs text-custom-text-100">{selectedWorkItem.name}</span>
-                      </div>
-                      <Button variant="neutral-primary" size="sm" onClick={handleClearWorkItem}>
-                        Change
-                      </Button>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="relative mt-2">
-                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-300" />
-                        <input
-                          type="text"
-                          value={workItemQuery}
-                          placeholder="Search work items"
-                          onChange={(event) => setWorkItemQuery(event.target.value)}
-                          className="h-9 w-full rounded-md border border-custom-border-200 bg-custom-background-100 pl-9 pr-3 text-xs text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
-                        />
-                      </div>
-                      <div className="mt-2 max-h-40 overflow-y-auto rounded-md border border-custom-border-200 bg-custom-background-100">
-                        {isWorkItemLoading ? (
-                          <Loader className="space-y-2 p-3">
-                            <Loader.Item height="24px" />
-                            <Loader.Item height="24px" />
-                            <Loader.Item height="24px" />
-                          </Loader>
-                        ) : workItemResults.length === 0 ? (
-                          <div className="px-3 py-2 text-xs text-custom-text-300">No work items found.</div>
-                        ) : (
-                          workItemResults.map((issue) => (
-                            <button
-                              key={issue.id}
-                              type="button"
-                              onClick={() => handleSelectWorkItem(issue)}
-                              className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-custom-text-200 hover:bg-custom-background-80"
-                            >
-                              <span
-                                className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
-                                style={{ backgroundColor: issue.state__color }}
-                              />
-                              <IssueIdentifier
-                                projectId={issue.project_id}
-                                issueTypeId={issue.type_id}
-                                projectIdentifier={issue.project__identifier}
-                                issueSequenceId={issue.sequence_id}
-                                textContainerClassName="text-xs text-custom-text-200"
-                              />
-                              <span className="truncate">{issue.name}</span>
-                            </button>
-                          ))
-                        )}
-                      </div>
-                    </>
-                  )}
-                  {workItemError ? <div className="mt-2 text-xs text-red-500">{workItemError}</div> : null}
-                  {isWorkItemDetailsLoading ? (
-                    <div className="mt-2 text-[11px] text-custom-text-300">Loading work item details…</div>
-                  ) : null}
-                </div>
-              ) : null}
-
-              <div className="mb-4 rounded-lg border border-custom-border-200 bg-custom-background-90 p-4">
-                <div className="text-xs font-semibold text-custom-text-100">Metadata (optional)</div>
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  <div className="flex flex-col gap-1 text-[11px] text-custom-text-300">
-                    <span>Category</span>
-                    <CategoryDropdown
-                      value={activeMeta.category}
-                      onChange={(val) => updateMetaField("category", val)}
-                      placeholder={uploadTarget === "work-item" ? "Work items" : "Uploads"}
-                      buttonVariant="border-with-text"
-                      className="h-8"
-                      buttonContainerClassName="w-full text-left"
-                      buttonClassName={`text-xs ${activeMeta.category ? "" : "text-custom-text-400"}`}
-                      hideIcon
-                      clearIconClassName="h-3 w-3"
-                      dropdownClassName="z-[70]"
-                      disabled={isWorkItemMetaLocked}
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1 text-[11px] text-custom-text-300">
-                    <span>Sport</span>
-                    <SportDropdown
-                      value={activeMeta.sport}
-                      onChange={(val) => updateMetaField("sport", val)}
-                      placeholder="Select sport"
-                      buttonVariant="border-with-text"
-                      className="h-8"
-                      buttonContainerClassName="w-full text-left"
-                      buttonClassName={`text-xs ${activeMeta.sport ? "" : "text-custom-text-400"}`}
-                      hideIcon
-                      clearIconClassName="h-3 w-3"
-                      dropdownClassName="z-[70]"
-                      disabled={isWorkItemMetaLocked}
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1 text-[11px] text-custom-text-300">
-                    <span>Program</span>
-                    <ProgramDropdown
-                      value={activeMeta.program}
-                      onChange={(val) => updateMetaField("program", val)}
-                      placeholder="Select program"
-                      buttonVariant="border-with-text"
-                      className="h-8"
-                      buttonContainerClassName="w-full text-left"
-                      buttonClassName={`text-xs ${activeMeta.program ? "" : "text-custom-text-400"}`}
-                      hideIcon
-                      clearIconClassName="h-3 w-3"
-                      dropdownClassName="z-[70]"
-                      disabled={isWorkItemMetaLocked}
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1 text-[11px] text-custom-text-300">
-                    <span>Level</span>
-                    <LevelDropdown
-                      value={activeMeta.level}
-                      onChange={(val) => updateMetaField("level", val)}
-                      placeholder="Select level"
-                      buttonVariant="border-with-text"
-                      className="h-8"
-                      buttonContainerClassName="w-full text-left"
-                      buttonClassName={`text-xs ${activeMeta.level ? "" : "text-custom-text-400"}`}
-                      hideIcon
-                      clearIconClassName="h-3 w-3"
-                      dropdownClassName="z-[70]"
-                      disabled={isWorkItemMetaLocked}
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1 text-[11px] text-custom-text-300">
-                    <span>Season</span>
-                    <YearRangeDropdown
-                      value={activeMeta.season}
-                      onChange={(val) => updateMetaField("season", val)}
-                      placeholder="Select season"
-                      buttonVariant="border-with-text"
-                      className="h-8"
-                      buttonContainerClassName="w-full text-left"
-                      buttonClassName={`text-xs ${activeMeta.season ? "" : "text-custom-text-400"}`}
-                      hideIcon
-                      clearIconClassName="h-3 w-3"
-                      dropdownClassName="z-[70]"
-                      disabled={isWorkItemMetaLocked}
-                    />
-                  </div>
-                  {uploadTarget === "work-item" ? (
-                    <>
-                      <div className="flex flex-col gap-1 text-[11px] text-custom-text-300">
-                        <span>Start date</span>
-                        <DateDropdown
-                          value={activeMeta.startDate}
-                          onChange={(val) =>
-                            updateMetaField("startDate", val ? renderFormattedPayloadDate(val) : null)
-                          }
-                          placeholder="Select date"
-                          buttonVariant="border-with-text"
-                          className="h-8"
-                          buttonContainerClassName="w-full text-left"
-                          buttonClassName={`text-xs ${activeMeta.startDate ? "" : "text-custom-text-400"}`}
-                          hideIcon
-                          clearIconClassName="h-3 w-3"
-                          optionsClassName="z-[70]"
-                          disabled={isWorkItemMetaLocked}
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1 text-[11px] text-custom-text-300">
-                        <span>Start time</span>
-                        <TimeDropdown
-                          value={activeMeta.startTime}
-                          onChange={(val) => updateMetaField("startTime", val)}
-                          placeholder="Select time"
-                          buttonVariant="border-with-text"
-                          className="h-8"
-                          buttonContainerClassName="w-full text-left"
-                          buttonClassName={`text-xs ${activeMeta.startTime ? "" : "text-custom-text-400"}`}
-                          hideIcon
-                          clearIconClassName="h-3 w-3"
-                          optionsClassName="z-[70]"
-                          disabled={isWorkItemMetaLocked}
-                        />
-                      </div>
-                    </>
-                  ) : null}
-                </div>
-                <div className="mt-2 text-[11px] text-custom-text-300">
-                  Metadata applies to all selected files.
-                  {isWorkItemMetaLocked ? " Values are read-only when a work item is selected." : ""}
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="mb-4 rounded-lg border border-dashed border-custom-border-200 bg-custom-background-90 px-4 py-3 text-center text-[11px] text-custom-text-300">
-              Select files to configure metadata and work item options.
-            </div>
-          )}
+        <div className="flex-1 overflow-y-auto p-5">
+          <MediaLibraryUploadTabs value={uploadTarget} onChange={setUploadTarget} />
+          {uploadTarget === "work-item" ? (
+            <MediaLibraryWorkItemSelector
+              selectedWorkItem={selectedWorkItem}
+              workItemQuery={workItemQuery}
+              onQueryChange={setWorkItemQuery}
+              results={workItemResults}
+              isLoading={isWorkItemLoading}
+              isDetailsLoading={isWorkItemDetailsLoading}
+              error={workItemError}
+              onSelect={handleSelectWorkItem}
+              onClear={handleClearWorkItem}
+            />
+          ) : null}
+          <MediaLibraryUploadMetaForm
+            uploadTarget={uploadTarget}
+            meta={activeMeta}
+            isLocked={isWorkItemMetaLocked}
+            onFieldChange={updateMetaField}
+            tagDraft={activeTagDraft}
+            onTagDraftChange={updateTagDraft}
+            onAddTag={handleAddTag}
+            onRemoveTag={handleRemoveTag}
+          />
 
           <div
-            className={`rounded-lg border border-dashed px-4 py-8 text-center transition ${
-              isDragging
+            className={`rounded-lg border border-dashed px-4 py-8 text-center transition ${isDragging
                 ? "border-custom-primary-100 bg-custom-primary-100/10"
                 : "border-custom-border-200 bg-custom-background-90"
-            }`}
+              }`}
             onDragOver={(event) => {
               event.preventDefault();
               setIsDragging(true);
@@ -707,9 +511,9 @@ export const MediaLibraryUploadModal = () => {
             <div className="mt-2 text-sm font-medium text-custom-text-100">Drag and drop your files here</div>
             <div className="mt-1 text-xs text-custom-text-300">or</div>
             <div className="flex justify-center items-center ">
-            <Button variant="primary" size="sm" className="mt-3 flex items-center"  onClick={() => inputRef.current?.click()}>
-              Browse Files
-            </Button>
+              <Button variant="primary" size="sm" className="mt-3 flex items-center" onClick={() => inputRef.current?.click()}>
+                Browse Files
+              </Button>
             </div>
             {selectionError ? <div className="mt-2 text-xs text-red-500">{selectionError}</div> : null}
             <input
@@ -729,7 +533,7 @@ export const MediaLibraryUploadModal = () => {
           <hr className="my-4 border-0 border-t border-custom-border-200/60" />
 
           <div className="mt-4 rounded-lg border border-custom-border-200">
-            <div className="max-h-[40vh] overflow-y-scroll">
+            <div className="max-h-[32vh] overflow-y-auto sm:max-h-[40vh]">
               {uploads.length === 0 ? (
                 <div className="px-4 py-3 text-xs text-custom-text-300">No files selected.</div>
               ) : (

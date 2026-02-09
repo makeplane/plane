@@ -43,6 +43,26 @@ const toDisplayLabel = (value: string) => {
 const getMetaKeyFromProperty = (property: TFilterProperty) =>
   property.startsWith(META_PROPERTY_PREFIX) ? property.slice(META_PROPERTY_PREFIX.length) : "";
 
+const META_OBJECT_DISPLAY_KEYS = [
+  "name",
+  "title",
+  "label",
+  "display_name",
+  "displayName",
+  "team_name",
+  "teamName",
+];
+
+const getObjectDisplayValues = (value: Record<string, unknown>): string[] => {
+  for (const key of META_OBJECT_DISPLAY_KEYS) {
+    const candidate = value[key];
+    if (typeof candidate === "string" && candidate.trim()) return [candidate.trim()];
+  }
+  const rawValue = value.value;
+  if (typeof rawValue === "string" && rawValue.trim()) return [rawValue.trim()];
+  return [];
+};
+
 const normalizeMetaValues = (value: unknown): string[] => {
   if (value === null || value === undefined) return [];
   if (typeof value === "string") return value.trim() ? [value.trim()] : [];
@@ -50,7 +70,11 @@ const normalizeMetaValues = (value: unknown): string[] => {
   if (Array.isArray(value)) {
     return value.flatMap((entry) => normalizeMetaValues(entry));
   }
-  return [JSON.stringify(value)];
+  if (typeof value === "object") {
+    const displayValues = getObjectDisplayValues(value as Record<string, unknown>);
+    if (displayValues.length > 0) return displayValues;
+  }
+  return [];
 };
 
 export const collectMetaFilterOptions = (items: TMediaItem[]) => {

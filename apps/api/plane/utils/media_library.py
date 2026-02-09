@@ -261,6 +261,30 @@ def hydrate_artifacts_with_meta(
     return hydrated
 
 
+_META_OBJECT_DISPLAY_KEYS = (
+    "name",
+    "title",
+    "label",
+    "display_name",
+    "displayName",
+    "team_name",
+    "teamName",
+)
+
+
+def _get_object_display_values(value: dict) -> list[str]:
+    results: list[str] = []
+    for key in _META_OBJECT_DISPLAY_KEYS:
+        candidate = value.get(key)
+        if isinstance(candidate, str) and candidate.strip():
+            results.append(candidate.strip())
+            break
+    raw_value = value.get("value")
+    if isinstance(raw_value, str) and raw_value.strip():
+        results.append(raw_value.strip())
+    return results
+
+
 def _normalize_meta_values(value: object) -> list[str]:
     if value is None:
         return []
@@ -274,6 +298,13 @@ def _normalize_meta_values(value: object) -> list[str]:
         for entry in value:
             results.extend(_normalize_meta_values(entry))
         return results
+    if isinstance(value, dict):
+        results = _get_object_display_values(value)
+        serialized = json.dumps(value)
+        if serialized:
+            results.append(serialized)
+        # Preserve order while removing duplicates
+        return list(dict.fromkeys(results))
     return [json.dumps(value)]
 
 
