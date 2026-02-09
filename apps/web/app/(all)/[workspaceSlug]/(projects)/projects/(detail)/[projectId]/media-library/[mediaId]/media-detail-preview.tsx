@@ -186,12 +186,10 @@ export const MediaDetailPreview = ({
             ) : null}
           </>
         ) : item.mediaType === "image" ? (
-          <div
-            className={`overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90 ${previewHeightClass}`}
-          >
+          <div className={`overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90 ${previewHeightClass}`}>
             <button
               type="button"
-              className="h-full w-full cursor-zoom-in"
+              className="h-full w-full cursor-zoom-in bg-custom-background-100"
               onClick={() => {
                 setIsImageZoomOpen(true);
               }}
@@ -203,7 +201,7 @@ export const MediaDetailPreview = ({
                   alt={item.title}
                   loading="lazy"
                   decoding="async"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain"
                   onLoad={(event) => {
                     const target = event.currentTarget;
                     if (!target.naturalWidth || !target.naturalHeight) return;
