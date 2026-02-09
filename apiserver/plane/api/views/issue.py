@@ -4,7 +4,8 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
-from django.db import IntegrityError
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError, transaction
 from django.db.models import (
     Case,
     CharField,
@@ -36,7 +37,8 @@ from plane.api.serializers import (
     IssueSerializer,
     LabelSerializer,
     IssueTypeSerializer,
-    IssueCustomPropertySerializer
+    IssueCustomPropertySerializer,
+    IssueBulkUpdateSerializer
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -59,8 +61,10 @@ from plane.db.models import (
     IssueCustomProperty,
     IssueTypeCustomProperty,
     Workspace,
-    User
+    User,
+    IssueAssignee
 )
+from plane.api.utils.update_resolver import resolve_update_values
 from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects
 from .base import BaseAPIView
 from datetime import datetime
@@ -1350,3 +1354,133 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
             epoch=epoch_timestamp,
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class IssueBulkUpdateAPIEndpoint(BaseAPIView):
+    """
+    Bulk update issues based on filter criteria.
+    Endpoint: PATCH /workspaces/{slug}/projects/{project_id}/issues/bulk-update/
+    """
+    permission_classes = [ProjectEntityPermission]
+
+    def patch(self, request, slug, project_id):
+        serializer = IssueBulkUpdateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                {"success": False, "error": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        filters = serializer.validated_data['filters']
+        updates = serializer.validated_data['updates']
+
+        try:
+            resolved_filters = issue_filters(filters, method="POST")
+        except Exception as e:
+            return Response(
+                {"success": False, "error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            with transaction.atomic():
+                issues = Issue.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    **resolved_filters
+                ).select_for_update()
+                count = issues.count()
+                if count == 0:
+                    return Response(
+                        {
+                            "success": True,
+                            "count": 0,
+                            "message": "No issues found matching the provided filters. No updates performed."
+                        },
+                        status=status.HTTP_200_OK
+                    )
+
+                issue_ids = list(issues.values_list('id', flat=True))
+                workspace_id = Workspace.objects.filter(slug=slug).values_list('id', flat=True).first()
+
+                current_instances = {
+                    str(issue.id): json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
+                    for issue in issues
+                }
+                current_assignees_map = {
+                    str(issue.id): set(issue.assignees.values_list('id', flat=True))
+                    for issue in issues
+                }
+
+                try:
+                    scalar_updates, m2m_updates = resolve_update_values(updates, workspace_id, project_id)
+                except ValidationError as e:
+                    return Response(
+                        {"success": False, "error": str(e)},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+                if scalar_updates:
+                    scalar_updates = {**scalar_updates, 'updated_at': timezone.now()}
+                    Issue.objects.filter(id__in=issue_ids).update(**scalar_updates)
+
+                if 'add_assignees' in m2m_updates:
+                    assignee_ids = m2m_updates['add_assignees']
+                    assignee_records = [
+                        IssueAssignee(
+                            issue_id=iid,
+                            assignee_id=aid,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
+                            created_by_id=request.user.id,
+                            updated_by_id=request.user.id
+                        )
+                        for iid in issue_ids for aid in assignee_ids
+                    ]
+                    IssueAssignee.objects.bulk_create(
+                        assignee_records, batch_size=100, ignore_conflicts=True
+                    )
+                if 'remove_assignees' in m2m_updates:
+                    IssueAssignee.objects.filter(
+                        issue_id__in=issue_ids,
+                        assignee_id__in=m2m_updates['remove_assignees']
+                    ).delete()
+
+                activity_data = {k: str(v) if k == 'state_id' else v for k, v in scalar_updates.items()}
+                add_ids = set(m2m_updates.get('add_assignees', []))
+                remove_ids = set(m2m_updates.get('remove_assignees', []))
+                has_assignee_changes = add_ids or remove_ids
+                epoch = int(timezone.now().timestamp())
+                origin = request.META.get("HTTP_ORIGIN")
+
+                for issue_id in issue_ids:
+                    issue_id_str = str(issue_id)
+                    issue_activity_data = activity_data.copy()
+                    if has_assignee_changes:
+                        final_assignees = (current_assignees_map[issue_id_str] | add_ids) - remove_ids
+                        issue_activity_data['assignee_ids'] = [str(uid) for uid in final_assignees]
+                    issue_activity.delay(
+                        type="issue.activity.updated",
+                        requested_data=json.dumps(issue_activity_data, cls=DjangoJSONEncoder),
+                        current_instance=current_instances[issue_id_str],
+                        actor_id=str(request.user.id),
+                        issue_id=issue_id_str,
+                        project_id=str(project_id),
+                        epoch=epoch,
+                        notification=True,
+                        origin=origin,
+                    )
+
+                return Response(
+                    {
+                        "success": True,
+                        "count": count,
+                        "message": f"Successfully updated {count} issue{'s' if count != 1 else ''}"
+                    },
+                    status=status.HTTP_200_OK
+                )
+        except IntegrityError:
+            return Response(
+                {"success": False, "error": "Database constraint violation. One or more update values are invalid."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception:
+            raise  # 500 for retry

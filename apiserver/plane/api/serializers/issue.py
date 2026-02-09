@@ -565,3 +565,72 @@ class IssueExpandSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
+
+class IssueBulkUpdateSerializer(serializers.Serializer):
+    """
+    Serializer for bulk issue update requests.
+    Validates that both filters and updates are provided and non-empty.
+    Also validates that field names are allowed.
+    """
+    filters = serializers.JSONField(required=True)
+    updates = serializers.JSONField(required=True)
+    
+    # Allowed filter fields (from ISSUE_FILTER dict + character fields)
+    ALLOWED_FILTER_FIELDS = {
+        "state", "state_group", "state_name", "estimate_point", "priority",
+        "parent", "labels", "assignees", "assignees_by_username", "mentions",
+        "created_by", "created_by_username", "logged_by", "name",
+        "created_at", "updated_at", "start_date", "target_date", "completed_at",
+        "type", "type_id", "project", "cycle", "module", "inbox_status",
+        "sub_issue", "subscriber", "start_target_date", "sequence_id",
+        "custom_properties", "created_at_ts", "updated_at_ts",
+        # Character fields
+        "trip_reference_number", "reference_number", "hub_code", "hub_name",
+        "customer_code", "customer_name", "vendor_name", "vendor_code",
+        "worker_code", "worker_name", "business_type", "source"
+    }
+    
+    # Allowed update fields (scalar fields + special update fields)
+    ALLOWED_UPDATE_FIELDS = {
+        "add_assignees_by_username", "remove_assignees_by_username", "state_name", "priority",
+        "vendor_code", "hub_code", "customer_code", "worker_code",
+        "reference_number", "trip_reference_number", "hub_name", "customer_name",
+        "vendor_name", "worker_name", "business_type", "source", "name",
+        "start_date", "target_date"
+    }
+    
+    def validate_filters(self, value):
+        if not value or not isinstance(value, dict):
+            raise serializers.ValidationError("Filters must be a non-empty dictionary")
+        
+        # Check for unknown filter fields
+        unknown_fields = set(value.keys()) - self.ALLOWED_FILTER_FIELDS
+        if unknown_fields:
+            raise serializers.ValidationError(
+                f"Unknown filter fields: {', '.join(sorted(unknown_fields))}"
+            )
+        
+        return value
+    
+    def validate_updates(self, value):
+        if not value or not isinstance(value, dict):
+            raise serializers.ValidationError("Updates must be a non-empty dictionary")
+        
+        # Check for unknown update fields
+        unknown_fields = set(value.keys()) - self.ALLOWED_UPDATE_FIELDS
+        if unknown_fields:
+            raise serializers.ValidationError(
+                f"Unknown update fields: {', '.join(sorted(unknown_fields))}"
+            )
+        
+        # Reject if both add and remove contain same username
+        add_users = set(value.get('add_assignees_by_username', []))
+        remove_users = set(value.get('remove_assignees_by_username', []))
+        overlap = add_users & remove_users
+        if overlap:
+            raise serializers.ValidationError(
+                f"Cannot add and remove same users: {', '.join(sorted(overlap))}"
+            )
+        
+        return value
