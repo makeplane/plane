@@ -164,7 +164,7 @@ export const MediaDetailPreview = ({
                 className="video-js vjs-default-skin h-full w-full"
                 poster={item.thumbnail}
                 playsInline
-                preload="metadata"
+                preload="auto"
                 crossOrigin={crossOrigin}
               />
               {playerElement ? createPortal(overlayContent, playerElement) : overlayContent}

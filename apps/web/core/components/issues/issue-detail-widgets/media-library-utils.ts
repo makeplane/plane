@@ -142,8 +142,24 @@ export const resolveAttachmentDownloadUrl = async (rawUrl: string) => {
   if (!response.ok) {
     throw new Error("Unable to access attachment.");
   }
-  const data = (await response.json()) as { url?: string };
-  return data.url ?? "";
+  const contentType = response.headers.get("content-type") ?? "";
+  const contentLength = Number(response.headers.get("content-length") ?? "NaN");
+  const shouldAttemptJson =
+    contentType.includes("application/json") ||
+    (Number.isFinite(contentLength) && contentLength > 0 && contentLength < 1024 * 1024);
+
+  if (!shouldAttemptJson) {
+    response.body?.cancel?.();
+    return normalizedUrl;
+  }
+
+  try {
+    const data = (await response.json()) as { url?: string };
+    return data.url ?? normalizedUrl;
+  } catch {
+    response.body?.cancel?.();
+    return normalizedUrl;
+  }
 };
 
 export const buildEventMeta = (issue?: TIssue, createdBy?: string) => {

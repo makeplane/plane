@@ -194,8 +194,8 @@ const MediaDetailPage = () => {
 
       playerRef.current = videojs(videoElement, {
         controls: true,
-        autoplay: false,
-        preload: "metadata",
+        autoplay: true,
+        preload: "auto",
         playsinline: true,
         crossOrigin,
         nativeTextTracks: false,

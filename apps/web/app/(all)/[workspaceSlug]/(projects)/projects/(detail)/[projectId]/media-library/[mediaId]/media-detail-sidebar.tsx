@@ -114,7 +114,10 @@ export const MediaDetailSidebar = ({
             ) : null}
             {isMeaningfulValue(season) ? (
               <div className="flex items-center justify-between gap-3">
-                <span className="text-custom-text-200">Season</span>
+                <span className="flex items-center gap-2 text-custom-text-200">
+                  <Calendar className="h-3.5 w-3.5" />
+                  <span>Season</span>
+                </span>
                 <span className="text-right">{season}</span>
               </div>
             ) : null}

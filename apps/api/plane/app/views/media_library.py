@@ -63,6 +63,7 @@ _IMAGE_FORMATS = {
     "thumbnail",
 }
 _VIDEO_FORMATS = {"mp4", "m3u8", "mov", "webm", "avi", "mkv", "mpeg", "mpg", "m4v"}
+_MP4_FASTSTART_FORMATS = {".mp4", ".m4v"}
 logger = logging.getLogger(__name__)
 
 
@@ -226,8 +227,19 @@ def _delete_artifact_disk_path(path: Path, artifact_name: str | None = None) -> 
         return
     except OSError:
         return
+
+
 def _should_download_as_attachment(request) -> bool:
     value = request.query_params.get("download")
+    if value is None:
+        return False
+    if isinstance(value, str) and value.strip().lower() in {"0", "false", "no"}:
+        return False
+    return True
+
+
+def _should_stream_in_chunks(request) -> bool:
+    value = request.query_params.get("stream")
     if value is None:
         return False
     if isinstance(value, str) and value.strip().lower() in {"0", "false", "no"}:
@@ -294,6 +306,84 @@ def _iter_file_range(path: Path, start: int, end: int, chunk_size: int = 8192):
                 break
             yield chunk
             remaining -= len(chunk)
+
+
+def _is_mp4_faststart(path: Path) -> bool:
+    """
+    Check top-level atom order. Faststart MP4 has `moov` before the first `mdat`.
+    """
+    if path.suffix.lower() not in _MP4_FASTSTART_FORMATS or not path.exists() or not path.is_file():
+        return False
+
+    file_size = path.stat().st_size
+    offset = 0
+    moov_offset = None
+    mdat_offset = None
+
+    with open(path, "rb") as handle:
+        while offset + 8 <= file_size:
+            handle.seek(offset)
+            header = handle.read(8)
+            if len(header) < 8:
+                break
+
+            atom_size = int.from_bytes(header[:4], byteorder="big", signed=False)
+            atom_type = header[4:8]
+            header_size = 8
+
+            if atom_size == 1:
+                ext_size = handle.read(8)
+                if len(ext_size) < 8:
+                    break
+                atom_size = int.from_bytes(ext_size, byteorder="big", signed=False)
+                header_size = 16
+            elif atom_size == 0:
+                atom_size = file_size - offset
+
+            if atom_size < header_size:
+                break
+
+            if atom_type == b"moov" and moov_offset is None:
+                moov_offset = offset
+            elif atom_type == b"mdat" and mdat_offset is None:
+                mdat_offset = offset
+
+            if moov_offset is not None and mdat_offset is not None:
+                return moov_offset < mdat_offset
+            if mdat_offset is not None and moov_offset is None:
+                return False
+
+            offset += atom_size
+
+    if moov_offset is None:
+        return False
+    if mdat_offset is None:
+        return True
+    return moov_offset < mdat_offset
+
+
+def _ensure_mp4_faststart(path: Path, artifact_name: str | None = None, force: bool = False) -> None:
+    if path.suffix.lower() not in _MP4_FASTSTART_FORMATS or not path.exists() or not path.is_file():
+        return
+
+    label = artifact_name or path.name
+    if not force:
+        try:
+            if _is_mp4_faststart(path):
+                return
+        except OSError as exc:
+            logger.warning("Failed to inspect MP4 atom order for %s: %s", label, exc)
+            return
+
+    if shutil.which("ffmpeg") is None:
+        logger.warning("ffmpeg is not installed. Skipping MP4 faststart for %s.", label)
+        return
+
+    try:
+        transcode_video_to_mp4(path, path)
+    except MediaLibraryTranscodeError as exc:
+        logger.warning("Failed to optimize MP4 for streaming (%s): %s", label, exc)
+
 
 mimetypes.add_type("application/vnd.apple.mpegurl", ".m3u8")
 mimetypes.add_type("application/x-mpegURL", ".m3u8")
@@ -486,6 +576,7 @@ class MediaArtifactFileAPIView(BaseAPIView):
                     file_path = matches[0].resolve(strict=False)
 
         download_requested = _should_download_as_attachment(request)
+        stream_requested = _should_stream_in_chunks(request) and not download_requested
         format_value = str(artifact.get("format") or "").lower()
         action_value = str(artifact.get("action") or "").lower()
         is_video = (
@@ -521,6 +612,9 @@ class MediaArtifactFileAPIView(BaseAPIView):
                     return Response({"error": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             file_path = mp4_path
 
+        if is_video and artifact_path is None:
+            _ensure_mp4_faststart(file_path, artifact.get("name"))
+
         content_type, _ = mimetypes.guess_type(str(file_path))
         content_type = content_type or "application/octet-stream"
         range_header = request.headers.get("range") or request.META.get("HTTP_RANGE")
@@ -533,6 +627,10 @@ class MediaArtifactFileAPIView(BaseAPIView):
                 response["Accept-Ranges"] = "bytes"
                 return response
             start, end = parsed
+            if stream_requested and is_video:
+                max_bytes = getattr(settings, "MEDIA_LIBRARY_STREAM_CHUNK_BYTES", 0) or 0
+                if max_bytes > 0 and end - start + 1 > max_bytes:
+                    end = min(file_size - 1, start + max_bytes - 1)
             response = StreamingHttpResponse(
                 _iter_file_range(file_path, start, end),
                 status=206,
@@ -1017,6 +1115,8 @@ class MediaArtifactsListAPIView(BaseAPIView):
                 with open(file_path, "wb") as handle:
                     for chunk in file_obj.chunks():
                         handle.write(chunk)
+                # Always rewrite uploaded MP4/M4V with +faststart so playback starts quickly.
+                _ensure_mp4_faststart(file_path, primary_artifact_name, force=True)
                 if video_thumbnail_name and video_thumbnail_path and video_thumbnail_relative_path:
                     if shutil.which("ffmpeg") is None:
                         logger.error("ffmpeg is not installed. Skipping video thumbnail for %s.", primary_artifact_name)
