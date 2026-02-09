@@ -1,4 +1,6 @@
 # base requirements
+# pkg_resources (required by opentelemetry-instrumentation at runtime, e.g. in Python 3.12 / slim images)
+setuptools>=65.0.0
 
 # django
 Django==4.2.14
