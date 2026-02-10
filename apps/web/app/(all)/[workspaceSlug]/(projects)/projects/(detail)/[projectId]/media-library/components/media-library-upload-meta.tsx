@@ -176,13 +176,13 @@ export const MediaLibraryUploadMetaForm = ({
         {meta.tags.map((tag) => (
           <span
             key={tag}
-            className="flex items-center gap-1 rounded-full border border-custom-border-200 bg-custom-background-90 px-2 py-0.5 text-xs text-custom-text-100"
+            className="inline-flex items-center gap-1 rounded-full border border-custom-primary-100/30 bg-custom-primary-100/15 px-2 py-0.5 text-[11px] font-medium text-custom-primary-100"
           >
             {tag}
             <button
               type="button"
               onClick={() => onRemoveTag(tag)}
-              className="text-custom-text-300 hover:text-custom-text-100"
+              className="text-custom-primary-100/80 hover:text-custom-primary-100"
             >
               <X className="h-3 w-3" />
             </button>
@@ -199,7 +199,7 @@ export const MediaLibraryUploadMetaForm = ({
             }
           }}
           placeholder={meta.tags.length === 0 ? "Add tags" : ""}
-          className="min-w-[140px] flex-1 bg-transparent px-1 py-0.5 text-xs text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
+          className="min-w-[140px] flex-1 bg-transparent px-1 py-0.5 text-[11px] text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
         />
       </div>
       <div className="mt-1 text-[10px] text-custom-text-300">Press comma or Enter to add.</div>

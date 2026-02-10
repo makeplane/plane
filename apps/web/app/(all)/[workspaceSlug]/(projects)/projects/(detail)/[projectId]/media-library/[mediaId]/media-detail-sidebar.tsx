@@ -43,7 +43,12 @@ type TEditableMetaKey =
   | "start_time"
   | "opposition";
 
-export const MediaDetailSidebar = ({ workspaceSlug, projectId, item, onMediaItemUpdated }: TMediaDetailSidebarProps) => {
+export const MediaDetailSidebar = ({
+  workspaceSlug,
+  projectId,
+  item,
+  onMediaItemUpdated,
+}: TMediaDetailSidebarProps) => {
   const { setPeekIssue } = useIssueDetail();
   const workItemId = item?.workItemId ?? "";
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
@@ -102,17 +107,7 @@ export const MediaDetailSidebar = ({ workspaceSlug, projectId, item, onMediaItem
     [artifactMeta, item?.id, item?.packageId, mediaLibraryService, onMediaItemUpdated, projectId, workspaceSlug]
   );
   const baseMetaKeys = useMemo(
-    () =>
-      new Set([
-        "category",
-        "sport",
-        "program",
-        "level",
-        "season",
-        "start_date",
-        "start_time",
-        "opposition",
-      ]),
+    () => new Set(["category", "sport", "program", "level", "season", "start_date", "start_time", "opposition"]),
     []
   );
   const additionalMetaEntries = useMemo(
@@ -120,7 +115,7 @@ export const MediaDetailSidebar = ({ workspaceSlug, projectId, item, onMediaItem
       Object.entries(artifactMeta).filter(([key, value]) => {
         if (baseMetaKeys.has(key)) return false;
         const normalizedKey = key.toLowerCase();
-        if (normalizedKey === "kind" || normalizedKey === "thumbnail") return false;
+        if (normalizedKey === "kind" || normalizedKey === "thumbnail" || normalizedKey === "tags") return false;
         const normalized = formatMetaValue(value);
         return normalized && normalized !== "--";
       }),

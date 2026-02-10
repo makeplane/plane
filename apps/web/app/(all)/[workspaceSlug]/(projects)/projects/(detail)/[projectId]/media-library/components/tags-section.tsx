@@ -82,13 +82,7 @@ const buildPreview = (item: TMediaItem, onPlay: () => void): ReactNode => {
   );
 };
 
-export const TagsSection = ({
-  item,
-  onPlay,
-  editable = false,
-  isSaving = false,
-  onTagsChange,
-}: TagsSectionProps) => {
+export const TagsSection = ({ item, onPlay, editable = false, isSaving = false, onTagsChange }: TagsSectionProps) => {
   const meta = item.meta ?? {};
   const oppositionName = normalizeTagValue(meta.opposition);
   const { getUserDetails } = useMember();
@@ -126,21 +120,22 @@ export const TagsSection = ({
 
   if (editable) {
     return (
-      <div className="w-full self-start  bg-custom-background-100 px-4 py-3 lg:max-w-[720px]">
+      <div className="w-full self-start lg:max-w-[720px]">
         <div className="text-[11px] text-custom-text-300">
-          <div>Tags</div>
-          <div className="mt-1 flex flex-wrap items-center gap-2 rounded-md  bg-custom-background-100 px-2 py-1.5">
+          <div className="mb-1">Tags</div>
+          <div className="flex min-h-[34px] w-full flex-wrap items-center gap-2 rounded-md   px-2 py-1.5">
             {tagsList.map((tag) => (
               <span
                 key={tag}
-                className="flex items-center gap-1 rounded-full border border-custom-border-200 bg-custom-background-90 px-2 py-0.5 text-xs text-custom-text-100"
+                className="inline-flex items-center gap-1 rounded-full border border-custom-primary-100/30 bg-custom-primary-100/15 px-2 py-0.5 text-[11px] font-medium text-custom-primary-100"
               >
                 {tag}
                 <button
                   type="button"
                   onClick={() => handleRemoveTag(tag)}
-                  className="text-custom-text-300 hover:text-custom-text-100"
+                  className="text-custom-primary-100/80 hover:text-custom-primary-100"
                   disabled={isSaving}
+                  aria-label={`Remove ${tag}`}
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -157,7 +152,7 @@ export const TagsSection = ({
                 }
               }}
               placeholder={tagsList.length === 0 ? "Add tags" : ""}
-              className="min-w-[140px] flex-1 bg-transparent px-1 py-0.5 text-xs text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
+              className="min-w-[140px] flex-1 bg-transparent px-1 py-0.5 text-[11px] text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
               disabled={isSaving}
             />
           </div>
@@ -176,7 +171,9 @@ export const TagsSection = ({
   addTag("Source", meta.source);
   const createdByValue = meta.created_by ?? meta.createdBy ?? item.author;
   const createdByLabel =
-    typeof createdByValue === "string" ? getUserDetails(createdByValue)?.display_name ?? createdByValue : createdByValue;
+    typeof createdByValue === "string"
+      ? (getUserDetails(createdByValue)?.display_name ?? createdByValue)
+      : createdByValue;
   addTag("Created by", createdByLabel);
   addTag("File type", meta.file_type ?? meta.fileType ?? item.format);
 
