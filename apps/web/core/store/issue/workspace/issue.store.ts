@@ -81,10 +81,10 @@ export class WorkspaceIssues extends BaseIssuesStore implements IWorkspaceIssues
     this.issueFilterStore = issueFilterStore;
   }
 
-  fetchParentStats = () => {};
+  fetchParentStats = () => { };
 
   /** */
-  updateParentStats = () => {};
+  updateParentStats = () => { };
 
   /**
    * This method is called to fetch the first issues of pagination
