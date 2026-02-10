@@ -9,7 +9,7 @@ import { Link2, MoveDiagonal, MoveRight, UploadCloud } from "lucide-react";
 import { API_BASE_URL, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
+import { TOAST_TYPE, setToast, updateToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssueAttachment, TNameDescriptionLoader } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
@@ -88,6 +88,7 @@ type TMediaLibraryAddResult = {
   successCount: number;
   skippedCount: number;
   failedCount: number;
+  errorMessage?: string;
 };
 
 const resolveInlineAssetUrl = (value: string) => {
@@ -604,7 +605,13 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
 
   const handleAddAssetsToMediaLibrary = useCallback(async (): Promise<TMediaLibraryAddResult> => {
     if (!workspaceSlug || !projectId || !issueId) {
-      throw new Error("Missing required fields.");
+      return {
+        total: 0,
+        successCount: 0,
+        skippedCount: 0,
+        failedCount: 0,
+        errorMessage: "Missing required fields.",
+      };
     }
 
     setIsAddingToMediaLibrary(true);
@@ -618,13 +625,25 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
       }
 
       if (resolvedAttachments.length === 0 && normalizedDescriptionImages.length === 0) {
-        throw new Error("No attachments or inline images found for this work item.");
+        return {
+          total: 0,
+          successCount: 0,
+          skippedCount: 0,
+          failedCount: 0,
+          errorMessage: "No attachments or inline images found for this work item.",
+        };
       }
 
       const manifest = await mediaLibraryService.ensureProjectLibrary(workspaceSlug, projectId);
       const packageId = typeof manifest?.id === "string" ? manifest.id : null;
       if (!packageId) {
-        throw new Error("Media library package not available.");
+        return {
+          total: 0,
+          successCount: 0,
+          skippedCount: 0,
+          failedCount: 0,
+          errorMessage: "Media library package not available.",
+        };
       }
 
       const attachmentUrlKeys = new Set(
@@ -806,12 +825,21 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
 
       if (result.successCount === 0) {
         if (result.skippedCount > 0 && result.failedCount === 0) {
-          throw new Error("Assets already exist in the media library.");
+          return {
+            ...result,
+            errorMessage: "Assets already exist in the media library.",
+          };
         }
         if (result.skippedCount > 0 && result.failedCount > 0) {
-          throw new Error("Some assets could not be added to the media library.");
+          return {
+            ...result,
+            errorMessage: "Some assets could not be added to the media library.",
+          };
         }
-        throw new Error("Unable to add assets to the media library.");
+        return {
+          ...result,
+          errorMessage: "Unable to add assets to the media library.",
+        };
       }
 
       return result;
@@ -830,30 +858,43 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     workspaceSlug,
   ]);
 
-  const handleAddAssetsClick = useCallback(() => {
+  const handleAddAssetsClick = useCallback(async () => {
     if (disabled || isAddingToMediaLibrary || !hasMediaAssets) return;
-    const addAssetsPromise = handleAddAssetsToMediaLibrary();
-    setPromiseToast(addAssetsPromise, {
-      loading: "Adding assets to media library...",
-      success: {
-        title: "Assets added",
-        message: (data) => {
-          if (!data) return "Assets added to the media library.";
-          const { total, successCount, skippedCount, failedCount } = data;
-          if (failedCount === 0 && skippedCount === 0) {
-            return `${successCount} of ${total} assets added to the media library.`;
-          }
-          if (failedCount === 0) {
-            return `${successCount} of ${total} assets added. ${skippedCount} skipped.`;
-          }
-          return `${successCount} of ${total} assets added. ${skippedCount} skipped, ${failedCount} failed.`;
-        },
-      },
-      error: {
-        title: "Assets not added",
-        message: (error) => getErrorMessage(error) || "Unable to add assets to the media library.",
-      },
+    const toastId = setToast({
+      type: TOAST_TYPE.LOADING,
+      title: "Adding assets to media library...",
     });
+    try {
+      const data = await handleAddAssetsToMediaLibrary();
+      if (data?.errorMessage) {
+        updateToast(toastId, {
+          type: TOAST_TYPE.ERROR,
+          title: "Assets not added",
+          message: data.errorMessage,
+        });
+        return;
+      }
+      const { total, successCount, skippedCount, failedCount } = data;
+      let message = "Assets added to the media library.";
+      if (failedCount === 0 && skippedCount === 0) {
+        message = `${successCount} of ${total} assets added to the media library.`;
+      } else if (failedCount === 0) {
+        message = `${successCount} of ${total} assets added. ${skippedCount} skipped.`;
+      } else {
+        message = `${successCount} of ${total} assets added. ${skippedCount} skipped, ${failedCount} failed.`;
+      }
+      updateToast(toastId, {
+        type: TOAST_TYPE.SUCCESS,
+        title: "Assets added",
+        message,
+      });
+    } catch (error) {
+      updateToast(toastId, {
+        type: TOAST_TYPE.ERROR,
+        title: "Assets not added",
+        message: getErrorMessage(error) || "Unable to add assets to the media library.",
+      });
+    }
   }, [disabled, handleAddAssetsToMediaLibrary, hasMediaAssets, isAddingToMediaLibrary]);
 
   const handleDeleteIssue = async () => {
