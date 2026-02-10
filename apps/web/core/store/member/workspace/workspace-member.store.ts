@@ -169,8 +169,9 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     const searchedWorkspaceMemberIds = filteredMemberIds.filter((userId) => {
       const memberDetails = this.getWorkspaceMemberDetails(userId);
       if (!memberDetails) return false;
-      const memberSearchQuery = `${memberDetails.member.first_name} ${memberDetails.member.last_name} ${memberDetails.member?.display_name
-        } ${memberDetails.member.email ?? ""}`;
+      const memberSearchQuery = `${memberDetails.member.first_name} ${memberDetails.member.last_name} ${
+        memberDetails.member?.display_name
+      } ${memberDetails.member.email ?? ""}`;
       return memberSearchQuery.toLowerCase()?.includes(searchQuery.toLowerCase());
     });
     return searchedWorkspaceMemberIds;
