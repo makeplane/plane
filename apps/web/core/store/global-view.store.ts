@@ -10,7 +10,7 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import type { IWorkspaceView } from "@plane/types";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // store
 import type { CoreRootStore } from "./root.store";
 
