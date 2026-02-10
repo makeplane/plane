@@ -39,7 +39,7 @@ export const CreateOrJoinWorkspaces = observer(function CreateOrJoinWorkspaces(p
   const { data: user } = useUser();
   const { config } = useInstance();
   // derived values
-  const isWorkspaceCreationEnabled = config?.is_workspace_creation_disabled ?? false;
+  const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled ?? false;
 
   useEffect(() => {
     if (invitations.length > 0) {
@@ -66,7 +66,7 @@ export const CreateOrJoinWorkspaces = observer(function CreateOrJoinWorkspaces(p
               handleCurrentViewChange={() => setCurrentView(ECreateOrJoinWorkspaceViews.WORKSPACE_CREATE)}
             />
           ) : currentView === ECreateOrJoinWorkspaceViews.WORKSPACE_CREATE ? (
-            isWorkspaceCreationEnabled ? (
+            !isWorkspaceCreationDisabled ? (
               <CreateWorkspace
                 stepChange={stepChange}
                 user={user ?? undefined}

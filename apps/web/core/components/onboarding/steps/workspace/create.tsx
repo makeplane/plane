@@ -51,7 +51,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
   const { fetchCurrentUserSettings } = useUserSettings();
   const { createWorkspace, fetchWorkspaces } = useWorkspace();
 
-  const isWorkspaceCreationEnabled = config?.is_workspace_creation_disabled ?? false;
+  const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled ?? false;
 
   // form info
   const {
@@ -114,7 +114,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
 
   const isButtonDisabled = !isValid || invalidSlug || isSubmitting;
 
-  if (!isWorkspaceCreationEnabled) {
+  if (isWorkspaceCreationDisabled) {
     return (
       <div className="flex flex-col gap-10">
         <span className="text-center text-14 text-tertiary">

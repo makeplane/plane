@@ -43,7 +43,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
   const { updateUserProfile } = useUserProfile();
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
   // derived values
-  const isWorkspaceCreationEnabled = config?.is_workspace_creation_disabled ?? false;
+  const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled ?? false;
   // translation
   const { t } = useTranslation();
   // local state
@@ -187,7 +187,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                     )}
                   </div>
                   <div className="w-full flex flex-col items-start justify-start gap-2 px-4 py-2 text-13">
-                    {isWorkspaceCreationEnabled && (
+                    {!isWorkspaceCreationDisabled && (
                       <Link href="/create-workspace" className="w-full">
                         <Menu.Item
                           as="div"
