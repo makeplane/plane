@@ -56,11 +56,7 @@ const resolveDocumentFormat = (item: TMediaItem) => {
   if (linkedFormat) return linkedFormat;
   const meta = item.meta as Record<string, unknown> | undefined;
   const metaFileType =
-    typeof meta?.file_type === "string"
-      ? meta.file_type
-      : typeof meta?.fileType === "string"
-        ? meta.fileType
-        : "";
+    typeof meta?.file_type === "string" ? meta.file_type : typeof meta?.fileType === "string" ? meta.fileType : "";
   const normalizedMetaType = normalizeDocumentFormat(metaFileType);
   if (normalizedMetaType) return normalizedMetaType;
   const format = normalizeDocumentFormat(item.format ?? "");
@@ -101,19 +97,18 @@ const MediaLibrarySectionPage = observer(() => {
       })),
     [mediaFilters.allConditionsForDisplay]
   );
-  const { items: libraryItems, isLoading, pagination } = useMediaLibraryItems(
-    workspaceSlug,
-    projectId,
-    libraryVersion,
-    {
-      query,
-      section: decodedSection,
-      filters: filterConditions,
-      formats: "thumbnail",
-      page: requestedPage,
-      perPage: pageSize,
-    }
-  );
+  const {
+    items: libraryItems,
+    isLoading,
+    pagination,
+  } = useMediaLibraryItems(workspaceSlug, projectId, libraryVersion, {
+    query,
+    section: decodedSection,
+    filters: filterConditions,
+    formats: "thumbnail",
+    page: requestedPage,
+    perPage: pageSize,
+  });
   const filteredItems = useMemo(
     () =>
       libraryItems.filter((item) => {
@@ -132,10 +127,7 @@ const MediaLibrarySectionPage = observer(() => {
   const resolvedPagination = pagination ?? lastPaginationRef.current;
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
   const filterConfigs = useMemo(
-    () =>
-      buildMetaFilterConfigs(collectMetaFilterOptions(filteredItems), operatorConfigs).filter(
-        (config) => config.id !== "meta.category"
-      ),
+    () => buildMetaFilterConfigs(collectMetaFilterOptions(filteredItems), operatorConfigs),
     [filteredItems, operatorConfigs]
   );
 
@@ -222,9 +214,7 @@ const MediaLibrarySectionPage = observer(() => {
         if (!parentHeight) return;
 
         const gridStyles = window.getComputedStyle(grid);
-        const gridColumns = gridStyles.gridTemplateColumns
-          .split(" ")
-          .filter((value) => value.trim().length > 0);
+        const gridColumns = gridStyles.gridTemplateColumns.split(" ").filter((value) => value.trim().length > 0);
         const columnCount = Math.max(1, gridColumns.length);
         const rowGap = parseFloat(gridStyles.rowGap || gridStyles.gap || "0") || 0;
 

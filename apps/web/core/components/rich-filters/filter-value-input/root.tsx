@@ -21,10 +21,22 @@ import { DateRangeFilterValueInput } from "./date/range";
 import { SingleDateFilterValueInput } from "./date/single";
 import { MultiSelectFilterValueInput } from "./select/multi";
 import { SingleSelectFilterValueInput } from "./select/single";
+import { TimeRangeFilterValueInput } from "./time/range";
+import { SingleTimeFilterValueInput } from "./time/single";
+
+const normalizeFilterProperty = (property: string) =>
+  property
+    .replace(/^meta\./, "")
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
 
 export const FilterValueInput = observer(
   <P extends TFilterProperty, V extends TFilterValue>(props: TFilterValueInputProps<P, V>) => {
     const { condition, filterFieldConfig, isDisabled = false, onChange } = props;
+    const isStartTimeFilter = normalizeFilterProperty(condition.property) === "start time";
 
     // Single select input
     if (filterFieldConfig?.type === FILTER_FIELD_TYPE.SINGLE_SELECT) {
@@ -52,6 +64,16 @@ export const FilterValueInput = observer(
 
     // Date filter input
     if (filterFieldConfig?.type === FILTER_FIELD_TYPE.DATE) {
+      if (isStartTimeFilter) {
+        return (
+          <SingleTimeFilterValueInput<P>
+            config={filterFieldConfig as TDateFilterFieldConfig<string>}
+            condition={condition as TFilterConditionNodeForDisplay<P, string>}
+            isDisabled={isDisabled}
+            onChange={(value) => onChange(value as SingleOrArray<V>)}
+          />
+        );
+      }
       return (
         <SingleDateFilterValueInput<P>
           config={filterFieldConfig as TDateFilterFieldConfig<string>}
@@ -64,6 +86,16 @@ export const FilterValueInput = observer(
 
     // Date range filter input
     if (filterFieldConfig?.type === FILTER_FIELD_TYPE.DATE_RANGE) {
+      if (isStartTimeFilter) {
+        return (
+          <TimeRangeFilterValueInput<P>
+            config={filterFieldConfig as TDateRangeFilterFieldConfig<string>}
+            condition={condition as TFilterConditionNodeForDisplay<P, string>}
+            isDisabled={isDisabled}
+            onChange={(value) => onChange(value as SingleOrArray<V>)}
+          />
+        );
+      }
       return (
         <DateRangeFilterValueInput<P>
           config={filterFieldConfig as TDateRangeFilterFieldConfig<string>}

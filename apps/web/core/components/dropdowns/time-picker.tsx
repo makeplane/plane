@@ -24,6 +24,7 @@ type Props = TDropdownProps & {
   clearIconClassName?: string;
   renderByDefault?: boolean;
   optionsClassName?: string;
+  useNativePicker?: boolean;
 };
 
 export const TimeDropdown: React.FC<Props> = observer((props) => {
@@ -41,16 +42,18 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
     tabIndex,
     disabled = false,
     renderByDefault = true,
-    closeOnSelect = true,
+    closeOnSelect: _closeOnSelect = true,
     onChange,
     value,
     optionsClassName = "",
+    useNativePicker = false,
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
   const [tempTime24, setTempTime24] = useState<string>("");
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const nativeInputRef = useRef<HTMLInputElement | null>(null);
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
@@ -71,6 +74,20 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
   /* Open dropdown & initialize time */
   /* ─────────────────────────────── */
   const handleOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (useNativePicker) {
+      e.preventDefault();
+      const input = nativeInputRef.current;
+      if (!input) return;
+
+      if ("showPicker" in input && typeof input.showPicker === "function") {
+        input.showPicker();
+      } else {
+        input.focus();
+        input.click();
+      }
+      return;
+    }
+
     handleOnClick(e);
     setTempTime24(value ? isoTo24Hour(value) : "");
   };
@@ -88,19 +105,6 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
     }
   };
 
-  /* ───────────── */
-  /* Apply on OK   */
-  /* ───────────── */
-  const handleApply = () => {
-    if (!tempTime24) return;
-
-    const updatedISO = updateISOTime(value, tempTime24);
-    onChange(updatedISO);
-
-    handleClose();
-    referenceElement?.blur();
-  };
-
   const displayValue = value ? isoTo24Hour(value) : placeholder;
 
   const comboButton = (
@@ -110,7 +114,7 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
       onClick={handleOpen}
       disabled={disabled}
       className={cn(
-        "clickable block h-full max-w-full outline-none",
+        "clickable relative block h-full max-w-full outline-none",
         {
           "cursor-not-allowed text-custom-text-200": disabled,
           "cursor-pointer": !disabled,
@@ -144,6 +148,17 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
           />
         )}
       </DropdownButton>
+      {useNativePicker ? (
+        <input
+          ref={nativeInputRef}
+          type="time"
+          value={value ? isoTo24Hour(value) : ""}
+          onChange={handlePickTime}
+          tabIndex={-1}
+          aria-hidden
+          className="pointer-events-none absolute inset-0 h-full w-full opacity-0"
+        />
+      ) : null}
     </button>
   );
 
@@ -159,6 +174,7 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
       renderByDefault={renderByDefault}
     >
       {isOpen &&
+        !useNativePicker &&
         createPortal(
           <Combobox.Options data-prevent-outside-click static>
             <div

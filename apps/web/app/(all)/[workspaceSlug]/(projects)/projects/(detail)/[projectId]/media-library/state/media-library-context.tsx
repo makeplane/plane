@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { FilterInstance } from "@plane/shared-state";
-import type { TFilterConfig } from "@plane/types";
+import type { TFilterConfig, TFilterValue } from "@plane/types";
 
 import type { TMediaLibraryExternalFilter, TMediaLibraryFilterProperty } from "../utils/media-library-filters";
 import { mediaLibraryFiltersAdapter } from "../utils/media-library-filters";
@@ -16,7 +16,7 @@ type TMediaLibraryContext = {
   libraryVersion: number;
   refreshLibrary: () => void;
   mediaFilters: FilterInstance<TMediaLibraryFilterProperty, TMediaLibraryExternalFilter>;
-  setMediaFilterConfigs: (configs: TFilterConfig<TMediaLibraryFilterProperty, string>[]) => void;
+  setMediaFilterConfigs: (configs: TFilterConfig<TMediaLibraryFilterProperty, TFilterValue>[]) => void;
 };
 
 const MediaLibraryContext = createContext<TMediaLibraryContext | null>(null);
@@ -28,7 +28,7 @@ export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
   const filterInstancesRef = useRef(
     new Map<string, FilterInstance<TMediaLibraryFilterProperty, TMediaLibraryExternalFilter>>()
   );
-  const filterConfigsRef = useRef(new Map<string, TFilterConfig<TMediaLibraryFilterProperty, string>[]>());
+  const filterConfigsRef = useRef(new Map<string, TFilterConfig<TMediaLibraryFilterProperty, TFilterValue>[]>());
 
   const openUpload = useCallback(() => setIsUploadOpen(true), []);
   const closeUpload = useCallback(() => setIsUploadOpen(false), []);
@@ -56,7 +56,7 @@ export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
   }, [activeScopeKey, mediaFilters]);
 
   const setMediaFilterConfigs = useCallback(
-    (configs: TFilterConfig<TMediaLibraryFilterProperty, string>[]) => {
+    (configs: TFilterConfig<TMediaLibraryFilterProperty, TFilterValue>[]) => {
       filterConfigsRef.current.set(activeScopeKey, configs);
       mediaFilters.configManager.setAreConfigsReady(true);
       mediaFilters.configManager.registerAll(configs);

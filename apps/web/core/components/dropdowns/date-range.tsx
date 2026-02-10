@@ -63,6 +63,7 @@ type Props = {
   customTooltipHeading?: string;
   defaultOpen?: boolean;
   renderInPortal?: boolean;
+  usePointerOutsideClick?: boolean;
 };
 
 export const DateRangeDropdown: React.FC<Props> = observer((props) => {
@@ -99,6 +100,7 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
     customTooltipHeading,
     defaultOpen = false,
     renderInPortal = false,
+    usePointerOutsideClick = false,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -133,6 +135,8 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
     isOpen,
     onOpen,
     setIsOpen,
+    useCaptureForOutsideClick: true,
+    usePointerOutsideClick,
   });
 
   const disabledDays: Matcher[] = [];

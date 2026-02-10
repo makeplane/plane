@@ -7,6 +7,7 @@ import shutil
 import tempfile
 import subprocess
 import time
+from datetime import datetime, timezone as dt_timezone
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -15,6 +16,7 @@ from django.conf import settings
 from django.utils import timezone
 
 # Third party imports
+from dateutil.parser import parse as dateutil_parse
 from rest_framework.serializers import ValidationError
 
 MANIFEST_VERSION = 1
@@ -316,6 +318,11 @@ _META_OBJECT_DISPLAY_KEYS = (
     "team_name",
     "teamName",
 )
+_START_TIME_FILTER_KEY = "start_time"
+_START_DATE_FILTER_KEY = "start_date"
+_START_DATE_META_ALIASES = ("start_date", "startDate", "start date")
+_START_TIME_META_ALIASES = ("start_time", "startTime", "start time")
+_TIME_VALUE_RE = re.compile(r"^\s*(\d{1,2}):(\d{2})(?::\d{2})?\s*([AaPp][Mm])?\s*$")
 
 
 def _get_object_display_values(value: dict) -> list[str]:
@@ -352,6 +359,105 @@ def _normalize_meta_values(value: object) -> list[str]:
         # Preserve order while removing duplicates
         return list(dict.fromkeys(results))
     return [json.dumps(value)]
+
+
+def _normalize_meta_key(key: str) -> str:
+    normalized = re.sub(
+        r"([a-z0-9])([A-Z])", r"\1 \2", key.replace("-", " ").replace("_", " ")
+    )
+    return re.sub(r"\s+", "_", normalized.strip().lower())
+
+
+def _get_meta_filter_values(meta: dict, meta_key: str) -> list[str]:
+    normalized_key = _normalize_meta_key(meta_key)
+    aliases = None
+    if normalized_key == _START_DATE_FILTER_KEY:
+        aliases = _START_DATE_META_ALIASES
+    elif normalized_key == _START_TIME_FILTER_KEY:
+        aliases = _START_TIME_META_ALIASES
+
+    if aliases:
+        for alias in aliases:
+            values = _normalize_meta_values(meta.get(alias))
+            if values:
+                return values
+        return []
+
+    return _normalize_meta_values(meta.get(meta_key))
+
+
+def _parse_datetime_value(value: str) -> float | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    try:
+        parsed = dateutil_parse(value)
+    except (TypeError, ValueError, OverflowError):
+        return None
+    if not isinstance(parsed, datetime):
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=dt_timezone.utc)
+    else:
+        parsed = parsed.astimezone(dt_timezone.utc)
+    return parsed.timestamp()
+
+
+def _parse_time_value(value: str) -> int | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+
+    parsed_datetime = _parse_datetime_value(value)
+    if parsed_datetime is not None:
+        parsed = datetime.fromtimestamp(parsed_datetime, tz=dt_timezone.utc)
+        return parsed.hour * 60 + parsed.minute
+
+    match = _TIME_VALUE_RE.match(value.strip())
+    if not match:
+        return None
+
+    hours = int(match.group(1))
+    minutes = int(match.group(2))
+    meridiem = (match.group(3) or "").lower()
+
+    if meridiem:
+        if hours < 1 or hours > 12:
+            return None
+        if meridiem == "am":
+            hours = 0 if hours == 12 else hours
+        elif meridiem == "pm":
+            hours = 12 if hours == 12 else hours + 12
+    elif hours < 0 or hours > 23:
+        return None
+
+    if minutes < 0 or minutes > 59:
+        return None
+
+    return hours * 60 + minutes
+
+
+def _matches_meta_range(item_values: list[str], condition_values: list[str], meta_key: str) -> bool:
+    if len(condition_values) < 2:
+        return True
+
+    normalized_key = _normalize_meta_key(meta_key)
+    parse_value = _parse_time_value if normalized_key == _START_TIME_FILTER_KEY else _parse_datetime_value
+
+    lower = parse_value(condition_values[0])
+    upper = parse_value(condition_values[1])
+    if lower is None or upper is None:
+        return True
+
+    range_start = min(lower, upper)
+    range_end = max(lower, upper)
+
+    for item_value in item_values:
+        parsed_value = parse_value(item_value)
+        if parsed_value is None:
+            continue
+        if range_start <= parsed_value <= range_end:
+            return True
+
+    return False
 
 
 def _get_meta_string(meta: dict, keys: list[str], fallback: str = "") -> str:
@@ -444,7 +550,7 @@ def filter_media_library_artifacts(
             meta_key = property_name[len("meta."):]
             if not meta_key or meta_key in META_FILTER_EXCLUDED_KEYS:
                 continue
-            item_values = _normalize_meta_values(meta.get(meta_key))
+            item_values = _get_meta_filter_values(meta, meta_key)
             if not item_values:
                 return False
             value = condition.get("value")
@@ -459,6 +565,9 @@ def filter_media_library_artifacts(
             operator = condition.get("operator")
             if operator in ("exact", "in"):
                 if not any(entry in item_values for entry in condition_values):
+                    return False
+            elif operator == "range":
+                if not _matches_meta_range(item_values, condition_values, meta_key):
                     return False
         return True
 

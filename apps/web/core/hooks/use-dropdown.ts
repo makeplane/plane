@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/hooks";
+import { useOutsideClickDetector, useOutsidePointerClickDetector } from "@plane/hooks";
 // hooks
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "./use-platform-os";
@@ -14,10 +14,23 @@ type TArguments = {
   query?: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setQuery?: React.Dispatch<React.SetStateAction<string>>;
+  useCaptureForOutsideClick?: boolean;
+  usePointerOutsideClick?: boolean;
 };
 
 export const useDropdown = (args: TArguments) => {
-  const { dropdownRef, inputRef, isOpen, onClose, onOpen, query, setIsOpen, setQuery } = args;
+  const {
+    dropdownRef,
+    inputRef,
+    isOpen,
+    onClose,
+    onOpen,
+    query,
+    setIsOpen,
+    setQuery,
+    useCaptureForOutsideClick = false,
+    usePointerOutsideClick = false,
+  } = args;
 
   const { isMobile } = usePlatformOS();
 
@@ -62,7 +75,21 @@ export const useDropdown = (args: TArguments) => {
   };
 
   // close the dropdown when the user clicks outside of the dropdown
-  useOutsideClickDetector(dropdownRef, handleClose);
+  useOutsideClickDetector(
+    dropdownRef,
+    () => {
+      if (!usePointerOutsideClick) handleClose();
+    },
+    useCaptureForOutsideClick
+  );
+  useOutsidePointerClickDetector(
+    dropdownRef,
+    () => {
+      if (usePointerOutsideClick) handleClose();
+    },
+    useCaptureForOutsideClick,
+    usePointerOutsideClick
+  );
 
   // focus the search input when the dropdown is open
   useEffect(() => {
