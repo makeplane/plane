@@ -5,6 +5,7 @@ import { renderFormattedPayloadDate } from "@plane/utils";
 import { CategoryDropdown } from "@/components/dropdowns/category-property";
 import { DateDropdown } from "@/components/dropdowns/date";
 import { LevelDropdown } from "@/components/dropdowns/level-property";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ProgramDropdown } from "@/components/dropdowns/program-property";
 import SportDropdown from "@/components/dropdowns/sport-property";
 import { TimeDropdown } from "@/components/dropdowns/time-picker";
@@ -12,6 +13,7 @@ import { YearRangeDropdown } from "@/components/dropdowns/year-property";
 import type { TMetaFieldChange, TMetaFormState, TUploadTarget } from "./media-library-upload-types";
 
 type Props = {
+  projectId: string;
   uploadTarget: TUploadTarget;
   meta: TMetaFormState;
   isLocked: boolean;
@@ -23,6 +25,7 @@ type Props = {
 };
 
 export const MediaLibraryUploadMetaForm = ({
+  projectId,
   uploadTarget,
   meta,
   isLocked,
@@ -49,6 +52,21 @@ export const MediaLibraryUploadMetaForm = ({
           clearIconClassName="h-3 w-3"
           dropdownClassName="z-[70]"
           disabled={isLocked}
+        />
+      </div>
+      <div className="flex flex-col gap-1 text-[11px] text-custom-text-300">
+        <span>Created by</span>
+        <MemberDropdown
+          value={meta.createdByMemberId}
+          onChange={(val) => onFieldChange("createdByMemberId", val)}
+          projectId={projectId}
+          multiple={false}
+          placeholder="Select member"
+          buttonVariant="border-with-text"
+          className="h-8"
+          buttonContainerClassName="w-full text-left"
+          buttonClassName={`text-xs ${meta.createdByMemberId ? "" : "text-custom-text-400"}`}
+          showUserDetails
         />
       </div>
       <div className="flex flex-col gap-1 text-[11px] text-custom-text-300">
@@ -161,15 +179,13 @@ export const MediaLibraryUploadMetaForm = ({
             className="flex items-center gap-1 rounded-full border border-custom-border-200 bg-custom-background-90 px-2 py-0.5 text-xs text-custom-text-100"
           >
             {tag}
-            {!isLocked ? (
-              <button
-                type="button"
-                onClick={() => onRemoveTag(tag)}
-                className="text-custom-text-300 hover:text-custom-text-100"
-              >
-                <X className="h-3 w-3" />
-              </button>
-            ) : null}
+            <button
+              type="button"
+              onClick={() => onRemoveTag(tag)}
+              className="text-custom-text-300 hover:text-custom-text-100"
+            >
+              <X className="h-3 w-3" />
+            </button>
           </span>
         ))}
         <input
@@ -184,7 +200,6 @@ export const MediaLibraryUploadMetaForm = ({
           }}
           placeholder={meta.tags.length === 0 ? "Add tags" : ""}
           className="min-w-[140px] flex-1 bg-transparent px-1 py-0.5 text-xs text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
-          disabled={isLocked}
         />
       </div>
       <div className="mt-1 text-[10px] text-custom-text-300">Press comma or Enter to add.</div>

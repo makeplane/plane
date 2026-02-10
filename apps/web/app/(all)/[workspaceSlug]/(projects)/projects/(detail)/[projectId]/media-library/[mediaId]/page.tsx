@@ -9,12 +9,15 @@ import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { LogoSpinner } from "@/components/common/logo-spinner";
+import { useMember } from "@/hooks/store/use-member";
+import { MediaLibraryService } from "@/services/media-library.service";
 import { useMediaLibraryItem } from "../hooks/use-media-library-item";
 import type { TMediaItem } from "../types";
 import { PLAYER_STYLE } from "./player-styles";
 import { useDocumentPreview, useResolvedMediaSources } from "../hooks/media-detail-hooks";
 import { MediaDetailPreview } from "./media-detail-preview";
 import { MediaDetailSidebar } from "./media-detail-sidebar";
+import { TagsSection } from "../components/tags-section";
 import {
   getCaptionTracks,
   getMetaString,
@@ -32,6 +35,7 @@ const MediaDetailPage = () => {
     workspaceSlug: string;
     projectId: string;
   };
+  const { getUserDetails } = useMember();
   const searchParams = useSearchParams();
   const fromParam = searchParams.get("from") ?? "";
   const backHref = useMemo(() => {
@@ -42,6 +46,8 @@ const MediaDetailPage = () => {
   }, [fromParam, projectId, workspaceSlug]);
   const { item: rawItem, isLoading } = useMediaLibraryItem(workspaceSlug, projectId, mediaId);
   const [mediaItemOverrides, setMediaItemOverrides] = useState<Partial<TMediaItem> | null>(null);
+  const [isTagsSaving, setIsTagsSaving] = useState(false);
+  const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
   const item = useMemo(
     () => (rawItem ? { ...rawItem, ...(mediaItemOverrides ?? {}) } : rawItem),
     [mediaItemOverrides, rawItem]
@@ -50,6 +56,26 @@ const MediaDetailPage = () => {
     if (!updates || Object.keys(updates).length === 0) return;
     setMediaItemOverrides((prev) => ({ ...(prev ?? {}), ...updates }));
   }, []);
+
+  const handleTagsUpdate = useCallback(
+    async (nextTags: string[]) => {
+      if (!item?.packageId || !item?.id) return;
+      const nextMeta = { ...(item.meta ?? {}), tags: nextTags };
+      setIsTagsSaving(true);
+      try {
+        await mediaLibraryService.updateManifestArtifacts(workspaceSlug, projectId, item.packageId, {
+          artifact_id: item.id,
+          artifact: {
+            meta: nextMeta,
+          },
+        });
+        handleMediaItemUpdated({ meta: nextMeta });
+      } finally {
+        setIsTagsSaving(false);
+      }
+    },
+    [handleMediaItemUpdated, item?.id, item?.meta, item?.packageId, mediaLibraryService, projectId, workspaceSlug]
+  );
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<ReturnType<typeof videojs> | null>(null);
   const [isImageZoomOpen, setIsImageZoomOpen] = useState(false);
@@ -731,7 +757,7 @@ const MediaDetailPage = () => {
     );
   }
   const createdBy = getMetaString(meta, ["created_by", "createdBy"], "");
-  const createdByLabel = createdBy || item.author;
+  const createdByLabel = (createdBy ? getUserDetails(createdBy)?.display_name ?? createdBy : "") || item.author;
 
   return (
     <div className="relative h-full w-full overflow-x-hidden overflow-y-auto lg:overflow-y-hidden">
@@ -771,43 +797,46 @@ const MediaDetailPage = () => {
         </div>
 
         <div className="grid gap-6 lg:min-h-0 lg:flex-1 lg:grid-cols-[2fr_1fr] lg:gap-0">
-          <MediaDetailPreview
-            item={item}
-            isVideo={isVideo}
-            isImageZoomOpen={isImageZoomOpen}
-            setIsImageZoomOpen={setIsImageZoomOpen}
-            videoRef={videoRef}
-            isPlaying={isPlaying}
-            onOverlayToggle={handleOverlayToggle}
-            onOverlaySeek={handleOverlaySeek}
-            isSettingsOpen={isSettingsOpen}
-            onCloseSettings={() => setIsSettingsOpen(false)}
-            qualityOptions={qualityOptions}
-            playbackRates={playbackRates}
-            currentPlaybackRate={currentPlaybackRate}
-            onSelectQuality={handleQualitySelect}
-            onSelectRate={handlePlaybackRate}
-            settingsPanelRef={settingsPanelRef}
-            playerElement={playerElement}
-            crossOrigin={crossOrigin}
-            videoDownloadSrc={videoDownloadSrc}
-            effectiveImageSrc={effectiveImageSrc}
-            isUnsupportedDocument={isUnsupportedDocument}
-            isBinaryDocument={isBinaryDocument}
-            isDocumentPreviewLoading={isDocumentPreviewLoading}
-            documentPreviewError={documentPreviewError}
-            documentPreviewHtml={documentPreviewHtml}
-            sanitizedDocumentPreviewHtml={sanitizedDocumentPreviewHtml}
-            documentPreviewUrl={documentPreviewUrl}
-            isTextDocument={isTextDocument}
-            isTextPreviewLoading={isTextPreviewLoading}
-            textPreviewError={textPreviewError}
-            textPreview={textPreview}
-            effectiveDocumentSrc={effectiveDocumentSrc}
-            description={item.description ?? null}
-            createdByLabel={createdByLabel}
-            createdAt={item.createdAt}
-          />
+          <div className="flex min-h-0 flex-col gap-6">
+            <MediaDetailPreview
+              item={item}
+              isVideo={isVideo}
+              isImageZoomOpen={isImageZoomOpen}
+              setIsImageZoomOpen={setIsImageZoomOpen}
+              videoRef={videoRef}
+              isPlaying={isPlaying}
+              onOverlayToggle={handleOverlayToggle}
+              onOverlaySeek={handleOverlaySeek}
+              isSettingsOpen={isSettingsOpen}
+              onCloseSettings={() => setIsSettingsOpen(false)}
+              qualityOptions={qualityOptions}
+              playbackRates={playbackRates}
+              currentPlaybackRate={currentPlaybackRate}
+              onSelectQuality={handleQualitySelect}
+              onSelectRate={handlePlaybackRate}
+              settingsPanelRef={settingsPanelRef}
+              playerElement={playerElement}
+              crossOrigin={crossOrigin}
+              videoDownloadSrc={videoDownloadSrc}
+              effectiveImageSrc={effectiveImageSrc}
+              isUnsupportedDocument={isUnsupportedDocument}
+              isBinaryDocument={isBinaryDocument}
+              isDocumentPreviewLoading={isDocumentPreviewLoading}
+              documentPreviewError={documentPreviewError}
+              documentPreviewHtml={documentPreviewHtml}
+              sanitizedDocumentPreviewHtml={sanitizedDocumentPreviewHtml}
+              documentPreviewUrl={documentPreviewUrl}
+              isTextDocument={isTextDocument}
+              isTextPreviewLoading={isTextPreviewLoading}
+              textPreviewError={textPreviewError}
+              textPreview={textPreview}
+              effectiveDocumentSrc={effectiveDocumentSrc}
+              description={item.description ?? null}
+              createdByLabel={createdByLabel}
+              createdAt={item.createdAt}
+            />
+            <TagsSection item={item} onPlay={handleOverlayToggle} editable onTagsChange={handleTagsUpdate} isSaving={isTagsSaving} />
+          </div>
           {isVideo ? (
             <style jsx global>
               {PLAYER_STYLE}

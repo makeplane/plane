@@ -2,6 +2,7 @@ export type TUploadTarget = "library" | "work-item";
 
 export type TMetaFormState = {
   category: string | null;
+  createdByMemberId: string | null;
   sport: string | null;
   program: string | null;
   level: string | null;

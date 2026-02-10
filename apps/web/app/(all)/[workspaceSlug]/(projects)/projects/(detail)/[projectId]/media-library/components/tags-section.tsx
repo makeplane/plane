@@ -1,12 +1,16 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { FileText, Image as ImageIcon, Video } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { FileText, Image as ImageIcon, Video, X } from "lucide-react";
 import type { TMediaItem } from "../types";
+import { useMember } from "@/hooks/store/use-member";
 
 type TagsSectionProps = {
   item: TMediaItem;
   onPlay: () => void;
+  editable?: boolean;
+  isSaving?: boolean;
+  onTagsChange?: (nextTags: string[]) => void;
 };
 
 const normalizeTagValue = (value: unknown): string => {
@@ -78,9 +82,18 @@ const buildPreview = (item: TMediaItem, onPlay: () => void): ReactNode => {
   );
 };
 
-export const TagsSection = ({ item, onPlay }: TagsSectionProps) => {
+export const TagsSection = ({
+  item,
+  onPlay,
+  editable = false,
+  isSaving = false,
+  onTagsChange,
+}: TagsSectionProps) => {
   const meta = item.meta ?? {};
   const oppositionName = normalizeTagValue(meta.opposition);
+  const { getUserDetails } = useMember();
+  const [tagDraft, setTagDraft] = useState("");
+  const tagsList = Array.isArray(meta.tags) ? meta.tags : [];
   const tagMap = new Map<string, string>();
 
   const addTag = (label: string, value: unknown) => {
@@ -89,6 +102,71 @@ export const TagsSection = ({ item, onPlay }: TagsSectionProps) => {
     tagMap.set(label, normalized);
   };
 
+  const handleAddTag = (rawValue: string) => {
+    if (!onTagsChange) return;
+    const parts = rawValue
+      .split(",")
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+    if (parts.length === 0) return;
+    const next = [...tagsList];
+    for (const part of parts) {
+      const exists = next.some((tag) => tag.toLowerCase() === part.toLowerCase());
+      if (!exists) next.push(part);
+    }
+    onTagsChange(next);
+    setTagDraft("");
+  };
+
+  const handleRemoveTag = (value: string) => {
+    if (!onTagsChange) return;
+    const next = tagsList.filter((tag) => tag.toLowerCase() !== value.toLowerCase());
+    onTagsChange(next);
+  };
+
+  if (editable) {
+    return (
+      <div className="w-full self-start  bg-custom-background-100 px-4 py-3 lg:max-w-[720px]">
+        <div className="text-[11px] text-custom-text-300">
+          <div>Tags</div>
+          <div className="mt-1 flex flex-wrap items-center gap-2 rounded-md  bg-custom-background-100 px-2 py-1.5">
+            {tagsList.map((tag) => (
+              <span
+                key={tag}
+                className="flex items-center gap-1 rounded-full border border-custom-border-200 bg-custom-background-90 px-2 py-0.5 text-xs text-custom-text-100"
+              >
+                {tag}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveTag(tag)}
+                  className="text-custom-text-300 hover:text-custom-text-100"
+                  disabled={isSaving}
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
+            ))}
+            <input
+              type="text"
+              value={tagDraft}
+              onChange={(event) => setTagDraft(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === ",") {
+                  event.preventDefault();
+                  handleAddTag(tagDraft);
+                }
+              }}
+              placeholder={tagsList.length === 0 ? "Add tags" : ""}
+              className="min-w-[140px] flex-1 bg-transparent px-1 py-0.5 text-xs text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
+              disabled={isSaving}
+            />
+          </div>
+          <div className="mt-1 text-[10px] text-custom-text-300">Press comma or Enter to add.</div>
+        </div>
+      </div>
+    );
+  }
+
   addTag("Category", meta.category);
   addTag("Sport", meta.sport);
   addTag("Program", meta.program);
@@ -96,11 +174,14 @@ export const TagsSection = ({ item, onPlay }: TagsSectionProps) => {
   addTag("Season", meta.season);
   addTag("Opposition", oppositionName);
   addTag("Source", meta.source);
-  addTag("Created by", meta.created_by ?? meta.createdBy ?? item.author);
+  const createdByValue = meta.created_by ?? meta.createdBy ?? item.author;
+  const createdByLabel =
+    typeof createdByValue === "string" ? getUserDetails(createdByValue)?.display_name ?? createdByValue : createdByValue;
+  addTag("Created by", createdByLabel);
   addTag("File type", meta.file_type ?? meta.fileType ?? item.format);
 
-  if (Array.isArray(meta.tags)) {
-    addTag("Tags", meta.tags);
+  if (tagsList.length > 0 && !editable) {
+    addTag("Tags", tagsList);
   }
 
   const tags = Array.from(tagMap.entries());

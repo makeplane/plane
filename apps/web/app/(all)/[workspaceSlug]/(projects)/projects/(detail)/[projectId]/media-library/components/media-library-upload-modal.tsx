@@ -6,6 +6,7 @@ import { FileImage, FileText, FileVideo, UploadCloud, X } from "lucide-react";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { Button } from "@plane/ui";
 import { useInstance } from "@/hooks/store/use-instance";
+import { useUser } from "@/hooks/store/user";
 import useDebounce from "@/hooks/use-debounce";
 import { IssueService } from "@/services/issue";
 import { MediaLibraryService } from "@/services/media-library.service";
@@ -46,6 +47,7 @@ type TUploadItem = {
 
 const DEFAULT_LIBRARY_META: TMetaFormState = {
   category: "Uploads",
+  createdByMemberId: null,
   sport: null,
   program: null,
   level: null,
@@ -57,6 +59,7 @@ const DEFAULT_LIBRARY_META: TMetaFormState = {
 
 const DEFAULT_WORK_ITEM_META: TMetaFormState = {
   category: null,
+  createdByMemberId: null,
   sport: null,
   program: null,
   level: null,
@@ -132,6 +135,9 @@ const buildMetaPayload = (
   const season = normalizeInputValue(metaState.season) || normalizeInputValue(selectedWorkItem?.year);
   if (season) meta.season = season;
 
+  const createdByMemberId = normalizeInputValue(metaState.createdByMemberId);
+  if (createdByMemberId) meta.created_by = createdByMemberId;
+
   if (metaState.tags.length > 0) meta.tags = metaState.tags;
 
   if (uploadTarget === "work-item") {
@@ -152,6 +158,7 @@ export const MediaLibraryUploadModal = () => {
   const { isUploadOpen, closeUpload, refreshLibrary } = useMediaLibrary();
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   const { config } = useInstance();
+  const { data: currentUser } = useUser();
   const [uploadTarget, setUploadTarget] = useState<TUploadTarget>("library");
   const [isDragging, setIsDragging] = useState(false);
   const [uploads, setUploads] = useState<TUploadItem[]>([]);
@@ -184,6 +191,13 @@ export const MediaLibraryUploadModal = () => {
   }, [uploadTarget]);
 
   useEffect(() => {
+    if (!currentUser?.id || uploadTarget !== "library") return;
+    setLibraryMeta((prev) =>
+      prev.createdByMemberId ? prev : { ...prev, createdByMemberId: currentUser.id }
+    );
+  }, [currentUser?.id, uploadTarget]);
+
+  useEffect(() => {
     if (uploadTarget !== "work-item" || !workspaceSlug || !projectId || selectedWorkItem) return;
     setIsWorkItemLoading(true);
     projectService
@@ -197,9 +211,11 @@ export const MediaLibraryUploadModal = () => {
 
   const mergeIssueIntoMeta = (issueData: Partial<TIssue> | ISearchIssueResponse | null | undefined) => {
     if (!issueData) return;
+    const createdByMemberId = "created_by" in issueData ? normalizeInputValue(issueData.created_by) : "";
     setWorkItemMeta((prev) => ({
       ...prev,
       category: issueData.category ?? prev.category ?? "Work items",
+      createdByMemberId: createdByMemberId || prev.createdByMemberId,
       sport: issueData.sport ?? prev.sport,
       program: issueData.program ?? prev.program,
       level: issueData.level ?? prev.level,
@@ -233,6 +249,7 @@ export const MediaLibraryUploadModal = () => {
     setSelectedWorkItem(null);
     setWorkItemQuery("");
     setWorkItemResults([]);
+    setWorkItemMeta((prev) => ({ ...prev, createdByMemberId: null }));
   };
 
   const handleClose = () => {
@@ -488,6 +505,7 @@ export const MediaLibraryUploadModal = () => {
             />
           ) : null}
           <MediaLibraryUploadMetaForm
+            projectId={projectId}
             uploadTarget={uploadTarget}
             meta={activeMeta}
             isLocked={isWorkItemMetaLocked}
