@@ -730,7 +730,6 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
         let format = resolveArtifactFormat(fileName);
 
         try {
-          const action = resolveArtifactAction(format);
           const meta: Record<string, unknown> = {
             ...baseEventMeta,
             source: "work_item_description",
@@ -748,6 +747,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
             }
             const artifactName = buildArtifactName(fileName, resolveInlineFileId(resolvedUrl, index + 1));
             const title = getFileName(fileName) || "Inline image";
+            const action = resolveArtifactAction(format);
             await mediaLibraryService.createArtifact(workspaceSlug, projectId, packageId, {
               name: artifactName,
               title,
@@ -777,6 +777,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           const artifactName = buildArtifactName(fileName, resolveInlineFileId(resolvedUrl, index + 1));
           const title = getFileName(fileName) || "Inline image";
           const file = new File([blob], fileName, { type: blob.type || undefined });
+          const action = resolveArtifactAction(format);
 
           await mediaLibraryService.uploadArtifact(
             workspaceSlug,

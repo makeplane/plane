@@ -2,12 +2,18 @@
 import type { FC } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { History } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import type { TIssue, TNameDescriptionLoader } from "@plane/types";
 // components
-import { getTextContent } from "@plane/utils";
+import { calculateTimeAgo, getTextContent } from "@plane/utils";
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
+import { IssueDescriptionInput } from "@/components/issues/description-input";
+import type { TIssueOperations } from "@/components/issues/issue-detail";
+import { IssueParentDetail } from "@/components/issues/issue-detail/parent";
+import { IssueReaction } from "@/components/issues/issue-detail/reactions";
+import { IssueTitleInput } from "@/components/issues/title-input";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
@@ -20,14 +26,7 @@ import { IssueTypeSwitcher } from "@/plane-web/components/issues/issue-details/i
 // plane web hooks
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
-
-// local components
 import { WorkItemVersionService } from "@/services/issue";
-import { IssueDescriptionInput } from "@/components/issues/description-input";
-import type { TIssueOperations } from "@/components/issues/issue-detail";
-import { IssueParentDetail } from "@/components/issues/issue-detail/parent";
-import { IssueReaction } from "@/components/issues/issue-detail/reactions";
-import { IssueTitleInput } from "@/components/issues/title-input";
 import { MediaLibraryService } from "@/services/media-library.service";
 import type { TMediaItem } from "../../types";
 // services init
@@ -88,6 +87,8 @@ export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
   // derived values
   const issue = issueId ? getIssueById(issueId) : undefined;
   const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
+  const hasLinkedIssue = Boolean(issue && issue.project_id);
+  const isArtifactOnlyMode = Boolean(mediaItem && !hasLinkedIssue);
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
     workspaceSlug,
@@ -100,7 +101,7 @@ export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
     }
   );
 
-  if (!issue || !issue.project_id) return <></>;
+  if (!hasLinkedIssue && !mediaItem) return <></>;
 
   const escapeHtml = useCallback(
     (value: string) =>
@@ -172,50 +173,69 @@ export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
   }, [issueOperations, mediaItem, updateMediaArtifact]);
 
   const issueDescription =
-    issue.description_html !== undefined && issue.description_html !== null && issue.description_html !== ""
+    issue?.description_html !== undefined && issue?.description_html !== null && issue?.description_html !== ""
       ? issue.description_html
       : "<p></p>";
+  const linkedProjectId = issue?.project_id ?? projectId;
+  const resolvedProjectId = hasLinkedIssue ? linkedProjectId : projectId;
+  const resolvedIssueId = hasLinkedIssue ? issue!.id : mediaItem?.id ?? issueId;
+  const mediaMeta = ((mediaItem?.meta ?? {}) as Record<string, unknown>) || {};
+  const mediaLastEditedAt =
+    typeof mediaMeta.updated_at === "string" && /^\d{4}-\d{2}-\d{2}/.test(mediaMeta.updated_at)
+      ? mediaMeta.updated_at
+      : typeof mediaMeta.created_at === "string" && /^\d{4}-\d{2}-\d{2}/.test(mediaMeta.created_at)
+        ? mediaMeta.created_at
+        : null;
+  const showIssueFooterMeta = hasLinkedIssue || Boolean(mediaItem);
+  const issueLastEditedAt = issue?.updated_at ?? issue?.created_at ?? null;
+  const lastEditedAt = mediaItem ? mediaLastEditedAt ?? issueLastEditedAt : issueLastEditedAt;
+  const lastEditedByDisplayName = hasLinkedIssue
+    ? getUserDetails(issue?.updated_by ?? issue?.created_by ?? "")?.display_name ?? mediaItem?.author ?? "Deactivated user"
+    : mediaItem?.author ?? "Media Library";
+  const lastEditedTimeLabel = lastEditedAt ? calculateTimeAgo(lastEditedAt) : mediaItem?.createdAt ? `on ${mediaItem.createdAt}` : "";
 
   return (
     <div className="space-y-2">
-      {issue.parent_id && (
+      {hasLinkedIssue && issue?.parent_id && (
         <IssueParentDetail
           workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
+          projectId={linkedProjectId}
           issueId={issueId}
-          issue={issue}
+          issue={issue!}
           issueOperations={issueOperations}
         />
       )}
-      <div className="flex items-center justify-between gap-2">
-        <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
-        {duplicateIssues?.length > 0 && (
-          <DeDupeIssuePopoverRoot
-            workspaceSlug={workspaceSlug}
-            projectId={issue.project_id}
-            rootIssueId={issueId}
-            issues={duplicateIssues}
-            issueOperations={issueOperations}
-          />
-        )}
-      </div>
+      {hasLinkedIssue && !isArtifactOnlyMode ? (
+        <div className="flex items-center justify-between gap-2">
+          <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
+          {duplicateIssues?.length > 0 && (
+            <DeDupeIssuePopoverRoot
+              workspaceSlug={workspaceSlug}
+              projectId={linkedProjectId}
+              rootIssueId={issueId}
+              issues={duplicateIssues}
+              issueOperations={issueOperations}
+            />
+          )}
+        </div>
+      ) : null}
       <IssueTitleInput
         workspaceSlug={workspaceSlug}
-        projectId={issue.project_id}
-        issueId={issue.id}
+        projectId={resolvedProjectId}
+        issueId={resolvedIssueId}
         isSubmitting={isSubmitting}
         setIsSubmitting={(value) => setIsSubmitting(value)}
         issueOperations={titleOps}
         disabled={disabled || isArchived}
-        value={mediaItem ? mediaTitle : issue.name}
+        value={mediaItem ? mediaTitle : issue?.name}
         containerClassName="-ml-3"
       />
 
       <IssueDescriptionInput
         editorRef={editorRef}
         workspaceSlug={workspaceSlug}
-        projectId={issue.project_id}
-        issueId={issue.id}
+        projectId={resolvedProjectId}
+        issueId={resolvedIssueId}
         initialValue={mediaItem ? mediaDescriptionHtml : issueDescription}
         disabled={disabled || isArchived}
         issueOperations={titleOps}
@@ -224,46 +244,62 @@ export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
         onDescriptionChange={onDescriptionChange}
       />
 
-      <div className="flex items-center justify-between gap-2">
-        {currentUser && (
-          <IssueReaction
-            workspaceSlug={workspaceSlug}
-            projectId={issue.project_id}
-            issueId={issueId}
-            currentUser={currentUser}
-            disabled={isArchived}
-          />
-        )}
-        {!disabled && (
-          <DescriptionVersionsRoot
-            className="flex-shrink-0"
-            entityInformation={{
-              createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
-              createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
-              id: issueId,
-              isRestoreDisabled: disabled || isArchived,
-            }}
-            fetchHandlers={{
-              listDescriptionVersions: (issueId) =>
-                workItemVersionService.listDescriptionVersions(
-                  workspaceSlug,
-                  issue.project_id?.toString() ?? "",
-                  issueId
-                ),
-              retrieveDescriptionVersion: (issueId, versionId) =>
-                workItemVersionService.retrieveDescriptionVersion(
-                  workspaceSlug,
-                  issue.project_id?.toString() ?? "",
-                  issueId,
-                  versionId
-                ),
-            }}
-            handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
-            projectId={issue.project_id}
-            workspaceSlug={workspaceSlug}
-          />
-        )}
-      </div>
+      {showIssueFooterMeta ? (
+        <div className="flex items-center justify-between gap-2">
+          {!mediaItem && currentUser && (
+            <IssueReaction
+              workspaceSlug={workspaceSlug}
+              projectId={linkedProjectId}
+              issueId={issueId}
+              currentUser={currentUser}
+              disabled={isArchived}
+            />
+          )}
+          <>
+            {mediaItem ? (
+              <div className="ml-auto flex items-center gap-1 text-custom-text-300">
+                <span className="flex-shrink-0 size-4 grid place-items-center">
+                  <History className="size-3.5" />
+                </span>
+                <p className="text-xs">
+                  Last edited by <span className="font-medium">{lastEditedByDisplayName}</span>{" "}
+                  {lastEditedTimeLabel}
+                </p>
+              </div>
+            ) : (
+              !disabled && (
+                <DescriptionVersionsRoot
+                  className="flex-shrink-0"
+                  entityInformation={{
+                    createdAt: issue!.created_at ? new Date(issue!.created_at) : new Date(),
+                    createdByDisplayName: getUserDetails(issue!.created_by ?? "")?.display_name ?? "",
+                    id: issueId,
+                    isRestoreDisabled: disabled || isArchived,
+                  }}
+                  fetchHandlers={{
+                    listDescriptionVersions: (issueId) =>
+                      workItemVersionService.listDescriptionVersions(
+                        workspaceSlug,
+                        linkedProjectId,
+                        issueId
+                      ),
+                    retrieveDescriptionVersion: (issueId, versionId) =>
+                      workItemVersionService.retrieveDescriptionVersion(
+                        workspaceSlug,
+                        linkedProjectId,
+                        issueId,
+                        versionId
+                      ),
+                  }}
+                  handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
+                  projectId={linkedProjectId}
+                  workspaceSlug={workspaceSlug}
+                />
+              )
+            )}
+          </>
+        </div>
+      ) : null}
     </div>
   );
 });

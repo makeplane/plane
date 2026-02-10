@@ -72,6 +72,7 @@ type TMediaManifestArtifactUpdatePayload = {
   artifact: {
     title?: string | null;
     description?: string | null;
+    meta?: Record<string, unknown>;
   };
 };
 
