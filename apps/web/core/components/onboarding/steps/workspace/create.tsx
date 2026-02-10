@@ -17,10 +17,10 @@ import type { IUser, IWorkspace } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserProfile, useUserSettings } from "@/hooks/store/user";
-// plane-web imports
-import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
+// services
 import { WorkspaceService } from "@/services/workspace.service";
 // local components
 import { CommonOnboardingHeader } from "../common";
@@ -46,11 +46,12 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
   // plane hooks
   const { t } = useTranslation();
   // store hooks
+  const { config } = useInstance();
   const { updateUserProfile } = useUserProfile();
   const { fetchCurrentUserSettings } = useUserSettings();
   const { createWorkspace, fetchWorkspaces } = useWorkspace();
 
-  const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
+  const isWorkspaceCreationEnabled = config?.is_workspace_creation_disabled ?? false;
 
   // form info
   const {

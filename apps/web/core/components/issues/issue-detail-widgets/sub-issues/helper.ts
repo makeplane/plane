@@ -5,7 +5,6 @@
  */
 
 import { useMemo } from "react";
-import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -14,18 +13,12 @@ import { EIssueServiceType } from "@plane/types";
 import { copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useProjectState } from "@/hooks/store/use-project-state";
-// plane web helpers
-import { updateEpicAnalytics } from "@/plane-web/helpers/epic-analytics";
 
 export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSubIssueOperations => {
-  // router
-  const { epicId: epicIdParam } = useParams();
   // translation
   const { t } = useTranslation();
   // store hooks
   const {
-    issue: { getIssueById },
     subIssues: { setSubIssueHelpers },
     createSubIssues,
     fetchSubIssues,
@@ -33,13 +26,6 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
     deleteSubIssue,
     removeSubIssue,
   } = useIssueDetail(issueServiceType);
-  const { getStateById } = useProjectState();
-  const { peekIssue: epicPeekIssue } = useIssueDetail(EIssueServiceType.EPICS);
-  // const { updateEpicAnalytics } = useIssueTypes();
-  const { updateAnalytics } = updateEpicAnalytics();
-
-  // derived values
-  const epicId = epicIdParam || epicPeekIssue?.issueId;
 
   const subIssueOperations: TSubIssueOperations = useMemo(
     () => ({
@@ -110,30 +96,6 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           await updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, issueData, oldIssue, fromModal);
-
-          if (issueServiceType === EIssueServiceType.EPICS) {
-            const oldState = getStateById(oldIssue?.state_id)?.group;
-
-            if (oldState && oldIssue && issueData && epicId) {
-              // Check if parent_id is changed if yes then decrement the epic analytics count
-              if (issueData.parent_id && oldIssue?.parent_id && issueData.parent_id !== oldIssue?.parent_id) {
-                updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
-                  decrementStateGroupCount: `${oldState}_issues`,
-                });
-              }
-
-              // Check if state_id is changed if yes then decrement the old state group count and increment the new state group count
-              if (issueData.state_id) {
-                const newState = getStateById(issueData.state_id)?.group;
-                if (oldState && newState && oldState !== newState) {
-                  updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
-                    decrementStateGroupCount: `${oldState}_issues`,
-                    incrementStateGroupCount: `${newState}_issues`,
-                  });
-                }
-              }
-            }
-          }
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("toast.success"),
@@ -152,16 +114,6 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           await removeSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
-          if (issueServiceType === EIssueServiceType.EPICS) {
-            const issueBeforeRemoval = getIssueById(issueId);
-            const oldState = getStateById(issueBeforeRemoval?.state_id)?.group;
-
-            if (epicId && oldState) {
-              updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
-                decrementStateGroupCount: `${oldState}_issues`,
-              });
-            }
-          }
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("toast.success"),
@@ -189,9 +141,8 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
       deleteSubIssue: async (workspaceSlug, projectId, parentIssueId, issueId) => {
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-          return deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId).then(() => {
-            setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-          });
+          await deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
+          setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
         } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -209,15 +160,11 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
     [
       createSubIssues,
       deleteSubIssue,
-      epicId,
       fetchSubIssues,
-      getIssueById,
-      getStateById,
       issueServiceType,
       removeSubIssue,
       setSubIssueHelpers,
       t,
-      updateAnalytics,
       updateSubIssue,
     ]
   );
