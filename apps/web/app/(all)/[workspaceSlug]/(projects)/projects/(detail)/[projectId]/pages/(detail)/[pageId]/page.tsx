@@ -29,7 +29,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 // plane web services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // services
 import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
 import type { Route } from "./+types/page";

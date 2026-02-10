@@ -20,7 +20,7 @@ import { useUser } from "@/hooks/store/user";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 
 const workspaceService = new WorkspaceService();
 

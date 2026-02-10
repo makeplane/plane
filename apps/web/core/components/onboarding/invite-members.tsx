@@ -31,7 +31,7 @@ import type { IUser, IWorkspace } from "@plane/types";
 // ui
 import { Input, Spinner } from "@plane/ui";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // components
 import { SwitchAccountDropdown } from "./switch-account-dropdown";
 

@@ -20,7 +20,7 @@ import { CustomSelect, Input, Spinner } from "@plane/ui";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserProfile, useUserSettings } from "@/hooks/store/user";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 
 type Props = {
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
