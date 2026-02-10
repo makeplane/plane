@@ -388,6 +388,10 @@ def _build_query_haystack(artifact: dict, metadata: dict | None = None) -> str:
     docs_text = ""
     if isinstance(docs, list):
         docs_text = " ".join([entry for entry in docs if isinstance(entry, str)])
+    tags_text = ""
+    tags_values = _normalize_meta_values(meta.get("tags"))
+    if tags_values:
+        tags_text = " ".join([entry for entry in tags_values if entry])
 
     items_count = meta.get("itemsCount")
     if items_count is None:
@@ -402,6 +406,7 @@ def _build_query_haystack(artifact: dict, metadata: dict | None = None) -> str:
         _get_primary_tag(meta),
         _get_secondary_tag(meta),
         _stringify_value(items_count),
+        tags_text,
         docs_text,
     ]
     return " ".join([value for value in values if value]).lower()
