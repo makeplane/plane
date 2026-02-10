@@ -15,7 +15,8 @@ import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-butt
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
-import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
+// layouts
+import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // local imports
 import type { Route } from "./+types/layout";
 

@@ -24,8 +24,6 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { getAdditionalProjectLevelFiltersHOCProps } from "@/plane-web/helpers/work-item-filters/project-level";
 // local imports
 import { WorkItemFiltersHOC } from "./base";
 import type { TEnableSaveViewProps, TEnableUpdateViewProps, TSharedWorkItemFiltersHOCProps } from "./shared";
@@ -203,11 +201,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
       />
       <WorkItemFiltersHOC
         {...props}
-        {...getAdditionalProjectLevelFiltersHOCProps({
-          entityType: props.entityType,
-          workspaceSlug,
-          projectId,
-        })}
+        workspaceSlug={workspaceSlug}
         cycleIds={getProjectCycleIds(projectId) ?? undefined}
         labelIds={getProjectLabelIds(projectId)}
         memberIds={getProjectMemberIds(projectId, false) ?? undefined}
