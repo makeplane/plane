@@ -5,9 +5,13 @@ import logging
 import shutil
 import mimetypes
 import os
+import re
+from hashlib import sha1
 from urllib.parse import urlparse
 from pathlib import Path
 from uuid import UUID, uuid4
+from html import unescape
+from types import SimpleNamespace
 
 # Third party imports
 from django.http import FileResponse, HttpResponse, StreamingHttpResponse
@@ -20,7 +24,9 @@ from django.conf import settings
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers.media_library import MediaArtifactSerializer, MediaLibraryPackageCreateSerializer
 from plane.app.views.base import BaseAPIView
-from plane.db.models import FileAsset
+from plane.api.middleware.api_authentication import APIKeyAuthentication
+from plane.authentication.session import BaseSessionAuthentication
+from plane.db.models import FileAsset, Issue
 from plane.settings.storage import S3Storage
 from plane.utils.exception_logger import log_exception
 from plane.utils.media_library import (
@@ -516,6 +522,15 @@ class MediaManifestDetailAPIView(BaseAPIView):
             return Response({"error": "artifact_id is required for artifact updates."}, status=status.HTTP_400_BAD_REQUEST)
         if artifact_fields is not None and not isinstance(artifact_fields, dict):
             return Response({"error": "artifact fields must be an object."}, status=status.HTTP_400_BAD_REQUEST)
+        if artifact_fields is not None:
+            description_value = artifact_fields.get("description")
+            if isinstance(description_value, str) and description_value.strip():
+                artifact_fields = dict(artifact_fields)
+                artifact_fields["description"] = _ensure_description_image_sources(
+                    description_value,
+                    slug=slug,
+                    project_id=project_id_str,
+                )
 
         manifest_file = manifest_path(project_id_str, package_id)
         if not manifest_file.exists():
@@ -1016,6 +1031,12 @@ class MediaArtifactsListAPIView(BaseAPIView):
             elif not entry.get("description"):
                 title_value = entry.get("title") or "Uploaded file"
                 entry["description"] = _default_artifact_description(title_value)
+            elif isinstance(entry.get("description"), str):
+                entry["description"] = _ensure_description_image_sources(
+                    entry.get("description"),
+                    slug=slug,
+                    project_id=project_id_str,
+                )
             if not entry.get("created_at"):
                 entry["created_at"] = timestamp
             if not entry.get("updated_at"):
@@ -1248,6 +1269,13 @@ class MediaArtifactsListAPIView(BaseAPIView):
                             created_thumbnail = True
                             break
                     if not created_thumbnail:
+                        try:
+                            if thumbnail_path.exists():
+                                thumbnail_path.unlink()
+                        except OSError:
+                            pass
+                        created_thumbnail = _create_media_fallback_thumbnail(format_value, thumbnail_path)
+                    if not created_thumbnail:
                         continue
                     thumbnail_relative_path = (
                         f"projects/{project_id_str}/packages/{package_id}/artifacts/{thumbnail_file_name}"
@@ -1314,6 +1342,13 @@ class MediaArtifactsListAPIView(BaseAPIView):
                                 created_thumbnail = True
                                 break
 
+                    if not created_thumbnail:
+                        try:
+                            if thumbnail_path.exists():
+                                thumbnail_path.unlink()
+                        except OSError:
+                            pass
+                        created_thumbnail = _create_media_fallback_thumbnail(format_value, thumbnail_path)
                     if not created_thumbnail:
                         continue
                     if not thumbnail_relative_path:
@@ -1401,3 +1436,943 @@ class MediaArtifactsListAPIView(BaseAPIView):
 
         response_payload = validated_artifacts if is_bulk else validated_artifacts[0]
         return Response(response_payload, status=status.HTTP_201_CREATED)
+
+
+_DOC_FORMATS = {"json", "csv", "pdf", "docx", "xlsx", "pptx", "txt"}
+_FALSEY_VALUES = {"", "0", "false", "no", "off"}
+_ARTIFACT_SEGMENT_RE = re.compile(r"[^a-z0-9_-]+")
+_IMAGE_TAG_RE = re.compile(r"<(?:img|image-component)\b[^>]*>", re.IGNORECASE)
+_IMAGE_ATTR_RE = re.compile(
+    r"(?:src|data-src|data-source)\s*=\s*(?:\"([^\"]+)\"|'([^']+)'|([^\s>]+))",
+    re.IGNORECASE,
+)
+_IMAGE_ID_ATTR_RE = re.compile(
+    r"\bid\s*=\s*(?:\"([^\"]+)\"|'([^']+)'|([^\s>]+))",
+    re.IGNORECASE,
+)
+_ARTIFACT_ACTION_CHOICES = {
+    "play",
+    "stream",
+    "view",
+    "download",
+    "preview",
+    "edit",
+    "navigate",
+    "play_hls",
+    "open_mp4",
+    "open_pdf",
+    "attach_captions",
+}
+_SUPPORTED_ARTIFACT_FORMATS = _IMAGE_FORMATS | _VIDEO_FORMATS | _DOC_FORMATS
+
+
+def _coerce_bool(value: object, default: bool = False) -> bool:
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value.strip().lower() not in _FALSEY_VALUES
+    return bool(value)
+
+
+def _sanitize_artifact_segment(value: str) -> str:
+    normalized = (value or "").strip().lower()
+    normalized = _ARTIFACT_SEGMENT_RE.sub("-", normalized)
+    return normalized.strip("-")
+
+
+def _build_artifact_name(file_name: str, source_id: str) -> str:
+    base_name = _sanitize_artifact_segment(Path(file_name).stem or "attachment")
+    suffix = _sanitize_artifact_segment(source_id) or uuid4().hex[:8]
+    return f"{base_name}-{suffix}" if base_name else f"attachment-{suffix}"
+
+
+def _resolve_artifact_format_from_name(file_name: str) -> str:
+    extension = Path(file_name or "").suffix.lstrip(".").lower()
+    if extension in _IMAGE_FORMATS or extension in _VIDEO_FORMATS or extension in _DOC_FORMATS:
+        return extension
+    return ""
+
+
+def _resolve_artifact_action(format_value: str) -> str:
+    normalized = (format_value or "").lower()
+    if normalized in _VIDEO_FORMATS:
+        return "play"
+    if normalized in _IMAGE_FORMATS:
+        return "view"
+    return "download"
+
+
+def _resolve_attachment_file_name(asset: FileAsset) -> str:
+    attributes = asset.attributes if isinstance(asset.attributes, dict) else {}
+    name = attributes.get("name")
+    if isinstance(name, str) and name.strip():
+        return name.strip()
+    return f"attachment-{asset.id}"
+
+
+def _resolve_payload_media_path(raw_path: object, request, slug: str, project_id: str) -> str:
+    if not isinstance(raw_path, str):
+        return ""
+    path = raw_path.strip()
+    if not path:
+        return ""
+    if path.startswith(("http://", "https://")):
+        return path
+    if "/" not in path:
+        try:
+            UUID(path)
+            return request.build_absolute_uri(
+                f"/api/assets/v2/workspaces/{slug}/projects/{project_id}/{path}/"
+            )
+        except Exception:
+            return path
+    if path.startswith("/"):
+        try:
+            return request.build_absolute_uri(path)
+        except Exception:
+            return path
+    return path
+
+
+def _resolve_payload_media_asset(path_value: str, slug: str, project_id: str) -> FileAsset | None:
+    candidate = (path_value or "").strip()
+    if not candidate:
+        return None
+    asset_id = _extract_asset_id_from_url(candidate)
+    if not asset_id:
+        try:
+            asset_id = str(UUID(candidate))
+        except ValueError:
+            asset_id = None
+    if not asset_id:
+        return None
+    return FileAsset.objects.filter(
+        id=asset_id,
+        workspace__slug=slug,
+        project_id=project_id,
+        is_deleted=False,
+        is_uploaded=True,
+    ).first()
+
+
+def _normalize_inline_source(value: str) -> str:
+    if not isinstance(value, str):
+        return ""
+    trimmed = value.strip()
+    if not trimmed:
+        return ""
+    if trimmed.startswith(("data:", "blob:")):
+        return ""
+    try:
+        parsed = urlparse(trimmed)
+        return parsed._replace(query="", fragment="").geturl()
+    except ValueError:
+        return trimmed
+
+
+def _extract_tag_attr_value(tag: str, pattern: re.Pattern[str]) -> str:
+    if not isinstance(tag, str) or not tag:
+        return ""
+    match = pattern.search(tag)
+    if not match:
+        return ""
+    raw_value = next((group for group in match.groups() if group), "")
+    return unescape((raw_value or "").strip())
+
+
+def _resolve_asset_uuid(value: object) -> str | None:
+    if not isinstance(value, str):
+        return None
+    candidate = value.strip()
+    if not candidate:
+        return None
+    try:
+        return str(UUID(candidate))
+    except (TypeError, ValueError):
+        return None
+
+
+def _asset_exists_for_project(asset_id: str, slug: str, project_id: str) -> bool:
+    return FileAsset.objects.filter(
+        id=asset_id,
+        workspace__slug=slug,
+        project_id=project_id,
+        is_deleted=False,
+        is_uploaded=True,
+    ).exists()
+
+
+def _ensure_description_image_sources(description_html: str | None, slug: str, project_id: str) -> str | None:
+    if not isinstance(description_html, str) or not description_html:
+        return description_html
+
+    asset_exists_cache: dict[str, bool] = {}
+
+    def _replace_tag(match: re.Match[str]) -> str:
+        tag = match.group(0)
+        if _extract_tag_attr_value(tag, _IMAGE_ATTR_RE):
+            return tag
+
+        tag_id = _extract_tag_attr_value(tag, _IMAGE_ID_ATTR_RE)
+        asset_id = _resolve_asset_uuid(tag_id)
+        if not asset_id:
+            return tag
+
+        exists = asset_exists_cache.get(asset_id)
+        if exists is None:
+            exists = _asset_exists_for_project(asset_id, slug, project_id)
+            asset_exists_cache[asset_id] = exists
+        if not exists:
+            return tag
+
+        insertion = f' src="{asset_id}"'
+        if tag.endswith("/>"):
+            return f"{tag[:-2]}{insertion}/>"
+        if tag.endswith(">"):
+            return f"{tag[:-1]}{insertion}>"
+        return tag
+
+    normalized = _IMAGE_TAG_RE.sub(_replace_tag, description_html)
+    return normalized
+
+
+def _extract_description_image_sources(
+    description_html: str | None, slug: str | None = None, project_id: str | None = None
+) -> list[str]:
+    if not isinstance(description_html, str) or not description_html:
+        return []
+    sources: list[str] = []
+    seen: set[str] = set()
+    asset_exists_cache: dict[str, bool] = {}
+    for tag_match in _IMAGE_TAG_RE.finditer(description_html):
+        tag = tag_match.group(0)
+        source = _extract_tag_attr_value(tag, _IMAGE_ATTR_RE)
+        if not source:
+            tag_id = _extract_tag_attr_value(tag, _IMAGE_ID_ATTR_RE)
+            asset_id = _resolve_asset_uuid(tag_id)
+            if asset_id and slug and project_id:
+                exists = asset_exists_cache.get(asset_id)
+                if exists is None:
+                    exists = _asset_exists_for_project(asset_id, slug, project_id)
+                    asset_exists_cache[asset_id] = exists
+                if exists:
+                    source = asset_id
+        if not source:
+            continue
+        key = source.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        sources.append(source)
+    return sources
+
+
+def _resolve_file_name_from_url(value: str, fallback: str) -> str:
+    if not value:
+        return fallback
+    try:
+        parsed = urlparse(value)
+        candidate = Path(parsed.path).name
+    except ValueError:
+        candidate = Path(value).name
+    return candidate or fallback
+
+
+def _resolve_format_from_mime(mime_type: str) -> str:
+    if not isinstance(mime_type, str) or not mime_type:
+        return ""
+    normalized = mime_type.lower().strip()
+    if normalized.startswith("image/"):
+        subtype = normalized.split("/", 1)[1]
+        return "svg" if subtype == "svg+xml" else subtype
+    if normalized.startswith("video/"):
+        return normalized.split("/", 1)[1]
+    if normalized == "application/pdf":
+        return "pdf"
+    return ""
+
+
+def _resolve_issue_created_by_label(issue: Issue) -> str:
+    created_by = getattr(issue, "created_by", None)
+    if not created_by:
+        return ""
+    display_name = getattr(created_by, "display_name", "") or ""
+    if isinstance(display_name, str) and display_name.strip():
+        if "-intake" in display_name:
+            return "Plane"
+        return display_name.strip()
+    email = getattr(created_by, "email", "") or ""
+    if isinstance(email, str):
+        return email.strip()
+    return ""
+
+
+def _create_media_fallback_thumbnail(format_value: str, thumbnail_path: Path) -> bool:
+    normalized = (format_value or "").lower()
+    hint = "attachment/default-icon.png"
+    if normalized in _VIDEO_FORMATS or normalized in {"stream", "m3u8"}:
+        hint = "attachment/video-icon.png"
+    elif normalized in _IMAGE_FORMATS:
+        hint = "attachment/img-icon.png"
+    source = get_document_icon_source(normalized or "default", hint)
+    if not source:
+        source = get_document_icon_source("default")
+    if not source:
+        return False
+    return generate_thumbnail(source, thumbnail_path, seek=None)
+
+
+def _serialize_issue_start_time(issue: Issue) -> str | None:
+    start_time = getattr(issue, "start_time", None)
+    if not start_time:
+        return None
+    try:
+        value = start_time.replace(microsecond=0).isoformat()
+    except Exception:
+        value = str(start_time)
+    if value.endswith("+00:00"):
+        value = value.replace("+00:00", "Z")
+    return value
+
+
+def _build_issue_artifact_meta(issue: Issue, source: str) -> dict:
+    meta: dict = {
+        "category": getattr(issue, "category", None) or "Work items",
+        "source": source,
+    }
+    created_by = _resolve_issue_created_by_label(issue)
+    if created_by:
+        meta["created_by"] = created_by
+    if getattr(issue, "start_date", None):
+        meta["start_date"] = str(issue.start_date)
+    start_time_value = _serialize_issue_start_time(issue)
+    if start_time_value:
+        meta["start_time"] = start_time_value
+    if getattr(issue, "level", None):
+        meta["level"] = issue.level
+    if getattr(issue, "program", None):
+        meta["program"] = issue.program
+    if getattr(issue, "sport", None):
+        meta["sport"] = issue.sport
+    if getattr(issue, "opposition_team", None):
+        meta["opposition"] = issue.opposition_team
+    if getattr(issue, "year", None):
+        meta["season"] = issue.year
+    return meta
+
+
+def _build_issue_manifest_meta(issue: Issue) -> dict:
+    return {
+        "category": getattr(issue, "category", None) or "Work items",
+        "start_date": str(issue.start_date) if getattr(issue, "start_date", None) else None,
+        "start_time": _serialize_issue_start_time(issue),
+        "level": getattr(issue, "level", None),
+        "program": getattr(issue, "program", None),
+        "sport": getattr(issue, "sport", None),
+        "opposition": getattr(issue, "opposition_team", None),
+        "season": getattr(issue, "year", None),
+    }
+
+
+def _ensure_media_library_manifest(project_id: str) -> dict:
+    packages_root = ensure_project_library(project_id)
+    package_dirs = [path for path in packages_root.iterdir() if path.is_dir()]
+    if package_dirs:
+        for package_dir in sorted(package_dirs, key=lambda path: path.name):
+            manifest_file = package_dir / "manifest.json"
+            if manifest_file.exists():
+                try:
+                    return read_manifest(manifest_file)
+                except Exception:
+                    manifest = create_manifest(
+                        project_id=project_id,
+                        package_id=package_dir.name,
+                        name=package_dir.name,
+                        title="Media Library Package",
+                    )
+                    write_manifest_atomic(manifest_file, manifest)
+                    return manifest
+            manifest = create_manifest(
+                project_id=project_id,
+                package_id=package_dir.name,
+                name=package_dir.name,
+                title="Media Library Package",
+            )
+            write_manifest_atomic(manifest_file, manifest)
+            return manifest
+    package_id = f"package-{uuid4().hex[:8]}"
+    root = package_root(project_id, package_id)
+    (root / "artifacts").mkdir(parents=True, exist_ok=False)
+    (root / "attachment").mkdir(parents=True, exist_ok=False)
+    manifest = create_manifest(
+        project_id=project_id,
+        package_id=package_id,
+        name=package_id,
+        title="Media Library Package",
+    )
+    write_manifest_atomic(manifest_path(project_id, package_id), manifest)
+    return manifest
+
+
+def _build_internal_request(original_request, payload: dict | list[dict]):
+    return SimpleNamespace(
+        data=payload,
+        FILES={},
+        user=original_request.user,
+        query_params=getattr(original_request, "query_params", {}),
+        build_absolute_uri=original_request.build_absolute_uri,
+    )
+
+
+def _resolve_description_image_candidate(
+    source: str,
+    request,
+    slug: str,
+    project_id: str,
+    index: int,
+) -> dict | None:
+    if not isinstance(source, str):
+        return None
+    raw_source = source.strip()
+    if not raw_source or raw_source.startswith(("data:", "blob:")):
+        return None
+
+    resolved_source = raw_source
+    asset = None
+
+    if not raw_source.lower().startswith(("http://", "https://")):
+        if "/" not in raw_source:
+            try:
+                UUID(raw_source)
+                asset = FileAsset.objects.filter(
+                    id=raw_source,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    is_deleted=False,
+                    is_uploaded=True,
+                ).first()
+            except ValueError:
+                asset = None
+            if asset and asset.asset_url:
+                resolved_source = asset.asset_url
+            else:
+                resolved_source = f"/api/assets/v2/workspaces/{slug}/projects/{project_id}/{raw_source}/"
+        elif raw_source.startswith("/"):
+            resolved_source = raw_source
+        else:
+            resolved_source = f"/{raw_source.lstrip('/')}"
+
+    if resolved_source.startswith("/"):
+        try:
+            resolved_source = request.build_absolute_uri(resolved_source)
+        except Exception:
+            pass
+
+    asset_id = _extract_asset_id_from_url(resolved_source)
+    if asset is None and asset_id:
+        asset = FileAsset.objects.filter(
+            id=asset_id,
+            workspace__slug=slug,
+            project_id=project_id,
+            is_deleted=False,
+            is_uploaded=True,
+        ).first()
+
+    fallback_name = f"inline-image-{index + 1}.png"
+    file_name = None
+    if asset and isinstance(asset.attributes, dict):
+        asset_name = asset.attributes.get("name")
+        if isinstance(asset_name, str) and asset_name.strip():
+            file_name = asset_name.strip()
+    if not file_name:
+        file_name = _resolve_file_name_from_url(resolved_source, fallback_name)
+
+    format_value = _resolve_artifact_format_from_name(file_name)
+    if not format_value and asset and isinstance(asset.attributes, dict):
+        format_value = _resolve_format_from_mime(asset.attributes.get("type", ""))
+
+    if not format_value or format_value not in _IMAGE_FORMATS or format_value == "thumbnail":
+        return None
+
+    if "." not in Path(file_name).name:
+        file_name = f"{file_name}.{format_value}"
+
+    inline_source = _normalize_inline_source(resolved_source)
+    file_id = asset_id or f"inline-{index + 1}"
+
+    return {
+        "path": resolved_source,
+        "file_name": file_name,
+        "format": format_value,
+        "file_id": file_id,
+        "inline_source": inline_source,
+    }
+
+
+def _derive_source_id_from_path(path: str, index: int) -> str:
+    asset_id = _extract_asset_id_from_url(path)
+    if asset_id:
+        return asset_id
+    normalized = _normalize_inline_source(path) or path or str(index)
+    digest = sha1(normalized.encode("utf-8")).hexdigest()[:12]
+    return f"media-{digest}"
+
+
+class MediaWorkItemSyncAPIView(BaseAPIView):
+    authentication_classes = [APIKeyAuthentication, BaseSessionAuthentication]
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
+    def post(self, request, slug, project_id):
+        project_id_str = str(project_id)
+        validate_segment(project_id_str, "projectId")
+
+        payload = request.data or {}
+        work_item_id = str(payload.get("work_item_id") or payload.get("workItemId") or "").strip()
+        if not work_item_id:
+            return Response({"error": "work_item_id is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        include_attachments = _coerce_bool(
+            payload.get("include_attachments", payload.get("includeAttachments")),
+            default=True,
+        )
+        include_description_images = _coerce_bool(
+            payload.get("include_description_images", payload.get("includeDescriptionImages")),
+            default=True,
+        )
+        update_manifest_meta = _coerce_bool(
+            payload.get("update_manifest_meta", payload.get("updateManifestMeta")),
+            default=True,
+        )
+
+        try:
+            work_item_uuid = UUID(work_item_id)
+        except ValueError:
+            return Response({"error": "work_item_id must be a valid UUID."}, status=status.HTTP_400_BAD_REQUEST)
+
+        issue = (
+            Issue.objects.select_related("created_by")
+            .filter(
+                id=work_item_uuid,
+                workspace__slug=slug,
+                project_id=project_id,
+                deleted_at__isnull=True,
+            )
+            .first()
+        )
+        if not issue:
+            return Response({"error": "Work item not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        manifest = _ensure_media_library_manifest(project_id_str)
+        package_id = str(manifest.get("id") or "")
+        if not package_id:
+            return Response(
+                {"error": "Unable to resolve media library package."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        summary = {
+            "attachments": {"candidates": 0, "created": 0, "skipped": 0, "failed": 0},
+            "description_images": {"candidates": 0, "created": 0, "skipped": 0, "failed": 0},
+            "payload_media": {"candidates": 0, "created": 0, "skipped": 0, "failed": 0},
+        }
+        candidates: list[dict] = []
+        candidate_names: set[str] = set()
+
+        def append_candidate(entry: dict, source_type: str) -> None:
+            name = entry.get("name")
+            if not isinstance(name, str) or not name:
+                summary[source_type]["failed"] += 1
+                return
+            if name in candidate_names:
+                summary[source_type]["skipped"] += 1
+                return
+            candidate_names.add(name)
+            payload_entry = dict(entry)
+            payload_entry["_source_type"] = source_type
+            candidates.append(payload_entry)
+            summary[source_type]["candidates"] += 1
+
+        if include_attachments:
+            attachment_meta = _build_issue_artifact_meta(issue, source="work_item_attachment")
+            attachments = (
+                FileAsset.objects.filter(
+                    issue_id=issue.id,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                    is_deleted=False,
+                    is_uploaded=True,
+                )
+                .order_by("created_at")
+            )
+            for attachment in attachments:
+                file_name = _resolve_attachment_file_name(attachment)
+                format_value = _resolve_artifact_format_from_name(file_name)
+                if not format_value:
+                    summary["attachments"]["skipped"] += 1
+                    continue
+
+                asset_path = request.build_absolute_uri(
+                    f"/api/assets/v2/workspaces/{slug}/projects/{project_id}/issues/{issue.id}/attachments/{attachment.id}/"
+                )
+
+                artifact_name = _build_artifact_name(file_name, str(attachment.id))
+                title = Path(file_name).stem or "Attachment"
+                action = _resolve_artifact_action(format_value)
+                meta = dict(attachment_meta)
+
+                if format_value in _DOC_FORMATS:
+                    meta["kind"] = "document_file"
+                    attributes = attachment.attributes if isinstance(attachment.attributes, dict) else {}
+                    file_size = attributes.get("size")
+                    if file_size is None:
+                        file_size = attachment.size
+                    if file_size is not None:
+                        meta["file_size"] = file_size
+                    meta["file_type"] = format_value
+
+                append_candidate(
+                    {
+                        "name": artifact_name,
+                        "title": title,
+                        "format": format_value,
+                        "path": asset_path,
+                        "link": None,
+                        "action": action,
+                        "meta": meta,
+                        "work_item_id": str(issue.id),
+                    },
+                    "attachments",
+                )
+
+        if include_description_images:
+            description_meta = _build_issue_artifact_meta(issue, source="work_item_description")
+            description_sources = _extract_description_image_sources(
+                issue.description_html,
+                slug=slug,
+                project_id=project_id_str,
+            )
+            seen_inline_sources: set[str] = set()
+            for index, source in enumerate(description_sources):
+                candidate = _resolve_description_image_candidate(source, request, slug, project_id_str, index)
+                if not candidate:
+                    summary["description_images"]["skipped"] += 1
+                    continue
+                inline_source = candidate.get("inline_source")
+                if inline_source and inline_source in seen_inline_sources:
+                    summary["description_images"]["skipped"] += 1
+                    continue
+                if inline_source:
+                    seen_inline_sources.add(inline_source)
+
+                file_name = candidate["file_name"]
+                artifact_name = _build_artifact_name(file_name, candidate["file_id"])
+                title = Path(file_name).stem or "Inline image"
+                meta = dict(description_meta)
+                if inline_source:
+                    meta["inline_source"] = inline_source
+
+                append_candidate(
+                    {
+                        "name": artifact_name,
+                        "title": title,
+                        "format": candidate["format"],
+                        "path": candidate["path"],
+                        "link": None,
+                        "action": _resolve_artifact_action(candidate["format"]),
+                        "meta": meta,
+                        "work_item_id": str(issue.id),
+                    },
+                    "description_images",
+                )
+
+        payload_media_items: list[dict] = []
+        raw_media_assets = payload.get("media_assets", payload.get("mediaAssets"))
+        raw_media_paths = payload.get("media_paths", payload.get("mediaPaths"))
+
+        if isinstance(raw_media_assets, dict):
+            payload_media_items.append(raw_media_assets)
+        elif isinstance(raw_media_assets, list):
+            for value in raw_media_assets:
+                if isinstance(value, dict):
+                    payload_media_items.append(value)
+                elif isinstance(value, str):
+                    payload_media_items.append({"path": value})
+                else:
+                    summary["payload_media"]["failed"] += 1
+        elif raw_media_assets not in (None, ""):
+            summary["payload_media"]["failed"] += 1
+
+        if isinstance(raw_media_paths, str):
+            payload_media_items.append({"path": raw_media_paths})
+        elif isinstance(raw_media_paths, list):
+            for value in raw_media_paths:
+                if isinstance(value, str):
+                    payload_media_items.append({"path": value})
+                elif isinstance(value, dict):
+                    payload_media_items.append(value)
+                else:
+                    summary["payload_media"]["failed"] += 1
+        elif raw_media_paths not in (None, ""):
+            summary["payload_media"]["failed"] += 1
+
+        if payload_media_items:
+            payload_media_meta = _build_issue_artifact_meta(issue, source="payload_media")
+            for index, item in enumerate(payload_media_items):
+                if not isinstance(item, dict):
+                    summary["payload_media"]["failed"] += 1
+                    continue
+
+                resolved_path = _resolve_payload_media_path(
+                    item.get("path")
+                    or item.get("url")
+                    or item.get("source")
+                    or item.get("src")
+                    or item.get("asset_url"),
+                    request=request,
+                    slug=slug,
+                    project_id=project_id_str,
+                )
+                if not resolved_path:
+                    summary["payload_media"]["failed"] += 1
+                    continue
+
+                asset = _resolve_payload_media_asset(resolved_path, slug, project_id_str)
+                asset_attributes = asset.attributes if asset and isinstance(asset.attributes, dict) else {}
+
+                file_name = (
+                    item.get("file_name")
+                    or item.get("fileName")
+                    or item.get("filename")
+                    or item.get("name")
+                )
+                if isinstance(file_name, str):
+                    file_name = file_name.strip()
+                if not file_name:
+                    asset_name = asset_attributes.get("name")
+                    if isinstance(asset_name, str) and asset_name.strip():
+                        file_name = asset_name.strip()
+                if not file_name:
+                    file_name = _resolve_file_name_from_url(resolved_path, f"media-{index + 1}")
+
+                format_value = item.get("format")
+                if isinstance(format_value, str):
+                    format_value = format_value.strip().lower()
+                else:
+                    format_value = ""
+                if not format_value:
+                    format_value = _resolve_artifact_format_from_name(file_name)
+                if not format_value:
+                    asset_name = asset_attributes.get("name")
+                    if isinstance(asset_name, str):
+                        format_value = _resolve_artifact_format_from_name(asset_name)
+                if not format_value:
+                    format_value = _resolve_format_from_mime(
+                        str(item.get("mime_type") or item.get("mimeType") or item.get("type") or "")
+                    )
+                if not format_value:
+                    format_value = _resolve_format_from_mime(str(asset_attributes.get("type") or ""))
+                if format_value not in _SUPPORTED_ARTIFACT_FORMATS:
+                    summary["payload_media"]["skipped"] += 1
+                    continue
+
+                action_value = item.get("action")
+                if isinstance(action_value, str):
+                    action_value = action_value.strip()
+                else:
+                    action_value = ""
+                if action_value not in _ARTIFACT_ACTION_CHOICES:
+                    action_value = _resolve_artifact_action(format_value)
+
+                source_id = str(
+                    item.get("source_id")
+                    or item.get("sourceId")
+                    or _derive_source_id_from_path(resolved_path, index + 1)
+                )
+                raw_artifact_name = item.get("artifact_name") or item.get("artifactName")
+                if isinstance(raw_artifact_name, str):
+                    candidate_artifact_name = _sanitize_artifact_segment(raw_artifact_name)
+                else:
+                    candidate_artifact_name = ""
+                artifact_name = candidate_artifact_name or _build_artifact_name(file_name, source_id)
+
+                title_value = item.get("title")
+                if not isinstance(title_value, str) or not title_value.strip():
+                    title_value = Path(file_name).stem or "Media file"
+                else:
+                    title_value = title_value.strip()
+
+                link_value = item.get("link")
+                if isinstance(link_value, str):
+                    link_value = link_value.strip() or None
+                elif link_value is not None:
+                    link_value = str(link_value).strip() or None
+
+                meta_value = item.get("meta")
+                if meta_value is None:
+                    custom_meta = {}
+                elif isinstance(meta_value, dict):
+                    custom_meta = dict(meta_value)
+                else:
+                    summary["payload_media"]["failed"] += 1
+                    continue
+                meta = dict(payload_media_meta)
+                meta.update(custom_meta)
+                if format_value in _DOC_FORMATS:
+                    if "kind" not in meta:
+                        meta["kind"] = "document_file"
+                    if "file_size" not in meta:
+                        file_size = item.get("file_size") or item.get("fileSize")
+                        if file_size is None:
+                            file_size = asset_attributes.get("size")
+                        if file_size is None and asset is not None:
+                            file_size = asset.size
+                        if file_size is not None:
+                            meta["file_size"] = file_size
+                    if "file_type" not in meta:
+                        meta["file_type"] = format_value
+
+                payload_candidate: dict = {
+                    "name": artifact_name,
+                    "title": title_value,
+                    "format": format_value,
+                    "path": resolved_path,
+                    "link": link_value,
+                    "action": action_value,
+                    "meta": meta,
+                    "work_item_id": str(issue.id),
+                }
+
+                description_value = item.get("description")
+                if isinstance(description_value, str) and description_value.strip():
+                    payload_candidate["description"] = description_value.strip()
+
+                metadata_ref = item.get("metadata_ref") or item.get("metadataRef")
+                if isinstance(metadata_ref, str) and metadata_ref.strip():
+                    payload_candidate["metadata_ref"] = metadata_ref.strip()
+
+                created_at = item.get("created_at") or item.get("createdAt")
+                if isinstance(created_at, str) and created_at.strip():
+                    payload_candidate["created_at"] = created_at.strip()
+                updated_at = item.get("updated_at") or item.get("updatedAt")
+                if isinstance(updated_at, str) and updated_at.strip():
+                    payload_candidate["updated_at"] = updated_at.strip()
+
+                append_candidate(payload_candidate, "payload_media")
+
+        latest_manifest = read_manifest(manifest_path(project_id_str, package_id))
+        existing_names = {
+            artifact.get("name")
+            for artifact in (latest_manifest.get("artifacts") or [])
+            if isinstance(artifact, dict) and artifact.get("name")
+        }
+
+        artifacts_payload: list[dict] = []
+        source_by_name: dict[str, str] = {}
+        for candidate in candidates:
+            source_type = str(candidate.pop("_source_type", "attachments"))
+            name = candidate.get("name")
+            if name in existing_names:
+                summary[source_type]["skipped"] += 1
+                continue
+            source_by_name[str(name)] = source_type
+            artifacts_payload.append(candidate)
+            existing_names.add(name)
+
+        artifact_error = None
+        if artifacts_payload:
+            artifacts_request = _build_internal_request(request, artifacts_payload)
+            artifacts_response = MediaArtifactsListAPIView().post(
+                artifacts_request,
+                slug=slug,
+                project_id=project_id,
+                package_id=package_id,
+            )
+            if artifacts_response.status_code == status.HTTP_201_CREATED:
+                payload_data = artifacts_response.data
+                response_items = payload_data if isinstance(payload_data, list) else [payload_data]
+                created_primary_names = {
+                    item.get("name")
+                    for item in response_items
+                    if isinstance(item, dict) and item.get("name") in source_by_name
+                }
+                for artifact_name, source_type in source_by_name.items():
+                    if artifact_name in created_primary_names:
+                        summary[source_type]["created"] += 1
+                    else:
+                        summary[source_type]["failed"] += 1
+            elif artifacts_response.status_code == status.HTTP_409_CONFLICT:
+                latest_manifest = read_manifest(manifest_path(project_id_str, package_id))
+                refreshed_names = {
+                    artifact.get("name")
+                    for artifact in (latest_manifest.get("artifacts") or [])
+                    if isinstance(artifact, dict) and artifact.get("name")
+                }
+                for artifact_name, source_type in source_by_name.items():
+                    if artifact_name in refreshed_names:
+                        summary[source_type]["skipped"] += 1
+                    else:
+                        summary[source_type]["failed"] += 1
+            else:
+                artifact_error = artifacts_response.data
+                for source_type in source_by_name.values():
+                    summary[source_type]["failed"] += 1
+
+        manifest_meta_updated = 0
+        manifest_meta_error = None
+        if update_manifest_meta:
+            manifest_request = _build_internal_request(
+                request,
+                {
+                    "work_item_id": str(issue.id),
+                    "meta": _build_issue_manifest_meta(issue),
+                },
+            )
+            manifest_response = MediaManifestDetailAPIView().patch(
+                manifest_request,
+                slug=slug,
+                project_id=project_id,
+                package_id=package_id,
+            )
+            if manifest_response.status_code == status.HTTP_200_OK and isinstance(manifest_response.data, dict):
+                manifest_meta_updated = int(manifest_response.data.get("updated") or 0)
+            elif manifest_response.status_code != status.HTTP_200_OK:
+                manifest_meta_error = manifest_response.data
+
+        totals = {
+            "candidates": (
+                summary["attachments"]["candidates"]
+                + summary["description_images"]["candidates"]
+                + summary["payload_media"]["candidates"]
+            ),
+            "created": (
+                summary["attachments"]["created"]
+                + summary["description_images"]["created"]
+                + summary["payload_media"]["created"]
+            ),
+            "skipped": (
+                summary["attachments"]["skipped"]
+                + summary["description_images"]["skipped"]
+                + summary["payload_media"]["skipped"]
+            ),
+            "failed": (
+                summary["attachments"]["failed"]
+                + summary["description_images"]["failed"]
+                + summary["payload_media"]["failed"]
+            ),
+        }
+
+        response_payload = {
+            "package_id": package_id,
+            "work_item_id": str(issue.id),
+            "totals": totals,
+            "details": summary,
+            "manifest_meta_updated": manifest_meta_updated,
+        }
+        if artifact_error is not None:
+            response_payload["artifact_error"] = artifact_error
+        if manifest_meta_error is not None:
+            response_payload["manifest_meta_error"] = manifest_meta_error
+        return Response(response_payload, status=status.HTTP_200_OK)

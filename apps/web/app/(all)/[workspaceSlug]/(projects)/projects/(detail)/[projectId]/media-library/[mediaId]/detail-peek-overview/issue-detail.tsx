@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { History } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import type { TIssue, TNameDescriptionLoader } from "@plane/types";
+import type { TFileEntityInfo, TIssue, TNameDescriptionLoader } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 // components
 import { calculateTimeAgo, getTextContent } from "@plane/utils";
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
@@ -31,6 +32,33 @@ import { MediaLibraryService } from "@/services/media-library.service";
 import type { TMediaItem } from "../../types";
 // services init
 const workItemVersionService = new WorkItemVersionService();
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+const isValidImageSource = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) return false;
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return true;
+  return UUID_PATTERN.test(trimmed);
+};
+
+const sanitizeMediaDescriptionHtml = (value: string) => {
+  if (!value || typeof window === "undefined") return value;
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(value, "text/html");
+    let changed = false;
+    doc.querySelectorAll("image-component, img").forEach((element) => {
+      const src = element.getAttribute("src");
+      if (!src) return;
+      if (isValidImageSource(src)) return;
+      element.removeAttribute("src");
+      changed = true;
+    });
+    return changed ? doc.body.innerHTML : value;
+  } catch {
+    return value;
+  }
+};
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
@@ -117,7 +145,7 @@ export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
   const getMediaDescriptionSeed = useCallback(
     (item?: TMediaItem) => {
       const html = item?.descriptionHtml?.trim();
-      if (html) return html;
+      if (html) return sanitizeMediaDescriptionHtml(html);
       const text = item?.description?.trim() ?? "";
       if (!text) return "<p></p>";
       return `<p>${escapeHtml(text).replace(/\n/g, "<br />")}</p>`;
@@ -135,6 +163,14 @@ export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
     setMediaDescriptionSeed(getMediaDescriptionSeed(mediaItem));
   }, [getMediaDescriptionSeed, mediaItem, mediaItem?.id]);
   const mediaDescriptionHtml = mediaDescriptionSeed || "<p></p>";
+  const artifactDescriptionUploadEntity = useMemo<TFileEntityInfo | undefined>(() => {
+    if (!isArtifactOnlyMode) return undefined;
+    if (!projectId) return undefined;
+    return {
+      entity_identifier: projectId,
+      entity_type: EFileAssetType.PROJECT_COVER,
+    };
+  }, [isArtifactOnlyMode, projectId]);
 
   const updateMediaArtifact = useCallback(
     async (data: Partial<TIssue>) => {
@@ -242,6 +278,7 @@ export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
         setIsSubmitting={(value) => setIsSubmitting(value)}
         containerClassName="-ml-3 border-none"
         onDescriptionChange={onDescriptionChange}
+        assetUploadEntityInfo={artifactDescriptionUploadEntity}
       />
 
       {showIssueFooterMeta ? (

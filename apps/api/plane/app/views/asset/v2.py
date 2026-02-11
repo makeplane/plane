@@ -563,6 +563,12 @@ class ProjectAssetEndpoint(BaseAPIView):
         # asset key
         asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
 
+        entity_fields = self.get_entity_id_field(entity_type, entity_identifier)
+        # Keep project scoping for this endpoint while avoiding duplicate kwargs
+        # when entity_type already maps to project_id (e.g. PROJECT_COVER).
+        if "project_id" not in entity_fields or not entity_fields["project_id"]:
+            entity_fields["project_id"] = project_id
+
         # Create a File Asset
         asset = FileAsset.objects.create(
             attributes={"name": name, "type": type, "size": size_limit},
@@ -571,8 +577,7 @@ class ProjectAssetEndpoint(BaseAPIView):
             workspace=workspace,
             created_by=request.user,
             entity_type=entity_type,
-            project_id=project_id,
-            **self.get_entity_id_field(entity_type, entity_identifier),
+            **entity_fields,
         )
 
         # Get the presigned URL

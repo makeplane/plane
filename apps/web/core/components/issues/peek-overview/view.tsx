@@ -21,6 +21,7 @@ import { IssuePeekOverviewHeader } from "./header";
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { IssuePeekOverviewLoader } from "./loader";
 import { PeekOverviewProperties } from "./properties";
+import { PeekOverviewWebhookArtifacts } from "./webhook-artifacts";
 
 const resolveDescriptionImageSrc = (value: string, workspaceSlug: string, projectId: string) => {
   const trimmed = value.trim();
@@ -112,10 +113,12 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const [isDuplicateIssueModalOpen, setIsDuplicateIssueModalOpen] = useState(false);
   const [isEditIssueModalOpen, setIsEditIssueModalOpen] = useState(false);
   const [isInlineCleanupModalOpen, setIsInlineCleanupModalOpen] = useState(false);
+  const [isWebhookVideoModalOpen, setIsWebhookVideoModalOpen] = useState(false);
   const [descriptionHtmlOverride, setDescriptionHtmlOverride] = useState<string | null>(null);
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<EditorRefApi>(null);
+  const webhookVideoModalCloseGuardRef = useRef<number>(0);
   // store hooks
   const {
     setPeekIssue,
@@ -147,10 +150,18 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const toggleArchiveIssueModal = (value: boolean) => setIsArchiveIssueModalOpen(value);
   const toggleDuplicateIssueModal = (value: boolean) => setIsDuplicateIssueModalOpen(value);
   const toggleEditIssueModal = (value: boolean) => setIsEditIssueModalOpen(value);
+  const handleWebhookVideoModalOpenChange = useCallback((isOpen: boolean) => {
+    setIsWebhookVideoModalOpen(isOpen);
+    webhookVideoModalCloseGuardRef.current = isOpen ? Date.now() + 60_000 : Date.now() + 300;
+  }, []);
 
   const isAnyLocalModalOpen =
     isDeleteIssueModalOpen || isArchiveIssueModalOpen || isDuplicateIssueModalOpen || isEditIssueModalOpen;
-  const isAnyLocalModalOpenWithInline = isAnyLocalModalOpen || isInlineCleanupModalOpen;
+  const isAnyLocalModalOpenWithInline =
+    isAnyLocalModalOpen ||
+    isInlineCleanupModalOpen ||
+    isWebhookVideoModalOpen ||
+    Date.now() < webhookVideoModalCloseGuardRef.current;
 
   usePeekOverviewOutsideClickDetector(
     issuePeekOverviewRef,
@@ -256,6 +267,13 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                       onDescriptionChange={handleDescriptionChange}
                     />
 
+                    <PeekOverviewWebhookArtifacts
+                      workspaceSlug={workspaceSlug}
+                      projectId={projectId}
+                      issueId={issueId}
+                      onVideoModalOpenChange={handleWebhookVideoModalOpenChange}
+                    />
+
                     <div className="py-2">
                       <IssueDetailWidgets
                         workspaceSlug={workspaceSlug}
@@ -298,6 +316,13 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           isSubmitting={isSubmitting}
                           setIsSubmitting={(value) => setIsSubmitting(value)}
                           onDescriptionChange={handleDescriptionChange}
+                        />
+
+                        <PeekOverviewWebhookArtifacts
+                          workspaceSlug={workspaceSlug}
+                          projectId={projectId}
+                          issueId={issueId}
+                          onVideoModalOpenChange={handleWebhookVideoModalOpenChange}
                         />
 
                         <div className="py-2">

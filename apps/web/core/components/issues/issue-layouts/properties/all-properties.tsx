@@ -340,7 +340,7 @@ const isStartTimeReadOnly = (
 // Usage:
  const disabled = isStartTimeReadOnly(issue.start_date, issue.start_time);
 
-  {console.log("Render all display propertie:", JSON.parse(JSON.stringify(displayProperties)) )}
+  // {console.log("Render all display propertie:", JSON.parse(JSON.stringify(displayProperties)) )}
 
   return (
     <div className={className}>

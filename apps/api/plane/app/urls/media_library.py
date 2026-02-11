@@ -7,6 +7,7 @@ from plane.app.views.media_library import (
     MediaLibraryInitAPIView,
     MediaManifestDetailAPIView,
     MediaPackageCreateAPIView,
+    MediaWorkItemSyncAPIView,
 )
 
 urlpatterns = [
@@ -14,6 +15,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/",
         MediaLibraryInitAPIView.as_view(),
         name="media-library-init",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/work-items/webhook/",
+        MediaWorkItemSyncAPIView.as_view(),
+        name="media-library-work-item-webhook",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/media-library/packages/",

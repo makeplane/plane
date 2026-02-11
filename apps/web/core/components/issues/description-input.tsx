@@ -8,7 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import type { TIssue, TNameDescriptionLoader } from "@plane/types";
+import type { TFileEntityInfo, TIssue, TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
@@ -36,6 +36,7 @@ export type IssueDescriptionInputProps = {
   setIsSubmitting: (initialValue: TNameDescriptionLoader) => void;
   swrIssueDescription?: string | null | undefined;
   onDescriptionChange?: (value: string) => void;
+  assetUploadEntityInfo?: TFileEntityInfo;
 };
 
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
@@ -52,6 +53,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     setIsSubmitting,
     placeholder,
     onDescriptionChange,
+    assetUploadEntityInfo,
   } = props;
   // states
   const [localIssueDescription, setLocalIssueDescription] = useState({
@@ -172,12 +174,14 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
               containerClassName={containerClassName}
               uploadFile={async (blockId, file) => {
                 try {
+                  const resolvedEntityInfo = assetUploadEntityInfo ?? {
+                    entity_identifier: issueId,
+                    entity_type: EFileAssetType.ISSUE_DESCRIPTION,
+                  };
+
                   const { asset_id } = await uploadEditorAsset({
                     blockId,
-                    data: {
-                      entity_identifier: issueId,
-                      entity_type: EFileAssetType.ISSUE_DESCRIPTION,
-                    },
+                    data: resolvedEntityInfo,
                     file,
                     projectId,
                     workspaceSlug,
