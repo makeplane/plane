@@ -618,8 +618,20 @@ class ProjectAssetEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, pk):
-        # get the asset id
-        asset = FileAsset.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        asset = FileAsset.objects.filter(workspace__slug=slug, project_id=project_id, pk=pk).first()
+        if not asset and request.query_params.get("response") == "json":
+            # Allow media-library resolution for soft-deleted assets still present in MinIO.
+            asset = FileAsset.all_objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                pk=pk,
+                is_deleted=True,
+            ).first()
+        if not asset:
+            return Response(
+                {"error": "The requested asset could not be found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         # Check if the asset is uploaded
         if not asset.is_uploaded:

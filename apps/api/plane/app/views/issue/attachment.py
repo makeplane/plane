@@ -167,8 +167,22 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, issue_id, pk=None):
         if pk:
-            # Get the asset
-            asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
+            asset_filters = {
+                "id": pk,
+                "workspace__slug": slug,
+                "project_id": project_id,
+                "issue_id": issue_id,
+                "entity_type": FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            }
+            asset = FileAsset.objects.filter(**asset_filters).first()
+            if not asset and request.query_params.get("response") == "json":
+                # Media library can still resolve soft-deleted attachments to MinIO signed URLs.
+                asset = FileAsset.all_objects.filter(**asset_filters, is_deleted=True).first()
+            if not asset:
+                return Response(
+                    {"error": "The requested asset could not be found."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
             # Check if the asset is uploaded
             if not asset.is_uploaded:
