@@ -97,7 +97,7 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
       });
       return;
     },
-    [createAttachment, maxFileSize, workspaceSlug, handleFetchPropertyActivities]
+    [createAttachment, maxFileSize, workspaceSlug, handleFetchPropertyActivities, t]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -120,6 +120,8 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
               onClose={() => toggleDeleteAttachmentModal(null)}
               attachmentOperations={attachmentOperations}
               attachmentId={attachmentDeleteModalId}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
               confirmManifestOnDelete={confirmManifestOnDelete}
               issueServiceType={issueServiceType}
             />

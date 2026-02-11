@@ -328,6 +328,101 @@ const fetchInlineImageResponse = async (url: string) => {
   return fallbackResponse;
 };
 
+const resolveInlineManifestCleanupArtifacts = ({
+  issueId,
+  candidates,
+  currentDescriptionImages,
+  manifestArtifacts,
+  manifestMetadata,
+}: {
+  issueId: string;
+  candidates: Array<{ url: string; index: number }>;
+  currentDescriptionImages: string[];
+  manifestArtifacts: Record<string, unknown>[];
+  manifestMetadata?: Record<string, Record<string, unknown>>;
+}) => {
+  const inlineSourceKeys = new Set(candidates.map(({ url }) => normalizeInlineSourceKey(url)).filter(Boolean));
+  const inlineUrlKeys = new Set(
+    candidates
+      .map(({ url }) => normalizeUrlForCompare(resolveInlineAssetUrl(url)))
+      .filter((entry) => entry && !entry.startsWith("data:"))
+  );
+  const inlineAssetIds = new Set(candidates.map(({ url }) => resolveInlineAssetId(url)).filter(Boolean));
+  const currentInlineSourceKeys = new Set(currentDescriptionImages.map((url) => normalizeInlineSourceKey(url)).filter(Boolean));
+  const currentInlineUrlKeys = new Set(
+    currentDescriptionImages
+      .map((url) => normalizeUrlForCompare(resolveInlineAssetUrl(url)))
+      .filter((entry) => entry && !entry.startsWith("data:"))
+  );
+  const currentInlineAssetIds = new Set(currentDescriptionImages.map((url) => resolveInlineAssetId(url)).filter(Boolean));
+  const artifactNameCandidates = new Set<string>();
+  candidates.forEach(({ url, index }) => {
+    resolveInlineArtifactNames(url, index).forEach((name) => artifactNameCandidates.add(name));
+  });
+
+  const namesToDelete = new Set<string>();
+
+  for (const artifact of manifestArtifacts) {
+    if (!artifact || typeof artifact !== "object") continue;
+    const artifactName = (artifact as { name?: string }).name;
+    if (!artifactName) continue;
+    const workItemId = (artifact as { work_item_id?: string | null }).work_item_id ?? "";
+    if (workItemId && workItemId !== issueId) continue;
+
+    const meta = resolveManifestMeta(artifact as Record<string, unknown>, manifestMetadata);
+    const inlineSource = typeof meta.inline_source === "string" ? meta.inline_source : "";
+    if (inlineSource) {
+      if (currentInlineSourceKeys.has(inlineSource)) continue;
+      if (inlineSourceKeys.has(inlineSource)) {
+        namesToDelete.add(artifactName);
+      }
+      continue;
+    }
+
+    const rawPath = (artifact as { path?: string }).path ?? "";
+    if (rawPath && typeof rawPath === "string" && rawPath.startsWith("http")) {
+      const normalizedPath = normalizeUrlForCompare(rawPath);
+      if (normalizedPath) {
+        if (currentInlineUrlKeys.has(normalizedPath)) continue;
+        if (inlineUrlKeys.has(normalizedPath)) {
+          namesToDelete.add(artifactName);
+          continue;
+        }
+      }
+    }
+
+    const lastSegment = artifactName.split("-").pop() ?? "";
+    if (lastSegment) {
+      if (currentInlineAssetIds.has(lastSegment)) continue;
+      if (inlineAssetIds.has(lastSegment)) {
+        namesToDelete.add(artifactName);
+        continue;
+      }
+    }
+
+    if (artifactNameCandidates.has(artifactName)) {
+      namesToDelete.add(artifactName);
+    }
+  }
+
+  if (namesToDelete.size === 0 && currentDescriptionImages.length === 0) {
+    for (const artifact of manifestArtifacts) {
+      if (!artifact || typeof artifact !== "object") continue;
+      const artifactName = (artifact as { name?: string }).name;
+      if (!artifactName) continue;
+      const workItemId = (artifact as { work_item_id?: string | null }).work_item_id ?? "";
+      if (workItemId && workItemId !== issueId) continue;
+      const meta = resolveManifestMeta(artifact as Record<string, unknown>, manifestMetadata);
+      const metaSource = typeof meta.source === "string" ? meta.source : "";
+      if (metaSource === "work_item_description") {
+        namesToDelete.add(artifactName);
+      }
+    }
+  }
+
+  return namesToDelete;
+};
+
 export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((props) => {
   const {
     peekMode,
@@ -441,13 +536,42 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
 
     const candidates = removedImages;
     if (candidates.length === 0) return;
-    setInlineCleanupCandidates((prev) => {
-      const merged = new Map<string, { url: string; index: number }>();
-      prev.forEach((entry) => merged.set(`${entry.url}::${entry.index}`, entry));
-      candidates.forEach((entry) => merged.set(`${entry.url}::${entry.index}`, entry));
-      return Array.from(merged.values());
-    });
-    setInlineCleanupModalOpen(true);
+    let isMounted = true;
+    const verifyAndOpenInlineCleanup = async () => {
+      try {
+        const manifest = await mediaLibraryService.ensureProjectLibrary(workspaceSlug, projectId);
+        const manifestArtifacts = Array.isArray(manifest?.artifacts)
+          ? (manifest.artifacts as unknown as Record<string, unknown>[])
+          : [];
+        const manifestMetadata =
+          manifest && typeof manifest === "object" && manifest.metadata && typeof manifest.metadata === "object"
+            ? (manifest.metadata as Record<string, Record<string, unknown>>)
+            : undefined;
+        const namesToDelete = resolveInlineManifestCleanupArtifacts({
+          issueId,
+          candidates,
+          currentDescriptionImages: normalizedDescriptionImages,
+          manifestArtifacts,
+          manifestMetadata,
+        });
+        if (!isMounted || namesToDelete.size === 0) return;
+        setInlineCleanupCandidates((prev) => {
+          const merged = new Map<string, { url: string; index: number }>();
+          prev.forEach((entry) => merged.set(`${entry.url}::${entry.index}`, entry));
+          candidates.forEach((entry) => merged.set(`${entry.url}::${entry.index}`, entry));
+          return Array.from(merged.values());
+        });
+        setInlineCleanupModalOpen(true);
+      } catch {
+        console.error("Failed to verify inline image cleanup candidates.");
+        // Ignore manifest lookup failures; do not prompt cleanup without verification.
+      }
+    };
+    void verifyAndOpenInlineCleanup();
+
+    return () => {
+      isMounted = false;
+    };
   }, [issueId, normalizedDescriptionImages, mediaLibraryService, projectId, workspaceSlug, setInlineCleanupModalOpen]);
 
   const handleInlineCleanupClose = useCallback(() => {
@@ -469,100 +593,20 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
         handleInlineCleanupClose();
         return;
       }
-      const inlineSourceKeys = new Set(
-        inlineCleanupCandidates.map(({ url }) => normalizeInlineSourceKey(url)).filter(Boolean)
-      );
-      const inlineUrlKeys = new Set(
-        inlineCleanupCandidates
-          .map(({ url }) => normalizeUrlForCompare(resolveInlineAssetUrl(url)))
-          .filter((entry) => entry && !entry.startsWith("data:"))
-      );
-      const inlineAssetIds = new Set(
-        inlineCleanupCandidates.map(({ url }) => resolveInlineAssetId(url)).filter(Boolean)
-      );
-      const currentInlineSourceKeys = new Set(
-        normalizedDescriptionImages.map((url) => normalizeInlineSourceKey(url)).filter(Boolean)
-      );
-      const currentInlineUrlKeys = new Set(
-        normalizedDescriptionImages
-          .map((url) => normalizeUrlForCompare(resolveInlineAssetUrl(url)))
-          .filter((entry) => entry && !entry.startsWith("data:"))
-      );
-      const currentInlineAssetIds = new Set(
-        normalizedDescriptionImages.map((url) => resolveInlineAssetId(url)).filter(Boolean)
-      );
-      const artifactNameCandidates = new Set<string>();
-      inlineCleanupCandidates.forEach(({ url, index }) => {
-        resolveInlineArtifactNames(url, index).forEach((name) => artifactNameCandidates.add(name));
-      });
-
-      const manifestArtifacts = Array.isArray(manifest?.artifacts) ? manifest?.artifacts : [];
+      const manifestArtifacts = Array.isArray(manifest?.artifacts)
+        ? (manifest.artifacts as unknown as Record<string, unknown>[])
+        : [];
       const manifestMetadata =
         manifest && typeof manifest === "object" && manifest.metadata && typeof manifest.metadata === "object"
           ? (manifest.metadata as Record<string, Record<string, unknown>>)
           : undefined;
-      const namesToDelete = new Set<string>();
-
-      if (manifestArtifacts.length > 0) {
-        for (const artifact of manifestArtifacts) {
-          if (!artifact || typeof artifact !== "object") continue;
-          const artifactName = (artifact as { name?: string }).name;
-          if (!artifactName) continue;
-          const workItemId = (artifact as { work_item_id?: string | null }).work_item_id ?? "";
-          if (workItemId && workItemId !== issueId) continue;
-
-          const meta = resolveManifestMeta(artifact as Record<string, unknown>, manifestMetadata);
-          const inlineSource = typeof meta.inline_source === "string" ? meta.inline_source : "";
-          if (inlineSource) {
-            if (currentInlineSourceKeys.has(inlineSource)) continue;
-            if (inlineSourceKeys.has(inlineSource)) {
-              namesToDelete.add(artifactName);
-            }
-            continue;
-          }
-
-          const rawPath = (artifact as { path?: string }).path ?? "";
-          if (rawPath && typeof rawPath === "string" && rawPath.startsWith("http")) {
-            const normalizedPath = normalizeUrlForCompare(rawPath);
-            if (normalizedPath) {
-              if (currentInlineUrlKeys.has(normalizedPath)) continue;
-              if (inlineUrlKeys.has(normalizedPath)) {
-                namesToDelete.add(artifactName);
-                continue;
-              }
-            }
-          }
-
-          const lastSegment = artifactName.split("-").pop() ?? "";
-          if (lastSegment) {
-            if (currentInlineAssetIds.has(lastSegment)) continue;
-            if (inlineAssetIds.has(lastSegment)) {
-              namesToDelete.add(artifactName);
-              continue;
-            }
-          }
-
-          if (artifactNameCandidates.has(artifactName)) {
-            namesToDelete.add(artifactName);
-          }
-        }
-      }
-
-      if (namesToDelete.size === 0 && artifactNameCandidates.size > 0) {
-        artifactNameCandidates.forEach((name) => namesToDelete.add(name));
-      }
-
-      if (namesToDelete.size === 0 && normalizedDescriptionImages.length === 0 && manifestArtifacts.length > 0) {
-        for (const artifact of manifestArtifacts) {
-          if (!artifact || typeof artifact !== "object") continue;
-          const artifactName = (artifact as { name?: string }).name;
-          if (!artifactName) continue;
-          const meta = resolveManifestMeta(artifact as Record<string, unknown>, manifestMetadata);
-          const metaSource = typeof meta.source === "string" ? meta.source : "";
-          if (metaSource !== "work_item_description") continue;
-          namesToDelete.add(artifactName);
-        }
-      }
+      const namesToDelete = resolveInlineManifestCleanupArtifacts({
+        issueId,
+        candidates: inlineCleanupCandidates,
+        currentDescriptionImages: normalizedDescriptionImages,
+        manifestArtifacts,
+        manifestMetadata,
+      });
 
       if (namesToDelete.size > 0) {
         await Promise.all(
@@ -578,7 +622,15 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     } finally {
       handleInlineCleanupClose();
     }
-  }, [handleInlineCleanupClose, inlineCleanupCandidates, mediaLibraryService, projectId, workspaceSlug]);
+  }, [
+    handleInlineCleanupClose,
+    inlineCleanupCandidates,
+    issueId,
+    mediaLibraryService,
+    normalizedDescriptionImages,
+    projectId,
+    workspaceSlug,
+  ]);
 
   const workItemLink = generateWorkItemLink({
     workspaceSlug,
@@ -918,8 +970,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
         content={
           <>
             You removed {inlineCleanupCandidates.length} inline image
-            {inlineCleanupCandidates.length === 1 ? "" : "s"} from the description. Do you want to also remove the
-            corresponding artifacts from the media library (manifest.json)?
+            {inlineCleanupCandidates.length === 1 ? "" : "s"} from the description. Do you also want to remove from the media library?
           </>
         }
       />
