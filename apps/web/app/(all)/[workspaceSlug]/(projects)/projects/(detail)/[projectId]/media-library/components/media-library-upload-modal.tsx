@@ -249,7 +249,9 @@ export const MediaLibraryUploadModal = () => {
     setSelectedWorkItem(null);
     setWorkItemQuery("");
     setWorkItemResults([]);
-    setWorkItemMeta((prev) => ({ ...prev, createdByMemberId: null }));
+    setWorkItemMeta(DEFAULT_WORK_ITEM_META);
+    setWorkItemTagDraft("");
+    setWorkItemError(null);
   };
 
   const handleClose = () => {
