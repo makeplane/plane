@@ -1,3 +1,6 @@
+# Python imports
+from collections import defaultdict
+
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Count
@@ -35,6 +38,8 @@ from plane.app.serializers import (
 from plane.db.models import (
     Issue,
     FileAsset,
+    IssueLabel,
+    IssueAssignee,
     IssueLink,
     IssueView,
     Workspace,
@@ -46,8 +51,6 @@ from plane.db.models import (
 )
 from plane.utils.grouper import (
     issue_group_values,
-    issue_on_results,
-    issue_queryset_grouper,
 )
 from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects, apply_user_hub_filters
 from plane.utils.constants import ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP
@@ -226,14 +229,15 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 project__project_projectmember__is_active=True,
             )
             .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(
-                cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
-                )
-            )
+            .prefetch_related("assignees", "labels")
+            # --- Commented out: cycle_id Subquery (per-row subquery, not needed for list) ---
+            # .annotate(
+            #     cycle_id=Subquery(
+            #         CycleIssue.objects.filter(
+            #             issue=OuterRef("id"), deleted_at__isnull=True
+            #         ).values("cycle_id")[:1]
+            #     )
+            # )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -249,60 +253,39 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True),
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(assignees__id__isnull=True)
-                            & Q(assignees__member_project__is_active=True)
-                            & Q(issue_assignee__deleted_at__isnull=True)
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue_module__module_id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(issue_module__module_id__isnull=True)
-                            & Q(issue_module__module__archived_at__isnull=True)
-                            & Q(issue_module__deleted_at__isnull=True)
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                custom_propertiess=Coalesce(
-                    ArrayAgg(
-                        Func(
-                            F('custom_properties__key'),
-                            F('custom_properties__value'),
-                            function="jsonb_build_object",
-                            template="%(function)s(%(expressions)s)",
-                            output_field=JSONField()  # Specify output field type
-                        ),
-                        distinct=True,
-                        filter=Q(custom_properties__key__isnull=False)
-                    ),
-                    Value([], output_field=ArrayField(JSONField()))
-                )
-            )
+            # --- Commented out: All 4 ArrayAgg annotations (cause row multiplication via LEFT JOINs) ---
+            # label_ids, assignee_ids, custom_propertiess are batch-loaded after pagination.
+            # module_ids is removed entirely.
+            # .annotate(
+            #     label_ids=Coalesce(
+            #         ArrayAgg("labels__id", distinct=True,
+            #             filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True))),
+            #         Value([], output_field=ArrayField(UUIDField())),
+            #     ),
+            #     assignee_ids=Coalesce(
+            #         ArrayAgg("assignees__id", distinct=True,
+            #             filter=Q(~Q(assignees__id__isnull=True) & Q(assignees__member_project__is_active=True)
+            #                 & Q(issue_assignee__deleted_at__isnull=True))),
+            #         Value([], output_field=ArrayField(UUIDField())),
+            #     ),
+            #     module_ids=Coalesce(
+            #         ArrayAgg("issue_module__module_id", distinct=True,
+            #             filter=Q(~Q(issue_module__module_id__isnull=True) & Q(issue_module__module__archived_at__isnull=True)
+            #                 & Q(issue_module__deleted_at__isnull=True))),
+            #         Value([], output_field=ArrayField(UUIDField())),
+            #     ),
+            #     custom_propertiess=Coalesce(
+            #         ArrayAgg(Func(F('custom_properties__key'), F('custom_properties__value'),
+            #             function="jsonb_build_object", template="%(function)s(%(expressions)s)",
+            #             output_field=JSONField()), distinct=True,
+            #             filter=Q(custom_properties__key__isnull=False)),
+            #         Value([], output_field=ArrayField(JSONField()))
+            #     )
+            # )
             .filter(
                 *custom_filters
             )
+            .distinct()
         )
         return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
 
@@ -386,7 +369,44 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             }
         
         return Response(response_data, status=status.HTTP_200_OK)
-    
+
+    @staticmethod
+    def _enrich_issues_with_relations(results_list):
+        """Batch-load label_ids, assignee_ids, custom_propertiess for paginated issues."""
+        if not results_list:
+            return results_list
+
+        issue_ids = list({r["id"] for r in results_list})
+
+        # label_ids
+        label_map = defaultdict(list)
+        for iid, lid in IssueLabel.objects.filter(
+            issue_id__in=issue_ids, deleted_at__isnull=True
+        ).values_list("issue_id", "label_id"):
+            label_map[iid].append(lid)
+
+        # assignee_ids
+        assignee_map = defaultdict(list)
+        for iid, aid in IssueAssignee.objects.filter(
+            issue_id__in=issue_ids, deleted_at__isnull=True
+        ).values_list("issue_id", "assignee_id"):
+            assignee_map[iid].append(aid)
+
+        # custom_propertiess
+        cp_map = defaultdict(list)
+        for row in IssueCustomProperty.objects.filter(
+            issue_id__in=issue_ids, key__isnull=False
+        ).values("issue_id", "key", "value"):
+            cp_map[row["issue_id"]].append({row["key"]: row["value"]})
+
+        for r in results_list:
+            iid = r["id"]
+            r["label_ids"] = label_map.get(iid, [])
+            r["assignee_ids"] = assignee_map.get(iid, [])
+            r["custom_propertiess"] = cp_map.get(iid, [])
+
+        return results_list
+
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
         filtersWithoutCustomProperties = filters.copy()
@@ -427,12 +447,36 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         group_by = request.GET.get("group_by", False)
         sub_group_by = request.GET.get("sub_group_by", False)
 
-        # issue queryset
-        issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset,
-            group_by=group_by,
-            sub_group_by=sub_group_by,
-        )
+        # Skipped issue_queryset_grouper -- it re-adds ArrayAgg annotations.
+        # Custom on_results replaces issue_on_results (which expects annotation
+        # fields on the queryset). label_ids, assignee_ids, custom_propertiess
+        # are batch-loaded after .values() instead.
+
+        # M2M fields that need raw field in .values() when used as group_by
+        FIELD_MAPPER = {
+            "labels__id": "label_ids",
+            "assignees__id": "assignee_ids",
+        }
+
+        base_fields = [
+            "id", "name", "state_id", "sort_order", "completed_at",
+            "priority", "start_date", "target_date", "sequence_id",
+            "project_id", "parent_id", "sub_issues_count",
+            "created_at", "updated_at", "created_by", "updated_by",
+            "attachment_count", "link_count", "is_draft", "archived_at",
+            "state__group", "trip_reference_number", "reference_number",
+            "hub_code", "hub_name", "customer_code", "customer_name",
+            "vendor_name", "vendor_code", "worker_code", "business_type",
+        ]
+
+        def on_results_fn(issues):
+            fields = list(base_fields)
+            if group_by and group_by in FIELD_MAPPER:
+                fields.append(group_by)
+            if sub_group_by and sub_group_by in FIELD_MAPPER:
+                fields.append(sub_group_by)
+            results = list(issues.values(*fields))
+            return self._enrich_issues_with_relations(results)
 
         if group_by:
             # Check group and sub group value paginate
@@ -450,11 +494,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                         request=request,
                         order_by=order_by_param,
                         queryset=issue_queryset,
-                        on_results=lambda issues: issue_on_results(
-                            group_by=group_by,
-                            issues=issues,
-                            sub_group_by=sub_group_by,
-                        ),
+                        on_results=on_results_fn,
                         paginator_cls=SubGroupedOffsetPaginator,
                         group_by_fields=issue_group_values(
                             field=group_by,
@@ -487,11 +527,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     request=request,
                     order_by=order_by_param,
                     queryset=issue_queryset,
-                    on_results=lambda issues: issue_on_results(
-                        group_by=group_by,
-                        issues=issues,
-                        sub_group_by=sub_group_by,
-                    ),
+                    on_results=on_results_fn,
                     paginator_cls=GroupedOffsetPaginator,
                     group_by_fields=issue_group_values(
                         field=group_by,
@@ -516,9 +552,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
-                on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                ),
+                on_results=on_results_fn,
                 skip_count=True,
             )
 
