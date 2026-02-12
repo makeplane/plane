@@ -1,14 +1,15 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import type { MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, Clock, File, Image as ImageIcon, Video } from "lucide-react";
-import { ETagSize, ETagVariant, Tag } from "@plane/ui";
+import { Calendar, Clock, File, Image as ImageIcon, ImageOff, Video } from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
+import { ETagSize, ETagVariant, Tag } from "@plane/ui";
 
-import type { TMediaItem } from "../types";
 import { useVideoDuration } from "../hooks/use-video-duration";
+import type { TMediaItem } from "../types";
 
 export const MediaCard = ({
   item,
@@ -27,6 +28,12 @@ export const MediaCard = ({
 }) => {
   // console.log("Rendering MediaCard for item:", item);
   const isHls = item.mediaType === "video" && item.format.toLowerCase() === "m3u8";
+  const [isThumbnailUnavailable, setIsThumbnailUnavailable] = useState(!item.thumbnail);
+
+  useEffect(() => {
+    setIsThumbnailUnavailable(!item.thumbnail);
+  }, [item.thumbnail]);
+
   const durationLabel = useVideoDuration(item);
   const isExternal = /^https?:\/\//i.test(href);
   const showLinkedTypeIndicator = item.mediaType === "image" && Boolean(item.link) && Boolean(item.linkedMediaType);
@@ -79,6 +86,12 @@ export const MediaCard = ({
       : (item.linkedMediaType ?? item.mediaType) === "image"
         ? ImageIcon
         : File;
+  const thumbnailUnavailableFallback = (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-custom-text-300">
+      <ImageOff className="h-16 w-16" strokeWidth={2.5} />
+      <span className="sr-only">Thumbnail unavailable</span>
+    </div>
+  );
 
   const cardBody = (
     <div
@@ -94,29 +107,35 @@ export const MediaCard = ({
           </span>
         ) : null}
         {item.mediaType === "image" ? (
-          <Image
-            src={item.thumbnail}
-            alt={item.title}
-            width={100}
-            height={100}
-            loading="lazy"
-            className={`h-full w-full transition-transform duration-300 ${
-              isLinkedDocumentThumbnail ? "object-contain p-6" : "object-cover"
-            }`}
-          />
+          isThumbnailUnavailable ? (
+            thumbnailUnavailableFallback
+          ) : (
+            <Image
+              src={item.thumbnail}
+              alt={item.title}
+              width={100}
+              height={100}
+              loading="lazy"
+              onError={() => setIsThumbnailUnavailable(true)}
+              className={`h-full w-full transition-transform duration-300 ${
+                isLinkedDocumentThumbnail ? "object-contain p-6" : "object-cover"
+              }`}
+            />
+          )
         ) : item.mediaType === "video" ? (
           isHls ? (
-            item.thumbnail ? (
+            isThumbnailUnavailable ? (
+              thumbnailUnavailableFallback
+            ) : (
               <Image
                 src={item.thumbnail}
                 alt={item.title}
                 width={100}
                 height={100}
                 loading="lazy"
+                onError={() => setIsThumbnailUnavailable(true)}
                 className="h-full w-full object-cover transition-transform duration-300 "
               />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-custom-text-300">Stream</div>
             )
           ) : (
             <video

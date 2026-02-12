@@ -1,10 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import type { MouseEvent } from "react";
 import Link from "next/link";
-import { File, Image, Video } from "lucide-react";
-import type { TMediaItem, TMediaSection } from "../types";
+import { File, Image, ImageOff, Video } from "lucide-react";
 import { useVideoDuration } from "../hooks/use-video-duration";
+import type { TMediaItem, TMediaSection } from "../types";
 
 const MediaListRow = ({
   item,
@@ -18,6 +19,12 @@ const MediaListRow = ({
   getItemTypeLabel?: (item: TMediaItem) => string;
 }) => {
   const durationLabel = useVideoDuration(item);
+  const [isThumbnailUnavailable, setIsThumbnailUnavailable] = useState(!item.thumbnail);
+
+  useEffect(() => {
+    setIsThumbnailUnavailable(!item.thumbnail);
+  }, [item.thumbnail]);
+
   const typeLabel = getItemTypeLabel ? getItemTypeLabel(item) : (item.linkedMediaType ?? item.mediaType);
   const showLinkedTypeIndicator = item.mediaType === "image" && Boolean(item.link) && Boolean(item.linkedMediaType);
   const isLinkedDocumentThumbnail = item.mediaType === "image" && item.linkedMediaType === "document";
@@ -35,6 +42,12 @@ const MediaListRow = ({
         ? Image
         : File
     : null;
+  const thumbnailUnavailableFallback = (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-custom-text-300">
+      <ImageOff className="h-6 w-6" strokeWidth={2.5} />
+      <span className="sr-only">Thumbnail unavailable</span>
+    </div>
+  );
   return (
     <Link
       href={getItemHref ? getItemHref(item) : `./${encodeURIComponent(item.id)}`}
@@ -45,14 +58,15 @@ const MediaListRow = ({
       style={{ gridTemplateColumns: "120px minmax(200px, 2fr) 1fr 1fr 1fr" }}
     >
       <div className="relative h-16 w-28 overflow-hidden rounded-md bg-custom-background-90">
-        {item.thumbnail ? (
+        {!isThumbnailUnavailable ? (
           <img
             src={item.thumbnail}
             alt={item.title}
+            onError={() => setIsThumbnailUnavailable(true)}
             className={`h-full w-full ${isLinkedDocumentThumbnail ? "object-contain p-3" : "object-cover"}`}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-custom-text-300">No preview</div>
+          thumbnailUnavailableFallback
         )}
         {showLinkedTypeIndicator && LinkedTypeIcon ? (
           <span className="absolute right-2 bottom-2 flex h-6 w-6 items-center justify-center rounded-full bg-custom-background-100/80 text-custom-text-300 backdrop-blur">
