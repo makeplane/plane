@@ -369,6 +369,8 @@ export const mapArtifactsToMediaItems = (
     const resolvedPath = resolveArtifactSource(artifact, context);
     const downloadablePath = context && artifact.name ? buildArtifactFileUrl(context, artifact.name) : "";
     const directDownloadPath = rawPath && /^https?:\/\//i.test(rawPath) ? rawPath : "";
+    const preferredDownloadPath =
+      mediaType === "video" ? downloadablePath || directDownloadPath : directDownloadPath || downloadablePath;
 
     const metaThumbnail = getMetaString(meta, ["thumbnail"], "");
     const fallbackThumbnail =
@@ -400,7 +402,7 @@ export const mapArtifactsToMediaItems = (
       videoSrc: mediaType === "video" ? resolvedPath : undefined,
       imageSrc: mediaType === "image" ? resolvedPath : undefined,
       fileSrc: mediaType === "document" ? resolvedPath : undefined,
-      downloadSrc: directDownloadPath || downloadablePath || undefined,
+      downloadSrc: preferredDownloadPath || undefined,
       docs,
     };
   });
