@@ -178,6 +178,7 @@ export function ResizableSidebar({
     <>
       {/* Main Sidebar */}
       <div
+        id="main-sidebar"
         className={cn(
           "h-full z-20 bg-surface-1 border-r border-subtle",
           !isResizing && "transition-all duration-300 ease-in-out",
@@ -192,6 +193,7 @@ export function ResizableSidebar({
         }}
         role="complementary"
         aria-label="Main sidebar"
+        data-prevent-outside-click={isMobile}
       >
         <aside
           className={cn(
