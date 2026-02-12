@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // assets
 import CSVLogo from "@/app/assets/services/csv.svg?url";
@@ -21,6 +20,17 @@ import { Stepper } from "@/components/importers/ui";
 import { IMPORTER_STEPS } from "@/constants/importers/flatfile";
 // hooks
 import { useFlatfileImporter } from "@/plane-web/hooks/store";
+// types
+import type { TImporterStepKeys } from "@/types/importers/flatfile";
+import { E_IMPORTER_STEPS } from "@/types/importers/flatfile";
+// step components
+import { SelectPlaneProject } from "./select-plane-project";
+import { ConfigureFlatfile } from "./configure-flatfile/root";
+
+const STEP_COMPONENT_MAP: Record<TImporterStepKeys, () => React.ReactNode> = {
+  [E_IMPORTER_STEPS.SELECT_PLANE_PROJECT]: () => <SelectPlaneProject />,
+  [E_IMPORTER_STEPS.CONFIGURE_FLATFILE]: () => <ConfigureFlatfile />,
+};
 
 export const StepsRoot = observer(function StepsRoot() {
   const { currentStepIndex, resetImporterData } = useFlatfileImporter();
@@ -33,6 +43,7 @@ export const StepsRoot = observer(function StepsRoot() {
         steps={IMPORTER_STEPS}
         currentStepIndex={currentStepIndex}
         redirectCallback={resetImporterData}
+        renderStep={(key) => STEP_COMPONENT_MAP[key]?.()}
       />
     </div>
   );

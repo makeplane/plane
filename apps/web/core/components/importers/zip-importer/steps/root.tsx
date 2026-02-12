@@ -11,17 +11,30 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Stepper } from "@/components/importers/ui";
 // plane web constants
 import { NOTION_IMPORTER_STEPS, CONFLUENCE_IMPORTER_STEPS } from "@/constants/importers/notion";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
-import type { TZipImporterProps } from "@/types/importers/zip-importer";
-import { EZipDriverType } from "@/types/importers/zip-importer";
+import type { TZipImporterProps, TImporterStepKeys } from "@/types/importers/zip-importer";
+import { E_IMPORTER_STEPS, EZipDriverType } from "@/types/importers/zip-importer";
+// step components
+import { SelectDestination } from "./select-destination";
+import { UploadZip } from "./upload-zip";
 
 export const StepsRoot = observer(function StepsRoot({ driverType, logo, serviceName }: TZipImporterProps) {
   const { currentStepIndex, resetImporterData } = useZipImporter(driverType);
+
+  const renderStep = (key: TImporterStepKeys) => {
+    switch (key) {
+      case E_IMPORTER_STEPS.SELECT_DESTINATION:
+        return <SelectDestination driverType={driverType} logo={logo} serviceName={serviceName} />;
+      case E_IMPORTER_STEPS.UPLOAD_ZIP:
+        return <UploadZip driverType={driverType} logo={logo} serviceName={serviceName} />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="relative w-full h-full overflow-hidden">
@@ -31,6 +44,7 @@ export const StepsRoot = observer(function StepsRoot({ driverType, logo, service
         steps={driverType === EZipDriverType.NOTION ? NOTION_IMPORTER_STEPS : CONFLUENCE_IMPORTER_STEPS}
         currentStepIndex={currentStepIndex}
         redirectCallback={resetImporterData}
+        renderStep={renderStep}
       />
     </div>
   );

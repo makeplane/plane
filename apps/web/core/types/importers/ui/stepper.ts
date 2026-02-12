@@ -16,7 +16,7 @@ export type TStepperBlock<T> = {
   icon?: () => React.ReactNode;
   i18n_title: string;
   i18n_description: string;
-  component: () => React.ReactNode;
+  component?: () => React.ReactNode;
   prevStep: T | undefined;
   nextStep: T | undefined;
 };
@@ -27,6 +27,7 @@ export type TStepper<T> = {
   steps: TStepperBlock<T>[];
   currentStepIndex: number;
   redirectCallback?: () => void;
+  renderStep?: (stepKey: T) => React.ReactNode;
 };
 
 export type TStepperNavigation<T> = {

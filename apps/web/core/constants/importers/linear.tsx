@@ -12,8 +12,6 @@
  */
 
 import { Layers2, Layers3, ReceiptText } from "lucide-react";
-// components
-import { SelectPlaneProjectRoot, ConfigureLinearRoot, MapStatesRoot, SummaryRoot } from "@/components/importers/linear";
 // types
 import type { TLinearImporterStep } from "@/types/importers/linear";
 import { E_LINEAR_IMPORTER_STEPS } from "@/types/importers/linear";
@@ -24,7 +22,6 @@ export const IMPORTER_LINEAR_STEPS: TLinearImporterStep[] = [
     icon: () => <Layers3 size={14} />,
     i18n_title: "linear_importer.steps.title_configure_plane",
     i18n_description: "linear_importer.steps.description_configure_plane",
-    component: () => <SelectPlaneProjectRoot />,
     prevStep: undefined,
     nextStep: E_LINEAR_IMPORTER_STEPS.CONFIGURE_LINEAR,
   },
@@ -33,7 +30,6 @@ export const IMPORTER_LINEAR_STEPS: TLinearImporterStep[] = [
     icon: () => <Layers2 size={14} />,
     i18n_title: "linear_importer.steps.title_configure_linear",
     i18n_description: "linear_importer.steps.description_configure_linear",
-    component: () => <ConfigureLinearRoot />,
     prevStep: E_LINEAR_IMPORTER_STEPS.SELECT_PLANE_PROJECT,
     nextStep: E_LINEAR_IMPORTER_STEPS.MAP_STATES,
   },
@@ -42,7 +38,6 @@ export const IMPORTER_LINEAR_STEPS: TLinearImporterStep[] = [
     icon: () => <Layers3 size={14} />,
     i18n_title: "linear_importer.steps.title_map_states",
     i18n_description: "linear_importer.steps.description_map_states",
-    component: () => <MapStatesRoot />,
     prevStep: E_LINEAR_IMPORTER_STEPS.CONFIGURE_LINEAR,
     nextStep: E_LINEAR_IMPORTER_STEPS.SUMMARY,
   },
@@ -51,7 +46,6 @@ export const IMPORTER_LINEAR_STEPS: TLinearImporterStep[] = [
     icon: () => <ReceiptText size={14} />,
     i18n_title: "linear_importer.steps.title_summary",
     i18n_description: "linear_importer.steps.description_summary",
-    component: () => <SummaryRoot />,
     prevStep: E_LINEAR_IMPORTER_STEPS.MAP_STATES,
     nextStep: E_LINEAR_IMPORTER_STEPS.SELECT_PLANE_PROJECT,
   },

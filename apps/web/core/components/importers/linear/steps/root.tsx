@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // assets
 import LinearLogo from "@/app/assets/services/linear.svg?url";
@@ -21,6 +20,21 @@ import { Stepper } from "@/components/importers/ui";
 import { IMPORTER_LINEAR_STEPS } from "@/constants/importers/linear";
 // plane web hooks
 import { useLinearImporter } from "@/plane-web/hooks/store";
+// types
+import type { TImporterLinearStepKeys } from "@/types/importers/linear";
+import { E_LINEAR_IMPORTER_STEPS } from "@/types/importers/linear";
+// step components
+import { SelectPlaneProjectRoot } from "./select-plane-project";
+import { ConfigureLinearRoot } from "./configure-linear";
+import { MapStatesRoot } from "./map-states";
+import { SummaryRoot } from "./summary";
+
+const STEP_COMPONENT_MAP: Record<TImporterLinearStepKeys, () => React.ReactNode> = {
+  [E_LINEAR_IMPORTER_STEPS.SELECT_PLANE_PROJECT]: () => <SelectPlaneProjectRoot />,
+  [E_LINEAR_IMPORTER_STEPS.CONFIGURE_LINEAR]: () => <ConfigureLinearRoot />,
+  [E_LINEAR_IMPORTER_STEPS.MAP_STATES]: () => <MapStatesRoot />,
+  [E_LINEAR_IMPORTER_STEPS.SUMMARY]: () => <SummaryRoot />,
+};
 
 export const StepsRoot = observer(function StepsRoot() {
   // hooks
@@ -34,6 +48,7 @@ export const StepsRoot = observer(function StepsRoot() {
         steps={IMPORTER_LINEAR_STEPS}
         currentStepIndex={currentStepIndex}
         redirectCallback={resetImporterData}
+        renderStep={(key) => STEP_COMPONENT_MAP[key]?.()}
       />
     </div>
   );

@@ -20,6 +20,17 @@ import { Stepper } from "@/components/importers/ui/stepper";
 import { CSV_IMPORTER_STEPS } from "@/constants/importers/csv";
 // hooks
 import { useCSVImporter } from "@/plane-web/hooks/store";
+// types
+import type { TCSVImporterStepKeys } from "@/types/importers/csv";
+import { E_CSV_IMPORTER_STEPS } from "@/types/importers/csv";
+// step components
+import { SelectPlaneProject } from "./select-plane-project";
+import { UploadCSV } from "./upload-csv";
+
+const STEP_COMPONENT_MAP: Record<TCSVImporterStepKeys, () => React.ReactNode> = {
+  [E_CSV_IMPORTER_STEPS.SELECT_PLANE_PROJECT]: () => <SelectPlaneProject />,
+  [E_CSV_IMPORTER_STEPS.UPLOAD_CSV]: () => <UploadCSV />,
+};
 
 /**
  * Steps root component for CSV importer.
@@ -36,6 +47,7 @@ export const CSVStepsRoot = observer(function CSVStepsRoot() {
         steps={CSV_IMPORTER_STEPS}
         currentStepIndex={currentStepIndex}
         redirectCallback={resetImporterData}
+        renderStep={(key) => STEP_COMPONENT_MAP[key]?.()}
       />
     </div>
   );

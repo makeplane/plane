@@ -21,7 +21,7 @@ import ImporterHeader from "../header";
 
 export function Stepper<T>(props: TStepper<T>) {
   // props
-  const { logo, steps, currentStepIndex, serviceName } = props;
+  const { logo, steps, currentStepIndex, serviceName, renderStep } = props;
 
   // derived value
   const currentStepDetails = steps[currentStepIndex];
@@ -83,9 +83,9 @@ export function Stepper<T>(props: TStepper<T>) {
             <div className="text-secondary text-14">{t(currentStepDetails?.i18n_description)}</div>
           </div>
           {/* component */}
-          {currentStepDetails?.component && (
+          {(renderStep || currentStepDetails?.component) && (
             <div className="h-full overflow-y-scroll flex flex-col justify-between mx-6">
-              {currentStepDetails.component()}
+              {renderStep ? renderStep(currentStepDetails.key) : currentStepDetails.component?.()}
             </div>
           )}
         </div>

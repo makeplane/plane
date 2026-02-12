@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // assets
 import ClickUpLogo from "@/app/assets/services/clickup.svg?url";
@@ -21,6 +20,21 @@ import { Stepper } from "@/components/importers/ui";
 import { IMPORTER_CLICKUP_STEPS } from "@/constants/importers/clickup";
 // plane web hooks
 import { useClickUpImporter } from "@/plane-web/hooks/store";
+// types
+import type { TClickUpImporterStepKeys } from "@/types/importers/clickup";
+import { E_CLICKUP_IMPORTER_STEPS } from "@/types/importers/clickup";
+// step components
+import { ConfigureClickUpRoot } from "./configure-clickup";
+import { MapStatesRoot } from "./map-states";
+import { MapPriorityRoot } from "./map-priority";
+import { SummaryRoot } from "./summary";
+
+const STEP_COMPONENT_MAP: Partial<Record<TClickUpImporterStepKeys, () => React.ReactNode>> = {
+  [E_CLICKUP_IMPORTER_STEPS.CONFIGURE_CLICKUP]: () => <ConfigureClickUpRoot />,
+  [E_CLICKUP_IMPORTER_STEPS.MAP_STATES]: () => <MapStatesRoot />,
+  [E_CLICKUP_IMPORTER_STEPS.MAP_PRIORITIES]: () => <MapPriorityRoot />,
+  [E_CLICKUP_IMPORTER_STEPS.SUMMARY]: () => <SummaryRoot />,
+};
 
 export const StepsRoot = observer(function StepsRoot() {
   // hooks
@@ -34,6 +48,7 @@ export const StepsRoot = observer(function StepsRoot() {
         steps={IMPORTER_CLICKUP_STEPS}
         currentStepIndex={currentStepIndex}
         redirectCallback={resetImporterData}
+        renderStep={(key) => STEP_COMPONENT_MAP[key]?.()}
       />
     </div>
   );
