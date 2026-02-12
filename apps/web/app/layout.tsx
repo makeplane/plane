@@ -12,7 +12,7 @@ import "@/styles/globals.css";
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
 
 // helpers
-import { cn } from "@plane/utils";
+import { cn, joinUrlPath } from "@plane/utils";
 
 // assets
 import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
@@ -57,6 +57,8 @@ export const meta = () => [
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const isSessionRecorderEnabled = parseInt(process.env.VITE_ENABLE_SESSION_RECORDER || "0");
+  const WEB_BASE_PATH =
+    (typeof import.meta !== "undefined" && import.meta.env?.BASE_URL) || process.env.VITE_WEB_BASE_PATH || "/";
 
   return (
     <html lang="en">
@@ -64,7 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="theme-color" content="#fff" />
         <link rel="icon" type="image/png" sizes="32x32" href={favicon32} />
         <link rel="icon" type="image/png" sizes="16x16" href={favicon16} />
-        <link rel="manifest" href="/site.webmanifest.json" />
+        <link rel="manifest" href={joinUrlPath(WEB_BASE_PATH, "site.webmanifest.json")} />
         <link rel="shortcut icon" href={faviconIco} />
         {/* Meta info for PWA */}
         <meta name="application-name" content="Plane" />
@@ -76,7 +78,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" href={icon512} />
         <link rel="apple-touch-icon" sizes="180x180" href={icon180} />
         <link rel="apple-touch-icon" sizes="512x512" href={icon512} />
-        <link rel="manifest" href="/manifest.json" />
       </head>
       <body>
         <div id="context-menu-portal" />
