@@ -1,15 +1,15 @@
 "use client";
 
 import type { RefObject } from "react";
-import { Download, FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { ImageFullScreenModal } from "@plane/editor";
+import { Download, FileText, FileWarning } from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
+import { ImageFullScreenModal } from "@plane/editor";
 import { LogoSpinner } from "@/components/common/logo-spinner";
+import { buildDownloadUrl, DOCUMENT_PREVIEW_STYLE, getMetaNumber } from "./media-detail-utils";
 import { PlayerOverlay, PlayerSettingsPanel } from "./player-ui";
 import type { TQualityOption } from "./player-ui";
-import { buildDownloadUrl, DOCUMENT_PREVIEW_STYLE, getMetaNumber } from "./media-detail-utils";
 
 type TMediaDetailPreviewProps = {
   item: any;
@@ -85,6 +85,9 @@ export const MediaDetailPreview = ({
 }: TMediaDetailPreviewProps) => {
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
+  const [isImagePreviewBroken, setIsImagePreviewBroken] = useState(false);
+  const [isVideoPreviewBroken, setIsVideoPreviewBroken] = useState(false);
+  const [isDocumentPreviewBroken, setIsDocumentPreviewBroken] = useState(false);
   const [viewport, setViewport] = useState(() => {
     if (typeof window === "undefined") {
       return { width: 0, height: 0 };
@@ -100,6 +103,12 @@ export const MediaDetailPreview = ({
   useEffect(() => {
     setImageDimensions(null);
   }, [effectiveImageSrc]);
+
+  useEffect(() => {
+    setIsImagePreviewBroken(false);
+    setIsVideoPreviewBroken(false);
+    setIsDocumentPreviewBroken(false);
+  }, [effectiveDocumentSrc, effectiveImageSrc, item?.id, item?.videoSrc]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -173,6 +182,21 @@ export const MediaDetailPreview = ({
       ? buildDownloadUrl(downloadBaseSrc)
       : downloadBaseSrc
     : "";
+  const isDocumentCorrupted =
+    (isBinaryDocument && (Boolean(documentPreviewError) || isDocumentPreviewBroken)) ||
+    (isTextDocument && Boolean(textPreviewError)) ||
+    (!isBinaryDocument && !isTextDocument && Boolean(effectiveDocumentSrc) && isDocumentPreviewBroken);
+  const imagePreviewAvailable = Boolean(effectiveImageSrc) && !isImagePreviewBroken;
+  const renderUnavailablePreview = (title: string, message: string, className: string) => (
+    <div
+      className={`flex ${className} flex-col items-center justify-center gap-2 rounded-lg bg-custom-background-100 px-4 text-center`}
+      role="status"
+      aria-live="polite"
+    >
+      <FileWarning className="h-32 w-32 text-custom-text-300" />
+      <span className="text-xl font-medium text-custom-text-100">{title}</span>
+    </div>
+  );
 
   return (
     <>
@@ -184,15 +208,26 @@ export const MediaDetailPreview = ({
             >
               <video
                 ref={videoRef}
-                className="video-js vjs-default-skin h-full w-full"
+                className={`video-js vjs-default-skin h-full w-full ${isVideoPreviewBroken ? "opacity-0" : ""}`}
                 poster={item.thumbnail}
                 playsInline
                 preload="auto"
                 crossOrigin={crossOrigin}
+                onLoadedData={() => setIsVideoPreviewBroken(false)}
+                onError={() => setIsVideoPreviewBroken(true)}
               />
               {playerElement ? createPortal(overlayContent, playerElement) : overlayContent}
+              {isVideoPreviewBroken ? (
+                <div className="pointer-events-none absolute inset-0 z-20">
+                  {renderUnavailablePreview(
+                    "Video is not available",
+                    "This video cannot be previewed right now.",
+                    "h-full w-full border-0"
+                  )}
+                </div>
+              ) : null}
             </div>
-            {videoDownloadSrc ? (
+            {videoDownloadSrc && !isVideoPreviewBroken ? (
               <div className="flex justify-end border-t border-custom-border-200 p-3">
                 <a
                   href={videoDownloadSrc}
@@ -214,29 +249,42 @@ export const MediaDetailPreview = ({
           >
             <button
               type="button"
-              className="h-full w-full cursor-zoom-in bg-custom-background-100"
+              className={`h-full w-full bg-custom-background-100 ${imagePreviewAvailable ? "cursor-zoom-in" : "cursor-default"}`}
               onClick={() => {
+                if (!imagePreviewAvailable) return;
                 setIsImageZoomOpen(true);
               }}
-              aria-label="Zoom image"
+              aria-label={imagePreviewAvailable ? "Zoom image" : "Image preview unavailable"}
             >
               {effectiveImageSrc ? (
-                <img
-                  src={effectiveImageSrc}
-                  alt={item.title}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-contain"
-                  onLoad={(event) => {
-                    const target = event.currentTarget;
-                    if (!target.naturalWidth || !target.naturalHeight) return;
-                    setImageDimensions({ width: target.naturalWidth, height: target.naturalHeight });
-                  }}
-                />
+                imagePreviewAvailable ? (
+                  <img
+                    src={effectiveImageSrc}
+                    alt={item.title}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-contain"
+                    onLoad={(event) => {
+                      const target = event.currentTarget;
+                      if (!target.naturalWidth || !target.naturalHeight) return;
+                      setImageDimensions({ width: target.naturalWidth, height: target.naturalHeight });
+                      setIsImagePreviewBroken(false);
+                    }}
+                    onError={() => setIsImagePreviewBroken(true)}
+                  />
+                ) : (
+                  renderUnavailablePreview(
+                    "Image is not available",
+                    "This image cannot be previewed right now.",
+                    "h-full w-full"
+                  )
+                )
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-xs text-custom-text-300">
-                  Loading image...
-                </div>
+                renderUnavailablePreview(
+                  "Image is not available",
+                  "This image cannot be previewed right now.",
+                  "h-full w-full"
+                )
               )}
             </button>
           </div>
@@ -249,65 +297,89 @@ export const MediaDetailPreview = ({
                 Only PDF, DOCX, XLSX, CSV, and text files are supported.
               </div>
             ) : isBinaryDocument ? (
-              <div className={`${previewHeightClass} rounded-lg bg-custom-background-100`}>
-                {isDocumentPreviewLoading ? (
-                  <div className="flex h-full flex-col items-center justify-center gap-2 text-xs text-custom-text-300">
-                    <LogoSpinner />
-                    <span>Loading preview...</span>
-                  </div>
-                ) : documentPreviewError ? (
-                  <div className="flex h-full items-center justify-center text-xs text-custom-text-300">
-                    {documentPreviewError}
-                  </div>
-                ) : documentPreviewHtml ? (
-                  <div className="h-full overflow-hidden rounded-lg bg-white">
-                    <iframe
-                      title={`${item.title}-preview`}
-                      className="h-full w-full"
-                      sandbox=""
-                      srcDoc={`<!doctype html><html><head>${DOCUMENT_PREVIEW_STYLE}</head><body><div class="document-preview">${sanitizedDocumentPreviewHtml}</div></body></html>`}
-                    />
-                  </div>
-                ) : documentPreviewUrl ? (
-                  <iframe src={documentPreviewUrl} title={item.title} className="h-full w-full rounded-lg bg-white" />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-xs text-custom-text-300">
-                    No preview available for this file.
-                  </div>
-                )}
-              </div>
+              isDocumentPreviewLoading ? (
+                <div
+                  className={`flex ${previewHeightClass} flex-col items-center justify-center gap-2 rounded-lg bg-custom-background-100 text-xs text-custom-text-300`}
+                >
+                  <LogoSpinner />
+                  <span>Loading preview...</span>
+                </div>
+              ) : documentPreviewError || isDocumentPreviewBroken ? (
+                renderUnavailablePreview(
+                  "Document is not available",
+                  documentPreviewError || "This document cannot be previewed right now.",
+                  previewHeightClass
+                )
+              ) : documentPreviewHtml ? (
+                <div className={`${previewHeightClass} overflow-hidden rounded-lg bg-white`}>
+                  <iframe
+                    title={`${item.title}-preview`}
+                    className="h-full w-full"
+                    sandbox=""
+                    srcDoc={`<!doctype html><html><head>${DOCUMENT_PREVIEW_STYLE}</head><body><div class="document-preview">${sanitizedDocumentPreviewHtml}</div></body></html>`}
+                  />
+                </div>
+              ) : documentPreviewUrl ? (
+                <iframe
+                  src={documentPreviewUrl}
+                  title={item.title}
+                  className={`${previewHeightClass} h-full w-full rounded-lg bg-white`}
+                  onLoad={() => setIsDocumentPreviewBroken(false)}
+                  onError={() => setIsDocumentPreviewBroken(true)}
+                />
+              ) : (
+                <div className={`flex ${previewHeightClass} items-center justify-center text-xs text-custom-text-300`}>
+                  No preview available for this file.
+                </div>
+              )
             ) : isTextDocument ? (
-              <div
-                className={`${previewHeightClass} overflow-auto rounded-lg bg-custom-background-100 p-4 text-xs text-custom-text-100`}
-              >
-                {isTextPreviewLoading ? (
-                  <div className="flex flex-col items-center gap-2 text-custom-text-300">
-                    <LogoSpinner />
-                    <span>Loading preview...</span>
-                  </div>
-                ) : textPreviewError ? (
-                  <div className="text-custom-text-300">{textPreviewError}</div>
-                ) : (
+              isTextPreviewLoading ? (
+                <div
+                  className={`flex ${previewHeightClass} flex-col items-center justify-center gap-2 rounded-lg bg-custom-background-100 text-xs text-custom-text-300`}
+                >
+                  <LogoSpinner />
+                  <span>Loading preview...</span>
+                </div>
+              ) : textPreviewError ? (
+                renderUnavailablePreview(
+                  "Document is not available",
+                  textPreviewError || "This document cannot be previewed right now.",
+                  previewHeightClass
+                )
+              ) : (
+                <div
+                  className={`${previewHeightClass} overflow-auto rounded-lg bg-custom-background-100 p-4 text-xs text-custom-text-100`}
+                >
                   <pre className="whitespace-pre-wrap break-words">{textPreview}</pre>
-                )}
-              </div>
+                </div>
+              )
             ) : effectiveDocumentSrc ? (
-              <iframe
-                src={effectiveDocumentSrc}
-                title={item.title}
-                className={`${previewHeightClass} w-full rounded-lg bg-white`}
-              />
+              isDocumentPreviewBroken ? (
+                renderUnavailablePreview(
+                  "Document is not available",
+                  "This document cannot be previewed right now.",
+                  previewHeightClass
+                )
+              ) : (
+                <iframe
+                  src={effectiveDocumentSrc}
+                  title={item.title}
+                  className={`${previewHeightClass} w-full rounded-lg bg-white`}
+                  onLoad={() => setIsDocumentPreviewBroken(false)}
+                  onError={() => setIsDocumentPreviewBroken(true)}
+                />
+              )
             ) : (
               <div
                 className={`flex ${previewHeightClass} flex-col items-center justify-center gap-3 rounded-lg text-custom-text-300`}
               >
                 <div className="flex flex-col items-center gap-2 text-sm">
                   <FileText className="h-8 w-8" />
-                  <span>No preview available for this file.</span>
+                  <span>Document is not available.</span>
                 </div>
               </div>
             )}
-            {effectiveDocumentSrc && !isUnsupportedDocument ? (
+            {effectiveDocumentSrc && !isUnsupportedDocument && !isDocumentCorrupted ? (
               <div className="flex justify-end border-t border-custom-border-200 p-3">
                 <a
                   href={effectiveDocumentSrc}
@@ -326,7 +398,7 @@ export const MediaDetailPreview = ({
         )}
       </div>
 
-      {item.mediaType === "image" ? (
+      {item.mediaType === "image" && imagePreviewAvailable ? (
         <ImageFullScreenModal
           aspectRatio={resolvedAspectRatio}
           downloadSrc={imageDownloadSrc}
