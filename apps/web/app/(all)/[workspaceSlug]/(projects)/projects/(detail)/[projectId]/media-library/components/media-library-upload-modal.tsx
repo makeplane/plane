@@ -643,7 +643,7 @@ export const MediaLibraryUploadModal = () => {
 
         <div className="flex items-center justify-between border-t border-custom-border-200 px-5 py-3 text-xs text-custom-text-300">
           <span>
-            Supported formats: MP4, HLS, JPG, JPEG, PNG, SVG, WEBP, GIF, PDF, CSV, JSON, DOCX, XLSX, PPTX, TXT (Max
+            Supported formats: MP4,HLS,JPEG,PNG,PDF,CSV,XLSX(Max
             size: {maxSizeLabel})
           </span>
           <div className="flex items-center gap-3">
