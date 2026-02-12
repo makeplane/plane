@@ -1,5 +1,8 @@
 # Python imports
+import logging
 from collections import defaultdict
+
+logger = logging.getLogger(__name__)
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -477,6 +480,12 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 fields.append(sub_group_by)
             results = list(issues.values(*fields))
             return self._enrich_issues_with_relations(results)
+
+        # Log the final SQL for analysis
+        logger.info(
+            "[WorkspaceViewIssues] slug=%s, group_by=%s, sub_group_by=%s, SQL:\n%s",
+            slug, group_by, sub_group_by, str(issue_queryset.query),
+        )
 
         if group_by:
             # Check group and sub group value paginate
