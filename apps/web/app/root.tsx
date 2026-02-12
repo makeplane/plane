@@ -28,7 +28,6 @@ import icon180 from "@/app/assets/icons/icon-180x180.png?url";
 import icon512 from "@/app/assets/icons/icon-512x512.png?url";
 import ogImage from "@/app/assets/og-image.png?url";
 import clarityTrackingScript from "@/app/assets/runtime/clarity-tracking.js?url";
-import themeInitScript from "@/app/assets/runtime/theme-init.js?url";
 import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
 // components
@@ -46,6 +45,11 @@ import "@fontsource/material-symbols-rounded";
 import "@fontsource/ibm-plex-mono";
 
 const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
+
+// Inline theme initializer — runs synchronously in <head> before first paint.
+// Reads "theme" from localStorage, resolves "system" via matchMedia, then sets
+// data-theme on <html> + colorScheme + theme-color meta.
+const THEME_INIT_SCRIPT = `(function(){try{var d=document.documentElement,s=localStorage.getItem("theme")||"system",t=s==="system"?window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light":s;d.setAttribute("data-theme",t);d.style.colorScheme=t.includes("dark")?"dark":"light";var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",t.includes("dark")?"#0e0f10":"#eff0f0")}catch(e){}})()`;
 
 export const links: LinksFunction = () => [
   { rel: "icon", type: "image/png", sizes: "32x32", href: favicon32 },
@@ -74,8 +78,18 @@ export function Layout({ children }: { children: ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script id="theme-init" src={themeInitScript} />
-        <meta name="theme-color" content="#fff" />
+        <script id="theme-init" dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {/* Critical inline CSS — sets html background before globals.css loads to prevent flash.
+            Values must match packages/tailwind-config/variables.css:
+            Light: --neutral-300 = oklch(0.9543 0.001 230.67)
+            Dark: --neutral-black = oklch(0.1689 0.0021 230.81) */}
+        <style
+          id="theme-critical-css"
+          dangerouslySetInnerHTML={{
+            __html: `html{background:oklch(0.9543 0.001 230.67)}html[data-theme*="dark"]{background:oklch(0.1689 0.0021 230.81)}`,
+          }}
+        />
+        <meta name="theme-color" content="#eff0f0" />
         {/* Meta info for PWA */}
         <meta name="application-name" content="Plane" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
