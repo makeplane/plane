@@ -3,7 +3,7 @@
 import type { RefObject } from "react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Download, Eye, FileText, FileWarning } from "lucide-react";
+import { Download, FileText, FileWarning } from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
 import { ImageFullScreenModal } from "@plane/editor";
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -193,7 +193,6 @@ export const MediaDetailPreview = ({
       ? buildDownloadUrl(documentDownloadCandidate)
       : documentDownloadCandidate
     : "";
-  const documentPreviewSrc = effectiveDocumentSrc || item?.fileSrc || "";
   const isDocumentCorrupted =
     (isBinaryDocument && (Boolean(documentPreviewError) || isDocumentPreviewBroken)) ||
     (isTextDocument && Boolean(textPreviewError)) ||
@@ -391,37 +390,20 @@ export const MediaDetailPreview = ({
                 </div>
               </div>
             )}
-            {(documentPreviewSrc || (documentDownloadSrc && !isDocumentCorrupted)) && !isUnsupportedDocument ? (
+            {documentDownloadSrc && !isUnsupportedDocument && !isDocumentCorrupted ? (
               <div className="flex justify-end border-t border-custom-border-200 p-3">
-                <div className="flex items-center gap-2">
-                  {documentPreviewSrc ? (
-                    <a
-                      href={documentPreviewSrc}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-3 rounded-md bg-custom-primary-100 px-2 py-1 text-sm font-medium text-custom-100"
-                    >
-                      <span className="flex h-6 w-6 items-center justify-center">
-                        <Eye className="h-4 w-4" />
-                      </span>
-                      Preview
-                    </a>
-                  ) : null}
-                  {documentDownloadSrc && !isDocumentCorrupted ? (
-                    <a
-                      href={documentDownloadSrc}
-                      target="_blank"
-                      rel="noreferrer"
-                      download
-                      className="inline-flex items-center gap-3 rounded-md bg-custom-primary-100 px-2 py-1 text-sm font-medium text-custom-100"
-                    >
-                      <span className="flex h-6 w-6 items-center justify-center">
-                        <Download className="h-4 w-4" />
-                      </span>
-                      Download
-                    </a>
-                  ) : null}
-                </div>
+                <a
+                  href={documentDownloadSrc}
+                  target="_blank"
+                  rel="noreferrer"
+                  download
+                  className="inline-flex items-center gap-3 rounded-md bg-custom-primary-100 px-2 py-1 text-sm font-medium text-custom-100"
+                >
+                  <span className="flex h-6 w-6 items-center justify-center">
+                    <Download className="h-4 w-4" />
+                  </span>
+                  Download
+                </a>
               </div>
             ) : null}
           </div>
