@@ -14,6 +14,7 @@ import json
 import logging
 import time
 from contextvars import ContextVar
+from urllib.parse import parse_qs, urlencode
 
 # Django imports
 from django.db import connection
@@ -43,8 +44,35 @@ class QueryCountWrapper:
 
 
 class RequestLoggerMiddleware:
+    _SENSITIVE_FIELDS = {"client_secret", "code", "refresh_token", "password"}
+
     def __init__(self, get_response):
         self.get_response = get_response
+
+    @staticmethod
+    def _safe_decode_body(content):
+        if not content:
+            return None
+        try:
+            return content.decode("utf-8")
+        except (UnicodeDecodeError, AttributeError):
+            return "[Could not decode content]"
+
+    @staticmethod
+    def _redact_sensitive_fields(body_str):
+        if not body_str:
+            return body_str
+        try:
+            params = parse_qs(body_str, keep_blank_values=True)
+            for field in RequestLoggerMiddleware._SENSITIVE_FIELDS:
+                if field in params:
+                    params[field] = [
+                        f"****{v[-4:]}" if len(v) > 4 else "****"
+                        for v in params[field]
+                    ]
+            return urlencode(params, doseq=True)
+        except Exception:
+            return body_str
 
     def _should_log_route(self, request: Request | HttpRequest) -> bool:
         """
@@ -92,6 +120,9 @@ class RequestLoggerMiddleware:
         # Reset query counter
         _query_count.set(0)
 
+        # Capture request body for specific endpoints that need payload logging on errors
+        request_body = request.body if request.path == "/auth/o/token/" else None
+
         # get the start time
         start_time = time.time()
 
@@ -127,6 +158,14 @@ class RequestLoggerMiddleware:
             "query_count": query_count,
             "content_type": response.get("Content-Type", ""),
         }
+
+        # Add request/response body for OAuth token 400 errors
+        if request.path == "/auth/o/token/" and response.status_code == 400:
+            decoded_body = self._safe_decode_body(request_body)
+            log_data["request_body"] = self._redact_sensitive_fields(decoded_body)
+            log_data["response_body"] = self._safe_decode_body(
+                response.content if hasattr(response, "content") else None
+            )
 
         # Add exception type for 5xx
         if response.status_code >= 500:
