@@ -7,12 +7,19 @@ import { useParams, useSearchParams, usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { MediaCard } from "../../../components/media-card";
-import type { TMediaItem, TMediaSection } from "../../../types";
-import { resolveMediaItemActionHref } from "../../../utils/media-items";
-import { useMediaLibrary } from "../../../state/media-library-context";
-import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../../../utils/media-library-filters";
 import { MediaListView } from "../../../components/media-list-view";
 import { useMediaLibraryItems } from "../../../hooks/use-media-library-items";
+import { useMediaLibrary } from "../../../state/media-library-context";
+import type { TMediaItem, TMediaSection } from "../../../types";
+import { resolveMediaItemActionHref } from "../../../utils/media-items";
+import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../../../utils/media-library-filters";
+
+const SECTION_QUERY_PARAM_KEY = "q_section";
+const MAIN_QUERY_PARAM_KEY = "q_main";
+const MAIN_VIEW_PARAM_KEY = "view_main";
+const SECTION_VIEW_PARAM_KEY = "view_section";
+const LEGACY_QUERY_PARAM_KEY = "q";
+const LEGACY_VIEW_PARAM_KEY = "view";
 
 const ALLOWED_DOCUMENT_FORMATS = new Set([
   "docx",
@@ -71,8 +78,8 @@ const MediaLibrarySectionPage = observer(() => {
   };
   const { libraryVersion, mediaFilters, setMediaFilterConfigs } = useMediaLibrary();
   const searchParams = useSearchParams();
-  const query = (searchParams.get("q") ?? "").trim();
-  const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
+  const query = (searchParams.get(SECTION_QUERY_PARAM_KEY) ?? "").trim();
+  const viewMode = searchParams.get(SECTION_VIEW_PARAM_KEY) === "list" ? "list" : "grid";
   const pathname = usePathname();
   const pageParam = Number(searchParams.get("page") ?? "1");
   const listPageSize = 10;
@@ -191,9 +198,10 @@ const MediaLibrarySectionPage = observer(() => {
 
     return items;
   }, [currentPage, showPagination, totalPages]);
+  const hasSectionItems = section.items.length > 0;
 
   useEffect(() => {
-    if (viewMode !== "grid") return;
+    if (viewMode !== "grid" || !hasSectionItems) return;
 
     const container = containerRef.current;
     const grid = gridRef.current;
@@ -230,8 +238,10 @@ const MediaLibrarySectionPage = observer(() => {
         const cardHeight = sampleCard.getBoundingClientRect().height;
         if (!cardHeight) return;
 
-        const rowHeight = cardHeight + rowGap;
-        const rows = Math.max(1, Math.floor((availableHeight + rowGap) / rowHeight));
+        const normalizedAvailableHeight = Math.floor(availableHeight);
+        const normalizedCardHeight = Math.ceil(cardHeight);
+        const rowHeight = normalizedCardHeight + rowGap;
+        const rows = Math.max(1, Math.floor((normalizedAvailableHeight + rowGap + 0.5) / rowHeight));
         const nextPageSize = Math.max(1, columnCount * rows);
 
         setGridPageSize((prev) => (prev === nextPageSize ? prev : nextPageSize));
@@ -242,7 +252,6 @@ const MediaLibrarySectionPage = observer(() => {
 
     const observer = new ResizeObserver(scheduleMeasure);
     observer.observe(parent);
-    observer.observe(grid);
     if (headerRef.current) observer.observe(headerRef.current);
     if (paginationRef.current) observer.observe(paginationRef.current);
 
@@ -253,7 +262,7 @@ const MediaLibrarySectionPage = observer(() => {
       observer.disconnect();
       window.removeEventListener("resize", scheduleMeasure);
     };
-  }, [section.items.length, showPagination, viewMode]);
+  }, [hasSectionItems, showPagination, viewMode]);
 
   const getPageHref = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -279,6 +288,25 @@ const MediaLibrarySectionPage = observer(() => {
     }
     return detailHref;
   };
+  const backHref = useMemo(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const allowedParams = new URLSearchParams();
+    const mainQuery = params.get(MAIN_QUERY_PARAM_KEY);
+    const mainView = params.get(MAIN_VIEW_PARAM_KEY);
+
+    if (mainQuery) allowedParams.set(MAIN_QUERY_PARAM_KEY, mainQuery);
+    if (mainView === "list") allowedParams.set(MAIN_VIEW_PARAM_KEY, mainView);
+
+    params.delete(SECTION_QUERY_PARAM_KEY);
+    params.delete(SECTION_VIEW_PARAM_KEY);
+    params.delete("page");
+    params.delete("cursor");
+    params.delete(LEGACY_QUERY_PARAM_KEY);
+    params.delete(LEGACY_VIEW_PARAM_KEY);
+
+    const queryString = allowedParams.toString();
+    return `/${workspaceSlug}/projects/${projectId}/media-library${queryString ? `?${queryString}` : ""}`;
+  }, [projectId, searchParams, workspaceSlug]);
 
   if (showSkeleton) {
     return viewMode === "list" ? (
@@ -364,7 +392,7 @@ const MediaLibrarySectionPage = observer(() => {
     <div ref={containerRef} className="flex flex-col gap-6 p-3">
       <div ref={headerRef} className="flex items-center gap-3">
         <Link
-          href={`/${workspaceSlug}/projects/${projectId}/media-library${viewMode === "list" ? "?view=list" : ""}`}
+          href={backHref}
           className="rounded-md border border-custom-border-200 bg-custom-background-100 p-0.5 text-custom-text-300 hover:text-custom-text-100"
           aria-label="Back to media library"
         >

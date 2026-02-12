@@ -89,9 +89,10 @@ export class MediaLibraryService extends APIService {
 
   async ensureProjectLibrary(
     workspaceSlug: string,
-    projectId: string
+    projectId: string,
+    config?: AxiosRequestConfig
   ): Promise<TMediaLibraryManifest | null> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/`)
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/`, {}, config)
       .then((response) => response?.data ?? null)
       .catch((error) => {
         throw error?.response?.data ?? error?.response ?? error;
@@ -117,11 +118,13 @@ export class MediaLibraryService extends APIService {
     workspaceSlug: string,
     projectId: string,
     packageId: string,
-    params?: TMediaLibraryArtifactsQuery
+    params?: TMediaLibraryArtifactsQuery,
+    config?: AxiosRequestConfig
   ): Promise<TMediaArtifactsResponse> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/`,
-      params ? { params } : {}
+      params ? { params } : {},
+      config
     )
       .then((response) => response?.data ?? [])
       .catch((error) => {
@@ -201,12 +204,7 @@ export class MediaLibraryService extends APIService {
       });
   }
 
-  async deleteArtifact(
-    workspaceSlug: string,
-    projectId: string,
-    packageId: string,
-    artifactId: string
-  ): Promise<void> {
+  async deleteArtifact(workspaceSlug: string, projectId: string, packageId: string, artifactId: string): Promise<void> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/media-library/packages/${packageId}/artifacts/${encodeURIComponent(
         artifactId
