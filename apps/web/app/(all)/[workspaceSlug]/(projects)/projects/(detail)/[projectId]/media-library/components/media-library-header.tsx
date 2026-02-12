@@ -268,7 +268,7 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
       {/* RIGHT */}
       <Header.RightItem>
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <div className="hidden 3xl:flex items-center gap-1 rounded bg-custom-background-80 p-1">
+          <div className="hidden 3xl:flex items-center gap-1 rounded bg-custom-background-100 px-0">
             <DateRangeDropdown
               value={{ from: startDateFrom, to: startDateTo }}
               onSelect={(range) => {
