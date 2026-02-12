@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { FilterInstance } from "@plane/shared-state";
 import type { TFilterConfig, TFilterValue } from "@plane/types";
 
@@ -20,9 +20,10 @@ type TMediaLibraryContext = {
 };
 
 const MediaLibraryContext = createContext<TMediaLibraryContext | null>(null);
+const SECTION_PATH_SEGMENT = "/media-library/section/";
 
 export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
-  const { sectionName } = useParams() as { sectionName?: string | string[] };
+  const pathname = usePathname();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [libraryVersion, setLibraryVersion] = useState(0);
   const filterInstancesRef = useRef(
@@ -34,11 +35,20 @@ export const MediaLibraryProvider = ({ children }: { children: ReactNode }) => {
   const closeUpload = useCallback(() => setIsUploadOpen(false), []);
   const refreshLibrary = useCallback(() => setLibraryVersion((prev) => prev + 1), []);
   const activeScopeKey = useMemo(() => {
-    if (typeof sectionName === "string" && sectionName.trim()) {
-      return `section:${decodeURIComponent(sectionName)}`;
+    const markerIndex = pathname.indexOf(SECTION_PATH_SEGMENT);
+    if (markerIndex === -1) return "all";
+    const rawSectionName =
+      pathname
+        .slice(markerIndex + SECTION_PATH_SEGMENT.length)
+        .split("/")[0]
+        ?.trim() ?? "";
+    if (!rawSectionName) return "all";
+    try {
+      return `section:${decodeURIComponent(rawSectionName)}`;
+    } catch {
+      return `section:${rawSectionName}`;
     }
-    return "all";
-  }, [sectionName]);
+  }, [pathname]);
   const mediaFilters = useMemo(() => {
     const existing = filterInstancesRef.current.get(activeScopeKey);
     if (existing) return existing;

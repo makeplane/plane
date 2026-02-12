@@ -32,6 +32,16 @@ type TMediaLibraryPagination = {
   prevPageResults?: boolean;
 };
 
+const isRequestCanceled = (error: unknown) => {
+  if (!error || typeof error !== "object") return false;
+  const maybeCanceledError = error as { code?: string; name?: string };
+  return (
+    maybeCanceledError.code === "ERR_CANCELED" ||
+    maybeCanceledError.name === "CanceledError" ||
+    maybeCanceledError.name === "AbortError"
+  );
+};
+
 export const useMediaLibraryItems = (
   workspaceSlug?: string,
   projectId?: string,
@@ -62,7 +72,11 @@ export const useMediaLibraryItems = (
     return `${perPageParam}:${pageIndex}:0`;
   }, [options?.cursor, pageParam, perPageParam]);
   const desiredFormats = useMemo(
-    () => formatsParam.split(",").map((entry) => entry.trim().toLowerCase()).filter(Boolean),
+    () =>
+      formatsParam
+        .split(",")
+        .map((entry) => entry.trim().toLowerCase())
+        .filter(Boolean),
     [formatsParam]
   );
   const shouldPaginate = Boolean(perPageParam || cursorParam);
@@ -70,12 +84,14 @@ export const useMediaLibraryItems = (
   useEffect(() => {
     if (!workspaceSlug || !projectId) return;
     let isMounted = true;
+    const abortController = new AbortController();
     setIsLoading(true);
     setPagination(null);
 
     const load = async () => {
       try {
-        const manifest = await mediaLibraryService.ensureProjectLibrary(workspaceSlug, projectId);
+        const requestConfig = { signal: abortController.signal };
+        const manifest = await mediaLibraryService.ensureProjectLibrary(workspaceSlug, projectId, requestConfig);
         const packageId = typeof manifest?.id === "string" ? manifest.id : null;
         const metadataMap =
           manifest && typeof manifest === "object" && manifest.metadata && typeof manifest.metadata === "object"
@@ -94,7 +110,13 @@ export const useMediaLibraryItems = (
         if (sectionParam) params.section = sectionParam;
         if (cursorParam) params.cursor = cursorParam;
         if (perPageParam) params.per_page = String(perPageParam);
-        const artifactsResponse = await mediaLibraryService.getArtifacts(workspaceSlug, projectId, packageId, params);
+        const artifactsResponse = await mediaLibraryService.getArtifacts(
+          workspaceSlug,
+          projectId,
+          packageId,
+          params,
+          requestConfig
+        );
         const paginatedResponse =
           artifactsResponse && !Array.isArray(artifactsResponse) && Array.isArray(artifactsResponse.results)
             ? (artifactsResponse as TMediaArtifactsPaginatedResponse)
@@ -128,11 +150,12 @@ export const useMediaLibraryItems = (
             setPagination(null);
           }
         }
-      } catch {
+      } catch (error) {
+        if (abortController.signal.aborted || isRequestCanceled(error)) return;
         if (isMounted) setItems([]);
         if (isMounted) setPagination(null);
       } finally {
-        if (isMounted) setIsLoading(false);
+        if (isMounted && !abortController.signal.aborted) setIsLoading(false);
       }
     };
 
@@ -140,9 +163,11 @@ export const useMediaLibraryItems = (
 
     return () => {
       isMounted = false;
+      abortController.abort();
     };
   }, [
     cursorParam,
+    desiredFormats,
     filtersParam,
     formatsParam,
     mediaLibraryService,
@@ -151,6 +176,7 @@ export const useMediaLibraryItems = (
     queryParam,
     refreshKey,
     sectionParam,
+    shouldPaginate,
     workspaceSlug,
   ]);
 

@@ -41,6 +41,10 @@ type Props = {
   layouts?: LayoutItem[];
 };
 
+type TUpdateQueryOptions = {
+  resetPagination?: boolean;
+};
+
 /* ------------------------------------------------------------------ */
 /* DEFAULTS */
 /* ------------------------------------------------------------------ */
@@ -52,6 +56,13 @@ const DEFAULT_LAYOUTS: LayoutItem[] = [
 
 const START_DATE_FILTER_PROPERTY = "meta.start_date";
 const START_TIME_FILTER_PROPERTY = "meta.start_time";
+const LEGACY_QUERY_PARAM_KEY = "q";
+const LEGACY_VIEW_PARAM_KEY = "view";
+const MAIN_QUERY_PARAM_KEY = "q_main";
+const SECTION_QUERY_PARAM_KEY = "q_section";
+const MAIN_VIEW_PARAM_KEY = "view_main";
+const SECTION_VIEW_PARAM_KEY = "view_section";
+const SECTION_PATH_SEGMENT = "/media-library/section/";
 // Temporarily disabled per product requirement; keep code path for future re-enable.
 const ENABLE_START_TIME_FILTER = false;
 
@@ -65,6 +76,20 @@ const toDateOrUndefined = (value?: string) => {
   if (!value) return undefined;
   const parsed = Date.parse(value);
   return Number.isNaN(parsed) ? undefined : new Date(parsed);
+};
+
+const useDebouncedValue = (value: string, delayMs: number) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handle = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delayMs);
+
+    return () => clearTimeout(handle);
+  }, [delayMs, value]);
+
+  return debouncedValue;
 };
 
 /* ------------------------------------------------------------------ */
@@ -84,15 +109,21 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const isSectionScope = useMemo(() => pathname.includes(SECTION_PATH_SEGMENT), [pathname]);
+  const activeQueryParamKey = isSectionScope ? SECTION_QUERY_PARAM_KEY : MAIN_QUERY_PARAM_KEY;
+  const activeViewParamKey = isSectionScope ? SECTION_VIEW_PARAM_KEY : MAIN_VIEW_PARAM_KEY;
 
-  const [query, setQuery] = useState(searchParams.get("q") ?? "");
-  const [debouncedQuery, setDebouncedQuery] = useState(query);
+  const queryParam = searchParams.get(activeQueryParamKey) ?? "";
+  const [query, setQuery] = useState(queryParam);
+  const debouncedQuery = useDebouncedValue(query, 300);
   const [isTemporalFiltersOpen, setIsTemporalFiltersOpen] = useState(false);
   const temporalFiltersRef = useRef<HTMLDivElement | null>(null);
+  const previousActiveQueryParamKeyRef = useRef(activeQueryParamKey);
+  const pendingQuerySyncRef = useRef<Map<string, Set<string>>>(new Map());
   const activeLayout = useMemo(() => {
-    const viewParam = searchParams.get("view");
+    const viewParam = searchParams.get(activeViewParamKey);
     return viewParam === MediaLayoutTypes.LIST ? MediaLayoutTypes.LIST : MediaLayoutTypes.GRID;
-  }, [searchParams]);
+  }, [activeViewParamKey, searchParams]);
   const normalizedLayouts = useMemo(
     () => layouts.filter((layout) => Object.values(MediaLayoutTypes).includes(layout.key)),
     [layouts]
@@ -117,36 +148,57 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
   /* ------------------------------------------------------------------ */
 
   useEffect(() => {
-    const nextQuery = searchParams.get("q") ?? "";
-    setQuery(nextQuery);
-    setDebouncedQuery(nextQuery);
-  }, [searchParams]);
+    const normalizedQueryParam = queryParam.trim();
+    const pendingValues = pendingQuerySyncRef.current.get(activeQueryParamKey);
+    if (pendingValues?.has(normalizedQueryParam)) {
+      pendingValues.delete(normalizedQueryParam);
+      if (!pendingValues.size) pendingQuerySyncRef.current.delete(activeQueryParamKey);
+      return;
+    }
 
-  const updateQuery = useCallback(
-    (key: string, value?: string) => {
+    setQuery((currentValue) => (currentValue === queryParam ? currentValue : queryParam));
+  }, [activeQueryParamKey, queryParam]);
+
+  const updateSearchParam = useCallback(
+    (key: string, value?: string, options?: TUpdateQueryOptions) => {
       const params = new URLSearchParams(searchParams.toString());
+      const normalizedValue = (value ?? "").trim();
 
-      if (value) params.set(key, value);
+      if (normalizedValue) params.set(key, normalizedValue);
       else params.delete(key);
 
-      router.replace(`${pathname}?${params.toString()}`);
+      if (options?.resetPagination) {
+        params.delete("page");
+        params.delete("cursor");
+      }
+      params.delete(LEGACY_QUERY_PARAM_KEY);
+      params.delete(LEGACY_VIEW_PARAM_KEY);
+
+      const nextQueryString = params.toString();
+      const currentQueryString = searchParams.toString();
+      if (nextQueryString === currentQueryString) return;
+
+      router.replace(nextQueryString ? `${pathname}?${nextQueryString}` : pathname);
     },
     [pathname, router, searchParams]
   );
 
   useEffect(() => {
-    const handle = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 300);
-    return () => clearTimeout(handle);
-  }, [query]);
+    const didQueryScopeChange = previousActiveQueryParamKeyRef.current !== activeQueryParamKey;
+    if (didQueryScopeChange) return;
+    const normalizedDebouncedQuery = debouncedQuery.trim();
+    const normalizedCurrentQuery = query.trim();
+    if (normalizedDebouncedQuery !== normalizedCurrentQuery) return;
+    if (normalizedDebouncedQuery === queryParam) return;
+    const pendingValues = pendingQuerySyncRef.current.get(activeQueryParamKey) ?? new Set<string>();
+    pendingValues.add(normalizedDebouncedQuery);
+    pendingQuerySyncRef.current.set(activeQueryParamKey, pendingValues);
+    updateSearchParam(activeQueryParamKey, normalizedDebouncedQuery, { resetPagination: true });
+  }, [activeQueryParamKey, debouncedQuery, query, queryParam, updateSearchParam]);
 
   useEffect(() => {
-    const currentQuery = searchParams.get("q") ?? "";
-    if (debouncedQuery !== currentQuery) {
-      updateQuery("q", debouncedQuery);
-    }
-  }, [debouncedQuery, searchParams, updateQuery]);
+    previousActiveQueryParamKeyRef.current = activeQueryParamKey;
+  }, [activeQueryParamKey]);
 
   useEffect(() => {
     if (ENABLE_START_TIME_FILTER) return;
@@ -180,7 +232,7 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
   }, [isTemporalFiltersOpen]);
 
   const handleLayoutChange = (layout: MediaLayoutTypes) => {
-    updateQuery("view", layout);
+    updateSearchParam(activeViewParamKey, layout);
   };
 
   const upsertTemporalRangeCondition = useCallback(
@@ -252,8 +304,10 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
               type="button"
               onClick={() => {
                 setQuery("");
-                setDebouncedQuery("");
-                updateQuery("q");
+                const pendingValues = pendingQuerySyncRef.current.get(activeQueryParamKey) ?? new Set<string>();
+                pendingValues.add("");
+                pendingQuerySyncRef.current.set(activeQueryParamKey, pendingValues);
+                updateSearchParam(activeQueryParamKey, "", { resetPagination: true });
               }}
               aria-label="Clear search"
               title="Clear search"
@@ -268,7 +322,7 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
       {/* RIGHT */}
       <Header.RightItem>
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <div className="hidden 3xl:flex items-center gap-1 rounded bg-custom-background-100 px-0">
+          <div className="hidden 3xl:flex items-center gap-1 border border-custom-border-200 rounded bg-custom-background-100 px-0">
             <DateRangeDropdown
               value={{ from: startDateFrom, to: startDateTo }}
               onSelect={(range) => {

@@ -17,7 +17,20 @@ import type { TMediaItem, TMediaSection } from "../types";
 import { groupMediaItemsByTag, resolveMediaItemActionHref } from "../utils/media-items";
 import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../utils/media-library-filters";
 
-const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHref: (item: TMediaItem) => string }) => {
+const MAIN_QUERY_PARAM_KEY = "q_main";
+const MAIN_VIEW_PARAM_KEY = "view_main";
+const SECTION_VIEW_PARAM_KEY = "view_section";
+const LEGACY_VIEW_PARAM_KEY = "view";
+
+const MediaRow = ({
+  section,
+  getItemHref,
+  getSectionHref,
+}: {
+  section: TMediaSection;
+  getItemHref: (item: TMediaItem) => string;
+  getSectionHref: (section: TMediaSection) => string;
+}) => {
   const rowId = useId().replace(/:/g, "");
   const prevId = `media-prev-${rowId}`;
   const nextId = `media-next-${rowId}`;
@@ -38,7 +51,7 @@ const MediaRow = ({ section, getItemHref }: { section: TMediaSection; getItemHre
       <div className="flex items-center justify-between">
         <div className="text-sm font-semibold text-custom-text-100">{section.title}</div>
         <Link
-          href={`./section/${encodeURIComponent(section.title)}`}
+          href={getSectionHref(section)}
           className="text-xs uppercase tracking-wider text-custom-text-300 hover:text-custom-text-100"
         >
           View all
@@ -139,11 +152,7 @@ const resolveDocumentFormat = (item: TMediaItem) => {
   if (linkedFormat) return linkedFormat;
   const meta = item.meta as Record<string, unknown> | undefined;
   const metaFileType =
-    typeof meta?.file_type === "string"
-      ? meta.file_type
-      : typeof meta?.fileType === "string"
-        ? meta.fileType
-        : "";
+    typeof meta?.file_type === "string" ? meta.file_type : typeof meta?.fileType === "string" ? meta.fileType : "";
   const normalizedMetaType = normalizeDocumentFormat(metaFileType);
   if (normalizedMetaType) return normalizedMetaType;
   const format = normalizeDocumentFormat(item.format ?? "");
@@ -154,8 +163,8 @@ const MediaLibraryListPage = observer(() => {
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   const { libraryVersion, mediaFilters, setMediaFilterConfigs } = useMediaLibrary();
   const searchParams = useSearchParams();
-  const query = (searchParams.get("q") ?? "").trim();
-  const viewMode = searchParams.get("view") === "list" ? "list" : "grid";
+  const query = (searchParams.get(MAIN_QUERY_PARAM_KEY) ?? "").trim();
+  const viewMode = searchParams.get(MAIN_VIEW_PARAM_KEY) === "list" ? "list" : "grid";
   const filterConditions = useMemo(
     () =>
       mediaFilters.allConditionsForDisplay.map(({ property, operator, value }) => ({
@@ -210,7 +219,8 @@ const MediaLibraryListPage = observer(() => {
   const showSkeleton = isLoading && filteredItems.length === 0;
   const getSectionHref = (section: TMediaSection) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("view", "list");
+    params.delete(SECTION_VIEW_PARAM_KEY);
+    params.delete(LEGACY_VIEW_PARAM_KEY);
     const paramsString = params.toString();
     return `./section/${encodeURIComponent(section.title)}${paramsString ? `?${paramsString}` : ""}`;
   };
@@ -289,7 +299,7 @@ const MediaLibraryListPage = observer(() => {
           <MediaListView sections={mediaSections} getItemHref={getItemHref} getSectionHref={getSectionHref} />
         ) : (
           mediaSections.map((section) => (
-            <MediaRow key={section.title} section={section} getItemHref={getItemHref} />
+            <MediaRow key={section.title} section={section} getItemHref={getItemHref} getSectionHref={getSectionHref} />
           ))
         )}
       </div>
