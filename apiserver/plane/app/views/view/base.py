@@ -407,6 +407,11 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             r["label_ids"] = label_map.get(iid, [])
             r["assignee_ids"] = assignee_map.get(iid, [])
             r["custom_propertiess"] = cp_map.get(iid, [])
+            # Removed fields -- send explicit defaults so frontend can hide columns
+            r["cycle_id"] = None
+            r["module_ids"] = []
+            r["estimate_point"] = None
+            r["worker_name"] = None
 
         return results_list
 
