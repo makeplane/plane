@@ -1,7 +1,7 @@
 "use client";
 
-import type { RefObject } from "react";
-import { useEffect, useState } from "react";
+import type { CSSProperties, RefObject } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { Download, FileText, FileWarning } from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
@@ -137,7 +137,26 @@ export const MediaDetailPreview = ({
     </>
   );
 
-  const previewHeightClass = "h-[220px] sm:h-[320px] md:h-[420px] lg:h-[505px]";
+  const previewHeight = useMemo(() => {
+    if (!viewport.height) return 505;
+
+    const isDesktopViewport = viewport.width >= 1025;
+    const isTabletViewport = viewport.width >= 768;
+
+    if (isDesktopViewport) {
+      const scaledHeight = Math.round(viewport.height * 0.68);
+      return Math.min(820, Math.max(520, scaledHeight));
+    }
+
+    if (isTabletViewport) {
+      const scaledHeight = Math.round(viewport.height * 0.56);
+      return Math.min(640, Math.max(420, scaledHeight));
+    }
+
+    const scaledHeight = Math.round(viewport.height * 0.38);
+    return Math.min(420, Math.max(220, scaledHeight));
+  }, [viewport.height, viewport.width]);
+  const previewHeightStyle: CSSProperties = { height: `${previewHeight}px` };
   const overlayVisibilityClass = [isSettingsOpen ? "is-settings-open" : "", !isPlaying ? "is-paused" : ""]
     .filter(Boolean)
     .join(" ");
@@ -198,9 +217,10 @@ export const MediaDetailPreview = ({
     (isTextDocument && Boolean(textPreviewError)) ||
     (!isBinaryDocument && !isTextDocument && Boolean(effectiveDocumentSrc) && isDocumentPreviewBroken);
   const imagePreviewAvailable = Boolean(effectiveImageSrc) && !isImagePreviewBroken;
-  const renderUnavailablePreview = (title: string, message: string, className: string) => (
+  const renderUnavailablePreview = (title: string, message: string, className: string, style?: CSSProperties) => (
     <div
       className={`flex ${className} flex-col items-center justify-center gap-2 rounded-lg bg-custom-background-100 px-4 text-center`}
+      style={style}
       role="status"
       aria-live="polite"
     >
@@ -215,7 +235,8 @@ export const MediaDetailPreview = ({
         {isVideo ? (
           <>
             <div
-              className={`media-player mx-auto ${previewHeightClass} w-full max-w-full overflow-hidden rounded-lg border border-custom-border-200 bg-black ${overlayVisibilityClass}`}
+              className={`media-player mx-auto w-full max-w-full overflow-hidden rounded-lg border border-custom-border-200 bg-black ${overlayVisibilityClass}`}
+              style={previewHeightStyle}
             >
               <video
                 ref={videoRef}
@@ -256,7 +277,8 @@ export const MediaDetailPreview = ({
           </>
         ) : item.mediaType === "image" ? (
           <div
-            className={`overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90 ${previewHeightClass}`}
+            className="overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-90"
+            style={previewHeightStyle}
           >
             <button
               type="button"
@@ -303,14 +325,16 @@ export const MediaDetailPreview = ({
           <div className="rounded-lg border border-custom-border-200 bg-custom-background-90">
             {isUnsupportedDocument ? (
               <div
-                className={`flex ${previewHeightClass} items-center justify-center rounded-lg bg-custom-background-100 text-xs text-custom-text-300`}
+                className="flex items-center justify-center rounded-lg bg-custom-background-100 text-xs text-custom-text-300"
+                style={previewHeightStyle}
               >
                 Only PDF, DOCX, XLSX, CSV, and text files are supported.
               </div>
             ) : isBinaryDocument ? (
               isDocumentPreviewLoading ? (
                 <div
-                  className={`flex ${previewHeightClass} flex-col items-center justify-center gap-2 rounded-lg bg-custom-background-100 text-xs text-custom-text-300`}
+                  className="flex flex-col items-center justify-center gap-2 rounded-lg bg-custom-background-100 text-xs text-custom-text-300"
+                  style={previewHeightStyle}
                 >
                   <LogoSpinner />
                   <span>Loading preview...</span>
@@ -319,10 +343,11 @@ export const MediaDetailPreview = ({
                 renderUnavailablePreview(
                   "Document is not available",
                   documentPreviewError || "This document cannot be previewed right now.",
-                  previewHeightClass
+                  "w-full",
+                  previewHeightStyle
                 )
               ) : documentPreviewHtml ? (
-                <div className={`${previewHeightClass} overflow-hidden rounded-lg bg-white`}>
+                <div className="overflow-hidden rounded-lg bg-white" style={previewHeightStyle}>
                   <iframe
                     title={`${item.title}-preview`}
                     className="h-full w-full"
@@ -334,19 +359,24 @@ export const MediaDetailPreview = ({
                 <iframe
                   src={documentPreviewUrl}
                   title={item.title}
-                  className={`${previewHeightClass} h-full w-full rounded-lg bg-white`}
+                  className="h-full w-full rounded-lg bg-white"
+                  style={previewHeightStyle}
                   onLoad={() => setIsDocumentPreviewBroken(false)}
                   onError={() => setIsDocumentPreviewBroken(true)}
                 />
               ) : (
-                <div className={`flex ${previewHeightClass} items-center justify-center text-xs text-custom-text-300`}>
+                <div
+                  className="flex items-center justify-center text-xs text-custom-text-300"
+                  style={previewHeightStyle}
+                >
                   No preview available for this file.
                 </div>
               )
             ) : isTextDocument ? (
               isTextPreviewLoading ? (
                 <div
-                  className={`flex ${previewHeightClass} flex-col items-center justify-center gap-2 rounded-lg bg-custom-background-100 text-xs text-custom-text-300`}
+                  className="flex flex-col items-center justify-center gap-2 rounded-lg bg-custom-background-100 text-xs text-custom-text-300"
+                  style={previewHeightStyle}
                 >
                   <LogoSpinner />
                   <span>Loading preview...</span>
@@ -355,11 +385,13 @@ export const MediaDetailPreview = ({
                 renderUnavailablePreview(
                   "Document is not available",
                   textPreviewError || "This document cannot be previewed right now.",
-                  previewHeightClass
+                  "w-full",
+                  previewHeightStyle
                 )
               ) : (
                 <div
-                  className={`${previewHeightClass} overflow-auto rounded-lg bg-custom-background-100 p-4 text-xs text-custom-text-100`}
+                  className="overflow-auto rounded-lg bg-custom-background-100 p-4 text-xs text-custom-text-100"
+                  style={previewHeightStyle}
                 >
                   <pre className="whitespace-pre-wrap break-words">{textPreview}</pre>
                 </div>
@@ -369,20 +401,23 @@ export const MediaDetailPreview = ({
                 renderUnavailablePreview(
                   "Document is not available",
                   "This document cannot be previewed right now.",
-                  previewHeightClass
+                  "w-full",
+                  previewHeightStyle
                 )
               ) : (
                 <iframe
                   src={effectiveDocumentSrc}
                   title={item.title}
-                  className={`${previewHeightClass} w-full rounded-lg bg-white`}
+                  className="w-full rounded-lg bg-white"
+                  style={previewHeightStyle}
                   onLoad={() => setIsDocumentPreviewBroken(false)}
                   onError={() => setIsDocumentPreviewBroken(true)}
                 />
               )
             ) : (
               <div
-                className={`flex ${previewHeightClass} flex-col items-center justify-center gap-3 rounded-lg text-custom-text-300`}
+                className="flex flex-col items-center justify-center gap-3 rounded-lg text-custom-text-300"
+                style={previewHeightStyle}
               >
                 <div className="flex flex-col items-center gap-2 text-sm">
                   <FileText className="h-8 w-8" />
