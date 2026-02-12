@@ -66,8 +66,11 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
 
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 
+  // Columns removed from workspace issues API for performance (no data returned)
+  const WORKSPACE_HIDDEN_COLUMNS: (keyof IIssueDisplayProperties)[] = ["modules", "cycle", "estimate", "worker_name"];
+
   const spreadsheetColumnsList = isWorkspaceLevel
-    ? SPREADSHEET_PROPERTY_LIST
+    ? SPREADSHEET_PROPERTY_LIST.filter((property) => !WORKSPACE_HIDDEN_COLUMNS.includes(property))
     : SPREADSHEET_PROPERTY_LIST.filter((property) => {
         if (property === "cycle" && !currentProjectDetails?.cycle_view) return false;
         if (property === "modules" && !currentProjectDetails?.module_view) return false;
