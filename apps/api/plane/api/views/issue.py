@@ -1691,9 +1691,15 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         """Update work item comment
 
         Modify the content of an existing comment on a work item.
+        Only the comment creator can perform this action.
         Validates external ID uniqueness if provided.
         """
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
+        if issue_comment.created_by_id != request.user.id:
+            return Response(
+                {"error": "Only the comment creator can update the comment"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
 
@@ -1760,9 +1766,15 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         """Delete issue comment
 
         Permanently remove a comment from a work item.
+        Only the comment creator can perform this action.
         Records deletion activity for audit purposes.
         """
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
+        if issue_comment.created_by_id != request.user.id:
+            return Response(
+                {"error": "Only the comment creator can delete the comment"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
         issue_comment.delete()
         issue_activity.delay(
