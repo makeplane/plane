@@ -3,7 +3,7 @@
 import type { RefObject } from "react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Download, FileText, FileWarning } from "lucide-react";
+import { Download, Eye, FileText, FileWarning } from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
 import { ImageFullScreenModal } from "@plane/editor";
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -182,6 +182,18 @@ export const MediaDetailPreview = ({
       ? buildDownloadUrl(downloadBaseSrc)
       : downloadBaseSrc
     : "";
+  const documentDownloadCandidate = item?.downloadSrc || item?.fileSrc || effectiveDocumentSrc;
+  const isAbsoluteDocumentDownloadSrc = /^https?:\/\//i.test(documentDownloadCandidate);
+  const isApiDocumentDownloadSrc =
+    Boolean(documentDownloadCandidate) &&
+    (!isAbsoluteDocumentDownloadSrc ||
+      (Boolean(API_BASE_URL) && documentDownloadCandidate.startsWith(API_BASE_URL)));
+  const documentDownloadSrc = documentDownloadCandidate
+    ? isApiDocumentDownloadSrc
+      ? buildDownloadUrl(documentDownloadCandidate)
+      : documentDownloadCandidate
+    : "";
+  const documentPreviewSrc = effectiveDocumentSrc || item?.fileSrc || "";
   const isDocumentCorrupted =
     (isBinaryDocument && (Boolean(documentPreviewError) || isDocumentPreviewBroken)) ||
     (isTextDocument && Boolean(textPreviewError)) ||
@@ -379,19 +391,37 @@ export const MediaDetailPreview = ({
                 </div>
               </div>
             )}
-            {effectiveDocumentSrc && !isUnsupportedDocument && !isDocumentCorrupted ? (
+            {(documentPreviewSrc || (documentDownloadSrc && !isDocumentCorrupted)) && !isUnsupportedDocument ? (
               <div className="flex justify-end border-t border-custom-border-200 p-3">
-                <a
-                  href={effectiveDocumentSrc}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-3 rounded-md bg-custom-primary-100 px-2 py-1 text-sm font-medium text-custom-100"
-                >
-                  <span className="flex h-6 w-6 items-center justify-center">
-                    <Download className="h-4 w-4" />
-                  </span>
-                  Download
-                </a>
+                <div className="flex items-center gap-2">
+                  {documentPreviewSrc ? (
+                    <a
+                      href={documentPreviewSrc}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-3 rounded-md bg-custom-primary-100 px-2 py-1 text-sm font-medium text-custom-100"
+                    >
+                      <span className="flex h-6 w-6 items-center justify-center">
+                        <Eye className="h-4 w-4" />
+                      </span>
+                      Preview
+                    </a>
+                  ) : null}
+                  {documentDownloadSrc && !isDocumentCorrupted ? (
+                    <a
+                      href={documentDownloadSrc}
+                      target="_blank"
+                      rel="noreferrer"
+                      download
+                      className="inline-flex items-center gap-3 rounded-md bg-custom-primary-100 px-2 py-1 text-sm font-medium text-custom-100"
+                    >
+                      <span className="flex h-6 w-6 items-center justify-center">
+                        <Download className="h-4 w-4" />
+                      </span>
+                      Download
+                    </a>
+                  ) : null}
+                </div>
               </div>
             ) : null}
           </div>
