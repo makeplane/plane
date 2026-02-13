@@ -12,7 +12,7 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -29,7 +29,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { HomePageHeader } from "@/components/home/header";
 // local imports
 import { StickiesWidget } from "../stickies/widget";
-import { HomeLoader, NoProjectsEmptyState, RecentActivityWidget } from "./widgets";
+import { HomeLoader, RecentActivityWidget } from "./widgets";
 import { DashboardQuickLinks } from "./widgets/links";
 import { ManageWidgetsModal } from "./widgets/manage";
 
@@ -70,8 +70,6 @@ export const HOME_WIDGETS_LIST: {
 export const DashboardWidgets = observer(function DashboardWidgets() {
   // router
   const { workspaceSlug } = useParams();
-  // navigation
-  const pathname = usePathname();
   // theme hook
   const { resolvedTheme } = useTheme();
   // store hooks
@@ -83,8 +81,6 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
   // derived values
   const noWidgetsResolvedPath = resolvedTheme === "light" ? lightWidgetsAsset : darkWidgetsAsset;
 
-  // derived values
-  const isWikiApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
   if (!workspaceSlug) return null;
   if (loading || loader !== "loaded") return <HomeLoader />;
 
@@ -96,8 +92,6 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
         isModalOpen={showWidgetSettings}
         handleOnClose={() => toggleWidgetSettings(false)}
       />
-      {!isWikiApp && <NoProjectsEmptyState />}
-
       {isAnyWidgetEnabled ? (
         <div className="flex flex-col">
           {orderedWidgets.map((key) => {
