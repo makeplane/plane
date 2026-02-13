@@ -96,7 +96,8 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
         }
       }
     },
-    issueId
+    issueId,
+    ["main-sidebar"]
   );
 
   const handleKeyDown = () => {

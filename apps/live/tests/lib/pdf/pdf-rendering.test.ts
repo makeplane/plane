@@ -728,6 +728,5 @@ describe("PDF Rendering Integration", () => {
 
       expect(text).toContain("Text after image");
     });
-
   });
 });

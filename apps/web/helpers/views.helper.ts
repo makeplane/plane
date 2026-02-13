@@ -15,6 +15,7 @@ const VIEW_ACCESS_ICONS = {
   [EViewAccess.PUBLIC]: GlobeIcon,
   [EViewAccess.PRIVATE]: LockIcon,
 };
+
 export const VIEW_ACCESS_SPECIFIERS: {
   key: EViewAccess;
   i18n_label: string;

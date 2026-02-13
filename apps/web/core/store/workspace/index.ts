@@ -15,7 +15,7 @@ import type {
   IWorkspaceUserPropertiesResponse,
 } from "@plane/types";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // store
 import type { CoreRootStore } from "@/store/root.store";
 // sub-stores
