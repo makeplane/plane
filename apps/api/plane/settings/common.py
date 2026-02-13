@@ -550,6 +550,8 @@ ATTACHMENT_MIME_TYPES = [
     "application/x-gzip",
     # SQL
     "application/x-sql",
+    # Markdown
+    "text/markdown",
 ]
 
 
