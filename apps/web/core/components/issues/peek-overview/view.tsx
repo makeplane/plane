@@ -112,7 +112,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
       }
     },
     issueId,
-    ["main-sidebar"]
+    ["main-sidebar", "app-rail"]
   );
 
   const handleKeyDown = () => {

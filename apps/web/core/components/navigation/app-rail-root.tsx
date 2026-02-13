@@ -62,7 +62,7 @@ export const AppRailRoot = observer(() => {
     >
       <ContextMenu>
         <ContextMenu.Trigger className="h-full">
-          <div className="flex flex-col justify-between gap-4 px-2 py-3 h-full">
+          <div id="app-rail" className="flex flex-col justify-between gap-4 px-2 py-3 h-full">
             <div
               className={cn("flex flex-col", {
                 "gap-4": showLabel,
