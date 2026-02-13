@@ -23,6 +23,7 @@ export default {
     favorites: "Избранное",
     pro: "Pro",
     upgrade: "Обновить",
+    stickies: "Стикеры",
   },
   auth: {
     common: {
@@ -2920,8 +2921,4 @@ export default {
   enter_number_of_projects: "Введите количество проектов",
   pin: "Закрепить",
   unpin: "Открепить",
-  sidebar: {
-    stickies: "Стикеры",
-    your_work: "Ваша работа",
-  },
 } as const;

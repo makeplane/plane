@@ -23,6 +23,7 @@ export default {
     favorites: "お気に入り",
     pro: "プロ",
     upgrade: "アップグレード",
+    stickies: "付箋",
   },
   auth: {
     common: {

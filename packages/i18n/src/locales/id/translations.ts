@@ -23,6 +23,7 @@ export default {
     favorites: "Favorit",
     pro: "Pro",
     upgrade: "Upgrade",
+    stickies: "Catatan tempel",
   },
   auth: {
     common: {

@@ -23,6 +23,7 @@ export default {
     favorites: "Favoriler",
     pro: "Pro",
     upgrade: "Yükselt",
+    stickies: "Yapışkan notlar",
   },
   auth: {
     common: {
