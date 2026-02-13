@@ -88,6 +88,6 @@ export const hideCellContent = (editor: Editor, cellPositions: number[]): void =
 export const showCellContent = (editor: Editor): void => {
   const tr = editor.view.state.tr;
   updateTransactionMeta(tr, null);
-  tr.setMeta(CORE_EDITOR_META.ADD_TO_HISTORY, true);
+  tr.setMeta(CORE_EDITOR_META.ADD_TO_HISTORY, false);
   editor.view.dispatch(tr);
 };
