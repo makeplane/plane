@@ -53,6 +53,7 @@ export const renderPiChatEditorMentionsDropdown =
             className: "fixed z-[100]",
           }
         );
+        if (!component.element) return;
         const element = component.element as HTMLElement;
         cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
       },
@@ -80,7 +81,7 @@ export const renderPiChatEditorMentionsDropdown =
         return component?.ref?.onKeyDown({ event }) ?? false;
       },
       onExit: () => {
-        component?.element.remove();
+        component?.element?.remove();
         handleClose();
       },
     };

@@ -89,7 +89,7 @@ const Command = Extension.create<SlashCommandOptions>({
                 editor: props.editor,
                 className: "fixed z-[100]",
               });
-              if (!props.clientRect) return;
+              if (!props.clientRect || !component.element) return;
               props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
               const element = component.element as HTMLElement;
               cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
@@ -119,7 +119,7 @@ const Command = Extension.create<SlashCommandOptions>({
             },
 
             onExit: ({ editor }) => {
-              component?.element.remove();
+              component?.element?.remove();
               handleClose(editor);
             },
           };

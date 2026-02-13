@@ -221,6 +221,7 @@ export function WorkItemSuggestionsDropdownRenderer(
             className: "fixed z-[100]",
           }
         );
+        if (!component.element) return;
         const element = component.element as HTMLElement;
         props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.WORK_ITEM_EMBED);
         cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
@@ -246,7 +247,7 @@ export function WorkItemSuggestionsDropdownRenderer(
         return component?.ref?.onKeyDown({ event }) ?? false;
       },
       onExit: ({ editor }) => {
-        component?.element.remove();
+        component?.element?.remove();
         handleClose(editor);
       },
     };
