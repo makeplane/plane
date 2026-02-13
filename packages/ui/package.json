@@ -69,7 +69,7 @@
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@types/react-color": "^3.0.9",
+    "@types/react-color": "catalog:",
     "@types/react-dom": "catalog:",
     "autoprefixer": "^10.4.19",
     "postcss-cli": "^11.0.0",

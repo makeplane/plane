@@ -53,7 +53,7 @@
     "@octokit/openapi-webhooks-types": "^8.3.0",
     "@plane/typescript-config": "workspace:*",
     "@types/node": "catalog:",
-    "@types/papaparse": "^5.3.15",
+    "@types/papaparse": "catalog:",
     "tsdown": "catalog:"
   }
 }

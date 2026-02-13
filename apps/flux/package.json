@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",
-    "@types/amqplib": "0.10.5",
+    "@types/amqplib": "catalog:",
     "@types/node": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
