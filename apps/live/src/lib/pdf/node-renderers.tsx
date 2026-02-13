@@ -358,7 +358,6 @@ export const nodeRenderers: NodeRendererRegistry = {
       </Text>
     );
   },
-
 };
 
 type InternalRenderContext = {

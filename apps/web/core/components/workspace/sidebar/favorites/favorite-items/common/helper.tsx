@@ -10,7 +10,7 @@ import { PageIcon } from "@plane/propel/icons";
 import type { IFavorite, TLogoProps } from "@plane/types";
 // components
 // plane web constants
-import { FAVORITE_ITEM_ICONS, FAVORITE_ITEM_LINKS } from "@/plane-web/constants/sidebar-favorites";
+import { FAVORITE_ITEM_ICONS, FAVORITE_ITEM_LINKS } from "@/constants/sidebar-favorites";
 
 export const getFavoriteItemIcon = (type: string, logo?: TLogoProps) => {
   const Icon = FAVORITE_ITEM_ICONS[type] || PageIcon;

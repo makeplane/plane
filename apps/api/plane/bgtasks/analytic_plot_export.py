@@ -24,6 +24,7 @@ from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.analytics_plot import build_graph_plot
 from plane.utils.exception_logger import log_exception
 from plane.utils.issue_filters import issue_filters
+from plane.utils.csv_utils import sanitize_csv_row
 
 row_mapping = {
     "state__name": "State",
@@ -180,7 +181,7 @@ def generate_csv_from_rows(rows):
     """Generate CSV buffer from rows."""
     csv_buffer = io.StringIO()
     writer = csv.writer(csv_buffer, delimiter=",", quoting=csv.QUOTE_ALL)
-    [writer.writerow(row) for row in rows]
+    [writer.writerow(sanitize_csv_row(row)) for row in rows]
     return csv_buffer
 
 

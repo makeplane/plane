@@ -185,7 +185,6 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
             }}
             projectId={issue.project_id}
             setIsSubmitting={(value) => setIsSubmitting(value)}
-            swrDescription={issue.description_html ?? "<p></p>"}
             workspaceSlug={workspaceSlug}
           />
         )}
