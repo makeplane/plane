@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@hypermod/utils": "^0.7.1",
-    "@types/jscodeshift": "^17.3.0",
+    "@types/jscodeshift": "catalog:",
     "ast-types": "0.14.2",
     "jscodeshift": "^17.3.0",
     "vitest": "^4.0.8"

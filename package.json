@@ -34,14 +34,14 @@
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.0.1",
     "eslint-plugin-react-refresh": "0.5.0",
-    "eslint-plugin-storybook": "10.2.7",
-    "eslint-plugin-turbo": "2.8.3",
+    "eslint-plugin-storybook": "10.2.8",
+    "eslint-plugin-turbo": "2.8.7",
     "globals": "16.5.0",
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
     "prettier": "3.8.1",
-    "turbo": "2.8.3",
-    "typescript-eslint": "8.54.0"
+    "turbo": "2.8.7",
+    "typescript-eslint": "8.55.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts,json,css,md}": [
@@ -61,9 +61,10 @@
       "js-yaml": "4.1.1",
       "brace-expansion": "2.0.2",
       "amqplib": "0.10.5",
-      "@types/amqplib": "0.10.5",
-      "@types/react": "18.3.18",
-      "@types/react-dom": "18.3.5",
+      "@types/amqplib": "catalog:",
+      "@types/node": "catalog:",
+      "@types/react": "catalog:",
+      "@types/react-dom": "catalog:",
       "nanoid": "3.3.8",
       "esbuild": "0.25.0",
       "@babel/helpers": "7.26.10",
@@ -73,7 +74,7 @@
       "tar-fs": "3.0.9",
       "prosemirror-view": "1.40.0",
       "prosemirror-model": "1.25.3",
-      "@types/express": "4.17.23",
+      "@types/express": "catalog:",
       "typescript": "catalog:",
       "vite": "catalog:",
       "@octokit/types": "13.8.0",
@@ -105,7 +106,7 @@
       "unrs-resolver"
     ]
   },
-  "packageManager": "pnpm@10.27.0+sha512.72d699da16b1179c14ba9e64dc71c9a40988cbdc65c264cb0e489db7de917f20dcf4d64d8723625f2969ba52d4b7e2a1170682d9ac2a5dcaeaab732b7e16f04a",
+  "packageManager": "pnpm@10.29.3+sha512.498e1fb4cca5aa06c1dcf2611e6fafc50972ffe7189998c409e90de74566444298ffe43e6cd2acdc775ba1aa7cc5e092a8b7054c811ba8c5770f84693d33d2dc",
   "engines": {
     "node": ">=22.18.0"
   }

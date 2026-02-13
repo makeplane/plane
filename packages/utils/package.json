@@ -42,13 +42,13 @@
   },
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",
-    "@types/chroma-js": "^3.1.2",
-    "@types/hast": "^3.0.4",
+    "@types/chroma-js": "catalog:",
+    "@types/hast": "catalog:",
     "@types/lodash-es": "catalog:",
-    "@types/mdast": "^4.0.4",
+    "@types/mdast": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@types/sanitize-html": "2.16.0",
+    "@types/sanitize-html": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
