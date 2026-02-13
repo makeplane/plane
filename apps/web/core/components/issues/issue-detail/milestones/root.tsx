@@ -12,41 +12,28 @@
  */
 
 import { observer } from "mobx-react";
+// plane imports
 import { MilestoneIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
+// components
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
+// dropdown
 import { MilestonesDropdown } from "./dropdown";
 
 type TWorkItemSideBarMilestoneItemProps = {
-  workspaceSlug: string;
   projectId: string;
-  workItemId: string;
-  isPeekView?: boolean;
+  milestoneId: string | undefined;
+  updateWorkItemMilestone: (milestoneId: string | undefined) => Promise<void> | undefined;
 };
 
 export const WorkItemSideBarMilestoneItem = observer(function WorkItemSideBarMilestoneItem(
   props: TWorkItemSideBarMilestoneItemProps
 ) {
-  const { workspaceSlug, projectId, workItemId } = props;
-
-  //store hooks
-  const {
-    workItems: { updateWorkItemMilestone },
-  } = useMilestones();
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
-
-  // derived values
-  const workItem = getIssueById(workItemId);
-
-  if (!workItem) return null;
+  const { projectId, milestoneId, updateWorkItemMilestone } = props;
 
   // handlers
-  const handleChange = (milestoneId: string | undefined) => {
-    updateWorkItemMilestone(workspaceSlug, projectId, workItemId, milestoneId).catch(() => {
+  const handleChange = async (milestoneId: string | undefined) => {
+    await updateWorkItemMilestone(milestoneId)?.catch(() => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -59,8 +46,8 @@ export const WorkItemSideBarMilestoneItem = observer(function WorkItemSideBarMil
     <SidebarPropertyListItem icon={MilestoneIcon} label="Milestone">
       <MilestonesDropdown
         projectId={projectId}
-        value={workItem.milestone_id}
-        onChange={handleChange}
+        value={milestoneId}
+        onChange={(milestoneId) => void handleChange(milestoneId)}
         buttonClassName="h-7.5 px-2"
       />
     </SidebarPropertyListItem>

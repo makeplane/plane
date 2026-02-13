@@ -258,10 +258,11 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
 
         {isMilestonesFeatureEnabled && (
           <WorkItemSideBarMilestoneItem
-            workspaceSlug={workspaceSlug}
             projectId={projectId}
-            workItemId={epicId}
-            isPeekView={false}
+            milestoneId={epicDetails.milestone_id}
+            updateWorkItemMilestone={(milestoneId) =>
+              epicOperations.updateWorkItemMilestone?.(workspaceSlug, projectId, epicId, milestoneId)
+            }
           />
         )}
 

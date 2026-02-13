@@ -17,7 +17,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 // plane imports
-import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
+import { DRAG_ALLOWED_GROUPS, isWorkItemPriority } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type {
@@ -155,16 +155,16 @@ export const ListGroup = observer(function ListGroup(props: Props) {
     return true;
   };
 
-  const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
+  const prePopulateQuickAddData = (groupByKey: TIssueGroupByOptions | null, value: string) => {
     const defaultState = projectState.projectStates?.find((state) => state.default);
-    let preloadedData: object = { state_id: defaultState?.id };
+    let preloadedData: Partial<TIssue> = { state_id: defaultState?.id };
 
     if (groupByKey === null) {
       preloadedData = { ...preloadedData };
     } else {
       if (groupByKey === "state") {
         preloadedData = { ...preloadedData, state_id: value };
-      } else if (groupByKey === "priority") {
+      } else if (groupByKey === "priority" && isWorkItemPriority(value)) {
         preloadedData = { ...preloadedData, priority: value };
       } else if (groupByKey === "labels" && value != "None") {
         preloadedData = { ...preloadedData, label_ids: [value] };
@@ -176,6 +176,10 @@ export const ListGroup = observer(function ListGroup(props: Props) {
         preloadedData = { ...preloadedData, module_ids: [value] };
       } else if (groupByKey === "created_by") {
         preloadedData = { ...preloadedData };
+      } else if (groupByKey === "milestone" && value != "None") {
+        preloadedData = { ...preloadedData, milestone_id: value };
+      } else if (groupByKey === "epic" && value != "None") {
+        preloadedData = { ...preloadedData, parent_id: value };
       } else {
         preloadedData = { ...preloadedData, [groupByKey]: value };
       }

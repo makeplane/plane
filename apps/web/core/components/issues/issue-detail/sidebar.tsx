@@ -284,7 +284,13 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             )}
 
             {isMilestonesFeatureEnabled && (
-              <WorkItemSideBarMilestoneItem workspaceSlug={workspaceSlug} projectId={projectId} workItemId={issue.id} />
+              <WorkItemSideBarMilestoneItem
+                projectId={projectId}
+                milestoneId={issue.milestone_id}
+                updateWorkItemMilestone={(milestoneId) =>
+                  issueOperations.updateWorkItemMilestone?.(workspaceSlug, projectId, issueId, milestoneId)
+                }
+              />
             )}
 
             {issue.type_id && (

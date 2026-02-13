@@ -264,29 +264,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
    * @returns
    */
   quickAddIssue = async (workspaceSlug: string, projectId: string, data: TIssue, moduleId: string) => {
-    try {
-      // add temporary issue to store list
-      this.addIssue(data);
-
-      // call overridden create issue
-      const response = await this.createIssue(workspaceSlug, projectId, data, moduleId);
-
-      // remove temp Issue from store list
-      runInAction(() => {
-        this.removeIssueFromList(data.id);
-        this.rootIssueStore.issues.removeIssue(data.id);
-      });
-
-      const currentCycleId = data.cycle_id !== "" && data.cycle_id === "None" ? undefined : data.cycle_id;
-
-      if (currentCycleId) {
-        await this.addCycleToIssue(workspaceSlug, projectId, currentCycleId, response.id);
-      }
-
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return await this.issueQuickAdd(workspaceSlug, projectId, data, moduleId, new Set(["module_id"]));
   };
 
   // Using aliased names as they cannot be overridden in other stores

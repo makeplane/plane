@@ -117,6 +117,12 @@ export interface IWorkspaceDraftIssues {
   archiveBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
   bulkUpdateProperties: (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => Promise<void>;
+  updateWorkItemMilestone: (
+    workspaceSlug: string,
+    projectId: string,
+    workItemId: string,
+    milestoneId: string | undefined
+  ) => Promise<void>;
 }
 
 export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
@@ -425,4 +431,10 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
   archiveBulkIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {};
   removeBulkIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {};
   bulkUpdateProperties = async (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => {};
+  updateWorkItemMilestone = async (
+    workspaceSlug: string,
+    projectId: string,
+    workItemId: string,
+    milestoneId: string | undefined
+  ) => {};
 }

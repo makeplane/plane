@@ -18,16 +18,26 @@ import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+import { useIssues } from "@/hooks/store/use-issues";
 
 export type TEpicOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string, loader?: boolean) => Promise<void>;
   update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  updateWorkItemMilestone: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    milestoneId: string | undefined
+  ) => Promise<void>;
 };
 
 export const useEpicOperations = (): TEpicOperations => {
-  const { fetchIssue } = useIssueDetail(EIssueServiceType.EPICS);
+  const { fetchIssue, fetchActivities } = useIssueDetail(EIssueServiceType.EPICS);
   const { updateIssue, removeIssue } = useIssuesActions(EIssuesStoreType.EPIC);
+  const {
+    issues: { updateWorkItemMilestone },
+  } = useIssues(EIssuesStoreType.EPIC);
 
   const epicOperations: TEpicOperations = useMemo(
     () => ({
@@ -71,8 +81,17 @@ export const useEpicOperations = (): TEpicOperations => {
           });
         }
       },
+      updateWorkItemMilestone: async (
+        workspaceSlug: string,
+        projectId: string,
+        workItemId: string,
+        milestoneId: string | undefined
+      ) => {
+        await updateWorkItemMilestone(workspaceSlug, projectId, workItemId, milestoneId);
+        void fetchActivities(workspaceSlug, projectId, workItemId);
+      },
     }),
-    [fetchIssue, updateIssue, removeIssue]
+    [fetchIssue, updateIssue, removeIssue, updateWorkItemMilestone, fetchActivities]
   );
 
   return epicOperations;

@@ -22,7 +22,8 @@ export interface IWorkItemMilestoneStore {
     workspaceSlug: string,
     projectId: string,
     workItemId: string,
-    newMilestoneId?: string
+    oldMilestoneId: string | undefined,
+    newMilestoneId: string | undefined
   ) => Promise<void>;
 }
 
@@ -49,13 +50,9 @@ export class WorkItemMilestoneStore {
     workspaceSlug: string,
     projectId: string,
     workItemId: string,
-    newMilestoneId?: string
+    oldMilestoneId: string | undefined,
+    newMilestoneId: string | undefined
   ): Promise<void> => {
-    const workItem = this.workItemStore.getIssueById(workItemId);
-    if (!workItem) return;
-
-    const oldMilestoneId = workItem.milestone_id;
-
     // Early return if no change
     if (oldMilestoneId === newMilestoneId) return;
 

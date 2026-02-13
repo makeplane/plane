@@ -12,7 +12,7 @@
  */
 
 import { isEqual, concat, get, indexOf, isEmpty, orderBy, pull, set, uniq, update, clone } from "lodash-es";
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction, toJS } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane constants
 import { ALL_ISSUES, ISSUE_PRIORITIES } from "@plane/constants";
@@ -114,6 +114,12 @@ export interface IBaseIssuesStore {
     addModuleIds: string[],
     removeModuleIds: string[]
   ): Promise<void>;
+  updateWorkItemMilestone: (
+    workspaceSlug: string,
+    projectId: string,
+    workItemId: string,
+    milestoneId: string | undefined
+  ) => Promise<void>;
   updateIssueDates(workspaceSlug: string, updates: IBlockUpdateDependencyData[], projectId?: string): Promise<void>;
 }
 
@@ -260,6 +266,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       addIssuesToModule: action.bound,
       removeIssuesFromModule: action.bound,
       changeModulesInIssue: action.bound,
+      updateWorkItemMilestone: action.bound,
     });
     this.rootIssueStore = _rootStore;
     this.issueFilterStore = issueFilterStore;
@@ -661,11 +668,17 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @param data
    * @returns
    */
-  async issueQuickAdd(workspaceSlug: string, projectId: string, data: TIssue) {
+  async issueQuickAdd(
+    workspaceSlug: string,
+    projectId: string,
+    data: TIssue,
+    entityId?: string,
+    propertiesToIgnore?: Set<"cycle_id" | "module_id" | "milestone_id">
+  ) {
     // Add issue to store with a temporary Id
     this.addIssue(data);
     // call Create issue method
-    const response = await this.createIssue(workspaceSlug, projectId, data);
+    const response = await this.createIssue(workspaceSlug, projectId, data, entityId);
     runInAction(() => {
       this.removeIssueFromList(data.id);
       this.rootIssueStore.issues.removeIssue(data.id);
@@ -673,12 +686,16 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const currentCycleId = data.cycle_id !== "" && data.cycle_id === "None" ? undefined : data.cycle_id;
     const currentModuleIds =
       data.module_ids && data.module_ids.length > 0 ? data.module_ids.filter((moduleId) => moduleId != "None") : [];
+    const currentMilestoneId = data.milestone_id !== "" && data.milestone_id === "None" ? undefined : data.milestone_id;
     const promiseRequests = [];
-    if (currentCycleId) {
+    if (currentCycleId && !propertiesToIgnore?.has("cycle_id")) {
       promiseRequests.push(this.addCycleToIssue(workspaceSlug, projectId, currentCycleId, response.id));
     }
-    if (currentModuleIds.length > 0) {
+    if (currentModuleIds.length > 0 && !propertiesToIgnore?.has("module_id")) {
       promiseRequests.push(this.changeModulesInIssue(workspaceSlug, projectId, response.id, currentModuleIds, []));
+    }
+    if (currentMilestoneId && !propertiesToIgnore?.has("milestone_id")) {
+      promiseRequests.push(this.updateWorkItemMilestone(workspaceSlug, projectId, response.id, currentMilestoneId));
     }
     if (promiseRequests && promiseRequests.length > 0) {
       await Promise.all(promiseRequests);
@@ -1149,6 +1166,44 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       });
 
       throw error;
+    }
+  }
+
+  /**
+   * Method called to add milestone to work item and update the list
+   * @param workspaceSlug
+   * @param projectId
+   * @param workItemId
+   * @param milestoneId
+   * @returns
+   */
+  async updateWorkItemMilestone(
+    workspaceSlug: string,
+    projectId: string,
+    workItemId: string,
+    milestoneId: string | undefined
+  ) {
+    const workItem = toJS(this.rootIssueStore.issues.getIssueById(workItemId));
+    const previousMilestoneId = workItem?.milestone_id;
+
+    if (previousMilestoneId === milestoneId) return;
+    try {
+      runInAction(() => {
+        void this.issueUpdate(workspaceSlug, projectId, workItemId, { milestone_id: milestoneId }, false);
+      });
+      await this.rootIssueStore.rootStore.milestone.workItems.updateWorkItemMilestone(
+        workspaceSlug,
+        projectId,
+        workItemId,
+        previousMilestoneId,
+        milestoneId
+      );
+    } catch (error) {
+      // revert the issue back to its original milestone id
+      runInAction(() => {
+        void this.issueUpdate(workspaceSlug, projectId, workItemId, { milestone_id: previousMilestoneId }, false);
+      });
+      console.error("Failed to add milestone to work item", error);
     }
   }
 

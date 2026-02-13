@@ -18,7 +18,7 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 // plane constants
-import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
+import { DRAG_ALLOWED_GROUPS, isWorkItemPriority } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 //types
@@ -204,18 +204,18 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
   ]);
 
   const prePopulateQuickAddData = (
-    groupByKey: string | undefined,
-    subGroupByKey: string | undefined | null,
+    groupByKey: TIssueGroupByOptions | undefined,
+    subGroupByKey: TIssueGroupByOptions | undefined | null,
     groupValue: string,
     subGroupValue: string
   ) => {
     const defaultState = projectState.projectStates?.find((state) => state.default);
-    let preloadedData: object = { state_id: defaultState?.id };
+    let preloadedData: Partial<TIssue> = { state_id: defaultState?.id };
 
     if (groupByKey) {
       if (groupByKey === "state") {
         preloadedData = { ...preloadedData, state_id: groupValue };
-      } else if (groupByKey === "priority") {
+      } else if (groupByKey === "priority" && isWorkItemPriority(groupValue)) {
         preloadedData = { ...preloadedData, priority: groupValue };
       } else if (groupByKey === "cycle") {
         preloadedData = { ...preloadedData, cycle_id: groupValue };
@@ -227,6 +227,10 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
         preloadedData = { ...preloadedData, assignee_ids: [groupValue] };
       } else if (groupByKey === "created_by") {
         preloadedData = { ...preloadedData };
+      } else if (groupByKey === "milestone" && groupValue != "None") {
+        preloadedData = { ...preloadedData, milestone_id: groupValue };
+      } else if (groupByKey === "epic" && groupValue != "None") {
+        preloadedData = { ...preloadedData, parent_id: groupValue };
       } else {
         preloadedData = { ...preloadedData, [groupByKey]: groupValue };
       }
@@ -235,7 +239,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     if (subGroupByKey) {
       if (subGroupByKey === "state") {
         preloadedData = { ...preloadedData, state_id: subGroupValue };
-      } else if (subGroupByKey === "priority") {
+      } else if (subGroupByKey === "priority" && isWorkItemPriority(subGroupValue)) {
         preloadedData = { ...preloadedData, priority: subGroupValue };
       } else if (subGroupByKey === "cycle") {
         preloadedData = { ...preloadedData, cycle_id: subGroupValue };
@@ -247,6 +251,10 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
         preloadedData = { ...preloadedData, assignee_ids: [subGroupValue] };
       } else if (subGroupByKey === "created_by") {
         preloadedData = { ...preloadedData };
+      } else if (subGroupByKey === "milestone" && subGroupValue != "None") {
+        preloadedData = { ...preloadedData, milestone_id: subGroupValue };
+      } else if (subGroupByKey === "epic" && subGroupValue != "None") {
+        preloadedData = { ...preloadedData, parent_id: subGroupValue };
       } else {
         preloadedData = { ...preloadedData, [subGroupByKey]: subGroupValue };
       }

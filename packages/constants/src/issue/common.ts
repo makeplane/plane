@@ -101,6 +101,10 @@ export const ISSUE_PRIORITIES: {
   },
 ];
 
+export const isWorkItemPriority = (value: unknown): value is TIssuePriorities => {
+  return typeof value === "string" && ISSUE_PRIORITIES.some((priority) => priority.key === value);
+};
+
 export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
   "state",
   "priority",

@@ -279,10 +279,11 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
         {isMilestonesFeatureEnabled && (
           <WorkItemSideBarMilestoneItem
-            workspaceSlug={workspaceSlug}
-            isPeekView
             projectId={projectId}
-            workItemId={issue.id}
+            milestoneId={issue.milestone_id}
+            updateWorkItemMilestone={(milestoneId) =>
+              issueOperations.updateWorkItemMilestone?.(workspaceSlug, projectId, issueId, milestoneId)
+            }
           />
         )}
 
