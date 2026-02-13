@@ -656,6 +656,7 @@ export const MediaLibraryUploadModal = () => {
             <Button
               variant="primary"
               size="sm"
+              className="disabled:!cursor-default disabled:opacity-70"
               onClick={handleUpload}
               disabled={
                 hasUploading ||
