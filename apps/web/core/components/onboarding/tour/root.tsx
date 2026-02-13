@@ -28,7 +28,7 @@ export const TourRoot = observer(function TourRoot(props: TAppFeaturesTourProps)
   const isSelfHosted = !!subscriptionDetail?.is_self_managed;
   const isOnBusinessPlan = subscriptionDetail?.product === EProductSubscriptionEnum.BUSINESS;
 
-  if (!isSelfHosted && isOnBusinessPlan) {
+  if (!isSelfHosted && isOnBusinessPlan && subscriptionDetail.is_on_trial) {
     return <BusinessPlanFeatures onComplete={props.onComplete} />;
   }
 
