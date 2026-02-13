@@ -16,8 +16,8 @@ import { Checkbox, Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
 import { AuthHeader } from "@/app/(all)/(home)/auth-header";
-import { Banner } from "@/components/common/banner";
-import { FormHeader } from "@/components/instance/form-header";
+import { Banner } from "../common/banner";
+import { FormHeader } from "./form-header";
 
 // service initialization
 const authService = new AuthService();
@@ -122,11 +122,11 @@ export function InstanceSetupForm() {
   const isButtonDisabled = useMemo(
     () =>
       !isSubmitting &&
-      formData.first_name &&
-      formData.email &&
-      formData.password &&
-      getPasswordStrength(formData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
-      formData.password === formData.confirm_password
+        formData.first_name &&
+        formData.email &&
+        formData.password &&
+        getPasswordStrength(formData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
+        formData.password === formData.confirm_password
         ? false
         : true,
     [formData.confirm_password, formData.email, formData.first_name, formData.password, isSubmitting]

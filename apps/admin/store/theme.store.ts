@@ -6,7 +6,7 @@
 
 import { action, observable, makeObservable } from "mobx";
 // root store
-import type { CoreRootStore } from "@/store/root.store";
+import type { RootStore } from "./root.store";
 
 type TTheme = "dark" | "light";
 export interface IThemeStore {
@@ -27,7 +27,7 @@ export class ThemeStore implements IThemeStore {
   isSidebarCollapsed: boolean | undefined = undefined;
   theme: string | undefined = undefined;
 
-  constructor(private store: CoreRootStore) {
+  constructor(private store: RootStore) {
     makeObservable(this, {
       // observables
       isNewUserPopup: observable.ref,
