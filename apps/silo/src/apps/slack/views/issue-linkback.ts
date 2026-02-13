@@ -30,7 +30,7 @@ export const createSlackLinkback = (
   hideActions: boolean = false,
   isUnfurled: boolean = false
 ) => {
-  const blocks: any[] = [];
+  const blocks: unknown[] = [];
 
   const planeToSlackUserMap = invertStringMap(userMap);
   const quote = !isUnfurled ? "> " : "";
@@ -99,17 +99,19 @@ export const createSlackLinkback = (
   });
 
   // Context with creation and update info using mrkdwn
-  blocks.push({
-    type: "context",
-    elements: [
-      {
-        type: "mrkdwn",
-        text: mutationContext,
-      },
-    ],
-  });
+  if (mutationContext?.length) {
+    blocks.push({
+      type: "context",
+      elements: [
+        {
+          type: "mrkdwn",
+          text: mutationContext,
+        },
+      ],
+    });
+  }
 
-  const actions: any[] = [
+  const actions: unknown[] = [
     {
       type: "button",
       text: {
