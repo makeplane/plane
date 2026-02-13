@@ -1,0 +1,14 @@
+ID,Category,Keywords,Description,Complexity Range,Example Count,Primary Use Cases,Related Categories
+1,webgl,"webgl, rendering, standard, basic",Standard WebGL rendering examples with core Three.js features,Low-High,216,"games, visualization, interactive",webgl / postprocessing; webgl / advanced
+2,webgl / postprocessing,"postprocessing, effects, bloom, ao, fxaa",Post-processing effects and image manipulation,Medium-High,27,"cinematic, stylized, photo-realistic",webgl; webgl / advanced
+3,webgl / advanced,"advanced, buffergeometry, custom, shader, gpu",Advanced rendering techniques and low-level GPU access,High,48,"optimization, custom rendering, research",webgl; webgpu
+4,webgpu (wip),"webgpu, compute, modern, next-gen, tsl",WebGPU-based rendering and compute shaders,Medium-High,190,"future-proof, compute, modern browsers",webgl / advanced
+5,webaudio,"audio, spatial, 3d sound, positional",Spatial audio and sound visualization,Medium,4,"games, immersive, vr",webxr
+6,webxr,"vr, ar, xr, immersive, headset",Virtual and augmented reality experiences,Medium-High,26,"vr games, ar apps, immersive",webaudio; webgpu
+7,games,"games, gameplay, interactive",Complete game-like examples and mechanics,Medium-High,1,"game development, interactive",webxr; physics
+8,physics,"physics, simulation, rigid body, collision",Physics simulation and rigid body dynamics,High,13,"games, simulation, realistic",games; webgpu
+9,misc,"misc, experiments, special",Miscellaneous experiments and special techniques,Varies,20,"experimentation, learning",All
+10,css2d,"css2d, labels, html overlay",CSS-based 2D overlays on 3D scenes,Low,1,"ui, labels, annotations",css3d
+11,css3d,"css3d, dom, html, 3d transform",CSS 3D transforms with Three.js,Medium,6,"ui, transitions, websites",css2d
+12,svg,"svg, vector, 2d",SVG rendering and vector graphics,Low-Medium,2,"icons, diagrams, 2d graphics",css2d
+13,tests,"tests, debug, development",Testing and debugging utilities,Low-Medium,2,"development, debugging",All

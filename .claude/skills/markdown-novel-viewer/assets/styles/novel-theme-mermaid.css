@@ -1,0 +1,128 @@
+/**
+ * Novel Theme - Mermaid Diagram Styles
+ * Mermaid diagrams, error containers
+ */
+
+/* Mermaid Diagrams */
+pre.mermaid,
+.mermaid {
+  text-align: center;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  overflow-x: auto;
+  /* Reset pre defaults for mermaid */
+  white-space: pre-wrap;
+  font-family: inherit;
+}
+
+pre.mermaid[data-processed="true"],
+.mermaid-rendered {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.mermaid-error-container {
+  background: #fff5f5;
+  border-color: #f5c6cb;
+}
+
+[data-theme="dark"] .mermaid-error-container {
+  background: #3a2020;
+  border-color: #6a3030;
+}
+
+.mermaid-error {
+  text-align: left;
+  color: #842029;
+  font-size: 0.875rem;
+}
+
+[data-theme="dark"] .mermaid-error {
+  color: #f8d7da;
+}
+
+.mermaid-error strong {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.mermaid-error pre {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+[data-theme="dark"] .mermaid-error pre {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.mermaid-error details {
+  margin-top: 0.5rem;
+}
+
+.mermaid-error summary {
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+/* Mermaid expand toggle */
+.mermaid-wrapper {
+  position: relative;
+  margin: 1.5rem 0;
+}
+
+.mermaid-expand-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 10;
+  padding: 0.375rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  line-height: 1;
+  transition: all 0.2s;
+  opacity: 0;
+}
+
+.mermaid-wrapper:hover .mermaid-expand-btn,
+.mermaid-wrapper:focus-within .mermaid-expand-btn {
+  opacity: 1;
+}
+
+.mermaid-expand-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--accent);
+}
+
+/* Expanded state */
+.mermaid-wrapper.expanded {
+  max-width: none;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  padding: 1rem 2rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.mermaid-wrapper.expanded .mermaid {
+  max-width: none;
+}
+
+/* Icon visibility toggle */
+.mermaid-expand-btn .icon-expand { display: inline; }
+.mermaid-expand-btn .icon-collapse { display: none; }
+
+.mermaid-wrapper.expanded .mermaid-expand-btn .icon-expand { display: none; }
+.mermaid-wrapper.expanded .mermaid-expand-btn .icon-collapse { display: inline; }

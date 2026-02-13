@@ -1,0 +1,381 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://claudekit.cc/schemas/ck-config.schema.json",
+  "title": "ClaudeKit Configuration",
+  "description": "Configuration schema for ClaudeKit Engineer .ck.json files",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for editor autocompletion"
+    },
+    "codingLevel": {
+      "type": "integer",
+      "minimum": -1,
+      "maximum": 3,
+      "default": -1,
+      "description": "User coding experience level: -1=auto, 0=beginner, 1=intermediate, 2=advanced, 3=expert"
+    },
+    "privacyBlock": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable privacy block hook to protect sensitive files (.env, credentials, etc.)"
+    },
+    "docs": {
+      "type": "object",
+      "description": "Documentation settings",
+      "properties": {
+        "maxLoc": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 5000,
+          "default": 800,
+          "description": "Maximum lines of code per documentation file"
+        }
+      },
+      "additionalProperties": false
+    },
+    "plan": {
+      "type": "object",
+      "description": "Plan naming and validation settings",
+      "properties": {
+        "namingFormat": {
+          "type": "string",
+          "default": "{date}-{issue}-{slug}",
+          "description": "Format for plan directory names. Variables: {date}, {issue}, {slug}"
+        },
+        "dateFormat": {
+          "type": "string",
+          "default": "YYMMDD-HHmm",
+          "description": "Date format for plan names (moment.js format)"
+        },
+        "issuePrefix": {
+          "type": "string",
+          "default": "GH-",
+          "description": "Prefix for issue references (e.g., GH-, JIRA-)"
+        },
+        "reportsDir": {
+          "type": "string",
+          "default": "reports",
+          "description": "Subdirectory name for reports within plans"
+        },
+        "resolution": {
+          "type": "object",
+          "description": "Plan resolution settings",
+          "properties": {
+            "order": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "session",
+                  "branch",
+                  "directory"
+                ]
+              },
+              "default": [
+                "session",
+                "branch"
+              ],
+              "description": "Order of resolution strategies for plan context"
+            },
+            "branchPattern": {
+              "type": "string",
+              "default": "(?:feat|fix|chore|refactor|docs)/(?:[^/]+/)?(.+)",
+              "description": "Regex pattern to extract plan slug from branch name"
+            }
+          },
+          "additionalProperties": false
+        },
+        "validation": {
+          "type": "object",
+          "description": "Plan validation settings",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": [
+                "prompt",
+                "auto",
+                "strict",
+                "none"
+              ],
+              "default": "prompt",
+              "description": "Validation mode: prompt=ask questions, auto=auto-validate, strict=require all, none=skip"
+            },
+            "minQuestions": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20,
+              "default": 3,
+              "description": "Minimum validation questions to ask"
+            },
+            "maxQuestions": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20,
+              "default": 8,
+              "description": "Maximum validation questions to ask"
+            },
+            "focusAreas": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "assumptions",
+                  "risks",
+                  "tradeoffs",
+                  "architecture",
+                  "security",
+                  "performance",
+                  "testing",
+                  "dependencies"
+                ]
+              },
+              "default": [
+                "assumptions",
+                "risks",
+                "tradeoffs",
+                "architecture"
+              ],
+              "description": "Focus areas for validation questions"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "paths": {
+      "type": "object",
+      "description": "Directory paths configuration",
+      "properties": {
+        "docs": {
+          "type": "string",
+          "default": "docs",
+          "description": "Path to documentation directory"
+        },
+        "plans": {
+          "type": "string",
+          "default": "plans",
+          "description": "Path to plans directory"
+        }
+      },
+      "additionalProperties": false
+    },
+    "locale": {
+      "type": "object",
+      "description": "Language and locale settings",
+      "properties": {
+        "thinkingLanguage": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Language for Claude's thinking (null=English)"
+        },
+        "responseLanguage": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Language for Claude's responses (null=match user)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "trust": {
+      "type": "object",
+      "description": "Trust mode settings for auto-approval",
+      "properties": {
+        "passphrase": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Passphrase to enable trust mode (null=disabled)"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether trust mode is currently enabled"
+        }
+      },
+      "additionalProperties": false
+    },
+    "project": {
+      "type": "object",
+      "description": "Project type detection settings",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "library",
+            "application",
+            "monorepo",
+            "cli",
+            "api",
+            "web",
+            "mobile"
+          ],
+          "default": "auto",
+          "description": "Project type (auto=detect from package.json)"
+        },
+        "packageManager": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "npm",
+            "yarn",
+            "pnpm",
+            "bun"
+          ],
+          "default": "auto",
+          "description": "Package manager (auto=detect from lockfile)"
+        },
+        "framework": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "react",
+            "vue",
+            "angular",
+            "svelte",
+            "nextjs",
+            "nuxt",
+            "express",
+            "nestjs",
+            "fastify",
+            "none"
+          ],
+          "default": "auto",
+          "description": "Framework (auto=detect from dependencies)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "gemini": {
+      "type": "object",
+      "description": "Gemini CLI configuration",
+      "properties": {
+        "model": {
+          "type": "string",
+          "enum": [
+            "gemini-2.5-flash",
+            "gemini-2.5-pro",
+            "gemini-3-pro-preview",
+            "gemini-3-flash-preview"
+          ],
+          "default": "gemini-3-flash-preview",
+          "description": "Gemini model to use for CLI commands"
+        }
+      },
+      "additionalProperties": false
+    },
+    "skills": {
+      "type": "object",
+      "description": "Per-skill configuration",
+      "properties": {
+        "research": {
+          "type": "object",
+          "properties": {
+            "useGemini": {
+              "type": "boolean",
+              "default": true,
+              "description": "Use Gemini CLI for research (false=use WebSearch)"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": {
+        "type": "object",
+        "description": "Custom skill configuration"
+      }
+    },
+    "assertions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "Glob pattern or regex for files to match"
+          },
+          "rule": {
+            "type": "string",
+            "description": "Assertion rule to enforce"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message when assertion fails"
+          }
+        }
+      },
+      "default": [],
+      "description": "Code assertions and rules to enforce"
+    },
+    "statusline": {
+      "type": "string",
+      "enum": ["full", "compact", "minimal", "none"],
+      "default": "full",
+      "description": "Statusline display mode: full=all features, compact=2-3 lines, minimal=single text line, none=disabled"
+    },
+    "hooks": {
+      "type": "object",
+      "description": "Toggle individual hooks on/off. Default: all enabled. Set a hook to `false` to disable; only explicit `false` disables (undefined/null/missing keys default to enabled).",
+      "properties": {
+        "session-init": {
+          "type": "boolean",
+          "default": true,
+          "description": "SessionStart hook - project detection and env setup"
+        },
+        "subagent-init": {
+          "type": "boolean",
+          "default": true,
+          "description": "SubagentStart hook - injects context to subagents"
+        },
+        "descriptive-name": {
+          "type": "boolean",
+          "default": true,
+          "description": "PreToolUse hook - descriptive name for scripts"
+        },
+        "dev-rules-reminder": {
+          "type": "boolean",
+          "default": true,
+          "description": "UserPromptSubmit hook - injects dev rules context"
+        },
+        "usage-context-awareness": {
+          "type": "boolean",
+          "default": true,
+          "description": "UserPromptSubmit/PostToolUse hook - usage limits fetching and injection"
+        },
+        "context-tracking": {
+          "type": "boolean",
+          "default": true,
+          "description": "Context window tracking injection (% used, token counts) in dev-rules-reminder"
+        },
+        "scout-block": {
+          "type": "boolean",
+          "default": true,
+          "description": "PreToolUse hook - blocks heavy directories"
+        },
+        "privacy-block": {
+          "type": "boolean",
+          "default": true,
+          "description": "PreToolUse hook - blocks sensitive files"
+        },
+        "post-edit-simplify-reminder": {
+          "type": "boolean",
+          "default": true,
+          "description": "PostToolUse hook - simplify reminder after edits"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}

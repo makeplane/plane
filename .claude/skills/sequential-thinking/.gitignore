@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment
+.env
+
+# Thought history (generated during use)
+scripts/.thought-history.json
+
+# Test coverage
+coverage/
+
+# Logs
+*.log

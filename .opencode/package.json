@@ -1,0 +1,8 @@
+{
+  "name": "@claudekit/opencode-plugins",
+  "version": "1.0.0",
+  "description": "ClaudeKit hooks converted to OpenCode plugins",
+  "dependencies": {
+    "@opencode-ai/plugin": ">=0.1.0"
+  }
+}

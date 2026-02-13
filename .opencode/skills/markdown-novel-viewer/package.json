@@ -1,0 +1,15 @@
+{
+  "name": "markdown-novel-viewer",
+  "version": "1.0.0",
+  "description": "Background HTTP server rendering markdown files with calm, book-like reading experience",
+  "main": "scripts/server.cjs",
+  "scripts": {
+    "start": "node scripts/server.cjs",
+    "test": "node scripts/tests/server.test.cjs"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "highlight.js": "^11.11.1",
+    "marked": "^17.0.0"
+  }
+}

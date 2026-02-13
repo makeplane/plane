@@ -1,0 +1,202 @@
+/**
+ * Novel Theme - Overlays Module
+ * Toast notifications and keyboard shortcuts cheatsheet
+ */
+
+/* ===========================
+   KEYBOARD SHORTCUTS TOAST
+   =========================== */
+
+.shortcuts-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1000;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  opacity: 0;
+  transform: translateY(1rem);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.shortcuts-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.shortcuts-toast kbd {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.toast-dismiss {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  transition: color 0.2s ease;
+}
+
+.toast-dismiss:hover {
+  color: var(--text-primary);
+}
+
+/* ===========================
+   KEYBOARD SHORTCUTS MODAL
+   =========================== */
+
+.shortcuts-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.shortcuts-overlay[hidden] {
+  display: none;
+}
+
+.shortcuts-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+.shortcuts-modal {
+  position: relative;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: auto;
+  font-family: var(--font-body);
+}
+
+.shortcuts-modal header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.shortcuts-modal h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: var(--text-primary);
+}
+
+.shortcuts-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.shortcuts-table tbody tr {
+  border-bottom: 1px solid var(--border);
+}
+
+.shortcuts-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.shortcuts-table td {
+  padding: 1rem 1.5rem;
+}
+
+.shortcuts-table td:first-child {
+  width: 100px;
+  font-weight: 500;
+}
+
+.shortcuts-table td:last-child {
+  color: var(--text-secondary);
+}
+
+.shortcuts-table kbd {
+  display: inline-block;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  min-width: 2rem;
+  text-align: center;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+@media (max-width: 768px) {
+  .shortcuts-toast {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    font-size: 0.85rem;
+  }
+
+  .shortcuts-modal {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+
+  .shortcuts-modal header {
+    padding: 1rem;
+  }
+
+  .shortcuts-table td {
+    padding: 0.75rem 1rem;
+  }
+
+  .shortcuts-table td:first-child {
+    width: 80px;
+  }
+}
