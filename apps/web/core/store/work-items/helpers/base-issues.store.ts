@@ -1278,10 +1278,14 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const issueId = issue?.id ?? issueBeforeUpdate?.id;
     if (!issueId) return;
 
-    // If sub-issues are hidden and this issue is a sub-issue, skip updating the list
+    // If sub-work items are hidden and this issue remains a sub-work item, skip updating the list.
+    // Do not skip when the issue is transitioning into or out of sub-work item status,
+    // so that the main list can be updated appropriately.
     const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
-    const isSubIssue = (issue?.parent_id ?? issueBeforeUpdate?.parent_id) !== null;
-    if (isSubIssue && displayFilters?.sub_issue === false) return;
+    const wasSubWorkItem = issueBeforeUpdate?.parent_id !== null && issueBeforeUpdate?.parent_id !== undefined;
+    const isNowSubWorkItem = issue?.parent_id !== null && issue?.parent_id !== undefined;
+    const remainsSubWorkItem = wasSubWorkItem && isNowSubWorkItem;
+    if (remainsSubWorkItem && displayFilters?.sub_issue === false) return;
 
     // get issueUpdates from another method by passing down the three arguments
     // issueUpdates is nothing but an array of objects that contain the path of the issueId list that need updating and also the action that needs to be performed at the path
