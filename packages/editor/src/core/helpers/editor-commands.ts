@@ -22,6 +22,10 @@ import type { ExtendedEmojiStorage } from "@/extensions/emoji/emoji";
 import { findTableAncestor } from "@/helpers/common";
 
 export const setText = (editor: Editor, range?: Range) => {
+  if (editor.isActive(CORE_EXTENSIONS.CODE_INLINE)) {
+    editor.chain().focus().toggleCode().run();
+    return;
+  }
   if (range) editor.chain().focus().deleteRange(range).setNode(CORE_EXTENSIONS.PARAGRAPH).run();
   else editor.chain().focus().setNode(CORE_EXTENSIONS.PARAGRAPH).run();
 };
