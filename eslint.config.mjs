@@ -43,6 +43,7 @@ export default defineConfig([
   jsxA11yPlugin.flatConfigs.recommended,
   reactRefreshPlugin.configs.recommended,
   reactRefreshPlugin.configs.vite,
+  // @ts-expect-error turbo plugin does not yet expose flat config types
   turboPlugin.configs["flat/recommended"],
   tseslint.configs.recommendedTypeChecked,
   // TODO: enable storybook linting once issues are resolved
@@ -136,7 +137,24 @@ export default defineConfig([
       "react-hooks/static-components": "warn",
       "react-refresh/only-export-components": [
         "warn",
-        { allowExportNames: ["meta", "links", "headers", "loader", "action"] },
+        {
+          allowExportNames: [
+            "action",
+            "clientAction",
+            "clientLoader",
+            "clientMiddleware",
+            "ErrorBoundary",
+            "handle",
+            "headers",
+            "HydrateFallback",
+            "links",
+            "loader",
+            "meta",
+            "middleware",
+            "shouldRevalidate",
+          ],
+          extraHOCs: ["observer"],
+        },
       ],
       "react/display-name": "warn",
       "react/jsx-no-target-blank": "warn",
