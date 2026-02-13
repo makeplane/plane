@@ -10,7 +10,7 @@ import { Menu, Settings } from "lucide-react";
 // icons
 import { Breadcrumbs } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { BreadcrumbLink } from "../breadcrumb-link";
 // hooks
 import { useTheme } from "@/hooks/store";
 // local imports

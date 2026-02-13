@@ -6,7 +6,7 @@
 
 import { createContext } from "react";
 // plane admin store
-import { RootStore } from "@/plane-admin/store/root.store";
+import { RootStore } from "../store/root.store";
 
 let rootStore = new RootStore();
 

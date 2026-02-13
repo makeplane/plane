@@ -16,7 +16,7 @@ import { Input, Spinner } from "@plane/ui";
 // components
 import { Banner } from "@/components/common/banner";
 // local components
-import { FormHeader } from "../../../core/components/instance/form-header";
+import { FormHeader } from "@/components/instance/form-header";
 import { AuthBanner } from "./auth-banner";
 import { AuthHeader } from "./auth-header";
 import { authErrorHandler } from "./auth-helpers";

@@ -16,8 +16,8 @@ import { Checkbox, Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
 import { AuthHeader } from "@/app/(all)/(home)/auth-header";
-import { Banner } from "@/components/common/banner";
-import { FormHeader } from "@/components/instance/form-header";
+import { Banner } from "../common/banner";
+import { FormHeader } from "./form-header";
 
 // service initialization
 const authService = new AuthService();

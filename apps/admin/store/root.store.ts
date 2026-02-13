@@ -17,7 +17,7 @@ import { WorkspaceStore } from "./workspace.store";
 
 enableStaticRendering(typeof window === "undefined");
 
-export abstract class CoreRootStore {
+export class RootStore {
   theme: IThemeStore;
   instance: IInstanceStore;
   user: IUserStore;

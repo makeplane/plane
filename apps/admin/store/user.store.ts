@@ -11,7 +11,7 @@ import { EUserStatus } from "@plane/constants";
 import { AuthService, UserService } from "@plane/services";
 import type { IUser } from "@plane/types";
 // root store
-import type { CoreRootStore } from "@/store/root.store";
+import type { RootStore } from "@/store/root.store";
 
 export interface IUserStore {
   // observables
@@ -36,7 +36,7 @@ export class UserStore implements IUserStore {
   userService;
   authService;
 
-  constructor(private store: CoreRootStore) {
+  constructor(private store: RootStore) {
     makeObservable(this, {
       // observables
       isLoading: observable.ref,
