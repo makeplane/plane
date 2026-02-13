@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -34,7 +38,7 @@ class Estimate(ProjectBaseModel):
 
 class EstimatePoint(ProjectBaseModel):
     estimate = models.ForeignKey("db.Estimate", on_delete=models.CASCADE, related_name="points")
-    key = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(12)])
+    key = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     description = models.TextField(blank=True)
     value = models.CharField(max_length=255)
 

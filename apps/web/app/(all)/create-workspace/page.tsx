@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -12,17 +18,17 @@ import WorkspaceCreationDisabled from "@/app/assets/workspace/workspace-creation
 import { CreateWorkspaceForm } from "@/components/workspace/create-workspace-form";
 // hooks
 import { useUser, useUserProfile } from "@/hooks/store/user";
+import { useInstance } from "@/hooks/store/use-instance";
 import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
-// plane web helpers
-import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 
 const CreateWorkspacePage = observer(function CreateWorkspacePage() {
   const { t } = useTranslation();
   // router
   const router = useAppRouter();
   // store hooks
+  const { config } = useInstance();
   const { data: currentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
   // states
@@ -32,7 +38,7 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
     organization_size: "",
   });
   // derived values
-  const isWorkspaceCreationDisabled = getIsWorkspaceCreationDisabled();
+  const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled ?? false;
 
   // methods
   const getMailtoHref = () => {

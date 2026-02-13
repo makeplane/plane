@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Proiecte",
@@ -1985,6 +1991,45 @@ export default {
         title: "Nicio estimare configurată",
         description: "Creează un set de estimări pentru a comunica volumul de muncă pentru fiecare activitate.",
         primary_button: "Adaugă sistem de estimare",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cicluri",
+        short_title: "Cicluri",
+        description:
+          "Programați munca în perioade flexibile care se adaptează ritmului și ritmului unic al acestui proiect.",
+        toggle_title: "Activați ciclurile",
+        toggle_description: "Planificați munca în intervale de timp concentrate.",
+      },
+      modules: {
+        title: "Module",
+        short_title: "Module",
+        description: "Organizați munca în subproiecte cu lideri și responsabili dedicați.",
+        toggle_title: "Activați modulele",
+        toggle_description: "Membrii proiectului vor putea crea și edita module.",
+      },
+      views: {
+        title: "Vizualizări",
+        short_title: "Vizualizări",
+        description: "Salvați sortări personalizate, filtre și opțiuni de afișare sau partajați-le cu echipa dvs.",
+        toggle_title: "Activați vizualizările",
+        toggle_description: "Membrii proiectului vor putea crea și edita vizualizări.",
+      },
+      pages: {
+        title: "Pagini",
+        short_title: "Pagini",
+        description: "Creați și editați conținut liber: note, documente, orice.",
+        toggle_title: "Activați paginile",
+        toggle_description: "Membrii proiectului vor putea crea și edita pagini.",
+      },
+      intake: {
+        title: "Recepție",
+        short_title: "Recepție",
+        description:
+          "Permiteți non-membrilor să partajeze erori, feedback și sugestii; fără a perturba fluxul de lucru.",
+        toggle_title: "Activați recepția",
+        toggle_description: "Permiteți membrilor proiectului să creeze solicitări de recepție în aplicație.",
       },
     },
   },
