@@ -285,6 +285,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                       issueId={issueId}
                       issueOperations={issueOperations}
                       disabled={disabled || is_archived}
+                      mediaItem={mediaItem}
+                      readOnly={Boolean(mediaItem)}
                     />
 
                     {!embedIssue && (
@@ -350,6 +352,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         issueId={issueId}
                         issueOperations={issueOperations}
                         disabled={disabled || is_archived}
+                        mediaItem={mediaItem}
+                        readOnly={Boolean(mediaItem)}
                       />
                     </div>
                   </div>

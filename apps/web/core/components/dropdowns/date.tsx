@@ -119,7 +119,7 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
       className={cn(
         "clickable block h-full max-w-full outline-none",
         {
-          "cursor-not-allowed text-custom-text-200": disabled,
+          "cursor-default text-custom-text-200": disabled,
           "cursor-pointer": !disabled,
         },
         buttonContainerClassName

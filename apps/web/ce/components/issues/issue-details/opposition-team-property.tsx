@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Ban, CirclePlus, Search } from "lucide-react";
+import { cn } from "@plane/utils";
 
 interface Team {
   name: string;
@@ -121,7 +122,13 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
     <div className="relative w-52" ref={dropdownRef}>
       <div
         onClick={() => !disabled && setOpen((o) => !o)}
-        className="rounded-lg px-2 py-1 flex items-center justify-between cursor-pointer text-custom-text-300 hover:bg-custom-background-80 hover:text-custom-text-100"
+        className={cn(
+          "rounded-lg px-2 py-1 flex items-center justify-between",
+          value ? "text-custom-text-100" : "text-custom-text-300",
+          disabled
+            ? "cursor-default"
+            : "cursor-pointer hover:bg-custom-background-80 hover:text-custom-text-100"
+        )}
       >
         {value ? (
           <div className="flex items-center gap-1.5">

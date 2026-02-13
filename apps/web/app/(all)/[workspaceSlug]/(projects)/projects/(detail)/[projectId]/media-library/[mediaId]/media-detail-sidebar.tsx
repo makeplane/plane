@@ -51,6 +51,7 @@ export const MediaDetailSidebar = ({
 }: TMediaDetailSidebarProps) => {
   const { setPeekIssue } = useIssueDetail();
   const workItemId = item?.workItemId ?? "";
+  const hasWorkItemId = Boolean(workItemId);
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
   const sidebarClassName =
     "w-full min-w-[300px] border-l border-custom-border-200 bg-custom-sidebar-background-100 py-5 lg:min-w-80 xl:min-w-96 lg:h-full lg:overflow-hidden lg:overscroll-y-contain";
@@ -198,45 +199,52 @@ export const MediaDetailSidebar = ({
                   </span>
                 </div>
 
-                <div className="flex h-8 w-full items-center gap-3">
-                  <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                    <CalendarClock className="h-4 w-4 flex-shrink-0" />
-                    <span>Start date</span>
-                  </div>
-                  <DateDropdown
-                    value={getMetaString("start_date")}
-                    onChange={(value) =>
-                      void updateEditableMeta("start_date", value ? (renderFormattedPayloadDate(value) ?? null) : null)
-                    }
-                    placeholder="Add start date"
-                    buttonVariant="transparent-with-text"
-                    className="w-3/4 flex-grow group"
-                    buttonContainerClassName="w-full text-left"
-                    buttonClassName={`text-sm ${getMetaString("start_date") ? "" : "text-custom-text-400"}`}
-                    hideIcon
-                    disabled={isSavingMeta}
-                    clearIconClassName="h-3 w-3 hidden group-hover:inline"
-                  />
-                </div>
+                {hasWorkItemId ? (
+                  <>
+                    <div className="flex h-8 w-full items-center gap-3">
+                      <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                        <CalendarClock className="h-4 w-4 flex-shrink-0" />
+                        <span>Start date</span>
+                      </div>
+                      <DateDropdown
+                        value={getMetaString("start_date")}
+                        onChange={(value) =>
+                          void updateEditableMeta(
+                            "start_date",
+                            value ? (renderFormattedPayloadDate(value) ?? null) : null
+                          )
+                        }
+                        placeholder="Add start date"
+                        buttonVariant="transparent-with-text"
+                        className="w-3/4 flex-grow group"
+                        buttonContainerClassName="w-full text-left"
+                        buttonClassName={`text-sm ${getMetaString("start_date") ? "" : "text-custom-text-400"}`}
+                        hideIcon
+                        disabled={isSavingMeta}
+                        clearIconClassName="h-3 w-3 hidden group-hover:inline"
+                      />
+                    </div>
 
-                <div className="flex h-8 w-full items-center gap-3">
-                  <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                    <Clock className="h-4 w-4 flex-shrink-0" />
-                    <span>Start time</span>
-                  </div>
-                  <TimeDropdown
-                    value={getMetaString("start_time")}
-                    onChange={(value) => void updateEditableMeta("start_time", value)}
-                    placeholder="Add start time"
-                    buttonVariant="transparent-with-text"
-                    className="w-3/4 flex-grow group"
-                    buttonContainerClassName="w-full text-left"
-                    buttonClassName={`text-sm ${getMetaString("start_time") ? "" : "text-custom-text-400"}`}
-                    hideIcon
-                    disabled={isSavingMeta}
-                    clearIconClassName="h-3 w-3 hidden group-hover:inline"
-                  />
-                </div>
+                    <div className="flex h-8 w-full items-center gap-3">
+                      <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                        <Clock className="h-4 w-4 flex-shrink-0" />
+                        <span>Start time</span>
+                      </div>
+                      <TimeDropdown
+                        value={getMetaString("start_time")}
+                        onChange={(value) => void updateEditableMeta("start_time", value)}
+                        placeholder="Add start time"
+                        buttonVariant="transparent-with-text"
+                        className="w-3/4 flex-grow group"
+                        buttonContainerClassName="w-full text-left"
+                        buttonClassName={`text-sm ${getMetaString("start_time") ? "" : "text-custom-text-400"}`}
+                        hideIcon
+                        disabled={isSavingMeta}
+                        clearIconClassName="h-3 w-3 hidden group-hover:inline"
+                      />
+                    </div>
+                  </>
+                ) : null}
 
                 <div className="flex h-8 w-full items-center gap-3">
                   <div className="flex w-1/4 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">

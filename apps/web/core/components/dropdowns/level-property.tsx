@@ -113,7 +113,7 @@ export const LevelDropdown: React.FC<Props> = observer((props) => {
       className={cn(
         "clickable block h-full max-w-full outline-none",
         disabled
-          ? "cursor-not-allowed text-custom-text-200"
+          ? "cursor-default text-custom-text-200"
           : "cursor-pointer",
         buttonContainerClassName
       )}

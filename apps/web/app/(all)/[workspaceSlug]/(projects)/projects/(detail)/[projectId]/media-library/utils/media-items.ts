@@ -113,6 +113,18 @@ const getMetaString = (meta: Record<string, unknown>, keys: string[], fallback =
   return fallback;
 };
 
+const getArtifactWorkItemId = (artifact: TMediaArtifact, meta: Record<string, unknown>) => {
+  const rawArtifactWorkItemId = artifact.work_item_id;
+  const artifactWorkItemId =
+    typeof rawArtifactWorkItemId === "string"
+      ? rawArtifactWorkItemId.trim()
+      : rawArtifactWorkItemId
+        ? String(rawArtifactWorkItemId).trim()
+        : "";
+  if (artifactWorkItemId) return artifactWorkItemId;
+  return getMetaString(meta, ["work_item_id", "workItemId"], "").trim();
+};
+
 const getMetaNumber = (meta: Record<string, unknown>, keys: string[], fallback = 0) => {
   for (const key of keys) {
     const value = meta[key];
@@ -317,6 +329,7 @@ export const mapArtifactsToMediaItems = (
     const format = normalizeFormat(rawFormat, artifact.path, artifact.name, artifact.link) || actionFormat;
     const mediaType = getMediaType(format, rawFormat, artifact.action ?? "");
     const meta = resolveArtifactMeta(artifact, context?.metadata);
+    const workItemId = getArtifactWorkItemId(artifact, meta);
     const linkedArtifact = artifact.link ? artifactByName.get(normalizeKey(artifact.link)) : undefined;
     const displayTitle =
       format === "thumbnail" && linkedArtifact?.title ? linkedArtifact.title : artifact.title;
@@ -387,7 +400,7 @@ export const mapArtifactsToMediaItems = (
       linkedFormat,
       action: artifact.action,
       link: artifact.link ?? null,
-      workItemId: artifact.work_item_id ?? null,
+      workItemId: workItemId || null,
       author,
       createdAt,
       views,

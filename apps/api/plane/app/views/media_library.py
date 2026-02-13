@@ -1741,6 +1741,7 @@ def _build_issue_artifact_meta(issue: Issue, source: str) -> dict:
     meta: dict = {
         "category": getattr(issue, "category", None) or "Work items",
         "source": source,
+        "work_item_id": str(issue.id),
     }
     created_by = _resolve_issue_created_by_label(issue)
     if created_by:

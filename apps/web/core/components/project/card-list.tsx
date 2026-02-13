@@ -90,6 +90,8 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
         <div className="text-center">
           <Image
             src={searchQuery.trim() === "" ? resolvedFiltersImage : resolvedNameFilterImage}
+            width={192}
+            height={192}
             className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching projects"
           />
