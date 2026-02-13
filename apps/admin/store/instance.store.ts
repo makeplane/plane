@@ -19,7 +19,7 @@ import type {
   IInstanceConfig,
 } from "@plane/types";
 // root store
-import type { CoreRootStore } from "@/store/root.store";
+import type { RootStore } from "@/store/root.store";
 
 export interface IInstanceStore {
   // issues
@@ -53,7 +53,7 @@ export class InstanceStore implements IInstanceStore {
   // service
   instanceService;
 
-  constructor(private store: CoreRootStore) {
+  constructor(private store: RootStore) {
     makeObservable(this, {
       // observable
       isLoading: observable.ref,
