@@ -122,11 +122,11 @@ export function InstanceSetupForm() {
   const isButtonDisabled = useMemo(
     () =>
       !isSubmitting &&
-        formData.first_name &&
-        formData.email &&
-        formData.password &&
-        getPasswordStrength(formData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
-        formData.password === formData.confirm_password
+      formData.first_name &&
+      formData.email &&
+      formData.password &&
+      getPasswordStrength(formData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
+      formData.password === formData.confirm_password
         ? false
         : true,
     [formData.confirm_password, formData.email, formData.first_name, formData.password, isSubmitting]
