@@ -33,6 +33,7 @@ export type TAIBlockWidgetProps = {
 export type CustomAIBlockExtensionProps = {
   aiBlockHandlers?: TAIBlockHandlers;
   aiBlockWidgetCallback?: React.ComponentType<TAIBlockNodeViewProps>;
+  isFlagged?: boolean;
 };
 
 // Node view props passed to the widget callback

@@ -35,14 +35,13 @@ export type CustomAIBlockUIProps = TAIBlockNodeViewProps & TAIBlockWidgetProps;
 export function CustomAIBlockUI(props: CustomAIBlockUIProps) {
   const { node, extension, blockTypes, blocks, editor } = props;
   // get handlers from extension options
-  const { aiBlockHandlers } = extension.options;
+  const { aiBlockHandlers, isFlagged } = extension.options;
   // derived values
   const isEmpty = node.textContent.trim().length === 0;
   const blockId = useMemo(() => node?.attrs[EAIBlockAttributeNames.ID], [node?.attrs]);
   // state
   const [isSettingsOpen, setIsSettingsOpen] = useState(isEmpty);
   const [block, setBlock] = useState<Partial<TAIBlockDetails> | undefined>(undefined);
-
   // derived values
   const blockDetails = useMemo(
     () => blocks?.find((data: TAIBlockDetails) => data.block_id === blockId),
@@ -94,7 +93,7 @@ export function CustomAIBlockUI(props: CustomAIBlockUIProps) {
               block={block}
             />
           }
-          <CustomAIBlockSettingsFooter type="settings" {...actionProps} />
+          <CustomAIBlockSettingsFooter type="settings" {...actionProps} isFlagged={isFlagged} />
         </div>
       ) : (
         <div
@@ -106,7 +105,7 @@ export function CustomAIBlockUI(props: CustomAIBlockUIProps) {
           )}
         >
           <CustomAIBlockPreview hasContent={!isEmpty} />
-          {editor.isEditable && <CustomAIBlockSettingsFooter type="revision" {...actionProps} />}
+          {editor.isEditable && <CustomAIBlockSettingsFooter type="revision" {...actionProps} isFlagged={isFlagged} />}
         </div>
       )}
     </YChangeNodeViewWrapper>

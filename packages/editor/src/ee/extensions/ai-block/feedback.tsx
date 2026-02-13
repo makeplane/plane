@@ -25,17 +25,19 @@ export const AIBlockFeedback = ({
   blockId,
   aiBlockHandlers,
   type,
+  isFlagged,
 }: {
   feedback: EAiFeedback | null | undefined;
   blockId: string | null;
   aiBlockHandlers: TAIBlockHandlers | undefined;
   type: "revision" | "settings";
+  isFlagged?: boolean;
 }) => {
   const [feedback, setFeedback] = useState<EAiFeedback | undefined | null>(undefined);
   const handleFeedback = async (feedbackValue: EAiFeedback) => {
     const initialValue = feedback;
     try {
-      if (!blockId) return;
+      if (!blockId || isFlagged) return;
       if (feedbackValue === initialValue) {
         setFeedback(undefined);
         return;
