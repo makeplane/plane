@@ -18,8 +18,7 @@ import { getPasswordStrength } from "@plane/utils";
 // components
 import { ProfileSettingsHeading } from "@/components/settings/profile/heading";
 // helpers
-import { authErrorHandler } from "@/helpers/authentication.helper";
-import type { EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
+import { authErrorHandler, EAuthenticationErrorCodes, passwordErrors } from "@/helpers/authentication.helper";
 // hooks
 import { useUser } from "@/hooks/store/user";
 // services
@@ -58,6 +57,7 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
     control,
     handleSubmit,
     watch,
+    setError,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<FormValues>({ defaultValues });
@@ -93,11 +93,9 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
         message: t("auth.common.password.toast.change_password.success.message"),
       });
     } catch (error: unknown) {
-      let errorInfo = undefined;
-      if (error instanceof Error) {
-        const code = "error_code" in error ? error.error_code?.toString() : undefined;
-        errorInfo = code ? authErrorHandler(code as EAuthenticationErrorCodes) : undefined;
-      }
+      const err = error as Error & { error_code?: string };
+      const code = err.error_code?.toString();
+      const errorInfo = code ? authErrorHandler(code as EAuthenticationErrorCodes) : undefined;
 
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -105,6 +103,13 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
         message:
           typeof errorInfo?.message === "string" ? errorInfo.message : t("auth.common.password.toast.error.message"),
       });
+
+      if (code && passwordErrors.includes(code as EAuthenticationErrorCodes)) {
+        setError("new_password", {
+          type: "manual",
+          message: errorInfo?.message?.toString() || t("auth.common.password.toast.error.message"),
+        });
+      }
     }
   };
 
@@ -204,6 +209,9 @@ export const SecurityProfileSettings = observer(function SecurityProfileSettings
                 )}
               </div>
               {passwordSupport}
+              {errors.new_password && (
+                <span className="text-11 text-danger-primary">{errors.new_password.message}</span>
+              )}
               {isNewPasswordSameAsOldPassword && !isPasswordInputFocused && (
                 <span className="text-11 text-danger-primary">
                   {t("new_password_must_be_different_from_old_password")}
