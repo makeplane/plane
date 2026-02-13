@@ -14,6 +14,7 @@ import { TimeDropdown } from "@/components/dropdowns/time-picker";
 import { YearRangeDropdown } from "@/components/dropdowns/year-property";
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
 import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 import { MediaLibraryService } from "@/services/media-library.service";
 import type { TMediaItem } from "../types";
@@ -50,6 +51,7 @@ export const MediaDetailSidebar = ({
   onMediaItemUpdated,
 }: TMediaDetailSidebarProps) => {
   const { setPeekIssue } = useIssueDetail();
+  const { getUserDetails } = useMember();
   const workItemId = item?.workItemId ?? "";
   const hasWorkItemId = Boolean(workItemId);
   const mediaLibraryService = useMemo(() => new MediaLibraryService(), []);
@@ -108,9 +110,30 @@ export const MediaDetailSidebar = ({
     [artifactMeta, item?.id, item?.packageId, mediaLibraryService, onMediaItemUpdated, projectId, workspaceSlug]
   );
   const baseMetaKeys = useMemo(
-    () => new Set(["category", "sport", "program", "level", "season", "start_date", "start_time", "opposition"]),
+    () =>
+      new Set([
+        "category",
+        "sport",
+        "program",
+        "level",
+        "season",
+        "start_date",
+        "start_time",
+        "opposition",
+        "created_by",
+        "createdBy",
+      ]),
     []
   );
+  const createdByMemberId = useMemo(() => {
+    const value = artifactMeta.created_by ?? artifactMeta.createdBy;
+    if (typeof value !== "string") return "";
+    return value.trim();
+  }, [artifactMeta]);
+  const createdByLabel = useMemo(() => {
+    if (createdByMemberId) return getUserDetails(createdByMemberId)?.display_name ?? createdByMemberId;
+    return formatMetaValue(item.author);
+  }, [createdByMemberId, getUserDetails, item.author]);
   const additionalMetaEntries = useMemo(
     () =>
       Object.entries(artifactMeta).filter(([key, value]) => {
@@ -195,7 +218,7 @@ export const MediaDetailSidebar = ({
                     <span>Created by</span>
                   </div>
                   <span className="w-3/4 rounded px-2 py-0.5 text-sm text-custom-text-100">
-                    {formatMetaValue(item.author)}
+                    {createdByLabel}
                   </span>
                 </div>
 

@@ -4,20 +4,19 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DOMPurify from "dompurify";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import videojs from "video.js";
+import { ArrowLeft } from "lucide-react";
 import "video.js/dist/video-js.css";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useMember } from "@/hooks/store/use-member";
 import { MediaLibraryService } from "@/services/media-library.service";
+import { TagsSection } from "../components/tags-section";
+import { useDocumentPreview, useResolvedMediaSources } from "../hooks/media-detail-hooks";
 import { useMediaLibraryItem } from "../hooks/use-media-library-item";
 import type { TMediaItem } from "../types";
-import { PLAYER_STYLE } from "./player-styles";
-import { useDocumentPreview, useResolvedMediaSources } from "../hooks/media-detail-hooks";
 import { MediaDetailPreview } from "./media-detail-preview";
 import { MediaDetailSidebar } from "./media-detail-sidebar";
-import { TagsSection } from "../components/tags-section";
 import {
   getCaptionTracks,
   getMetaString,
@@ -25,6 +24,7 @@ import {
   getVideoMimeType,
   getVideoRepresentations,
 } from "./media-detail-utils";
+import { PLAYER_STYLE } from "./player-styles";
 
 
 type TPipCaptionMode = "disabled" | "hidden" | "showing";

@@ -7,6 +7,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { Button, Checkbox } from "@plane/ui";
 import { useInstance } from "@/hooks/store/use-instance";
+import { useUser } from "@/hooks/store/user";
 import { IssueService } from "@/services/issue";
 import { MediaLibraryService } from "@/services/media-library.service";
 import { ProjectService } from "@/services/project";
@@ -43,9 +44,9 @@ type TUploadItem = {
   error?: string;
 };
 
-const DEFAULT_META: TMetaFormState = {
+const createDefaultMeta = (createdByMemberId: string | null = null): TMetaFormState => ({
   category: null,
-  createdByMemberId: null,
+  createdByMemberId,
   sport: null,
   program: null,
   level: null,
@@ -53,7 +54,7 @@ const DEFAULT_META: TMetaFormState = {
   startDate: null,
   startTime: null,
   tags: [],
-};
+});
 
 const useDebouncedValue = (value: string, delayMs: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -160,10 +161,12 @@ export const MediaLibraryUploadModal = () => {
   const { isUploadOpen, closeUpload, refreshLibrary } = useMediaLibrary();
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   const { config } = useInstance();
+  const { data: currentUser } = useUser();
+  const currentUserId = currentUser?.id ?? null;
   const [isDragging, setIsDragging] = useState(false);
   const [uploads, setUploads] = useState<TUploadItem[]>([]);
   const [selectionError, setSelectionError] = useState<string | null>(null);
-  const [metaState, setMetaState] = useState<TMetaFormState>(DEFAULT_META);
+  const [metaState, setMetaState] = useState<TMetaFormState>(() => createDefaultMeta(currentUserId));
   const [workItemResults, setWorkItemResults] = useState<ISearchIssueResponse[]>([]);
   const [workItemQuery, setWorkItemQuery] = useState("");
   const [isWorkItemSelectorEnabled, setIsWorkItemSelectorEnabled] = useState(false);
@@ -182,6 +185,11 @@ export const MediaLibraryUploadModal = () => {
   const hasUploading = uploads.some((item) => item.status === "uploading");
   const uploadTarget: TUploadTarget = selectedWorkItem ? "work-item" : "library";
   const isWorkItemMetaLocked = Boolean(selectedWorkItem);
+
+  useEffect(() => {
+    if (!isUploadOpen || !currentUserId || selectedWorkItem) return;
+    setMetaState((prev) => (prev.createdByMemberId ? prev : { ...prev, createdByMemberId: currentUserId }));
+  }, [currentUserId, isUploadOpen, selectedWorkItem]);
 
   useEffect(() => {
     if (!isUploadOpen || !workspaceSlug || !projectId || !isWorkItemSelectorEnabled) return;
@@ -247,7 +255,7 @@ export const MediaLibraryUploadModal = () => {
   const handleClearWorkItem = () => {
     setSelectedWorkItem(null);
     setWorkItemQuery("");
-    setMetaState(DEFAULT_META);
+    setMetaState(createDefaultMeta(currentUserId));
     setTagDraft("");
   };
 
@@ -256,7 +264,7 @@ export const MediaLibraryUploadModal = () => {
     setIsDragging(false);
     setSelectionError(null);
     setIsWorkItemSelectorEnabled(false);
-    setMetaState(DEFAULT_META);
+    setMetaState(createDefaultMeta(currentUserId));
     setSelectedWorkItem(null);
     setWorkItemResults([]);
     setIsWorkItemDetailsLoading(false);
