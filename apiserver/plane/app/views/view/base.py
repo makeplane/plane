@@ -215,82 +215,60 @@ class WorkspaceViewViewSet(BaseViewSet):
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
     def get_queryset(self, filters):
+        """Phase 1 queryset: lean, for filtering + ordering + pagination only.
+
+        No select_related (narrow rows → cheap DISTINCT).
+        No correlated subqueries (sub_issues_count, link_count, attachment_count)
+        — those run in Phase 2 on the small paginated ID set.
+        No ArrayAgg annotations — batch-loaded after pagination.
+        """
         custom_properties = filters.get("custom_properties", {})
         custom_filters = build_custom_property_q_objects(custom_properties)
         queryset = (
-            Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
+            Issue.issue_objects
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
             )
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels")
-            # --- Commented out: cycle_id Subquery (per-row subquery, not needed for list) ---
-            # .annotate(
-            #     cycle_id=Subquery(
-            #         CycleIssue.objects.filter(
-            #             issue=OuterRef("id"), deleted_at__isnull=True
-            #         ).values("cycle_id")[:1]
-            #     )
-            # )
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=FileAsset.objects.filter(
-                    issue_id=OuterRef("id"),
-                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            # --- Commented out: All 4 ArrayAgg annotations (cause row multiplication via LEFT JOINs) ---
-            # label_ids, assignee_ids, custom_propertiess are batch-loaded after pagination.
-            # module_ids is removed entirely.
-            # .annotate(
-            #     label_ids=Coalesce(
-            #         ArrayAgg("labels__id", distinct=True,
-            #             filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True))),
-            #         Value([], output_field=ArrayField(UUIDField())),
-            #     ),
-            #     assignee_ids=Coalesce(
-            #         ArrayAgg("assignees__id", distinct=True,
-            #             filter=Q(~Q(assignees__id__isnull=True) & Q(assignees__member_project__is_active=True)
-            #                 & Q(issue_assignee__deleted_at__isnull=True))),
-            #         Value([], output_field=ArrayField(UUIDField())),
-            #     ),
-            #     module_ids=Coalesce(
-            #         ArrayAgg("issue_module__module_id", distinct=True,
-            #             filter=Q(~Q(issue_module__module_id__isnull=True) & Q(issue_module__module__archived_at__isnull=True)
-            #                 & Q(issue_module__deleted_at__isnull=True))),
-            #         Value([], output_field=ArrayField(UUIDField())),
-            #     ),
-            #     custom_propertiess=Coalesce(
-            #         ArrayAgg(Func(F('custom_properties__key'), F('custom_properties__value'),
-            #             function="jsonb_build_object", template="%(function)s(%(expressions)s)",
-            #             output_field=JSONField()), distinct=True,
-            #             filter=Q(custom_properties__key__isnull=False)),
-            #         Value([], output_field=ArrayField(JSONField()))
-            #     )
-            # )
+            # Phase 1: NO select_related — keep rows narrow for cheap DISTINCT
+            # Phase 1: NO correlated subqueries — they run in Phase 2 on ~100 IDs
             .filter(
                 *custom_filters
             )
             .distinct()
         )
         return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
+
+    @staticmethod
+    def _build_detail_queryset(page_ids):
+        """Phase 2: fetch full details + counts for a small set of IDs.
+
+        Correlated subqueries are cheap here because they run on ~100 rows
+        instead of the entire candidate set (10k+).
+        """
+        return (
+            Issue.objects.filter(id__in=page_ids)
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(
+                    parent=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count"),
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count"),
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count"),
+            )
+        )
 
     @method_decorator(gzip_page)
     @allow_permission(
@@ -455,18 +433,22 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         group_by = request.GET.get("group_by", False)
         sub_group_by = request.GET.get("sub_group_by", False)
 
-        # Skipped issue_queryset_grouper -- it re-adds ArrayAgg annotations.
-        # Custom on_results replaces issue_on_results (which expects annotation
-        # fields on the queryset). label_ids, assignee_ids, custom_propertiess
-        # are batch-loaded after .values() instead.
+        # ── Two-phase query strategy ──
+        # Phase 1 (issue_queryset) is lean: only filters + ordering + pagination.
+        #   No select_related, no correlated subqueries → narrow DISTINCT, fast sort.
+        # Phase 2 (_build_detail_queryset) fetches counts + fields for the ~100 IDs
+        #   returned by Phase 1.  Correlated subqueries on ~100 rows are trivial.
+        # M2M relations (labels, assignees, custom_properties) are batch-loaded in
+        #   _enrich_issues_with_relations after Phase 2.
 
-        # M2M fields that need raw field in .values() when used as group_by
+        # M2M fields that need the raw FK in .values() when used as group_by
         FIELD_MAPPER = {
             "labels__id": "label_ids",
             "assignees__id": "assignee_ids",
         }
 
-        base_fields = [
+        # Fields fetched in Phase 2 (includes annotated counts)
+        detail_fields = [
             "id", "name", "state_id", "sort_order", "completed_at",
             "priority", "start_date", "target_date", "sequence_id",
             "project_id", "parent_id", "sub_issues_count",
@@ -477,20 +459,55 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             "vendor_name", "vendor_code", "worker_code", "business_type",
         ]
 
+        has_m2m_group = group_by and group_by in FIELD_MAPPER
+        has_m2m_subgroup = sub_group_by and sub_group_by in FIELD_MAPPER
+
         def on_results_fn(issues):
-            fields = list(base_fields)
-            if group_by and group_by in FIELD_MAPPER:
-                fields.append(group_by)
-            if sub_group_by and sub_group_by in FIELD_MAPPER:
-                fields.append(sub_group_by)
-            results = list(issues.values(*fields))
+            """Two-phase callback: Phase 1 → IDs, Phase 2 → details + counts."""
+            # ── Phase 1: extract IDs (+ M2M group keys if needed) ──
+            phase1_fields = ["id"]
+            if has_m2m_group:
+                phase1_fields.append(group_by)
+            if has_m2m_subgroup:
+                phase1_fields.append(sub_group_by)
+
+            phase1_rows = list(issues.values(*phase1_fields))
+            # Ordered-unique IDs (preserves Phase 1 sort order)
+            page_ids = list(dict.fromkeys(r["id"] for r in phase1_rows))
+
+            if not page_ids:
+                return []
+
+            # ── Phase 2: detail query on the small ID set ──
+            detail_qs = self._build_detail_queryset(page_ids)
+            print(f"\n[WorkspaceViewIssues] Phase 2 SQL ({len(page_ids)} IDs):\n{detail_qs.values(*detail_fields).query}\n")
+            results = list(detail_qs.values(*detail_fields))
+            id_to_result = {r["id"]: r for r in results}
+
+            if has_m2m_group or has_m2m_subgroup:
+                # For M2M grouping the paginator produced multiple rows per issue
+                # (one per M2M value).  Reconstruct those pairs so process_results
+                # can group correctly.
+                merged = []
+                for p1 in phase1_rows:
+                    base = id_to_result.get(p1["id"])
+                    if base is None:
+                        continue
+                    row = dict(base)  # shallow copy — avoid mutating shared dict
+                    if has_m2m_group:
+                        row[group_by] = p1[group_by]
+                    if has_m2m_subgroup:
+                        row[sub_group_by] = p1[sub_group_by]
+                    merged.append(row)
+                results = merged
+            else:
+                # Preserve Phase 1 ordering
+                results = [id_to_result[pid] for pid in page_ids if pid in id_to_result]
+
             return self._enrich_issues_with_relations(results)
 
-        # Log the final SQL for analysis
-        logger.info(
-            "[WorkspaceViewIssues] slug=%s, group_by=%s, sub_group_by=%s, SQL:\n%s",
-            slug, group_by, sub_group_by, str(issue_queryset.query),
-        )
+        # Log Phase 1 SQL for analysis (print so it's visible regardless of log level)
+        print(f"\n[WorkspaceViewIssues] Phase 1 SQL (slug={slug}, group_by={group_by}, sub_group_by={sub_group_by}):\n{issue_queryset.query}\n")
 
         if group_by:
             # Check group and sub group value paginate
