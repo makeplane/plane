@@ -274,7 +274,6 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
     }
   };
 
-
   const shouldHighlightProject = URLProjectId === project?.id && projectPreferences.navigationMode !== "ACCORDION";
 
   return (
