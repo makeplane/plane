@@ -42,7 +42,7 @@ import {
   updateRowDragMarker,
   updateRowDropMarker,
 } from "../marker-utils";
-import { updateCellContentVisibility } from "../utils";
+import { showCellContent } from "../utils";
 import { RowOptionsDropdown } from "./dropdown";
 import { calculateRowDropIndex, constructRowDragPreview, getTableRowNodesInfo } from "./utils";
 
@@ -152,8 +152,9 @@ export function RowDragHandle(props: RowDragHandleProps) {
         hideDropMarker(dropMarker);
         hideDragMarker(dragMarker);
 
+        // Show cell content by clearing decorations
         if (isCellSelection(editor.state.selection)) {
-          updateCellContentVisibility(editor, false);
+          showCellContent(editor);
         }
 
         if (row !== dropIndex) {

@@ -10,7 +10,7 @@ import { action, observable, runInAction, makeObservable, computed } from "mobx"
 import { InstanceWorkspaceService } from "@plane/services";
 import type { IWorkspace, TLoader, TPaginationInfo } from "@plane/types";
 // root store
-import type { CoreRootStore } from "@/store/root.store";
+import type { RootStore } from "@/store/root.store";
 
 export interface IWorkspaceStore {
   // observables
@@ -37,7 +37,7 @@ export class WorkspaceStore implements IWorkspaceStore {
   // services
   instanceWorkspaceService;
 
-  constructor(private store: CoreRootStore) {
+  constructor(private store: RootStore) {
     makeObservable(this, {
       // observables
       loader: observable,
