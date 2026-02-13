@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowUpToLine, Clipboard, History } from "lucide-react";
@@ -132,12 +138,12 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
         optionsOrder={[
           "full-screen",
           "sticky-toolbar",
+          "copy-markdown",
+          "version-history",
           "make-a-copy",
-          "toggle-access",
           "archive-restore",
           "delete",
-          "version-history",
-          "copy-markdown",
+          "toggle-access",
           "export",
         ]}
         page={page}

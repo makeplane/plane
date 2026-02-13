@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export * from "./activity";
 export * from "./ai";
 export * from "./analytics";
@@ -36,6 +42,7 @@ export * from "./reaction";
 export * from "./intake";
 export * from "./rich-filters";
 export * from "./search";
+export * from "./settings";
 export * from "./state";
 export * from "./stickies";
 export * from "./timezone";

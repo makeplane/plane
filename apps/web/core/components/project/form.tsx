@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info } from "lucide-react";
@@ -258,7 +264,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
           </div>
         </div>
       </div>
-      <div className="my-8 flex flex-col gap-8">
+      <div className="mt-8 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
           <h4 className="text-13">{t("common.project_name")}</h4>
           <Controller

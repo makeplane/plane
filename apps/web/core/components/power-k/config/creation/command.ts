@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { FileText, FolderPlus, Layers, SquarePlus } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -9,8 +15,7 @@ import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
-// plane web imports
-import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
+import { useInstance } from "@/hooks/store/use-instance";
 
 export type TPowerKCreationCommandKeys =
   | "create_work_item"
@@ -26,6 +31,7 @@ export type TPowerKCreationCommandKeys =
  */
 export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommandKeys, TPowerKCommandConfig> => {
   // store
+  const { config } = useInstance();
   const {
     canPerformAnyCreateAction,
     permission: { allowPermissions },
@@ -52,7 +58,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       ctx.params.workspaceSlug?.toString(),
       ctx.params.projectId?.toString()
     );
-  const isWorkspaceCreationDisabled = getIsWorkspaceCreationDisabled();
+  const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled ?? false;
 
   const getProjectDetails = (ctx: TPowerKContext) =>
     ctx.params.projectId ? getPartialProjectById(ctx.params.projectId.toString()) : undefined;

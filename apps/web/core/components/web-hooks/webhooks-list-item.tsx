@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // Plane imports
@@ -23,12 +29,15 @@ export function WebhooksListItem(props: IWebhookListItem) {
   };
 
   return (
-    <div className="border-b border-subtle">
-      <Link href={`/${workspaceSlug}/settings/webhooks/${webhook?.id}`}>
-        <span className="flex items-center justify-between gap-4 py-[18px]">
-          <h5 className="truncate text-14 font-medium">{webhook.url}</h5>
+    <div className="bg-layer-2 border border-subtle px-4 py-3 rounded-lg">
+      <Link
+        href={`/${workspaceSlug}/settings/webhooks/${webhook?.id}`}
+        className="flex items-center justify-between gap-4"
+      >
+        <h5 className="text-body-sm-medium truncate">{webhook.url}</h5>
+        <div className="shrink-0">
           <ToggleSwitch value={webhook.is_active} onChange={handleToggle} />
-        </span>
+        </div>
       </Link>
     </div>
   );

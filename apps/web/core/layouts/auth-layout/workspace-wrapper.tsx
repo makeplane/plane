@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -178,15 +184,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
                 </Link>
               )}
               {allWorkspaces?.length > 0 && (
-                <Link
-                  href={`/${allWorkspaces[0].slug}/settings/account`}
-                  className={cn(getButtonStyling("secondary", "base"))}
-                >
+                <Link href="/settings/profile/general/" className={cn(getButtonStyling("secondary", "base"))}>
                   Visit Profile
                 </Link>
               )}
               {allWorkspaces && allWorkspaces.length === 0 && (
-                <Link href={`/`} className={cn(getButtonStyling("secondary", "base"))}>
+                <Link href="/create-workspace/" className={cn(getButtonStyling("secondary", "base"))}>
                   Create new workspace
                 </Link>
               )}

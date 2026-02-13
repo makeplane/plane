@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Content, Extensions, JSONContent, RawCommands } from "@tiptap/core";
 import type { MarkType, NodeType } from "@tiptap/pm/model";
 import type { Selection } from "@tiptap/pm/state";

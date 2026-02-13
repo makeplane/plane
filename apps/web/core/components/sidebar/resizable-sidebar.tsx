@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Dispatch, ReactElement, SetStateAction } from "react";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 // helpers
@@ -172,6 +178,7 @@ export function ResizableSidebar({
     <>
       {/* Main Sidebar */}
       <div
+        id="main-sidebar"
         className={cn(
           "h-full z-20 bg-surface-1 border-r border-subtle",
           !isResizing && "transition-all duration-300 ease-in-out",
