@@ -335,6 +335,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.silo_data_migration_task",
     "plane.bgtasks.silo_credentials_update_task",
     "plane.bgtasks.project_subscriber_task",
+    "plane.bgtasks.link_crawler_task",
     # ee tasks
     "plane.ee.bgtasks.entity_issue_state_progress_task",
     "plane.ee.bgtasks.app_bot_task",
