@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Image, Link, Text, View } from "@react-pdf/renderer";
 import type { Style } from "@react-pdf/types";
 import type { ReactElement } from "react";
@@ -352,7 +358,6 @@ export const nodeRenderers: NodeRendererRegistry = {
       </Text>
     );
   },
-
 };
 
 type InternalRenderContext = {

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { get } from "lodash-es";
 // plane imports
 import { DATE_OPERATOR_LABELS_MAP, EMPTY_OPERATOR_LABEL, OPERATOR_LABELS_MAP } from "@plane/constants";

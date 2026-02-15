@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane types
 import { EUserPermissionsLevel, WORKSPACE_SETTINGS } from "@plane/constants";
@@ -8,8 +14,6 @@ import { PowerKSettingsMenu } from "@/components/power-k/menus/settings";
 import { WORKSPACE_SETTINGS_ICONS } from "@/components/settings/workspace/sidebar/item-icon";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 
 type Props = {
   context: TPowerKContext;
@@ -26,7 +30,6 @@ export const PowerKOpenWorkspaceSettingsMenu = observer(function PowerKOpenWorks
   const settingsList = Object.values(WORKSPACE_SETTINGS).filter(
     (setting) =>
       context.params.workspaceSlug &&
-      shouldRenderSettingLink(context.params.workspaceSlug?.toString(), setting.key) &&
       allowPermissions(setting.access, EUserPermissionsLevel.WORKSPACE, context.params.workspaceSlug?.toString())
   );
   const settingsListWithIcons = settingsList.map((setting) => ({

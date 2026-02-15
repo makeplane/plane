@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Проєкти",
@@ -1305,7 +1311,8 @@ export default {
         request_button: "Запитати адміністратора інстанції",
       },
       validation: {
-        name_alphanumeric: "Назви робочих просторів можуть містити лише « » (пробіл), «-», «_» і алфанумеричні символи.",
+        name_alphanumeric:
+          "Назви робочих просторів можуть містити лише « » (пробіл), «-», «_» і алфанумеричні символи.",
         name_length: "Назва обмежена 80 символами.",
         url_alphanumeric: "URL може містити лише «-» та алфанумеричні символи.",
         url_length: "URL обмежений 48 символами.",
@@ -1998,8 +2005,7 @@ export default {
     automations: {
       label: "Автоматизація",
       heading: "Автоматизація",
-      description:
-        "Налаштовуйте автоматичні дії, щоб спростити керування проєктом і зменшити ручні операції.",
+      description: "Налаштовуйте автоматичні дії, щоб спростити керування проєктом і зменшити ручні операції.",
       "auto-archive": {
         title: "Автоматично архівувати закриті одиниці",
         description: "Plane архівуватиме завершені або скасовані одиниці.",

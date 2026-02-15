@@ -1,11 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Outlet } from "react-router";
 // components
 import { getProjectActivePath } from "@/components/settings/helper";
 import { SettingsMobileNav } from "@/components/settings/mobile/nav";
-// plane web imports
-import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
+// layouts
+import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // types
 import type { Route } from "./+types/layout";
 import { ProjectSettingsSidebarRoot } from "@/components/settings/project/sidebar";

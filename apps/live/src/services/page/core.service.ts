@@ -1,14 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { logger } from "@plane/logger";
-import type { TPage } from "@plane/types";
+import type { TDocumentPayload, TPage } from "@plane/types";
 // services
 import { AppError } from "@/lib/errors";
 import { APIService } from "../api.service";
-
-export type TPageDescriptionPayload = {
-  description_binary: string;
-  description_html: string;
-  description_json: object;
-};
 
 export type TUserMention = {
   id: string;
@@ -115,7 +115,7 @@ export abstract class PageCoreService extends APIService {
     }
   }
 
-  async updateDescriptionBinary(pageId: string, data: TPageDescriptionPayload): Promise<any> {
+  async updateDescriptionBinary(pageId: string, data: TDocumentPayload): Promise<any> {
     try {
       const response = await this.patch(`${this.basePath}/pages/${pageId}/description/`, data, {
         headers: this.getHeader(),

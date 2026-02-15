@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
@@ -10,7 +16,7 @@ import { Input, Spinner } from "@plane/ui";
 // components
 import { Banner } from "@/components/common/banner";
 // local components
-import { FormHeader } from "../../../core/components/instance/form-header";
+import { FormHeader } from "@/components/instance/form-header";
 import { AuthBanner } from "./auth-banner";
 import { AuthHeader } from "./auth-header";
 import { authErrorHandler } from "./auth-helpers";

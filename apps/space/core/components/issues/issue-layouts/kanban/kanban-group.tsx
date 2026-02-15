@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { MutableRefObject } from "react";
 import { forwardRef, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -38,7 +44,9 @@ const KanbanIssueBlockLoader = forwardRef(function KanbanIssueBlockLoader(
   props: Record<string, unknown>,
   ref: React.ForwardedRef<HTMLSpanElement>
 ) {
-  return <span ref={ref} className="block h-28 m-1.5 animate-pulse bg-layer-1 rounded-sm" />;
+  return (
+    <span ref={ref} className="block h-28 m-1.5 animate-pulse bg-[var(--illustration-fill-quaternary)] rounded-sm" />
+  );
 });
 KanbanIssueBlockLoader.displayName = "KanbanIssueBlockLoader";
 
@@ -113,7 +121,17 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
         scrollableContainerRef={scrollableContainerRef}
       />
 
-      {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
+      {shouldLoadMore &&
+        (isSubGroup ? (
+          <>{loadMore}</>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <KanbanIssueBlockLoader key={index} />
+            ))}
+            <KanbanIssueBlockLoader ref={setIntersectionElement} />
+          </div>
+        ))}
     </div>
   );
 });

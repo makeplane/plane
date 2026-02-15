@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   submit: "Submit",
   cancel: "Cancel",
@@ -1236,7 +1242,7 @@ export default {
           comic: {
             title: "Analytics works best with Cycles + Modules",
             description:
-              "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav.",
+              "First, timebox your work items into Cycles and, if you can, group work items that span more than a cycle into Modules. Check out both on the left nav.",
           },
         },
       },

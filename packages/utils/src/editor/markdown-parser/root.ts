@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // - Parses TipTap/ProseMirror HTML fragments
 // - Removes <u> tags (Markdown has no underline)
 // - Adds a space after checkbox inputs for correct GFM task list rendering

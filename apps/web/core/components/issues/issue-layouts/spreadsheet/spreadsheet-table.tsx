@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { MutableRefObject } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -138,7 +144,9 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
       </tbody>
       {canLoadMoreIssues && (
         <tfoot ref={setIntersectionElement}>
-          <SpreadsheetIssueRowLoader columnCount={displayPropertiesCount} />
+          {Array.from({ length: 3 }).map((_, index) => (
+            <SpreadsheetIssueRowLoader key={index} columnCount={displayPropertiesCount} />
+          ))}
         </tfoot>
       )}
     </table>

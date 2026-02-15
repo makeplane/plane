@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { createRequire } from "module";
 import path from "path";
 import { Document, Font, Page, pdf, Text } from "@react-pdf/renderer";
