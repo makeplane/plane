@@ -128,6 +128,30 @@ export class FavoriteStore implements IFavoriteStore {
   }
 
   /**
+   * Fetches all favorites for the workspace and populates the store
+   * @param workspaceSlug
+   * @returns Promise<IFavorite[]>
+   */
+  fetchFavorite = async (workspaceSlug: string) => {
+    try {
+      const response = await this.favoriteService.getFavorites(workspaceSlug);
+      runInAction(() => {
+        response.forEach((favorite) => {
+          set(this.favoriteMap, [favorite.id], favorite);
+          if (favorite.entity_identifier) {
+            set(this.entityMap, [favorite.entity_identifier], favorite);
+          }
+        });
+        this.favoriteIds = response.map((favorite) => favorite.id);
+      });
+      return response;
+    } catch (error) {
+      console.error("Failed to fetch favorites from favorite store");
+      throw error;
+    }
+  };
+
+  /**
    * Creates a favorite in the workspace and adds it to the store
    * @param workspaceSlug
    * @param data
