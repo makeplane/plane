@@ -8,6 +8,8 @@ import { observer } from "mobx-react";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { DashboardIcon } from "@plane/propel/icons";
 import type { IAnalyticsDashboard } from "@plane/types";
+import { FavoriteStar } from "@plane/ui";
+import { useAnalyticsDashboard } from "@/hooks/store/use-analytics-dashboard";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
@@ -24,9 +26,20 @@ export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
   onDelete,
 }: Props) {
   const router = useAppRouter();
+  const { addDashboardToFavorites, removeDashboardFromFavorites } = useAnalyticsDashboard();
 
   const handleCardClick = () => {
-    router.push(`/${workspaceSlug}/dashboards/${dashboard.id}`);
+    void router.push(`/${workspaceSlug}/dashboards/${dashboard.id}`);
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (dashboard.is_favorite) {
+      void removeDashboardFromFavorites(workspaceSlug, dashboard.id);
+    } else {
+      void addDashboardToFavorites(workspaceSlug, dashboard.id);
+    }
   };
 
   return (
@@ -51,38 +64,40 @@ export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
           </div>
         </div>
 
-        {/* Actions menu */}
-        <div className="relative flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100">
-          <button
-            className="flex h-6 w-6 items-center justify-center rounded hover:bg-custom-background-80"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Toggle dropdown handled by parent focus
-            }}
-          >
-            <MoreHorizontal className="h-4 w-4 text-custom-text-300" />
-          </button>
-          <div className="absolute right-0 top-full z-10 mt-1 hidden w-36 rounded-md border border-custom-border-200 bg-custom-background-100 py-1 shadow-custom-shadow-rg group-hover:block">
+        {/* Favorite star + Actions menu */}
+        <div className="flex items-center gap-1">
+          <FavoriteStar onClick={handleToggleFavorite} selected={dashboard.is_favorite} />
+          <div className="relative flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100">
             <button
-              className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-custom-text-200 hover:bg-custom-background-80"
+              className="flex h-6 w-6 items-center justify-center rounded hover:bg-custom-background-80"
               onClick={(e) => {
                 e.stopPropagation();
-                onEdit(dashboard);
               }}
             >
-              <Pencil className="h-3.5 w-3.5" />
-              Edit
+              <MoreHorizontal className="h-4 w-4 text-custom-text-300" />
             </button>
-            <button
-              className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-red-500 hover:bg-custom-background-80"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(dashboard);
-              }}
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-              Delete
-            </button>
+            <div className="absolute right-0 top-full z-10 mt-1 hidden w-36 rounded-md border border-custom-border-200 bg-custom-background-100 py-1 shadow-custom-shadow-rg group-hover:block">
+              <button
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-custom-text-200 hover:bg-custom-background-80"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(dashboard);
+                }}
+              >
+                <Pencil className="h-3.5 w-3.5" />
+                Edit
+              </button>
+              <button
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-red-500 hover:bg-custom-background-80"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(dashboard);
+                }}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -95,9 +110,7 @@ export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
       {/* Footer */}
       <div className="mt-auto flex items-center gap-4 text-xs text-custom-text-300">
         <span>{dashboard.widget_count} widgets</span>
-        {dashboard.config?.project_ids?.length > 0 && (
-          <span>{dashboard.config.project_ids.length} projects</span>
-        )}
+        {dashboard.config?.project_ids?.length > 0 && <span>{dashboard.config.project_ids.length} projects</span>}
       </div>
     </div>
   );

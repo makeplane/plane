@@ -19,6 +19,13 @@ import type {
 } from "@plane/types";
 // services
 import { AnalyticsDashboardService } from "@/services/analytics-dashboard.service";
+// store
+import type { CoreRootStore } from "./root.store";
+
+interface APIError {
+  detail?: string;
+  message?: string;
+}
 
 export interface IAnalyticsDashboardStore {
   // observables
@@ -36,14 +43,35 @@ export interface IAnalyticsDashboardStore {
   // actions
   fetchDashboards: (workspaceSlug: string) => Promise<IAnalyticsDashboard[]>;
   createDashboard: (workspaceSlug: string, data: TAnalyticsDashboardCreate) => Promise<IAnalyticsDashboard>;
-  updateDashboard: (workspaceSlug: string, dashboardId: string, data: TAnalyticsDashboardUpdate) => Promise<IAnalyticsDashboard>;
+  updateDashboard: (
+    workspaceSlug: string,
+    dashboardId: string,
+    data: TAnalyticsDashboardUpdate
+  ) => Promise<IAnalyticsDashboard>;
   deleteDashboard: (workspaceSlug: string, dashboardId: string) => Promise<void>;
   fetchDashboard: (workspaceSlug: string, dashboardId: string) => Promise<IAnalyticsDashboardDetail>;
-  createWidget: (workspaceSlug: string, dashboardId: string, data: TAnalyticsWidgetCreate) => Promise<IAnalyticsDashboardWidget>;
-  updateWidget: (workspaceSlug: string, dashboardId: string, widgetId: string, data: TAnalyticsWidgetUpdate) => Promise<IAnalyticsDashboardWidget>;
+  createWidget: (
+    workspaceSlug: string,
+    dashboardId: string,
+    data: TAnalyticsWidgetCreate
+  ) => Promise<IAnalyticsDashboardWidget>;
+  updateWidget: (
+    workspaceSlug: string,
+    dashboardId: string,
+    widgetId: string,
+    data: TAnalyticsWidgetUpdate
+  ) => Promise<IAnalyticsDashboardWidget>;
   deleteWidget: (workspaceSlug: string, dashboardId: string, widgetId: string) => Promise<void>;
-  fetchWidgetData: (workspaceSlug: string, dashboardId: string, widgetId: string, params?: Record<string, any>) => Promise<IAnalyticsChartData | IAnalyticsNumberWidgetData>;
+  fetchWidgetData: (
+    workspaceSlug: string,
+    dashboardId: string,
+    widgetId: string,
+    params?: Record<string, unknown>
+  ) => Promise<IAnalyticsChartData | IAnalyticsNumberWidgetData>;
   setActiveDashboard: (dashboardId: string | null) => void;
+  addDashboardToFavorites: (workspaceSlug: string, dashboardId: string) => Promise<void>;
+  removeDashboardFromFavorites: (workspaceSlug: string, dashboardId: string) => Promise<void>;
+  getDashboardById: (dashboardId: string) => IAnalyticsDashboard | undefined;
 }
 
 export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
@@ -56,8 +84,10 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
   error: string | null = null;
   // service
   analyticsDashboardService: AnalyticsDashboardService;
+  // root store
+  rootStore: CoreRootStore;
 
-  constructor() {
+  constructor(rootStore: CoreRootStore) {
     makeObservable(this, {
       dashboardMap: observable,
       widgetMap: observable,
@@ -81,14 +111,17 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
       deleteWidget: action,
       fetchWidgetData: action,
       setActiveDashboard: action,
+      addDashboardToFavorites: action,
+      removeDashboardFromFavorites: action,
     });
+    this.rootStore = rootStore;
     this.analyticsDashboardService = new AnalyticsDashboardService();
   }
 
   // computed
   get dashboardsList(): IAnalyticsDashboard[] {
     return Array.from(this.dashboardMap.values()).sort(
-      (a, b) => a.sort_order - b.sort_order || b.created_at.localeCompare(a.created_at)
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
   }
 
@@ -103,9 +136,16 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
   }
 
   get sortedWidgets(): IAnalyticsDashboardWidget[] {
-    return [...this.currentWidgets].sort(
-      (a, b) => a.sort_order - b.sort_order || b.created_at.localeCompare(a.created_at)
-    );
+    return this.currentWidgets.sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+  }
+
+  // helper method to handle errors
+  private getErrorMessage(error: unknown): string {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    const apiError = error as APIError;
+    return apiError?.detail ?? apiError?.message ?? String(error);
   }
 
   // actions
@@ -115,15 +155,13 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
       this.error = null;
       const dashboards = await this.analyticsDashboardService.getDashboards(workspaceSlug);
       runInAction(() => {
-        dashboards.forEach((d) => this.dashboardMap.set(d.id, d));
+        dashboards.forEach((dashboard) => this.dashboardMap.set(dashboard.id, dashboard));
         this.loader = false;
       });
       return dashboards;
     } catch (error) {
       runInAction(() => {
-        this.error = error instanceof Error
-          ? error.message
-          : (error as any)?.detail ?? (error as any)?.message ?? String(error);
+        this.error = this.getErrorMessage(error);
         this.loader = false;
       });
       throw error;
@@ -138,9 +176,9 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
       });
       return dashboard;
     } catch (error) {
-      runInAction(() => { this.error = error instanceof Error
-          ? error.message
-          : (error as any)?.detail ?? (error as any)?.message ?? String(error); });
+      runInAction(() => {
+        this.error = this.getErrorMessage(error);
+      });
       throw error;
     }
   };
@@ -157,9 +195,9 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
       });
       return dashboard;
     } catch (error) {
-      runInAction(() => { this.error = error instanceof Error
-          ? error.message
-          : (error as any)?.detail ?? (error as any)?.message ?? String(error); });
+      runInAction(() => {
+        this.error = this.getErrorMessage(error);
+      });
       throw error;
     }
   };
@@ -179,9 +217,9 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
         if (this.activeDashboardId === dashboardId) this.activeDashboardId = null;
       });
     } catch (error) {
-      runInAction(() => { this.error = error instanceof Error
-          ? error.message
-          : (error as any)?.detail ?? (error as any)?.message ?? String(error); });
+      runInAction(() => {
+        this.error = this.getErrorMessage(error);
+      });
       throw error;
     }
   };
@@ -199,9 +237,7 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
       return dashboard;
     } catch (error) {
       runInAction(() => {
-        this.error = error instanceof Error
-          ? error.message
-          : (error as any)?.detail ?? (error as any)?.message ?? String(error);
+        this.error = this.getErrorMessage(error);
         this.loader = false;
       });
       throw error;
@@ -224,9 +260,9 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
       });
       return widget;
     } catch (error) {
-      runInAction(() => { this.error = error instanceof Error
-          ? error.message
-          : (error as any)?.detail ?? (error as any)?.message ?? String(error); });
+      runInAction(() => {
+        this.error = this.getErrorMessage(error);
+      });
       throw error;
     }
   };
@@ -245,9 +281,9 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
       });
       return widget;
     } catch (error) {
-      runInAction(() => { this.error = error instanceof Error
-          ? error.message
-          : (error as any)?.detail ?? (error as any)?.message ?? String(error); });
+      runInAction(() => {
+        this.error = this.getErrorMessage(error);
+      });
       throw error;
     }
   };
@@ -264,9 +300,9 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
         }
       });
     } catch (error) {
-      runInAction(() => { this.error = error instanceof Error
-          ? error.message
-          : (error as any)?.detail ?? (error as any)?.message ?? String(error); });
+      runInAction(() => {
+        this.error = this.getErrorMessage(error);
+      });
       throw error;
     }
   };
@@ -275,20 +311,62 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
     workspaceSlug: string,
     dashboardId: string,
     widgetId: string,
-    params?: Record<string, any>
+    params?: Record<string, unknown>
   ): Promise<IAnalyticsChartData | IAnalyticsNumberWidgetData> => {
-    try {
-      const data = await this.analyticsDashboardService.getWidgetData(workspaceSlug, dashboardId, widgetId, params);
-      runInAction(() => {
-        this.widgetDataMap.set(widgetId, data);
-      });
-      return data;
-    } catch (error) {
-      throw error;
-    }
+    const data = await this.analyticsDashboardService.getWidgetData(workspaceSlug, dashboardId, widgetId, params);
+    runInAction(() => {
+      this.widgetDataMap.set(widgetId, data);
+    });
+    return data;
   };
 
   setActiveDashboard = (dashboardId: string | null) => {
     this.activeDashboardId = dashboardId;
+  };
+
+  getDashboardById = (dashboardId: string): IAnalyticsDashboard | undefined => this.dashboardMap.get(dashboardId);
+
+  addDashboardToFavorites = async (workspaceSlug: string, dashboardId: string): Promise<void> => {
+    const dashboard = this.dashboardMap.get(dashboardId);
+    if (!dashboard || dashboard.is_favorite) return;
+
+    // Optimistic update
+    runInAction(() => {
+      this.dashboardMap.set(dashboardId, { ...dashboard, is_favorite: true });
+    });
+
+    try {
+      await this.rootStore.favorite.addFavorite(workspaceSlug, {
+        entity_type: "analytics_dashboard",
+        entity_identifier: dashboardId,
+        name: dashboard.name,
+      });
+    } catch (error) {
+      // Revert optimistic update on failure
+      runInAction(() => {
+        this.dashboardMap.set(dashboardId, { ...dashboard, is_favorite: false });
+      });
+      throw error;
+    }
+  };
+
+  removeDashboardFromFavorites = async (workspaceSlug: string, dashboardId: string): Promise<void> => {
+    const dashboard = this.dashboardMap.get(dashboardId);
+    if (!dashboard || !dashboard.is_favorite) return;
+
+    // Optimistic update
+    runInAction(() => {
+      this.dashboardMap.set(dashboardId, { ...dashboard, is_favorite: false });
+    });
+
+    try {
+      await this.rootStore.favorite.removeFavoriteEntity(workspaceSlug, dashboardId);
+    } catch (error) {
+      // Revert optimistic update on failure
+      runInAction(() => {
+        this.dashboardMap.set(dashboardId, { ...dashboard, is_favorite: true });
+      });
+      throw error;
+    }
   };
 }

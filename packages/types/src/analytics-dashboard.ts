@@ -11,9 +11,10 @@ export interface IAnalyticsDashboard {
   workspace: string;
   name: string;
   description: string | null;
-  logo_props: Record<string, any>;
+  logo_props: Record<string, unknown>;
   owner: string;
   is_default: boolean;
+  is_favorite: boolean;
   sort_order: number;
   config: IAnalyticsDashboardConfig;
   widget_count: number;
@@ -24,7 +25,7 @@ export interface IAnalyticsDashboard {
 export interface IAnalyticsDashboardConfig {
   project_ids: string[];
   layout?: { columns?: number; rowHeight?: number };
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
 }
 
 export enum EAnalyticsWidgetType {
@@ -59,7 +60,7 @@ export interface IAnalyticsWidgetConfig {
   show_tooltip?: boolean;
   center_value?: boolean;
   show_markers?: boolean;
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
 }
 
 export interface IAnalyticsWidgetPosition {
@@ -77,7 +78,7 @@ export interface IAnalyticsColorPreset {
 }
 
 export interface IAnalyticsChartData {
-  data: Array<Record<string, any>>;
+  data: Array<Record<string, unknown>>;
   schema: Record<string, string>;
 }
 
@@ -91,6 +92,12 @@ export interface IAnalyticsDashboardDetail extends IAnalyticsDashboard {
 }
 
 export type TAnalyticsDashboardCreate = Pick<IAnalyticsDashboard, "name" | "description" | "logo_props" | "config">;
-export type TAnalyticsDashboardUpdate = Partial<TAnalyticsDashboardCreate> & { is_default?: boolean; sort_order?: number };
-export type TAnalyticsWidgetCreate = Pick<IAnalyticsDashboardWidget, "widget_type" | "title" | "chart_property" | "chart_metric" | "config" | "position">;
+export type TAnalyticsDashboardUpdate = Partial<TAnalyticsDashboardCreate> & {
+  is_default?: boolean;
+  sort_order?: number;
+};
+export type TAnalyticsWidgetCreate = Pick<
+  IAnalyticsDashboardWidget,
+  "widget_type" | "title" | "chart_property" | "chart_metric" | "config" | "position"
+>;
 export type TAnalyticsWidgetUpdate = Partial<TAnalyticsWidgetCreate> & { sort_order?: number };

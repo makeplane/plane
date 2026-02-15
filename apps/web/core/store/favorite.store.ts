@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { orderBy, uniqBy, set } from "lodash-es";
+import { orderBy, set } from "lodash-es";
 import { action, observable, makeObservable, runInAction, computed } from "mobx";
 import { v4 as uuidv4 } from "uuid";
 import type { IFavorite } from "@plane/types";
@@ -109,7 +109,9 @@ export class FavoriteStore implements IFavoriteStore {
   }
 
   get groupedFavorites() {
-    const data: { [favoriteId: string]: IFavorite } = JSON.parse(JSON.stringify(this.currentWorkspaceFavorites));
+    const data: { [favoriteId: string]: IFavorite } = JSON.parse(JSON.stringify(this.currentWorkspaceFavorites)) as {
+      [favoriteId: string]: IFavorite;
+    };
 
     Object.values(data).forEach((fav) => {
       if (fav.parent && data[fav.parent]) {
@@ -289,6 +291,13 @@ export class FavoriteStore implements IFavoriteStore {
           this.projectStore.projectMap[entity_identifier] &&
           (this.projectStore.projectMap[entity_identifier].is_favorite = false)
         );
+      case "analytics_dashboard": {
+        const dashboard = this.rootStore.analyticsDashboard.dashboardMap.get(entity_identifier);
+        if (dashboard) {
+          this.rootStore.analyticsDashboard.dashboardMap.set(entity_identifier, { ...dashboard, is_favorite: false });
+        }
+        return;
+      }
       default:
         return;
     }
@@ -370,9 +379,9 @@ export class FavoriteStore implements IFavoriteStore {
       );
       runInAction(() => {
         if (projectData) {
-          projectData.forEach(async (fav) => {
+          projectData.forEach((fav) => {
             if (fav.entity_identifier) {
-              this.removeFavoriteFromStore(fav.entity_identifier);
+              void this.removeFavoriteFromStore(fav.entity_identifier);
               this.removeFavoriteEntityFromStore(fav.entity_identifier, fav.entity_type);
             }
           });
@@ -388,57 +397,6 @@ export class FavoriteStore implements IFavoriteStore {
       });
     } catch (error) {
       console.error("Failed to remove favorite from favorite store", error);
-      throw error;
-    }
-  };
-  /**
-   * get Grouped Favorites
-   * @param workspaceSlug
-   * @param favoriteId
-   * @returns Promise<IFavorite[]>
-   */
-  fetchGroupedFavorites = async (workspaceSlug: string, favoriteId: string) => {
-    if (!favoriteId) return [];
-    try {
-      const response = await this.favoriteService.getGroupedFavorites(workspaceSlug, favoriteId);
-      runInAction(() => {
-        // add the favorites to the map
-        response.forEach((favorite) => {
-          set(this.favoriteMap, [favorite.id], favorite);
-          this.favoriteIds.push(favorite.id);
-          this.favoriteIds = uniqBy(this.favoriteIds, (id) => id);
-          if (favorite.entity_identifier) set(this.entityMap, [favorite.entity_identifier], favorite);
-        });
-      });
-
-      return response;
-    } catch (error) {
-      console.error("Failed to get grouped favorites from favorite store");
-      throw error;
-    }
-  };
-
-  /**
-   * get Workspace favorite using workspace slug
-   * @param workspaceSlug
-   * @returns Promise<IFavorite[]>
-   *
-   */
-  fetchFavorite = async (workspaceSlug: string) => {
-    try {
-      const favorites = await this.favoriteService.getFavorites(workspaceSlug);
-      runInAction(() => {
-        favorites.forEach((favorite) => {
-          set(this.favoriteMap, [favorite.id], favorite);
-          this.favoriteIds.push(favorite.id);
-          if (favorite.entity_identifier) {
-            set(this.entityMap, [favorite.entity_identifier], favorite);
-          }
-        });
-      });
-      return favorites;
-    } catch (error) {
-      console.error("Failed to fetch favorites from workspace store");
       throw error;
     }
   };

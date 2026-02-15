@@ -12,6 +12,7 @@ class AnalyticsDashboardSerializer(BaseSerializer):
     """Serializer for Analytics Dashboard list/create/update operations."""
 
     widget_count = serializers.SerializerMethodField()
+    is_favorite = serializers.BooleanField(read_only=True, default=False)
 
     class Meta:
         model = AnalyticsDashboard
@@ -26,6 +27,7 @@ class AnalyticsDashboardSerializer(BaseSerializer):
             "sort_order",
             "config",
             "widget_count",
+            "is_favorite",
             "created_at",
             "updated_at",
         ]

@@ -132,7 +132,7 @@ export class CoreRootStore {
     this.favorite = new FavoriteStore(this);
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
-    this.analyticsDashboard = new AnalyticsDashboardStore();
+    this.analyticsDashboard = new AnalyticsDashboardStore(this);
     this.analytics = new AnalyticsStore();
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
@@ -167,7 +167,7 @@ export class CoreRootStore {
     this.favorite = new FavoriteStore(this);
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
-    this.analyticsDashboard = new AnalyticsDashboardStore();
+    this.analyticsDashboard = new AnalyticsDashboardStore(this);
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
   }
