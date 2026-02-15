@@ -83,6 +83,28 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     this.issueFilterService = new WorkspaceService();
   }
 
+  /**
+   * Applies layout-specific defaults to display filters:
+   * - Kanban: defaults group_by to "state_detail.group" if unset or incompatible
+   * - Calendar: defaults calendar config if missing
+   */
+  private applyLayoutDefaults(displayFilters: IIssueDisplayFilterOptions): void {
+    if (displayFilters.layout === "kanban") {
+      if (
+        !displayFilters.group_by ||
+        !WORKSPACE_KANBAN_GROUP_BY_OPTIONS.includes(
+          displayFilters.group_by as (typeof WORKSPACE_KANBAN_GROUP_BY_OPTIONS)[number]
+        )
+      ) {
+        displayFilters.group_by = "state_detail.group";
+      }
+    }
+
+    if (displayFilters.layout === "calendar" && !displayFilters.calendar) {
+      displayFilters.calendar = { layout: "month", show_weekends: true };
+    }
+  }
+
   getIssueFilters = (viewId: string | undefined) => {
     if (!viewId) return undefined;
 
@@ -188,17 +210,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       displayFilters.order_by = "-created_at";
     }
 
-    // Set default group_by for kanban layout if not already set or incompatible
-    if (displayFilters.layout === "kanban") {
-      if (!displayFilters.group_by || !WORKSPACE_KANBAN_GROUP_BY_OPTIONS.includes(displayFilters.group_by as typeof WORKSPACE_KANBAN_GROUP_BY_OPTIONS[number])) {
-        displayFilters.group_by = "state_detail.group";
-      }
-    }
-
-    // Set calendar defaults if layout is calendar
-    if (displayFilters.layout === "calendar" && !displayFilters.calendar) {
-      displayFilters.calendar = { layout: "month", show_weekends: true };
-    }
+    this.applyLayoutDefaults(displayFilters);
 
     runInAction(() => {
       set(this.filters, [viewId, "richFilters"], richFilters);
@@ -262,26 +274,24 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             _filters.displayFilters.sub_group_by = null;
             updatedDisplayFilters.sub_group_by = null;
           }
-          // set group_by to state_detail.group if layout is switched to kanban and group_by is null or incompatible
-          // For workspace views, we use state_detail.group instead of state (which is project-specific)
-          if (_filters.displayFilters.layout === "kanban") {
-            if (
-              !_filters.displayFilters.group_by ||
-              !WORKSPACE_KANBAN_GROUP_BY_OPTIONS.includes(_filters.displayFilters.group_by as typeof WORKSPACE_KANBAN_GROUP_BY_OPTIONS[number])
-            ) {
-              _filters.displayFilters.group_by = "state_detail.group";
-              updatedDisplayFilters.group_by = "state_detail.group";
-            }
-            // Re-check: nullify sub_group_by if it now matches the normalized group_by
-            if (_filters.displayFilters.group_by === _filters.displayFilters.sub_group_by) {
-              _filters.displayFilters.sub_group_by = null;
-              updatedDisplayFilters.sub_group_by = null;
-            }
+          // Apply layout-specific defaults (kanban group_by, calendar config)
+          const prevGroupBy = _filters.displayFilters.group_by;
+          const prevCalendar = _filters.displayFilters.calendar;
+          this.applyLayoutDefaults(_filters.displayFilters);
+          // Sync any defaults that were applied back to updatedDisplayFilters for local storage persistence
+          if (_filters.displayFilters.group_by !== prevGroupBy) {
+            updatedDisplayFilters.group_by = _filters.displayFilters.group_by;
           }
-          // Set calendar defaults if layout is switched to calendar
-          if (_filters.displayFilters.layout === "calendar" && !_filters.displayFilters.calendar) {
-            _filters.displayFilters.calendar = { layout: "month", show_weekends: true };
-            updatedDisplayFilters.calendar = { layout: "month", show_weekends: true };
+          if (_filters.displayFilters.calendar !== prevCalendar) {
+            updatedDisplayFilters.calendar = _filters.displayFilters.calendar;
+          }
+          // Nullify sub_group_by if it now matches the normalized group_by (kanban-specific)
+          if (
+            _filters.displayFilters.layout === "kanban" &&
+            _filters.displayFilters.group_by === _filters.displayFilters.sub_group_by
+          ) {
+            _filters.displayFilters.sub_group_by = null;
+            updatedDisplayFilters.sub_group_by = null;
           }
 
           // When layout changes, clear issue IDs BEFORE updating the layout
