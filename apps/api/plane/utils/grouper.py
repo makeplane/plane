@@ -26,6 +26,9 @@ def issue_queryset_grouper(
     group_by: Optional[str],
     sub_group_by: Optional[str],
 ) -> QuerySet[Issue]:
+    if not group_by and not sub_group_by:
+        return queryset
+
     FIELD_MAPPER: Dict[str, str] = {
         "label_ids": "labels__id",
         "assignee_ids": "assignees__id",
