@@ -313,10 +313,8 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
           // Fetch issues when display filters change
           // Fire-and-forget pattern: UI updates optimistically via MobX, fetches run in background
-          if (updatedDisplayFilters.layout === "calendar") {
-            // Calendar layout needs date-range parameters that only the component can provide
-            // Don't fetch here - let the calendar component handle it
-          } else if (updatedDisplayFilters.layout) {
+          // Calendar layout is skipped — it needs date-range parameters that only the component can provide
+          if (updatedDisplayFilters.layout && updatedDisplayFilters.layout !== "calendar") {
             // Layout is changing to kanban or spreadsheet - fetch with correct canGroup
             const needsGrouping = _filters.displayFilters.layout === "kanban";
             this.rootIssueStore.workspaceIssues.fetchIssues(
@@ -327,7 +325,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             ).catch((error) => {
               console.error("error while fetching issues after layout change", error instanceof Error ? error.message : error);
             });
-          } else {
+          } else if (!updatedDisplayFilters.layout) {
             this.rootIssueStore.workspaceIssues
               .fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation")
               .catch((error) => {
