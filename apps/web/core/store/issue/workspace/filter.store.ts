@@ -220,7 +220,11 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       });
 
       // Fire-and-forget: UI updates optimistically, fetch runs in background
-      void this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
+      this.rootIssueStore.workspaceIssues
+        .fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation")
+        .catch((error) => {
+          console.error("error while fetching issues after rich filter update", error instanceof Error ? error.message : error);
+        });
     } catch (error) {
       console.error("error while updating rich filters", error instanceof Error ? error.message : error);
       throw error;
@@ -305,14 +309,20 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
           } else if (updatedDisplayFilters.layout) {
             // Layout is changing to kanban or spreadsheet - fetch with correct canGroup
             const needsGrouping = _filters.displayFilters.layout === "kanban";
-            void this.rootIssueStore.workspaceIssues.fetchIssues(
+            this.rootIssueStore.workspaceIssues.fetchIssues(
               workspaceSlug,
               viewId,
               "init-loader",
               { canGroup: needsGrouping, perPageCount: needsGrouping ? 30 : 100 }
-            );
+            ).catch((error) => {
+              console.error("error while fetching issues after layout change", error instanceof Error ? error.message : error);
+            });
           } else {
-            void this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
+            this.rootIssueStore.workspaceIssues
+              .fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation")
+              .catch((error) => {
+                console.error("error while fetching issues after display filter update", error instanceof Error ? error.message : error);
+              });
           }
 
           if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
@@ -367,7 +377,10 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
           break;
       }
     } catch (error) {
-      if (viewId) void this.fetchFilters(workspaceSlug, viewId);
+      if (viewId)
+        this.fetchFilters(workspaceSlug, viewId).catch((err) => {
+          console.error("error while re-fetching filters", err instanceof Error ? err.message : err);
+        });
       throw error;
     }
   };
