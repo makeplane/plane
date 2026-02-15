@@ -216,7 +216,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       // Fire-and-forget: UI updates optimistically, fetch runs in background
       void this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
     } catch (error) {
-      console.log("error while updating rich filters", error);
+      console.error("error while updating rich filters", error instanceof Error ? error.message : error);
       throw error;
     }
   };
