@@ -296,8 +296,9 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
           // When layout changes, clear issue IDs BEFORE updating the layout
           // This ensures IssueLayoutHOC shows the loader immediately (due to issueCount being undefined)
-          // instead of trying to render with data in the wrong format
-          if (updatedDisplayFilters.layout) {
+          // instead of trying to render with data in the wrong format.
+          // Skip the clear if the layout isn't actually changing to avoid unnecessary loader flashes.
+          if (updatedDisplayFilters.layout && updatedDisplayFilters.layout !== issueFilters.displayFilters?.layout) {
             this.rootIssueStore.workspaceIssues.clearIssueIds();
           }
 
