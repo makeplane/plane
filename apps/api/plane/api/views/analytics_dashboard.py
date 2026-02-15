@@ -277,6 +277,22 @@ class AnalyticsDashboardWidgetDataEndpoint(BaseAPIView):
         "state_group",
     ]
 
+    # Map frontend chart_property keys (lowercase) to backend x_axis keys (uppercase)
+    CHART_PROPERTY_TO_X_AXIS = {
+        "priority": "PRIORITY",
+        "state": "STATES",
+        "state_group": "STATE_GROUPS",
+        "assignee": "ASSIGNEES",
+        "labels": "LABELS",
+        "cycle": "CYCLES",
+        "module": "MODULES",
+        "estimate_point": "ESTIMATE_POINTS",
+        "start_date": "START_DATE",
+        "target_date": "TARGET_DATE",
+        "created_at": "CREATED_AT",
+        "completed_at": "COMPLETED_AT",
+    }
+
     def get(self, request, slug, dashboard_id, widget_id):
         """Get widget data based on configuration."""
         try:
@@ -343,9 +359,18 @@ class AnalyticsDashboardWidgetDataEndpoint(BaseAPIView):
         else:
             # For chart widgets, use build_analytics_chart
             try:
+                # Transform frontend key to backend x_axis key
+                x_axis_key = self.CHART_PROPERTY_TO_X_AXIS.get(
+                    widget.chart_property
+                )
+                if not x_axis_key:
+                    return Response(
+                        {"error": f"Invalid chart property: {widget.chart_property}"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
                 chart_data = build_analytics_chart(
                     queryset=queryset,
-                    x_axis=widget.chart_property,
+                    x_axis=x_axis_key,
                 )
                 return Response(chart_data, status=status.HTTP_200_OK)
             except Exception as e:
