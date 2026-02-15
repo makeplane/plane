@@ -137,6 +137,7 @@ export default {
   stay_ahead_of_blockers_description:
     "Spot challenges from one project to another and see inter-cycle dependencies that aren't obvious from any other view.",
   analytics: "Analytics",
+  dashboards: "Dashboards",
   workspace_invites: "Workspace invites",
   enter_god_mode: "Enter god mode",
   workspace_logo: "Workspace logo",

@@ -1,7 +1,7 @@
 # Plane.so Codebase Summary
 
-**Last Updated**: 2026-02-13
-**Version**: 1.2.0
+**Last Updated**: 2026-02-14
+**Version**: 1.2.1
 **Structure**: pnpm + Turborepo monorepo
 
 ## Repository Overview
@@ -28,23 +28,24 @@ plane.so/
 |-----------|---------|
 | **Framework** | React 18 + React Router v7 (SSR: disabled) |
 | **Build Tool** | Vite + TypeScript |
-| **State Management** | MobX (32 stores) |
+| **State Management** | MobX (33 stores) |
 | **Styling** | Tailwind CSS v4 |
 | **Entry Point** | `app/entry.client.tsx` |
 | **Routes** | File-based routing in `app/routes/` |
 
 **Key Directories**:
 - `app/` - React Router v7 app directory
-- `core/store/` - 32 MobX domain stores (user, workspace, issue, cycle, module, etc.)
-- `core/components/` - 50+ component directories
-- `core/hooks/` - 49+ custom React hooks
-- `core/services/` - API integration layer (31+ service dirs)
+- `core/store/` - 33 MobX domain stores (user, workspace, issue, cycle, module, analytics-dashboard, etc.)
+- `core/components/` - 50+ component directories (includes dashboards/)
+- `core/hooks/` - 49+ custom React hooks (includes use-analytics-dashboard)
+- `core/services/` - API integration layer (31+ service dirs, includes analytics-dashboard.service.ts)
 - `core/layouts/` - Layout components
 
 **Main Routes**:
 - `/(home)` - Authentication & onboarding
 - `/(all)/[workspaceSlug]/` - Main workspace hierarchy
 - `[projectId]/` - Project-specific views (board, list, calendar, spreadsheet, gantt, timeline)
+- `dashboards/` - Analytics Dashboard Pro feature (CRUD pages, widget configuration)
 
 ### 2. Admin App (`apps/admin/`)
 **Purpose**: Instance administrator dashboard
@@ -113,16 +114,23 @@ plane.so/
 **Structure**:
 - `plane/` - Main Django project
 - `plane/settings/` - Django configuration (common, production, local, test)
-- `plane/db/models/` - 31 model files (user, workspace, project, issue, cycle, module, page, etc.)
+- `plane/db/models/` - 33 model files (user, workspace, project, issue, cycle, module, page, analytics_dashboard, etc.)
 - `plane/db/migrations/` - 120+ database migrations
 - `plane/app/` - Legacy API v0 endpoints
-- `plane/api/` - New API v1 endpoints
+- `plane/api/` - New API v1 endpoints (includes analytics_dashboard module)
 - `plane/authentication/` - OAuth + magic link auth
 - `plane/bgtasks/` - 36+ Celery background tasks
 
+**Analytics Dashboard Backend** (`plane/api/analytics_dashboard.*`):
+- Models: `AnalyticsDashboard`, `AnalyticsDashboardWidget` (soft-delete enabled)
+- Views: Endpoints for CRUD operations + widget data aggregation
+- Serializers: List, detail, create/update for dashboards and widgets
+- Permissions: `WorkSpaceAdminPermission` on all dashboard endpoints
+- Features: Multi-dashboard management, 6 widget types, widget-level analytics filters
+
 **API Versions**:
 - `/api/` and `/api/v0/` - Legacy endpoints (under `plane.app`)
-- `/api/v1/` - New endpoints (under `plane.api`)
+- `/api/v1/` - New endpoints (under `plane.api`) + analytics dashboard endpoints
 - `/api/public/` - Public/shared space APIs
 - `/auth/` - Authentication endpoints
 
@@ -148,10 +156,10 @@ plane.so/
 ## Packages (Shared Libraries)
 
 ### Core Type System
-- **@plane/types** (116 files) - TypeScript definitions & interfaces for entire platform
+- **@plane/types** (116 files) - TypeScript definitions & interfaces (includes `analytics-dashboard.ts`: widget types, enums, interfaces for all dashboard/widget operations)
 
 ### Constants & Configuration
-- **@plane/constants** (56 files) - Enums, config values, site metadata
+- **@plane/constants** (56 files) - Enums, config values, site metadata (includes `analytics-dashboard.ts`: widget type options, metric options, position configs, chart property mappings)
 
 ### Utilities
 - **@plane/utils** (40+ modules)
@@ -296,15 +304,15 @@ apps/api/
 | Frontend Apps | 4 (web, admin, space, live) |
 | Backend Apps | 2 (api, proxy) |
 | Shared Packages | 12+ |
-| Total Files (approx) | 3,000+ |
-| Database Models | 31 |
+| Total Files (approx) | 3,100+ |
+| Database Models | 33 |
 | Django Migrations | 120+ |
 | Celery Tasks | 36+ |
-| MobX Stores (web) | 32 |
+| MobX Stores (web) | 33 |
 | MobX Stores (admin) | 5 |
 | MobX Stores (space) | 14 |
 | API v0 Modules | 18 URL modules |
-| API v1 Modules | 23 URL modules |
+| API v1 Modules | 25 URL modules |
 | Supported Languages (i18n) | 19 |
 | Docker Compose Services | 13 |
 | Deployment Methods | 4 |

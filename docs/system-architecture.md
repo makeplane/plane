@@ -1,7 +1,7 @@
 # System Architecture
 
-**Last Updated**: 2026-02-13
-**Version**: 1.2.0
+**Last Updated**: 2026-02-14
+**Version**: 1.2.1
 **Scope**: Production deployment architecture, data flows, real-time collaboration
 
 ## High-Level System Overview
@@ -169,6 +169,8 @@ Plus Real-time Layer:
 │  ┌──────────────────────────────────────────────┐   │
 │  │ Page Components (app/routes)                 │   │
 │  │ - WorkspaceHome, ProjectBoard, IssueDetail   │   │
+│  │ - AnalyticsDashboard (list & detail)         │   │
+│  │ - Dashboard list & widget detail pages       │   │
 │  └──────┬───────────────────────────────────────┘   │
 │         │                                            │
 │  ┌──────▼──────────────────────────────────────┐   │
@@ -181,15 +183,16 @@ Plus Real-time Layer:
 │  │ State Management (MobX)                     │   │
 │  │ ┌────────────────────────────────────────┐  │   │
 │  │ │ Root Store                             │  │   │
-│  │ ├─ user.store.ts (auth, profile)        │  │   │
-│  │ ├─ workspace.store.ts (workspace data)  │  │   │
-│  │ ├─ project.store.ts (project list)      │  │   │
-│  │ ├─ issue.store.ts (issue list)          │  │   │
-│  │ ├─ issue-detail.store.ts (single issue) │  │   │
-│  │ ├─ cycle.store.ts (sprints)             │  │   │
-│  │ ├─ module.store.ts (modules)            │  │   │
-│  │ ├─ theme.store.ts (dark/light mode)     │  │   │
-│  │ └─ [28 more stores...]                  │  │   │
+│  │ ├─ user.store.ts (auth, profile)              │  │   │
+│  │ ├─ workspace.store.ts (workspace data)        │  │   │
+│  │ ├─ project.store.ts (project list)            │  │   │
+│  │ ├─ issue.store.ts (issue list)                │  │   │
+│  │ ├─ issue-detail.store.ts (single issue)       │  │   │
+│  │ ├─ cycle.store.ts (sprints)                   │  │   │
+│  │ ├─ module.store.ts (modules)                  │  │   │
+│  │ ├─ analytics-dashboard.store.ts (dashboards)  │  │   │
+│  │ ├─ theme.store.ts (dark/light mode)           │  │   │
+│  │ └─ [27 more stores...]                        │  │   │
 │  │ └────────────────────────────────────────┘  │   │
 │  └──────┬───────────────────────────────────────┘   │
 │         │                                            │
@@ -200,12 +203,13 @@ Plus Real-time Layer:
 │  └──────┬───────────────────────────────────────┘   │
 │         │                                            │
 │  ┌──────▼──────────────────────────────────────┐   │
-│  │ Services Layer (core/services/)             │   │
-│  │ - API calls via axios                       │   │
-│  │ - workspaceService.getAll()                 │   │
-│  │ - issueService.create(payload)              │   │
-│  │ - Domain-specific API wrappers              │   │
-│  └────────────────────────────────────────────┘   │
+│  │ Services Layer (core/services/)               │   │
+│  │ - API calls via axios                         │   │
+│  │ - workspaceService.getAll()                   │   │
+│  │ - issueService.create(payload)                │   │
+│  │ - analyticsDashboardService (CRUD + widgets)  │   │
+│  │ - Domain-specific API wrappers                │   │
+│  └────────────────────────────────────────────────┘   │
 │                                                      │
 └─────────────────────────────────────────────────────┘
 ```
@@ -235,6 +239,7 @@ Plus Real-time Layer:
 │  │ ViewSets (plane/app/views/)                   │  │
 │  │ - Permission checks (who can access?)         │  │
 │  │ - Serialization (ORM → JSON)                  │  │
+│  │ - Analytics dashboard CRUD & aggregation      │  │
 │  │ - Business logic dispatch                     │  │
 │  └────────────┬─────────────────────────────────┘  │
 │               │                                      │
@@ -287,9 +292,13 @@ User
 │   │   ├── Page (1:N)
 │   │   │   └── PageVersion (1:N)
 │   │   ├── State (1:N) - e.g., "To Do", "In Progress"
-│   │   └── Label (1:N)
-│   └── IssueView (saved filters)
-└── notifications → Notification
+│   │   ├── Label (1:N)
+│   │   ├── AnalyticsDashboard (1:N) - Pro feature
+│   │   │   └── AnalyticsDashboardWidget (1:N)
+│   │   │       └── Widget config (charts, filters)
+│   │   └── IssueView (saved filters)
+│   └── Notifications → Notification
+└── Analytics data aggregation (via build_analytics_chart())
 ```
 
 ### Database Choice Rationale

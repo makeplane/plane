@@ -15,6 +15,7 @@ export default {
     workspace: "Workspace",
     views: "Views",
     analytics: "Analytics",
+    dashboards: "Dashboards",
     work_items: "Work items",
     cycles: "Cycles",
     modules: "Modules",

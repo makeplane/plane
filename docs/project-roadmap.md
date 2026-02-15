@@ -1,7 +1,7 @@
 # Project Roadmap & Status
 
-**Last Updated**: 2026-02-13
-**Current Version**: 1.2.0
+**Last Updated**: 2026-02-15
+**Current Version**: 1.2.1
 **Next Release Target**: Q2 2026
 
 ## Project Status Summary
@@ -47,11 +47,12 @@
 - ✅ Advanced filtering & search
 - ✅ Custom workflows
 - ✅ Webhook integrations
+- ✅ Analytics Dashboard Pro Feature (6 widget types, multi-dashboard CRUD, widget config UI, backend API, data aggregation)
 
 ## Planned Roadmap (2026)
 
 ### Phase 1: Q1 2026 (Current - Mar 2026)
-**Focus**: Developer Experience & Documentation
+**Focus**: Developer Experience & Documentation + Pro Features
 
 **Tasks**:
 - ✅ Complete developer documentation
@@ -59,6 +60,7 @@
 - ✅ Establish code standards
 - ✅ System architecture diagrams
 - ✅ Deployment guide
+- ✅ Analytics Dashboard Pro feature (backend + frontend + tests + code review fixes)
 - 🔄 ESLint enforcement migration
 - 🔄 TypeScript strict mode rollout
 
