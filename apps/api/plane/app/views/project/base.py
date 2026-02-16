@@ -8,7 +8,7 @@ import json
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
+from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery, Count
 from django.utils import timezone
 
 # Third Party imports
@@ -28,7 +28,6 @@ from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.db.models import (
     UserFavorite,
     DeployBoard,
-    ProjectUserProperty,
     Intake,
     Project,
     ProjectIdentifier,
@@ -36,10 +35,10 @@ from plane.db.models import (
     ProjectNetwork,
     State,
     DEFAULT_STATES,
-    UserFavorite,
     Workspace,
     WorkspaceMember,
 )
+from plane.db.models.intake import IntakeIssueStatus
 from plane.utils.host import base_host
 
 
@@ -155,6 +154,15 @@ class ProjectViewSet(BaseViewSet):
                     is_active=True,
                 ).values("role")
             )
+            .annotate(
+                intake_count=Count(
+                    "project_intakeissue",
+                    filter=Q(
+                        project_intakeissue__status=IntakeIssueStatus.PENDING.value,
+                        project_intakeissue__deleted_at__isnull=True,
+                    ),
+                )
+            )
             .annotate(inbox_view=F("intake_view"))
             .annotate(sort_order=Subquery(sort_order))
             .distinct()
@@ -165,6 +173,7 @@ class ProjectViewSet(BaseViewSet):
             "sort_order",
             "logo_props",
             "member_role",
+            "intake_count",
             "archived_at",
             "workspace",
             "cycle_view",

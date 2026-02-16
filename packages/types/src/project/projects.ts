@@ -39,6 +39,7 @@ export interface IPartialProject {
   // actor
   created_by?: string;
   updated_by?: string;
+  intake_count?: number;
 }
 
 export interface IProject extends IPartialProject {
