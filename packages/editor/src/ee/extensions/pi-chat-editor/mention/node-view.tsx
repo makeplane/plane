@@ -15,7 +15,7 @@ import { NodeViewWrapper } from "@tiptap/react";
 import type { NodeViewProps } from "@tiptap/react";
 import { BriefcaseIcon } from "lucide-react";
 // plane imports
-import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
+import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ViewsIcon, TeamsIcon, InitiativeIcon } from "@plane/propel/icons";
 // local imports
 import type { PiChatEditorMentionAttributes } from "./types";
 
@@ -39,6 +39,10 @@ const SelectedIcon = ({ type, className }: { type: string; className?: string })
       return <LayersIcon className={className} />;
     case "views":
       return <ViewsIcon className={className} />;
+    case "teamspaces":
+      return <TeamsIcon className={className} />;
+    case "initiatives":
+      return <InitiativeIcon className={className} />;
     default:
       return <LayersIcon className={className} />;
   }

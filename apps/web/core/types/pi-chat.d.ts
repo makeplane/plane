@@ -258,7 +258,6 @@ export type TChatContextData = {
   type: string;
   title: string | undefined;
   subTitle?: string | undefined;
-  icon: React.ReactNode;
 } | null;
 export type TPiChatDrawerOpen = {
   is_open: boolean;

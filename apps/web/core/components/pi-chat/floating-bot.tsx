@@ -24,41 +24,6 @@ import { PiChatDetail } from "./detail";
 import { PiChatLayout } from "./layout";
 import { isPiAllowed } from "@/helpers/pi-chat";
 
-const getEntityData = (
-  params: Record<string, string | undefined>
-): {
-  entityType: "issue" | "cycle" | "module" | "page" | "view";
-  entityIdentifier: string;
-} | null => {
-  const { workItem, cycleId, moduleId, pageId, viewId } = params;
-  if (workItem)
-    return {
-      entityType: "issue",
-      entityIdentifier: workItem,
-    };
-  if (cycleId)
-    return {
-      entityType: "cycle",
-      entityIdentifier: cycleId,
-    };
-  if (moduleId)
-    return {
-      entityType: "module",
-      entityIdentifier: moduleId,
-    };
-  if (pageId)
-    return {
-      entityType: "page",
-      entityIdentifier: pageId,
-    };
-  if (viewId)
-    return {
-      entityType: "view",
-      entityIdentifier: viewId,
-    };
-  return null;
-};
-
 type TProps = {
   isOpen: boolean;
   sidecarChatId: string | undefined;
@@ -74,8 +39,7 @@ export const PiChatFloatingBot = observer(function PiChatFloatingBot(props: TPro
   // hooks
   const { initPiChat } = usePiChat();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-  const entityData = getEntityData(params);
-  const contextData = entityData ? useAIAssistant(entityData.entityType, entityData.entityIdentifier) : null;
+  const contextData = useAIAssistant(params);
   // derived states
   const isSidePanelOpen = searchParams.get("pi_sidebar_open");
   const chatId = searchParams.get("chat_id");
