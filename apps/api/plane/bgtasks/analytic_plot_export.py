@@ -13,7 +13,6 @@ from celery import shared_task
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 from django.db.models import Q, Case, Value, When
 from django.db import models
 from django.db.models.functions import Concat
@@ -22,6 +21,7 @@ from django.db.models.functions import Concat
 from plane.db.models import Issue
 from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.analytics_plot import build_graph_plot
+from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 from plane.utils.issue_filters import issue_filters
 from plane.utils.csv_utils import sanitize_csv_row
@@ -53,7 +53,7 @@ def send_export_email(email, slug, csv_buffer, rows):
     """Helper function to send export email."""
     subject = "Your Export is ready"
     html_content = render_to_string("emails/exports/analytics.html", {})
-    text_content = strip_tags(html_content)
+    text_content = generate_plain_text_from_html(html_content)
 
     csv_buffer.seek(0)
 
