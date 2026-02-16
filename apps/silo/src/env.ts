@@ -17,6 +17,17 @@ import { logger } from "@plane/logger";
 dotenvx.config();
 
 const envSchema = z.object({
+  // Sentry Env Variables
+  SENTRY_DSN: z.string().optional(),
+  SENTRY_ORG: z.string().default("plane-hq"),
+  SENTRY_PROJECT: z.string().default("plane-silo"),
+  SENTRY_RELEASE_VERSION: z.string().default("1.0.0"),
+  // Datadog Environment Variables
+  DD_API_KEY: z.string().optional(),
+  DD_TRACE_AGENT_HOSTNAME: z.string().optional().default("localhost"),
+  DD_ENV: z.string().default("production"),
+  DD_SERVICE: z.string().default("silo"),
+  DD_VERSION: z.string().default("1.0.0"),
   // App Env Variables
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   BATCH_SIZE: z.string().default("50"),
@@ -108,7 +119,6 @@ const envSchema = z.object({
   AWS_SECRET_ACCESS_KEY: z.string().optional(),
   AWS_S3_ENDPOINT_URL: z.string().optional(),
   AWS_S3_BUCKET_NAME: z.string().default("uploads"),
-
   // Internal Plane App Env Variables
   PRD_AGENT_CLIENT_ID: z.string().optional(),
   PRD_AGENT_CLIENT_SECRET: z.string().optional(),

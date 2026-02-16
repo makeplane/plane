@@ -11,12 +11,19 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import "./config/tracer";
 import { logger } from "@plane/logger";
 import DB from "@/db/client";
 import { env } from "@/env";
 import { importTaskManger, integrationTaskManager, celeryProducer } from "@/worker";
+import { setupSentry } from "./instrument";
 import Server from "./server";
 import { initializeS3Client, Store } from "./worker/base";
+
+logger.info("Setting up Sentry instrumentation...");
+setupSentry();
+// Initialize worker-related services and prepare for migration jobs
+logger.info("Warming up worker instance, connecting services... ♨️");
 
 // Enum for service names
 enum ServiceType {

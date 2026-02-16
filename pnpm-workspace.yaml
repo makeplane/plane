@@ -1,9 +1,9 @@
 packages:
-  - apps/*
-  - packages/*
-  - apps/runners/*
-  - '!apps/api'
-  - '!apps/proxy'
+- apps/*
+- packages/*
+- apps/runners/*
+- '!apps/api'
+- '!apps/proxy'
 
 catalog:
   '@atlaskit/pragmatic-drag-and-drop': 1.7.7
@@ -14,6 +14,8 @@ catalog:
   '@react-router/dev': 7.13.0
   '@react-router/node': 7.13.0
   '@react-router/serve': 7.13.0
+  '@sentry/cli': 3.2.0
+  '@sentry/core': 10.38.0
   '@sentry/node': 10.38.0
   '@sentry/profiling-node': 10.38.0
   '@sentry/react-router': 10.38.0
@@ -64,4 +66,4 @@ catalog:
   vite: 7.3.1
 
 onlyBuiltDependencies:
-  - turbo
+- turbo

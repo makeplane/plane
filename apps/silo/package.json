@@ -20,7 +20,8 @@
     "check:types": "tsc --noEmit",
     "check:format": "prettier . --cache --check",
     "fix:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=2553 --fix",
-    "fix:format": "prettier . --cache --write"
+    "fix:format": "prettier . --cache --write",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject ./dist && sentry-cli sourcemaps upload --release=$SENTRY_RELEASE_VERSION ./dist"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.989.0",
@@ -38,6 +39,10 @@
     "@plane/logger": "workspace:*",
     "@plane/sdk": "workspace:*",
     "@plane/types": "workspace:*",
+    "@sentry/cli": "catalog:",
+    "@sentry/core": "catalog:",
+    "@sentry/node": "catalog:",
+    "@sentry/profiling-node": "catalog:",
     "@slack/bolt": "^4.4.0",
     "@types/bluebird": "catalog:",
     "@types/cookie-parser": "catalog:",
@@ -49,6 +54,7 @@
     "bluebird": "^3.7.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "dd-trace": "^5.45.0",
     "express": "4.22.0",
     "express-winston": "^4.2.0",
     "jira.js": "^4.0.1",
