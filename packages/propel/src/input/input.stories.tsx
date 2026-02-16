@@ -14,13 +14,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Input } from "./index";
 
-const meta: Meta<typeof Input> = {
+const meta = {
   title: "Components/Input",
   component: Input,
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   argTypes: {
     mode: {
       control: "select",
@@ -45,7 +44,7 @@ const meta: Meta<typeof Input> = {
       control: "boolean",
     },
   },
-};
+} satisfies Meta<typeof Input>;
 
 export default meta;
 type Story = StoryObj<typeof Input>;

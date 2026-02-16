@@ -32,7 +32,6 @@ Perfect for modals, drawers, overlays, and any UI that needs to appear above oth
       },
     },
   },
-  tags: ["autodocs"],
   args: {
     isOpen: false,
     children: null,

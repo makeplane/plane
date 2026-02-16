@@ -24,7 +24,7 @@ const MILESTONE_COLORS = {
   started_no_progress: "#FF9500",
 } as const;
 
-const meta: Meta<typeof MilestoneIcon> = {
+const meta = {
   title: "Icons/MilestoneIcon",
   component: MilestoneIcon,
   argTypes: {
@@ -41,7 +41,7 @@ const meta: Meta<typeof MilestoneIcon> = {
   args: {
     className: "size-6",
   },
-};
+} satisfies Meta<typeof MilestoneIcon>;
 
 export default meta;
 type Story = StoryObj<typeof MilestoneIcon>;

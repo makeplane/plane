@@ -36,7 +36,6 @@ const meta = {
   parameters: {
     layout: "fullscreen",
   },
-  tags: ["autodocs"],
   args: {
     children: null,
   },

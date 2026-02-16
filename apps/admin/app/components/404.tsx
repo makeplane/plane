@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { Link } from "react-router";
 // ui
 import { Button } from "@plane/propel/button";

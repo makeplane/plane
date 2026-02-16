@@ -11,8 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { PopoverMenu } from "./popover-menu";
 
 type TPopoverMenu = {
@@ -20,13 +19,12 @@ type TPopoverMenu = {
   name: string;
 };
 
-const meta: Meta<typeof PopoverMenu<TPopoverMenu>> = {
+const meta = {
   title: "Components/PopoverMenu",
   component: PopoverMenu,
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   args: {
     popperPosition: "bottom-start",
     panelClassName: "rounded-sm bg-gray-100 p-2",
@@ -43,9 +41,9 @@ const meta: Meta<typeof PopoverMenu<TPopoverMenu>> = {
       </div>
     ),
   },
-};
+} satisfies Meta<typeof PopoverMenu<TPopoverMenu>>;
 
 export default meta;
-type Story = StoryObj<typeof PopoverMenu<TPopoverMenu>>;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};

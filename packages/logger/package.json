@@ -23,14 +23,15 @@
     "express-winston": "^4.2.0",
     "winston": "^3.17.0"
   },
+  "peerDependencies": {
+    "@types/express": ">=4"
+  },
   "devDependencies": {
-    "@plane/typescript-config": "workspace:*",
     "@types/express": "catalog:",
+    "@plane/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
   "types": "./dist/index.d.ts"
 }

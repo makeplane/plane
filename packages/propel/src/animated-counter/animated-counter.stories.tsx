@@ -21,7 +21,6 @@ const meta = {
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   args: {
     size: "md",
     count: 0,

@@ -31,7 +31,7 @@ function NewRunnerTaskPage({ params }: Route.ComponentProps) {
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - New Runner Task` : undefined;
 
   return (
-    <WithFeatureFlagHOC flag="PLANE_RUNNER" fallback={null} workspaceSlug={workspaceSlug as string}>
+    <WithFeatureFlagHOC flag="PLANE_RUNNER" fallback={null} workspaceSlug={workspaceSlug}>
       <SettingsContentWrapper header={<ScriptsWorkspaceSettingsHeader />}>
         <PageHead title={pageTitle} />
         <div className="w-full">

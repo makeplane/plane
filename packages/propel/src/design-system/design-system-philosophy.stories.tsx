@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta = {
@@ -30,7 +29,6 @@ Key concepts and rules are preserved, but the implementation is componentized fo
       },
     },
   },
-  tags: ["autodocs"],
 } satisfies Meta;
 
 export default meta;

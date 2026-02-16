@@ -23,7 +23,7 @@ import { useState } from "react";
 
 export const ScriptModal = observer(function ScriptModal(props: {
   isOpen: boolean;
-  defaultScriptId: string | null;
+  defaultScriptId: string | null | undefined;
   handleClose: () => void;
   handleUseSelectedScript: (scriptId: string | null) => void;
 }) {
@@ -32,7 +32,7 @@ export const ScriptModal = observer(function ScriptModal(props: {
   const { isLoading, getScriptsByWorkspaceSlug, fetchScriptById, getScriptById } = useRunners();
   const { workspaceSlug } = useParams();
   // states
-  const [scriptId, setScriptId] = useState<string | null>(defaultScriptId);
+  const [scriptId, setScriptId] = useState<string | null>(defaultScriptId ?? null);
   // derived values
   const scripts = workspaceSlug ? getScriptsByWorkspaceSlug(workspaceSlug) : undefined;
   const script = scriptId && workspaceSlug ? getScriptById(scriptId) : undefined;

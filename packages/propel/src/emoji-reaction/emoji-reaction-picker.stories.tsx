@@ -25,7 +25,6 @@ const meta = {
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
 } satisfies Meta<typeof EmojiReactionPicker>;
 
 export default meta;

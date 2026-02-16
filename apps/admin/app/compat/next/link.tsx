@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { Link as RRLink } from "react-router";
 import { ensureTrailingSlash } from "./helper";
 

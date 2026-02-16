@@ -21,7 +21,6 @@ const meta = {
     layout: "centered",
     controls: { disable: true },
   },
-  tags: ["autodocs"],
   subcomponents: {
     Item: Accordion.Item,
     Trigger: Accordion.Trigger,

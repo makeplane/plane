@@ -21,7 +21,6 @@ const meta = {
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   subcomponents: {
     MenuItem: Menu.MenuItem,
     SubMenu: Menu.SubMenu,

@@ -28,7 +28,6 @@ const meta: Meta<typeof Popover> = {
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   args: {
     children: null,
     open: undefined,

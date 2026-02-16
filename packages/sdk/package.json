@@ -3,9 +3,7 @@
   "version": "0.23.0",
   "private": true,
   "type": "module",
-  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "module": "./dist/index.js",
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"

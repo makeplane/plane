@@ -22,7 +22,6 @@ const meta = {
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   args: { value: false, onChange: () => {} },
   render(args) {
     const [{ value }, updateArgs] = useArgs();

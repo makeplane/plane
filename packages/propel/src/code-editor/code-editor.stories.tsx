@@ -15,10 +15,9 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import { CodeEditor } from "./code-editor";
 // Import bundled types as raw string (Vite handles ?raw imports at build time)
-const meta: Meta<typeof CodeEditor> = {
+const meta = {
   title: "Components/CodeEditor",
   component: CodeEditor,
-  tags: ["autodocs"],
   argTypes: {
     language: {
       control: "select",
@@ -51,7 +50,7 @@ const meta: Meta<typeof CodeEditor> = {
       control: "boolean",
     },
   },
-};
+} satisfies Meta<typeof CodeEditor>;
 
 export default meta;
 type Story = StoryObj<typeof CodeEditor>;

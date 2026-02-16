@@ -11,7 +11,7 @@ import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
 import reactRefreshPlugin from "eslint-plugin-react-refresh";
 import turboPlugin from "eslint-plugin-turbo";
-// import storybookPlugin from "eslint-plugin-storybook";
+import storybookPlugin from "eslint-plugin-storybook";
 
 import prettierConfig from "eslint-config-prettier/flat";
 import globals from "globals";
@@ -47,7 +47,7 @@ export default defineConfig([
   turboPlugin.configs["flat/recommended"],
   tseslint.configs.recommendedTypeChecked,
   // TODO: enable storybook linting once issues are resolved
-  // storybookPlugin.configs["flat/recommended"],
+  storybookPlugin.configs["flat/recommended"],
   {
     settings: {
       react: {

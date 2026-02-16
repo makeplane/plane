@@ -17,7 +17,7 @@ import { IllustrationMap } from "./assets/illustration/constant";
 import { VerticalStackAssetsMap } from "./assets/vertical-stack/constant";
 
 // Meta for asset showcase
-const meta: Meta = {
+const meta = {
   title: "Components/EmptyState/Assets Showcase",
   parameters: {
     layout: "fullscreen",
@@ -27,7 +27,7 @@ const meta: Meta = {
       },
     },
   },
-};
+} satisfies Meta;
 
 export default meta;
 type Story = StoryObj;

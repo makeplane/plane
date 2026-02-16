@@ -11,17 +11,15 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Preview } from "@storybook/react";
-import "../styles/output.css";
+import type { Preview } from "@storybook/react-vite";
+import "./tailwind.css";
+
 const preview: Preview = {
   parameters: {
     controls: {
-      matchers: {
-        color: /(background|color)$/i,
-        date: /Date$/i,
-      },
+      matchers: {},
     },
   },
+  tags: ["autodocs"],
 };
-
 export default preview;

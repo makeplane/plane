@@ -28,7 +28,7 @@ import { CycleIcon } from "./project/cycle-icon";
 import { HomeIcon } from "./workspace/home-icon";
 import { ProjectIcon } from "./workspace/project-icon";
 
-const meta: Meta = {
+const meta = {
   title: "Icons",
   parameters: {
     layout: "padded",
@@ -39,7 +39,7 @@ const meta: Meta = {
       },
     },
   },
-};
+} satisfies Meta;
 
 export default meta;
 type Story = StoryObj;

@@ -32,7 +32,6 @@ const meta = {
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   render(args) {
     const [{ open }, updateArgs] = useArgs();
     const setOpen = (value: boolean) => updateArgs({ open: value });

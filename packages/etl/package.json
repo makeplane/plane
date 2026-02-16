@@ -49,6 +49,9 @@
     "uuid": "catalog:",
     "zod": "^3.24.1"
   },
+  "peerDependencies": {
+    "@octokit/openapi-webhooks-types": ">=8"
+  },
   "devDependencies": {
     "@octokit/openapi-webhooks-types": "^8.3.0",
     "@plane/typescript-config": "workspace:*",

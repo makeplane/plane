@@ -216,7 +216,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
         const assetId = await protect(
           apiClient.asset.uploadAsset.bind(apiClient.asset),
           job.workspace_slug,
-          new File([content], node.name, {
+          new File([new Uint8Array(content)], node.name, {
             type: parsed?.mime,
           }),
           node.name,
