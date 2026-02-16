@@ -180,7 +180,7 @@ export function PageToolbar(props: Props) {
         />
       </div>
       {Object.keys(toolbarItems).map((key) => (
-        <div key={key} className="flex items-center gap-0.5 px-2 first:pl-0 last:pr-0">
+        <div key={key} className="flex items-center gap-0.5 px-2 first:ps-0 last:pr-0">
           {toolbarItems[key].map((item) => (
             <ToolbarButton
               key={item.renderKey}

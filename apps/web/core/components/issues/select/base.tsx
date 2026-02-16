@@ -294,7 +294,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                       if (!query.length) return;
                       handleAddLabel(query);
                     }}
-                    className={`text-left text-secondary ${query.length ? "cursor-pointer" : "cursor-default"}`}
+                    className={`text-start text-secondary ${query.length ? "cursor-pointer" : "cursor-default"}`}
                   >
                     {/* TODO: translate here */}
                     {query.length ? (

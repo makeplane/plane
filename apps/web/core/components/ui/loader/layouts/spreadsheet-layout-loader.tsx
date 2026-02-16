@@ -11,7 +11,7 @@ import { getRandomLength } from "../utils";
 export function SpreadsheetIssueRowLoader(props: { columnCount: number }) {
   return (
     <tr className="border-b border-subtle bg-surface-1">
-      <td className="h-11 min-w-[28rem] z-[10] sticky left-0 flex items-center border-r-[0.5px] border-subtle bg-surface-1">
+      <td className="h-11 min-w-[28rem] z-[10] sticky left-0 flex items-center border-e-[0.5px] border-subtle bg-surface-1">
         <Row className="flex items-center gap-3">
           <span className="h-5 w-10 bg-layer-1 rounded-sm animate-pulse" />
           <span className={`h-5 w-${getRandomLength(["32", "52", "72"])} bg-layer-1 rounded-sm animate-pulse`} />

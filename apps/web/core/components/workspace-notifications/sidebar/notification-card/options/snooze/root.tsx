@@ -37,7 +37,7 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
   const { workspaceSlug, notification, setIsSnoozeStateModalOpen, customSnoozeModal, setCustomSnoozeModal } = props;
   // hooks
   const { isMobile } = usePlatformOS();
-  const {} = useWorkspaceNotifications();
+  const { } = useWorkspaceNotifications();
   const { t } = useTranslation();
   const { asJson: data, snoozeNotification, unSnoozeNotification } = notification;
 

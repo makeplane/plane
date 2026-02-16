@@ -87,7 +87,7 @@ export function AlertModalCore(props: Props) {
             {customIcon ? <>{customIcon}</> : <Icon className="size-5" aria-hidden="true" />}
           </span>
         )}
-        <div className="text-center sm:text-left">
+        <div className="text-center sm:text-start">
           <h3 className="text-16 font-medium">{title}</h3>
           <p className="mt-1 text-13 text-secondary">{content}</p>
         </div>

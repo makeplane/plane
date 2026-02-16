@@ -79,7 +79,7 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
       as="div"
       className={cn("relative h-full flex max-w-48 w-fit whitespace-nowrap truncate", {
         "w-full justify-center text-center": variant === "sidebar",
-        "flex-grow justify-stretch text-left truncate": variant === "top-navigation",
+        "flex-grow justify-stretch text-start truncate": variant === "top-navigation",
       })}
     >
       {({ open, close }: { open: boolean; close: () => void }) => {
@@ -155,16 +155,16 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
                   )}
                 >
                   <div className="overflow-x-hidden vertical-scrollbar scrollbar-sm flex max-h-96 flex-col items-start justify-start overflow-y-scroll">
-                    <span className="rounded-md text-left px-4 sticky top-0 z-21 h-full w-full bg-surface-1 pb-1 pt-3 text-13 font-medium text-placeholder truncate flex-shrink-0">
+                    <span className="rounded-md text-start px-4 sticky top-0 z-21 h-full w-full bg-surface-1 pb-1 pt-3 text-13 font-medium text-placeholder truncate flex-shrink-0">
                       {currentUser?.email}
                     </span>
                     {workspacesList ? (
                       <div className="size-full flex flex-col items-start justify-start">
                         {(activeWorkspace
                           ? [
-                              activeWorkspace,
-                              ...workspacesList.filter((workspace) => workspace.id !== activeWorkspace?.id),
-                            ]
+                            activeWorkspace,
+                            ...workspacesList.filter((workspace) => workspace.id !== activeWorkspace?.id),
+                          ]
                           : workspacesList
                         ).map((workspace) => (
                           <SidebarDropdownItem

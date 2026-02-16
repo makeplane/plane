@@ -45,7 +45,7 @@ export const IssueColumn = observer(function IssueColumn(props: Props) {
     >
       <td
         tabIndex={0}
-        className="h-11 min-w-36 text-13 after:absolute after:w-full after:bottom-[-1px] after:border after:border-subtle border-r-[1px] border-subtle"
+        className="h-11 min-w-36 text-13 after:absolute after:w-full after:bottom-[-1px] after:border after:border-subtle border-e-[1px] border-subtle"
         ref={tableCellRef}
       >
         <Column

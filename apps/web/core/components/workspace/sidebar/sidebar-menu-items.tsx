@@ -106,7 +106,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
           <Disclosure.Button
             as="button"
             type="button"
-            className="w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder"
+            className="w-full flex items-center gap-1 whitespace-nowrap text-start text-13 font-semibold text-placeholder"
             onClick={() => toggleListDisclosure(!isWorkspaceMenuOpen)}
             aria-label={t(
               isWorkspaceMenuOpen

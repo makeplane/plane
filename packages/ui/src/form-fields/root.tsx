@@ -16,7 +16,7 @@ interface LabelProps {
 
 export function Label({ htmlFor, children, className }: LabelProps) {
   return (
-    <label htmlFor={htmlFor} className={cn("block text-13 font-medium text-primary", className)}>
+    <label htmlFor={htmlFor} className={cn("block text-start text-13 font-medium text-primary", className)}>
       {children}
     </label>
   );

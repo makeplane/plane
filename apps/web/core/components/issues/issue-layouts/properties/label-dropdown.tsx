@@ -201,13 +201,12 @@ export function LabelDropdown(props: ILabelDropdownProps) {
       <button
         ref={setReferenceElement}
         type="button"
-        className={`clickable flex w-full h-full items-center justify-center gap-1 text-caption-sm-regular ${fullWidth && "hover:bg-layer-1"} ${
-          disabled
+        className={`clickable flex w-full h-full items-center justify-center gap-1 text-caption-sm-regular ${fullWidth && "hover:bg-layer-1"} ${disabled
             ? "cursor-not-allowed text-secondary"
             : value.length <= maxRender
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-layer-1"
-        }  ${buttonClassName}`}
+          }  ${buttonClassName}`}
         onClick={handleOnClick}
         disabled={disabled}
       >
@@ -238,7 +237,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
       <ComboDropDown
         as="div"
         ref={dropdownRef}
-        className={`w-auto max-w-full h-full flex-shrink-0 text-left ${className}`}
+        className={`w-auto max-w-full h-full flex-shrink-0 text-start ${className}`}
         value={value}
         onChange={onChange}
         disabled={disabled}
@@ -282,8 +281,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
                         }
                       }}
                       className={({ active, selected }) =>
-                        `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 hover:bg-layer-1 ${
-                          active ? "bg-layer-1" : ""
+                        `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 hover:bg-layer-1 ${active ? "bg-layer-1" : ""
                         } ${selected ? "text-primary" : "text-secondary"}`
                       }
                     >
@@ -307,7 +305,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
                       if (!query.length) return;
                       handleAddLabel(query);
                     }}
-                    className={`text-left text-secondary ${query.length ? "cursor-pointer" : "cursor-default"}`}
+                    className={`text-start text-secondary ${query.length ? "cursor-pointer" : "cursor-default"}`}
                   >
                     {/* TODO: translate here */}
                     {query.length ? (
@@ -319,7 +317,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
                     )}
                   </p>
                 ) : (
-                  <p className="text-left text-secondary ">{t("common.search.no_matching_results")}</p>
+                  <p className="text-start text-secondary ">{t("common.search.no_matching_results")}</p>
                 )}
               </div>
             </div>

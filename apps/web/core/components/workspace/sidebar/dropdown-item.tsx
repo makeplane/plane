@@ -53,9 +53,8 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
         <div className="flex items-center justify-between gap-1 rounded-sm p-1 text-13 text-primary ">
           <div className="flex items-center justify-start gap-2.5 w-[80%] relative">
             <span
-              className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-14 uppercase font-medium border-subtle ${
-                !workspace?.logo_url && "rounded-md bg-[#026292] text-on-color"
-              }`}
+              className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-14 uppercase font-medium border-subtle ${!workspace?.logo_url && "rounded-md bg-[#026292] text-on-color"
+                }`}
             >
               {workspace?.logo_url && workspace.logo_url !== "" ? (
                 <img
@@ -69,7 +68,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
             </span>
             <div className="w-[inherit]">
               <div
-                className={`truncate text-left text-ellipsis text-13 font-medium ${workspaceSlug === workspace.slug ? "" : "text-secondary"}`}
+                className={`truncate text-start text-ellipsis text-13 font-medium ${workspaceSlug === workspace.slug ? "" : "text-secondary"}`}
               >
                 {workspace.name}
               </div>

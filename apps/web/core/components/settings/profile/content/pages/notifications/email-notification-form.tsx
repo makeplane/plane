@@ -100,7 +100,7 @@ export const NotificationsProfileSettingsForm = observer(function NotificationsP
           />
         }
       />
-      <div className="border-l-3 border-subtle-1 pl-3">
+      <div className="border-s-3 border-subtle-1 ps-3">
         <SettingsControlItem
           title={t("issue_completed")}
           description={t("issue_completed_description")}

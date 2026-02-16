@@ -162,8 +162,8 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
       },
       {
         accessorKey: "count",
-        header: () => <div className="text-right">Count</div>,
-        cell: ({ row }) => <div className="text-right">{row.original.count}</div>,
+        header: () => <div className="text-end">Count</div>,
+        cell: ({ row }) => <div className="text-end">{row.original.count}</div>,
         meta: {
           export: {
             key: "Count",
@@ -181,8 +181,8 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
       parsedData
         ? Object.keys(parsedData?.schema ?? {}).map((key) => ({
             accessorKey: key,
-            header: () => <div className="text-right">{parsedData.schema[key]}</div>,
-            cell: ({ row }) => <div className="text-right">{row.original[key]}</div>,
+            header: () => <div className="text-end">{parsedData.schema[key]}</div>,
+            cell: ({ row }) => <div className="text-end">{row.original[key]}</div>,
             meta: {
               export: {
                 key,
