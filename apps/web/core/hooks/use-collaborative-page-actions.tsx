@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect, useCallback, useMemo } from "react";
 import type { EditorRefApi, TDocumentEventsServer } from "@plane/editor";
 import type { TDocumentEventsClient } from "@plane/editor/lib";

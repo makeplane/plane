@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -254,6 +260,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
 
   if (!project) return null;
 
+  const isAccordionMode = projectPreferences.navigationMode === "ACCORDION";
+
   const handleItemClick = () => {
     if (projectPreferences.navigationMode === "ACCORDION") {
       setIsProjectListOpen(!isProjectListOpen);
@@ -261,12 +269,10 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
       router.push(defaultTabUrl);
     }
     // close the extended sidebar if it is open
-    if (isExtendedProjectSidebarOpened) {
+    if (isExtendedProjectSidebarOpened && !isAccordionMode) {
       toggleExtendedProjectSidebar(false);
     }
   };
-
-  const isAccordionMode = projectPreferences.navigationMode === "ACCORDION";
 
   const shouldHighlightProject = URLProjectId === project?.id && projectPreferences.navigationMode !== "ACCORDION";
 

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -37,7 +43,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
   const { workItem: workItemIdentifierFromRoute } = useParams();
   // store hooks
   const { t } = useTranslation();
-  const { toggleSidebar } = useAppTheme();
+  const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar, toggleSidebar } = useAppTheme();
   const { getPartialProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
   const {
@@ -55,6 +61,10 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
   const handleProjectClick = () => {
     if (window.innerWidth < 768) {
       toggleSidebar();
+    }
+    // close the extended sidebar if it is open
+    if (isExtendedProjectSidebarOpened) {
+      toggleExtendedProjectSidebar(false);
     }
   };
 

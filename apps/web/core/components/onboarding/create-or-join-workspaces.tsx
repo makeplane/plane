@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { OctagonAlert } from "lucide-react";
 // plane imports
@@ -7,8 +13,7 @@ import type { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types"
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { useUser } from "@/hooks/store/user";
-// plane web helpers
-import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
+import { useInstance } from "@/hooks/store/use-instance";
 // local imports
 import { CreateWorkspace } from "./create-workspace";
 import { Invitations } from "./invitations";
@@ -27,13 +32,14 @@ type Props = {
 };
 
 export const CreateOrJoinWorkspaces = observer(function CreateOrJoinWorkspaces(props: Props) {
-  const { invitations, totalSteps, stepChange, finishOnboarding } = props;
+  const { invitations, stepChange, finishOnboarding } = props;
   // states
   const [currentView, setCurrentView] = useState<ECreateOrJoinWorkspaceViews | null>(null);
   // store hooks
   const { data: user } = useUser();
+  const { config } = useInstance();
   // derived values
-  const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
+  const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled ?? false;
 
   useEffect(() => {
     if (invitations.length > 0) {
@@ -60,7 +66,7 @@ export const CreateOrJoinWorkspaces = observer(function CreateOrJoinWorkspaces(p
               handleCurrentViewChange={() => setCurrentView(ECreateOrJoinWorkspaceViews.WORKSPACE_CREATE)}
             />
           ) : currentView === ECreateOrJoinWorkspaceViews.WORKSPACE_CREATE ? (
-            isWorkspaceCreationEnabled ? (
+            !isWorkspaceCreationDisabled ? (
               <CreateWorkspace
                 stepChange={stepChange}
                 user={user ?? undefined}

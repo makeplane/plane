@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { TLogoProps } from "../common";
 import type { EPageAccess } from "../enums";
 import type { TPageExtended } from "./extended";
@@ -8,7 +14,7 @@ export type TPage = {
   color: string | undefined;
   created_at: Date | undefined;
   created_by: string | undefined;
-  description: object | undefined;
+  description_json: object | undefined;
   description_html: string | undefined;
   id: string | undefined;
   is_favorite: boolean;
@@ -66,7 +72,7 @@ export type TPageVersion = {
 export type TDocumentPayload = {
   description_binary: string;
   description_html: string;
-  description: object;
+  description_json: object;
 };
 
 export type TWebhookConnectionQueryParams = {

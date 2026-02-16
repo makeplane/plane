@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { MutableRefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -306,7 +312,17 @@ export const ListGroup = observer(function ListGroup(props: Props) {
             />
           )}
 
-          {shouldLoadMore && (group_by ? <>{loadMore}</> : <ListLoaderItemRow ref={setIntersectionElement} />)}
+          {shouldLoadMore &&
+            (group_by ? (
+              <>{loadMore}</>
+            ) : (
+              <>
+                {Array.from({ length: 2 }).map((_, index) => (
+                  <ListLoaderItemRow key={index} />
+                ))}
+                <ListLoaderItemRow ref={setIntersectionElement} />
+              </>
+            ))}
 
           {enableIssueQuickAdd &&
             !disableIssueCreation &&

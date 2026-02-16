@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
@@ -106,7 +112,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
         tHeadClassName="border-b border-subtle"
         thClassName="text-left font-medium divide-x-0 text-placeholder"
         tBodyClassName="divide-y-0"
-        tBodyTrClassName="divide-x-0 p-4 h-[40px] text-secondary"
+        tBodyTrClassName="divide-x-0 p-4 h-10 text-secondary"
         tHeadTrClassName="divide-x-0"
       />
     </div>

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { NodeViewProps } from "@tiptap/react";
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
 import { useState } from "react";
@@ -29,13 +35,14 @@ export function CustomCalloutBlock(props: CustomCalloutNodeViewProps) {
 
   return (
     <NodeViewWrapper
+      key={node.attrs[ECalloutAttributeNames.ID]}
       className="editor-callout-component group/callout-node relative bg-layer-3 rounded-lg text-primary p-4 my-2 flex items-start gap-4 transition-colors duration-500 break-words"
       style={{
         backgroundColor: activeBackgroundColor,
       }}
     >
       <CalloutBlockLogoSelector
-        key={node.attrs["id"]}
+        key={node.attrs[ECalloutAttributeNames.ID]}
         blockAttributes={node.attrs}
         disabled={!editor.isEditable}
         isOpen={isEmojiPickerOpen}

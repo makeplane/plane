@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import type {
@@ -24,7 +30,7 @@ import { Input, Spinner } from "@plane/ui";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // components
 import { CommonOnboardingHeader } from "../common";
 

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { MutableRefObject } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -305,7 +311,17 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
         isEpic={isEpic}
       />
 
-      {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
+      {shouldLoadMore &&
+        (isSubGroup ? (
+          <>{loadMore}</>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <KanbanIssueBlockLoader key={index} />
+            ))}
+            <KanbanIssueBlockLoader ref={setIntersectionElement} />
+          </div>
+        ))}
 
       {enableQuickIssueCreate &&
         !disableIssueCreation &&
