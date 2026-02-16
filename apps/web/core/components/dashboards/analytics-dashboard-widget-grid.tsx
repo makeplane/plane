@@ -6,13 +6,13 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { ResponsiveGridLayout } from "react-grid-layout";
+import { ResponsiveGridLayout  } from "react-grid-layout";
+import type {Layout} from "react-grid-layout";
 import { Plus } from "lucide-react";
 import type { IAnalyticsDashboardWidget } from "@plane/types";
 import { EAnalyticsWidgetType } from "@plane/types";
 import { AnalyticsDashboardWidgetCard } from "./analytics-dashboard-widget-card";
 import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
 
 // Minimum size constraints per widget type
 const MIN_SIZE: Record<string, { minW: number; minH: number }> = {
@@ -96,15 +96,13 @@ export const AnalyticsDashboardWidgetGrid = observer(function AnalyticsDashboard
 
   // Debounced layout change handler
   const handleLayoutChange = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (currentLayout: any) => {
+    (currentLayout: Layout) => {
       if (!isEditMode || !onLayoutChange) return;
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => {
-        const items = Array.isArray(currentLayout) ? currentLayout : [];
-        const positions: WidgetPosition[] = items
-          .filter((item: { i: string }) => item.i !== "__add_widget__")
-          .map((item: { i: string; x: number; y: number; w: number; h: number }) => ({
+        const positions: WidgetPosition[] = currentLayout
+          .filter((item) => item.i !== "__add_widget__")
+          .map((item) => ({
             id: item.i,
             position: { row: item.y, col: item.x, width: item.w, height: item.h },
           }));
@@ -130,12 +128,12 @@ export const AnalyticsDashboardWidgetGrid = observer(function AnalyticsDashboard
           cols={COLS}
           width={containerWidth}
           rowHeight={60}
-          draggableHandle=".widget-drag-handle"
-          onLayoutChange={handleLayoutChange as any}
+          onLayoutChange={(layout) => handleLayoutChange(layout)}
           margin={[16, 16] as [number, number]}
           containerPadding={[0, 0] as [number, number]}
           compactType="vertical"
-          {...({ isDraggable: isEditMode, isResizable: isEditMode } as any)}
+          dragConfig={{ enabled: isEditMode, bounded: false, handle: ".widget-drag-handle" }}
+          resizeConfig={{ enabled: isEditMode }}
         >
           {widgets.map((widget) => (
             <div key={widget.id}>
