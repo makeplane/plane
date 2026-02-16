@@ -30,6 +30,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CustomerQuickActions } from "@/components/customers/actions";
+import { getCustomerLogoSrc } from "@/components/customers/utils";
 import { useCustomers } from "@/plane-web/hooks/store";
 
 export const CustomerDetailHeader = observer(function CustomerDetailHeader() {
@@ -54,7 +55,9 @@ export const CustomerDetailHeader = observer(function CustomerDetailHeader() {
       return {
         value: _customer.id,
         query: _customer.name,
-        content: <SwitcherLabel logo_url={_customer.logo_url} name={_customer.name} LabelIcon={CustomersIcon} />,
+        content: (
+          <SwitcherLabel logo_url={getCustomerLogoSrc(_customer)} name={_customer.name} LabelIcon={CustomersIcon} />
+        ),
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];

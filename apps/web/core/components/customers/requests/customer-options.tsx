@@ -22,6 +22,7 @@ import { CheckIcon, CustomersIcon, SearchIcon } from "@plane/propel/icons";
 import type { TCustomer } from "@plane/types";
 import { cn } from "@plane/utils";
 import { SwitcherIcon } from "@/components/common/switcher-label";
+import { getCustomerLogoSrc } from "@/components/customers/utils";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 interface Props {
@@ -79,7 +80,7 @@ export const CustomerOptions = observer(function CustomerOptions(props: Props) {
         query: customer.name ?? "",
         content: (
           <div className="flex items-center gap-2">
-            <SwitcherIcon logo_url={customer.logo_url} LabelIcon={CustomersIcon} />
+            <SwitcherIcon logo_url={getCustomerLogoSrc(customer)} LabelIcon={CustomersIcon} />
             <span className="flex-grow truncate">{customer.name}</span>
           </div>
         ),

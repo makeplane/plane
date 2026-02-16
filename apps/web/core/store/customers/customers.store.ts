@@ -326,11 +326,13 @@ export class CustomerStore implements ICustomersStore {
         update(this.customersMap, [customerId], (customer) => ({ ...customer, ...data }));
       });
       const response = await this.customerService.update(workspaceSlug, customerId, data);
-      if (data.logo_asset) {
-        runInAction(() => {
-          update(this.customersMap, [customerId], (customer) => ({ ...customer, logo_url: response.logo_url }));
-        });
-      }
+      runInAction(() => {
+        update(this.customersMap, [customerId], (customer) => ({
+          ...customer,
+          logo_url: response.logo_url,
+          logo_props: response.logo_props,
+        }));
+      });
       return response;
     } catch (error) {
       runInAction(() => {

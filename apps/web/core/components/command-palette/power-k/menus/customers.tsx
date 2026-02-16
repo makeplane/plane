@@ -17,6 +17,7 @@ import { observer } from "mobx-react";
 import { CustomersIcon } from "@plane/propel/icons";
 import type { TCustomer } from "@plane/types";
 import { SwitcherIcon } from "@/components/common/switcher-label";
+import { getCustomerLogoSrc } from "@/components/customers/utils";
 import { PowerKMenuBuilder } from "@/components/power-k/menus/builder";
 
 type Props = {
@@ -29,7 +30,9 @@ export const PowerKCustomersMenu = observer(function PowerKCustomersMenu({ custo
     <PowerKMenuBuilder
       heading="Customers"
       items={customers}
-      getIconNode={(customer) => <SwitcherIcon logo_url={customer.logo_url} LabelIcon={CustomersIcon} size={14} />}
+      getIconNode={(customer) => (
+        <SwitcherIcon logo_url={getCustomerLogoSrc(customer)} LabelIcon={CustomersIcon} size={14} />
+      )}
       getKey={(customer) => customer.id || customer.name}
       getLabel={(customer) => customer.name}
       getValue={(customer) => customer.name}

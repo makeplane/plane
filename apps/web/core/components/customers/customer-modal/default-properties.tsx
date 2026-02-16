@@ -12,7 +12,7 @@
  */
 
 import type { FC } from "react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane constants
 import {
@@ -54,6 +54,16 @@ export function DefaultProperties(props: Props) {
   const { workspaceSlug, submitBtnRef, customerId, onAssetUpload } = props;
   //states
   const [logo, setLogo] = useState<File | null>(null);
+  const [logoBlobUrl, setLogoBlobUrl] = useState<string | null>(null);
+  // Memoize the blob URL and revoke on cleanup to prevent memory leaks
+  useEffect(() => {
+    if (logo) {
+      const url = URL.createObjectURL(logo);
+      setLogoBlobUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+    setLogoBlobUrl(null);
+  }, [logo]);
   // i18n
   const { t } = useTranslation();
   // hooks
@@ -136,7 +146,7 @@ export function DefaultProperties(props: Props) {
               {value || logo ? (
                 <div className="bg-surface-1 rounded-md h-11 w-11 overflow-hidden border-[0.5px] border-subtle-1">
                   <img
-                    src={logo ? URL.createObjectURL(logo) : value && value !== "" ? (getFileURL(value) ?? "") : ""}
+                    src={logoBlobUrl ?? (value && value !== "" ? (getFileURL(value) ?? "") : "")}
                     alt="customer logo"
                     className="w-full h-full object-cover rounded-md"
                   />

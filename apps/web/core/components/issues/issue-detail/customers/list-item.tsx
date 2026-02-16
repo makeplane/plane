@@ -16,9 +16,9 @@ import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { CustomersIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { getFileURL } from "@plane/utils";
 import { Popover } from "@plane/propel/popover";
 // components
+import { getCustomerLogoSrc } from "@/components/customers/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { useCustomers } from "@/plane-web/hooks/store";
@@ -38,6 +38,7 @@ export const CustomerSidebarListitem = observer(function CustomerSidebarListitem
   // derived values
   const customer = getCustomerById(customerId);
   const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const customerLogoSrc = getCustomerLogoSrc(customer);
 
   if (!customer) return null;
   return (
@@ -48,9 +49,9 @@ export const CustomerSidebarListitem = observer(function CustomerSidebarListitem
             type="button"
             className="h-full w-full flex items-center gap-1.5 rounded-lg px-2 py-0.5 bg-layer-transparent-active hover:bg-layer-transparent-hover text-body-xs-regular text-tertiary truncate"
           >
-            {customer.logo_url ? (
+            {customerLogoSrc ? (
               <img
-                src={getFileURL(customer.logo_url)}
+                src={customerLogoSrc}
                 alt="customer-logo"
                 className="rounded-md w-3 h-3 object-cover flex-shrink-0"
               />

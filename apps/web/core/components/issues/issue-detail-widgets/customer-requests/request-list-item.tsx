@@ -18,12 +18,12 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CustomersIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { getFileURL } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // plane web imports
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { SourceItem, SourceCreateUpdateModal, RequestAttachmentsCollapsible } from "@/components/customers";
+import { getCustomerLogoSrc } from "@/components/customers/utils";
 import { CustomerRequestQuickActions } from "@/components/customers/actions";
 import { useCustomers } from "@/plane-web/hooks/store";
 // local imports
@@ -59,6 +59,7 @@ export const WorkItemRequestListItem = observer(function WorkItemRequestListItem
   const customerId = request?.customer_id ?? "";
   const customer = getCustomerById(customerId);
   const workspaceDetails = getWorkspaceBySlug(workspaceSlug);
+  const customerLogoSrc = getCustomerLogoSrc(customer);
 
   const handleUpdateSource = (link: string) => {
     updateCustomerRequest(workspaceSlug, customerId, requestId, { link })
@@ -111,12 +112,8 @@ export const WorkItemRequestListItem = observer(function WorkItemRequestListItem
         <div className="flex justify-between items-center mb-1">
           <div className="flex items-center gap-1 px-2 py-1 bg-surface-1 border border-subtle-1 rounded-lg">
             <div className="p-1">
-              {customer?.logo_url ? (
-                <img
-                  src={getFileURL(customer.logo_url)}
-                  alt="customer-logo"
-                  className="rounded-sm w-3 h-3 object-cover"
-                />
+              {customerLogoSrc ? (
+                <img src={customerLogoSrc} alt="customer-logo" className="rounded-sm w-3 h-3 object-cover" />
               ) : (
                 <div className="bg-layer-1 rounded-md flex items-center justify-center h-3 w-3">
                   <CustomersIcon className="size-4 opacity-50" />

@@ -34,6 +34,7 @@ import { CustomerRequestsRoot, WorkItemsList } from "@/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
+import { getCustomerLogoSrc } from "@/components/customers/utils";
 import { CustomerLogoInput } from "./logo-input";
 
 const fileService = new FileService();
@@ -148,7 +149,7 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
           handleOpenLogoInput={handleOpenLogoInput}
           onLogoUpload={onLogoUpload}
           logoInputRef={logoInputRef}
-          logo_url={customer.logo_url}
+          customerLogoSrc={getCustomerLogoSrc(customer)}
           logo={logo}
         />
         <div className="w-full">

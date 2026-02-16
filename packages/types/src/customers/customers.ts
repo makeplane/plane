@@ -18,10 +18,19 @@ import type { TIssue } from "../issues/issue";
 export type TCustomerContractStatus = "active" | "pre_contract" | "signed" | "inactive";
 
 export type TCustomerStage = "lead" | "sales_qualified_lead" | "contract_negotiation" | "closed_won" | "closed_lost";
+export type TCustomerLogoProps = {
+  title?: string;
+  favicon?: string;
+  favicon_url?: string;
+  url?: string;
+  error?: string;
+};
+
 export type TCustomer = {
   id: string | undefined;
   name: string;
   logo_url: string;
+  logo_props: TCustomerLogoProps;
   description: object | undefined;
   description_html: string | undefined;
   description_stripped: string | undefined;

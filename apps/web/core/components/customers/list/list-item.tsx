@@ -19,11 +19,12 @@ import Link from "next/link";
 import { useTranslation } from "@plane/i18n";
 import { CustomerRequestIcon, CustomersIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { getFileURL, formatURLForDisplay } from "@plane/utils";
+import { formatURLForDisplay } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 // plane web imports
 import { CustomerQuickActions } from "@/components/customers/actions";
+import { getCustomerLogoSrc } from "@/components/customers/utils";
 import { useCustomers } from "@/plane-web/hooks/store";
 
 type TCustomerListItemProps = {
@@ -43,6 +44,7 @@ export const CustomerListItem = observer(function CustomerListItem(props: TCusto
   // derived values
   const customer = getCustomerById(customerId);
   const requestCount = customer?.customer_request_count || 0;
+  const customerLogoSrc = getCustomerLogoSrc(customer);
 
   if (!customer) return null;
   return (
@@ -52,13 +54,9 @@ export const CustomerListItem = observer(function CustomerListItem(props: TCusto
       prependTitleElement={
         <div className="flex gap-2 items-center">
           <div className="rounded-md border-subtle-1">
-            {customer?.logo_url && customer.logo_url !== "" ? (
+            {customerLogoSrc ? (
               <div className="bg-surface-1 rounded-md h-9 w-9 overflow-hidden border-[0.5px] border-subtle-1">
-                <img
-                  src={getFileURL(customer.logo_url)}
-                  alt="customer logo"
-                  className="w-full h-full object-cover rounded-md"
-                />
+                <img src={customerLogoSrc} alt="customer logo" className="w-full h-full object-cover rounded-md" />
               </div>
             ) : (
               <div className="bg-layer-1 rounded-md flex items-center justify-center h-9 w-9">

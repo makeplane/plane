@@ -19,10 +19,10 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TCustomer } from "@plane/types";
-import { getFileURL, formatURLForDisplay } from "@plane/utils";
+import { formatURLForDisplay } from "@plane/utils";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
+import { getAbbreviatedNumber, getCustomerLogoSrc } from "@/components/customers/utils";
 import { useMember } from "@/hooks/store/use-member";
-import { getAbbreviatedNumber } from "@/components/customers/utils";
 type TProps = {
   customer: TCustomer;
   workspaceSlug: string;
@@ -36,6 +36,7 @@ export function CustomerPreview(props: TProps) {
   const createdByDetails = customer ? getUserDetails(customer.created_by) : undefined;
   const contractStatus = CUSTOMER_CONTRACT_STATUS.find((status) => status.value === customer?.contract_status);
   const stage = CUSTOMER_STAGES.find((stage) => stage.value === customer?.stage);
+  const customerLogoSrc = getCustomerLogoSrc(customer);
   return (
     <div className="bg-layer-1/40">
       <div className={"min-w-[350px] max-w-[400px]"}>
@@ -43,12 +44,8 @@ export function CustomerPreview(props: TProps) {
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center truncate">
               <div className="border border-subtle-1 rounded-md">
-                {customer.logo_url ? (
-                  <img
-                    src={getFileURL(customer.logo_url)}
-                    alt="customer-logo"
-                    className="rounded-md w-8 h-8 object-cover"
-                  />
+                {customerLogoSrc ? (
+                  <img src={customerLogoSrc} alt="customer-logo" className="rounded-md w-8 h-8 object-cover" />
                 ) : (
                   <div className="bg-layer-1 rounded-md flex items-center justify-center p-1.5">
                     <CustomersIcon className="size-6 opacity-50" />
