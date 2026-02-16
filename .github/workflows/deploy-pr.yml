@@ -380,13 +380,58 @@ jobs:
           role-to-assume: ${{ secrets.AWS_SECRET_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
 
-      - name: Retrieve deploy secrets from AWS Secrets Manager
-        id: deploy-secrets
+      - name: Retrieve deploy secrets safely
         run: |
-          SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id ${{ secrets.AWS_SECRET_NAME || 'github-actions/github-actions-secrets' }} --query SecretString --output text)
-          CLOUDFLARE_TOKEN=$(echo $SECRET_JSON | jq -r '.cloudflare_api_token')
-          echo "cloudflare_token=$CLOUDFLARE_TOKEN" >> $GITHUB_ENV
-          echo "::add-mask::$CLOUDFLARE_TOKEN"
+            SECRET_JSON=$(aws secretsmanager get-secret-value \
+              --secret-id ${{ secrets.AWS_SECRET_NAME || 'github-actions/github-actions-secrets' }} \
+              --query SecretString \
+              --output text)
+
+            CLOUDFLARE_TOKEN=$(echo "$SECRET_JSON" | jq -r '.cloudflare_api_token')
+            REDIS_URL=$(echo "$SECRET_JSON" | jq -r '.redis_url')
+            RDS_HOST=$(echo "$SECRET_JSON" | jq -r '.rds_host')
+            RDS_USER=$(echo "$SECRET_JSON" | jq -r '.rds_user')
+            RDS_PASSWORD=$(echo "$SECRET_JSON" | jq -r '.rds_password')
+
+            # Mask sensitive values immediately after extraction
+            echo "::add-mask::$RDS_PASSWORD"
+            echo "::add-mask::$REDIS_URL"
+            echo "::add-mask::$CLOUDFLARE_TOKEN"
+            echo "::add-mask::$RDS_HOST"
+            echo "::add-mask::$RDS_USER"
+
+            # Generate random delimiter for heredoc to prevent injection
+            DELIMITER=$(openssl rand -hex 16)
+
+            {
+              echo "cloudflare_token<<${DELIMITER}"
+              echo "$CLOUDFLARE_TOKEN"
+              echo "${DELIMITER}"
+            } >> "$GITHUB_ENV"
+
+            {
+              echo "redis_url<<${DELIMITER}"
+              echo "$REDIS_URL"
+              echo "${DELIMITER}"
+            } >> "$GITHUB_ENV"
+
+            {
+              echo "rds_host<<${DELIMITER}"
+              echo "$RDS_HOST"
+              echo "${DELIMITER}"
+            } >> "$GITHUB_ENV"
+
+            {
+              echo "rds_user<<${DELIMITER}"
+              echo "$RDS_USER"
+              echo "${DELIMITER}"
+            } >> "$GITHUB_ENV"
+
+            {
+              echo "rds_password<<${DELIMITER}"
+              echo "$RDS_PASSWORD"
+              echo "${DELIMITER}"
+            } >> "$GITHUB_ENV"
 
       - name: Configure AWS credentials to assume the EKS role
         uses: aws-actions/configure-aws-credentials@v4
@@ -464,6 +509,8 @@ jobs:
 
           if [ "${DEPLOY_TYPE}" == "enterprise" ]; then
             RELEASE_NAME="${RELEASE_NAME}-ent"
+            DATABASE_NAME="ee${PR_NUMBER}ent"
+            PG_URI="postgresql://${{ env.rds_user }}:${{ env.rds_password }}@${{ env.rds_host }}:5432/${DATABASE_NAME}"
             APP_HOST="feat-${PR_NUMBER}-ee.feat.plane.town"
             NAMESPACE="${RELEASE_NAME}"
             helm upgrade --install "${RELEASE_NAME}" "${CHART_REF}" \
@@ -479,6 +526,8 @@ jobs:
               --set services.live.image=makeplane/plane-live-${{ needs.pre-requisites.outputs.image_repo }} \
               --set services.admin.image=makeplane/plane-admin-${{ needs.pre-requisites.outputs.image_repo }} \
               --set services.proxy.image=makeplane/plane-proxy-${{ needs.pre-requisites.outputs.image_repo }} \
+              --set services.postgres.local_setup=false \
+              --set services.redis.local_setup=false \
               --set planeVersion=${IMAGE_TAG} \
               --set ingress.enabled=true \
               --set license.licenseDomain=${APP_HOST} \
@@ -488,11 +537,15 @@ jobs:
               --set ssl.token=${{ env.cloudflare_token }} \
               --set ssl.email=engineering@plane.so \
               --set ssl.generateCerts=true \
-              --set env.storageClass=gp2
+              --set env.storageClass=gp2 \
+              --set-string env.pgdb_remote_url="${PG_URI}" \
+              --set-string env.remote_redis_url="${{ env.redis_url }}"
           else
             RELEASE_NAME="${RELEASE_NAME}-cloud"
             APP_HOST="feat-${PR_NUMBER}-cloud.feat.plane.town"
             NAMESPACE="${RELEASE_NAME}"
+            DATABASE_NAME="ee${PR_NUMBER}cloud"
+            PG_URI="postgresql://${{ env.rds_user }}:${{ env.rds_password }}@${{ env.rds_host }}:5432/${DATABASE_NAME}"
             helm upgrade --install "${RELEASE_NAME}" "${CHART_REF}" \
               --namespace ${NAMESPACE} \
               --create-namespace \
@@ -527,6 +580,10 @@ jobs:
               --set services.email_service.enabled=false \
               --set services.pi_worker.enabled=false \
               --set services.pi_beat_worker.enabled=false \
+            --set services.postgres.local_setup=false \
+            --set services.redis.local_setup=false \
+            --set services.postgres.pg_db_remote_url=${PG_URI} \
+            --set services.redis.redis_remote_url=${{ env.redis_url }} \
               --set django_backend.session_cookie_domain=.plane.town \
               --set opensearch.enabled=false \
               --set planeVersion=${IMAGE_TAG}
