@@ -127,6 +127,11 @@ export class InboxIssueStore implements IInboxIssueStore {
         }
       });
 
+      // Update counts
+      const currentTotalResults = this.store.projectInbox.inboxIssuePaginationInfo?.total_results ?? 0;
+      const updatedCount = currentTotalResults > 0 ? currentTotalResults - 1 : currentTotalResults;
+      set(this.store.projectInbox, ["inboxIssuePaginationInfo", "total_results"], updatedCount);
+
       // If issue accepted sync issue to local db
       if (status === EInboxIssueStatus.ACCEPTED) {
         const updatedIssue = { ...this.issue, ...inboxIssue.issue };
