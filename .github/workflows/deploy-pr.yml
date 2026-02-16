@@ -60,7 +60,7 @@ jobs:
   branch_build_push_admin:
     name: Build-Push Admin Docker Image
     needs: [pre-requisites]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     permissions:
       id-token: write
       contents: read
@@ -95,7 +95,7 @@ jobs:
   branch_build_push_silo:
     name: Build-Push Silo Docker Image
     needs: [pre-requisites]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     permissions:
       id-token: write
       contents: read
@@ -129,7 +129,7 @@ jobs:
 
   branch_build_push_web:
     name: Build-Push Web Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [pre-requisites]
     permissions:
         id-token: write
@@ -164,7 +164,7 @@ jobs:
 
   branch_build_push_space:
     name: Build-Push Space Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [pre-requisites]
     permissions:
       id-token: write
@@ -199,7 +199,7 @@ jobs:
 
   branch_build_push_live:
     name: Build-Push Live Collaboration Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [pre-requisites]
     permissions:
       id-token: write
@@ -234,7 +234,7 @@ jobs:
 
   branch_build_push_api:
     name: Build-Push API Server Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [pre-requisites]
     permissions:
       id-token: write
@@ -269,7 +269,7 @@ jobs:
 
   branch_build_push_proxy:
     name: Build-Push Proxy Docker Image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs: [pre-requisites]
     permissions:
       id-token: write
@@ -305,7 +305,7 @@ jobs:
   branch_build_push_aio:
     name: Build-Push AIO Docker Image
     if: ${{ github.event.client_payload.slash_command.args.named.aio == 'true' }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     needs:
       - pre-requisites
       - branch_build_push_admin
@@ -368,7 +368,7 @@ jobs:
       branch_build_push_api,
       branch_build_push_proxy
     ]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-4core
     permissions:
       id-token: write
       contents: read
