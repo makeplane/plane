@@ -80,6 +80,33 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
     setConfigWidget(widget);
   };
 
+  const handleLayoutChange = async (
+    positions: Array<{ id: string; position: { row: number; col: number; width: number; height: number } }>
+  ) => {
+    try {
+      await analyticsDashboardStore.updateWidgetPositions(workspaceSlug, dashboardId, positions);
+    } catch (error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Failed to update layout",
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  };
+
+  const handleDuplicateWidget = async (widgetId: string) => {
+    try {
+      await analyticsDashboardStore.duplicateWidget(workspaceSlug, dashboardId, widgetId);
+      setToast({ type: TOAST_TYPE.SUCCESS, title: "Widget duplicated" });
+    } catch (error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Failed to duplicate widget",
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  };
+
   const handleWidgetSubmit = async (
     data: TAnalyticsWidgetCreate | TAnalyticsWidgetUpdate
   ) => {
@@ -188,6 +215,8 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
               onAddWidget={handleAddWidget}
               onDeleteWidget={handleDeleteWidget}
               onConfigureWidget={handleConfigureWidget}
+              onDuplicateWidget={handleDuplicateWidget}
+              onLayoutChange={handleLayoutChange}
             />
           )}
         </div>

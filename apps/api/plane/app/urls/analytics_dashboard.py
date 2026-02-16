@@ -9,7 +9,9 @@ from plane.app.views.analytics_dashboard import (
     AnalyticsDashboardDetailEndpoint,
     AnalyticsDashboardWidgetEndpoint,
     AnalyticsDashboardWidgetDetailEndpoint,
+    AnalyticsDashboardWidgetBulkPositionEndpoint,
     AnalyticsDashboardWidgetDataEndpoint,
+    AnalyticsDashboardDuplicateEndpoint,
 )
 
 urlpatterns = [
@@ -38,6 +40,20 @@ urlpatterns = [
             http_method_names=["get", "patch", "delete"]
         ),
         name="analytics-dashboard-widget-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/analytics-dashboards/<uuid:dashboard_id>/widgets/positions/",
+        AnalyticsDashboardWidgetBulkPositionEndpoint.as_view(
+            http_method_names=["patch"]
+        ),
+        name="analytics-dashboard-widget-bulk-positions",
+    ),
+    path(
+        "workspaces/<str:slug>/analytics-dashboards/<uuid:dashboard_id>/duplicate/",
+        AnalyticsDashboardDuplicateEndpoint.as_view(
+            http_method_names=["post"]
+        ),
+        name="analytics-dashboard-duplicate",
     ),
     path(
         "workspaces/<str:slug>/analytics-dashboards/<uuid:dashboard_id>/widgets/<uuid:widget_id>/data/",

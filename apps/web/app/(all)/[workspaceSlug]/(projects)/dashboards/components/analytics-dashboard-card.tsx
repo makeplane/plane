@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Copy, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { DashboardIcon } from "@plane/propel/icons";
 import type { IAnalyticsDashboard } from "@plane/types";
 import { FavoriteStar } from "@plane/ui";
@@ -17,6 +17,7 @@ type Props = {
   workspaceSlug: string;
   onEdit: (dashboard: IAnalyticsDashboard) => void;
   onDelete: (dashboard: IAnalyticsDashboard) => void;
+  onDuplicate?: (dashboard: IAnalyticsDashboard) => void;
 };
 
 export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
@@ -24,6 +25,7 @@ export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
   workspaceSlug,
   onEdit,
   onDelete,
+  onDuplicate,
 }: Props) {
   const router = useAppRouter();
   const { addDashboardToFavorites, removeDashboardFromFavorites } = useAnalyticsDashboard();
@@ -87,6 +89,18 @@ export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
                 <Pencil className="h-3.5 w-3.5" />
                 Edit
               </button>
+              {onDuplicate && (
+                <button
+                  className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-custom-text-200 hover:bg-custom-background-80"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDuplicate(dashboard);
+                  }}
+                >
+                  <Copy className="h-3.5 w-3.5" />
+                  Duplicate
+                </button>
+              )}
               <button
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-red-500 hover:bg-custom-background-80"
                 onClick={(e) => {

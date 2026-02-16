@@ -9,3 +9,6 @@ export * from "./color-preset-selector";
 export * from "./basic-settings-section";
 export * from "./style-settings-section";
 export * from "./display-settings-section";
+export * from "./filter-settings-section";
+export * from "./widget-preview-panel";
+export * from "./widget-sample-data";

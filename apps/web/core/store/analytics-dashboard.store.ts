@@ -68,6 +68,13 @@ export interface IAnalyticsDashboardStore {
     widgetId: string,
     params?: Record<string, unknown>
   ) => Promise<IAnalyticsChartData | IAnalyticsNumberWidgetData>;
+  updateWidgetPositions: (
+    workspaceSlug: string,
+    dashboardId: string,
+    positions: Array<{ id: string; position: { row: number; col: number; width: number; height: number } }>
+  ) => Promise<void>;
+  duplicateDashboard: (workspaceSlug: string, dashboardId: string) => Promise<IAnalyticsDashboardDetail>;
+  duplicateWidget: (workspaceSlug: string, dashboardId: string, widgetId: string) => Promise<IAnalyticsDashboardWidget>;
   setActiveDashboard: (dashboardId: string | null) => void;
   addDashboardToFavorites: (workspaceSlug: string, dashboardId: string) => Promise<void>;
   removeDashboardFromFavorites: (workspaceSlug: string, dashboardId: string) => Promise<void>;
@@ -110,6 +117,9 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
       updateWidget: action,
       deleteWidget: action,
       fetchWidgetData: action,
+      updateWidgetPositions: action,
+      duplicateDashboard: action,
+      duplicateWidget: action,
       setActiveDashboard: action,
       addDashboardToFavorites: action,
       removeDashboardFromFavorites: action,
@@ -136,7 +146,12 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
   }
 
   get sortedWidgets(): IAnalyticsDashboardWidget[] {
-    return this.currentWidgets.sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+    return this.currentWidgets.sort((a, b) => {
+      const aRow = a.position?.row ?? 0;
+      const bRow = b.position?.row ?? 0;
+      if (aRow !== bRow) return aRow - bRow;
+      return (a.position?.col ?? 0) - (b.position?.col ?? 0);
+    });
   }
 
   // helper method to handle errors
@@ -318,6 +333,89 @@ export class AnalyticsDashboardStore implements IAnalyticsDashboardStore {
       this.widgetDataMap.set(widgetId, data);
     });
     return data;
+  };
+
+  updateWidgetPositions = async (
+    workspaceSlug: string,
+    dashboardId: string,
+    positions: Array<{ id: string; position: { row: number; col: number; width: number; height: number } }>
+  ): Promise<void> => {
+    // Optimistic update
+    const previousPositions = new Map<string, IAnalyticsDashboardWidget>();
+    runInAction(() => {
+      for (const item of positions) {
+        const widget = this.widgetMap.get(item.id);
+        if (widget) {
+          previousPositions.set(item.id, { ...widget });
+          this.widgetMap.set(item.id, { ...widget, position: item.position });
+        }
+      }
+    });
+
+    try {
+      await this.analyticsDashboardService.updateWidgetPositions(workspaceSlug, dashboardId, positions);
+    } catch (error) {
+      // Revert on failure
+      runInAction(() => {
+        for (const [id, widget] of previousPositions.entries()) {
+          this.widgetMap.set(id, widget);
+        }
+      });
+      throw error;
+    }
+  };
+
+  duplicateDashboard = async (
+    workspaceSlug: string,
+    dashboardId: string
+  ): Promise<IAnalyticsDashboardDetail> => {
+    try {
+      const dashboard = await this.analyticsDashboardService.duplicateDashboard(workspaceSlug, dashboardId);
+      runInAction(() => {
+        this.dashboardMap.set(dashboard.id, dashboard);
+        if (dashboard.widgets) {
+          dashboard.widgets.forEach((w) => this.widgetMap.set(w.id, w));
+        }
+      });
+      return dashboard;
+    } catch (error) {
+      runInAction(() => {
+        this.error = this.getErrorMessage(error);
+      });
+      throw error;
+    }
+  };
+
+  duplicateWidget = async (
+    workspaceSlug: string,
+    dashboardId: string,
+    widgetId: string
+  ): Promise<IAnalyticsDashboardWidget> => {
+    const sourceWidget = this.widgetMap.get(widgetId);
+    if (!sourceWidget) throw new Error("Source widget not found");
+
+    // Offset position to the right, or next row if no space
+    const newPosition = {
+      row: sourceWidget.position.row,
+      col: sourceWidget.position.col + sourceWidget.position.width,
+      width: sourceWidget.position.width,
+      height: sourceWidget.position.height,
+    };
+    if (newPosition.col + newPosition.width > 12) {
+      newPosition.col = 0;
+      newPosition.row = sourceWidget.position.row + sourceWidget.position.height;
+    }
+
+    const data: TAnalyticsWidgetCreate = {
+      widget_type: sourceWidget.widget_type,
+      title: `${sourceWidget.title} (Copy)`,
+      chart_property: sourceWidget.chart_property,
+      chart_metric: sourceWidget.chart_metric,
+      config: { ...sourceWidget.config },
+      position: newPosition,
+    };
+
+    return this.createWidget(workspaceSlug, dashboardId, data);
   };
 
   setActiveDashboard = (dashboardId: string | null) => {

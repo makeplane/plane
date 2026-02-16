@@ -62,6 +62,19 @@ function DashboardListPage({ params }: Route.ComponentProps) {
     [workspaceSlug, editDashboard, analyticsDashboardStore]
   );
 
+  const handleDuplicate = useCallback(
+    async (dashboard: IAnalyticsDashboard) => {
+      if (!workspaceSlug) return;
+      try {
+        const newDashboard = await analyticsDashboardStore.duplicateDashboard(workspaceSlug, dashboard.id);
+        setToast({ type: TOAST_TYPE.SUCCESS, title: "Dashboard duplicated", message: `Created "${newDashboard.name}"` });
+      } catch (error) {
+        setToast({ type: TOAST_TYPE.ERROR, title: "Failed to duplicate dashboard" });
+      }
+    },
+    [workspaceSlug, analyticsDashboardStore]
+  );
+
   const handleDelete = useCallback(async () => {
     if (!workspaceSlug || !deleteDashboard) return;
     try {
@@ -121,6 +134,7 @@ function DashboardListPage({ params }: Route.ComponentProps) {
                   workspaceSlug={workspaceSlug}
                   onEdit={setEditDashboard}
                   onDelete={setDeleteDashboard}
+                  onDuplicate={handleDuplicate}
                 />
               ))}
             </div>

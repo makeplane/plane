@@ -51,6 +51,27 @@ export interface IAnalyticsDashboardWidget {
   updated_at: string;
 }
 
+// Date range filter with optional after/before bounds
+export interface IAnalyticsDateRangeFilter {
+  after?: string; // ISO 8601 YYYY-MM-DD
+  before?: string;
+}
+
+// Widget-level filters applied to data queries
+export interface IAnalyticsWidgetFilters {
+  priority?: string[];
+  state?: string[];
+  state_group?: string[];
+  assignee?: string[];
+  labels?: string[];
+  cycle?: string[];
+  module?: string[];
+  start_date?: IAnalyticsDateRangeFilter;
+  target_date?: IAnalyticsDateRangeFilter;
+  created_at?: IAnalyticsDateRangeFilter;
+  completed_at?: IAnalyticsDateRangeFilter;
+}
+
 export interface IAnalyticsWidgetConfig {
   color_preset: string;
   fill_opacity?: number;
@@ -60,7 +81,7 @@ export interface IAnalyticsWidgetConfig {
   show_tooltip?: boolean;
   center_value?: boolean;
   show_markers?: boolean;
-  filters?: Record<string, unknown>;
+  filters?: IAnalyticsWidgetFilters;
 }
 
 export interface IAnalyticsWidgetPosition {
@@ -78,7 +99,7 @@ export interface IAnalyticsColorPreset {
 }
 
 export interface IAnalyticsChartData {
-  data: Array<Record<string, unknown>>;
+  data: Array<Record<string, string | number>>;
   schema: Record<string, string>;
 }
 

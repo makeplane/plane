@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import type { IAnalyticsDashboardWidget, TAnalyticsWidgetCreate, TAnalyticsWidgetUpdate } from "@plane/types";
+import type { IAnalyticsDashboardWidget, IAnalyticsWidgetConfig, TAnalyticsWidgetCreate, TAnalyticsWidgetUpdate } from "@plane/types";
 import { EAnalyticsWidgetType } from "@plane/types";
 import { ANALYTICS_DEFAULT_WIDGET_CONFIGS, ANALYTICS_DEFAULT_WIDGET_SIZES } from "@plane/constants";
 import { Button, ModalCore, EModalPosition, EModalWidth } from "@plane/ui";
@@ -17,6 +17,8 @@ import { WidgetTypeSelector } from "./config/widget-type-selector";
 import { BasicSettingsSection } from "./config/basic-settings-section";
 import { StyleSettingsSection } from "./config/style-settings-section";
 import { DisplaySettingsSection } from "./config/display-settings-section";
+import { FilterSettingsSection } from "./config/filter-settings-section";
+import { WidgetPreviewPanel } from "./config/widget-preview-panel";
 
 interface WidgetConfigModalProps {
   isOpen: boolean;
@@ -30,16 +32,7 @@ interface FormData {
   title: string;
   chart_property: string;
   chart_metric: string;
-  config: {
-    color_preset: string;
-    fill_opacity?: number;
-    show_border?: boolean;
-    smoothing?: boolean;
-    show_legend?: boolean;
-    show_tooltip?: boolean;
-    center_value?: boolean;
-    show_markers?: boolean;
-  };
+  config: IAnalyticsWidgetConfig;
   position: {
     row: number;
     col: number;
@@ -53,6 +46,7 @@ const CONFIG_TABS = [
   { key: "basic", label: "Basic" },
   { key: "style", label: "Style" },
   { key: "display", label: "Display" },
+  { key: "filters", label: "Filters" },
 ] as const;
 
 type ConfigTabKey = (typeof CONFIG_TABS)[number]["key"];
@@ -93,6 +87,21 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
   });
 
   const widgetType = watch("widget_type");
+  const chartProperty = watch("chart_property");
+  const chartMetric = watch("chart_metric");
+  const configValue = watch("config");
+  const filtersValue = watch("config.filters");
+
+  // Count active filters for badge display
+  const activeFilterCount = (() => {
+    if (!filtersValue || typeof filtersValue !== "object") return 0;
+    let count = 0;
+    for (const [, v] of Object.entries(filtersValue)) {
+      if (Array.isArray(v) && v.length > 0) count++;
+      else if (v && typeof v === "object" && (("after" in v && v.after) || ("before" in v && v.before))) count++;
+    }
+    return count;
+  })();
 
   // Reset form when modal opens with different widget
   useEffect(() => {
@@ -143,6 +152,17 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
   const handleFormSubmit = async (data: FormData) => {
     try {
       setIsSubmitting(true);
+      // Sanitize empty filters before submitting
+      if (data.config.filters) {
+        const cleaned = Object.fromEntries(
+          Object.entries(data.config.filters).filter(([, v]) => {
+            if (Array.isArray(v)) return v.length > 0;
+            if (v && typeof v === "object") return ("after" in v && v.after) || ("before" in v && v.before);
+            return false;
+          })
+        );
+        data.config.filters = Object.keys(cleaned).length > 0 ? (cleaned as typeof data.config.filters) : undefined;
+      }
       await onSubmit(data);
       reset();
       onClose();
@@ -174,36 +194,55 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
           </button>
         </div>
 
-        {/* Form */}
+        {/* Form — side-by-side: config (55%) + preview (45%) */}
         <form onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}>
-          <div className="px-5 py-4">
-            {/* Tab buttons */}
-            <div className="flex w-full items-center gap-1.5 rounded-md p-0.5 bg-custom-background-80">
-              {CONFIG_TABS.map((tab) => (
-                <button
-                  key={tab.key}
-                  type="button"
-                  onClick={() => setActiveTab(tab.key)}
-                  className={cn(
-                    "flex items-center justify-center p-1 min-w-fit w-full text-13 font-medium outline-none cursor-pointer transition-all rounded-sm",
-                    activeTab === tab.key
-                      ? "bg-custom-background-100 text-custom-text-100 shadow-sm"
-                      : "text-custom-text-400 hover:text-custom-text-300 hover:bg-custom-background-90"
-                  )}
-                >
-                  {tab.label}
-                </button>
-              ))}
+          <div className="flex gap-4 px-5 py-4">
+            {/* Config panel (left) */}
+            <div className="w-[55%] min-w-0">
+              {/* Tab buttons */}
+              <div className="flex w-full items-center gap-1.5 rounded-md p-0.5 bg-custom-background-80">
+                {CONFIG_TABS.map((tab) => (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    onClick={() => setActiveTab(tab.key)}
+                    className={cn(
+                      "flex items-center justify-center p-1 min-w-fit w-full text-13 font-medium outline-none cursor-pointer transition-all rounded-sm",
+                      activeTab === tab.key
+                        ? "bg-custom-background-100 text-custom-text-100 shadow-sm"
+                        : "text-custom-text-400 hover:text-custom-text-300 hover:bg-custom-background-90"
+                    )}
+                  >
+                    {tab.label}
+                    {tab.key === "filters" && activeFilterCount > 0 && (
+                      <span className="ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-custom-primary-100 px-1 text-[10px] font-medium text-white">
+                        {activeFilterCount}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Tab content */}
+              <div className="mt-4 max-h-96 overflow-y-auto">
+                {activeTab === "type" && (
+                  <WidgetTypeSelector selectedType={widgetType} onChange={(type) => setValue("widget_type", type)} />
+                )}
+                {activeTab === "basic" && <BasicSettingsSection control={control} errors={errors} />}
+                {activeTab === "style" && <StyleSettingsSection control={control} widgetType={widgetType} />}
+                {activeTab === "display" && <DisplaySettingsSection control={control} widgetType={widgetType} />}
+                {activeTab === "filters" && <FilterSettingsSection control={control} />}
+              </div>
             </div>
 
-            {/* Tab content */}
-            <div className="mt-4 max-h-96 overflow-y-auto">
-              {activeTab === "type" && (
-                <WidgetTypeSelector selectedType={widgetType} onChange={(type) => setValue("widget_type", type)} />
-              )}
-              {activeTab === "basic" && <BasicSettingsSection control={control} errors={errors} />}
-              {activeTab === "style" && <StyleSettingsSection control={control} widgetType={widgetType} />}
-              {activeTab === "display" && <DisplaySettingsSection control={control} widgetType={widgetType} />}
+            {/* Preview panel (right) */}
+            <div className="w-[45%] min-w-0">
+              <WidgetPreviewPanel
+                widgetType={widgetType}
+                config={configValue as any}
+                chartProperty={chartProperty}
+                chartMetric={chartMetric}
+              />
             </div>
           </div>
 

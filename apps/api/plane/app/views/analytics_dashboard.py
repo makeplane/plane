@@ -3,9 +3,11 @@
 # See the LICENSE file for details.
 
 import logging
+from datetime import datetime
 
 from rest_framework import status
 from rest_framework.response import Response
+from django.db import transaction
 from django.db.models import Sum, Prefetch, Exists, OuterRef
 
 from plane.app.views.base import BaseAPIView
@@ -247,10 +249,123 @@ class AnalyticsDashboardWidgetDetailEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class AnalyticsDashboardDuplicateEndpoint(BaseAPIView):
+    """Duplicate an analytics dashboard with all its widgets."""
+
+    permission_classes = [WorkSpaceAdminPermission]
+
+    def post(self, request, slug, dashboard_id):
+        """Clone dashboard and all its widgets atomically."""
+        try:
+            source = AnalyticsDashboard.objects.get(
+                workspace__slug=slug, id=dashboard_id, deleted_at__isnull=True,
+            )
+        except AnalyticsDashboard.DoesNotExist:
+            return Response(
+                {"error": "Dashboard not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        with transaction.atomic():
+            # Generate unique copy name
+            base_name = f"{source.name} (Copy)"
+            copy_name = base_name
+            counter = 2
+            while AnalyticsDashboard.objects.filter(
+                workspace=source.workspace, name=copy_name, deleted_at__isnull=True,
+            ).exists():
+                copy_name = f"{source.name} (Copy {counter})"
+                counter += 1
+
+            # Create new dashboard
+            new_dashboard = AnalyticsDashboard.objects.create(
+                workspace=source.workspace,
+                name=copy_name,
+                description=source.description,
+                logo_props=source.logo_props,
+                config=source.config,
+                owner=request.user,
+            )
+
+            # Clone all widgets
+            source_widgets = AnalyticsDashboardWidget.objects.filter(
+                dashboard=source, deleted_at__isnull=True,
+            )
+            new_widgets = []
+            for w in source_widgets:
+                new_widgets.append(AnalyticsDashboardWidget(
+                    dashboard=new_dashboard,
+                    widget_type=w.widget_type,
+                    title=w.title,
+                    chart_property=w.chart_property,
+                    chart_metric=w.chart_metric,
+                    config=w.config,
+                    position=w.position,
+                    sort_order=w.sort_order,
+                ))
+            if new_widgets:
+                AnalyticsDashboardWidget.objects.bulk_create(new_widgets)
+
+        serializer = AnalyticsDashboardDetailSerializer(new_dashboard)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class AnalyticsDashboardWidgetBulkPositionEndpoint(BaseAPIView):
+    """Bulk update widget positions after drag-and-drop or resize."""
+
+    permission_classes = [WorkSpaceAdminPermission]
+
+    def patch(self, request, slug, dashboard_id):
+        """Bulk update widget positions. Expects: {"positions": [{"id": uuid, "position": {row, col, width, height}}]}"""
+        positions = request.data.get("positions", [])
+        if not positions or not isinstance(positions, list):
+            return Response(
+                {"error": "positions array is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Validate dashboard belongs to workspace
+        if not AnalyticsDashboard.objects.filter(
+            workspace__slug=slug, id=dashboard_id, deleted_at__isnull=True,
+        ).exists():
+            return Response(
+                {"error": "Dashboard not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Bulk update each widget position
+        widget_ids = [p["id"] for p in positions if "id" in p and "position" in p]
+        widgets = AnalyticsDashboardWidget.objects.filter(
+            dashboard_id=dashboard_id, id__in=widget_ids, deleted_at__isnull=True,
+        )
+        widget_map = {str(w.id): w for w in widgets}
+
+        updated = []
+        for item in positions:
+            widget = widget_map.get(str(item.get("id")))
+            if not widget:
+                continue
+            pos = item.get("position", {})
+            widget.position = {
+                "row": max(0, int(pos.get("row", 0))),
+                "col": max(0, int(pos.get("col", 0))),
+                "width": max(1, int(pos.get("width", 1))),
+                "height": max(1, int(pos.get("height", 1))),
+            }
+            updated.append(widget)
+
+        if updated:
+            AnalyticsDashboardWidget.objects.bulk_update(updated, ["position"])
+
+        return Response({"updated": len(updated)}, status=status.HTTP_200_OK)
+
+
 class AnalyticsDashboardWidgetDataEndpoint(BaseAPIView):
     """Analytics Dashboard Widget Data Endpoint"""
 
     permission_classes = [WorkSpaceAdminPermission]
+
+    MAX_FILTER_ARRAY_SIZE = 100
 
     # Whitelist of allowed filter keys for security
     ALLOWED_FILTER_KEYS = [
@@ -262,6 +377,14 @@ class AnalyticsDashboardWidgetDataEndpoint(BaseAPIView):
         "module",
         "state_group",
     ]
+
+    # Date range filter keys mapped to Django ORM lookups
+    DATE_RANGE_FILTER_KEYS = {
+        "start_date": "start_date",
+        "target_date": "target_date",
+        "created_at": "created_at",
+        "completed_at": "completed_at",
+    }
 
     # Map frontend chart_property keys (lowercase) to backend x_axis keys (uppercase)
     CHART_PROPERTY_TO_X_AXIS = {
@@ -278,6 +401,15 @@ class AnalyticsDashboardWidgetDataEndpoint(BaseAPIView):
         "created_at": "CREATED_AT",
         "completed_at": "COMPLETED_AT",
     }
+
+    @staticmethod
+    def _is_valid_date(date_str):
+        """Validate ISO 8601 date string (YYYY-MM-DD)."""
+        try:
+            datetime.fromisoformat(date_str)
+            return True
+        except (ValueError, TypeError):
+            return False
 
     def get(self, request, slug, dashboard_id, widget_id):
         """Get widget data based on configuration."""
@@ -313,12 +445,22 @@ class AnalyticsDashboardWidgetDataEndpoint(BaseAPIView):
         # Apply widget-specific filters from config (with whitelist + value validation)
         widget_filters = widget.config.get("filters", {})
         for k, v in widget_filters.items():
-            if k not in self.ALLOWED_FILTER_KEYS:
-                continue
-            if isinstance(v, list):
-                queryset = queryset.filter(**{f"{k}__in": [str(item) for item in v]})
-            elif isinstance(v, str):
-                queryset = queryset.filter(**{k: v})
+            if k in self.ALLOWED_FILTER_KEYS:
+                if isinstance(v, list):
+                    if len(v) > self.MAX_FILTER_ARRAY_SIZE:
+                        continue
+                    queryset = queryset.filter(**{f"{k}__in": [str(item) for item in v]})
+                elif isinstance(v, str):
+                    queryset = queryset.filter(**{k: v})
+            elif k in self.DATE_RANGE_FILTER_KEYS and isinstance(v, dict):
+                # Handle date range filters with __gte / __lte lookups
+                field = self.DATE_RANGE_FILTER_KEYS[k]
+                after_val = v.get("after")
+                before_val = v.get("before")
+                if after_val and self._is_valid_date(str(after_val)):
+                    queryset = queryset.filter(**{f"{field}__gte": str(after_val)})
+                if before_val and self._is_valid_date(str(before_val)):
+                    queryset = queryset.filter(**{f"{field}__lte": str(before_val)})
 
         # Generate data based on widget type
         if widget.widget_type == AnalyticsDashboardWidget.WidgetType.NUMBER:

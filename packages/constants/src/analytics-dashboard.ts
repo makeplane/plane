@@ -50,6 +50,41 @@ export const ANALYTICS_CHART_METRIC_OPTIONS = [
   { key: "estimate_points", label: "Estimate Points Sum" },
 ];
 
+// Filter options for widget-level filtering UI
+export const ANALYTICS_ENTITY_FILTER_OPTIONS = [
+  { key: "priority", label: "Priority" },
+  { key: "state", label: "State" },
+  { key: "state_group", label: "State Group" },
+  { key: "assignee", label: "Assignee" },
+  { key: "labels", label: "Labels" },
+  { key: "cycle", label: "Cycle" },
+  { key: "module", label: "Module" },
+] as const;
+
+export const ANALYTICS_DATE_FILTER_OPTIONS = [
+  { key: "start_date", label: "Start Date" },
+  { key: "target_date", label: "Target Date" },
+  { key: "created_at", label: "Created Date" },
+  { key: "completed_at", label: "Completed Date" },
+] as const;
+
+// Hardcoded filter values for priority and state_group
+export const ANALYTICS_PRIORITY_OPTIONS = [
+  { key: "urgent", label: "Urgent" },
+  { key: "high", label: "High" },
+  { key: "medium", label: "Medium" },
+  { key: "low", label: "Low" },
+  { key: "none", label: "None" },
+];
+
+export const ANALYTICS_STATE_GROUP_OPTIONS = [
+  { key: "backlog", label: "Backlog" },
+  { key: "unstarted", label: "Unstarted" },
+  { key: "started", label: "Started" },
+  { key: "completed", label: "Completed" },
+  { key: "cancelled", label: "Cancelled" },
+];
+
 export const ANALYTICS_DEFAULT_WIDGET_SIZES: Record<string, { width: number; height: number }> = {
   bar: { width: 6, height: 4 },
   line: { width: 6, height: 4 },

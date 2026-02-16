@@ -180,6 +180,35 @@ export class AnalyticsDashboardService extends APIService {
   }
 
   /**
+   * Bulk update widget positions after drag-and-drop or resize
+   */
+  async updateWidgetPositions(
+    workspaceSlug: string,
+    dashboardId: string,
+    positions: Array<{ id: string; position: { row: number; col: number; width: number; height: number } }>
+  ): Promise<{ updated: number }> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/analytics-dashboards/${dashboardId}/widgets/positions/`,
+      { positions }
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Duplicate an analytics dashboard with all its widgets
+   */
+  async duplicateDashboard(workspaceSlug: string, dashboardId: string): Promise<IAnalyticsDashboardDetail> {
+    return this.post(`/api/workspaces/${workspaceSlug}/analytics-dashboards/${dashboardId}/duplicate/`, {})
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
    * Fetch widget data (chart data or number value)
    * @param workspaceSlug - Workspace slug
    * @param dashboardId - Dashboard ID

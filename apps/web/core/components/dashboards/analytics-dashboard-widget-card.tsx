@@ -6,7 +6,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { MoreVertical, Settings, Trash2 } from "lucide-react";
+import { Copy, GripVertical, MoreVertical, Settings, Trash2 } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Loader } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -27,6 +27,7 @@ type AnalyticsDashboardWidgetCardProps = {
   isEditMode: boolean;
   onDelete: (widgetId: string) => void;
   onConfigure: (widgetId: string) => void;
+  onDuplicate?: (widgetId: string) => void;
 };
 
 export const AnalyticsDashboardWidgetCard = observer(function AnalyticsDashboardWidgetCard({
@@ -36,6 +37,7 @@ export const AnalyticsDashboardWidgetCard = observer(function AnalyticsDashboard
   isEditMode,
   onDelete,
   onConfigure,
+  onDuplicate,
 }: AnalyticsDashboardWidgetCardProps) {
   const analyticsDashboardStore = useAnalyticsDashboard();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -167,16 +169,17 @@ export const AnalyticsDashboardWidgetCard = observer(function AnalyticsDashboard
   };
 
   return (
-    <div
-      className="relative rounded-lg border border-custom-border-200 bg-custom-background-100 p-4"
-      style={{
-        gridColumn: `span ${widget.position.width}`,
-        gridRow: `span ${widget.position.height}`,
-      }}
-    >
+    <div className="relative h-full rounded-lg border border-custom-border-200 bg-custom-background-100 p-4">
       {/* Header */}
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-medium text-custom-text-200">{widget.title}</h3>
+        <div className="flex items-center gap-1.5">
+          {isEditMode && (
+            <div className="widget-drag-handle cursor-grab active:cursor-grabbing">
+              <GripVertical className="h-4 w-4 text-custom-text-400" />
+            </div>
+          )}
+          <h3 className="text-sm font-medium text-custom-text-200">{widget.title}</h3>
+        </div>
         {isEditMode && (
           <div className="relative" ref={menuRef}>
             <button
@@ -197,6 +200,18 @@ export const AnalyticsDashboardWidgetCard = observer(function AnalyticsDashboard
                   <Settings className="h-4 w-4" />
                   Configure
                 </button>
+                {onDuplicate && (
+                  <button
+                    onClick={() => {
+                      onDuplicate(widget.id);
+                      setShowMenu(false);
+                    }}
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-custom-text-200 hover:bg-custom-background-80"
+                  >
+                    <Copy className="h-4 w-4" />
+                    Duplicate
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     onDelete(widget.id);
