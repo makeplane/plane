@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import * as Sentry from "@sentry/react-router";
 import { Links, Meta, Outlet, Scripts } from "react-router";
@@ -35,6 +36,7 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { GetMobileApp } from "@/components/mobile";
 // plane web imports
 import { TrialBanner } from "@/components/workspace/license/banner/trial-banner";
+import { bootstrapInstance } from "@/lib/bootstrap/client-bootstrap";
 // local
 import { CustomErrorComponent } from "./error";
 import { AppProvider } from "./provider";
@@ -155,10 +157,34 @@ export const meta: Route.MetaFunction = () => [
   { name: "twitter:image:alt", content: "Plane - Modern project management" },
 ];
 
+export async function clientLoader() {
+  await bootstrapInstance();
+  return null;
+}
+clientLoader.hydrate = true as const;
+
 export default function Root() {
+  const [isContentVisible, setIsContentVisible] = useState(false);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setIsContentVisible(true);
+    });
+
+    return () => {
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
   return (
     <AppProvider>
-      <div className={cn("h-screen w-full overflow-hidden bg-canvas relative flex flex-col", "desktop-app-container")}>
+      <div
+        className={cn(
+          "h-screen w-full overflow-hidden bg-canvas relative flex flex-col transition-opacity duration-300 ease-out",
+          isContentVisible ? "opacity-100" : "opacity-0",
+          "desktop-app-container"
+        )}
+      >
         <GetMobileApp />
         {/* free trial banner */}
         <TrialBanner />

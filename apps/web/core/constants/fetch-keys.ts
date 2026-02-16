@@ -60,6 +60,12 @@ const paramsToKey = (params: any) => {
   return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${mentionsKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${subscriberKey}`;
 };
 
+// instance keys
+export const INSTANCE_INFORMATION = "INSTANCE_INFORMATION";
+
+// user keys
+export const USER_INFORMATION = "USER_INFORMATION";
+
 export const USER_WORKSPACES_LIST = "USER_WORKSPACES_LIST";
 
 export const WORKSPACE_PARTIAL_PROJECTS = (workspaceSlug: string) =>
@@ -221,3 +227,7 @@ export const PROJECT_MILESTONES = (projectId: string, projectRole: EUserPermissi
 
 export const PROJECT_EPICS_META = (projectId: string, projectRole: EUserPermissions | undefined) =>
   `PROJECT_EPICS_META_${projectId.toString().toUpperCase()}_${projectRole}`;
+
+// feature flag keys
+export const WORKSPACE_FLAGS = (workspaceSlug: string) => `WORKSPACE_FLAGS_${workspaceSlug.toUpperCase()}`;
+export const AI_FLAGS = (workspaceSlug: string) => `AI_FLAGS_${workspaceSlug.toUpperCase()}`;

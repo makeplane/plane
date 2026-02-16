@@ -14,16 +14,15 @@
 // components
 import { Outlet } from "react-router";
 import { PageHead } from "@/components/core/page-title";
-// wrappers
-import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
+import { redirectIfUserIsNotOnboarded, requireAuthenticatedUser } from "@/lib/middleware/auth-client-middleware";
+
+export const clientMiddleware = [requireAuthenticatedUser, redirectIfUserIsNotOnboarded];
 
 export default function CloudUpgradeLayout() {
   return (
     <div className="h-full w-full overflow-hidden">
       <PageHead title={`Cloud Upgrade - Plane`} />
-      <AuthenticationWrapper>
-        <Outlet />
-      </AuthenticationWrapper>
+      <Outlet />
     </div>
   );
 }

@@ -14,8 +14,9 @@
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+// constants
+import { INSTANCE_INFORMATION } from "@/constants/fetch-keys";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 import { InstanceNotReady, MaintenanceView } from "@/components/instance";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
@@ -30,18 +31,13 @@ const InstanceWrapper = observer(function InstanceWrapper(props: TInstanceWrappe
   const { isLoading, instance, error, fetchInstanceInfo } = useInstance();
 
   const { isLoading: isInstanceSWRLoading, error: instanceSWRError } = useSWR(
-    "INSTANCE_INFORMATION",
-    async () => await fetchInstanceInfo(),
+    INSTANCE_INFORMATION,
+    () => fetchInstanceInfo(),
     { revalidateOnFocus: false }
   );
 
-  // loading state
-  if ((isLoading || isInstanceSWRLoading) && !instance)
-    return (
-      <div className="relative flex h-screen w-full items-center justify-center">
-        <LogoSpinner />
-      </div>
-    );
+  // don't render anything if instance is not loaded
+  if (!instance && (isLoading || isInstanceSWRLoading)) return;
 
   if (instanceSWRError) return <MaintenanceView />;
 

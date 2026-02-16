@@ -14,18 +14,12 @@
 // components
 import { Outlet } from "react-router";
 import { PageHead } from "@/components/core/page-title";
-// helpers
-import { EPageTypes } from "@/helpers/authentication.helper";
-// wrappers
-import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 
 export default function SelfHostedUpgradeLayout() {
   return (
     <div className="h-full w-full overflow-hidden">
       <PageHead title={`Self-Hosted Upgrade - Plane`} />
-      <AuthenticationWrapper pageType={EPageTypes.PUBLIC}>
-        <Outlet />
-      </AuthenticationWrapper>
+      <Outlet />
     </div>
   );
 }

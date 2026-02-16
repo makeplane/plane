@@ -28,10 +28,6 @@ import {
 // components
 import { PageHead } from "@/components/core/page-title";
 import { SwitchAccountDropdown } from "@/components/onboarding/switch-account-dropdown";
-// helpers
-import { EPageTypes } from "@/helpers/authentication.helper";
-// wrappers
-import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 
@@ -59,30 +55,28 @@ const UpgradeLayout = observer(function UpgradeLayout() {
   return (
     <>
       <div className="h-screen w-full overflow-hidden bg-surface-2">
-        <AuthenticationWrapper pageType={EPageTypes.PUBLIC}>
-          <PageHead title="Upgrade - Plane" />
-          <div className="relative z-10 w-screen h-screen overflow-hidden overflow-y-auto flex flex-col">
-            <div className="container mx-auto px-10 lg:px-0 shrink-0 relative flex items-center justify-between pb-4 transition-all">
-              {subscriptionType && (
-                <div className={"flex items-center gap-x-2 py-10 text-accent-primary"}>
-                  <Link
-                    href={getBaseUpgradePath(planType as EExternalUpgradePlanType)}
-                    className="flex items-center gap-x-2 w-full"
-                  >
-                    <PlaneIcon className="size-7" />
-                    <div className="text-h3-bold">{getSubscriptionName(subscriptionType)}</div>
-                  </Link>
-                </div>
-              )}
-              <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row text-center text-body-xs-medium text-tertiary">
-                <SwitchAccountDropdown />
+        <PageHead title="Upgrade - Plane" />
+        <div className="relative z-10 w-screen h-screen overflow-hidden overflow-y-auto flex flex-col">
+          <div className="container mx-auto px-10 lg:px-0 shrink-0 relative flex items-center justify-between pb-4 transition-all">
+            {subscriptionType && (
+              <div className={"flex items-center gap-x-2 py-10 text-accent-primary"}>
+                <Link
+                  href={getBaseUpgradePath(planType as EExternalUpgradePlanType)}
+                  className="flex items-center gap-x-2 w-full"
+                >
+                  <PlaneIcon className="size-7" />
+                  <div className="text-h3-bold">{getSubscriptionName(subscriptionType)}</div>
+                </Link>
               </div>
-            </div>
-            <div className="flex flex-col justify-center container h-[calc(100vh-240px)] mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 transition-all">
-              <Outlet />
+            )}
+            <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row text-center text-body-xs-medium text-tertiary">
+              <SwitchAccountDropdown />
             </div>
           </div>
-        </AuthenticationWrapper>
+          <div className="flex flex-col justify-center container h-[calc(100vh-240px)] mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 transition-all">
+            <Outlet />
+          </div>
+        </div>
       </div>
       {GOOGLE_ANALYTICS_ID && (
         <>

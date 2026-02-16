@@ -30,13 +30,16 @@ export const HomePageHeader = observer(function HomePageHeader() {
   const { workspaceSlug } = useParams();
   const { activeChatId, isWorkspaceAuthorized, initPiChat } = usePiChat();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-  if (!isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)) return <></>;
+  // derived values
+  const isPiEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
 
   useEffect(() => {
+    if (!isPiEnabled) return;
     void initPiChat();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (!isPiEnabled) return;
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_CHAT" fallback={<></>}>
       <div className="flex flex-col gap-1">

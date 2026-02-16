@@ -47,6 +47,8 @@ export interface IUserStore {
   userSettings: IUserSettingsStore;
   accounts: Record<string, IAccountStore>;
   permission: IUserPermissionStore;
+  // computed
+  preferredWorkspaceSlug: string | undefined;
   // actions
   fetchCurrentUser: () => Promise<IUser | undefined>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser | undefined>;
@@ -98,6 +100,8 @@ export class UserStore implements IUserStore {
       userSettings: observable,
       accounts: observable,
       permission: observable,
+      // computed
+      preferredWorkspaceSlug: computed,
       // actions
       fetchCurrentUser: action,
       updateCurrentUser: action,
@@ -110,6 +114,17 @@ export class UserStore implements IUserStore {
       canPerformAnyCreateAction: computed,
       projectsWithCreatePermissions: computed,
     });
+  }
+
+  /**
+   * @description returns the user's preferred workspace slug (last visited or fallback)
+   * @returns {string | undefined}
+   */
+  get preferredWorkspaceSlug(): IUserStore["preferredWorkspaceSlug"] {
+    return (
+      this.userSettings.data?.workspace?.last_workspace_slug ||
+      this.userSettings.data?.workspace?.fallback_workspace_slug
+    );
   }
 
   /**

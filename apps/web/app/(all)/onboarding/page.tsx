@@ -20,16 +20,16 @@ import { OnboardingRoot } from "@/components/onboarding";
 // constants
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // helpers
-import { EPageTypes } from "@/helpers/authentication.helper";
+import { redirectIfUserIsOnboarded, requireAuthenticatedUser } from "@/lib/middleware/auth-client-middleware";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
-// wrappers
-import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 
 const workspaceService = new WorkspaceService();
+
+export const clientMiddleware = [requireAuthenticatedUser, redirectIfUserIsOnboarded];
 
 function OnboardingPage() {
   // store hooks
@@ -52,21 +52,19 @@ function OnboardingPage() {
   );
 
   return (
-    <AuthenticationWrapper pageType={EPageTypes.ONBOARDING}>
-      <div className="flex relative size-full overflow-hidden bg-canvas rounded-lg transition-all ease-in-out duration-300">
-        <div className="size-full p-2 flex-grow transition-all ease-in-out duration-300 overflow-hidden">
-          <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg bg-surface-1 shadow-md border border-subtle">
-            {user && !invitationsLoader ? (
-              <OnboardingRoot invitations={invitations ?? []} />
-            ) : (
-              <div className="grid h-full w-full place-items-center">
-                <LogoSpinner />
-              </div>
-            )}
-          </div>
+    <div className="flex relative size-full overflow-hidden bg-canvas rounded-lg transition-all ease-in-out duration-300">
+      <div className="size-full p-2 flex-grow transition-all ease-in-out duration-300 overflow-hidden">
+        <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg bg-surface-1 shadow-md border border-subtle">
+          {user && !invitationsLoader ? (
+            <OnboardingRoot invitations={invitations ?? []} />
+          ) : (
+            <div className="grid h-full w-full place-items-center">
+              <LogoSpinner />
+            </div>
+          )}
         </div>
       </div>
-    </AuthenticationWrapper>
+    </div>
   );
 }
 

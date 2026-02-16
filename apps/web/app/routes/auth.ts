@@ -16,7 +16,11 @@ import type { RouteConfigEntry } from "@react-router/dev/routes";
 
 export const authRoutes: RouteConfigEntry[] = [
   // Home - Sign In
-  layout("./(home)/layout.tsx", [index("./(home)/page.tsx")]),
+  layout("./(home)/layout.tsx", [
+    index("./(home)/page.tsx"),
+    route("ldap", "./(home)/ldap/page.tsx"),
+    route("sso", "./(home)/sso/page.tsx"),
+  ]),
 
   // Sign Up
   layout("./(all)/sign-up/layout.tsx", [route("sign-up", "./(all)/sign-up/page.tsx")]),
@@ -45,12 +49,6 @@ export const authRoutes: RouteConfigEntry[] = [
   layout("./(all)/workspace-invitations/layout.tsx", [
     route("workspace-invitations", "./(all)/workspace-invitations/page.tsx"),
   ]),
-
-  // LDAP Auth
-  route("ldap", "./(home)/ldap/page.tsx"),
-
-  // SSO Auth
-  route("sso", "./(home)/sso/page.tsx"),
 
   // Mobile Auth
   route("m/auth", "./m/auth/page.tsx"),

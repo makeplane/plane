@@ -17,13 +17,14 @@ import Link from "next/link";
 import { PlaneLockup } from "@plane/propel/icons";
 // hooks
 import { useUser } from "@/hooks/store/user";
-// services
-import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
+import { redirectIfUserIsNotOnboarded, requireAuthenticatedUser } from "@/lib/middleware/auth-client-middleware";
 // local imports
 import type { Route } from "./+types/page";
 import { ESupportedFeatures, WorkspaceSelector } from "./workspace-selector";
 
 const NOT_FOUND_CLASSNAME = "flex items-center justify-center h-full text-primary text-16 font-medium";
+
+export const clientMiddleware = [requireAuthenticatedUser, redirectIfUserIsNotOnboarded];
 
 function isValidFeature(feature: string): feature is ESupportedFeatures {
   return Object.values(ESupportedFeatures).includes(feature as ESupportedFeatures);
@@ -48,17 +49,15 @@ function WorkspacePickerPage({ params }: Route.ComponentProps) {
   }, [feature, identifier, isFeatureSupported]);
 
   return (
-    <AuthenticationWrapper>
-      <div className="flex flex-col h-full gap-y-2 pb-20">
-        <div className="flex items-center justify-between p-10 lg:px-20 xl:px-36">
-          <Link href="/" className="bg-surface-1 px-3">
-            <PlaneLockup className="h-7 w-auto text-primary" />
-          </Link>
-          <div className="text-13 text-primary">{currentUser?.email}</div>
-        </div>
-        {content}
+    <div className="flex flex-col h-full gap-y-2 pb-20">
+      <div className="flex items-center justify-between p-10 lg:px-20 xl:px-36">
+        <Link href="/" className="bg-surface-1 px-3">
+          <PlaneLockup className="h-7 w-auto text-primary" />
+        </Link>
+        <div className="text-13 text-primary">{currentUser?.email}</div>
       </div>
-    </AuthenticationWrapper>
+      {content}
+    </div>
   );
 }
 

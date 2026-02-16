@@ -19,7 +19,6 @@ import type { SWRResponse } from "swr";
 // plane imports
 import { ETemplateLevel, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 import { WorkspaceNotAuthorizedPage } from "@/components/auth-screens/workspace/not-authorized";
 import { WorkspaceDowngradePage } from "@/components/auth-screens/workspace/downgrade";
 import { WorkspaceNotFoundPage } from "@/components/auth-screens/workspace/not-found";
@@ -33,6 +32,8 @@ import {
   WORKSPACE_STATES,
   WORKSPACE_SIDEBAR_PREFERENCES,
   WORKSPACE_PROJECT_NAVIGATION_PREFERENCES,
+  WORKSPACE_FLAGS,
+  AI_FLAGS,
 } from "@/constants/fetch-keys";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
@@ -81,7 +82,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
   const { fetchWorkspaceStates } = useProjectState();
-  const { fetchFeatureFlags, fetchIntegrations, fetchAiFeatureFlags } = useFeatureFlags();
+  const { flags, fetchFeatureFlags, fetchIntegrations, fetchAiFeatureFlags } = useFeatureFlags();
   const { fetchWorkspaceFeatures, isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const { fetchProjectFeatures } = useProjectAdvanced();
   const { fetchProjectStates } = useWorkspaceProjectStates();
@@ -174,7 +175,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
 
   // fetching feature flags
   const featureFlagsResponse: SWRResponse<TFeatureFlagsResponse, Error> = useSWR(
-    `WORKSPACE_FLAGS_${workspaceSlug}`,
+    WORKSPACE_FLAGS(workspaceSlug),
     () => fetchFeatureFlags(workspaceSlug),
     {
       revalidateOnFocus: false,
@@ -183,7 +184,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   );
 
   const aiFeatureFlagsResponse: SWRResponse<TFeatureFlagsResponse, Error> = useSWR(
-    `AI_FLAGS_${workspaceSlug}`,
+    AI_FLAGS(workspaceSlug),
     () => fetchAiFeatureFlags(workspaceSlug),
     {
       revalidateOnFocus: false,
@@ -320,15 +321,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
 
   const flagsLoader = featureFlagsResponse.isLoading || aiFeatureFlagsResponse.isLoading;
   const flagsError = featureFlagsResponse.error || aiFeatureFlagsResponse.error;
-  // if list of workspaces are not there then we have to render the spinner
-  if ((flagsLoader && !flagsError) || allWorkspaces === undefined || loader) {
-    return (
-      <div className="grid h-full place-items-center p-4 rounded-lg border border-subtle">
-        <div className="flex flex-col items-center gap-3 text-center">
-          <LogoSpinner />
-        </div>
-      </div>
-    );
+  const areFlagsPrimed = flags[workspaceSlug] !== undefined;
+  const shouldBlockOnWorkspacePermissions = loader && currentWorkspaceInfo === undefined;
+
+  // don't render anything if flags are loading or there is an error or workspace permissions are not loaded
+  if ((flagsLoader && !flagsError && !areFlagsPrimed) || shouldBlockOnWorkspacePermissions) {
+    return;
   }
 
   // if workspaces are there and we are trying to access the workspace that we are not part of then show the existing workspaces

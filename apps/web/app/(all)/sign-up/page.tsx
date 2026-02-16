@@ -14,17 +14,17 @@
 // components
 import { AuthBase } from "@/components/auth-screens/auth-base";
 // helpers
-import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
+import { EAuthModes } from "@/helpers/authentication.helper";
+import { redirectIfUserIsAuthenticated } from "@/lib/middleware/auth-client-middleware";
 // assets
 import DefaultLayout from "@/layouts/default-layout";
-import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
+
+export const clientMiddleware = [redirectIfUserIsAuthenticated];
 
 function SignUpPage() {
   return (
     <DefaultLayout>
-      <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
-        <AuthBase authType={EAuthModes.SIGN_UP} />
-      </AuthenticationWrapper>
+      <AuthBase authType={EAuthModes.SIGN_UP} />
     </DefaultLayout>
   );
 }

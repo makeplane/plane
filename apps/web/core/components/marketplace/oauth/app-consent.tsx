@@ -58,12 +58,12 @@ export const AppConsent = observer(function AppConsent({
 }: TAppConsentProps) {
   const { t } = useTranslation();
   const router = useRouter();
-  const { userSettings } = useUser();
+  const { preferredWorkspaceSlug } = useUser();
   const workspaceSlugFromParams = workspaceSlug;
 
   // if workspaceSlug is not available in URL, pick last visited workspace's slug from settings
   if (!workspaceSlug) {
-    workspaceSlug = userSettings?.data?.workspace?.last_workspace_slug ?? "";
+    workspaceSlug = preferredWorkspaceSlug ?? "";
   }
 
   const { workspaces } = useWorkspace();
