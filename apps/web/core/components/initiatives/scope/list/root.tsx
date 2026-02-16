@@ -11,20 +11,19 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { EpicIcon, ProjectIcon } from "@plane/propel/icons";
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
+import { INITIATIVE_SCOPE_TABS } from "@plane/types";
+import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 // assets
 import initiativesListDark from "@/app/assets/empty-state/initiatives/scope/initiatives-list-dark.webp?url";
 import initiativesListLight from "@/app/assets/empty-state/initiatives/scope/initiatives-list-light.webp?url";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { AddScopeButton } from "@/components/initiatives/common/add-scope-button";
-import { EpicListItem } from "@/components/initiatives/details/main/collapsible-section/epics/epic-list-item/root";
-import { ProjectList } from "@/components/initiatives/details/main/collapsible-section/projects/project-list";
-import { ListHeader } from "./header";
+import { EpicListItem } from "../../details/main/collapsible-section/epics/epic-list-item/root";
+import { ProjectList } from "../../details/main/collapsible-section/projects/project-list";
+import { useInitiativeScopeShared } from "../filters/context-shared";
 
 type Props = {
   epicIds: string[];
@@ -32,17 +31,16 @@ type Props = {
   workspaceSlug: string;
   initiativeId: string;
   disabled: boolean;
-  handleAddEpic: () => void;
-  handleAddProject: () => void;
 };
 
 export const InitiativeScopeListView = observer(function InitiativeScopeListView(props: Props) {
-  const { epicIds, projectIds, workspaceSlug, initiativeId, disabled, handleAddEpic, handleAddProject } = props;
+  const { epicIds, projectIds, workspaceSlug, initiativeId, disabled } = props;
+  const { activeTab } = useInitiativeScopeShared();
 
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
 
-  const isEmpty = epicIds.length === 0 && projectIds.length === 0;
+  const isEmpty = epicIds?.length === 0 && projectIds?.length === 0;
 
   const resolvedAssetPath = resolvedTheme === "light" ? initiativesListLight : initiativesListDark;
 
@@ -64,49 +62,29 @@ export const InitiativeScopeListView = observer(function InitiativeScopeListView
   return (
     <div className="h-full w-full overflow-y-auto">
       {/**Epics List */}
-      {epicIds.length > 0 && (
-        <Collapsible defaultOpen>
-          <CollapsibleTrigger className="w-full">
-            <ListHeader
-              count={epicIds.length}
-              label={t("common.epics")}
-              handleAdd={handleAddEpic}
-              icon={<EpicIcon className="size-4" />}
-            />
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            {epicIds?.map((epicId) => (
-              <EpicListItem
-                key={epicId}
-                workspaceSlug={workspaceSlug}
-                epicId={epicId}
-                initiativeId={initiativeId}
-                disabled={disabled}
-              />
-            ))}
-          </CollapsibleContent>
-        </Collapsible>
-      )}
-      {/**Projects List */}
-      {projectIds.length > 0 && (
-        <Collapsible defaultOpen>
-          <CollapsibleTrigger className="w-full">
-            <ListHeader
-              count={projectIds.length}
-              label={t("common.projects")}
-              handleAdd={handleAddProject}
-              icon={<ProjectIcon className="size-4" />}
-            />
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <ProjectList
+      {activeTab === INITIATIVE_SCOPE_TABS.EPICS && (
+        <>
+          {epicIds?.map((epicId) => (
+            <EpicListItem
+              key={epicId}
               workspaceSlug={workspaceSlug}
+              epicId={epicId}
               initiativeId={initiativeId}
-              projectIds={projectIds}
               disabled={disabled}
             />
-          </CollapsibleContent>
-        </Collapsible>
+          ))}
+        </>
+      )}
+      {/**Projects List */}
+      {activeTab === INITIATIVE_SCOPE_TABS.PROJECTS && (
+        <>
+          <ProjectList
+            workspaceSlug={workspaceSlug}
+            initiativeId={initiativeId}
+            projectIds={projectIds}
+            disabled={disabled}
+          />
+        </>
       )}
     </div>
   );

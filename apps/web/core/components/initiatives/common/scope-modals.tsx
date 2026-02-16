@@ -37,7 +37,9 @@ export const InitiativeScopeModals = observer(function InitiativeScopeModals(pro
   } = useInitiatives();
   const {
     initiative: {
-      epics: { addEpicsToInitiative, getInitiativeEpicsById },
+      scope: {
+        epics: { addEpicsToInitiative, getInitiativeEpicsById },
+      },
       fetchInitiativeAnalytics,
       updateInitiative,
       getInitiativeById,

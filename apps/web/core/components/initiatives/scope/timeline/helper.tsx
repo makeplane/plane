@@ -23,7 +23,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 
-export const useTimelineOperations = (workspaceSlug: string) => {
+export const useTimelineOperations = (workspaceSlug: string, blockType: EGanttBlockType) => {
   const { updateProject } = useProject();
   const { issues } = useIssues(EIssuesStoreType.GLOBAL);
   const { updateIssue } = useIssuesActions(EIssuesStoreType.EPIC);
@@ -118,7 +118,7 @@ export const useTimelineOperations = (workspaceSlug: string) => {
 
   // Main handlers
   const blockStructureUpdateHandler = async (block: any, payload: IBlockUpdateData): Promise<void> => {
-    const operations = getOperations(payload.meta?.type);
+    const operations = getOperations(blockType);
     if (operations) {
       await operations.updateStructure(block, payload);
     }
@@ -127,8 +127,7 @@ export const useTimelineOperations = (workspaceSlug: string) => {
   const blockDatesUpdateHandler = async (updates: IBlockUpdateDependencyData[]): Promise<void> => {
     const update = updates[0];
     if (!update) return;
-
-    const operations = getOperations(update.meta?.type);
+    const operations = getOperations(blockType);
     if (operations) {
       await operations.updateDates(updates);
     }
@@ -143,7 +142,7 @@ export const useTimelineOperations = (workspaceSlug: string) => {
 /**
  * Block render map
  */
-const blockRenderMap: Record<EGanttBlockType, (data: any) => React.ReactNode> = {
+export const blockRenderMap: Record<EGanttBlockType, (data: any) => React.ReactNode> = {
   [EGanttBlockType.EPIC]: (data: TIssue) => <WorkItemTimelineBlock issueId={data.id} isEpic />,
   [EGanttBlockType.PROJECT]: (data: TProject) => <ProjectTimelineBlock projectId={data.id} />,
   [EGanttBlockType.WORK_ITEM]: (data: TIssue) => <WorkItemTimelineBlock issueId={data.id} />,
@@ -152,8 +151,6 @@ const blockRenderMap: Record<EGanttBlockType, (data: any) => React.ReactNode> = 
 /**
  * Block render helper
  */
-export const getBlockToRender = (data: any) => {
-  const type = data.meta?.type as EGanttBlockType | undefined;
-  if (!type) return null;
-  return blockRenderMap[type](data);
+export const getBlockToRender = (blockType: EGanttBlockType, data: any) => {
+  return blockRenderMap[blockType](data);
 };

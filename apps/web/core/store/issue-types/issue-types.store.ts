@@ -744,7 +744,7 @@ export class IssueTypes implements IIssueTypesStore {
 
           const initiativeIdFromRouter = this.rootStore.router.query.initiativeId;
           if (initiativeIdFromRouter) {
-            this.rootStore.initiativeStore.epics.removeEpicFromInitiative(
+            this.rootStore.initiativeStore.scope.epics.removeEpicFromInitiative(
               workspaceSlug,
               initiativeIdFromRouter?.toString(),
               workItemId

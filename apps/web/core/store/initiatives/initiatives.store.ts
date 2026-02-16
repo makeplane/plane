@@ -19,10 +19,10 @@ import { computedFn } from "mobx-utils";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import type {
   TEpicStats,
-  TLoader,
   TInitiativeGroupByOptions,
-  TInitiativeOrderByOptions,
   TInitiativeLabel,
+  TInitiativeOrderByOptions,
+  TLoader,
 } from "@plane/types";
 import { convertToISODateString } from "@plane/utils";
 
@@ -37,20 +37,19 @@ import type {
   TInitiativeStats,
 } from "@/types/initiative";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
+import type { RootStore } from "../../../ee/store/root.store";
 
 // local imports
 import type { IInitiativeAttachmentStore } from "./initiative-attachment.store";
 import { InitiativeAttachmentStore } from "./initiative-attachment.store";
-import { InitiativeEpicStore } from "./initiative-epics.store";
 import type { IInitiativeLinkStore } from "./initiative-links.store";
 import { InitiativeLinkStore } from "./initiative-links.store";
-import { InitiativeScopeStore } from "./initiative-scope-filters.store";
+import { InitiativeScopeStore } from "./initiative-scope.store";
 import type { IInitiativeCommentActivityStore } from "./initiatives-comment-activity.store";
 import { InitiativeCommentActivityStore } from "./initiatives-comment-activity.store";
 import type { IInitiativeFilterStore } from "./initiatives-filter.store";
 import type { IUpdateStore } from "@/store/work-items/epic/updates/base.store";
 import { UpdateStore } from "@/store/work-items/epic/updates/base.store";
-import type { RootStore } from "@/plane-web/store/root.store";
 
 export const ALL_INITIATIVES = "All Initiatives";
 
@@ -155,7 +154,6 @@ export interface IInitiativeStore {
   ) => Promise<void>;
 
   // store
-  epics: InitiativeEpicStore;
   scope: InitiativeScopeStore;
 }
 
@@ -188,7 +186,6 @@ export class InitiativeStore implements IInitiativeStore {
   rootStore: RootStore;
   initiativeFilterStore: IInitiativeFilterStore;
   updatesStore: IUpdateStore;
-  epics: InitiativeEpicStore;
   scope: InitiativeScopeStore;
 
   constructor(_rootStore: RootStore, initiativeFilterStore: IInitiativeFilterStore) {
@@ -248,8 +245,7 @@ export class InitiativeStore implements IInitiativeStore {
     // services
     this.initiativeService = new InitiativeService();
     this.initiativeLabelsService = new InitiativeLabelsService();
-    this.epics = new InitiativeEpicStore(this, this.initiativeService);
-    this.scope = new InitiativeScopeStore();
+    this.scope = new InitiativeScopeStore(this.rootStore, this.initiativeService);
   }
 
   get isAnyModalOpen() {
@@ -500,7 +496,7 @@ export class InitiativeStore implements IInitiativeStore {
       this.fetchInitiativeAnalytics(workspaceSlug, initiativeId);
       this.initiativeCommentActivities.fetchInitiativeComments(workspaceSlug, initiativeId);
       this.initiativeCommentActivities.fetchActivities(workspaceSlug, initiativeId);
-      this.epics.fetchInitiativeEpics(workspaceSlug, initiativeId);
+      this.scope.epics.fetchInitiativeEpics(workspaceSlug, initiativeId);
       return response;
     } catch (error) {
       console.error("error while fetching initiative details", error);

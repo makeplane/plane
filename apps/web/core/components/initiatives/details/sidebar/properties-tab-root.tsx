@@ -56,7 +56,9 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
     initiative: {
       getInitiativeById,
       updateInitiative,
-      epics: { getInitiativeEpicsById },
+      scope: {
+        epics: { getInitiativeEpicsDetailById },
+      },
     },
   } = useInitiatives();
   const { getUserDetails } = useMember();
@@ -67,7 +69,7 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
   const { t } = useTranslation();
 
   // derived values
-  const initiativeEpicIds = getInitiativeEpicsById(initiativeId) ?? [];
+  const initiativeEpicIds = getInitiativeEpicsDetailById(initiativeId) ?? [];
   const initiative = initiativeId ? getInitiativeById(initiativeId) : undefined;
   const initiativeProjectIds = initiative?.project_ids || [];
   const initiativeLabelIds = initiative?.label_ids || [];

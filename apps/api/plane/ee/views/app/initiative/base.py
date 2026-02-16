@@ -16,7 +16,7 @@ from datetime import date, timedelta
 
 
 # Module imports
-from django.db.models import OuterRef, Subquery, Q, Count, Prefetch, Func, F
+from django.db.models import OuterRef, Subquery, Q, Count, Prefetch
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.utils import timezone
@@ -35,7 +35,6 @@ from plane.ee.models import (
     InitiativeProject,
     InitiativeReaction,
     InitiativeEpic,
-    ProjectAttribute,
     EntityUpdates,
     InitiativeLabelAssociation,
 )
@@ -47,6 +46,7 @@ from plane.ee.bgtasks.initiative_activity_task import initiative_activity
 from plane.ee.utils.nested_issue_children import get_all_related_issues
 from plane.db.models import IssueAssignee, IssueActivity
 from plane.utils.filters import ComplexFilterBackend, InitiativeFilterSet
+from plane.utils.filters.extended.filterset import InitiativeProjectFilterSet
 
 
 class InitiativeEndpoint(BaseAPIView):
@@ -236,48 +236,26 @@ class InitiativeProjectEndpoint(BaseAPIView):
     permission_classes = [WorkspaceUserPermission]
     model = InitiativeProject
     serializer_class = InitiativeProjectSerializer
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = InitiativeProjectFilterSet
 
     def get(self, request, slug, initiative_id, project_id=None):
         # Get all projects in initiative
-        initiative_projects = InitiativeProject.objects.filter(
-            initiative_id=initiative_id,
-            workspace__slug=slug,
-            project__archived_at__isnull=True,
-        ).values_list("project_id", flat=True)
-
-        # Get all projects in initiative
-        projects = (
-            Project.objects.filter(id__in=initiative_projects, archived_at__isnull=True)
-            .annotate(
-                total_issues=Issue.issue_objects.filter(project_id=OuterRef("pk"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                completed_issues=Issue.issue_objects.filter(project_id=OuterRef("pk"), state__group="completed")
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                state_id=Subquery(ProjectAttribute.objects.filter(project_id=OuterRef("pk")).values("state_id")[:1])
-            )
-            .values(
-                "id",
-                "name",
-                "completed_issues",
-                "total_issues",
-                "archived_at",
-                "state_id",
-                "lead_id",
-                "start_date",
-                "target_date",
-                "logo_props",
-            )
+        projects = Project.objects.filter(archived_at__isnull=True).filter(
+            # Filter by initiative relationship
+            id__in=InitiativeProject.objects.filter(
+                initiative_id=initiative_id,
+                workspace__slug=slug,
+                deleted_at__isnull=True,
+                project__archived_at__isnull=True,
+            ).values_list("project_id", flat=True)
         )
 
-        return Response(projects, status=status.HTTP_200_OK)
+        # Apply filters
+        projects = self.filter_queryset(projects)
+        projects = projects.distinct()
+
+        return Response(projects.values_list("id", flat=True), status=status.HTTP_200_OK)
 
     def post(self, request, slug, initiative_id, project_id=None):
         workspace = Workspace.objects.get(slug=slug)

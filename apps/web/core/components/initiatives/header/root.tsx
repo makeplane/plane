@@ -108,12 +108,7 @@ export const InitiativesDetailsHeader = observer(function InitiativesDetailsHead
   const INITIATIVE_HEADER_ACTIONS = useMemo(
     () => ({
       [EInitiativeNavigationItem.OVERVIEW]: <InitiativeOverviewHeaderActions />,
-      [EInitiativeNavigationItem.SCOPE]: (
-        <InitiativeScopeHeaderActions
-          initiativeId={initiativeId?.toString()}
-          disabled={!hasWorkspaceMemberLevelPermissions}
-        />
-      ),
+      [EInitiativeNavigationItem.SCOPE]: <InitiativeScopeHeaderActions initiativeId={initiativeId?.toString()} />,
     }),
     [initiativeId, hasWorkspaceMemberLevelPermissions]
   );

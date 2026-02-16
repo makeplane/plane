@@ -19,6 +19,7 @@ from django_filters import filters
 from plane.utils.filters.filterset import IssueFilterSet, UUIDInFilter, CharInFilter, BaseFilterSet
 from plane.utils.exception_logger import log_exception
 from plane.ee.models import Initiative
+from plane.db.models import Project
 from plane.utils.uuid import is_valid_uuid
 
 
@@ -446,3 +447,73 @@ class InitiativeFilterSet(BaseFilterSet):
             return ~has_non_deleted_label
         else:
             return has_non_deleted_label
+
+
+class InitiativeProjectFilterSet(BaseFilterSet):
+    lead = filters.UUIDFilter(method="filter_lead")
+    lead__in = UUIDInFilter(method="filter_lead_in", lookup_expr="in")
+    lead__isnull = filters.BooleanFilter(method="filter_lead_isnull", lookup_expr="isnull")
+    start_date = filters.CharFilter(method="filter_start_date")
+    start_date__gte = filters.CharFilter(method="filter_start_date_gte")
+    start_date__lte = filters.CharFilter(method="filter_start_date_lte")
+    target_date = filters.CharFilter(method="filter_target_date")
+    target_date__gte = filters.CharFilter(method="filter_target_date_gte", lookup_expr="gte")
+    target_date__lte = filters.CharFilter(method="filter_target_date_lte", lookup_expr="lte")
+    priority = filters.CharFilter(method="filter_priority")
+    priority__in = CharInFilter(method="filter_priority_in", lookup_expr="in")
+    state_id = filters.CharFilter(method="filter_state_id", lookup_expr="in")
+    state_id__in = CharInFilter(method="filter_state_id_in", lookup_expr="in")
+
+    class Meta:
+        model = Project
+        fields = {
+            "created_at": ["exact", "gte", "gt", "lte", "lt", "range"],
+            "updated_at": ["exact", "gte", "gt", "lte", "lt", "range"],
+            "archived_at": ["exact", "isnull"],
+            "network": ["exact", "in"],
+        }
+
+    def filter_lead(self, queryset, name, value):
+        """Filter by project lead ID"""
+        return Q(project_lead_id=value)
+
+    def filter_lead_in(self, queryset, name, value):
+        """Filter by project lead IDs (in)"""
+        return Q(project_lead_id__in=value)
+
+    def filter_lead_isnull(self, queryset, name, value):
+        """Filter by project lead (is null), excluding soft deleted users"""
+        if value in (True, "true", "True", 1, "1"):
+            return Q(project_lead_id__isnull=True)
+        else:
+            return Q(project_lead_id__isnull=False)
+
+    def filter_start_date(self, queryset, name, value):
+        return Q(project_projectattribute__start_date__exact=value)
+
+    def filter_start_date_gte(self, queryset, name, value):
+        return Q(project_projectattribute__start_date__gte=value)
+
+    def filter_start_date_lte(self, queryset, name, value):
+        return Q(project_projectattribute__start_date__lte=value)
+
+    def filter_target_date(self, queryset, name, value):
+        return Q(project_projectattribute__target_date__exact=value)
+
+    def filter_target_date_gte(self, queryset, name, value):
+        return Q(project_projectattribute__target_date__gte=value)
+
+    def filter_target_date_lte(self, queryset, name, value):
+        return Q(project_projectattribute__target_date__lte=value)
+
+    def filter_priority(self, queryset, name, value):
+        return Q(project_projectattribute__priority=value)
+
+    def filter_priority_in(self, queryset, name, value):
+        return Q(project_projectattribute__priority__in=value)
+
+    def filter_state_id(self, queryset, name, value):
+        return Q(project_projectattribute__state_id=value, project_projectattribute__state__deleted_at__isnull=True)
+
+    def filter_state_id_in(self, queryset, name, value):
+        return Q(project_projectattribute__state_id__in=value, project_projectattribute__state__deleted_at__isnull=True)

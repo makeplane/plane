@@ -33,7 +33,7 @@ import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type { Route } from "./+types/page";
 
-function IssueDetailsPage({ params }: Route.ComponentProps) {
+function InitiativeScopePage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
   const { workspaceSlug, initiativeId } = params;
@@ -46,7 +46,9 @@ function IssueDetailsPage({ params }: Route.ComponentProps) {
     initiative: {
       getInitiativeById,
       fetchInitiativeDetails,
-      epics: { fetchInitiativeEpicsDetail },
+      scope: {
+        epics: { fetchInitiativeEpicsDetail },
+      },
     },
   } = useInitiatives();
 
@@ -118,4 +120,4 @@ function IssueDetailsPage({ params }: Route.ComponentProps) {
   );
 }
 
-export default observer(IssueDetailsPage);
+export default observer(InitiativeScopePage);

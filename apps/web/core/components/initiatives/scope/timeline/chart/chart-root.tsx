@@ -11,17 +11,19 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo } from "react";
-import { observer } from "mobx-react";
-import { EUserPermissionsLevel } from "@plane/constants";
-import { EGanttBlockType, EUserPermissions } from "@plane/types";
+import { TimelineChartViewRoot } from "@/components/timeline";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
+import { EUserPermissionsLevel } from "@plane/constants";
+import type { TInitiativeScopeTab } from "@plane/types";
+import { EGanttBlockType, EUserPermissions, INITIATIVE_SCOPE_TABS } from "@plane/types";
+import { observer } from "mobx-react";
+import { useMemo } from "react";
+import { FlatScopeGanttSidebar } from "../sidebar/root";
 import { getBlockToRender, useTimelineOperations } from "../helper";
-import { GroupedTimelineSidebar } from "../sidebar/root";
-import { GroupedTimelineChart } from "./group-chart";
 
 type Props = {
+  activeTab: TInitiativeScopeTab;
   epicIds: string[];
   projectIds: string[];
   workspaceSlug: string;
@@ -31,25 +33,26 @@ type Props = {
   handleAddProject: () => void;
 };
 export const ScopeTimelineChartRoot = observer(function ScopeTimelineChartRoot(props: Props) {
-  const { epicIds, projectIds, workspaceSlug, handleAddEpic, handleAddProject } = props;
+  const { activeTab, epicIds, projectIds, workspaceSlug, handleAddEpic, handleAddProject } = props;
 
-  const { blockStructureUpdateHandler, blockDatesUpdateHandler } = useTimelineOperations(workspaceSlug);
-  const { allowPermissions } = useUserPermissions();
-  const { getBlockById } = useTimeLineChartStore();
-
-  const groupedBlockIds = useMemo(
-    () => [
-      {
-        type: EGanttBlockType.EPIC,
-        blockIds: epicIds,
-      },
-      {
-        type: EGanttBlockType.PROJECT,
-        blockIds: projectIds,
-      },
-    ],
-    [epicIds, projectIds]
+  const { blockStructureUpdateHandler, blockDatesUpdateHandler } = useTimelineOperations(
+    workspaceSlug,
+    activeTab === INITIATIVE_SCOPE_TABS.EPICS ? EGanttBlockType.EPIC : EGanttBlockType.PROJECT
   );
+  const { allowPermissions } = useUserPermissions();
+  const { getBlockById, setBlockIds } = useTimeLineChartStore();
+
+  const blockIds = useMemo(() => {
+    if (activeTab === INITIATIVE_SCOPE_TABS.EPICS) return epicIds;
+    if (activeTab === INITIATIVE_SCOPE_TABS.PROJECTS) return projectIds;
+    return [];
+  }, [activeTab, epicIds, projectIds]);
+
+  const activeBlockType = useMemo(() => {
+    if (activeTab === INITIATIVE_SCOPE_TABS.EPICS) return EGanttBlockType.EPIC;
+    if (activeTab === INITIATIVE_SCOPE_TABS.PROJECTS) return EGanttBlockType.PROJECT;
+    return EGanttBlockType.EPIC;
+  }, [activeTab]);
 
   const checkEditPermissions = (projectId: string) => {
     if (!projectId) return false;
@@ -84,24 +87,41 @@ export const ScopeTimelineChartRoot = observer(function ScopeTimelineChartRoot(p
     }
   };
 
+  // update the timeline store with updated blockIds
+  useMemo(() => {
+    setBlockIds(blockIds);
+  }, [blockIds, setBlockIds]);
+
   return (
     <div className="h-full w-full">
-      <GroupedTimelineChart
+      <TimelineChartViewRoot
         border={false}
         title="Scope"
-        blockGroups={groupedBlockIds}
+        blockIds={blockIds}
         blockUpdateHandler={blockStructureUpdateHandler}
-        blockToRender={getBlockToRender}
-        sidebarToRender={(props) => <GroupedTimelineSidebar {...props} showAllBlocks handleAddBlock={handleAddBlock} />}
+        blockToRender={(data) => getBlockToRender(activeBlockType, data)}
+        sidebarToRender={(props) => (
+          <FlatScopeGanttSidebar
+            {...props}
+            blockIds={blockIds}
+            activeBlockType={activeBlockType}
+            showAllBlocks
+            handleAddBlock={handleAddBlock}
+          />
+        )}
         enableBlockLeftResize
         enableBlockRightResize
         enableBlockMove
+        enableReorder={false}
         enableAddBlock
         enableSelection={false}
         showToday
         updateBlockDates={blockDatesUpdateHandler}
         showAllBlocks
         enableDependency={isDependencyEnabled}
+        isEpic={activeTab === INITIATIVE_SCOPE_TABS.EPICS}
+        loaderTitle=""
+        bottomSpacing={false}
       />
     </div>
   );

@@ -26,9 +26,9 @@ import { CoreRootStore } from "@/store/root.store";
 // theme
 import type { IThemeStore } from "./theme.store";
 import { ThemeStore } from "./theme.store";
-// importers
 import type { IGlobalViewStore } from "./global-view.store";
 import { GlobalViewStore } from "./global-view.store";
+
 // timeline
 import type { IProjectInboxStore } from "./project-inbox.store";
 import { ProjectInboxStore } from "./project-inbox.store";
@@ -60,7 +60,6 @@ export class RootStore extends CoreRootStore {
     this.timelineStore = new TimeLineStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.projectInbox = new ProjectInboxStore(this);
-    // project members activity
     // project view
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);

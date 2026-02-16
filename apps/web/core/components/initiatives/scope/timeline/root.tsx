@@ -15,12 +15,13 @@ import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 // assets
-import { GANTT_TIMELINE_TYPE } from "@plane/types";
+import { GANTT_TIMELINE_TYPE, INITIATIVE_SCOPE_TABS } from "@plane/types";
 import initiativesGanttDark from "@/app/assets/empty-state/initiatives/scope/initiatives-gantt-dark.webp?url";
 import initiativesGanttLight from "@/app/assets/empty-state/initiatives/scope/initiatives-gantt-light.webp?url";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { TimeLineTypeContext } from "@/components/timeline/contexts";
 import { AddScopeButton } from "../../common/add-scope-button";
+import { useInitiativeScopeShared } from "../filters/context-shared";
 import { ScopeTimelineChartRoot } from "./chart/chart-root";
 
 type Props = {
@@ -34,6 +35,7 @@ type Props = {
 };
 export function InitiativeScopeTimelineView(props: Props) {
   const { epicIds, projectIds, workspaceSlug, handleAddEpic, handleAddProject, initiativeId, disabled } = props;
+  const { activeTab } = useInitiativeScopeShared();
 
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
@@ -57,17 +59,38 @@ export function InitiativeScopeTimelineView(props: Props) {
       />
     );
 
-  return (
-    <TimeLineTypeContext.Provider value={GANTT_TIMELINE_TYPE.GROUPED}>
-      <ScopeTimelineChartRoot
-        epicIds={epicIds}
-        projectIds={projectIds}
-        workspaceSlug={workspaceSlug}
-        handleAddEpic={handleAddEpic}
-        handleAddProject={handleAddProject}
-        initiativeId={initiativeId}
-        disabled={disabled}
-      />
-    </TimeLineTypeContext.Provider>
-  );
+  if (activeTab === INITIATIVE_SCOPE_TABS.EPICS) {
+    return (
+      <TimeLineTypeContext.Provider value={GANTT_TIMELINE_TYPE.ISSUE}>
+        <ScopeTimelineChartRoot
+          activeTab={activeTab}
+          epicIds={epicIds}
+          projectIds={projectIds}
+          workspaceSlug={workspaceSlug}
+          handleAddEpic={handleAddEpic}
+          handleAddProject={handleAddProject}
+          initiativeId={initiativeId}
+          disabled={disabled}
+        />
+      </TimeLineTypeContext.Provider>
+    );
+  }
+  if (activeTab === INITIATIVE_SCOPE_TABS.PROJECTS) {
+    return (
+      <TimeLineTypeContext.Provider value={GANTT_TIMELINE_TYPE.PROJECT}>
+        <ScopeTimelineChartRoot
+          activeTab={activeTab}
+          epicIds={epicIds}
+          projectIds={projectIds}
+          workspaceSlug={workspaceSlug}
+          handleAddEpic={handleAddEpic}
+          handleAddProject={handleAddProject}
+          initiativeId={initiativeId}
+          disabled={disabled}
+        />
+      </TimeLineTypeContext.Provider>
+    );
+  }
+
+  return null;
 }

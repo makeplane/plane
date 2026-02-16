@@ -11,56 +11,99 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { set } from "lodash-es";
-import { action, makeObservable, observable, runInAction } from "mobx";
-import { computedFn } from "mobx-utils";
-import type { EIssueFilterType } from "@plane/constants";
+import { isEmpty, set } from "lodash-es";
+import { action, computed, makeObservable, observable, runInAction, toJS } from "mobx";
+// plane constants
+import { EIssueFilterType } from "@plane/constants";
+// types
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
-  ISubWorkItemFilters,
-  TIssue,
+  IIssueFilters,
+  TIssueParams,
+  TWorkItemFilterExpression,
 } from "@plane/types";
-import {
-  getFilteredWorkItems,
-  getGroupedWorkItemIds,
-  updateSubWorkItemFilters,
-} from "@/store/work-items/helpers/base-issues-utils";
-import { DEFAULT_DISPLAY_PROPERTIES } from "@/store/work-items/details/sub_issues_filter.store";
-import type { InitiativeEpicStore } from "./initiative-epics.store";
+// store
+import type { RootStore } from "../../../ee/store/root.store";
+import type { IBaseIssueFilterStore } from "../work-items/helpers/issue-filter-helper.store";
+import { IssueFilterHelperStore } from "../work-items/helpers/issue-filter-helper.store";
+import type { IIssueRootStore } from "../work-items/root.store";
+import { DEFAULT_DISPLAY_PROPERTIES } from "../work-items/details/sub_issues_filter.store";
 
-export interface IInitiativeEpicsFilterStore {
-  initiativeEpicsFiltersMap: Record<string, Partial<ISubWorkItemFilters>>;
-  getInitiativeEpicsFiltersById: (initiativeId: string) => Partial<ISubWorkItemFilters> | undefined;
-  updateEpicsFilters: (
+export interface IInitiativeEpicsFilterStore extends IBaseIssueFilterStore {
+  // helper actions
+  getIssueFilters(initiativeId: string): IIssueFilters | undefined;
+  getInitiativeEpicsFiltersById: (initiativeId: string) => IIssueFilters | undefined;
+  updateEpicFilters: (
     workspaceSlug: string,
     filterType: EIssueFilterType,
-    filters: IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    filters:
+      | Partial<IIssueFilterOptions>
+      | Partial<IIssueDisplayFilterOptions>
+      | Partial<IIssueDisplayProperties>
+      | TWorkItemFilterExpression,
     initiativeId: string
-  ) => Promise<void>;
-  getGroupedEpics: (initiativeId: string) => Record<string, string[]>;
-  getFilteredEpics: (initiativeId: string, filters: IIssueFilterOptions) => TIssue[];
-  resetFilters: (workItemId: string) => void;
-  // store
-  initiativeEpicStore: InitiativeEpicStore;
+  ) => void;
+  resetFilters: (initiativeId: string) => void;
 }
 
-export class InitiativeEpicsFilterStore implements IInitiativeEpicsFilterStore {
-  initiativeEpicsFiltersMap: Record<string, Partial<ISubWorkItemFilters>> = {};
-  initiativeEpicStore: InitiativeEpicStore;
+export class InitiativeEpicsFilterStore extends IssueFilterHelperStore implements IInitiativeEpicsFilterStore {
+  // observables
+  filters: { [initiativeId: string]: IIssueFilters } = {};
+  // root stores
+  rootIssueStore: IIssueRootStore;
+  rootStore: RootStore;
 
-  constructor(initiativeEpicStore: InitiativeEpicStore) {
+  constructor(_rootStore: IIssueRootStore, rootStore: RootStore) {
+    super();
     makeObservable(this, {
-      initiativeEpicsFiltersMap: observable,
-      updateEpicsFilters: action,
+      // observables
+      filters: observable,
+      // computed
+      issueFilters: computed,
+      appliedFilters: computed,
+      // actions
+      updateEpicFilters: action,
       getInitiativeEpicsFiltersById: action,
-      getGroupedEpics: action,
-      getFilteredEpics: action,
       resetFilters: action,
     });
+    // root stores
+    this.rootIssueStore = _rootStore;
+    this.rootStore = rootStore;
+  }
 
-    this.initiativeEpicStore = initiativeEpicStore;
+  // computed
+  /**
+   * @description This method is used to get the issue filters for the current initiative
+   * @returns {IIssueFilters | undefined}
+   */
+  get issueFilters(): IIssueFilters | undefined {
+    // For initiative epics, we don't have a single current initiativeId in rootIssueStore
+    // So this computed property may not be used, but we keep it for interface compliance
+    return undefined;
+  }
+
+  /**
+   * @description This method is used to get the applied filters for the current initiative
+   * @returns {Partial<Record<TIssueParams, string | boolean>> | undefined}
+   */
+  get appliedFilters(): Partial<Record<TIssueParams, string | boolean>> | undefined {
+    // For initiative epics, we don't have a single current initiativeId in rootIssueStore
+    // So this computed property may not be used, but we keep it for interface compliance
+    return undefined;
+  }
+
+  // helpers
+  /**
+   * @description This method is used to get the issue filters for an initiative
+   * @param initiativeId - The initiative id
+   * @returns {IIssueFilters | undefined}
+   */
+  getIssueFilters(initiativeId: string): IIssueFilters | undefined {
+    const displayFilters = this.filters[initiativeId] || undefined;
+    if (isEmpty(displayFilters)) return undefined;
+    return this.computedIssueFilters(displayFilters);
   }
 
   /**
@@ -68,9 +111,9 @@ export class InitiativeEpicsFilterStore implements IInitiativeEpicsFilterStore {
    * @param initiativeId - The initiative id
    */
   initializeFilters = (initiativeId: string) => {
-    set(this.initiativeEpicsFiltersMap, [initiativeId, "displayProperties"], DEFAULT_DISPLAY_PROPERTIES);
-    set(this.initiativeEpicsFiltersMap, [initiativeId, "filters"], {});
-    set(this.initiativeEpicsFiltersMap, [initiativeId, "displayFilters"], {});
+    set(this.filters, [initiativeId, "displayProperties"], DEFAULT_DISPLAY_PROPERTIES);
+    set(this.filters, [initiativeId, "richFilters"], {});
+    set(this.filters, [initiativeId, "displayFilters"], {});
   };
 
   /**
@@ -80,61 +123,64 @@ export class InitiativeEpicsFilterStore implements IInitiativeEpicsFilterStore {
    */
   getInitiativeEpicsFiltersById = (initiativeId: string) => {
     // initialize the filters if no exists before
-    if (!this.initiativeEpicsFiltersMap?.[initiativeId]) {
+    if (!this.filters?.[initiativeId]) {
       this.initializeFilters(initiativeId);
     }
-    return this.initiativeEpicsFiltersMap?.[initiativeId];
+
+    return this.filters?.[initiativeId];
   };
 
   /**
-   * Update the initiative epics filters
+   * Update display filters, display properties, or rich filters
    * @param workspaceSlug - The workspace slug
    * @param filterType - The filter type
-   * @param filters - The filters
+   * @param filters - The filters to update
    * @param initiativeId - The initiative id
    */
-  updateEpicsFilters = async (
+  updateEpicFilters = (
     workspaceSlug: string,
     filterType: EIssueFilterType,
-    filters: IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    filters:
+      | Partial<IIssueFilterOptions>
+      | Partial<IIssueDisplayFilterOptions>
+      | Partial<IIssueDisplayProperties>
+      | TWorkItemFilterExpression,
     initiativeId: string
   ) => {
     runInAction(() => {
-      updateSubWorkItemFilters(this.initiativeEpicsFiltersMap, filterType, filters, initiativeId);
+      if (!this.filters[initiativeId]) {
+        this.initializeFilters(initiativeId);
+      }
+
+      const currentFilters = this.filters[initiativeId];
+
+      switch (filterType) {
+        case EIssueFilterType.DISPLAY_FILTERS: {
+          const updatedDisplayFilters = filters as Partial<IIssueDisplayFilterOptions>;
+          set(this.filters, [initiativeId, "displayFilters"], {
+            ...currentFilters?.displayFilters,
+            ...updatedDisplayFilters,
+          });
+          break;
+        }
+        case EIssueFilterType.DISPLAY_PROPERTIES: {
+          const updatedDisplayProperties = filters as Partial<IIssueDisplayProperties>;
+          set(this.filters, [initiativeId, "displayProperties"], {
+            ...currentFilters?.displayProperties,
+            ...updatedDisplayProperties,
+          });
+          break;
+        }
+        case EIssueFilterType.FILTERS: {
+          set(this.filters, [initiativeId, "richFilters"], filters);
+          this.rootStore.initiativeStore.scope.epics.fetchInitiativeEpics(workspaceSlug, initiativeId);
+          break;
+        }
+        default:
+          break;
+      }
     });
   };
-
-  /**
-   * @description This method is used to get the grouped epics
-   * @param parentWorkItemId
-   * @returns
-   */
-  getGroupedEpics = computedFn((parentWorkItemId: string) => {
-    const epicsFilters = this.getInitiativeEpicsFiltersById(parentWorkItemId);
-    // get group by and order by
-    const orderByKey = epicsFilters.displayFilters?.order_by;
-    const groupByKey = epicsFilters.displayFilters?.group_by;
-
-    const filteredEpics = this.getFilteredEpics(parentWorkItemId, epicsFilters.filters ?? {});
-
-    const groupedEpics = getGroupedWorkItemIds(filteredEpics, groupByKey, orderByKey);
-
-    return groupedEpics;
-  });
-
-  /**
-   * @description This method is used to get the filtered epics
-   * @param initiativeId
-   * @returns
-   */
-  getFilteredEpics = computedFn((initiativeId: string, filters: IIssueFilterOptions) => {
-    const epicIds = this.initiativeEpicStore.getInitiativeEpicsById(initiativeId);
-    const epics = this.initiativeEpicStore.rootStore.issue.issues.getIssuesByIds(epicIds, "un-archived");
-
-    const filteredEpics = getFilteredWorkItems(epics, filters);
-
-    return filteredEpics;
-  });
 
   /**
    * @description This method is used to reset the filters

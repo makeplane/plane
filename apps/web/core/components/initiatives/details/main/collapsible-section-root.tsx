@@ -11,16 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React, { useMemo } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // components
 import { AttachmentsSection } from "./collapsible-section/attachment/attachments-section";
-import { EpicsSection } from "./collapsible-section/epics/epics-section";
 import { LinksSection } from "./collapsible-section/links/links-section";
-import { ProjectsSection } from "./collapsible-section/projects/projects-section";
 
 type Props = {
   workspaceSlug: string;
@@ -34,10 +31,6 @@ export const InitiativeCollapsibleSection = observer(function InitiativeCollapsi
   // store hooks
   const {
     initiative: {
-      toggleProjectsModal,
-      toggleEpicModal,
-      epics: { getInitiativeEpicsById },
-      getInitiativeById,
       initiativeLinks: { getInitiativeLinks },
       initiativeAttachments: { getAttachmentsByInitiativeId },
       openCollapsibleSection,
@@ -46,12 +39,9 @@ export const InitiativeCollapsibleSection = observer(function InitiativeCollapsi
   } = useInitiatives();
 
   // derived values
-  const initiative = getInitiativeById(initiativeId);
   const initiativesLinks = getInitiativeLinks(initiativeId);
   const attachmentUploads = getAttachmentsByInitiativeId(initiativeId);
   const initiativesAttachments = getAttachmentsByInitiativeId(initiativeId);
-  const projectsIds = initiative?.project_ids;
-  const initiativeEpics = getInitiativeEpicsById(initiativeId) ?? [];
 
   const shouldRenderLinks = !!initiativesLinks && initiativesLinks?.length > 0;
   const shouldRenderAttachments =
@@ -60,44 +50,11 @@ export const InitiativeCollapsibleSection = observer(function InitiativeCollapsi
 
   const linksCount = initiativesLinks?.length ?? 0;
   const attachmentCount = initiativesAttachments?.length ?? 0;
-  const epicCount = initiativeEpics?.length ?? 0;
-  const projectCount = projectsIds?.length ?? 0;
 
-  const sectionOrder = useMemo(() => {
-    const defaultOrder = ["links", "attachments"];
-    if (epicCount === 0 && projectCount > 0) {
-      return ["links", "attachments"];
-    }
-    return defaultOrder;
-  }, [epicCount, projectCount]);
+  const sectionOrder = ["links", "attachments"];
 
   const renderSection = (sectionType: string) => {
     switch (sectionType) {
-      case "projects":
-        return (
-          <ProjectsSection
-            workspaceSlug={workspaceSlug}
-            initiativeId={initiativeId}
-            projectIds={projectsIds}
-            disabled={disabled}
-            toggleProjectModal={toggleProjectsModal}
-            isOpen={openCollapsibleSection.includes("projects")}
-            onToggle={() => toggleOpenCollapsibleSection("projects")}
-            count={projectCount}
-          />
-        );
-      case "epics":
-        return (
-          <EpicsSection
-            workspaceSlug={workspaceSlug}
-            initiativeId={initiativeId}
-            disabled={disabled}
-            toggleEpicModal={toggleEpicModal}
-            isOpen={openCollapsibleSection.includes("epics")}
-            onToggle={() => toggleOpenCollapsibleSection("epics")}
-            count={epicCount}
-          />
-        );
       case "links":
         return (
           shouldRenderLinks && (

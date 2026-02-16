@@ -59,8 +59,15 @@ export type TInitiativeAttachmentIdMap = {
   [initiative_id: string]: string[];
 };
 
+export const INITIATIVE_SCOPE_TABS = {
+  EPICS: "epics",
+  PROJECTS: "projects",
+} as const;
+export type TInitiativeScopeTab = (typeof INITIATIVE_SCOPE_TABS)[keyof typeof INITIATIVE_SCOPE_TABS];
+
 export interface IInitiativeScopeDisplayFiltersOptions {
   activeLayout: EIssueLayoutTypes;
+  activeTab: TInitiativeScopeTab;
 }
 
 export type TInitiativeStates = "DRAFT" | "PLANNED" | "ACTIVE" | "COMPLETED" | "CLOSED";

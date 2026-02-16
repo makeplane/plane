@@ -107,7 +107,9 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
     initiative: {
       getInitiativeAnalyticsById,
       getInitiativeById,
-      epics: { getInitiativeEpicsById },
+      scope: {
+        epics: { getInitiativeEpicsDetailById },
+      },
       toggleProjectsModal,
       toggleEpicModal,
     },
@@ -118,7 +120,7 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
   // derived values
   const initiativeAnalytics = getInitiativeAnalyticsById(initiativeId);
   const initiative = getInitiativeById(initiativeId);
-  const initiativeEpics = getInitiativeEpicsById(initiativeId);
+  const initiativeEpics = getInitiativeEpicsDetailById(initiativeId);
 
   const epicsCount = initiativeEpics?.length ?? 0;
   const projectsCount = initiative?.project_ids?.length ?? 0;

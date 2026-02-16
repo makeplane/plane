@@ -141,7 +141,7 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
         });
         reset(defaultValues);
       })
-      .catch((error) => {
+      .catch((error: { error_code?: E_BULK_OPERATION_ERROR_CODES }) => {
         const errorInfo = BULK_OPERATION_ERROR_DETAILS[error?.error_code as E_BULK_OPERATION_ERROR_CODES] ?? undefined;
         setToast({
           type: TOAST_TYPE.ERROR,

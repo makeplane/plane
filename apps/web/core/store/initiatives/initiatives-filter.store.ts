@@ -19,7 +19,7 @@ import type { TInitiativeDisplayFilters } from "@plane/types";
 // Plane-web
 import { InitiativeService } from "@/services/initiative.service";
 import type { TExternalInitiativeFilterExpression } from "@/types/initiative";
-import type { RootStore } from "@/plane-web/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 export interface IInitiativeFilterStore {
   displayFilters: Record<string, TInitiativeDisplayFilters>;
@@ -41,11 +41,11 @@ export class InitiativeFilterStore implements IInitiativeFilterStore {
   filters: Record<string, TExternalInitiativeFilterExpression> = {};
 
   // root store
-  rootStore: RootStore;
+  rootStore: CoreRootStore;
   // service
   initiativeService: InitiativeService;
 
-  constructor(_rootStore: RootStore) {
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
       displayFilters: observable,

@@ -12,24 +12,15 @@
  */
 
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
 import { EIssueLayoutTypes } from "@plane/types";
 import { LayoutSelection } from "@/components/issues/issue-layouts/filters";
-import { AddScopeButton } from "@/components/initiatives/common/add-scope-button";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
 type Props = {
   initiativeId: string;
-  disabled: boolean;
 };
 
-export const InitiativeScopeHeaderActions = observer(function InitiativeScopeHeaderActions({
-  initiativeId,
-  disabled,
-}: Props) {
-  const { t } = useTranslation();
-
+export const InitiativeScopeHeaderActions = observer(function InitiativeScopeHeaderActions({ initiativeId }: Props) {
   const {
     initiative: {
       scope: { getDisplayFilters, updateDisplayFilters },
@@ -51,14 +42,6 @@ export const InitiativeScopeHeaderActions = observer(function InitiativeScopeHea
         layouts={[EIssueLayoutTypes.LIST, EIssueLayoutTypes.GANTT]}
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={activeLayout}
-      />
-      <AddScopeButton
-        disabled={disabled}
-        customButton={
-          <Button variant="primary" size="lg">
-            {t("initiatives.scope.add_scope")}
-          </Button>
-        }
       />
     </div>
   );

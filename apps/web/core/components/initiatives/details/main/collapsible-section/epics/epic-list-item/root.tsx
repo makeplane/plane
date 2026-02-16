@@ -56,8 +56,10 @@ export const EpicListItem = observer(function EpicListItem(props: Props) {
   const {
     initiative: {
       fetchInitiativeAnalytics,
-      epics: {
-        filters: { getInitiativeEpicsFiltersById },
+      scope: {
+        epics: {
+          filters: { getInitiativeEpicsFiltersById },
+        },
       },
     },
   } = useInitiatives();

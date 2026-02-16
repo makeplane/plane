@@ -37,7 +37,9 @@ export const useEpicUpdates = (workspaceSlug: string, projectId: string, epicId:
   } = useUpdateDetail(EUpdateEntityType.EPIC);
   const {
     initiative: {
-      epics: { fetchInitiativeEpics },
+      scope: {
+        epics: { fetchInitiativeEpics },
+      },
       fetchInitiativeAnalytics,
     },
   } = useInitiatives();

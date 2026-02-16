@@ -88,6 +88,20 @@ export class InitiativeService extends APIService {
       });
   }
 
+  async fetchInitiativeProjects(
+    workspaceSlug: string,
+    initiativeId: string,
+    queries?: Record<string, string | boolean>
+  ): Promise<string[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/projects/`, {
+      params: queries,
+    })
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
   async getInitiativeProject(
     workspaceSlug: string,
     initiativeId: string,

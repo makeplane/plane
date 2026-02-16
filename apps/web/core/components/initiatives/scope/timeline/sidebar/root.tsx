@@ -11,105 +11,50 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { RefObject } from "react";
-import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import type { RefObject } from "react";
 // plane
-import { useTranslation } from "@plane/i18n";
-import { EpicIcon, ProjectIcon } from "@plane/propel/icons";
 import { EGanttBlockType } from "@plane/types";
-// components
-import { ProjectTimelineSidebarBlock } from "@/components/projects/list/with-grouping/layouts/timeline/blocks";
 // hooks
-import { BLOCK_HEIGHT } from "@/components/timeline/constants";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
-// local imports
-import { ListHeader } from "../../list/header";
+//
+import { ProjectTimelineSidebarBlock } from "@/components/projects/list/with-grouping/layouts/timeline/blocks";
 import { EpicSidebarBlock } from "./epic-block";
 
 type Props = {
+  activeBlockType: EGanttBlockType;
+  blockIds: string[];
   loadMoreBlocks?: () => void;
-  ganttContainerRef: RefObject<HTMLDivElement>;
+  ganttContainerRef?: RefObject<HTMLDivElement>;
   showAllBlocks?: boolean;
   handleAddBlock: (type: EGanttBlockType) => Promise<void>;
 };
 
-export const GroupedTimelineSidebar = observer(function GroupedTimelineSidebar(props: Props) {
-  const { showAllBlocks = false, handleAddBlock, ganttContainerRef } = props;
+export const FlatScopeGanttSidebar = observer(function FlatScopeGanttSidebar(props: Props) {
+  const { activeBlockType, blockIds, showAllBlocks = false } = props;
 
-  const { getBlockById, getGroupedBlockIds, toggleGroup } = useTimeLineChartStore();
+  const { getBlockById } = useTimeLineChartStore();
 
-  const { t } = useTranslation();
+  if (!blockIds) return null;
 
-  const [ganttContainerWidth, setGanttContainerWidth] = useState(0);
-
-  const groupedBlockIds = getGroupedBlockIds();
-
-  const handleAdd = async (type: EGanttBlockType) => {
-    await handleAddBlock(type);
-    toggleGroup(type);
-  };
-
-  /** Set width for group header */
-  useEffect(() => {
-    if (ganttContainerRef.current) {
-      setGanttContainerWidth(ganttContainerRef.current.clientWidth);
-    }
-  }, [ganttContainerRef]);
-
-  const blockTypeConfig: Record<EGanttBlockType, { title: string; icon: React.ReactNode }> = {
-    [EGanttBlockType.EPIC]: {
-      title: t("common.epics"),
-      icon: <EpicIcon className="size-4" />,
-    },
-    [EGanttBlockType.PROJECT]: {
-      title: t("common.projects"),
-      icon: <ProjectIcon className="size-4" />,
-    },
-    [EGanttBlockType.WORK_ITEM]: {
-      title: t("common.issues"),
-      icon: <ProjectIcon className="size-4" />,
-    },
-  };
-
-  const getListTitle = (type: EGanttBlockType) => blockTypeConfig[type]?.title ?? "";
-
-  const getListIcon = (type: EGanttBlockType) => blockTypeConfig[type]?.icon;
-
-  return groupedBlockIds.map((group) => {
-    const type = group.type;
-    const blockIds = group.blockIds;
-    if (!blockIds) return;
-
-    return (
+  return (
+    <>
       <>
-        <ListHeader
-          count={group.count ?? 0}
-          label={getListTitle(type)}
-          handleAdd={() => handleAdd(type)}
-          onClick={() => toggleGroup(type)}
-          style={{ width: ganttContainerWidth, height: BLOCK_HEIGHT }}
-          customClassName="border-[1px]"
-          icon={getListIcon(type)}
-        />
-        <>
-          {blockIds.map((blockId) => {
-            const block = getBlockById(blockId);
-            const isBlockVisibleOnSidebar = block?.start_date && block?.target_date;
-            const type = block?.meta?.type;
+        {blockIds.map((blockId: string) => {
+          const block = getBlockById(blockId);
+          const isBlockVisibleOnSidebar = block?.start_date && block?.target_date;
 
-            // hide the block if it doesn't have start and target dates and showAllBlocks is false
-            if (!block || (!showAllBlocks && !isBlockVisibleOnSidebar)) return;
+          // hide the block if it doesn't have start and target dates and showAllBlocks is false
+          if (!block || (!showAllBlocks && !isBlockVisibleOnSidebar)) return;
 
-            switch (type) {
-              case EGanttBlockType.EPIC:
-                return <EpicSidebarBlock key={blockId} block={block} />;
-              case EGanttBlockType.PROJECT:
-                return <ProjectTimelineSidebarBlock key={blockId} block={block} />;
-            }
-          })}
-        </>
+          switch (activeBlockType) {
+            case EGanttBlockType.EPIC:
+              return <EpicSidebarBlock key={blockId} block={block} />;
+            case EGanttBlockType.PROJECT:
+              return <ProjectTimelineSidebarBlock key={blockId} block={block} />;
+          }
+        })}
       </>
-    );
-  });
+    </>
+  );
 });

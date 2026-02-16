@@ -39,7 +39,9 @@ export const EpicQuickActions = observer(function EpicQuickActions(props: Props)
   //  store hooks
   const {
     initiative: {
-      epics: { removeEpicFromInitiative },
+      scope: {
+        epics: { removeEpicFromInitiative },
+      },
     },
   } = useInitiatives();
   const {
