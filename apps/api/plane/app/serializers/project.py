@@ -5,6 +5,9 @@
 # Third party imports
 from rest_framework import serializers
 
+# Python imports
+import re
+
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
 from django.db.models import Max
@@ -37,6 +40,9 @@ class ProjectSerializer(BaseSerializer):
         project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]
 
+        if re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, name):
+            raise serializers.ValidationError(detail="PROJECT_NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS")
+
         project = Project.objects.filter(name=name, workspace_id=workspace_id)
 
         if project_id:
@@ -52,6 +58,9 @@ class ProjectSerializer(BaseSerializer):
     def validate_identifier(self, identifier):
         project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]
+
+        if re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, identifier):
+            raise serializers.ValidationError(detail="PROJECT_IDENTIFIER_CANNOT_CONTAIN_SPECIAL_CHARACTERS")
 
         project = Project.objects.filter(identifier=identifier, workspace_id=workspace_id)
 
