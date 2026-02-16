@@ -128,6 +128,30 @@ export class FavoriteStore implements IFavoriteStore {
   }
 
   /**
+   * Fetches grouped favorites (children) for a specific favorite folder
+   * @param workspaceSlug
+   * @param favoriteId
+   * @returns Promise<IFavorite[]>
+   */
+  fetchGroupedFavorites = async (workspaceSlug: string, favoriteId: string) => {
+    try {
+      const response = await this.favoriteService.getGroupedFavorites(workspaceSlug, favoriteId);
+      runInAction(() => {
+        response.forEach((favorite) => {
+          set(this.favoriteMap, [favorite.id], favorite);
+          if (favorite.entity_identifier) {
+            set(this.entityMap, [favorite.entity_identifier], favorite);
+          }
+        });
+      });
+      return response;
+    } catch (error) {
+      console.error("Failed to fetch grouped favorites from favorite store");
+      throw error;
+    }
+  };
+
+  /**
    * Fetches all favorites for the workspace and populates the store
    * @param workspaceSlug
    * @returns Promise<IFavorite[]>
