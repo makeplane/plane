@@ -20,7 +20,7 @@ import type {
   CustomFieldContextProjectMapping,
   IssueTypeToContextMapping,
   CustomFieldContextOption,
-} from "jira.js/out/version3/models";
+} from "jira.js/out/version3/models/index.js";
 import Papa from "papaparse";
 import type { JiraService } from "@/jira/services";
 import type {

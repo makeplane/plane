@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Issue as IJiraIssue } from "jira.js/out/version3/models";
+import type { Issue as IJiraIssue } from "jira.js/out/version3/models/index.js";
 import type { PlaneEntities } from "@plane/etl/core";
 import type { JiraConfig, JiraEntity, TJiraIssueWithChildren } from "@plane/etl/jira";
 import {

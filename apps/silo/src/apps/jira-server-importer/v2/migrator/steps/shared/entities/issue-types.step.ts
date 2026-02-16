@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { IssueTypeDetails } from "jira.js/out/version2/models";
+import type { IssueTypeDetails } from "jira.js/out/version2/models/index.js";
 import { v4 as uuid } from "uuid";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import type { E_IMPORTER_KEYS } from "@plane/etl/core";

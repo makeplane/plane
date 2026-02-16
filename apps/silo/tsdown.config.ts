@@ -6,6 +6,8 @@ export default defineConfig({
   dts: true,
   clean: true,
   sourcemap: true,
-  exports: true,
+  exports: { legacy: true },
+  noExternal: [/^bluebird$/],
+  inlineOnly: false,
   platform: "node",
 });

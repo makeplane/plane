@@ -15,7 +15,7 @@ import type {
   Attachment as JiraAttachment,
   Priority as JiraPriority,
   StatusDetails as JiraState,
-} from "jira.js/out/version2/models";
+} from "jira.js/out/version2/models/index.js";
 import type { ExIssueAttachment, ExState, ExIssueProperty, ExIssuePropertyValue, TPropertyValue } from "@plane/sdk";
 import { E_IMPORTER_KEYS } from "@/core";
 import type { IPriorityConfig, IStateConfig, JiraCustomFieldKeys, JiraIssueField } from "@/jira-server/types";

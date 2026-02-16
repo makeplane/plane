@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Sprint } from "jira.js/out/agile/models";
+import type { Sprint } from "jira.js/out/agile/models/index.js";
 import { v4 as uuid } from "uuid";
 import type { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { JiraConfig, JiraSprint } from "@plane/etl/jira-server";

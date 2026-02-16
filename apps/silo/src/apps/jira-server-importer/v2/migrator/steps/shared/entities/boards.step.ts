@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Board } from "jira.js/out/agile/models";
+import type { Board } from "jira.js/out/agile/models/index.js";
 import type { JiraConfig, JiraV2Service, PaginatedResult } from "@plane/etl/jira-server";
 import { pullBoardsV2 } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";

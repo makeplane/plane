@@ -5,6 +5,8 @@
   "private": true,
   "author": "engineering@plane.so",
   "type": "module",
+  "main": "./dist/start.mjs",
+  "module": "./dist/start.mjs",
   "types": "./dist/start.d.mts",
   "exports": {
     ".": "./dist/start.mjs",

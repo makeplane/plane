@@ -17,7 +17,7 @@ import type {
   Comment as JComment,
   IssueTypeDetails as JiraIssueTypeDetails,
   FieldDetails,
-} from "jira.js/out/version2/models";
+} from "jira.js/out/version2/models/index.js";
 import type {
   ImportedJiraUser,
   JiraComment,

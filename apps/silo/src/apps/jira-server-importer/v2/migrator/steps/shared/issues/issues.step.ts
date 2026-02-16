@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Worklog } from "jira.js/out/version2/models";
+import type { Worklog } from "jira.js/out/version2/models/index.js";
 import { v4 as uuidv4 } from "uuid";
 import type { E_IMPORTER_KEYS, TIssuePropertyValuesPayload } from "@plane/etl/core";
 import type { IJiraIssue, JiraConfig, JiraIssueField, JiraV2Service } from "@plane/etl/jira-server";

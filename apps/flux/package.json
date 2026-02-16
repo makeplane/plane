@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "license": "AGPL-3.0",
   "description": "WebSocket flux service for horizontal scaling with Redis pub/sub",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
   "exports": {
     ".": "./dist/index.mjs",
     "./consumer": "./dist/consumer.mjs",

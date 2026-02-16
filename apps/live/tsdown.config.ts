@@ -7,7 +7,7 @@ export default defineConfig({
   dts: false,
   clean: true,
   sourcemap: false,
-  exports: true,
+  exports: { legacy: true },
   platform: "node",
   copy: "assets",
 });

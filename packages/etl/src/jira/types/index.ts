@@ -22,7 +22,7 @@ import type {
   IssueTypeWithStatus as JiraStates,
   IssueTypeDetails as JiraIssueTypeDetails,
   CustomFieldContextOption,
-} from "jira.js/out/version3/models";
+} from "jira.js/out/version3/models/index.js";
 import type { ExProject, ExState } from "@plane/sdk";
 
 export type JiraProps =

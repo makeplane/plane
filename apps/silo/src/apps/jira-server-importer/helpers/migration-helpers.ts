@@ -16,7 +16,7 @@ import type {
   Attachment as JiraAttachment,
   Priority as JiraPriority,
   StatusDetails as JiraState,
-} from "jira.js/out/version2/models";
+} from "jira.js/out/version2/models/index.js";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { IPriorityConfig, IStateConfig, JiraComponent, JiraConfig, JiraSprint } from "@plane/etl/jira-server";
 import { EJiraAuthenticationType, JiraV2Service } from "@plane/etl/jira-server";

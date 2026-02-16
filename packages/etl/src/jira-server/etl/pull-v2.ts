@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Board, Sprint } from "jira.js/out/agile/models";
+import type { Board, Sprint } from "jira.js/out/agile/models/index.js";
 import type {
   Issue as IJiraIssue,
   ComponentWithIssueCount,
@@ -19,7 +19,7 @@ import type {
   IssueTypeDetails as JiraIssueTypeDetails,
   FieldDetails,
   Worklog,
-} from "jira.js/out/version2/models";
+} from "jira.js/out/version2/models/index.js";
 import type {
   ImportedJiraUser,
   JiraComment,

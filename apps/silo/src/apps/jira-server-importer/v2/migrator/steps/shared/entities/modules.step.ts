@@ -12,7 +12,7 @@
  */
 
 /* ----------------- Modules Migrator Step ----------------- */
-import type { ComponentWithIssueCount } from "jira.js/out/version2/models";
+import type { ComponentWithIssueCount } from "jira.js/out/version2/models/index.js";
 import { v4 as uuid } from "uuid";
 import type { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { JiraConfig, JiraV2Service } from "@plane/etl/jira-server";

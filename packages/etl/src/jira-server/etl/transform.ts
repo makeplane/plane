@@ -11,7 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { ComponentWithIssueCount, IssueTypeDetails as JiraIssueTypeDetails } from "jira.js/out/version2/models";
+import type {
+  ComponentWithIssueCount,
+  IssueTypeDetails as JiraIssueTypeDetails,
+} from "jira.js/out/version2/models/index.js";
 import type {
   ExCycle,
   ExIssueComment,

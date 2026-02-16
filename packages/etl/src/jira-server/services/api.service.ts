@@ -15,8 +15,8 @@
 import type { AxiosError } from "axios";
 import axios from "axios";
 import type { Paginated } from "jira.js";
-import { Board as BoardClient } from "jira.js/out/agile";
-import { Version2Client } from "jira.js/out/version2";
+import { Board as BoardClient } from "jira.js/out/agile/index.js";
+import { Version2Client } from "jira.js/out/version2/index.js";
 import type {
   CustomFieldContextOption,
   FieldDetails,
@@ -24,7 +24,7 @@ import type {
   JiraStatus,
   Project,
   IssueTypeDetails,
-} from "jira.js/out/version2/models";
+} from "jira.js/out/version2/models/index.js";
 import type { JiraCustomFieldWithCtx } from "@/jira-server/types/custom-fields";
 import type { JiraApiUser, JiraProps } from "..";
 import { fetchPaginatedData, EJiraAuthenticationType } from "..";

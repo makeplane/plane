@@ -14,9 +14,9 @@
 // services
 import type { AxiosError } from "axios";
 import axios from "axios";
-import { Board } from "jira.js/out/agile";
-import { Version3Client } from "jira.js/out/version3";
-import type { FieldDetails, PageString } from "jira.js/out/version3/models";
+import { Board } from "jira.js/out/agile/index.js";
+import { Version3Client } from "jira.js/out/version3/index.js";
+import type { FieldDetails, PageString } from "jira.js/out/version3/models/index.js";
 import type { JiraProps, JiraResource } from "@/jira/types";
 
 export class JiraService {
