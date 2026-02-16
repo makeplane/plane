@@ -13,7 +13,6 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   inputSize?: "xs" | "sm" | "md";
   hasError?: boolean;
   className?: string;
-  autoComplete?: "on" | "off";
 }
 
 const Input = React.forwardRef(function Input(props: InputProps, ref: React.ForwardedRef<HTMLInputElement>) {

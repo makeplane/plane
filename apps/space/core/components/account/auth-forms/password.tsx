@@ -159,7 +159,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
-            autoComplete="on"
+            autoComplete="off"
             autoFocus
           />
           {showPassword?.password ? (
@@ -192,6 +192,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
+              autoComplete="off"
             />
             {showPassword?.retypePassword ? (
               <EyeOff
