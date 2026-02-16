@@ -20,6 +20,7 @@ Plane is a modern, open-source project management tool designed for teams to tra
 ## Core Features
 
 ### 1. Work Items (Issues)
+
 - Rich-text editor with file uploads
 - Issue relationships (blocks, relates, duplicates)
 - Assignments, mentions, watchers
@@ -28,34 +29,42 @@ Plane is a modern, open-source project management tool designed for teams to tra
 - Sub-issues/task hierarchy
 
 ### 2. Cycles (Sprints)
+
 - Time-boxed planning
 - Issue assignment to cycles
 - Burn-down charts & progress tracking
 - Cycle metrics and reporting
 
 ### 3. Modules
+
 - Break projects into deliverable components
 - Module grouping of issues
 - Dependency management
 
 ### 4. Views
+
 - Customizable issue filters
 - Saved views for team workflows
 - Board, list, calendar, spreadsheet, Gantt, timeline views
 
 ### 5. Pages
+
 - Wiki-style project documentation
 - Rich text editing with Tiptap
 - Version history
 - AI-assisted content generation
 
 ### 6. Analytics
-- Real-time dashboards
-- Custom analytics views
-- Trend visualization via charts
+
+- Real-time dashboards (Pro feature)
+- Custom analytics views with multiple chart types
+- Trend visualization via charts (line, bar, pie, scatter)
+- Dashboard favorites/pinning with unified UserFavorite system
+- Multi-dashboard CRUD with widget configuration UI
 - Export capabilities
 
 ### 7. Collaboration
+
 - Real-time editing via Hocuspocus + Y.js CRDT
 - Comment threads
 - Activity tracking
@@ -63,11 +72,13 @@ Plane is a modern, open-source project management tool designed for teams to tra
 - Mentions & @-references
 
 ### 8. Public Sharing
+
 - Public issue views via anchor links
 - Public workspace browsing
 - Read-only access for stakeholders
 
 ### 9. Authentication & Authorization
+
 - OAuth providers (Google, GitHub, GitLab, Gitea)
 - Magic link (email-based passwordless auth)
 - Password-based authentication
@@ -75,6 +86,7 @@ Plane is a modern, open-source project management tool designed for teams to tra
 - RBAC with workspace/project roles
 
 ### 10. Integrations
+
 - GitHub sync (repos, issues, comments)
 - Slack notifications
 - Custom webhooks
@@ -83,6 +95,7 @@ Plane is a modern, open-source project management tool designed for teams to tra
 ## Architecture Overview
 
 ### Monorepo Structure
+
 - **Apps**: web, admin, space, live, api, proxy
 - **Packages**: @plane/types, @plane/constants, @plane/utils, @plane/services, @plane/hooks, @plane/propel (UI), @plane/editor, @plane/i18n, and others
 - **Build**: pnpm + Turborepo
@@ -90,6 +103,7 @@ Plane is a modern, open-source project management tool designed for teams to tra
 ### Tech Stack
 
 **Frontend**:
+
 - React 18, React Router v7
 - MobX for state management
 - Vite + TypeScript
@@ -97,6 +111,7 @@ Plane is a modern, open-source project management tool designed for teams to tra
 - Hocuspocus + Y.js for real-time collaboration
 
 **Backend**:
+
 - Django 4.2 + DRF
 - PostgreSQL 15.7 (primary DB)
 - MongoDB 4.6 (API logs)
@@ -105,6 +120,7 @@ Plane is a modern, open-source project management tool designed for teams to tra
 - Channels (WebSocket support)
 
 **Infrastructure**:
+
 - MinIO (S3-compatible storage)
 - Caddy (reverse proxy, auto-HTTPS)
 - Docker (containerization)
@@ -114,28 +130,28 @@ Plane is a modern, open-source project management tool designed for teams to tra
 
 ### Functional Requirements
 
-| Requirement | Priority | Status | Details |
-|------------|----------|--------|---------|
-| Multi-workspace support | Critical | Shipped | Users can create/manage multiple workspaces |
+| Requirement               | Priority | Status  | Details                                                       |
+| ------------------------- | -------- | ------- | ------------------------------------------------------------- |
+| Multi-workspace support   | Critical | Shipped | Users can create/manage multiple workspaces                   |
 | Role-based access control | Critical | Shipped | Workspace & project-level roles (Owner, Admin, Member, Guest) |
-| Issue full lifecycle | Critical | Shipped | Create, update, assign, comment, close, archive |
-| Real-time collaboration | High | Shipped | WebSocket-based simultaneous editing |
-| Public sharing | High | Shipped | Share issues/workspaces publicly via links |
-| Analytics & reporting | High | Shipped | Dashboard views, trend charts, burn-down tracking |
-| OAuth authentication | High | Shipped | Google, GitHub, GitLab, Gitea providers |
-| File uploads | Medium | Shipped | Attach files to issues, store in S3/MinIO |
-| API access | Medium | Shipped | REST API v1 with token-based auth |
-| Self-hosting | Critical | Shipped | Docker/Kubernetes deployment options |
+| Issue full lifecycle      | Critical | Shipped | Create, update, assign, comment, close, archive               |
+| Real-time collaboration   | High     | Shipped | WebSocket-based simultaneous editing                          |
+| Public sharing            | High     | Shipped | Share issues/workspaces publicly via links                    |
+| Analytics & reporting     | High     | Shipped | Dashboard views, trend charts, burn-down tracking             |
+| OAuth authentication      | High     | Shipped | Google, GitHub, GitLab, Gitea providers                       |
+| File uploads              | Medium   | Shipped | Attach files to issues, store in S3/MinIO                     |
+| API access                | Medium   | Shipped | REST API v1 with token-based auth                             |
+| Self-hosting              | Critical | Shipped | Docker/Kubernetes deployment options                          |
 
 ### Non-Functional Requirements
 
-| Requirement | Target | Details |
-|------------|--------|---------|
-| **Scalability** | Horizontal | Stateless services, Redis cache, DB connection pooling |
-| **Performance** | <2s avg response | Pagination, caching, optimized queries |
-| **Availability** | 99.5% uptime | Health checks, graceful degradation, no single point of failure |
-| **Security** | SOC2 Ready | RBAC, encryption, rate limiting, audit logs |
-| **Data Privacy** | GDPR Compliant | Data sovereignty, self-hosting, encryption at rest |
+| Requirement         | Target                | Details                                                         |
+| ------------------- | --------------------- | --------------------------------------------------------------- |
+| **Scalability**     | Horizontal            | Stateless services, Redis cache, DB connection pooling          |
+| **Performance**     | <2s avg response      | Pagination, caching, optimized queries                          |
+| **Availability**    | 99.5% uptime          | Health checks, graceful degradation, no single point of failure |
+| **Security**        | SOC2 Ready            | RBAC, encryption, rate limiting, audit logs                     |
+| **Data Privacy**    | GDPR Compliant        | Data sovereignty, self-hosting, encryption at rest              |
 | **Maintainability** | TypeScript throughout | 200 LOC file limit, modular architecture, comprehensive testing |
 
 ### Success Metrics
@@ -158,12 +174,14 @@ Plane is a modern, open-source project management tool designed for teams to tra
 ## Key Constraints & Dependencies
 
 **Constraints**:
+
 - AGPL-3.0 license requires source sharing for modifications
 - PostgreSQL 15.7+ required (no legacy DB support)
 - Real-time features require WebSocket support
 - File uploads limited to 5MB per request (configurable)
 
 **External Dependencies**:
+
 - OAuth providers (Google, GitHub, GitLab, Gitea)
 - Email service for notifications (SMTP)
 - S3-compatible storage (MinIO or AWS S3)
@@ -172,18 +190,21 @@ Plane is a modern, open-source project management tool designed for teams to tra
 ## Roadmap & Priorities
 
 ### Current Phase (v1.2.x)
+
 - Stability & performance optimization
 - Community Edition feature parity
 - Enhanced analytics
 - Mobile app improvements
 
 ### Near-term (v1.3-v1.4)
+
 - Advanced automation rules
 - Custom fields & workflows
 - Improved import/export tools
 - Better integration ecosystem
 
 ### Future (v2.0)
+
 - AI-powered issue summarization
 - Predictive analytics
 - Advanced resource planning

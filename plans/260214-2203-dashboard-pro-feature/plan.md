@@ -28,16 +28,16 @@ Implement full-featured Pro dashboard system with customizable analytics widgets
 
 ## Implementation Phases
 
-| Phase | Description | Status | Effort |
-|-------|-------------|--------|--------|
-| [Phase 1](./phase-01-backend-models.md) | Backend Models & Migrations | Completed | 3h |
-| [Phase 2](./phase-02-backend-api.md) | Backend API Endpoints | Completed | 4h |
-| [Phase 3](./phase-03-frontend-types-constants-service.md) | Frontend Types, Constants & Service | Completed | 3h |
-| [Phase 4](./phase-04-frontend-store.md) | Frontend MobX Store | Completed | 3h |
-| [Phase 5](./phase-05-navigation-routing.md) | Navigation & Routing | Completed | 2h |
-| [Phase 6](./phase-06-dashboard-list-crud.md) | Dashboard List & CRUD UI | Completed | 4h |
-| [Phase 7](./phase-07-widget-components-grid.md) | Widget Components & Grid Layout | Completed | 6h |
-| [Phase 8](./phase-08-widget-configuration.md) | Widget Configuration UI | Completed | 7h |
+| Phase                                                     | Description                         | Status    | Effort |
+| --------------------------------------------------------- | ----------------------------------- | --------- | ------ |
+| [Phase 1](./phase-01-backend-models.md)                   | Backend Models & Migrations         | Completed | 3h     |
+| [Phase 2](./phase-02-backend-api.md)                      | Backend API Endpoints               | Completed | 4h     |
+| [Phase 3](./phase-03-frontend-types-constants-service.md) | Frontend Types, Constants & Service | Completed | 3h     |
+| [Phase 4](./phase-04-frontend-store.md)                   | Frontend MobX Store                 | Completed | 3h     |
+| [Phase 5](./phase-05-navigation-routing.md)               | Navigation & Routing                | Completed | 2h     |
+| [Phase 6](./phase-06-dashboard-list-crud.md)              | Dashboard List & CRUD UI            | Completed | 4h     |
+| [Phase 7](./phase-07-widget-components-grid.md)           | Widget Components & Grid Layout     | Completed | 6h     |
+| [Phase 8](./phase-08-widget-configuration.md)             | Widget Configuration UI             | Completed | 7h     |
 
 **Total Estimated Effort**: 32 hours
 
@@ -77,6 +77,7 @@ Implement full-featured Pro dashboard system with customizable analytics widgets
 ## Validation Log
 
 ### Session 1 — 2026-02-14
+
 **Trigger:** Initial plan creation validation
 **Questions asked:** 7
 
@@ -118,6 +119,7 @@ Implement full-featured Pro dashboard system with customizable analytics widgets
    - **Rationale:** Unlimited dashboards and widgets. Users self-manage. Simpler implementation. No limit checks needed in API.
 
 #### Confirmed Decisions
+
 - API version: v1 (plane/api/) — new feature, new namespace
 - Ownership: Shared editing — any ADMIN/MEMBER can edit any dashboard
 - Grid layout: Fixed preset sizes per widget type — no react-grid-layout dependency
@@ -127,18 +129,21 @@ Implement full-featured Pro dashboard system with customizable analytics widgets
 - Limits: None — unlimited dashboards and widgets
 
 #### Action Items
+
 - [ ] Phase 2: Ensure API endpoints use v1 namespace (plane/api/), not v0
 - [ ] Phase 1: Remove owner-only permission logic, keep shared model
 - [ ] Phase 7: Move widget component paths from route folder to core/components/dashboards/
 - [ ] Phase 7: Remove position JSON from widget model, use fixed preset sizes from constants
 
 #### Impact on Phases
+
 - Phase 1: Keep owner field for tracking but no owner-only permission logic. Fresh table names confirmed.
 - Phase 2: API in v1 namespace (plane/api/views/, plane/api/serializers/, plane/api/urls/). Already correct in plan.
 - Phase 7: Widget components move to `apps/web/core/components/dashboards/widgets/` instead of route folder. Position simplified to preset sizes from constants.
 - Phase 8: No changes needed (config modal stays in route folder or moves to core/components/dashboards/config/).
 
 ### Session 2 — 2026-02-14
+
 **Trigger:** Re-validation to catch implementation-blocking issues before coding
 **Questions asked:** 3
 
@@ -160,16 +165,47 @@ Implement full-featured Pro dashboard system with customizable analytics widgets
    - **Rationale:** Proceed as planned. Handle conflicts during implementation if they arise. Fresh table names ('dashboards', 'dashboard_widgets') should avoid collisions.
 
 #### Confirmed Decisions
+
 - File paths: ALL components in `core/components/dashboards/` — route pages only import, no local components
 - Security: Whitelist ORM filter keys in widget data endpoint — prevent injection
 - DB models: Proceed with fresh creation, handle conflicts if encountered
 
 #### Action Items
+
 - [ ] Phase 7: Update ALL component file paths from `app/.../components/` to `apps/web/core/components/dashboards/`
 - [ ] Phase 8: Update ALL config component file paths to `apps/web/core/components/dashboards/config/`
 - [ ] Phase 2: Add ALLOWED_WIDGET_FILTER_KEYS whitelist in DashboardWidgetDataEndpoint
 
 #### Impact on Phases
+
 - Phase 2: Add filter key whitelist (`ALLOWED_WIDGET_FILTER_KEYS = ["state", "priority", "labels", "assignee", "cycle", "module"]`) to DashboardWidgetDataEndpoint. Reject unknown keys.
 - Phase 7: Move ALL component files (dashboard-detail-header, widget-card, widget-grid, add-widget-button, all widgets/) to `apps/web/core/components/dashboards/`. Route page.tsx only imports from core.
 - Phase 8: Move ALL config component files (widget-config-modal, config/) to `apps/web/core/components/dashboards/`. Route page.tsx only imports from core.
+
+### Session 3 — 2026-02-15
+
+**Trigger:** Post-implementation fixes for chart property key mismatch and missing route registration
+**Status:** Validation of production fixes
+
+#### Fixes Applied
+
+1. **Backend Chart Property Keys** (Phase 2)
+   - **Issue:** Frontend chart configuration uses lowercase property keys (e.g., `x_axis_key`), but backend `build_analytics_chart()` returns uppercase keys (e.g., `X_AXIS_KEY`)
+   - **File:** `apps/plane/app/views/analytics_dashboard.py`
+   - **Fix:** Added `CHART_PROPERTY_TO_X_AXIS` mapping to normalize case conversion between frontend and backend
+   - **Status:** Resolved — charts now render correctly with proper data binding
+
+2. **Dashboard Routes Registration** (Phase 5)
+   - **Issue:** Dashboard routes were not registered in core route file, causing TypeScript type generation failure for `/dashboards` endpoints
+   - **File:** `apps/web/app/routes/core.ts`
+   - **Fix:** Registered all dashboard routes (list, create, detail, widget data, etc.) in route exports
+   - **Status:** Resolved — TypeScript generation now includes dashboard endpoints
+
+3. **Navigation Integration** (Phase 5)
+   - **File:** `apps/web/core/components/sidebar/sidebar-menu-items.tsx`
+   - **Check:** Verified working correctly, no changes needed
+   - **Status:** Confirmed working
+
+#### Summary
+
+All three integration points verified and working. Feature complete and production-ready.

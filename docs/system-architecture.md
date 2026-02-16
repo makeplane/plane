@@ -294,16 +294,26 @@ User
 │   │   ├── State (1:N) - e.g., "To Do", "In Progress"
 │   │   ├── Label (1:N)
 │   │   ├── AnalyticsDashboard (1:N) - Pro feature
-│   │   │   └── AnalyticsDashboardWidget (1:N)
-│   │   │       └── Widget config (charts, filters)
-│   │   └── IssueView (saved filters)
+│   │   │   ├── AnalyticsDashboardWidget (1:N)
+│   │   │   │   └── Widget config (charts, filters)
+│   │   │   └── UserFavorite (M:N, annotated as is_favorite)
+│   │   ├── IssueView (saved filters)
+│   │   └── UserFavorite (M:N, annotated as is_favorite on views)
 │   └── Notifications → Notification
-└── Analytics data aggregation (via build_analytics_chart())
+└── UserFavorite (M:N) → Multiple favoritable entities (dashboards, cycles, modules, etc.)
 ```
+
+**UserFavorite Pattern** (shared across dashboards, views, pages, cycles, modules):
+
+- Backend annotates `is_favorite=Exists(UserFavorite.objects.filter(...))` on list queries
+- Frontend reads `is_favorite` boolean flag in API response
+- Favorited items appear in sidebar Favorites section
+- Uses optimistic updates with rollback on error
 
 ### Database Choice Rationale
 
 **PostgreSQL 15.7 (Primary)**:
+
 - ACID compliance for transactional data
 - Complex queries (JOINs, window functions)
 - Full-text search capabilities
@@ -311,6 +321,7 @@ User
 - 31 models covering entire domain
 
 **MongoDB 4.6 (Secondary)**:
+
 - API activity logs (high volume, write-heavy)
 - Flexible schema for analytics
 - Time-series data storage
@@ -335,18 +346,21 @@ Request
 ### Authorization (RBAC)
 
 **Workspace Roles**:
+
 - Owner - Full control
 - Admin - Manage members, projects
 - Member - Create/edit issues
 - Guest - Read-only access
 
 **Project Roles**:
+
 - Owner - Full control
 - Admin - Manage members
 - Member - Create/edit issues
 - Guest - Read-only
 
 **Implementation**: Permission classes in DRF check:
+
 1. Is user workspace member?
 2. Does user have required role?
 3. Can user access resource?
@@ -357,16 +371,17 @@ Request
 
 **Stateless Components** (scale via replicas):
 
-| Component | Role | Replicas | Health Check |
-|-----------|------|----------|--------------|
-| Web (3000) | Frontend SPA | WEB_REPLICAS | HTTP 200 on / |
-| Admin (3000) | Admin SPA | ADMIN_REPLICAS | HTTP 200 on / |
-| Space (3000) | Public portal | SPACE_REPLICAS | HTTP 200 on / |
-| Live (3000) | WebSocket | LIVE_REPLICAS | HTTP 200 on /health |
-| API (8000) | REST server | API_REPLICAS | HTTP 200 on /health |
-| Worker | Celery tasks | WORKER_REPLICAS | (managed by Celery) |
+| Component    | Role          | Replicas        | Health Check        |
+| ------------ | ------------- | --------------- | ------------------- |
+| Web (3000)   | Frontend SPA  | WEB_REPLICAS    | HTTP 200 on /       |
+| Admin (3000) | Admin SPA     | ADMIN_REPLICAS  | HTTP 200 on /       |
+| Space (3000) | Public portal | SPACE_REPLICAS  | HTTP 200 on /       |
+| Live (3000)  | WebSocket     | LIVE_REPLICAS   | HTTP 200 on /health |
+| API (8000)   | REST server   | API_REPLICAS    | HTTP 200 on /health |
+| Worker       | Celery tasks  | WORKER_REPLICAS | (managed by Celery) |
 
 **Configuration** (docker-compose.yml):
+
 ```yaml
 services:
   api:
@@ -377,32 +392,38 @@ services:
 ### Caching Strategy
 
 **Layer 1 - Browser Cache**:
+
 - Static assets (CSS, JS) with cache headers
 - Service Worker for offline support
 
 **Layer 2 - CDN Cache** (optional):
+
 - Static files cached at edge
 - Configurable TTL
 
 **Layer 3 - Redis Cache**:
+
 - Session storage
 - Computed results
 - Rate limit counters
 - Celery task results
 
 **Layer 4 - Database Query Cache**:
+
 - ORM select_related/prefetch_related
 - Materialized views (if needed)
 
 ### Database Connection Pooling
 
 **PostgreSQL** (via Django):
+
 - Default pool: 5 connections
 - Maximum: 1000 (configured)
 - Min idle: monitored
 - Connection timeout: 5s
 
 **Redis** (via django-redis):
+
 - Connection pool enabled
 - Max connections: 50
 
@@ -413,6 +434,7 @@ services:
 **Technology**: Y.js CRDT + Hocuspocus
 
 **Flow**:
+
 ```
 User A edits document
   ↓
@@ -441,15 +463,18 @@ No conflicts, no manual merging needed
 ### Logging
 
 **Request Logging** (RequestLoggerMiddleware):
+
 - All HTTP requests logged to JSON
 - Fields: method, path, status, duration, user_id, ip
 
 **API Token Logging** (APITokenLogMiddleware):
+
 - External API requests tracked
 - Fields: token, request body, response, timestamp
 - Storage: PostgreSQL + MongoDB
 
 **Application Logging**:
+
 - Django logger at DEBUG level (dev) / WARNING (prod)
 - Celery task logging per task
 - Error tracking via Sentry (optional)
@@ -457,6 +482,7 @@ No conflicts, no manual merging needed
 ### Error Tracking
 
 **Optional Integrations**:
+
 - Sentry - Error monitoring & alerting
 - Scout APM - Performance monitoring
 - PostHog - Product analytics
