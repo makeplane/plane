@@ -1,12 +1,19 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
+// plane imports
 import { EEstimateSystem } from "@plane/constants";
-import { convertMinutesToHoursMinutesString, cn } from "@plane/utils";
-// helpers
+import { convertMinutesToHoursMinutesString } from "@plane/utils";
+// components
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useEstimate } from "@/hooks/store/estimates/use-estimate";
-// plane web components
+// plane web imports
 import { EstimateListItemButtons } from "@/plane-web/components/estimates";
 
 type TEstimateListItem = {
@@ -19,40 +26,31 @@ type TEstimateListItem = {
 };
 
 export const EstimateListItem = observer(function EstimateListItem(props: TEstimateListItem) {
-  const { estimateId, isAdmin, isEstimateEnabled, isEditable } = props;
-  // hooks
+  const { estimateId } = props;
+  // store hooks
   const { estimateById } = useProjectEstimates();
   const { estimatePointIds, estimatePointById } = useEstimate(estimateId);
   const currentEstimate = estimateById(estimateId);
-
   // derived values
   const estimatePointValues = estimatePointIds?.map((estimatePointId) => {
     const estimatePoint = estimatePointById(estimatePointId);
     if (estimatePoint) return estimatePoint.value;
   });
 
-  if (!currentEstimate) return <></>;
+  if (!currentEstimate) return null;
+
   return (
-    <div
-      className={cn(
-        "relative border-b border-subtle flex justify-between items-center gap-3 py-3.5",
-        isAdmin && isEditable && isEstimateEnabled ? `text-primary` : `text-secondary`
-      )}
-    >
-      <div className="space-y-1">
-        <h3 className="font-medium text-14">{currentEstimate?.name}</h3>
-        <p className="text-11">
-          {estimatePointValues
-            ?.map((estimatePointValue) => {
-              if (currentEstimate?.type === EEstimateSystem.TIME) {
-                return convertMinutesToHoursMinutesString(Number(estimatePointValue));
-              }
-              return estimatePointValue;
-            })
-            .join(", ")}
-        </p>
-      </div>
-      <EstimateListItemButtons {...props} />
-    </div>
+    <SettingsBoxedControlItem
+      title={currentEstimate.name}
+      description={estimatePointValues
+        ?.map((estimatePointValue) => {
+          if (currentEstimate.type === EEstimateSystem.TIME) {
+            return convertMinutesToHoursMinutesString(Number(estimatePointValue));
+          }
+          return estimatePointValue;
+        })
+        .join(", ")}
+      control={<EstimateListItemButtons {...props} />}
+    />
   );
 });

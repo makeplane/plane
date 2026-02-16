@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
@@ -39,7 +45,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
   } = props;
   const { t } = useTranslation();
   // states
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(value || "");
   const [isLengthVisible, setIsLengthVisible] = useState(false);
   // ref to track if there are unsaved changes
   const hasUnsavedChanges = useRef(false);

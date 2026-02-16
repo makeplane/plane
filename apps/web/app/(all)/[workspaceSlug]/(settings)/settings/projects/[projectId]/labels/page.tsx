@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -7,10 +13,12 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { ProjectSettingsLabelList } from "@/components/labels";
-// hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+// hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { LabelsProjectSettingsHeader } from "./header";
 
 function LabelsSettingsPage() {
   // store hooks
@@ -45,9 +53,9 @@ function LabelsSettingsPage() {
   }
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<LabelsProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
-      <div ref={scrollableContainerRef} className="h-full w-full gap-10">
+      <div ref={scrollableContainerRef} className="size-full">
         <ProjectSettingsLabelList />
       </div>
     </SettingsContentWrapper>

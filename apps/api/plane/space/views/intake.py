@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 
@@ -140,7 +144,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
-            description=request.data.get("issue", {}).get("description", {}),
+            description_json=request.data.get("issue", {}).get("description_json", {}),
             description_html=request.data.get("issue", {}).get("description_html", "<p></p>"),
             priority=request.data.get("issue", {}).get("priority", "low"),
             project_id=project_deploy_board.project_id,
@@ -201,7 +205,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         issue_data = {
             "name": issue_data.get("name", issue.name),
             "description_html": issue_data.get("description_html", issue.description_html),
-            "description": issue_data.get("description", issue.description),
+            "description_json": issue_data.get("description_json", issue.description_json),
         }
 
         issue_serializer = IssueCreateSerializer(

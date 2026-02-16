@@ -1,26 +1,28 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
-// icons
-
-// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
-// plane helpers
+// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-// types
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
+import { IconButton } from "@plane/propel/icon-button";
 import { EditIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IUserProfileProjectSegregation } from "@plane/types";
-// plane ui
 import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -37,11 +39,12 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
   // refs
   const ref = useRef<HTMLDivElement>(null);
   // router
-  const { userId, workspaceSlug } = useParams();
+  const { userId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const { profileSidebarCollapsed, toggleProfileSidebar } = useAppTheme();
   const { getProjectById } = useProject();
+  const { toggleProfileSettingsModal } = useCommandPalette();
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
   // derived values
@@ -84,7 +87,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
   return (
     <div
       className={cn(
-        `vertical-scrollbar scrollbar-md fixed z-5 h-full w-full flex-shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 transition-all md:relative md:w-[300px] shadow-raised-200`,
+        `vertical-scrollbar scrollbar-md fixed z-5 h-full w-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 transition-all md:relative md:w-[300px] shadow-raised-200`,
         className
       )}
       style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
@@ -93,12 +96,17 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
         <>
           <div className="relative h-[110px]">
             {currentUser?.id === userId && (
-              <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded-sm bg-white">
-                <Link href={`/${workspaceSlug}/settings/account`}>
-                  <span className="grid place-items-center text-black">
-                    <EditIcon className="h-3 w-3" />
-                  </span>
-                </Link>
+              <div className="absolute right-3.5 top-3.5">
+                <IconButton
+                  variant="secondary"
+                  icon={EditIcon}
+                  onClick={() =>
+                    toggleProfileSettingsModal({
+                      activeTab: "general",
+                      isOpen: true,
+                    })
+                  }
+                />
               </div>
             )}
             <CoverImage

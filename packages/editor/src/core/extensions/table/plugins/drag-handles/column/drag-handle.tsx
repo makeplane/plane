@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   shift,
   flip,
@@ -36,7 +42,7 @@ import {
   updateColDragMarker,
   updateColDropMarker,
 } from "../marker-utils";
-import { updateCellContentVisibility } from "../utils";
+import { showCellContent } from "../utils";
 import { ColumnOptionsDropdown } from "./dropdown";
 import { calculateColumnDropIndex, constructColumnDragPreview, getTableColumnNodesInfo } from "./utils";
 
@@ -146,8 +152,9 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
         hideDropMarker(dropMarker);
         hideDragMarker(dragMarker);
 
+        // Show cell content by clearing decorations
         if (isCellSelection(editor.state.selection)) {
-          updateCellContentVisibility(editor, false);
+          showCellContent(editor);
         }
 
         if (col !== dropIndex) {
