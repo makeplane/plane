@@ -421,6 +421,7 @@ class WorkspaceUserPreference(BaseModel):
         VIEWS = "views", "Views"
         ACTIVE_CYCLES = "active_cycles", "Active Cycles"
         ANALYTICS = "analytics", "Analytics"
+        DASHBOARDS = "dashboards", "Dashboards"
         DRAFTS = "drafts", "Drafts"
         YOUR_WORK = "your_work", "Your Work"
         ARCHIVES = "archives", "Archives"
