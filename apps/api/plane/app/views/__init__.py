@@ -232,6 +232,14 @@ from .webhook.base import (
     WebhookSecretRegenerateEndpoint,
 )
 
+from .analytics_dashboard import (
+    AnalyticsDashboardEndpoint,
+    AnalyticsDashboardDetailEndpoint,
+    AnalyticsDashboardWidgetEndpoint,
+    AnalyticsDashboardWidgetDetailEndpoint,
+    AnalyticsDashboardWidgetDataEndpoint,
+)
+
 from .error_404 import custom_404_view
 
 from .notification.base import MarkAllReadNotificationViewSet
