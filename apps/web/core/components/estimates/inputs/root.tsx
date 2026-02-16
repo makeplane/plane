@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { FC } from "react";
 // plane imports
 import type { TEstimateSystemKeys } from "@plane/types";
 import { EEstimateSystem } from "@plane/types";

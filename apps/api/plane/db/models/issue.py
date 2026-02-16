@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python import
 from uuid import uuid4
 
@@ -128,7 +132,7 @@ class Issue(ProjectBaseModel):
         blank=True,
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(blank=True, default=dict)
+    description_json = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)
@@ -526,36 +530,6 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
         return str(self.issue)
 
 
-class IssueUserProperty(ProjectBaseModel):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="issue_property_user",
-    )
-    filters = models.JSONField(default=get_default_filters)
-    display_filters = models.JSONField(default=get_default_display_filters)
-    display_properties = models.JSONField(default=get_default_display_properties)
-    rich_filters = models.JSONField(default=dict)
-
-    class Meta:
-        verbose_name = "Issue User Property"
-        verbose_name_plural = "Issue User Properties"
-        db_table = "issue_user_properties"
-        ordering = ("-created_at",)
-        unique_together = ["user", "project", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "project"],
-                condition=Q(deleted_at__isnull=True),
-                name="issue_user_property_unique_user_project_when_deleted_at_null",
-            )
-        ]
-
-    def __str__(self):
-        """Return properties status of the issue"""
-        return str(self.user)
-
-
 class IssueLabel(ProjectBaseModel):
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="label_issue")
     label = models.ForeignKey("db.Label", on_delete=models.CASCADE, related_name="label_issue")
@@ -830,7 +804,7 @@ class IssueDescriptionVersion(ProjectBaseModel):
                 description_binary=issue.description_binary,
                 description_html=issue.description_html,
                 description_stripped=issue.description_stripped,
-                description_json=issue.description,
+                description_json=issue.description_json,
             )
             return True
         except Exception as e:

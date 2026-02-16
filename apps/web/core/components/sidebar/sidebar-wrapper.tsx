@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane helpers
@@ -44,7 +50,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
   return (
     <>
       <CustomizeNavigationDialog isOpen={isCustomizeNavDialogOpen} onClose={() => setIsCustomizeNavDialogOpen(false)} />
-      <div ref={ref} className="flex flex-col h-full w-full">
+      <div ref={ref} className="animate-fade-in flex flex-col h-full w-full">
         <div className="flex flex-col gap-3 px-3">
           {/* Workspace switcher and settings */}
 

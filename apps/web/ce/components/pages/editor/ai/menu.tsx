@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import { CornerDownRight, RefreshCcw, Sparkles, TriangleAlert } from "lucide-react";
@@ -10,7 +16,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";
 // plane web constants
-import { AI_EDITOR_TASKS, LOADING_TEXTS } from "@/plane-web/constants/ai";
+import { AI_EDITOR_TASKS, LOADING_TEXTS } from "@/constants/ai";
 // plane web services
 import type { TTaskPayload } from "@/services/ai.service";
 import { AIService } from "@/services/ai.service";
