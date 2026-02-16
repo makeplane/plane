@@ -580,10 +580,10 @@ jobs:
               --set services.email_service.enabled=false \
               --set services.pi_worker.enabled=false \
               --set services.pi_beat_worker.enabled=false \
-            --set services.postgres.local_setup=false \
-            --set services.redis.local_setup=false \
-            --set services.postgres.pg_db_remote_url=${PG_URI} \
-            --set services.redis.redis_remote_url=${{ env.redis_url }} \
+              --set services.postgres.local_setup=false \
+              --set services.redis.local_setup=false \
+              --set services.postgres.pg_db_remote_url=${PG_URI} \
+              --set services.redis.remote_redis_url=${{ env.redis_url }} \
               --set django_backend.session_cookie_domain=.plane.town \
               --set opensearch.enabled=false \
               --set planeVersion=${IMAGE_TAG}
