@@ -27,17 +27,22 @@ export const useActiveTab = ({ navigationItems, pathname, workItemId, workItem, 
   // Check if a navigation item is active
   const isActive = useCallback(
     (item: TNavigationItem) => {
-      // Work item condition
-      const workItemCondition = workItemId && workItem && !workItem?.is_epic && workItem?.project_id === projectId;
-      // Epic condition
-      const epicCondition = workItemId && workItem && workItem?.is_epic && workItem?.project_id === projectId;
-      // Is active
-      const isWorkItemActive = item.key === "work_items" && workItemCondition;
-      const isEpicActive = item.key === "epics" && epicCondition;
-      // Pathname condition - use exact match or startsWith for better accuracy
-      const isPathnameActive = pathname === item.href || pathname.startsWith(item.href + "/");
-      // Return
-      return isWorkItemActive || isEpicActive || isPathnameActive;
+      // Pathname match (always checked)
+      if (pathname === item.href || pathname.startsWith(item.href + "/")) return true;
+
+      // Work item context — only relevant if we have a work item in this project
+      if (!workItemId || !workItem || workItem.project_id !== projectId) return false;
+
+      // Determine which tab key this work item belongs to (archive > intake > epic > work_items)
+      const resolvedKey = workItem.archived_at
+        ? "archive"
+        : workItem.is_intake
+          ? "intake"
+          : workItem.is_epic
+            ? "epics"
+            : "work_items";
+
+      return item.key === resolvedKey;
     },
     [pathname, workItem, workItemId, projectId]
   );

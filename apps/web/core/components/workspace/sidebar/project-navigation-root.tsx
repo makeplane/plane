@@ -16,8 +16,8 @@ import { observer } from "mobx-react";
 import { EpicIcon, OverviewIcon } from "@plane/propel/icons";
 import { EUserProjectRoles } from "@plane/types";
 // components
+import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";
 import { ProjectNavigation } from "@/components/workspace/sidebar/project-navigation";
-import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
