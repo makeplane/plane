@@ -19,6 +19,7 @@ import {
   E_MUTATION_CONTEXT_FORMAT_TYPE,
   E_MUTATION_CONTEXT_ITEM_TYPE,
 } from "../helpers/blocks";
+import { capitalize } from "@/helpers/generic-helpers";
 import { ACTIONS } from "../helpers/constants";
 import { getUserMarkdown } from "../helpers/user";
 
@@ -51,7 +52,7 @@ export const createSlackLinkback = (
   }
 
   if (issue.priority && issue.priority !== "none") {
-    sectionContent += `\n${quote}*Priority*: ${issue.priority}`;
+    sectionContent += `\n${quote}*Priority*: ${capitalize(issue.priority)}`;
   }
 
   if (issue.assignees.length > 0) {

@@ -11,6 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+
 export const removeArrayObjSpaces = (arr: any[]) => arr.map((obj) => removeSpacesFromKeys(obj));
 
 export const removeSpacesFromKeys = (obj: any) => {
@@ -53,3 +56,6 @@ export const getRandomColor = () => "#" + Math.floor(Math.random() * 16777215).t
 
 export const removeUndefinedFromObject = (obj: any): any =>
   Object.fromEntries(Object.entries(obj || {}).filter(([_, value]) => value !== undefined));
+
+// Capitalise the first letters in a string
+export const capitalize = (str: string): string => (str.length > 0 ? `${str[0].toUpperCase()}${str.slice(1)}` : "");

@@ -11,6 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+/* eslint-disable
+  @typescript-eslint/no-unsafe-enum-comparison,
+  @typescript-eslint/no-unsafe-argument,
+  @typescript-eslint/no-unsafe-assignment,
+  @typescript-eslint/restrict-template-expressions
+*/
+
 import type { SlackService, TSlackUserAlertsConfig } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
 import type { Client, ExIssue, ExIssueComment, PlaneActivity, PlaneWebhookPayloadBase } from "@plane/sdk";
@@ -143,11 +150,16 @@ const extractSlackDmAlertsFromIssue = (payload: PlaneWebhookPayloadBase<ExIssue>
   // When it comes to creating work items directly, the field values come as null
   if (!payload.activity.field) {
     const assignees = payload.data.assignees || [];
-    const assigneeAlerts = assignees.map((assignee: { id: string } | string) => ({
-      actor_id: typeof assignee === "object" ? assignee.id : assignee,
-      type: ESlackDMAlertActivityType.ASSIGNEE,
-      action: ESlackDMAlertActivityAction.ADDED,
-    }));
+    const actorId = payload.activity.actor?.id;
+    const assigneeAlerts = assignees
+      .map((assignee: { id: string } | string) => (typeof assignee === "object" ? assignee.id : assignee))
+      .filter((assigneeId) => !actorId || assigneeId !== actorId)
+      .map((assigneeId) => ({
+        actor_id: assigneeId,
+        type: ESlackDMAlertActivityType.ASSIGNEE,
+        action: ESlackDMAlertActivityAction.ADDED,
+      }));
+
     const descriptionAlerts = extractUserMentionFromHtml(payload.data.description_html)
       .map((userId) => ({
         actor_id: userId,
