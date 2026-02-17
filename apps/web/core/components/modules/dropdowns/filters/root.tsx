@@ -8,6 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import type { TModuleStatus } from "@plane/propel/icons";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 import type { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 // components
@@ -36,6 +37,8 @@ export const ModuleFiltersSelection = observer(function ModuleFiltersSelection(p
   } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
+  // translation
+  const { t } = useTranslation();
   // store
   const { isMobile } = usePlatformOS();
 
@@ -47,7 +50,7 @@ export const ModuleFiltersSelection = observer(function ModuleFiltersSelection(p
           <input
             type="text"
             className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            placeholder={t("search")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
             autoFocus={!isMobile}
@@ -69,7 +72,7 @@ export const ModuleFiltersSelection = observer(function ModuleFiltersSelection(p
                   favorites: !displayFilters.favorites,
                 })
               }
-              title="Favorites"
+              title={t("favorites")}
             />
           </div>
         )}

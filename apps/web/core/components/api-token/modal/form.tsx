@@ -74,6 +74,8 @@ export function CreateApiTokenForm(props: Props) {
   const { handleClose, neverExpires, toggleNeverExpires, onSubmit } = props;
   // states
   const [customDate, setCustomDate] = useState<Date | null>(null);
+  // hooks
+  const { t } = useTranslation();
   // form
   const {
     control,
@@ -82,16 +84,14 @@ export function CreateApiTokenForm(props: Props) {
     reset,
     watch,
   } = useForm<IApiToken>({ defaultValues });
-  // hooks
-  const { t } = useTranslation();
 
   const handleFormSubmit = async (data: IApiToken) => {
     // if never expires is toggled off, and the user has not selected a custom date or a predefined date, show an error
     if (!neverExpires && (!data.expired_at || (data.expired_at === "custom" && !customDate)))
       return setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Please select an expiration date.",
+        title: t("error"),
+        message: t("workspace_settings.settings.api_tokens.errors.select_expiry_date"),
       });
 
     const payload: Partial<IApiToken> = {
@@ -135,12 +135,12 @@ export function CreateApiTokenForm(props: Props) {
               control={control}
               name="label"
               rules={{
-                required: t("title_is_required"),
+                required: t("common.errors.required"),
                 maxLength: {
                   value: 255,
-                  message: t("title_should_be_less_than_255_characters"),
+                  message: t("common.errors.max_length", { length: 255 }),
                 },
-                validate: (val) => val.trim() !== "" || t("title_is_required"),
+                validate: (val) => val.trim() !== "" || t("common.errors.required"),
               }}
               render={({ field: { value, onChange } }) => (
                 <Input
@@ -148,7 +148,7 @@ export function CreateApiTokenForm(props: Props) {
                   value={value}
                   onChange={onChange}
                   hasError={Boolean(errors.label)}
-                  placeholder={t("title")}
+                  placeholder={t("common.title")}
                   className="w-full text-14"
                 />
               )}
@@ -163,7 +163,7 @@ export function CreateApiTokenForm(props: Props) {
                 value={value}
                 onChange={onChange}
                 hasError={Boolean(errors.description)}
-                placeholder={t("description")}
+                placeholder={t("common.description")}
                 className="w-full text-14 resize-none min-h-24"
               />
             )}
@@ -189,10 +189,10 @@ export function CreateApiTokenForm(props: Props) {
                         >
                           <Calendar className="h-3 w-3" />
                           {value === "custom"
-                            ? "Custom date"
+                            ? t("common.duration.custom_date")
                             : selectedOption
-                              ? selectedOption.label
-                              : "Set expiration date"}
+                              ? t(`common.duration.${selectedOption.key}`)
+                              : t("workspace_settings.settings.api_tokens.form.set_expiry_date")}
                         </div>
                       }
                       value={value}
@@ -201,10 +201,10 @@ export function CreateApiTokenForm(props: Props) {
                     >
                       {EXPIRY_DATE_OPTIONS.map((option) => (
                         <CustomSelect.Option key={option.key} value={option.key}>
-                          {option.label}
+                          {t(`common.duration.${option.key}`)}
                         </CustomSelect.Option>
                       ))}
-                      <CustomSelect.Option value="custom">Custom</CustomSelect.Option>
+                      <CustomSelect.Option value="custom">{t("common.duration.custom")}</CustomSelect.Option>
                     </CustomSelect>
                   );
                 }}
@@ -217,7 +217,7 @@ export function CreateApiTokenForm(props: Props) {
                     minDate={tomorrow}
                     icon={<Calendar className="h-3 w-3" />}
                     buttonVariant="border-with-text"
-                    placeholder="Set date"
+                    placeholder={t("common.duration.set_date")}
                     disabled={neverExpires}
                   />
                 </div>
@@ -227,10 +227,16 @@ export function CreateApiTokenForm(props: Props) {
               <span className="text-11 text-placeholder">
                 {expiredAt === "custom"
                   ? customDate
-                    ? `Expires ${renderFormattedDate(customDateFormatted ?? "")} at ${renderFormattedTime(customDateFormatted ?? "")}`
+                    ? t("workspace_settings.settings.api_tokens.expires_at", {
+                        date: renderFormattedDate(customDateFormatted ?? ""),
+                        time: renderFormattedTime(customDateFormatted ?? ""),
+                      })
                     : null
                   : expiredAt
-                    ? `Expires ${renderFormattedDate(expiryDate ?? "")} at ${renderFormattedTime(expiryDate ?? "")}`
+                    ? t("workspace_settings.settings.api_tokens.expires_at", {
+                        date: renderFormattedDate(expiryDate ?? ""),
+                        time: renderFormattedTime(expiryDate ?? ""),
+                      })
                     : null}
               </span>
             )}
@@ -246,7 +252,7 @@ export function CreateApiTokenForm(props: Props) {
         </div>
         <div className="flex items-center gap-2">
           <Button variant="secondary" onClick={handleClose}>
-            {t("cancel")}
+            {t("common.cancel")}
           </Button>
           <Button variant="primary" type="submit" loading={isSubmitting}>
             {isSubmitting

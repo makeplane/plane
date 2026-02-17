@@ -8,6 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane imports
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IState } from "@plane/types";
 // ui
@@ -28,6 +29,7 @@ export const StateDeleteModal = observer(function StateDeleteModal(props: TState
   // router
   const { workspaceSlug } = useParams();
   const { deleteState } = useProjectState();
+  const { t } = useTranslation();
 
   const handleClose = () => {
     onClose();
@@ -47,15 +49,14 @@ export const StateDeleteModal = observer(function StateDeleteModal(props: TState
         if (err.status === 400)
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message:
-              "This state contains some work items within it, please move them to some other state to delete this state.",
+            title: t("error"),
+            message: t("project_state.errors.move_issues"),
           });
         else
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "State could not be deleted. Please try again.",
+            title: t("error"),
+            message: t("project_state.errors.generic"),
           });
       })
       .finally(() => {
@@ -69,11 +70,10 @@ export const StateDeleteModal = observer(function StateDeleteModal(props: TState
       handleSubmit={handleDeletion}
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
-      title="Delete State"
+      title={t("project_state.modals.delete.title")}
       content={
         <>
-          Are you sure you want to delete state- <span className="font-medium text-primary">{data?.name}</span>? All of
-          the data related to the state will be permanently removed. This action cannot be undone.
+          {t("project_state.modals.delete.content", { name: data?.name })}
         </>
       }
     />

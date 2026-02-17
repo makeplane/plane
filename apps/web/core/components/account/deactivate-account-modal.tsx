@@ -42,8 +42,8 @@ export function DeactivateAccountModal(props: Props) {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Account deactivated successfully.",
+          title: t("success"),
+          message: t("account_deactivated_successfully"),
         });
         signOut();
         router.push("/");
@@ -53,7 +53,7 @@ export function DeactivateAccountModal(props: Props) {
       .catch((err: any) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
+          title: t("error"),
           message: err?.error,
         });
       })
