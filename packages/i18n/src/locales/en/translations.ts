@@ -118,6 +118,7 @@ export default {
     "Monitor cycles across projects, track high-priority work items, and zoom in cycles that need attention.",
   on_demand_snapshots_of_all_your_cycles: "On-demand snapshots of all your cycles",
   upgrade: "Upgrade",
+  pro_feature: "Pro feature",
   "10000_feet_view": "10,000-feet view of all active cycles.",
   "10000_feet_view_description":
     "Zoom out to see running cycles across all your projects at once instead of going from Cycle to Cycle in each project.",
@@ -261,6 +262,7 @@ export default {
   deactivate_your_account_description:
     "Once deactivated, you can't be assigned work items and be billed for your workspace. To reactivate your account, you will need an invite to a workspace at this email address.",
   deactivating: "Deactivating",
+  account_deactivated_successfully: "Account deactivated successfully.",
   confirm: "Confirm",
   confirming: "Confirming",
   draft_created: "Draft created",
@@ -505,6 +507,7 @@ export default {
     guests: "Guests",
     assignees: "Assignees",
     assignee: "Assignee",
+    add_assignees: "Add assignees",
     created_by: "Created by",
     none: "None",
     link: "Link",
@@ -527,6 +530,7 @@ export default {
     },
     group_by: "Group by",
     epic: "Epic",
+    no_lead: "No lead",
     epics: "Epics",
     work_item: "Work item",
     work_items: "Work items",
@@ -577,10 +581,10 @@ export default {
       manual: "Manual",
       last_created: "Last created",
       last_updated: "Last updated",
-      start_date: "Start date",
-      due_date: "Due date",
-      asc: "Ascending",
-      desc: "Descending",
+          start_date: "Start date",
+          due_date: "Due date",
+          add_due_date: "Add due date",
+          asc: "Ascending",      desc: "Descending",
       updated_on: "Updated on",
     },
     sort: {
@@ -608,6 +612,7 @@ export default {
     continue: "Continue",
     resend: "Resend",
     relations: "Relations",
+    duplicate_of: "Duplicate of",
     errors: {
       default: {
         title: "Error!",
@@ -632,11 +637,22 @@ export default {
     close_peek_view: "Close the peek view",
     toggle_peek_view_layout: "Toggle peek view layout",
     options: "Options",
-    duration: "Duration",
+    duration: {
+      label: "Duration",
+      "1_week": "1 week",
+      "1_month": "1 month",
+      "3_months": "3 months",
+      "1_year": "1 year",
+      custom: "Custom",
+      custom_date: "Custom date",
+      set_date: "Set date",
+    },
     today: "Today",
     week: "Week",
     month: "Month",
+    months: "Months",
     quarter: "Quarter",
+    submitting: "Submitting...",
     press_for_commands: "Press '/' for commands",
     click_to_add_description: "Click to add description",
     on_track: "On-Track",
@@ -984,6 +1000,17 @@ export default {
     file_size_limit: "File must be of {size}MB or less in size.",
     drag_and_drop: "Drag and drop anywhere to upload",
     delete: "Delete attachment",
+    toast: {
+      uploading: "Uploading attachment...",
+      upload_success_title: "Attachment uploaded",
+      upload_success_message: "The attachment has been successfully uploaded",
+      upload_error_title: "Attachment not uploaded",
+      upload_error_message: "The attachment could not be uploaded",
+      remove_success_title: "Attachment removed",
+      remove_success_message: "The attachment has been successfully removed",
+      remove_error_title: "Attachment not removed",
+      remove_error_message: "The attachment could not be removed",
+    },
   },
   label: {
     select: "Add labels",
@@ -1025,6 +1052,23 @@ export default {
       label: "Update View",
     },
   },
+  project_state: {
+    create: {
+      success: "State created successfully.",
+      already_exists: "State with that name already exists. Please try again with another name.",
+      error: "State could not be created. Please try again.",
+    },
+    modals: {
+      delete: {
+        title: "Delete State",
+        content: "Are you sure you want to delete state- {name}? All of the data related to the state will be permanently removed. This action cannot be undone.",
+      },
+    },
+    errors: {
+      move_issues: "This state contains some work items within it, please move them to some other state to delete this state.",
+      generic: "State could not be deleted. Please try again.",
+    },
+  },
   inbox_issue: {
     status: {
       pending: {
@@ -1049,6 +1093,9 @@ export default {
       },
     },
     modals: {
+      create: {
+        success: "Work item created successfully.",
+      },
       decline: {
         title: "Decline work item",
         content: "Are you sure you want to decline work item {value}?",
@@ -1063,7 +1110,10 @@ export default {
       snooze_permission: "Only project admins can snooze/Un-snooze work items",
       accept_permission: "Only project admins can accept work items",
       decline_permission: "Only project admins can deny work items",
+      processing_editor: "Editor is still processing changes. Please wait before proceeding.",
+      generic: "Some error occurred. Please try again.",
     },
+    duplicates_found: "{count, plural, one{# duplicate issue} other{# duplicate issues}} found!",
     actions: {
       accept: "Accept",
       decline: "Decline",
@@ -1126,6 +1176,14 @@ export default {
       organization_size: {
         label: "How many people will use this workspace?",
         placeholder: "Select a range",
+      },
+      organization_sizes: {
+        just_myself: "Just myself",
+        "2-10": "2-10",
+        "11-50": "11-50",
+        "51-200": "51-200",
+        "201-500": "201-500",
+        "500+": "500+",
       },
     },
     errors: {
@@ -1364,6 +1422,35 @@ export default {
   },
   account_settings: {
     profile: {
+      general: {
+        avatar: {
+          delete_success: "Profile picture deleted successfully.",
+          delete_error: "There was some error in deleting your profile picture. Please try again.",
+        },
+        cover: {
+          process_error: "Failed to process cover image",
+        },
+        form: {
+          updating: "Updating...",
+          update_success: "Profile updated successfully.",
+          update_error: "There was some error in updating your profile. Please try again.",
+          first_name: {
+            required: "Please enter first name",
+            placeholder: "Enter your first name",
+          },
+          last_name: {
+            placeholder: "Enter your last name",
+          },
+          display_name: {
+            required: "Display name is required.",
+            placeholder: "Enter your display name",
+          },
+          email: {
+            required: "Email is required.",
+            placeholder: "Enter your email",
+          },
+        },
+      },
       change_email_modal: {
         title: "Change email",
         description: "Enter a new email address to receive a verification link.",
@@ -1405,6 +1492,10 @@ export default {
     preferences: {
       heading: "Preferences",
       description: "Customize your app experience the way you work",
+      start_of_week: {
+        success: "First day of the week updated successfully",
+        error: "Please try again later.",
+      },
     },
     notifications: {
       heading: "Email notifications",
@@ -1445,7 +1536,12 @@ export default {
         delete_btn: "Delete this workspace",
         delete_modal: {
           title: "Are you sure you want to delete this workspace?",
-          description: "You have an active trial to one of our paid plans. Please cancel it first to proceed.",
+          description:
+            "You are about to delete the workspace {name}. If you confirm, you will lose access to all your work data in this workspace without any way to restore it. Tread very carefully.",
+          type_workspace_name: "Type in this workspace's name to continue.",
+          final_confirmation_prefix: "For final confirmation, type",
+          final_confirmation_suffix: "below.",
+          confirmation_phrase: "delete my workspace",
           dismiss: "Dismiss",
           cancel: "Cancel trial",
           success_title: "Workspace deleted.",
@@ -1583,6 +1679,13 @@ export default {
         never_expires: "Never expires",
         generate_token: "Generate token",
         generating: "Generating",
+        expires_at: "Expires {date} at {time}",
+        form: {
+          set_expiry_date: "Set expiration date",
+        },
+        errors: {
+          select_expiry_date: "Please select an expiration date.",
+        },
         delete: {
           title: "Delete personal access token",
           description:
@@ -1682,6 +1785,19 @@ export default {
       },
     },
   },
+  project: {
+    card: {
+      created_on: "Created on {date}",
+      members: "Members",
+      members_count: "{count, plural, one {# Member} other {# Members}}",
+      no_member: "No Member",
+      no_member_yet: "No Member Yet",
+      archived: "Archived",
+      joined: "Joined",
+      join: "Join",
+      restore: "Restore",
+    },
+  },
   project_settings: {
     general: {
       enter_project_id: "Enter project ID",
@@ -1702,6 +1818,11 @@ export default {
         success: "Project updated successfully",
         error: "Project could not be updated. Please try again.",
       },
+    },
+    features: {
+      updating: "Updating project feature...",
+      updated: "Project feature updated successfully.",
+      error: "Something went wrong while updating project feature. Please try again.",
     },
     members: {
       label: "Members",
@@ -1734,6 +1855,14 @@ export default {
       label_max_char: "Label name should not exceed 255 characters",
       toast: {
         error: "Error while updating the label",
+      },
+    },
+    automation: {
+      form: {
+        enter_months: "Enter Months",
+      },
+      errors: {
+        select_month_range: "Select a month between 1 and 12.",
       },
     },
     estimates: {
@@ -2493,6 +2622,72 @@ export default {
       created_at: "Created date",
       manual: "Manual",
     },
+    action: {
+      copy_link: {
+        title: "Link Copied!",
+        description: "Module link copied to clipboard.",
+      },
+      restore: {
+        success: {
+          title: "Restore success",
+          description: "Your module can be found in project modules.",
+        },
+        failed: {
+          title: "Error!",
+          description: "Module could not be restored. Please try again.",
+        },
+      },
+      favorite: {
+        loading: "Adding module to favorites...",
+        success: {
+          title: "Success!",
+          description: "Module added to favorites.",
+        },
+        failed: {
+          title: "Error!",
+          description: "Couldn't add the module to favorites. Please try again.",
+        },
+      },
+      unfavorite: {
+        loading: "Removing module from favorites...",
+        success: {
+          title: "Success!",
+          description: "Module removed from favorites.",
+        },
+        failed: {
+          title: "Error!",
+          description: "Couldn't remove the module from favorites. Please try again.",
+        },
+      },
+      update: {
+        success: {
+          title: "Success!",
+          description: "Module updated successfully.",
+        },
+        failed: {
+          title: "Error!",
+          description: "Module could not be updated. Please try again.",
+        },
+      },
+    },
+    links: {
+      create: {
+        title: "Add link",
+        button: "Add link",
+        button_loading: "Adding link",
+        success: "Module link created successfully.",
+      },
+      update: {
+        title: "Update link",
+        button: "Update link",
+        button_loading: "Updating link",
+        success: "Module link updated successfully.",
+      },
+    },
+  },
+  work_item: {
+    label: "{count, plural, one {Work item} other {Work items}}",
+    no_work_item: "No work item",
   },
   cycle: {
     label: "{count, plural, one {Cycle} other {Cycles}}",
@@ -2753,5 +2948,92 @@ export default {
   sidebar: {
     stickies: "Stickies",
     your_work: "Your work",
+  },
+  onboarding: {
+    profile: {
+      title: "Create your profile.",
+      description: "This is how you will appear in Plane.",
+      avatar: {
+        change: "Change image",
+        upload: "Upload image",
+        choose: "Choose image",
+      },
+      form: {
+        name: {
+          label: "Name",
+          placeholder: "Enter your full name",
+          required: "Name is required",
+          max_length: "Name must be within 50 characters.",
+        },
+        first_name: {
+          label: "First name",
+          required: "First name is required",
+          placeholder: "Wilbur",
+          max_length: "First name must be within 50 characters.",
+        },
+        last_name: {
+          label: "Last name",
+          required: "Last name is required",
+          placeholder: "Wright",
+          max_length: "Last name must be within 50 characters.",
+        },
+        password: {
+          title: "Set a password",
+          optional: "(Optional)",
+          confirm_title: "Confirm password",
+          mismatch: "Passwords do not match",
+          match: "✓ Passwords match",
+          placeholder: "New password...",
+        },
+        role: {
+          label: "What role are you working on? Choose one.",
+          required: "This field is required",
+        },
+        domain: {
+          label: "What is your domain expertise? Choose one or more.",
+          required: "Please select at least one option",
+        },
+        marketing_consent: "I agree to Plane marketing communications",
+        update_error: "User details update failed. Please try again!",
+        setup_success: "Profile setup completed!",
+        setup_error: "Profile setup failed. Please try again!",
+        roles: {
+          individual_contributor: "Individual contributor",
+          senior_leader: "Senior Leader",
+          manager: "Manager",
+          executive: "Executive",
+          freelancer: "Freelancer",
+          student: "Student",
+        },
+        domains: {
+          engineering: "Engineering",
+          product: "Product",
+          marketing: "Marketing",
+          sales: "Sales",
+          operations: "Operations",
+          legal: "Legal",
+          finance: "Finance",
+          human_resources: "Human Resources",
+          project: "Project",
+          other: "Other",
+        },
+      },
+    },
+    workspace: {
+      title: "Create your workspace",
+      description: "All your work — unified.",
+      form: {
+        name: {
+          placeholder: "Enter workspace name",
+        },
+      },
+      join_existing: "Join existing workspace",
+      join_title: "Join invites or create a workspace",
+      create_new: "Create new workspace",
+      no_invitations: "No Invitations found",
+      restricted:
+        "You don't seem to have any invites to a workspace and your instance admin has restricted creation of new workspaces. Please ask a workspace owner or admin to invite you to a workspace first and come back to this screen to join.",
+    },
+    continue: "Continue",
   },
 } as const;

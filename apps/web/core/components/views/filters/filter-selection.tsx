@@ -7,6 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 
+import { useTranslation } from "@plane/i18n";
 import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import type { TViewFilterProps, TViewFilters } from "@plane/types";
 import { EViewAccess } from "@plane/types";
@@ -30,6 +31,8 @@ export const ViewFiltersSelection = observer(function ViewFiltersSelection(props
   const { filters, handleFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
+  // i18n
+  const { t } = useTranslation();
   // store
   const { isMobile } = usePlatformOS();
 
@@ -65,7 +68,7 @@ export const ViewFiltersSelection = observer(function ViewFiltersSelection(props
           <input
             type="text"
             className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
-            placeholder="Search"
+            placeholder={t("search")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
             autoFocus={!isMobile}
@@ -87,7 +90,7 @@ export const ViewFiltersSelection = observer(function ViewFiltersSelection(props
                 favorites: !filters.filters?.favorites,
               })
             }
-            title="Favorites"
+            title={t("favorites")}
           />
         </div>
 
@@ -97,8 +100,8 @@ export const ViewFiltersSelection = observer(function ViewFiltersSelection(props
           handleUpdate={(val: string | string[]) => handleFilters("view_type", val)}
           searchQuery={filtersSearchQuery}
           accessFilters={[
-            { key: EViewAccess.PRIVATE, value: "Private" },
-            { key: EViewAccess.PUBLIC, value: "Public" },
+            { key: EViewAccess.PRIVATE, value: t("common.access.private") },
+            { key: EViewAccess.PUBLIC, value: t("common.access.public") },
           ]}
         />
 

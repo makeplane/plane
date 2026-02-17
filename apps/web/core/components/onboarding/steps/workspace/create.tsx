@@ -117,11 +117,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
   if (isWorkspaceCreationDisabled) {
     return (
       <div className="flex flex-col gap-10">
-        <span className="text-center text-14 text-tertiary">
-          You don&apos;t seem to have any invites to a workspace and your instance admin has restricted creation of new
-          workspaces. Please ask a workspace owner or admin to invite you to a workspace first and come back to this
-          screen to join.
-        </span>
+        <span className="text-center text-14 text-tertiary">{t("onboarding.workspace.restricted")}</span>
       </div>
     );
   }
@@ -132,7 +128,10 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
         void handleSubmit(handleCreateWorkspace)(e);
       }}
     >
-      <CommonOnboardingHeader title="Create your workspace" description="All your work — unified." />
+      <CommonOnboardingHeader
+        title={t("onboarding.workspace.title")}
+        description={t("onboarding.workspace.description")}
+      />
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2">
           <label
@@ -166,7 +165,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                       shouldValidate: true,
                     });
                   }}
-                  placeholder="Enter workspace name"
+                  placeholder={t("onboarding.workspace.form.name.placeholder")}
                   ref={ref}
                   className={cn(
                     "w-full px-3 py-2 text-secondary border border-strong rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-accent-strong placeholder:text-placeholder focus:border-transparent transition-all duration-200",
@@ -276,7 +275,9 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                       >
                         <CircleCheck className={cn("size-4 text-placeholder", isSelected && "text-secondary")} />
 
-                        <span className="font-medium">{size}</span>
+                        <span className="font-medium">
+                          {t(`workspace_creation.form.organization_sizes.${size === "Just myself" ? "just_myself" : size}`)}
+                        </span>
                       </button>
                     );
                   })}
@@ -295,7 +296,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
         </Button>
         {hasInvitations && (
           <Button variant="ghost" size="xl" className="w-full" onClick={handleCurrentViewChange}>
-            Join existing workspace
+            {t("onboarding.workspace.join_existing")}
           </Button>
         )}
       </div>

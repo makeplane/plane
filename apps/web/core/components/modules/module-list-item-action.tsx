@@ -77,14 +77,14 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
     );
 
     setPromiseToast(addToFavoritePromise, {
-      loading: "Adding module to favorites...",
+      loading: t("project_modules.action.favorite.loading"),
       success: {
-        title: "Success!",
-        message: () => "Module added to favorites.",
+        title: t("success"),
+        message: () => t("project_modules.action.favorite.success.description"),
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't add the module to favorites. Please try again.",
+        title: t("error"),
+        message: () => t("project_modules.action.favorite.error.description"),
       },
     });
   };
@@ -101,14 +101,14 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
     );
 
     setPromiseToast(removeFromFavoritePromise, {
-      loading: "Removing module from favorites...",
+      loading: t("project_modules.action.unfavorite.loading"),
       success: {
-        title: "Success!",
-        message: () => "Module removed from favorites.",
+        title: t("success"),
+        message: () => t("project_modules.action.unfavorite.success.description"),
       },
       error: {
-        title: "Error!",
-        message: () => "Couldn't remove the module from favorites. Please try again.",
+        title: t("error"),
+        message: () => t("project_modules.action.unfavorite.error.description"),
       },
     });
   };
@@ -120,15 +120,15 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module updated successfully.",
+          title: t("success"),
+          message: t("project_modules.action.update.success.description"),
         });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.detail ?? "Module could not be updated. Please try again.",
+          title: t("error"),
+          message: err?.detail ?? t("project_modules.action.update.failed.description"),
         });
       });
   };
@@ -173,7 +173,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
           <ButtonAvatars showTooltip={false} userIds={moduleLeadDetails?.id} />
         </span>
       ) : (
-        <Tooltip tooltipContent="No lead">
+        <Tooltip tooltipContent={t("common.no_lead")}>
           <SquareUser className="h-4 w-4 text-tertiary" />
         </Tooltip>
       )}

@@ -20,6 +20,8 @@ import { cn, calculateTotalFilters } from "@plane/utils";
 import { ArchiveTabsList } from "@/components/archives";
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // helpers
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -30,6 +32,8 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
   const { projectId } = useParams();
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
+  // translation
+  const { t } = useTranslation();
   // hooks
   const {
     currentProjectArchivedFilters,
@@ -112,7 +116,7 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
           <input
             ref={inputRef}
             className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
-            placeholder="Search"
+            placeholder={t("search")}
             value={archivedModulesSearchQuery}
             onChange={(e) => updateArchivedModulesSearchQuery(e.target.value)}
             onKeyDown={handleInputKeyDown}
@@ -141,7 +145,7 @@ export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
         />
         <FiltersDropdown
           icon={<ListFilter className="h-3 w-3" />}
-          title="Filters"
+          title={t("common.filters")}
           placement="bottom-end"
           isFiltersApplied={isFiltersApplied}
         >

@@ -116,6 +116,7 @@ export default {
     "Monitorea ciclos en todos los proyectos, rastrea elementos de trabajo de alta prioridad y enfócate en los ciclos que necesitan atención.",
   on_demand_snapshots_of_all_your_cycles: "Instantáneas bajo demanda de todos tus ciclos",
   upgrade: "Actualizar",
+  pro_feature: "Función Pro",
   "10000_feet_view": "Vista panorámica de todos los ciclos activos.",
   "10000_feet_view_description":
     "Aléjate para ver los ciclos en ejecución en todos tus proyectos a la vez en lugar de ir de Ciclo en Ciclo en cada proyecto.",
@@ -269,6 +270,7 @@ export default {
   deactivate_your_account_description:
     "Una vez desactivada, no se te podrán asignar elementos de trabajo ni se te facturará por tu espacio de trabajo. Para reactivar tu cuenta, necesitarás una invitación a un espacio de trabajo con esta dirección de correo electrónico.",
   deactivating: "Desactivando",
+  account_deactivated_successfully: "Cuenta desactivada correctamente.",
   confirm: "Confirmar",
   confirming: "Confirmando",
   draft_created: "Borrador creado",
@@ -507,6 +509,7 @@ export default {
     label: "Etiqueta",
     assignees: "Asignados",
     assignee: "Asignado",
+    add_assignees: "Agregar asignados",
     created_by: "Creado por",
     none: "Ninguno",
     link: "Enlace",
@@ -529,6 +532,7 @@ export default {
     },
     group_by: "Agrupar por",
     epic: "Epic",
+    no_lead: "Sin líder",
     epics: "Epics",
     work_item: "Elemento de trabajo",
     work_items: "Elementos de trabajo",
@@ -579,10 +583,10 @@ export default {
       manual: "Manual",
       last_created: "Último creado",
       last_updated: "Última actualización",
-      start_date: "Fecha de inicio",
-      due_date: "Fecha de vencimiento",
-      asc: "Ascendente",
-      desc: "Descendente",
+          start_date: "Fecha de inicio",
+          due_date: "Fecha de vencimiento",
+          add_due_date: "Agregar fecha de vencimiento",
+          asc: "Ascendente",      desc: "Descendente",
       updated_on: "Actualizado el",
     },
     sort: {
@@ -610,6 +614,7 @@ export default {
     continue: "Continuar",
     resend: "Reenviar",
     relations: "Relaciones",
+    duplicate_of: "Duplicado de",
     errors: {
       default: {
         title: "¡Error!",
@@ -634,11 +639,22 @@ export default {
     close_peek_view: "Cerrar la vista previa",
     toggle_peek_view_layout: "Alternar diseño de vista previa",
     options: "Opciones",
-    duration: "Duración",
+    duration: {
+      label: "Duración",
+      "1_week": "1 semana",
+      "1_month": "1 mes",
+      "3_months": "3 meses",
+      "1_year": "1 año",
+      custom: "Personalizado",
+      custom_date: "Fecha personalizada",
+      set_date: "Establecer fecha",
+    },
     today: "Hoy",
     week: "Semana",
     month: "Mes",
+    months: "Meses",
     quarter: "Trimestre",
+    submitting: "Enviando...",
     press_for_commands: "Presiona '/' para comandos",
     click_to_add_description: "Haz clic para agregar descripción",
     search: {
@@ -987,6 +1003,17 @@ export default {
     file_size_limit: "El archivo debe tener {size}MB o menos de tamaño.",
     drag_and_drop: "Arrastra y suelta en cualquier lugar para subir",
     delete: "Eliminar archivo adjunto",
+    toast: {
+      uploading: "Subiendo archivo adjunto...",
+      upload_success_title: "Archivo adjunto subido",
+      upload_success_message: "El archivo adjunto se ha subido correctamente",
+      upload_error_title: "Archivo adjunto no subido",
+      upload_error_message: "No se ha podido subir el archivo adjunto",
+      remove_success_title: "Archivo adjunto eliminado",
+      remove_success_message: "El archivo adjunto se ha eliminado correctamente",
+      remove_error_title: "Archivo adjunto no eliminado",
+      remove_error_message: "No se ha podido eliminar el archivo adjunto",
+    },
   },
   label: {
     select: "Seleccionar etiqueta",
@@ -1028,6 +1055,23 @@ export default {
       label: "Actualizar vista",
     },
   },
+  project_state: {
+    create: {
+      success: "Estado creado correctamente.",
+      already_exists: "Ya existe un estado con ese nombre. Por favor, inténtalo de nuevo con otro nombre.",
+      error: "No se ha podido crear el estado. Por favor, inténtalo de nuevo.",
+    },
+    modals: {
+      delete: {
+        title: "Eliminar estado",
+        content: "¿Estás seguro de que quieres eliminar el estado {name}? Todos los datos relacionados con el estado serán eliminados permanentemente. Esta acción no se puede deshacer.",
+      },
+    },
+    errors: {
+      move_issues: "Este estado contiene algunos elementos de trabajo. Por favor, muévelos a otro estado para poder eliminar este.",
+      generic: "No se ha podido eliminar el estado. Por favor, inténtalo de nuevo.",
+    },
+  },
   inbox_issue: {
     status: {
       pending: {
@@ -1052,6 +1096,9 @@ export default {
       },
     },
     modals: {
+      create: {
+        success: "Elemento de trabajo creado correctamente.",
+      },
       decline: {
         title: "Rechazar elemento de trabajo",
         content: "¿Estás seguro de que quieres rechazar el elemento de trabajo {value}?",
@@ -1066,7 +1113,10 @@ export default {
       snooze_permission: "Solo los administradores del proyecto pueden posponer/desposponer elementos de trabajo",
       accept_permission: "Solo los administradores del proyecto pueden aceptar elementos de trabajo",
       decline_permission: "Solo los administradores del proyecto pueden rechazar elementos de trabajo",
+      processing_editor: "El editor todavía está procesando los cambios. Por favor, espere antes de continuar.",
+      generic: "Se ha producido un error. Por favor, inténtelo de nuevo.",
     },
+    duplicates_found: "¡Se {count, plural, one{ha encontrado # incidencia duplicada} other{han encontrado # incidencias duplicadas}}!",
     actions: {
       accept: "Aceptar",
       decline: "Rechazar",
@@ -1130,6 +1180,14 @@ export default {
       organization_size: {
         label: "¿Cuántas personas usarán este espacio de trabajo?",
         placeholder: "Selecciona un rango",
+      },
+      organization_sizes: {
+        just_myself: "Solo yo",
+        "2-10": "2-10",
+        "11-50": "11-50",
+        "51-200": "51-200",
+        "201-500": "201-500",
+        "500+": "500+",
       },
     },
     errors: {
@@ -1381,6 +1439,35 @@ export default {
   },
   account_settings: {
     profile: {
+      general: {
+        avatar: {
+          delete_success: "Foto de perfil eliminada correctamente.",
+          delete_error: "Hubo un error al eliminar tu foto de perfil. Por favor, inténtalo de nuevo.",
+        },
+        cover: {
+          process_error: "Fallo al procesar la imagen de portada",
+        },
+        form: {
+          updating: "Actualizando...",
+          update_success: "Perfil actualizado correctamente.",
+          update_error: "Hubo un error al actualizar tu perfil. Por favor, inténtalo de nuevo.",
+          first_name: {
+            required: "Por favor, introduce el nombre",
+            placeholder: "Introduce tu nombre",
+          },
+          last_name: {
+            placeholder: "Introduce tu apellido",
+          },
+          display_name: {
+            required: "El nombre para mostrar es obligatorio.",
+            placeholder: "Introduce tu nombre para mostrar",
+          },
+          email: {
+            required: "El correo electrónico es obligatorio.",
+            placeholder: "Introduce tu correo electrónico",
+          },
+        },
+      },
       change_email_modal: {
         title: "Cambiar correo electrónico",
         description: "Introduce una nueva dirección de correo electrónico para recibir un enlace de verificación.",
@@ -1419,6 +1506,14 @@ export default {
         },
       },
     },
+    preferences: {
+      heading: "Preferencias",
+      description: "Personaliza tu experiencia en la aplicación según tu forma de trabajar",
+      start_of_week: {
+        success: "El primer día de la semana se ha actualizado correctamente",
+        error: "Por favor, inténtalo de nuevo más tarde.",
+      },
+    },
   },
   workspace_settings: {
     label: "Configuración del espacio de trabajo",
@@ -1442,9 +1537,13 @@ export default {
           "Al eliminar un espacio de trabajo, todos los datos y recursos dentro de ese espacio se eliminarán permanentemente y no podrán recuperarse.",
         delete_btn: "Eliminar este espacio de trabajo",
         delete_modal: {
-          title: "¿Está seguro de que desea eliminar este espacio de trabajo?",
+          title: "¿Estás seguro de que deseas eliminar este espacio de trabajo?",
           description:
-            "Tiene una prueba activa de uno de nuestros planes de pago. Por favor, cancelela primero para continuar.",
+            "Estás a punto de eliminar el espacio de trabajo {name}. Si confirmas, perderás el acceso a todos tus datos de trabajo en este espacio sin posibilidad de restaurarlos. Procede con mucha precaución.",
+          type_workspace_name: "Escribe el nombre de este espacio de trabajo para continuar.",
+          final_confirmation_prefix: "Para la confirmación final, escribe",
+          final_confirmation_suffix: "a continuación.",
+          confirmation_phrase: "eliminar mi espacio de trabajo",
           dismiss: "Descartar",
           cancel: "Cancelar prueba",
           success_title: "Espacio de trabajo eliminado.",
@@ -1574,6 +1673,13 @@ export default {
         never_expires: "Nunca expira",
         generate_token: "Generar token",
         generating: "Generando",
+        expires_at: "Expira el {date} a las {time}",
+        form: {
+          set_expiry_date: "Establecer fecha de expiración",
+        },
+        errors: {
+          select_expiry_date: "Por favor selecciona una fecha de expiración.",
+        },
         delete: {
           title: "Eliminar token de API",
           description:
@@ -1672,6 +1778,19 @@ export default {
       },
     },
   },
+  project: {
+    card: {
+      created_on: "Creado el {date}",
+      members: "Miembros",
+      members_count: "{count, plural, one {# Miembro} other {# Miembros}}",
+      no_member: "Sin miembros",
+      no_member_yet: "Aún sin miembros",
+      archived: "Archivado",
+      joined: "Unido",
+      join: "Unirse",
+      restore: "Restaurar",
+    },
+  },
   project_settings: {
     general: {
       enter_project_id: "Ingresa el ID del proyecto",
@@ -1692,6 +1811,11 @@ export default {
         success: "Proyecto actualizado exitosamente",
         error: "No se pudo actualizar el proyecto. Por favor intenta de nuevo.",
       },
+    },
+    features: {
+      updating: "Actualizando función del proyecto...",
+      updated: "Función del proyecto actualizada correctamente.",
+      error: "Algo ha ido mal al actualizar la función del proyecto. Por favor, inténtalo de nuevo.",
     },
     members: {
       label: "Miembros",
@@ -1721,6 +1845,14 @@ export default {
       label_max_char: "El nombre de la etiqueta no debe exceder 255 caracteres",
       toast: {
         error: "Error al actualizar la etiqueta",
+      },
+    },
+    automation: {
+      form: {
+        enter_months: "Ingresar meses",
+      },
+      errors: {
+        select_month_range: "Selecciona un mes entre 1 y 12.",
       },
     },
     estimates: {
@@ -2488,6 +2620,72 @@ export default {
       created_at: "Fecha de creación",
       manual: "Manual",
     },
+    action: {
+      copy_link: {
+        title: "¡Enlace copiado!",
+        description: "Enlace del módulo copiado al portapapeles.",
+      },
+      restore: {
+        success: {
+          title: "Restauración exitosa",
+          description: "Tu módulo se puede encontrar en los módulos del proyecto.",
+        },
+        failed: {
+          title: "¡Error!",
+          description: "No se ha podido restaurar el módulo. Por favor, inténtalo de nuevo.",
+        },
+      },
+      favorite: {
+        loading: "Agregando módulo a favoritos...",
+        success: {
+          title: "¡Éxito!",
+          description: "Módulo agregado a favoritos.",
+        },
+        failed: {
+          title: "¡Error!",
+          description: "No se ha podido agregar el módulo a favoritos. Por favor, inténtalo de nuevo.",
+        },
+      },
+      unfavorite: {
+        loading: "Eliminando módulo de favoritos...",
+        success: {
+          title: "¡Éxito!",
+          description: "Módulo eliminado de favoritos.",
+        },
+        failed: {
+          title: "¡Error!",
+          description: "No se ha podido eliminar el módulo de favoritos. Por favor, inténtalo de nuevo.",
+        },
+      },
+      update: {
+        success: {
+          title: "¡Éxito!",
+          description: "Módulo actualizado correctamente.",
+        },
+        failed: {
+          title: "¡Error!",
+          description: "No se ha podido actualizar el módulo. Por favor, inténtalo de nuevo.",
+        },
+      },
+    },
+    links: {
+      create: {
+        title: "Agregar enlace",
+        button: "Agregar enlace",
+        button_loading: "Agregando enlace",
+        success: "Enlace del módulo creado correctamente.",
+      },
+      update: {
+        title: "Actualizar enlace",
+        button: "Actualizar enlace",
+        button_loading: "Actualizando enlace",
+        success: "Enlace del módulo actualizado correctamente.",
+      },
+    },
+  },
+  work_item: {
+    label: "{count, plural, one {Elemento de trabajo} other {Elementos de trabajo}}",
+    no_work_item: "Sin elementos de trabajo",
   },
   cycle: {
     label: "{count, plural, one {Ciclo} other {Ciclos}}",
@@ -2755,5 +2953,92 @@ export default {
       preferences: "Preferencias",
       help: "Ayuda",
     },
+  },
+  onboarding: {
+    profile: {
+      title: "Crea tu perfil.",
+      description: "Así es como aparecerás en Plane.",
+      avatar: {
+        change: "Cambiar imagen",
+        upload: "Subir imagen",
+        choose: "Elegir imagen",
+      },
+      form: {
+        name: {
+          label: "Nombre",
+          placeholder: "Introduce tu nombre completo",
+          required: "El nombre es obligatorio",
+          max_length: "El nombre debe tener menos de 50 caracteres.",
+        },
+        first_name: {
+          label: "Nombre",
+          required: "El nombre es obligatorio",
+          placeholder: "Wilbur",
+          max_length: "El nombre debe tener menos de 50 caracteres.",
+        },
+        last_name: {
+          label: "Apellido",
+          required: "El apellido es obligatorio",
+          placeholder: "Wright",
+          max_length: "El apellido debe tener menos de 50 caracteres.",
+        },
+        password: {
+          title: "Establecer una contraseña",
+          optional: "(Opcional)",
+          confirm_title: "Confirmar contraseña",
+          mismatch: "Las contraseñas no coinciden",
+          match: "✓ Las contraseñas coinciden",
+          placeholder: "Nueva contraseña...",
+        },
+        role: {
+          label: "¿En qué rol estás trabajando? Elige uno.",
+          required: "Este campo es obligatorio",
+        },
+        domain: {
+          label: "¿Cuál es tu experiencia de dominio? Elige uno o más.",
+          required: "Por favor, selecciona al menos una opción",
+        },
+        marketing_consent: "Acepto las comunicaciones de marketing de Plane",
+        update_error: "Fallo al actualizar los detalles del usuario. ¡Por favor, inténtalo de nuevo!",
+        setup_success: "¡Configuración del perfil completada!",
+        setup_error: "Fallo al configurar el perfil. ¡Por favor, inténtalo de nuevo!",
+        roles: {
+          individual_contributor: "Colaborador individual",
+          senior_leader: "Líder senior",
+          manager: "Gerente",
+          executive: "Ejecutivo",
+          freelancer: "Freelancer",
+          student: "Estudiante",
+        },
+        domains: {
+          engineering: "Ingeniería",
+          product: "Producto",
+          marketing: "Marketing",
+          sales: "Ventas",
+          operations: "Operaciones",
+          legal: "Legal",
+          finance: "Finanzas",
+          human_resources: "Recursos humanos",
+          project: "Proyecto",
+          other: "Otro",
+        },
+      },
+    },
+    workspace: {
+      title: "Crea tu espacio de trabajo",
+      description: "Todo tu trabajo — unificado.",
+      form: {
+        name: {
+          placeholder: "Introduce el nombre del espacio de trabajo",
+        },
+      },
+      join_existing: "Unirse a un espacio de trabajo existente",
+      join_title: "Únete a invitaciones o crea un espacio de trabajo",
+      create_new: "Crear nuevo espacio de trabajo",
+      no_invitations: "No se encontraron invitaciones",
+      restricted:
+        "Parece que no tienes invitaciones a ningún espacio de trabajo y el administrador de tu instancia ha restringido la creación de nuevos espacios. Por favor, pide al propietario o administrador de un espacio que te invite y vuelve a esta pantalla para unirte.",
+    },
+    continue: "Continuar",
   },
 } as const;

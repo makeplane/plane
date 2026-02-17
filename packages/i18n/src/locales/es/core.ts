@@ -48,8 +48,48 @@ export default {
         },
         new_password: {
           label: "Nueva contraseña",
+          placeholder: "Introduce la nueva contraseña",
+        },
+        change_password: {
+          label: {
+            default: "Cambiar contraseña",
+            submitting: "Cambiando contraseña",
+          },
+        },
+        errors: {
+          match: "Las contraseñas no coinciden",
+          empty: "Por favor introduce tu contraseña",
+          length: "La contraseña debe tener más de 8 caracteres",
+          strength: {
+            weak: "La contraseña es débil",
+            strong: "La contraseña es fuerte",
+          },
+        },
+        submit: "Establecer contraseña",
+        toast: {
+          change_password: {
+            success: {
+              title: "¡Éxito!",
+              message: "Contraseña cambiada correctamente.",
+            },
+            error: {
+              title: "¡Error!",
+              message: "Algo ha ido mal. Por favor, inténtalo de nuevo.",
+            },
+          },
         },
       },
+      unique_code: {
+        label: "Código único",
+        placeholder: "123456",
+        paste_code: "Pega el código enviado a tu correo",
+        requesting_new_code: "Solicitando nuevo código",
+        sending_code: "Enviando código",
+      },
+      already_have_an_account: "¿Ya tienes una cuenta?",
+      login: "Iniciar sesión",
+      create_account: "Crear una cuenta",
+      new_to_plane: "¿Nuevo en Plane?",
       back_to_sign_in: "Volver al inicio de sesión",
       resend_in: "Reenviar en {seconds} segundos",
       sign_in_with_unique_code: "Iniciar sesión con código único",
