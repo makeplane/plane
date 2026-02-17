@@ -1607,7 +1607,7 @@ Terima kasih,
       },
       filter: {
         title: "Tidak ada proyek yang cocok",
-        description: `Tidak ada proyek yang terdeteksi dengan kriteria yang cocok. 
+        description: `Tidak ada proyek yang terdeteksi dengan kriteria yang cocok.
  Buat proyek baru sebagai gantinya.`,
       },
       search: {
@@ -2796,7 +2796,7 @@ Buat proyek baru sebagai gantinya`,
       },
       filter: {
         title: "Tidak ada tampilan yang cocok",
-        description: `Tidak ada tampilan yang cocok dengan kriteria pencarian. 
+        description: `Tidak ada tampilan yang cocok dengan kriteria pencarian.
  Buat tampilan baru sebagai gantinya.`,
       },
     },
@@ -3465,7 +3465,7 @@ jika Anda yakin pencarian Anda benar. `,
       },
       filter: {
         title: "Tidak ada tampilan yang cocok",
-        description: `Tidak ada tampilan yang cocok dengan kriteria pencarian. 
+        description: `Tidak ada tampilan yang cocok dengan kriteria pencarian.
  Buat tampilan baru sebagai gantinya.`,
       },
     },
@@ -3562,7 +3562,7 @@ jika Anda yakin pencarian Anda benar. `,
       },
       search: {
         title: "Tidak ada inisiatif yang cocok",
-        description: `Tidak ada inisiatif yang terdeteksi dengan kriteria yang cocok. 
+        description: `Tidak ada inisiatif yang terdeteksi dengan kriteria yang cocok.
  Buat inisiatif baru sebagai gantinya.`,
       },
       not_found: {
@@ -3686,19 +3686,19 @@ jika Anda yakin pencarian Anda benar. `,
   active_cycle_analytics: {
     empty_state: {
       progress: {
-        title: `Tambahkan item kerja ke siklus untuk melihat 
+        title: `Tambahkan item kerja ke siklus untuk melihat
  kemajuannya`,
       },
       priority: {
-        title: `Amati item kerja prioritas tinggi yang ditangani dalam 
+        title: `Amati item kerja prioritas tinggi yang ditangani dalam
  siklus secara sekilas.`,
       },
       assignee: {
-        title: `Tambahkan penanggung jawab ke item kerja untuk melihat 
+        title: `Tambahkan penanggung jawab ke item kerja untuk melihat
  pembagian pekerjaan berdasarkan penanggung jawab.`,
       },
       label: {
-        title: `Tambahkan label ke item kerja untuk melihat 
+        title: `Tambahkan label ke item kerja untuk melihat
  pembagian pekerjaan berdasarkan label.`,
       },
     },
@@ -4087,6 +4087,7 @@ jika Anda yakin pencarian Anda benar. `,
     project: "Projek",
     workspace: "Workspace",
     status: "Status",
+    summary: "Ringkasan",
     total_batches: "Total Batch",
     imported_batches: "Batch Terimport",
     re_run: "Jalankan Ulang",

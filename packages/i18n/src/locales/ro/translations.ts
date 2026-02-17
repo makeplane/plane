@@ -3478,7 +3478,7 @@ văzute aici`,
       },
       filter: {
         title: "Nicio vizualizare care să se potrivească",
-        description: `Nicio vizualizare nu corespunde criteriilor de căutare. 
+        description: `Nicio vizualizare nu corespunde criteriilor de căutare.
  Creează o nouă vizualizare în schimb.`,
       },
     },
@@ -3575,7 +3575,7 @@ văzute aici`,
       },
       search: {
         title: "Nicio inițiativă care să se potrivească",
-        description: `Nu s-au detectat inițiative cu criteriile de potrivire. 
+        description: `Nu s-au detectat inițiative cu criteriile de potrivire.
  Creează o nouă inițiativă în schimb.`,
       },
       not_found: {
@@ -3700,19 +3700,19 @@ văzute aici`,
   active_cycle_analytics: {
     empty_state: {
       progress: {
-        title: `Adaugă elemente de lucru la ciclu pentru a-i vedea 
+        title: `Adaugă elemente de lucru la ciclu pentru a-i vedea
  progresul`,
       },
       priority: {
-        title: `Observă elementele de lucru cu prioritate ridicată abordate în 
+        title: `Observă elementele de lucru cu prioritate ridicată abordate în
  ciclu dintr-o privire.`,
       },
       assignee: {
-        title: `Adaugă responsabili la elementele de lucru pentru a vedea o 
+        title: `Adaugă responsabili la elementele de lucru pentru a vedea o
  defalcare a muncii după responsabili.`,
       },
       label: {
-        title: `Adaugă etichete la elementele de lucru pentru a vedea 
+        title: `Adaugă etichete la elementele de lucru pentru a vedea
  defalcarea muncii după etichete.`,
       },
     },
@@ -4102,6 +4102,7 @@ văzute aici`,
     project: "Proiect",
     workspace: "Workspace",
     status: "Status",
+    summary: "Sumar",
     total_batches: "Total Loturi",
     imported_batches: "Loturi Importate",
     re_run: "Rulează din nou",

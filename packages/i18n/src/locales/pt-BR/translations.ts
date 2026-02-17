@@ -1622,7 +1622,7 @@ Obrigado,
       },
       filter: {
         title: "Nenhum projeto correspondente",
-        description: `Nenhum projeto detectado com os critérios correspondentes. 
+        description: `Nenhum projeto detectado com os critérios correspondentes.
  Crie um novo projeto em vez disso.`,
       },
       search: {
@@ -3483,7 +3483,7 @@ se você tem certeza de que sua pesquisa está correta.`,
       },
       filter: {
         title: "Nenhuma visualização correspondente",
-        description: `Nenhuma visualização corresponde aos critérios de pesquisa. 
+        description: `Nenhuma visualização corresponde aos critérios de pesquisa.
  Crie uma nova visualização em vez disso.`,
       },
     },
@@ -3580,7 +3580,7 @@ se você tem certeza de que sua pesquisa está correta.`,
       },
       search: {
         title: "Nenhuma iniciativa correspondente",
-        description: `Nenhuma iniciativa detectada com os critérios correspondentes. 
+        description: `Nenhuma iniciativa detectada com os critérios correspondentes.
  Crie uma nova iniciativa em vez disso.`,
       },
       not_found: {
@@ -3705,19 +3705,19 @@ se você tem certeza de que sua pesquisa está correta.`,
   active_cycle_analytics: {
     empty_state: {
       progress: {
-        title: `Adicione itens de trabalho ao ciclo para visualizar seu 
+        title: `Adicione itens de trabalho ao ciclo para visualizar seu
  progresso`,
       },
       priority: {
-        title: `Observe itens de trabalho de alta prioridade abordados no 
+        title: `Observe itens de trabalho de alta prioridade abordados no
  ciclo rapidamente.`,
       },
       assignee: {
-        title: `Adicione responsáveis aos itens de trabalho para ver uma 
+        title: `Adicione responsáveis aos itens de trabalho para ver uma
  divisão do trabalho por responsáveis.`,
       },
       label: {
-        title: `Adicione etiquetas aos itens de trabalho para ver a 
+        title: `Adicione etiquetas aos itens de trabalho para ver a
  divisão do trabalho por etiquetas.`,
       },
     },
@@ -4108,6 +4108,7 @@ se você tem certeza de que sua pesquisa está correta.`,
     project: "Projeto",
     workspace: "Workspace",
     status: "Status",
+    summary: "Resumo",
     total_batches: "Total de Lotes",
     imported_batches: "Lotes Importados",
     re_run: "Executar Novamente",

@@ -45,6 +45,9 @@ import { generateIssuePayloadV2 } from "@/etl/migrator/issues.migrator";
 import { getAPIClientInternal } from "@/services/client";
 import type { BulkIssuePayload } from "@/types";
 import { celeryProducer } from "@/worker";
+import { extractErrorMetadata } from "@/helpers/errors";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
 
 /**
  * Jira Server Issues Step
@@ -253,29 +256,54 @@ export class JiraIssuesStep implements IStep {
     hasMore: boolean;
     total: number;
   }> {
-    const issuesResult = await pullIssuesV2(
-      {
-        client: props.jobContext.sourceClient,
+    try {
+      const issuesResult = await pullIssuesV2(
+        {
+          client: props.jobContext.sourceClient,
+          startAt: props.paginationCtx.startAt,
+          maxResults: this.PAGE_SIZE,
+        },
+        props.projectKey,
+        undefined,
+        props.jql
+      );
+
+      executionLog.collect(props.jobContext.job.id, {
+        entity_type: EExecutionLogEntityType.WORK_ITEM,
+        phase: "PULL_ISSUES",
+        level: EExecutionLogLevel.INFO,
+        metrics: {
+          total: issuesResult.total,
+          pulled: issuesResult.items.length,
+        },
+      });
+
+      logger.info(`[${props.jobContext.job.id}] [${this.name}] Pulled issues`, {
+        jobId: props.jobContext.job.id,
+        count: issuesResult.items.length,
+        hasMore: issuesResult.hasMore,
         startAt: props.paginationCtx.startAt,
-        maxResults: this.PAGE_SIZE,
-      },
-      props.projectKey,
-      undefined,
-      props.jql
-    );
+      });
 
-    logger.info(`[${props.jobContext.job.id}] [${this.name}] Pulled issues`, {
-      jobId: props.jobContext.job.id,
-      count: issuesResult.items.length,
-      hasMore: issuesResult.hasMore,
-      startAt: props.paginationCtx.startAt,
-    });
+      return {
+        items: issuesResult.items,
+        hasMore: issuesResult.hasMore,
+        total: issuesResult.total ?? 0,
+      };
+    } catch (error) {
+      logger.error(`[${props.jobContext.job.id}][${this.name}] Unable to pull issues from Jira`, error);
 
-    return {
-      items: issuesResult.items,
-      hasMore: issuesResult.hasMore,
-      total: issuesResult.total ?? 0,
-    };
+      executionLog.collect(props.jobContext.job.id, {
+        entity_type: EExecutionLogEntityType.WORK_ITEM,
+        phase: "PULL_ISSUES",
+
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        is_fatal: true,
+      });
+
+      throw error;
+    }
   }
 
   /**
@@ -283,15 +311,21 @@ export class JiraIssuesStep implements IStep {
    * Merges timestamps from fields.comment with HTML body from renderedFields.comment
    */
   protected async extractCommentsFromIssues(props: {
-    _jobContext: TJobContext;
+    jobContext: TJobContext;
     issues: IJiraIssue[];
     resourceId: string;
     projectId: string;
   }): Promise<ExIssueComment[]> {
     const comments = [];
+
+    const {
+      job: { id: jobId },
+    } = props.jobContext;
+
     for (const issue of props.issues) {
       const fieldsComments = issue.fields?.comment?.comments || [];
       const renderedComments = issue.renderedFields?.comment?.comments || [];
+      const totalComments = issue.fields.comment?.total;
       /*
        * Jira provides us with the comments, but those comments are paginated, in
        * case the number of comments are more than what we have in the comments property
@@ -299,7 +333,7 @@ export class JiraIssuesStep implements IStep {
        */
       const shouldFetchMoreComments = issue.fields.comment?.total > issue.fields.comment?.comments?.length;
       if (shouldFetchMoreComments) {
-        const allComments = await pullAllCommentsForIssue(issue, props._jobContext.sourceClient);
+        const allComments = await pullAllCommentsForIssue(issue, props.jobContext.sourceClient);
         const transformedComments = allComments.map((comment) =>
           transformComment({ resourceId: props.resourceId, projectId: props.projectId, source: this.source }, comment)
         );
@@ -329,6 +363,16 @@ export class JiraIssuesStep implements IStep {
         });
         comments.push(transformedComments);
       }
+
+      executionLog.collect(jobId, {
+        entity_type: EExecutionLogEntityType.WORK_ITEM_COMMENT,
+        phase: "PULL_ALL_COMMENTS",
+        level: EExecutionLogLevel.INFO,
+        related_entity: issue.id,
+        metrics: {
+          pulled: totalComments,
+        },
+      });
     }
 
     return comments.flat() as ExIssueComment[];
@@ -362,7 +406,7 @@ export class JiraIssuesStep implements IStep {
 
     // Extract comments from issues
     const comments = await this.extractCommentsFromIssues({
-      _jobContext: props.jobContext,
+      jobContext: props.jobContext,
       issues: props.issuesResult.items,
       resourceId,
       projectId,
@@ -376,6 +420,27 @@ export class JiraIssuesStep implements IStep {
       props.propertyData.planeIssueProperties,
       props.propertyData.issueTypes
     );
+
+    const totalPropertyValues = Object.values(propertyValues).reduce(
+      (sum, vals) => sum + (Array.isArray(vals) ? vals.length : 0),
+      0
+    );
+
+    executionLog.collect(props.jobContext.job.id, {
+      entity_type: EExecutionLogEntityType.ISSUE_PROPERTY_VALUE,
+      phase: "PROCESS_ISSUES_PROPERTY_VALUE",
+      level: EExecutionLogLevel.INFO,
+      ignore_summarization: true,
+      metrics: {
+        pulled: totalPropertyValues,
+      },
+      additional_data: {
+        processedIssues: props.issuesResult.items.length,
+        extractedComments: comments.length,
+        issuesWithPropertyValues: Object.keys(propertyValues).length,
+        totalPropertyValues,
+      },
+    });
 
     logger.info(`[${props.jobContext.job.id}] [${this.name}] Processed issues data`, {
       jobId: props.jobContext.job.id,
@@ -491,6 +556,18 @@ export class JiraIssuesStep implements IStep {
       storage.lookupMapping(jobId, EJiraStep.MODULES, Array.from(componentExternalIds)),
     ]);
 
+    executionLog.collect(jobId, {
+      entity_type: EExecutionLogEntityType.WORK_ITEM,
+      phase: "LOAD_MAPPINGS",
+      level: EExecutionLogLevel.INFO,
+      additional_data: {
+        loadedUsers: userMap.size,
+        loadedIssueTypes: issueTypeMap.size,
+        loadedCycles: cycleMap.size,
+        loadedModules: moduleMap.size,
+      },
+    });
+
     logger.info(`[${jobId}] [${this.name}] Loaded mappings`, {
       jobId,
       users: userMap.size,
@@ -529,7 +606,7 @@ export class JiraIssuesStep implements IStep {
    */
   private extractRelations(job: TImportJob<JiraConfig>, issues: IJiraIssue[]): TIssueRelationsData[] {
     const { projectId, resourceId } = extractJobData(job);
-    return issues
+    const relations = issues
       .map((issue) => ({
         external_id: buildExternalId(projectId, resourceId, issue.id),
         relationships: {
@@ -548,6 +625,39 @@ export class JiraIssuesStep implements IStep {
           rel.relationships.relates_to.length > 0 ||
           rel.relationships.duplicate_of
       );
+
+    const relationshipCounts = {
+      parent: 0,
+      blocking: 0,
+      blocked_by: 0,
+      relates_to: 0,
+      duplicate_of: 0,
+    };
+
+    relations.forEach((rel) => {
+      if (rel.relationships.parent) relationshipCounts.parent++;
+      relationshipCounts.blocking += rel.relationships.blocking.length;
+      relationshipCounts.blocked_by += rel.relationships.is_blocked_by.length;
+      relationshipCounts.relates_to += rel.relationships.relates_to.length;
+      if (rel.relationships.duplicate_of) relationshipCounts.duplicate_of++;
+    });
+
+    executionLog.collect(job.report_id, {
+      entity_type: EExecutionLogEntityType.WORK_ITEM_RELATIONS,
+      phase: "EXTRACT_RELATIONS",
+      // We are handling this in the relations step.
+      ignore_summarization: true,
+      level: EExecutionLogLevel.INFO,
+      metrics: {
+        pulled: relations.length,
+      },
+      additional_data: {
+        issuesWithRelations: relations.length,
+        relationshipCounts,
+      },
+    });
+
+    return relations;
   }
 
   private async extractAssociations(
@@ -559,15 +669,41 @@ export class JiraIssuesStep implements IStep {
     const cycles = new Map<string, string[]>();
     const modules = new Map<string, string[]>();
     const worklogs = new Map<string, Partial<TWorklog>[]>();
+
+    let totalCycleAssociations = 0;
+    let totalModuleAssociations = 0;
+    let totalWorklogs = 0;
+
     for (const issue of issues) {
       const issueExternalId = buildExternalId(projectId, resourceId, issue.id);
       const sprintExternalIds = this.extractSprints(job, issue);
       const componentExternalIds = this.extractComponents(job, issue);
       const issueWorklogs = await this.extractWorklogs(job, client, issue);
+
       cycles.set(issueExternalId, sprintExternalIds);
       modules.set(issueExternalId, componentExternalIds);
       worklogs.set(issueExternalId, issueWorklogs);
+
+      totalCycleAssociations += sprintExternalIds.length;
+      totalModuleAssociations += componentExternalIds.length;
+      totalWorklogs += issueWorklogs.length;
     }
+
+    executionLog.collect(job.report_id, {
+      entity_type: EExecutionLogEntityType.WORK_ITEM,
+      phase: "EXTRACT_ASSOCIATIONS",
+      ignore_summarization: true,
+      level: EExecutionLogLevel.INFO,
+      additional_data: {
+        issuesWithCycles: Array.from(cycles.values()).filter((c) => c.length > 0).length,
+        issuesWithModules: Array.from(modules.values()).filter((m) => m.length > 0).length,
+        issuesWithWorklogs: Array.from(worklogs.values()).filter((w) => w.length > 0).length,
+        totalCycleAssociations,
+        totalModuleAssociations,
+        totalWorklogs,
+      },
+    });
+
     return { cycles, modules, worklogs };
   }
 
@@ -632,7 +768,7 @@ export class JiraIssuesStep implements IStep {
    * Extract worklogs from issue
    */
   protected async extractWorklogs(
-    _job: TImportJob<JiraConfig>,
+    job: TImportJob<JiraConfig>,
     client: JiraV2Service,
     issue: IJiraIssue
   ): Promise<Partial<TWorklog>[]> {
@@ -644,11 +780,23 @@ export class JiraIssuesStep implements IStep {
       updated_at: worklog.updated,
     });
 
+    const totalWorklogCount = issue.fields.worklog.total;
+
     const shouldPullMoreWorklogs = issue.fields?.worklog?.total > issue.fields?.worklog?.worklogs?.length;
     if (shouldPullMoreWorklogs) {
       const worklogs = await pullAllWorklogsForIssue(issue, client);
       return worklogs.map(transformWorklog);
     }
+
+    executionLog.collect(job.id, {
+      entity_type: EExecutionLogEntityType.WORK_LOG,
+      phase: "PULL_ALL_WORKLOG",
+      level: EExecutionLogLevel.INFO,
+      related_entity: issue.id,
+      metrics: {
+        pulled: totalWorklogCount,
+      },
+    });
 
     return (
       issue.fields?.worklog?.worklogs?.map((worklog, index) => {
@@ -685,7 +833,7 @@ export class JiraIssuesStep implements IStep {
   ): Promise<BulkIssuePayload[]> {
     const { job, credentials, planeClient } = jobContext;
 
-    // Generate complete BulkIssuePayload
+    // Generate complete BulkIssuePayload (summary collected inside)
     const bulkPayload: BulkIssuePayload[] = await generateIssuePayloadV2({
       jobId: job.id,
       issues: issues as ExIssue[],
@@ -708,24 +856,60 @@ export class JiraIssuesStep implements IStep {
       isLastBatch: false,
     };
 
-    await celeryProducer.registerTask(
-      payload,
-      job.workspace_slug,
-      job.project_id,
-      job.id,
-      credentials.user_id,
-      uuidv4(),
-      "plane.bgtasks.data_import_task.import_data"
-    );
+    try {
+      await celeryProducer.registerTask(
+        payload,
+        job.workspace_slug,
+        job.project_id,
+        job.id,
+        credentials.user_id,
+        uuidv4(),
+        "plane.bgtasks.data_import_task.import_data"
+      );
 
-    logger.info(`[${job.id}] [${this.name}] Sent to Celery`, {
-      jobId: job.id,
-      issues: bulkPayload.length,
-      totalComments: bulkPayload.reduce((sum, i) => sum + i.comments.length, 0),
-      totalPropertyValues: bulkPayload.reduce((sum, i) => sum + i.issue_property_values.length, 0),
-    });
+      const totalComments = bulkPayload.reduce((sum, i) => sum + i.comments.length, 0);
+      const totalPropertyValues = bulkPayload.reduce((sum, i) => sum + i.issue_property_values.length, 0);
+      const issuesWithAttachments = bulkPayload.filter((i) => i.attachments && i.attachments.length > 0).length;
+      const totalAttachments = bulkPayload.reduce((sum, i) => sum + (i.attachments?.length || 0), 0);
 
-    return bulkPayload;
+      executionLog.collect(job.report_id, {
+        entity_type: EExecutionLogEntityType.WORK_ITEM,
+        phase: "SEND_TO_CELERY",
+        ignore_summarization: true,
+        level: EExecutionLogLevel.SUCCESS,
+        additional_data: {
+          issuesSent: bulkPayload.length,
+          totalComments,
+          totalPropertyValues,
+          issuesWithAttachments,
+          totalAttachments,
+        },
+      });
+
+      logger.info(`[${job.id}] [${this.name}] Sent to Celery`, {
+        jobId: job.id,
+        issues: bulkPayload.length,
+        totalComments,
+        totalPropertyValues,
+      });
+
+      return bulkPayload;
+    } catch (error) {
+      logger.error(`[${job.id}][${this.name}] Unable to send issues to Celery`, error);
+
+      executionLog.collect(job.report_id, {
+        entity_type: EExecutionLogEntityType.WORK_ITEM,
+        phase: "SEND_TO_CELERY",
+        ignore_summarization: true,
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        additional_data: {
+          attemptedIssues: bulkPayload.length,
+        },
+      });
+
+      throw error;
+    }
   }
 
   /**

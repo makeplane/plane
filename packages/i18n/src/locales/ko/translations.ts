@@ -3420,7 +3420,7 @@ export default {
       },
       filter: {
         title: "일치하는 뷰 없음",
-        description: `검색 기준과 일치하는 뷰가 없습니다. 
+        description: `검색 기준과 일치하는 뷰가 없습니다.
  대신 새 뷰를 만드세요.`,
       },
     },
@@ -3517,7 +3517,7 @@ export default {
       },
       search: {
         title: "일치하는 이니셔티브 없음",
-        description: `일치하는 기준의 이니셔티브가 감지되지 않았습니다. 
+        description: `일치하는 기준의 이니셔티브가 감지되지 않았습니다.
  대신 새 이니셔티브를 만드세요.`,
       },
       not_found: {
@@ -3641,19 +3641,19 @@ export default {
   active_cycle_analytics: {
     empty_state: {
       progress: {
-        title: `사이클의 진행 상황을 보려면 작업 항목을 
+        title: `사이클의 진행 상황을 보려면 작업 항목을
  추가하세요`,
       },
       priority: {
-        title: `사이클에서 처리된 높은 우선순위 작업 
+        title: `사이클에서 처리된 높은 우선순위 작업
  항목을 한눈에 확인하세요.`,
       },
       assignee: {
-        title: `작업 항목에 담당자를 추가하여 담당자별 
+        title: `작업 항목에 담당자를 추가하여 담당자별
  작업 분석을 확인하세요.`,
       },
       label: {
-        title: `작업 항목에 레이블을 추가하여 레이블별 
+        title: `작업 항목에 레이블을 추가하여 레이블별
  작업 분석을 확인하세요.`,
       },
     },
@@ -4040,6 +4040,7 @@ export default {
     project: "프로젝트",
     workspace: "워크스페이스",
     status: "스테이터스",
+    summary: "요약",
     total_batches: "전체 배치",
     imported_batches: "임포트된 배치",
     re_run: "재실행",

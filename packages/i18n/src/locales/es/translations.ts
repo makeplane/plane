@@ -1623,7 +1623,7 @@ Gracias,
       },
       filter: {
         title: "No hay proyectos coincidentes",
-        description: `No se detectaron proyectos con los criterios coincidentes. 
+        description: `No se detectaron proyectos con los criterios coincidentes.
  Crea un nuevo proyecto en su lugar.`,
       },
       search: {
@@ -2827,7 +2827,7 @@ cancelados pueden ser archivados.`,
       },
       filter: {
         title: "No hay vistas coincidentes",
-        description: `Ninguna vista coincide con los criterios de búsqueda. 
+        description: `Ninguna vista coincide con los criterios de búsqueda.
  Crea una nueva vista en su lugar.`,
       },
     },
@@ -2926,12 +2926,12 @@ cancelados pueden ser archivados.`,
       },
       all: {
         title: "No hay elementos de trabajo asignados",
-        description: `Las actualizaciones de elementos de trabajo asignados a ti se pueden 
+        description: `Las actualizaciones de elementos de trabajo asignados a ti se pueden
  ver aquí`,
       },
       mentions: {
         title: "No hay elementos de trabajo asignados",
-        description: `Las actualizaciones de elementos de trabajo asignados a ti se pueden 
+        description: `Las actualizaciones de elementos de trabajo asignados a ti se pueden
  ver aquí`,
       },
     },
@@ -3498,7 +3498,7 @@ si estás seguro de que tu búsqueda es correcta.`,
       },
       filter: {
         title: "No hay vistas coincidentes",
-        description: `Ninguna vista coincide con los criterios de búsqueda. 
+        description: `Ninguna vista coincide con los criterios de búsqueda.
  Crea una nueva vista en su lugar.`,
       },
     },
@@ -3595,7 +3595,7 @@ si estás seguro de que tu búsqueda es correcta.`,
       },
       search: {
         title: "No hay iniciativas coincidentes",
-        description: `No se detectaron iniciativas con los criterios de búsqueda. 
+        description: `No se detectaron iniciativas con los criterios de búsqueda.
  Crea una nueva iniciativa en su lugar.`,
       },
       not_found: {
@@ -3720,19 +3720,19 @@ si estás seguro de que tu búsqueda es correcta.`,
   active_cycle_analytics: {
     empty_state: {
       progress: {
-        title: `Agrega elementos de trabajo al Cycle para ver su 
+        title: `Agrega elementos de trabajo al Cycle para ver su
  progreso`,
       },
       priority: {
-        title: `Observa los elementos de trabajo de alta prioridad abordados en 
+        title: `Observa los elementos de trabajo de alta prioridad abordados en
  el Cycle de un vistazo.`,
       },
       assignee: {
-        title: `Agrega asignados a los elementos de trabajo para ver un 
+        title: `Agrega asignados a los elementos de trabajo para ver un
  desglose del trabajo por asignados.`,
       },
       label: {
-        title: `Agrega etiquetas a los elementos de trabajo para ver el 
+        title: `Agrega etiquetas a los elementos de trabajo para ver el
  desglose del trabajo por etiquetas.`,
       },
     },
@@ -4123,6 +4123,7 @@ si estás seguro de que tu búsqueda es correcta.`,
     project: "Proyecto",
     workspace: "Espacio de trabajo",
     status: "Estado",
+    summary: "Resumen",
     total_batches: "Total de lotes",
     imported_batches: "Lotes importados",
     re_run: "Volver a ejecutar",

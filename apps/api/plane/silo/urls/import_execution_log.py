@@ -13,8 +13,7 @@
 from django.urls import path
 
 # Module imports
-from plane.silo.views import ImportExecutionLogAPIView
-
+from plane.silo.views import ImportExecutionLogAPIView, ImportJobSummaryAPIView
 
 # Report endpoints
 urlpatterns = [
@@ -22,5 +21,10 @@ urlpatterns = [
         "execution-logs/jobs/<uuid:job_id>/reports/<uuid:report_id>/execution-logs/",
         ImportExecutionLogAPIView.as_view(),
         name="import-execution-log",
+    ),
+    path(
+        "jobs/<uuid:job_id>/reports/<uuid:report_id>/trigger-summary-generation/",
+        ImportJobSummaryAPIView.as_view(),
+        name="import-job-summary",
     ),
 ]

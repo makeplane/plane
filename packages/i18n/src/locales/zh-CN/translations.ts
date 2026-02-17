@@ -3973,6 +3973,7 @@ export default {
     project: "项目",
     workspace: "工作区",
     status: "状态",
+    summary: "摘要",
     total_batches: "总批次",
     imported_batches: "已导入批次",
     re_run: "重新运行",

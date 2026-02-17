@@ -15,6 +15,9 @@ import { logger } from "@plane/logger";
 import type { ExCycle, ExIssue, Client as PlaneClient } from "@plane/sdk";
 import { getJobData } from "@/helpers/job";
 import { AssertAPIErrorResponse, protect } from "@/lib";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
+import { extractErrorMetadata } from "@/helpers/errors";
 
 /* ------------------------------ Cycles Creation ---------------------------- */
 export const createCycles = async (
@@ -155,14 +158,42 @@ export const createAllCyclesV2 = async (
         }
       );
       createdCycles.push(createdCycle);
+
+      executionLog.collect(jobId, {
+        entity_type: EExecutionLogEntityType.CYCLE,
+        phase: "CREATE_CYCLE",
+        level: EExecutionLogLevel.SUCCESS,
+        entity_external_id: cycle.external_id,
+        entity_plane_id: createdCycle.id,
+        entity_name: cycle.name,
+      });
     } catch (error) {
       if (AssertAPIErrorResponse(error)) {
         if (error.error && error.error.includes("already exists")) {
           logger.info(`[${jobId.slice(0, 7)}] Cycle "${cycle.name}" already exists. Skipping...`);
           createdCycles.push({ external_id: cycle.external_id, id: error.id });
+
+          executionLog.collect(jobId, {
+            entity_type: EExecutionLogEntityType.CYCLE,
+            phase: "CREATE_CYCLE",
+            level: EExecutionLogLevel.SUCCESS,
+            entity_external_id: cycle.external_id,
+            entity_plane_id: error.id,
+            entity_name: cycle.name,
+            already_existed: true,
+          });
         }
       } else {
         logger.error(`[${jobId.slice(0, 7)}] Error while creating the cycle: ${cycle.name}`, error);
+
+        executionLog.collect(jobId, {
+          entity_type: EExecutionLogEntityType.CYCLE,
+          phase: "CREATE_CYCLE",
+          level: EExecutionLogLevel.ERROR,
+          error: extractErrorMetadata(error),
+          entity_name: cycle.name,
+          entity_external_id: cycle.external_id,
+        });
       }
     }
   }

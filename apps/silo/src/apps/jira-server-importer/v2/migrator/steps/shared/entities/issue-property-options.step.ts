@@ -30,6 +30,9 @@ import type {
 } from "@/apps/jira-server-importer/v2/types";
 import { E_ADDITIONAL_STORAGE_KEYS, EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { createOrUpdateIssuePropertiesOptions } from "@/etl/migrator/issue-types/issue-property.migrator";
+import { extractErrorMetadata } from "@/helpers/errors";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
 
 /**
  * Jira Server Issue Property Options Step
@@ -95,11 +98,11 @@ export class JiraIssuePropertyOptionsStep implements IStep {
   private transform(job: TImportJob<JiraConfig>, rawFields: JiraIssueField[]): Partial<ExIssuePropertyOption>[] {
     const resourceId = job.config.resource ? job.config.resource.id : uuid();
 
-    const options = rawFields
-      .filter(
-        (field) =>
-          field.schema?.custom && OPTION_CUSTOM_FIELD_TYPES.includes(field.schema.custom as JiraCustomFieldKeys)
-      )
+    const optionFields = rawFields.filter(
+      (field) => field.schema?.custom && OPTION_CUSTOM_FIELD_TYPES.includes(field.schema.custom as JiraCustomFieldKeys)
+    );
+
+    const options = optionFields
       .flatMap(
         (field) =>
           field.options?.map((option) =>
@@ -107,6 +110,16 @@ export class JiraIssuePropertyOptionsStep implements IStep {
           ) || []
       )
       .filter(Boolean);
+
+    executionLog.collect(job.id, {
+      entity_type: EExecutionLogEntityType.ISSUE_PROPERTY_OPTION,
+      phase: "TRANSFORM_OPTIONS",
+      level: EExecutionLogLevel.INFO,
+      metrics: {
+        total: options.length,
+        pulled: options.length,
+      },
+    });
 
     logger.info(`[${job.id}] [${this.name}] Transformed options`, {
       jobId: job.id,
@@ -166,15 +179,32 @@ export class JiraIssuePropertyOptionsStep implements IStep {
       count: options.length,
     });
 
-    return await createOrUpdateIssuePropertiesOptions({
-      jobId: job.id,
-      issuePropertyMap: propertiesMap,
-      issuePropertiesOptions: options,
-      planeClient,
-      workspaceSlug: job.workspace_slug,
-      projectId: job.project_id,
-      method,
-    });
+    try {
+      // Summary is collected inside createOrUpdateIssuePropertiesOptions
+      return await createOrUpdateIssuePropertiesOptions({
+        jobId: job.id,
+        issuePropertyMap: propertiesMap,
+        issuePropertiesOptions: options,
+        planeClient,
+        workspaceSlug: job.workspace_slug,
+        projectId: job.project_id,
+        method,
+      });
+    } catch (error) {
+      logger.error(`[${job.id}][${this.name}] Unable to ${method} options`, error);
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_PROPERTY_OPTION,
+        phase: method === "create" ? "CREATE_OPTIONS" : "UPDATE_OPTIONS",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        additional_data: {
+          attemptedCount: options.length,
+        },
+      });
+
+      throw error;
+    }
   }
 
   /**
@@ -217,12 +247,31 @@ export class JiraIssuePropertyOptionsStep implements IStep {
         options.forEach((option) => existingOptions.set(option.external_id, option));
       }
 
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_PROPERTY_OPTION,
+        phase: "FETCH_EXISTING_OPTIONS",
+        level: EExecutionLogLevel.INFO,
+        metrics: {
+          already_existed: existingOptions.size,
+        },
+        additional_data: {
+          optionPropertiesCount: optionProperties.length,
+        },
+      });
+
       logger.info(`[${job.id}] [${this.name}] Found existing options`, {
         jobId: job.id,
         count: existingOptions.size,
       });
     } catch (error) {
       logger.error(`[${job.id}] [${this.name}] Error fetching existing options`, { jobId: job.id, error });
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_PROPERTY_OPTION,
+        phase: "FETCH_EXISTING_OPTIONS",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+      });
     }
 
     return existingOptions;

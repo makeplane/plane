@@ -17,6 +17,9 @@ import { getSupportedDefaultProperties } from "@/apps/jira-server-importer/v2/he
 import type { TIssueTypesData, TStepExecutionContext, TStepExecutionInput } from "@/apps/jira-server-importer/v2/types";
 import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { JiraIssuePropertiesStep } from "./issue-properties.step";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
+import { extractErrorMetadata } from "@/helpers/errors";
 
 /*
  * @overview
@@ -37,32 +40,58 @@ export class JiraDefaultPropertiesStep extends JiraIssuePropertiesStep {
     const { dependencyData, jobContext, storage } = input;
     const { job } = jobContext;
 
-    const issueTypes = dependencyData?.issue_types as TIssueTypesData;
-    if (!issueTypes || issueTypes.length === 0) {
-      throw new Error("No issue types found");
+    try {
+      const issueTypes = dependencyData?.issue_types as TIssueTypesData;
+      if (!issueTypes || issueTypes.length === 0) {
+        throw new Error("No issue types found");
+      }
+
+      const { resourceId, projectId } = extractJobData(job);
+      const defaultPropertiesToCreate = [];
+
+      for (const issueType of issueTypes) {
+        const defaultProperties = getSupportedDefaultProperties(
+          resourceId,
+          projectId,
+          issueType.id,
+          issueType.external_id,
+          this.source
+        );
+        defaultPropertiesToCreate.push(...defaultProperties);
+      }
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_PROPERTY,
+        phase: "DEFAULT_PROPERTIES",
+        level: EExecutionLogLevel.INFO,
+        metrics: {
+          total: defaultPropertiesToCreate.length,
+          pulled: defaultPropertiesToCreate.length,
+        },
+        additional_data: {
+          issueTypesCount: issueTypes.length,
+          propertyNames: new Set(defaultPropertiesToCreate.map((p) => p.display_name)),
+        },
+      });
+
+      const pushed = await this.push(jobContext, defaultPropertiesToCreate, issueTypes);
+      await this.storePropertiesData(EJiraStep.ISSUE_PROPERTIES, job, pushed, storage);
+
+      return createSuccessContext({
+        pulled: defaultPropertiesToCreate.length,
+        pushed: defaultPropertiesToCreate.length,
+        totalProcessed: defaultPropertiesToCreate.length,
+      });
+    } catch (error) {
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_DEFAULT_PROPERTY,
+        phase: "EXECUTE_DEFAULT_PROPERTIES",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        is_fatal: true,
+      });
+
+      throw error;
     }
-
-    const { resourceId, projectId } = extractJobData(job);
-    const defaultPropertiesToCreate = [];
-
-    for (const issueType of issueTypes) {
-      const defaultProperties = getSupportedDefaultProperties(
-        resourceId,
-        projectId,
-        issueType.id,
-        issueType.external_id,
-        this.source
-      );
-      defaultPropertiesToCreate.push(...defaultProperties);
-    }
-
-    const pushed = await this.push(jobContext, defaultPropertiesToCreate, issueTypes);
-    await this.storePropertiesData(EJiraStep.ISSUE_PROPERTIES, job, pushed, storage);
-
-    return createSuccessContext({
-      pulled: defaultPropertiesToCreate.length,
-      pushed: defaultPropertiesToCreate.length,
-      totalProcessed: defaultPropertiesToCreate.length,
-    });
   }
 }

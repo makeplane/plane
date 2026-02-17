@@ -347,6 +347,7 @@ CELERY_IMPORTS = (
     "plane.silo.bgtasks.integration_apps_task",
     "plane.silo.bgtasks.bulk_update_issue_relations_task",
     "plane.silo.bgtasks.bulk_update_issue_relations_task_v2",
+    "plane.silo.bgtasks.generate_job_summary",
     # event stream tasks
     "plane.event_stream.bgtasks.outbox_cleaner",
     # webhook tasks

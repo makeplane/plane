@@ -34,6 +34,9 @@ import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { createOrUpdateIssueTypes } from "@/etl/migrator/issue-types/issue-type.migrator";
 import { getPlaneFeatureFlagService } from "@/helpers/plane-api-client";
 import { protect } from "@/lib";
+import { extractErrorMetadata } from "@/helpers/errors";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
 
 /**
  * Jira Server Issue Types Step
@@ -152,23 +155,47 @@ export class JiraIssueTypesStep implements IStep {
    * Pull one page of issue types from Jira Server
    */
   protected async pull(jobContext: TJobContext, projectId: string, startAt: number) {
-    const result = await pullIssueTypesV2(
-      {
-        client: jobContext.sourceClient,
+    try {
+      const result = await pullIssueTypesV2(
+        {
+          client: jobContext.sourceClient,
+          startAt,
+          maxResults: this.PAGE_SIZE,
+        },
+        projectId
+      );
+
+      executionLog.collect(jobContext.job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_TYPE,
+        phase: "PULL_ISSUE_TYPES",
+        level: EExecutionLogLevel.INFO,
+        metrics: {
+          pulled: result.items.length,
+          total: result.total,
+        },
+      });
+
+      logger.info(`[${jobContext.job.id}] [${this.name}] Pulled issue types from Jira Server`, {
+        jobId: jobContext.job.id,
+        count: result.items.length,
+        hasMore: result.hasMore,
         startAt,
-        maxResults: this.PAGE_SIZE,
-      },
-      projectId
-    );
+      });
 
-    logger.info(`[${jobContext.job.id}] [${this.name}] Pulled issue types from Jira Server`, {
-      jobId: jobContext.job.id,
-      count: result.items.length,
-      hasMore: result.hasMore,
-      startAt,
-    });
+      return result;
+    } catch (error) {
+      logger.error(`[${jobContext.job.id}][${this.name}] Unable to pull issue types from Jira`, error);
 
-    return result;
+      executionLog.collect(jobContext.job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_TYPE,
+        phase: "PULL_ISSUE_TYPES",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        is_fatal: true,
+      });
+
+      throw error;
+    }
   }
 
   /**
@@ -230,18 +257,43 @@ export class JiraIssueTypesStep implements IStep {
    */
   private async fetchExistingIssueTypes(jobContext: TJobContext): Promise<ExIssueType[]> {
     const { job, planeClient } = jobContext;
-    const existingIssueTypes = await withCache(
-      this.name,
-      job,
-      async () => await planeClient.issueType.fetch(job.workspace_slug, job.project_id)
-    );
 
-    logger.info(`[${job.id}] [${this.name}] Found existing issue types`, {
-      jobId: job.id,
-      count: existingIssueTypes.length,
-    });
+    try {
+      const existingIssueTypes = await withCache(
+        this.name,
+        job,
+        async () => await planeClient.issueType.fetch(job.workspace_slug, job.project_id)
+      );
 
-    return existingIssueTypes;
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_TYPE,
+        phase: "FETCH_EXISTING_ISSUE_TYPES",
+        ignore_summarization: true,
+        level: EExecutionLogLevel.INFO,
+        additional_data: {
+          existingIssueTypesCount: existingIssueTypes.length,
+          issueTypeNames: existingIssueTypes.map((t) => t.name),
+        },
+      });
+
+      logger.info(`[${job.id}] [${this.name}] Found existing issue types`, {
+        jobId: job.id,
+        count: existingIssueTypes.length,
+      });
+
+      return existingIssueTypes;
+    } catch (error) {
+      logger.error(`[${job.id}][${this.name}] Unable to fetch existing issue types from Plane`, error);
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_TYPE,
+        phase: "FETCH_EXISTING_ISSUE_TYPES",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+      });
+
+      return [];
+    }
   }
 
   /**
@@ -308,14 +360,31 @@ export class JiraIssueTypesStep implements IStep {
       count: issueTypes.length,
     });
 
-    return await createOrUpdateIssueTypes({
-      jobId: job.id,
-      issueTypes,
-      planeClient,
-      workspaceSlug: job.workspace_slug,
-      projectId: job.project_id,
-      method: method,
-    });
+    try {
+      // Summary is collected inside createOrUpdateIssueTypes
+      return await createOrUpdateIssueTypes({
+        jobId: job.id,
+        issueTypes,
+        planeClient,
+        workspaceSlug: job.workspace_slug,
+        projectId: job.project_id,
+        method: method,
+      });
+    } catch (error) {
+      logger.error(`[${job.id}][${this.name}] Unable to ${method} issue types`, error);
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_TYPE,
+        phase: method === "create" ? "CREATE_ISSUE_TYPES" : "UPDATE_ISSUE_TYPES",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        additional_data: {
+          attemptedCount: issueTypes.length,
+        },
+      });
+
+      throw error;
+    }
   }
 
   /**

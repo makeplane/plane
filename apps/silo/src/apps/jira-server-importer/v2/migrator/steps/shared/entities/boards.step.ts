@@ -29,6 +29,9 @@ import type {
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
 import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
+import { extractErrorMetadata } from "@/helpers/errors";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
 
 /**
  * Handles the extraction of boards from Jira Server.
@@ -110,22 +113,49 @@ export class JiraBoardsStep implements IStep {
    * Pulls a page of boards from Jira Server
    */
   private async pullBoards(client: JiraV2Service, projectId: string, startAt: number, jobId: string) {
-    const result = await pullBoardsV2(
-      {
-        client,
-        startAt,
-        maxResults: this.PAGE_SIZE,
-      },
-      projectId
-    );
+    try {
+      const result = await pullBoardsV2(
+        {
+          client,
+          startAt,
+          maxResults: this.PAGE_SIZE,
+        },
+        projectId
+      );
 
-    logger.info(`[${jobId}] [${this.name}] Pulled boards`, {
-      jobId,
-      count: result.items.length,
-      hasMore: result.hasMore,
-    });
+      executionLog.collect(jobId, {
+        entity_type: EExecutionLogEntityType.BOARDS,
+        phase: "PULL_BOARDS",
+        level: EExecutionLogLevel.INFO,
+        metrics: {
+          pulled: result.items.length,
+          total: result.total,
+        },
+        additional_data: {
+          scrumBoards: result.items.filter((board) => board.type === "scrum").length,
+        },
+      });
 
-    return result;
+      logger.info(`[${jobId}] [${this.name}] Pulled boards`, {
+        jobId,
+        count: result.items.length,
+        hasMore: result.hasMore,
+      });
+
+      return result;
+    } catch (error) {
+      logger.error(`[${jobId}][${this.name}] Unable to pull boards from Jira`, error);
+
+      executionLog.collect(jobId, {
+        entity_type: EExecutionLogEntityType.BOARDS,
+        phase: "PULL_BOARDS",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        is_fatal: true,
+      });
+
+      throw error;
+    }
   }
 
   /**
@@ -141,17 +171,45 @@ export class JiraBoardsStep implements IStep {
   private async storeBoards(storage: IStorageService, jobId: string, items: Board[]) {
     if (items.length === 0) return;
 
-    const boardData: TBoardData = items
-      .filter((board) => board.id && board.name && board.type)
-      .map((board) => ({
-        id: board.id,
-        name: board.name,
-        type: board.type,
-      })) as TBoardData;
+    try {
+      const boardData: TBoardData = items
+        .filter((board) => board.id && board.name && board.type)
+        .map((board) => ({
+          id: board.id,
+          name: board.name,
+          type: board.type,
+        })) as TBoardData;
 
-    await storage.storeData(jobId, this.name, boardData, "id");
+      await storage.storeData(jobId, this.name, boardData, "id");
 
-    logger.info(`[${jobId}] [${this.name}] Stored boards`, { count: boardData.length });
+      executionLog.collect(jobId, {
+        entity_type: EExecutionLogEntityType.BOARDS,
+        phase: "STORE_BOARDS",
+        ignore_summarization: true,
+        level: EExecutionLogLevel.SUCCESS,
+        additional_data: {
+          storedBoards: boardData.length,
+          boardNames: boardData.map((b) => b.name),
+        },
+      });
+
+      logger.info(`[${jobId}] [${this.name}] Stored boards`, { count: boardData.length });
+    } catch (error) {
+      logger.error(`[${jobId}][${this.name}] Unable to store boards`, error);
+
+      executionLog.collect(jobId, {
+        entity_type: EExecutionLogEntityType.BOARDS,
+        phase: "STORE_BOARDS",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        is_fatal: true,
+        additional_data: {
+          attemptedCount: items.length,
+        },
+      });
+
+      throw error;
+    }
   }
 
   /**

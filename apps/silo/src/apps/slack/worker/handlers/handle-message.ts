@@ -265,7 +265,6 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
             const featureFlagResponse = await featureFlagService.featureFlags({
               workspace_slug: workspaceConnection.workspace_slug,
               user_id: planeUserId ?? "",
-              // @ts-expect-error we will need to check the feature key
               flag_key: E_FEATURE_FLAGS.SLACK_WORK_OBJECTS,
             });
 

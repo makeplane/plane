@@ -1621,7 +1621,7 @@ Merci,
       },
       filter: {
         title: "Aucun projet correspondant",
-        description: `Aucun projet détecté avec les critères correspondants. 
+        description: `Aucun projet détecté avec les critères correspondants.
  Créez plutôt un nouveau projet.`,
       },
       search: {
@@ -2827,7 +2827,7 @@ annulés peuvent être archivés.`,
       },
       filter: {
         title: "Aucune vue correspondante",
-        description: `Aucune vue ne correspond aux critères de recherche. 
+        description: `Aucune vue ne correspond aux critères de recherche.
  Créez plutôt une nouvelle vue.`,
       },
     },
@@ -2926,12 +2926,12 @@ annulés peuvent être archivés.`,
       },
       all: {
         title: "Aucun élément de travail assigné",
-        description: `Les mises à jour des éléments de travail qui vous sont assignés peuvent être 
+        description: `Les mises à jour des éléments de travail qui vous sont assignés peuvent être
  vues ici`,
       },
       mentions: {
         title: "Aucun élément de travail assigné",
-        description: `Les mises à jour des éléments de travail qui vous sont assignés peuvent être 
+        description: `Les mises à jour des éléments de travail qui vous sont assignés peuvent être
  vues ici`,
       },
     },
@@ -3495,7 +3495,7 @@ si vous êtes sûr que votre recherche est correcte.`,
       },
       filter: {
         title: "Aucune vue correspondante",
-        description: `Aucune vue ne correspond aux critères de recherche. 
+        description: `Aucune vue ne correspond aux critères de recherche.
  Créez plutôt une nouvelle vue.`,
       },
     },
@@ -3592,7 +3592,7 @@ si vous êtes sûr que votre recherche est correcte.`,
       },
       search: {
         title: "Aucune initiative correspondante",
-        description: `Aucune initiative détectée avec les critères correspondants. 
+        description: `Aucune initiative détectée avec les critères correspondants.
  Créez plutôt une nouvelle initiative.`,
       },
       not_found: {
@@ -3716,19 +3716,19 @@ si vous êtes sûr que votre recherche est correcte.`,
   active_cycle_analytics: {
     empty_state: {
       progress: {
-        title: `Ajoutez des éléments de travail au Cycle pour voir sa 
+        title: `Ajoutez des éléments de travail au Cycle pour voir sa
  progression`,
       },
       priority: {
-        title: `Observez les éléments de travail hautement prioritaires traités dans 
+        title: `Observez les éléments de travail hautement prioritaires traités dans
  le Cycle en un coup d'œil.`,
       },
       assignee: {
-        title: `Ajoutez des assignés aux éléments de travail pour voir une 
+        title: `Ajoutez des assignés aux éléments de travail pour voir une
  répartition du travail par assigné.`,
       },
       label: {
-        title: `Ajoutez des étiquettes aux éléments de travail pour voir la 
+        title: `Ajoutez des étiquettes aux éléments de travail pour voir la
  répartition du travail par étiquettes.`,
       },
     },
@@ -4120,6 +4120,7 @@ si vous êtes sûr que votre recherche est correcte.`,
     project: "Projet",
     workspace: "Espace de travail",
     status: "Statut",
+    summary: "Résumé",
     total_batches: "Lots totaux",
     imported_batches: "Lots importés",
     re_run: "Relancer",

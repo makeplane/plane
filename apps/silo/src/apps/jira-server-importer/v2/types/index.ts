@@ -36,6 +36,9 @@ export enum EJiraStep {
 
   // Relations
   RELATIONS = "relations",
+
+  // Post Run
+  SUMMARY = "summary",
 }
 
 /**

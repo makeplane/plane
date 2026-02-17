@@ -13,6 +13,7 @@
 
 import { APIService } from "@/services/api.service";
 // types
+import type { AxiosError } from "axios";
 import type { ClientOptions, ExIssuePropertyOption } from "@/types";
 
 export class IssuePropertyOptionService extends APIService {
@@ -21,10 +22,12 @@ export class IssuePropertyOptionService extends APIService {
   }
 
   async fetch(workspaceSlug: string, projectId: string, propertyId: string): Promise<ExIssuePropertyOption[]> {
-    return this.get(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/${propertyId}/options/`)
+    return this.get<ExIssuePropertyOption[]>(
+      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/${propertyId}/options/`
+    )
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 
@@ -34,12 +37,12 @@ export class IssuePropertyOptionService extends APIService {
     propertyId: string,
     optionId: string
   ): Promise<ExIssuePropertyOption> {
-    return this.get(
+    return this.get<ExIssuePropertyOption>(
       `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/${propertyId}/options/${optionId}/`
     )
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 
@@ -49,13 +52,13 @@ export class IssuePropertyOptionService extends APIService {
     propertyId: string,
     data: Partial<ExIssuePropertyOption>
   ): Promise<ExIssuePropertyOption> {
-    return this.post(
+    return this.post<ExIssuePropertyOption>(
       `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/${propertyId}/options/`,
       data
     )
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 
@@ -66,23 +69,23 @@ export class IssuePropertyOptionService extends APIService {
     optionId: string,
     data: Partial<ExIssuePropertyOption>
   ): Promise<ExIssuePropertyOption> {
-    return this.patch(
+    return this.patch<ExIssuePropertyOption>(
       `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/${propertyId}/options/${optionId}/`,
       data
     )
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 
   async remove(workspaceSlug: string, projectId: string, propertyId: string, optionId: string): Promise<void> {
-    return this.delete(
+    return this.delete<void>(
       `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/${propertyId}/options/${optionId}/`
     )
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 }

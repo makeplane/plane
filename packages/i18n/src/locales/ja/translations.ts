@@ -4071,6 +4071,7 @@ export default {
     project: "プロジェクト",
     workspace: "ワークスペース",
     status: "ステータス",
+    summary: "概要",
     total_batches: "合計バッチ数",
     imported_batches: "インポート済みバッチ",
     re_run: "再実行",

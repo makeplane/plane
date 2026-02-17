@@ -22,11 +22,13 @@ import { WorkspaceEntityConnectionAPIService } from "@/services/workspace/entity
 import type { ClientOptions } from "@/types";
 import { AssetApiService } from "./asset/asset.service";
 import { PageAPIService } from "./page/page.service";
+import { ImportExecutionLogAPIService } from "./job";
 
 export class APIClient {
   options: ClientOptions;
   importJob: ImportJobAPIService;
   importReport: ImportReportAPIService;
+  importExecutionLog: ImportExecutionLogAPIService;
   workspaceConnection: WorkspaceConnectionAPIService;
   workspaceCredential: WorkspaceCredentialAPIService;
   workspaceEntityConnection: WorkspaceEntityConnectionAPIService;
@@ -41,6 +43,7 @@ export class APIClient {
     this.workspaceEntityConnection = new WorkspaceEntityConnectionAPIService(options);
     this.importJob = new ImportJobAPIService(options);
     this.importReport = new ImportReportAPIService(options);
+    this.importExecutionLog = new ImportExecutionLogAPIService(options);
     this.page = new PageAPIService(options);
     this.asset = new AssetApiService(options);
   }

@@ -3461,7 +3461,7 @@ Erstellen Sie ein neues.`,
       },
       filter: {
         title: "Keine passenden Ansichten",
-        description: `Keine Ansichten entsprechen den Suchkriterien. 
+        description: `Keine Ansichten entsprechen den Suchkriterien.
  Erstellen Sie stattdessen eine neue Ansicht.`,
       },
     },
@@ -3559,7 +3559,7 @@ Erstellen Sie ein neues.`,
       },
       search: {
         title: "Keine passenden Initiativen",
-        description: `Keine Initiativen mit den passenden Kriterien gefunden. 
+        description: `Keine Initiativen mit den passenden Kriterien gefunden.
  Erstellen Sie stattdessen eine neue Initiative.`,
       },
       not_found: {
@@ -3684,19 +3684,19 @@ Erstellen Sie ein neues.`,
   active_cycle_analytics: {
     empty_state: {
       progress: {
-        title: `Fügen Sie Arbeitsaufgaben zum Zyklus hinzu, um 
+        title: `Fügen Sie Arbeitsaufgaben zum Zyklus hinzu, um
  seinen Fortschritt zu sehen`,
       },
       priority: {
-        title: `Beobachten Sie hochprioritäre Arbeitsaufgaben, die 
+        title: `Beobachten Sie hochprioritäre Arbeitsaufgaben, die
  im Zyklus auf einen Blick bearbeitet werden.`,
       },
       assignee: {
-        title: `Fügen Sie Arbeitsaufgaben Bearbeitern hinzu, um eine 
+        title: `Fügen Sie Arbeitsaufgaben Bearbeitern hinzu, um eine
  Aufschlüsselung der Arbeit nach Bearbeitern zu sehen.`,
       },
       label: {
-        title: `Fügen Sie Arbeitsaufgaben Labels hinzu, um die 
+        title: `Fügen Sie Arbeitsaufgaben Labels hinzu, um die
  Aufschlüsselung der Arbeit nach Labels zu sehen.`,
       },
     },
@@ -4089,6 +4089,7 @@ Erstellen Sie ein neues.`,
     project: "Projekt",
     workspace: "Workspace",
     status: "Status",
+    summary: "Zusammenfassung",
     total_batches: "Gesamt-Batches",
     imported_batches: "Importierte Batches",
     re_run: "Neu starten",

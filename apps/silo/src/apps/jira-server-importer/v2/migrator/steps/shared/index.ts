@@ -11,7 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+// Import steps
 export * from "./entities";
 export * from "./issues";
-export * from "./pre-run";
 export * from "./relations";
+
+// Steps which are not direcly related to the import but contribute
+// to the environment
+export * from "./pre-run";
+export * from "./post-run";

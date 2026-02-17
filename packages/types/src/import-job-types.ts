@@ -55,4 +55,7 @@ export type TImportReport = {
   // Time Stamps
   start_time?: string | null;
   end_time?: string | null;
+
+  // Asset ID of the summary HTML file
+  summary_asset?: string | null;
 };

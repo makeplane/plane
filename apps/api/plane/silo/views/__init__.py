@@ -15,5 +15,10 @@ from .credential import WorkspaceCredentialAPIView, VerifyWorkspaceCredentialAPI
 from .connection import WorkspaceConnectionAPIView, WorkspaceUserConnectionAPIView
 from .entity_connection import WorkspaceEntityConnectionAPIView
 from .importer import ImportJobAPIView
-from .importer_report import ImportReportAPIView, ImportReportCountIncrementAPIView, ImportExecutionLogAPIView
+from .importer_report import (
+    ImportReportAPIView,
+    ImportReportCountIncrementAPIView,
+    ImportExecutionLogAPIView,
+    ImportJobSummaryAPIView,
+)
 from .page import WikiBulkOperationAPIView, ProjectPageBulkOperationAPIView, TeamspacePageBulkOperationAPIView

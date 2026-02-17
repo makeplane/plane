@@ -13,22 +13,19 @@
 
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import {
-  // Pre-run steps
-  PlaneProjectConfigurationStep,
-  // Entity steps
   JiraBoardsStep,
   JiraCyclesStep,
   JiraDefaultPropertiesStep,
+  JiraExecutionSummaryStep,
   JiraIssuePropertiesStep,
   JiraIssuePropertyOptionsStep,
+  JiraIssuesStep,
   JiraIssueTypesStep,
   JiraModulesStep,
-  JiraUsersStep,
-  // Issue steps
-  JiraIssuesStep,
-  WaitForCeleryStep,
-  // Association steps
   JiraRelationsStep,
+  JiraUsersStep,
+  PlaneProjectConfigurationStep,
+  WaitForCeleryStep,
 } from "../shared";
 
 const JIRA_SERVER_STEPS = [
@@ -48,6 +45,8 @@ const JIRA_SERVER_STEPS = [
   new WaitForCeleryStep(),
   // Association steps
   new JiraRelationsStep(E_IMPORTER_KEYS.JIRA_SERVER),
+  // Post Run Steps
+  new JiraExecutionSummaryStep(),
 ];
 
 export default JIRA_SERVER_STEPS;

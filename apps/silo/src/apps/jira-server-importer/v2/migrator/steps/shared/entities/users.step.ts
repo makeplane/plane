@@ -28,6 +28,9 @@ import type {
 import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { createUsers } from "@/etl/migrator/users.migrator";
 import { protect } from "@/lib";
+import { extractErrorMetadata } from "@/helpers/errors";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
 
 /**
  * Handles the import of users from Jira Server to Plane.
@@ -132,21 +135,47 @@ export class JiraUsersStep implements IStep {
    * @param jobId - The import job ID for logging purposes
    * @returns Paginated result containing user items and hasMore flag
    */
-  protected async pull(_jobContext: TJobContext, client: JiraV2Service, startAt: number, jobId: string) {
-    const result = await pullUsersV2({
-      client,
-      startAt,
-      maxResults: this.PAGE_SIZE,
-    });
+  protected async pull(jobContext: TJobContext, client: JiraV2Service, startAt: number, jobId: string) {
+    const { job } = jobContext;
 
-    logger.info(`[${jobId}] [${this.name}] Pulled users`, {
-      jobId,
-      count: result.items.length,
-      hasMore: result.hasMore,
-      startAt,
-    });
+    try {
+      const result = await pullUsersV2({
+        client,
+        startAt,
+        maxResults: this.PAGE_SIZE,
+      });
 
-    return result;
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.USER,
+        phase: "PULL_USERS",
+        level: EExecutionLogLevel.INFO,
+        metrics: {
+          pulled: result.items.length,
+          total: result.total,
+        },
+      });
+
+      logger.info(`[${jobId}] [${this.name}] Pulled users`, {
+        jobId,
+        count: result.items.length,
+        hasMore: result.hasMore,
+        startAt,
+      });
+
+      return result;
+    } catch (error) {
+      logger.error(`[${job.id}][USERS] Unable to pull users from plane`, error);
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.USER,
+        phase: "PLANE PULL USERS",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        is_fatal: true,
+      });
+
+      throw error;
+    }
   }
 
   /**
@@ -179,6 +208,15 @@ export class JiraUsersStep implements IStep {
     const { planeClient, job, credentials } = jobContext;
 
     const existingUsers = await this.fetchExistingUsers(planeClient, job);
+
+    executionLog.collect(job.id, {
+      entity_type: EExecutionLogEntityType.USER,
+      level: EExecutionLogLevel.INFO,
+      metrics: {
+        already_existed: existingUsers.length,
+      },
+    });
+
     const usersToCreate = this.extractNewUsers(transformedUsers, existingUsers);
 
     logger.info(`[${job.id}] [${this.name}] User deduplication`, {
@@ -210,11 +248,21 @@ export class JiraUsersStep implements IStep {
    * @returns Array of existing Plane users
    */
   private async fetchExistingUsers(planeClient: PlaneClient, job: TImportJob<JiraConfig>): Promise<PlaneUser[]> {
-    return withCache(
-      this.name,
-      job,
-      async () => await protect(planeClient.users.list.bind(planeClient.users), job.workspace_slug, job.project_id)
-    );
+    try {
+      return withCache(
+        this.name,
+        job,
+        async () => await protect(planeClient.users.list.bind(planeClient.users), job.workspace_slug, job.project_id)
+      );
+    } catch (error) {
+      logger.error(`[${job.id}] Unable to pull existing users from plane`, extractErrorMetadata(error));
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.USER,
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+      });
+      return [];
+    }
   }
 
   /**
@@ -251,6 +299,7 @@ export class JiraUsersStep implements IStep {
       return [];
     }
 
+    // Summary is collected inside the createUsers function
     return await createUsers(jobId, usersToCreate as PlaneUser[], planeClient, credentials, workspaceSlug, projectId);
   }
 

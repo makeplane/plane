@@ -1604,7 +1604,7 @@ Vďaka,
       },
       filter: {
         title: "Žiadne zodpovedajúce projekty",
-        description: `Nenašli sa projekty zodpovedajúce kritériám. 
+        description: `Nenašli sa projekty zodpovedajúce kritériám.
  Vytvorte nový.`,
       },
       search: {
@@ -3433,7 +3433,7 @@ Vytvorte nový.`,
       },
       filter: {
         title: "Žiadne zodpovedajúce pohľady",
-        description: `Žiadne pohľady nezodpovedajú kritériám vyhľadávania. 
+        description: `Žiadne pohľady nezodpovedajú kritériám vyhľadávania.
  Namiesto toho vytvorte nový pohľad.`,
       },
     },
@@ -3535,7 +3535,7 @@ Vytvorte nový.`,
       },
       search: {
         title: "Žiadne zodpovedajúce iniciatívy",
-        description: `Neboli zistené žiadne iniciatívy so zodpovedajúcimi kritériami. 
+        description: `Neboli zistené žiadne iniciatívy so zodpovedajúcimi kritériami.
  Namiesto toho vytvorte novú iniciatívu.`,
       },
       not_found: {
@@ -3661,19 +3661,19 @@ Vytvorte nový.`,
   active_cycle_analytics: {
     empty_state: {
       progress: {
-        title: `Pridajte pracovné položky do cyklu, aby ste videli jeho 
+        title: `Pridajte pracovné položky do cyklu, aby ste videli jeho
  pokrok`,
       },
       priority: {
-        title: `Sledujte pracovné položky s vysokou prioritou riešené v 
+        title: `Sledujte pracovné položky s vysokou prioritou riešené v
  cykle na prvý pohľad.`,
       },
       assignee: {
-        title: `Pridajte priradeným osobám pracovné položky, aby ste videli 
+        title: `Pridajte priradeným osobám pracovné položky, aby ste videli
  rozdelenie práce podľa priradených osôb.`,
       },
       label: {
-        title: `Pridajte štítky k pracovným položkám, aby ste videli 
+        title: `Pridajte štítky k pracovným položkám, aby ste videli
  rozdelenie práce podľa štítkov.`,
       },
     },
@@ -4062,6 +4062,7 @@ Vytvorte nový.`,
     project: "Projekt",
     workspace: "Vorkspejs",
     status: "Stav",
+    summary: "Zhrnutie",
     total_batches: "Celkový počet dávok",
     imported_batches: "Importované dávky",
     re_run: "Spustiť znova",

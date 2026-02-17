@@ -1613,7 +1613,7 @@ Teşekkürler,
       },
       filter: {
         title: "Eşleşen proje yok",
-        description: `Eşleşen kriterlerle proje bulunamadı. 
+        description: `Eşleşen kriterlerle proje bulunamadı.
  Bunun yerine yeni bir proje oluşturun.`,
       },
       search: {
@@ -2790,7 +2790,7 @@ modüller arşivlenebilir.`,
       },
       filter: {
         title: "Eşleşen görünüm yok",
-        description: `Arama kriterleriyle eşleşen görünüm yok. 
+        description: `Arama kriterleriyle eşleşen görünüm yok.
  Bunun yerine yeni bir görünüm oluşturun.`,
       },
     },
@@ -2887,12 +2887,12 @@ modüller arşivlenebilir.`,
       },
       all: {
         title: "Atanan iş öğesi yok",
-        description: `Size atanan iş öğelerinin güncellemelerini 
+        description: `Size atanan iş öğelerinin güncellemelerini
  burada görebilirsiniz`,
       },
       mentions: {
         title: "Atanan iş öğesi yok",
-        description: `Size atanan iş öğelerinin güncellemelerini 
+        description: `Size atanan iş öğelerinin güncellemelerini
  burada görebilirsiniz`,
       },
     },
@@ -3453,7 +3453,7 @@ modüller arşivlenebilir.`,
       },
       filter: {
         title: "Eşleşen görünüm yok",
-        description: `Arama kriterlerine uygun görünüm yok. 
+        description: `Arama kriterlerine uygun görünüm yok.
  Bunun yerine yeni bir görünüm oluşturun.`,
       },
     },
@@ -3550,7 +3550,7 @@ modüller arşivlenebilir.`,
       },
       search: {
         title: "Eşleşen inisiyatif yok",
-        description: `Eşleşen kriterlere sahip inisiyatif tespit edilmedi. 
+        description: `Eşleşen kriterlere sahip inisiyatif tespit edilmedi.
  Bunun yerine yeni bir inisiyatif oluşturun.`,
       },
       not_found: {
@@ -4073,6 +4073,7 @@ modüller arşivlenebilir.`,
     project: "Proje",
     workspace: "Workspace",
     status: "Durum",
+    summary: "Özet",
     total_batches: "Toplam Batch",
     imported_batches: "İmport Edilen Batchler",
     re_run: "Tekrar Çalıştır",

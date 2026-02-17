@@ -3434,7 +3434,7 @@ Utwórz nowy.`,
       },
       filter: {
         title: "Brak pasujących widoków",
-        description: `Żadne widoki nie pasują do kryteriów wyszukiwania. 
+        description: `Żadne widoki nie pasują do kryteriów wyszukiwania.
  Zamiast tego utwórz nowy widok.`,
       },
     },
@@ -3531,7 +3531,7 @@ Utwórz nowy.`,
       },
       search: {
         title: "Brak pasujących inicjatyw",
-        description: `Nie wykryto inicjatyw z pasującymi kryteriami. 
+        description: `Nie wykryto inicjatyw z pasującymi kryteriami.
  Zamiast tego utwórz nową inicjatywę.`,
       },
       not_found: {
@@ -3655,19 +3655,19 @@ Utwórz nowy.`,
   active_cycle_analytics: {
     empty_state: {
       progress: {
-        title: `Dodaj elementy pracy do cyklu, aby zobaczyć jego 
+        title: `Dodaj elementy pracy do cyklu, aby zobaczyć jego
  postęp`,
       },
       priority: {
-        title: `Obserwuj elementy pracy o wysokim priorytecie 
+        title: `Obserwuj elementy pracy o wysokim priorytecie
  realizowane w cyklu na pierwszy rzut oka.`,
       },
       assignee: {
-        title: `Dodaj przypisanych do elementów pracy, aby zobaczyć 
+        title: `Dodaj przypisanych do elementów pracy, aby zobaczyć
  podział pracy według przypisanych osób.`,
       },
       label: {
-        title: `Dodaj etykiety do elementów pracy, aby zobaczyć 
+        title: `Dodaj etykiety do elementów pracy, aby zobaczyć
  podział pracy według etykiet.`,
       },
     },
@@ -4057,6 +4057,7 @@ Utwórz nowy.`,
     project: "Projekt",
     workspace: "Workspace",
     status: "Status",
+    summary: "Podsumowanie",
     total_batches: "Całkowita liczba partii",
     imported_batches: "Zaimportowane partie",
     re_run: "Uruchom ponownie",

@@ -31,6 +31,9 @@ import type {
 } from "@/apps/jira-server-importer/v2/types";
 import { E_ADDITIONAL_STORAGE_KEYS, EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { createOrUpdateIssueProperties } from "@/etl/migrator/issue-types/issue-property.migrator";
+import { extractErrorMetadata } from "@/helpers/errors";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
 
 /**
  * Jira Server Issue Properties Step
@@ -112,20 +115,46 @@ export class JiraIssuePropertiesStep implements IStep {
     projectId: string,
     issueTypesData: TIssueTypesData
   ): Promise<JiraIssueField[]> {
-    // Convert stored issue types to format expected by pull function
-    const issueTypes = issueTypesData.map((type) => ({
-      id: type.external_id.split("_").pop()!,
-      name: type.name,
-    })) as { id: string; name: string }[];
+    try {
+      // Convert stored issue types to format expected by pull function
+      const issueTypes = issueTypesData.map((type) => ({
+        id: type.external_id.split("_").pop()!,
+        name: type.name,
+      })) as { id: string; name: string }[];
 
-    const result = await pullIssueFieldsV2(jobCtx.sourceClient, projectId, issueTypes);
+      const result = await pullIssueFieldsV2(jobCtx.sourceClient, projectId, issueTypes);
 
-    logger.info(`[${jobCtx.job.id}] [${this.name}] Pulled custom fields`, {
-      jobId: jobCtx.job.id,
-      count: result.length,
-    });
+      executionLog.collect(jobCtx.job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_PROPERTY,
+        phase: "PULL_CUSTOM_FIELDS",
+        level: EExecutionLogLevel.INFO,
+        metrics: {
+          pulled: result.length,
+        },
+        additional_data: {
+          issueTypesCount: issueTypes.length,
+        },
+      });
 
-    return result;
+      logger.info(`[${jobCtx.job.id}] [${this.name}] Pulled custom fields`, {
+        jobId: jobCtx.job.id,
+        count: result.length,
+      });
+
+      return result;
+    } catch (error) {
+      logger.error(`[${jobCtx.job.id}][${this.name}] Unable to pull custom fields from Jira`, error);
+
+      executionLog.collect(jobCtx.job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_PROPERTY,
+        phase: "PULL_CUSTOM_FIELDS",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        is_fatal: true,
+      });
+
+      throw error;
+    }
   }
 
   /**
@@ -183,16 +212,33 @@ export class JiraIssuePropertiesStep implements IStep {
       count: properties.length,
     });
 
-    return await createOrUpdateIssueProperties({
-      jobId: job.id,
-      issueTypesMap,
-      defaultIssueType,
-      issueProperties: properties,
-      planeClient,
-      workspaceSlug: job.workspace_slug,
-      projectId: job.project_id,
-      method,
-    });
+    try {
+      // Summary is collected inside createOrUpdateIssueProperties
+      return await createOrUpdateIssueProperties({
+        jobId: job.id,
+        issueTypesMap,
+        defaultIssueType,
+        issueProperties: properties,
+        planeClient,
+        workspaceSlug: job.workspace_slug,
+        projectId: job.project_id,
+        method,
+      });
+    } catch (error) {
+      logger.error(`[${job.id}][${this.name}] Unable to ${method} properties`, error);
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_PROPERTY,
+        phase: method === "create" ? "CREATE_PROPERTIES" : "UPDATE_PROPERTIES",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+        additional_data: {
+          attemptedCount: properties.length,
+        },
+      });
+
+      throw error;
+    }
   }
 
   /**
@@ -242,12 +288,31 @@ export class JiraIssuePropertiesStep implements IStep {
         properties.forEach((prop) => existingProperties.set(prop.external_id, prop));
       }
 
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_PROPERTY,
+        phase: "FETCH_EXISTING_PROPERTIES",
+        level: EExecutionLogLevel.INFO,
+        metrics: {
+          already_existed: existingProperties.size,
+        },
+        additional_data: {
+          propertyNames: Array.from(existingProperties.values()).map((p) => p.display_name),
+        },
+      });
+
       logger.info(`[${job.id}] [${this.name}] Found existing properties`, {
         jobId: job.id,
         count: existingProperties.size,
       });
     } catch (error) {
       logger.error(`[${job.id}] [${this.name}] Error fetching existing properties`, { jobId: job.id, error });
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.ISSUE_PROPERTY,
+        phase: "FETCH_EXISTING_PROPERTIES",
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+      });
     }
 
     return existingProperties;

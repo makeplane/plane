@@ -24,6 +24,7 @@ import {
   WaitForCeleryStep,
   // Association steps
   JiraRelationsStep,
+  JiraExecutionSummaryStep,
 } from "../shared";
 import { JiraCloudUserStep, JiraCloudIssuePropertiesStep, JiraCloudIssueTypesStep } from "./entities";
 import { JiraCloudIssuesStep } from "./issues";
@@ -45,6 +46,8 @@ const JIRA_CLOUD_STEPS = [
   new WaitForCeleryStep(),
   // Association steps
   new JiraRelationsStep(E_IMPORTER_KEYS.JIRA),
+  // Post Run Steps
+  new JiraExecutionSummaryStep(),
 ];
 
 export default JIRA_CLOUD_STEPS;

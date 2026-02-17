@@ -25,7 +25,7 @@ import { ProjectIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TImportJob, TLogoProps } from "@plane/types";
 import { ModalCore } from "@plane/ui";
-import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { renderFormattedDate, renderFormattedTime, getEditorAssetSrc } from "@plane/utils";
 import ImporterHeader from "../../header";
 import { RerunModal, CancelModal } from "./modals";
 import { DashboardLoaderTable } from "./loader/table";
@@ -41,6 +41,7 @@ export type TImporterConfig<T> = {
   hideRerun?: boolean;
   hideCancel?: boolean;
   showSummary?: boolean;
+  useReportForSummary?: boolean;
   getWorkspaceName: (job: TImportJob<T>) => string;
   getProjectName: (job: TImportJob<T>) => string;
   getPlaneProject: (job: TImportJob<T>) =>
@@ -98,6 +99,7 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
     hideRerun,
     hideCancel,
     showSummary,
+    useReportForSummary,
   } = config;
   const { t } = useTranslation();
 
@@ -140,6 +142,15 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
     if (!job || !job?.status) return true;
 
     return [E_JOB_STATUS.FINISHED, E_JOB_STATUS.ERROR, E_JOB_STATUS.CANCELLED].includes(job?.status as E_JOB_STATUS);
+  };
+
+  const handleSummaryRedirect = (workspaceSlug: string, assetId: string) => {
+    const source = getEditorAssetSrc({
+      workspaceSlug,
+      assetId,
+    });
+
+    window.open(source, "_blank");
   };
 
   // handlers
@@ -212,33 +223,55 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
     }
   };
 
-  const handleDownloadSummary = (job: TImportJob<T>) => {
-    const summary = {
-      job_id: job.id,
-      status: job.status,
-      initiator_id: job.initiator_id,
-      workspace_id: job.workspace_id,
-      config: job.config,
-      report: {
-        total_issue_count: job.report.total_issue_count,
-        imported_issue_count: job.report.imported_issue_count,
-        errored_issue_count: job.report.errored_issue_count,
-        start_time: job.report.start_time,
-        end_time: job.report.end_time,
-      },
-      success_metadata: job.success_metadata,
-      error_metadata: job.error_metadata,
-    };
+  const isSummaryDisabled = (job: TImportJob<T>) => {
+    if (useReportForSummary) {
+      return job.status !== E_JOB_STATUS.FINISHED && job.status !== E_JOB_STATUS.ERROR;
+    }
 
-    const blob = new Blob([JSON.stringify(summary, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `import-summary-${job.id}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    return !job.report.summary_asset;
+  };
+
+  const handleDownloadSummary = (job: TImportJob<T>) => {
+    if (useReportForSummary) {
+      const summary = {
+        job_id: job.id,
+        status: job.status,
+        initiator_id: job.initiator_id,
+        workspace_id: job.workspace_id,
+        config: job.config,
+        report: {
+          total_issue_count: job.report.total_issue_count,
+          imported_issue_count: job.report.imported_issue_count,
+          errored_issue_count: job.report.errored_issue_count,
+          start_time: job.report.start_time,
+          end_time: job.report.end_time,
+        },
+        success_metadata: job.success_metadata,
+        error_metadata: job.error_metadata,
+      };
+
+      const blob = new Blob([JSON.stringify(summary, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `import-summary-${job.id}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } else {
+      const workspaceSlug = job.workspace_slug;
+      const assetId = job.report.summary_asset as string | undefined;
+
+      if (assetId) {
+        const source = getEditorAssetSrc({
+          workspaceSlug,
+          assetId,
+        });
+
+        window.open(source, "_blank");
+      }
+    }
   };
 
   const RerunModalComponent = modals?.rerun || RerunModal;
@@ -319,6 +352,7 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                         </td>
                       )}
                       <td className="p-3 whitespace-nowrap text-center">{t("importers.status")}</td>
+                      {showSummary && <td className="p-3 whitespace-nowrap text-center">Summary</td>}
                       {!hideBatches && (
                         <>
                           <td className="p-3 whitespace-nowrap text-center">{t("importers.total_batches")}</td>
@@ -327,7 +361,6 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                       )}
                       {!hideRerun && <td className="p-3 whitespace-nowrap text-center">{t("importers.re_run")}</td>}
                       {!hideCancel && <td className="p-3 whitespace-nowrap text-center">{t("importers.cancel")}</td>}
-                      {showSummary && <td className="p-3 whitespace-nowrap text-center">Summary</td>}
                       <td className="p-3 whitespace-nowrap text-center">{t("importers.start_time")}</td>
                     </tr>
                   </thead>
@@ -367,6 +400,19 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                             <td className="p-3 whitespace-nowrap text-center">
                               <SyncJobStatus status={job?.status as TJobStatus} />
                             </td>
+                            {showSummary && (
+                              <td className="p-3 whitespace-nowrap text-center">
+                                <Button
+                                  variant="secondary"
+                                  size="sm"
+                                  prependIcon={<Download className="w-3 h-3" />}
+                                  onClick={() => handleDownloadSummary(job)}
+                                  disabled={isSummaryDisabled(job)}
+                                >
+                                  Summary
+                                </Button>
+                              </td>
+                            )}
                             {!hideBatches && (
                               <>
                                 <td className="p-3 whitespace-nowrap text-center">
@@ -398,18 +444,6 @@ export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDash
                                   disabled={isCancelDisabled(job)}
                                 >
                                   {t("importers.cancel")}
-                                </Button>
-                              </td>
-                            )}
-                            {showSummary && (
-                              <td className="p-3 whitespace-nowrap text-center">
-                                <Button
-                                  variant="secondary"
-                                  prependIcon={<Download className="w-3 h-3" />}
-                                  onClick={() => handleDownloadSummary(job)}
-                                  disabled={job?.status !== E_JOB_STATUS.FINISHED && job?.status !== E_JOB_STATUS.ERROR}
-                                >
-                                  Download
                                 </Button>
                               </td>
                             )}

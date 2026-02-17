@@ -19,6 +19,8 @@ from rest_framework.response import Response
 from .base import BaseServiceAPIView
 from plane.ee.models import ImportReport, ImportExecutionLog, ImportJob
 from plane.silo.serializers import ImportReportAPISerializer, ImportExecutionLogSerializer
+from plane.silo.bgtasks.generate_job_summary import generate_job_summary
+
 
 
 class ImportReportAPIView(BaseServiceAPIView):
@@ -110,3 +112,16 @@ class ImportExecutionLogAPIView(BaseServiceAPIView):
             return Response(status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ImportJobSummaryAPIView(BaseServiceAPIView):
+    def post(self, request, job_id, report_id):
+        if not ImportJob.objects.filter(pk=job_id).exists():
+            return Response({"error": "Import Job not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        if not ImportReport.objects.filter(pk=report_id).exists():
+            return Response({"error": "Import report not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        generate_job_summary.delay(job_id, report_id)
+
+        return Response(status=status.HTTP_200_OK)

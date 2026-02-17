@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import type { JiraConfig } from "@plane/etl/jira";
@@ -19,14 +18,21 @@ import type { TImportJob } from "@plane/types";
 // assets
 import JiraLogo from "@/app/assets/services/jira.svg?url";
 // plane web imports
-import { useJiraImporter } from "@/plane-web/hooks/store";
+import { useFlag, useJiraImporter } from "@/plane-web/hooks/store";
 // components
 import { BaseDashboard } from "../../common/dashboard/base-dashboard";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 
 export const JiraDashboardRoot = observer(function JiraDashboardRoot() {
   const getWorkspaceName = (job: TImportJob<JiraConfig>) => job.config.resource?.name || "---";
   const getProjectName = (job: TImportJob<JiraConfig>) => job.config.project?.name || "---";
   const getPlaneProject = (job: TImportJob<JiraConfig>) => job.config.planeProject;
+
+  const { currentWorkspace } = useWorkspace();
+  const workspaceSlug = currentWorkspace?.slug || "";
+
+  const isSummaryEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.IMPORT_SUMMARY);
 
   return (
     <BaseDashboard
@@ -37,6 +43,7 @@ export const JiraDashboardRoot = observer(function JiraDashboardRoot() {
         serviceName: "Jira",
         logo: JiraLogo,
         swrKey: "JIRA_IMPORTER",
+        showSummary: isSummaryEnabled,
       }}
       useImporterHook={useJiraImporter}
     />

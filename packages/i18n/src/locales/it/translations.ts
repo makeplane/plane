@@ -1610,7 +1610,7 @@ Grazie,
       },
       filter: {
         title: "Nessun progetto corrispondente",
-        description: `Nessun progetto rilevato con i criteri di ricerca corrispondenti. 
+        description: `Nessun progetto rilevato con i criteri di ricerca corrispondenti.
  Crea un nuovo progetto invece.`,
       },
       search: {
@@ -2807,7 +2807,7 @@ Crea un nuovo progetto invece`,
       },
       filter: {
         title: "Nessuna visualizzazione corrispondente",
-        description: `Nessuna visualizzazione corrisponde ai criteri di ricerca. 
+        description: `Nessuna visualizzazione corrisponde ai criteri di ricerca.
  Crea una nuova visualizzazione invece.`,
       },
     },
@@ -3472,7 +3472,7 @@ Crea un nuovo progetto invece`,
       },
       filter: {
         title: "Nessuna vista corrispondente",
-        description: `Nessuna vista corrisponde ai criteri di ricerca. 
+        description: `Nessuna vista corrisponde ai criteri di ricerca.
  Crea una nuova vista invece.`,
       },
     },
@@ -3569,7 +3569,7 @@ Crea un nuovo progetto invece`,
       },
       search: {
         title: "Nessuna iniziativa corrispondente",
-        description: `Nessuna iniziativa rilevata con i criteri corrispondenti. 
+        description: `Nessuna iniziativa rilevata con i criteri corrispondenti.
  Crea una nuova iniziativa invece.`,
       },
       not_found: {
@@ -3694,19 +3694,19 @@ Crea un nuovo progetto invece`,
   active_cycle_analytics: {
     empty_state: {
       progress: {
-        title: `Aggiungi elementi di lavoro al ciclo per vedere il suo 
+        title: `Aggiungi elementi di lavoro al ciclo per vedere il suo
  progresso`,
       },
       priority: {
-        title: `Osserva elementi di lavoro ad alta priorità affrontati in 
+        title: `Osserva elementi di lavoro ad alta priorità affrontati in
  il ciclo a colpo d'occhio.`,
       },
       assignee: {
-        title: `Aggiungi assegnatari agli elementi di lavoro per vedere una 
+        title: `Aggiungi assegnatari agli elementi di lavoro per vedere una
  distribuzione del lavoro per assegnatari.`,
       },
       label: {
-        title: `Aggiungi etichette agli elementi di lavoro per vedere la 
+        title: `Aggiungi etichette agli elementi di lavoro per vedere la
  distribuzione del lavoro per etichette.`,
       },
     },
@@ -4097,6 +4097,7 @@ Crea un nuovo progetto invece`,
     project: "Progetto",
     workspace: "workspace",
     status: "Stato",
+    summary: "Sommario",
     total_batches: "Totale batch",
     imported_batches: "Batch importati",
     re_run: "Rerun",

@@ -24,7 +24,7 @@ export class PageService extends APIService {
     return this.get(`/api/v1/workspaces/${slug}/pages/${pageId}/`)
       .then((response) => response.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 
@@ -32,7 +32,7 @@ export class PageService extends APIService {
     return this.get(`/api/v1/workspaces/${slug}/projects/${projectId}/pages/${pageId}/`)
       .then((response) => response.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 
@@ -40,7 +40,7 @@ export class PageService extends APIService {
     return this.get(`/api/v1/pages/public/anchor/${anchor}/pages/`)
       .then((response) => response.data)
       .catch((error) => {
-        throw error;
+        throw error?.response?.data;
       });
   }
 }

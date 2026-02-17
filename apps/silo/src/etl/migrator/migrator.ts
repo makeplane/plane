@@ -13,7 +13,7 @@
 
 import { v4 as uuidv4 } from "uuid";
 import type { PlaneEntities } from "@plane/etl/core";
-import { E_FEATURE_FLAGS, E_IMPORTER_KEYS } from "@plane/etl/core";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { logger } from "@plane/logger";
 import type {
   ExCycle,
@@ -51,6 +51,7 @@ import { generateIssuePayload } from "./issues.migrator";
 import { createLabelsForIssues } from "./labels.migrator";
 import { createAllModules } from "./modules.migrator";
 import { createUsers } from "./users.migrator";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 
 export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], meta: any) {
   try {

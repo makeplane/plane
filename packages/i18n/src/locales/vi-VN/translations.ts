@@ -3451,7 +3451,7 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
       },
       filter: {
         title: "Không có góc nhìn phù hợp",
-        description: `Không có góc nhìn nào phù hợp với tiêu chí tìm kiếm. 
+        description: `Không có góc nhìn nào phù hợp với tiêu chí tìm kiếm.
  Tạo góc nhìn mới thay thế.`,
       },
     },
@@ -3548,7 +3548,7 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
       },
       search: {
         title: "Không có sáng kiến phù hợp",
-        description: `Không phát hiện sáng kiến nào với tiêu chí phù hợp. 
+        description: `Không phát hiện sáng kiến nào với tiêu chí phù hợp.
  Tạo một sáng kiến mới thay thế.`,
       },
       not_found: {
@@ -3672,19 +3672,19 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
   active_cycle_analytics: {
     empty_state: {
       progress: {
-        title: `Thêm mục công việc vào chu kỳ để xem tiến độ 
+        title: `Thêm mục công việc vào chu kỳ để xem tiến độ
  của nó`,
       },
       priority: {
-        title: `Quan sát các mục công việc ưu tiên cao được giải quyết trong 
+        title: `Quan sát các mục công việc ưu tiên cao được giải quyết trong
  chu kỳ chỉ với một cái nhìn.`,
       },
       assignee: {
-        title: `Thêm người được gán cho mục công việc để xem 
+        title: `Thêm người được gán cho mục công việc để xem
  phân tích công việc theo người được gán.`,
       },
       label: {
-        title: `Thêm nhãn vào mục công việc để xem 
+        title: `Thêm nhãn vào mục công việc để xem
  phân tích công việc theo nhãn.`,
       },
     },
@@ -4074,6 +4074,7 @@ tìm kiếm là chính xác, hãy cho chúng tôi biết.`,
     project: "Dự án",
     workspace: "Workspace",
     status: "Trạng thái",
+    summary: "Tóm tắt",
     total_batches: "Tổng số lô",
     imported_batches: "Số lô đã nhập",
     re_run: "Chạy lại",

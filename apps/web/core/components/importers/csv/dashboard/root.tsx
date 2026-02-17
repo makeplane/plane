@@ -53,6 +53,7 @@ export const CSVDashboardRoot = observer(function CSVDashboardRoot() {
         hideRerun: true,
         hideCancel: true,
         showSummary: true,
+        useReportForSummary: true,
       }}
       useImporterHook={useCSVImporter}
     />

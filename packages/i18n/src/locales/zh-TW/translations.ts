@@ -3995,6 +3995,7 @@ export default {
     project: "專案",
     workspace: "工作區",
     status: "狀態",
+    summary: "摘要",
     total_batches: "總批次",
     imported_batches: "已導入批次",
     re_run: "重新運行",

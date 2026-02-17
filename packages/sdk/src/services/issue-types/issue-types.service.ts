@@ -13,6 +13,7 @@
 
 import { APIService } from "@/services/api.service";
 // types
+import type { AxiosError } from "axios";
 import type { ClientOptions, ExIssueType } from "@/types";
 
 export class IssueTypeService extends APIService {
@@ -21,26 +22,26 @@ export class IssueTypeService extends APIService {
   }
 
   async fetch(workspaceSlug: string, projectId: string): Promise<ExIssueType[]> {
-    return this.get(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/`)
+    return this.get<ExIssueType[]>(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/`)
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 
   async fetchById(workspaceSlug: string, projectId: string, typeId: string): Promise<ExIssueType> {
-    return this.get(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/`)
+    return this.get<ExIssueType>(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/`)
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 
   async create(workspaceSlug: string, projectId: string, data: Partial<ExIssueType>): Promise<ExIssueType> {
-    return this.post(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/`, data)
+    return this.post<ExIssueType>(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/`, data)
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 
@@ -50,18 +51,21 @@ export class IssueTypeService extends APIService {
     typeId: string,
     data: Partial<ExIssueType>
   ): Promise<ExIssueType> {
-    return this.patch(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/`, data)
+    return this.patch<ExIssueType>(
+      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/`,
+      data
+    )
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 
   async remove(workspaceSlug: string, projectId: string, typeId: string): Promise<void> {
-    return this.delete(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/`)
+    return this.delete<void>(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/`)
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
+      .catch((error: AxiosError) => {
+        throw error?.response?.data;
       });
   }
 }

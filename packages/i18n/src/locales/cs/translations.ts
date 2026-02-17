@@ -1601,7 +1601,7 @@ Díky,
       },
       filter: {
         title: "Žádné odpovídající projekty",
-        description: `Nenalezeny projekty odpovídající kritériím. 
+        description: `Nenalezeny projekty odpovídající kritériím.
  Vytvořte nový.`,
       },
       search: {
@@ -3425,7 +3425,7 @@ Vytvořte nový.`,
       },
       filter: {
         title: "Žádné shodné pohledy",
-        description: `Žádné pohledy neodpovídají kritériím vyhledávání. 
+        description: `Žádné pohledy neodpovídají kritériím vyhledávání.
  Vytvořte nový pohled místo toho.`,
       },
     },
@@ -3522,7 +3522,7 @@ Vytvořte nový.`,
       },
       search: {
         title: "Žádné shodné iniciativy",
-        description: `Žádné iniciativy nebyly detekovány s odpovídajícími kritérii. 
+        description: `Žádné iniciativy nebyly detekovány s odpovídajícími kritérii.
  Vytvořte novou iniciativu místo toho.`,
       },
       not_found: {
@@ -3647,19 +3647,19 @@ Vytvořte nový.`,
   active_cycle_analytics: {
     empty_state: {
       progress: {
-        title: `Přidejte pracovní položky do cyklu, abyste viděli jeho 
+        title: `Přidejte pracovní položky do cyklu, abyste viděli jeho
  pokrok`,
       },
       priority: {
-        title: `Pozorujte vysoce prioritní pracovní položky řešené v 
+        title: `Pozorujte vysoce prioritní pracovní položky řešené v
  cyklu na první pohled.`,
       },
       assignee: {
-        title: `Přidejte přiřazení k pracovním položkám, abyste viděli 
+        title: `Přidejte přiřazení k pracovním položkám, abyste viděli
  rozdělení práce podle přiřazení.`,
       },
       label: {
-        title: `Přidejte štítky k pracovním položkám, abyste viděli 
+        title: `Přidejte štítky k pracovním položkám, abyste viděli
  rozdělení práce podle štítků.`,
       },
     },
@@ -4048,6 +4048,7 @@ Vytvořte nový.`,
     project: "Projekt",
     workspace: "workspace",
     status: "Stav",
+    summary: "Souhrn",
     total_batches: "Celkové dávky",
     imported_batches: "Importované dávky",
     re_run: "Znovu spustit",

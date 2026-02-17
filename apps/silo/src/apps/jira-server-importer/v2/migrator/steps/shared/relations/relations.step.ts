@@ -23,6 +23,9 @@ import type {
 } from "@/apps/jira-server-importer/v2/types";
 import { E_ADDITIONAL_STORAGE_KEYS, EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { celeryProducer } from "@/worker";
+import { extractErrorMetadata } from "@/helpers/errors";
+import { executionLog } from "@/lib/execution-log/service/execution-log.service";
+import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
 
 /**
  * Relations Step
@@ -50,6 +53,16 @@ export class JiraRelationsStep implements IStep {
 
       if (!allRelations || allRelations.length === 0) {
         logger.info(`[${jobContext.job.id}] [${this.name}] No relations found`, { jobId: job.id });
+
+        executionLog.collect(job.id, {
+          entity_type: EExecutionLogEntityType.WORK_ITEM_RELATIONS,
+          phase: "RETRIEVE_RELATIONS",
+          level: EExecutionLogLevel.INFO,
+          additional_data: {
+            message: "No relations found in storage",
+          },
+        });
+
         return createEmptyContext();
       }
 
@@ -63,6 +76,19 @@ export class JiraRelationsStep implements IStep {
           r.relates_to?.length > 0 ||
           r.duplicate_of
         );
+      });
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.WORK_ITEM_RELATIONS,
+        phase: "RETRIEVE_RELATIONS",
+        level: EExecutionLogLevel.INFO,
+        metrics: {
+          pulled: allRelations.length,
+        },
+        additional_data: {
+          totalRelationsRetrieved: allRelations.length,
+          relationsWithRelationships: relationsWithRelationships.length,
+        },
       });
 
       if (relationsWithRelationships.length === 0) {
@@ -94,6 +120,15 @@ export class JiraRelationsStep implements IStep {
         "plane.silo.bgtasks.bulk_update_issue_relations_task_v2.bulk_update_issue_relations_task_v2"
       );
 
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.WORK_ITEM_RELATIONS,
+        phase: "SEND_RELATIONS_TO_CELERY",
+        level: EExecutionLogLevel.SUCCESS,
+        additional_data: {
+          relationsSent: relationshipsOnly.length,
+        },
+      });
+
       logger.info(`[${jobContext.job.id}] [${this.name}] Sent all relations to Celery`, {
         jobId: job.id,
         totalRelations: relationshipsOnly.length,
@@ -105,6 +140,15 @@ export class JiraRelationsStep implements IStep {
         jobId: job.id,
         error: error instanceof Error ? error.message : String(error),
       });
+
+      executionLog.collect(job.id, {
+        entity_type: EExecutionLogEntityType.WORK_ITEM_RELATIONS,
+        phase: "SEND_RELATIONS_TO_CELERY",
+
+        level: EExecutionLogLevel.ERROR,
+        error: extractErrorMetadata(error),
+      });
+
       throw error;
     }
   }
