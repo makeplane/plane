@@ -14,7 +14,6 @@
 import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import type { TLanguage } from "@plane/i18n";
 import { useTranslation } from "@plane/i18n";
@@ -22,7 +21,6 @@ import { useTranslation } from "@plane/i18n";
 import { applyCustomTheme, clearCustomTheme } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useRouterParams } from "@/hooks/store/use-router-params";
 import { useUserProfile } from "@/hooks/store/user";
 
 type TStoreWrapper = {
@@ -33,10 +31,7 @@ function StoreWrapper(props: TStoreWrapper) {
   const { children } = props;
   // theme
   const { setTheme } = useTheme();
-  // router
-  const params = useParams();
   // store hooks
-  const { setQuery } = useRouterParams();
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: userProfile } = useUserProfile();
   const { changeLanguage } = useTranslation();
@@ -118,11 +113,6 @@ function StoreWrapper(props: TStoreWrapper) {
     if (!userProfile?.language) return;
     changeLanguage(userProfile?.language as TLanguage);
   }, [userProfile?.language, changeLanguage]);
-
-  useEffect(() => {
-    if (!params) return;
-    setQuery(params);
-  }, [params, setQuery]);
 
   return <>{children}</>;
 }

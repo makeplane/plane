@@ -37,6 +37,8 @@ import { GetMobileApp } from "@/components/mobile";
 // plane web imports
 import { TrialBanner } from "@/components/workspace/license/banner/trial-banner";
 import { bootstrapInstance } from "@/lib/bootstrap/client-bootstrap";
+// store
+import { store } from "@/lib/store-context";
 // local
 import { CustomErrorComponent } from "./error";
 import { AppProvider } from "./provider";
@@ -156,6 +158,13 @@ export const meta: Route.MetaFunction = () => [
   { name: "twitter:image:height", content: "630" },
   { name: "twitter:image:alt", content: "Plane - Modern project management" },
 ];
+
+const syncRouterParamsMiddleware: Route.ClientMiddlewareFunction = async ({ params }, next) => {
+  store.router.setQuery({ ...params });
+  await next();
+};
+
+export const clientMiddleware = [syncRouterParamsMiddleware];
 
 export async function clientLoader() {
   await bootstrapInstance();
