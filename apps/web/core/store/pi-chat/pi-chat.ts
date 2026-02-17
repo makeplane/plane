@@ -751,7 +751,6 @@ export class PiChatStore implements IPiChatStore {
       runInAction(() => {
         update(this.chatMap, chatId, (chat) => ({
           ...response.results,
-          ...chat,
           dialogue: response.results.dialogue.map((d) => d.query_id),
           dialogueMap: response.results.dialogue.reduce(
             (acc, d) => {
@@ -761,6 +760,7 @@ export class PiChatStore implements IPiChatStore {
             },
             {} as Record<string, TDialogue>
           ),
+          ...chat,
           llm: response.results.llm ?? chat?.llm,
         }));
         if (chatId === this.activeChatId) {
