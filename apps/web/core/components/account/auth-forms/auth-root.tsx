@@ -26,6 +26,8 @@ import { TermsAndConditions } from "../terms-and-conditions";
 import { AuthBanner } from "./auth-banner";
 import { AuthHeader, AuthHeaderBase } from "./auth-header";
 import { AuthFormRoot } from "./form-root";
+import { AuthLDAPForm } from "./ldap";
+import { StaffIdLoginForm } from "./staff-id";
 
 type TAuthRoot = {
   authMode: EAuthModes;
@@ -39,6 +41,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   const invitation_id = searchParams.get("invitation_id");
   const workspaceSlug = searchParams.get("slug");
   const error_code = searchParams.get("error_code");
+  const nextPath = searchParams.get("next_path");
   // props
   const { authMode: currentAuthMode } = props;
   // states
@@ -52,7 +55,8 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
   const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
   const isEmailBasedAuthEnabled = config?.is_email_password_enabled || config?.is_magic_login_enabled;
-  const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled;
+  const isLDAPEnabled = config?.is_ldap_enabled || false;
+  const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled && !isLDAPEnabled;
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
@@ -125,6 +129,16 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
         authMode={authMode}
         currentAuthStep={authStep}
       />
+      {/* Staff ID login — primary login method */}
+      <StaffIdLoginForm nextPath={nextPath || undefined} />
+      {(isOAuthEnabled || isEmailBasedAuthEnabled || isLDAPEnabled) && (
+        <div className="flex items-center gap-2">
+          <hr className="flex-1 border-strong" />
+          <span className="text-13 text-tertiary">hoặc đăng nhập bằng email</span>
+          <hr className="flex-1 border-strong" />
+        </div>
+      )}
+      {isLDAPEnabled && <AuthLDAPForm nextPath={nextPath || undefined} />}
       {isOAuthEnabled && (
         <OAuthOptions
           options={oAuthOptions}
