@@ -53,7 +53,7 @@ export const PiSidebar = observer(function PiSidebar() {
       quickActions={<Toolbar searchQuery={searchQuery} isFullScreen updateSearchQuery={updateSearchQuery} />}
     >
       {/* Favorites */}
-      {favoriteChats && favoriteChats.length > 0 && <FavoriteChats favoriteChats={favoriteChats} />}
+      {favoriteChats && favoriteChats.length > 0 && <FavoriteChats favoriteChats={favoriteChats} isFullScreen />}
       {/* History List */}
       <RecentChats
         userThreads={filteredUserThread ?? []}

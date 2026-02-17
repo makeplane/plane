@@ -156,7 +156,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
         trailingText
       );
     },
-    [contextData]
+    [contextData?.id]
   );
 
   const handleUseTemplate = useCallback(
@@ -173,7 +173,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
         void handleSubmit(undefined, formattedQuery);
       }
     },
-    [contextData]
+    [contextData?.id]
   );
 
   const handleSubmit = useEvent(async (e?: React.FormEvent, queryArg?: string) => {
@@ -256,7 +256,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
     if (isEditorReady) {
       addContext();
     }
-  }, [contextData, isEditorReady, addContext]);
+  }, [contextData?.id, isEditorReady, addContext]);
 
   useEffect(() => {
     const handleKeySequence = (e: KeyboardEvent) => {

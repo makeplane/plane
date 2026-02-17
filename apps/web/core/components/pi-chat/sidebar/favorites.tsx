@@ -20,9 +20,10 @@ import { SidebarItem } from "./sidebar-item";
 type TProps = {
   favoriteChats: TUserThreads[];
   isProjectLevel?: boolean;
+  isFullScreen: boolean;
 };
 const FavoriteChats = observer(function FavoriteChats(props: TProps) {
-  const { favoriteChats, isProjectLevel = false } = props;
+  const { favoriteChats, isProjectLevel = false, isFullScreen } = props;
   // router
   const { workspaceSlug } = useParams();
 
@@ -41,6 +42,7 @@ const FavoriteChats = observer(function FavoriteChats(props: TProps) {
             isFavorite={chat.is_favorite}
             optionToExclude={["rename", "delete"]}
             onClickItem={() => {}}
+            isFullScreen={isFullScreen}
           />
         ))}
       </div>
