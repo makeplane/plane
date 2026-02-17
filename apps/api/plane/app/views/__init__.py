@@ -240,6 +240,23 @@ from .analytics_dashboard import (
     AnalyticsDashboardWidgetDataEndpoint,
 )
 
+from .workspace.department import (
+    DepartmentEndpoint,
+    DepartmentDetailEndpoint,
+    DepartmentTreeEndpoint,
+    DepartmentStaffEndpoint,
+    DepartmentLinkProjectEndpoint,
+)
+from .workspace.staff import (
+    StaffEndpoint,
+    StaffDetailEndpoint,
+    StaffTransferEndpoint,
+    StaffDeactivateEndpoint,
+    StaffBulkImportEndpoint,
+    StaffExportEndpoint,
+    StaffStatsEndpoint,
+)
+
 from .error_404 import custom_404_view
 
 from .notification.base import MarkAllReadNotificationViewSet

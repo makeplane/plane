@@ -92,3 +92,6 @@ from .sticky import Sticky
 from .description import Description, DescriptionVersion
 
 from .analytics_dashboard import AnalyticsDashboard, AnalyticsDashboardWidget
+
+from .department import Department
+from .staff import StaffProfile, EmploymentStatus
