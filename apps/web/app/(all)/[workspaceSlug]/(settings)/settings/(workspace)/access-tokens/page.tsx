@@ -15,7 +15,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
@@ -34,7 +34,7 @@ import { WORKSPACE_API_TOKENS_LIST } from "@/constants/fetch-keys";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import type { Route } from "./+types/page";
-import { useFlag } from "@/plane-web/hooks/store/use-flag";
+
 import { WorkspaceAccessTokensHeader } from "./header";
 
 const workspaceApiTokenService = new WorkspaceAPITokenService();
@@ -49,22 +49,19 @@ function ApiTokensPage({ params }: Route.ComponentProps) {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const isWorkspaceAccessTokensEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.WORKSPACE_API_TOKEN, false);
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const { data: tokens } = useSWR(
-    canPerformWorkspaceAdminActions && isWorkspaceAccessTokensEnabled ? WORKSPACE_API_TOKENS_LIST(workspaceSlug) : null,
-    canPerformWorkspaceAdminActions && isWorkspaceAccessTokensEnabled
-      ? () => workspaceApiTokenService.list(workspaceSlug)
-      : null
+    canPerformWorkspaceAdminActions ? WORKSPACE_API_TOKENS_LIST(workspaceSlug) : null,
+    canPerformWorkspaceAdminActions ? () => workspaceApiTokenService.list(workspaceSlug) : null
   );
 
   const pageTitle = currentWorkspace?.name
     ? `${currentWorkspace.name} - ${t("workspace_settings.settings.api_tokens.title")}`
     : undefined;
 
-  if (workspaceUserInfo && (!canPerformWorkspaceAdminActions || !isWorkspaceAccessTokensEnabled)) {
+  if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
     return <NotAuthorizedView section="settings" className="h-auto" />;
   }
 

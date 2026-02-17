@@ -24,8 +24,6 @@ from plane.app.views import BaseAPIView
 from plane.db.models import APIToken, Workspace
 from plane.app.serializers import APITokenSerializer, APITokenReadSerializer
 from plane.app.permissions import WorkSpaceAdminPermission
-from plane.payment.flags.flag import FeatureFlag
-from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class WorkspaceAPITokenEndpoint(BaseAPIView):
@@ -33,7 +31,6 @@ class WorkspaceAPITokenEndpoint(BaseAPIView):
         WorkSpaceAdminPermission,
     ]
 
-    @check_feature_flag(FeatureFlag.WORKSPACE_API_TOKEN)
     def post(self, request: Request, slug: str) -> Response:
         label = request.data.get("label", str(uuid4().hex))
         description = request.data.get("description", "")
@@ -57,7 +54,6 @@ class WorkspaceAPITokenEndpoint(BaseAPIView):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @check_feature_flag(FeatureFlag.WORKSPACE_API_TOKEN)
     def get(self, request: Request, slug: str, pk: Optional[str] = None) -> Response:
         if pk is None:
             api_tokens = APIToken.objects.filter(workspace__slug=slug, is_service=False, user=request.user)
@@ -73,7 +69,6 @@ class WorkspaceAPITokenEndpoint(BaseAPIView):
             serializer = APITokenReadSerializer(api_tokens)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @check_feature_flag(FeatureFlag.WORKSPACE_API_TOKEN)
     def delete(self, request: Request, slug: str, pk: str) -> Response:
         try:
             api_token = APIToken.objects.get(workspace__slug=slug, pk=pk, is_service=False, user=request.user)

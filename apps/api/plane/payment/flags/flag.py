@@ -118,8 +118,6 @@ class FeatureFlag(Enum):
     PROJECT_MEMBER_ACTIVITY = "PROJECT_MEMBER_ACTIVITY"
     # CLOUD_SSO
     CLOUD_SSO = "CLOUD_SSO"
-    # Workspace api token
-    WORKSPACE_API_TOKEN = "WORKSPACE_API_TOKEN"
 
 
 class AdminFeatureFlag(Enum):
