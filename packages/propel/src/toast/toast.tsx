@@ -12,7 +12,7 @@
  */
 
 import * as React from "react";
-import { Toast as BaseToast } from "@base-ui-components/react/toast";
+import { Toast as BaseToast } from "@base-ui/react/toast";
 import { AlertTriangle, InfoIcon, XIcon } from "lucide-react";
 // spinner
 import { CircularBarSpinner } from "../spinners/circular-bar-spinner";

@@ -12,7 +12,7 @@
  */
 
 import { useMemo, useCallback, useState, useEffect } from "react";
-import { Tabs } from "@base-ui-components/react";
+import { Tabs } from "@base-ui/react";
 import { Popover } from "../popover";
 import { cn } from "../utils/classname";
 import { convertPlacementToSideAndAlign } from "../utils/placement";
@@ -120,10 +120,10 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
 
   return (
     <Popover open={isOpen} onOpenChange={handleToggle}>
-      <Popover.Button className={cn("outline-none", buttonClassName)} disabled={disabled}>
+      <Popover.Trigger className={cn("outline-none", buttonClassName)} disabled={disabled}>
         {label}
-      </Popover.Button>
-      <Popover.Panel
+      </Popover.Trigger>
+      <Popover.Content
         positionerClassName="z-50"
         className={cn("w-80 bg-surface-1 rounded-md border-[0.5px] border-strong overflow-hidden", dropdownClassName)}
         side={finalSide}
@@ -150,12 +150,11 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
               <Tabs.Tab
                 key={tab.key}
                 value={tab.key}
-                className={({ selected }) =>
-                  cn("py-1 text-13 rounded-sm border border-subtle bg-layer-1", {
-                    "bg-surface-1 text-primary": selected,
-                    "text-placeholder hover:text-tertiary hover:bg-layer-1/60": !selected,
-                  })
-                }
+                className={cn(
+                  "py-1 text-13 rounded-sm border border-subtle bg-layer-1",
+                  "data-[active]:bg-surface-1 data-[active]:text-primary data-[active]:hover:text-primary",
+                  "hover:text-tertiary hover:bg-layer-1/60 text-placeholder"
+                )}
               >
                 {tab.label}
               </Tabs.Tab>
@@ -167,7 +166,7 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
             </Tabs.Panel>
           ))}
         </Tabs.Root>
-      </Popover.Panel>
+      </Popover.Content>
     </Popover>
   );
 }

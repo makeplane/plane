@@ -12,7 +12,7 @@
  */
 
 import { forwardRef, memo, useMemo } from "react";
-import { Dialog as BaseDialog } from "@base-ui-components/react";
+import { Dialog as BaseDialog } from "@base-ui/react";
 import { cn } from "../utils/classname";
 
 // enums

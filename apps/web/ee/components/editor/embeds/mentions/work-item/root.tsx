@@ -76,15 +76,15 @@ export const EditorWorkItemMention = observer(function EditorWorkItemMention(pro
 
   return (
     <div className="not-prose inline! px-1 py-0.5 rounded bg-accent-primary/10 border border-strong-1 no-underline cursor-pointer max-w-full truncate">
-      <Popover delay={100} openOnHover>
-        <Popover.Button className="truncate" nativeButton={false}>
+      <Popover>
+        <Popover.Trigger className="truncate" nativeButton={false} delay={100} openOnHover>
           {workItemDetails && !errorFetchingWorkItemDetails ? (
             <EditorWorkItemMentionContent workItemDetails={workItemDetails} />
           ) : (
             <span className="text-tertiary">{isFetchingWorkItemDetails ? "..." : "work item not found"}</span>
           )}
-        </Popover.Button>
-        <Popover.Panel side="bottom" align="start">
+        </Popover.Trigger>
+        <Popover.Content side="bottom" align="start">
           <div className="p-3 space-y-2 w-72 rounded-lg shadow-raised-200 bg-surface-1 border-[0.5px] border-subtle-1">
             {workItemDetails ? (
               <EditorWorkItemMentionPreview workItemDetails={workItemDetails} />
@@ -94,7 +94,7 @@ export const EditorWorkItemMention = observer(function EditorWorkItemMention(pro
               </p>
             )}
           </div>
-        </Popover.Panel>
+        </Popover.Content>
       </Popover>
     </div>
   );

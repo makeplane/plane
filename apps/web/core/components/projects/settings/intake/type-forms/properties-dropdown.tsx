@@ -53,7 +53,7 @@ export const TypePropertiesDropdown = observer(function TypePropertiesDropdown(p
   };
 
   return (
-    <Combobox multiSelect value={selectedFields} onValueChange={handleSelect}>
+    <Combobox multiSelect value={selectedFields} onValueChange={(value) => handleSelect(value ?? [])}>
       <Combobox.Button>
         <Button variant="secondary" className="bg-layer-1 rounded-lg px-1.5 py-1">
           <AddIcon className="size-3" />

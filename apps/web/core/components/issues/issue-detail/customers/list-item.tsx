@@ -42,8 +42,10 @@ export const CustomerSidebarListitem = observer(function CustomerSidebarListitem
 
   if (!customer) return null;
   return (
-    <Popover openOnHover delay={0}>
-      <Popover.Button
+    <Popover>
+      <Popover.Trigger
+        delay={0}
+        openOnHover
         render={
           <button
             type="button"
@@ -63,9 +65,9 @@ export const CustomerSidebarListitem = observer(function CustomerSidebarListitem
         }
       />
 
-      <Popover.Panel align={"center"} side={isPeekView ? "left" : "right"} positionerClassName="z-40">
+      <Popover.Content align={"center"} side={isPeekView ? "left" : "right"} positionerClassName="z-40">
         {isAdmin && <CustomerPreview workspaceSlug={workspaceSlug} customer={customer} />}
-      </Popover.Panel>
+      </Popover.Content>
     </Popover>
   );
 });

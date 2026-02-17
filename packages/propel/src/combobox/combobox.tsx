@@ -12,17 +12,18 @@
  */
 
 import * as React from "react";
-import { Combobox as BaseCombobox } from "@base-ui-components/react/combobox";
+import { Combobox as BaseCombobox } from "@base-ui/react/combobox";
 import { SearchIcon } from "../icons";
 import { cn } from "../utils/classname";
 
 // Type definitions
 type TMaxHeight = "lg" | "md" | "rg" | "sm";
 
+//TODO: Extend all props types from @base-ui/react/combobox
 export interface ComboboxProps {
   value?: string | string[];
   defaultValue?: string | string[];
-  onValueChange?: (value: string | string[]) => void;
+  onValueChange?: (value: string | string[] | null) => void;
   multiSelect?: boolean;
   maxSelections?: number;
   disabled?: boolean;
@@ -81,7 +82,7 @@ function ComboboxRoot({
   children,
 }: ComboboxProps) {
   const handleValueChange = React.useCallback(
-    (newValue: string | string[]) => {
+    (newValue: string | string[] | null) => {
       onValueChange?.(newValue);
     },
     [onValueChange]

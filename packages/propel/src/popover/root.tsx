@@ -12,7 +12,13 @@
  */
 
 import { memo, useMemo } from "react";
-import { Popover as BasePopover } from "@base-ui-components/react/popover";
+import { Popover as BasePopover } from "@base-ui/react/popover";
+import type {
+  PopoverRootProps,
+  PopoverTriggerProps,
+  PopoverPortalProps,
+  PopoverPositionerProps,
+} from "@base-ui/react/popover";
 import type { TPlacement, TSide, TAlign } from "../utils/placement";
 import { convertPlacementToSideAndAlign } from "../utils/placement";
 
@@ -58,26 +64,26 @@ const PopoverContent = memo(function PopoverContent({
 });
 
 // wrapper components
-const PopoverTrigger = memo(function PopoverTrigger(props: React.ComponentProps<typeof BasePopover.Trigger>) {
+const PopoverTrigger = memo(function PopoverTrigger(props: PopoverTriggerProps) {
   return <BasePopover.Trigger data-slot="popover-trigger" {...props} />;
 });
 
-const PopoverPortal = memo(function PopoverPortal(props: React.ComponentProps<typeof BasePopover.Portal>) {
+const PopoverPortal = memo(function PopoverPortal(props: PopoverPortalProps) {
   return <BasePopover.Portal data-slot="popover-portal" {...props} />;
 });
 
-const PopoverPositioner = memo(function PopoverPositioner(props: React.ComponentProps<typeof BasePopover.Positioner>) {
+const PopoverPositioner = memo(function PopoverPositioner(props: PopoverPositionerProps) {
   return <BasePopover.Positioner data-slot="popover-positioner" {...props} />;
 });
 
 // compound components
 const Popover = Object.assign(
-  memo(function Popover(props: React.ComponentProps<typeof BasePopover.Root>) {
+  memo(function Popover(props: PopoverRootProps) {
     return <BasePopover.Root data-slot="popover" {...props} />;
   }),
   {
-    Button: PopoverTrigger,
-    Panel: PopoverContent,
+    Trigger: PopoverTrigger,
+    Content: PopoverContent,
   }
 );
 

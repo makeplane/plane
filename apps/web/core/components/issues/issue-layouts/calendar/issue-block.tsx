@@ -97,9 +97,11 @@ export const CalendarIssueBlock = observer(
     });
 
     return (
-      <Popover delay={100} openOnHover>
-        <Popover.Button
+      <Popover>
+        <Popover.Trigger
           className="w-full"
+          delay={100}
+          openOnHover
           render={
             <ControlLink
               id={`issue-${issue.id}`}
@@ -165,7 +167,7 @@ export const CalendarIssueBlock = observer(
             </ControlLink>
           }
         />
-        <Popover.Panel side="bottom" align="start">
+        <Popover.Content side="bottom" align="start">
           <>
             {issue.project_id && (
               <WorkItemPreviewCard
@@ -177,7 +179,7 @@ export const CalendarIssueBlock = observer(
               />
             )}
           </>
-        </Popover.Panel>
+        </Popover.Content>
       </Popover>
     );
   })

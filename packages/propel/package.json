@@ -67,7 +67,7 @@
     "./styles/react-day-picker": "./dist/styles/react-day-picker.css"
   },
   "dependencies": {
-    "@base-ui-components/react": "1.0.0-beta.3",
+    "@base-ui/react": "1.2.0",
     "@monaco-editor/react": "^4.7.0",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",

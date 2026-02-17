@@ -99,7 +99,7 @@ export const InitiativeStateDropdown = observer(function InitiativeStateDropdown
 
   return (
     <div className={cn("contain-layout", className)}>
-      <Combobox value={value} onValueChange={handleValueChange} disabled={disabled || readonly}>
+      <Combobox value={value} onValueChange={(value) => handleValueChange(value ?? "")} disabled={disabled || readonly}>
         <Combobox.Button
           className={cn(
             "flex h-full w-full items-center justify-between gap-1 rounded-sm border border-subtle-1 px-2 py-1 text-11 hover:bg-layer-1-hover",

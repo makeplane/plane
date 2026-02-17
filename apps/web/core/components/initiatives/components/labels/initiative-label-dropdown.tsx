@@ -123,7 +123,11 @@ export const InitiativeLabelDropdown = observer(function InitiativeLabelDropdown
   const selectedLabels = labelOptions.filter((option) => value.includes(option.value));
 
   const handleValueChange = (newValue: string | string[]) => {
-    onChange?.(newValue as string[]);
+    if (Array.isArray(newValue)) {
+      onChange?.(newValue);
+    } else {
+      onChange?.([newValue]);
+    }
   };
 
   const handleAddLabel = async (labelName: string) => {
@@ -152,7 +156,7 @@ export const InitiativeLabelDropdown = observer(function InitiativeLabelDropdown
     <div className={cn("contain-layout", className)}>
       <Combobox
         value={value || []}
-        onValueChange={handleValueChange}
+        onValueChange={(value) => handleValueChange(value ?? [])}
         disabled={disabled || readonly}
         open={isOpen}
         onOpenChange={setIsOpen}

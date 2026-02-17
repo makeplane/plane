@@ -76,7 +76,7 @@ export function NotificationsPopoverRoot({ workspaceSlug }: NotificationsPopover
 
   return (
     <Popover open={shouldPopoverBeOpen} onOpenChange={handlePopoverChange}>
-      <Popover.Button>
+      <Popover.Trigger>
         <AppSidebarItem
           variant={"button"}
           item={{
@@ -92,8 +92,8 @@ export function NotificationsPopoverRoot({ workspaceSlug }: NotificationsPopover
             onClick: handleSidebarClick,
           }}
         />
-      </Popover.Button>
-      <Popover.Panel
+      </Popover.Trigger>
+      <Popover.Content
         side="bottom"
         align="start"
         positionerClassName={"z-30"}
@@ -109,7 +109,7 @@ export function NotificationsPopoverRoot({ workspaceSlug }: NotificationsPopover
             }
           }}
         />
-      </Popover.Panel>
+      </Popover.Content>
     </Popover>
   );
 }

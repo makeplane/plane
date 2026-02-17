@@ -80,10 +80,10 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
 
   return (
     <Popover open={isOpen} onOpenChange={handleToggle}>
-      <Popover.Button className={cn("outline-none", buttonClassName)} disabled={disabled}>
+      <Popover.Trigger className={cn("outline-none", buttonClassName)} disabled={disabled}>
         {label}
-      </Popover.Button>
-      <Popover.Panel
+      </Popover.Trigger>
+      <Popover.Content
         positionerClassName="z-50"
         className={cn("w-80 bg-surface-1 rounded-md border-[0.5px] border-strong overflow-hidden", dropdownClassName)}
         side={finalSide}
@@ -100,7 +100,7 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
             onSearchQueryChange={setSearchQuery}
           />
         </div>
-      </Popover.Panel>
+      </Popover.Content>
     </Popover>
   );
 }

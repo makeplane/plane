@@ -68,7 +68,7 @@ export const PopoverFilterInput = observer(function PopoverFilterInput(props: TP
 
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
-      <Popover.Button>
+      <Popover.Trigger>
         <button
           className={cn(
             FILTER_BUTTON_CLASSNAMES,
@@ -82,8 +82,8 @@ export const PopoverFilterInput = observer(function PopoverFilterInput(props: TP
         >
           {displayValue || placeholder}
         </button>
-      </Popover.Button>
-      <Popover.Panel
+      </Popover.Trigger>
+      <Popover.Content
         className={cn(FILTER_PANEL_CLASSNAMES, panelClassName)}
         positionerClassName="z-[15]"
         placement="bottom-start"
@@ -114,7 +114,7 @@ export const PopoverFilterInput = observer(function PopoverFilterInput(props: TP
             </div>
           </div>
         </div>
-      </Popover.Panel>
+      </Popover.Content>
     </Popover>
   );
 });

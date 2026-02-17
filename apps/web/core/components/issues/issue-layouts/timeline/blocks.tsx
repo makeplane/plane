@@ -67,9 +67,11 @@ export const WorkItemTimelineBlock = observer(function WorkItemTimelineBlock(pro
   const duration = findTotalDaysInRange(issueDetails?.start_date, issueDetails?.target_date) || 0;
 
   return (
-    <Popover delay={100} openOnHover>
-      <Popover.Button
+    <Popover>
+      <Popover.Trigger
         className="w-full"
+        delay={100}
+        openOnHover
         render={
           <div
             id={`issue-${issueId}`}
@@ -94,7 +96,7 @@ export const WorkItemTimelineBlock = observer(function WorkItemTimelineBlock(pro
           </div>
         }
       />
-      <Popover.Panel side="bottom" align="start">
+      <Popover.Content side="bottom" align="start">
         <>
           {issueDetails && issueDetails?.project_id && (
             <WorkItemPreviewCard
@@ -106,7 +108,7 @@ export const WorkItemTimelineBlock = observer(function WorkItemTimelineBlock(pro
             />
           )}
         </>
-      </Popover.Panel>
+      </Popover.Content>
     </Popover>
   );
 });

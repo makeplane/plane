@@ -99,7 +99,7 @@ export const FocusFilter = observer(function FocusFilter(props: TProps) {
     );
 
   return (
-    <Combobox value={currentValue} onValueChange={handleValueChange}>
+    <Combobox value={currentValue} onValueChange={(value) => handleValueChange(value ?? "")}>
       <Tooltip
         tooltipContent="Turn this on if you want AI to use your work data from Plane."
         position="top"

@@ -12,7 +12,7 @@
  */
 
 import * as React from "react";
-import { Menu as BaseMenu } from "@base-ui-components/react/menu";
+import { Menu as BaseMenu } from "@base-ui/react/menu";
 import { MoreHorizontal } from "lucide-react";
 import { ChevronDownIcon, ChevronRightIcon } from "../icons";
 import { cn } from "../utils/classname";
@@ -136,7 +136,7 @@ function Menu(props: TMenuProps) {
   };
 
   return (
-    <BaseMenu.Root openOnHover={openOnHover} onOpenChange={handleOpenChange}>
+    <BaseMenu.Root highlightItemOnHover={openOnHover} onOpenChange={handleOpenChange}>
       {customButton ? (
         <BaseMenu.Trigger
           type="button"

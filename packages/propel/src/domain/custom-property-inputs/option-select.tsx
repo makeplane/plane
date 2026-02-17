@@ -77,7 +77,7 @@ export function OptionSelect({ property, options, isPreview = false, required = 
             return `${selectedOptions.length} selected`;
           })();
 
-          const handleValueChange = (newValue: string | string[]) => {
+          const handleValueChange = (newValue: string | string[] | null) => {
             if (isMulti) {
               if (Array.isArray(newValue)) {
                 onChange(newValue);

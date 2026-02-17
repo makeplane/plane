@@ -73,7 +73,7 @@ export function UpdateStatusPills(props: TStatusPills) {
         .filter(([_, count]) => count > 0)
         .map(([status, count]) => (
           <Popover key={status}>
-            <Popover.Button className={cn("my-auto outline-none text-tertiary")} onClick={(e) => e.stopPropagation()}>
+            <Popover.Trigger className={cn("my-auto outline-none text-tertiary")} onClick={(e) => e.stopPropagation()}>
               <Tooltip tooltipContent={status && capitalizeFirstLetter(status.replaceAll("-", " ").toLowerCase())}>
                 <button className="flex items-center gap-1 border border-subtle-1 rounded-md px-1 py-1 bg-surface-1">
                   <UpdateStatusIcons size="xs" statusType={status as EUpdateStatus} showBackground={false} />
@@ -82,9 +82,14 @@ export function UpdateStatusPills(props: TStatusPills) {
                   </span>
                 </button>
               </Tooltip>
-            </Popover.Button>
+            </Popover.Trigger>
 
-            <Popover.Panel side="bottom" align="start" positionerClassName="z-30" onClick={(e) => e.stopPropagation()}>
+            <Popover.Content
+              side="bottom"
+              align="start"
+              positionerClassName="z-30"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div
                 className={cn(
                   "rounded-lg bg-surface-1 text-11 shadow-raised-200 focus:outline-none max-w-[320px] w-screen"
@@ -129,7 +134,7 @@ export function UpdateStatusPills(props: TStatusPills) {
                   }}
                 />
               </div>
-            </Popover.Panel>
+            </Popover.Content>
           </Popover>
         ))}
     </div>

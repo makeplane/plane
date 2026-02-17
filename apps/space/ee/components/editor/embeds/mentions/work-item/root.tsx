@@ -26,11 +26,11 @@ export const EditorWorkItemMention = observer(function EditorWorkItemMention(pro
 
   return (
     <div className="not-prose !inline px-1 py-0.5 rounded-sm bg-accent-primary/10 border border-strong-1 no-underline">
-      <Popover delay={100} openOnHover>
-        <Popover.Button className="cursor-default">
+      <Popover>
+        <Popover.Trigger className="cursor-default" delay={100} openOnHover>
           {workItemDetails && <EditorWorkItemMentionContent workItemDetails={workItemDetails} />}
-        </Popover.Button>
-        <Popover.Panel side="bottom" align="start">
+        </Popover.Trigger>
+        <Popover.Content side="bottom" align="start">
           <div className="p-3 space-y-2 w-72 rounded-lg shadow-raised-200 bg-surface-1 border-[0.5px] border-subtle-1">
             {workItemDetails ? (
               <EditorWorkItemMentionPreview workItemDetails={workItemDetails} />
@@ -40,7 +40,7 @@ export const EditorWorkItemMention = observer(function EditorWorkItemMention(pro
               </p>
             )}
           </div>
-        </Popover.Panel>
+        </Popover.Content>
       </Popover>
     </div>
   );

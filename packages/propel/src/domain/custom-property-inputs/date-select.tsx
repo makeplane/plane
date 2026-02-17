@@ -54,7 +54,7 @@ export function DateSelect({ property, isPreview = false, required = false }: TD
         }}
         render={({ field: { value, onChange } }) => (
           <Popover open={isOpen && !isPreview} onOpenChange={setIsOpen}>
-            <Popover.Button
+            <Popover.Trigger
               className={cn(
                 "flex w-full items-center justify-between rounded-md border px-3 py-2 text-13 focus:outline-none",
                 {
@@ -72,8 +72,8 @@ export function DateSelect({ property, isPreview = false, required = false }: TD
               >
                 {value ? formatDate(value) : `Select ${property.display_name?.toLowerCase() || "date"}`}
               </span>
-            </Popover.Button>
-            <Popover.Panel
+            </Popover.Trigger>
+            <Popover.Content
               className="rounded-md border border-subtle-1 bg-surface-1 shadow-lg"
               side="bottom"
               align="start"
@@ -91,7 +91,7 @@ export function DateSelect({ property, isPreview = false, required = false }: TD
                 }}
                 disabled={isPreview}
               />
-            </Popover.Panel>
+            </Popover.Content>
           </Popover>
         )}
       />
