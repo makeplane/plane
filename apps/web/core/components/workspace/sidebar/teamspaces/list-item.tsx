@@ -14,10 +14,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { Transition } from "@headlessui/react";
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { Logo } from "@plane/propel/emoji-icon-picker";
+import { IconButton } from "@plane/propel/icon-button";
 import { ChevronRightIcon } from "@plane/propel/icons";
 // plane ui
 import { cn, joinUrlPath } from "@plane/utils";
@@ -41,8 +41,6 @@ export const TeamspaceSidebarListItem = observer(function TeamspaceSidebarListIt
   const pathname = usePathname();
   const { getTeamspaceById, getTeamspaceProjectIds } = useTeamspaces();
   const { getProjectById } = useProject();
-  // router
-  const router = useRouter();
   // state for disclosure
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -51,34 +49,34 @@ export const TeamspaceSidebarListItem = observer(function TeamspaceSidebarListIt
 
   if (!teamspace) return null;
 
+  const isTeamspaceActive = pathname.includes(joinUrlPath(workspaceSlug?.toString(), "teamspaces", teamspaceId));
+
   return (
-    <Collapsible className="flex flex-col" open={isExpanded} onOpenChange={setIsExpanded}>
-      <div className="group group/teamspace-item hover:bg-surface-2 px-2 py-1 rounded-md flex items-center">
-        <CollapsibleTrigger
-          className="flex-1 flex items-center gap-1.5 py-[1px] text-left outline-none justify-between w-full"
-          onClick={() => handleLinkClick()}
-        >
-          <div
+    <div className="flex flex-col">
+      <SidebarNavItem isActive={isTeamspaceActive} className="group/teamspace-item">
+        <div className="flex items-center w-full">
+          <Link
+            href={`/${workspaceSlug}/teamspaces/${teamspaceId}`}
+            onClick={handleLinkClick}
             className="flex flex-1 items-center gap-1.5 py-[1px] truncate"
-            onClick={() => {
-              router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}`);
-            }}
           >
             <Logo logo={teamspace.logo_props} size={16} />
             <p className="text-body-xs-medium text-secondary leading-5 font-medium truncate">{teamspace.name}</p>
-          </div>
-        </CollapsibleTrigger>
-        <CollapsibleTrigger
-          className="flex-shrink-0 size-4 text-tertiary transition-all opacity-0 group-hover/teamspace-item:opacity-100"
-          onClick={() => setIsExpanded(!isExpanded)}
-        >
-          <ChevronRightIcon
-            className={cn("flex-shrink-0 size-4 text-tertiary transition-transform", {
-              "rotate-90": isExpanded,
-            })}
-          />
-        </CollapsibleTrigger>
-      </div>
+          </Link>
+          {projectIds.length > 0 && (
+            <IconButton
+              variant="ghost"
+              size="sm"
+              icon={ChevronRightIcon}
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="opacity-0 group-hover/teamspace-item:opacity-100 text-tertiary"
+              iconClassName={cn("transition-transform", {
+                "rotate-90": isExpanded,
+              })}
+            />
+          )}
+        </div>
+      </SidebarNavItem>
 
       <Transition
         show={isExpanded}
@@ -90,7 +88,7 @@ export const TeamspaceSidebarListItem = observer(function TeamspaceSidebarListIt
         leaveTo="transform scale-95 opacity-0"
       >
         {isExpanded && projectIds.length > 0 && (
-          <CollapsibleContent className="flex flex-col gap-0.5 ml-4 mt-1">
+          <div className="flex flex-col gap-0.5 ml-4 mt-1">
             {projectIds.map((projectId) => {
               const project = getProjectById(projectId);
               if (!project) return null;
@@ -114,9 +112,9 @@ export const TeamspaceSidebarListItem = observer(function TeamspaceSidebarListIt
                 </Link>
               );
             })}
-          </CollapsibleContent>
+          </div>
         )}
       </Transition>
-    </Collapsible>
+    </div>
   );
 });
