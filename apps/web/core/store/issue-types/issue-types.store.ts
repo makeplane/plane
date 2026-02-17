@@ -263,7 +263,7 @@ export class IssueTypes implements IIssueTypesStore {
    * @returns {boolean}
    */
   isWorkItemTypeEnabledForProject = computedFn((workspaceSlug: string, projectId: string): boolean => {
-    const issueTypeFlagEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("ISSUE_TYPES", false);
+    const issueTypeFlagEnabled = this.rootStore.featureFlags.getFeatureFlag(workspaceSlug, "ISSUE_TYPES", false);
     const projectFeatures = this.rootStore.projectDetails.getProjectFeatures(projectId);
     return (issueTypeFlagEnabled && projectFeatures?.is_issue_type_enabled) ?? false;
   });
@@ -275,7 +275,7 @@ export class IssueTypes implements IIssueTypesStore {
    * @returns {boolean}
    */
   isEpicEnabledForProject = computedFn((workspaceSlug: string, projectId: string): boolean => {
-    const epicFlagEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("EPICS", false);
+    const epicFlagEnabled = this.rootStore.featureFlags.getFeatureFlag(workspaceSlug, "EPICS", false);
     const projectFeatures = this.rootStore.projectDetails.getProjectFeatures(projectId);
     return (epicFlagEnabled && projectFeatures?.is_epic_enabled) ?? false;
   });
@@ -519,7 +519,7 @@ export class IssueTypes implements IIssueTypesStore {
    */
   fetchAllIssueTypes = async (workspaceSlug: string, projectId?: string) => {
     if (!workspaceSlug) return Promise.resolve([]);
-    const isIssueTypesEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("ISSUE_TYPES", false);
+    const isIssueTypesEnabled = this.rootStore.featureFlags.getFeatureFlag(workspaceSlug, "ISSUE_TYPES", false);
     if (!isIssueTypesEnabled) return Promise.resolve([]);
     const workItemTypeFetchService = projectId
       ? this.issueTypesService.fetchAllProjectLevel.bind(this.issueTypesService, { workspaceSlug, projectId })
@@ -534,7 +534,7 @@ export class IssueTypes implements IIssueTypesStore {
    */
   fetchAllEpics = async (workspaceSlug: string, projectId?: string) => {
     if (!workspaceSlug) return Promise.resolve([]);
-    const isEpicsEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("EPICS", false);
+    const isEpicsEnabled = this.rootStore.featureFlags.getFeatureFlag(workspaceSlug, "EPICS", false);
     if (!isEpicsEnabled) return Promise.resolve([]);
     const epicTypeFetchService = projectId
       ? this.epicIssueTypesService.fetchAllProjectLevel.bind(this.epicIssueTypesService, { workspaceSlug, projectId })

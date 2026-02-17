@@ -22,12 +22,12 @@ const SidebarFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefi
   "pi-chat": E_FEATURE_FLAGS.PI_CHAT,
 };
 
-export const isAppRailFeatureEnabled = (featureKey: string) => {
+export const isAppRailFeatureEnabled = (workspaceSlug: string, featureKey: string) => {
   // Check if we need to check for a feature flag, if not, return true
   const featureFlag = SidebarFeatureKeyToFeatureFlagMap[featureKey];
   if (!featureFlag) return true;
   // Check for the feature flag in the current workspace
-  const isFeatureFlagEnabled = store.featureFlags.getFeatureFlagForCurrentWorkspace(featureFlag, false);
+  const isFeatureFlagEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, featureFlag, false);
 
   switch (featureKey) {
     case "pi-chat":

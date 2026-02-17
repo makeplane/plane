@@ -40,7 +40,7 @@ export const isSidebarFeatureEnabled = (featureKey: string, workspaceSlug: strin
   const featureFlag = SidebarFeatureKeyToFeatureFlagMap[featureKey];
   if (!featureFlag) return true;
   // Check for the feature flag in the current workspace
-  const isFeatureFlagEnabled = store.featureFlags.getFeatureFlagForCurrentWorkspace(featureFlag, false);
+  const isFeatureFlagEnabled = store.featureFlags.getFeatureFlag(workspaceSlug, featureFlag, false);
 
   switch (featureKey) {
     case "workspace-dashboards":

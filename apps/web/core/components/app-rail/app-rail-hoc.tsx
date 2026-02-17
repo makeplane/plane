@@ -35,21 +35,21 @@ export function withDockItems<P extends WithDockItemsProps>(WrappedComponent: Re
         icon: <PlaneNewIcon className="size-5" />,
         href: `/${workspaceSlug}/`,
         isActive: isProjectsPath && !isNotificationsPath,
-        shouldRender: isAppRailFeatureEnabled("projects"),
+        shouldRender: isAppRailFeatureEnabled(workspaceSlug, "projects"),
       },
       {
         label: "Wiki",
         icon: <WikiIcon className="size-5" />,
         href: `/${workspaceSlug}/wiki`,
         isActive: isWikiPath,
-        shouldRender: isAppRailFeatureEnabled("wiki"),
+        shouldRender: isAppRailFeatureEnabled(workspaceSlug, "wiki"),
       },
       {
         label: "AI",
         icon: <PiIcon className="size-5" />,
         href: `/${workspaceSlug}/pi-chat`,
         isActive: isAiPath,
-        shouldRender: isAppRailFeatureEnabled("pi-chat"),
+        shouldRender: isAppRailFeatureEnabled(workspaceSlug, "pi-chat"),
       },
     ];
 
