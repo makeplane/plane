@@ -151,21 +151,29 @@ class IntakeSettingEndpoint(BaseAPIView):
         data["anchors"] = {}
 
         # Get intake form anchor from DeployBoard
-        intake_deploy_board = DeployBoard.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            entity_name="intake",
-        ).values("anchor").first()
+        intake_deploy_board = (
+            DeployBoard.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                entity_name="intake",
+            )
+            .values("anchor")
+            .first()
+        )
 
         if intake_deploy_board and check_workspace_feature_flag(FeatureFlag.INTAKE_FORM, slug, user_id=request.user.id):
             data["anchors"]["intake"] = intake_deploy_board["anchor"]
 
         # Get intake email anchor from IntakeEmail
-        intake_email = IntakeEmail.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            intake=intake,
-        ).values("anchor").first()
+        intake_email = (
+            IntakeEmail.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                intake=intake,
+            )
+            .values("anchor")
+            .first()
+        )
 
         if intake_email and check_workspace_feature_flag(FeatureFlag.INTAKE_EMAIL, slug, user_id=request.user.id):
             data["anchors"]["intake_email"] = f"{slug}-{intake_email['anchor']}@{self.get_intake_email_domain()}"
@@ -247,21 +255,29 @@ class IntakeSettingEndpoint(BaseAPIView):
         anchors = {}
 
         # Get intake form anchor from DeployBoard
-        intake_deploy_board = DeployBoard.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            entity_name="intake",
-        ).values("anchor").first()
+        intake_deploy_board = (
+            DeployBoard.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                entity_name="intake",
+            )
+            .values("anchor")
+            .first()
+        )
 
         if intake_deploy_board:
             anchors["intake"] = intake_deploy_board["anchor"]
 
         # Get intake email anchor from IntakeEmail
-        intake_email_obj = IntakeEmail.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            intake=intake,
-        ).values("anchor").first()
+        intake_email_obj = (
+            IntakeEmail.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                intake=intake,
+            )
+            .values("anchor")
+            .first()
+        )
 
         if intake_email_obj:
             anchors["intake_email"] = f"{slug}-{intake_email_obj['anchor']}@{self.get_intake_email_domain()}"

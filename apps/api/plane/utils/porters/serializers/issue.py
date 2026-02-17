@@ -366,6 +366,6 @@ class IssueExportSerializer(IssueSerializer):
         ]
 
     def get_description(self, obj):
-        if (obj.description_stripped):
+        if obj.description_stripped:
             return obj.description_stripped
         return ""

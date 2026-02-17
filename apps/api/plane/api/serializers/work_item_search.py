@@ -39,12 +39,6 @@ class WorkItemAdvancedSearchRequestSerializer(serializers.Serializer):
         allow_null=True,
         help_text="Filter JSON passed through to IssueFilterSet for validation and application",
     )
-    limit = serializers.IntegerField(
-        required=False,
-        default=10,
-        min_value=1,
-        help_text="Maximum number of results to return",
-    )
     workspace_search = serializers.BooleanField(
         required=False,
         default=False,

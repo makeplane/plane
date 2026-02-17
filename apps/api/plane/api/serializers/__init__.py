@@ -107,7 +107,18 @@ from .work_item_property import (
     WorkItemPropertyValueResponseSerializer,
 )
 
+from .work_item_properties import (
+    WorkItemWithPropertiesSerializer,
+    CustomPropertySerializer,
+)
+
 from .project_label import (
     ProjectLabelSerializer,
     ProjectLabelCreateUpdateSerializer,
+)
+
+from .work_item_type_schema import (
+    WorkItemTypeSchemaSerializer,
+    FieldSchemaSerializer,
+    CustomFieldSchemaSerializer,
 )

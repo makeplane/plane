@@ -18,6 +18,7 @@ from plane.db.models.issue import IssueRelationChoices
 # Serializers
 from rest_framework import serializers
 
+
 class ImportReportAPISerializer(BaseSerializer):
     class Meta:
         model = ImportReport

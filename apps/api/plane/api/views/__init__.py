@@ -134,6 +134,8 @@ from .work_item_property_value import (
 
 from .work_item_search import WorkItemAdvancedSearchEndpoint
 
+from .work_item_properties import WorkItemPropertiesAPIEndpoint
+
 from .workspace import (
     WorkspaceFeatureAPIEndpoint,
 )
@@ -152,3 +154,7 @@ from .work_item_page import (
     WorkItemPageListCreateAPIEndpoint,
     WorkItemPageDetailAPIEndpoint,
 )
+
+from .work_item_type_schema import WorkItemTypeSchemaAPIEndpoint
+
+from .work_item_type_create import WorkItemCreateAPIEndpoint

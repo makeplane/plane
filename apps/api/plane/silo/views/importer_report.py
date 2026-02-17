@@ -20,6 +20,7 @@ from .base import BaseServiceAPIView
 from plane.ee.models import ImportReport, ImportExecutionLog, ImportJob
 from plane.silo.serializers import ImportReportAPISerializer, ImportExecutionLogSerializer
 
+
 class ImportReportAPIView(BaseServiceAPIView):
     def get(self, request, pk=None):
         if not pk:
@@ -90,32 +91,20 @@ class ImportExecutionLogAPIView(BaseServiceAPIView):
         # Bulk create execution logs
         logs_data = request.data
         if not isinstance(logs_data, list):
-            return Response(
-                {"error": "Data must be a list of log records"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Data must be a list of log records"}, status=status.HTTP_400_BAD_REQUEST)
 
         if not ImportJob.objects.filter(pk=job_id).exists():
-            return Response(
-                {"error": "Import Job not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Import Job not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Verify report exists
         if not ImportReport.objects.filter(pk=report_id).exists():
-             return Response(
-                 {"error": "Import report not found"},
-                 status=status.HTTP_404_NOT_FOUND
-             )
+            return Response({"error": "Import report not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = ImportExecutionLogSerializer(data=logs_data, many=True)
         if serializer.is_valid():
             logs_to_create = [
-                ImportExecutionLog(
-                    job_id=job_id,
-                    report_id=report_id,
-                    **log_data
-                ) for log_data in serializer.validated_data
+                ImportExecutionLog(job_id=job_id, report_id=report_id, **log_data)
+                for log_data in serializer.validated_data
             ]
             ImportExecutionLog.objects.bulk_create(logs_to_create, batch_size=1000)
             return Response(status=status.HTTP_201_CREATED)

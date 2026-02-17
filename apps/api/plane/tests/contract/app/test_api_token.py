@@ -411,9 +411,7 @@ class TestApiTokenEndpoint:
     def test_patch_cannot_modify_service_token(self, session_client, create_user):
         """Test that service tokens cannot be modified through user token endpoint"""
         # Arrange
-        service_token = APIToken.objects.create(
-            label="Service Token", user=create_user, user_type=0, is_service=True
-        )
+        service_token = APIToken.objects.create(label="Service Token", user=create_user, user_type=0, is_service=True)
         session_client.force_authenticate(user=create_user)
         url = reverse("api-tokens", kwargs={"pk": service_token.pk})
         update_data = {"label": "Hacked Service Token"}
