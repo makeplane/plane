@@ -54,6 +54,7 @@ class Customer(ChangeTrackerMixin, BaseModel):
     contract_status = models.CharField(max_length=255, blank=True, null=True)
     revenue = models.CharField(blank=True, null=True)
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="customers")
+    archived_at = models.DateTimeField(null=True)
 
     TRACKED_FIELDS = ["website_url"]
 
@@ -234,6 +235,7 @@ class CustomerRequest(BaseModel):
     customer = models.ForeignKey("ee.Customer", on_delete=models.CASCADE, related_name="requests")
     link = models.URLField(blank=True, null=True)
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="customer_requests")
+    archived_at = models.DateTimeField(null=True)
 
     def save(self, *args, **kwargs):
         # Strip the html tags using html parser

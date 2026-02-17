@@ -52,6 +52,7 @@ class Initiative(BaseModel):
         related_name="initiatives",
         blank=True,
     )
+    archived_at = models.DateTimeField(null=True)
 
     class Meta:
         db_table = "initiatives"

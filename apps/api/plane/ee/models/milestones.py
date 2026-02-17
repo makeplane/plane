@@ -26,6 +26,7 @@ class Milestone(ProjectBaseModel):
     target_date = models.DateField(null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
     external_source = models.CharField(max_length=255, null=True, blank=True)
+    archived_at = models.DateTimeField(null=True)
 
     class Meta:
         verbose_name = "Milestone"
