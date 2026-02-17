@@ -121,6 +121,8 @@ class OAuthApplicationEndpoint(BaseAPIView):
             "supported_plans",
             "supported_environments",
             "links",
+            "resource_permissions",
+            "authorization_grant_type",
         }
 
         # Filter the request data to only include allowed fields

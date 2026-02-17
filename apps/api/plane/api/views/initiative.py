@@ -19,6 +19,7 @@ from plane.app.permissions import WorkSpaceAdminPermission
 from plane.db.models import Workspace, Project, Issue
 from plane.api.serializers import InitiativeSerializer, InitiativeLabelSerializer, ProjectSerializer, IssueSerializer
 from plane.api.permissions import InitiativesFeatureFlagPermission
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 
 # OpenAPI imports
 from plane.utils.openapi.decorators import initiative_docs, initiative_entity_docs
@@ -36,12 +37,31 @@ from plane.utils.openapi import (
     CURSOR_PARAMETER,
     PER_PAGE_PARAMETER,
 )
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    INITIATIVES_READ_SCOPE,
+    INITIATIVES_WRITE_SCOPE,
+    INITIATIVES_LABELS_READ_SCOPE,
+    INITIATIVES_LABELS_WRITE_SCOPE,
+    INITIATIVES_PROJECTS_READ_SCOPE,
+    INITIATIVES_PROJECTS_WRITE_SCOPE,
+    INITIATIVES_EPICS_READ_SCOPE,
+    INITIATIVES_EPICS_WRITE_SCOPE,
+)
 
 
 class InitiativeViewSet(BaseViewSet):
     serializer_class = InitiativeSerializer
     model = Initiative
-    permission_classes = [WorkSpaceAdminPermission, InitiativesFeatureFlagPermission]
+    permission_classes = [WorkSpaceAdminPermission, InitiativesFeatureFlagPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [INITIATIVES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE]],
+    }
 
     def get_queryset(self):
         return Initiative.objects.filter(workspace__slug=self.kwargs.get("slug"))
@@ -255,112 +275,21 @@ class InitiativeViewSet(BaseViewSet):
             InitiativeLabelAssociation.objects.filter(initiative=initiative, label=label).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @initiative_docs(
-        operation_id="list_initiative_projects",
-        summary="List projects associated with an initiative",
-        description="List all projects associated with an initiative",
-        parameters=[
-            WORKSPACE_SLUG_PARAMETER,
-            INITIATIVE_ID_PARAMETER,
-            CURSOR_PARAMETER,
-            PER_PAGE_PARAMETER,
-        ],
-        responses={
-            200: create_paginated_response(
-                ProjectSerializer, "Project", "List of projects", example_name="Paginated Projects"
-            )
-        },
-    )
-    def get_projects(self, request, slug, initiative_id):
-        initiative = self.get_queryset().get(id=initiative_id)
-        projects = Project.objects.filter(initiatives__initiative=initiative, initiatives__deleted_at__isnull=True)
-        return self.paginate(
-            request=request,
-            queryset=(projects),
-            on_results=lambda projects: ProjectSerializer(projects, many=True).data,
-            default_per_page=20,
-        )
 
-    @initiative_docs(
-        operation_id="add_initiative_projects",
-        summary="Add projects to an initiative",
-        description="Add projects to an initiative by its ID",
-        parameters=[
-            WORKSPACE_SLUG_PARAMETER,
-            INITIATIVE_ID_PARAMETER,
-        ],
-        request=OpenApiRequest(
-            request={
-                "type": "object",
-                "properties": {
-                    "project_ids": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "uuid",
-                        },
-                    },
-                },
-            }
-        ),
-        responses={
-            200: OpenApiResponse(description="Projects added", response=ProjectSerializer, examples=[PROJECT_EXAMPLE])
-        },
-    )
-    def add_projects(self, request, slug, initiative_id):
-        initiative = self.get_queryset().get(id=initiative_id)
-        project_ids = request.data.get("project_ids", [])
+class InitiativeEpicsViewSet(BaseViewSet):
+    serializer_class = InitiativeSerializer
+    model = Initiative
+    permission_classes = [WorkSpaceAdminPermission, InitiativesFeatureFlagPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [INITIATIVES_READ_SCOPE, INITIATIVES_EPICS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE, INITIATIVES_EPICS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE, INITIATIVES_EPICS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE, INITIATIVES_EPICS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE, INITIATIVES_EPICS_WRITE_SCOPE]],
+    }
 
-        # skip adding projects that are already associated with the initiative
-        existing_project_ids = InitiativeProject.objects.filter(
-            initiative=initiative, project_id__in=project_ids
-        ).values_list("project_id", flat=True)
-
-        # Convert UUIDs to strings for proper comparison
-        existing_project_ids = [str(uuid_id) for uuid_id in existing_project_ids]
-        new_project_ids = set(project_ids) - set(existing_project_ids)
-
-        for project_id in new_project_ids:
-            project = Project.objects.get(id=project_id, workspace__slug=slug)
-            InitiativeProject.objects.create(
-                initiative=initiative, project=project, workspace_id=initiative.workspace_id
-            )
-        # send new projects in response
-        new_projects = Project.objects.filter(id__in=project_ids)
-        serializer = ProjectSerializer(new_projects, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    @initiative_docs(
-        operation_id="remove_initiative_projects",
-        summary="Remove projects from an initiative",
-        description="Remove projects from an initiative by its ID",
-        parameters=[
-            WORKSPACE_SLUG_PARAMETER,
-            INITIATIVE_ID_PARAMETER,
-        ],
-        request=OpenApiRequest(
-            request={
-                "type": "object",
-                "properties": {
-                    "project_ids": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "uuid",
-                        },
-                    },
-                },
-            }
-        ),
-        responses={204: DELETED_RESPONSE},
-    )
-    def remove_projects(self, request, slug, initiative_id):
-        initiative = self.get_queryset().get(id=initiative_id)
-        project_ids = request.data.get("project_ids", [])
-        for project_id in project_ids:
-            project = Project.objects.get(id=project_id, workspace__slug=slug)
-            InitiativeProject.objects.filter(initiative=initiative, project=project).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def get_queryset(self):
+        return Initiative.objects.filter(workspace__slug=self.kwargs.get("slug"))
 
     @initiative_docs(
         operation_id="list_initiative_epics",
@@ -470,10 +399,140 @@ class InitiativeViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class InitiativeProjectsViewSet(BaseViewSet):
+    serializer_class = InitiativeSerializer
+    model = Initiative
+    permission_classes = [WorkSpaceAdminPermission, InitiativesFeatureFlagPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [INITIATIVES_READ_SCOPE, INITIATIVES_PROJECTS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE, INITIATIVES_PROJECTS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE, INITIATIVES_PROJECTS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE, INITIATIVES_PROJECTS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE, INITIATIVES_PROJECTS_WRITE_SCOPE]],
+    }
+
+    def get_queryset(self):
+        return Initiative.objects.filter(workspace__slug=self.kwargs.get("slug"))
+
+    @initiative_docs(
+        operation_id="list_initiative_projects",
+        summary="List projects associated with an initiative",
+        description="List all projects associated with an initiative",
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            INITIATIVE_ID_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+        ],
+        responses={
+            200: create_paginated_response(
+                ProjectSerializer, "Project", "List of projects", example_name="Paginated Projects"
+            )
+        },
+    )
+    def get_projects(self, request, slug, initiative_id):
+        initiative = self.get_queryset().get(id=initiative_id)
+        projects = Project.objects.filter(initiatives__initiative=initiative, initiatives__deleted_at__isnull=True)
+        return self.paginate(
+            request=request,
+            queryset=(projects),
+            on_results=lambda projects: ProjectSerializer(projects, many=True).data,
+            default_per_page=20,
+        )
+
+    @initiative_docs(
+        operation_id="add_initiative_projects",
+        summary="Add projects to an initiative",
+        description="Add projects to an initiative by its ID",
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            INITIATIVE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request={
+                "type": "object",
+                "properties": {
+                    "project_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                        },
+                    },
+                },
+            }
+        ),
+        responses={
+            200: OpenApiResponse(description="Projects added", response=ProjectSerializer, examples=[PROJECT_EXAMPLE])
+        },
+    )
+    def add_projects(self, request, slug, initiative_id):
+        initiative = self.get_queryset().get(id=initiative_id)
+        project_ids = request.data.get("project_ids", [])
+
+        # skip adding projects that are already associated with the initiative
+        existing_project_ids = InitiativeProject.objects.filter(
+            initiative=initiative, project_id__in=project_ids
+        ).values_list("project_id", flat=True)
+
+        # Convert UUIDs to strings for proper comparison
+        existing_project_ids = [str(uuid_id) for uuid_id in existing_project_ids]
+        new_project_ids = set(project_ids) - set(existing_project_ids)
+
+        for project_id in new_project_ids:
+            project = Project.objects.get(id=project_id, workspace__slug=slug)
+            InitiativeProject.objects.create(
+                initiative=initiative, project=project, workspace_id=initiative.workspace_id
+            )
+        # send new projects in response
+        new_projects = Project.objects.filter(id__in=project_ids)
+        serializer = ProjectSerializer(new_projects, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @initiative_docs(
+        operation_id="remove_initiative_projects",
+        summary="Remove projects from an initiative",
+        description="Remove projects from an initiative by its ID",
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            INITIATIVE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request={
+                "type": "object",
+                "properties": {
+                    "project_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                        },
+                    },
+                },
+            }
+        ),
+        responses={204: DELETED_RESPONSE},
+    )
+    def remove_projects(self, request, slug, initiative_id):
+        initiative = self.get_queryset().get(id=initiative_id)
+        project_ids = request.data.get("project_ids", [])
+        for project_id in project_ids:
+            project = Project.objects.get(id=project_id, workspace__slug=slug)
+            InitiativeProject.objects.filter(initiative=initiative, project=project).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class InitiativeLabelViewSet(BaseViewSet):
     serializer_class = InitiativeLabelSerializer
     model = InitiativeLabel
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [INITIATIVES_LABELS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [INITIATIVES_LABELS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [INITIATIVES_LABELS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [INITIATIVES_LABELS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [INITIATIVES_LABELS_WRITE_SCOPE]],
+    }
 
     def get_queryset(self):
         return InitiativeLabel.objects.filter(workspace__slug=self.kwargs.get("slug")).order_by("sort_order")

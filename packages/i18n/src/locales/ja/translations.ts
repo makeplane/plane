@@ -2070,6 +2070,26 @@ export default {
         enable_app_mentions: "アプリのメンションを有効にする",
         enable_app_mentions_tooltip:
           "これを有効にすると、ユーザーは作業項目をこのアプリにメンションしたり割り当てたりできます。",
+        scopes: "スコープ",
+        select_scopes: "スコープを選択",
+        read_access_to: "読み取り専用アクセス先",
+        write_access_to: "書き込みアクセス先",
+        global_permission_expiration:
+          "グローバルスコープはまもなく期限切れになります。代わりに細かいスコープを使用してください。例：グローバル読み取りの代わりに project:read を使用します。",
+        selected_scopes: "{count} 件選択中",
+        scopes_and_permissions: "スコープと権限",
+        read: "読み取り",
+        write: "書き込み",
+        scope_description: {
+          projects: "プロジェクトおよびプロジェクト関連エンティティへのアクセス",
+          wiki: "WikiおよびWiki関連エンティティへのアクセス",
+          customers: "顧客および顧客関連エンティティへのアクセス",
+          initiatives: "イニシアチブおよびイニシアチブ関連エンティティへのアクセス",
+          workspaces: "ワークスペースおよびワークスペース関連エンティティへのアクセス",
+          stickies: "付箋および付箋関連エンティティへのアクセス",
+          teamspaces: "チームスペースおよびチームスペース関連エンティティへのアクセス",
+          profile: "ユーザープロフィール情報へのアクセス",
+        },
         internal: "内部",
       },
       "plane-intelligence": {

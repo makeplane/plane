@@ -51,6 +51,8 @@ from plane.utils.openapi.examples import (
     PROJECT_LABEL_CREATE_EXAMPLE,
     PROJECT_LABEL_UPDATE_EXAMPLE,
 )
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import READ_SCOPE, WRITE_SCOPE, PROJECTS_LABELS_READ_SCOPE, PROJECTS_LABELS_WRITE_SCOPE
 
 
 class ProjectLabelListCreateAPIEndpoint(BaseAPIView):
@@ -59,11 +61,15 @@ class ProjectLabelListCreateAPIEndpoint(BaseAPIView):
     serializer_class = ProjectLabelSerializer
     model = ProjectLabel
     use_read_replica = True
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_LABELS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_LABELS_WRITE_SCOPE]],
+    }
 
     def get_permissions(self):
         if self.request.method == "GET":
-            return [WorkspaceViewerPermission()]
-        return [WorkSpaceAdminPermission()]
+            return [WorkspaceViewerPermission(), TokenHasScopeIfOAuth]
+        return [WorkSpaceAdminPermission(), TokenHasScopeIfOAuth]
 
     def get_queryset(self):
         return (
@@ -97,9 +103,7 @@ class ProjectLabelListCreateAPIEndpoint(BaseAPIView):
         """
         try:
             workspace = Workspace.objects.get(slug=slug)
-            serializer = ProjectLabelCreateUpdateSerializer(
-                data=request.data, context={"workspace_id": workspace.id}
-            )
+            serializer = ProjectLabelCreateUpdateSerializer(data=request.data, context={"workspace_id": workspace.id})
 
             if serializer.is_valid():
                 serializer.save(workspace_id=workspace.id)
@@ -153,9 +157,9 @@ class ProjectLabelListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=self.get_queryset(),
-            on_results=lambda project_labels: ProjectLabelSerializer(
-                project_labels, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda project_labels: (
+                ProjectLabelSerializer(project_labels, many=True, fields=self.fields, expand=self.expand).data
+            ),
         )
 
 
@@ -234,10 +238,14 @@ class ProjectLabelDetailAPIEndpoint(ProjectLabelListCreateAPIEndpoint):
                 )
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
-            existing_label = ProjectLabel.objects.filter(
-                workspace__slug=slug,
-                name=request.data.get("name"),
-            ).exclude(pk=pk).first()
+            existing_label = (
+                ProjectLabel.objects.filter(
+                    workspace__slug=slug,
+                    name=request.data.get("name"),
+                )
+                .exclude(pk=pk)
+                .first()
+            )
             return Response(
                 {
                     "error": "Project label with the same name already exists in the workspace",

@@ -14,6 +14,7 @@ from rest_framework import status
 
 from plane.api.views.base import BaseViewSet
 from plane.app.permissions import WorkspaceUserPermission
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.db.models import Sticky, Workspace
 from plane.api.serializers import StickySerializer
 
@@ -26,13 +27,20 @@ from plane.utils.openapi import (
     create_paginated_response,
     DELETED_RESPONSE,
 )
+from plane.utils.oauth import READ_SCOPE, WRITE_SCOPE, STICKIES_READ_SCOPE, STICKIES_WRITE_SCOPE
 
 
 class StickyViewSet(BaseViewSet):
     serializer_class = StickySerializer
     model = Sticky
     use_read_replica = True
-    permission_classes = [WorkspaceUserPermission]
+    permission_classes = [WorkspaceUserPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [STICKIES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [STICKIES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [STICKIES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [STICKIES_WRITE_SCOPE]],
+    }
 
     def get_queryset(self):
         return self.filter_queryset(

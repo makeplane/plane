@@ -66,6 +66,13 @@ from plane.utils.openapi import (
     INVALID_REQUEST_RESPONSE,
     DELETED_RESPONSE,
 )
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_INTAKES_READ_SCOPE,
+    PROJECTS_INTAKES_WRITE_SCOPE,
+)
 
 
 class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
@@ -74,7 +81,11 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
     serializer_class = IntakeIssueSerializer
 
     model = Intake
-    permission_classes = [ProjectLitePermission]
+    permission_classes = [ProjectLitePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_INTAKES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_INTAKES_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -236,8 +247,14 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
 class IntakeIssueDetailAPIEndpoint(BaseAPIView):
     """Intake Issue API Endpoint"""
 
-    permission_classes = [ProjectLitePermission]
-
+    permission_classes = [ProjectLitePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_INTAKES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_INTAKES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_INTAKES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_INTAKES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_INTAKES_WRITE_SCOPE]],
+    }
     serializer_class = IntakeIssueSerializer
     model = IntakeIssue
     use_read_replica = True

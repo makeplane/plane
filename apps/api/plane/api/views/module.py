@@ -78,6 +78,14 @@ from plane.utils.openapi import (
     MODULE_ISSUE_NOT_FOUND_RESPONSE,
     CANNOT_ARCHIVE_RESPONSE,
 )
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_MODULES_READ_SCOPE,
+    PROJECTS_MODULES_WRITE_SCOPE,
+    PROJECTS_WORK_ITEMS_READ_SCOPE,
+)
 
 
 class ModuleListCreateAPIEndpoint(BaseAPIView):
@@ -86,7 +94,11 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
     serializer_class = ModuleSerializer
     model = Module
     webhook_event = "module"
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_MODULES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_MODULES_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -292,9 +304,9 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(self.get_queryset().filter(archived_at__isnull=True)),
-            on_results=lambda modules: ModuleSerializer(
-                modules, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda modules: (
+                ModuleSerializer(modules, many=True, fields=self.fields, expand=self.expand).data
+            ),
         )
 
 
@@ -302,7 +314,12 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
     """Module Detail Endpoint"""
 
     model = Module
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_MODULES_READ_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_MODULES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_MODULES_WRITE_SCOPE]],
+    }
     serializer_class = ModuleSerializer
     webhook_event = "module"
     use_read_replica = True
@@ -561,7 +578,11 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
     serializer_class = ModuleIssueSerializer
     model = ModuleIssue
     webhook_event = "module_issue"
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_MODULES_READ_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_MODULES_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -768,7 +789,11 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
     bulk = True
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_MODULES_READ_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_MODULES_WRITE_SCOPE]],
+    }
 
     def get_queryset(self):
         return (
@@ -911,7 +936,12 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
 
 
 class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_MODULES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_MODULES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_MODULES_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -1034,9 +1064,9 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
-            on_results=lambda modules: ModuleSerializer(
-                modules, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda modules: (
+                ModuleSerializer(modules, many=True, fields=self.fields, expand=self.expand).data
+            ),
         )
 
     @module_docs(

@@ -46,6 +46,7 @@ function OAuthPage() {
     state,
     claims,
     disable_dropdown,
+    scope,
   } = Object.fromEntries(searchParams.entries());
 
   const { data, isLoading } = useSWR(client_id ? APPLICATION_BY_CLIENT_ID(client_id) : null, async () => {
@@ -104,7 +105,7 @@ function OAuthPage() {
                 code_challenge,
                 code_challenge_method,
                 response_type,
-                scope: "read write",
+                scope: scope ?? application.resource_permissions?.join(" "),
                 nonce,
                 state,
                 claims,

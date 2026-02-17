@@ -20,11 +20,17 @@ from plane.api.views.base import BaseAPIView
 from plane.db.models import User
 from plane.utils.openapi.decorators import user_docs
 from plane.utils.openapi import USER_EXAMPLE
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import READ_SCOPE, PROFILE_READ_SCOPE
 
 
 class UserEndpoint(BaseAPIView):
     serializer_class = UserLiteSerializer
     model = User
+    permission_classes = [TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROFILE_READ_SCOPE]],
+    }
 
     @user_docs(
         operation_id="get_current_user",

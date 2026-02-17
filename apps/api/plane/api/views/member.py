@@ -44,10 +44,21 @@ from plane.utils.openapi import (
 )
 
 from plane.payment.bgtasks.member_sync_task import member_sync_task
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    WORKSPACES_MEMBERS_READ_SCOPE,
+    PROJECTS_MEMBERS_READ_SCOPE,
+    PROJECTS_MEMBERS_WRITE_SCOPE,
+)
 
 
 class WorkspaceMemberAPIEndpoint(BaseAPIView):
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [WORKSPACES_MEMBERS_READ_SCOPE]],
+    }
     use_read_replica = True
 
     @extend_schema(
@@ -112,7 +123,11 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
 class ProjectMemberSiloEndpoint(BaseAPIView):
     # TODO: Remove this endpoint once the silo is updated to use the new endpoint
 
-    permission_classes = [ProjectMemberPermission]
+    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_MEMBERS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_MEMBERS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_permissions(self):
@@ -241,7 +256,14 @@ class ProjectMemberSiloEndpoint(BaseAPIView):
 
 
 class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
-    permission_classes = [ProjectMemberPermission]
+    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_MEMBERS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_MEMBERS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_MEMBERS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_MEMBERS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_MEMBERS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_permissions(self):

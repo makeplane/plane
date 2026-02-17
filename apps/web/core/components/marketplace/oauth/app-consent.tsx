@@ -22,7 +22,7 @@ import { ChevronDownIcon, PlaneLogo } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IWorkspace, TUserApplication } from "@plane/types";
 import { cn, CustomMenu } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
+import { getFileURL, getResourcesFromScopeString } from "@plane/utils";
 import ConnectSvg from "@/app/assets/marketplace/connect.svg?url";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
@@ -31,8 +31,8 @@ import { ApplicationService, OAuthService } from "@/services/marketplace";
 import { AuthService } from "@/services/auth.service";
 import {
   ApplicationPermissionText,
+  ApplicationPermissionTextWithResources,
   userLevelPermissions,
-  workspaceLevelPermissions,
 } from "../applications/installation/details";
 
 type TAppConsentProps = {
@@ -98,6 +98,10 @@ export const AppConsent = observer(function AppConsent({
   const [selectedWorkspace, setSelectedWorkspace] = useState<IWorkspace | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
+  const { readResources, writeResources } = useMemo(
+    () => getResourcesFromScopeString(consentParams.scope ?? ""),
+    [consentParams.scope]
+  );
 
   // Initialize selected workspace only once when workspaces list is available
   useEffect(() => {
@@ -239,10 +243,15 @@ export const AppConsent = observer(function AppConsent({
                   app: application?.name,
                 })}
               </div>
-              <div className="flex flex-col space-y-2 py-2 border-b border-subtle-1">
-                {workspaceLevelPermissions.map((permission) => (
-                  <ApplicationPermissionText key={permission.key} permission={permission} />
-                ))}
+              <div className="flex flex-col space-y-4">
+                <ApplicationPermissionTextWithResources
+                  accessText={t("workspace_settings.settings.applications.read_access_to")}
+                  resources={readResources}
+                />
+                <ApplicationPermissionTextWithResources
+                  accessText={t("workspace_settings.settings.applications.write_access_to")}
+                  resources={writeResources}
+                />
               </div>
             </div>
             <div className="flex flex-col gap-y-2">

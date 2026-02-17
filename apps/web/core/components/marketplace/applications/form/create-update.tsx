@@ -44,6 +44,7 @@ import { FormSection } from "./form-section";
 import { SelectCategories } from "./select-categories";
 import { SelectSupportedPlans } from "./select-supported-plans";
 import { UploadAppAttachments } from "./upload-attachments";
+import { SelectScopes } from "./select-scopes";
 
 type Props = {
   formData?: Partial<TUserApplication>;
@@ -69,6 +70,7 @@ const defaultFormData: Partial<TUserApplication> = {
   attachments: [],
   attachments_urls: [],
   is_mentionable: false,
+  resource_permissions: [],
   authorization_grant_type: EApplicationAuthorizationGrantType.AUTHORIZATION_CODE,
   supported_plans: [],
 };
@@ -204,7 +206,7 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
           {t("docs")}
         </Button>
       </div>
-      <div className="flex flex-col mt-4 w-full">
+      <div className="flex flex-col mt-4 w-full space-y-4">
         <FormSection title={"Basic information"}>
           <AppImageUploadModal
             isOpen={isImageModalOpen}
@@ -421,7 +423,14 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
             error={errors.redirect_uris}
           />
         </FormSection>
-        <FormSection title={"Categorisation"} collapsible>
+        <FormSection title={"Scopes & Permissions"} collapsible>
+          <SelectScopes
+            selectedScopes={watch("resource_permissions") ?? []}
+            handleChange={(value: string[]) => setValue("resource_permissions", value)}
+            isCreateMode={!watch("id")}
+          />
+        </FormSection>
+        <FormSection title={"Categorisation"} collapsible isDefaultOpen={false}>
           <div tabIndex={5} className="flex flex-col gap-1">
             <div className="text-13 text-tertiary">
               {t("workspace_settings.settings.applications.categories_description")}
@@ -436,7 +445,11 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
             )}
           </div>
         </FormSection>
-        <FormSection title={t("workspace_settings.settings.applications.supported_plans")} collapsible>
+        <FormSection
+          title={t("workspace_settings.settings.applications.supported_plans")}
+          collapsible
+          isDefaultOpen={false}
+        >
           <div tabIndex={6} className="flex flex-col gap-1">
             <div className="text-13 text-tertiary">
               {t("workspace_settings.settings.applications.supported_plans_description")}
@@ -447,7 +460,7 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
             />
           </div>
         </FormSection>
-        <FormSection title={"Compliance & Support"} collapsible>
+        <FormSection title={"Compliance & Support"} collapsible isDefaultOpen={false}>
           <InputField
             id="contact_email"
             type="email"
@@ -509,7 +522,7 @@ export const CreateUpdateApplication = observer(function CreateUpdateApplication
             error={errors.support_url}
           />
         </FormSection>
-        <FormSection title={"Additional resources"} collapsible>
+        <FormSection title={"Additional resources"} collapsible isDefaultOpen={false}>
           <InputField
             id="video_url"
             type="url"

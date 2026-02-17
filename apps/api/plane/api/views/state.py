@@ -41,6 +41,13 @@ from plane.utils.openapi import (
     STATE_CANNOT_DELETE_RESPONSE,
     EXTERNAL_ID_EXISTS_RESPONSE,
 )
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_STATES_READ_SCOPE,
+    PROJECTS_STATES_WRITE_SCOPE,
+)
 
 
 class StateListCreateAPIEndpoint(BaseAPIView):
@@ -48,7 +55,11 @@ class StateListCreateAPIEndpoint(BaseAPIView):
 
     serializer_class = StateSerializer
     model = State
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_STATES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_STATES_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -186,7 +197,12 @@ class StateDetailAPIEndpoint(BaseAPIView):
 
     serializer_class = StateSerializer
     model = State
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_STATES_READ_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_STATES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_STATES_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):

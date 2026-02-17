@@ -122,7 +122,7 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
     supported_environments = models.JSONField(default=list, blank=True)
     links = models.JSONField(default=list, blank=True)
     status = models.CharField(max_length=255, default=Status.DRAFT.value)
-
+    resource_permissions = models.JSONField(default=list, blank=True)
     is_featured = models.BooleanField(default=False)
 
     # seo fields

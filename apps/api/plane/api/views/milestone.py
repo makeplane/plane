@@ -28,10 +28,25 @@ from plane.api.serializers.milestone import (
     MilestoneWorkItemSerializer,
     MilestoneWorkItemBulkSerializer,
 )
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_MILESTONES_READ_SCOPE,
+    PROJECTS_MILESTONES_WRITE_SCOPE,
+    PROJECTS_WORK_ITEMS_READ_SCOPE,
+    PROJECTS_WORK_ITEMS_WRITE_SCOPE,
+)
 
 
 class MilestoneViewSet(BaseViewSet):
-    permission_classes = [ProjectMemberPermission]
+    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_MILESTONES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_MILESTONES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_MILESTONES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_MILESTONES_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -55,9 +70,9 @@ class MilestoneViewSet(BaseViewSet):
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
-            on_results=lambda milestones: MilestoneSerializer(
-                milestones, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda milestones: (
+                MilestoneSerializer(milestones, many=True, fields=self.fields, expand=self.expand).data
+            ),
         )
 
     @extend_schema(
@@ -137,7 +152,13 @@ class MilestoneViewSet(BaseViewSet):
 
 
 class MilestoneWorkItemsViewSet(BaseViewSet):
-    permission_classes = [ProjectMemberPermission]
+    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_MILESTONES_READ_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_MILESTONES_WRITE_SCOPE, PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_MILESTONES_WRITE_SCOPE, PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_MILESTONES_WRITE_SCOPE, PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -162,9 +183,9 @@ class MilestoneWorkItemsViewSet(BaseViewSet):
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
-            on_results=lambda work_items: MilestoneWorkItemSerializer(
-                work_items, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda work_items: (
+                MilestoneWorkItemSerializer(work_items, many=True, fields=self.fields, expand=self.expand).data
+            ),
         )
 
     @extend_schema(

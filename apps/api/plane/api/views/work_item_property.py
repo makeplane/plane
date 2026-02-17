@@ -23,6 +23,13 @@ from plane.api.views.base import BaseAPIView
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.openapi.decorators import issue_property_docs
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_WORK_ITEM_PROPERTIES_READ_SCOPE,
+    PROJECTS_WORK_ITEM_PROPERTIES_WRITE_SCOPE,
+)
 
 
 class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
@@ -32,7 +39,11 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
 
     model = IssueProperty
     serializer_class = IssuePropertyAPISerializer
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_PROPERTIES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTIES_WRITE_SCOPE]],
+    }
     webhook_event = "issue_property"
 
     type_logo_props = {
@@ -197,7 +208,12 @@ class IssuePropertyDetailAPIEndpoint(BaseAPIView):
 
     model = IssueProperty
     serializer_class = IssuePropertyAPISerializer
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_PROPERTIES_READ_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTIES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTIES_WRITE_SCOPE]],
+    }
     webhook_event = "issue_property"
 
     type_logo_props = {

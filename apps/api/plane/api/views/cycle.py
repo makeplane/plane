@@ -86,6 +86,14 @@ from plane.utils.openapi import (
     UNARCHIVED_RESPONSE,
     REQUIRED_FIELDS_RESPONSE,
 )
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_CYCLES_READ_SCOPE,
+    PROJECTS_CYCLES_WRITE_SCOPE,
+    PROJECTS_WORK_ITEMS_READ_SCOPE,
+)
 
 
 class CycleListCreateAPIEndpoint(BaseAPIView):
@@ -94,8 +102,15 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
     serializer_class = CycleSerializer
     model = Cycle
     webhook_event = "cycle"
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     use_read_replica = True
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_CYCLES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+    }
 
     def get_queryset(self):
         return (
@@ -226,13 +241,15 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
             return self.paginate(
                 request=request,
                 queryset=(queryset),
-                on_results=lambda cycles: CycleSerializer(
-                    cycles,
-                    many=True,
-                    fields=self.fields,
-                    expand=self.expand,
-                    context={"project": project},
-                ).data,
+                on_results=lambda cycles: (
+                    CycleSerializer(
+                        cycles,
+                        many=True,
+                        fields=self.fields,
+                        expand=self.expand,
+                        context={"project": project},
+                    ).data
+                ),
             )
 
         # Completed Cycles
@@ -241,13 +258,15 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
             return self.paginate(
                 request=request,
                 queryset=(queryset),
-                on_results=lambda cycles: CycleSerializer(
-                    cycles,
-                    many=True,
-                    fields=self.fields,
-                    expand=self.expand,
-                    context={"project": project},
-                ).data,
+                on_results=lambda cycles: (
+                    CycleSerializer(
+                        cycles,
+                        many=True,
+                        fields=self.fields,
+                        expand=self.expand,
+                        context={"project": project},
+                    ).data
+                ),
             )
 
         # Draft Cycles
@@ -256,13 +275,15 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
             return self.paginate(
                 request=request,
                 queryset=(queryset),
-                on_results=lambda cycles: CycleSerializer(
-                    cycles,
-                    many=True,
-                    fields=self.fields,
-                    expand=self.expand,
-                    context={"project": project},
-                ).data,
+                on_results=lambda cycles: (
+                    CycleSerializer(
+                        cycles,
+                        many=True,
+                        fields=self.fields,
+                        expand=self.expand,
+                        context={"project": project},
+                    ).data
+                ),
             )
 
         # Incomplete Cycles
@@ -271,24 +292,28 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
             return self.paginate(
                 request=request,
                 queryset=(queryset),
-                on_results=lambda cycles: CycleSerializer(
+                on_results=lambda cycles: (
+                    CycleSerializer(
+                        cycles,
+                        many=True,
+                        fields=self.fields,
+                        expand=self.expand,
+                        context={"project": project},
+                    ).data
+                ),
+            )
+        return self.paginate(
+            request=request,
+            queryset=(queryset),
+            on_results=lambda cycles: (
+                CycleSerializer(
                     cycles,
                     many=True,
                     fields=self.fields,
                     expand=self.expand,
                     context={"project": project},
-                ).data,
-            )
-        return self.paginate(
-            request=request,
-            queryset=(queryset),
-            on_results=lambda cycles: CycleSerializer(
-                cycles,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
-                context={"project": project},
-            ).data,
+                ).data
+            ),
         )
 
     @cycle_docs(
@@ -372,8 +397,15 @@ class CycleDetailAPIEndpoint(BaseAPIView):
     serializer_class = CycleSerializer
     model = Cycle
     webhook_event = "cycle"
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     use_read_replica = True
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_CYCLES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+    }
 
     def get_queryset(self):
         return (
@@ -619,8 +651,15 @@ class CycleDetailAPIEndpoint(BaseAPIView):
 class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     """Cycle Archive and Unarchive Endpoint"""
 
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     use_read_replica = True
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_CYCLES_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+    }
 
     def get_queryset(self):
         return (
@@ -812,8 +851,15 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
     serializer_class = CycleIssueSerializer
     model = CycleIssue
     webhook_event = "cycle_issue"
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     use_read_replica = True
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_CYCLES_READ_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+    }
 
     def get_queryset(self):
         return (
@@ -1063,8 +1109,15 @@ class CycleIssueDetailAPIEndpoint(BaseAPIView):
     model = CycleIssue
     webhook_event = "cycle_issue"
     bulk = True
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     use_read_replica = True
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_CYCLES_READ_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+    }
 
     def get_queryset(self):
         return (
@@ -1174,7 +1227,10 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
     """
 
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "POST": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
+    }
 
     @cycle_docs(
         operation_id="transfer_cycle_work_items",

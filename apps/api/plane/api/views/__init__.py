@@ -46,7 +46,7 @@ from .intake import (
 
 from .invite import WorkspaceInvitationsViewset
 
-from .initiative import InitiativeViewSet, InitiativeLabelViewSet
+from .initiative import InitiativeViewSet, InitiativeLabelViewSet, InitiativeEpicsViewSet, InitiativeProjectsViewSet
 
 from .issue import (
     WorkspaceIssueAPIEndpoint,
@@ -107,7 +107,7 @@ from .state import (
 
 from .sticky import StickyViewSet
 
-from .teamspace import TeamspaceViewSet
+from .teamspace import TeamspaceViewSet, TeamspaceProjectViewSet, TeamspaceMemberViewSet
 
 from .user import UserEndpoint
 

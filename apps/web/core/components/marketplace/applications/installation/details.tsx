@@ -164,3 +164,26 @@ export function ApplicationPermissionText(props: { permission: ApplicationPermis
     </div>
   );
 }
+
+export function ApplicationPermissionTextWithResources(props: { accessText: string; resources: string[] }) {
+  const { accessText, resources } = props;
+  if (resources.length === 0) return null;
+  return (
+    <div className="flex items-start space-x-4">
+      <div className="flex items-center space-x-2 w-1/4">
+        <CheckCircle className="h-3 w-3" />
+        <div className="text-13 text-primary">{accessText}</div>
+      </div>
+      <div className="flex flex-row space-x-2 flex-wrap space-y-2 w-3/4">
+        {resources.map((resource) => (
+          <div
+            key={resource}
+            className="text-11 text-tertiary font-medium border border-subtle-1 rounded-md px-2 py-0.5 bg-layer-1"
+          >
+            {resource}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

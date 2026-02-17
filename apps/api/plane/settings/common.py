@@ -608,6 +608,7 @@ FIREBASE_CLIENT_CERT_URL = os.environ.get("FIREBASE_CLIENT_CERT_URL", "")
 
 # Oauth Provider Settings
 from plane.authentication.utils import is_pkce_required  # noqa
+from plane.utils.oauth import ALL_OAUTH_SCOPES, READ_SCOPE, WRITE_SCOPE  # noqa
 
 OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL = "authentication.AccessToken"
 OAUTH2_PROVIDER_APPLICATION_MODEL = "authentication.Application"
@@ -625,6 +626,8 @@ OAUTH2_PROVIDER = {
         "refresh_token",
     ],
     "PKCE_REQUIRED": is_pkce_required,
+    "SCOPES": ALL_OAUTH_SCOPES,
+    "DEFAULT_SCOPES": [READ_SCOPE, WRITE_SCOPE],
 }
 
 # OpenSearch settings

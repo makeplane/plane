@@ -19,10 +19,12 @@ import { cn } from "@plane/ui";
 type Props = {
   collapsible?: boolean;
   title: string;
+  titleSuffix?: React.ReactNode;
+  isDefaultOpen?: boolean;
 } & PropsWithChildren;
 
-export function FormSection({ collapsible, title, children }: Props) {
-  const [collapsibleOpen, setCollapsibleOpen] = useState(true);
+export function FormSection({ collapsible, title, titleSuffix, children, isDefaultOpen = true }: Props) {
+  const [collapsibleOpen, setCollapsibleOpen] = useState(isDefaultOpen);
 
   const handleToggle = () => {
     if (collapsible) {
@@ -36,7 +38,10 @@ export function FormSection({ collapsible, title, children }: Props) {
         className={`flex items-center justify-between ${collapsible ? "cursor-pointer" : ""}`}
         onClick={handleToggle}
       >
-        <h3 className="text-16 font-medium">{title}</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-16 font-medium">{title}</h3>
+          {titleSuffix}
+        </div>
         {collapsible && (
           <div className="flex items-center gap-2">
             <ChevronDownIcon

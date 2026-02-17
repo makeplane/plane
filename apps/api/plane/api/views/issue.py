@@ -167,6 +167,25 @@ from plane.ee.utils.workflow import WorkflowStateManager
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
 )
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from rest_framework.permissions import IsAuthenticated
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_WORK_ITEMS_READ_SCOPE,
+    PROJECTS_WORK_ITEMS_WRITE_SCOPE,
+    PROJECTS_LABELS_READ_SCOPE,
+    PROJECTS_LABELS_WRITE_SCOPE,
+    PROJECTS_WORK_ITEM_LINKS_READ_SCOPE,
+    PROJECTS_WORK_ITEM_LINKS_WRITE_SCOPE,
+    PROJECTS_WORK_ITEM_COMMENTS_READ_SCOPE,
+    PROJECTS_WORK_ITEM_COMMENTS_WRITE_SCOPE,
+    PROJECTS_WORK_ITEM_ACTIVITIES_READ_SCOPE,
+    PROJECTS_WORK_ITEM_ATTACHMENTS_READ_SCOPE,
+    PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE,
+    PROJECTS_WORK_ITEM_RELATIONS_READ_SCOPE,
+    PROJECTS_WORK_ITEM_RELATIONS_WRITE_SCOPE,
+)
 
 
 def user_has_issue_permission(user_id, project_id, issue=None, allowed_roles=None, allow_creator=True):
@@ -192,7 +211,10 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
 
     model = Issue
     webhook_event = "issue"
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
+    }
     serializer_class = IssueSerializer
     use_read_replica = True
 
@@ -294,7 +316,11 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
 
     model = Issue
     webhook_event = "issue"
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+    }
     serializer_class = IssueSerializer
     use_read_replica = True
 
@@ -554,7 +580,13 @@ class IssueDetailAPIEndpoint(BaseAPIView):
 
     model = Issue
     webhook_event = "issue"
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+    }
     serializer_class = IssueSerializer
     use_read_replica = True
 
@@ -955,7 +987,11 @@ class LabelListCreateAPIEndpoint(BaseAPIView):
 
     serializer_class = LabelSerializer
     model = Label
-    permission_classes = [ProjectMemberPermission]
+    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_LABELS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_LABELS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -1081,7 +1117,12 @@ class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
 
     serializer_class = LabelSerializer
     model = Label
-    permission_classes = [ProjectMemberPermission]
+    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_LABELS_READ_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_LABELS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_LABELS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     @label_docs(
@@ -1192,7 +1233,11 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
 
     serializer_class = IssueLinkSerializer
     model = IssueLink
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_LINKS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_LINKS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -1293,7 +1338,13 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
 class IssueLinkDetailAPIEndpoint(BaseAPIView):
     """Issue Link Detail Endpoint"""
 
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_LINKS_READ_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_LINKS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_LINKS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_LINKS_WRITE_SCOPE]],
+    }
 
     model = IssueLink
     serializer_class = IssueLinkSerializer
@@ -1439,7 +1490,11 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
     serializer_class = IssueCommentSerializer
     model = IssueComment
     webhook_event = "issue_comment"
-    permission_classes = [ProjectLitePermission]
+    permission_classes = [ProjectLitePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -1611,7 +1666,13 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
     serializer_class = IssueCommentSerializer
     model = IssueComment
     webhook_event = "issue_comment"
-    permission_classes = [ProjectLitePermission]
+    permission_classes = [ProjectLitePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_READ_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -1790,7 +1851,10 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
 
 
 class IssueActivityListAPIEndpoint(BaseAPIView):
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ACTIVITIES_READ_SCOPE]],
+    }
     use_read_replica = True
 
     @issue_activity_docs(
@@ -1844,7 +1908,10 @@ class IssueActivityListAPIEndpoint(BaseAPIView):
 class IssueActivityDetailAPIEndpoint(BaseAPIView):
     """Issue Activity Detail Endpoint"""
 
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ACTIVITIES_READ_SCOPE]],
+    }
     use_read_replica = True
 
     @issue_activity_docs(
@@ -1906,6 +1973,11 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
     model = FileAsset
     use_read_replica = True
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+    }
 
     @issue_attachment_docs(
         operation_id="create_work_item_attachment",
@@ -2129,6 +2201,13 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
     model = FileAsset
     use_read_replica = True
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_READ_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+    }
 
     @issue_attachment_docs(
         operation_id="delete_work_item_attachment",
@@ -2329,7 +2408,14 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
 
 class IssueAttachmentServerEndpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+        "PUT": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
+    }
     model = FileAsset
     use_read_replica = True
 
@@ -2508,6 +2594,10 @@ class IssueSearchEndpoint(BaseAPIView):
     """Endpoint to search across multiple fields in the issues"""
 
     use_read_replica = True
+    permission_classes = [IsAuthenticated, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
+    }
 
     @extend_schema(
         operation_id="search_work_items",
@@ -2590,7 +2680,11 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
 
     serializer_class = IssueRelationSerializer
     model = IssueRelation
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_RELATIONS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_RELATIONS_WRITE_SCOPE]],
+    }
 
     @issue_docs(
         operation_id="list_work_item_relations",
@@ -2821,7 +2915,10 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
 class IssueRelationRemoveAPIEndpoint(BaseAPIView):
     """Issue Relation Remove Endpoint"""
 
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_RELATIONS_WRITE_SCOPE]],
+    }
     model = IssueRelation
 
     @issue_docs(

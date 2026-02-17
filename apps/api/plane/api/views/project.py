@@ -76,6 +76,15 @@ from plane.utils.openapi import (
 )
 
 from plane.ee.models import ProjectFeature
+from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    PROJECTS_READ_SCOPE,
+    PROJECTS_WRITE_SCOPE,
+    PROJECTS_FEATURES_READ_SCOPE,
+    PROJECTS_FEATURES_WRITE_SCOPE,
+)
 
 
 class ProjectListCreateAPIEndpoint(BaseAPIView):
@@ -84,7 +93,11 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
     serializer_class = ProjectSerializer
     model = Project
     webhook_event = "project"
-    permission_classes = [ProjectBasePermission]
+    permission_classes = [ProjectBasePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -378,7 +391,12 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
     model = Project
     webhook_event = "project"
 
-    permission_classes = [ProjectBasePermission]
+    permission_classes = [ProjectBasePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_READ_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -615,7 +633,11 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
 class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
     """Project Archive and Unarchive Endpoint"""
 
-    permission_classes = [ProjectBasePermission]
+    permission_classes = [ProjectBasePermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "POST": [[WRITE_SCOPE], [PROJECTS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WRITE_SCOPE]],
+    }
 
     @project_docs(
         operation_id="archive_project",
@@ -666,7 +688,11 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
 
 
 class ProjectFeatureAPIEndpoint(BaseAPIView):
-    permission_classes = [ProjectMemberPermission]
+    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_FEATURES_READ_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_FEATURES_WRITE_SCOPE]],
+    }
     serializer_class = ProjectFeatureSerializer
 
     def get_queryset(self):
