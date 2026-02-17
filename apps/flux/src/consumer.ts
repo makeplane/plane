@@ -11,7 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Effect, Layer, Schema, Fiber } from "effect";
+// dd-trace must be imported before any other modules for proper instrumentation
+import "./config/tracer";
+
+import { Effect, Layer, Logger, Schema, Fiber } from "effect";
 import { NodeRuntime } from "@effect/platform-node";
 import { AppConfig, AmqpService, SocketEmitter, Telemetry, TelemetryTracingLive } from "./services";
 import { MessageParseError } from "./schema";
@@ -104,6 +107,8 @@ const AmqpLive = AmqpService.Default.pipe(Layer.provide(AppConfig.Default));
 const SocketEmitterLive = SocketEmitter.Default.pipe(Layer.provide(AppConfig.Default));
 const ConsumerLive = Layer.mergeAll(AppConfig.Default, TelemetryTracingLive, AmqpLive, SocketEmitterLive);
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const main = Effect.gen(function* () {
   // Initialize telemetry first (Sentry must be ready before other services)
   yield* Telemetry;
@@ -118,6 +123,10 @@ const main = Effect.gen(function* () {
 
   yield* Effect.logInfo("CONSUMER: Listening for events...");
   yield* Fiber.join(consumerFiber);
-}).pipe(Effect.scoped, Effect.provide(ConsumerLive));
+}).pipe(
+  Effect.scoped,
+  Effect.provide(ConsumerLive),
+  isProduction ? Effect.provide(Logger.replace(Logger.defaultLogger, Logger.jsonLogger)) : (e) => e
+);
 
 NodeRuntime.runMain(main);

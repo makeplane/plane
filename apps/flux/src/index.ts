@@ -11,6 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+// dd-trace must be imported before any other modules for proper instrumentation
+import "./config/tracer";
+
 import { Effect, Layer, Logger, LogLevel } from "effect";
 import { NodeRuntime } from "@effect/platform-node";
 import { AppConfigLive, Telemetry, TelemetryTracingLive } from "./services";
@@ -26,6 +29,13 @@ const program = Effect.gen(function* () {
   yield* Effect.never;
 });
 
-const runnable = program.pipe(Effect.provide(MainLive), Effect.scoped, Logger.withMinimumLogLevel(LogLevel.Info));
+const isProduction = process.env.NODE_ENV === "production";
+
+const runnable = program.pipe(
+  Effect.provide(MainLive),
+  Effect.scoped,
+  Logger.withMinimumLogLevel(LogLevel.Info),
+  isProduction ? Effect.provide(Logger.replace(Logger.defaultLogger, Logger.jsonLogger)) : (e) => e
+);
 
 NodeRuntime.runMain(runnable);

@@ -439,9 +439,6 @@ importers:
       '@opentelemetry/semantic-conventions':
         specifier: 1.39.0
         version: 1.39.0
-      '@plane/logger':
-        specifier: workspace:*
-        version: link:../../packages/logger
       '@sentry/node':
         specifier: 'catalog:'
         version: 10.38.0
@@ -460,6 +457,9 @@ importers:
       axios:
         specifier: 'catalog:'
         version: 1.13.5
+      dd-trace:
+        specifier: ^5.45.0
+        version: 5.86.0
       effect:
         specifier: 3.19.16
         version: 3.19.16

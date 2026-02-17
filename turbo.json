@@ -58,7 +58,8 @@
     "ENABLE_EXPERIMENTAL_COREPACK",
     "VITE_TURNSTILE_SITE_KEY",
     "VITE_FLATFILE_PUBLISHABLE_KEY",
-    "SENTRY_AUTH_TOKEN"
+    "SENTRY_AUTH_TOKEN",
+    "DD_TRACE_ENABLED"
   ],
   "remoteCache": {
     "enabled": false
