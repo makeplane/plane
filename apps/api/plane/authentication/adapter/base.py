@@ -109,7 +109,7 @@ class Adapter:
 
         # Check if sign up is disabled and invite is present or not
         if ENABLE_SIGNUP == "0" and not WorkspaceMemberInvite.objects.filter(email=email).exists():
-            self.logger.warning(f"Sign up is disabled and invite is not present: {email}")
+            self.logger.warning("Sign up is disabled and invite is not present")
             # Raise exception
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["SIGNUP_DISABLED"],
