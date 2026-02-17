@@ -112,14 +112,14 @@ class GitHubOAuthProvider(OauthAdapter):
             emails_response = requests.get(emails_url, headers=headers).json()
             # Ensure the response is a list before iterating
             if not isinstance(emails_response, list):
-                self.logger.error(f"Unexpected response format from GitHub emails API: {emails_response}")
+                self.logger.error("Unexpected response format from GitHub emails API")
                 raise AuthenticationException(
                     error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                     error_message="GITHUB_OAUTH_PROVIDER_ERROR",
                 )
             email = next((email["email"] for email in emails_response if email["primary"]), None)
             if not email:
-                self.logger.error(f"No primary email found for user: {emails_response}")
+                self.logger.error("No primary email found for user")
                 raise AuthenticationException(
                     error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                     error_message="GITHUB_OAUTH_PROVIDER_ERROR",
