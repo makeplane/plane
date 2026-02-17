@@ -12,6 +12,7 @@ on:
       - "reopened"
     paths:
       - "apps/api/**"
+      - "apps/pi/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
