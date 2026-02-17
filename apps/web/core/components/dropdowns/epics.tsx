@@ -244,8 +244,8 @@ export const EpicsDropdown = observer(function EpicsDropdown(props: Props) {
                         >
                           {({ selected }) => (
                             <>
-                              <EpicIcon className="h-4 w-4 text-tertiary" />
-                              <span className="flex-grow truncate">{option.name}</span>
+                              <EpicIcon className="h-4 w-4 text-tertiary shrink-0" />
+                              <span className="flex items-center flex-grow truncate">{option.name}</span>
                               {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                             </>
                           )}

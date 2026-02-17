@@ -104,15 +104,7 @@ type Props = {
 export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
   const { workspaceSlug, initiativeId, disabled } = props;
   const {
-    initiative: {
-      getInitiativeAnalyticsById,
-      getInitiativeById,
-      scope: {
-        epics: { getInitiativeEpicsDetailById },
-      },
-      toggleProjectsModal,
-      toggleEpicModal,
-    },
+    initiative: { getInitiativeAnalyticsById, getInitiativeById, toggleProjectsModal, toggleEpicModal },
   } = useInitiatives();
 
   const { t } = useTranslation();
@@ -120,9 +112,8 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
   // derived values
   const initiativeAnalytics = getInitiativeAnalyticsById(initiativeId);
   const initiative = getInitiativeById(initiativeId);
-  const initiativeEpics = getInitiativeEpicsDetailById(initiativeId);
 
-  const epicsCount = initiativeEpics?.length ?? 0;
+  const epicsCount = initiative?.epic_ids?.length ?? 0;
   const projectsCount = initiative?.project_ids?.length ?? 0;
 
   const shouldShowProjectsCard = projectsCount > 0;

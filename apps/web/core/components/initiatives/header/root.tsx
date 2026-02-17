@@ -100,7 +100,7 @@ export const InitiativesDetailsHeader = observer(function InitiativesDetailsHead
         icon: ScopeIcon,
       },
     ],
-    [workspaceSlug, initiativeId, router]
+    [workspaceSlug, initiativeId, router, t]
   );
 
   const activeDetailOption = DETAIL_OPTIONS.find((option) => option.key === selectedNavigationKey);

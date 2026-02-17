@@ -12,6 +12,7 @@
  */
 
 import type { InitiativeService } from "@/services/initiative.service";
+import { storage } from "@/lib/local-storage";
 import type { IInitiativeScopeDisplayFiltersOptions } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
 import { action, makeObservable, observable } from "mobx";
@@ -20,6 +21,8 @@ import { InitiativeEpicStore } from "./initiative-epics.store";
 import { InitiativeEpicsFilterStore } from "./initiative-epics-filter.store";
 import { InitiativeProjectsStore } from "./initiative-projects.store";
 import type { RootStore } from "@/plane-web/store/root.store";
+
+const DISPLAY_FILTERS_STORAGE_KEY = "initiative_scope_display_filters";
 
 export interface IInitiativeScopeStore {
   epics: InitiativeEpicStore;
@@ -52,9 +55,44 @@ export class InitiativeScopeStore implements IInitiativeScopeStore {
     this.projects = new InitiativeProjectsStore(_rootStore, initiativeService);
   }
 
-  /**Initialize filters */
+  /**
+   * Get stored display filters from localStorage
+   */
+  private getStoredDisplayFilters = (initiativeId: string): IInitiativeScopeDisplayFiltersOptions | undefined => {
+    const stored = storage.get(DISPLAY_FILTERS_STORAGE_KEY);
+    if (!stored) return undefined;
+    try {
+      const parsed = JSON.parse(stored);
+      return parsed?.[initiativeId] ?? undefined;
+    } catch {
+      return undefined;
+    }
+  };
+
+  /**
+   * Save display filters to localStorage
+   */
+  private saveDisplayFiltersToStorage = (
+    initiativeId: string,
+    filters: IInitiativeScopeDisplayFiltersOptions
+  ): void => {
+    const stored = storage.get(DISPLAY_FILTERS_STORAGE_KEY);
+    let all: Record<string, IInitiativeScopeDisplayFiltersOptions> = {};
+    if (stored) {
+      try {
+        all = JSON.parse(stored);
+      } catch {
+        // ignore parse errors
+      }
+    }
+    all[initiativeId] = filters;
+    storage.set(DISPLAY_FILTERS_STORAGE_KEY, JSON.stringify(all));
+  };
+
+  /**Initialize filters, restoring from localStorage if available */
   initDisplayFilters = (initiativeId: string) => {
-    this.displayFiltersMap.set(initiativeId, DEFAULT_DISPLAY_FILTERS);
+    const stored = this.getStoredDisplayFilters(initiativeId);
+    this.displayFiltersMap.set(initiativeId, stored ?? DEFAULT_DISPLAY_FILTERS);
   };
 
   /**
@@ -77,9 +115,11 @@ export class InitiativeScopeStore implements IInitiativeScopeStore {
   updateDisplayFilters = (initiativeId: string, displayFilters: Partial<IInitiativeScopeDisplayFiltersOptions>) => {
     const currentDisplayFilters = this.getDisplayFilters(initiativeId);
 
-    this.displayFiltersMap.set(initiativeId, {
+    const updatedFilters = {
       ...(currentDisplayFilters ?? DEFAULT_DISPLAY_FILTERS),
       ...displayFilters,
-    });
+    };
+    this.displayFiltersMap.set(initiativeId, updatedFilters);
+    this.saveDisplayFiltersToStorage(initiativeId, updatedFilters);
   };
 }

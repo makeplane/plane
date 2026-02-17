@@ -282,7 +282,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
                       >
                         {({ selected }) => (
                           <>
-                            <span className="flex-grow truncate">{option.content}</span>
+                            <span className="flex items-center flex-grow truncate">{option.content}</span>
                             {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                           </>
                         )}

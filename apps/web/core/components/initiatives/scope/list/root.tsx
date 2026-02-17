@@ -21,6 +21,7 @@ import initiativesListDark from "@/app/assets/empty-state/initiatives/scope/init
 import initiativesListLight from "@/app/assets/empty-state/initiatives/scope/initiatives-list-light.webp?url";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { AddScopeButton } from "@/components/initiatives/common/add-scope-button";
+import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
 import { EpicListItem } from "../../details/main/collapsible-section/epics/epic-list-item/root";
 import { ProjectList } from "../../details/main/collapsible-section/projects/project-list";
 import { useInitiativeScopeShared } from "../filters/context-shared";
@@ -31,10 +32,11 @@ type Props = {
   workspaceSlug: string;
   initiativeId: string;
   disabled: boolean;
+  isDataLoading?: boolean;
 };
 
 export const InitiativeScopeListView = observer(function InitiativeScopeListView(props: Props) {
-  const { epicIds, projectIds, workspaceSlug, initiativeId, disabled } = props;
+  const { epicIds, projectIds, workspaceSlug, initiativeId, disabled, isDataLoading } = props;
   const { activeTab } = useInitiativeScopeShared();
 
   const { t } = useTranslation();
@@ -43,6 +45,8 @@ export const InitiativeScopeListView = observer(function InitiativeScopeListView
   const isEmpty = epicIds?.length === 0 && projectIds?.length === 0;
 
   const resolvedAssetPath = resolvedTheme === "light" ? initiativesListLight : initiativesListDark;
+
+  if (isDataLoading) return <ListLayoutLoader />;
 
   if (isEmpty)
     return (

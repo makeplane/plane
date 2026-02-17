@@ -12,11 +12,14 @@
  */
 
 import type { InitiativeService } from "@/services/initiative.service";
+import { storage } from "@/lib/local-storage";
 import type { TProjectDisplayFilters } from "@plane/types";
 import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import type { TExternalProjectFilterExpression } from "../../components/initiatives/scope/filters/types";
 import type { InitiativeProjectsStore } from "./initiative-projects.store";
+
+const PROJECT_FILTERS_STORAGE_KEY = "initiative_project_scope_filters";
 
 export type TInitiativeProjectFilters = {
   displayFilters?: TProjectDisplayFilters;
@@ -55,12 +58,44 @@ export class InitiativeProjectsFilterStore implements IInitiativeProjectsFilterS
   }
 
   /**
-   * Initialize the initiative projects filters
+   * Get stored rich filters from localStorage
+   */
+  private getStoredRichFilters = (initiativeId: string): TExternalProjectFilterExpression | undefined => {
+    const stored = storage.get(PROJECT_FILTERS_STORAGE_KEY);
+    if (!stored) return undefined;
+    try {
+      const parsed = JSON.parse(stored);
+      return parsed?.[initiativeId]?.richFilters ?? undefined;
+    } catch {
+      return undefined;
+    }
+  };
+
+  /**
+   * Save rich filters to localStorage
+   */
+  private saveRichFiltersToStorage = (initiativeId: string, richFilters: TExternalProjectFilterExpression): void => {
+    const stored = storage.get(PROJECT_FILTERS_STORAGE_KEY);
+    let all: Record<string, { richFilters: TExternalProjectFilterExpression }> = {};
+    if (stored) {
+      try {
+        all = JSON.parse(stored);
+      } catch {
+        // ignore parse errors
+      }
+    }
+    all[initiativeId] = { richFilters };
+    storage.set(PROJECT_FILTERS_STORAGE_KEY, JSON.stringify(all));
+  };
+
+  /**
+   * Initialize the initiative projects filters, restoring richFilters from localStorage if available
    * @param initiativeId - The initiative id
    */
   initializeFilters = (initiativeId: string) => {
+    const storedRichFilters = this.getStoredRichFilters(initiativeId);
     set(this.initiativeProjectsFiltersMap, [initiativeId, "displayFilters"], {});
-    set(this.initiativeProjectsFiltersMap, [initiativeId, "richFilters"], {});
+    set(this.initiativeProjectsFiltersMap, [initiativeId, "richFilters"], storedRichFilters ?? {});
   };
 
   /**
@@ -94,6 +129,8 @@ export class InitiativeProjectsFilterStore implements IInitiativeProjectsFilterS
       set(this.initiativeProjectsFiltersMap, [initiativeId, "richFilters"], richFilters);
     });
 
+    this.saveRichFiltersToStorage(initiativeId, richFilters);
+
     this.initiativeProjectsStore.fetchInitiativeProjects(
       this.initiativeProjectsStore.rootStore.router.workspaceSlug ?? "",
       initiativeId
@@ -105,6 +142,7 @@ export class InitiativeProjectsFilterStore implements IInitiativeProjectsFilterS
    * @param initiativeId
    */
   resetFilters = (initiativeId: string) => {
+    this.saveRichFiltersToStorage(initiativeId, {});
     this.initializeFilters(initiativeId);
   };
 }

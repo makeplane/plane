@@ -53,8 +53,8 @@ export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
       scope: {
         getDisplayFilters,
         updateDisplayFilters,
-        epics: { getInitiativeEpicsById, fetchInitiativeEpics, filters: epicsFilterStore },
-        projects: { getInitiativeProjectsById, fetchInitiativeProjects },
+        epics: { getInitiativeEpicsById, fetchInitiativeEpics, filters: epicsFilterStore, initiativeEpicLoader },
+        projects: { getInitiativeProjectsById, fetchInitiativeProjects, initiativeProjectLoader },
       },
       toggleEpicModal,
       toggleProjectsModal,
@@ -103,12 +103,19 @@ export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
     });
   };
 
+  // Derive loading state from store loaders
+  const isDataLoading =
+    activeTab === INITIATIVE_SCOPE_TABS.EPICS
+      ? initiativeEpicLoader[initiativeId?.toString()] !== "loaded"
+      : initiativeProjectLoader[initiativeId?.toString()] !== "loaded";
+
   // Filter props based on active tab
   const scopeViewProps = useMemo(() => {
     const baseProps = {
       workspaceSlug: workspaceSlug?.toString(),
       initiativeId: initiativeId?.toString(),
       disabled: !isEditable,
+      isDataLoading,
       handleAddEpic: () => toggleEpicModal(true),
       handleAddProject: () => toggleProjectsModal(true),
     };
@@ -132,6 +139,7 @@ export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
     workspaceSlug,
     initiativeId,
     isEditable,
+    isDataLoading,
     toggleEpicModal,
     toggleProjectsModal,
     initiativeProjects,
@@ -229,7 +237,7 @@ export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
                 </div>
 
                 <InitiativeScopeProjectFiltersRow />
-                <WorkItemFiltersRow filter={epicFilterInstance} />
+                {activeTab === INITIATIVE_SCOPE_TABS.EPICS && <WorkItemFiltersRow filter={epicFilterInstance} />}
 
                 {INITIATIVE_SCOPE_ACTIVE_LAYOUTS[activeLayout]}
                 <EpicPeekOverview />

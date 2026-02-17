@@ -19,6 +19,7 @@ import { GANTT_TIMELINE_TYPE, INITIATIVE_SCOPE_TABS } from "@plane/types";
 import initiativesGanttDark from "@/app/assets/empty-state/initiatives/scope/initiatives-gantt-dark.webp?url";
 import initiativesGanttLight from "@/app/assets/empty-state/initiatives/scope/initiatives-gantt-light.webp?url";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
 import { TimeLineTypeContext } from "@/components/timeline/contexts";
 import { AddScopeButton } from "../../common/add-scope-button";
 import { useInitiativeScopeShared } from "../filters/context-shared";
@@ -30,11 +31,13 @@ type Props = {
   workspaceSlug: string;
   initiativeId: string;
   disabled: boolean;
+  isDataLoading?: boolean;
   handleAddEpic: () => void;
   handleAddProject: () => void;
 };
 export function InitiativeScopeTimelineView(props: Props) {
-  const { epicIds, projectIds, workspaceSlug, handleAddEpic, handleAddProject, initiativeId, disabled } = props;
+  const { epicIds, projectIds, workspaceSlug, handleAddEpic, handleAddProject, initiativeId, disabled, isDataLoading } =
+    props;
   const { activeTab } = useInitiativeScopeShared();
 
   const { t } = useTranslation();
@@ -43,6 +46,8 @@ export function InitiativeScopeTimelineView(props: Props) {
   const isEmpty = epicIds.length === 0 && projectIds.length === 0;
 
   const resolvedAssetPath = resolvedTheme === "light" ? initiativesGanttLight : initiativesGanttDark;
+
+  if (isDataLoading) return <ListLayoutLoader />;
 
   if (isEmpty)
     return (
