@@ -300,7 +300,6 @@ export class InitiativeStore implements IInitiativeStore {
 
   initFilteredInitiatives = async (workspaceSlug: string) => {
     await this.initiativeFilterStore.initInitiativeFilters(workspaceSlug);
-    await this.fetchInitiativeLabels(workspaceSlug);
     const filters = this.initiativeFilterStore.getInitiativeFilters(workspaceSlug);
     await this.fetchFilteredInitiatives(workspaceSlug, filters);
   };

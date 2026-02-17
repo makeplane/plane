@@ -65,7 +65,8 @@ export const InitiativesRoot = observer(function InitiativesRoot() {
     []
   );
 
-  if (initiative.fetchingFilteredInitiatives) return <InitiativeLayoutLoader layout={activeLayout} />;
+  if (initiative.initiativesLoader || initiative.fetchingFilteredInitiatives)
+    return <InitiativeLayoutLoader layout={activeLayout} />;
 
   const emptyGroupedInitiativeIds = Object.values(groupedInitiativeIds || {}).every(
     (arr) => Array.isArray(arr) && arr.length === 0
