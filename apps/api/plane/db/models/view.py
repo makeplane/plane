@@ -68,6 +68,7 @@ class IssueView(WorkspaceBaseModel):
     logo_props = models.JSONField(default=dict)
     owned_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="views")
     is_locked = models.BooleanField(default=False)
+    archived_at = models.DateTimeField(null=True)
 
     class Meta:
         verbose_name = "Issue View"
