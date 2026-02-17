@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { RelationTypeEnum } from "@makeplane/plane-node-sdk";
+import type { PropertyRelationType } from "@makeplane/plane-node-sdk";
 import type { SelectOption } from "@/types/form/base/field-options";
 import type { RelationField, SelectField, TextField } from "@/types/form/base/fields";
 
@@ -73,7 +73,7 @@ export class StaticFormFieldsService {
       placeholder: "Select assignees",
       helpText: "Select the assignees for the work item",
       options: [],
-      relationType: RelationTypeEnum.User,
+      relationType: "USER" satisfies PropertyRelationType,
       isMulti: true,
     };
   }

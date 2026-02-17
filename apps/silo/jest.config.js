@@ -6,5 +6,7 @@ export default {
   testEnvironment: "node",
   transform: {
     "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.jsx?$": "ts-jest",
   },
+  transformIgnorePatterns: ["node_modules/(?!(@plane)/)"],
 };

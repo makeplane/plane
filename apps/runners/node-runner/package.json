@@ -9,7 +9,7 @@
     "dev": "PORT=3300 tsdown --watch --onSuccess \"node --env-file=.env .\""
   },
   "dependencies": {
-    "@makeplane/plane-node-sdk": "0.2.4",
+    "@makeplane/plane-node-sdk": "0.2.8",
     "acorn": "^8.15.0",
     "acorn-walk": "^8.3.4",
     "axios": "catalog:",

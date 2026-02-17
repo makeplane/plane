@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { RelationTypeEnum, PropertyTypeEnum } from "@makeplane/plane-node-sdk";
+import type { PropertyRelationType, PropertyType } from "@makeplane/plane-node-sdk";
 import type { SelectOption, UserOption } from "./field-options";
 import type { FieldValidation, TextValidation, NumberValidation, DateValidation, FileValidation } from "./validations";
 
@@ -38,7 +38,7 @@ export interface ConditionalRule {
 export interface BaseField {
   id: string;
   name: string;
-  type: PropertyTypeEnum;
+  type: PropertyType | "FILE";
   required: boolean;
   visible: boolean;
   order: number;
@@ -65,7 +65,7 @@ export interface SelectField extends BaseField {
 
 export interface RelationField extends BaseField {
   type: "RELATION";
-  relationType: RelationTypeEnum;
+  relationType: PropertyRelationType;
   options: UserOption[];
   allowUnassigned?: boolean;
   defaultValue?: string;

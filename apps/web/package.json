@@ -30,7 +30,7 @@
     "@fontsource/ibm-plex-mono": "5.2.7",
     "@fontsource/material-symbols-rounded": "5.2.34",
     "@headlessui/react": "^1.7.19",
-    "@makeplane/plane-node-sdk": "^0.2.7",
+    "@makeplane/plane-node-sdk": "0.2.8",
     "@plane/constants": "workspace:*",
     "@plane/editor": "workspace:*",
     "@plane/etl": "workspace:*",

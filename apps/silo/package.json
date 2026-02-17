@@ -33,7 +33,7 @@
     "@flatfile/listener": "^1.1.1",
     "@flatfile/plugin-record-hook": "^1.11.2",
     "@linear/sdk": "^30.0.0",
-    "@makeplane/plane-node-sdk": "0.1.4",
+    "@makeplane/plane-node-sdk": "0.2.8",
     "@octokit/openapi-webhooks-types": "^8.3.0",
     "@plane/constants": "workspace:*",
     "@plane/decorators": "workspace:*",

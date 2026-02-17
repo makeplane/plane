@@ -11,14 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { RelationTypeEnum } from "@makeplane/plane-node-sdk";
-import type { IssuePropertyAPI, PropertyTypeEnum } from "@makeplane/plane-node-sdk";
-import type { PlaneClientV2 } from "@/helpers/plane-api-client-v2";
+import type { PlaneClient, WorkItemProperty } from "@makeplane/plane-node-sdk";
 import { getPlaneClientV2 } from "@/helpers/plane-api-client-v2";
 import type { FormField, RelationField, SelectField } from "@/types/form/base/fields";
 
 export class OptionFormFieldsService {
-  private planeAPIClient: PlaneClientV2;
+  private planeAPIClient: PlaneClient;
 
   constructor(accessToken: string) {
     this.planeAPIClient = getPlaneClientV2({ accessToken });
@@ -30,16 +28,12 @@ export class OptionFormFieldsService {
     issueTypeId: string,
     orderInFormFields: number
   ): Promise<FormField[]> {
-    const workItemProperties = await this.planeAPIClient.workItemPropertiesApi.listIssueProperties({
-      projectId,
-      slug,
-      typeId: issueTypeId,
-    });
+    const workItemProperties = await this.planeAPIClient.workItemProperties.list(slug, projectId, issueTypeId);
 
     const customFields: FormField[] = [];
 
     for (const property of workItemProperties) {
-      const formField = await this.getFormFieldFromProperty(issueTypeId, property);
+      const formField = this.getFormFieldFromProperty(issueTypeId, property);
       if (formField) {
         formField.order = orderInFormFields;
         orderInFormFields++;
@@ -50,38 +44,35 @@ export class OptionFormFieldsService {
     return customFields;
   }
 
-  private async getFormFieldFromProperty(
-    issueTypeId: string,
-    property: IssuePropertyAPI
-  ): Promise<FormField | undefined> {
+  private getFormFieldFromProperty(issueTypeId: string, property: WorkItemProperty): FormField | undefined {
     if (property.settings?.display_format === "readonly") {
       return undefined;
     }
 
-    const isMulti = property.isMulti || property.settings?.display_format === "multi-line";
+    const isMulti = property.is_multi || property.settings?.display_format === "multi-line";
 
     // Create base field properties
     const baseField = {
       id: `${issueTypeId}:${property.id}`,
-      name: property.displayName ?? "",
-      type: property.propertyType,
-      required: property.isRequired ?? false,
-      visible: property.isActive ?? true,
-      order: property.sortOrder ?? 0,
+      name: property.display_name ?? "",
+      type: property.property_type,
+      required: property.is_required ?? false,
+      visible: property.is_active ?? true,
+      order: property.sort_order ?? 0,
       placeholder: property.description ?? "",
       helpText: property.description?.slice(0, 100) ?? "",
       customField: true,
       isMulti,
     };
 
-    if (property.propertyType === "RELATION") {
+    if (property.property_type === "RELATION") {
       const relationField = baseField as RelationField;
-      relationField.relationType = property.relationType ?? RelationTypeEnum.User;
+      relationField.relationType = property.relation_type ?? "USER";
       relationField.options = [];
       return relationField as FormField;
     }
 
-    if (property.propertyType === "OPTION") {
+    if (property.property_type === "OPTION") {
       const selectField = baseField as SelectField;
       selectField.options = [];
       return selectField;
