@@ -1,28 +1,36 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { cn } from "@plane/utils";
 // local imports
 import type { TPopoverMenuOptions } from "./root";
 
-export const NotificationMenuOptionItem: FC<TPopoverMenuOptions> = observer((props) => {
+export const NotificationMenuOptionItem = observer(function NotificationMenuOptionItem(props: TPopoverMenuOptions) {
   const { type, label = "", isActive, prependIcon, appendIcon, onClick } = props;
 
   if (type === "menu-item")
     return (
       <div
-        className="flex items-center gap-2 cursor-pointer mx-2 px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
+        className="flex items-center gap-2 cursor-pointer mx-2 px-2 p-1 transition-all hover:bg-layer-1 rounded-xs"
         onClick={() => onClick && onClick()}
       >
         {prependIcon && prependIcon}
-        <div className={cn("whitespace-nowrap text-sm", isActive ? "text-custom-text-100" : "text-custom-text-200")}>
+        <div
+          className={cn("whitespace-nowrap text-body-xs-medium", {
+            "text-primary": isActive,
+            "text-secondary": !isActive,
+          })}
+        >
           {label}
         </div>
         {appendIcon && <div className="ml-auto">{appendIcon}</div>}
       </div>
     );
 
-  return <div className="border-b border-custom-border-200" />;
+  return <div className="border-b border-subtle" />;
 });

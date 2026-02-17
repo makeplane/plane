@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Projek",
@@ -74,7 +80,7 @@ export default {
       },
       unique_code: {
         label: "Kode unik",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Tempelkan kode yang dikirim ke email anda",
         requesting_new_code: "Meminta kode baru",
         sending_code: "Mengirim kode",
@@ -340,13 +346,13 @@ export default {
   project_id_must_be_at_most_5_characters: "ID proyek maksimal 5 karakter",
   project_id: "ID proyek",
   project_id_tooltip_content:
-    "Membantu Anda mengidentifikasi item kerja dalam proyek secara unik. Maksimal 5 karakter.",
+    "Membantu Anda mengidentifikasi item kerja dalam proyek secara unik. Maksimal 10 karakter.",
   description_placeholder: "Deskripsi",
   only_alphanumeric_non_latin_characters_allowed: "Hanya karakter alfanumerik & Non-latin yang diizinkan.",
   project_id_is_required: "ID proyek diperlukan",
   project_id_allowed_char: "Hanya karakter alfanumerik & Non-latin yang diizinkan.",
   project_id_min_char: "ID proyek harus minimal 1 karakter",
-  project_id_max_char: "ID proyek maksimal 5 karakter",
+  project_id_max_char: "ID proyek maksimal 10 karakter",
   project_description_placeholder: "Masukkan deskripsi proyek",
   select_network: "Pilih jaringan",
   lead: "Pemimpin",
@@ -644,6 +650,8 @@ export default {
   },
   common: {
     all: "Semua",
+    no_items_in_this_group: "Tidak ada item dalam grup ini",
+    drop_here_to_move: "Letakkan di sini untuk memindahkan",
     states: "Negara-negara",
     state: "Negara",
     state_groups: "Kelompok negara",
@@ -1528,6 +1536,47 @@ export default {
         "Jika Anda mengonfirmasi, semua opsi pengurutan, filter, dan tampilan + tata letak yang telah Anda pilih untuk tampilan ini akan dihapus secara permanen tanpa cara untuk memulihkannya.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Ubah email",
+        description: "Masukkan alamat email baru untuk menerima tautan verifikasi.",
+        toasts: {
+          success_title: "Berhasil!",
+          success_message: "Email berhasil diperbarui. Silakan masuk kembali.",
+        },
+        form: {
+          email: {
+            label: "Email baru",
+            placeholder: "Masukkan email Anda",
+            errors: {
+              required: "Email wajib diisi",
+              invalid: "Email tidak valid",
+              exists: "Email sudah ada. Gunakan yang lain.",
+              validation_failed: "Validasi email gagal. Coba lagi.",
+            },
+          },
+          code: {
+            label: "Kode unik",
+            placeholder: "123456",
+            helper_text: "Kode verifikasi dikirim ke email baru Anda.",
+            errors: {
+              required: "Kode unik wajib diisi",
+              invalid: "Kode verifikasi tidak valid. Coba lagi.",
+            },
+          },
+        },
+        actions: {
+          continue: "Lanjutkan",
+          confirm: "Konfirmasi",
+          cancel: "Batal",
+        },
+        states: {
+          sending: "Mengirim…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Pengaturan ruang kerja",
     page_label: "{workspace} - Pengaturan Umum",
@@ -1543,6 +1592,7 @@ export default {
         name: "Nama ruang kerja",
         company_size: "Ukuran perusahaan",
         url: "URL ruang kerja",
+        workspace_timezone: "Zona waktu ruang kerja",
         update_workspace: "Perbarui ruang kerja",
         delete_workspace: "Hapus ruang kerja ini",
         delete_workspace_description:
@@ -1608,6 +1658,7 @@ export default {
         exporting: "Mengeskpor",
         previous_exports: "Ekspor sebelumnya",
         export_separate_files: "Ekspor data ke file terpisah",
+        filters_info: "Terapkan filter untuk mengekspor item kerja tertentu berdasarkan kriteria Anda.",
         modal: {
           title: "Ekspor ke",
           toasts: {
@@ -1935,6 +1986,44 @@ export default {
         title: "Belum ada sistem perkiraan",
         description: "Buat serangkaian perkiraan untuk mengkomunikasikan jumlah pekerjaan per item kerja.",
         primary_button: "Tambah sistem perkiraan",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Siklus",
+        short_title: "Siklus",
+        description:
+          "Jadwalkan pekerjaan dalam periode fleksibel yang menyesuaikan dengan ritme dan tempo unik proyek ini.",
+        toggle_title: "Aktifkan siklus",
+        toggle_description: "Rencanakan pekerjaan dalam jangka waktu yang terfokus.",
+      },
+      modules: {
+        title: "Modul",
+        short_title: "Modul",
+        description: "Atur pekerjaan menjadi sub-proyek dengan pemimpin dan penerima tugas khusus.",
+        toggle_title: "Aktifkan modul",
+        toggle_description: "Anggota proyek akan dapat membuat dan mengedit modul.",
+      },
+      views: {
+        title: "Tampilan",
+        short_title: "Tampilan",
+        description: "Simpan pengurutan, filter, dan opsi tampilan kustom atau bagikan dengan tim Anda.",
+        toggle_title: "Aktifkan tampilan",
+        toggle_description: "Anggota proyek akan dapat membuat dan mengedit tampilan.",
+      },
+      pages: {
+        title: "Halaman",
+        short_title: "Halaman",
+        description: "Buat dan edit konten bebas: catatan, dokumen, apa saja.",
+        toggle_title: "Aktifkan halaman",
+        toggle_description: "Anggota proyek akan dapat membuat dan mengedit halaman.",
+      },
+      intake: {
+        title: "Penerimaan",
+        short_title: "Penerimaan",
+        description: "Biarkan non-anggota berbagi bug, umpan balik, dan saran; tanpa mengganggu alur kerja Anda.",
+        toggle_title: "Aktifkan penerimaan",
+        toggle_description: "Izinkan anggota proyek membuat permintaan penerimaan dalam aplikasi.",
       },
     },
   },

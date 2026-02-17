@@ -1,12 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Extension } from "@tiptap/core";
-import { NodeType } from "@tiptap/pm/model";
-import { Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
+import type { NodeType } from "@tiptap/pm/model";
+import type { Transaction } from "@tiptap/pm/state";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { canJoin } from "@tiptap/pm/transform";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 
 declare module "@tiptap/core" {
-  // eslint-disable-next-line no-unused-vars
   interface Commands<ReturnType> {
     customKeymap: {
       /**

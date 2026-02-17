@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // helpers
 import { cn } from "@plane/utils";
@@ -9,7 +15,7 @@ type Props = {
   id: string;
 };
 
-export const EditorUserMention: React.FC<Props> = observer((props) => {
+export const EditorUserMention = observer(function EditorUserMention(props: Props) {
   const { id } = props;
   // store hooks
   const { data: currentUser } = useUser();
@@ -19,7 +25,7 @@ export const EditorUserMention: React.FC<Props> = observer((props) => {
 
   if (!userDetails) {
     return (
-      <div className="not-prose inline px-1 py-0.5 rounded bg-custom-background-80 text-custom-text-300 no-underline">
+      <div className="not-prose inline px-1 py-0.5 rounded-sm bg-layer-1 text-tertiary no-underline">
         @deactivated user
       </div>
     );
@@ -27,12 +33,9 @@ export const EditorUserMention: React.FC<Props> = observer((props) => {
 
   return (
     <div
-      className={cn(
-        "not-prose inline px-1 py-0.5 rounded bg-custom-primary-100/20 text-custom-primary-100 no-underline",
-        {
-          "bg-yellow-500/20 text-yellow-500": id === currentUser?.id,
-        }
-      )}
+      className={cn("not-prose inline px-1 py-0.5 rounded-sm bg-accent-primary/20 text-accent-primary no-underline", {
+        "bg-yellow-500/20 text-yellow-500": id === currentUser?.id,
+      })}
     >
       @{userDetails?.member__display_name}
     </div>

@@ -1,6 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { useCallback } from "react";
 import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
@@ -16,7 +19,7 @@ type TIssueAppliedFilters = {
   anchor: string;
 };
 
-export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) => {
+export const IssueAppliedFilters = observer(function IssueAppliedFilters(props: TIssueAppliedFilters) {
   const { anchor } = props;
   // router
   const router = useRouter();
@@ -92,7 +95,7 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
   if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <div className="border-b border-custom-border-200 bg-custom-background-100 p-4">
+    <div className="border-b border-subtle bg-surface-1 p-4">
       <AppliedFiltersList
         appliedFilters={appliedFilters || {}}
         handleRemoveFilter={handleFilters as any}

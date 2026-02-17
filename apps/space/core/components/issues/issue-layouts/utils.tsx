@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { isNil } from "lodash-es";
 // types
@@ -46,7 +50,7 @@ export const getGroupByColumns = (
     case "labels":
       return getLabelsColumns(label) as any;
     case "assignees":
-      return getAssigneeColumns(member) as any;
+      return getAssigneeColumns(member);
     case "created_by":
       return getCreatedByColumns(member) as any;
     default:
@@ -67,7 +71,7 @@ const getCycleColumns = (cycleStore: ICycleStore): IGroupByColumn[] | undefined 
       cycleGroups.push({
         id: cycle.id,
         name: cycle.name,
-        icon: <CycleGroupIcon cycleGroup={cycleStatus as TCycleGroups} className="h-3.5 w-3.5" />,
+        icon: <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />,
         payload: { cycle_id: cycle.id },
       });
     }
@@ -198,11 +202,8 @@ export const getDisplayPropertiesCount = (
   return count;
 };
 
-export const getIssueBlockId = (
-  issueId: string | undefined,
-  groupId: string | undefined,
-  subGroupId?: string | undefined
-) => `issue_${issueId}_${groupId}_${subGroupId}`;
+export const getIssueBlockId = (issueId: string | undefined, groupId: string | undefined, subGroupId?: string) =>
+  `issue_${issueId}_${groupId}_${subGroupId}`;
 
 /**
  * returns empty Array if groupId is None
@@ -223,7 +224,7 @@ export const removeNillKeys = <T,>(obj: T) =>
   Object.fromEntries(Object.entries(obj ?? {}).filter(([key, value]) => key && !isNil(value)));
 
 /**
- * This Method returns if the the grouped values are subGrouped
+ * This Method returns if the grouped values are subGrouped
  * @param groupedIssueIds
  * @returns
  */

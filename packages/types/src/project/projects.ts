@@ -1,6 +1,12 @@
-import { TLogoProps } from "../common";
-import { TUserPermissions } from "../enums";
-import { TStateGroups } from "../state";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { TLogoProps } from "../common";
+import type { TUserPermissions } from "../enums";
+import type { TStateGroups } from "../state";
 import type { IUser, IUserLite } from "../users";
 import type { IWorkspace } from "../workspace";
 
@@ -33,6 +39,7 @@ export interface IPartialProject {
   // actor
   created_by?: string;
   updated_by?: string;
+  intake_count?: number;
 }
 
 export interface IProject extends IPartialProject {
@@ -51,6 +58,7 @@ export interface IProject extends IPartialProject {
   is_favorite?: boolean;
   members?: string[];
   timezone?: string;
+  next_work_item_sequence?: number;
 }
 
 export type TProjectAnalyticsCountParams = {
@@ -72,12 +80,6 @@ export interface IProjectLite {
   identifier: string;
   logo_props: TLogoProps;
 }
-
-export type ProjectPreferences = {
-  pages: {
-    block_display: boolean;
-  };
-};
 
 export interface IProjectMap {
   [id: string]: IProject;
@@ -109,6 +111,27 @@ export type TProjectMembership = {
 export interface IProjectBulkAddFormData {
   members: { role: TUserPermissions | EUserProjectRoles; member_id: string }[];
 }
+
+export type IProjectMemberNavigationPreferences = {
+  default_tab: string;
+  hide_in_more_menu: string[];
+};
+
+export type IProjectMemberPreferencesUpdate = {
+  navigation: IProjectMemberNavigationPreferences;
+};
+
+export type IProjectMemberPreferencesResponse = {
+  preferences: {
+    navigation: IProjectMemberNavigationPreferences;
+  };
+};
+
+export type IProjectMemberPreferencesFullResponse = IProjectMemberPreferencesResponse & {
+  project_id: string;
+  member_id: string;
+  workspace_id: string;
+};
 
 export interface IGithubRepository {
   id: string;

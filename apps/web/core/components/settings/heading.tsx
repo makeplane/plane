@@ -1,46 +1,38 @@
-import { Button } from "@plane/propel/button";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+// plane imports
 import { cn } from "@plane/ui";
 
 type Props = {
-  title: string | React.ReactNode;
-  description?: string;
-  appendToRight?: React.ReactNode;
-  showButton?: boolean;
-  customButton?: React.ReactNode;
-  button?: {
-    label: string;
-    onClick: () => void;
-  };
   className?: string;
+  control?: React.ReactNode;
+  description?: React.ReactNode;
+  title?: React.ReactNode;
+  variant?: "h3" | "h4" | "h6";
 };
 
-export const SettingsHeading = ({
-  title,
-  description,
-  button,
-  appendToRight,
-  customButton,
-  showButton = true,
-  className,
-}: Props) => (
-  <div
-    className={cn(
-      "flex flex-col md:flex-row gap-2 items-start md:items-center justify-between border-b border-custom-border-100 pb-3.5",
-      className
-    )}
-  >
-    <div className="flex flex-col items-start gap-1">
-      {typeof title === "string" ? <h3 className="text-xl font-medium">{title}</h3> : title}
-      {description && <div className="text-sm text-custom-text-300">{description}</div>}
+export function SettingsHeading({ className, control, description, title, variant = "h3" }: Props) {
+  return (
+    <div className={cn("flex flex-col md:flex-row gap-4 items-start md:items-center justify-between", className)}>
+      <div className="flex flex-col items-start gap-1">
+        {title && (
+          <h3
+            className={cn("text-h3-medium text-primary", {
+              "text-h3-medium": variant === "h3",
+              "text-h4-medium": variant === "h4",
+              "text-h6-medium": variant === "h6",
+            })}
+          >
+            {title}
+          </h3>
+        )}
+        {description && <p className="text-body-xs-regular text-tertiary">{description}</p>}
+      </div>
+      {control}
     </div>
-    {showButton && customButton}
-    {button && showButton && (
-      <Button variant="primary" onClick={button.onClick} size="sm" className="w-fit">
-        {button.label}
-      </Button>
-    )}
-    {appendToRight}
-  </div>
-);
-
-export default SettingsHeading;
+  );
+}

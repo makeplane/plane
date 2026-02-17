@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -19,7 +25,7 @@ export type TVersionEditorProps = {
   storeType: EPageStoreType;
 };
 
-export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
+export const PagesVersionEditor = observer(function PagesVersionEditor(props: TVersionEditorProps) {
   const { activeVersion, versionDetails } = props;
   // params
   const { workspaceSlug, projectId } = useParams();

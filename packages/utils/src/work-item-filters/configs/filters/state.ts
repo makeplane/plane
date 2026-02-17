@@ -1,22 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
-import {
-  COLLECTION_OPERATOR,
-  EQUALITY_OPERATOR,
-  IState,
-  TFilterProperty,
-  TStateGroups,
-  TSupportedOperators,
-} from "@plane/types";
+import type { IState, TFilterProperty, TStateGroups, TSupportedOperators } from "@plane/types";
+import { COLLECTION_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
 // local imports
-import {
-  createFilterConfig,
-  getMultiSelectConfig,
-  IFilterIconConfig,
-  TCreateFilterConfig,
-  TCreateFilterConfigParams,
-  createOperatorConfigEntry,
-} from "../../../rich-filters";
+import type { IFilterIconConfig, TCreateFilterConfig, TCreateFilterConfigParams } from "../../../rich-filters";
+import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";
 
 // ------------ State group filter ------------
 
@@ -60,7 +54,7 @@ export const getStateGroupMultiSelectConfig = (
 export const getStateGroupFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateStateGroupFilterParams> =>
   (params: TCreateStateGroupFilterParams) =>
-    createFilterConfig<P, TStateGroups>({
+    createFilterConfig<P>({
       id: key,
       label: "State Group",
       ...params,
@@ -114,7 +108,7 @@ export const getStateMultiSelectConfig = (params: TCreateStateFilterParams, sing
 export const getStateFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateStateFilterParams> =>
   (params: TCreateStateFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "State",
       ...params,

@@ -1,69 +1,44 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS, WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import type { IWebhook } from "@plane/types";
-// hooks
 import { ToggleSwitch } from "@plane/ui";
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
+// hooks
 import { useWebhook } from "@/hooks/store/use-webhook";
-// ui
-// types
 
 interface IWebhookListItem {
   webhook: IWebhook;
 }
 
-export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
+export function WebhooksListItem(props: IWebhookListItem) {
   const { webhook } = props;
   // router
   const { workspaceSlug } = useParams();
   // store hooks
   const { updateWebhook } = useWebhook();
 
-  const handleToggle = () => {
+  const handleToggle = async () => {
     if (!workspaceSlug || !webhook.id) return;
-    updateWebhook(workspaceSlug.toString(), webhook.id, { is_active: !webhook.is_active })
-      .then(() => {
-        captureElementAndEvent({
-          element: {
-            elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_LIST_ITEM_TOGGLE_SWITCH,
-          },
-          event: {
-            eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_toggled,
-            state: "SUCCESS",
-            payload: {
-              webhook: webhook.url,
-            },
-          },
-        });
-      })
-      .catch(() => {
-        captureElementAndEvent({
-          element: {
-            elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_LIST_ITEM_TOGGLE_SWITCH,
-          },
-          event: {
-            eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_toggled,
-            state: "ERROR",
-            payload: {
-              webhook: webhook.url,
-            },
-          },
-        });
-      });
+    await updateWebhook(workspaceSlug.toString(), webhook.id, { is_active: !webhook.is_active });
   };
 
   return (
-    <div className="border-b border-custom-border-200">
-      <Link href={`/${workspaceSlug}/settings/webhooks/${webhook?.id}`}>
-        <span className="flex items-center justify-between gap-4 py-[18px]">
-          <h5 className="truncate text-base font-medium">{webhook.url}</h5>
+    <div className="bg-layer-2 border border-subtle px-4 py-3 rounded-lg">
+      <Link
+        href={`/${workspaceSlug}/settings/webhooks/${webhook?.id}`}
+        className="flex items-center justify-between gap-4"
+      >
+        <h5 className="text-body-sm-medium truncate">{webhook.url}</h5>
+        <div className="shrink-0">
           <ToggleSwitch value={webhook.is_active} onChange={handleToggle} />
-        </span>
+        </div>
       </Link>
     </div>
   );
-};
+}

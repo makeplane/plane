@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { sortBy, cloneDeep, update, set } from "lodash-es";
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -12,7 +18,7 @@ import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/se
 // store
 import type { CoreRootStore } from "../root.store";
 
-type ProjectOverviewCollapsible = "links" | "attachments";
+type ProjectOverviewCollapsible = "links" | "attachments" | "milestones";
 
 export interface IProjectStore {
   // observables
@@ -30,6 +36,7 @@ export interface IProjectStore {
   joinedProjectIds: string[];
   favoriteProjectIds: string[];
   currentProjectDetails: TProject | undefined;
+  currentProjectNextSequenceId: number | undefined;
   // actions
   getProjectById: (projectId: string | undefined | null) => TProject | undefined;
   getPartialProjectById: (projectId: string | undefined | null) => TPartialProject | undefined;
@@ -76,7 +83,7 @@ export class ProjectStore implements IProjectStore {
   fetchStatus: TFetchStatus = undefined;
   projectMap: Record<string, TProject> = {};
   projectAnalyticsCountMap: Record<string, TProjectAnalyticsCount> = {};
-  openCollapsibleSection: ProjectOverviewCollapsible[] = [];
+  openCollapsibleSection: ProjectOverviewCollapsible[] = ["milestones"];
   lastCollapsibleAction: ProjectOverviewCollapsible | null = null;
 
   // root store
@@ -107,6 +114,7 @@ export class ProjectStore implements IProjectStore {
       currentProjectDetails: computed,
       joinedProjectIds: computed,
       favoriteProjectIds: computed,
+      currentProjectNextSequenceId: computed,
       // helper actions
       processProjectAfterCreation: action,
       // fetch actions
@@ -214,6 +222,15 @@ export class ProjectStore implements IProjectStore {
   get currentProjectDetails() {
     if (!this.rootStore.router.projectId) return;
     return this.projectMap?.[this.rootStore.router.projectId];
+  }
+
+  /**
+   * Returns the next sequence ID for the current project
+   * Used for calculating identifier width in list layouts
+   */
+  get currentProjectNextSequenceId() {
+    if (!this.rootStore.router.projectId) return undefined;
+    return this.currentProjectDetails?.next_work_item_sequence;
   }
 
   /**
@@ -498,7 +515,7 @@ export class ProjectStore implements IProjectStore {
       runInAction(() => {
         set(this.projectMap, [projectId, "sort_order"], viewProps?.sort_order);
       });
-      const response = await this.projectService.setProjectView(workspaceSlug, projectId, viewProps);
+      const response = await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, viewProps);
       return response;
     } catch (error) {
       runInAction(() => {

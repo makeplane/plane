@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane types
-import { TPaginationInfo } from "./common";
-import { TIssuePriorities } from "./issues";
-import { TIssue } from "./issues/issue";
+import type { TPaginationInfo } from "./common";
+import type { TIssuePriorities } from "./issues";
+import type { TIssue } from "./issues/issue";
 
 export enum EInboxIssueCurrentTab {
   OPEN = "open",

@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // types
 import type { TPageNavigationTabs } from "@plane/types";
@@ -15,7 +20,7 @@ type TPagesListRoot = {
   storeType: EPageStoreType;
 };
 
-export const PagesListRoot: FC<TPagesListRoot> = observer((props) => {
+export const PagesListRoot = observer(function PagesListRoot(props: TPagesListRoot) {
   const { pageType, storeType } = props;
   // store hooks
   const { getCurrentProjectFilteredPageIdsByTab } = usePageStore(storeType);

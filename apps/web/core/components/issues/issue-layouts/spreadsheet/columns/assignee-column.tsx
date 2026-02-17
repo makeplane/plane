@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 // types
@@ -12,11 +18,11 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetAssigneeColumn = observer(function SpreadsheetAssigneeColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle">
       <MemberDropdown
         value={issue?.assignee_ids ?? []}
         onChange={(data) => {
@@ -36,7 +42,7 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props
         buttonVariant={
           issue?.assignee_ids && issue.assignee_ids.length > 1 ? "transparent-without-text" : "transparent-with-text"
         }
-        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10 px-page-x"
+        buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x"
         buttonContainerClassName="w-full"
         optionsClassName="z-[9]"
         onClose={onClose}

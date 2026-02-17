@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Plus } from "lucide-react";
+
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { PlusIcon } from "@plane/propel/icons";
 // hooks
 import { useSticky } from "@/hooks/use-stickies";
 // local imports
@@ -10,7 +17,7 @@ import { StickiesTruncated } from "./layout/stickies-truncated";
 import { StickySearch } from "./modal/search";
 import { useStickyOperations } from "./sticky/use-operations";
 
-export const StickiesWidget: React.FC = observer(() => {
+export const StickiesWidget = observer(function StickiesWidget() {
   // params
   const { workspaceSlug } = useParams();
   // store hooks
@@ -24,7 +31,7 @@ export const StickiesWidget: React.FC = observer(() => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <div className="text-base font-semibold text-custom-text-350">{t("stickies.title")}</div>
+        <div className="text-14 font-semibold text-tertiary">{t("stickies.title")}</div>
         {/* actions */}
         <div className="flex gap-2">
           <StickySearch />
@@ -33,14 +40,14 @@ export const StickiesWidget: React.FC = observer(() => {
               toggleShowNewSticky(true);
               stickyOperations.create();
             }}
-            className="flex gap-1 text-sm font-medium text-custom-primary-100 my-auto"
+            className="flex gap-1 text-13 font-medium text-accent-primary my-auto"
             disabled={creatingSticky}
           >
-            <Plus className="size-4 my-auto" />
+            <PlusIcon className="size-4 my-auto" />
             <span>{t("stickies.add")}</span>
             {creatingSticky && (
               <div
-                className="size-4 border-2 border-t-transparent border-custom-primary-100 rounded-full animate-spin"
+                className="size-4 border-2 border-t-transparent border-accent-strong rounded-full animate-spin"
                 role="status"
                 aria-label="loading"
               />

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { uniq, update, isEmpty, omit, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -64,7 +70,7 @@ export interface IProjectInboxStore {
     workspaceSlug: string,
     projectId: string,
     loadingType?: TLoader,
-    tab?: TInboxIssueCurrentTab | undefined
+    tab?: TInboxIssueCurrentTab
   ) => Promise<void>;
   fetchInboxPaginationIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<TInboxIssue>;
@@ -125,18 +131,16 @@ export class ProjectInboxStore implements IProjectInboxStore {
    * @description computed project inbox filters
    */
   get inboxFilters() {
-    const { projectId } = this.store.router;
-    if (!projectId) return {} as TInboxIssueFilter;
-    return this.filtersMap?.[projectId];
+    if (!this.currentInboxProjectId) return {} as TInboxIssueFilter;
+    return this.filtersMap?.[this.currentInboxProjectId];
   }
 
   /**
    * @description computed project inbox sorting
    */
   get inboxSorting() {
-    const { projectId } = this.store.router;
-    if (!projectId) return {} as TInboxIssueSorting;
-    return this.sortingMap?.[projectId];
+    if (!this.currentInboxProjectId) return {} as TInboxIssueSorting;
+    return this.sortingMap?.[this.currentInboxProjectId];
   }
 
   get getAppliedFiltersCount() {
@@ -274,7 +278,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
   };
 
   handleInboxIssueFilters = <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => {
-    const { workspaceSlug, projectId } = this.store.router;
+    const { workspaceSlug } = this.store.router;
+    const projectId = this.currentInboxProjectId;
     if (workspaceSlug && projectId) {
       runInAction(() => {
         set(this.filtersMap, [projectId, key], value);
@@ -285,7 +290,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
   };
 
   handleInboxIssueSorting = <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => {
-    const { workspaceSlug, projectId } = this.store.router;
+    const { workspaceSlug } = this.store.router;
+    const projectId = this.currentInboxProjectId;
     if (workspaceSlug && projectId) {
       runInAction(() => {
         set(this.sortingMap, [projectId, key], value);
@@ -467,10 +473,16 @@ export class ProjectInboxStore implements IProjectInboxStore {
             ["inboxIssuePaginationInfo", "total_results"],
             (this.inboxIssuePaginationInfo?.total_results || 0) + 1
           );
+          // Increment intake_count if the new issue is PENDING
+          if (inboxIssueResponse.status === EInboxIssueStatus.PENDING) {
+            const currentCount = this.store.projectRoot.project.projectMap[projectId]?.intake_count ?? 0;
+            set(this.store.projectRoot.project.projectMap, [projectId, "intake_count"], currentCount + 1);
+          }
         });
       return inboxIssueResponse;
-    } catch {
+    } catch (error) {
       console.error("Error creating the intake issue");
+      throw error;
     }
   };
 
@@ -482,6 +494,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
    */
   deleteInboxIssue = async (workspaceSlug: string, projectId: string, inboxIssueId: string) => {
     const currentIssue = this.inboxIssues?.[inboxIssueId];
+    const wasPending = currentIssue?.status === EInboxIssueStatus.PENDING;
     try {
       if (!currentIssue) return;
       await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId).then(() => {
@@ -497,6 +510,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
             ["inboxIssueIds"],
             this.inboxIssueIds.filter((id) => id !== inboxIssueId)
           );
+          // Decrement intake_count if the deleted issue was PENDING
+          if (wasPending) {
+            const currentCount = this.store.projectRoot.project.projectMap[projectId]?.intake_count ?? 0;
+            set(this.store.projectRoot.project.projectMap, [projectId, "intake_count"], Math.max(0, currentCount - 1));
+          }
         });
       });
     } catch (error) {

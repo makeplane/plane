@@ -1,4 +1,10 @@
-export const MaintenanceMessage = () => {
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+export function MaintenanceMessage() {
   const linkMap = [
     {
       key: "mail_to",
@@ -10,10 +16,10 @@ export const MaintenanceMessage = () => {
   return (
     <>
       <div className="flex flex-col gap-2.5">
-        <h1 className="text-xl font-semibold text-custom-text-100 text-left">
+        <h1 className="text-18 font-semibold text-primary text-left">
           &#x1F6A7; Looks like Plane didn&apos;t start up correctly!
         </h1>
-        <span className="text-base font-medium text-custom-text-200 text-left">
+        <span className="text-14 font-medium text-secondary text-left">
           Some services might have failed to start. Please check your container logs to identify and resolve the issue.
           If you&apos;re stuck, reach out to our support team for more help.
         </span>
@@ -25,7 +31,7 @@ export const MaintenanceMessage = () => {
               href={link.value}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-custom-primary-100 hover:underline text-sm"
+              className="text-accent-primary hover:underline text-13"
             >
               {link.label}
             </a>
@@ -34,4 +40,4 @@ export const MaintenanceMessage = () => {
       </div>
     </>
   );
-};
+}

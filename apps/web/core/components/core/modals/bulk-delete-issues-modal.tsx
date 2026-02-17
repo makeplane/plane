@@ -1,26 +1,35 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { useTheme } from "next-themes";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import { Search } from "lucide-react";
-import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse, IUser } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+// assets
+import darkIssuesAsset from "@/app/assets/empty-state/search/issues-dark.webp?url";
+import lightIssuesAsset from "@/app/assets/empty-state/search/issues-light.webp?url";
+import darkSearchAsset from "@/app/assets/empty-state/search/search-dark.webp?url";
+import lightSearchAsset from "@/app/assets/empty-state/search/search-light.webp?url";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import useDebounce from "@/hooks/use-debounce";
 // services
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { ProjectService } from "@/services/project";
 // local components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
@@ -37,7 +46,7 @@ type Props = {
 
 const projectService = new ProjectService();
 
-export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
+export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(props: Props) {
   const { isOpen, onClose } = props;
   // router params
   const { workspaceSlug, projectId } = useParams();
@@ -45,6 +54,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   const [query, setQuery] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // hooks
   const {
     issues: { removeBulkIssues },
@@ -52,8 +63,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
   // derived values
   const debouncedSearchTerm: string = useDebounce(query, 500);
-  const searchResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
-  const issuesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/issues" });
+  const searchResolvedPath = resolvedTheme === "light" ? lightSearchAsset : darkSearchAsset;
+  const issuesResolvedPath = resolvedTheme === "light" ? lightIssuesAsset : darkIssuesAsset;
 
   useEffect(() => {
     if (!isOpen || !workspaceSlug || !projectId) return;
@@ -100,7 +111,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
 
     if (!Array.isArray(data.delete_issue_ids)) data.delete_issue_ids = [data.delete_issue_ids];
 
-    await removeBulkIssues(workspaceSlug as string, projectId as string, data.delete_issue_ids)
+    await removeBulkIssues(workspaceSlug, projectId, data.delete_issue_ids)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -122,9 +133,9 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
     issues.length > 0 ? (
       <li className="p-2">
         {query === "" && (
-          <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select work items to delete</h2>
+          <h2 className="mb-2 mt-4 px-3 text-11 font-semibold text-primary">Select work items to delete</h2>
         )}
-        <ul className="text-sm text-custom-text-200">
+        <ul className="text-13 text-secondary">
           {issues.map((issue) => (
             <BulkDeleteIssuesModalItem
               issue={issue}
@@ -145,78 +156,57 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
     );
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <div className="fixed inset-0 z-20 overflow-y-auto bg-custom-backdrop p-4 transition-opacity sm:p-6 md:p-20">
-          <Transition.Child
-            as={React.Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 scale-100"
-            leaveTo="opacity-0 scale-95"
-          >
-            <Dialog.Panel className="relative flex w-full items-center justify-center ">
-              <div className="w-full max-w-2xl transform divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
-                <form>
-                  <Combobox
-                    onChange={(val: string) => {
-                      const selectedIssues = watch("delete_issue_ids");
-                      if (selectedIssues.includes(val))
-                        setValue(
-                          "delete_issue_ids",
-                          selectedIssues.filter((i) => i !== val)
-                        );
-                      else setValue("delete_issue_ids", [...selectedIssues, val]);
-                    }}
-                  >
-                    <div className="relative m-1">
-                      <Search
-                        className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
-                        aria-hidden="true"
-                      />
-                      <input
-                        type="text"
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
-                        placeholder="Search..."
-                        onChange={(event) => setQuery(event.target.value)}
-                      />
-                    </div>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
+      <form>
+        <Combobox
+          onChange={(val: string) => {
+            const selectedIssues = watch("delete_issue_ids");
+            if (selectedIssues.includes(val))
+              setValue(
+                "delete_issue_ids",
+                selectedIssues.filter((i) => i !== val)
+              );
+            else setValue("delete_issue_ids", [...selectedIssues, val]);
+          }}
+        >
+          <div className="relative m-1">
+            <SearchIcon
+              className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
+              aria-hidden="true"
+            />
+            <input
+              type="text"
+              className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none focus:ring-0 sm:text-13"
+              placeholder="Search..."
+              onChange={(event) => setQuery(event.target.value)}
+            />
+          </div>
 
-                    <Combobox.Options
-                      static
-                      className="max-h-80 scroll-py-2 divide-y divide-custom-border-200 overflow-y-auto"
-                    >
-                      {isSearching ? (
-                        <Loader className="space-y-3 p-3">
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                          <Loader.Item height="40px" />
-                        </Loader>
-                      ) : (
-                        <>{issueList}</>
-                      )}
-                    </Combobox.Options>
-                  </Combobox>
+          <Combobox.Options static className="max-h-80 scroll-py-2 divide-y divide-subtle-1 overflow-y-auto">
+            {isSearching ? (
+              <Loader className="space-y-3 p-3">
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+              </Loader>
+            ) : (
+              <>{issueList}</>
+            )}
+          </Combobox.Options>
+        </Combobox>
 
-                  {issues.length > 0 && (
-                    <div className="flex items-center justify-end gap-2 p-3">
-                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                        Cancel
-                      </Button>
-                      <Button variant="danger" size="sm" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
-                        {isSubmitting ? "Deleting..." : "Delete selected work items"}
-                      </Button>
-                    </div>
-                  )}
-                </form>
-              </div>
-            </Dialog.Panel>
-          </Transition.Child>
-        </div>
-      </Dialog>
-    </Transition.Root>
+        {issues.length > 0 && (
+          <div className="flex items-center justify-end gap-2 p-3">
+            <Button variant="secondary" size="lg" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button variant="error-fill" size="lg" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
+              {isSubmitting ? "Deleting..." : "Delete selected work items"}
+            </Button>
+          </div>
+        )}
+      </form>
+    </ModalCore>
   );
 });

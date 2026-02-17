@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 
@@ -65,9 +69,7 @@ from plane.utils.openapi import (
     ADMIN_ONLY_RESPONSE,
     REQUIRED_FIELDS_RESPONSE,
     MODULE_ISSUE_NOT_FOUND_RESPONSE,
-    ARCHIVED_RESPONSE,
     CANNOT_ARCHIVE_RESPONSE,
-    UNARCHIVED_RESPONSE,
 )
 
 
@@ -412,7 +414,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
                 {"error": "Archived module cannot be edited"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = ModuleSerializer(module, data=request.data, context={"project_id": project_id}, partial=True)
+        serializer = ModuleUpdateSerializer(module, data=request.data, context={"project_id": project_id}, partial=True)
         if serializer.is_valid():
             if (
                 request.data.get("external_id")
@@ -871,6 +873,8 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
             module_id=module_id,
             issue_id=issue_id,
         )
+
+        module_name = module_issue.module.name if module_issue.module is not None else ""
         module_issue.delete()
         issue_activity.delay(
             type="module.activity.deleted",
@@ -878,7 +882,7 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
-            current_instance=None,
+            current_instance=json.dumps({"module_name": module_name}),
             epoch=int(timezone.now().timestamp()),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1022,7 +1026,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         ],
         request={},
         responses={
-            204: ARCHIVED_RESPONSE,
+            204: None,
             400: CANNOT_ARCHIVE_RESPONSE,
             404: MODULE_NOT_FOUND_RESPONSE,
         },
@@ -1057,7 +1061,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             MODULE_PK_PARAMETER,
         ],
         responses={
-            204: UNARCHIVED_RESPONSE,
+            204: None,
             404: MODULE_NOT_FOUND_RESPONSE,
         },
     )

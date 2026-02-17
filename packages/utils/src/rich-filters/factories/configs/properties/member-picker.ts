@@ -1,8 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
-import { EQUALITY_OPERATOR, IUserLite, TFilterProperty } from "@plane/types";
+import type { IUserLite, TFilterProperty } from "@plane/types";
+import { EQUALITY_OPERATOR } from "@plane/types";
 // local imports
-import { createFilterConfig, createOperatorConfigEntry, TCreateFilterConfig } from "../shared";
-import { getMemberMultiSelectConfig, TCreateUserFilterParams, TCustomPropertyFilterParams } from "./shared";
+import type { TCreateFilterConfig } from "../shared";
+import { createFilterConfig, createOperatorConfigEntry } from "../shared";
+import type { TCreateUserFilterParams, TCustomPropertyFilterParams } from "./shared";
+import { getMemberMultiSelectConfig } from "./shared";
 
 /**
  * Member picker property filter specific params

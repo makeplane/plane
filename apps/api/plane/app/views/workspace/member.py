@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.db.models import Count, Q, OuterRef, Subquery, IntegerField
 from django.utils import timezone
@@ -48,6 +52,25 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             serializer = WorkspaceMemberAdminSerializer(workspace_members, fields=("id", "member", "role"), many=True)
         else:
             serializer = WorkSpaceMemberSerializer(workspace_members, fields=("id", "member", "role"), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def retrieve(self, request, slug, pk):
+        workspace_member = WorkspaceMember.objects.get(member=request.user, workspace__slug=slug, is_active=True)
+
+        try:
+            # Get the specific workspace member by pk
+            member = self.get_queryset().get(pk=pk)
+        except WorkspaceMember.DoesNotExist:
+            return Response(
+                {"error": "Workspace member not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if workspace_member.role > ROLE.GUEST.value:
+            serializer = WorkspaceMemberAdminSerializer(member, fields=("id", "member", "role"))
+        else:
+            serializer = WorkSpaceMemberSerializer(member, fields=("id", "member", "role"))
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")

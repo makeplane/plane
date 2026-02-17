@@ -1,7 +1,13 @@
-import { Editor } from "@tiptap/core";
-import { Plugin } from "@tiptap/pm/state";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Editor } from "@tiptap/core";
+import type { Plugin } from "@tiptap/pm/state";
 // types
-import { TFileHandler } from "@/types";
+import type { TFileHandler } from "@/types";
 // local imports
 import { TrackFileDeletionPlugin } from "./delete";
 import { TrackFileRestorationPlugin } from "./restore";

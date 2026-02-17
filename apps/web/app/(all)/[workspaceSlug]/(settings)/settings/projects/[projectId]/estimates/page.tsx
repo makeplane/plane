@@ -1,19 +1,25 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { EstimateRoot } from "@/components/estimates";
-// hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+// hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import type { Route } from "./+types/page";
+import { EstimatesProjectSettingsHeader } from "./header";
 
-const EstimatesSettingsPage = observer(() => {
-  const { workspaceSlug, projectId } = useParams();
+function EstimatesSettingsPage({ params }: Route.ComponentProps) {
+  const { workspaceSlug, projectId } = params;
   // store
   const { currentProjectDetails } = useProject();
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
@@ -22,24 +28,18 @@ const EstimatesSettingsPage = observer(() => {
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Estimates` : undefined;
   const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
-  if (!workspaceSlug || !projectId) return <></>;
-
   if (workspaceUserInfo && !canPerformProjectAdminActions) {
     return <NotAuthorizedView section="settings" isProjectView className="h-auto" />;
   }
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<EstimatesProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
       <div className={`w-full ${canPerformProjectAdminActions ? "" : "pointer-events-none opacity-60"}`}>
-        <EstimateRoot
-          workspaceSlug={workspaceSlug?.toString()}
-          projectId={projectId?.toString()}
-          isAdmin={canPerformProjectAdminActions}
-        />
+        <EstimateRoot workspaceSlug={workspaceSlug} projectId={projectId} isAdmin={canPerformProjectAdminActions} />
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default EstimatesSettingsPage;
+export default observer(EstimatesSettingsPage);

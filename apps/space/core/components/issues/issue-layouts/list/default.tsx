@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
@@ -6,7 +12,6 @@ import type {
   TGroupedIssues,
   IIssueDisplayProperties,
   TIssueGroupByOptions,
-  IGroupByColumn,
   TPaginationData,
   TLoader,
 } from "@plane/types";
@@ -32,10 +37,10 @@ export interface IList {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
-  getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
+  getIssueLoader: (groupId?: string, subGroupId?: string) => TLoader;
 }
 
-export const List: React.FC<IList> = observer((props) => {
+export const List = observer(function List(props: IList) {
   const {
     groupedIssueIds,
     groupBy,
@@ -67,7 +72,7 @@ export const List: React.FC<IList> = observer((props) => {
             ref={containerRef}
             className="size-full vertical-scrollbar scrollbar-lg relative overflow-auto vertical-scrollbar-margin-top-md"
           >
-            {groupList.map((group: IGroupByColumn) => (
+            {groupList.map((group) => (
               <ListGroup
                 key={group.id}
                 groupIssueIds={groupedIssueIds?.[group.id]}

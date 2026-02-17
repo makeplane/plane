@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane constants
@@ -31,7 +37,7 @@ type Props = {
   issuesLoading: boolean;
 };
 
-export const WorkspaceSpreadsheetRoot: React.FC<Props> = observer((props: Props) => {
+export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRoot(props: Props) {
   const { isLoading = false, workspaceSlug, globalViewId, fetchNextPages, issuesLoading } = props;
 
   // Custom hooks

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   combineTransactionSteps,
   escapeForRegEx,
@@ -10,23 +16,21 @@ import {
   PasteRule,
   removeDuplicates,
 } from "@tiptap/core";
-import { EmojiStorage, emojis, emojiToShortcode, shortcodeToEmoji } from "@tiptap/extension-emoji";
-import { Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
-import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
+import type { EmojiStorage } from "@tiptap/extension-emoji";
+import { emojis, emojiToShortcode, shortcodeToEmoji } from "@tiptap/extension-emoji";
+import { Fragment } from "@tiptap/pm/model";
+import type { Transaction } from "@tiptap/pm/state";
+import { Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
+import type { SuggestionOptions } from "@tiptap/suggestion";
+import Suggestion from "@tiptap/suggestion";
 import emojiRegex from "emoji-regex";
 import { isEmojiSupported } from "is-emoji-supported";
 // helpers
 import { customFindSuggestionMatch } from "@/helpers/find-suggestion-match";
 
-declare module "@tiptap/core" {
-  interface Commands<ReturnType> {
-    emoji: {
-      /**
-       * Add an emoji
-       */
-      setEmoji: (shortcode: string) => ReturnType;
-    };
-  }
+// Extended storage type to include our custom forceOpen flag
+export interface ExtendedEmojiStorage extends EmojiStorage {
+  forceOpen: boolean;
 }
 
 export type EmojiItem = {
@@ -114,18 +118,22 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
           editor
             .chain()
             .focus()
-            .insertContentAt(range, [
-              {
-                type: this.name,
-                attrs: props,
-              },
-              {
-                type: "text",
-                text: " ",
-              },
-            ])
-            .command(({ tr, state }) => {
-              tr.setStoredMarks(state.doc.resolve(state.selection.to - 2).marks());
+            .command(({ tr, state, dispatch }) => {
+              if (!dispatch) return true;
+
+              const { schema } = state;
+              const emojiNode = schema.nodes[this.name].create(props);
+              const spaceNode = schema.text(" ");
+
+              const fragment = Fragment.from([emojiNode, spaceNode]);
+
+              tr.replaceWith(range.from, range.to, fragment);
+
+              const newPos = range.from + fragment.size;
+              tr.setSelection(TextSelection.near(tr.doc.resolve(newPos)));
+
+              tr.setStoredMarks(tr.doc.resolve(range.from).marks());
+
               return true;
             })
             .run();
@@ -150,13 +158,14 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
 
         return {
           ...versions,
-          [version as number]: emoji ? isEmojiSupported(emoji.emoji as string) : false,
+          [version]: emoji ? isEmojiSupported(emoji.emoji as string) : false,
         };
       }, {});
 
     return {
       emojis: this.options.emojis,
       isSupported: (emojiItem) => (emojiItem.version ? supportMap[emojiItem.version] : false),
+      forceOpen: false,
     };
   },
 

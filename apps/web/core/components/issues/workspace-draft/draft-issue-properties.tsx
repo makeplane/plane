@@ -1,10 +1,14 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { CalendarCheck2, CalendarClock } from "lucide-react";
+import { DueDatePropertyIcon, StartDatePropertyIcon } from "@plane/propel/icons";
 // types
 import type { TIssuePriorities, TWorkspaceDraftIssue } from "@plane/types";
 import { getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
@@ -35,7 +39,7 @@ export interface IIssueProperties {
   className: string;
 }
 
-export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props) => {
+export const DraftIssueProperties = observer(function DraftIssueProperties(props: IIssueProperties) {
   const { issue, updateIssue, className } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -177,7 +181,7 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
           onChange={handleStartDate}
           maxDate={maxDate}
           placeholder="Start date"
-          icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+          icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
           buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
           optionsClassName="z-10"
           renderByDefault={isMobile}
@@ -192,12 +196,12 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
           onChange={handleTargetDate}
           minDate={minDate}
           placeholder="Due date"
-          icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+          icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
           buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
           buttonClassName={
-            shouldHighlightIssueDueDate(issue?.target_date || null, stateDetails?.group) ? "text-red-500" : ""
+            shouldHighlightIssueDueDate(issue?.target_date || null, stateDetails?.group) ? "text-danger-primary" : ""
           }
-          clearIconClassName="!text-custom-text-100"
+          clearIconClassName="!text-primary"
           optionsClassName="z-10"
           renderByDefault={isMobile}
           showTooltip

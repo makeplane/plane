@@ -1,14 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
-import { EQUALITY_OPERATOR, IModule, TFilterProperty, COLLECTION_OPERATOR } from "@plane/types";
+import type { IModule, TFilterProperty } from "@plane/types";
+import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
-import {
-  createFilterConfig,
-  TCreateFilterConfigParams,
-  IFilterIconConfig,
-  TCreateFilterConfig,
-  getMultiSelectConfig,
-  createOperatorConfigEntry,
-} from "../../../rich-filters";
+import type { TCreateFilterConfigParams, IFilterIconConfig, TCreateFilterConfig } from "../../../rich-filters";
+import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";
 
 /**
  * Module filter specific params
@@ -50,7 +51,7 @@ export const getModuleMultiSelectConfig = (params: TCreateModuleFilterParams) =>
 export const getModuleFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateModuleFilterParams> =>
   (params: TCreateModuleFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Module",
       ...params,

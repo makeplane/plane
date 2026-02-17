@@ -1,30 +1,32 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
-// ui
-// components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "@/components/automation";
 import { PageHead } from "@/components/core/page-title";
-// hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
+// hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { CustomAutomationsRoot } from "@/plane-web/components/automations/root";
+// local imports
+import type { Route } from "./+types/page";
+import { AutomationsProjectSettingsHeader } from "./header";
 
-const AutomationSettingsPage = observer(() => {
+function AutomationSettingsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug: workspaceSlugParam, projectId: projectIdParam } = useParams();
-  const workspaceSlug = workspaceSlugParam?.toString();
-  const projectId = projectIdParam?.toString();
+  const { workspaceSlug, projectId } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails: projectDetails, updateProject } = useProject();
@@ -35,15 +37,17 @@ const AutomationSettingsPage = observer(() => {
   const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const handleChange = async (formData: Partial<IProject>) => {
-    if (!workspaceSlug || !projectId || !projectDetails) return;
+    if (!projectDetails) return;
 
-    await updateProject(workspaceSlug.toString(), projectId.toString(), formData).catch(() => {
+    try {
+      await updateProject(workspaceSlug, projectId, formData);
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: "Something went wrong. Please try again.",
       });
-    });
+    }
   };
 
   // derived values
@@ -54,19 +58,21 @@ const AutomationSettingsPage = observer(() => {
   }
 
   return (
-    <SettingsContentWrapper size="lg">
+    <SettingsContentWrapper header={<AutomationsProjectSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
       <section className={`w-full ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
         <SettingsHeading
           title={t("project_settings.automations.heading")}
           description={t("project_settings.automations.description")}
         />
-        <AutoArchiveAutomation handleChange={handleChange} />
-        <AutoCloseAutomation handleChange={handleChange} />
+        <div className="mt-6">
+          <AutoArchiveAutomation handleChange={handleChange} />
+          <AutoCloseAutomation handleChange={handleChange} />
+        </div>
       </section>
       <CustomAutomationsRoot projectId={projectId} workspaceSlug={workspaceSlug} />
     </SettingsContentWrapper>
   );
-});
+}
 
-export default AutomationSettingsPage;
+export default observer(AutomationSettingsPage);

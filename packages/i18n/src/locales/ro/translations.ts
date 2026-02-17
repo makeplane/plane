@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Proiecte",
@@ -338,13 +344,13 @@ export default {
   project_id_must_be_at_least_1_character: "ID-ul proiectului trebuie să conțină cel puțin 1 caracter",
   project_id_must_be_at_most_5_characters: "ID-ul proiectului trebuie să conțină cel mult 5 caractere",
   project_id: "ID-ul Proiectului",
-  project_id_tooltip_content: "Te ajută să identifici unic activitățile din proiect. Maxim 5 caractere.",
+  project_id_tooltip_content: "Te ajută să identifici unic activitățile din proiect. Maxim 10 caractere.",
   description_placeholder: "Descriere",
   only_alphanumeric_non_latin_characters_allowed: "Sunt permise doar caractere alfanumerice și non-latine.",
   project_id_is_required: "ID-ul proiectului este obligatoriu",
   project_id_allowed_char: "Sunt permise doar caractere alfanumerice și non-latine.",
   project_id_min_char: "ID-ul proiectului trebuie să aibă cel puțin 1 caracter",
-  project_id_max_char: "ID-ul proiectului trebuie să aibă cel mult 5 caractere",
+  project_id_max_char: "ID-ul proiectului trebuie să aibă cel mult 10 caractere",
   project_description_placeholder: "Introdu descrierea proiectului",
   select_network: "Selectează rețeaua",
   lead: "Lider",
@@ -646,6 +652,8 @@ export default {
   },
   common: {
     all: "Toate",
+    no_items_in_this_group: "Nu există elemente în acest grup",
+    drop_here_to_move: "Eliberează aici pentru a muta",
     states: "Stări",
     state: "Stare",
     state_groups: "Grupuri de stări",
@@ -1532,6 +1540,47 @@ export default {
         "Dacă confirmați, toate opțiunile de sortare, filtrare și afișare + aspectul pe care l-ați ales pentru această vizualizare vor fi șterse permanent fără nicio modalitate de a le restaura.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Schimbă e-mailul",
+        description: "Introduceți o nouă adresă de e-mail pentru a primi un link de verificare.",
+        toasts: {
+          success_title: "Succes!",
+          success_message: "E-mail actualizat cu succes. Conectați-vă din nou.",
+        },
+        form: {
+          email: {
+            label: "E-mail nou",
+            placeholder: "Introduceți e-mailul",
+            errors: {
+              required: "E-mailul este obligatoriu",
+              invalid: "E-mailul este invalid",
+              exists: "E-mailul există deja. Folosiți altul.",
+              validation_failed: "Validarea e-mailului a eșuat. Încercați din nou.",
+            },
+          },
+          code: {
+            label: "Cod unic",
+            placeholder: "123456",
+            helper_text: "Codul de verificare a fost trimis la noul e-mail.",
+            errors: {
+              required: "Codul unic este obligatoriu",
+              invalid: "Cod de verificare invalid. Încercați din nou.",
+            },
+          },
+        },
+        actions: {
+          continue: "Continuă",
+          confirm: "Confirmă",
+          cancel: "Anulează",
+        },
+        states: {
+          sending: "Se trimite…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Setări spațiu de lucru",
     page_label: "{workspace} - Setări generale",
@@ -1547,6 +1596,7 @@ export default {
         name: "Numele spațiului de lucru",
         company_size: "Dimensiunea companiei",
         url: "URL-ul spațiului de lucru",
+        workspace_timezone: "Fusul orar al spațiului de lucru",
         update_workspace: "Actualizează spațiul de lucru",
         delete_workspace: "Șterge acest spațiu de lucru",
         delete_workspace_description:
@@ -1612,6 +1662,7 @@ export default {
         exporting: "Se exportă",
         previous_exports: "Exporturi anterioare",
         export_separate_files: "Exportă datele în fișiere separate",
+        filters_info: "Aplică filtre pentru a exporta elemente de lucru specifice în funcție de criteriile tale.",
         modal: {
           title: "Exportă în",
           toasts: {
@@ -1940,6 +1991,45 @@ export default {
         title: "Nicio estimare configurată",
         description: "Creează un set de estimări pentru a comunica volumul de muncă pentru fiecare activitate.",
         primary_button: "Adaugă sistem de estimare",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cicluri",
+        short_title: "Cicluri",
+        description:
+          "Programați munca în perioade flexibile care se adaptează ritmului și ritmului unic al acestui proiect.",
+        toggle_title: "Activați ciclurile",
+        toggle_description: "Planificați munca în intervale de timp concentrate.",
+      },
+      modules: {
+        title: "Module",
+        short_title: "Module",
+        description: "Organizați munca în subproiecte cu lideri și responsabili dedicați.",
+        toggle_title: "Activați modulele",
+        toggle_description: "Membrii proiectului vor putea crea și edita module.",
+      },
+      views: {
+        title: "Vizualizări",
+        short_title: "Vizualizări",
+        description: "Salvați sortări personalizate, filtre și opțiuni de afișare sau partajați-le cu echipa dvs.",
+        toggle_title: "Activați vizualizările",
+        toggle_description: "Membrii proiectului vor putea crea și edita vizualizări.",
+      },
+      pages: {
+        title: "Pagini",
+        short_title: "Pagini",
+        description: "Creați și editați conținut liber: note, documente, orice.",
+        toggle_title: "Activați paginile",
+        toggle_description: "Membrii proiectului vor putea crea și edita pagini.",
+      },
+      intake: {
+        title: "Recepție",
+        short_title: "Recepție",
+        description:
+          "Permiteți non-membrilor să partajeze erori, feedback și sugestii; fără a perturba fluxul de lucru.",
+        toggle_title: "Activați recepția",
+        toggle_description: "Permiteți membrilor proiectului să creeze solicitări de recepție în aplicație.",
       },
     },
   },

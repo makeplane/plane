@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { MutableRefObject } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -37,13 +43,13 @@ export interface IKanBanSwimLanes {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
-  getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
+  getIssueLoader: (groupId?: string, subGroupId?: string) => TLoader;
   showEmptyGroup: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   orderBy: TIssueOrderByOptions | undefined;
 }
 
-export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
+export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanSwimLanes) {
   const {
     groupedIssueIds,
     displayProperties,
@@ -71,7 +77,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
 
   return (
     <div className="relative">
-      <div className="sticky top-0 z-[4] h-[50px] bg-custom-background-90 px-2">
+      <div className="sticky top-0 z-4 h-[50px] px-2">
         <SubGroupSwimlaneHeader
           groupBy={groupBy}
           subGroupBy={subGroupBy}
@@ -125,8 +131,14 @@ const visibilitySubGroupByGroupCount = (subGroupIssueCount: number, showEmptyGro
   return subGroupHeaderVisibility;
 };
 
-const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
-  ({ subGroupBy, groupBy, groupList, showEmptyGroup, getGroupIssueCount }) => (
+const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
+  subGroupBy,
+  groupBy,
+  groupList,
+  showEmptyGroup,
+  getGroupIssueCount,
+}: ISubGroupSwimlaneHeader) {
+  return (
     <div className="relative flex h-max min-h-full w-full items-center gap-2">
       {groupList &&
         groupList.length > 0 &&
@@ -143,8 +155,8 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
           );
         })}
     </div>
-  )
-);
+  );
+});
 
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
@@ -157,12 +169,12 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
-  getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
+  getIssueLoader: (groupId?: string, subGroupId?: string) => TLoader;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
 }
 
-const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
+const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwimlane) {
   const {
     groupedIssueIds,
     subGroupBy,
@@ -214,12 +226,12 @@ interface ISubGroup {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
-  getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
+  getIssueLoader: (groupId?: string, subGroupId?: string) => TLoader;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
 }
 
-const SubGroup: React.FC<ISubGroup> = observer((props) => {
+const SubGroup = observer(function SubGroup(props: ISubGroup) {
   const {
     groupedIssueIds,
     subGroupBy,
@@ -263,7 +275,7 @@ const SubGroup: React.FC<ISubGroup> = observer((props) => {
   return (
     <>
       <div className="flex flex-shrink-0 flex-col">
-        <div className="sticky top-[50px] z-[3] py-1 flex w-full items-center bg-custom-background-100 border-y-[0.5px] border-custom-border-200">
+        <div className="sticky top-[50px] z-[3] py-1 flex w-full items-center bg-layer-1 border-y-[0.5px] border-subtle">
           <div className="sticky left-0 flex-shrink-0">
             <HeaderSubGroupByCard
               icon={group.icon as any}

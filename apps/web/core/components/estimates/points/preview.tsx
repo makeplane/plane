@@ -1,10 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { GripVertical, Pencil, Trash2 } from "lucide-react";
+import { GripVertical } from "lucide-react";
 // plane imports
 import { EEstimateSystem, estimateCount } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // plane web imports
@@ -26,7 +33,7 @@ type TEstimatePointItemPreview = {
   handleEstimatePointError?: (newValue: string, message: string | undefined) => void;
 };
 
-export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer((props) => {
+export const EstimatePointItemPreview = observer(function EstimatePointItemPreview(props: TEstimatePointItemPreview) {
   const {
     workspaceSlug,
     projectId,
@@ -56,35 +63,33 @@ export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer(
   return (
     <div>
       {!estimatePointEditToggle && !estimatePointDeleteToggle && (
-        <div className="border border-custom-border-200 rounded relative flex items-center px-1 gap-2 text-base my-1">
-          <div className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer">
-            <GripVertical size={14} className="text-custom-text-200" />
+        <div className="border border-subtle rounded-sm relative flex items-center px-1 gap-2 text-14 my-1">
+          <div className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer">
+            <GripVertical size={14} className="text-secondary" />
           </div>
-          <div ref={EstimatePointValueRef} className="py-2 w-full text-sm">
+          <div ref={EstimatePointValueRef} className="py-2 w-full text-13">
             {estimatePoint?.value ? (
               `${estimateType === EEstimateSystem.TIME ? convertMinutesToHoursMinutesString(Number(estimatePoint?.value)) : estimatePoint?.value}`
             ) : (
-              <span className="text-custom-text-400">
-                {t("project_settings.estimates.create.enter_estimate_point")}
-              </span>
+              <span className="text-placeholder">{t("project_settings.estimates.create.enter_estimate_point")}</span>
             )}
           </div>
           <div
-            className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
+            className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer"
             onClick={() => setEstimatePointEditToggle(true)}
           >
-            <Pencil size={14} className="text-custom-text-200" />
+            <EditIcon width={14} height={14} className="text-secondary" />
           </div>
           {estimatePoints.length > estimateCount.min && (
             <div
-              className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
+              className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer"
               onClick={() =>
                 estimateId && estimatePointId
                   ? setEstimatePointDeleteToggle(true)
                   : handleEstimatePointValueRemove && handleEstimatePointValueRemove()
               }
             >
-              <Trash2 size={14} className="text-custom-text-200" />
+              <TrashIcon width={14} height={14} className="text-secondary" />
             </div>
           )}
         </div>

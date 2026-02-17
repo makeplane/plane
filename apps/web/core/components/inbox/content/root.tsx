@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -24,7 +29,7 @@ type TInboxContentRoot = {
   embedRemoveCurrentNotification?: () => void;
 };
 
-export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
+export const InboxContentRoot = observer(function InboxContentRoot(props: TInboxContentRoot) {
   const {
     workspaceSlug,
     projectId,
@@ -94,7 +99,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
             embedRemoveCurrentNotification={embedRemoveCurrentNotification}
           />
         </div>
-        <ContentWrapper className="space-y-5 divide-y-2 divide-custom-border-200">
+        <ContentWrapper className="divide-y-2 divide-subtle-1">
           <InboxIssueMainContent
             workspaceSlug={workspaceSlug}
             projectId={projectId}

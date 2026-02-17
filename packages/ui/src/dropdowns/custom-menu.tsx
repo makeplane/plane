@@ -1,16 +1,23 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Menu } from "@headlessui/react";
-import { ChevronDown, ChevronRight, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import * as React from "react";
 import ReactDOM from "react-dom";
 import { usePopper } from "react-popper";
-// plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ChevronDownIcon, ChevronRightIcon } from "@plane/propel/icons";
+// plane helpers
 // helpers
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../utils";
 // hooks
 // types
-import {
+import type {
   ICustomMenuDropdownProps,
   ICustomMenuItemProps,
   ICustomSubMenuProps,
@@ -24,7 +31,7 @@ interface PortalProps {
   asChild?: boolean;
 }
 
-const Portal: React.FC<PortalProps> = ({ children, container, asChild = false }) => {
+function Portal({ children, container, asChild = false }: PortalProps) {
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -43,7 +50,7 @@ const Portal: React.FC<PortalProps> = ({ children, container, asChild = false })
   }
 
   return ReactDOM.createPortal(<div data-radix-portal="">{children}</div>, targetContainer);
-};
+}
 
 // Context for main menu to communicate with submenus
 const MenuContext = React.createContext<{
@@ -51,7 +58,7 @@ const MenuContext = React.createContext<{
   registerSubmenu: (closeSubmenu: () => void) => () => void;
 } | null>(null);
 
-const CustomMenu = (props: ICustomMenuDropdownProps) => {
+function CustomMenu(props: ICustomMenuDropdownProps) {
   const {
     ariaLabel,
     buttonClassName = "",
@@ -193,7 +200,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     >
       <div
         className={cn(
-          "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
+          "my-1 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 focus:outline-none min-w-[12rem] whitespace-nowrap",
           {
             "max-h-60": maxHeight === "lg",
             "max-h-48": maxHeight === "md",
@@ -256,8 +263,8 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     type="button"
                     onClick={handleMenuButtonClick}
                     disabled={disabled}
-                    className={`relative grid place-items-center rounded p-1 text-custom-text-200 outline-none hover:text-custom-text-100 ${
-                      disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
+                    className={`relative grid place-items-center rounded-sm p-1 text-secondary outline-none hover:text-primary ${
+                      disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-layer-transparent-hover"
                     } ${buttonClassName}`}
                     tabIndex={customButtonTabIndex}
                     aria-label={ariaLabel}
@@ -270,12 +277,10 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                   <button
                     ref={setReferenceElement}
                     type="button"
-                    className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-xs duration-300 ${
-                      open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
-                    } ${noBorder ? "" : "border border-custom-border-300 shadow-sm focus:outline-none"} ${
-                      disabled
-                        ? "cursor-not-allowed text-custom-text-200"
-                        : "cursor-pointer hover:bg-custom-background-80"
+                    className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-11 duration-300 ${
+                      open ? "text-primary" : "text-secondary"
+                    } ${noBorder ? "" : "border border-strong shadow-sm focus:outline-none"} ${
+                      disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover"
                     } ${buttonClassName}`}
                     onClick={handleMenuButtonClick}
                     tabIndex={customButtonTabIndex}
@@ -283,7 +288,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     aria-label={ariaLabel}
                   >
                     {label}
-                    {!noChevron && <ChevronDown className="h-3.5 w-3.5" />}
+                    {!noChevron && <ChevronDownIcon className="h-3.5 w-3.5" />}
                   </button>
                 </Menu.Button>
               )}
@@ -294,7 +299,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       )}
     </Menu>
   );
-};
+}
 
 // SubMenu context for closing submenu from nested items
 const SubMenuContext = React.createContext<{ closeSubmenu: () => void } | null>(null);
@@ -303,7 +308,7 @@ const SubMenuContext = React.createContext<{ closeSubmenu: () => void } | null>(
 const useSubMenu = () => React.useContext(SubMenuContext);
 
 // SubMenu implementation
-const SubMenu: React.FC<ICustomSubMenuProps> = (props) => {
+function SubMenu(props: ICustomSubMenuProps) {
   const {
     children,
     trigger,
@@ -395,17 +400,17 @@ const SubMenu: React.FC<ICustomSubMenuProps> = (props) => {
           {({ active }) => (
             <div
               className={cn(
-                "w-full select-none rounded px-1 py-1.5 text-left text-custom-text-200 flex items-center justify-between cursor-pointer",
+                "w-full select-none rounded-sm px-1 py-1.5 text-left text-secondary flex items-center justify-between cursor-pointer",
                 {
-                  "bg-custom-background-80": active && !disabled,
-                  "text-custom-text-400": disabled,
+                  "bg-layer-transparent-hover": active && !disabled,
+                  "text-placeholder": disabled,
                   "cursor-not-allowed": disabled,
                 }
               )}
               onClick={handleClick}
             >
               <span className="flex-1">{trigger}</span>
-              <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" />
+              <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0" />
             </div>
           )}
         </Menu.Item>
@@ -418,8 +423,7 @@ const SubMenu: React.FC<ICustomSubMenuProps> = (props) => {
             style={styles.popper}
             {...attributes.popper}
             className={cn(
-              "fixed z-30 min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 p-1 text-xs shadow-custom-shadow-lg",
-              "ring-1 ring-black ring-opacity-5", // Additional styling to make it stand out
+              "fixed z-30 min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-subtle-1 bg-surface-1 p-1 text-11",
               contentClassName
             )}
             data-prevent-outside-click="true"
@@ -446,9 +450,9 @@ const SubMenu: React.FC<ICustomSubMenuProps> = (props) => {
       )}
     </div>
   );
-};
+}
 
-const MenuItem: React.FC<ICustomMenuItemProps> = (props) => {
+function MenuItem(props: ICustomMenuItemProps) {
   const { children, disabled = false, onClick, className } = props;
   const submenuContext = useSubMenu();
 
@@ -458,10 +462,10 @@ const MenuItem: React.FC<ICustomMenuItemProps> = (props) => {
         <button
           type="button"
           className={cn(
-            "w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200",
+            "w-full select-none truncate rounded-sm px-1 py-1.5 text-left text-secondary",
             {
-              "bg-custom-background-80": active && !disabled,
-              "text-custom-text-400": disabled,
+              "bg-layer-transparent-hover": active && !disabled,
+              "text-placeholder": disabled,
             },
             className
           )}
@@ -478,9 +482,9 @@ const MenuItem: React.FC<ICustomMenuItemProps> = (props) => {
       )}
     </Menu.Item>
   );
-};
+}
 
-const SubMenuTrigger: React.FC<ICustomSubMenuTriggerProps> = (props) => {
+function SubMenuTrigger(props: ICustomSubMenuTriggerProps) {
   const { children, disabled = false, className } = props;
 
   return (
@@ -488,10 +492,10 @@ const SubMenuTrigger: React.FC<ICustomSubMenuTriggerProps> = (props) => {
       {({ active }) => (
         <div
           className={cn(
-            "w-full select-none rounded px-1 py-1.5 text-left text-custom-text-200 flex items-center justify-between",
+            "w-full select-none rounded-sm px-1 py-1.5 text-left text-secondary flex items-center justify-between",
             {
-              "bg-custom-background-80": active && !disabled,
-              "text-custom-text-400": disabled,
+              "bg-layer-transparent-hover": active && !disabled,
+              "text-placeholder": disabled,
               "cursor-pointer": !disabled,
               "cursor-not-allowed": disabled,
             },
@@ -499,27 +503,27 @@ const SubMenuTrigger: React.FC<ICustomSubMenuTriggerProps> = (props) => {
           )}
         >
           <span className="flex-1">{children}</span>
-          <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" />
+          <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0" />
         </div>
       )}
     </Menu.Item>
   );
-};
+}
 
-const SubMenuContent: React.FC<ICustomSubMenuContentProps> = (props) => {
+function SubMenuContent(props: ICustomSubMenuContentProps) {
   const { children, className } = props;
 
   return (
     <div
       className={cn(
-        "z-[15] min-w-[12rem] overflow-hidden rounded-md border border-custom-border-300 bg-custom-background-100 p-1 text-xs shadow-custom-shadow-rg",
+        "z-[15] min-w-[12rem] overflow-hidden rounded-md border border-subtle-1 bg-surface-1 p-1 text-11",
         className
       )}
     >
       {children}
     </div>
   );
-};
+}
 
 // Add all components as static properties for external use
 CustomMenu.Portal = Portal;

@@ -1,21 +1,27 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { ProjectStateRoot } from "@/components/project-states";
-// hook
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
+// hook
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import type { Route } from "./+types/page";
+import { StatesProjectSettingsHeader } from "./header";
 
-const StatesSettingsPage = observer(() => {
-  const { workspaceSlug, projectId } = useParams();
+function StatesSettingsPage({ params }: Route.ComponentProps) {
+  const { workspaceSlug, projectId } = params;
   // store
   const { currentProjectDetails } = useProject();
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
@@ -35,19 +41,19 @@ const StatesSettingsPage = observer(() => {
   }
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<StatesProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
       <div className="w-full">
         <SettingsHeading
           title={t("project_settings.states.heading")}
           description={t("project_settings.states.description")}
         />
-        {workspaceSlug && projectId && (
-          <ProjectStateRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
-        )}
+        <div className="mt-6">
+          <ProjectStateRoot workspaceSlug={workspaceSlug} projectId={projectId} />
+        </div>
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default StatesSettingsPage;
+export default observer(StatesSettingsPage);

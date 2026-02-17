@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { action, makeObservable, runInAction } from "mobx";
 // base class
 import type {
@@ -94,8 +100,7 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
-        this.clear(!isExistingPaginationOptions, false); // clear while fetching from server.
-        if (!this.groupBy) this.clear(!isExistingPaginationOptions, true); // clear while using local to have the no load effect.
+        this.clear(!isExistingPaginationOptions); // clear while fetching from server.
       });
 
       // get params from pagination options

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -15,7 +21,7 @@ type TWorkItemLabelSelectProps = Omit<TWorkItemLabelSelectBaseProps, "labelIds" 
   projectId: string | undefined;
 };
 
-export const IssueLabelSelect: React.FC<TWorkItemLabelSelectProps> = observer((props) => {
+export const IssueLabelSelect = observer(function IssueLabelSelect(props: TWorkItemLabelSelectProps) {
   const { projectId } = props;
   // router
   const { workspaceSlug } = useParams();

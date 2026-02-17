@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useState } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
@@ -22,7 +28,7 @@ type TProps = {
   showToolbar?: boolean;
   handleLayout?: () => void;
 };
-export const StickyNote = observer((props: TProps) => {
+export const StickyNote = observer(function StickyNote(props: TProps) {
   const { onClose, workspaceSlug, className = "", stickyId, showToolbar, handleLayout } = props;
   // navigation
   // const pathName = usePathname();
@@ -74,7 +80,7 @@ export const StickyNote = observer((props: TProps) => {
         handleClose={() => setIsDeleteModalOpen(false)}
       />
       <div
-        className={cn("w-full h-fit flex flex-col rounded group/sticky overflow-y-scroll", className)}
+        className={cn("w-full h-fit flex flex-col rounded-sm group/sticky overflow-y-scroll", className)}
         style={{
           backgroundColor,
         }}

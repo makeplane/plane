@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
@@ -20,7 +24,7 @@ export type TReadonlyStateProps = {
   workspaceSlug: string;
 };
 
-export const ReadonlyState: React.FC<TReadonlyStateProps> = observer((props) => {
+export const ReadonlyState = observer(function ReadonlyState(props: TReadonlyStateProps) {
   const { className, iconSize = "size-4", hideIcon = false, value, placeholder, projectId, workspaceSlug } = props;
   // states
   const [stateLoader, setStateLoader] = useState(false);
@@ -48,7 +52,7 @@ export const ReadonlyState: React.FC<TReadonlyStateProps> = observer((props) => 
 
   if (stateLoader) {
     return (
-      <Loader className={cn("flex items-center gap-1 text-sm", className)}>
+      <Loader className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
         <Loader.Item height="16px" width="16px" className="rounded-full" />
         <Loader.Item height="16px" width="50px" />
       </Loader>
@@ -56,7 +60,7 @@ export const ReadonlyState: React.FC<TReadonlyStateProps> = observer((props) => 
   }
 
   return (
-    <div className={cn("flex items-center gap-1 text-sm", className)}>
+    <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
       {!hideIcon && (
         <StateGroupIcon
           stateGroup={state?.group ?? "backlog"}

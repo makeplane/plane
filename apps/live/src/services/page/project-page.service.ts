@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { AppError } from "@/lib/errors";
 import { PageService } from "./extended.service";
 
 interface ProjectPageServiceParams {
@@ -13,9 +20,9 @@ export class ProjectPageService extends PageService {
   constructor(params: ProjectPageServiceParams) {
     super();
     const { workspaceSlug, projectId } = params;
-    if (!workspaceSlug || !projectId) throw new Error("Missing required fields.");
+    if (!workspaceSlug || !projectId) throw new AppError("Missing required fields.");
     // validate cookie
-    if (!params.cookie) throw new Error("Cookie is required.");
+    if (!params.cookie) throw new AppError("Cookie is required.");
     // set cookie
     this.setHeader("Cookie", params.cookie);
     // set base path

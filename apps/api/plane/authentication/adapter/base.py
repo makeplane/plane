@@ -1,23 +1,33 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import os
 import uuid
 import logging
+import requests
+from io import BytesIO
+
 
 # Django imports
 from django.utils import timezone
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 # Third party imports
 from zxcvbn import zxcvbn
 
 # Module imports
-from plane.db.models import Profile, User, WorkspaceMemberInvite
+from plane.db.models import Profile, User, WorkspaceMemberInvite, FileAsset
 from plane.license.utils.instance_value import get_configuration_value
 from .error import AuthenticationException, AUTHENTICATION_ERROR_CODES
 from plane.bgtasks.user_activation_email_task import user_activation_email
 from plane.utils.host import base_host
 from plane.utils.ip_address import get_client_ip
+from plane.utils.exception_logger import log_exception
+from plane.settings.storage import S3Storage
 
 
 
@@ -82,8 +92,8 @@ class Adapter:
         if results["score"] < 3:
             self.logger.warning(f"Password is not strong enough: {email}")
             raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
-                error_message="INVALID_PASSWORD",
+                error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                error_message="PASSWORD_TOO_WEAK",
                 payload={"email": email},
             )
         return
@@ -92,9 +102,9 @@ class Adapter:
         """Check if sign up is enabled or not and raise exception if not enabled"""
 
         # Get configuration value
-        (ENABLE_SIGNUP,) = get_configuration_value(
-            [{"key": "ENABLE_SIGNUP", "default": os.environ.get("ENABLE_SIGNUP", "1")}]
-        )
+        (ENABLE_SIGNUP,) = get_configuration_value([
+            {"key": "ENABLE_SIGNUP", "default": os.environ.get("ENABLE_SIGNUP", "1")}
+        ])
 
         # Check if sign up is disabled and invite is present or not
         if ENABLE_SIGNUP == "0" and not WorkspaceMemberInvite.objects.filter(email=email).exists():
@@ -107,6 +117,104 @@ class Adapter:
             )
 
         return True
+
+    def get_avatar_download_headers(self):
+        return {}
+
+    def check_sync_enabled(self):
+        """Check if sync is enabled for the provider"""
+        provider_config_map = {
+            "google": "ENABLE_GOOGLE_SYNC",
+            "github": "ENABLE_GITHUB_SYNC",
+            "gitlab": "ENABLE_GITLAB_SYNC",
+            "gitea": "ENABLE_GITEA_SYNC",
+        }
+        config_key = provider_config_map.get(self.provider)
+        if config_key:
+            (enabled,) = get_configuration_value([{"key": config_key, "default": os.environ.get(config_key, "0")}])
+            return enabled == "1"
+        return False
+
+    def download_and_upload_avatar(self, avatar_url, user):
+        """
+        Downloads avatar from OAuth provider and uploads to our storage.
+        Returns the uploaded file path or None if failed.
+        """
+        if not avatar_url:
+            return None
+
+        try:
+            headers = self.get_avatar_download_headers()
+            # Download the avatar image
+            response = requests.get(avatar_url, timeout=10, headers=headers)
+            response.raise_for_status()
+
+            # Check content length before downloading
+            content_length = response.headers.get("Content-Length")
+            max_size = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
+            if content_length and int(content_length) > max_size:
+                return None
+
+            # Get content type and determine file extension
+            content_type = response.headers.get("Content-Type", "image/jpeg")
+            extension_map = {
+                "image/jpeg": "jpg",
+                "image/jpg": "jpg",
+                "image/png": "png",
+                "image/gif": "gif",
+                "image/webp": "webp",
+            }
+            extension = extension_map.get(content_type)
+
+            if not extension:
+                return None
+
+            # Download with size limit
+            chunks = []
+            total_size = 0
+            for chunk in response.iter_content(chunk_size=8192):
+                total_size += len(chunk)
+                if total_size > max_size:
+                    return None
+                chunks.append(chunk)
+            content = b"".join(chunks)
+            file_size = len(content)
+
+            # Generate unique filename
+            filename = f"{uuid.uuid4().hex}-user-avatar.{extension}"
+
+            storage = S3Storage(request=self.request)
+
+            # Create file-like object
+            file_obj = BytesIO(response.content)
+            file_obj.seek(0)
+
+            # Upload using boto3 directly
+            upload_success = storage.upload_file(file_obj=file_obj, object_name=filename, content_type=content_type)
+            if not upload_success:
+                return None
+
+            # Get storage metadata
+            storage_metadata = storage.get_object_metadata(object_name=filename)
+
+            # Create FileAsset record
+            file_asset = FileAsset.objects.create(
+                attributes={"name": f"{self.provider}-avatar.{extension}", "type": content_type, "size": file_size},
+                asset=filename,
+                size=file_size,
+                user=user,
+                created_by=user,
+                entity_type=FileAsset.EntityTypeContext.USER_AVATAR,
+                is_uploaded=True,
+                storage_metadata=storage_metadata,
+            )
+
+            return file_asset
+
+        except Exception as e:
+            log_exception(e)
+            # Return None if upload fails, so original URL can be used as fallback
+            return None
 
     def save_user_data(self, user):
         # Update user details
@@ -121,6 +229,59 @@ class Adapter:
             user_activation_email.delay(base_host(request=self.request), user.id)
         # Set user as active
         user.is_active = True
+        user.save()
+        return user
+
+    def delete_old_avatar(self, user):
+        """Delete the old avatar if it exists"""
+        try:
+            if user.avatar_asset:
+                asset = FileAsset.objects.get(pk=user.avatar_asset_id)
+                storage = S3Storage(request=self.request)
+                storage.delete_files(object_names=[asset.asset.name])
+
+                # Delete the user avatar
+                asset.delete()
+                user.avatar_asset = None
+                user.avatar = ""
+                user.save()
+            return
+        except FileAsset.DoesNotExist:
+            pass
+        except Exception as e:
+            log_exception(e)
+            return
+
+    def sync_user_data(self, user):
+        # Update user details
+        first_name = self.user_data.get("user", {}).get("first_name", "")
+        last_name = self.user_data.get("user", {}).get("last_name", "")
+        user.first_name = first_name if first_name else ""
+        user.last_name = last_name if last_name else ""
+
+        # Get email
+        email = self.user_data.get("email")
+
+        # Get display name
+        display_name = self.user_data.get("user", {}).get("display_name")
+        # If display name is not provided, generate a random display name
+        if not display_name:
+            display_name = User.get_display_name(email)
+
+        # Set display name
+        user.display_name = display_name
+
+        # Download and upload avatar only if the avatar is different from the one in the storage
+        avatar = self.user_data.get("user", {}).get("avatar", "")
+        # Delete the old avatar if it exists
+        self.delete_old_avatar(user=user)
+        avatar_asset = self.download_and_upload_avatar(avatar_url=avatar, user=user)
+        if avatar_asset:
+            user.avatar_asset = avatar_asset
+        # If avatar upload fails, set the avatar to the original URL
+        else:
+            user.avatar = avatar
+
         user.save()
         return user
 
@@ -158,16 +319,30 @@ class Adapter:
                 user.is_password_autoset = False
 
             # Set user details
-            avatar = self.user_data.get("user", {}).get("avatar", "")
             first_name = self.user_data.get("user", {}).get("first_name", "")
             last_name = self.user_data.get("user", {}).get("last_name", "")
-            user.avatar = avatar if avatar else ""
             user.first_name = first_name if first_name else ""
             user.last_name = last_name if last_name else ""
+
             user.save()
+
+            # Download and upload avatar
+            avatar = self.user_data.get("user", {}).get("avatar", "")
+            if avatar:
+                avatar_asset = self.download_and_upload_avatar(avatar_url=avatar, user=user)
+                if avatar_asset:
+                    user.avatar_asset = avatar_asset
+                    user.avatar = avatar
+                # If avatar upload fails, set the avatar to the original URL
+                else:
+                    user.avatar = avatar
 
             # Create profile
             Profile.objects.create(user=user)
+
+        # Check if IDP sync is enabled and user is not signing up
+        if self.check_sync_enabled() and not is_signup:
+            user = self.sync_user_data(user=user)
 
         # Save user data
         user = self.save_user_data(user=user)

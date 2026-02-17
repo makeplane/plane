@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 // constants
@@ -52,7 +58,6 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
         this.editor.emit("update", {
           editor: this.editor,
           transaction: newState.tr,
-          appendedTransactions: [],
         });
 
         return null;
@@ -60,5 +65,9 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
     });
 
     return [plugin];
+  },
+
+  getHeadings() {
+    return this.storage.headings;
   },
 });

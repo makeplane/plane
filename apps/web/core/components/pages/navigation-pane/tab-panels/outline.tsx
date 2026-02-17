@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane web imports
 import { PageNavigationPaneOutlineTabEmptyState } from "@/plane-web/components/pages/navigation-pane/tab-panels/empty-states/outline";
 // store
@@ -9,7 +15,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageNavigationPaneOutlineTabPanel: React.FC<Props> = (props) => {
+export function PageNavigationPaneOutlineTabPanel(props: Props) {
   const { page } = props;
   // derived values
   const {
@@ -25,4 +31,4 @@ export const PageNavigationPaneOutlineTabPanel: React.FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

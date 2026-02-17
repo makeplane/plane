@@ -1,8 +1,15 @@
-import { TStaticViewTypes, IWorkspaceSearchResults, EUserWorkspaceRoles } from "@plane/types";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-export const ORGANIZATION_SIZE = ["Just myself", "2-10", "11-50", "51-200", "201-500", "500+"];
+import type { TStaticViewTypes, IWorkspaceSearchResults } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 
-export const RESTRICTED_URLS = [
+export const ORGANIZATION_SIZE: string[] = ["Just myself", "2-10", "11-50", "51-200", "201-500", "500+"];
+
+export const RESTRICTED_URLS: string[] = [
   "404",
   "accounts",
   "api",
@@ -68,62 +75,6 @@ export const RESTRICTED_URLS = [
   "licenses",
   "instances",
   "instance",
-];
-
-export const WORKSPACE_SETTINGS = {
-  general: {
-    key: "general",
-    i18n_label: "workspace_settings.settings.general.title",
-    href: `/settings`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/`,
-  },
-  members: {
-    key: "members",
-    i18n_label: "workspace_settings.settings.members.title",
-    href: `/settings/members`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members/`,
-  },
-  "billing-and-plans": {
-    key: "billing-and-plans",
-    i18n_label: "workspace_settings.settings.billing_and_plans.title",
-    href: `/settings/billing`,
-    access: [EUserWorkspaceRoles.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/billing/`,
-  },
-  export: {
-    key: "export",
-    i18n_label: "workspace_settings.settings.exports.title",
-    href: `/settings/exports`,
-    access: [EUserWorkspaceRoles.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/exports/`,
-  },
-  webhooks: {
-    key: "webhooks",
-    i18n_label: "workspace_settings.settings.webhooks.title",
-    href: `/settings/webhooks`,
-    access: [EUserWorkspaceRoles.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/webhooks/`,
-  },
-};
-
-export const WORKSPACE_SETTINGS_ACCESS = Object.fromEntries(
-  Object.entries(WORKSPACE_SETTINGS).map(([_, { href, access }]) => [href, access])
-);
-
-export const WORKSPACE_SETTINGS_LINKS: {
-  key: string;
-  i18n_label: string;
-  href: string;
-  access: EUserWorkspaceRoles[];
-  highlight: (pathname: string, baseUrl: string) => boolean;
-}[] = [
-  WORKSPACE_SETTINGS["general"],
-  WORKSPACE_SETTINGS["members"],
-  WORKSPACE_SETTINGS["billing-and-plans"],
-  WORKSPACE_SETTINGS["export"],
-  WORKSPACE_SETTINGS["webhooks"],
 ];
 
 export const ROLE = {
@@ -253,19 +204,12 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
     labelTranslationKey: "views",
     href: `/workspace-views/all-issues/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-    highlight: (pathname: string, url: string) => pathname === url,
+    highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   analytics: {
     key: "analytics",
     labelTranslationKey: "analytics",
     href: `/analytics/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    highlight: (pathname: string, url: string) => pathname.includes(url),
-  },
-  drafts: {
-    key: "drafts",
-    labelTranslationKey: "drafts",
-    href: `/drafts/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
@@ -279,10 +223,9 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
 };
 
 export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["views"]!,
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["analytics"]!,
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["drafts"]!,
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["archives"]!,
+  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["views"],
+  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["analytics"],
+  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["archives"],
 ];
 
 export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
@@ -307,6 +250,20 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspac
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
+  stickies: {
+    key: "stickies",
+    labelTranslationKey: "sidebar.stickies",
+    href: `/stickies/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
+  drafts: {
+    key: "drafts",
+    labelTranslationKey: "drafts",
+    href: `/drafts/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
   projects: {
     key: "projects",
     labelTranslationKey: "projects",
@@ -317,13 +274,11 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspac
 };
 
 export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
-  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["home"]!,
-  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["inbox"]!,
-  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["your-work"]!,
+  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["home"],
 ];
 
 export const WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
-  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"]!,
+  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"],
 ];
 
 export const IS_FAVORITE_MENU_OPEN = "is_favorite_menu_open";

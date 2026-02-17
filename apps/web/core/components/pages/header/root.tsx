@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
@@ -27,7 +33,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
+export const PagesListHeaderRoot = observer(function PagesListHeaderRoot(props: Props) {
   const { pageType, projectId, storeType, workspaceSlug } = props;
   const { t } = useTranslation();
   // store hooks

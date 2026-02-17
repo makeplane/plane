@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { AnyExtension } from "@tiptap/core";
 import { SlashCommands } from "@/extensions";
@@ -26,7 +32,7 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   },
 ];
 
-export const DocumentEditorAdditionalExtensions = (props: TDocumentEditorAdditionalExtensionsProps) => {
+export function DocumentEditorAdditionalExtensions(props: TDocumentEditorAdditionalExtensionsProps) {
   const { disabledExtensions, flaggedExtensions } = props;
 
   const documentExtensions = extensionRegistry
@@ -34,4 +40,4 @@ export const DocumentEditorAdditionalExtensions = (props: TDocumentEditorAdditio
     .map((config) => config.getExtension(props));
 
   return documentExtensions;
-};
+}

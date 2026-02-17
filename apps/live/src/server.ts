@@ -1,8 +1,15 @@
-import { Server as HttpServer } from "http";
-import { type Hocuspocus } from "@hocuspocus/server";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Server as HttpServer } from "http";
+import type { Hocuspocus } from "@hocuspocus/server";
 import compression from "compression";
 import cors from "cors";
-import express, { Express, Request, Response, Router } from "express";
+import type { Express, Request, Response, Router } from "express";
+import express from "express";
 import expressWs from "express-ws";
 import helmet from "helmet";
 // plane imports
@@ -39,7 +46,6 @@ export class Server {
       const manager = HocusPocusServerManager.getInstance();
       this.hocuspocusServer = await manager.initialize();
       logger.info("SERVER: HocusPocus setup completed");
-
       this.setupRoutes(this.hocuspocusServer);
       this.setupNotFoundHandler();
     } catch (error) {

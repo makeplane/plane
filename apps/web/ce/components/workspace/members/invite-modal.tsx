@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React from "react";
 import { observer } from "mobx-react";
@@ -20,7 +24,9 @@ export type TSendWorkspaceInvitationModalProps = {
   onSubmit: (data: IWorkspaceBulkInviteFormData) => Promise<void> | undefined;
 };
 
-export const SendWorkspaceInvitationModal: React.FC<TSendWorkspaceInvitationModalProps> = observer((props) => {
+export const SendWorkspaceInvitationModal = observer(function SendWorkspaceInvitationModal(
+  props: TSendWorkspaceInvitationModalProps
+) {
   const { isOpen, onClose, onSubmit } = props;
   // store hooks
   const { t } = useTranslation();

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
@@ -183,7 +189,7 @@ export class ProfileIssuesFilter extends IssueFilterHelperStore implements IProf
       if (isEmpty(this.filters) || isEmpty(this.filters[userId])) return;
 
       const _filters = {
-        richFilters: this.filters[userId].richFilters as TWorkItemFilterExpression,
+        richFilters: this.filters[userId].richFilters,
         displayFilters: this.filters[userId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[userId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[userId].kanbanFilters as TIssueKanbanFilters,

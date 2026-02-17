@@ -1,13 +1,16 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 // plane imports
 import { getPageName } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 import { BlockItemAction } from "@/components/pages/list/block-item-action";
 // hooks
@@ -21,7 +24,7 @@ type TPageListBlock = {
   storeType: EPageStoreType;
 };
 
-export const PageListBlock: FC<TPageListBlock> = observer((props) => {
+export const PageListBlock = observer(function PageListBlock(props: TPageListBlock) {
   const { pageId, storeType } = props;
   // refs
   const parentRef = useRef(null);
@@ -43,7 +46,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
           {logo_props?.in_use ? (
             <Logo logo={logo_props} size={16} type="lucide" />
           ) : (
-            <PageIcon className="h-4 w-4 text-custom-text-300" />
+            <PageIcon className="h-4 w-4 text-tertiary" />
           )}
         </>
       }

@@ -2,15 +2,15 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: ["src/index.ts", "src/lib.ts"],
-  outDir: "dist",
-  format: ["esm", "cjs"],
+  format: ["esm"],
+  dts: true,
   copy: ["src/styles"],
   exports: {
-    customExports: (out) => ({
-      ...out,
+    customExports: (exports) => ({
+      ...exports,
+      "./styles.css": "./dist/styles/index.css",
       "./styles": "./dist/styles/index.css",
     }),
   },
-  dts: true,
-  clean: true,
+  platform: "neutral",
 });

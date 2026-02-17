@@ -1,13 +1,14 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
-import { PROJECT_SETTINGS_TRACKER_ELEMENTS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { ToggleSwitch } from "@plane/ui";
 // hooks
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
 // i18n
@@ -17,7 +18,7 @@ type TEstimateDisableSwitch = {
   isAdmin: boolean;
 };
 
-export const EstimateDisableSwitch: FC<TEstimateDisableSwitch> = observer((props) => {
+export const EstimateDisableSwitch = observer(function EstimateDisableSwitch(props: TEstimateDisableSwitch) {
   const { workspaceSlug, projectId, isAdmin } = props;
   // i18n
   const { t } = useTranslation();
@@ -34,15 +35,6 @@ export const EstimateDisableSwitch: FC<TEstimateDisableSwitch> = observer((props
       await updateProject(workspaceSlug, projectId, {
         estimate: currentProjectActiveEstimate ? null : currentActiveEstimateId,
       });
-      captureElementAndEvent({
-        element: {
-          elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.ESTIMATES_TOGGLE_BUTTON,
-        },
-        event: {
-          eventName: PROJECT_SETTINGS_TRACKER_EVENTS.estimates_toggle,
-          state: "SUCCESS",
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: currentProjectActiveEstimate
@@ -53,15 +45,6 @@ export const EstimateDisableSwitch: FC<TEstimateDisableSwitch> = observer((props
           : t("project_settings.estimates.toasts.enabled.success.message"),
       });
     } catch (err) {
-      captureElementAndEvent({
-        element: {
-          elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.ESTIMATES_TOGGLE_BUTTON,
-        },
-        event: {
-          eventName: PROJECT_SETTINGS_TRACKER_EVENTS.estimates_toggle,
-          state: "ERROR",
-        },
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("project_settings.estimates.toasts.disabled.error.title"),

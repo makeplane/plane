@@ -2,7 +2,7 @@
   "name": "plane",
   "description": "Open-source project management that unlocks customer value",
   "repository": "https://github.com/makeplane/plane.git",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
@@ -12,17 +12,52 @@
     "clean": "turbo run clean && rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "fix": "turbo run fix",
     "fix:format": "turbo run fix:format",
+    "fix:lint": "turbo run fix:lint",
     "check": "turbo run check",
     "check:lint": "turbo run check:lint",
-    "check:format": "turbo run check:format"
+    "check:format": "turbo run check:format",
+    "check:types": "turbo run check:types",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "prettier": "latest",
-    "prettier-plugin-tailwindcss": "^0.6.14",
-    "turbo": "^2.5.8"
+    "@eslint/js": "9.39.1",
+    "@prettier/plugin-oxc": "0.1.3",
+    "@vitest/eslint-plugin": "1.5.1",
+    "eslint": "9.39.1",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-import-resolver-node": "0.3.9",
+    "eslint-import-resolver-typescript": "4.4.4",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-n": "17.23.1",
+    "eslint-plugin-promise": "7.2.1",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "7.0.1",
+    "eslint-plugin-react-refresh": "0.4.24",
+    "eslint-plugin-storybook": "10.1.4",
+    "eslint-plugin-turbo": "2.6.3",
+    "globals": "16.5.0",
+    "husky": "9.1.7",
+    "lint-staged": "16.2.7",
+    "prettier": "3.7.4",
+    "turbo": "2.6.3",
+    "typescript-eslint": "8.48.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts,json,css,md}": [
+      "pnpm exec prettier --write --ignore-unknown"
+    ],
+    "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts}": [
+      "pnpm exec eslint --fix --max-warnings=0 --no-warn-ignored"
+    ]
   },
   "pnpm": {
     "overrides": {
+      "express": "catalog:",
+      "mdast-util-to-hast": "13.2.1",
+      "valibot": "1.2.0",
+      "glob": "11.1.0",
+      "js-yaml": "4.1.1",
       "brace-expansion": "2.0.2",
       "nanoid": "3.3.8",
       "esbuild": "0.25.0",
@@ -34,19 +69,23 @@
       "prosemirror-view": "1.40.0",
       "@types/express": "4.17.23",
       "typescript": "catalog:",
-      "sharp": "catalog:",
-      "vite": "catalog:"
+      "vite": "catalog:",
+      "qs": "6.14.2",
+      "diff": "5.2.2",
+      "webpack": "5.104.1",
+      "lodash-es": "catalog:",
+      "@isaacs/brace-expansion": "5.0.1",
+      "lodash": "4.17.23"
     },
     "onlyBuiltDependencies": [
-      "@swc/core",
-      "core-js",
-      "esbuild",
-      "sharp",
-      "turbo",
-      "unrs-resolver"
+      "@sentry/cli",
+      "turbo"
+    ],
+    "ignoredBuiltDependencies": [
+      "sharp"
     ]
   },
-  "packageManager": "pnpm@10.12.1",
+  "packageManager": "pnpm@10.24.0+sha512.01ff8ae71b4419903b65c60fb2dc9d34cf8bb6e06d03bde112ef38f7a34d6904c424ba66bea5cdcf12890230bf39f9580473140ed9c946fef328b6e5238a345a",
   "engines": {
     "node": ">=22.18.0"
   }

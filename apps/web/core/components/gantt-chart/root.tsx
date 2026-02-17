@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -32,7 +38,7 @@ type GanttChartRootProps = {
   isEpic?: boolean;
 };
 
-export const GanttChartRoot: FC<GanttChartRootProps> = observer((props) => {
+export const GanttChartRoot = observer(function GanttChartRoot(props: GanttChartRootProps) {
   const {
     border = true,
     title,

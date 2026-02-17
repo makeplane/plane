@@ -1,9 +1,14 @@
-import type { Metadata } from "next";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-export const metadata: Metadata = {
-  title: "Set Password - Plane",
-};
+import { Outlet } from "react-router";
+import type { Route } from "./+types/layout";
 
-export default function SetPasswordLayout({ children }: { children: React.ReactNode }) {
-  return children;
+export default function SetPasswordLayout() {
+  return <Outlet />;
 }
+
+export const meta: Route.MetaFunction = () => [{ title: "Set Password - Plane" }];

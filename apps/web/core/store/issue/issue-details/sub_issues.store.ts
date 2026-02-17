@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { pull, concat, uniq, set, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -11,9 +17,7 @@ import type {
   TIssueServiceType,
   TLoader,
 } from "@plane/types";
-import { EIssueServiceType } from "@plane/types";
 // services
-import { updatePersistentLayer } from "@/local-db/utils/utils";
 import { IssueService } from "@/services/issue";
 // store
 import type { IIssueDetail } from "./root.store";
@@ -198,10 +202,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       this.subIssues[parentIssueId].length
     );
 
-    if (this.serviceType === EIssueServiceType.ISSUES) {
-      updatePersistentLayer([parentIssueId, ...issueIds]);
-    }
-
     return;
   };
 
@@ -298,10 +298,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       );
     });
 
-    if (this.serviceType === EIssueServiceType.ISSUES) {
-      updatePersistentLayer([parentIssueId]);
-    }
-
     return;
   };
 
@@ -334,10 +330,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
         this.subIssues[parentIssueId]?.length
       );
     });
-
-    if (this.serviceType === EIssueServiceType.ISSUES) {
-      updatePersistentLayer([parentIssueId]);
-    }
 
     return;
   };

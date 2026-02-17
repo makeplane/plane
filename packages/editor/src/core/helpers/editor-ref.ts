@@ -1,26 +1,34 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Editor } from "@tiptap/core";
 import { DOMSerializer } from "@tiptap/pm/model";
 import * as Y from "yjs";
+// plane imports
+import { convertHTMLToMarkdown } from "@plane/utils";
 // components
 import { getEditorMenuItems } from "@/components/menus";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { CORE_EDITOR_META } from "@/constants/meta";
 // types
-import type { EditorRefApi, TEditorCommands } from "@/types";
+import type { EditorRefApi, IEditorProps, TEditorCommands } from "@/types";
 // local imports
 import { getParagraphCount } from "./common";
 import { insertContentAtSavedSelection } from "./insert-content-at-cursor-position";
 import { scrollSummary, scrollToNodeViaDOMCoordinates } from "./scroll-to-node";
 
-type TArgs = {
+type TArgs = Pick<IEditorProps, "getEditorMetaData"> & {
   editor: Editor | null;
   provider: HocuspocusProvider | undefined;
 };
 
 export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
-  const { editor, provider } = args;
+  const { editor, getEditorMetaData, provider } = args;
 
   return {
     blur: () => editor?.commands.blur(),
@@ -77,8 +85,36 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     }),
     getHeadings: () => (editor ? editor.storage.headingsList?.headings : []),
     getMarkDown: () => {
-      const markdownOutput = editor?.storage?.markdown?.getMarkdown?.() ?? "";
-      return markdownOutput;
+      if (!editor) return "";
+      const editorHTML = editor.getHTML();
+      const metaData = getEditorMetaData(editorHTML);
+      // convert to markdown
+      const markdown = convertHTMLToMarkdown({
+        description_html: editorHTML,
+        metaData,
+      });
+      return markdown;
+    },
+    copyMarkdownToClipboard: () => {
+      if (!editor) return;
+
+      const html = editor.getHTML();
+      const metaData = getEditorMetaData(html);
+      const markdown = convertHTMLToMarkdown({
+        description_html: html,
+        metaData,
+      });
+
+      const copyHandler = (event: ClipboardEvent) => {
+        event.preventDefault();
+        event.clipboardData?.setData("text/plain", markdown);
+        event.clipboardData?.setData("text/html", html);
+        event.clipboardData?.setData("text/plane-editor-html", html);
+        document.removeEventListener("copy", copyHandler);
+      };
+
+      document.addEventListener("copy", copyHandler);
+      document.execCommand("copy");
     },
     isAnyDropbarOpen: () => {
       if (!editor) return false;
@@ -94,11 +130,8 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         ?.chain()
         .setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true)
         .setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true)
-        .setContent(content, {
-          emitUpdate,
-          parseOptions: {
-            preserveWhitespace: true,
-          },
+        .setContent(content, emitUpdate, {
+          preserveWhitespace: true,
         })
         .run();
     },

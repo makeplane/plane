@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // hooks
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
@@ -10,7 +16,7 @@ type Props = {
   entities: Record<string, string[]>; // { groupID: entityIds[] }
 };
 
-export const MultipleSelectGroup: React.FC<Props> = observer((props) => {
+export const MultipleSelectGroup = observer(function MultipleSelectGroup(props: Props) {
   const { children, containerRef, disabled = false, entities } = props;
 
   const helpers = useMultipleSelect({
@@ -21,5 +27,3 @@ export const MultipleSelectGroup: React.FC<Props> = observer((props) => {
 
   return <>{children(helpers)}</>;
 });
-
-MultipleSelectGroup.displayName = "MultipleSelectGroup";

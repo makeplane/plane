@@ -1,11 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Earth, Lock } from "lucide-react";
+import { Earth } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { LockIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProjectView } from "@plane/types";
 import { EViewAccess } from "@plane/types";
@@ -28,7 +35,7 @@ type Props = {
   view: IProjectView;
 };
 
-export const ViewListItemAction: FC<Props> = observer((props) => {
+export const ViewListItemAction = observer(function ViewListItemAction(props: Props) {
   const { parentRef, view } = props;
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
@@ -87,18 +94,18 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
         />
       )}
       <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
-      <div className="cursor-default text-custom-text-300">
+      <div className="cursor-default text-tertiary">
         <Tooltip tooltipContent={access === EViewAccess.PUBLIC ? "Public" : "Private"}>
-          {access === EViewAccess.PUBLIC ? <Earth className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+          {access === EViewAccess.PUBLIC ? <Earth className="h-4 w-4" /> : <LockIcon className="h-4 w-4" />}
         </Tooltip>
       </div>
 
       {view?.anchor && publishLink ? (
         <div
-          className="px-3 py-1.5 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5 cursor-pointer"
+          className="px-3 py-1.5 bg-success-subtle text-success-primary rounded-sm text-11 font-medium flex items-center gap-1.5 cursor-pointer"
           onClick={() => setPublishModalOpen(true)}
         >
-          <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
+          <span className="flex-shrink-0 rounded-full size-1.5 bg-success-primary" />
           Live
         </div>
       ) : (

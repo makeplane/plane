@@ -1,18 +1,20 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 // components
-import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // icon
-import { CycleGroupIcon, CycleIcon } from "@plane/propel/icons";
+import { CheckIcon, CycleGroupIcon, CycleIcon, SearchIcon } from "@plane/propel/icons";
 import type { TCycleGroups } from "@plane/types";
 // ui
 // store hooks
@@ -37,7 +39,7 @@ type CycleOptionsProps = {
   currentCycleId?: string;
 };
 
-export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
+export const CycleOptions = observer(function CycleOptions(props: CycleOptionsProps) {
   const { projectId, isOpen, referenceElement, placement, canRemoveCycle, currentCycleId } = props;
   // i18n
   const { t } = useTranslation();
@@ -124,17 +126,17 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
   return (
     <Combobox.Options className="fixed z-10" static>
       <div
-        className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+        className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
         ref={setPopperElement}
         style={styles.popper}
         {...attributes.popper}
       >
-        <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-          <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+        <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
+          <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
           <Combobox.Input
             as="input"
             ref={inputRef}
-            className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+            className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("common.search.label")}
@@ -150,24 +152,24 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
                   key={option.value}
                   value={option.value}
                   className={({ active, selected }) =>
-                    `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
-                      active ? "bg-custom-background-80" : ""
-                    } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                    `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 ${
+                      active ? "bg-layer-transparent-hover" : ""
+                    } ${selected ? "text-primary" : "text-secondary"}`
                   }
                 >
                   {({ selected }) => (
                     <>
                       <span className="flex-grow truncate">{option.content}</span>
-                      {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                      {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                     </>
                   )}
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.search.no_matches_found")}</p>
+              <p className="px-1.5 py-1 italic text-placeholder">{t("common.search.no_matches_found")}</p>
             )
           ) : (
-            <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.loading")}</p>
+            <p className="px-1.5 py-1 italic text-placeholder">{t("common.loading")}</p>
           )}
         </div>
       </div>

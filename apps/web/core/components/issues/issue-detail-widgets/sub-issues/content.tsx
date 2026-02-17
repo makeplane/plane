@@ -1,4 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React, { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
@@ -23,7 +28,7 @@ type Props = {
 
 type TIssueCrudState = { toggle: boolean; parentIssueId: string | undefined; issue: TIssue | undefined };
 
-export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
+export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibleContent(props: Props) {
   const { workspaceSlug, projectId, parentIssueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
   // state
   const [issueCrudState, setIssueCrudState] = useState<{
@@ -80,7 +85,8 @@ export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
   );
 
   const handleFetchSubIssues = useCallback(async () => {
-    if (!subIssueHelpers.issue_visibility.includes(parentIssueId)) {
+    const currentSubIssueHelpers = subIssueHelpersByIssueId(`${parentIssueId}_root`);
+    if (!currentSubIssueHelpers.issue_visibility.includes(parentIssueId)) {
       try {
         setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", parentIssueId);
         await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, parentIssueId);
@@ -91,14 +97,7 @@ export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
         setSubIssueHelpers(`${parentIssueId}_root`, "preview_loader", "");
       }
     }
-  }, [
-    parentIssueId,
-    projectId,
-    setSubIssueHelpers,
-    subIssueHelpers.issue_visibility,
-    subIssueOperations,
-    workspaceSlug,
-  ]);
+  }, [parentIssueId, projectId, setSubIssueHelpers, subIssueHelpersByIssueId, subIssueOperations, workspaceSlug]);
 
   useEffect(() => {
     handleFetchSubIssues();

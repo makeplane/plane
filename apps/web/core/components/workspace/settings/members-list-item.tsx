@@ -1,10 +1,12 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
-import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceMember } from "@plane/types";
@@ -12,8 +14,7 @@ import { Table } from "@plane/ui";
 // components
 import { MembersLayoutLoader } from "@/components/ui/loader/layouts/members-layout-loader";
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import type { RowData } from "@/components/workspace/settings/member-columns";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -26,7 +27,7 @@ type Props = {
   memberDetails: (IWorkspaceMember | null)[];
 };
 
-export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
+export const WorkspaceMembersListItem = observer(function WorkspaceMembersListItem(props: Props) {
   const { memberDetails } = props;
   const { columns, workspaceSlug, removeMemberModal, setRemoveMemberModal } = useMemberColumns();
   // router
@@ -45,43 +46,33 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   const handleLeaveWorkspace = async () => {
     if (!workspaceSlug || !currentUser) return;
 
-    await leaveWorkspace(workspaceSlug.toString())
-      .then(async () => {
-        await fetchCurrentUserSettings();
-        router.push(getWorkspaceRedirectionUrl());
-        captureSuccess({
-          eventName: MEMBER_TRACKER_EVENTS.workspace.leave,
-          payload: {
-            workspace: workspaceSlug,
-          },
-        });
-      })
-      .catch((err: any) => {
-        captureError({
-          eventName: MEMBER_TRACKER_EVENTS.workspace.leave,
-          payload: {
-            workspace: workspaceSlug,
-          },
-          error: err,
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.error || t("something_went_wrong_please_try_again"),
-        });
+    try {
+      await leaveWorkspace(workspaceSlug.toString());
+      await fetchCurrentUserSettings();
+      router.push(getWorkspaceRedirectionUrl());
+    } catch (err: unknown) {
+      const error = err as { error?: string };
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: error?.error || t("something_went_wrong_please_try_again"),
       });
+    }
   };
 
   const handleRemoveMember = async (memberId: string) => {
     if (!workspaceSlug || !memberId) return;
 
-    await removeMemberFromWorkspace(workspaceSlug.toString(), memberId).catch((err) =>
+    try {
+      await removeMemberFromWorkspace(workspaceSlug.toString(), memberId);
+    } catch (err: unknown) {
+      const error = err as { error?: string };
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: err?.error || t("something_went_wrong_please_try_again"),
-      })
-    );
+        message: error?.error || t("something_went_wrong_please_try_again"),
+      });
+    }
   };
 
   const handleRemove = async (memberId: string) => {
@@ -100,7 +91,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   if (isEmpty(columns)) return <MembersLayoutLoader />;
 
   return (
-    <div className="border-t border-custom-border-100 grid">
+    <div className="border-t border-subtle grid">
       {removeMemberModal && (
         <ConfirmWorkspaceMemberRemove
           isOpen={removeMemberModal.member.id.length > 0}
@@ -112,14 +103,16 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
           onSubmit={() => handleRemove(removeMemberModal.member.id)}
         />
       )}
-      <Table
+      <Table<RowData>
         columns={columns ?? []}
-        data={(memberDetails?.filter((member): member is IWorkspaceMember => member !== null) ?? []) as any}
+        data={
+          (memberDetails?.filter((member): member is IWorkspaceMember => member !== null) ?? []) as unknown as RowData[]
+        }
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
-        tHeadClassName="border-b border-custom-border-100"
-        thClassName="text-left font-medium divide-x-0 text-custom-text-400"
+        tHeadClassName="border-b border-subtle"
+        thClassName="text-left font-medium divide-x-0 text-placeholder"
         tBodyClassName="divide-y-0"
-        tBodyTrClassName="divide-x-0 p-4 h-[40px] text-custom-text-200"
+        tBodyTrClassName="divide-x-0 p-4 h-10 text-secondary"
         tHeadTrClassName="divide-x-0"
       />
     </div>

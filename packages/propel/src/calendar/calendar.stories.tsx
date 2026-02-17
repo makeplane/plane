@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import type { DateRange } from "react-day-picker";
@@ -184,10 +190,10 @@ export const TwoMonths: Story = {
 };
 
 export const Uncontrolled: Story = {
-  render(args) {
+  render() {
     return (
       <div className="p-4">
-        <Calendar {...args} mode="single" defaultMonth={new Date(2024, 0)} className="rounded-md border" />
+        <Calendar mode="single" defaultMonth={new Date(2024, 0)} showOutsideDays className="rounded-md border" />
       </div>
     );
   },

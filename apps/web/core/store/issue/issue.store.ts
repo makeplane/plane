@@ -1,4 +1,10 @@
-import { clone, set, update } from "lodash-es";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { set, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -7,8 +13,6 @@ import type { TIssue } from "@plane/types";
 import { getCurrentDateTimeInISO } from "@plane/utils";
 import { rootStore } from "@/lib/store-context";
 // services
-import { deleteIssueFromLocal } from "@/local-db/utils/load-issues";
-import { updatePersistentLayer } from "@/local-db/utils/utils";
 import { IssueService } from "@/services/issue";
 
 export type IIssueStore = {
@@ -103,17 +107,12 @@ export class IssueStore implements IIssueStore {
    */
   updateIssue = (issueId: string, issue: Partial<TIssue>) => {
     if (!issue || !issueId || !this.issuesMap[issueId]) return;
-    const issueBeforeUpdate = clone(this.issuesMap[issueId]);
     runInAction(() => {
       set(this.issuesMap, [issueId, "updated_at"], getCurrentDateTimeInISO());
       Object.keys(issue).forEach((key) => {
         set(this.issuesMap, [issueId, key], issue[key as keyof TIssue]);
       });
     });
-
-    if (!issueBeforeUpdate.is_epic) {
-      updatePersistentLayer(issueId);
-    }
   };
 
   /**
@@ -126,7 +125,6 @@ export class IssueStore implements IIssueStore {
     runInAction(() => {
       delete this.issuesMap[issueId];
     });
-    deleteIssueFromLocal(issueId);
   };
 
   // helper methods

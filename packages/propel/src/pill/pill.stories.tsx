@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Pill, EPillVariant, EPillSize } from "./pill";
 
@@ -125,7 +131,7 @@ export const StatusExamples: Story = {
     return (
       <div className="space-y-4">
         <div className="space-y-2">
-          <h3 className="text-sm font-medium">Task Status</h3>
+          <h3 className="text-13 font-medium">Task Status</h3>
           <div className="flex flex-wrap gap-2">
             <Pill variant={EPillVariant.DEFAULT}>Draft</Pill>
             <Pill variant={EPillVariant.WARNING}>In Progress</Pill>

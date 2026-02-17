@@ -1,8 +1,11 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 import os
-import random
-import string
+import secrets
 
 
 # Module imports
@@ -50,13 +53,7 @@ class MagicCodeProvider(CredentialAdapter):
 
     def initiate(self):
         ## Generate a random token
-        token = (
-            "".join(random.choices(string.ascii_lowercase, k=4))
-            + "-"
-            + "".join(random.choices(string.ascii_lowercase, k=4))
-            + "-"
-            + "".join(random.choices(string.ascii_lowercase, k=4))
-        )
+        token = str(secrets.randbelow(900000) + 100000)
 
         ri = redis_instance()
 

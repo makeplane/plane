@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { LayoutGrid } from "lucide-react";
 // plane imports
@@ -28,7 +32,7 @@ export const commandGroups: TCommandGroups = {
     icon: <CycleIcon className="h-3 w-3" />,
     itemName: (cycle: IWorkspaceDefaultSearchResult) => (
       <h6>
-        <span className="text-xs text-custom-text-300">{cycle.project__identifier}</span> {cycle.name}
+        <span className="text-11 text-tertiary">{cycle.project__identifier}</span> {cycle.name}
       </h6>
     ),
     path: (cycle: IWorkspaceDefaultSearchResult) =>
@@ -44,7 +48,7 @@ export const commandGroups: TCommandGroups = {
           issueTypeId={issue.type_id}
           projectIdentifier={issue.project__identifier}
           issueSequenceId={issue.sequence_id}
-          textContainerClassName="text-xs"
+          size="xs"
         />{" "}
         {issue.name}
       </div>
@@ -63,7 +67,7 @@ export const commandGroups: TCommandGroups = {
     icon: <ViewsIcon className="h-3 w-3" />,
     itemName: (view: IWorkspaceDefaultSearchResult) => (
       <h6>
-        <span className="text-xs text-custom-text-300">{view.project__identifier}</span> {view.name}
+        <span className="text-11 text-tertiary">{view.project__identifier}</span> {view.name}
       </h6>
     ),
     path: (view: IWorkspaceDefaultSearchResult) =>
@@ -74,7 +78,7 @@ export const commandGroups: TCommandGroups = {
     icon: <ModuleIcon className="h-3 w-3" />,
     itemName: (module: IWorkspaceDefaultSearchResult) => (
       <h6>
-        <span className="text-xs text-custom-text-300">{module.project__identifier}</span> {module.name}
+        <span className="text-11 text-tertiary">{module.project__identifier}</span> {module.name}
       </h6>
     ),
     path: (module: IWorkspaceDefaultSearchResult) =>
@@ -85,7 +89,7 @@ export const commandGroups: TCommandGroups = {
     icon: <PageIcon className="h-3 w-3" />,
     itemName: (page: IWorkspacePageSearchResult) => (
       <h6>
-        <span className="text-xs text-custom-text-300">{page.project__identifiers?.[0]}</span> {page.name}
+        <span className="text-11 text-tertiary">{page.project__identifiers?.[0]}</span> {page.name}
       </h6>
     ),
     path: (page: IWorkspacePageSearchResult, projectId: string | undefined) => {
@@ -93,7 +97,7 @@ export const commandGroups: TCommandGroups = {
       if (!!projectId && page?.project_ids?.includes(projectId)) redirectProjectId = projectId;
       return redirectProjectId
         ? `/${page?.workspace__slug}/projects/${redirectProjectId}/pages/${page?.id}`
-        : `/${page?.workspace__slug}/pages/${page?.id}`;
+        : `/${page?.workspace__slug}/wiki/${page?.id}`;
     },
     title: "Pages",
   },

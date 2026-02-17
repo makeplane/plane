@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 // plane imports
 import { EAuthModes } from "@plane/constants";
@@ -11,15 +15,17 @@ import { EPageTypes } from "@/helpers/authentication.helper";
 import DefaultLayout from "@/layouts/default-layout";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 
-const ResetPasswordPage = () => (
-  <DefaultLayout>
-    <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
-      <div className="relative z-10 flex flex-col items-center w-screen h-screen overflow-hidden overflow-y-auto pt-6 pb-10 px-8">
-        <AuthHeader type={EAuthModes.SIGN_IN} />
-        <ResetPasswordForm />
-      </div>
-    </AuthenticationWrapper>
-  </DefaultLayout>
-);
+function ResetPasswordPage() {
+  return (
+    <DefaultLayout>
+      <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
+        <div className="relative z-10 flex flex-col items-center w-screen h-screen overflow-hidden overflow-y-auto pt-6 pb-10 px-8">
+          <AuthHeader type={EAuthModes.SIGN_IN} />
+          <ResetPasswordForm />
+        </div>
+      </AuthenticationWrapper>
+    </DefaultLayout>
+  );
+}
 
 export default ResetPasswordPage;

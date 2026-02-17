@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 // hooks
@@ -28,7 +34,7 @@ interface PortalProps {
   container?: Element | null;
 }
 
-export const Portal: React.FC<PortalProps> = ({ children, container }) => {
+export function Portal({ children, container }: PortalProps) {
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -42,7 +48,7 @@ export const Portal: React.FC<PortalProps> = ({ children, container }) => {
 
   const targetContainer = container || document.body;
   return ReactDOM.createPortal(children, targetContainer);
-};
+}
 
 // Context for managing nested menus
 export const ContextMenuContext = React.createContext<{
@@ -57,7 +63,7 @@ type ContextMenuProps = {
   portalContainer?: Element | null;
 };
 
-const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
+function ContextMenuWithoutPortal(props: ContextMenuProps) {
   const { parentRef, items, portalContainer } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -206,7 +212,7 @@ const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
     >
       <div
         ref={contextMenuRef}
-        className="fixed border-[0.5px] border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-rg rounded-md px-2 py-2.5 max-h-72 min-w-[12rem] overflow-y-scroll vertical-scrollbar scrollbar-sm"
+        className="fixed border-[0.5px] border-subtle-1 bg-surface-1 rounded-md px-2 py-2.5 max-h-72 min-w-[12rem] overflow-y-scroll vertical-scrollbar scrollbar-sm"
         style={{
           top: position.y,
           left: position.x,
@@ -227,11 +233,11 @@ const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
       </div>
     </div>
   );
-};
+}
 
-export const ContextMenu: React.FC<ContextMenuProps> = (props) => {
+export function ContextMenu(props: ContextMenuProps) {
   let contextMenu = <ContextMenuWithoutPortal {...props} />;
   const portal = document.querySelector("#context-menu-portal");
   if (portal) contextMenu = ReactDOM.createPortal(contextMenu, portal);
   return contextMenu;
-};
+}

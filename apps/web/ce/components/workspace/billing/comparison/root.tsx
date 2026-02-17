@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import type { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
@@ -15,7 +21,7 @@ type TPlansComparisonProps = {
   setIsCompareAllFeaturesSectionOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const PlansComparison = observer((props: TPlansComparisonProps) => {
+export const PlansComparison = observer(function PlansComparison(props: TPlansComparisonProps) {
   const {
     isCompareAllFeaturesSectionOpen,
     getBillingFrequency,

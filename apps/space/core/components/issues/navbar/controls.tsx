@@ -1,6 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -25,7 +28,7 @@ export type NavbarControlsProps = {
   publishSettings: PublishStore;
 };
 
-export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
+export const NavbarControls = observer(function NavbarControls(props: NavbarControlsProps) {
   // props
   const { publishSettings } = props;
   // router
@@ -107,17 +110,17 @@ export const NavbarControls: FC<NavbarControlsProps> = observer((props) => {
   return (
     <>
       {/* issue views */}
-      <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
+      <div className="shrink-0">
         <IssuesLayoutSelection anchor={anchor} />
       </div>
 
       {/* issue filters */}
-      <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
+      <div className="shrink-0">
         <IssueFiltersDropdown anchor={anchor} />
       </div>
 
       {/* theming */}
-      <div className="relative flex-shrink-0">
+      <div className="shrink-0">
         <NavbarTheme />
       </div>
 

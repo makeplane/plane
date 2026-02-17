@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 // components
 import { AuthRoot } from "@/components/account/auth-forms";
@@ -6,10 +10,12 @@ import { PoweredBy } from "@/components/common/powered-by";
 // local imports
 import { AuthHeader } from "./header";
 
-export const AuthView = () => (
-  <div className="relative z-10 flex flex-col items-center w-screen h-screen overflow-hidden overflow-y-auto pt-6 pb-10 px-8">
-    <AuthHeader />
-    <AuthRoot />
-    <PoweredBy />
-  </div>
-);
+export function AuthView() {
+  return (
+    <div className="bg-surface-1 relative z-10 flex flex-col items-center w-screen h-screen overflow-hidden overflow-y-auto pt-6 pb-10 px-8">
+      <AuthHeader />
+      <AuthRoot />
+      <PoweredBy />
+    </div>
+  );
+}

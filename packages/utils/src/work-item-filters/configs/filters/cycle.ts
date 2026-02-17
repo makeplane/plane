@@ -1,21 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
-import {
-  EQUALITY_OPERATOR,
-  ICycle,
-  TCycleGroups,
-  TFilterProperty,
-  COLLECTION_OPERATOR,
-  TSupportedOperators,
-} from "@plane/types";
+import type { ICycle, TCycleGroups, TFilterProperty, TSupportedOperators } from "@plane/types";
+import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
-import {
-  createFilterConfig,
-  TCreateFilterConfigParams,
-  IFilterIconConfig,
-  TCreateFilterConfig,
-  getMultiSelectConfig,
-  createOperatorConfigEntry,
-} from "../../../rich-filters";
+import type { TCreateFilterConfigParams, IFilterIconConfig, TCreateFilterConfig } from "../../../rich-filters";
+import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";
 
 /**
  * Cycle filter specific params
@@ -57,7 +51,7 @@ export const getCycleMultiSelectConfig = (params: TCreateCycleFilterParams, sing
 export const getCycleFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateCycleFilterParams> =>
   (params: TCreateCycleFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Cycle",
       ...params,

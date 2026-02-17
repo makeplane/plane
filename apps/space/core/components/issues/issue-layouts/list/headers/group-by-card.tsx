@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
 import { CircleDashed } from "lucide-react";
@@ -11,22 +15,23 @@ interface IHeaderGroupByCard {
   toggleListGroup: (id: string) => void;
 }
 
-export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
+export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHeaderGroupByCard) {
   const { groupID, icon, title, count, toggleListGroup } = props;
 
   return (
     <>
       <div
-        className="group/list-header relative w-full flex-shrink-0 flex items-center gap-2 py-1.5"
+        className="group/list-header relative w-full shrink-0 flex items-center gap-2 py-1.5 hover:bg-layer-transparent-hover px-2 py-1"
         onClick={() => toggleListGroup(groupID)}
+        role="button"
       >
-        <div className="flex-shrink-0 grid place-items-center overflow-hidden">
+        <div className="shrink-0 size-3.5 grid place-items-center overflow-hidden">
           {icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
         </div>
 
-        <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden cursor-pointer">
-          <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
-          <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
+        <div className="relative flex w-full items-center gap-1 overflow-hidden cursor-pointer">
+          <div className="inline-block line-clamp-1 truncate font-medium text-primary">{title}</div>
+          <div className="pl-2 text-13 font-medium text-tertiary">{count || 0}</div>
         </div>
       </div>
     </>

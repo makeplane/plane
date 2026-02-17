@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // computed
@@ -15,7 +21,7 @@ export type TProjectLinkList = {
   workspaceSlug: string;
 };
 
-export const ProjectLinkList: FC<TProjectLinkList> = observer((props) => {
+export const ProjectLinkList = observer(function ProjectLinkList(props: TProjectLinkList) {
   // props
   const { linkOperations, workspaceSlug } = props;
   // hooks
@@ -35,7 +41,7 @@ export const ProjectLinkList: FC<TProjectLinkList> = observer((props) => {
         maxHeight={150}
         containerClassName="box-border min-h-[30px] flex flex-col"
         fallback={<></>}
-        buttonClassName="bg-custom-background-90/20"
+        buttonClassName="bg-surface-2/20"
       >
         <div className="flex gap-2 mb-2 flex-wrap flex-1">
           {links.map((linkId) => (

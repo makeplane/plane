@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -21,34 +27,34 @@ type TMultiSelectFilterValueInputProps<P extends TFilterProperty> = {
   onChange: (values: SingleOrArray<string>) => void;
 };
 
-export const MultiSelectFilterValueInput = observer(
-  <P extends TFilterProperty>(props: TMultiSelectFilterValueInputProps<P>) => {
-    const { config, condition, isDisabled, onChange } = props;
-    // states
-    const [options, setOptions] = useState<IFilterOption<string>[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    // derived values
-    const formattedOptions = useMemo(() => getFormattedOptions<string>(options), [options]);
+export const MultiSelectFilterValueInput = observer(function MultiSelectFilterValueInput<P extends TFilterProperty>(
+  props: TMultiSelectFilterValueInputProps<P>
+) {
+  const { config, condition, isDisabled, onChange } = props;
+  // states
+  const [options, setOptions] = useState<IFilterOption<string>[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  // derived values
+  const formattedOptions = useMemo(() => getFormattedOptions<string>(options), [options]);
 
-    useEffect(() => {
-      loadOptions({ config, setOptions, setLoading });
-    }, [config]);
+  useEffect(() => {
+    loadOptions({ config, setOptions, setLoading });
+  }, [config]);
 
-    const handleSelectChange = (values: string[]) => {
-      onChange(values);
-    };
+  const handleSelectChange = (values: string[]) => {
+    onChange(values);
+  };
 
-    return (
-      <CustomSearchSelect
-        {...getCommonCustomSearchSelectProps(isDisabled)}
-        value={toFilterArray(condition.value)}
-        onChange={handleSelectChange}
-        options={formattedOptions}
-        multiple
-        disabled={loading || isDisabled}
-        customButton={<SelectedOptionsDisplay<string> selectedValue={condition.value} options={options} />}
-        defaultOpen={getFilterValueLength(condition.value) === 0}
-      />
-    );
-  }
-);
+  return (
+    <CustomSearchSelect
+      {...getCommonCustomSearchSelectProps(isDisabled)}
+      value={toFilterArray(condition.value)}
+      onChange={handleSelectChange}
+      options={formattedOptions}
+      multiple
+      disabled={loading || isDisabled}
+      customButton={<SelectedOptionsDisplay<string> selectedValue={condition.value} options={options} />}
+      defaultOpen={getFilterValueLength(condition.value) === 0}
+    />
+  );
+});

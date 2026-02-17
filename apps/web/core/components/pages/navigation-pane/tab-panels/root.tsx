@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { Tab } from "@headlessui/react";
 // components
@@ -17,7 +23,7 @@ type Props = {
   versionHistory: Pick<TPageRootHandlers, "fetchAllVersions" | "fetchVersionDetails">;
 };
 
-export const PageNavigationPaneTabPanelsRoot: React.FC<Props> = (props) => {
+export function PageNavigationPaneTabPanelsRoot(props: Props) {
   const { page, versionHistory } = props;
 
   return (
@@ -36,4 +42,4 @@ export const PageNavigationPaneTabPanelsRoot: React.FC<Props> = (props) => {
       ))}
     </Tab.Panels>
   );
-};
+}

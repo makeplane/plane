@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -14,7 +20,7 @@ import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-to
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 
-export const ProfileIssuesFilter = observer(() => {
+export const ProfileIssuesFilter = observer(function ProfileIssuesFilter() {
   // i18n
   const { t } = useTranslation();
   // router

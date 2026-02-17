@@ -1,4 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane package imports
 import type { ChartXAxisProperty } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
@@ -13,7 +18,7 @@ type Props = {
   label?: string | React.ReactNode;
 };
 
-export const SelectXAxis: React.FC<Props> = (props) => {
+export function SelectXAxis(props: Props) {
   const { value, onChange, options, hiddenOptions, allowNoValue, label } = props;
   return (
     <CustomSelect value={value} label={label} onChange={onChange} maxHeight="lg">
@@ -28,4 +33,4 @@ export const SelectXAxis: React.FC<Props> = (props) => {
       })}
     </CustomSelect>
   );
-};
+}

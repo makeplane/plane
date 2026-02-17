@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
@@ -22,7 +26,7 @@ type Props = {
 
 const appInstallationService = new AppInstallationService();
 
-export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
+export const SelectChannel = observer(function SelectChannel({ integration }: Props) {
   // store hooks
   const { config } = useInstance();
   // states
@@ -40,16 +44,10 @@ export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
   });
 
   const { data: projectIntegration } = useSWR(
-    workspaceSlug && projectId && integration.id
-      ? SLACK_CHANNEL_INFO(workspaceSlug as string, projectId as string)
-      : null,
+    workspaceSlug && projectId && integration.id ? SLACK_CHANNEL_INFO(workspaceSlug, projectId) : null,
     () =>
       workspaceSlug && projectId && integration.id
-        ? appInstallationService.getSlackChannelDetail(
-            workspaceSlug as string,
-            projectId as string,
-            integration.id as string
-          )
+        ? appInstallationService.getSlackChannelDetail(workspaceSlug, projectId, integration.id)
         : null
   );
 
@@ -76,7 +74,7 @@ export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
       setSlackChannel(null);
     });
     appInstallationService
-      .removeSlackChannel(workspaceSlug as string, projectId as string, integration.id as string, slackChannel?.id)
+      .removeSlackChannel(workspaceSlug, projectId, integration.id, slackChannel?.id)
       .catch((err) => console.error(err));
   };
 

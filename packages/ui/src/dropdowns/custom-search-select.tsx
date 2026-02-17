@@ -1,17 +1,24 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Combobox } from "@headlessui/react";
-import { Check, ChevronDown, Info, Search } from "lucide-react";
+import { Info } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
+import { CheckIcon, SearchIcon, ChevronDownIcon } from "@plane/propel/icons";
+// plane imports
 // local imports
 import { Tooltip } from "@plane/propel/tooltip";
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../utils";
-import { ICustomSearchSelectProps } from "./helper";
+import type { ICustomSearchSelectProps } from "./helper";
 
-export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
+export function CustomSearchSelect(props: ICustomSearchSelectProps) {
   const {
     customButtonClassName = "",
     buttonClassName = "",
@@ -98,10 +105,10 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                   ref={setReferenceElement}
                   type="button"
                   className={cn(
-                    "flex w-full items-center justify-between gap-1 text-xs",
+                    "flex w-full items-center justify-between gap-1 text-11",
                     {
-                      "cursor-not-allowed text-custom-text-200": disabled,
-                      "cursor-pointer hover:bg-custom-background-80": !disabled,
+                      "cursor-not-allowed text-secondary": disabled,
+                      "cursor-pointer hover:bg-layer-transparent-hover": !disabled,
                     },
                     customButtonClassName
                   )}
@@ -116,12 +123,12 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                   ref={setReferenceElement}
                   type="button"
                   className={cn(
-                    "flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300",
+                    "flex w-full items-center justify-between gap-1 rounded-sm border-[0.5px] border-strong",
                     {
-                      "px-3 py-2 text-sm": input,
-                      "px-2 py-1 text-xs": !input,
-                      "cursor-not-allowed text-custom-text-200": disabled,
-                      "cursor-pointer hover:bg-custom-background-80": !disabled,
+                      "px-3 py-2 text-13": input,
+                      "px-2 py-1 text-11": !input,
+                      "cursor-not-allowed text-secondary": disabled,
+                      "cursor-pointer hover:bg-layer-transparent-hover": !disabled,
                     },
                     buttonClassName
                   )}
@@ -129,7 +136,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                 >
                   {label}
                   {!noChevron && !disabled && (
-                    <ChevronDown className={cn("h-3 w-3 flex-shrink-0", chevronClassName)} aria-hidden="true" />
+                    <ChevronDownIcon className={cn("h-3 w-3 flex-shrink-0", chevronClassName)} aria-hidden="true" />
                   )}
                 </button>
               </Combobox.Button>
@@ -139,17 +146,17 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                 <Combobox.Options data-prevent-outside-click static>
                   <div
                     className={cn(
-                      "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
+                      "my-1 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 py-2.5 text-11 focus:outline-none min-w-48 whitespace-nowrap z-30",
                       optionsClassName
                     )}
                     ref={setPopperElement}
                     style={styles.popper}
                     {...attributes.popper}
                   >
-                    <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2 mx-2">
-                      <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+                    <div className="flex items-center gap-1.5 rounded-sm border border-subtle px-2 mx-2">
+                      <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
                       <Combobox.Input
-                        className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                        className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Search"
@@ -174,10 +181,10 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                               value={option.value}
                               className={({ active }) =>
                                 cn(
-                                  "w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none",
+                                  "w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none",
                                   {
-                                    "bg-custom-background-80": active,
-                                    "text-custom-text-400 opacity-60 cursor-not-allowed": option.disabled,
+                                    "bg-layer-transparent-hover": active,
+                                    "text-placeholder opacity-60 cursor-not-allowed": option.disabled,
                                   }
                                 )
                               }
@@ -189,12 +196,12 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                               {({ selected }) => (
                                 <>
                                   <span className="flex-grow truncate">{option.content}</span>
-                                  {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                                  {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                                   {option.tooltip && (
                                     <>
                                       {typeof option.tooltip === "string" ? (
                                         <Tooltip tooltipContent={option.tooltip}>
-                                          <Info className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-custom-text-200" />
+                                          <Info className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-secondary" />
                                         </Tooltip>
                                       ) : (
                                         option.tooltip
@@ -206,10 +213,10 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                             </Combobox.Option>
                           ))
                         ) : (
-                          <p className="text-custom-text-400 italic py-1 px-1.5">{noResultsMessage}</p>
+                          <p className="text-placeholder italic py-1 px-1.5">{noResultsMessage}</p>
                         )
                       ) : (
-                        <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
+                        <p className="text-placeholder italic py-1 px-1.5">Loading...</p>
                       )}
                     </div>
                     {footerOption}
@@ -222,4 +229,4 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
       }}
     </Combobox>
   );
-};
+}

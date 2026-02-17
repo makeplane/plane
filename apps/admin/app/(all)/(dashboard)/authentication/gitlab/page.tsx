@@ -1,21 +1,29 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import useSWR from "swr";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
+// assets
+import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
+import { PageWrapper } from "@/components/common/page-wrapper";
 // hooks
 import { useInstance } from "@/hooks/store";
-// icons
-import GitlabLogo from "@/public/logos/gitlab-logo.svg";
-// local components
+// types
+import type { Route } from "./+types/page";
+// local
 import { InstanceGitlabConfigForm } from "./form";
 
-const InstanceGitlabAuthenticationPage = observer(() => {
+const InstanceGitlabAuthenticationPage = observer(function InstanceGitlabAuthenticationPage(
+  _props: Route.ComponentProps
+) {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
@@ -35,10 +43,10 @@ const InstanceGitlabAuthenticationPage = observer(() => {
     const updateConfigPromise = updateInstanceConfigurations(payload);
 
     setPromiseToast(updateConfigPromise, {
-      loading: "Saving Configuration...",
+      loading: "Saving Configuration",
       success: {
         title: "Configuration saved",
-        message: () => `GitLab authentication is now ${value ? "active" : "disabled"}.`,
+        message: () => `GitLab authentication is now ${value === "1" ? "active" : "disabled"}.`,
       },
       error: {
         title: "Error",
@@ -56,47 +64,46 @@ const InstanceGitlabAuthenticationPage = observer(() => {
       });
   };
   return (
-    <>
-      <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
-        <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
-          <AuthenticationMethodCard
-            name="GitLab"
-            description="Allow members to login or sign up to plane with their GitLab accounts."
-            icon={<Image src={GitlabLogo} height={24} width={24} alt="GitLab Logo" />}
-            config={
-              <ToggleSwitch
-                value={Boolean(parseInt(enableGitlabConfig))}
-                onChange={() => {
-                  if (Boolean(parseInt(enableGitlabConfig)) === true) {
-                    updateConfig("IS_GITLAB_ENABLED", "0");
-                  } else {
-                    updateConfig("IS_GITLAB_ENABLED", "1");
-                  }
-                }}
-                size="sm"
-                disabled={isSubmitting || !formattedConfig}
-              />
-            }
-            disabled={isSubmitting || !formattedConfig}
-            withBorder={false}
-          />
-        </div>
-        <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
-          {formattedConfig ? (
-            <InstanceGitlabConfigForm config={formattedConfig} />
-          ) : (
-            <Loader className="space-y-8">
-              <Loader.Item height="50px" width="25%" />
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" />
-              <Loader.Item height="50px" width="50%" />
-            </Loader>
-          )}
-        </div>
-      </div>
-    </>
+    <PageWrapper
+      customHeader={
+        <AuthenticationMethodCard
+          name="GitLab"
+          description="Allow members to login or sign up to plane with their GitLab accounts."
+          icon={<img src={GitlabLogo} height={24} width={24} alt="GitLab Logo" />}
+          config={
+            <ToggleSwitch
+              value={Boolean(parseInt(enableGitlabConfig))}
+              onChange={() => {
+                if (Boolean(parseInt(enableGitlabConfig)) === true) {
+                  updateConfig("IS_GITLAB_ENABLED", "0");
+                } else {
+                  updateConfig("IS_GITLAB_ENABLED", "1");
+                }
+              }}
+              size="sm"
+              disabled={isSubmitting || !formattedConfig}
+            />
+          }
+          disabled={isSubmitting || !formattedConfig}
+          withBorder={false}
+        />
+      }
+    >
+      {formattedConfig ? (
+        <InstanceGitlabConfigForm config={formattedConfig} />
+      ) : (
+        <Loader className="space-y-8">
+          <Loader.Item height="50px" width="25%" />
+          <Loader.Item height="50px" />
+          <Loader.Item height="50px" />
+          <Loader.Item height="50px" />
+          <Loader.Item height="50px" width="50%" />
+        </Loader>
+      )}
+    </PageWrapper>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "GitLab Authentication - God Mode" }];
 
 export default InstanceGitlabAuthenticationPage;

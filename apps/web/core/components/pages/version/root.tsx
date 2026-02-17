@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -22,7 +28,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
+export const PageVersionsOverlay = observer(function PageVersionsOverlay(props: Props) {
   const { editorComponent, fetchVersionDetails, handleRestore, pageId, restoreEnabled, storeType } = props;
   // navigation
   const router = useRouter();
@@ -43,7 +49,7 @@ export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
   return (
     <div
       className={cn(
-        "absolute inset-0 z-[16] h-full bg-custom-background-100 flex overflow-hidden opacity-0 pointer-events-none transition-opacity",
+        "absolute inset-0 z-[16] h-full bg-surface-1 flex overflow-hidden opacity-0 pointer-events-none transition-opacity",
         {
           "opacity-100 pointer-events-auto": isOpen,
         }

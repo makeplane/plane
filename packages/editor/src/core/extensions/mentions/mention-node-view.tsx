@@ -1,8 +1,16 @@
-import { NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { NodeViewProps } from "@tiptap/react";
+import { NodeViewWrapper } from "@tiptap/react";
 // extension config
-import { TMentionExtensionOptions } from "./extension-config";
+import type { TMentionExtensionOptions } from "./extension-config";
 // extension types
-import { EMentionComponentAttributeNames, TMentionComponentAttributes } from "./types";
+import type { TMentionComponentAttributes } from "./types";
+import { EMentionComponentAttributeNames } from "./types";
 
 export type MentionNodeViewProps = NodeViewProps & {
   node: NodeViewProps["node"] & {
@@ -10,18 +18,18 @@ export type MentionNodeViewProps = NodeViewProps & {
   };
 };
 
-export const MentionNodeView: React.FC<MentionNodeViewProps> = (props) => {
+export function MentionNodeView(props: MentionNodeViewProps) {
   const {
     extension,
     node: { attrs },
   } = props;
 
   return (
-    <NodeViewWrapper className="mention-component inline w-fit">
+    <NodeViewWrapper key={attrs[EMentionComponentAttributeNames.ID]} className="mention-component inline w-fit">
       {(extension.options as TMentionExtensionOptions).renderComponent({
         entity_identifier: attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER] ?? "",
         entity_name: attrs[EMentionComponentAttributeNames.ENTITY_NAME] ?? "user_mention",
       })}
     </NodeViewWrapper>
   );
-};
+}

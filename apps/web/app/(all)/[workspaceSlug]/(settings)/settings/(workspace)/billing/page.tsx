@@ -1,18 +1,24 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
 // component
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-// hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+// hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { BillingRoot } from "@/plane-web/components/workspace/billing";
+// local imports
+import { BillingWorkspaceSettingsHeader } from "./header";
 
-const BillingSettingsPage = observer(() => {
+function BillingSettingsPage() {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
@@ -25,11 +31,11 @@ const BillingSettingsPage = observer(() => {
   }
 
   return (
-    <SettingsContentWrapper size="lg">
+    <SettingsContentWrapper header={<BillingWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
       <BillingRoot />
     </SettingsContentWrapper>
   );
-});
+}
 
-export default BillingSettingsPage;
+export default observer(BillingSettingsPage);

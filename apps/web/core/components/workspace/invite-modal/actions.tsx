@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
+
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { PlusIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 type TInvitationModalActionsProps = {
@@ -19,7 +26,7 @@ type TInvitationModalActionsProps = {
   className?: string;
 };
 
-export const InvitationModalActions: React.FC<TInvitationModalActionsProps> = observer((props) => {
+export const InvitationModalActions = observer(function InvitationModalActions(props: TInvitationModalActionsProps) {
   const {
     isInviteDisabled = false,
     isSubmitting = false,
@@ -38,7 +45,7 @@ export const InvitationModalActions: React.FC<TInvitationModalActionsProps> = ob
       <button
         type="button"
         className={cn(
-          "flex items-center gap-1 bg-transparent py-2 pr-3 text-xs font-medium text-custom-primary outline-custom-primary",
+          "flex items-center gap-1 bg-transparent py-2 pr-3 text-caption-md-medium text-accent-primary outline-accent-strong",
           {
             "cursor-not-allowed opacity-60": isInviteDisabled,
           }
@@ -46,14 +53,14 @@ export const InvitationModalActions: React.FC<TInvitationModalActionsProps> = ob
         onClick={appendField}
         disabled={isInviteDisabled}
       >
-        <Plus className="h-3.5 w-3.5" />
+        <PlusIcon className="h-3.5 w-3.5" />
         {addMoreButtonText || t("common.add_more")}
       </button>
       <div className="flex items-center gap-2">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="secondary" size="lg" onClick={handleClose}>
           {cancelButtonText || t("cancel")}
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} disabled={isInviteDisabled}>
+        <Button variant="primary" size="lg" type="submit" loading={isSubmitting} disabled={isInviteDisabled}>
           {isSubmitting
             ? submitButtonText?.loading || t("workspace_settings.settings.members.modal.button_loading")
             : submitButtonText?.default || t("workspace_settings.settings.members.modal.button")}

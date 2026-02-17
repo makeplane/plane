@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
@@ -17,7 +21,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { ProjectAppliedFiltersList } from "./applied-filters";
 import { ProjectCardList } from "./card-list";
 
-export const ProjectRoot = observer(() => {
+export const ProjectRoot = observer(function ProjectRoot() {
   const { currentWorkspace } = useWorkspace();
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
@@ -71,9 +75,7 @@ export const ProjectRoot = observer(() => {
   }, [clearAllFilters, clearAllAppliedDisplayFilters, workspaceSlug]);
 
   useEffect(() => {
-    isArchived
-      ? updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true })
-      : updateDisplayFilters(workspaceSlug.toString(), { archived_projects: false });
+    updateDisplayFilters(workspaceSlug.toString(), { archived_projects: isArchived });
   }, [pathname]);
 
   return (

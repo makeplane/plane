@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { isEmpty } from "lodash-es";
 import { autorun, makeObservable, observable } from "mobx";
 // types
@@ -266,7 +272,7 @@ export class IssueRootStore implements IIssueRootStore {
     this.archivedIssues = new ArchivedIssues(this, this.archivedIssuesFilter);
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
-    this.issueCalendarView = new CalendarStore();
+    this.issueCalendarView = new CalendarStore(this);
 
     this.projectEpicsFilter = new ProjectEpicsFilter(this);
     this.projectEpics = new ProjectEpics(this, this.projectEpicsFilter);

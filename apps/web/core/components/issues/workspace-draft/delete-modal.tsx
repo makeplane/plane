@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useEffect, useState } from "react";
 // types
@@ -21,7 +25,7 @@ type Props = {
   onSubmit?: () => Promise<void>;
 };
 
-export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
+export function WorkspaceDraftIssueDeleteIssueModal(props: Props) {
   const { dataId, data, isOpen, handleClose, onSubmit } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
@@ -102,4 +106,4 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
       secondaryButtonText={t("cancel")}
     />
   );
-};
+}

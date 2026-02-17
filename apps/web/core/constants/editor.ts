@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Styles } from "@react-pdf/renderer";
 import { StyleSheet } from "@react-pdf/renderer";
 import type { LucideIcon } from "lucide-react";
@@ -129,18 +135,18 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
 
 const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-list">[] = [
   {
-    itemKey: "bulleted-list",
-    renderKey: "bulleted-list",
-    name: "Bulleted list",
-    icon: List,
-    shortcut: ["Cmd", "Shift", "7"],
-    editors: ["lite", "document"],
-  },
-  {
     itemKey: "numbered-list",
     renderKey: "numbered-list",
     name: "Numbered list",
     icon: ListOrdered,
+    shortcut: ["Cmd", "Shift", "7"],
+    editors: ["lite", "document"],
+  },
+  {
+    itemKey: "bulleted-list",
+    renderKey: "bulleted-list",
+    name: "Bulleted list",
+    icon: List,
     shortcut: ["Cmd", "Shift", "8"],
     editors: ["lite", "document"],
   },

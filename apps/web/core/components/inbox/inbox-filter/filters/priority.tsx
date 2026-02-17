@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import { useState } from "react";
@@ -17,7 +21,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterPriority: FC<Props> = observer((props) => {
+export const FilterPriority = observer(function FilterPriority(props: Props) {
   const { searchQuery } = props;
   // hooks
   const { t } = useTranslation();
@@ -52,7 +56,7 @@ export const FilterPriority: FC<Props> = observer((props) => {
               />
             ))
           ) : (
-            <p className="text-xs italic text-custom-text-400">{t("common.search.no_matches_found")}</p>
+            <p className="text-11 italic text-placeholder">{t("common.search.no_matches_found")}</p>
           )}
         </div>
       )}

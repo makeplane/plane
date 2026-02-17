@@ -1,25 +1,29 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 // mobx
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Check, Hotel, Users, X } from "lucide-react";
+import { Hotel } from "lucide-react";
 // plane ui
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ProjectIcon } from "@plane/propel/icons";
+import { MembersPropertyIcon, CheckIcon, ProjectIcon, CloseIcon } from "@plane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
-// helpers
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 
-export const NoProjectsEmptyState = observer(() => {
+export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
   // navigation
   const { workspaceSlug } = useParams();
   // store hooks
@@ -57,7 +61,6 @@ export const NoProjectsEmptyState = observer(() => {
           e.preventDefault();
           e.stopPropagation();
           toggleCreateProjectModal(true);
-          captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
         },
         disabled: !canCreateProject,
       },
@@ -66,7 +69,7 @@ export const NoProjectsEmptyState = observer(() => {
       id: "invite-team",
       title: "home.empty.invite_team.title",
       description: "home.empty.invite_team.description",
-      icon: <Users className="size-4" />,
+      icon: <MembersPropertyIcon className="size-4" />,
       flag: "visited_members",
       cta: {
         text: "home.empty.invite_team.cta",
@@ -93,7 +96,7 @@ export const NoProjectsEmptyState = observer(() => {
       icon:
         currentUser?.avatar_url && currentUser?.avatar_url.trim() !== "" ? (
           <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
-            <span className="relative flex size-4 items-center justify-center rounded-full p-4 capitalize text-white">
+            <span className="relative flex size-4 items-center justify-center rounded-full p-4 capitalize text-on-color">
               <img
                 src={getFileURL(currentUser?.avatar_url)}
                 className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
@@ -103,7 +106,7 @@ export const NoProjectsEmptyState = observer(() => {
           </Link>
         ) : (
           <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
-            <span className="relative flex size-4 items-center justify-center rounded-full bg-gray-700 p-4 capitalize text-white text-sm">
+            <span className="relative flex size-4 items-center justify-center rounded-full bg-[#028375] p-4 capitalize text-on-color text-13">
               {(currentUser?.email ?? currentUser?.display_name ?? "?")[0]}
             </span>
           </Link>
@@ -111,7 +114,7 @@ export const NoProjectsEmptyState = observer(() => {
       flag: "visited_profile",
       cta: {
         text: "home.empty.personalize_account.cta",
-        link: `/${workspaceSlug}/settings/account`,
+        link: `/settings/profile/general`,
         disabled: false,
       },
     },
@@ -134,15 +137,15 @@ export const NoProjectsEmptyState = observer(() => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <div className="text-base font-semibold text-custom-text-350">{t("home.empty.quickstart_guide")}</div>
+        <div className="text-14 font-semibold text-tertiary">{t("home.empty.quickstart_guide")}</div>
         <button
-          className="text-custom-text-300 font-medium text-sm flex items-center gap-1"
+          className="text-tertiary font-medium text-13 flex items-center gap-1"
           onClick={() => {
             if (!storedValue) return;
             setValue({ ...storedValue, hide: true });
           }}
         >
-          <X className="size-4" />
+          <CloseIcon className="size-4" />
           {t("home.empty.not_right_now")}
         </button>
       </div>
@@ -150,25 +153,19 @@ export const NoProjectsEmptyState = observer(() => {
         {EMPTY_STATE_DATA.map((item) => {
           const isStateComplete = isComplete(item.flag);
           return (
-            <div
-              key={item.id}
-              className="flex flex-col p-4 bg-custom-background-100 rounded-xl border border-custom-border-200/40"
-            >
+            <div key={item.id} className="flex flex-col p-4 bg-layer-2 rounded-xl border border-subtle">
               <div
-                className={cn(
-                  "grid place-items-center bg-custom-background-90 rounded-full size-9 mb-3 text-custom-text-400",
-                  {
-                    "text-custom-primary-100 bg-custom-primary-100/10": !isStateComplete,
-                  }
-                )}
+                className={cn("grid place-items-center bg-surface-2 rounded-full size-9 mb-3 text-placeholder", {
+                  "text-accent-primary bg-accent-primary/10": !isStateComplete,
+                })}
               >
-                <span className="text-3xl my-auto">{item.icon}</span>
+                <span className="text-24 my-auto">{item.icon}</span>
               </div>
-              <h3 className="text-sm font-medium text-custom-text-100 mb-2">{t(item.title)}</h3>
-              <p className="text-[11px] text-custom-text-300 mb-2">{t(item.description)}</p>
+              <h3 className="text-13 font-medium text-primary mb-2">{t(item.title)}</h3>
+              <p className="text-11 text-tertiary mb-2">{t(item.description)}</p>
               {isStateComplete ? (
                 <div className="flex items-center gap-2 bg-[#17a34a] rounded-full p-1 w-fit">
-                  <Check className="size-3 text-custom-primary-100 text-white" />
+                  <CheckIcon className="size-3 text-accent-primary text-on-color" />
                 </div>
               ) : (
                 !item.cta.disabled &&
@@ -186,14 +183,14 @@ export const NoProjectsEmptyState = observer(() => {
                         [item.flag]: true,
                       });
                     }}
-                    className={cn("text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium", {})}
+                    className={cn("text-accent-primary hover:text-accent-secondary text-13 font-medium", {})}
                   >
                     {t(item.cta.text)}
                   </Link>
                 ) : (
                   <button
                     type="button"
-                    className="text-custom-primary-100 hover:text-custom-primary-200 text-sm font-medium"
+                    className="text-accent-primary hover:text-accent-secondary text-13 font-medium text-left"
                     onClick={item.cta.onClick}
                   >
                     {t(item.cta.text)}

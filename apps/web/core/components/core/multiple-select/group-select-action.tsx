@@ -1,4 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // ui
 import { Checkbox } from "@plane/ui";
 // helpers
@@ -13,7 +18,7 @@ type Props = {
   selectionHelpers: TSelectionHelper;
 };
 
-export const MultipleSelectGroupAction: React.FC<Props> = (props) => {
+export function MultipleSelectGroupAction(props: Props) {
   const { className, disabled = false, groupID, selectionHelpers } = props;
   // derived values
   const groupSelectionStatus = selectionHelpers.isGroupSelected(groupID);
@@ -30,4 +35,4 @@ export const MultipleSelectGroupAction: React.FC<Props> = (props) => {
       disabled={disabled}
     />
   );
-};
+}

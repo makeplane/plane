@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import copy
 from datetime import date
@@ -249,23 +253,26 @@ class WorkspaceUserPropertiesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceViewerPermission]
 
     def patch(self, request, slug):
-        workspace_properties = WorkspaceUserProperties.objects.get(user=request.user, workspace__slug=slug)
+        workspace = Workspace.objects.get(slug=slug)
 
-        workspace_properties.filters = request.data.get("filters", workspace_properties.filters)
-        workspace_properties.rich_filters = request.data.get("rich_filters", workspace_properties.rich_filters)
-        workspace_properties.display_filters = request.data.get("display_filters", workspace_properties.display_filters)
-        workspace_properties.display_properties = request.data.get(
-            "display_properties", workspace_properties.display_properties
+        (workspace_properties, _) = WorkspaceUserProperties.objects.get_or_create(
+            user=request.user, workspace_id=workspace.id
         )
-        workspace_properties.save()
 
-        serializer = WorkspaceUserPropertiesSerializer(workspace_properties)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = WorkspaceUserPropertiesSerializer(workspace_properties, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, slug):
+        workspace = Workspace.objects.get(slug=slug)
+
         (workspace_properties, _) = WorkspaceUserProperties.objects.get_or_create(
-            user=request.user, workspace__slug=slug
+            user=request.user, workspace=workspace
         )
+
         serializer = WorkspaceUserPropertiesSerializer(workspace_properties)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

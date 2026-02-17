@@ -1,14 +1,17 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party imports
+import random
 from rest_framework import serializers
 
+
+# Python imports
+import re
+
 # Module imports
-from plane.db.models import (
-    Project,
-    ProjectIdentifier,
-    WorkspaceMember,
-    State,
-    Estimate,
-)
+from plane.db.models import Project, ProjectIdentifier, WorkspaceMember, State, Estimate
 
 from plane.utils.content_validator import (
     validate_html_content,
@@ -23,6 +26,47 @@ class ProjectCreateSerializer(BaseSerializer):
     Handles project creation including identifier validation, member verification,
     and workspace association for new project initialization.
     """
+
+    PROJECT_ICON_DEFAULT_COLORS = [
+        "#95999f",
+        "#6d7b8a",
+        "#5e6ad2",
+        "#02b5ed",
+        "#02b55c",
+        "#f2be02",
+        "#e57a00",
+        "#f38e82",
+    ]
+    PROJECT_ICON_DEFAULT_ICONS = [
+        "home",
+        "apps",
+        "settings",
+        "star",
+        "favorite",
+        "done",
+        "check_circle",
+        "add_task",
+        "create_new_folder",
+        "dataset",
+        "terminal",
+        "key",
+        "rocket",
+        "public",
+        "quiz",
+        "mood",
+        "gavel",
+        "eco",
+        "diamond",
+        "forest",
+        "bolt",
+        "sync",
+        "cached",
+        "library_add",
+        "view_timeline",
+        "view_kanban",
+        "empty_dashboard",
+        "cycle",
+    ]
 
     class Meta:
         model = Project
@@ -44,10 +88,10 @@ class ProjectCreateSerializer(BaseSerializer):
             "archive_in",
             "close_in",
             "timezone",
-            "logo_props",
             "external_source",
             "external_id",
             "is_issue_type_enabled",
+            "is_time_tracking_enabled",
         ]
 
         read_only_fields = [
@@ -57,9 +101,19 @@ class ProjectCreateSerializer(BaseSerializer):
             "updated_at",
             "created_by",
             "updated_by",
+            "logo_props",
         ]
 
     def validate(self, data):
+        project_name = data.get("name", None)
+        project_identifier = data.get("identifier", None)
+
+        if project_name is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_name):
+            raise serializers.ValidationError("Project name cannot contain special characters.")
+
+        if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
+            raise serializers.ValidationError("Project identifier cannot contain special characters.")
+
         if data.get("project_lead", None) is not None:
             # Check if the project lead is a member of the workspace
             if not WorkspaceMember.objects.filter(
@@ -80,11 +134,22 @@ class ProjectCreateSerializer(BaseSerializer):
 
     def create(self, validated_data):
         identifier = validated_data.get("identifier", "").strip().upper()
+
         if identifier == "":
             raise serializers.ValidationError(detail="Project Identifier is required")
 
         if ProjectIdentifier.objects.filter(name=identifier, workspace_id=self.context["workspace_id"]).exists():
             raise serializers.ValidationError(detail="Project Identifier is taken")
+
+        if validated_data.get("logo_props", None) is None:
+            # Generate a random icon and color for the project icon
+            validated_data["logo_props"] = {
+                "in_use": "icon",
+                "icon": {
+                    "name": random.choice(self.PROJECT_ICON_DEFAULT_ICONS),
+                    "color": random.choice(self.PROJECT_ICON_DEFAULT_COLORS),
+                },
+            }
 
         project = Project.objects.create(**validated_data, workspace_id=self.context["workspace_id"])
         return project
@@ -108,6 +173,15 @@ class ProjectUpdateSerializer(ProjectCreateSerializer):
         read_only_fields = ProjectCreateSerializer.Meta.read_only_fields
 
     def update(self, instance, validated_data):
+        project_name = validated_data.get("name", None)
+        project_identifier = validated_data.get("identifier", None)
+
+        if project_name is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_name):
+            raise serializers.ValidationError("Project name cannot contain special characters.")
+
+        if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
+            raise serializers.ValidationError("Project identifier cannot contain special characters.")
+
         """Update a project"""
         if (
             validated_data.get("default_state", None) is not None
@@ -118,7 +192,7 @@ class ProjectUpdateSerializer(ProjectCreateSerializer):
 
         if (
             validated_data.get("estimate", None) is not None
-            and not Estimate.objects.filter(project=instance, id=validated_data.get("estimate")).exists()
+            and not Estimate.objects.filter(project=instance, id=validated_data.get("estimate").id).exists()
         ):
             # Check if the estimate is a estimate in the project
             raise serializers.ValidationError("Estimate should be a estimate in the project")
@@ -158,6 +232,15 @@ class ProjectSerializer(BaseSerializer):
         ]
 
     def validate(self, data):
+        project_name = data.get("name", None)
+        project_identifier = data.get("identifier", None)
+
+        if project_name is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_name):
+            raise serializers.ValidationError("Project name cannot contain special characters.")
+
+        if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
+            raise serializers.ValidationError("Project identifier cannot contain special characters.")
+
         # Check project lead should be a member of the workspace
         if (
             data.get("project_lead", None) is not None

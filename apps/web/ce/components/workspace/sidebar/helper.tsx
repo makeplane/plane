@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   AnalyticsIcon,
   ArchiveIcon,
@@ -5,6 +11,7 @@ import {
   DraftIcon,
   HomeIcon,
   InboxIcon,
+  MultipleStickyIcon,
   ProjectIcon,
   ViewsIcon,
   YourWorkIcon,
@@ -31,5 +38,7 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <DraftIcon className={cn("size-4 flex-shrink-0", className)} />;
     case "archives":
       return <ArchiveIcon className={cn("size-4 flex-shrink-0", className)} />;
+    case "stickies":
+      return <MultipleStickyIcon className={cn("size-4 flex-shrink-0", className)} />;
   }
 };

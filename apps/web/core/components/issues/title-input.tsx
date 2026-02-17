@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import { useState, useEffect, useCallback, useRef } from "react";
@@ -26,7 +30,7 @@ export type IssueTitleInputProps = {
   containerClassName?: string;
 };
 
-export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
+export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTitleInputProps) {
   const {
     disabled,
     value,
@@ -41,7 +45,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
   } = props;
   const { t } = useTranslation();
   // states
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(value || "");
   const [isLengthVisible, setIsLengthVisible] = useState(false);
   // ref to track if there are unsaved changes
   const hasUnsavedChanges = useRef(false);
@@ -139,7 +143,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
     [setIsSubmitting]
   );
 
-  if (disabled) return <div className="text-2xl font-medium whitespace-pre-line">{title}</div>;
+  if (disabled) return <div className="text-20 font-medium whitespace-pre-line">{title}</div>;
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -147,9 +151,9 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
         <TextArea
           id="title-input"
           className={cn(
-            "block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-0 text-2xl font-medium outline-none ring-0",
+            "block w-full resize-none overflow-hidden rounded-sm border-none bg-transparent px-3 py-0 text-20 font-medium outline-none ring-0",
             {
-              "ring-1 ring-red-400 mx-2.5": title?.length === 0,
+              "ring-1 ring-danger-strong mx-2.5": title?.length === 0,
             },
             className
           )}
@@ -163,17 +167,21 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
         />
         <div
           className={cn(
-            "pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200 opacity-0 transition-opacity",
+            "pointer-events-none absolute bottom-1 right-1 z-[2] rounded-sm bg-surface-1 p-0.5 text-11 text-secondary opacity-0 transition-opacity",
             {
               "opacity-100": isLengthVisible,
             }
           )}
         >
-          <span className={`${title.length === 0 || title.length > 255 ? "text-red-500" : ""}`}>{title.length}</span>
+          <span className={`${title.length === 0 || title.length > 255 ? "text-danger-primary" : ""}`}>
+            {title.length}
+          </span>
           /255
         </div>
       </div>
-      {title?.length === 0 && <span className="text-sm font-medium text-red-500">{t("form.title.required")}</span>}
+      {title?.length === 0 && (
+        <span className="text-13 font-medium text-danger-primary">{t("form.title.required")}</span>
+      )}
     </div>
   );
 });

@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { AlignLeft } from "lucide-react";
 // hooks
@@ -8,7 +13,7 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 
 type TIssueDescriptionActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueDescriptionActivity: FC<TIssueDescriptionActivity> = observer((props) => {
+export const IssueDescriptionActivity = observer(function IssueDescriptionActivity(props: TIssueDescriptionActivity) {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {
@@ -20,7 +25,7 @@ export const IssueDescriptionActivity: FC<TIssueDescriptionActivity> = observer(
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<AlignLeft size={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<AlignLeft size={14} className="text-secondary" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

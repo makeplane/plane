@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Proyectos",
@@ -345,13 +351,13 @@ export default {
   project_id_must_be_at_most_5_characters: "El ID del proyecto debe tener como máximo 5 caracteres",
   project_id: "ID del proyecto",
   project_id_tooltip_content:
-    "Te ayuda a identificar elementos de trabajo en el proyecto de manera única. Máximo 5 caracteres.",
+    "Te ayuda a identificar elementos de trabajo en el proyecto de manera única. Máximo 10 caracteres.",
   description_placeholder: "Descripción",
   only_alphanumeric_non_latin_characters_allowed: "Solo se permiten caracteres alfanuméricos y no latinos.",
   project_id_is_required: "El ID del proyecto es requerido",
   project_id_allowed_char: "Solo se permiten caracteres alfanuméricos y no latinos.",
   project_id_min_char: "El ID del proyecto debe tener al menos 1 carácter",
-  project_id_max_char: "El ID del proyecto debe tener como máximo 5 caracteres",
+  project_id_max_char: "El ID del proyecto debe tener como máximo 10 caracteres",
   project_description_placeholder: "Ingresa la descripción del proyecto",
   select_network: "Seleccionar red",
   lead: "Líder",
@@ -654,6 +660,8 @@ export default {
   },
   common: {
     all: "Todo",
+    no_items_in_this_group: "No hay elementos en este grupo",
+    drop_here_to_move: "Suelta aquí para mover",
     states: "Estados",
     state: "Estado",
     state_groups: "Grupos de estados",
@@ -1542,6 +1550,47 @@ export default {
         "Si confirmas, todas las opciones de ordenación, filtro y visualización + el diseño que has elegido para esta vista se eliminarán permanentemente sin posibilidad de restaurarlas.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Cambiar correo electrónico",
+        description: "Introduce una nueva dirección de correo electrónico para recibir un enlace de verificación.",
+        toasts: {
+          success_title: "¡Éxito!",
+          success_message: "Correo electrónico actualizado correctamente. Inicia sesión de nuevo.",
+        },
+        form: {
+          email: {
+            label: "Nuevo correo electrónico",
+            placeholder: "Introduce tu correo electrónico",
+            errors: {
+              required: "El correo electrónico es obligatorio",
+              invalid: "El correo electrónico no es válido",
+              exists: "El correo electrónico ya existe. Usa uno diferente.",
+              validation_failed: "La validación del correo electrónico falló. Inténtalo de nuevo.",
+            },
+          },
+          code: {
+            label: "Código único",
+            placeholder: "123456",
+            helper_text: "Código de verificación enviado a tu nuevo correo electrónico.",
+            errors: {
+              required: "El código único es obligatorio",
+              invalid: "Código de verificación inválido. Inténtalo de nuevo.",
+            },
+          },
+        },
+        actions: {
+          continue: "Continuar",
+          confirm: "Confirmar",
+          cancel: "Cancelar",
+        },
+        states: {
+          sending: "Enviando…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Configuración del espacio de trabajo",
     page_label: "{workspace} - Configuración general",
@@ -1557,6 +1606,7 @@ export default {
         name: "Nombre del espacio de trabajo",
         company_size: "Tamaño de la empresa",
         url: "URL del espacio de trabajo",
+        workspace_timezone: "Zona horaria del espacio de trabajo",
         update_workspace: "Actualizar espacio de trabajo",
         delete_workspace: "Eliminar este espacio de trabajo",
         delete_workspace_description:
@@ -1622,6 +1672,7 @@ export default {
         exporting: "Exportando",
         previous_exports: "Exportaciones anteriores",
         export_separate_files: "Exportar los datos en archivos separados",
+        filters_info: "Aplica filtros para exportar elementos de trabajo específicos según tus criterios.",
         modal: {
           title: "Exportar a",
           toasts: {
@@ -1952,6 +2003,46 @@ export default {
         title: "Aún no hay sistemas de estimación",
         description: "Crea un conjunto de estimaciones para comunicar el volumen de trabajo por elemento de trabajo.",
         primary_button: "Agregar sistema de estimación",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Ciclos",
+        short_title: "Ciclos",
+        description:
+          "Programa el trabajo en períodos flexibles que se adaptan al ritmo y al tempo únicos de este proyecto.",
+        toggle_title: "Habilitar ciclos",
+        toggle_description: "Planifica el trabajo en períodos de tiempo enfocados.",
+      },
+      modules: {
+        title: "Módulos",
+        short_title: "Módulos",
+        description: "Organiza el trabajo en subproyectos con líderes y responsables dedicados.",
+        toggle_title: "Habilitar módulos",
+        toggle_description: "Los miembros del proyecto podrán crear y editar módulos.",
+      },
+      views: {
+        title: "Vistas",
+        short_title: "Vistas",
+        description:
+          "Guarda ordenaciones, filtros y opciones de visualización personalizadas o compártelos con tu equipo.",
+        toggle_title: "Habilitar vistas",
+        toggle_description: "Los miembros del proyecto podrán crear y editar vistas.",
+      },
+      pages: {
+        title: "Páginas",
+        short_title: "Páginas",
+        description: "Crea y edita contenido libre: notas, documentos, cualquier cosa.",
+        toggle_title: "Habilitar páginas",
+        toggle_description: "Los miembros del proyecto podrán crear y editar páginas.",
+      },
+      intake: {
+        title: "Recepción",
+        short_title: "Recepción",
+        description:
+          "Permite que los no miembros compartan errores, comentarios y sugerencias; sin interrumpir tu flujo de trabajo.",
+        toggle_title: "Habilitar recepción",
+        toggle_description: "Permitir a los miembros del proyecto crear solicitudes de recepción en la aplicación.",
       },
     },
   },

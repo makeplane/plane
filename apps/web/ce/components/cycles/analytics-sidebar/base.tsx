@@ -1,5 +1,9 @@
-"use client";
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Fragment } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -19,7 +23,7 @@ type ProgressChartProps = {
   projectId: string;
   cycleId: string;
 };
-export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
+export const SidebarChart = observer(function SidebarChart(props: ProgressChartProps) {
   const { workspaceSlug, projectId, cycleId } = props;
 
   // hooks

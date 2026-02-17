@@ -1,17 +1,14 @@
-import type { FC } from "react";
-import React, { useEffect, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useTheme } from "next-themes";
 // plane imports
-import { API_BASE_URL } from "@plane/constants";
 import { OAuthOptions } from "@plane/ui";
-// assets
-import GithubLightLogo from "/public/logos/github-black.png";
-import GithubDarkLogo from "/public/logos/github-dark.svg";
-import GitlabLogo from "/public/logos/gitlab-logo.svg";
-import GoogleLogo from "/public/logos/google-logo.svg";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import {
@@ -22,18 +19,19 @@ import {
   authErrorHandler,
 } from "@/helpers/authentication.helper";
 // hooks
+import { useOAuthConfig } from "@/hooks/oauth";
 import { useInstance } from "@/hooks/store/use-instance";
 // local imports
 import { TermsAndConditions } from "../terms-and-conditions";
 import { AuthBanner } from "./auth-banner";
-import { AuthHeader } from "./auth-header";
+import { AuthHeader, AuthHeaderBase } from "./auth-header";
 import { AuthFormRoot } from "./form-root";
 
 type TAuthRoot = {
   authMode: EAuthModes;
 };
 
-export const AuthRoot: FC<TAuthRoot> = observer((props) => {
+export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   //router
   const searchParams = useSearchParams();
   // query params
@@ -41,8 +39,6 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const invitation_id = searchParams.get("invitation_id");
   const workspaceSlug = searchParams.get("slug");
   const error_code = searchParams.get("error_code");
-  const next_path = searchParams.get("next_path");
-  const { resolvedTheme } = useTheme();
   // props
   const { authMode: currentAuthMode } = props;
   // states
@@ -50,13 +46,13 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
-
-  // hooks
+  // store hooks
   const { config } = useInstance();
-
   // derived values
-  const isOAuthEnabled =
-    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
+  const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
+  const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
+  const isEmailBasedAuthEnabled = config?.is_email_password_enabled || config?.is_magic_login_enabled;
+  const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled;
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
@@ -106,61 +102,37 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
 
   if (!authMode) return <></>;
 
-  const OauthButtonContent = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
-
-  const OAuthConfig = [
-    {
-      id: "google",
-      text: `${OauthButtonContent} with Google`,
-      icon: <Image src={GoogleLogo} height={18} width={18} alt="Google Logo" />,
-      onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/google/${next_path ? `?next_path=${next_path}` : ``}`);
-      },
-      enabled: config?.is_google_enabled,
-    },
-    {
-      id: "github",
-      text: `${OauthButtonContent} with GitHub`,
-      icon: (
-        <Image
-          src={resolvedTheme === "dark" ? GithubDarkLogo : GithubLightLogo}
-          height={18}
-          width={18}
-          alt="GitHub Logo"
+  if (noAuthMethodsAvailable) {
+    return (
+      <AuthContainer>
+        <AuthHeaderBase
+          header="No authentication methods available"
+          subHeader="Please contact your administrator to enable authentication for your instance."
         />
-      ),
-      onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/github/${next_path ? `?next_path=${next_path}` : ``}`);
-      },
-      enabled: config?.is_github_enabled,
-    },
-    {
-      id: "gitlab",
-      text: `${OauthButtonContent} with GitLab`,
-      icon: <Image src={GitlabLogo} height={18} width={18} alt="GitLab Logo" />,
-      onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
-      },
-      enabled: config?.is_gitlab_enabled,
-    },
-  ];
+      </AuthContainer>
+    );
+  }
 
   return (
-    <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
-      <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
-        {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-          <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
-        )}
-        <AuthHeader
-          workspaceSlug={workspaceSlug?.toString() || undefined}
-          invitationId={invitation_id?.toString() || undefined}
-          invitationEmail={email || undefined}
-          authMode={authMode}
-          currentAuthStep={authStep}
+    <AuthContainer>
+      {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
+        <AuthBanner message={errorInfo.message} handleBannerData={(value) => setErrorInfo(value)} />
+      )}
+      <AuthHeader
+        workspaceSlug={workspaceSlug?.toString() || undefined}
+        invitationId={invitation_id?.toString() || undefined}
+        invitationEmail={email || undefined}
+        authMode={authMode}
+        currentAuthStep={authStep}
+      />
+      {isOAuthEnabled && (
+        <OAuthOptions
+          options={oAuthOptions}
+          compact={authStep === EAuthSteps.PASSWORD}
+          showDivider={isEmailBasedAuthEnabled}
         />
-
-        {isOAuthEnabled && <OAuthOptions options={OAuthConfig} compact={authStep === EAuthSteps.PASSWORD} />}
-
+      )}
+      {isEmailBasedAuthEnabled && (
         <AuthFormRoot
           authStep={authStep}
           authMode={authMode}
@@ -171,8 +143,16 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
           setErrorInfo={(errorInfo) => setErrorInfo(errorInfo)}
           currentAuthMode={currentAuthMode}
         />
-        <TermsAndConditions authType={authMode} />
-      </div>
-    </div>
+      )}
+      <TermsAndConditions authType={authMode} />
+    </AuthContainer>
   );
 });
+
+function AuthContainer({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
+      <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">{children}</div>
+    </div>
+  );
+}

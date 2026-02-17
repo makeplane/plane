@@ -1,5 +1,9 @@
-"use client";
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 // ui
@@ -15,7 +19,7 @@ type Props = {
   isDragging: boolean;
 };
 
-export const FavoriteItemDragHandle: FC<Props> = observer((props) => {
+export const FavoriteItemDragHandle = observer(function FavoriteItemDragHandle(props: Props) {
   const { sort_order, isDragging } = props;
   // store hooks
   const { isMobile } = usePlatformOS();
@@ -29,7 +33,7 @@ export const FavoriteItemDragHandle: FC<Props> = observer((props) => {
     >
       <div
         className={cn(
-          "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
+          "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded-sm text-placeholder cursor-grab",
           {
             "cursor-not-allowed opacity-60": sort_order === null,
             "cursor-grabbing": isDragging,

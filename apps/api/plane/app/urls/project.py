@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from django.urls import path
 
 from plane.app.views import (
@@ -11,9 +15,9 @@ from plane.app.views import (
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
     UserProjectInvitationsViewset,
-    ProjectPublicCoverImagesEndpoint,
     UserProjectRolesEndpoint,
     ProjectArchiveUnarchiveEndpoint,
+    ProjectMemberPreferenceEndpoint,
 )
 
 
@@ -106,11 +110,6 @@ urlpatterns = [
         name="project-favorite",
     ),
     path(
-        "project-covers/",
-        ProjectPublicCoverImagesEndpoint.as_view(),
-        name="project-covers",
-    ),
-    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/",
         DeployBoardViewSet.as_view({"get": "list", "post": "create"}),
         name="project-deploy-board",
@@ -124,5 +123,10 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/archive/",
         ProjectArchiveUnarchiveEndpoint.as_view(),
         name="project-archive-unarchive",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/preferences/member/<uuid:member_id>/",
+        ProjectMemberPreferenceEndpoint.as_view(),
+        name="project-member-preference",
     ),
 ]

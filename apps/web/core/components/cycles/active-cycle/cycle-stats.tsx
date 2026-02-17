@@ -1,9 +1,14 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import { Fragment, useCallback, useRef, useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
@@ -17,18 +22,24 @@ import { EIssuesStoreType } from "@plane/types";
 // ui
 import { Loader, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
+// assets
+import darkAssigneeAsset from "@/app/assets/empty-state/active-cycle/assignee-dark.webp?url";
+import lightAssigneeAsset from "@/app/assets/empty-state/active-cycle/assignee-light.webp?url";
+import darkLabelAsset from "@/app/assets/empty-state/active-cycle/label-dark.webp?url";
+import lightLabelAsset from "@/app/assets/empty-state/active-cycle/label-light.webp?url";
+import darkPriorityAsset from "@/app/assets/empty-state/active-cycle/priority-dark.webp?url";
+import lightPriorityAsset from "@/app/assets/empty-state/active-cycle/priority-light.webp?url";
+import userImage from "@/app/assets/user.png?url";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-// helpers
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // store
 import type { ActiveCycleIssueDetails } from "@/store/issue/cycle";
@@ -39,10 +50,10 @@ export type ActiveCycleStatsProps = {
   cycle: ICycle | null;
   cycleId?: string | null;
   handleFiltersUpdate: (conditions: TWorkItemFilterCondition[]) => void;
-  cycleIssueDetails: ActiveCycleIssueDetails;
+  cycleIssueDetails?: ActiveCycleIssueDetails | { nextPageResults: boolean };
 };
 
-export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
+export const ActiveCycleStats = observer(function ActiveCycleStats(props: ActiveCycleStatsProps) {
   const { workspaceSlug, projectId, cycle, cycleId, handleFiltersUpdate, cycleIssueDetails } = props;
   // local storage
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
@@ -50,12 +61,14 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const issuesContainerRef = useRef<HTMLDivElement | null>(null);
   // states
   const [issuesLoaderElement, setIssueLoaderElement] = useState<HTMLDivElement | null>(null);
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // derived values
-  const priorityResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/priority" });
-  const assigneesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/assignee" });
-  const labelsResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/label" });
+  const priorityResolvedPath = resolvedTheme === "light" ? lightPriorityAsset : darkPriorityAsset;
+  const assigneesResolvedPath = resolvedTheme === "light" ? lightAssigneeAsset : darkAssigneeAsset;
+  const labelsResolvedPath = resolvedTheme === "light" ? lightLabelAsset : darkLabelAsset;
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
@@ -93,7 +106,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   );
 
   return cycleId ? (
-    <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
+    <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-surface-1 col-span-1 lg:col-span-2 xl:col-span-1 border border-subtle rounded-lg">
       <Tab.Group
         as={Fragment}
         defaultIndex={currentValue(tab)}
@@ -113,7 +126,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
       >
         <Tab.List
           as="div"
-          className="relative border-[0.5px] border-custom-border-200 rounded bg-custom-background-80 p-[1px] grid"
+          className="relative border-[0.5px] border-subtle rounded-sm bg-layer-1 p-[1px] grid"
           style={{
             gridTemplateColumns: `repeat(3, 1fr)`,
           }}
@@ -121,10 +134,10 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
+                "relative z-[1] font-semibold text-11 rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
+                  "text-tertiary bg-surface-1": selected,
+                  "hover:text-tertiary": !selected,
                 }
               )
             }
@@ -134,10 +147,10 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
+                "relative z-[1] font-semibold text-11 rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
+                  "text-tertiary bg-surface-1": selected,
+                  "hover:text-tertiary": !selected,
                 }
               )
             }
@@ -147,10 +160,10 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
+                "relative z-[1] font-semibold text-11 rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
+                  "text-tertiary bg-surface-1": selected,
+                  "hover:text-tertiary": !selected,
                 }
               )
             }
@@ -162,7 +175,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
         <Tab.Panels as={Fragment}>
           <Tab.Panel
             as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
+            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-secondary vertical-scrollbar scrollbar-sm"
           >
             <div
               ref={issuesContainerRef}
@@ -179,7 +192,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                       return (
                         <div
                           key={issue.id}
-                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
+                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-surface-2 p-1"
                           onClick={() => {
                             if (issue.id) {
                               setPeekIssue({
@@ -195,13 +208,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                           }}
                         >
                           <div className="flex items-center gap-1.5 flex-grow w-full min-w-24 truncate">
-                            <IssueIdentifier
-                              issueId={issue.id}
-                              projectId={projectId}
-                              textContainerClassName="text-xs text-custom-text-200"
-                            />
+                            <IssueIdentifier issueId={issue.id} projectId={projectId} size="xs" variant="secondary" />
                             <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
-                              <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
+                              <span className="text-13 text-primary truncate">{issue.name}</span>
                             </Tooltip>
                           </div>
                           <PriorityIcon priority={issue.priority} withContainer size={12} />
@@ -220,9 +229,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                                 tooltipHeading="Target Date"
                                 tooltipContent={renderFormattedDate(issue.target_date)}
                               >
-                                <div className="h-full flex truncate items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 group-hover:bg-custom-background-100 cursor-pointer">
+                                <div className="h-full flex truncate items-center gap-1.5 rounded-sm text-11 px-2 py-0.5 bg-layer-1 group-hover:bg-surface-1 cursor-pointer">
                                   <CalendarCheck className="h-3 w-3 flex-shrink-0" />
-                                  <span className="text-xs truncate">
+                                  <span className="text-11 truncate">
                                     {renderFormattedDateWithoutYear(issue.target_date)}
                                   </span>
                                 </div>
@@ -236,7 +245,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                       <div
                         ref={setIssueLoaderElement}
                         className={
-                          "h-11 relative flex items-center gap-3 bg-custom-background-80 p-3 text-sm cursor-pointer animate-pulse"
+                          "h-11 relative flex items-center gap-3 bg-layer-1 p-3 text-13 cursor-pointer animate-pulse"
                         }
                       />
                     )}
@@ -257,7 +266,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
 
           <Tab.Panel
             as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm"
+            className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-secondary vertical-scrollbar scrollbar-sm"
           >
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
@@ -293,8 +302,8 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                         key={`unassigned-${index}`}
                         title={
                           <div className="flex items-center gap-2">
-                            <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
-                              <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
+                            <div className="h-5 w-5 rounded-full border-2 border-subtle bg-layer-1">
+                              <img src={userImage} height="100%" width="100%" className="rounded-full" alt="User" />
                             </div>
                             <span>{t("no_assignee")}</span>
                           </div>
@@ -319,7 +328,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
 
           <Tab.Panel
             as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
+            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-secondary vertical-scrollbar scrollbar-sm"
           >
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (
@@ -334,7 +343,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                             backgroundColor: label.color ?? "#000000",
                           }}
                         />
-                        <span className="text-xs text-ellipsis truncate">{label.label_name ?? "No labels"}</span>
+                        <span className="text-11 text-ellipsis truncate">{label.label_name ?? "No labels"}</span>
                       </div>
                     }
                     completed={label.completed_issues}
@@ -363,7 +372,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
       </Tab.Group>
     </div>
   ) : (
-    <Loader className="flex flex-col gap-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1">
+    <Loader className="flex flex-col gap-4 min-h-[17rem] overflow-hidden bg-surface-1 col-span-1 lg:col-span-2 xl:col-span-1">
       <Loader.Item width="100%" height="17rem" />
     </Loader>
   );

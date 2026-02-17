@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Request, Response } from "express";
 import { z } from "zod";
 // helpers
@@ -5,7 +11,7 @@ import { Controller, Post } from "@plane/decorators";
 import { convertHTMLDocumentToAllFormats } from "@plane/editor";
 // logger
 import { logger } from "@plane/logger";
-import { type TConvertDocumentRequestBody } from "@/types";
+import type { TConvertDocumentRequestBody } from "@/types";
 
 // Define the schema with more robust validation
 const convertDocumentSchema = z.object({
@@ -27,14 +33,14 @@ export class DocumentController {
       const { description_html, variant } = validatedData;
 
       // Process document conversion
-      const { description, description_binary } = convertHTMLDocumentToAllFormats({
+      const { description_json, description_binary } = convertHTMLDocumentToAllFormats({
         document_html: description_html,
         variant,
       });
 
       // Return successful response
       res.status(200).json({
-        description,
+        description_json,
         description_binary,
       });
     } catch (error) {

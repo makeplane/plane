@@ -1,8 +1,16 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party imports
 from rest_framework import serializers
 
+# Python imports
+import re
+
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
+from django.db.models import Max
 from plane.app.serializers.workspace import WorkspaceLiteSerializer
 from plane.app.serializers.user import UserLiteSerializer, UserAdminLiteSerializer
 from plane.db.models import (
@@ -12,6 +20,7 @@ from plane.db.models import (
     ProjectIdentifier,
     DeployBoard,
     ProjectPublicMember,
+    IssueSequence,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -31,6 +40,9 @@ class ProjectSerializer(BaseSerializer):
         project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]
 
+        if re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, name):
+            raise serializers.ValidationError(detail="PROJECT_NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS")
+
         project = Project.objects.filter(name=name, workspace_id=workspace_id)
 
         if project_id:
@@ -46,6 +58,9 @@ class ProjectSerializer(BaseSerializer):
     def validate_identifier(self, identifier):
         project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]
+
+        if re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, identifier):
+            raise serializers.ValidationError(detail="PROJECT_IDENTIFIER_CANNOT_CONTAIN_SPECIAL_CHARACTERS")
 
         project = Project.objects.filter(identifier=identifier, workspace_id=workspace_id)
 
@@ -105,6 +120,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
     members = serializers.SerializerMethodField()
     cover_image_url = serializers.CharField(read_only=True)
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
+    next_work_item_sequence = serializers.SerializerMethodField()
 
     def get_members(self, obj):
         project_members = getattr(obj, "members_list", None)
@@ -112,6 +128,11 @@ class ProjectListSerializer(DynamicBaseSerializer):
             # Filter members by the project ID
             return [member.member_id for member in project_members if member.is_active and not member.member.is_bot]
         return []
+
+    def get_next_work_item_sequence(self, obj):
+        """Get the next sequence ID that will be assigned to a new issue"""
+        max_sequence = IssueSequence.objects.filter(project_id=obj.id).aggregate(max_seq=Max("sequence"))["max_seq"]
+        return (max_sequence + 1) if max_sequence else 1
 
     class Meta:
         model = Project
@@ -140,6 +161,18 @@ class ProjectMemberSerializer(BaseSerializer):
     class Meta:
         model = ProjectMember
         fields = "__all__"
+
+
+class ProjectMemberPreferenceSerializer(BaseSerializer):
+    class Meta:
+        model = ProjectMember
+        fields = ["preferences", "project_id", "member_id", "workspace_id"]
+
+    def validate_preferences(self, value):
+        preferences = self.instance.preferences
+
+        preferences.update(value)
+        return preferences
 
 
 class ProjectMemberAdminSerializer(BaseSerializer):

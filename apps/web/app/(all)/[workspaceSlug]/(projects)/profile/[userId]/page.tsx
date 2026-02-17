@@ -1,6 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { GROUP_CHOICES } from "@plane/constants";
@@ -18,15 +21,15 @@ import { ProfileWorkload } from "@/components/profile/overview/workload";
 import { USER_PROFILE_DATA } from "@/constants/fetch-keys";
 // services
 import { UserService } from "@/services/user.service";
+import type { Route } from "./+types/page";
 const userService = new UserService();
 
-export default function ProfileOverviewPage() {
-  const { workspaceSlug, userId } = useParams();
+export default function ProfileOverviewPage({ params }: Route.ComponentProps) {
+  const { workspaceSlug, userId } = params;
 
   const { t } = useTranslation();
-  const { data: userProfile } = useSWR(
-    workspaceSlug && userId ? USER_PROFILE_DATA(workspaceSlug.toString(), userId.toString()) : null,
-    workspaceSlug && userId ? () => userService.getUserProfileData(workspaceSlug.toString(), userId.toString()) : null
+  const { data: userProfile } = useSWR(USER_PROFILE_DATA(workspaceSlug, userId), () =>
+    userService.getUserProfileData(workspaceSlug, userId)
   );
 
   const stateDistribution: IUserStateDistribution[] = Object.keys(GROUP_CHOICES).map((key) => {

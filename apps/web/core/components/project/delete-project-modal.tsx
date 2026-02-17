@@ -1,20 +1,18 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React from "react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
-import { Dialog, Transition } from "@headlessui/react";
-// types
-import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
-// ui
-import { Input } from "@plane/ui";
-// constants
+import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 
@@ -29,7 +27,7 @@ const defaultValues = {
   confirmDelete: "",
 };
 
-export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
+export function DeleteProjectModal(props: DeleteProjectModal) {
   const { isOpen, project, onClose } = props;
   // store hooks
   const { deleteProject } = useProject();
@@ -59,143 +57,96 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   const onSubmit = async () => {
     if (!workspaceSlug || !canDelete) return;
 
-    await deleteProject(workspaceSlug.toString(), project.id)
-      .then(() => {
-        if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
-
-        handleClose();
-        captureSuccess({
-          eventName: PROJECT_TRACKER_EVENTS.delete,
-          payload: {
-            id: project.id,
-          },
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Project deleted successfully.",
-        });
-      })
-      .catch(() => {
-        captureError({
-          eventName: PROJECT_TRACKER_EVENTS.delete,
-          payload: {
-            id: project.id,
-          },
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Something went wrong. Please try again later.",
-        });
+    try {
+      await deleteProject(workspaceSlug.toString(), project.id);
+      if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
+      handleClose();
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Project deleted successfully.",
       });
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Something went wrong. Please try again later.",
+      });
+    }
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <Transition.Child
-              as={React.Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
-                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
-                  <div className="flex w-full items-center justify-start gap-6">
-                    <span className="place-items-center rounded-full bg-red-500/20 p-4">
-                      <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
-                    </span>
-                    <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete project</h3>
-                    </span>
-                  </div>
-                  <span>
-                    <p className="text-sm leading-7 text-custom-text-200">
-                      Are you sure you want to delete project{" "}
-                      <span className="break-words font-semibold">{project?.name}</span>? All of the data related to the
-                      project will be permanently removed. This action cannot be undone
-                    </p>
-                  </span>
-                  <div className="text-custom-text-200">
-                    <p className="break-words text-sm ">
-                      Enter the project name <span className="font-medium text-custom-text-100">{project?.name}</span>{" "}
-                      to continue:
-                    </p>
-                    <Controller
-                      control={control}
-                      name="projectName"
-                      render={({ field: { value, onChange, ref } }) => (
-                        <Input
-                          id="projectName"
-                          name="projectName"
-                          type="text"
-                          value={value}
-                          onChange={onChange}
-                          ref={ref}
-                          hasError={Boolean(errors.projectName)}
-                          placeholder="Project name"
-                          className="mt-2 w-full"
-                          autoComplete="off"
-                        />
-                      )}
-                    />
-                  </div>
-                  <div className="text-custom-text-200">
-                    <p className="text-sm">
-                      To confirm, type <span className="font-medium text-custom-text-100">delete my project</span>{" "}
-                      below:
-                    </p>
-                    <Controller
-                      control={control}
-                      name="confirmDelete"
-                      render={({ field: { value, onChange, ref } }) => (
-                        <Input
-                          id="confirmDelete"
-                          name="confirmDelete"
-                          type="text"
-                          value={value}
-                          onChange={onChange}
-                          ref={ref}
-                          hasError={Boolean(errors.confirmDelete)}
-                          placeholder="Enter 'delete my project'"
-                          className="mt-2 w-full"
-                          autoComplete="off"
-                        />
-                      )}
-                    />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                      Cancel
-                    </Button>
-                    <Button variant="danger" size="sm" type="submit" disabled={!canDelete} loading={isSubmitting}>
-                      {isSubmitting ? "Deleting" : "Delete project"}
-                    </Button>
-                  </div>
-                </form>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
+        <div className="flex w-full items-center justify-start gap-6">
+          <span className="place-items-center rounded-full bg-danger-subtle p-4">
+            <AlertTriangle className="h-6 w-6 text-danger-primary" aria-hidden="true" />
+          </span>
+          <span className="flex items-center justify-start">
+            <h3 className="text-18 font-medium 2xl:text-20">Delete project</h3>
+          </span>
         </div>
-      </Dialog>
-    </Transition.Root>
+        <span>
+          <p className="text-13 leading-7 text-secondary">
+            Are you sure you want to delete project <span className="break-words font-semibold">{project?.name}</span>?
+            All of the data related to the project will be permanently removed. This action cannot be undone
+          </p>
+        </span>
+        <div className="text-secondary">
+          <p className="break-words text-13 ">
+            Enter the project name <span className="font-medium text-primary">{project?.name}</span> to continue:
+          </p>
+          <Controller
+            control={control}
+            name="projectName"
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="projectName"
+                name="projectName"
+                type="text"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.projectName)}
+                placeholder="Project name"
+                className="mt-2 w-full"
+                autoComplete="off"
+              />
+            )}
+          />
+        </div>
+        <div className="text-secondary">
+          <p className="text-13">
+            To confirm, type <span className="font-medium text-primary">delete my project</span> below:
+          </p>
+          <Controller
+            control={control}
+            name="confirmDelete"
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="confirmDelete"
+                name="confirmDelete"
+                type="text"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.confirmDelete)}
+                placeholder="Enter 'delete my project'"
+                className="mt-2 w-full"
+                autoComplete="off"
+              />
+            )}
+          />
+        </div>
+        <div className="flex justify-end gap-2">
+          <Button variant="secondary" size="lg" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="error-fill" size="lg" type="submit" disabled={!canDelete} loading={isSubmitting}>
+            {isSubmitting ? "Deleting" : "Delete project"}
+          </Button>
+        </div>
+      </form>
+    </ModalCore>
   );
-};
+}

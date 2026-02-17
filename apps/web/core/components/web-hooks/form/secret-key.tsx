@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import { useState } from "react";
@@ -6,9 +10,10 @@ import { range } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
+import { Eye, EyeOff, RefreshCw } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { CopyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IWebhook } from "@plane/types";
@@ -27,7 +32,7 @@ type Props = {
   data: Partial<IWebhook>;
 };
 
-export const WebhookSecretKey: FC<Props> = observer((props) => {
+export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props) {
   const { data } = props;
   // states
   const [isRegenerating, setIsRegenerating] = useState(false);
@@ -46,7 +51,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
       .then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: `${t("success")!}`,
+          title: `${t("success")}`,
           message: t("workspace_settings.settings.webhooks.toasts.secret_key_copied.message"),
         })
       )
@@ -68,7 +73,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: `${t("success")!}`,
+          title: `${t("success")}`,
           message: "New key regenerated successfully.",
         });
 
@@ -91,7 +96,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
 
   const SECRET_KEY_OPTIONS = [
     { label: "View secret key", Icon: shouldShowKey ? EyeOff : Eye, onClick: toggleShowKey, key: "eye" },
-    { label: "Copy secret key", Icon: Copy, onClick: handleCopySecretKey, key: "copy" },
+    { label: "Copy secret key", Icon: CopyIcon, onClick: handleCopySecretKey, key: "copy" },
   ];
 
   return (
@@ -99,20 +104,18 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
       {(data || webhookSecretKey) && (
         <div className="space-y-2">
           {webhookId && (
-            <div className="text-sm font-medium">{t("workspace_settings.settings.webhooks.secret_key.title")}</div>
+            <div className="text-13 font-medium">{t("workspace_settings.settings.webhooks.secret_key.title")}</div>
           )}
-          <div className="text-xs text-custom-text-400">
-            {t("workspace_settings.settings.webhooks.secret_key.message")}
-          </div>
+          <div className="text-11 text-placeholder">{t("workspace_settings.settings.webhooks.secret_key.message")}</div>
           <div className="flex flex-col md:flex-row md:items-center gap-4">
-            <div className="flex flex-grow max-w-lg items-center justify-between self-stretch rounded border border-custom-border-200 px-2 h-8">
+            <div className="flex flex-grow max-w-lg items-center justify-between self-stretch rounded-sm border border-subtle px-2 h-8">
               <div className="select-none overflow-hidden font-medium">
                 {shouldShowKey ? (
-                  <p className="text-xs">{webhookSecretKey}</p>
+                  <p className="text-11">{webhookSecretKey}</p>
                 ) : (
                   <div className="flex items-center gap-1.5 overflow-hidden mr-2">
                     {range(30).map((index) => (
-                      <div key={index} className="h-1 w-1 rounded-full bg-custom-text-400 flex-shrink-0" />
+                      <div key={index} className="h-1 w-1 rounded-full bg-(--text-color-disabled) flex-shrink-0" />
                     ))}
                   </div>
                 )}
@@ -122,7 +125,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
                   {SECRET_KEY_OPTIONS.map((option) => (
                     <Tooltip key={option.key} tooltipContent={option.label} isMobile={isMobile}>
                       <button type="button" className="grid flex-shrink-0 place-items-center" onClick={option.onClick}>
-                        <option.Icon className="h-3 w-3 text-custom-text-400" />
+                        <option.Icon className="h-3 w-3 text-placeholder" />
                       </button>
                     </Tooltip>
                   ))}
@@ -131,8 +134,13 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
             </div>
             {data && (
               <div>
-                <Button onClick={handleRegenerateSecretKey} variant="accent-primary" loading={isRegenerating}>
-                  <RefreshCw className="h-3 w-3" />
+                <Button
+                  onClick={handleRegenerateSecretKey}
+                  variant="secondary"
+                  size="lg"
+                  loading={isRegenerating}
+                  prependIcon={<RefreshCw />}
+                >
                   {isRegenerating ? `${t("re_generating")}...` : t("re_generate_key")}
                 </Button>
               </div>

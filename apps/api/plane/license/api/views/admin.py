@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 from urllib.parse import urlencode, urljoin
 import uuid
@@ -134,7 +138,10 @@ class InstanceAdminSignUpEndpoint(View):
                 },
             )
             url = urljoin(
-                base_host(request=request, is_admin=True),
+                base_host(
+                    request=request,
+                    is_admin=True,
+                ),
                 "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
@@ -184,8 +191,8 @@ class InstanceAdminSignUpEndpoint(View):
             results = zxcvbn(password)
             if results["score"] < 3:
                 exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_ADMIN_PASSWORD"],
-                    error_message="INVALID_ADMIN_PASSWORD",
+                    error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                    error_message="PASSWORD_TOO_WEAK",
                     payload={
                         "email": email,
                         "first_name": first_name,
@@ -228,7 +235,7 @@ class InstanceAdminSignUpEndpoint(View):
 
             # get tokens for user
             user_login(request=request, user=user, is_admin=True)
-            url = urljoin(base_host(request=request, is_admin=True), "general")
+            url = urljoin(base_host(request=request, is_admin=True), "general/")
             return HttpResponseRedirect(url)
 
 
@@ -347,7 +354,7 @@ class InstanceAdminSignInEndpoint(View):
 
         # get tokens for user
         user_login(request=request, user=user, is_admin=True)
-        url = urljoin(base_host(request=request, is_admin=True), "general")
+        url = urljoin(base_host(request=request, is_admin=True), "general/")
         return HttpResponseRedirect(url)
 
 

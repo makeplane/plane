@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
@@ -20,7 +24,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
+export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleTitle(props: Props) {
   const {
     isOpen,
     parentIssueId,
@@ -51,7 +55,7 @@ export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
       isOpen={isOpen}
       title={`${issueServiceType === EIssueServiceType.EPICS ? t("issue.label", { count: 1 }) : t("common.sub_work_items")}`}
       indicatorElement={
-        <div className="flex items-center gap-1.5 text-custom-text-300 text-sm">
+        <div className="flex items-center gap-1.5 text-tertiary text-13">
           <CircularProgressIndicator size={18} percentage={percentage} strokeWidth={3} />
           <span>
             {completedCount}/{totalCount} {t("common.done")}

@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
@@ -31,7 +35,7 @@ type TAuthFormRoot = {
 
 const authService = new AuthService();
 
-export const AuthFormRoot = observer((props: TAuthFormRoot) => {
+export const AuthFormRoot = observer(function AuthFormRoot(props: TAuthFormRoot) {
   const { authStep, authMode, email, setEmail, setAuthMode, setAuthStep, setErrorInfo, currentAuthMode } = props;
   // router
   const router = useAppRouter();
@@ -93,7 +97,7 @@ export const AuthFormRoot = observer((props: TAuthFormRoot) => {
       .generateUniqueCode(payload)
       .then(() => ({ code: "" }))
       .catch((error) => {
-        const errorhandler = authErrorHandler(error?.error_code.toString());
+        const errorhandler = authErrorHandler(error?.error_code?.toString());
         if (errorhandler?.type) setErrorInfo(errorhandler);
         throw error;
       });

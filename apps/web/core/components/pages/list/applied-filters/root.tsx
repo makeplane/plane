@@ -1,6 +1,12 @@
-import { X } from "lucide-react";
-// plane imports
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
 import type { TPageFilterProps } from "@plane/types";
 import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
@@ -18,7 +24,7 @@ type Props = {
 const MEMBERS_FILTERS = ["created_by"];
 const DATE_FILTERS = ["created_at"];
 
-export const PageAppliedFiltersList: React.FC<Props> = (props) => {
+export function PageAppliedFiltersList(props: Props) {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
   const { t } = useTranslation();
 
@@ -28,7 +34,7 @@ export const PageAppliedFiltersList: React.FC<Props> = (props) => {
   const isEditingAllowed = alwaysAllowEditing;
 
   return (
-    <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
+    <div className="flex flex-wrap items-stretch gap-2">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof TPageFilterProps;
 
@@ -38,7 +44,7 @@ export const PageAppliedFiltersList: React.FC<Props> = (props) => {
         return (
           <Tag key={filterKey}>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+              <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
               {DATE_FILTERS.includes(filterKey) && (
                 <AppliedDateFilters
                   editable={isEditingAllowed}
@@ -56,10 +62,10 @@ export const PageAppliedFiltersList: React.FC<Props> = (props) => {
               {isEditingAllowed && (
                 <button
                   type="button"
-                  className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                  className="grid place-items-center text-tertiary hover:text-secondary"
                   onClick={() => handleRemoveFilter(filterKey, null)}
                 >
-                  <X size={12} strokeWidth={2} />
+                  <CloseIcon height={12} width={12} strokeWidth={2} />
                 </button>
               )}
             </div>
@@ -70,10 +76,10 @@ export const PageAppliedFiltersList: React.FC<Props> = (props) => {
         <button type="button" onClick={handleClearAllFilters}>
           <Tag>
             {t("common.clear_all")}
-            <X size={12} strokeWidth={2} />
+            <CloseIcon height={12} strokeWidth={2} />
           </Tag>
         </button>
       )}
     </div>
   );
-};
+}

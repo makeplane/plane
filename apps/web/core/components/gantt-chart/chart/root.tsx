@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
@@ -48,7 +54,7 @@ const timelineViewHelpers = {
   quarter: quarterView,
 };
 
-export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
+export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRootProps) {
   const {
     border,
     title,
@@ -175,9 +181,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
 
   const content = (
     <div
-      className={cn("relative flex flex-col h-full select-none rounded-sm bg-custom-background-100 shadow", {
-        "inset-0 z-[25] bg-custom-background-100": fullScreenMode,
-        "border-[0.5px] border-custom-border-200": border,
+      className={cn("relative flex flex-col h-full select-none rounded-xs bg-surface-1 shadow", {
+        "inset-0 z-[25] bg-surface-1": fullScreenMode,
+        "border-[0.5px] border-subtle": border,
       })}
     >
       <GanttChartHeader

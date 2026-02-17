@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEditorState, useEditor as useTiptapEditor } from "@tiptap/react";
 import { useImperativeHandle, useEffect } from "react";
 import type { MarkdownStorage } from "tiptap-markdown";
@@ -29,6 +35,7 @@ export const useEditor = (props: TEditorHookProps) => {
     fileHandler,
     flaggedExtensions,
     forwardedRef,
+    getEditorMetaData,
     handleEditorReady,
     id = "",
     initialValue,
@@ -39,8 +46,9 @@ export const useEditor = (props: TEditorHookProps) => {
     onEditorFocus,
     onTransaction,
     placeholder,
-    provider,
+    showPlaceholderOnEmpty,
     tabIndex,
+    provider,
     value,
   } = props;
 
@@ -65,10 +73,13 @@ export const useEditor = (props: TEditorHookProps) => {
           extendedEditorProps,
           fileHandler,
           flaggedExtensions,
+          getEditorMetaData,
           isTouchDevice,
           mentionHandler,
           placeholder,
+          showPlaceholderOnEmpty,
           tabIndex,
+          provider,
         }),
         ...extensions,
       ],
@@ -77,7 +88,11 @@ export const useEditor = (props: TEditorHookProps) => {
       onTransaction: () => {
         onTransaction?.();
       },
-      onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
+      onUpdate: ({ editor, transaction }) => {
+        // Check if this update is only due to migration update
+        const isMigrationUpdate = transaction?.getMeta("uniqueIdOnlyChange") === true;
+        onChange?.(editor.getJSON(), editor.getHTML(), { isMigrationUpdate });
+      },
       onDestroy: () => handleEditorReady?.(false),
       onFocus: onEditorFocus,
     },
@@ -93,11 +108,8 @@ export const useEditor = (props: TEditorHookProps) => {
       const { uploadInProgress: isUploadInProgress } = editor.storage.utility;
       if (!editor.isDestroyed && !isUploadInProgress) {
         try {
-          editor.commands.setContent(value, {
-            emitUpdate: false,
-            parseOptions: {
-              preserveWhitespace: true,
-            },
+          editor.commands.setContent(value, false, {
+            preserveWhitespace: true,
           });
           if (editor.state.selection) {
             const docLength = editor.state.doc.content.size;
@@ -132,7 +144,16 @@ export const useEditor = (props: TEditorHookProps) => {
     onAssetChange(assets);
   }, [assetsList?.assets, onAssetChange]);
 
-  useImperativeHandle(forwardedRef, () => getEditorRefHelpers({ editor, provider }), [editor, provider]);
+  useImperativeHandle(
+    forwardedRef,
+    () =>
+      getEditorRefHelpers({
+        editor,
+        getEditorMetaData,
+        provider,
+      }),
+    [editor, getEditorMetaData, provider]
+  );
 
   if (!editor) {
     return null;

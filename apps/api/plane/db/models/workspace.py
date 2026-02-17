@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import pytz
 from typing import Optional, Any
@@ -204,6 +208,9 @@ class WorkspaceMember(BaseModel):
     default_props = models.JSONField(default=get_default_props)
     issue_props = models.JSONField(default=get_issue_props)
     is_active = models.BooleanField(default=True)
+    getting_started_checklist = models.JSONField(default=dict)
+    tips = models.JSONField(default=dict)
+    explored_features = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["workspace", "member", "deleted_at"]
@@ -301,6 +308,10 @@ class WorkspaceTheme(BaseModel):
 
 
 class WorkspaceUserProperties(BaseModel):
+    class NavigationControlPreference(models.TextChoices):
+        ACCORDION = "ACCORDION", "Accordion"
+        TABBED = "TABBED", "Tabbed"
+
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.CASCADE,
@@ -315,6 +326,12 @@ class WorkspaceUserProperties(BaseModel):
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)
     rich_filters = models.JSONField(default=dict)
+    navigation_project_limit = models.IntegerField(default=10)
+    navigation_control_preference = models.CharField(
+        max_length=25,
+        choices=NavigationControlPreference.choices,
+        default=NavigationControlPreference.ACCORDION,
+    )
 
     class Meta:
         unique_together = ["workspace", "user", "deleted_at"]
@@ -407,6 +424,7 @@ class WorkspaceUserPreference(BaseModel):
         DRAFTS = "drafts", "Drafts"
         YOUR_WORK = "your_work", "Your Work"
         ARCHIVES = "archives", "Archives"
+        STICKIES = "stickies", "Stickies"
 
     workspace = models.ForeignKey(
         "db.Workspace",

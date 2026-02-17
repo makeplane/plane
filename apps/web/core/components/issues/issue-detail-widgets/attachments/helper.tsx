@@ -1,11 +1,14 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { setPromiseToast, TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
 import type { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
@@ -37,34 +40,21 @@ export const useAttachmentOperations = (
   const attachmentOperations: TAttachmentOperations = useMemo(
     () => ({
       create: async (file) => {
-        try {
-          if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
-          const attachmentUploadPromise = createAttachment(workspaceSlug, projectId, issueId, file);
-          setPromiseToast(attachmentUploadPromise, {
-            loading: "Uploading attachment...",
-            success: {
-              title: "Attachment uploaded",
-              message: () => "The attachment has been successfully uploaded",
-            },
-            error: {
-              title: "Attachment not uploaded",
-              message: () => "The attachment could not be uploaded",
-            },
-          });
+        if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing required fields");
+        const attachmentUploadPromise = createAttachment(workspaceSlug, projectId, issueId, file);
+        setPromiseToast(attachmentUploadPromise, {
+          loading: "Uploading attachment...",
+          success: {
+            title: "Attachment uploaded",
+            message: () => "The attachment has been successfully uploaded",
+          },
+          error: {
+            title: "Attachment not uploaded",
+            message: () => "The attachment could not be uploaded",
+          },
+        });
 
-          await attachmentUploadPromise;
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.attachment.add,
-            payload: { id: issueId },
-          });
-        } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.attachment.add,
-            payload: { id: issueId },
-            error: error as Error,
-          });
-          throw error;
-        }
+        await attachmentUploadPromise;
       },
       remove: async (attachmentId) => {
         try {
@@ -75,16 +65,7 @@ export const useAttachmentOperations = (
             type: TOAST_TYPE.SUCCESS,
             title: "Attachment removed",
           });
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.attachment.remove,
-            payload: { id: issueId },
-          });
-        } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.attachment.remove,
-            payload: { id: issueId },
-            error: error as Error,
-          });
+        } catch (_error) {
           setToast({
             message: "The Attachment could not be removed",
             type: TOAST_TYPE.ERROR,

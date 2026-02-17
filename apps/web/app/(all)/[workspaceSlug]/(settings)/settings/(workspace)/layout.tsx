@@ -1,33 +1,36 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-// constants
-import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
-import type { EUserWorkspaceRoles } from "@plane/types";
+import { Outlet } from "react-router";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
-import { SettingsMobileNav } from "@/components/settings/mobile";
+import { SettingsMobileNav } from "@/components/settings/mobile/nav";
+// plane imports
+import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
+import type { EUserWorkspaceRoles } from "@plane/types";
+// components
+import { WorkspaceSettingsSidebarRoot } from "@/components/settings/workspace/sidebar";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-// local components
-import { WorkspaceSettingsSidebar } from "./sidebar";
 
-export interface IWorkspaceSettingLayout {
-  children: ReactNode;
-}
+import type { Route } from "./+types/layout";
 
-const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => {
-  const { children } = props;
+const WorkspaceSettingLayout = observer(function WorkspaceSettingLayout({ params }: Route.ComponentProps) {
+  // router
+  const { workspaceSlug } = params;
   // store hooks
   const { workspaceUserInfo, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   // next hooks
   const pathname = usePathname();
   // derived values
-  const { workspaceSlug, accessKey } = pathnameToAccessKey(pathname);
-  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
+  const { accessKey } = pathnameToAccessKey(pathname);
+  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
 
   let isAuthorized: boolean | string = false;
   if (pathname && workspaceSlug && userWorkspaceRole) {
@@ -37,16 +40,18 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
   return (
     <>
       <SettingsMobileNav
-        hamburgerContent={WorkspaceSettingsSidebar}
+        hamburgerContent={WorkspaceSettingsSidebarRoot}
         activePath={getWorkspaceActivePath(pathname) || ""}
       />
       <div className="inset-y-0 flex flex-row w-full h-full">
         {workspaceUserInfo && !isAuthorized ? (
           <NotAuthorizedView section="settings" className="h-auto" />
         ) : (
-          <div className="relative flex h-full w-full">
-            <div className="hidden md:block">{<WorkspaceSettingsSidebar />}</div>
-            <div className="w-full h-full overflow-y-scroll md:pt-page-y">{children}</div>
+          <div className="relative flex size-full">
+            <div className="h-full hidden md:block">
+              <WorkspaceSettingsSidebarRoot />
+            </div>
+            <Outlet />
           </div>
         )}
       </div>

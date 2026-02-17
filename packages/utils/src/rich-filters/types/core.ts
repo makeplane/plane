@@ -1,7 +1,10 @@
-import {
-  FILTER_FIELD_TYPE,
-  FILTER_NODE_TYPE,
-  LOGICAL_OPERATOR,
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type {
   TFilterAndGroupNode,
   TFilterConditionNode,
   TFilterExpression,
@@ -10,6 +13,7 @@ import {
   TFilterProperty,
   TFilterValue,
 } from "@plane/types";
+import { FILTER_FIELD_TYPE, FILTER_NODE_TYPE, LOGICAL_OPERATOR } from "@plane/types";
 
 /**
  * Type guard to check if a node is a condition node.

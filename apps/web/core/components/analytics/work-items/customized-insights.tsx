@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -11,7 +17,13 @@ import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import { AnalyticsSelectParams } from "../select/analytics-params";
 import PriorityChart from "./priority-chart";
 
-const CustomizedInsights = observer(({ peekView, isEpic }: { peekView?: boolean; isEpic?: boolean }) => {
+const CustomizedInsights = observer(function CustomizedInsights({
+  peekView,
+  isEpic,
+}: {
+  peekView?: boolean;
+  isEpic?: boolean;
+}) {
   const { t } = useTranslation();
   const { workspaceSlug } = useParams();
   const { control, watch, setValue } = useForm<IAnalyticsParams>({

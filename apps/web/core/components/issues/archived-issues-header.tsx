@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -15,7 +21,7 @@ import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-to
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 
-export const ArchivedIssuesHeader: FC = observer(() => {
+export const ArchivedIssuesHeader = observer(function ArchivedIssuesHeader() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;

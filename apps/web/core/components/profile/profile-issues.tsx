@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -19,12 +25,9 @@ type Props = {
   type: "assigned" | "subscribed" | "created";
 };
 
-export const ProfileIssuesPage = observer((props: Props) => {
+export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Props) {
   const { type } = props;
-  const { workspaceSlug, userId } = useParams() as {
-    workspaceSlug: string;
-    userId: string;
-  };
+  const { workspaceSlug, userId } = useParams();
   // store hooks
   const {
     issues: { setViewId },
@@ -61,7 +64,7 @@ export const ProfileIssuesPage = observer((props: Props) => {
           <>
             <div className="flex flex-col h-full w-full">
               {profileWorkItemsFilter && <WorkItemFiltersRow filter={profileWorkItemsFilter} />}
-              <div className="-z-1 relative h-full w-full overflow-auto">
+              <div className="relative h-full w-full overflow-auto">
                 {activeLayout === "list" ? (
                   <ProfileIssuesListLayout />
                 ) : activeLayout === "kanban" ? (

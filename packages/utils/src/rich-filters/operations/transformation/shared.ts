@@ -1,6 +1,13 @@
-import { TFilterGroupNode, TFilterProperty } from "@plane/types";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { TFilterGroupNode, TFilterProperty } from "@plane/types";
 import { processGroupNode } from "../../types/shared";
-import { transformGroupWithChildren, TTreeTransformFn, TTreeTransformResult } from "./core";
+import type { TTreeTransformFn, TTreeTransformResult } from "./core";
+import { transformGroupWithChildren } from "./core";
 
 /**
  * Transforms groups by processing children.

@@ -1,7 +1,11 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { CustomSearchSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
@@ -18,7 +22,7 @@ type TTimezoneSelect = {
   disabled?: boolean;
 };
 
-export const TimezoneSelect: FC<TTimezoneSelect> = observer((props) => {
+export const TimezoneSelect = observer(function TimezoneSelect(props: TTimezoneSelect) {
   // props
   const {
     value,
@@ -40,13 +44,14 @@ export const TimezoneSelect: FC<TTimezoneSelect> = observer((props) => {
         label={value && selectedValue ? selectedValue(value) : label}
         options={isDisabled || disabled ? [] : timezones}
         onChange={onChange}
-        buttonClassName={cn(buttonClassName, {
-          "border-red-500": error,
+        buttonClassName={cn(buttonClassName, "border border-subtle-1", {
+          "border-danger-strong": error,
         })}
-        className={cn("rounded-md border-[0.5px] !border-custom-border-200", className)}
+        className={cn("rounded-md", className)}
         optionsClassName={cn("w-72", optionsClassName)}
         input
         disabled={isDisabled || disabled}
+        placement="bottom-end"
       />
     </div>
   );

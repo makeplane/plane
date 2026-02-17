@@ -1,6 +1,10 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
@@ -9,18 +13,22 @@ import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal, ChevronRight } from "lucide-react";
+import scrollIntoView from "smooth-scroll-into-view-if-needed";
+import { Settings, Share2, LogOut, MoreHorizontal } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ArchiveIcon } from "@plane/propel/icons";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { LinkIcon, ArchiveIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { IconButton } from "@plane/propel/icon-button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
+import { DEFAULT_TAB_KEY, getTabUrl } from "@/components/navigation/tab-navigation-utils";
+import { useTabPreferences } from "@/components/navigation/use-tab-preferences";
 import { LeaveProjectModal } from "@/components/project/leave-project-modal";
 import { PublishProjectModal } from "@/components/project/publish-project/modal";
 // hooks
@@ -28,8 +36,10 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
+import { useNavigationItems } from "@/plane-web/components/navigations";
 import { ProjectNavigationRoot } from "@/plane-web/components/sidebar";
 // local imports
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
@@ -49,7 +59,7 @@ type Props = {
   renderInExtendedSidebar?: boolean;
 };
 
-export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
+export const SidebarProjectsListItem = observer(function SidebarProjectsListItem(props: Props) {
   const {
     projectId,
     handleCopyText,
@@ -66,7 +76,8 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
   const { getIsProjectListOpen, toggleProjectListOpen } = useCommandPalette();
-  const { toggleAnySidebarDropdown } = useAppTheme();
+  const { preferences: projectPreferences } = useProjectNavigationPreferences();
+  const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar, toggleAnySidebarDropdown } = useAppTheme();
 
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
@@ -76,7 +87,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const isProjectListOpen = getIsProjectListOpen(projectId);
   const [instruction, setInstruction] = useState<"DRAG_OVER" | "DRAG_BELOW" | undefined>(undefined);
   // refs
-  const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  const actionSectionRef = useRef<HTMLButtonElement | null>(null);
   const projectRef = useRef<HTMLDivElement | null>(null);
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
   // router
@@ -84,8 +95,28 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const router = useRouter();
   // derived values
   const project = getPartialProjectById(projectId);
+
+  // Get available navigation items for this project
+  const navigationItems = useNavigationItems({
+    workspaceSlug: workspaceSlug.toString(),
+    projectId,
+    project,
+    allowPermissions,
+  });
+  const availableTabKeys = navigationItems.map((item) => item.key);
+
+  // Get preferences from hook
+  const { tabPreferences } = useTabPreferences(workspaceSlug.toString(), projectId);
+  const defaultTabKey = tabPreferences.defaultTab;
+  // Validate that the default tab is available
+  const validatedDefaultTabKey = availableTabKeys.includes(defaultTabKey) ? defaultTabKey : DEFAULT_TAB_KEY;
+  const defaultTabUrl = project ? getTabUrl(workspaceSlug.toString(), project.id, validatedDefaultTabKey) : "";
+
   // toggle project list open
-  const setIsProjectListOpen = (value: boolean) => toggleProjectListOpen(projectId, value);
+  const setIsProjectListOpen = useCallback(
+    (value: boolean) => toggleProjectListOpen(projectId, value),
+    [projectId, toggleProjectListOpen]
+  );
   // auth
   const isAdmin = allowPermissions(
     [EUserPermissions.ADMIN],
@@ -129,11 +160,11 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded flex items-center bg-custom-background-100 text-sm p-1 pr-2">
+                <div className="rounded-sm flex items-center bg-surface-1 text-13 p-1 pr-2">
                   <div className="size-4 grid place-items-center flex-shrink-0">
                     {project && <Logo logo={project?.logo_props} />}
                   </div>
-                  <p className="truncate text-custom-sidebar-text-200">{project?.name}</p>
+                  <p className="truncate text-secondary">{project?.name}</p>
                 </div>
               );
               return () => root.unmount();
@@ -196,18 +227,55 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   useEffect(() => {
     if (isMenuActive) toggleAnySidebarDropdown(true);
     else toggleAnySidebarDropdown(false);
-  }, [isMenuActive]);
+  }, [isMenuActive, toggleAnySidebarDropdown]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
   useOutsideClickDetector(projectRef, () => projectRef?.current?.classList?.remove(HIGHLIGHT_CLASS));
 
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    if (URLProjectId === project?.id) {
+      setIsProjectListOpen(true);
+      // Scroll to active project
+      if (projectRef.current) {
+        timeoutId = setTimeout(() => {
+          if (projectRef.current) {
+            scrollIntoView(projectRef.current, {
+              behavior: "smooth",
+              block: "center",
+              scrollMode: "if-needed",
+            });
+          }
+        }, 200);
+      }
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [URLProjectId, project?.id, setIsProjectListOpen]);
+
   if (!project) return null;
 
-  useEffect(() => {
-    if (URLProjectId === project.id) setIsProjectListOpen(true);
-  }, [URLProjectId]);
+  const isAccordionMode = projectPreferences.navigationMode === "ACCORDION";
 
-  const handleItemClick = () => setIsProjectListOpen(!isProjectListOpen);
+  const handleItemClick = () => {
+    if (projectPreferences.navigationMode === "ACCORDION") {
+      setIsProjectListOpen(!isProjectListOpen);
+    } else {
+      router.push(defaultTabUrl);
+    }
+    // close the extended sidebar if it is open
+    if (isExtendedProjectSidebarOpened && !isAccordionMode) {
+      toggleExtendedProjectSidebar(false);
+    }
+  };
+
+  const shouldHighlightProject = URLProjectId === project?.id && projectPreferences.navigationMode !== "ACCORDION";
+
   return (
     <>
       <PublishProjectModal isOpen={publishModalOpen} projectId={projectId} onClose={() => setPublishModal(false)} />
@@ -216,16 +284,17 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
         <div
           id={`sidebar-${projectId}-${projectListType}`}
           className={cn("relative", {
-            "bg-custom-sidebar-background-80 opacity-60": isDragging,
+            "bg-layer-1 opacity-60": isDragging,
           })}
           ref={projectRef}
         >
           <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
           <div
             className={cn(
-              "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-90",
+              "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
               {
-                "bg-custom-sidebar-background-90": isMenuActive,
+                "bg-surface-2": isMenuActive,
+                "bg-layer-transparent-active": shouldHighlightProject,
               }
             )}
             id={`${project?.id}`}
@@ -242,7 +311,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 <button
                   type="button"
                   className={cn(
-                    "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
+                    "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded-sm text-placeholder cursor-grab",
                     {
                       "cursor-not-allowed opacity-60": project.sort_order === null,
                       "cursor-grabbing": isDragging,
@@ -256,52 +325,59 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
               </Tooltip>
             )}
             <>
-              <ControlLink
-                href={`/${workspaceSlug}/projects/${project.id}/issues`}
-                className="flex-grow flex truncate"
-                onClick={handleItemClick}
-              >
-                <Disclosure.Button
-                  as="button"
-                  type="button"
-                  className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {})}
-                  aria-label={
-                    isProjectListOpen
-                      ? t("aria_labels.projects_sidebar.close_project_menu")
-                      : t("aria_labels.projects_sidebar.open_project_menu")
-                  }
-                >
-                  <div className="size-4 grid place-items-center flex-shrink-0">
-                    <Logo logo={project.logo_props} size={16} />
-                  </div>
-                  <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{project.name}</p>
-                </Disclosure.Button>
-              </ControlLink>
-              <CustomMenu
-                customButton={
-                  <span
-                    ref={actionSectionRef}
-                    className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
-                    onClick={() => setIsMenuActive(!isMenuActive)}
+              <ControlLink href={defaultTabUrl} className="flex-grow flex truncate" onClick={handleItemClick}>
+                {isAccordionMode ? (
+                  <Disclosure.Button
+                    as="button"
+                    type="button"
+                    className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {})}
+                    aria-label={
+                      isProjectListOpen
+                        ? t("aria_labels.projects_sidebar.close_project_menu")
+                        : t("aria_labels.projects_sidebar.open_project_menu")
+                    }
                   >
-                    <MoreHorizontal className="size-4" />
-                  </span>
-                }
-                className={cn(
-                  "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
-                  {
-                    "opacity-100 pointer-events-auto": isMenuActive,
-                  }
+                    <div className="size-4 grid place-items-center flex-shrink-0">
+                      <Logo logo={project.logo_props} size={16} />
+                    </div>
+                    <p className="truncate text-13 font-medium text-secondary">{project.name}</p>
+                  </Disclosure.Button>
+                ) : (
+                  <div className="flex-grow flex items-center gap-1.5 text-left select-none w-full">
+                    <div className="size-4 grid place-items-center flex-shrink-0">
+                      <Logo logo={project.logo_props} size={16} />
+                    </div>
+                    <p className="truncate text-13 font-medium text-secondary">{project.name}</p>
+                  </div>
                 )}
-                customButtonClassName="grid place-items-center"
-                placement="bottom-start"
-                ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
-                useCaptureForOutsideClick
-                closeOnSelect
-                onMenuClose={() => setIsMenuActive(false)}
-              >
-                {/* TODO: Removed is_favorite logic due to the optimization in projects API */}
-                {/* {isAuthorized && (
+              </ControlLink>
+              <div className="flex items-center gap-1">
+                <CustomMenu
+                  customButton={
+                    <IconButton
+                      ref={actionSectionRef}
+                      variant="ghost"
+                      size="sm"
+                      icon={MoreHorizontal}
+                      onClick={() => setIsMenuActive(!isMenuActive)}
+                      className="text-placeholder"
+                    />
+                  }
+                  className={cn(
+                    "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
+                    {
+                      "opacity-100 pointer-events-auto": isMenuActive,
+                    }
+                  )}
+                  customButtonClassName="grid place-items-center"
+                  placement="bottom-start"
+                  ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
+                  useCaptureForOutsideClick
+                  closeOnSelect
+                  onMenuClose={() => setIsMenuActive(false)}
+                >
+                  {/* TODO: Removed is_favorite logic due to the optimization in projects API */}
+                  {/* {isAuthorized && (
                     <CustomMenu.MenuItem
                       onClick={project.is_favorite ? handleRemoveFromFavorites : handleAddToFavorites}
                     >
@@ -316,98 +392,98 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     </CustomMenu.MenuItem>
                   )} */}
 
-                {/* publish project settings */}
-                {isAdmin && (
-                  <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
-                    <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
-                      <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
-                        <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
+                  {/* publish project settings */}
+                  {isAdmin && (
+                    <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
+                      <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
+                        <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm text-secondary transition-all duration-300 hover:bg-layer-1">
+                          <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
+                        </div>
+                        <div>{t("publish_project")}</div>
                       </div>
-                      <div>{t("publish_project")}</div>
-                    </div>
+                    </CustomMenu.MenuItem>
+                  )}
+                  <CustomMenu.MenuItem onClick={handleCopyText}>
+                    <span className="flex items-center justify-start gap-2">
+                      <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                      <span>{t("copy_link")}</span>
+                    </span>
                   </CustomMenu.MenuItem>
-                )}
-                <CustomMenu.MenuItem onClick={handleCopyText}>
-                  <span className="flex items-center justify-start gap-2">
-                    <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                    <span>{t("copy_link")}</span>
-                  </span>
-                </CustomMenu.MenuItem>
-                {isAuthorized && (
+                  {isAuthorized && (
+                    <CustomMenu.MenuItem
+                      onClick={() => {
+                        router.push(`/${workspaceSlug}/projects/${project?.id}/archives/issues`);
+                      }}
+                    >
+                      <div className="flex items-center justify-start gap-2 cursor-pointer">
+                        <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                        <span>{t("archives")}</span>
+                      </div>
+                    </CustomMenu.MenuItem>
+                  )}
                   <CustomMenu.MenuItem
                     onClick={() => {
-                      router.push(`/${workspaceSlug}/projects/${project?.id}/archives/issues`);
+                      router.push(`/${workspaceSlug}/settings/projects/${project?.id}`);
                     }}
                   >
                     <div className="flex items-center justify-start gap-2 cursor-pointer">
-                      <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                      <span>{t("archives")}</span>
+                      <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
+                      <span>{t("settings")}</span>
                     </div>
                   </CustomMenu.MenuItem>
+                  {/* leave project */}
+                  {!isAuthorized && (
+                    <CustomMenu.MenuItem
+                      onClick={handleLeaveProject}
+                      data-ph-element={MEMBER_TRACKER_ELEMENTS.SIDEBAR_PROJECT_QUICK_ACTIONS}
+                    >
+                      <div className="flex items-center justify-start gap-2">
+                        <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
+                        <span>{t("leave_project")}</span>
+                      </div>
+                    </CustomMenu.MenuItem>
+                  )}
+                </CustomMenu>
+                {isAccordionMode && (
+                  <IconButton
+                    variant="ghost"
+                    size="sm"
+                    icon={ChevronRightIcon}
+                    onClick={() => setIsProjectListOpen(!isProjectListOpen)}
+                    className={cn("hidden group-hover/project-item:inline-flex text-placeholder", {
+                      "inline-flex": isMenuActive,
+                    })}
+                    iconClassName={cn("transition-transform", {
+                      "rotate-90": isProjectListOpen,
+                    })}
+                    aria-label={t(
+                      isProjectListOpen
+                        ? "aria_labels.projects_sidebar.close_project_menu"
+                        : "aria_labels.projects_sidebar.open_project_menu"
+                    )}
+                  />
                 )}
-                <CustomMenu.MenuItem
-                  onClick={() => {
-                    router.push(`/${workspaceSlug}/settings/projects/${project?.id}`);
-                  }}
-                >
-                  <div className="flex items-center justify-start gap-2 cursor-pointer">
-                    <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
-                    <span>{t("settings")}</span>
-                  </div>
-                </CustomMenu.MenuItem>
-                {/* leave project */}
-                {!isAuthorized && (
-                  <CustomMenu.MenuItem
-                    onClick={handleLeaveProject}
-                    data-ph-element={MEMBER_TRACKER_ELEMENTS.SIDEBAR_PROJECT_QUICK_ACTIONS}
-                  >
-                    <div className="flex items-center justify-start gap-2">
-                      <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
-                      <span>{t("leave_project")}</span>
-                    </div>
-                  </CustomMenu.MenuItem>
-                )}
-              </CustomMenu>
-              <Disclosure.Button
-                as="button"
-                type="button"
-                className={cn(
-                  "hidden group-hover/project-item:inline-block p-0.5 rounded hover:bg-custom-sidebar-background-80",
-                  {
-                    "inline-block": isMenuActive,
-                  }
-                )}
-                onClick={() => setIsProjectListOpen(!isProjectListOpen)}
-                aria-label={t(
-                  isProjectListOpen
-                    ? "aria_labels.projects_sidebar.close_project_menu"
-                    : "aria_labels.projects_sidebar.open_project_menu"
-                )}
-              >
-                <ChevronRight
-                  className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
-                    "rotate-90": isProjectListOpen,
-                  })}
-                />
-              </Disclosure.Button>
+              </div>
             </>
           </div>
-          <Transition
-            show={isProjectListOpen}
-            enter="transition duration-100 ease-out"
-            enterFrom="transform scale-95 opacity-0"
-            enterTo="transform scale-100 opacity-100"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform scale-100 opacity-100"
-            leaveTo="transform scale-95 opacity-0"
-          >
-            {isProjectListOpen && (
-              <Disclosure.Panel as="div" className="relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5">
-                <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-custom-border-200" />
-                <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
-              </Disclosure.Panel>
-            )}
-          </Transition>
+          {isAccordionMode && (
+            <Transition
+              show={isProjectListOpen}
+              enter="transition duration-100 ease-out"
+              enterFrom="transform scale-95 opacity-0"
+              enterTo="transform scale-100 opacity-100"
+              leave="transition duration-75 ease-out"
+              leaveFrom="transform scale-100 opacity-100"
+              leaveTo="transform scale-95 opacity-0"
+            >
+              {isProjectListOpen && (
+                <Disclosure.Panel as="div" className="relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5">
+                  <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-layer-3" />
+                  <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+                </Disclosure.Panel>
+              )}
+            </Transition>
+          )}
           {isLastChild && <DropIndicator isVisible={instruction === "DRAG_BELOW"} />}
         </div>
       </Disclosure>

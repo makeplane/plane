@@ -1,4 +1,11 @@
-import { callOrReturn, getExtensionField, mergeAttributes, Node, ParentConfig } from "@tiptap/core";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { ParentConfig } from "@tiptap/core";
+import { callOrReturn, getExtensionField, mergeAttributes, Node } from "@tiptap/core";
 import { TextSelection } from "@tiptap/pm/state";
 import {
   addColumnAfter,
@@ -21,6 +28,7 @@ import {
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // local imports
+import { TableDragStatePlugin } from "../plugins/drag-state";
 import { TableColumnDragHandlePlugin } from "../plugins/drag-handles/column/plugin";
 import { TableRowDragHandlePlugin } from "../plugins/drag-handles/row/plugin";
 import { TableInsertPlugin } from "../plugins/insert-handlers/plugin";
@@ -274,6 +282,7 @@ export const Table = Node.create<TableOptions>({
       tableEditing({
         allowTableNodeSelection: this.options.allowTableNodeSelection,
       }),
+      TableDragStatePlugin,
       TableInsertPlugin(this.editor),
       TableColumnDragHandlePlugin(this.editor),
       TableRowDragHandlePlugin(this.editor),

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party imports
 from rest_framework import serializers
 
@@ -10,6 +14,7 @@ from plane.db.models import (
     ModuleMember,
     ModuleIssue,
     ProjectMember,
+    Project,
 )
 
 
@@ -53,6 +58,14 @@ class ModuleCreateSerializer(BaseSerializer):
         ]
 
     def validate(self, data):
+        project_id = self.context.get("project_id")
+        if not project_id:
+            raise serializers.ValidationError("Project ID is required")
+        project = Project.objects.get(id=project_id)
+        if not project:
+            raise serializers.ValidationError("Project not found")
+        if not project.module_view:
+            raise serializers.ValidationError("Modules are not enabled for this project")
         if (
             data.get("start_date", None) is not None
             and data.get("target_date", None) is not None

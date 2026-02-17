@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 
@@ -22,6 +26,7 @@ from plane.db.models import (
     IntakeIssue,
     Issue,
     State,
+    StateGroup,
     IssueLink,
     FileAsset,
     Project,
@@ -228,14 +233,30 @@ class IntakeIssueViewSet(BaseViewSet):
         ]:
             return Response({"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # create an issue
         project = Project.objects.get(pk=project_id)
+
+        # get the triage state
+        triage_state = State.triage_objects.filter(project_id=project_id, workspace__slug=slug).first()
+        if not triage_state:
+            triage_state = State.objects.create(
+                name="Triage",
+                group=StateGroup.TRIAGE.value,
+                project_id=project_id,
+                workspace_id=project.workspace_id,
+                color="#4E5355",
+                sequence=65000,
+                default=False,
+            )
+        request.data["issue"]["state_id"] = triage_state.id
+
+        # create an issue
         serializer = IssueCreateSerializer(
             data=request.data.get("issue"),
             context={
                 "project_id": project_id,
                 "workspace_id": project.workspace_id,
                 "default_assignee_id": project.default_assignee_id,
+                "allow_triage_state": True,
             },
         )
         if serializer.is_valid():
@@ -305,6 +326,9 @@ class IntakeIssueViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=Issue)
     def partial_update(self, request, slug, project_id, pk):
+        skip_activity = request.data.pop("skip_activity", False)
+        is_description_update = request.data.get("description_html") is not None
+
         intake_id = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
         intake_issue = IntakeIssue.objects.get(
             issue_id=pk,
@@ -344,6 +368,12 @@ class IntakeIssueViewSet(BaseViewSet):
 
         # Get issue data
         issue_data = request.data.pop("issue", False)
+        issue_serializer = None
+        issue = None
+        issue_current_instance = None
+        issue_requested_data = None
+
+        # Validate issue data if provided
         if bool(issue_data):
             issue = Issue.objects.annotate(
                 label_ids=Coalesce(
@@ -368,26 +398,46 @@ class IntakeIssueViewSet(BaseViewSet):
                 issue_data = {
                     "name": issue_data.get("name", issue.name),
                     "description_html": issue_data.get("description_html", issue.description_html),
-                    "description": issue_data.get("description", issue.description),
+                    "description_json": issue_data.get("description_json", issue.description_json),
                 }
 
-            current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
+            issue_current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
+            issue_requested_data = json.dumps(issue_data, cls=DjangoJSONEncoder)
 
             issue_serializer = IssueCreateSerializer(
-                issue, data=issue_data, partial=True, context={"project_id": project_id}
+                issue, data=issue_data, partial=True, context={"project_id": project_id, "allow_triage_state": True}
             )
 
-            if issue_serializer.is_valid():
-                # Log all the updates
-                requested_data = json.dumps(issue_data, cls=DjangoJSONEncoder)
+            if not issue_serializer.is_valid():
+                return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate intake issue data if user has permission
+        intake_serializer = None
+        intake_current_instance = None
+
+        if (project_member and project_member.role > ROLE.MEMBER.value) or is_workspace_admin:
+            intake_current_instance = json.dumps(IntakeIssueSerializer(intake_issue).data, cls=DjangoJSONEncoder)
+            intake_serializer = IntakeIssueSerializer(intake_issue, data=request.data, partial=True)
+
+            if not intake_serializer.is_valid():
+                return Response(intake_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Both serializers are valid, now save them
+        if issue_serializer:
+            issue_serializer.save()
+
+            # Check if the update is a migration description update
+            is_migration_description_update = skip_activity and is_description_update
+            # Log all the updates
+            if not is_migration_description_update:
                 if issue is not None:
                     issue_activity.delay(
                         type="issue.activity.updated",
-                        requested_data=requested_data,
+                        requested_data=issue_requested_data,
                         actor_id=str(request.user.id),
                         issue_id=str(issue.id),
                         project_id=str(project_id),
-                        current_instance=current_instance,
+                        current_instance=issue_current_instance,
                         epoch=int(timezone.now().timestamp()),
                         notification=True,
                         origin=base_host(request=request, is_app=True),
@@ -395,95 +445,55 @@ class IntakeIssueViewSet(BaseViewSet):
                     )
                     # updated issue description version
                     issue_description_version_task.delay(
-                        updated_issue=current_instance,
+                        updated_issue=issue_current_instance,
                         issue_id=str(pk),
                         user_id=request.user.id,
                     )
-                issue_serializer.save()
-            else:
-                return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Only project admins can edit intake issue attributes
-        if (project_member and project_member.role > ROLE.MEMBER.value) or is_workspace_admin:
-            serializer = IntakeIssueSerializer(intake_issue, data=request.data, partial=True)
-            current_instance = json.dumps(IntakeIssueSerializer(intake_issue).data, cls=DjangoJSONEncoder)
-            if serializer.is_valid():
-                serializer.save()
-                # Update the issue state if the issue is rejected or marked as duplicate
-                if serializer.data["status"] in [-1, 2]:
-                    issue = Issue.objects.get(
-                        pk=intake_issue.issue_id,
-                        workspace__slug=slug,
-                        project_id=project_id,
-                    )
-                    state = State.objects.filter(group="cancelled", workspace__slug=slug, project_id=project_id).first()
-                    if state is not None:
-                        issue.state = state
-                        issue.save()
+        if intake_serializer:
+            intake_serializer.save()
+            # create a activity for status change
+            issue_activity.delay(
+                type="intake.activity.created",
+                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                actor_id=str(request.user.id),
+                issue_id=str(pk),
+                project_id=str(project_id),
+                current_instance=intake_current_instance,
+                epoch=int(timezone.now().timestamp()),
+                notification=False,
+                origin=base_host(request=request, is_app=True),
+                intake=str(intake_issue.id),
+            )
 
-                # Update the issue state if it is accepted
-                if serializer.data["status"] in [1]:
-                    issue = Issue.objects.get(
-                        pk=intake_issue.issue_id,
-                        workspace__slug=slug,
-                        project_id=project_id,
-                    )
-
-                    # Update the issue state only if it is in triage state
-                    if issue.state.is_triage:
-                        # Move to default state
-                        state = State.objects.filter(workspace__slug=slug, project_id=project_id, default=True).first()
-                        if state is not None:
-                            issue.state = state
-                            issue.save()
-                # create a activity for status change
-                issue_activity.delay(
-                    type="intake.activity.created",
-                    requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
-                    actor_id=str(request.user.id),
-                    issue_id=str(pk),
-                    project_id=str(project_id),
-                    current_instance=current_instance,
-                    epoch=int(timezone.now().timestamp()),
-                    notification=False,
-                    origin=base_host(request=request, is_app=True),
-                    intake=(intake_issue.id),
-                )
-
-                intake_issue = (
-                    IntakeIssue.objects.select_related("issue")
-                    .prefetch_related("issue__labels", "issue__assignees")
-                    .annotate(
-                        label_ids=Coalesce(
-                            ArrayAgg(
-                                "issue__labels__id",
-                                distinct=True,
-                                filter=Q(
-                                    ~Q(issue__labels__id__isnull=True) & Q(issue__label_issue__deleted_at__isnull=True)
-                                ),
-                            ),
-                            Value([], output_field=ArrayField(UUIDField())),
+        # Fetch and return the updated intake issue
+        intake_issue = (
+            IntakeIssue.objects.select_related("issue")
+            .prefetch_related("issue__labels", "issue__assignees")
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "issue__labels__id",
+                        distinct=True,
+                        filter=Q(~Q(issue__labels__id__isnull=True) & Q(issue__label_issue__deleted_at__isnull=True)),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "issue__assignees__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(issue__assignees__id__isnull=True) & Q(issue__issue_assignee__deleted_at__isnull=True)
                         ),
-                        assignee_ids=Coalesce(
-                            ArrayAgg(
-                                "issue__assignees__id",
-                                distinct=True,
-                                filter=Q(
-                                    ~Q(issue__assignees__id__isnull=True)
-                                    & Q(issue__issue_assignee__deleted_at__isnull=True)
-                                ),
-                            ),
-                            Value([], output_field=ArrayField(UUIDField())),
-                        ),
-                    )
-                    .get(intake_id=intake_id.id, issue_id=pk, project_id=project_id)
-                )
-                serializer = IntakeIssueDetailSerializer(intake_issue).data
-                return Response(serializer, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            serializer = IntakeIssueDetailSerializer(intake_issue).data
-            return Response(serializer, status=status.HTTP_200_OK)
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .get(intake_id=intake_id.id, issue_id=pk, project_id=project_id)
+        )
+        serializer = IntakeIssueDetailSerializer(intake_issue).data
+        return Response(serializer, status=status.HTTP_200_OK)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], creator=True, model=Issue)
     def retrieve(self, request, slug, project_id, pk):

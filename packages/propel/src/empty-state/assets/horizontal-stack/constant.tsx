@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   CustomerHorizontalStackIllustration,
   EpicHorizontalStackIllustration,
@@ -9,6 +15,7 @@ import {
   MembersHorizontalStackIllustration,
   NoteHorizontalStackIllustration,
   PriorityHorizontalStackIllustration,
+  ProjectHorizontalStackIllustration,
   SettingsHorizontalStackIllustration,
   StateHorizontalStackIllustration,
   TemplateHorizontalStackIllustration,
@@ -60,6 +67,10 @@ export const HorizontalStackAssetsMap = [
   {
     asset: <PriorityHorizontalStackIllustration className="w-20 h-20" />,
     title: "Priority",
+  },
+  {
+    asset: <ProjectHorizontalStackIllustration className="w-20 h-20" />,
+    title: "Project",
   },
   {
     asset: <SettingsHorizontalStackIllustration className="w-20 h-20" />,

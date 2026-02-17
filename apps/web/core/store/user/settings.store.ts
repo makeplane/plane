@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import type { IUserSettings } from "@plane/types";
@@ -14,7 +20,6 @@ export interface IUserSettingsStore {
   isLoading: boolean;
   error: TError | undefined;
   data: IUserSettings;
-  canUseLocalDB: boolean;
   sidebarCollapsed: boolean;
   isScrolled: boolean;
   // actions
@@ -42,7 +47,6 @@ export class UserSettingsStore implements IUserSettingsStore {
       invites: undefined,
     },
   };
-  canUseLocalDB: boolean = false;
   // services
   userService: UserService;
 
@@ -52,7 +56,6 @@ export class UserSettingsStore implements IUserSettingsStore {
       isLoading: observable.ref,
       error: observable,
       data: observable,
-      canUseLocalDB: observable.ref,
       sidebarCollapsed: observable.ref,
       isScrolled: observable.ref,
       // actions

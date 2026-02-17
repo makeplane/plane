@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Editor } from "@tiptap/react";
 import {
   BoldIcon,
@@ -18,12 +24,12 @@ import {
   Heading5,
   Heading6,
   CaseSensitive,
-  type LucideIcon,
   MinusSquare,
   Palette,
   AlignCenter,
-  LinkIcon,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { LinkIcon } from "@plane/propel/icons";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
@@ -49,8 +55,8 @@ import {
   unsetLinkEditor,
 } from "@/helpers/editor-commands";
 // types
-import { TCommandWithProps, TEditorCommands } from "@/types";
-
+import type { TCommandWithProps, TEditorCommands } from "@/types";
+import type { ISvgIcons } from "@plane/propel/icons";
 type isActiveFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => boolean;
 type commandFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => void;
 
@@ -58,7 +64,7 @@ export type EditorMenuItem<T extends TEditorCommands> = {
   key: T;
   name: string;
   command: commandFunction<T>;
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   isActive: isActiveFunction<T>;
 };
 
@@ -206,11 +212,13 @@ export const LinkItem = (editor: Editor): EditorMenuItem<"link"> =>
     key: "link",
     name: "Link",
     isActive: () => editor?.isActive("link"),
+
     command: (props) => {
       if (!props) return;
       if (props.url) setLinkEditor(editor, props.url, props.text);
       else unsetLinkEditor(editor);
     },
+
     icon: LinkIcon,
   }) as const;
 

@@ -1,6 +1,12 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as RadixScrollArea from "@radix-ui/react-scroll-area";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { cn } from "./utils";
 
 type TScrollAreaProps = {
@@ -23,7 +29,7 @@ const thumbSizeStyles = {
   lg: "before:absolute before:left-1/2 before:top-1/2 before:size-full before:min-h-17 before:min-w-17 before:-translate-x-1/2 before:-translate-y-1/2",
 };
 
-export const ScrollArea: FC<TScrollAreaProps> = (props) => {
+export function ScrollArea(props: TScrollAreaProps) {
   const { type = "always", className = "", scrollHideDelay = 600, size = "md", children } = props;
 
   return (
@@ -42,7 +48,7 @@ export const ScrollArea: FC<TScrollAreaProps> = (props) => {
       >
         <RadixScrollArea.Thumb
           className={cn(
-            "relative flex-1 rounded-[10px]  bg-custom-scrollbar-neutral group-hover:bg-custom-scrollbar-hover group-active/track:bg-custom-scrollbar-active",
+            "relative flex-1 rounded-[10px] bg-scrollbar-thumb group-hover:bg-scrollbar-thumb-surface-hover group-hover/track:bg-scrollbar-thumb-hover group-active/track:bg-scrollbar-thumb-active",
             thumbSizeStyles[size]
           )}
         />
@@ -56,11 +62,11 @@ export const ScrollArea: FC<TScrollAreaProps> = (props) => {
       >
         <RadixScrollArea.Thumb
           className={cn(
-            "relative flex-1 rounded-[10px] bg-custom-scrollbar-neutral group-hover:bg-custom-scrollbar-hover group-active/track:bg-custom-scrollbar-active",
+            "relative flex-1 rounded-[10px] bg-scrollbar-thumb group-hover:bg-scrollbar-thumb-surface-hover group-hover/track:bg-scrollbar-thumb-hover group-active/track:bg-scrollbar-thumb-active",
             thumbSizeStyles[size]
           )}
         />
       </RadixScrollArea.Scrollbar>
     </RadixScrollArea.Root>
   );
-};
+}

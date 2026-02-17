@@ -1,6 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // types
+import { logger } from "@plane/logger";
 import type { IUser } from "@plane/types";
 // services
+import { AppError } from "@/lib/errors";
 import { APIService } from "@/services/api.service";
 
 export class UserService extends APIService {
@@ -22,7 +30,11 @@ export class UserService extends APIService {
     })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error;
+        const appError = new AppError(error, {
+          context: { operation: "currentUser" },
+        });
+        logger.error("Failed to fetch current user", appError);
+        throw appError;
       });
   }
 }

@@ -1,4 +1,10 @@
-import React, { forwardRef } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { forwardRef } from "react";
 // plane imports
 import { RichTextEditorWithRef } from "@plane/editor";
 import type { EditorRefApi, IRichTextEditorProps, TFileHandler } from "@plane/editor";
@@ -9,16 +15,18 @@ import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 type RichTextEditorWrapperProps = MakeOptional<
   Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler" | "extendedEditorProps">,
-  "disabledExtensions" | "editable" | "flaggedExtensions"
+  "disabledExtensions" | "editable" | "flaggedExtensions" | "getEditorMetaData"
 > & {
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
+  issueSequenceId?: number;
 } & (
     | {
         editable: false;
@@ -27,10 +35,14 @@ type RichTextEditorWrapperProps = MakeOptional<
         editable: true;
         searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
         uploadFile: TFileHandler["upload"];
+        duplicateFile: TFileHandler["duplicate"];
       }
   );
 
-export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
+export const RichTextEditor = forwardRef(function RichTextEditor(
+  props: RichTextEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const {
     containerClassName,
     editable,
@@ -44,7 +56,8 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   const { getUserDetails } = useMember();
   // editor flaggings
   const { richText: richTextEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug,
+    projectId,
   });
   // use editor mention
   const { fetchMentions } = useEditorMention({
@@ -52,6 +65,11 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   });
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
+  // parse content
+  const { getEditorMetaData } = useParseEditorContent({
+    projectId,
+    workspaceSlug,
+  });
 
   return (
     <RichTextEditorWithRef
@@ -62,9 +80,11 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
       fileHandler={getEditorFileHandlers({
         projectId,
         uploadFile: editable ? props.uploadFile : async () => "",
+        duplicateFile: editable ? props.duplicateFile : async () => "",
         workspaceId,
         workspaceSlug,
       })}
+      getEditorMetaData={getEditorMetaData}
       mentionHandler={{
         searchCallback: async (query) => {
           const res = await fetchMentions(query);

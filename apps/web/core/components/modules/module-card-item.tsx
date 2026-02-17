@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { SyntheticEvent } from "react";
 import React, { useRef } from "react";
@@ -13,8 +17,6 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
   IS_FAVORITE_MENU_OPEN,
-  MODULE_TRACKER_EVENTS,
-  MODULE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { WorkItemsIcon } from "@plane/propel/icons";
@@ -28,21 +30,18 @@ import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
-// helpers
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web constants
 
 type Props = {
   moduleId: string;
 };
 
-export const ModuleCardItem: React.FC<Props> = observer((props) => {
+export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
   const { moduleId } = props;
   // refs
   const parentRef = useRef(null);
@@ -55,10 +54,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
-
   // local storage
   const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
-
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = allowPermissions(
@@ -77,16 +74,6 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
       () => {
         if (!storedValue) toggleFavoriteMenu(true);
-        captureElementAndEvent({
-          element: {
-            elementName: MODULE_TRACKER_ELEMENTS.CARD_ITEM,
-          },
-          event: {
-            eventName: MODULE_TRACKER_EVENTS.favorite,
-            payload: { id: moduleId },
-            state: "SUCCESS",
-          },
-        });
       }
     );
 
@@ -112,18 +99,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
       workspaceSlug.toString(),
       projectId.toString(),
       moduleId
-    ).then(() => {
-      captureElementAndEvent({
-        element: {
-          elementName: MODULE_TRACKER_ELEMENTS.CARD_ITEM,
-        },
-        event: {
-          eventName: MODULE_TRACKER_EVENTS.unfavorite,
-          payload: { id: moduleId },
-          state: "SUCCESS",
-        },
-      });
-    });
+    );
 
     setPromiseToast(removeFromFavoritePromise, {
       loading: "Removing module from favorites...",
@@ -190,7 +166,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
-  const issueCount = module
+  const issueCount = moduleDetails
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? `0 work items`
       : moduleTotalIssues === moduleCompletedIssues
@@ -214,7 +190,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
           <div>
             <div className="flex items-center justify-between gap-2">
               <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
-                <span className="truncate text-base font-medium">{moduleDetails.name}</span>
+                <span className="truncate text-14 font-medium">{moduleDetails.name}</span>
               </Tooltip>
               <div className="flex items-center gap-2" onClick={handleEventPropagation}>
                 {moduleStatus && (
@@ -225,16 +201,16 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                   />
                 )}
                 <button onClick={openModuleOverview}>
-                  <Info className="h-4 w-4 text-custom-text-400" />
+                  <Info className="h-4 w-4 text-placeholder" />
                 </button>
               </div>
             </div>
           </div>
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-custom-text-200">
-                <WorkItemsIcon className="h-4 w-4 text-custom-text-300" />
-                <span className="text-xs text-custom-text-300">{issueCount ?? "0 Work item"}</span>
+              <div className="flex items-center gap-1.5 text-secondary">
+                <WorkItemsIcon className="h-4 w-4 text-tertiary" />
+                <span className="text-11 text-tertiary">{issueCount ?? "0 Work item"}</span>
               </div>
               {moduleLeadDetails ? (
                 <span className="cursor-default">
@@ -242,14 +218,14 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                 </span>
               ) : (
                 <Tooltip tooltipContent="No lead">
-                  <SquareUser className="h-4 w-4 mx-1 text-custom-text-300 " />
+                  <SquareUser className="h-4 w-4 mx-1 text-tertiary " />
                 </Tooltip>
               )}
             </div>
             <LinearProgressIndicator size="lg" data={progressIndicatorData} />
             <div className="flex items-center justify-between py-0.5" onClick={handleEventPropagation}>
               <DateRangeDropdown
-                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
+                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-tertiary border-[0.5px] border-strong rounded-sm text-11`}
                 buttonVariant="transparent-with-text"
                 className="h-7"
                 value={{

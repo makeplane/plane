@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { OctagonAlert } from "lucide-react";
 // plane imports
@@ -7,8 +13,7 @@ import type { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types"
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { useUser } from "@/hooks/store/user";
-// plane web helpers
-import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
+import { useInstance } from "@/hooks/store/use-instance";
 // local imports
 import { CreateWorkspace } from "./create-workspace";
 import { Invitations } from "./invitations";
@@ -26,14 +31,15 @@ type Props = {
   finishOnboarding: () => Promise<void>;
 };
 
-export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
-  const { invitations, totalSteps, stepChange, finishOnboarding } = props;
+export const CreateOrJoinWorkspaces = observer(function CreateOrJoinWorkspaces(props: Props) {
+  const { invitations, stepChange, finishOnboarding } = props;
   // states
   const [currentView, setCurrentView] = useState<ECreateOrJoinWorkspaceViews | null>(null);
   // store hooks
   const { data: user } = useUser();
+  const { config } = useInstance();
   // derived values
-  const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
+  const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled ?? false;
 
   useEffect(() => {
     if (invitations.length > 0) {
@@ -60,7 +66,7 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
               handleCurrentViewChange={() => setCurrentView(ECreateOrJoinWorkspaceViews.WORKSPACE_CREATE)}
             />
           ) : currentView === ECreateOrJoinWorkspaceViews.WORKSPACE_CREATE ? (
-            isWorkspaceCreationEnabled ? (
+            !isWorkspaceCreationDisabled ? (
               <CreateWorkspace
                 stepChange={stepChange}
                 user={user ?? undefined}
@@ -69,7 +75,7 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
               />
             ) : (
               <div className="flex h-96 w-full items-center justify-center">
-                <div className="flex gap-2.5 w-full items-start justify-center text-sm leading-5 mt-4 px-6 py-4 rounded border border-custom-primary-100/20 bg-custom-primary-100/10 text-custom-primary-200">
+                <div className="flex gap-2.5 w-full items-start justify-center text-13 leading-5 mt-4 px-6 py-4 rounded-sm border border-accent-strong/20 bg-accent-primary/10 text-accent-secondary">
                   <OctagonAlert className="flex-shrink-0 size-5 mt-1" />
                   <span>
                     You don&apos;t seem to have any invites to a workspace and your instance admin has restricted

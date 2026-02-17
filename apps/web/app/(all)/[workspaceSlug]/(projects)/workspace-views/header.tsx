@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -30,7 +34,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
 
-export const GlobalIssuesHeader = observer(() => {
+export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
   // router
@@ -122,9 +126,7 @@ export const GlobalIssuesHeader = observer(() => {
         <Header.LeftItem>
           <Breadcrumbs>
             <Breadcrumbs.Item
-              component={
-                <BreadcrumbLink label={t("views")} icon={<ViewsIcon className="h-4 w-4 text-custom-text-300" />} />
-              }
+              component={<BreadcrumbLink label={t("views")} icon={<ViewsIcon className="h-4 w-4 text-tertiary" />} />}
             />
             <Breadcrumbs.Item
               component={
@@ -137,7 +139,7 @@ export const GlobalIssuesHeader = observer(() => {
                   title={viewDetails?.name ?? t(defaultViewDetails?.i18n_label ?? "")}
                   icon={
                     <Breadcrumbs.Icon>
-                      <ViewsIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                      <ViewsIcon className="size-4 flex-shrink-0 text-tertiary" />
                     </Breadcrumbs.Icon>
                   }
                   isLast
@@ -168,10 +170,9 @@ export const GlobalIssuesHeader = observer(() => {
               />
             </FiltersDropdown>
           )}
-
           <Button
             variant="primary"
-            size="sm"
+            size="lg"
             data-ph-element={GLOBAL_VIEW_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => setCreateViewModal(true)}
           >

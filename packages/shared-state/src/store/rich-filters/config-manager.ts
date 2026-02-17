@@ -1,11 +1,19 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { action, computed, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { DEFAULT_FILTER_CONFIG_OPTIONS, TConfigOptions } from "@plane/constants";
-import { TExternalFilter, TFilterConfig, TFilterProperty, TFilterValue } from "@plane/types";
+import type { TConfigOptions } from "@plane/constants";
+import { DEFAULT_FILTER_CONFIG_OPTIONS } from "@plane/constants";
+import type { TExternalFilter, TFilterConfig, TFilterProperty } from "@plane/types";
 // local imports
-import { FilterConfig, IFilterConfig } from "./config";
-import { IFilterInstance } from "./filter";
+import type { IFilterConfig } from "./config";
+import { FilterConfig } from "./config";
+import type { IFilterInstance } from "./filter";
 
 /**
  * Interface for managing filter configurations.
@@ -22,17 +30,17 @@ import { IFilterInstance } from "./filter";
  */
 export interface IFilterConfigManager<P extends TFilterProperty> {
   // observables
-  filterConfigs: Map<P, IFilterConfig<P, TFilterValue>>; // filter property -> config
+  filterConfigs: Map<P, IFilterConfig<P>>; // filter property -> config
   configOptions: TConfigOptions;
   areConfigsReady: boolean;
   // computed
-  allAvailableConfigs: IFilterConfig<P, TFilterValue>[];
+  allAvailableConfigs: IFilterConfig<P>[];
   // computed functions
-  getConfigByProperty: (property: P) => IFilterConfig<P, TFilterValue> | undefined;
+  getConfigByProperty: (property: P) => IFilterConfig<P> | undefined;
   // helpers
-  register: <C extends TFilterConfig<P, TFilterValue>>(config: C) => void;
-  registerAll: (configs: TFilterConfig<P, TFilterValue>[]) => void;
-  updateConfigByProperty: (property: P, configUpdates: Partial<TFilterConfig<P, TFilterValue>>) => void;
+  register: <C extends TFilterConfig<P>>(config: C) => void;
+  registerAll: (configs: TFilterConfig<P>[]) => void;
+  updateConfigByProperty: (property: P, configUpdates: Partial<TFilterConfig<P>>) => void;
   setAreConfigsReady: (value: boolean) => void;
 }
 
@@ -53,9 +61,10 @@ export type TConfigManagerParams = {
  * @template V - The filter value type extending TFilterValue
  * @template E - The external filter type extending TExternalFilter
  */
-export class FilterConfigManager<P extends TFilterProperty, E extends TExternalFilter = TExternalFilter>
-  implements IFilterConfigManager<P>
-{
+export class FilterConfigManager<
+  P extends TFilterProperty,
+  E extends TExternalFilter = TExternalFilter,
+> implements IFilterConfigManager<P> {
   // observables
   filterConfigs: IFilterConfigManager<P>["filterConfigs"];
   configOptions: IFilterConfigManager<P>["configOptions"];
@@ -112,7 +121,7 @@ export class FilterConfigManager<P extends TFilterProperty, E extends TExternalF
    * @returns The config for the property, or undefined if not found.
    */
   getConfigByProperty: IFilterConfigManager<P>["getConfigByProperty"] = computedFn(
-    (property) => this.filterConfigs.get(property) as IFilterConfig<P, TFilterValue>
+    (property) => this.filterConfigs.get(property) as IFilterConfig<P>
   );
 
   // ------------ helpers ------------
@@ -162,7 +171,7 @@ export class FilterConfigManager<P extends TFilterProperty, E extends TExternalF
 
   // ------------ private computed ------------
 
-  private get _allConfigs(): IFilterConfig<P, TFilterValue>[] {
+  private get _allConfigs(): IFilterConfig<P>[] {
     return Array.from(this.filterConfigs.values());
   }
 
@@ -170,7 +179,7 @@ export class FilterConfigManager<P extends TFilterProperty, E extends TExternalF
    * Returns all enabled filterConfigs.
    * @returns All enabled filterConfigs.
    */
-  private get _allEnabledConfigs(): IFilterConfig<P, TFilterValue>[] {
+  private get _allEnabledConfigs(): IFilterConfig<P>[] {
     return this._allConfigs.filter((config) => config.isEnabled);
   }
 

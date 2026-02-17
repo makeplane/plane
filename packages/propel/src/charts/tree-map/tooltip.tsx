@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 // plane imports
 import { Card, ECardSpacing } from "../../card";
@@ -7,18 +13,18 @@ interface TreeMapTooltipProps {
   payload: any[] | undefined;
 }
 
-export const TreeMapTooltip = React.memo(({ active, payload }: TreeMapTooltipProps) => {
+export const TreeMapTooltip = React.memo(function TreeMapTooltip({ active, payload }: TreeMapTooltipProps) {
   if (!active || !payload || !payload[0]?.payload) return null;
 
   const data = payload[0].payload;
 
   return (
     <Card className="flex flex-col space-y-1.5" spacing={ECardSpacing.SM}>
-      <div className="flex items-center gap-2 border-b border-custom-border-200 pb-2.5">
+      <div className="flex items-center gap-2 border-b border-subtle pb-2.5">
         {data?.icon}
-        <p className="text-xs text-custom-text-100 font-medium capitalize">{data?.name}</p>
+        <p className="text-11 text-primary font-medium capitalize">{data?.name}</p>
       </div>
-      <span className="text-xs font-medium text-custom-text-200">
+      <span className="text-11 font-medium text-secondary">
         {data?.value.toLocaleString()}
         {data.label && ` ${data.label}`}
       </span>

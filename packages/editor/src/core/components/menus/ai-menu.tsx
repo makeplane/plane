@@ -1,5 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
-import tippy, { type Instance } from "tippy.js";
+import tippy from "tippy.js";
+import type { Instance } from "tippy.js";
 // plane utils
 import { cn } from "@plane/utils";
 // types
@@ -9,7 +16,7 @@ type Props = {
   menu: TAIHandler["menu"];
 };
 
-export const AIFeaturesMenu: React.FC<Props> = (props) => {
+export function AIFeaturesMenu(props: Props) {
   const { menu } = props;
   // states
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -93,4 +100,4 @@ export const AIFeaturesMenu: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

@@ -1,14 +1,17 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 // plane imports
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { copyUrlToClipboard } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 export type TRelationIssueOperations = {
@@ -27,33 +30,23 @@ export const useRelationOperations = (
 
   const issueOperations: TRelationIssueOperations = useMemo(
     () => ({
-      copyLink: (path) => {
-        copyUrlToClipboard(path).then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: t("common.link_copied"),
-            message: t("entity.link_copied_to_clipboard", { entity: entityName }),
-          });
+      copyLink: async (path) => {
+        await copyUrlToClipboard(path);
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("common.link_copied"),
+          message: t("entity.link_copied_to_clipboard", { entity: entityName }),
         });
       },
       update: async (workspaceSlug, projectId, issueId, data) => {
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-          });
           setToast({
             title: t("toast.success"),
             type: TOAST_TYPE.SUCCESS,
             message: t("entity.update.success", { entity: entityName }),
           });
-        } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issueId },
-            error: error as Error,
-          });
+        } catch (_error) {
           setToast({
             title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
@@ -62,20 +55,7 @@ export const useRelationOperations = (
         }
       },
       remove: async (workspaceSlug, projectId, issueId) => {
-        try {
-          return removeIssue(workspaceSlug, projectId, issueId).then(() => {
-            captureSuccess({
-              eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-              payload: { id: issueId },
-            });
-          });
-        } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-            payload: { id: issueId },
-            error: error as Error,
-          });
-        }
+        return removeIssue(workspaceSlug, projectId, issueId);
       },
     }),
     [entityName, removeIssue, t, updateIssue]

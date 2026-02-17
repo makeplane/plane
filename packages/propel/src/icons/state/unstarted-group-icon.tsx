@@ -1,17 +1,23 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 
-import { ISvgIcons } from "../type";
+import type { ISvgIcons } from "../type";
 import { DashedCircle } from "./dashed-circle";
 import { ProgressCircle } from "./progress-circle";
 
 // StateIcon component implementation
-export const UnstartedGroupIcon: React.FC<ISvgIcons> = ({
+export function UnstartedGroupIcon({
   width = "20",
   height = "20",
   className,
   color = "#F59E0B",
   percentage = 100,
-}) => {
+}: ISvgIcons) {
   // Ensure percentage is between 0 and 100
   const normalized =
     typeof percentage === "number"
@@ -48,4 +54,4 @@ export const UnstartedGroupIcon: React.FC<ISvgIcons> = ({
       />
     </svg>
   );
-};
+}

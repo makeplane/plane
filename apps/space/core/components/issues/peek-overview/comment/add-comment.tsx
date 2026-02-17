@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -26,7 +30,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const AddComment: React.FC<Props> = observer((props) => {
+export const AddComment = observer(function AddComment(props: Props) {
   const { anchor } = props;
   // states
   const [uploadedAssetIds, setUploadAssetIds] = useState<string[]>([]);
@@ -97,6 +101,9 @@ export const AddComment: React.FC<Props> = observer((props) => {
                 const { asset_id } = await uploadCommentAsset(file, anchor);
                 setUploadAssetIds((prev) => [...prev, asset_id]);
                 return asset_id;
+              }}
+              displayConfig={{
+                fontSize: "small-font",
               }}
             />
           )}

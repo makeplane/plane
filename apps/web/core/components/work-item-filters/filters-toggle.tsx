@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import type { EIssuesStoreType } from "@plane/types";
@@ -11,7 +17,7 @@ type TWorkItemFiltersToggleProps = {
   entityId: string;
 };
 
-export const WorkItemFiltersToggle = observer((props: TWorkItemFiltersToggleProps) => {
+export const WorkItemFiltersToggle = observer(function WorkItemFiltersToggle(props: TWorkItemFiltersToggleProps) {
   const { entityType, entityId } = props;
   // store hooks
   const { getFilter } = useWorkItemFilters();

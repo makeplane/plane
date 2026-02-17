@@ -1,22 +1,24 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ImageIcon } from "lucide-react";
 // plane imports
-import { E_PASSWORD_STRENGTH, ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS } from "@plane/constants";
+import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
-import { cn, getFileURL, getPasswordStrength } from "@plane/utils";
+import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
 // components
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
-// helpers
-import { captureError, captureView } from "@/helpers/event-tracker.helper";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -36,7 +38,7 @@ export type TProfileSetupFormValues = {
   password?: string;
   confirm_password?: string;
   role?: string;
-  use_case?: string;
+  use_case?: string[];
   has_marketing_email_consent?: boolean;
 };
 
@@ -51,12 +53,13 @@ const defaultValues: Partial<TProfileSetupFormValues> = {
   has_marketing_email_consent: true,
 };
 
-export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
+export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepChange }: Props) {
   // states
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
   const { data: user, updateCurrentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
+  const { config: instanceConfig } = useInstance();
   // form info
   const {
     getValues,
@@ -94,9 +97,6 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
         formData.password && handleSetPassword(formData.password),
       ]);
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -107,15 +107,11 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
 
   const onSubmit = async (formData: TProfileSetupFormValues) => {
     if (!user) return;
-    captureView({
-      elementName: ONBOARDING_TRACKER_ELEMENTS.PROFILE_SETUP_FORM,
-    });
     updateUserProfile({
       has_marketing_email_consent: formData.has_marketing_email_consent,
     });
-    await handleSubmitUserDetail(formData).then(() => {
-      handleStepChange(EOnboardingSteps.PROFILE_SETUP);
-    });
+    await handleSubmitUserDetail(formData);
+    handleStepChange(EOnboardingSteps.PROFILE_SETUP);
   };
 
   const handleDelete = (url: string | null | undefined) => {
@@ -172,7 +168,7 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
       />
       <div className="flex items-center gap-4">
         <button
-          className="size-12 rounded-full bg-[#028375] flex items-center justify-center text-white font-semibold text-xl"
+          className="size-12 rounded-full bg-accent-primary flex items-center justify-center text-on-color font-semibold text-18"
           type="button"
           onClick={() => setIsImageUploadModalOpen(true)}
         >
@@ -189,12 +185,12 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
         </button>
         <input type="file" className="hidden" id="profile-image-input" />
         <button
-          className="flex items-center gap-1.5 text-custom-text-300 hover:text-custom-text-200 text-sm px-2 py-1"
+          className="flex items-center gap-1.5 text-tertiary hover:text-secondary text-13 px-2 py-1"
           type="button"
           onClick={() => setIsImageUploadModalOpen(true)}
         >
           <ImageIcon className="size-4" />
-          <span className="text-sm">{userAvatar ? "Change image" : "Upload image"}</span>
+          <span className="text-13">{userAvatar ? "Change image" : "Upload image"}</span>
         </button>
       </div>
 
@@ -202,7 +198,7 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
         {/* Name Input */}
         <div className="flex flex-col gap-2">
           <label
-            className="block text-sm font-medium text-custom-text-300 after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="block text-13 font-medium text-tertiary after:content-['*'] after:ml-0.5 after:text-danger-primary"
             htmlFor="first_name"
           >
             Name
@@ -212,9 +208,10 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
             name="first_name"
             rules={{
               required: "Name is required",
+              validate: validatePersonName,
               maxLength: {
-                value: 24,
-                message: "Name must be within 24 characters.",
+                value: 50,
+                message: "Name must be within 50 characters.",
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
@@ -227,10 +224,10 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
                 onChange={(e) => onChange(e.target.value)}
                 autoFocus
                 className={cn(
-                  "w-full px-3 py-2 text-custom-text-200 border border-custom-border-300 rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-custom-text-400 focus:border-transparent transition-all duration-200",
+                  "w-full px-3 py-2 text-secondary border border-strong rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-accent-strong placeholder:text-placeholder focus:border-transparent transition-all duration-200",
                   {
-                    "border-custom-border-300": !errors.first_name,
-                    "border-red-500": errors.first_name,
+                    "border-strong": !errors.first_name,
+                    "border-danger-strong": errors.first_name,
                   }
                 )}
                 placeholder="Enter your full name"
@@ -238,7 +235,7 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
               />
             )}
           />
-          {errors.first_name && <span className="text-sm text-red-500">{errors.first_name.message}</span>}
+          {errors.first_name && <span className="text-13 text-danger-primary">{errors.first_name.message}</span>}
         </div>
 
         {/* setting up password for the first time */}
@@ -250,17 +247,19 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
         )}
       </div>
       {/* Continue Button */}
-      <Button variant="primary" type="submit" className="w-full" size="lg" disabled={isButtonDisabled}>
+      <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
         Continue
       </Button>
 
       {/* Marketing Consent */}
-      <MarketingConsent
-        isChecked={!!watch("has_marketing_email_consent")}
-        handleChange={(has_marketing_email_consent) =>
-          setValue("has_marketing_email_consent", has_marketing_email_consent)
-        }
-      />
+      {!instanceConfig?.is_self_managed && (
+        <MarketingConsent
+          isChecked={!!watch("has_marketing_email_consent")}
+          handleChange={(has_marketing_email_consent) =>
+            setValue("has_marketing_email_consent", has_marketing_email_consent)
+          }
+        />
+      )}
     </form>
   );
 });

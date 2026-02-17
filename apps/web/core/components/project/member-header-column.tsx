@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // ui
 import { observer } from "mobx-react";
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Eraser, MoveRight } from "lucide-react";
@@ -16,7 +22,7 @@ interface Props {
   handleDisplayFilterUpdate: (data: Partial<IMemberFilters>) => void;
 }
 
-export const MemberHeaderColumn = observer((props: Props) => {
+export const MemberHeaderColumn = observer(function MemberHeaderColumn(props: Props) {
   const { displayFilters, handleDisplayFilterUpdate, property } = props;
   // i18n
   const { t } = useTranslation();
@@ -41,7 +47,7 @@ export const MemberHeaderColumn = observer((props: Props) => {
       customButtonTabIndex={-1}
       className="!w-full"
       customButton={
-        <div className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-sm text-custom-text-200 hover:text-custom-text-100">
+        <div className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-13 text-secondary hover:text-primary">
           <span>{t(propertyDetails.i18n_title)}</span>
           <div className="ml-3 flex">
             {(activeSortingProperty === propertyDetails.ascendingOrderKey ||
@@ -67,8 +73,8 @@ export const MemberHeaderColumn = observer((props: Props) => {
             <div
               className={`flex items-center justify-between gap-1.5 px-1 ${
                 activeSortingProperty === propertyDetails.ascendingOrderKey
-                  ? "text-custom-text-100"
-                  : "text-custom-text-200 hover:text-custom-text-100"
+                  ? "text-primary"
+                  : "text-secondary hover:text-primary"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -85,8 +91,8 @@ export const MemberHeaderColumn = observer((props: Props) => {
             <div
               className={`flex items-center justify-between gap-1.5 px-1 ${
                 activeSortingProperty === propertyDetails.descendingOrderKey
-                  ? "text-custom-text-100"
-                  : "text-custom-text-200 hover:text-custom-text-100"
+                  ? "text-primary"
+                  : "text-secondary hover:text-primary"
               }`}
             >
               <div className="flex items-center gap-2">

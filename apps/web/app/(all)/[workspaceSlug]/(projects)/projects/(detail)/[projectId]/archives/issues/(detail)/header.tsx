@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -20,7 +24,7 @@ import { IssueService } from "@/services/issue";
 
 const issueService = new IssueService();
 
-export const ProjectArchivedIssueDetailsHeader = observer(() => {
+export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchivedIssueDetailsHeader() {
   // router
   const { workspaceSlug, projectId, archivedIssueId } = useParams();
   // store hooks
@@ -43,7 +47,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
                 label="Archives"
-                icon={<ArchiveIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<ArchiveIcon className="h-4 w-4 text-tertiary" />}
               />
             }
           />
@@ -52,7 +56,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
                 label="Work items"
-                icon={<WorkItemsIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
               />
             }
           />

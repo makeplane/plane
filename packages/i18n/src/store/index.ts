@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import IntlMessageFormat from "intl-messageformat";
 import { get, merge } from "lodash-es";
 import { makeAutoObservable, runInAction } from "mobx";
@@ -6,7 +12,7 @@ import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, ETranslat
 // core translations imports
 import { enCore, locales } from "../locales";
 // types
-import { TLanguage, ILanguageOption, ITranslations } from "../types";
+import type { TLanguage, ILanguageOption, ITranslations } from "../types";
 
 /**
  * Mobx store class for handling translations and language changes in the application
@@ -101,11 +107,10 @@ export class TranslationStore {
 
   private loadRemainingLanguages(): void {
     const remainingLanguages = SUPPORTED_LANGUAGES.map((lang) => lang.value).filter(
-      (lang) =>
-        !this.loadedLanguages.has(lang as TLanguage) && lang !== this.currentLocale && lang !== FALLBACK_LANGUAGE
+      (lang) => !this.loadedLanguages.has(lang) && lang !== this.currentLocale && lang !== FALLBACK_LANGUAGE
     );
     // Load all remaining languages in parallel
-    Promise.all(remainingLanguages.map((lang) => this.loadLanguageTranslations(lang as TLanguage))).catch((error) => {
+    Promise.all(remainingLanguages.map((lang) => this.loadLanguageTranslations(lang))).catch((error) => {
       console.error("Failed to load some remaining languages:", error);
     });
   }

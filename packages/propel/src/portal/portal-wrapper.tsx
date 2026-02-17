@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useLayoutEffect, useState, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { DEFAULT_PORTAL_ID } from "./constants";
-import { PortalWrapperProps } from "./types";
+import type { PortalWrapperProps } from "./types";
 
 /**
  * PortalWrapper - A reusable portal component that renders children into a specific DOM element
@@ -14,14 +20,14 @@ import { PortalWrapperProps } from "./types";
  * @param onMount - Callback fired when portal is mounted
  * @param onUnmount - Callback fired when portal is unmounted
  */
-export const PortalWrapper: React.FC<PortalWrapperProps> = ({
+export function PortalWrapper({
   children,
   portalId = DEFAULT_PORTAL_ID,
   fallbackToDocument = true,
   className,
   onMount,
   onUnmount,
-}) => {
+}: PortalWrapperProps) {
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -73,4 +79,4 @@ export const PortalWrapper: React.FC<PortalWrapperProps> = ({
   }
 
   return null;
-};
+}

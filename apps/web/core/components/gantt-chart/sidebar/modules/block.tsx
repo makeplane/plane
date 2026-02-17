@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // Plane
 import { Row } from "@plane/ui";
@@ -14,7 +20,7 @@ type Props = {
   isDragging: boolean;
 };
 
-export const ModulesSidebarBlock: React.FC<Props> = observer((props) => {
+export const ModulesSidebarBlock = observer(function ModulesSidebarBlock(props: Props) {
   const { blockId, isDragging } = props;
   // store hooks
   const { getBlockById, updateActiveBlockId, isBlockActive, getNumberOfDaysFromPosition } = useTimeLineChartStore();
@@ -28,16 +34,19 @@ export const ModulesSidebarBlock: React.FC<Props> = observer((props) => {
   return (
     <div
       className={cn({
-        "rounded bg-custom-background-80": isDragging,
+        "rounded-sm bg-layer-1": isDragging,
       })}
       onMouseEnter={() => updateActiveBlockId(block.id)}
       onMouseLeave={() => updateActiveBlockId(null)}
     >
       <Row
         id={`sidebar-block-${block.id}`}
-        className={cn("group w-full flex items-center gap-2 pr-4", {
-          "bg-custom-background-90": isBlockActive(block.id),
-        })}
+        className={cn(
+          "group w-full flex items-center gap-2 pr-4 bg-layer-transparent hover:bg-layer-transparent-hover",
+          {
+            "bg-transparent-hover": isBlockActive(block.id),
+          }
+        )}
         style={{
           height: `${BLOCK_HEIGHT}px`,
         }}
@@ -47,7 +56,7 @@ export const ModulesSidebarBlock: React.FC<Props> = observer((props) => {
             <ModuleGanttSidebarBlock moduleId={block.data.id} />
           </div>
           {duration !== undefined && (
-            <div className="flex-shrink-0 text-sm text-custom-text-200">
+            <div className="flex-shrink-0 text-13 text-secondary">
               {duration} day{duration > 1 ? "s" : ""}
             </div>
           )}

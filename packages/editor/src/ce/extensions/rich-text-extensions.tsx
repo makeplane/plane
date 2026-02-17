@@ -1,8 +1,14 @@
-import { AnyExtension, Extensions } from "@tiptap/core";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { AnyExtension, Extensions } from "@tiptap/core";
 // extensions
 import { SlashCommands } from "@/extensions/slash-commands/root";
 // types
-import { IEditorProps, TExtensions } from "@/types";
+import type { IEditorProps, TExtensions } from "@/types";
 
 export type TRichTextEditorAdditionalExtensionsProps = Pick<
   IEditorProps,
@@ -30,7 +36,7 @@ const extensionRegistry: TRichTextEditorAdditionalExtensionsRegistry[] = [
   },
 ];
 
-export const RichTextEditorAdditionalExtensions = (props: TRichTextEditorAdditionalExtensionsProps) => {
+export function RichTextEditorAdditionalExtensions(props: TRichTextEditorAdditionalExtensionsProps) {
   const { disabledExtensions, flaggedExtensions } = props;
 
   const extensions: Extensions = extensionRegistry
@@ -39,4 +45,4 @@ export const RichTextEditorAdditionalExtensions = (props: TRichTextEditorAdditio
     .filter((extension): extension is AnyExtension => extension !== undefined);
 
   return extensions;
-};
+}

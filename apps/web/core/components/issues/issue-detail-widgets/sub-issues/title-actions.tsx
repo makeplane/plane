@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useCallback } from "react";
 import { cloneDeep } from "lodash-es";
@@ -28,7 +34,7 @@ type TSubWorkItemTitleActionsProps = {
   projectId: string;
 };
 
-export const SubWorkItemTitleActions: FC<TSubWorkItemTitleActionsProps> = observer((props) => {
+export const SubWorkItemTitleActions = observer(function SubWorkItemTitleActions(props: TSubWorkItemTitleActionsProps) {
   const { disabled, issueServiceType = EIssueServiceType.ISSUES, parentId, projectId } = props;
 
   // store hooks

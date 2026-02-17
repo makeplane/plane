@@ -1,16 +1,24 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
-import { ChevronRight, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import { useUserSettings } from "@/hooks/store/user";
+import { IconButton } from "@plane/propel/icon-button";
 
 type Props = {
-  hamburgerContent: React.ComponentType<{ isMobile: boolean }>;
+  hamburgerContent: React.ComponentType<{ className?: string; isMobile?: boolean }>;
   activePath: string;
 };
 
-export const SettingsMobileNav = observer((props: Props) => {
+export const SettingsMobileNav = observer(function SettingsMobileNav(props: Props) {
   const { hamburgerContent: HamburgerContent, activePath } = props;
   // refs
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -23,23 +31,19 @@ export const SettingsMobileNav = observer((props: Props) => {
   });
 
   return (
-    <div className="md:hidden">
-      <div className="border-b border-custom-border-100 py-3 flex items-center gap-4">
-        <div ref={sidebarRef} className="relative w-fit">
-          {!sidebarCollapsed && <HamburgerContent isMobile />}
-          <button
-            type="button"
-            className="z-50  group flex-shrink-0 size-6 grid place-items-center rounded border border-custom-border-200 transition-all bg-custom-background md:hidden"
-            onClick={() => toggleSidebar()}
-          >
-            <Menu className="size-3.5 text-custom-text-200 transition-all group-hover:text-custom-text-100" />
-          </button>
-        </div>
-        {/* path */}
-        <div className="flex items-center gap-2">
-          <ChevronRight className="size-4 text-custom-text-300" />
-          <span className="text-sm font-medium text-custom-text-200">{t(activePath)}</span>
-        </div>
+    <div className="md:hidden border-b border-subtle py-3 flex items-center gap-4 px-page-x">
+      <div ref={sidebarRef} className="relative w-fit z-50">
+        {!sidebarCollapsed && (
+          <div className="absolute left-0 top-10.5 z-50">
+            <HamburgerContent className="max-h-100 pb-3 border border-subtle rounded-lg" />
+          </div>
+        )}
+        <IconButton variant="secondary" className="z-50 group shrink-0" icon={Menu} onClick={() => toggleSidebar()} />
+      </div>
+      {/* path */}
+      <div className="flex items-center gap-2">
+        <ChevronRightIcon className="size-4 text-tertiary" />
+        <span className="text-13 font-medium text-secondary">{t(activePath)}</span>
       </div>
     </div>
   );

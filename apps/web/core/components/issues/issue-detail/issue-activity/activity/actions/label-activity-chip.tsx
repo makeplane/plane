@@ -1,13 +1,18 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Tooltip } from "@plane/propel/tooltip";
 
 type TIssueLabelPill = { name?: string; color?: string };
 
-export const LabelActivityChip: FC<TIssueLabelPill> = (props) => {
+export function LabelActivityChip(props: TIssueLabelPill) {
   const { name, color } = props;
   return (
     <Tooltip tooltipContent={name}>
-      <span className="inline-flex w-min max-w-32 cursor-default flex-shrink-0 items-center gap-2 truncate whitespace-nowrap rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+      <span className="inline-flex w-min max-w-32 cursor-default flex-shrink-0 items-center gap-2 truncate whitespace-nowrap rounded-full border border-strong px-2 py-0.5 text-11">
         <span
           className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
           style={{
@@ -15,8 +20,8 @@ export const LabelActivityChip: FC<TIssueLabelPill> = (props) => {
           }}
           aria-hidden="true"
         />
-        <span className="flex-shrink truncate font-medium text-custom-text-100">{name}</span>
+        <span className="flex-shrink truncate font-medium text-primary">{name}</span>
       </span>
     </Tooltip>
   );
-};
+}

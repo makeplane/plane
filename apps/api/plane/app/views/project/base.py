@@ -1,43 +1,44 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
-import boto3
-from django.conf import settings
-from django.utils import timezone
 import json
 
+
 # Django imports
-from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery, Count
+from django.utils import timezone
 
 # Third Party imports
-from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
 # Module imports
-from plane.app.views.base import BaseViewSet, BaseAPIView
+from plane.app.permissions import ROLE, ProjectMemberPermission, allow_permission
 from plane.app.serializers import (
-    ProjectSerializer,
-    ProjectListSerializer,
     DeployBoardSerializer,
+    ProjectListSerializer,
+    ProjectSerializer,
 )
-
-from plane.app.permissions import ProjectMemberPermission, allow_permission, ROLE
+from plane.app.views.base import BaseAPIView, BaseViewSet
+from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.db.models import (
     UserFavorite,
-    Intake,
     DeployBoard,
-    IssueUserProperty,
+    Intake,
     Project,
     ProjectIdentifier,
     ProjectMember,
+    ProjectNetwork,
     State,
+    DEFAULT_STATES,
     Workspace,
     WorkspaceMember,
 )
-from plane.utils.cache import cache_response
-from plane.bgtasks.webhook_task import model_activity, webhook_activity
-from plane.bgtasks.recent_visited_task import recent_visited_task
-from plane.utils.exception_logger import log_exception
+from plane.db.models.intake import IntakeIssueStatus
 from plane.utils.host import base_host
 
 
@@ -48,11 +49,10 @@ class ProjectViewSet(BaseViewSet):
     use_read_replica = True
 
     def get_queryset(self):
-        sort_order = ProjectMember.objects.filter(
-            member=self.request.user,
+        sort_order = ProjectUserProperty.objects.filter(
+            user=self.request.user,
             project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
-            is_active=True,
         ).values("sort_order")
         return self.filter_queryset(
             super()
@@ -138,11 +138,10 @@ class ProjectViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
-        sort_order = ProjectMember.objects.filter(
-            member=self.request.user,
+        sort_order = ProjectUserProperty.objects.filter(
+            user=self.request.user,
             project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
-            is_active=True,
         ).values("sort_order")
 
         projects = (
@@ -155,6 +154,15 @@ class ProjectViewSet(BaseViewSet):
                     is_active=True,
                 ).values("role")
             )
+            .annotate(
+                intake_count=Count(
+                    "project_intakeissue",
+                    filter=Q(
+                        project_intakeissue__status=IntakeIssueStatus.PENDING.value,
+                        project_intakeissue__deleted_at__isnull=True,
+                    ),
+                )
+            )
             .annotate(inbox_view=F("intake_view"))
             .annotate(sort_order=Subquery(sort_order))
             .distinct()
@@ -165,6 +173,7 @@ class ProjectViewSet(BaseViewSet):
             "sort_order",
             "logo_props",
             "member_role",
+            "intake_count",
             "archived_at",
             "workspace",
             "cycle_view",
@@ -209,18 +218,24 @@ class ProjectViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def retrieve(self, request, slug, pk):
-        project = (
-            self.get_queryset()
-            .filter(
-                project_projectmember__member=self.request.user,
-                project_projectmember__is_active=True,
-            )
-            .filter(archived_at__isnull=True)
-            .filter(pk=pk)
-        ).first()
+        project = self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk).first()
 
         if project is None:
             return Response({"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        member_ids = [str(project_member.member_id) for project_member in project.members_list]
+
+        if str(request.user.id) not in member_ids:
+            if project.network == ProjectNetwork.SECRET.value:
+                return Response(
+                    {"error": "You do not have permission"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            else:
+                return Response(
+                    {"error": "You are not a member of this project"},
+                    status=status.HTTP_409_CONFLICT,
+                )
 
         recent_visited_task.delay(
             slug=slug,
@@ -247,8 +262,6 @@ class ProjectViewSet(BaseViewSet):
                 member=request.user,
                 role=ROLE.ADMIN.value,
             )
-            # Also create the issue property for the user
-            _ = IssueUserProperty.objects.create(project_id=serializer.data["id"], user=request.user)
 
             if serializer.data["project_lead"] is not None and str(serializer.data["project_lead"]) != str(
                 request.user.id
@@ -258,46 +271,6 @@ class ProjectViewSet(BaseViewSet):
                     member_id=serializer.data["project_lead"],
                     role=ROLE.ADMIN.value,
                 )
-                # Also create the issue property for the user
-                IssueUserProperty.objects.create(
-                    project_id=serializer.data["id"],
-                    user_id=serializer.data["project_lead"],
-                )
-
-            # Default states
-            states = [
-                {
-                    "name": "Backlog",
-                    "color": "#60646C",
-                    "sequence": 15000,
-                    "group": "backlog",
-                    "default": True,
-                },
-                {
-                    "name": "Todo",
-                    "color": "#60646C",
-                    "sequence": 25000,
-                    "group": "unstarted",
-                },
-                {
-                    "name": "In Progress",
-                    "color": "#F59E0B",
-                    "sequence": 35000,
-                    "group": "started",
-                },
-                {
-                    "name": "Done",
-                    "color": "#46A758",
-                    "sequence": 45000,
-                    "group": "completed",
-                },
-                {
-                    "name": "Cancelled",
-                    "color": "#9AA4BC",
-                    "sequence": 55000,
-                    "group": "cancelled",
-                },
-            ]
 
             State.objects.bulk_create(
                 [
@@ -311,7 +284,7 @@ class ProjectViewSet(BaseViewSet):
                         default=state.get("default", False),
                         created_by=request.user,
                     )
-                    for state in states
+                    for state in DEFAULT_STATES
                 ]
             )
 
@@ -551,49 +524,6 @@ class ProjectFavoritesViewSet(BaseViewSet):
         )
         project_favorite.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class ProjectPublicCoverImagesEndpoint(BaseAPIView):
-    permission_classes = [AllowAny]
-
-    # Cache the below api for 24 hours
-    @cache_response(60 * 60 * 24, user=False)
-    def get(self, request):
-        files = []
-        if settings.USE_MINIO:
-            s3 = boto3.client(
-                "s3",
-                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            )
-        else:
-            s3 = boto3.client(
-                "s3",
-                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            )
-        params = {
-            "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
-            "Prefix": "static/project-cover/",
-        }
-
-        try:
-            response = s3.list_objects_v2(**params)
-            # Extracting file keys from the response
-            if "Contents" in response:
-                for content in response["Contents"]:
-                    if not content["Key"].endswith(
-                        "/"
-                    ):  # This line ensures we're only getting files, not "sub-folders"
-                        files.append(
-                            f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
-                        )
-
-            return Response(files, status=status.HTTP_200_OK)
-        except Exception as e:
-            log_exception(e)
-            return Response([], status=status.HTTP_200_OK)
 
 
 class DeployBoardViewSet(BaseViewSet):

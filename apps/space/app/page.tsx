@@ -1,4 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -10,8 +15,13 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { AuthView } from "@/components/views";
 // hooks
 import { useUser } from "@/hooks/store/use-user";
+import type { Route } from "./+types/page";
 
-const HomePage = observer(() => {
+export const headers: Route.HeadersFunction = () => ({
+  "X-Frame-Options": "SAMEORIGIN",
+});
+
+const HomePage = observer(function HomePage() {
   const { data: currentUser, isAuthenticated, isInitializing } = useUser();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -25,7 +35,7 @@ const HomePage = observer(() => {
 
   if (isInitializing)
     return (
-      <div className="flex h-screen min-h-[500px] w-full justify-center items-center">
+      <div className="bg-surface-1 flex h-screen min-h-[500px] w-full justify-center items-center">
         <LogoSpinner />
       </div>
     );
@@ -33,7 +43,7 @@ const HomePage = observer(() => {
   if (currentUser && isAuthenticated) {
     if (nextPath && isValidNextPath(nextPath)) {
       return (
-        <div className="flex h-screen min-h-[500px] w-full justify-center items-center">
+        <div className="bg-surface-1 flex h-screen min-h-[500px] w-full justify-center items-center">
           <LogoSpinner />
         </div>
       );

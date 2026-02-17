@@ -1,5 +1,9 @@
-"use client";
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal, Star } from "lucide-react";
@@ -18,7 +22,7 @@ type Props = {
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
 };
 
-export const FavoriteItemQuickAction: FC<Props> = observer((props) => {
+export const FavoriteItemQuickAction = observer(function FavoriteItemQuickAction(props: Props) {
   const { ref, isMenuActive, onChange, handleRemoveFromFavorites, favorite } = props;
   // translation
   const { t } = useTranslation();
@@ -26,10 +30,7 @@ export const FavoriteItemQuickAction: FC<Props> = observer((props) => {
   return (
     <CustomMenu
       customButton={
-        <span
-          ref={ref}
-          className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
-        >
+        <span ref={ref} className="grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm">
           <MoreHorizontal className="size-4" />
         </span>
       }

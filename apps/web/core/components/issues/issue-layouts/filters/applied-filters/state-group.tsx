@@ -1,11 +1,14 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
 
 // icons
-import { X } from "lucide-react";
 import { EIconSize } from "@plane/constants";
-import { StateGroupIcon } from "@plane/propel/icons";
+import { CloseIcon, StateGroupIcon } from "@plane/propel/icons";
 import type { TStateGroups } from "@plane/types";
 
 type Props = {
@@ -13,21 +16,21 @@ type Props = {
   values: string[];
 };
 
-export const AppliedStateGroupFilters: React.FC<Props> = observer((props) => {
+export const AppliedStateGroupFilters = observer(function AppliedStateGroupFilters(props: Props) {
   const { handleRemove, values } = props;
 
   return (
     <>
       {values.map((stateGroup) => (
-        <div key={stateGroup} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+        <div key={stateGroup} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
           <StateGroupIcon stateGroup={stateGroup as TStateGroups} size={EIconSize.SM} />
           {stateGroup}
           <button
             type="button"
-            className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+            className="grid place-items-center text-tertiary hover:text-secondary"
             onClick={() => handleRemove(stateGroup)}
           >
-            <X size={10} strokeWidth={2} />
+            <CloseIcon height={10} width={10} strokeWidth={2} />
           </button>
         </div>
       ))}

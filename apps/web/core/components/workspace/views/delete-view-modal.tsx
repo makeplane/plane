@@ -1,18 +1,18 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// types
-import { GLOBAL_VIEW_TRACKER_EVENTS } from "@plane/constants";
+// Plane Imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceView } from "@plane/types";
-// ui
 import { AlertModalCore } from "@plane/ui";
-// constants
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useGlobalView } from "@/hooks/store/use-global-view";
 
 type Props = {
@@ -21,7 +21,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
+export const DeleteGlobalViewModal = observer(function DeleteGlobalViewModal(props: Props) {
   const { data, isOpen, onClose } = props;
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -34,37 +34,20 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
 
   const handleDeletion = async () => {
     if (!workspaceSlug) return;
-
     setIsDeleteLoading(true);
 
-    await deleteGlobalView(workspaceSlug.toString(), data.id)
-      .then(() => {
-        captureSuccess({
-          eventName: GLOBAL_VIEW_TRACKER_EVENTS.delete,
-          payload: {
-            view_id: data.id,
-          },
-        });
-      })
-      .catch((error: any) => {
-        captureError({
-          eventName: GLOBAL_VIEW_TRACKER_EVENTS.delete,
-          payload: {
-            view_id: data.id,
-          },
-          error: error,
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? "Something went wrong while deleting the view. Please try again.",
-        });
-      })
-      .finally(() => {
-        setIsDeleteLoading(false);
-        handleClose();
+    try {
+      await deleteGlobalView(workspaceSlug.toString(), data.id);
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to delete the view. Please try again.",
       });
+    }
 
+    setIsDeleteLoading(false);
+    handleClose();
     // remove filters from local storage
     localStorage.removeItem(`global_view_filters/${data.id}`);
   };

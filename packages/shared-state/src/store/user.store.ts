@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { makeObservable, observable } from "mobx";
-import { IWorkspaceStore } from "./workspace.store";
+import type { IWorkspaceStore } from "./workspace.store";
 
 export interface IUserStore {
   user: any;

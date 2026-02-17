@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
@@ -41,7 +47,7 @@ interface IBaseListRoot {
   isCompletedCycle?: boolean;
   isEpic?: boolean;
 }
-export const BaseListRoot = observer((props: IBaseListRoot) => {
+export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot) {
   const {
     QuickActions,
     viewId,
@@ -148,7 +154,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.LIST}>
-      <div className={`relative size-full bg-custom-background-90`}>
+      <div className={`relative size-full bg-surface-2`}>
         <List
           issuesMap={issueMap}
           displayProperties={displayProperties}

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 """
 Helper decorators for drf-spectacular OpenAPI documentation.
 
@@ -254,6 +258,22 @@ def state_docs(**kwargs):
     defaults = {
         "tags": ["States"],
         "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def sticky_docs(**kwargs):
+    """Decorator for sticky management endpoints"""
+    defaults = {
+        "tags": ["Stickies"],
+        "summary": "Endpoints for sticky create/update/delete and fetch sticky details",
+        "parameters": [WORKSPACE_SLUG_PARAMETER],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,
             403: FORBIDDEN_RESPONSE,

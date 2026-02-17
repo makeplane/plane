@@ -1,21 +1,23 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React, { useState } from "react";
+import { useState } from "react";
 // plane imports
-import { MEMBER_TRACKER_ELEMENTS, MEMBER_TRACKER_EVENTS, ROLE } from "@plane/constants";
+import { ROLE } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { Checkbox, Spinner } from "@plane/ui";
 import { truncateText } from "@plane/utils";
 // constants
 import { WorkspaceLogo } from "@/components/workspace/logo";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserSettings } from "@/hooks/store/user";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // local components
 import { CommonOnboardingHeader } from "../common";
 
@@ -26,7 +28,7 @@ type Props = {
 };
 const workspaceService = new WorkspaceService();
 
-export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
+export function WorkspaceJoinInvitesStep(props: Props) {
   const { invitations, handleNextStep, handleCurrentViewChange } = props;
   // states
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
@@ -54,24 +56,11 @@ export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
 
     try {
       await workspaceService.joinWorkspaces({ invitations: invitationsRespond });
-      captureSuccess({
-        eventName: MEMBER_TRACKER_EVENTS.accept,
-        payload: {
-          member_id: invitation?.id,
-        },
-      });
       await fetchWorkspaces();
       await fetchCurrentUserSettings();
       await handleNextStep();
     } catch (error: any) {
       console.error(error);
-      captureError({
-        eventName: MEMBER_TRACKER_EVENTS.accept,
-        payload: {
-          member_id: invitation?.id,
-        },
-        error: error,
-      });
       setIsJoiningWorkspaces(false);
     }
   };
@@ -88,7 +77,7 @@ export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
             return (
               <div
                 key={invitation.id}
-                className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 border-custom-border-200 hover:bg-custom-background-90`}
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 border-subtle hover:bg-surface-2`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
                 <div className="flex-shrink-0">
@@ -99,8 +88,8 @@ export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
                   />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
-                  <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
+                  <div className="text-13 font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
+                  <p className="text-11 text-secondary">{ROLE[invitation.role]}</p>
                 </div>
                 <span className={`flex-shrink-0`}>
                   <Checkbox checked={isSelected} />
@@ -112,17 +101,16 @@ export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
       <div className="flex flex-col gap-4">
         <Button
           variant="primary"
-          size="lg"
+          size="xl"
           className="w-full"
           onClick={submitInvitations}
           disabled={isJoiningWorkspaces || !invitationsRespond.length}
-          data-ph-element={MEMBER_TRACKER_ELEMENTS.ONBOARDING_JOIN_WORKSPACE}
         >
           {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue"}
         </Button>
         <Button
-          variant="link-neutral"
-          size="lg"
+          variant="ghost"
+          size="xl"
           className="w-full"
           onClick={handleCurrentViewChange}
           disabled={isJoiningWorkspaces}
@@ -134,4 +122,4 @@ export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
   ) : (
     <div>No Invitations found</div>
   );
-};
+}

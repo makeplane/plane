@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Search, X } from "lucide-react";
+import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import type { TCycleFilters, TCycleGroups } from "@plane/types";
 // hooks
@@ -16,7 +22,7 @@ type Props = {
   isArchived?: boolean;
 };
 
-export const CycleFiltersSelection: React.FC<Props> = observer((props) => {
+export const CycleFiltersSelection = observer(function CycleFiltersSelection(props: Props) {
   const { filters, handleFiltersUpdate, isArchived = false } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
@@ -25,12 +31,12 @@ export const CycleFiltersSelection: React.FC<Props> = observer((props) => {
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
-      <div className="bg-custom-background-100 p-2.5 pb-0">
-        <div className="flex items-center gap-1.5 rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-1.5 py-1 text-xs">
-          <Search className="text-custom-text-400" size={12} strokeWidth={2} />
+      <div className="bg-surface-1 p-2.5 pb-0">
+        <div className="flex items-center gap-1.5 rounded-sm border-[0.5px] border-subtle bg-surface-2 px-1.5 py-1 text-11">
+          <SearchIcon className="text-placeholder" width={12} height={12} strokeWidth={2} />
           <input
             type="text"
-            className="w-full bg-custom-background-90 outline-none placeholder:text-custom-text-400"
+            className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
             placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
@@ -38,12 +44,12 @@ export const CycleFiltersSelection: React.FC<Props> = observer((props) => {
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
-              <X className="text-custom-text-300" size={12} strokeWidth={2} />
+              <CloseIcon className="text-tertiary" height={12} width={12} strokeWidth={2} />
             </button>
           )}
         </div>
       </div>
-      <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
+      <div className="h-full w-full divide-y divide-subtle-1 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
         {/* cycle status */}
         {!isArchived && (
           <div className="py-2">

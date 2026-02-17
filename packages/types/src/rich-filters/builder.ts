@@ -1,7 +1,13 @@
-import { SingleOrArray } from "../utils";
-import { IFilterAdapter, TExternalFilter } from "./adapter";
-import { TFilterProperty, TFilterValue } from "./expression";
-import { TAllAvailableOperatorsForDisplay } from "./operators";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { SingleOrArray } from "../utils";
+import type { IFilterAdapter, TExternalFilter } from "./adapter";
+import type { TFilterProperty, TFilterValue } from "./expression";
+import type { TAllAvailableOperatorsForDisplay } from "./operators";
 
 /**
  * Condition payload for building filter expressions.

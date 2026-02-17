@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -10,13 +14,13 @@ import {
   EIssueFilterType,
   EUserPermissions,
   EUserPermissionsLevel,
-  EProjectFeatureKey,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { IconButton } from "@plane/propel/icon-button";
 import { CycleIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
@@ -25,6 +29,7 @@ import { Breadcrumbs, BreadcrumbNavigationSearchDropdown, Header } from "@plane/
 import { cn } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 import { CycleQuickActions } from "@/components/cycles/quick-actions";
 import {
@@ -45,18 +50,14 @@ import useLocalStorage from "@/hooks/use-local-storage";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const CycleIssuesHeader: React.FC = observer(() => {
+export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
   // refs
   const parentRef = useRef<HTMLDivElement>(null);
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, cycleId } = useParams() as {
-    workspaceSlug: string;
-    projectId: string;
-    cycleId: string;
-  };
+  const { workspaceSlug, projectId, cycleId } = useParams();
   // i18n
   const { t } = useTranslation();
   // store hooks
@@ -137,10 +138,15 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         <Header.LeftItem>
           <div className="flex items-center gap-2">
             <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-              <CommonProjectBreadcrumbs
-                workspaceSlug={workspaceSlug?.toString()}
-                projectId={projectId?.toString()}
-                featureKey={EProjectFeatureKey.CYCLES}
+              <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+              <Breadcrumbs.Item
+                component={
+                  <BreadcrumbLink
+                    label="Cycles"
+                    href={`/${workspaceSlug}/projects/${projectId}/cycles/`}
+                    icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
+                  />
+                }
               />
               <Breadcrumbs.Item
                 component={
@@ -153,7 +159,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     title={cycleDetails?.name}
                     icon={
                       <Breadcrumbs.Icon>
-                        <CycleIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                        <CycleIcon className="size-4 flex-shrink-0 text-tertiary" />
                       </Breadcrumbs.Icon>
                     }
                     isLast
@@ -170,7 +176,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 } in this cycle`}
                 position="bottom"
               >
-                <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
+                <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2 text-center text-11 font-semibold text-accent-primary">
                   {workItemsCount}
                 </span>
               </Tooltip>
@@ -227,39 +233,41 @@ export const CycleIssuesHeader: React.FC = observer(() => {
 
             {canUserCreateIssue && (
               <>
-                <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-                  <div className="hidden @4xl:flex">Analytics</div>
-                  <div className="flex @4xl:hidden">
+                <Button onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
+                  <span className="hidden @4xl:flex">Analytics</span>
+                  <span className="@4xl:hidden">
                     <ChartNoAxesColumn className="size-3.5" />
-                  </div>
+                  </span>
                 </Button>
                 {!isCompletedCycle && (
                   <Button
-                    className="h-full self-start"
+                    variant="primary"
+                    size="lg"
                     onClick={() => {
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
                     data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.CYCLE}
-                    size="sm"
                   >
                     {t("issue.add.label")}
                   </Button>
                 )}
               </>
             )}
-            <button
-              type="button"
-              className="p-1.5 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
+            <IconButton
+              variant="tertiary"
+              size="lg"
+              icon={PanelRight}
               onClick={toggleSidebar}
-            >
-              <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
-            </button>
+              className={cn({
+                "text-accent-primary bg-accent-subtle": !isSidebarCollapsed,
+              })}
+            />
             <CycleQuickActions
               parentRef={parentRef}
               cycleId={cycleId}
               projectId={projectId}
               workspaceSlug={workspaceSlug}
-              customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+              customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
             />
           </div>
         </Header.RightItem>

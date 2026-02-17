@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import { useCallback, useEffect } from "react";
@@ -38,7 +42,7 @@ interface IBaseCalendarRoot {
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
 }
 
-export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
+export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseCalendarRoot) {
   const {
     QuickActions,
     addIssuesToView,
@@ -52,7 +56,8 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const { workspaceSlug } = useParams();
 
   // hooks
-  const storeType = isEpic ? EIssuesStoreType.EPIC : (useIssueStoreType() as CalendarStoreType);
+  const fallbackStoreType = useIssueStoreType() as CalendarStoreType;
+  const storeType = isEpic ? EIssuesStoreType.EPIC : fallbackStoreType;
   const { allowPermissions } = useUserPermissions();
   const { issues, issuesFilter, issueMap } = useIssues(storeType);
   const {
@@ -152,7 +157,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
 
   return (
     <>
-      <div className="h-full w-full overflow-hidden bg-custom-background-100 pt-4">
+      <div className="h-full w-full overflow-hidden bg-surface-1 pt-4">
         <CalendarChart
           issuesFilterStore={issuesFilter}
           issues={issueMap}

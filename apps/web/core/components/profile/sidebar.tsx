@@ -1,28 +1,28 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
-// icons
-import { ChevronDown, Pencil } from "lucide-react";
-// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
-// plane helpers
+// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-// types
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { IconButton } from "@plane/propel/icon-button";
+import { EditIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IUserProfileProjectSegregation } from "@plane/types";
-// plane ui
 import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
-// helpers
+import { CoverImage } from "@/components/common/cover-image";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -34,16 +34,17 @@ type TProfileSidebar = {
   className?: string;
 };
 
-export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
+export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSidebar) {
   const { userProjectsData, className = "" } = props;
   // refs
   const ref = useRef<HTMLDivElement>(null);
   // router
-  const { userId, workspaceSlug } = useParams();
+  const { userId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const { profileSidebarCollapsed, toggleProfileSidebar } = useAppTheme();
   const { getProjectById } = useProject();
+  const { toggleProfileSettingsModal } = useCommandPalette();
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
   // derived values
@@ -86,7 +87,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
   return (
     <div
       className={cn(
-        `vertical-scrollbar scrollbar-md fixed z-[5] h-full w-full flex-shrink-0 overflow-hidden overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 transition-all md:relative md:w-[300px]`,
+        `vertical-scrollbar scrollbar-md fixed z-5 h-full w-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 transition-all md:relative md:w-[300px] shadow-raised-200`,
         className
       )}
       style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
@@ -95,32 +96,34 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
         <>
           <div className="relative h-[110px]">
             {currentUser?.id === userId && (
-              <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded bg-white">
-                <Link href={`/${workspaceSlug}/settings/account`}>
-                  <span className="grid place-items-center text-black">
-                    <Pencil className="h-3 w-3" />
-                  </span>
-                </Link>
+              <div className="absolute right-3.5 top-3.5">
+                <IconButton
+                  variant="secondary"
+                  icon={EditIcon}
+                  onClick={() =>
+                    toggleProfileSettingsModal({
+                      activeTab: "general",
+                      isOpen: true,
+                    })
+                  }
+                />
               </div>
             )}
-            <img
-              src={
-                userData?.cover_image_url
-                  ? getFileURL(userData?.cover_image_url)
-                  : "/users/user-profile-cover-default-img.png"
-              }
+            <CoverImage
+              src={userData?.cover_image_url ?? undefined}
               alt={userData?.display_name}
-              className="h-[110px] w-full object-cover"
+              className="h-[110px] w-full"
+              showDefaultWhenEmpty
             />
-            <div className="absolute -bottom-[26px] left-5 h-[52px] w-[52px] rounded">
+            <div className="absolute -bottom-[26px] left-5 h-[52px] w-[52px] rounded-sm">
               {userData?.avatar_url && userData?.avatar_url !== "" ? (
                 <img
                   src={getFileURL(userData?.avatar_url)}
                   alt={userData?.display_name}
-                  className="h-full w-full rounded object-cover"
+                  className="h-full w-full rounded-sm object-cover"
                 />
               ) : (
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-[#028375] capitalize text-white">
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-sm bg-accent-primary capitalize text-on-color">
                   {userData?.first_name?.[0]}
                 </div>
               )}
@@ -128,20 +131,20 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
           </div>
           <div className="px-5">
             <div className="mt-[38px]">
-              <h4 className="text-lg font-semibold">
+              <h4 className="text-16 font-semibold">
                 {userData?.first_name} {userData?.last_name}
               </h4>
-              <h6 className="text-sm text-custom-text-200">({userData?.display_name})</h6>
+              <h6 className="text-13 text-secondary">({userData?.display_name})</h6>
             </div>
             <div className="mt-6 space-y-5">
               {userDetails.map((detail) => (
-                <div key={detail.i18n_label} className="flex items-center gap-4 text-sm">
-                  <div className="w-2/5 flex-shrink-0 text-custom-text-200">{t(detail.i18n_label)}</div>
+                <div key={detail.i18n_label} className="flex items-center gap-4 text-13">
+                  <div className="w-2/5 flex-shrink-0 text-secondary">{t(detail.i18n_label)}</div>
                   <div className="w-3/5 break-words font-medium">{detail.value}</div>
                 </div>
               ))}
             </div>
-            <div className="mt-9 divide-y divide-custom-border-100">
+            <div className="mt-9 divide-y divide-subtle">
               {userProjectsData.project_data.map((project, index) => {
                 const projectDetails = getProjectById(project.id);
 
@@ -164,25 +167,25 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
                             <span className="grid h-7 w-7 flex-shrink-0 place-items-center">
                               <Logo logo={projectDetails.logo_props} />
                             </span>
-                            <div className="truncate break-words text-sm font-medium">{projectDetails.name}</div>
+                            <div className="truncate break-words text-13 font-medium">{projectDetails.name}</div>
                           </div>
                           <div className="flex flex-shrink-0 items-center gap-2">
                             {project.assigned_issues > 0 && (
                               <Tooltip tooltipContent="Completion percentage" position="left" isMobile={isMobile}>
                                 <div
-                                  className={`rounded px-1 py-0.5 text-xs font-medium ${
+                                  className={`rounded-sm px-1 py-0.5 text-11 font-medium ${
                                     completedIssuePercentage <= 35
-                                      ? "bg-red-500/10 text-red-500"
+                                      ? "bg-danger-subtle text-danger-primary"
                                       : completedIssuePercentage <= 70
                                         ? "bg-yellow-500/10 text-yellow-500"
-                                        : "bg-green-500/10 text-green-500"
+                                        : "bg-success-subtle text-success-primary"
                                   }`}
                                 >
                                   {completedIssuePercentage}%
                                 </div>
                               </Tooltip>
                             )}
-                            <ChevronDown className="h-4 w-4" />
+                            <ChevronDownIcon className="h-4 w-4" />
                           </div>
                         </Disclosure.Button>
                         <Transition
@@ -198,28 +201,28 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
                             {totalIssues > 0 && (
                               <div className="flex items-center gap-0.5">
                                 <div
-                                  className="h-1 rounded"
+                                  className="h-1 rounded-sm"
                                   style={{
                                     backgroundColor: "#203b80",
                                     width: `${(project.created_issues / totalIssues) * 100}%`,
                                   }}
                                 />
                                 <div
-                                  className="h-1 rounded"
+                                  className="h-1 rounded-sm"
                                   style={{
                                     backgroundColor: "#3f76ff",
                                     width: `${(project.assigned_issues / totalIssues) * 100}%`,
                                   }}
                                 />
                                 <div
-                                  className="h-1 rounded"
+                                  className="h-1 rounded-sm"
                                   style={{
                                     backgroundColor: "#f59e0b",
                                     width: `${(project.pending_issues / totalIssues) * 100}%`,
                                   }}
                                 />
                                 <div
-                                  className="h-1 rounded"
+                                  className="h-1 rounded-sm"
                                   style={{
                                     backgroundColor: "#16a34a",
                                     width: `${(project.completed_issues / totalIssues) * 100}%`,
@@ -227,10 +230,10 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
                                 />
                               </div>
                             )}
-                            <div className="mt-7 space-y-5 text-sm text-custom-text-200">
+                            <div className="mt-7 space-y-5 text-13 text-secondary">
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
-                                  <div className="h-2.5 w-2.5 rounded-sm bg-[#203b80]" />
+                                  <div className="h-2.5 w-2.5 rounded-xs bg-[#203b80]" />
                                   Created
                                 </div>
                                 <div className="font-medium">
@@ -239,7 +242,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
-                                  <div className="h-2.5 w-2.5 rounded-sm bg-[#3f76ff]" />
+                                  <div className="h-2.5 w-2.5 rounded-xs bg-[#3f76ff]" />
                                   Assigned
                                 </div>
                                 <div className="font-medium">
@@ -248,7 +251,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
-                                  <div className="h-2.5 w-2.5 rounded-sm bg-[#f59e0b]" />
+                                  <div className="h-2.5 w-2.5 rounded-xs bg-[#f59e0b]" />
                                   Due
                                 </div>
                                 <div className="font-medium">
@@ -257,7 +260,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
-                                  <div className="h-2.5 w-2.5 rounded-sm bg-[#16a34a]" />
+                                  <div className="h-2.5 w-2.5 rounded-xs bg-[#16a34a]" />
                                   Completed
                                 </div>
                                 <div className="font-medium">

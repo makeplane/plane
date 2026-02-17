@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "프로젝트",
@@ -74,7 +80,7 @@ export default {
       },
       unique_code: {
         label: "고유 코드",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "이메일로 전송된 코드를 붙여넣기",
         requesting_new_code: "새 코드 요청 중",
         sending_code: "코드 전송 중",
@@ -332,13 +338,13 @@ export default {
   project_id_must_be_at_least_1_character: "프로젝트 ID는 최소 1자 이상이어야 합니다",
   project_id_must_be_at_most_5_characters: "프로젝트 ID는 최대 5자 이하여야 합니다",
   project_id: "프로젝트 ID",
-  project_id_tooltip_content: "작업 항목을 고유하게 식별하는 데 도움이 됩니다. 최대 5자.",
+  project_id_tooltip_content: "작업 항목을 고유하게 식별하는 데 도움이 됩니다. 최대 10자.",
   description_placeholder: "설명",
   only_alphanumeric_non_latin_characters_allowed: "영숫자 및 비라틴 문자만 허용됩니다.",
   project_id_is_required: "프로젝트 ID가 필요합니다",
   project_id_allowed_char: "영숫자 및 비라틴 문자만 허용됩니다.",
   project_id_min_char: "프로젝트 ID는 최소 1자 이상이어야 합니다",
-  project_id_max_char: "프로젝트 ID는 최대 5자 이하여야 합니다",
+  project_id_max_char: "프로젝트 ID는 최대 10자 이하여야 합니다",
   project_description_placeholder: "프로젝트 설명 입력",
   select_network: "네트워크 선택",
   lead: "리드",
@@ -634,6 +640,8 @@ export default {
   },
   common: {
     all: "모두",
+    no_items_in_this_group: "이 그룹에 항목이 없습니다",
+    drop_here_to_move: "이동하려면 여기에 드롭하세요",
     states: "상태",
     state: "상태",
     state_groups: "상태 그룹",
@@ -1512,6 +1520,47 @@ export default {
         "확인하면 이 뷰에 대해 선택한 모든 정렬, 필터 및 표시 옵션 + 레이아웃이 복원할 수 없는 방식으로 영구적으로 삭제됩니다.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "이메일 변경",
+        description: "확인 링크를 받으려면 새 이메일 주소를 입력하세요.",
+        toasts: {
+          success_title: "성공!",
+          success_message: "이메일이 업데이트되었습니다. 다시 로그인하세요.",
+        },
+        form: {
+          email: {
+            label: "새 이메일",
+            placeholder: "이메일을 입력하세요",
+            errors: {
+              required: "이메일은 필수입니다",
+              invalid: "유효하지 않은 이메일입니다",
+              exists: "이미 존재하는 이메일입니다. 다른 주소를 사용하세요.",
+              validation_failed: "이메일 확인에 실패했습니다. 다시 시도하세요.",
+            },
+          },
+          code: {
+            label: "고유 코드",
+            placeholder: "123456",
+            helper_text: "인증 코드가 새 이메일로 전송되었습니다.",
+            errors: {
+              required: "고유 코드는 필수입니다",
+              invalid: "잘못된 인증 코드입니다. 다시 시도하세요.",
+            },
+          },
+        },
+        actions: {
+          continue: "계속",
+          confirm: "확인",
+          cancel: "취소",
+        },
+        states: {
+          sending: "전송 중…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "작업 공간 설정",
     page_label: "{workspace} - 일반 설정",
@@ -1527,6 +1576,7 @@ export default {
         name: "작업 공간 이름",
         company_size: "회사 규모",
         url: "작업 공간 URL",
+        workspace_timezone: "작업 공간 시간대",
         update_workspace: "작업 공간 업데이트",
         delete_workspace: "이 작업 공간 삭제",
         delete_workspace_description:
@@ -1591,6 +1641,7 @@ export default {
         exporting: "내보내기 중",
         previous_exports: "이전 내보내기",
         export_separate_files: "데이터를 별도의 파일로 내보내기",
+        filters_info: "기준에 따라 특정 작업 항목을 내보내려면 필터를 적용하세요.",
         modal: {
           title: "내보내기",
           toasts: {
@@ -1917,6 +1968,43 @@ export default {
         title: "추정 시스템 없음",
         description: "작업 항목당 작업량을 전달하는 추정 세트를 생성하세요.",
         primary_button: "추정 시스템 추가",
+      },
+    },
+    features: {
+      cycles: {
+        title: "사이클",
+        short_title: "사이클",
+        description: "이 프로젝트의 고유한 리듬과 속도에 적응하는 유연한 기간으로 작업을 예약합니다.",
+        toggle_title: "사이클 활성화",
+        toggle_description: "집중된 기간에 작업을 계획합니다.",
+      },
+      modules: {
+        title: "모듈",
+        short_title: "모듈",
+        description: "전담 리더와 담당자가 있는 하위 프로젝트로 작업을 구성합니다.",
+        toggle_title: "모듈 활성화",
+        toggle_description: "프로젝트 멤버가 모듈을 생성하고 편집할 수 있습니다.",
+      },
+      views: {
+        title: "보기",
+        short_title: "보기",
+        description: "사용자 정의 정렬, 필터 및 표시 옵션을 저장하거나 팀과 공유합니다.",
+        toggle_title: "보기 활성화",
+        toggle_description: "프로젝트 멤버가 보기를 생성하고 편집할 수 있습니다.",
+      },
+      pages: {
+        title: "페이지",
+        short_title: "페이지",
+        description: "자유 형식 콘텐츠를 생성하고 편집합니다: 메모, 문서, 무엇이든.",
+        toggle_title: "페이지 활성화",
+        toggle_description: "프로젝트 멤버가 페이지를 생성하고 편집할 수 있습니다.",
+      },
+      intake: {
+        title: "접수",
+        short_title: "접수",
+        description: "워크플로를 방해하지 않고 비회원이 버그, 피드백 및 제안을 공유할 수 있도록 합니다.",
+        toggle_title: "접수 활성화",
+        toggle_description: "프로젝트 멤버가 앱 내에서 접수 요청을 생성할 수 있도록 허용합니다.",
       },
     },
   },

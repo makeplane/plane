@@ -1,4 +1,10 @@
-import { TLanguage, ILanguageOption } from "../types";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { TLanguage, ILanguageOption } from "../types";
 
 export const FALLBACK_LANGUAGE: TLanguage = "en";
 
@@ -32,6 +38,7 @@ export enum ETranslationFiles {
   TRANSLATIONS = "translations",
   ACCESSIBILITY = "accessibility",
   EDITOR = "editor",
+  EMPTY_STATE = "empty-state",
 }
 
 export const LANGUAGE_STORAGE_KEY = "userLanguage";

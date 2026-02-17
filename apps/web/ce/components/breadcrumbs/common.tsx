@@ -1,32 +1,23 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
-// plane imports
-import type { EProjectFeatureKey } from "@plane/constants";
 // local components
+import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 import { ProjectBreadcrumb } from "./project";
-import { ProjectFeatureBreadcrumb } from "./project-feature";
 
 type TCommonProjectBreadcrumbProps = {
   workspaceSlug: string;
   projectId: string;
-  featureKey?: EProjectFeatureKey;
-  isLast?: boolean;
 };
 
-export const CommonProjectBreadcrumbs: FC<TCommonProjectBreadcrumbProps> = (props) => {
-  const { workspaceSlug, projectId, featureKey, isLast = false } = props;
-  return (
-    <>
-      <ProjectBreadcrumb workspaceSlug={workspaceSlug} projectId={projectId} />
-      {featureKey && (
-        <ProjectFeatureBreadcrumb
-          workspaceSlug={workspaceSlug?.toString()}
-          projectId={projectId?.toString()}
-          featureKey={featureKey}
-          isLast={isLast}
-        />
-      )}
-    </>
-  );
-};
+export function CommonProjectBreadcrumbs(props: TCommonProjectBreadcrumbProps) {
+  const { workspaceSlug, projectId } = props;
+  // preferences
+  const { preferences: projectPreferences } = useProjectNavigationPreferences();
+
+  if (projectPreferences.navigationMode === "TABBED") return null;
+  return <ProjectBreadcrumb workspaceSlug={workspaceSlug} projectId={projectId} />;
+}

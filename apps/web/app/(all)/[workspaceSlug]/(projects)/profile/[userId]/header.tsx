@@ -1,13 +1,17 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 // ui
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronDown, PanelRight } from "lucide-react";
+import { PanelRight } from "lucide-react";
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { YourWorkIcon } from "@plane/propel/icons";
+import { YourWorkIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs, Header, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -17,6 +21,7 @@ import { ProfileIssuesFilter } from "@/components/profile/profile-issues-filter"
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { Button } from "@plane/propel/button";
 
 type TUserProfileHeader = {
   userProjectsData: IUserProfileProjectSegregation | undefined;
@@ -24,7 +29,7 @@ type TUserProfileHeader = {
   showProfileIssuesFilter?: boolean;
 };
 
-export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
+export const UserProfileHeader = observer(function UserProfileHeader(props: TUserProfileHeader) {
   const { userProjectsData, type = undefined, showProfileIssuesFilter } = props;
   // router
   const { workspaceSlug, userId } = useParams();
@@ -59,7 +64,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
               <BreadcrumbLink
                 label={breadcrumbLabel}
                 disableTooltip
-                icon={<YourWorkIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<YourWorkIcon className="h-4 w-4 text-tertiary" />}
               />
             }
           />
@@ -70,15 +75,15 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
         <div className="flex gap-4 md:hidden">
           <CustomMenu
             maxHeight={"md"}
-            className="flex flex-grow justify-center text-sm text-custom-text-200"
+            className="flex flex-grow justify-center text-13 text-secondary"
             placement="bottom-start"
             customButton={
-              <div className="flex items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1.5">
-                <span className="flex flex-grow justify-center text-sm text-custom-text-200">{type}</span>
-                <ChevronDown className="h-4 w-4 text-custom-text-400" />
+              <div className="flex items-center gap-2 rounded-md border border-subtle px-2 py-1.5">
+                <span className="flex flex-grow justify-center text-13 text-secondary">{type}</span>
+                <ChevronDownIcon className="h-4 w-4 text-placeholder" />
               </div>
             }
-            customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
+            customButtonClassName="flex flex-grow justify-center text-secondary text-13"
             closeOnSelect
           >
             <></>
@@ -88,23 +93,22 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
                 key={tab.route}
                 onClick={() => router.push(`/${workspaceSlug}/profile/${userId}/${tab.route}`)}
               >
-                <span className="w-full text-custom-text-300">{t(tab.i18n_label)}</span>
+                <span className="w-full text-tertiary">{t(tab.i18n_label)}</span>
               </CustomMenu.MenuItem>
             ))}
           </CustomMenu>
-          <button
-            className="block transition-all md:hidden"
-            onClick={() => {
-              toggleProfileSidebar();
-            }}
-          >
-            <PanelRight
-              className={cn(
-                "block h-4 w-4 md:hidden",
-                !profileSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200"
-              )}
-            />
-          </button>
+          <div className="shrink-0 md:hidden">
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={() => {
+                toggleProfileSidebar();
+              }}
+              appendIcon={
+                <PanelRight className={!profileSidebarCollapsed ? "text-accent-primary" : "text-secondary"} />
+              }
+            ></Button>
+          </div>
         </div>
       </Header.RightItem>
     </Header>

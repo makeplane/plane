@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -22,7 +28,12 @@ type Props = {
   isMobile?: boolean;
 };
 
-const HeaderFilters = observer(({ filterMenuButton, isMobile, classname = "", filterClassname = "" }: Props) => {
+const HeaderFilters = observer(function HeaderFilters({
+  filterMenuButton,
+  isMobile,
+  classname = "",
+  filterClassname = "",
+}: Props) {
   // i18n
   const { t } = useTranslation();
   // router

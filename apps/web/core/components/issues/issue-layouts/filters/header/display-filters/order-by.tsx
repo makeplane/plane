@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
@@ -13,7 +19,7 @@ type Props = {
   orderByOptions: TIssueOrderByOptions[];
 };
 
-export const FilterOrderBy: React.FC<Props> = observer((props) => {
+export const FilterOrderBy = observer(function FilterOrderBy(props: Props) {
   const { selectedOrderBy, handleUpdate, orderByOptions } = props;
   // hooks
   const { t } = useTranslation();

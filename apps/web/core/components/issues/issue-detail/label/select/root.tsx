@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // components
 import type { TLabelOperations } from "../root";
 import { IssueLabelSelect } from "./label-select";
@@ -12,7 +17,7 @@ type TIssueLabelSelectRoot = {
   labelOperations: TLabelOperations;
 };
 
-export const IssueLabelSelectRoot: FC<TIssueLabelSelectRoot> = (props) => {
+export function IssueLabelSelectRoot(props: TIssueLabelSelectRoot) {
   const { workspaceSlug, projectId, issueId, values, labelOperations } = props;
 
   const handleLabel = async (_labelIds: string[]) => {
@@ -29,4 +34,4 @@ export const IssueLabelSelectRoot: FC<TIssueLabelSelectRoot> = (props) => {
       onAddLabel={labelOperations.createLabel}
     />
   );
-};
+}

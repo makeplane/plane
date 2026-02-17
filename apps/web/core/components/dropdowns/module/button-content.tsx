@@ -1,8 +1,11 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { ChevronDown, X } from "lucide-react";
 // plane imports
-import { ModuleIcon } from "@plane/propel/icons";
+import { CloseIcon, ModuleIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
@@ -23,7 +26,7 @@ type ModuleButtonContentProps = {
   className?: string;
 };
 
-export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) => {
+export function ModuleButtonContent(props: ModuleButtonContentProps) {
   const {
     disabled,
     dropdownArrow,
@@ -48,7 +51,7 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
           <div className="relative flex items-center max-w-full gap-1">
             {!hideIcon && <ModuleIcon className="h-3 w-3 flex-shrink-0" />}
             {(value.length > 0 || !!placeholder) && (
-              <div className="max-w-40 flex-grow truncate">
+              <div className="max-w-40 truncate">
                 {value.length > 0
                   ? value.length === 1
                     ? `${getModuleById(value[0])?.name || "module"}`
@@ -65,7 +68,7 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
                 <div
                   key={moduleId}
                   className={cn(
-                    "flex max-w-full items-center gap-1 rounded bg-custom-background-80 py-1 text-custom-text-200",
+                    "flex max-w-full items-center gap-1 rounded-sm bg-layer-1 py-1 text-secondary",
                     className
                   )}
                 >
@@ -78,7 +81,7 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
                       isMobile={isMobile}
                       renderByDefault={false}
                     >
-                      <span className="max-w-40 flex-grow truncate text-xs font-medium">{moduleDetails?.name}</span>
+                      <span className="max-w-40 truncate text-11 font-medium">{moduleDetails?.name}</span>
                     </Tooltip>
                   )}
                   {!disabled && (
@@ -96,7 +99,7 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
                           onChange(newModuleIds);
                         }}
                       >
-                        <X className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                        <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-danger-primary" />
                       </button>
                     </Tooltip>
                   )}
@@ -111,7 +114,7 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
           </>
         )}
         {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </>
     );
@@ -123,8 +126,8 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
           <span className="flex-grow truncate text-left">{value ? getModuleById(value)?.name : placeholder}</span>
         )}
         {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </>
     );
-};
+}

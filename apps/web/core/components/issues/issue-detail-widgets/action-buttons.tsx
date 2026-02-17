@@ -1,10 +1,14 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import React from "react";
-import { Link, Paperclip, Waypoints } from "lucide-react";
+import { Paperclip } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { ViewsIcon } from "@plane/propel/icons";
+import { LinkIcon, ViewsIcon, RelationPropertyIcon } from "@plane/propel/icons";
 // plane imports
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // plane web imports
@@ -25,7 +29,7 @@ type Props = {
   hideWidgets?: TWorkItemWidgets[];
 };
 
-export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
+export function IssueDetailWidgetActionButtons(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets } = props;
   // translation
   const { t } = useTranslation();
@@ -52,7 +56,7 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
           customButton={
             <IssueDetailWidgetButton
               title={t("issue.add.relation")}
-              icon={<Waypoints className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+              icon={<RelationPropertyIcon className="h-3.5 w-3.5 flex-shrink-0" />}
               disabled={disabled}
             />
           }
@@ -65,7 +69,7 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
           customButton={
             <IssueDetailWidgetButton
               title={t("issue.add.link")}
-              icon={<Link className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+              icon={<LinkIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
               disabled={disabled}
             />
           }
@@ -99,4 +103,4 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

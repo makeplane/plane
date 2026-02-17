@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
@@ -29,7 +35,7 @@ type TIssueAttachmentItemList = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((props) => {
+export const IssueAttachmentItemList = observer(function IssueAttachmentItemList(props: TIssueAttachmentItemList) {
   const {
     workspaceSlug,
     projectId,
@@ -127,11 +133,11 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
           >
             <input {...getInputProps()} />
             {isDragActive && (
-              <div className="absolute flex items-center justify-center left-0 top-0 h-full w-full bg-custom-background-90/75 z-30 ">
-                <div className="flex items-center justify-center p-1 rounded-md bg-custom-background-100">
-                  <div className="flex flex-col justify-center items-center px-5 py-6 rounded-md border border-dashed border-custom-border-300">
+              <div className="absolute flex items-center justify-center left-0 top-0 h-full w-full bg-surface-2/75 z-30 ">
+                <div className="flex items-center justify-center p-1 rounded-md bg-surface-1">
+                  <div className="flex flex-col justify-center items-center px-5 py-6 rounded-md border border-dashed border-strong">
                     <UploadCloud className="size-7" />
-                    <span className="text-sm text-custom-text-300">{t("attachment.drag_and_drop")}</span>
+                    <span className="text-13 text-tertiary">{t("attachment.drag_and_drop")}</span>
                   </div>
                 </div>
               </div>

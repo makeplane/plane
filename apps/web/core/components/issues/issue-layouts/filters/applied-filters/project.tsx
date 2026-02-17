@@ -1,7 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
-// components
-import { Logo } from "@/components/common/logo";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { CloseIcon } from "@plane/propel/icons";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
@@ -11,7 +16,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
+export const AppliedProjectFilters = observer(function AppliedProjectFilters(props: Props) {
   const { handleRemove, values, editable } = props;
   // store hooks
   const { projectMap } = useProject();
@@ -24,7 +29,7 @@ export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
         if (!projectDetails) return null;
 
         return (
-          <div key={projectId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+          <div key={projectId} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
             <span className="grid place-items-center flex-shrink-0 h-4 w-4">
               <Logo logo={projectDetails.logo_props} size={12} />
             </span>
@@ -32,10 +37,10 @@ export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
             {editable && (
               <button
                 type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(projectId)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

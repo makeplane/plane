@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
@@ -14,8 +20,6 @@ import { usePathname } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // plane types
 import type { InstructionType } from "@plane/types";
-// plane ui
-import { DropIndicator } from "@plane/ui";
 // components
 import { StickyNote } from "../sticky";
 // helpers
@@ -32,12 +36,11 @@ type Props = {
   handleLayout: () => void;
 };
 
-export const StickyDNDWrapper = observer((props: Props) => {
-  const { stickyId, workspaceSlug, itemWidth, isLastChild, isInFirstRow, isInLastRow, handleDrop, handleLayout } =
-    props;
+export const StickyDNDWrapper = observer(function StickyDNDWrapper(props: Props) {
+  const { stickyId, workspaceSlug, itemWidth, isLastChild, handleDrop, handleLayout } = props;
   // states
   const [isDragging, setIsDragging] = useState(false);
-  const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
+  const [_instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
   // refs
   const elementRef = useRef<HTMLDivElement>(null);
   // navigation

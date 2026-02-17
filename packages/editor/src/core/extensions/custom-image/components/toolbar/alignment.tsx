@@ -1,8 +1,14 @@
-import { ChevronDown } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { Tooltip } from "@plane/ui";
+import { ChevronDownIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 // local imports
 import type { TCustomImageAlignment } from "../../types";
 import { IMAGE_ALIGNMENT_OPTIONS } from "../../utils";
@@ -14,7 +20,7 @@ type Props = {
   toggleToolbarViewStatus: (val: boolean) => void;
 };
 
-export const ImageAlignmentAction: React.FC<Props> = (props) => {
+export function ImageAlignmentAction(props: Props) {
   const { activeAlignment, handleChange, isTouchDevice, toggleToolbarViewStatus } = props;
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -38,11 +44,11 @@ export const ImageAlignmentAction: React.FC<Props> = (props) => {
           onClick={() => setIsDropdownOpen((prev) => !prev)}
         >
           {activeAlignmentDetails && <activeAlignmentDetails.icon className="flex-shrink-0 size-3" />}
-          <ChevronDown className="flex-shrink-0 size-2" />
+          <ChevronDownIcon className="flex-shrink-0 size-2" />
         </button>
       </Tooltip>
       {isDropdownOpen && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0.5 h-7 bg-black/80 flex items-center gap-2 px-2 rounded">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0.5 h-7 bg-black/80 flex items-center gap-2 px-2 rounded-sm">
           {IMAGE_ALIGNMENT_OPTIONS.map((option) => (
             <Tooltip disabled={isTouchDevice} key={option.value} tooltipContent={option.label}>
               <button
@@ -61,4 +67,4 @@ export const ImageAlignmentAction: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

@@ -1,5 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import useSWR from "swr";
 // plane web imports
+import { WORKSPACE_ESTIMATES, WORKSPACE_CYCLES, WORKSPACE_LABELS, WORKSPACE_MODULES } from "@/constants/fetch-keys";
 import { useWorkspaceIssuePropertiesExtended } from "@/plane-web/hooks/use-workspace-issue-properties-extended";
 // plane imports
 import { useProjectEstimates } from "./store/estimates";
@@ -18,28 +25,28 @@ export const useWorkspaceIssueProperties = (workspaceSlug: string | string[] | u
 
   // fetch workspace Modules
   useSWR(
-    workspaceSlug ? `WORKSPACE_MODULES_${workspaceSlug}` : null,
+    workspaceSlug ? WORKSPACE_MODULES(workspaceSlug.toString()) : null,
     workspaceSlug ? () => fetchWorkspaceModules(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetch workspace Cycles
   useSWR(
-    workspaceSlug ? `WORKSPACE_CYCLES_${workspaceSlug}` : null,
+    workspaceSlug ? WORKSPACE_CYCLES(workspaceSlug.toString()) : null,
     workspaceSlug ? () => fetchWorkspaceCycles(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetch workspace labels
   useSWR(
-    workspaceSlug ? `WORKSPACE_LABELS_${workspaceSlug}` : null,
+    workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
     workspaceSlug ? () => fetchWorkspaceLabels(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetch workspace estimates
   useSWR(
-    workspaceSlug ? `WORKSPACE_ESTIMATES_${workspaceSlug}` : null,
+    workspaceSlug ? WORKSPACE_ESTIMATES(workspaceSlug.toString()) : null,
     workspaceSlug ? () => getWorkspaceEstimates(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );

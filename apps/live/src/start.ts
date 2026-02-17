@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { setupSentry } from "./instrument";
 setupSentry();
 
-// eslint-disable-next-line import/order
 import { logger } from "@plane/logger";
+import { AppError } from "@/lib/errors";
 import { Server } from "./server";
 
 let server: Server;
@@ -20,28 +26,41 @@ async function startServer() {
 
 startServer();
 
-// Graceful shutdown on unhandled rejection
-process.on("unhandledRejection", async (err: Error) => {
-  logger.error(`UNHANDLED REJECTION!`, err);
+// Handle process signals
+process.on("SIGTERM", async () => {
+  logger.info("Received SIGTERM signal. Initiating graceful shutdown...");
   try {
-    // if (server) {
-    //   await server.destroy();
-    // }
-  } finally {
-    // logger.info("Exiting process...");
-    // process.exit(1);
+    if (server) {
+      await server.destroy();
+    }
+    logger.info("Server shut down gracefully");
+  } catch (error) {
+    logger.error("Error during graceful shutdown:", error);
+    process.exit(1);
   }
+  process.exit(0);
 });
 
-// Graceful shutdown on uncaught exception
-process.on("uncaughtException", async (err: Error) => {
-  logger.error(`UNCAUGHT EXCEPTION!`, err);
+process.on("SIGINT", async () => {
+  logger.info("Received SIGINT signal. Killing node process...");
   try {
-    // if (server) {
-    //   await server.destroy();
-    // }
-  } finally {
-    // logger.info("Exiting process...");
-    // process.exit(1);
+    if (server) {
+      await server.destroy();
+    }
+    logger.info("Server shut down gracefully");
+  } catch (error) {
+    logger.error("Error during graceful shutdown:", error);
+    process.exit(1);
   }
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (err: Error) => {
+  const error = new AppError(err);
+  logger.error(`[UNHANDLED_REJECTION]`, error);
+});
+
+process.on("uncaughtException", (err: Error) => {
+  const error = new AppError(err);
+  logger.error(`[UNCAUGHT_EXCEPTION]`, error);
 });

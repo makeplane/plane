@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from django.urls import path
 
 from plane.app.views import (
@@ -29,6 +33,16 @@ urlpatterns = [
         "users/me/settings/",
         UserEndpoint.as_view({"get": "retrieve_user_settings"}),
         name="users",
+    ),
+    path(
+        "users/me/email/generate-code/",
+        UserEndpoint.as_view({"post": "generate_email_verification_code"}),
+        name="user-email-verify-code",
+    ),
+    path(
+        "users/me/email/",
+        UserEndpoint.as_view({"patch": "update_email"}),
+        name="user-email-update",
     ),
     # Profile
     path("users/me/profile/", ProfileEndpoint.as_view(), name="accounts"),

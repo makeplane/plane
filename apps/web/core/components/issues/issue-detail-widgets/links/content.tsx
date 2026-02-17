@@ -1,4 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React from "react";
 import type { TIssueServiceType } from "@plane/types";
@@ -15,7 +20,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const IssueLinksCollapsibleContent: FC<Props> = (props) => {
+export function IssueLinksCollapsibleContent(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled, issueServiceType } = props;
 
   // helper
@@ -29,4 +34,4 @@ export const IssueLinksCollapsibleContent: FC<Props> = (props) => {
       issueServiceType={issueServiceType}
     />
   );
-};
+}

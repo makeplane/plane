@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 // types
 import { useTranslation } from "@plane/i18n";
@@ -14,7 +20,7 @@ type Props = {
   onSubmit: () => Promise<void>;
 };
 
-export const DeclineIssueModal: React.FC<Props> = (props) => {
+export function DeclineIssueModal(props: Props) {
   const { isOpen, onClose, data, onSubmit } = props;
   // states
   const [isDeclining, setIsDeclining] = useState(false);
@@ -45,7 +51,7 @@ export const DeclineIssueModal: React.FC<Props> = (props) => {
       content={
         <>
           Are you sure you want to decline work item{" "}
-          <span className="break-words font-medium text-custom-text-100">
+          <span className="break-words font-medium text-primary">
             {projectDetails?.identifier}-{data?.sequence_id}
           </span>
           {""}? This action cannot be undone.
@@ -57,4 +63,4 @@ export const DeclineIssueModal: React.FC<Props> = (props) => {
       }}
     />
   );
-};
+}

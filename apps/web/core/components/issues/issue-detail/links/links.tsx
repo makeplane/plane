@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // computed
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -14,7 +19,7 @@ export type TIssueLinkList = {
   disabled?: boolean;
 };
 
-export const IssueLinkList: FC<TIssueLinkList> = observer((props) => {
+export const IssueLinkList = observer(function IssueLinkList(props: TIssueLinkList) {
   // props
   const { issueId, linkOperations, disabled = false } = props;
   // hooks

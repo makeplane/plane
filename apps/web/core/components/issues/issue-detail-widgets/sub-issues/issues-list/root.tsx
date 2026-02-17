@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -29,7 +35,7 @@ type Props = {
   storeType: EIssuesStoreType;
 };
 
-export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
+export const SubIssuesListRoot = observer(function SubIssuesListRoot(props: Props) {
   const {
     workspaceSlug,
     projectId,
@@ -96,7 +102,7 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
           icon={<ListFilter />}
           customClassName={storeType !== EIssuesStoreType.EPIC ? "border-none" : ""}
           actionElement={
-            <Button variant="neutral-primary" size="sm" onClick={() => resetFilters(rootIssueId)}>
+            <Button variant="secondary" onClick={() => resetFilters(rootIssueId)}>
               {t("sub_work_item.empty_state.list_filters.action")}
             </Button>
           }

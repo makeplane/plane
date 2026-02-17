@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -15,7 +19,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 
 const PER_PAGE = 100;
 
-const ProfileActivityPage = observer(() => {
+function ProfileActivityPage() {
   // states
   const [pageCount, setPageCount] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -53,14 +57,14 @@ const ProfileActivityPage = observer(() => {
       <PageHead title="Profile - Activity" />
       <div className="flex h-full w-full flex-col overflow-hidden py-5">
         <div className="flex items-center justify-between gap-2 px-5 md:px-9">
-          <h3 className="text-lg font-medium">{t("profile.stats.recent_activity.title")}</h3>
+          <h3 className="text-16 font-medium">{t("profile.stats.recent_activity.title")}</h3>
           {canDownloadActivity && <DownloadActivityButton />}
         </div>
         <div className="vertical-scrollbar scrollbar-md flex h-full flex-col overflow-y-auto px-5 md:px-9">
           {activityPages}
           {pageCount < totalPages && resultsCount !== 0 && (
-            <div className="flex w-full items-center justify-center text-xs">
-              <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
+            <div className="flex w-full items-center justify-center text-11">
+              <Button variant="secondary" onClick={handleLoadMore}>
                 {t("common.load_more")}
               </Button>
             </div>
@@ -69,6 +73,6 @@ const ProfileActivityPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default ProfileActivityPage;
+export default observer(ProfileActivityPage);

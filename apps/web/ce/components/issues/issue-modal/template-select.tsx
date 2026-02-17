@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export type TWorkItemTemplateDropdownSize = "xs" | "sm";
 
 export type TWorkItemTemplateSelect = {
@@ -13,4 +19,6 @@ export type TWorkItemTemplateSelect = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const WorkItemTemplateSelect = (props: TWorkItemTemplateSelect) => <></>;
+export function WorkItemTemplateSelect(props: TWorkItemTemplateSelect) {
+  return <></>;
+}

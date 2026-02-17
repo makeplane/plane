@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
@@ -202,7 +208,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
       if (isEmpty(this.filters) || isEmpty(this.filters[cycleId])) return;
 
       const _filters = {
-        richFilters: this.filters[cycleId].richFilters as TWorkItemFilterExpression,
+        richFilters: this.filters[cycleId].richFilters,
         displayFilters: this.filters[cycleId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[cycleId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[cycleId].kanbanFilters as TIssueKanbanFilters,
@@ -243,7 +249,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
           });
 
           if (this.getShouldClearIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.cycleIssues.clear(true, true); // clear issues for local store when some filters like layout changes
+            this.rootIssueStore.cycleIssues.clear(true); // clear issues for local store when some filters like layout changes
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {

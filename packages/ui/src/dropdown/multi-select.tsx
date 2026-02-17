@@ -1,6 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Combobox } from "@headlessui/react";
 import { sortBy } from "lodash-es";
-import React, { FC, useMemo, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -9,9 +16,9 @@ import { useDropdownKeyPressed } from "../hooks/use-dropdown-key-pressed";
 import { cn } from "../utils";
 import { DropdownButton } from "./common";
 import { DropdownOptions } from "./common/options";
-import { IMultiSelectDropdown } from "./dropdown";
+import type { IMultiSelectDropdown } from "./dropdown";
 
-export const MultiSelectDropdown: FC<IMultiSelectDropdown> = (props) => {
+export function MultiSelectDropdown(props: IMultiSelectDropdown) {
   const {
     value,
     onChange,
@@ -137,7 +144,7 @@ export const MultiSelectDropdown: FC<IMultiSelectDropdown> = (props) => {
         <Combobox.Options className="fixed z-10" static>
           <div
             className={cn(
-              "my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none",
+              "my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none",
               optionsContainerClassName
             )}
             ref={setPopperElement}
@@ -164,4 +171,4 @@ export const MultiSelectDropdown: FC<IMultiSelectDropdown> = (props) => {
       )}
     </Combobox>
   );
-};
+}

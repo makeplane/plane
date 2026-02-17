@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
@@ -19,7 +23,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import HeaderFilters from "./filters";
 import { ProjectSearch } from "./search-projects";
 
-export const ProjectsBaseHeader = observer(() => {
+export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
   // i18n
   const { t } = useTranslation();
   // store hooks
@@ -42,7 +46,7 @@ export const ProjectsBaseHeader = observer(() => {
             component={
               <BreadcrumbLink
                 label={t("workspace_projects.label", { count: 2 })}
-                icon={<ProjectIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<ProjectIcon className="h-4 w-4 text-tertiary" />}
               />
             }
           />
@@ -56,7 +60,8 @@ export const ProjectsBaseHeader = observer(() => {
         </div>
         {isAuthorizedUser && !isArchived ? (
           <Button
-            size="sm"
+            variant="primary"
+            size="lg"
             onClick={() => {
               toggleCreateProjectModal(true);
             }}

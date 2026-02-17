@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -13,7 +17,7 @@ import { useStickyOperations } from "@/components/stickies/sticky/use-operations
 // hooks
 import { useSticky } from "@/hooks/use-stickies";
 
-export const WorkspaceStickyHeader = observer(() => {
+export const WorkspaceStickyHeader = observer(function WorkspaceStickyHeader() {
   const { workspaceSlug } = useParams();
   // hooks
   const { creatingSticky, toggleShowNewSticky } = useSticky();
@@ -29,7 +33,7 @@ export const WorkspaceStickyHeader = observer(() => {
                 component={
                   <BreadcrumbLink
                     label={`Stickies`}
-                    icon={<RecentStickyIcon className="size-5 rotate-90 text-custom-text-200" />}
+                    icon={<RecentStickyIcon className="size-5 rotate-90 text-secondary" />}
                   />
                 }
               />
@@ -41,8 +45,7 @@ export const WorkspaceStickyHeader = observer(() => {
           <StickySearch />
           <Button
             variant="primary"
-            size="sm"
-            className="items-center gap-1"
+            size="lg"
             onClick={() => {
               toggleShowNewSticky(true);
               stickyOperations.create();

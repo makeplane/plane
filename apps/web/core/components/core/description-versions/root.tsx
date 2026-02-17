@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -27,7 +33,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const DescriptionVersionsRoot: React.FC<Props> = observer((props) => {
+export const DescriptionVersionsRoot = observer(function DescriptionVersionsRoot(props: Props) {
   const { className, entityInformation, fetchHandlers, handleRestore, projectId, workspaceSlug } = props;
   // states
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -1,15 +1,21 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { mergeAttributes } from "@tiptap/core";
 import { Image as BaseImageExtension } from "@tiptap/extension-image";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // local imports
-import {
-  type CustomImageExtensionType,
-  type CustomImageExtensionStorage,
-  ECustomImageAttributeNames,
-  type InsertImageComponentProps,
+import { ECustomImageAttributeNames } from "./types";
+import type {
   CustomImageExtensionOptions,
   TCustomImageAttributes,
+  CustomImageExtensionType,
+  CustomImageExtensionStorage,
+  InsertImageComponentProps,
 } from "./types";
 import { DEFAULT_CUSTOM_IMAGE_ATTRIBUTES } from "./utils";
 

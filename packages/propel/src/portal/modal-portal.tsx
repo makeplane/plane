@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useCallback, useMemo, useRef, useEffect } from "react";
 import { cn } from "../utils";
 import {
@@ -9,7 +15,7 @@ import {
   MODAL_Z_INDEX,
 } from "./constants";
 import { PortalWrapper } from "./portal-wrapper";
-import { ModalPortalProps } from "./types";
+import type { ModalPortalProps } from "./types";
 
 /**
  * @param children - The modal content to render
@@ -26,7 +32,7 @@ import { ModalPortalProps } from "./types";
  * @param closeOnOverlayClick - Whether clicking overlay closes modal
  * @param closeOnEscape - Whether pressing Escape closes modal
  */
-export const ModalPortal: React.FC<ModalPortalProps> = ({
+export function ModalPortal({
   children,
   isOpen,
   onClose,
@@ -40,7 +46,7 @@ export const ModalPortal: React.FC<ModalPortalProps> = ({
   showOverlay = true,
   closeOnOverlayClick = true,
   closeOnEscape = true,
-}) => {
+}: ModalPortalProps) {
   const contentRef = useRef<HTMLDivElement>(null);
 
   // Memoized overlay click handler
@@ -95,7 +101,7 @@ export const ModalPortal: React.FC<ModalPortalProps> = ({
     >
       {showOverlay && (
         <div
-          className={cn("absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300", overlayClassName)}
+          className={cn("absolute inset-0 bg-black/50 transition-colors duration-300", overlayClassName)}
           onClick={handleOverlayClick}
           aria-hidden="true"
         />
@@ -107,4 +113,4 @@ export const ModalPortal: React.FC<ModalPortalProps> = ({
   );
 
   return <PortalWrapper portalId={portalId}>{content}</PortalWrapper>;
-};
+}

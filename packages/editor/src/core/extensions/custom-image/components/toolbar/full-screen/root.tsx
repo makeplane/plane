@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Maximize } from "lucide-react";
 import { useEffect, useState } from "react";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // local imports
 import { ImageFullScreenModal } from "./modal";
 
@@ -17,7 +23,7 @@ type Props = {
   toggleToolbarViewStatus: (val: boolean) => void;
 };
 
-export const ImageFullScreenActionRoot: React.FC<Props> = (props) => {
+export function ImageFullScreenActionRoot(props: Props) {
   const { image, isTouchDevice, toggleToolbarViewStatus } = props;
   // states
   const [isFullScreenEnabled, setIsFullScreenEnabled] = useState(false);
@@ -47,7 +53,7 @@ export const ImageFullScreenActionRoot: React.FC<Props> = (props) => {
             e.stopPropagation();
             setIsFullScreenEnabled(true);
           }}
-          className="flex-shrink-0 h-full grid place-items-center text-white/60 hover:text-white transition-colors"
+          className="flex-shrink-0 h-full grid place-items-center text-on-color/60 hover:text-on-color transition-colors"
           aria-label="View image in full screen"
         >
           <Maximize className="size-3" />
@@ -55,4 +61,4 @@ export const ImageFullScreenActionRoot: React.FC<Props> = (props) => {
       </Tooltip>
     </>
   );
-};
+}

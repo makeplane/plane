@@ -1,6 +1,13 @@
-import { Download, ExternalLink, Minus, Plus, X } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { Download, Minus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
+import { NewTabIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 
@@ -19,7 +26,7 @@ type Props = {
   width: string;
 };
 
-const ImageFullScreenModalWithoutPortal = (props: Props) => {
+function ImageFullScreenModalWithoutPortal(props: Props) {
   const { aspectRatio, isFullScreenEnabled, isTouchDevice, downloadSrc, src, toggleFullScreenMode, width } = props;
   // refs
   const dragStart = useRef({ x: 0, y: 0 });
@@ -212,7 +219,7 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
           className="absolute top-10 right-10 size-8 grid place-items-center"
           aria-label="Close image viewer"
         >
-          <X className="size-8 text-white/60 hover:text-white transition-colors" />
+          <CloseIcon className="size-8 text-white/60 hover:text-white transition-colors" />
         </button>
         <img
           ref={setImageRef}
@@ -230,7 +237,7 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
           }}
           onMouseDown={handleMouseDown}
         />
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1 rounded-md border border-white/20 py-2 divide-x divide-white/20 bg-black">
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1 rounded-md border border-subtle-1 py-2 divide-x divide-subtle-1 bg-black">
           <div className="flex items-center">
             <button
               type="button"
@@ -247,7 +254,7 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
             >
               <Minus className="size-4" />
             </button>
-            <span className="text-sm w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
+            <span className="text-13 w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
             <button
               type="button"
               onClick={(e) => {
@@ -261,7 +268,7 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
               disabled={magnification >= MAX_ZOOM}
               aria-label="Zoom in"
             >
-              <Plus className="size-4" />
+              <PlusIcon className="size-4" />
             </button>
           </div>
           {!isTouchDevice && (
@@ -281,16 +288,16 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
               className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
               aria-label="Open image in new tab"
             >
-              <ExternalLink className="size-4" />
+              <NewTabIcon className="size-4" />
             </button>
           )}
         </div>
       </div>
     </div>
   );
-};
+}
 
-export const ImageFullScreenModal: React.FC<Props> = (props) => {
+export function ImageFullScreenModal(props: Props) {
   let modal = <ImageFullScreenModalWithoutPortal {...props} />;
   const portal = document.querySelector("#editor-portal");
   if (portal) {
@@ -302,4 +309,4 @@ export const ImageFullScreenModal: React.FC<Props> = (props) => {
     }
   }
   return modal;
-};
+}

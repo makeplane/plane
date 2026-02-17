@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import Link from "next/link";
 import { cn } from "@plane/utils";
 
@@ -12,6 +18,7 @@ interface AppSidebarItemData {
   isActive?: boolean;
   onClick?: () => void;
   disabled?: boolean;
+  showLabel?: boolean;
 }
 
 interface AppSidebarItemProps {
@@ -47,20 +54,20 @@ interface AppSidebarButtonItemProps {
 // ============================================================================
 
 const styles = {
-  base: "group flex flex-col gap-0.5 items-center justify-center text-custom-text-300",
-  icon: "flex items-center justify-center gap-2 size-8 rounded-md text-custom-text-300",
-  iconActive: "bg-custom-background-80 text-custom-text-200",
-  iconInactive: "group-hover:text-custom-text-200 group-hover:bg-custom-background-80",
-  label: "text-xs font-semibold",
-  labelActive: "text-custom-text-200",
-  labelInactive: "group-hover:text-custom-text-200 text-custom-text-300",
+  base: "group flex flex-col gap-0.5 items-center justify-center text-tertiary",
+  icon: "flex items-center justify-center gap-2 size-8 rounded-md text-tertiary",
+  iconActive: "bg-layer-transparent-selected text-secondary !text-icon-primary",
+  iconInactive: "group-hover:text-icon-secondary group-hover:bg-layer-transparent-hover !text-icon-tertiary",
+  label: "text-11 font-medium",
+  labelActive: "text-secondary",
+  labelInactive: "group-hover:text-secondary text-tertiary",
 } as const;
 
 // ============================================================================
 // SUB-COMPONENTS
 // ============================================================================
 
-const AppSidebarItemLabel: React.FC<AppSidebarItemLabelProps> = ({ highlight = false, label }) => {
+function AppSidebarItemLabel({ highlight = false, label }: AppSidebarItemLabelProps) {
   if (!label) return null;
 
   return (
@@ -73,9 +80,9 @@ const AppSidebarItemLabel: React.FC<AppSidebarItemLabelProps> = ({ highlight = f
       {label}
     </span>
   );
-};
+}
 
-const AppSidebarItemIcon: React.FC<AppSidebarItemIconProps> = ({ icon, highlight }) => {
+function AppSidebarItemIcon({ icon, highlight }: AppSidebarItemIconProps) {
   if (!icon) return null;
 
   return (
@@ -88,9 +95,9 @@ const AppSidebarItemIcon: React.FC<AppSidebarItemIconProps> = ({ icon, highlight
       {icon}
     </div>
   );
-};
+}
 
-const AppSidebarLinkItem: React.FC<AppSidebarLinkItemProps> = ({ href, children, className }) => {
+function AppSidebarLinkItem({ href, children, className }: AppSidebarLinkItemProps) {
   if (!href) return null;
 
   return (
@@ -98,39 +105,36 @@ const AppSidebarLinkItem: React.FC<AppSidebarLinkItemProps> = ({ href, children,
       {children}
     </Link>
   );
-};
+}
 
-const AppSidebarButtonItem: React.FC<AppSidebarButtonItemProps> = ({
-  children,
-  onClick,
-  disabled = false,
-  className,
-}) => (
-  <button className={cn(styles.base, className)} onClick={onClick} disabled={disabled} type="button">
-    {children}
-  </button>
-);
+function AppSidebarButtonItem({ children, onClick, disabled = false, className }: AppSidebarButtonItemProps) {
+  return (
+    <button className={cn(styles.base, className)} onClick={onClick} disabled={disabled} type="button">
+      {children}
+    </button>
+  );
+}
 
 // ============================================================================
 // MAIN COMPONENT
 // ============================================================================
 
-type AppSidebarItemComponent = React.FC<AppSidebarItemProps> & {
+export type AppSidebarItemComponent = React.FC<AppSidebarItemProps> & {
   Label: React.FC<AppSidebarItemLabelProps>;
   Icon: React.FC<AppSidebarItemIconProps>;
   Link: React.FC<AppSidebarLinkItemProps>;
   Button: React.FC<AppSidebarButtonItemProps>;
 };
 
-const AppSidebarItem: AppSidebarItemComponent = ({ variant = "link", item }) => {
+function AppSidebarItem({ variant = "link", item }: AppSidebarItemProps) {
   if (!item) return null;
 
-  const { icon, isActive, label, href, onClick, disabled } = item;
+  const { icon, isActive, label, href, onClick, disabled, showLabel = true } = item;
 
   const commonItems = (
     <>
       <AppSidebarItemIcon icon={icon} highlight={isActive} />
-      <AppSidebarItemLabel highlight={isActive} label={label} />
+      {showLabel && <AppSidebarItemLabel highlight={isActive} label={label} />}
     </>
   );
 
@@ -143,7 +147,7 @@ const AppSidebarItem: AppSidebarItemComponent = ({ variant = "link", item }) => 
       {commonItems}
     </AppSidebarButtonItem>
   );
-};
+}
 
 // ============================================================================
 // COMPOUND COMPONENT ASSIGNMENT

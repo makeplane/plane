@@ -1,13 +1,19 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
-import { MoreHorizontal, ArchiveIcon, ChevronRight, Settings } from "lucide-react";
+import { MoreHorizontal, ArchiveIcon, Settings } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -19,7 +25,9 @@ export type SidebarWorkspaceMenuHeaderProps = {
   toggleWorkspaceMenu: (value: boolean) => void;
 };
 
-export const SidebarWorkspaceMenuHeader: FC<SidebarWorkspaceMenuHeaderProps> = observer((props) => {
+export const SidebarWorkspaceMenuHeader = observer(function SidebarWorkspaceMenuHeader(
+  props: SidebarWorkspaceMenuHeaderProps
+) {
   const { isWorkspaceMenuOpen, toggleWorkspaceMenu } = props;
   // state
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -38,10 +46,10 @@ export const SidebarWorkspaceMenuHeader: FC<SidebarWorkspaceMenuHeaderProps> = o
   const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN] as any, EUserPermissionsLevel.WORKSPACE);
 
   return (
-    <div className="flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded mt-2.5">
+    <div className="flex px-2 bg-surface-1 group/workspace-button hover:bg-surface-2 rounded-sm mt-2.5">
       <Disclosure.Button
         as="button"
-        className="flex-1 sticky top-0  z-10  w-full  py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400  text-sm font-semibold"
+        className="flex-1 sticky top-0  z-10  w-full  py-1.5 flex items-center justify-between gap-1 text-placeholder  text-13 font-semibold"
         onClick={() => toggleWorkspaceMenu(!isWorkspaceMenuOpen)}
       >
         <span>{t("workspace")}</span>
@@ -50,7 +58,7 @@ export const SidebarWorkspaceMenuHeader: FC<SidebarWorkspaceMenuHeaderProps> = o
         customButton={
           <span
             ref={actionSectionRef}
-            className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded my-auto"
+            className="grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm my-auto"
             onClick={() => {
               setIsMenuActive(!isMenuActive);
             }}
@@ -85,13 +93,13 @@ export const SidebarWorkspaceMenuHeader: FC<SidebarWorkspaceMenuHeaderProps> = o
       </CustomMenu>
       <Disclosure.Button
         as="button"
-        className="sticky top-0 z-10 group/workspace-button px-0.5 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold"
+        className="sticky top-0 z-10 group/workspace-button px-0.5 py-1.5 flex items-center justify-between gap-1 text-placeholder hover:bg-surface-2 rounded-sm text-11 font-semibold"
         onClick={() => toggleWorkspaceMenu(!isWorkspaceMenuOpen)}
       >
         {" "}
-        <span className="flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded hover:bg-custom-sidebar-background-80">
-          <ChevronRight
-            className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+        <span className="flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded-sm hover:bg-layer-1">
+          <ChevronRightIcon
+            className={cn("size-4 flex-shrink-0 text-placeholder transition-transform", {
               "rotate-90": isWorkspaceMenuOpen,
             })}
           />

@@ -1,4 +1,8 @@
-"use-client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import { useState } from "react";
@@ -16,7 +20,7 @@ type TInboxIssueCreateModalRoot = {
   handleModalClose: () => void;
 };
 
-export const InboxIssueCreateModalRoot: FC<TInboxIssueCreateModalRoot> = (props) => {
+export function InboxIssueCreateModalRoot(props: TInboxIssueCreateModalRoot) {
   const { workspaceSlug, projectId, modalState, handleModalClose } = props;
   // states
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
@@ -46,4 +50,4 @@ export const InboxIssueCreateModalRoot: FC<TInboxIssueCreateModalRoot> = (props)
       />
     </ModalCore>
   );
-};
+}

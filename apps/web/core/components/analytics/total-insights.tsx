@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane package imports
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -44,10 +50,13 @@ const getInsightLabel = (
   return `${prefix}${baseTranslation}${suffix}`;
 };
 
-const TotalInsights: React.FC<{
+const TotalInsights = observer(function TotalInsights({
+  analyticsType,
+  peekView,
+}: {
   analyticsType: TAnalyticsTabsBase;
   peekView?: boolean;
-}> = observer(({ analyticsType, peekView }) => {
+}) {
   const params = useParams();
   const workspaceSlug = params.workspaceSlug.toString();
   const { t } = useTranslation();

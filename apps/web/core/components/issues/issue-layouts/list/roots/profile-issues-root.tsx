@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -8,7 +14,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";
 
-export const ProfileIssuesListLayout: FC = observer(() => {
+export const ProfileIssuesListLayout = observer(function ProfileIssuesListLayout() {
   // router
   const { workspaceSlug, profileViewId } = useParams();
   // store

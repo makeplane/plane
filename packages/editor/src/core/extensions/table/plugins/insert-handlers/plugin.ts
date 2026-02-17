@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 // local imports
 import { COL_DRAG_MARKER_CLASS, DROP_MARKER_CLASS, ROW_DRAG_MARKER_CLASS } from "../drag-handles/marker-utils";
-import { createColumnInsertButton, createRowInsertButton, findAllTables, TableInfo } from "./utils";
+import type { TableInfo } from "./utils";
+import { createColumnInsertButton, createRowInsertButton, findAllTables } from "./utils";
 
 const TABLE_INSERT_PLUGIN_KEY = new PluginKey("table-insert");
 

@@ -1,6 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -19,7 +22,7 @@ type TGroupList = {
   stateItemClassName?: string;
 };
 
-export const GroupList: FC<TGroupList> = observer((props) => {
+export const GroupList = observer(function GroupList(props: TGroupList) {
   const {
     groupedStates,
     stateOperationsCallbacks,

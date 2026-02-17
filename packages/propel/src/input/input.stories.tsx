@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Input } from "./index";
 
@@ -48,11 +54,11 @@ const createShowcaseStory = (
   render: () => (
     <div className="space-y-4 w-[400px]">
       <div className="space-y-2">
-        <h3 className="text-sm font-medium">{title}</h3>
+        <h3 className="text-13 font-medium">{title}</h3>
         <div className="space-y-2">
           {sections.map(({ label, props }, index) => (
             <div key={index} className="w-full">
-              <label className="text-xs text-gray-500">{label}</label>
+              <label className="text-11 text-gray-500">{label}</label>
               <Input className="w-full" {...props} />
             </div>
           ))}

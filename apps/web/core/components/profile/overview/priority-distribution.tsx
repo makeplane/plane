@@ -1,15 +1,16 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IUserProfileData } from "@plane/types";
 import { Loader, Card } from "@plane/ui";
 import { capitalizeFirstLetter } from "@plane/utils";
-// components
-import { ProfileEmptyState } from "@/components/ui/profile-empty-state";
-// assets
-import emptyBarGraph from "@/public/empty-state/empty_bar_graph.svg";
 
 type Props = {
   userProfile: IUserProfileData | undefined;
@@ -23,11 +24,11 @@ const priorityColors = {
   none: "#e5e5e5",
 };
 
-export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) => {
+export function ProfilePriorityDistribution({ userProfile }: Props) {
   const { t } = useTranslation();
   return (
     <div className="flex flex-col space-y-2">
-      <h3 className="text-lg font-medium">{t("profile.stats.priority_distribution.title")}</h3>
+      <h3 className="text-16 font-medium">{t("profile.stats.priority_distribution.title")}</h3>
       {userProfile ? (
         <Card>
           {userProfile.priority_distribution.length > 0 ? (
@@ -62,13 +63,11 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
               barSize={20}
             />
           ) : (
-            <div className="flex-grow p-7">
-              <ProfileEmptyState
-                title={t("no_data_yet")}
-                description={t("profile.stats.priority_distribution.empty")}
-                image={emptyBarGraph}
-              />
-            </div>
+            <EmptyStateCompact
+              assetKey="priority"
+              assetClassName="size-20"
+              title={t("workspace_empty_state.your_work_by_priority.title")}
+            />
           )}
         </Card>
       ) : (
@@ -84,4 +83,4 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
       )}
     </div>
   );
-};
+}

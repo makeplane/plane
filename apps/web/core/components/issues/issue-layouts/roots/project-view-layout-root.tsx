@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -5,8 +11,6 @@ import useSWR from "swr";
 // plane constants
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-// components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
@@ -21,7 +25,7 @@ import { ProjectViewKanBanLayout } from "../kanban/roots/project-view-root";
 import { ProjectViewListLayout } from "../list/roots/project-view-root";
 import { ProjectViewSpreadsheetLayout } from "../spreadsheet/roots/project-view-root";
 
-const ProjectViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined; viewId: string }) => {
+function ProjectViewIssueLayout(props: { activeLayout: EIssueLayoutTypes | undefined; viewId: string }) {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <ProjectViewListLayout />;
@@ -36,9 +40,9 @@ const ProjectViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undef
     default:
       return null;
   }
-};
+}
 
-export const ProjectViewLayoutRoot: React.FC = observer(() => {
+export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, viewId: routerViewId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug?.toString() : undefined;
@@ -60,7 +64,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
       }
     : undefined;
 
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && projectId && viewId ? `PROJECT_VIEW_ISSUES_${workspaceSlug}_${projectId}_${viewId}` : null,
     async () => {
       if (workspaceSlug && projectId && viewId) {
@@ -78,16 +82,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
     [issuesFilter, workspaceSlug, viewId]
   );
 
-  if (!workspaceSlug || !projectId || !viewId) return <></>;
-
-  if (isLoading && !workItemFilters) {
-    return (
-      <div className="relative flex h-screen w-full items-center justify-center">
-        <LogoSpinner />
-      </div>
-    );
-  }
-
+  if (!workspaceSlug || !projectId || !viewId || !workItemFilters) return <></>;
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.PROJECT_VIEW}>
       <ProjectLevelWorkItemFiltersHOC

@@ -1,36 +1,39 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo } from "react";
-import {
-  AtSign,
-  Briefcase,
-  Calendar,
-  CalendarCheck2,
-  CalendarClock,
-  CircleUserRound,
-  SignalHigh,
-  Tag,
-  Users,
-} from "lucide-react";
+import { AtSign, Briefcase } from "lucide-react";
 // plane imports
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
+  CalendarLayoutIcon,
   CycleGroupIcon,
   CycleIcon,
   ModuleIcon,
-  DoubleCircleIcon,
+  StatePropertyIcon,
   PriorityIcon,
   StateGroupIcon,
+  MembersPropertyIcon,
+  LabelPropertyIcon,
+  StartDatePropertyIcon,
+  DueDatePropertyIcon,
+  UserCirclePropertyIcon,
+  PriorityPropertyIcon,
 } from "@plane/propel/icons";
 import type {
   ICycle,
   IState,
   IUserLite,
   TFilterConfig,
-  TFilterValue,
   IIssueLabel,
   IModule,
   IProject,
   TWorkItemFilterProperty,
 } from "@plane/types";
-import { Avatar, Logo } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 import {
   getAssigneeFilterConfig,
   getCreatedAtFilterConfig,
@@ -77,9 +80,9 @@ export type TUseWorkItemFiltersConfigProps = {
 
 export type TWorkItemFiltersConfig = {
   areAllConfigsInitialized: boolean;
-  configs: TFilterConfig<TWorkItemFilterProperty, TFilterValue>[];
+  configs: TFilterConfig<TWorkItemFilterProperty>[];
   configMap: {
-    [key in TWorkItemFilterProperty]?: TFilterConfig<TWorkItemFilterProperty, TFilterValue>;
+    [key in TWorkItemFilterProperty]?: TFilterConfig<TWorkItemFilterProperty>;
   };
   isFilterEnabled: (key: TWorkItemFilterProperty) => boolean;
   members: IUserLite[];
@@ -149,7 +152,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getStateGroupFilterConfig<TWorkItemFilterProperty>("state_group")({
         isEnabled: isFilterEnabled("state_group"),
-        filterIcon: DoubleCircleIcon,
+        filterIcon: StatePropertyIcon,
         getOptionIcon: (stateGroupKey) => <StateGroupIcon stateGroup={stateGroupKey} />,
         ...operatorConfigs,
       }),
@@ -161,7 +164,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getStateFilterConfig<TWorkItemFilterProperty>("state_id")({
         isEnabled: isFilterEnabled("state_id") && workItemStates !== undefined,
-        filterIcon: DoubleCircleIcon,
+        filterIcon: StatePropertyIcon,
         getOptionIcon: (state) => <StateGroupIcon stateGroup={state.group} color={state.color} />,
         states: workItemStates ?? [],
         ...operatorConfigs,
@@ -174,7 +177,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getLabelFilterConfig<TWorkItemFilterProperty>("label_id")({
         isEnabled: isFilterEnabled("label_id") && workItemLabels !== undefined,
-        filterIcon: Tag,
+        filterIcon: LabelPropertyIcon,
         labels: workItemLabels ?? [],
         getOptionIcon: (color) => (
           <span className="flex flex-shrink-0 size-2.5 rounded-full" style={{ backgroundColor: color }} />
@@ -215,7 +218,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getAssigneeFilterConfig<TWorkItemFilterProperty>("assignee_id")({
         isEnabled: isFilterEnabled("assignee_id") && members !== undefined,
-        filterIcon: Users,
+        filterIcon: MembersPropertyIcon,
         members: members ?? [],
         getOptionIcon: (memberDetails) => (
           <Avatar
@@ -255,7 +258,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getCreatedByFilterConfig<TWorkItemFilterProperty>("created_by_id")({
         isEnabled: isFilterEnabled("created_by_id") && members !== undefined,
-        filterIcon: CircleUserRound,
+        filterIcon: UserCirclePropertyIcon,
         members: members ?? [],
         getOptionIcon: (memberDetails) => (
           <Avatar
@@ -275,7 +278,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getSubscriberFilterConfig<TWorkItemFilterProperty>("subscriber_id")({
         isEnabled: isFilterEnabled("subscriber_id") && members !== undefined,
-        filterIcon: Users,
+        filterIcon: MembersPropertyIcon,
         members: members ?? [],
         getOptionIcon: (memberDetails) => (
           <Avatar
@@ -295,7 +298,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getPriorityFilterConfig<TWorkItemFilterProperty>("priority")({
         isEnabled: isFilterEnabled("priority"),
-        filterIcon: SignalHigh,
+        filterIcon: PriorityPropertyIcon,
         getOptionIcon: (priority) => <PriorityIcon priority={priority} />,
         ...operatorConfigs,
       }),
@@ -307,7 +310,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getStartDateFilterConfig<TWorkItemFilterProperty>("start_date")({
         isEnabled: true,
-        filterIcon: CalendarClock,
+        filterIcon: StartDatePropertyIcon,
         ...operatorConfigs,
       }),
     [operatorConfigs]
@@ -318,7 +321,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getTargetDateFilterConfig<TWorkItemFilterProperty>("target_date")({
         isEnabled: true,
-        filterIcon: CalendarCheck2,
+        filterIcon: DueDatePropertyIcon,
         ...operatorConfigs,
       }),
     [operatorConfigs]
@@ -329,7 +332,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getCreatedAtFilterConfig<TWorkItemFilterProperty>("created_at")({
         isEnabled: true,
-        filterIcon: Calendar,
+        filterIcon: CalendarLayoutIcon,
         ...operatorConfigs,
       }),
     [operatorConfigs]
@@ -340,7 +343,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getUpdatedAtFilterConfig<TWorkItemFilterProperty>("updated_at")({
         isEnabled: true,
-        filterIcon: Calendar,
+        filterIcon: CalendarLayoutIcon,
         ...operatorConfigs,
       }),
     [operatorConfigs]

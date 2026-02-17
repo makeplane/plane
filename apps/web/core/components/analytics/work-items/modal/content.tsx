@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
@@ -20,7 +26,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
+export const WorkItemsModalMainContent = observer(function WorkItemsModalMainContent(props: Props) {
   const { projectDetails, cycleDetails, moduleDetails, fullScreen, isEpic } = props;
   const { updateSelectedProjects, updateSelectedCycle, updateSelectedModule, updateIsPeekView } = useAnalytics();
   const [isModalConfigured, setIsModalConfigured] = useState(false);

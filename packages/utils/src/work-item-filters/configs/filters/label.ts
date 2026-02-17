@@ -1,20 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
-import {
-  EQUALITY_OPERATOR,
-  IIssueLabel,
-  TFilterProperty,
-  COLLECTION_OPERATOR,
-  TSupportedOperators,
-} from "@plane/types";
+import type { IIssueLabel, TFilterProperty, TSupportedOperators } from "@plane/types";
+import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
-import {
-  createFilterConfig,
-  TCreateFilterConfigParams,
-  IFilterIconConfig,
-  TCreateFilterConfig,
-  getMultiSelectConfig,
-  createOperatorConfigEntry,
-} from "../../../rich-filters";
+import type { TCreateFilterConfigParams, IFilterIconConfig, TCreateFilterConfig } from "../../../rich-filters";
+import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";
 
 /**
  * Label filter specific params
@@ -56,7 +51,7 @@ export const getLabelMultiSelectConfig = (params: TCreateLabelFilterParams, sing
 export const getLabelFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateLabelFilterParams> =>
   (params: TCreateLabelFilterParams) =>
-    createFilterConfig<P, string>({
+    createFilterConfig<P>({
       id: key,
       label: "Label",
       ...params,

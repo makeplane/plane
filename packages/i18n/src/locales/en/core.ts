@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Projects",
@@ -75,7 +81,7 @@ export default {
       },
       unique_code: {
         label: "Unique code",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Paste the code sent to your email",
         requesting_new_code: "Requesting new code",
         sending_code: "Sending code",

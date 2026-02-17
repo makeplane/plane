@@ -1,8 +1,13 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import type { TIssueServiceType } from "@plane/types";
 // hooks
@@ -14,7 +19,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const IssueLinksActionButton: FC<Props> = observer((props) => {
+export const IssueLinksActionButton = observer(function IssueLinksActionButton(props: Props) {
   const { customButton, disabled = false, issueServiceType } = props;
   // store hooks
   const { toggleIssueLinkModal } = useIssueDetail(issueServiceType);
@@ -28,7 +33,7 @@ export const IssueLinksActionButton: FC<Props> = observer((props) => {
 
   return (
     <button type="button" onClick={handleOnClick} disabled={disabled}>
-      {customButton ? customButton : <Plus className="h-4 w-4" />}
+      {customButton ? customButton : <PlusIcon className="h-4 w-4" />}
     </button>
   );
 });

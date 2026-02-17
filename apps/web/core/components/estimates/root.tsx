@@ -1,19 +1,26 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+// components
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
+import { SettingsHeading } from "@/components/settings/heading";
 // hooks
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import { UpdateEstimateModal } from "@/plane-web/components/estimates";
 // local imports
-import { SettingsHeading } from "../settings/heading";
 import { CreateEstimateModal } from "./create/modal";
 import { DeleteEstimateModal } from "./delete/modal";
-import { EstimateEmptyScreen } from "./empty-screen";
 import { EstimateDisableSwitch } from "./estimate-disable-switch";
 import { EstimateList } from "./estimate-list";
 import { EstimateLoaderScreen } from "./loader-screen";
@@ -24,7 +31,7 @@ type TEstimateRoot = {
   isAdmin: boolean;
 };
 
-export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
+export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot) {
   const { workspaceSlug, projectId, isAdmin } = props;
   // hooks
   const { currentProjectDetails } = useProject();
@@ -41,67 +48,85 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
     async () => workspaceSlug && projectId && getProjectEstimates(workspaceSlug, projectId)
   );
 
+  if (loader === "init-loader" || isSWRLoading) {
+    return <EstimateLoaderScreen />;
+  }
+
   return (
-    <div className="container mx-auto">
-      {loader === "init-loader" || isSWRLoading ? (
-        <EstimateLoaderScreen />
-      ) : (
-        <div className="space-y-2">
-          {/* header */}
-
-          <SettingsHeading
-            title={t("project_settings.estimates.heading")}
-            description={t("project_settings.estimates.description")}
-          />
-
+    <>
+      <div>
+        {/* header */}
+        <SettingsHeading
+          title={t("project_settings.estimates.heading")}
+          description={t("project_settings.estimates.description")}
+        />
+        <div className="mt-6">
           {/* current active estimate section */}
           {currentActiveEstimateId ? (
-            <div className="">
+            <>
               {/* estimates activated deactivated section */}
-              <div className="relative border-b border-custom-border-200 pb-4 flex justify-between items-center gap-3">
-                <div className="space-y-1">
-                  <h3 className="text-lg font-medium text-custom-text-100">{t("project_settings.estimates.title")}</h3>
-                  <p className="text-sm text-custom-text-200">{t("project_settings.estimates.enable_description")}</p>
-                </div>
-                <EstimateDisableSwitch workspaceSlug={workspaceSlug} projectId={projectId} isAdmin={isAdmin} />
-              </div>
-              {/* active estimates section */}
-              <EstimateList
-                estimateIds={[currentActiveEstimateId]}
-                isAdmin={isAdmin}
-                isEstimateEnabled={Boolean(currentProjectDetails?.estimate)}
-                isEditable
-                onEditClick={(estimateId: string) => setEstimateToUpdate(estimateId)}
-                onDeleteClick={(estimateId: string) => setEstimateToDelete(estimateId)}
+              <SettingsBoxedControlItem
+                title={t("project_settings.estimates.title")}
+                description={t("project_settings.estimates.enable_description")}
+                control={
+                  <EstimateDisableSwitch workspaceSlug={workspaceSlug} projectId={projectId} isAdmin={isAdmin} />
+                }
               />
-            </div>
+              {/* active estimates section */}
+              <div className="mt-12 flex flex-col gap-y-4">
+                <SettingsHeading title="Estimates list" variant="h6" />
+                <EstimateList
+                  estimateIds={[currentActiveEstimateId]}
+                  isAdmin={isAdmin}
+                  isEstimateEnabled={Boolean(currentProjectDetails?.estimate)}
+                  isEditable
+                  onEditClick={(estimateId: string) => setEstimateToUpdate(estimateId)}
+                  onDeleteClick={(estimateId: string) => setEstimateToDelete(estimateId)}
+                />
+              </div>
+            </>
           ) : (
-            <EstimateEmptyScreen onButtonClick={() => setIsEstimateCreateModalOpen(true)} />
+            <EmptyStateCompact
+              assetKey="estimate"
+              assetClassName="size-20"
+              title={t("settings_empty_state.estimates.title")}
+              description={t("settings_empty_state.estimates.description")}
+              actions={[
+                {
+                  label: t("settings_empty_state.estimates.cta_primary"),
+                  onClick: () => setIsEstimateCreateModalOpen(true),
+                },
+              ]}
+              align="start"
+              rootClassName="py-20"
+            />
           )}
-
           {/* archived estimates section */}
           {archivedEstimateIds && archivedEstimateIds.length > 0 && (
-            <div className="">
-              <div className="border-b border-custom-border-200 space-y-1 pb-4">
-                <h3 className="text-lg font-medium text-custom-text-100">Archived estimates</h3>
-                <p className="text-sm text-custom-text-200">
-                  Estimates have gone through a change, these are the estimates you had in your older versions which
-                  were not in use. Read more about them&nbsp;
-                  <a
-                    href={"https://docs.plane.so/core-concepts/projects/run-project#estimate"}
-                    target="_blank"
-                    className="text-custom-primary-100/80 hover:text-custom-primary-100"
-                  >
-                    here.
-                  </a>
-                </p>
-              </div>
+            <div className="mt-12 flex flex-col gap-y-4">
+              <SettingsHeading
+                title="Archived estimates"
+                description={
+                  <>
+                    Estimates have gone through a change, these are the estimates you had in your older versions which
+                    were not in use. Read more about them&nbsp;
+                    <a
+                      href={"https://docs.plane.so/core-concepts/projects/run-project#estimate"}
+                      target="_blank"
+                      className="text-accent-primary/80 hover:text-accent-primary"
+                      rel="noreferrer"
+                    >
+                      here.
+                    </a>
+                  </>
+                }
+                variant="h6"
+              />
               <EstimateList estimateIds={archivedEstimateIds} isAdmin={isAdmin} />
             </div>
           )}
         </div>
-      )}
-
+      </div>
       {/* CRUD modals */}
       <CreateEstimateModal
         workspaceSlug={workspaceSlug}
@@ -123,6 +148,6 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
         isOpen={estimateToDelete ? true : false}
         handleClose={() => setEstimateToDelete(undefined)}
       />
-    </div>
+    </>
   );
 });

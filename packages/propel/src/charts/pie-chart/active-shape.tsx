@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { Sector } from "recharts";
-import { PieSectorDataItem } from "recharts/types/polar/Pie";
+import type { PieSectorDataItem } from "recharts/types/polar/Pie";
 
-export const CustomActiveShape = React.memo((props: PieSectorDataItem) => {
+export const CustomActiveShape = React.memo(function CustomActiveShape(props: PieSectorDataItem) {
   const { cx, cy, cornerRadius, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
 
   return (

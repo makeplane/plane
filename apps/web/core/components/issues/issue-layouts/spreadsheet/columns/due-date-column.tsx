@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
-import { CalendarCheck2 } from "lucide-react";
+import { DueDatePropertyIcon } from "@plane/propel/icons";
 // types
 import type { TIssue } from "@plane/types";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
@@ -17,7 +23,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
   // store hooks
   const { getStateById } = useProjectState();
@@ -25,7 +31,7 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props)
   const stateDetails = getStateById(issue.state_id);
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle">
       <DateDropdown
         value={issue.target_date}
         minDate={getDate(issue.start_date)}
@@ -42,17 +48,17 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props)
         }}
         disabled={disabled}
         placeholder="Due date"
-        icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+        icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="transparent-with-text"
         buttonContainerClassName="w-full"
         buttonClassName={cn(
-          "rounded-none text-left group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10 px-page-x",
+          "rounded-none text-left group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x",
           {
-            "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+            "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
           }
         )}
         optionsClassName="z-[9]"
-        clearIconClassName="!text-custom-text-100"
+        clearIconClassName="!text-primary"
         onClose={onClose}
       />
     </div>

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 //
 import type { IBlockUpdateDependencyData } from "@plane/types";
@@ -15,7 +21,7 @@ export type GanttChartBlocksProps = {
   enableDependency: boolean | ((blockId: string) => boolean);
 };
 
-export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
+export function GanttChartBlocksList(props: GanttChartBlocksProps) {
   const {
     blockIds,
     blockToRender,
@@ -50,4 +56,4 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
       ))}
     </>
   );
-};
+}

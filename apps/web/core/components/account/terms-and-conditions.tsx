@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import Link from "next/link";
 import { EAuthModes } from "@plane/constants";
@@ -18,18 +24,22 @@ const MESSAGES = {
 } as const;
 
 // Reusable link component to reduce duplication
-const LegalLink: React.FC<{ href: string; children: React.ReactNode }> = ({ href, children }) => (
-  <Link href={href} className="text-custom-text-200" target="_blank" rel="noopener noreferrer">
-    <span className="text-sm font-medium underline hover:cursor-pointer">{children}</span>
-  </Link>
-);
+function LegalLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link href={href} className="text-secondary" target="_blank" rel="noopener noreferrer">
+      <span className="text-13 font-medium underline hover:cursor-pointer">{children}</span>
+    </Link>
+  );
+}
 
-export const TermsAndConditions: React.FC<TermsAndConditionsProps> = ({ authType = EAuthModes.SIGN_IN }) => (
-  <div className="flex items-center justify-center">
-    <p className="text-center text-sm text-custom-text-300 whitespace-pre-line">
-      {`${MESSAGES[authType]}, you understand and agree to \n our `}
-      <LegalLink href={LEGAL_LINKS.termsOfService}>Terms of Service</LegalLink> and{" "}
-      <LegalLink href={LEGAL_LINKS.privacyPolicy}>Privacy Policy</LegalLink>.
-    </p>
-  </div>
-);
+export function TermsAndConditions({ authType = EAuthModes.SIGN_IN }: TermsAndConditionsProps) {
+  return (
+    <div className="flex items-center justify-center">
+      <p className="text-center text-13 text-tertiary whitespace-pre-line">
+        {`${MESSAGES[authType]}, you understand and agree to \n our `}
+        <LegalLink href={LEGAL_LINKS.termsOfService}>Terms of Service</LegalLink> and{" "}
+        <LegalLink href={LEGAL_LINKS.privacyPolicy}>Privacy Policy</LegalLink>.
+      </p>
+    </div>
+  );
+}

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import requests
 
@@ -48,6 +52,8 @@ class OauthAdapter(Adapter):
             return "GITHUB_OAUTH_PROVIDER_ERROR"
         elif self.provider == "gitlab":
             return "GITLAB_OAUTH_PROVIDER_ERROR"
+        elif self.provider == "gitea":
+            return "GITEA_OAUTH_PROVIDER_ERROR"
         else:
             return "OAUTH_NOT_CONFIGURED"
 

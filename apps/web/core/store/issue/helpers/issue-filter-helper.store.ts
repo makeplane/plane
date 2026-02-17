@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { isEmpty } from "lodash-es";
 // plane constants
 import type { EIssueFilterType } from "@plane/constants";
@@ -24,6 +30,7 @@ import { EIssueLayoutTypes } from "@plane/types";
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 // lib
 import { storage } from "@/lib/local-storage";
+import { getEnabledDisplayFilters } from "@/plane-web/store/issue/helpers/filter-utils";
 
 interface ILocalStoreIssueFilters {
   key: EIssuesStoreType;
@@ -176,7 +183,10 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
   computedDisplayFilters = (
     displayFilters: IIssueDisplayFilterOptions,
     defaultValues?: IIssueDisplayFilterOptions
-  ): IIssueDisplayFilterOptions => getComputedDisplayFilters(displayFilters, defaultValues);
+  ): IIssueDisplayFilterOptions => {
+    const computedFilters = getComputedDisplayFilters(displayFilters, defaultValues);
+    return getEnabledDisplayFilters(computedFilters);
+  };
 
   /**
    * @description This method is used to apply the display properties on the issues

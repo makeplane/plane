@@ -1,8 +1,13 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { Dispatch, ReactElement, SetStateAction } from "react";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 // helpers
+import { usePlatformOS } from "@plane/hooks";
 import { cn } from "@plane/utils";
 
 interface ResizableSidebarProps {
@@ -24,7 +29,6 @@ interface ResizableSidebarProps {
   extendedSidebar?: ReactElement;
   isAnyExtendedSidebarExpanded?: boolean;
   isAnySidebarDropdownOpen?: boolean;
-  disablePeekTrigger?: boolean;
 }
 
 export function ResizableSidebar({
@@ -44,7 +48,6 @@ export function ResizableSidebar({
   extendedSidebar,
   isAnyExtendedSidebarExpanded = false,
   isAnySidebarDropdownOpen = false,
-  disablePeekTrigger = false,
 }: ResizableSidebarProps) {
   // states
   const [isResizing, setIsResizing] = useState(false);
@@ -53,7 +56,8 @@ export function ResizableSidebar({
   const peekTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const initialWidthRef = useRef<number>(0);
   const initialMouseXRef = useRef<number>(0);
-
+  // hooks
+  const { isMobile } = usePlatformOS();
   // handlers
   const setShowPeek = useCallback(
     (value: boolean) => {
@@ -94,25 +98,6 @@ export function ResizableSidebar({
       clearTimeout(peekTimeoutRef.current);
     }
   }, [toggleCollapsedProp, setShowPeek]);
-
-  const handleTriggerEnter = useCallback(() => {
-    if (isCollapsed) {
-      setIsHoveringTrigger(true);
-      setShowPeek(true);
-      if (peekTimeoutRef.current) {
-        clearTimeout(peekTimeoutRef.current);
-      }
-    }
-  }, [isCollapsed, setShowPeek]);
-
-  const handleTriggerLeave = useCallback(() => {
-    if (isCollapsed && !isAnyExtendedSidebarExpanded) {
-      setIsHoveringTrigger(false);
-      peekTimeoutRef.current = setTimeout(() => {
-        setShowPeek(false);
-      }, peekDuration);
-    }
-  }, [isCollapsed, peekDuration, setShowPeek, isAnyExtendedSidebarExpanded]);
 
   const handlePeekEnter = useCallback(() => {
     if (isCollapsed && showPeek) {
@@ -193,10 +178,12 @@ export function ResizableSidebar({
     <>
       {/* Main Sidebar */}
       <div
+        id="main-sidebar"
         className={cn(
-          "h-full z-20 bg-custom-background-100 border-r border-custom-sidebar-border-200",
+          "h-full z-20 bg-surface-1 border-r border-subtle",
           !isResizing && "transition-all duration-300 ease-in-out",
           isCollapsed ? "translate-x-[-100%] opacity-0 w-0" : "translate-x-0 opacity-100",
+          isMobile && "absolute",
           className
         )}
         style={{
@@ -206,10 +193,11 @@ export function ResizableSidebar({
         }}
         role="complementary"
         aria-label="Main sidebar"
+        data-prevent-outside-click={isMobile}
       >
         <aside
           className={cn(
-            "group/sidebar h-full w-full bg-custom-sidebar-background-100 overflow-hidden relative flex flex-col pt-3",
+            "group/sidebar h-full w-full bg-surface-1 overflow-hidden relative flex flex-col pt-3",
             isAnyExtendedSidebarExpanded && "rounded-none"
           )}
         >
@@ -219,8 +207,8 @@ export function ResizableSidebar({
           <div
             className={cn(
               "transition-all duration-200 cursor-ew-resize absolute h-full w-1 z-[20]",
-              !isResizing && "hover:bg-custom-background-90",
-              isResizing && "w-1.5 bg-custom-background-80",
+              !isResizing && "hover:bg-surface-2",
+              isResizing && "w-1.5 bg-layer-1",
               "top-0 right-0"
             )}
             // onDoubleClick toggle sidebar
@@ -231,26 +219,10 @@ export function ResizableSidebar({
           />
         </aside>
       </div>
-
-      {/* Peek Trigger Area */}
-      {isCollapsed && !disablePeekTrigger && (
-        <div
-          className={cn(
-            "absolute top-0 left-0 w-1 h-full z-50 bg-transparent",
-            "transition-opacity duration-200",
-            isHoveringTrigger ? "opacity-100" : "opacity-0"
-          )}
-          onMouseEnter={handleTriggerEnter}
-          onMouseLeave={handleTriggerLeave}
-          role="button"
-          aria-label="Show sidebar peek"
-        />
-      )}
-
       {/* Peek View */}
       <div
         className={cn(
-          "absolute left-0 z-20 bg-custom-background-100 shadow-sm h-full",
+          "absolute left-0 z-20 bg-surface-1 shadow-sm h-full",
           !isResizing && "transition-all duration-300 ease-in-out",
           isCollapsed && showPeek ? "translate-x-0 opacity-100" : "translate-x-[-100%] opacity-0",
           "pointer-events-none",
@@ -267,8 +239,8 @@ export function ResizableSidebar({
       >
         <aside
           className={cn(
-            "group/sidebar h-full w-full bg-custom-sidebar-background-100 overflow-hidden relative flex flex-col z-20 pt-4",
-            "self-center border-r border-custom-sidebar-border-200 rounded-md rounded-tl-none rounded-bl-none",
+            "group/sidebar h-full w-full bg-surface-1 overflow-hidden relative flex flex-col z-20 pt-4",
+            "self-center border-r border-subtle rounded-md rounded-tl-none rounded-bl-none",
             isAnyExtendedSidebarExpanded && "rounded-none"
           )}
         >
@@ -277,8 +249,8 @@ export function ResizableSidebar({
           <div
             className={cn(
               "transition-all duration-200 cursor-ew-resize absolute h-full w-1 z-[20]",
-              !isResizing && "hover:bg-custom-background-90",
-              isResizing && "bg-custom-background-80",
+              !isResizing && "hover:bg-surface-2",
+              isResizing && "bg-layer-1",
               "top-0 right-0"
             )}
             // onDoubleClick toggle sidebar

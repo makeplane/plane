@@ -1,10 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // plane imports
 import { EPageAccess } from "@plane/constants";
+import type { TChangeHandlerProps } from "@plane/propel/emoji-icon-picker";
 import type { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
-import type { TChangeHandlerProps } from "@plane/ui";
-import { convertHexEmojiToDecimal } from "@plane/utils";
 // plane web store
 import { ExtendedBasePage } from "@/plane-web/store/pages/extended-base-page";
 import type { RootStore } from "@/plane-web/store/root.store";
@@ -14,6 +19,7 @@ import { PageEditorInstance } from "./page-editor-info";
 export type TBasePage = TPage & {
   // observables
   isSubmitting: TNameDescriptionLoader;
+  isSyncingWithServer: "syncing" | "synced" | "error";
   // computed
   asJSON: TPage | undefined;
   isCurrentUserOwner: boolean;
@@ -25,17 +31,18 @@ export type TBasePage = TPage & {
   update: (pageData: Partial<TPage>) => Promise<Partial<TPage> | undefined>;
   updateTitle: (title: string) => void;
   updateDescription: (document: TDocumentPayload) => Promise<void>;
-  makePublic: (shouldSync?: boolean) => Promise<void>;
-  makePrivate: (shouldSync?: boolean) => Promise<void>;
-  lock: (shouldSync?: boolean) => Promise<void>;
-  unlock: (shouldSync?: boolean) => Promise<void>;
-  archive: (shouldSync?: boolean) => Promise<void>;
-  restore: (shouldSync?: boolean) => Promise<void>;
+  makePublic: (params: { shouldSync?: boolean }) => Promise<void>;
+  makePrivate: (params: { shouldSync?: boolean }) => Promise<void>;
+  lock: (params: { shouldSync?: boolean; recursive?: boolean }) => Promise<void>;
+  unlock: (params: { shouldSync?: boolean; recursive?: boolean }) => Promise<void>;
+  archive: (params: { shouldSync?: boolean; archived_at?: string | null }) => Promise<void>;
+  restore: (params: { shouldSync?: boolean }) => Promise<void>;
   updatePageLogo: (value: TChangeHandlerProps) => Promise<void>;
   addToFavorites: () => Promise<void>;
   removePageFromFavorites: () => Promise<void>;
   duplicate: () => Promise<TPage | undefined>;
   mutateProperties: (data: Partial<TPage>, shouldUpdateName?: boolean) => void;
+  setSyncingStatus: (status: "syncing" | "synced" | "error") => void;
   // sub-store
   editor: PageEditorInstance;
 };
@@ -74,11 +81,12 @@ export type TPageInstance = TBasePage &
 export class BasePage extends ExtendedBasePage implements TBasePage {
   // loaders
   isSubmitting: TNameDescriptionLoader = "saved";
+  isSyncingWithServer: "syncing" | "synced" | "error" = "syncing";
   // page properties
   id: string | undefined;
   name: string | undefined;
   logo_props: TLogoProps | undefined;
-  description: object | undefined;
+  description_json: object | undefined;
   description_html: string | undefined;
   color: string | undefined;
   label_ids: string[] | undefined;
@@ -115,7 +123,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     this.id = page?.id || undefined;
     this.name = page?.name;
     this.logo_props = page?.logo_props || undefined;
-    this.description = page?.description || undefined;
+    this.description_json = page?.description_json || undefined;
     this.description_html = page?.description_html || undefined;
     this.color = page?.color || undefined;
     this.label_ids = page?.label_ids || undefined;
@@ -140,7 +148,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       id: observable.ref,
       name: observable.ref,
       logo_props: observable.ref,
-      description: observable,
+      description_json: observable.ref,
       description_html: observable.ref,
       color: observable.ref,
       label_ids: observable,
@@ -156,6 +164,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       created_at: observable.ref,
       updated_at: observable.ref,
       deleted_at: observable.ref,
+      isSyncingWithServer: observable.ref,
       // helpers
       oldName: observable.ref,
       setIsSubmitting: action,
@@ -214,7 +223,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     return {
       id: this.id,
       name: this.name,
-      description: this.description,
+      description_json: this.description_json,
       description_html: this.description_html,
       color: this.color,
       label_ids: this.label_ids,
@@ -315,7 +324,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description make the page public
    */
-  makePublic = async (shouldSync: boolean = true) => {
+  makePublic = async ({ shouldSync = true }) => {
     const pageAccess = this.access;
     runInAction(() => {
       this.access = EPageAccess.PUBLIC;
@@ -338,7 +347,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description make the page private
    */
-  makePrivate = async (shouldSync: boolean = true) => {
+  makePrivate = async ({ shouldSync = true }) => {
     const pageAccess = this.access;
     runInAction(() => {
       this.access = EPageAccess.PRIVATE;
@@ -361,7 +370,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description lock the page
    */
-  lock = async (shouldSync: boolean = true) => {
+  lock = async ({ shouldSync = true }) => {
     const pageIsLocked = this.is_locked;
     runInAction(() => (this.is_locked = true));
 
@@ -378,7 +387,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description unlock the page
    */
-  unlock = async (shouldSync: boolean = true) => {
+  unlock = async ({ shouldSync = true }) => {
     const pageIsLocked = this.is_locked;
     runInAction(() => (this.is_locked = false));
 
@@ -395,12 +404,12 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description archive the page
    */
-  archive = async (shouldSync: boolean = true) => {
+  archive = async ({ shouldSync = true, archived_at }: { shouldSync?: boolean; archived_at?: string | null }) => {
     if (!this.id) return undefined;
 
     try {
       runInAction(() => {
-        this.archived_at = new Date().toISOString();
+        this.archived_at = archived_at ?? new Date().toISOString();
       });
 
       if (this.rootStore.favorite.entityMap[this.id]) this.rootStore.favorite.removeFavoriteFromStore(this.id);
@@ -422,7 +431,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description restore the page
    */
-  restore = async (shouldSync: boolean = true) => {
+  restore = async ({ shouldSync = true }: { shouldSync?: boolean }) => {
     const archivedAtBeforeRestore = this.archived_at;
 
     try {
@@ -438,6 +447,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       runInAction(() => {
         this.archived_at = archivedAtBeforeRestore;
       });
+      throw error;
     }
   };
 
@@ -447,8 +457,8 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       let logoValue = {};
       if (value?.type === "emoji")
         logoValue = {
-          value: convertHexEmojiToDecimal(value.value.unified),
-          url: value.value.imageUrl,
+          value: value.value,
+          url: undefined,
         };
       else if (value?.type === "icon") logoValue = value.value;
 
@@ -533,6 +543,12 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       const value = data[key as keyof TPage];
       if (key === "name" && !shouldUpdateName) return;
       set(this, key, value);
+    });
+  };
+
+  setSyncingStatus = (status: "syncing" | "synced" | "error") => {
+    runInAction(() => {
+      this.isSyncingWithServer = status;
     });
   };
 }

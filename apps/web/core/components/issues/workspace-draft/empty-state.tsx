@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import { Fragment, useState } from "react";
@@ -6,14 +10,13 @@ import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
-export const WorkspaceDraftEmptyState: FC = observer(() => {
+export const WorkspaceDraftEmptyState = observer(function WorkspaceDraftEmptyState() {
   // state
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   // store hooks
@@ -24,7 +27,6 @@ export const WorkspaceDraftEmptyState: FC = observer(() => {
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/cycles" });
 
   return (
     <Fragment>
@@ -35,17 +37,20 @@ export const WorkspaceDraftEmptyState: FC = observer(() => {
         isDraft
       />
       <div className="relative h-full w-full overflow-y-auto">
-        <DetailedEmptyState
-          title={t("workspace_draft_issues.empty_state.title")}
-          description={t("workspace_draft_issues.empty_state.description")}
-          assetPath={resolvedPath}
-          primaryButton={{
-            text: t("workspace_draft_issues.empty_state.primary_button.text"),
-            onClick: () => {
-              setIsDraftIssueModalOpen(true);
+        <EmptyStateDetailed
+          title={t("workspace_empty_state.drafts.title")}
+          description={t("workspace_empty_state.drafts.description")}
+          assetKey="draft"
+          actions={[
+            {
+              label: t("workspace_empty_state.drafts.cta_primary"),
+              onClick: () => {
+                setIsDraftIssueModalOpen(true);
+              },
+              disabled: !canPerformEmptyStateActions,
+              variant: "primary",
             },
-            disabled: !canPerformEmptyStateActions,
-          }}
+          ]}
         />
       </div>
     </Fragment>

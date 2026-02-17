@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 // types
@@ -13,7 +19,7 @@ type Props = {
   anchor: string;
 };
 
-export const IssuesListLayoutRoot = observer((props: Props) => {
+export const IssuesListLayoutRoot = observer(function IssuesListLayoutRoot(props: Props) {
   const { anchor } = props;
   // store hooks
   const {
@@ -46,7 +52,7 @@ export const IssuesListLayoutRoot = observer((props: Props) => {
 
   return (
     <IssueLayoutHOC getGroupIssueCount={getGroupIssueCount} getIssueLoader={getIssueLoader}>
-      <div className={`relative size-full bg-custom-background-90`}>
+      <div className="relative size-full">
         <List
           displayProperties={displayProperties}
           groupBy={"state"}

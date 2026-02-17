@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import uuid
 import random
@@ -17,6 +21,7 @@ from plane.db.models import (
     Project,
     ProjectMember,
     State,
+    StateGroup,
     Label,
     Cycle,
     Module,
@@ -264,7 +269,9 @@ def create_issues(workspace, project, user_id, issue_count):
     Faker.seed(0)
 
     states = (
-        State.objects.filter(workspace=workspace, project=project).exclude(group="Triage").values_list("id", flat=True)
+        State.objects.filter(workspace=workspace, project=project)
+        .exclude(group=StateGroup.TRIAGE.value)
+        .values_list("id", flat=True)
     )
     creators = ProjectMember.objects.filter(workspace=workspace, project=project).values_list("member_id", flat=True)
 

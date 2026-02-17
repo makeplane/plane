@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // icons
-import { X } from "lucide-react";
-// helpers
 import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
+import { CloseIcon } from "@plane/propel/icons";
+// helpers
 import { renderFormattedDate, capitalizeFirstLetter } from "@plane/utils";
 // constants
 
@@ -11,7 +17,7 @@ type Props = {
   values: string[];
 };
 
-export const AppliedDateFilters: React.FC<Props> = observer((props) => {
+export const AppliedDateFilters = observer(function AppliedDateFilters(props: Props) {
   const { handleRemove, values } = props;
 
   const getDateLabel = (value: string): string => {
@@ -36,14 +42,14 @@ export const AppliedDateFilters: React.FC<Props> = observer((props) => {
   return (
     <>
       {values.map((date) => (
-        <div key={date} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+        <div key={date} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
           <span className="normal-case">{getDateLabel(date)}</span>
           <button
             type="button"
-            className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+            className="grid place-items-center text-tertiary hover:text-secondary"
             onClick={() => handleRemove(date)}
           >
-            <X size={10} strokeWidth={2} />
+            <CloseIcon height={10} width={10} strokeWidth={2} />
           </button>
         </div>
       ))}

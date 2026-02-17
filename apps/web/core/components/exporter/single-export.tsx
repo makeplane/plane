@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import { useState } from "react";
@@ -14,9 +18,9 @@ type Props = {
   refreshing: boolean;
 };
 
-export const SingleExport: FC<Props> = ({ service, refreshing }) => {
+export function SingleExport({ service, refreshing }: Props) {
   const provider = service.provider;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const [isLoading] = useState(false);
 
   const checkExpiry = (inputDateString: string) => {
@@ -30,7 +34,7 @@ export const SingleExport: FC<Props> = ({ service, refreshing }) => {
   return (
     <div className="flex items-center justify-between gap-2 px-4 py-3">
       <div>
-        <h4 className="flex items-center gap-2 text-sm">
+        <h4 className="flex items-center gap-2 text-13">
           <span>
             Export to{" "}
             <span className="font-medium">
@@ -38,13 +42,13 @@ export const SingleExport: FC<Props> = ({ service, refreshing }) => {
             </span>{" "}
           </span>
           <span
-            className={`rounded px-2 py-0.5 text-xs capitalize ${
+            className={`rounded-sm px-2 py-0.5 text-11 capitalize ${
               service.status === "completed"
-                ? "bg-green-500/20 text-green-500"
+                ? "bg-success-subtle text-success-primary"
                 : service.status === "processing"
                   ? "bg-yellow-500/20 text-yellow-500"
                   : service.status === "failed"
-                    ? "bg-red-500/20 text-red-500"
+                    ? "bg-danger-subtle text-danger-primary"
                     : service.status === "expired"
                       ? "bg-orange-500/20 text-orange-500"
                       : ""
@@ -53,7 +57,7 @@ export const SingleExport: FC<Props> = ({ service, refreshing }) => {
             {refreshing ? "Refreshing..." : service.status}
           </span>
         </h4>
-        <div className="mt-2 flex items-center gap-2 text-xs text-custom-text-200">
+        <div className="mt-2 flex items-center gap-2 text-11 text-secondary">
           <span>{renderFormattedDate(service.created_at)}</span>|
           <span>Exported by {service?.initiated_by_detail?.display_name}</span>
         </div>
@@ -71,8 +75,8 @@ export const SingleExport: FC<Props> = ({ service, refreshing }) => {
           )}
         </>
       ) : (
-        <div className="text-xs text-red-500">Expired</div>
+        <div className="text-11 text-danger-primary">Expired</div>
       )}
     </div>
   );
-};
+}

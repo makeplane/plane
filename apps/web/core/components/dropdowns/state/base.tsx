@@ -1,14 +1,17 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { StateGroupIcon } from "@plane/propel/icons";
+import { SearchIcon, StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IState } from "@plane/types";
 import { ComboDropDown, Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -41,7 +44,9 @@ export type TWorkItemStateDropdownBaseProps = TDropdownProps & {
   value: string | undefined | null;
 };
 
-export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps> = observer((props) => {
+export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdownBase(
+  props: TWorkItemStateDropdownBaseProps
+) {
   const {
     button,
     buttonClassName,
@@ -79,7 +84,7 @@ export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps
   const { t } = useTranslation();
   const statesList = stateIds.map((stateId) => getStateById(stateId)).filter((state) => !!state);
   const defaultState = statesList?.find((state) => state?.default);
-  const stateValue = !!value ? value : showDefaultState ? defaultState?.id : undefined;
+  const stateValue = value ? value : showDefaultState ? defaultState?.id : undefined;
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
@@ -152,7 +157,7 @@ export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps
           className={cn(
             "clickable block h-full max-w-full outline-none",
             {
-              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-not-allowed text-secondary": disabled,
               "cursor-pointer": !disabled,
             },
             buttonContainerClassName
@@ -176,7 +181,7 @@ export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps
                 {!hideIcon && (
                   <StateGroupIcon
                     stateGroup={selectedState?.group ?? "backlog"}
-                    color={selectedState?.color ?? "rgba(var(--color-text-300))"}
+                    color={selectedState?.color ?? "var(--text-color-tertiary)"}
                     className={cn("flex-shrink-0", iconSize)}
                     percentage={selectedState?.order}
                   />
@@ -185,7 +190,10 @@ export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps
                   <span className="flex-grow truncate text-left">{selectedState?.name ?? t("state")}</span>
                 )}
                 {dropdownArrow && (
-                  <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+                  <ChevronDownIcon
+                    className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)}
+                    aria-hidden="true"
+                  />
                 )}
               </>
             )}
@@ -210,17 +218,17 @@ export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+            className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
-            <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+            <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
+              <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
-                className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t("common.search.label")}
@@ -237,14 +245,14 @@ export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps
                       key={option.value}
                       option={option}
                       selectedValue={value}
-                      className="flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5"
+                      className="flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5"
                     />
                   ))
                 ) : (
-                  <p className="px-1.5 py-1 italic text-custom-text-400">{t("no_matching_results")}</p>
+                  <p className="px-1.5 py-1 italic text-placeholder">{t("no_matching_results")}</p>
                 )
               ) : (
-                <p className="px-1.5 py-1 italic text-custom-text-400">{t("loading")}</p>
+                <p className="px-1.5 py-1 italic text-placeholder">{t("loading")}</p>
               )}
             </div>
           </div>

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { concat, get, set, uniq, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -103,15 +109,15 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     const allIssues = groupedIssueIds[ALL_ISSUES] ?? [];
     if (allIssues && Array.isArray(allIssues)) {
-      return allIssues as string[];
+      return allIssues;
     }
 
     if (groupId && groupedIssueIds?.[groupId] && Array.isArray(groupedIssueIds[groupId])) {
-      return (groupedIssueIds[groupId] ?? []) as string[];
+      return groupedIssueIds[groupId] ?? [];
     }
 
     if (groupId && subGroupId) {
-      return ((groupedIssueIds as TSubGroupedIssues)[groupId]?.[subGroupId] ?? []) as string[];
+      return (groupedIssueIds as TSubGroupedIssues)[groupId]?.[subGroupId] ?? [];
     }
 
     return undefined;
@@ -443,7 +449,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // if groupedIssueIds is an array, update the `groupedIssueIds` store at the issuePath
     if (groupedIssueIds && Array.isArray(groupedIssueIds)) {
       update(this, ["groupedIssueIds", ...issuePath], (issueIds: string[] = []) =>
-        uniq(concat(issueIds, groupedIssueIds as string[]))
+        uniq(concat(issueIds, groupedIssueIds))
       );
       // return true to indicate the store has been updated
       return true;

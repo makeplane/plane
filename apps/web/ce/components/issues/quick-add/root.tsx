@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
@@ -34,7 +40,7 @@ export type TQuickAddIssueFormRoot = {
   isEpic: boolean;
 };
 
-export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props) => {
+export const QuickAddIssueFormRoot = observer(function QuickAddIssueFormRoot(props: TQuickAddIssueFormRoot) {
   const { isOpen, layout, projectId, hasError = false, setFocus, register, onSubmit, onClose, isEpic } = props;
   // store hooks
   const { getProjectById } = useProject();

@@ -1,13 +1,21 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   ArchivedCycleVerticalStackIllustration,
   ArchivedModuleVerticalStackIllustration,
   ArchivedWorkItemVerticalStackIllustration,
+  ChangelogVerticalStackIllustration,
   CustomerVerticalStackIllustration,
   CycleVerticalStackIllustration,
   DashboardVerticalStackIllustration,
   DraftVerticalStackIllustration,
   EpicVerticalStackIllustration,
   Error404VerticalStackIllustration,
+  InitiativeVerticalStackIllustration,
   InvalidLinkVerticalStackIllustration,
   ModuleVerticalStackIllustration,
   NoAccessVerticalStackIllustration,
@@ -33,6 +41,10 @@ export const VerticalStackAssetsMap = [
     title: "ArchivedWorkItemVerticalStackIllustration",
   },
   {
+    asset: <ChangelogVerticalStackIllustration />,
+    title: "ChangelogVerticalStackIllustration",
+  },
+  {
     asset: <CustomerVerticalStackIllustration />,
     title: "CustomerVerticalStackIllustration",
   },
@@ -55,6 +67,10 @@ export const VerticalStackAssetsMap = [
   {
     asset: <Error404VerticalStackIllustration />,
     title: "Error404VerticalStackIllustration",
+  },
+  {
+    asset: <InitiativeVerticalStackIllustration />,
+    title: "InitiativeVerticalStackIllustration",
   },
   {
     asset: <InvalidLinkVerticalStackIllustration />,

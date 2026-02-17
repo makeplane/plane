@@ -3,17 +3,16 @@
   padding-bottom: 26px;
 
   table {
-    position: relative;
     border-collapse: collapse;
     table-layout: fixed;
     margin: 0.5rem 0 0 0;
-    border: 1px solid rgba(var(--color-border-200));
+    @apply relative border border-subtle;
     width: 100%;
 
     td,
     th {
       min-width: 1em;
-      border: 1px solid rgba(var(--color-border-300));
+      @apply border border-strong;
       padding: 7px 10px;
       vertical-align: top;
       box-sizing: border-box;
@@ -38,19 +37,19 @@
         }
 
         &.selectedCell-border-top::after {
-          border-top: 2px solid rgba(var(--color-primary-100));
+          border-top: 2px solid var(--border-color-accent-strong);
         }
 
         &.selectedCell-border-left::after {
-          border-left: 2px solid rgba(var(--color-primary-100));
+          border-left: 2px solid var(--border-color-accent-strong);
         }
 
         &.selectedCell-border-bottom::after {
-          border-bottom: 2px solid rgba(var(--color-primary-100));
+          border-bottom: 2px solid var(--border-color-accent-strong);
         }
 
         &.selectedCell-border-right::after {
-          border-right: 2px solid rgba(var(--color-primary-100));
+          border-right: 2px solid var(--border-color-accent-strong);
         }
       }
       /* End selected cell outline */
@@ -81,34 +80,31 @@
     }
 
     th {
-      font-weight: 500;
-      text-align: left;
+      @apply font-medium text-left;
     }
 
     tr[background="none"],
     tr:not([background]) {
       th {
-        background-color: rgba(var(--color-background-90));
+        @apply bg-layer-3;
       }
     }
 
     .table-drop-marker {
-      background-color: rgba(var(--color-primary-100));
-      position: absolute;
-      z-index: 10;
+      background-color: var(--border-color-accent-strong);
+      @apply absolute z-10;
 
       &.hidden {
-        display: none;
+        @apply hidden;
       }
     }
 
     .table-col-drag-marker,
     .table-row-drag-marker {
-      position: absolute;
-      z-index: 10;
+      @apply absolute z-10;
 
       &.hidden {
-        display: none;
+        @apply hidden;
       }
     }
 
@@ -124,7 +120,7 @@
   /* Selected status */
   &.ProseMirror-selectednode {
     table {
-      background-color: rgba(var(--color-primary-100), 0.2);
+      background-color: color-mix(in srgb, var(--background-color-accent-primary) 20%, transparent);
     }
   }
   /* End selected status */
@@ -138,7 +134,7 @@
   width: 2px;
   height: calc(100% + 2px);
   z-index: 5;
-  background-color: rgba(var(--color-primary-100));
+  background-color: var(--border-color-accent-strong);
   pointer-events: none;
 }
 /* End column resizer */
@@ -156,28 +152,27 @@
   .table-column-insert-button,
   .table-row-insert-button {
     position: absolute;
-    background-color: rgba(var(--color-background-90));
-    color: rgba(var(--color-text-300));
-    border: 1px solid rgba(var(--color-border-200));
+    background-color: var(--background-color-layer-1);
+    @apply text-tertiary border border-subtle-1;
     border-radius: 4px;
     display: grid;
     place-items: center;
     opacity: 0;
     pointer-events: none;
     outline: none;
-    z-index: 10;
+    z-index: 9;
     transition: all 0.2s ease;
 
     &:hover {
-      background-color: rgba(var(--color-background-80));
-      color: rgba(var(--color-text-100));
+      background-color: var(--background-color-layer-1-hover);
+      @apply text-primary;
     }
 
     &.dragging {
       opacity: 1;
       pointer-events: auto;
-      background-color: rgba(var(--color-primary-100), 0.2);
-      color: rgba(var(--color-text-100));
+      background-color: color-mix(in srgb, var(--background-color-accent-primary) 20%, transparent);
+      @apply text-primary;
     }
 
     svg {

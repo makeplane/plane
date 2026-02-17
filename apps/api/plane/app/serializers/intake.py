@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Third party frameworks
 from rest_framework import serializers
 
@@ -7,7 +11,7 @@ from .issue import IssueIntakeSerializer, LabelLiteSerializer, IssueDetailSerial
 from .project import ProjectLiteSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
-from plane.db.models import Intake, IntakeIssue, Issue
+from plane.db.models import Intake, IntakeIssue, Issue, StateGroup, State
 
 
 class IntakeSerializer(BaseSerializer):
@@ -35,6 +39,49 @@ class IntakeIssueSerializer(BaseSerializer):
             "created_by",
         ]
         read_only_fields = ["project", "workspace"]
+
+    def validate(self, attrs):
+        """
+        Validate that if status is being changed to accepted (1),
+        the project has a default state to transition to.
+        """
+
+        # Check if status is being updated to accepted
+        if attrs.get("status") == 1:
+            intake_issue = self.instance
+            issue = intake_issue.issue
+
+            # Check if issue is in TRIAGE state
+            if issue.state and issue.state.group == StateGroup.TRIAGE.value:
+                # Verify default state exists before allowing the update
+                default_state = State.objects.filter(
+                    workspace=intake_issue.workspace, project=intake_issue.project, default=True
+                ).first()
+
+                if not default_state:
+                    raise serializers.ValidationError(
+                        {"status": "Cannot accept intake issue: No default state found for the project"}
+                    )
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        # Update the intake issue
+        instance = super().update(instance, validated_data)
+
+        # If status is accepted (1), transition the issue state from TRIAGE to default
+        if validated_data.get("status") == 1:
+            issue = instance.issue
+            if issue.state and issue.state.group == StateGroup.TRIAGE.value:
+                # Get the default project state
+                default_state = State.objects.filter(
+                    workspace=instance.workspace, project=instance.project, default=True
+                ).first()
+                if default_state:
+                    issue.state = default_state
+                    issue.save()
+
+        return instance
 
     def to_representation(self, instance):
         # Pass the annotated fields to the Issue instance if they exist

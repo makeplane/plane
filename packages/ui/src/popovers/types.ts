@@ -1,5 +1,11 @@
-import { Placement } from "@popperjs/core";
-import { MutableRefObject, ReactNode } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Placement } from "@popperjs/core";
+import type { MutableRefObject, ReactNode } from "react";
 
 export type TPopoverButtonDefaultOptions = {
   // button and button styling

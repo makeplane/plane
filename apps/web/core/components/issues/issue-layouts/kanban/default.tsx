@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 // i18n
@@ -65,7 +71,7 @@ export interface IKanBan {
   isEpic?: boolean;
 }
 
-export const KanBan: React.FC<IKanBan> = observer((props) => {
+export const KanBan = observer(function KanBan(props: IKanBan) {
   const {
     issuesMap,
     groupedIssueIds,
@@ -152,7 +158,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           const issueIds = isSubGroup
             ? ((groupedIssueIds as TSubGroupedIssues)?.[subList.id]?.[sub_group_id] ?? [])
             : ((groupedIssueIds as TGroupedIssues)?.[subList.id] ?? []);
-          const issueLength = issueIds?.length as number;
+          const issueLength = issueIds?.length;
           const groupHeight = issueLength * approximateCardHeight;
 
           return (
@@ -163,7 +169,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
               } `}
             >
               {sub_group_by === null && (
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-surface-2 py-1">
                   <HeaderGroupByCard
                     sub_group_by={sub_group_by}
                     group_by={group_by}

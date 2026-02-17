@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -5,14 +11,13 @@ import { DEFAULT_PRODUCT_BILLING_FREQUENCY, SUBSCRIPTION_WITH_BILLING_FREQUENCY 
 import { useTranslation } from "@plane/i18n";
 import type { TBillingFrequency, TProductBillingFrequency } from "@plane/types";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { getSubscriptionTextColor } from "@plane/ui";
-import { cn } from "@plane/utils";
 // components
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { SettingsHeading } from "@/components/settings/heading";
 // local imports
 import { PlansComparison } from "./comparison/root";
 
-export const BillingRoot = observer(() => {
+export const BillingRoot = observer(function BillingRoot() {
   const [isCompareAllFeaturesSectionOpen, setIsCompareAllFeaturesSectionOpen] = useState(false);
   const [productBillingFrequency, setProductBillingFrequency] = useState<TProductBillingFrequency>(
     DEFAULT_PRODUCT_BILLING_FREQUENCY
@@ -39,36 +44,28 @@ export const BillingRoot = observer(() => {
     setProductBillingFrequency({ ...productBillingFrequency, [subscriptionType]: frequency });
 
   return (
-    <section className="relative size-full flex flex-col overflow-y-auto scrollbar-hide">
-      <SettingsHeading
-        title={t("workspace_settings.settings.billing_and_plans.heading")}
-        description={t("workspace_settings.settings.billing_and_plans.description")}
-      />
-      <div className={cn("transition-all duration-500 ease-in-out will-change-[height,opacity]")}>
-        <div className="py-6">
-          <div className={cn("px-6 py-4 border border-custom-border-200 rounded-lg")}>
-            <div className="flex gap-2 font-medium items-center justify-between">
-              <div className="flex flex-col gap-1">
-                <h4
-                  className={cn("text-xl leading-6 font-bold", getSubscriptionTextColor(EProductSubscriptionEnum.FREE))}
-                >
-                  Community
-                </h4>
-                <div className="text-sm text-custom-text-200 font-medium">
-                  Unlimited projects, issues, cycles, modules, pages, and storage
-                </div>
-              </div>
-            </div>
-          </div>
+    <section className="relative size-full overflow-y-auto scrollbar-hide">
+      <div>
+        <SettingsHeading
+          title={t("workspace_settings.settings.billing_and_plans.heading")}
+          description={t("workspace_settings.settings.billing_and_plans.description")}
+        />
+        <div className="mt-6">
+          <SettingsBoxedControlItem
+            title="Community"
+            description="Unlimited projects, issues, cycles, modules, pages, and storage"
+          />
         </div>
-        <div className="text-xl font-semibold mt-3">All plans</div>
       </div>
-      <PlansComparison
-        isCompareAllFeaturesSectionOpen={isCompareAllFeaturesSectionOpen}
-        getBillingFrequency={getBillingFrequency}
-        setBillingFrequency={setBillingFrequency}
-        setIsCompareAllFeaturesSectionOpen={setIsCompareAllFeaturesSectionOpen}
-      />
+      <div className="mt-10 flex flex-col gap-y-3">
+        <h4 className="text-h6-semibold">All plans</h4>
+        <PlansComparison
+          isCompareAllFeaturesSectionOpen={isCompareAllFeaturesSectionOpen}
+          getBillingFrequency={getBillingFrequency}
+          setBillingFrequency={setBillingFrequency}
+          setIsCompareAllFeaturesSectionOpen={setIsCompareAllFeaturesSectionOpen}
+        />
+      </div>
     </section>
   );
 });

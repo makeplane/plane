@@ -1,14 +1,18 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ViewsIcon } from "@plane/propel/icons";
 // types
 import type { IProjectView } from "@plane/types";
 // components
-import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -20,7 +24,7 @@ type Props = {
   view: IProjectView;
 };
 
-export const ProjectViewListItem: FC<Props> = observer((props) => {
+export const ProjectViewListItem = observer(function ProjectViewListItem(props: Props) {
   const { view } = props;
   // refs
   const parentRef = useRef(null);
@@ -36,7 +40,7 @@ export const ProjectViewListItem: FC<Props> = observer((props) => {
           {view?.logo_props?.in_use ? (
             <Logo logo={view?.logo_props} size={16} type="lucide" />
           ) : (
-            <ViewsIcon className="h-4 w-4 text-custom-text-300" />
+            <ViewsIcon className="h-4 w-4 text-tertiary" />
           )}
         </>
       }

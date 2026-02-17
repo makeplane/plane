@@ -1,12 +1,14 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
 import { SquareUser } from "lucide-react";
-// types
+// Plane imports
 import {
   MODULE_STATUS,
   EUserPermissions,
@@ -20,16 +22,12 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IModule } from "@plane/types";
-// ui
 import { FavoriteStar } from "@plane/ui";
-// components
 import { renderFormattedPayloadDate, getDate } from "@plane/utils";
+// components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
-// constants
-// helpers
-import { captureElementAndEvent, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
@@ -42,7 +40,7 @@ type Props = {
   parentRef: React.RefObject<HTMLDivElement>;
 };
 
-export const ModuleListItemAction: FC<Props> = observer((props) => {
+export const ModuleListItemAction = observer(function ModuleListItemAction(props: Props) {
   const { moduleId, moduleDetails, parentRef } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -71,28 +69,12 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
-      .then(() => {
+    const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
+      () => {
         // open favorites menu if closed
         if (!storedValue) toggleFavoriteMenu(true);
-        captureElementAndEvent({
-          element: {
-            elementName: MODULE_TRACKER_ELEMENTS.LIST_ITEM,
-          },
-          event: {
-            eventName: MODULE_TRACKER_EVENTS.favorite,
-            payload: { id: moduleId },
-            state: "SUCCESS",
-          },
-        });
-      })
-      .catch((error) => {
-        captureError({
-          eventName: MODULE_TRACKER_EVENTS.favorite,
-          payload: { id: moduleId },
-          error,
-        });
-      });
+      }
+    );
 
     setPromiseToast(addToFavoritePromise, {
       loading: "Adding module to favorites...",
@@ -116,26 +98,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
       workspaceSlug.toString(),
       projectId.toString(),
       moduleId
-    )
-      .then(() => {
-        captureElementAndEvent({
-          element: {
-            elementName: MODULE_TRACKER_ELEMENTS.LIST_ITEM,
-          },
-          event: {
-            eventName: MODULE_TRACKER_EVENTS.unfavorite,
-            payload: { id: moduleId },
-            state: "SUCCESS",
-          },
-        });
-      })
-      .catch((error) => {
-        captureError({
-          eventName: MODULE_TRACKER_EVENTS.unfavorite,
-          payload: { id: moduleId },
-          error,
-        });
-      });
+    );
 
     setPromiseToast(removeFromFavoritePromise, {
       loading: "Removing module from favorites...",
@@ -175,7 +138,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
   return (
     <>
       <DateRangeDropdown
-        buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
+        buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-tertiary border-[0.5px] border-strong rounded-sm text-11`}
         buttonVariant="transparent-with-text"
         className="h-7"
         value={{
@@ -211,7 +174,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
         </span>
       ) : (
         <Tooltip tooltipContent="No lead">
-          <SquareUser className="h-4 w-4 text-custom-text-300" />
+          <SquareUser className="h-4 w-4 text-tertiary" />
         </Tooltip>
       )}
 

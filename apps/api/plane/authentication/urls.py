@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from django.urls import path
 
 from .views import (
@@ -36,6 +40,10 @@ from .views import (
     SignInAuthSpaceEndpoint,
     SignUpAuthSpaceEndpoint,
     SignOutAuthSpaceEndpoint,
+    GiteaCallbackEndpoint,
+    GiteaOauthInitiateEndpoint,
+    GiteaCallbackSpaceEndpoint,
+    GiteaOauthInitiateSpaceEndpoint,
 )
 
 urlpatterns = [
@@ -129,4 +137,17 @@ urlpatterns = [
     ),
     path("change-password/", ChangePasswordEndpoint.as_view(), name="forgot-password"),
     path("set-password/", SetUserPasswordEndpoint.as_view(), name="set-password"),
+    ## Gitea Oauth
+    path("gitea/", GiteaOauthInitiateEndpoint.as_view(), name="gitea-initiate"),
+    path("gitea/callback/", GiteaCallbackEndpoint.as_view(), name="gitea-callback"),
+    path(
+        "spaces/gitea/",
+        GiteaOauthInitiateSpaceEndpoint.as_view(),
+        name="space-gitea-initiate",
+    ),
+    path(
+        "spaces/gitea/callback/",
+        GiteaCallbackSpaceEndpoint.as_view(),
+        name="space-gitea-callback",
+    ),
 ]

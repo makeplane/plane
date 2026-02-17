@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -26,7 +32,7 @@ type TCommentCreate = {
 // services
 const fileService = new FileService();
 
-export const CommentCreate: FC<TCommentCreate> = observer((props) => {
+export const CommentCreate = observer(function CommentCreate(props: TCommentCreate) {
   const {
     workspaceSlug,
     entityId,
@@ -42,7 +48,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
   // store hooks
   const workspaceStore = useWorkspace();
   // derived values
-  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
+  const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug)?.id as string;
   // form info
   const {
     handleSubmit,
@@ -87,7 +93,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
 
   return (
     <div
-      className={cn("sticky bottom-0 z-[4] bg-custom-background-100 sm:static")}
+      className={cn("sticky bottom-0 z-[4] bg-surface-1 sm:static")}
       onKeyDown={(e) => {
         if (
           e.key === "Enter" &&
@@ -130,6 +136,11 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                 isSubmitting={isSubmitting}
                 uploadFile={async (blockId, file) => {
                   const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file);
+                  setUploadedAssetIds((prev) => [...prev, asset_id]);
+                  return asset_id;
+                }}
+                duplicateFile={async (assetId: string) => {
+                  const { asset_id } = await activityOperations.duplicateCommentAsset(assetId);
                   setUploadedAssetIds((prev) => [...prev, asset_id]);
                   return asset_id;
                 }}

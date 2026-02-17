@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import type { TIssueServiceType } from "@plane/types";
@@ -17,7 +22,7 @@ type TLinkList = {
   issueServiceType: TIssueServiceType;
 };
 
-export const LinkList: FC<TLinkList> = observer((props) => {
+export const LinkList = observer(function LinkList(props: TLinkList) {
   // props
   const { issueId, linkOperations, disabled = false, issueServiceType } = props;
   // hooks
@@ -30,7 +35,7 @@ export const LinkList: FC<TLinkList> = observer((props) => {
   if (!issueLinks) return null;
 
   return (
-    <div className="flex flex-col gap-2 py-4">
+    <div className="flex flex-col gap-2 pt-4">
       {issueLinks.map((linkId) => (
         <IssueLinkItem
           key={linkId}

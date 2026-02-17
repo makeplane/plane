@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import Link from "next/link";
 // types
 import type { TPageNavigationTabs } from "@plane/types";
@@ -27,7 +32,7 @@ const pageTabs: { key: TPageNavigationTabs; label: string }[] = [
   },
 ];
 
-export const PageTabNavigation: FC<TPageTabNavigation> = (props) => {
+export function PageTabNavigation(props: TPageTabNavigation) {
   const { workspaceSlug, projectId, pageType } = props;
 
   const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabKey: TPageNavigationTabs) => {
@@ -35,27 +40,28 @@ export const PageTabNavigation: FC<TPageTabNavigation> = (props) => {
   };
 
   return (
-    <div className="relative flex items-center">
+    <div className="relative flex items-center h-full">
       {pageTabs.map((tab) => (
         <Link
           key={tab.key}
           href={`/${workspaceSlug}/projects/${projectId}/pages?type=${tab.key}`}
           onClick={(e) => handleTabClick(e, tab.key)}
+          className="flex flex-col h-full"
         >
-          <span
-            className={cn(`block p-3 py-4 text-sm font-medium transition-all`, {
-              "text-custom-primary-100": tab.key === pageType,
+          <div
+            className={cn(`flex flex-1 text-13 px-4 font-medium transition-all justify-center items-center`, {
+              "text-accent-primary": tab.key === pageType,
             })}
           >
             {tab.label}
-          </span>
+          </div>
           <div
-            className={cn(`rounded-t border-t-2 transition-all border-transparent`, {
-              "border-custom-primary-100": tab.key === pageType,
+            className={cn(`rounded-t border-t-2 transition-all border-transparent w-full`, {
+              "border-accent-strong": tab.key === pageType,
             })}
           />
         </Link>
       ))}
     </div>
   );
-};
+}

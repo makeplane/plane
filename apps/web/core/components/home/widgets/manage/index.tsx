@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
@@ -14,7 +18,7 @@ export type TProps = {
   handleOnClose?: () => void;
 };
 
-export const ManageWidgetsModal: FC<TProps> = observer((props) => {
+export const ManageWidgetsModal = observer(function ManageWidgetsModal(props: TProps) {
   // props
   const { workspaceSlug, isModalOpen, handleOnClose } = props;
   const { t } = useTranslation();
@@ -22,7 +26,7 @@ export const ManageWidgetsModal: FC<TProps> = observer((props) => {
   return (
     <ModalCore isOpen={isModalOpen} handleClose={handleOnClose} width={EModalWidth.MD}>
       <div className="p-4">
-        <div className="font-medium text-xl"> {t("home.manage_widgets")}</div>
+        <div className="font-medium text-18"> {t("home.manage_widgets")}</div>
         <WidgetList workspaceSlug={workspaceSlug} />
       </div>
     </ModalCore>

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from django.urls import path
 
 
@@ -13,6 +17,7 @@ from plane.app.views import (
     ProjectAssetEndpoint,
     ProjectBulkAssetEndpoint,
     AssetCheckEndpoint,
+    DuplicateAssetEndpoint,
     WorkspaceAssetDownloadEndpoint,
     ProjectAssetDownloadEndpoint,
 )
@@ -90,6 +95,11 @@ urlpatterns = [
         "assets/v2/workspaces/<str:slug>/check/<uuid:asset_id>/",
         AssetCheckEndpoint.as_view(),
         name="asset-check",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/duplicate-assets/<uuid:asset_id>/",
+        DuplicateAssetEndpoint.as_view(),
+        name="duplicate-assets",
     ),
     path(
         "assets/v2/workspaces/<str:slug>/download/<uuid:asset_id>/",

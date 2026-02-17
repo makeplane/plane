@@ -1,14 +1,23 @@
-import { type Editor, ReactRenderer } from "@tiptap/react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { ReactRenderer } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import type { SuggestionOptions } from "@tiptap/suggestion";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
-import { CommandListInstance, DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
+import type { CommandListInstance } from "@/helpers/tippy";
+import { DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // types
-import { TMentionHandler } from "@/types";
+import type { TMentionHandler } from "@/types";
 // local components
-import { MentionsListDropdown, MentionsListDropdownProps } from "./mentions-list-dropdown";
+import type { MentionsListDropdownProps } from "./mentions-list-dropdown";
+import { MentionsListDropdown } from "./mentions-list-dropdown";
 
 export const renderMentionsDropdown =
   (args: Pick<TMentionHandler, "searchCallback">): SuggestionOptions["render"] =>
@@ -48,7 +57,7 @@ export const renderMentionsDropdown =
         component.updateProps(props);
         if (!props.clientRect) return;
         cleanup();
-        cleanup = updateFloatingUIFloaterPosition(props.editor, component.element).cleanup;
+        cleanup = updateFloatingUIFloaterPosition(props.editor, component.element as HTMLElement).cleanup;
       },
       onKeyDown: ({ event }) => {
         if ([...DROPDOWN_NAVIGATION_KEYS, "Escape"].includes(event.key)) {

@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { SyntheticEvent } from "react";
 import { useCallback, useMemo } from "react";
@@ -6,12 +10,10 @@ import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { CalendarCheck2, CalendarClock, Link, Paperclip } from "lucide-react";
-// types
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { Paperclip } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { ViewsIcon } from "@plane/propel/icons";
+import { LinkIcon, StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
@@ -31,8 +33,6 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
-// helpers
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -58,7 +58,7 @@ export interface IIssueProperties {
   isEpic?: boolean;
 }
 
-export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
+export const IssueProperties = observer(function IssueProperties(props: IIssueProperties) {
   const { issue, updateIssue, displayProperties, isReadOnly, className, isEpic = false } = props;
   // i18n
   const { t } = useTranslation();
@@ -107,44 +107,20 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     [workspaceSlug, issue, changeModulesInIssue, addCycleToIssue, removeCycleFromIssue]
   );
 
-  const handleState = (stateId: string) => {
-    if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { state_id: stateId }).then(() => {
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload: { id: issue.id },
-        });
-      });
+  const handleState = async (stateId: string) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, { state_id: stateId });
   };
 
-  const handlePriority = (value: TIssuePriorities) => {
-    if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { priority: value }).then(() => {
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload: { id: issue.id },
-        });
-      });
+  const handlePriority = async (value: TIssuePriorities) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, { priority: value });
   };
 
-  const handleLabel = (ids: string[]) => {
-    if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { label_ids: ids }).then(() => {
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload: { id: issue.id },
-        });
-      });
+  const handleLabel = async (ids: string[]) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, { label_ids: ids });
   };
 
-  const handleAssignee = (ids: string[]) => {
-    if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { assignee_ids: ids }).then(() => {
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload: { id: issue.id },
-        });
-      });
+  const handleAssignee = async (ids: string[]) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, { assignee_ids: ids });
   };
 
   const handleModule = useCallback(
@@ -159,11 +135,6 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         else modulesToAdd.push(moduleId);
       if (modulesToAdd.length > 0) issueOperations.addModulesToIssue(modulesToAdd);
       if (modulesToRemove.length > 0) issueOperations.removeModulesFromIssue(modulesToRemove);
-
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: { id: issue.id },
-      });
     },
     [issueOperations, issue]
   );
@@ -173,47 +144,22 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       if (!issue || issue.cycle_id === cycleId) return;
       if (cycleId) issueOperations.addIssueToCycle?.(cycleId);
       else issueOperations.removeIssueFromCycle?.();
-
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: { id: issue.id },
-      });
     },
     [issue, issueOperations]
   );
 
-  const handleStartDate = (date: Date | null) => {
+  const handleStartDate = async (date: Date | null) => {
     if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { start_date: date ? renderFormattedPayloadDate(date) : null }).then(
-        () => {
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issue.id },
-          });
-        }
-      );
+      await updateIssue(issue.project_id, issue.id, { start_date: date ? renderFormattedPayloadDate(date) : null });
   };
 
-  const handleTargetDate = (date: Date | null) => {
+  const handleTargetDate = async (date: Date | null) => {
     if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null }).then(
-        () => {
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: issue.id },
-          });
-        }
-      );
+      await updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null });
   };
 
-  const handleEstimate = (value: string | undefined) => {
-    if (updateIssue)
-      updateIssue(issue.project_id, issue.id, { estimate_point: value }).then(() => {
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.update,
-          payload: { id: issue.id },
-        });
-      });
+  const handleEstimate = async (value: string | undefined) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, { estimate_point: value });
   };
 
   const workItemLink = generateWorkItemLink({
@@ -272,7 +218,6 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             onChange={handlePriority}
             disabled={isReadOnly}
             buttonVariant="border-without-text"
-            buttonClassName="border"
             renderByDefault={isMobile}
             showTooltip
           />
@@ -301,8 +246,10 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             isClearable
             mergeDates
             buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
-            clearIconClassName="!text-custom-text-100"
+            buttonClassName={
+              shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger-primary" : ""
+            }
+            clearIconClassName="text-primary!"
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip
@@ -324,12 +271,13 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             onChange={handleStartDate}
             maxDate={maxDate}
             placeholder={t("common.order_by.start_date")}
-            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+            icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-10"
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip
+            labelClassName="text-caption-sm-regular"
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -346,14 +294,17 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             onChange={handleTargetDate}
             minDate={minDate}
             placeholder={t("common.order_by.due_date")}
-            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+            icon={<DueDatePropertyIcon className="h-3 w-3 shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
-            clearIconClassName="!text-custom-text-100"
+            buttonClassName={
+              shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger-primary" : ""
+            }
+            clearIconClassName="text-primary!"
             optionsClassName="z-10"
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip
+            labelClassName="text-caption-sm-regular"
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -461,14 +412,14 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
                 if (subIssueCount) redirectToIssueDetail();
               }}
               className={cn(
-                "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1",
+                "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1",
                 {
-                  "hover:bg-custom-background-80 cursor-pointer": subIssueCount,
+                  "hover:bg-layer-1 cursor-pointer": subIssueCount,
                 }
               )}
             >
               <ViewsIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-              <div className="text-xs">{subIssueCount}</div>
+              <div className="text-caption-sm-regular">{subIssueCount}</div>
             </div>
           </Tooltip>
         </WithDisplayPropertiesHOC>
@@ -487,12 +438,12 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           renderByDefault={false}
         >
           <div
-            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
+            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1"
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
             <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{issue.attachment_count}</div>
+            <div className="text-caption-sm-regular">{issue.attachment_count}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>
@@ -510,12 +461,12 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           renderByDefault={false}
         >
           <div
-            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
+            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1"
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
-            <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{issue.link_count}</div>
+            <LinkIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <div className="text-caption-sm-regular">{issue.link_count}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>

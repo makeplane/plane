@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Mail, MessageCircle } from "lucide-react";
 import { DiscordIcon } from "@plane/propel/icons";
 import { EProductSubscriptionEnum } from "@plane/types";
@@ -45,20 +51,22 @@ type PlanePlans = {
   planComparison: TPlansComparisonDetails[];
 };
 
-const RiDiscordFill = ({ className }: { className?: string }) => (
-  <DiscordIcon className={cn(className, "size-5 text-custom-text-200")} />
-);
+function RiDiscordFill({ className }: { className?: string }) {
+  return <DiscordIcon className={cn(className, "size-5 text-secondary")} />;
+}
 
-export const ComingSoonBadge = ({ className }: { className?: string }) => (
-  <span
-    className={cn(
-      "bg-[#3f76ff] text-white font-semibold text-[8px] py-0.5 px-1.5 w-fit whitespace-nowrap rounded",
-      className
-    )}
-  >
-    COMING SOON
-  </span>
-);
+export function ComingSoonBadge({ className }: { className?: string }) {
+  return (
+    <span
+      className={cn(
+        "bg-accent-primary text-on-color font-semibold text-9 py-0.5 px-1.5 w-fit whitespace-nowrap rounded-sm",
+        className
+      )}
+    >
+      COMING SOON
+    </span>
+  );
+}
 
 export const PLANS_LIST: TPlanePlans[] = ["free", "one", "pro", "business", "enterprise"];
 
@@ -623,7 +631,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       //     one: "Basic text search",
       //     pro: (
       //       <span className="flex flex-col items-end lg:items-center gap-1">
-      //         <span className="bg-[#3f76ff] text-white font-semibold text-[8px] p-0.5 w-fit whitespace-nowrap rounded-sm">
+      //         <span className="bg-[#3f76ff] text-on-color font-semibold text-9 p-0.5 w-fit whitespace-nowrap rounded-xs">
       //           COMING SOON
       //         </span>
       //         Operator capsules from text or PQL
@@ -631,7 +639,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       //     ),
       //     business: (
       //       <span className="flex flex-col items-end lg:items-center gap-1">
-      //         <span className="bg-[#3f76ff] text-white font-semibold text-[8px] p-0.5 w-fit whitespace-nowrap rounded-sm">
+      //         <span className="bg-[#3f76ff] text-on-color font-semibold text-9 p-0.5 w-fit whitespace-nowrap rounded-xs">
       //           COMING SOON
       //         </span>
       //         Operator capsules from text or PQL
@@ -639,7 +647,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       //     ),
       //     enterprise: (
       //       <span className="flex flex-col items-end lg:items-center gap-1">
-      //         <span className="bg-[#3f76ff] text-white font-semibold text-[8px] p-0.5 w-fit whitespace-nowrap rounded-sm">
+      //         <span className="bg-[#3f76ff] text-on-color font-semibold text-9 p-0.5 w-fit whitespace-nowrap rounded-xs">
       //           COMING SOON
       //         </span>
       //         Operator capsules from text or PQL

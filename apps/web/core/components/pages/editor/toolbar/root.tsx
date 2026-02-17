@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { PanelRight } from "lucide-react";
 // plane imports
@@ -19,7 +25,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
+export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(props: Props) {
   const { handleOpenNavigationPane, isNavigationPaneOpen, page } = props;
   // translation
   const { t } = useTranslation();
@@ -50,13 +56,13 @@ export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
           )}
         >
           <div className="max-w-full w-full flex items-center justify-between">
-            {editorRef && <PageToolbar editorRef={editorRef} />}
+            <div className="flex-1">{editorRef && <PageToolbar editorRef={editorRef} />}</div>
             <div className="flex items-center gap-2">
               <PageCollaboratorsList page={page} />
               {!isNavigationPaneOpen && (
                 <button
                   type="button"
-                  className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors"
+                  className="shrink-0 size-6 grid place-items-center rounded-sm text-secondary hover:text-primary hover:bg-layer-transparent-hover transition-colors"
                   onClick={handleOpenNavigationPane}
                 >
                   <PanelRight className="size-3.5" />
@@ -72,7 +78,7 @@ export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
             <Tooltip tooltipContent={t("page_navigation_pane.open_button")}>
               <button
                 type="button"
-                className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors"
+                className="shrink-0 size-6 grid place-items-center rounded-sm text-secondary hover:text-primary hover:bg-layer-transparent-hover transition-colors"
                 onClick={handleOpenNavigationPane}
                 aria-label={t("page_navigation_pane.open_button")}
               >

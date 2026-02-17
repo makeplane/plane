@@ -1,12 +1,16 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React, { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // ui
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { Loader } from "@plane/ui";
 // components
-import { Logo } from "@/components/common/logo";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -17,7 +21,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterProjects: React.FC<Props> = observer((props) => {
+export const FilterProjects = observer(function FilterProjects(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
@@ -74,7 +78,7 @@ export const FilterProjects: React.FC<Props> = observer((props) => {
                 {sortedOptions.length > 5 && (
                   <button
                     type="button"
-                    className="ml-8 text-xs font-medium text-custom-primary-100"
+                    className="ml-8 text-11 font-medium text-accent-primary"
                     onClick={handleViewToggle}
                   >
                     {itemsToRender === sortedOptions.length ? "View less" : "View all"}
@@ -82,7 +86,7 @@ export const FilterProjects: React.FC<Props> = observer((props) => {
                 )}
               </>
             ) : (
-              <p className="text-xs italic text-custom-text-400">No matches found</p>
+              <p className="text-11 italic text-placeholder">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

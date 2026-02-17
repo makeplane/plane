@@ -1,11 +1,17 @@
-import { Lock } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { LockIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 
-export const LockedComponent = (props: { toolTipContent?: string }) => {
+export function LockedComponent(props: { toolTipContent?: string }) {
   const { toolTipContent } = props;
   const lockedComponent = (
-    <div className="flex-shrink-0 flex h-7 items-center gap-2 rounded-full bg-custom-background-80 px-3 py-0.5 text-xs font-medium text-custom-text-300">
-      <Lock className="h-3 w-3" />
+    <div className="flex-shrink-0 flex h-7 items-center gap-2 rounded-full bg-layer-1 px-3 py-0.5 text-11 font-medium text-tertiary">
+      <LockIcon className="h-3 w-3" />
       <span>Locked</span>
     </div>
   );
@@ -15,4 +21,4 @@ export const LockedComponent = (props: { toolTipContent?: string }) => {
       {toolTipContent ? <Tooltip tooltipContent={toolTipContent}>{lockedComponent}</Tooltip> : <>{lockedComponent}</>}
     </>
   );
-};
+}

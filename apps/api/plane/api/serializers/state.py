@@ -1,6 +1,11 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Module imports
 from .base import BaseSerializer
-from plane.db.models import State
+from plane.db.models import State, StateGroup
+from rest_framework import serializers
 
 
 class StateSerializer(BaseSerializer):
@@ -15,6 +20,9 @@ class StateSerializer(BaseSerializer):
         # If the default is being provided then make all other states default False
         if data.get("default", False):
             State.objects.filter(project_id=self.context.get("project_id")).update(default=False)
+
+        if data.get("group", None) == StateGroup.TRIAGE.value:
+            raise serializers.ValidationError("Cannot create triage state")
         return data
 
     class Meta:

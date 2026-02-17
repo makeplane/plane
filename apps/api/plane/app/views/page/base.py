@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 from datetime import datetime
@@ -128,7 +132,7 @@ class PageViewSet(BaseViewSet):
             context={
                 "project_id": project_id,
                 "owned_by_id": request.user.id,
-                "description": request.data.get("description", {}),
+                "description_json": request.data.get("description_json", {}),
                 "description_binary": request.data.get("description_binary", None),
                 "description_html": request.data.get("description_html", "<p></p>"),
             },
@@ -137,7 +141,11 @@ class PageViewSet(BaseViewSet):
         if serializer.is_valid():
             serializer.save()
             # capture the page transaction
-            page_transaction.delay(request.data, None, serializer.data["id"])
+            page_transaction.delay(
+                new_description_html=request.data.get("description_html", "<p></p>"),
+                old_description_html=None,
+                page_id=serializer.data["id"],
+            )
             page = self.get_queryset().get(pk=serializer.data["id"])
             serializer = PageDetailSerializer(page)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -145,14 +153,24 @@ class PageViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, project_id, page_id):
         try:
-            page = Page.objects.get(pk=page_id, workspace__slug=slug, projects__id=project_id)
+            page = Page.objects.get(
+                pk=page_id,
+                workspace__slug=slug,
+                projects__id=project_id,
+                project_pages__deleted_at__isnull=True,
+            )
 
             if page.is_locked:
                 return Response({"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
             parent = request.data.get("parent", None)
             if parent:
-                _ = Page.objects.get(pk=parent, workspace__slug=slug, projects__id=project_id)
+                _ = Page.objects.get(
+                    pk=parent,
+                    workspace__slug=slug,
+                    projects__id=project_id,
+                    project_pages__deleted_at__isnull=True,
+                )
 
             # Only update access if the page owner is the requesting  user
             if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
@@ -168,11 +186,8 @@ class PageViewSet(BaseViewSet):
                 # capture the page transaction
                 if request.data.get("description_html"):
                     page_transaction.delay(
-                        new_value=request.data,
-                        old_value=json.dumps(
-                            {"description_html": page_description},
-                            cls=DjangoJSONEncoder,
-                        ),
+                        new_description_html=request.data.get("description_html", "<p></p>"),
+                        old_description_html=page_description,
                         page_id=page_id,
                     )
 
@@ -229,14 +244,24 @@ class PageViewSet(BaseViewSet):
             return Response(data, status=status.HTTP_200_OK)
 
     def lock(self, request, slug, project_id, page_id):
-        page = Page.objects.filter(pk=page_id, workspace__slug=slug, projects__id=project_id).first()
+        page = Page.objects.get(
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
+        )
 
         page.is_locked = True
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def unlock(self, request, slug, project_id, page_id):
-        page = Page.objects.filter(pk=page_id, workspace__slug=slug, projects__id=project_id).first()
+        page = Page.objects.get(
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
+        )
 
         page.is_locked = False
         page.save()
@@ -245,7 +270,12 @@ class PageViewSet(BaseViewSet):
 
     def access(self, request, slug, project_id, page_id):
         access = request.data.get("access", 0)
-        page = Page.objects.filter(pk=page_id, workspace__slug=slug, projects__id=project_id).first()
+        page = Page.objects.get(
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
+        )
 
         # Only update access if the page owner is the requesting user
         if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
@@ -276,7 +306,12 @@ class PageViewSet(BaseViewSet):
         return Response(pages, status=status.HTTP_200_OK)
 
     def archive(self, request, slug, project_id, page_id):
-        page = Page.objects.get(pk=page_id, workspace__slug=slug, projects__id=project_id)
+        page = Page.objects.get(
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
+        )
 
         # only the owner or admin can archive the page
         if (
@@ -302,7 +337,12 @@ class PageViewSet(BaseViewSet):
         return Response({"archived_at": str(datetime.now())}, status=status.HTTP_200_OK)
 
     def unarchive(self, request, slug, project_id, page_id):
-        page = Page.objects.get(pk=page_id, workspace__slug=slug, projects__id=project_id)
+        page = Page.objects.get(
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
+        )
 
         # only the owner or admin can un archive the page
         if (
@@ -326,7 +366,12 @@ class PageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, slug, project_id, page_id):
-        page = Page.objects.get(pk=page_id, workspace__slug=slug, projects__id=project_id)
+        page = Page.objects.get(
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
+        )
 
         if page.archived_at is None:
             return Response(
@@ -349,7 +394,12 @@ class PageViewSet(BaseViewSet):
             )
 
         # remove parent from all the children
-        _ = Page.objects.filter(parent_id=page_id, projects__id=project_id, workspace__slug=slug).update(parent=None)
+        _ = Page.objects.filter(
+            parent_id=page_id,
+            projects__id=project_id,
+            workspace__slug=slug,
+            project_pages__deleted_at__isnull=True,
+        ).update(parent=None)
 
         page.delete()
         # Delete the user favorite page
@@ -449,13 +499,13 @@ class PagesDescriptionViewSet(BaseViewSet):
     permission_classes = [ProjectPagePermission]
 
     def retrieve(self, request, slug, project_id, page_id):
-        page = (
-            Page.objects.filter(pk=page_id, workspace__slug=slug, projects__id=project_id)
-            .filter(Q(owned_by=self.request.user) | Q(access=0))
-            .first()
+        page = Page.objects.get(
+            Q(owned_by=self.request.user) | Q(access=0),
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
         )
-        if page is None:
-            return Response({"error": "Page not found"}, status=404)
         binary_data = page.description_binary
 
         def stream_data():
@@ -469,14 +519,13 @@ class PagesDescriptionViewSet(BaseViewSet):
         return response
 
     def partial_update(self, request, slug, project_id, page_id):
-        page = (
-            Page.objects.filter(pk=page_id, workspace__slug=slug, projects__id=project_id)
-            .filter(Q(owned_by=self.request.user) | Q(access=0))
-            .first()
+        page = Page.objects.get(
+            Q(owned_by=self.request.user) | Q(access=0),
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
         )
-
-        if page is None:
-            return Response({"error": "Page not found"}, status=404)
 
         if page.is_locked:
             return Response(
@@ -504,7 +553,11 @@ class PagesDescriptionViewSet(BaseViewSet):
         if serializer.is_valid():
             # Capture the page transaction
             if request.data.get("description_html"):
-                page_transaction.delay(new_value=request.data, old_value=existing_instance, page_id=page_id)
+                page_transaction.delay(
+                    new_description_html=request.data.get("description_html", "<p></p>"),
+                    old_description_html=page.description_html,
+                    page_id=page_id,
+                )
 
             # Update the page using serializer
             updated_page = serializer.save()
@@ -524,7 +577,12 @@ class PageDuplicateEndpoint(BaseAPIView):
     permission_classes = [ProjectPagePermission]
 
     def post(self, request, slug, project_id, page_id):
-        page = Page.objects.filter(pk=page_id, workspace__slug=slug, projects__id=project_id).first()
+        page = Page.objects.get(
+            pk=page_id,
+            workspace__slug=slug,
+            projects__id=project_id,
+            project_pages__deleted_at__isnull=True,
+        )
 
         # check for permission
         if page.access == Page.PRIVATE_ACCESS and page.owned_by_id != request.user.id:
@@ -550,7 +608,11 @@ class PageDuplicateEndpoint(BaseAPIView):
                 updated_by_id=page.updated_by_id,
             )
 
-        page_transaction.delay({"description_html": page.description_html}, None, page.id)
+        page_transaction.delay(
+            new_description_html=page.description_html,
+            old_description_html=None,
+            page_id=page.id,
+        )
 
         # Copy the s3 objects uploaded in the page
         copy_s3_objects_of_description_and_assets.delay(

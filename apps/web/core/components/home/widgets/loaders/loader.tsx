@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // components
 import { QuickLinksWidgetLoader } from "./quick-links";
 import { RecentActivityWidgetLoader } from "./recent-activity";
@@ -13,7 +19,7 @@ export enum EWidgetKeys {
   QUICK_LINKS = "quick_links",
 }
 
-export const WidgetLoader: React.FC<Props> = (props) => {
+export function WidgetLoader(props: Props) {
   const { widgetKey } = props;
 
   const loaders = {
@@ -22,4 +28,4 @@ export const WidgetLoader: React.FC<Props> = (props) => {
   };
 
   return loaders[widgetKey];
-};
+}

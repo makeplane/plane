@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { ReactElement } from "react";
 import { createContext } from "react";
@@ -18,6 +22,6 @@ const initializeStore = () => {
 
 export const store = initializeStore();
 
-export const StoreProvider = ({ children }: { children: ReactElement }) => (
-  <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
-);
+export function StoreProvider({ children }: { children: ReactElement }) {
+  return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
+}

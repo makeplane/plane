@@ -1,21 +1,22 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { ExternalLink, HelpCircle, MoveLeft } from "lucide-react";
+import { HelpCircle, MoveLeft } from "lucide-react";
 import { Transition } from "@headlessui/react";
-// plane internal packages
 import { WEB_BASE_URL } from "@plane/constants";
-import { DiscordIcon, GithubIcon, PageIcon } from "@plane/propel/icons";
+// plane internal packages
+import { DiscordIcon, GithubIcon, NewTabIcon, PageIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
-import { useTheme } from "@/hooks/store";
+import { useInstance, useTheme } from "@/hooks/store";
 // assets
-// eslint-disable-next-line import/order
-import packageJson from "package.json";
 
 const helpOptions = [
   {
@@ -35,10 +36,11 @@ const helpOptions = [
   },
 ];
 
-export const AdminSidebarHelpSection: FC = observer(() => {
+export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection() {
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // store
+  const { instance } = useInstance();
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
@@ -48,7 +50,7 @@ export const AdminSidebarHelpSection: FC = observer(() => {
   return (
     <div
       className={cn(
-        "flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 px-4 h-14 flex-shrink-0",
+        "flex w-full items-center justify-between gap-1 self-baseline border-t border-subtle bg-surface-1 px-4 h-14 flex-shrink-0",
         {
           "flex-col h-auto py-1.5": isSidebarCollapsed,
         }
@@ -58,32 +60,32 @@ export const AdminSidebarHelpSection: FC = observer(() => {
         <Tooltip tooltipContent="Redirect to Plane" position="right" className="ml-4" disabled={!isSidebarCollapsed}>
           <a
             href={redirectionLink}
-            className={`relative px-2 py-1.5 flex items-center gap-2 font-medium rounded border border-custom-primary-100/20 bg-custom-primary-100/10 text-xs text-custom-primary-200 whitespace-nowrap`}
+            className={`relative px-2 py-1 flex items-center gap-1 rounded-sm bg-layer-1 text-body-xs-medium text-secondary whitespace-nowrap`}
           >
-            <ExternalLink size={14} />
+            <NewTabIcon width={14} height={14} />
             {!isSidebarCollapsed && "Redirect to Plane"}
           </a>
         </Tooltip>
         <Tooltip tooltipContent="Help" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
           <button
             type="button"
-            className={`ml-auto grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+            className={`ml-auto grid place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-layer-1-hover hover:text-primary ${
               isSidebarCollapsed ? "w-full" : ""
             }`}
             onClick={() => setIsNeedHelpOpen((prev) => !prev)}
           >
-            <HelpCircle className="h-3.5 w-3.5" />
+            <HelpCircle className="size-4" />
           </button>
         </Tooltip>
         <Tooltip tooltipContent="Toggle sidebar" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
           <button
             type="button"
-            className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+            className={`grid place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-layer-1-hover hover:text-primary ${
               isSidebarCollapsed ? "w-full" : ""
             }`}
             onClick={() => toggleSidebar(!isSidebarCollapsed)}
           >
-            <MoveLeft className={`h-3.5 w-3.5 duration-300 ${isSidebarCollapsed ? "rotate-180" : ""}`} />
+            <MoveLeft className={`size-4 duration-300 ${isSidebarCollapsed ? "rotate-180" : ""}`} />
           </button>
         </Tooltip>
       </div>
@@ -101,7 +103,7 @@ export const AdminSidebarHelpSection: FC = observer(() => {
           <div
             className={`absolute bottom-2 min-w-[10rem] z-[15] ${
               isSidebarCollapsed ? "left-full" : "-left-[75px]"
-            } divide-y divide-custom-border-200 whitespace-nowrap rounded bg-custom-background-100 p-1 shadow-custom-shadow-xs`}
+            } divide-y divide-subtle-1 whitespace-nowrap rounded-sm bg-surface-1 p-1 shadow-raised-100`}
             ref={helpOptionsRef}
           >
             <div className="space-y-1 pb-2">
@@ -109,11 +111,11 @@ export const AdminSidebarHelpSection: FC = observer(() => {
                 if (href)
                   return (
                     <Link href={href} key={name} target="_blank">
-                      <div className="flex items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80">
+                      <div className="flex items-center gap-x-2 rounded-sm px-2 py-1 text-11 hover:bg-layer-1-hover">
                         <div className="grid flex-shrink-0 place-items-center">
-                          <Icon className="h-3.5 w-3.5 text-custom-text-200" width={14} height={14} />
+                          <Icon className="h-3.5 w-3.5 text-secondary" />
                         </div>
-                        <span className="text-xs">{name}</span>
+                        <span className="text-11">{name}</span>
                       </div>
                     </Link>
                   );
@@ -122,17 +124,17 @@ export const AdminSidebarHelpSection: FC = observer(() => {
                     <button
                       key={name}
                       type="button"
-                      className="flex w-full items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80"
+                      className="flex w-full items-center gap-x-2 rounded-sm px-2 py-1 text-11 hover:bg-layer-1"
                     >
                       <div className="grid flex-shrink-0 place-items-center">
-                        <Icon className="h-3.5 w-3.5 text-custom-text-200" />
+                        <Icon className="h-3.5 w-3.5 text-secondary" />
                       </div>
-                      <span className="text-xs">{name}</span>
+                      <span className="text-11">{name}</span>
                     </button>
                   );
               })}
             </div>
-            <div className="px-2 pb-1 pt-2 text-[10px]">Version: v{packageJson.version}</div>
+            <div className="px-2 pb-1 pt-2 text-10">Version: v{instance?.current_version}</div>
           </div>
         </Transition>
       </div>

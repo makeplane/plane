@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { LucideIcon } from "lucide-react";
 import {
   AlignCenter,
   AlignLeft,
@@ -16,13 +23,12 @@ import {
   List,
   ListOrdered,
   ListTodo,
-  LucideIcon,
   Strikethrough,
   Table,
   TextQuote,
   Underline,
 } from "lucide-react";
-import { TCommandExtraProps, TEditorCommands } from "@/types/editor";
+import type { TCommandExtraProps, TEditorCommands } from "@/types/editor";
 
 export type TEditorTypes = "lite" | "document";
 

@@ -1,4 +1,10 @@
-import { TLogoProps } from "../common";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { TLogoProps } from "../common";
 
 export type IFavorite = {
   id: string;
@@ -16,4 +22,5 @@ export type IFavorite = {
   children: IFavorite[];
   project_id: string | null;
   sequence: number;
+  workspace_id: string;
 };

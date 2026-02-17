@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane utils
 import { cn } from "@plane/utils";
 // types
-import { ISlashCommandItem } from "@/types";
+import type { ISlashCommandItem } from "@/types";
 
 type Props = {
   isSelected: boolean;
@@ -30,7 +36,7 @@ const highlightMatch = (text: string, query: string): React.ReactNode => {
     return (
       <>
         {before}
-        <span className="font-medium text-custom-text-100">{match}</span>
+        <span className="font-medium text-primary">{match}</span>
         {after}
       </>
     );
@@ -40,7 +46,7 @@ const highlightMatch = (text: string, query: string): React.ReactNode => {
   return text;
 };
 
-export const CommandMenuItem: React.FC<Props> = (props) => {
+export function CommandMenuItem(props: Props) {
   const { isSelected, item, itemIndex, onClick, onMouseEnter, sectionIndex, query } = props;
 
   return (
@@ -48,9 +54,9 @@ export const CommandMenuItem: React.FC<Props> = (props) => {
       type="button"
       id={`item-${sectionIndex}-${itemIndex}`}
       className={cn(
-        "flex items-center gap-2 w-full rounded px-1 py-1.5 text-sm text-left truncate text-custom-text-200",
+        "flex items-center gap-2 w-full rounded-sm px-1 py-1.5 text-13 text-left truncate text-secondary hover:bg-layer-1-hover",
         {
-          "bg-custom-background-80": isSelected,
+          "bg-layer-1-hover": isSelected,
         }
       )}
       onClick={onClick}
@@ -59,8 +65,8 @@ export const CommandMenuItem: React.FC<Props> = (props) => {
       <span className="size-5 grid place-items-center flex-shrink-0" style={item.iconContainerStyle}>
         {item.icon}
       </span>
-      <p className="flex-grow truncate">{query ? highlightMatch(item.title, query) : item.title}</p>
+      <p className="flex-grow truncate text-12">{query ? highlightMatch(item.title, query) : item.title}</p>
       {item.badge}
     </button>
   );
-};
+}

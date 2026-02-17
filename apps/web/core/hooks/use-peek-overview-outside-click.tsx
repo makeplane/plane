@@ -1,42 +1,60 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type React from "react";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 
 const usePeekOverviewOutsideClickDetector = (
   ref: React.RefObject<HTMLElement>,
   callback: () => void,
-  issueId: string
+  issueId: string,
+  excludePreventionElementIds?: string[]
 ) => {
-  const handleClick = (event: MouseEvent) => {
-    if (ref.current && !ref.current.contains(event.target as Node)) {
-      // check for the closest element with attribute name data-prevent-outside-click
-      const preventOutsideClickElement = (event.target as HTMLElement | undefined)?.closest(
-        "[data-prevent-outside-click]"
-      );
-      // if the closest element with attribute name data-prevent-outside-click is found, return
-      if (preventOutsideClickElement) {
-        return;
-      }
-      // check if the click target is the current issue element or its children
-      let targetElement = event.target as HTMLElement | null;
-      while (targetElement) {
-        if (targetElement.id === `issue-${issueId}`) {
-          // if the click target is the current issue element, return
+  const handleClick = useCallback(
+    (event: MouseEvent) => {
+      if (!(event.target instanceof HTMLElement)) return;
+      if (ref.current && !ref.current.contains(event.target)) {
+        // check for the closest element with attribute name data-prevent-outside-click
+        const preventOutsideClickElement = event.target.closest("[data-prevent-outside-click]");
+        // if the closest element with attribute name data-prevent-outside-click is found
+        if (preventOutsideClickElement) {
+          // Check if this element's ID is in the exclusion list
+          const elementId = preventOutsideClickElement.id;
+          const shouldExcludePrevention =
+            excludePreventionElementIds && elementId && excludePreventionElementIds.includes(elementId);
+
+          if (!shouldExcludePrevention && !preventOutsideClickElement.contains(ref.current)) {
+            // Only prevent the callback if the ref is NOT inside the same prevent-outside-click container.
+            // This allows normal outside click detection for elements within the same container
+            return;
+          }
+        }
+        // check if the click target is the current issue element or its children
+        let targetElement: HTMLElement | null = event.target;
+        while (targetElement) {
+          if (targetElement.id === `issue-${issueId}`) {
+            // if the click target is the current issue element, return
+            return;
+          }
+          targetElement = targetElement.parentElement;
+        }
+        const delayOutsideClickElement = event.target.closest("[data-delay-outside-click]");
+        if (delayOutsideClickElement) {
+          // if the click target is the closest element with attribute name data-delay-outside-click, delay the callback
+          setTimeout(() => {
+            callback();
+          }, 0);
           return;
         }
-        targetElement = targetElement.parentElement;
+        // else, call the callback immediately
+        callback();
       }
-      const delayOutsideClickElement = (event.target as HTMLElement | undefined)?.closest("[data-delay-outside-click]");
-      if (delayOutsideClickElement) {
-        // if the click target is the closest element with attribute name data-delay-outside-click, delay the callback
-        setTimeout(() => {
-          callback();
-        }, 0);
-        return;
-      }
-      // else, call the callback immediately
-      callback();
-    }
-  };
+    },
+    [ref, callback, issueId, excludePreventionElementIds]
+  );
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClick);
@@ -44,7 +62,7 @@ const usePeekOverviewOutsideClickDetector = (
     return () => {
       document.removeEventListener("mousedown", handleClick);
     };
-  });
+  }, [handleClick]);
 };
 
 export default usePeekOverviewOutsideClickDetector;

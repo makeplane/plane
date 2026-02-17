@@ -1,6 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 // ui
@@ -20,7 +23,7 @@ type Props = {
   anchor: string;
 };
 
-export const IssuesLayoutSelection: FC<Props> = observer((props) => {
+export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(props: Props) {
   const { anchor } = props;
   // hooks
   const { t } = useTranslation();
@@ -45,7 +48,7 @@ export const IssuesLayoutSelection: FC<Props> = observer((props) => {
   };
 
   return (
-    <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
+    <div className="flex items-center gap-1 rounded-sm bg-layer-2 p-1">
       {SITES_ISSUE_LAYOUTS.map((layout) => {
         if (!layoutOptions[layout.key]) return;
 
@@ -53,14 +56,14 @@ export const IssuesLayoutSelection: FC<Props> = observer((props) => {
           <Tooltip key={layout.key} tooltipContent={t(layout.titleTranslationKey)}>
             <button
               type="button"
-              className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
-                activeLayout == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+              className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded-sm transition-all bg-layer-transparent hover:bg-layer-transparent-hover ${
+                activeLayout == layout.key ? "bg-layer-transparent-active hover:bg-layer-transparent-selected" : ""
               }`}
               onClick={() => handleCurrentBoardView(layout.key)}
             >
               <IssueLayoutIcon
                 layout={layout.key}
-                className={`size-3.5 ${activeLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"}`}
+                className={`size-3.5 ${activeLayout == layout.key ? "text-primary" : "text-secondary"}`}
               />
             </button>
           </Tooltip>

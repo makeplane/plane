@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -16,7 +22,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterStatus: FC<Props> = observer((props) => {
+export const FilterStatus = observer(function FilterStatus(props: Props) {
   const { searchQuery } = props;
   // hooks
   const { currentTab, inboxFilters, handleInboxIssueFilters } = useProjectInbox();
@@ -61,7 +67,7 @@ export const FilterStatus: FC<Props> = observer((props) => {
               />
             ))
           ) : (
-            <p className="text-xs italic text-custom-text-400">No matches found</p>
+            <p className="text-11 italic text-placeholder">No matches found</p>
           )}
         </div>
       )}

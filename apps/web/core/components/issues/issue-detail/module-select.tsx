@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
@@ -21,7 +27,7 @@ type TIssueModuleSelect = {
   disabled?: boolean;
 };
 
-export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) => {
+export const IssueModuleSelect = observer(function IssueModuleSelect(props: TIssueModuleSelect) {
   const { className = "", workspaceSlug, projectId, issueId, issueOperations, disabled = false } = props;
   const { t } = useTranslation();
   // states
@@ -64,8 +70,8 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
         placeholder={t("module.no_module")}
         disabled={disableSelect}
         className="group h-full w-full"
-        buttonContainerClassName="w-full rounded"
-        buttonClassName={`min-h-8 text-sm justify-between ${issue?.module_ids?.length ? "" : "text-custom-text-400"}`}
+        buttonContainerClassName="w-full text-left rounded-sm"
+        buttonClassName={`text-body-xs-medium justify-between ${issue?.module_ids?.length ? "" : "text-placeholder"}`}
         buttonVariant="transparent-with-text"
         hideIcon
         dropdownArrow

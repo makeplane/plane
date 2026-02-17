@@ -1,15 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
-import { ISSUE_PRIORITIES, TIssuePriorities } from "@plane/constants";
-import { EQUALITY_OPERATOR, TFilterProperty, COLLECTION_OPERATOR, TSupportedOperators } from "@plane/types";
+import type { TIssuePriorities } from "@plane/constants";
+import { ISSUE_PRIORITIES } from "@plane/constants";
+import type { TFilterProperty, TSupportedOperators } from "@plane/types";
+import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
-import {
-  createFilterConfig,
-  TCreateFilterConfigParams,
-  IFilterIconConfig,
-  TCreateFilterConfig,
-  getMultiSelectConfig,
-  createOperatorConfigEntry,
-} from "../../../rich-filters";
+import type { TCreateFilterConfigParams, IFilterIconConfig, TCreateFilterConfig } from "../../../rich-filters";
+import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";
 
 // ------------ Priority filter ------------
 
@@ -53,7 +55,7 @@ export const getPriorityMultiSelectConfig = (
 export const getPriorityFilterConfig =
   <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreatePriorityFilterParams> =>
   (params: TCreatePriorityFilterParams) =>
-    createFilterConfig<P, TIssuePriorities>({
+    createFilterConfig<P>({
       id: key,
       label: "Priority",
       ...params,

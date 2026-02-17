@@ -1,7 +1,9 @@
-"use client";
-import type { FC } from "react";
-import React from "react";
-// helpers
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { cn } from "@plane/utils";
 import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 
@@ -10,11 +12,11 @@ type Props = {
   className?: string;
 };
 
-export const ProfileSettingContentWrapper: FC<Props> = (props) => {
+export function ProfileSettingContentWrapper(props: Props) {
   const { children, className = "" } = props;
   return (
     <div className="flex h-full flex-col">
-      <div className="block flex-shrink-0 border-b border-custom-border-200 p-4 md:hidden">
+      <div className="block flex-shrink-0 border-b border-subtle p-4 md:hidden">
         <SidebarHamburgerToggle />
       </div>
 
@@ -28,4 +30,4 @@ export const ProfileSettingContentWrapper: FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

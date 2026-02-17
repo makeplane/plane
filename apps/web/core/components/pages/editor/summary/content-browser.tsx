@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect, useCallback } from "react";
 // plane imports
 import type { EditorRefApi, IMarking } from "@plane/editor";
@@ -14,7 +20,7 @@ type Props = {
   showOutline?: boolean;
 };
 
-export const PageContentBrowser: React.FC<Props> = (props) => {
+export function PageContentBrowser(props: Props) {
   const { className, editorRef, emptyState, setSidePeekVisible, showOutline = false } = props;
   // states
   const [headings, setHeadings] = useState<IMarking[]>([]);
@@ -63,7 +69,7 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
           return (
             <div
               key={`${marking.level}-${marking.sequence}`}
-              className="flex-shrink-0 h-0.5 bg-custom-border-400 self-end rounded-sm"
+              className="flex-shrink-0 h-0.5 bg-layer-3 self-end rounded-xs"
               style={{
                 width: marking.level === 1 ? "20px" : marking.level === 2 ? "18px" : "14px",
               }}
@@ -79,4 +85,4 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
       })}
     </div>
   );
-};
+}

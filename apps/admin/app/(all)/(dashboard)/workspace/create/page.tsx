@@ -1,21 +1,30 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
 // components
+import { PageWrapper } from "@/components/common/page-wrapper";
+// types
+import type { Route } from "./+types/page";
+// local
 import { WorkspaceCreateForm } from "./form";
 
-const WorkspaceCreatePage = observer(() => (
-  <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
-    <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
-      <div className="text-xl font-medium text-custom-text-100">Create a new workspace on this instance.</div>
-      <div className="text-sm font-normal text-custom-text-300">
-        You will need to invite users from Workspace Settings after you create this workspace.
-      </div>
-    </div>
-    <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
+const WorkspaceCreatePage = observer(function WorkspaceCreatePage(_props: Route.ComponentProps) {
+  return (
+    <PageWrapper
+      header={{
+        title: "Create a new workspace on this instance.",
+        description: "You will need to invite users from Workspace Settings after you create this workspace.",
+      }}
+    >
       <WorkspaceCreateForm />
-    </div>
-  </div>
-));
+    </PageWrapper>
+  );
+});
+
+export const meta: Route.MetaFunction = () => [{ title: "Create Workspace - God Mode" }];
 
 export default WorkspaceCreatePage;

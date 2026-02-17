@@ -1,8 +1,18 @@
-import { observable, action, makeObservable } from "mobx";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
 import type { TCreateModalStoreTypes, TCreatePageModal } from "@plane/constants";
 import { DEFAULT_CREATE_PAGE_MODAL_DATA, EPageAccess } from "@plane/constants";
+import type { TProfileSettingsTabs } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
+// lib
+import { store } from "@/lib/store-context";
 
 export interface ModalData {
   store: EIssuesStoreType;
@@ -11,8 +21,6 @@ export interface ModalData {
 
 export interface IBaseCommandPaletteStore {
   // observables
-  isCommandPaletteOpen: boolean;
-  isShortcutModalOpen: boolean;
   isCreateProjectModalOpen: boolean;
   isCreateCycleModalOpen: boolean;
   isCreateModuleModalOpen: boolean;
@@ -23,12 +31,14 @@ export interface IBaseCommandPaletteStore {
   isBulkDeleteIssueModalOpen: boolean;
   createIssueStoreType: TCreateModalStoreTypes;
   createWorkItemAllowedProjectIds: string[] | undefined;
+  profileSettingsModal: {
+    activeTab: TProfileSettingsTabs | null;
+    isOpen: boolean;
+  };
   allStickiesModal: boolean;
   projectListOpenMap: Record<string, boolean>;
   getIsProjectListOpen: (projectId: string) => boolean;
   // toggle actions
-  toggleCommandPaletteModal: (value?: boolean) => void;
-  toggleShortcutModal: (value?: boolean) => void;
   toggleCreateProjectModal: (value?: boolean) => void;
   toggleCreateCycleModal: (value?: boolean) => void;
   toggleCreateViewModal: (value?: boolean) => void;
@@ -39,12 +49,11 @@ export interface IBaseCommandPaletteStore {
   toggleBulkDeleteIssueModal: (value?: boolean) => void;
   toggleAllStickiesModal: (value?: boolean) => void;
   toggleProjectListOpen: (projectId: string, value?: boolean) => void;
+  toggleProfileSettingsModal: (value: { activeTab?: TProfileSettingsTabs | null; isOpen?: boolean }) => void;
 }
 
 export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStore {
   // observables
-  isCommandPaletteOpen: boolean = false;
-  isShortcutModalOpen: boolean = false;
   isCreateProjectModalOpen: boolean = false;
   isCreateCycleModalOpen: boolean = false;
   isCreateModuleModalOpen: boolean = false;
@@ -55,14 +64,16 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   createPageModal: TCreatePageModal = DEFAULT_CREATE_PAGE_MODAL_DATA;
   createIssueStoreType: TCreateModalStoreTypes = EIssuesStoreType.PROJECT;
   createWorkItemAllowedProjectIds: IBaseCommandPaletteStore["createWorkItemAllowedProjectIds"] = undefined;
+  profileSettingsModal: IBaseCommandPaletteStore["profileSettingsModal"] = {
+    activeTab: "general",
+    isOpen: false,
+  };
   allStickiesModal: boolean = false;
   projectListOpenMap: Record<string, boolean> = {};
 
   constructor() {
     makeObservable(this, {
       // observable
-      isCommandPaletteOpen: observable.ref,
-      isShortcutModalOpen: observable.ref,
       isCreateProjectModalOpen: observable.ref,
       isCreateCycleModalOpen: observable.ref,
       isCreateModuleModalOpen: observable.ref,
@@ -73,12 +84,10 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       createPageModal: observable,
       createIssueStoreType: observable,
       createWorkItemAllowedProjectIds: observable,
+      profileSettingsModal: observable,
       allStickiesModal: observable,
       projectListOpenMap: observable,
-      // projectPages: computed,
       // toggle actions
-      toggleCommandPaletteModal: action,
-      toggleShortcutModal: action,
       toggleCreateProjectModal: action,
       toggleCreateCycleModal: action,
       toggleCreateViewModal: action,
@@ -89,6 +98,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       toggleBulkDeleteIssueModal: action,
       toggleAllStickiesModal: action,
       toggleProjectListOpen: action,
+      toggleProfileSettingsModal: action,
     });
   }
 
@@ -99,15 +109,15 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   protected getCoreModalsState(): boolean {
     return Boolean(
       this.isCreateIssueModalOpen ||
-        this.isCreateCycleModalOpen ||
-        this.isCreateProjectModalOpen ||
-        this.isCreateModuleModalOpen ||
-        this.isCreateViewModalOpen ||
-        this.isShortcutModalOpen ||
-        this.isBulkDeleteIssueModalOpen ||
-        this.isDeleteIssueModalOpen ||
-        this.createPageModal.isOpen ||
-        this.allStickiesModal
+      this.isCreateCycleModalOpen ||
+      this.isCreateProjectModalOpen ||
+      this.isCreateModuleModalOpen ||
+      this.isCreateViewModalOpen ||
+      store.powerK.isShortcutsListModalOpen ||
+      this.isBulkDeleteIssueModalOpen ||
+      this.isDeleteIssueModalOpen ||
+      this.createPageModal.isOpen ||
+      this.allStickiesModal
     );
   }
   // computedFn
@@ -121,32 +131,6 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   toggleProjectListOpen = (projectId: string, value?: boolean) => {
     if (value !== undefined) this.projectListOpenMap[projectId] = value;
     else this.projectListOpenMap[projectId] = !this.projectListOpenMap[projectId];
-  };
-
-  /**
-   * Toggles the command palette modal
-   * @param value
-   * @returns
-   */
-  toggleCommandPaletteModal = (value?: boolean) => {
-    if (value !== undefined) {
-      this.isCommandPaletteOpen = value;
-    } else {
-      this.isCommandPaletteOpen = !this.isCommandPaletteOpen;
-    }
-  };
-
-  /**
-   * Toggles the shortcut modal
-   * @param value
-   * @returns
-   */
-  toggleShortcutModal = (value?: boolean) => {
-    if (value !== undefined) {
-      this.isShortcutModalOpen = value;
-    } else {
-      this.isShortcutModalOpen = !this.isShortcutModalOpen;
-    }
   };
 
   /**
@@ -275,5 +259,21 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
     } else {
       this.allStickiesModal = !this.allStickiesModal;
     }
+  };
+
+  /**
+   * Toggles the profile settings modal
+   * @param value
+   * @returns
+   */
+  toggleProfileSettingsModal: IBaseCommandPaletteStore["toggleProfileSettingsModal"] = (payload) => {
+    const updatedSettings: IBaseCommandPaletteStore["profileSettingsModal"] = {
+      ...this.profileSettingsModal,
+      ...payload,
+    };
+
+    runInAction(() => {
+      this.profileSettingsModal = updatedSettings;
+    });
   };
 }

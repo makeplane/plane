@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { MutableRefObject } from "react";
 import { useEffect, useRef, useState } from "react";
@@ -62,7 +66,7 @@ interface IssueDetailsBlockProps {
   isEpic?: boolean;
 }
 
-const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props) => {
+const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props: IssueDetailsBlockProps) {
   const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties, isEpic = false } = props;
   // refs
   const menuActionRef = useRef<HTMLDivElement | null>(null);
@@ -74,8 +78,8 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   const customActionButton = (
     <div
       ref={menuActionRef}
-      className={`flex items-center h-full w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-custom-background-80 ${
-        isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
+      className={`flex items-center h-full w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
+        isMenuActive ? "bg-layer-1 text-primary" : "text-secondary"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
@@ -100,7 +104,8 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           <IssueIdentifier
             issueId={issue.id}
             projectId={issue.project_id}
-            textContainerClassName="line-clamp-1 text-xs text-custom-text-300"
+            size="xs"
+            variant="tertiary"
             displayProperties={displayProperties}
           />
         )}
@@ -120,13 +125,13 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
       </div>
 
       <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
-        <div className="w-full line-clamp-1 text-sm text-custom-text-100">
+        <div className="w-full line-clamp-1 text-body-sm-medium text-primary">
           <span>{issue.name}</span>
         </div>
       </Tooltip>
 
       <IssueProperties
-        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300 pt-1.5"
+        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-tertiary pt-1.5"
         issue={issue}
         displayProperties={displayProperties}
         activeLayout="Kanban"
@@ -141,14 +146,14 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
           displayPropertyKey="sub_issue_count"
           shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!subIssueCount}
         >
-          <IssueStats issueId={issue.id} className="mt-2 font-medium text-custom-text-350" />
+          <IssueStats issueId={issue.id} className="mt-2 font-medium text-tertiary" />
         </WithDisplayPropertiesHOC>
       )}
     </>
   );
 });
 
-export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
+export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueBlockProps) {
   const {
     issueId,
     groupId,
@@ -270,16 +275,16 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
           href={workItemLink}
           ref={cardRef}
           className={cn(
-            "block rounded border-[1px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",
+            "block rounded-lg border outline-[0.5px] outline-transparent shadow-raised-100 w-full border-subtle bg-layer-2 text-13 transition-all p-3 hover:shadow-raised-200 hover:border-strong",
             { "hover:cursor-pointer": isDragAllowed },
-            { "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id) },
-            { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
+            { "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id) },
+            { "bg-layer-1 z-[100]": isCurrentBlockDragging }
           )}
           onClick={() => handleIssuePeekOverview(issue)}
           disabled={!!issue?.tempId}
         >
           <RenderIfVisible
-            classNames="space-y-2 px-3 py-2"
+            classNames="space-y-2"
             root={scrollableContainerRef}
             defaultHeight="100px"
             horizontalOffset={100}
@@ -301,5 +306,3 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     </>
   );
 });
-
-KanbanIssueBlock.displayName = "KanbanIssueBlock";

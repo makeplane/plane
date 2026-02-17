@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { RefObject } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -23,7 +29,7 @@ type Props = {
   ganttContainerRef: RefObject<HTMLDivElement>;
 };
 
-export const ChartDraggable: React.FC<Props> = observer((props) => {
+export const ChartDraggable = observer(function ChartDraggable(props: Props) {
   const {
     block,
     blockToRender,
@@ -49,7 +55,7 @@ export const ChartDraggable: React.FC<Props> = observer((props) => {
         position={block.position}
       />
       <div
-        className={cn("relative z-[6] flex h-8 w-full items-center rounded", {
+        className={cn("relative z-[6] flex h-8 w-full items-center rounded-sm", {
           "pointer-events-none": isMoving,
         })}
         onMouseDown={(e) => enableBlockMove && handleBlockDrag(e, "move")}

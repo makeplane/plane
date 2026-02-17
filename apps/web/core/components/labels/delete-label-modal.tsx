@@ -1,16 +1,18 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IIssueLabel } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useLabel } from "@/hooks/store/use-label";
 
 type Props = {
@@ -19,7 +21,7 @@ type Props = {
   data: IIssueLabel | null;
 };
 
-export const DeleteLabelModal: React.FC<Props> = observer((props) => {
+export const DeleteLabelModal = observer(function DeleteLabelModal(props: Props) {
   const { isOpen, onClose, data } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -40,27 +42,10 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
 
     await deleteLabel(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
-        captureSuccess({
-          eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_deleted,
-          payload: {
-            name: data.name,
-            project_id: projectId,
-          },
-        });
         handleClose();
       })
       .catch((err) => {
         setIsDeleteLoading(false);
-
-        captureError({
-          eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_deleted,
-          payload: {
-            name: data.name,
-            project_id: projectId,
-          },
-          error: err,
-        });
-
         const error = err?.error || "Label could not be deleted. Please try again.";
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -79,8 +64,8 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
       title="Delete Label"
       content={
         <>
-          Are you sure you want to delete <span className="font-medium text-custom-text-100">{data?.name}</span>? This
-          will remove the label from all the work item and from any views where the label is being filtered upon.
+          Are you sure you want to delete <span className="font-medium text-primary">{data?.name}</span>? This will
+          remove the label from all the work item and from any views where the label is being filtered upon.
         </>
       }
     />

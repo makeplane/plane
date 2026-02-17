@@ -1,4 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
@@ -16,7 +21,9 @@ type TCreateIssueToastActionItems = {
   isEpic?: boolean;
 };
 
-export const CreateIssueToastActionItems: FC<TCreateIssueToastActionItems> = observer((props) => {
+export const CreateIssueToastActionItems = observer(function CreateIssueToastActionItems(
+  props: TCreateIssueToastActionItems
+) {
   const { workspaceSlug, projectId, issueId, isEpic = false } = props;
   // state
   const [copied, setCopied] = useState(false);
@@ -54,24 +61,24 @@ export const CreateIssueToastActionItems: FC<TCreateIssueToastActionItems> = obs
   };
 
   return (
-    <div className="flex items-center gap-1 text-xs text-custom-text-200">
+    <div className="flex items-center gap-1 text-11 text-secondary -ml-2">
       <a
         href={workItemLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+        className="text-accent-primary px-2 py-1 hover:bg-surface-2 font-medium rounded-sm"
       >
         {`View ${isEpic ? "epic" : "work item"}`}
       </a>
 
       {copied ? (
         <>
-          <span className="cursor-default px-2 py-1 text-custom-text-200">Copied!</span>
+          <span className="cursor-default px-2 py-1 text-secondary">Copied!</span>
         </>
       ) : (
         <>
           <button
-            className="cursor-pointer hidden group-hover:flex px-2 py-1 text-custom-text-300 hover:text-custom-text-200 hover:bg-custom-background-90 rounded"
+            className="cursor-pointer hidden group-hover:flex px-2 py-1 text-tertiary hover:text-secondary hover:bg-surface-2 rounded-sm"
             onClick={copyToClipboard}
           >
             Copy link

@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from django.urls import path
 
 
@@ -250,11 +254,6 @@ urlpatterns = [
     # User Preference
     path(
         "workspaces/<str:slug>/sidebar-preferences/",
-        WorkspaceUserPreferenceViewSet.as_view(),
-        name="workspace-user-preference",
-    ),
-    path(
-        "workspaces/<str:slug>/sidebar-preferences/<str:key>/",
         WorkspaceUserPreferenceViewSet.as_view(),
         name="workspace-user-preference",
     ),

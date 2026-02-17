@@ -1,10 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Tab } from "@headlessui/react";
-import React, { FC, Fragment, useEffect, useState } from "react";
+import type { FC } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 // helpers
 import { useLocalStorage } from "@plane/hooks";
 import { cn } from "../utils";
 // types
-import { TabList, TabListItem } from "./tab-list";
+import type { TabListItem } from "./tab-list";
+import { TabList } from "./tab-list";
 
 export type TabContent = {
   content: React.ReactNode;
@@ -26,7 +34,7 @@ type TTabsProps = {
   storeInLocalStorage?: boolean;
 };
 
-export const Tabs: FC<TTabsProps> = (props: TTabsProps) => {
+export function Tabs(props: TTabsProps) {
   const {
     tabs,
     storageKey,
@@ -85,4 +93,4 @@ export const Tabs: FC<TTabsProps> = (props: TTabsProps) => {
       </Tab.Group>
     </div>
   );
-};
+}

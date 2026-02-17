@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 
 // components
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 import type { TSupportedFilterForUpdate } from "@plane/types";
 import { Row } from "@plane/ui";
 // icons
@@ -16,12 +22,7 @@ import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "./dropdowns";
 
 interface ICalendarHeader {
-  issuesFilterStore:
-    | IProjectIssuesFilter
-    | IModuleIssuesFilter
-    | ICycleIssuesFilter
-    | IProjectViewIssuesFilter
-    | IProjectEpicsFilter;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
   updateFilters?: (
     projectId: string,
     filterType: TSupportedFilterTypeForUpdate,
@@ -30,7 +31,7 @@ interface ICalendarHeader {
   setSelectedDate: (date: Date) => void;
 }
 
-export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
+export const CalendarHeader = observer(function CalendarHeader(props: ICalendarHeader) {
   const { issuesFilterStore, updateFilters, setSelectedDate } = props;
 
   const { t } = useTranslation();
@@ -104,17 +105,17 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
     <Row className="mb-4 flex items-center justify-between gap-2">
       <div className="flex items-center gap-1.5">
         <button type="button" className="grid place-items-center" onClick={handlePrevious}>
-          <ChevronLeft size={16} strokeWidth={2} />
+          <ChevronLeftIcon height={16} width={16} strokeWidth={2} />
         </button>
         <button type="button" className="grid place-items-center" onClick={handleNext}>
-          <ChevronRight size={16} strokeWidth={2} />
+          <ChevronRightIcon height={16} width={16} strokeWidth={2} />
         </button>
         <CalendarMonthsDropdown issuesFilterStore={issuesFilterStore} />
       </div>
       <div className="flex items-center gap-1.5">
         <button
           type="button"
-          className="rounded bg-custom-background-80 px-2.5 py-1 text-xs font-medium text-custom-text-200 hover:text-custom-text-100"
+          className="rounded-sm bg-layer-transparent hover:bg-layer-transparent-hover px-2.5 py-1 text-11 font-medium text-secondary  hover:text-primary"
           onClick={handleToday}
         >
           {t("common.today")}

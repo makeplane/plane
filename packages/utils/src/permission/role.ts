@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { EUserPermissions } from "@plane/constants";
-import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
+import type { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 
 export const getUserRole = (role: EUserPermissions | EUserWorkspaceRoles | EUserProjectRoles) => {
   switch (role) {

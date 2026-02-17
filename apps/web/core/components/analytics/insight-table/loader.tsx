@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@plane/propel/table";
@@ -8,27 +14,29 @@ interface TableSkeletonProps {
   rows: number;
 }
 
-export const TableLoader: React.FC<TableSkeletonProps> = ({ columns, rows }) => (
-  <Table>
-    <TableHeader>
-      <TableRow>
-        {columns.map((column, index) => (
-          <TableHead key={column.header?.toString() ?? index}>
-            {typeof column.header === "string" ? column.header : ""}
-          </TableHead>
-        ))}
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      {Array.from({ length: rows }).map((_, rowIndex) => (
-        <TableRow key={rowIndex}>
-          {columns.map((_, colIndex) => (
-            <TableCell key={colIndex}>
-              <Loader.Item height="20px" width="100%" />
-            </TableCell>
+export function TableLoader({ columns, rows }: TableSkeletonProps) {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          {columns.map((column, index) => (
+            <TableHead key={column.header?.toString() ?? index}>
+              {typeof column.header === "string" ? column.header : ""}
+            </TableHead>
           ))}
         </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-);
+      </TableHeader>
+      <TableBody>
+        {Array.from({ length: rows }).map((_, rowIndex) => (
+          <TableRow key={rowIndex}>
+            {columns.map((_, colIndex) => (
+              <TableCell key={colIndex}>
+                <Loader.Item height="20px" width="100%" />
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}

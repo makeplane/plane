@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React from "react";
 import { observer } from "mobx-react";
@@ -28,9 +32,10 @@ export interface IssuesModalProps {
   isProjectSelectionDisabled?: boolean;
   templateId?: string;
   allowedProjectIds?: string[];
+  showActionItemsOnUpdate?: boolean;
 }
 
-export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
+export const CreateUpdateIssueModal = observer(function CreateUpdateIssueModal(props: IssuesModalProps) {
   // router params
   const { cycleId, moduleId } = useParams();
   // derived values

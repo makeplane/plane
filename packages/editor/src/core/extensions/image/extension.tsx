@@ -1,12 +1,19 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import type { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // types
 import type { TFileHandler } from "@/types";
 // local imports
-import { CustomImageNodeView, CustomImageNodeViewProps } from "../custom-image/components/node-view";
+import type { CustomImageNodeViewProps } from "../custom-image/components/node-view";
+import { CustomImageNodeView } from "../custom-image/components/node-view";
 import { ImageExtensionConfig } from "./extension-config";
 
 declare module "@tiptap/core" {
@@ -23,7 +30,7 @@ type Props = {
   fileHandler: TFileHandler;
 };
 
-export const ImageExtension = (props: Props) => {
+export function ImageExtension(props: Props) {
   const { fileHandler } = props;
   // derived values
   const { getAssetSrc } = fileHandler;
@@ -60,4 +67,4 @@ export const ImageExtension = (props: Props) => {
       ));
     },
   });
-};
+}

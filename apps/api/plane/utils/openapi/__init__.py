@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 """
 OpenAPI utilities for drf-spectacular integration.
 
@@ -140,6 +144,7 @@ from .examples import (
     WORKSPACE_MEMBER_EXAMPLE,
     PROJECT_MEMBER_EXAMPLE,
     CYCLE_ISSUE_EXAMPLE,
+    STICKY_EXAMPLE,
 )
 
 # Helper decorators
@@ -292,6 +297,7 @@ __all__ = [
     "WORKSPACE_MEMBER_EXAMPLE",
     "PROJECT_MEMBER_EXAMPLE",
     "CYCLE_ISSUE_EXAMPLE",
+    "STICKY_EXAMPLE",
     # Decorators
     "workspace_docs",
     "project_docs",

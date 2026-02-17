@@ -1,7 +1,11 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { IssuesLayoutsRoot } from "@/components/issues/issue-layouts";
@@ -10,16 +14,10 @@ import { usePublish } from "@/hooks/store/publish";
 import { useLabel } from "@/hooks/store/use-label";
 import { useStates } from "@/hooks/store/use-state";
 
-type Props = {
-  params: {
-    anchor: string;
-  };
-};
-
-const IssuesPage = observer((props: Props) => {
-  const { params } = props;
-  const { anchor } = params;
+const IssuesPage = observer(function IssuesPage() {
   // params
+  const params = useParams<{ anchor: string }>();
+  const { anchor } = params;
   const searchParams = useSearchParams();
   const peekId = searchParams.get("peekId") || undefined;
   // store

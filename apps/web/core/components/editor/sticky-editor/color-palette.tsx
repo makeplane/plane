@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { TSticky } from "@plane/types";
 
 export const STICKY_COLORS_LIST: {
@@ -8,7 +14,7 @@ export const STICKY_COLORS_LIST: {
   {
     key: "gray",
     label: "Gray",
-    backgroundColor: "rgba(var(--color-background-90))",
+    backgroundColor: "var(--editor-colors-gray-background)",
   },
   {
     key: "peach",
@@ -51,11 +57,11 @@ type TProps = {
   handleUpdate: (data: Partial<TSticky>) => Promise<void>;
 };
 
-export const ColorPalette = (props: TProps) => {
+export function ColorPalette(props: TProps) {
   const { handleUpdate } = props;
   return (
-    <div className="absolute z-10 bottom-5 left-0 w-56 shadow p-2 rounded-md bg-custom-background-100 mb-2">
-      <div className="text-sm font-semibold text-custom-text-400 mb-2">Background colors</div>
+    <div className="absolute z-10 bottom-5 left-0 w-56 shadow p-2 rounded-md bg-surface-1 mb-2">
+      <div className="text-13 font-semibold text-placeholder mb-2">Background colors</div>
       <div className="flex flex-wrap gap-2">
         {STICKY_COLORS_LIST.map((color) => (
           <button
@@ -66,7 +72,7 @@ export const ColorPalette = (props: TProps) => {
                 background_color: color.key,
               });
             }}
-            className="h-6 w-6 rounded-md hover:ring-2 hover:ring-custom-primary focus:outline-none focus:ring-2 focus:ring-custom-primary transition-all"
+            className="h-6 w-6 rounded-md hover:ring-2 hover:ring-accent-strong focus:outline-none focus:ring-2 focus:ring-accent-strong transition-all"
             style={{
               backgroundColor: color.backgroundColor,
             }}
@@ -75,4 +81,4 @@ export const ColorPalette = (props: TProps) => {
       </div>
     </div>
   );
-};
+}

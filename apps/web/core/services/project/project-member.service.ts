@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // types
 import { API_BASE_URL } from "@plane/constants";
 import type { IProjectBulkAddFormData, TProjectMembership } from "@plane/types";
@@ -58,7 +64,7 @@ export class ProjectMemberService extends APIService {
       });
   }
 
-  async deleteProjectMember(workspaceSlug: string, projectId: string, memberId: string): Promise<any> {
+  async deleteProjectMember(workspaceSlug: string, projectId: string, memberId: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`)
       .then((response) => response?.data)
       .catch((error) => {

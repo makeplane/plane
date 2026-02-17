@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   shift,
   flip,
@@ -7,9 +13,8 @@ import {
   autoUpdate,
   useClick,
   useRole,
-  type UseInteractionsReturn,
-  type UseFloatingReturn,
 } from "@floating-ui/react";
+import type { UseInteractionsReturn, UseFloatingReturn } from "@floating-ui/react";
 import { useState } from "react";
 
 type TArgs = {

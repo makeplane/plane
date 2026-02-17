@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // helpers
 import { getValidKeysFromObject } from "@plane/utils";
@@ -34,7 +39,7 @@ type TIssueActivityItem = {
   ends: "top" | "bottom" | undefined;
 };
 
-export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
+export const IssueActivityItem = observer(function IssueActivityItem(props: TIssueActivityItem) {
   const { activityId, ends } = props;
   // hooks
   const {

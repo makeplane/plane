@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 
@@ -18,12 +22,13 @@ from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 from plane.db.models import (
     Cycle,
     Intake,
-    IssueUserProperty,
+    ProjectUserProperty,
     Module,
     Project,
     DeployBoard,
     ProjectMember,
     State,
+    DEFAULT_STATES,
     Workspace,
     UserFavorite,
 )
@@ -209,14 +214,14 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
         """
         try:
             workspace = Workspace.objects.get(slug=slug)
+
             serializer = ProjectCreateSerializer(data={**request.data}, context={"workspace_id": workspace.id})
+
             if serializer.is_valid():
                 serializer.save()
 
                 # Add the user as Administrator to the project
                 _ = ProjectMember.objects.create(project_id=serializer.instance.id, member=request.user, role=20)
-                # Also create the issue property for the user
-                _ = IssueUserProperty.objects.create(project_id=serializer.instance.id, user=request.user)
 
                 if serializer.instance.project_lead is not None and str(serializer.instance.project_lead) != str(
                     request.user.id
@@ -226,46 +231,6 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                         member_id=serializer.instance.project_lead,
                         role=20,
                     )
-                    # Also create the issue property for the user
-                    IssueUserProperty.objects.create(
-                        project_id=serializer.instance.id,
-                        user_id=serializer.instance.project_lead,
-                    )
-
-                # Default states
-                states = [
-                    {
-                        "name": "Backlog",
-                        "color": "#60646C",
-                        "sequence": 15000,
-                        "group": "backlog",
-                        "default": True,
-                    },
-                    {
-                        "name": "Todo",
-                        "color": "#60646C",
-                        "sequence": 25000,
-                        "group": "unstarted",
-                    },
-                    {
-                        "name": "In Progress",
-                        "color": "#F59E0B",
-                        "sequence": 35000,
-                        "group": "started",
-                    },
-                    {
-                        "name": "Done",
-                        "color": "#46A758",
-                        "sequence": 45000,
-                        "group": "completed",
-                    },
-                    {
-                        "name": "Cancelled",
-                        "color": "#9AA4BC",
-                        "sequence": 55000,
-                        "group": "cancelled",
-                    },
-                ]
 
                 State.objects.bulk_create(
                     [
@@ -279,7 +244,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                             default=state.get("default", False),
                             created_by=request.user,
                         )
-                        for state in states
+                        for state in DEFAULT_STATES
                     ]
                 )
 

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import { PopoverMenu } from "./popover-menu";
@@ -16,7 +22,7 @@ const meta: Meta<typeof PopoverMenu<TPopoverMenu>> = {
   tags: ["autodocs"],
   args: {
     popperPosition: "bottom-start",
-    panelClassName: "rounded bg-gray-100 p-2",
+    panelClassName: "rounded-sm bg-gray-100 p-2",
     data: [
       { id: 1, name: "John Doe" },
       { id: 2, name: "Jane Doe" },
@@ -25,7 +31,7 @@ const meta: Meta<typeof PopoverMenu<TPopoverMenu>> = {
     ],
     keyExtractor: (item, index: number) => `${item.id}-${index}`,
     render: (item: TPopoverMenu) => (
-      <div className="text-sm text-gray-600 hover:text-gray-700 rounded-sm cursor-pointer hover:bg-gray-200 transition-all px-1.5 py-0.5 capitalize">
+      <div className="text-13 text-gray-600 hover:text-gray-700 rounded-xs cursor-pointer hover:bg-gray-200 transition-all px-1.5 py-0.5 capitalize">
         {item.name}
       </div>
     ),

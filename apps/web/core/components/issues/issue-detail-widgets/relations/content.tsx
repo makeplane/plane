@@ -1,4 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -37,7 +42,7 @@ export type TRelationObject = {
   placeholder: string;
 };
 
-export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
+export const RelationsCollapsibleContent = observer(function RelationsCollapsibleContent(props: Props) {
   const { workspaceSlug, issueId, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -139,7 +144,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
               title={
                 <div className={`flex items-center gap-1 px-2.5 py-1 h-9  w-full ${relation.className}`}>
                   <span>{relation.icon ? relation.icon(14) : null}</span>
-                  <span className="text-sm font-medium leading-5">{relation.label}</span>
+                  <span className="text-13 font-medium leading-5">{relation.label}</span>
                 </div>
               }
               defaultOpen
@@ -187,7 +192,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
               issueCrudState.delete.issue.id &&
               issueCrudState.delete.issue.project_id
             ) {
-              const deleteOperation = !!issueCrudState.delete.issue?.is_epic
+              const deleteOperation = issueCrudState.delete.issue?.is_epic
                 ? epicOperations.remove
                 : issueOperations.remove;
               await deleteOperation(
@@ -203,7 +208,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
 
       {shouldRenderIssueUpdateModal && (
         <>
-          {!!issueCrudState?.update?.issue?.is_epic ? (
+          {issueCrudState?.update?.issue?.is_epic ? (
             <CreateUpdateEpicModal
               isOpen={issueCrudState?.update?.toggle}
               onClose={() => {

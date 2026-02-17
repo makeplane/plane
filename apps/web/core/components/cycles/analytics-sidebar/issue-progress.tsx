@@ -1,14 +1,18 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import { useMemo } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
-import { ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ChevronUpIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { ICycle, TCyclePlotType, TProgressSnapshot } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { getDate } from "@plane/utils";
@@ -54,7 +58,7 @@ export const validateCycleSnapshot = (cycleDetails: ICycle | null): ICycle | nul
   return updatedCycleDetails;
 };
 
-export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((props) => {
+export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(props: TCycleAnalyticsProgress) {
   // props
   const { workspaceSlug, projectId, cycleId } = props;
   // router
@@ -100,7 +104,7 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
 
   if (!cycleDetails) return <></>;
   return (
-    <div className="border-t border-custom-border-200 space-y-4 py-5">
+    <div className="border-t border-subtle space-y-4 py-5">
       <Disclosure defaultOpen>
         {({ open }) => (
           <div className="flex flex-col">
@@ -108,27 +112,23 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
             {isCycleDateValid ? (
               <div className="relative w-full flex justify-between items-center gap-2">
                 <Disclosure.Button className="relative flex items-center gap-2 w-full">
-                  <div className="font-medium text-custom-text-200 text-sm">
-                    {t("project_cycles.active_cycle.progress")}
-                  </div>
+                  <div className="font-medium text-secondary text-13">{t("project_cycles.active_cycle.progress")}</div>
                 </Disclosure.Button>
                 <Disclosure.Button className="ml-auto">
                   {open ? (
-                    <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" />
+                    <ChevronUpIcon className="h-3.5 w-3.5" aria-hidden="true" />
                   ) : (
-                    <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+                    <ChevronDownIcon className="h-3.5 w-3.5" aria-hidden="true" />
                   )}
                 </Disclosure.Button>
               </div>
             ) : (
               <div className="relative w-full flex justify-between items-center gap-2">
-                <div className="font-medium text-custom-text-200 text-sm">
-                  {t("project_cycles.active_cycle.progress")}
-                </div>
+                <div className="font-medium text-secondary text-13">{t("project_cycles.active_cycle.progress")}</div>
               </div>
             )}
             <Transition show={open}>
-              <Disclosure.Panel className="flex flex-col divide-y divide-custom-border-200">
+              <Disclosure.Panel className="flex flex-col divide-y divide-subtle-1">
                 {cycleStartDate && cycleEndDate ? (
                   <>
                     {isCycleDateValid && (
@@ -162,7 +162,7 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                     )}
                   </>
                 ) : (
-                  <div className="my-2 py-2 text-sm text-custom-text-350  bg-custom-background-90 rounded-md px-2 w-full">
+                  <div className="my-2 py-2 text-13 text-tertiary  bg-surface-2 rounded-md px-2 w-full">
                     {t("no_data_yet")}
                   </div>
                 )}

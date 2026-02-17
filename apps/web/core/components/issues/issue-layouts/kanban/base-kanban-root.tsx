@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -7,12 +11,10 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { EIssuesStoreType } from "@plane/types";
 import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
-//constants
 //hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useKanbanView } from "@/hooks/store/use-kanban-view";
@@ -50,7 +52,7 @@ export interface IBaseKanBanLayout {
   isEpic?: boolean;
 }
 
-export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
+export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBanLayout) {
   const {
     QuickActions,
     addIssuesToView,
@@ -202,23 +204,14 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
     if (!draggedIssueId || !draggedIssue) return;
 
-    await removeIssue(draggedIssue.project_id, draggedIssueId)
-      .then(() => {
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-          payload: { id: draggedIssueId },
-        });
-      })
-      .catch(() => {
-        captureError({
-          eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-          payload: { id: draggedIssueId },
-        });
-      })
-      .finally(() => {
-        setDeleteIssueModal(false);
-        setDraggedIssueId(undefined);
-      });
+    try {
+      await removeIssue(draggedIssue.project_id, draggedIssueId);
+      setDeleteIssueModal(false);
+      setDraggedIssueId(undefined);
+    } catch (_error) {
+      setDeleteIssueModal(false);
+      setDraggedIssueId(undefined);
+    }
   };
 
   const handleCollapsedGroups = useCallback(
@@ -259,8 +252,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         <div
           className={`${
             isDragging ? `opacity-100` : `opacity-0`
-          } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
-            isDragOverDelete ? "bg-red-500 opacity-70 blur-2xl" : ""
+          } flex w-full items-center justify-center rounded-sm border-2 border-danger-strong/20 bg-surface-1 px-3 py-5 text-11 font-medium italic text-danger-primary ${
+            isDragOverDelete ? "bg-danger-primary blur-2xl" : ""
           } transition duration-300`}
         >
           Drop here to delete the work item.
@@ -268,10 +261,10 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       </div>
       <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
         <div
-          className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-custom-background-90 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
+          className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-surface-2 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
           ref={scrollableContainerRef}
         >
-          <div className="relative h-full w-max min-w-full bg-custom-background-90">
+          <div className="relative h-full w-max min-w-full bg-surface-2">
             <div className="h-full w-max">
               <KanBanView
                 issuesMap={issueMap}

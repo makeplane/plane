@@ -1,6 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -23,7 +26,7 @@ type Props = {
   publishSettings: PublishStore;
 };
 
-export const IssuesLayoutsRoot: FC<Props> = observer((props) => {
+export const IssuesLayoutsRoot = observer(function IssuesLayoutsRoot(props: Props) {
   const { peekId, publishSettings } = props;
   // store hooks
   const { getIssueFilters } = useIssueFilter();
@@ -54,20 +57,20 @@ export const IssuesLayoutsRoot: FC<Props> = observer((props) => {
   if (error) return <SomethingWentWrongError />;
 
   return (
-    <div className="relative h-full w-full overflow-hidden">
+    <div className="relative size-full overflow-hidden">
       {peekId && <IssuePeekOverview anchor={anchor} peekId={peekId} />}
       {activeLayout && (
-        <div className="relative flex h-full w-full flex-col overflow-hidden">
+        <div className="relative flex size-full flex-col overflow-hidden">
           {/* applied filters */}
           <IssueAppliedFilters anchor={anchor} />
 
           {activeLayout === "list" && (
-            <div className="relative h-full w-full overflow-y-auto">
+            <div className="relative size-full overflow-y-auto">
               <IssuesListLayoutRoot anchor={anchor} />
             </div>
           )}
           {activeLayout === "kanban" && (
-            <div className="relative mx-auto h-full w-full p-5">
+            <div className="relative mx-auto size-full p-5">
               <IssueKanbanLayoutRoot anchor={anchor} />
             </div>
           )}

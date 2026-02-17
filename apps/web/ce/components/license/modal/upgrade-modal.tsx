@@ -1,6 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import {
@@ -21,14 +24,14 @@ import type { TCheckoutParams } from "@/components/license/modal/card/checkout-b
 
 // Constants
 const COMMON_CARD_CLASSNAME = "flex flex-col w-full h-full justify-end col-span-12 sm:col-span-6 xl:col-span-3";
-const COMMON_EXTRA_FEATURES_CLASSNAME = "pt-2 text-center text-xs text-custom-primary-200 font-medium hover:underline";
+const COMMON_EXTRA_FEATURES_CLASSNAME = "pt-2 text-center text-caption-md-medium text-accent-primary hover:underline";
 
 export type PaidPlanUpgradeModalProps = {
   isOpen: boolean;
   handleClose: () => void;
 };
 
-export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((props) => {
+export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props: PaidPlanUpgradeModalProps) {
   const { isOpen, handleClose } = props;
   // derived values
   const isSelfHosted = true;
@@ -50,9 +53,9 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
         <div className="grid grid-cols-12 gap-6 h-full">
           {/* Free Plan Section */}
           <div className={cn(COMMON_CARD_CLASSNAME)}>
-            <div className="text-3xl font-bold leading-8 flex">Upgrade to a paid plan and unlock missing features.</div>
+            <div className="text-24 font-bold leading-8 flex">Upgrade to a paid plan and unlock missing features.</div>
             <div className="mt-4 mb-2">
-              <p className="text-sm mb-4 pr-8 text-custom-text-100">
+              <p className="text-13 mb-4 pr-8 text-primary">
                 Dashboards, Workflows, Approvals, Time Management, and other superpowers are just a click away. Upgrade
                 today to unlock features your teams need yesterday.
               </p>
@@ -71,7 +74,7 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
               verticalFeatureList
               extraFeatures={
                 <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
-                  <a href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.PRO]} target="_blank">
+                  <a href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.PRO]} target="_blank" rel="noreferrer">
                     See full features list
                   </a>
                 </p>
@@ -89,7 +92,11 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
               verticalFeatureList
               extraFeatures={
                 <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
-                  <a href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.BUSINESS]} target="_blank">
+                  <a
+                    href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.BUSINESS]}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     See full features list
                   </a>
                 </p>
@@ -107,7 +114,11 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
               verticalFeatureList
               extraFeatures={
                 <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
-                  <a href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.ENTERPRISE]} target="_blank">
+                  <a
+                    href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.ENTERPRISE]}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     See full features list
                   </a>
                 </p>

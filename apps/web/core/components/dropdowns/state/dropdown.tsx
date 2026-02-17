@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -16,7 +20,7 @@ type TWorkItemStateDropdownProps = Omit<
   stateIds?: string[];
 };
 
-export const StateDropdown: React.FC<TWorkItemStateDropdownProps> = observer((props) => {
+export const StateDropdown = observer(function StateDropdown(props: TWorkItemStateDropdownProps) {
   const { projectId, stateIds: propsStateIds } = props;
   // router params
   const { workspaceSlug } = useParams();

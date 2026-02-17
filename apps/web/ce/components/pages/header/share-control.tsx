@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { EPageStoreType } from "@/plane-web/hooks/store";
 // store
@@ -9,4 +13,6 @@ export type TPageShareControlProps = {
   storeType: EPageStoreType;
 };
 
-export const PageShareControl = ({}: TPageShareControlProps) => null;
+export function PageShareControl({}: TPageShareControlProps) {
+  return null;
+}

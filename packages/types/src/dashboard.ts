@@ -1,8 +1,14 @@
-import { EDurationFilters } from "./enums";
-import { IIssueActivity, TIssuePriorities } from "./issues";
-import { TIssue } from "./issues/issue";
-import { TIssueRelationTypes } from "./issues/issue_relation";
-import { TStateGroups } from "./state";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { EDurationFilters } from "./enums";
+import type { IIssueActivity, TIssuePriorities } from "./issues";
+import type { TIssue } from "./issues/issue";
+import type { TIssueRelationTypes } from "./issues/issue_relation";
+import type { TStateGroups } from "./state";
 
 export type TWidgetKeys =
   | "overview_stats"

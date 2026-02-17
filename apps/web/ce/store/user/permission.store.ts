@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { computedFn } from "mobx-utils";
 import type { EUserPermissions } from "@plane/constants";
 import type { RootStore } from "@/plane-web/store/root.store";
@@ -18,7 +24,11 @@ export class UserPermissionStore extends BaseUserPermissionStore implements IUse
    * @returns { EUserPermissions | undefined }
    */
   getProjectRoleByWorkspaceSlugAndProjectId = computedFn(
-    (workspaceSlug: string, projectId: string): EUserPermissions | undefined =>
+    (workspaceSlug: string, projectId?: string): EUserPermissions | undefined =>
       this.getProjectRole(workspaceSlug, projectId)
   );
+
+  fetchWorkspaceLevelProjectEntities = (workspaceSlug: string, projectId: string): void => {
+    void this.store.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+  };
 }

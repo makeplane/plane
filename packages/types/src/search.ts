@@ -1,10 +1,16 @@
-import { ICycle } from "./cycle";
-import { TIssue } from "./issues/issue";
-import { IModule } from "./module";
-import { TPage } from "./page";
-import { IProject } from "./project";
-import { IUser } from "./users";
-import { IWorkspace } from "./workspace";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { ICycle } from "./cycle";
+import type { TIssue } from "./issues/issue";
+import type { IModule } from "./module";
+import type { TPage } from "./page";
+import type { IProject } from "./project";
+import type { IUser } from "./users";
+import type { IWorkspace } from "./workspace";
 
 export type TSearchEntities = "user_mention" | "issue" | "project" | "cycle" | "module" | "page";
 

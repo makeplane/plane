@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { AxiosRequestConfig } from "axios";
 // plane types
 import { API_BASE_URL } from "@plane/constants";
 import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
-import type { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
+import type { EFileAssetType, TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 import { getAssetIdFromUrl } from "@plane/utils";
 // helpers
 // services
@@ -274,11 +280,20 @@ export class FileService extends APIService {
         throw err?.response?.data;
       });
   }
-  async getProjectCoverImages(): Promise<string[]> {
-    return this.get(`/api/project-covers/`)
-      .then((res) => res?.data)
-      .catch((err) => {
-        throw err?.response?.data;
+
+  async duplicateAsset(
+    workspaceSlug: string,
+    assetId: string,
+    data: {
+      entity_id?: string;
+      entity_type: EFileAssetType;
+      project_id?: string;
+    }
+  ): Promise<{ asset_id: string }> {
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/duplicate-assets/${assetId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
       });
   }
 }

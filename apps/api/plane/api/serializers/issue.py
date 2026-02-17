@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.utils import timezone
 from lxml import html
@@ -65,7 +69,7 @@ class IssueSerializer(BaseSerializer):
     class Meta:
         model = Issue
         read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
-        exclude = ["description", "description_stripped"]
+        exclude = ["description_json", "description_stripped"]
 
     def validate(self, data):
         if (
@@ -393,7 +397,7 @@ class IssueLinkCreateSerializer(BaseSerializer):
 
     class Meta:
         model = IssueLink
-        fields = ["url", "issue_id"]
+        fields = ["title", "url", "issue_id"]
         read_only_fields = [
             "id",
             "workspace",
@@ -633,6 +637,7 @@ class IssueExpandSerializer(BaseSerializer):
     labels = serializers.SerializerMethodField()
     assignees = serializers.SerializerMethodField()
     state = StateLiteSerializer(read_only=True)
+    description = serializers.JSONField(source="description_json", read_only=True)
 
     def get_labels(self, obj):
         expand = self.context.get("expand", [])

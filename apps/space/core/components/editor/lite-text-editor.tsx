@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 // plane imports
 import { LiteTextEditorWithRef } from "@plane/editor";
@@ -6,6 +12,9 @@ import type { MakeOptional } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
+// hooks
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
+// plane web imports
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // local imports
 import { EditorMentionsRoot } from "./embeds/mentions";
@@ -13,7 +22,7 @@ import { IssueCommentToolbar } from "./toolbar";
 
 type LiteTextEditorWrapperProps = MakeOptional<
   Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "extendedEditorProps">,
-  "disabledExtensions" | "flaggedExtensions"
+  "disabledExtensions" | "flaggedExtensions" | "getEditorMetaData"
 > & {
   anchor: string;
   isSubmitting?: boolean;
@@ -29,7 +38,10 @@ type LiteTextEditorWrapperProps = MakeOptional<
       }
   );
 
-export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
+export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
+  props: LiteTextEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const {
     anchor,
     containerClassName,
@@ -47,9 +59,13 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
   const { liteText: liteTextEditorExtensions } = useEditorFlagging(anchor);
+  // parse content
+  const { getEditorMetaData } = useParseEditorContent({
+    anchor,
+  });
 
   return (
-    <div className="border border-custom-border-200 rounded p-3 space-y-3">
+    <div className="border border-subtle rounded-sm p-3 space-y-3">
       <LiteTextEditorWithRef
         ref={ref}
         disabledExtensions={[...liteTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
@@ -60,6 +76,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           uploadFile: editable ? props.uploadFile : async () => "",
           workspaceId,
         })}
+        getEditorMetaData={getEditorMetaData}
         mentionHandler={{
           renderComponent: (props) => <EditorMentionsRoot {...props} />,
         }}
@@ -68,21 +85,23 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         // overriding the containerClassName to add relative class passed
         containerClassName={cn(containerClassName, "relative")}
       />
-      <IssueCommentToolbar
-        executeCommand={(item) => {
-          // TODO: update this while toolbar homogenization
-          // @ts-expect-error type mismatch here
-          editorRef?.executeMenuItemCommand({
-            itemKey: item.itemKey,
-            ...item.extraProps,
-          });
-        }}
-        isSubmitting={isSubmitting}
-        showSubmitButton={showSubmitButton}
-        handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
-        isCommentEmpty={isEmpty}
-        editorRef={editorRef}
-      />
+      {editable && (
+        <IssueCommentToolbar
+          executeCommand={(item) => {
+            // TODO: update this while toolbar homogenization
+            // @ts-expect-error type mismatch here
+            editorRef?.executeMenuItemCommand({
+              itemKey: item.itemKey,
+              ...item.extraProps,
+            });
+          }}
+          isSubmitting={isSubmitting}
+          showSubmitButton={showSubmitButton}
+          handleSubmit={(e) => rest.onEnterKeyPress?.(e)}
+          isCommentEmpty={isEmpty}
+          editorRef={editorRef}
+        />
+      )}
     </div>
   );
 });

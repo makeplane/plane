@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { TIssueGroupByOptions } from "@plane/types";
 
@@ -6,4 +12,6 @@ type Props = {
   groupId: string | undefined;
 };
 
-export const WorkFlowGroupTree = (props: Props) => <></>;
+export function WorkFlowGroupTree(props: Props) {
+  return <></>;
+}

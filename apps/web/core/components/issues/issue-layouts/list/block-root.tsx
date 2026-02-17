@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC, MutableRefObject } from "react";
 import React, { useEffect, useRef, useState } from "react";
@@ -44,7 +48,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const IssueBlockRoot: FC<Props> = observer((props) => {
+export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
   const {
     issueId,
     issuesMap,
@@ -132,7 +136,7 @@ export const IssueBlockRoot: FC<Props> = observer((props) => {
       <RenderIfVisible
         key={`${issueId}`}
         root={containerRef}
-        classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-custom-border-200"}`}
+        classNames={`relative ${isLastChild && !isExpanded ? "" : "border-b border-b-subtle"}`}
         verticalOffset={100}
         defaultValue={shouldRenderByDefault || isIssueNew(issuesMap[issueId])}
         placeholderChildren={<ListLoaderItemRow shouldAnimate={false} renderForPlaceHolder defaultPropertyCount={4} />}

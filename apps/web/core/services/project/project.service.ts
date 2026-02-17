@@ -1,6 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { API_BASE_URL } from "@plane/constants";
 import type {
   GithubRepositoriesResponse,
+  IProjectUserPropertiesResponse,
   ISearchIssueResponse,
   TProjectAnalyticsCount,
   TProjectAnalyticsCountParams,
@@ -57,7 +64,7 @@ export class ProjectService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        throw error?.response;
       });
   }
 
@@ -90,14 +97,21 @@ export class ProjectService extends APIService {
       });
   }
 
-  async setProjectView(
+  // User Properties
+  async getProjectUserProperties(workspaceSlug: string, projectId: string): Promise<IProjectUserPropertiesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-properties/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateProjectUserProperties(
     workspaceSlug: string,
     projectId: string,
-    data: {
-      sort_order?: number;
-    }
-  ): Promise<any> {
-    await this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-views/`, data)
+    data: Partial<IProjectUserPropertiesResponse>
+  ): Promise<IProjectUserPropertiesResponse> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-properties/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

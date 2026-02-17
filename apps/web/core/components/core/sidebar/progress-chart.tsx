@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 // plane imports
 import { AreaChart } from "@plane/propel/charts/area-chart";
@@ -11,7 +17,7 @@ type Props = {
   plotTitle?: string;
 };
 
-const ProgressChart: React.FC<Props> = ({ distribution, totalIssues, className = "", plotTitle = "work items" }) => {
+function ProgressChart({ distribution, totalIssues, className = "", plotTitle = "work items" }: Props) {
   const chartData: TChartData<string, string>[] = Object.keys(distribution ?? []).map((key, index) => ({
     name: renderFormattedDateWithoutYear(key),
     current: distribution[key] ?? 0,
@@ -65,6 +71,6 @@ const ProgressChart: React.FC<Props> = ({ distribution, totalIssues, className =
       />
     </div>
   );
-};
+}
 
 export default ProgressChart;

@@ -1,18 +1,19 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Check } from "lucide-react";
 // plane imports
-import { ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS, USE_CASES } from "@plane/constants";
+import { USE_CASES } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { CheckIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
 import { cn } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 // local imports
@@ -24,10 +25,10 @@ type Props = {
 };
 
 const defaultValues = {
-  use_case: "",
+  use_case: [] as string[],
 };
 
-export const UseCaseSetupStep: FC<Props> = observer(({ handleStepChange }) => {
+export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepChange }: Props) {
   // store hooks
   const { data: profile, updateUserProfile } = useUserProfile();
   // form info
@@ -38,7 +39,7 @@ export const UseCaseSetupStep: FC<Props> = observer(({ handleStepChange }) => {
   } = useForm<TProfileSetupFormValues>({
     defaultValues: {
       ...defaultValues,
-      use_case: profile?.use_case,
+      use_case: profile?.use_case ? profile.use_case.split(". ") : [],
     },
     mode: "onChange",
   });
@@ -46,28 +47,19 @@ export const UseCaseSetupStep: FC<Props> = observer(({ handleStepChange }) => {
   // handle submit
   const handleSubmitUserPersonalization = async (formData: TProfileSetupFormValues) => {
     const profileUpdatePayload: Partial<TUserProfile> = {
-      use_case: formData.use_case,
+      use_case: formData.use_case && formData.use_case.length > 0 ? formData.use_case.join(". ") : undefined,
     };
     try {
       await Promise.all([
         updateUserProfile(profileUpdatePayload),
         // totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
-      captureSuccess({
-        eventName: USER_TRACKER_EVENTS.add_details,
-        payload: {
-          use_case: formData.use_case,
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",
         message: "Profile setup completed!",
       });
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -79,12 +71,8 @@ export const UseCaseSetupStep: FC<Props> = observer(({ handleStepChange }) => {
   // on submit
   const onSubmit = async (formData: TProfileSetupFormValues) => {
     if (!profile) return;
-    captureView({
-      elementName: ONBOARDING_TRACKER_ELEMENTS.PROFILE_SETUP_FORM,
-    });
-    await handleSubmitUserPersonalization(formData).then(() => {
-      handleStepChange(EOnboardingSteps.USE_CASE_SETUP);
-    });
+    await handleSubmitUserPersonalization(formData);
+    handleStepChange(EOnboardingSteps.USE_CASE_SETUP);
   };
 
   // handle skip
@@ -102,62 +90,70 @@ export const UseCaseSetupStep: FC<Props> = observer(({ handleStepChange }) => {
 
       {/* Use Case Selection */}
       <div className="flex flex-col gap-3">
-        <p className="text-sm font-medium text-custom-text-400">Select any</p>
+        <p className="text-body-sm-semibold text-placeholder">Select one or more</p>
 
         <Controller
           control={control}
           name="use_case"
           rules={{
-            required: "This field is required",
+            required: "Please select at least one option",
+            validate: (value) => (value && value.length > 0) || "Please select at least one option",
           }}
           render={({ field: { value, onChange } }) => (
             <div className="flex flex-col gap-3">
               {USE_CASES.map((useCase) => {
-                const isSelected = value === useCase;
+                const isSelected = value?.includes(useCase) || false;
                 return (
                   <button
                     key={useCase}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      onChange(useCase);
+                      const currentValue = value || [];
+                      if (isSelected) {
+                        // Remove from array
+                        onChange(currentValue.filter((item) => item !== useCase));
+                      } else {
+                        // Add to array
+                        onChange([...currentValue, useCase]);
+                      }
                     }}
                     className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center gap-2 ${
                       isSelected
-                        ? "border-custom-primary-100 bg-custom-primary-10 text-custom-primary-100"
-                        : "border-custom-border-200 hover:border-custom-border-300 text-custom-text-300"
+                        ? "border-accent-strong bg-accent-subtle text-accent-primary"
+                        : "border-subtle hover:border-strong text-tertiary"
                     }`}
                   >
                     <span
-                      className={cn(`size-4 rounded border-2 flex items-center justify-center`, {
-                        "bg-custom-primary-100 border-custom-primary-100": isSelected,
-                        "border-custom-border-300": !isSelected,
+                      className={cn(`size-4 rounded-sm border-2 flex items-center justify-center`, {
+                        "bg-accent-primary border-accent-strong": isSelected,
+                        "border-strong": !isSelected,
                       })}
                     >
-                      <Check
-                        className={cn("w-3 h-3 text-white", {
+                      <CheckIcon
+                        className={cn("w-3 h-3 text-on-color", {
                           "opacity-100": isSelected,
                           "opacity-0": !isSelected,
                         })}
                       />
                     </span>
 
-                    <span className="font-medium">{useCase}</span>
+                    <span className="text-body-sm-regular">{useCase}</span>
                   </button>
                 );
               })}
             </div>
           )}
         />
-        {errors.use_case && <span className="text-sm text-red-500">{errors.use_case.message}</span>}
+        {errors.use_case && <span className="text-13 text-danger-primary">{errors.use_case.message}</span>}
       </div>
 
       {/* Action Buttons */}
       <div className="space-y-3">
-        <Button variant="primary" type="submit" className="w-full" size="lg" disabled={isButtonDisabled}>
+        <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
           Continue
         </Button>
-        <Button variant="link-neutral" onClick={handleSkip} className="w-full" size="lg">
+        <Button variant="ghost" onClick={handleSkip} className="w-full" size="xl">
           Skip
         </Button>
       </div>

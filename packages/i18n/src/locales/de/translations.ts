@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Projekte",
@@ -74,7 +80,7 @@ export default {
       },
       unique_code: {
         label: "Einmaliger Code",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Fügen Sie den an Ihre E-Mail gesendeten Code ein",
         requesting_new_code: "Neuen Code anfordern",
         sending_code: "Code wird gesendet",
@@ -344,13 +350,13 @@ export default {
   project_id_must_be_at_least_1_character: "Projekt-ID muss mindestens 1 Zeichen lang sein",
   project_id_must_be_at_most_5_characters: "Projekt-ID darf maximal 5 Zeichen lang sein",
   project_id: "Projekt-ID",
-  project_id_tooltip_content: "Hilft, Arbeitselemente im Projekt eindeutig zu identifizieren. Max. 5 Zeichen.",
+  project_id_tooltip_content: "Hilft, Arbeitselemente im Projekt eindeutig zu identifizieren. Max. 10 Zeichen.",
   description_placeholder: "Beschreibung",
   only_alphanumeric_non_latin_characters_allowed: "Es sind nur alphanumerische und nicht-lateinische Zeichen erlaubt.",
   project_id_is_required: "Projekt-ID ist erforderlich",
   project_id_allowed_char: "Es sind nur alphanumerische und nicht-lateinische Zeichen erlaubt.",
   project_id_min_char: "Projekt-ID muss mindestens 1 Zeichen lang sein",
-  project_id_max_char: "Projekt-ID darf maximal 5 Zeichen lang sein",
+  project_id_max_char: "Projekt-ID darf maximal 10 Zeichen lang sein",
   project_description_placeholder: "Geben Sie eine Projektbeschreibung ein",
   select_network: "Netzwerk auswählen",
   lead: "Leitung",
@@ -653,6 +659,8 @@ export default {
   },
   common: {
     all: "Alle",
+    no_items_in_this_group: "Keine Elemente in dieser Gruppe",
+    drop_here_to_move: "Hier ablegen zum Verschieben",
     states: "Status",
     state: "Status",
     state_groups: "Statusgruppen",
@@ -1538,6 +1546,47 @@ export default {
         "Wenn Sie bestätigen, werden alle Sortier-, Filter- und Anzeigeoptionen + das Layout, das Sie für diese Ansicht gewählt haben, dauerhaft gelöscht und können nicht wiederhergestellt werden.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "E-Mail ändern",
+        description: "Gib eine neue E-Mail-Adresse ein, um einen Verifizierungslink zu erhalten.",
+        toasts: {
+          success_title: "Erfolg!",
+          success_message: "E-Mail erfolgreich aktualisiert. Bitte melde dich erneut an.",
+        },
+        form: {
+          email: {
+            label: "Neue E-Mail",
+            placeholder: "Gib deine E-Mail ein",
+            errors: {
+              required: "E-Mail ist erforderlich",
+              invalid: "E-Mail ist ungültig",
+              exists: "E-Mail existiert bereits. Bitte nutze eine andere.",
+              validation_failed: "E-Mail-Verifizierung fehlgeschlagen. Bitte versuche es erneut.",
+            },
+          },
+          code: {
+            label: "Einmaliger Code",
+            placeholder: "123456",
+            helper_text: "Verifizierungscode wurde an deine neue E-Mail gesendet.",
+            errors: {
+              required: "Einmaliger Code ist erforderlich",
+              invalid: "Ungültiger Verifizierungscode. Bitte versuche es erneut.",
+            },
+          },
+        },
+        actions: {
+          continue: "Weiter",
+          confirm: "Bestätigen",
+          cancel: "Abbrechen",
+        },
+        states: {
+          sending: "Wird gesendet…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Arbeitsbereich-Einstellungen",
     page_label: "{workspace} - Allgemeine Einstellungen",
@@ -1553,6 +1602,7 @@ export default {
         name: "Name des Arbeitsbereichs",
         company_size: "Unternehmensgröße",
         url: "URL des Arbeitsbereichs",
+        workspace_timezone: "Zeitzone des Arbeitsbereichs",
         update_workspace: "Arbeitsbereich aktualisieren",
         delete_workspace: "Diesen Arbeitsbereich löschen",
         delete_workspace_description:
@@ -1616,6 +1666,8 @@ export default {
         exporting: "Wird exportiert",
         previous_exports: "Bisherige Exporte",
         export_separate_files: "Daten in separaten Dateien exportieren",
+        filters_info:
+          "Wenden Sie Filter an, um bestimmte Arbeitselemente basierend auf Ihren Kriterien zu exportieren.",
         modal: {
           title: "Exportieren nach",
           toasts: {
@@ -1942,6 +1994,46 @@ export default {
         title: "Keine Schätzungssysteme",
         description: "Erstellen Sie ein Schätzungssystem, um den Aufwand zu kommunizieren.",
         primary_button: "Schätzungssystem hinzufügen",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Zyklen",
+        short_title: "Zyklen",
+        description:
+          "Planen Sie die Arbeit in flexiblen Zeiträumen, die sich dem einzigartigen Rhythmus und Tempo dieses Projekts anpassen.",
+        toggle_title: "Zyklen aktivieren",
+        toggle_description: "Planen Sie die Arbeit in fokussierten Zeiträumen.",
+      },
+      modules: {
+        title: "Module",
+        short_title: "Module",
+        description: "Organisieren Sie die Arbeit in Teilprojekte mit engagierten Leitern und Verantwortlichen.",
+        toggle_title: "Module aktivieren",
+        toggle_description: "Projektmitglieder können Module erstellen und bearbeiten.",
+      },
+      views: {
+        title: "Ansichten",
+        short_title: "Ansichten",
+        description:
+          "Speichern Sie benutzerdefinierte Sortierungen, Filter und Anzeigeoptionen oder teilen Sie sie mit Ihrem Team.",
+        toggle_title: "Ansichten aktivieren",
+        toggle_description: "Projektmitglieder können Ansichten erstellen und bearbeiten.",
+      },
+      pages: {
+        title: "Seiten",
+        short_title: "Seiten",
+        description: "Erstellen und bearbeiten Sie freie Inhalte: Notizen, Dokumente, alles.",
+        toggle_title: "Seiten aktivieren",
+        toggle_description: "Projektmitglieder können Seiten erstellen und bearbeiten.",
+      },
+      intake: {
+        title: "Aufnahme",
+        short_title: "Aufnahme",
+        description:
+          "Ermöglichen Sie Nicht-Mitgliedern, Fehler, Feedback und Vorschläge zu teilen, ohne Ihren Workflow zu unterbrechen.",
+        toggle_title: "Aufnahme aktivieren",
+        toggle_description: "Projektmitgliedern erlauben, In-App-Aufnahmeanfragen zu erstellen.",
       },
     },
   },

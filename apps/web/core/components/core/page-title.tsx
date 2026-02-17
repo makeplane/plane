@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect } from "react";
 
 type PageHeadTitleProps = {
@@ -5,7 +11,7 @@ type PageHeadTitleProps = {
   description?: string;
 };
 
-export const PageHead: React.FC<PageHeadTitleProps> = (props) => {
+export function PageHead(props: PageHeadTitleProps) {
   const { title } = props;
 
   useEffect(() => {
@@ -15,4 +21,4 @@ export const PageHead: React.FC<PageHeadTitleProps> = (props) => {
   }, [title]);
 
   return null;
-};
+}

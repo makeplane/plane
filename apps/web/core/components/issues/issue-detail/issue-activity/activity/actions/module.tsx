@@ -1,6 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { ModuleIcon } from "@plane/propel/icons";
@@ -11,7 +14,7 @@ import { IssueActivityBlockComponent } from "./";
 
 type TIssueModuleActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
-export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) => {
+export const IssueModuleActivity = observer(function IssueModuleActivity(props: TIssueModuleActivity) {
   const { activityId, ends } = props;
   // hooks
   const {
@@ -23,7 +26,7 @@ export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) =>
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<ModuleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />}
+      icon={<ModuleIcon className="h-4 w-4 flex-shrink-0 text-secondary" />}
       activityId={activityId}
       ends={ends}
     >
@@ -35,7 +38,7 @@ export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) =>
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
             </a>
@@ -47,7 +50,7 @@ export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) =>
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
             >
               <span className="truncate"> {activity.new_value}</span>
             </a>
@@ -59,7 +62,7 @@ export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) =>
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
             >
               <span className="truncate"> {activity.old_value}</span>
             </a>

@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronRight, CircleDashed } from "lucide-react";
+import { CircleDashed } from "lucide-react";
 import { ALL_ISSUES } from "@plane/constants";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import type { IGroupByColumn, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
@@ -28,7 +35,7 @@ interface TSubIssuesListGroupProps {
   spacingLeft?: number;
 }
 
-export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props) => {
+export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TSubIssuesListGroupProps) {
   const {
     group,
     serviceType,
@@ -59,8 +66,8 @@ export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props)
         title={
           !isAllIssues && (
             <div className="flex items-center gap-2 p-3">
-              <ChevronRight
-                className={cn("size-3.5 transition-all text-custom-text-400", {
+              <ChevronRightIcon
+                className={cn("size-3.5 transition-all text-placeholder", {
                   "rotate-90": isCollapsibleOpen,
                 })}
                 strokeWidth={2.5}
@@ -68,8 +75,8 @@ export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props)
               <div className="flex-shrink-0 grid place-items-center overflow-hidden">
                 {group.icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
               </div>
-              <span className="text-sm text-custom-text-100 font-medium">{group.name}</span>
-              <span className="text-sm text-custom-text-400">{workItemIds.length}</span>
+              <span className="text-13 text-primary font-medium">{group.name}</span>
+              <span className="text-13 text-placeholder">{workItemIds.length}</span>
             </div>
           )
         }

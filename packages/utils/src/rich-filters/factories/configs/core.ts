@@ -1,7 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
-import { FILTER_FIELD_TYPE, TFilterValue, TSupportedOperators, TBaseFilterFieldConfig } from "@plane/types";
+import type { TFilterValue, TSupportedOperators, TBaseFilterFieldConfig } from "@plane/types";
+import { FILTER_FIELD_TYPE } from "@plane/types";
 // local imports
-import { createFilterFieldConfig, IFilterIconConfig } from "./shared";
+import type { IFilterIconConfig } from "./shared";
+import { createFilterFieldConfig } from "./shared";
 
 // ------------ Selection filters ------------
 

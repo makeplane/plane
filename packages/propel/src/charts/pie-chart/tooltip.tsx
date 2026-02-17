@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
-import { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
+import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 // plane imports
 import { Card, ECardSpacing } from "../../card";
 
@@ -9,7 +15,7 @@ type Props = {
   payload: Payload<ValueType, NameType>[];
 };
 
-export const CustomPieChartTooltip = React.memo((props: Props) => {
+export const CustomPieChartTooltip = React.memo(function CustomPieChartTooltip(props: Props) {
   const { dotColor, label, payload } = props;
 
   return (
@@ -17,21 +23,19 @@ export const CustomPieChartTooltip = React.memo((props: Props) => {
       className="flex flex-col max-h-[40vh] w-[12rem] overflow-y-scroll vertical-scrollbar scrollbar-sm"
       spacing={ECardSpacing.SM}
     >
-      <p className="flex-shrink-0 text-xs text-custom-text-100 font-medium border-b border-custom-border-200 pb-2 truncate">
-        {label}
-      </p>
+      <p className="flex-shrink-0 text-11 text-primary font-medium border-b border-subtle pb-2 truncate">{label}</p>
       {payload?.map((item) => (
-        <div key={item?.dataKey} className="flex items-center gap-2 text-xs capitalize">
+        <div key={item?.dataKey} className="flex items-center gap-2 text-11 capitalize">
           <div className="flex items-center gap-2 truncate">
             <div
-              className="flex-shrink-0 size-2 rounded-sm"
+              className="flex-shrink-0 size-2 rounded-xs"
               style={{
                 backgroundColor: dotColor,
               }}
             />
-            <span className="text-custom-text-300 truncate">{item?.name}:</span>
+            <span className="text-tertiary truncate">{item?.name}:</span>
           </div>
-          <span className="flex-shrink-0 font-medium text-custom-text-200">{item?.value}</span>
+          <span className="flex-shrink-0 font-medium text-secondary">{item?.value}</span>
         </div>
       ))}
     </Card>

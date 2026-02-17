@@ -1,6 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -25,7 +28,7 @@ type TStateItem = {
   stateItemClassName?: string;
 };
 
-export const StateItem: FC<TStateItem> = observer((props) => {
+export const StateItem = observer(function StateItem(props: TStateItem) {
   const {
     groupKey,
     groupedStates,
@@ -99,10 +102,10 @@ export const StateItem: FC<TStateItem> = observer((props) => {
             const destinationData = self.data as TDraggableData;
 
             if (sourceData && destinationData && sourceData.id) {
-              const destinationGroupKey = destinationData.groupKey as TStateGroups;
+              const destinationGroupKey = destinationData.groupKey;
               const edge = extractClosestEdge(destinationData) || undefined;
               const payload: Partial<IState> = {
-                id: sourceData.id as string,
+                id: sourceData.id,
                 group: destinationGroupKey,
                 sequence: getCurrentStateSequence(groupedStates[destinationGroupKey], destinationData, edge),
               };
@@ -132,7 +135,7 @@ export const StateItem: FC<TStateItem> = observer((props) => {
       <div
         ref={draggableElementRef}
         className={cn(
-          "relative border border-custom-border-100 bg-custom-background-100 py-3 px-3.5 rounded group",
+          "relative border border-subtle bg-surface-1 py-3 px-3.5 rounded-sm group",
           isDragging ? `opacity-50` : `opacity-100`,
           totalStates === 1 ? `cursor-auto` : `cursor-grab`,
           stateItemClassName

@@ -1,10 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
-import Image from "next/image";
 // image
-import SvgFileIcon from "@/public/attachment/svg-icon.png";
+import SvgFileIcon from "@/app/assets/attachment/svg-icon.png?url";
 // type
 import type { ImageIconPros } from "../types";
 
-export const SvgIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <Image src={SvgFileIcon} height={height} width={width} alt="SvgFileIcon" />
-);
+export function SvgIcon({ width, height }: ImageIconPros) {
+  return <img src={SvgFileIcon} width={width} height={height} alt="SvgFileIcon" />;
+}

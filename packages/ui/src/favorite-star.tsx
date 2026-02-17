@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Star } from "lucide-react";
 import React from "react";
 // helpers
@@ -10,20 +16,20 @@ type Props = {
   selected: boolean;
 };
 
-export const FavoriteStar: React.FC<Props> = (props) => {
+export function FavoriteStar(props: Props) {
   const { buttonClassName, iconClassName, onClick, selected } = props;
 
   return (
     <button type="button" className={cn("h-4 w-4 grid place-items-center", buttonClassName)} onClick={onClick}>
       <Star
         className={cn(
-          "h-4 w-4 text-custom-text-300 transition-all",
+          "h-4 w-4 text-tertiary transition-all",
           {
-            "fill-yellow-500 stroke-yellow-500": selected,
+            "fill-(--color-label-yellow-icon) stroke-(--color-label-yellow-icon)": selected,
           },
           iconClassName
         )}
       />
     </button>
   );
-};
+}

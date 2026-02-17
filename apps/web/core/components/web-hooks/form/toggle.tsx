@@ -1,37 +1,37 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 // constants
-import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import type { IWebhook } from "@plane/types";
 // ui
 import { ToggleSwitch } from "@plane/ui";
-// hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 
 interface IWebHookToggle {
   control: Control<IWebhook, any>;
 }
 
-export const WebhookToggle = ({ control }: IWebHookToggle) => (
-  <div className="flex gap-6">
-    <div className="text-sm font-medium">Enable webhook</div>
-    <Controller
-      control={control}
-      name="is_active"
-      render={({ field: { onChange, value } }) => (
-        <ToggleSwitch
-          value={value}
-          onChange={(val: boolean) => {
-            captureClick({
-              elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_DETAILS_PAGE_TOGGLE_SWITCH,
-            });
-            onChange(val);
-          }}
-          size="sm"
-        />
-      )}
-    />
-  </div>
-);
+export function WebhookToggle({ control }: IWebHookToggle) {
+  return (
+    <div className="flex gap-6">
+      <div className="text-13 font-medium">Enable webhook</div>
+      <Controller
+        control={control}
+        name="is_active"
+        render={({ field: { onChange, value } }) => (
+          <ToggleSwitch
+            value={value}
+            onChange={(val: boolean) => {
+              onChange(val);
+            }}
+            size="sm"
+          />
+        )}
+      />
+    </div>
+  );
+}

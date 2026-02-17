@@ -1,6 +1,15 @@
-import { EditorProps } from "@tiptap/pm/view";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { DOMParser } from "@tiptap/pm/model";
+import type { EditorProps } from "@tiptap/pm/view";
 // plane utils
 import { cn } from "@plane/utils";
+// helpers
+import { processAssetDuplication } from "@/helpers/paste-asset";
 
 type TArgs = {
   editorClassName: string;
@@ -27,8 +36,15 @@ export const CoreEditorProps = (props: TArgs): EditorProps => {
         }
       },
     },
-    transformPastedHTML(html) {
-      return html.replace(/<img.*?>/g, "");
+    handlePaste: (view, event) => {
+      if (!event.clipboardData) return false;
+
+      const htmlContent = event.clipboardData.getData("text/plane-editor-html");
+      if (!htmlContent) return false;
+
+      const { processedHtml } = processAssetDuplication(htmlContent);
+      view.pasteHTML(processedHtml);
+      return true;
     },
   };
 };

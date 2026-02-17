@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 // plane imports
 import { Loader } from "@plane/ui";
@@ -8,13 +12,13 @@ type Props = {
   className?: string;
 };
 
-export const PageContentLoader = (props: Props) => {
+export function PageContentLoader(props: Props) {
   const { className } = props;
 
   return (
     <div className={cn("relative size-full flex flex-col", className)}>
       {/* header */}
-      <div className="flex-shrink-0 w-full h-12 border-b border-custom-border-100 relative flex items-center divide-x divide-custom-border-100">
+      <div className="flex-shrink-0 w-full h-12 border-b border-subtle relative flex items-center divide-x divide-subtle">
         <Loader className="relative flex items-center gap-1 pr-2">
           <Loader.Item width="26px" height="26px" />
           <Loader.Item width="26px" height="26px" />
@@ -82,4 +86,4 @@ export const PageContentLoader = (props: Props) => {
       </div>
     </div>
   );
-};
+}

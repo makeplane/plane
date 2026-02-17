@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Node } from "@tiptap/core";
 // types
 import type { TFileHandler } from "@/types";
@@ -9,6 +15,7 @@ export enum ECustomImageAttributeNames {
   ASPECT_RATIO = "aspectRatio",
   SOURCE = "src",
   ALIGNMENT = "alignment",
+  STATUS = "status",
 }
 
 export type Pixel = `${number}px`;
@@ -23,6 +30,14 @@ export type TCustomImageSize = {
 
 export type TCustomImageAlignment = "left" | "center" | "right";
 
+export enum ECustomImageStatus {
+  PENDING = "pending",
+  UPLOADING = "uploading",
+  UPLOADED = "uploaded",
+  DUPLICATING = "duplicating",
+  DUPLICATION_FAILED = "duplication-failed",
+}
+
 export type TCustomImageAttributes = {
   [ECustomImageAttributeNames.ID]: string | null;
   [ECustomImageAttributeNames.WIDTH]: PixelAttribute<"35%" | number> | null;
@@ -30,6 +45,7 @@ export type TCustomImageAttributes = {
   [ECustomImageAttributeNames.ASPECT_RATIO]: number | null;
   [ECustomImageAttributeNames.SOURCE]: string | null;
   [ECustomImageAttributeNames.ALIGNMENT]: TCustomImageAlignment;
+  [ECustomImageAttributeNames.STATUS]: ECustomImageStatus;
 };
 
 export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File }) & { hasOpenedFileInputOnce?: boolean };
@@ -45,6 +61,7 @@ export type CustomImageExtensionOptions = {
   getImageSource: TFileHandler["getAssetSrc"];
   restoreImage: TFileHandler["restore"];
   uploadImage?: TFileHandler["upload"];
+  duplicateImage?: TFileHandler["duplicate"];
 };
 
 export type CustomImageExtensionStorage = {

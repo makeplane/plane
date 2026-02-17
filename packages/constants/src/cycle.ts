@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // types
 export const CYCLE_STATUS: {
   i18n_label: string;
@@ -28,15 +34,15 @@ export const CYCLE_STATUS: {
     value: "completed",
     i18n_title: "project_cycles.status.completed",
     color: "#16A34A",
-    textColor: "text-green-600",
-    bgColor: "bg-green-50",
+    textColor: "text-success-primary",
+    bgColor: "bg-success-subtle",
   },
   {
     i18n_label: "project_cycles.status.draft",
     value: "draft",
     i18n_title: "project_cycles.status.draft",
     color: "#525252",
-    textColor: "text-custom-text-300",
-    bgColor: "bg-custom-background-90",
+    textColor: "text-tertiary",
+    bgColor: "bg-surface-2",
   },
 ];

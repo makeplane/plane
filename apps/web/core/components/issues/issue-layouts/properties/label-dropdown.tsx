@@ -1,18 +1,26 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Loader, Search } from "lucide-react";
+import { Loader } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { CheckIcon, SearchIcon, ChevronDownIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { ComboDropDown } from "@plane/ui";
+import { sortBySelectedFirst } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -38,7 +46,7 @@ export interface ILabelDropdownProps {
   label: React.ReactNode;
 }
 
-export const LabelDropdown = (props: ILabelDropdownProps) => {
+export function LabelDropdown(props: ILabelDropdownProps) {
   const {
     projectId,
     value,
@@ -111,8 +119,11 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
 
   const filteredOptions = useMemo(
     () =>
-      query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase())),
-    [options, query]
+      sortBySelectedFirst(
+        query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase())),
+        value
+      ),
+    [options, query, value]
   );
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -129,14 +140,18 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
 
   const onOpen = useCallback(() => {
     if (!storeLabels && workspaceSlug && projectId)
-      fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
-  }, [storeLabels, workspaceSlug, projectId, fetchProjectLabels]);
+      fetchProjectLabels(workspaceSlug, projectId)
+        .then(() => setIsLoading(false))
+        .catch(() => {
+          setIsLoading(false);
+        });
+  }, [storeLabels, workspaceSlug, projectId, fetchProjectLabels, setIsLoading]);
 
   const toggleDropdown = useCallback(() => {
     if (!isOpen) onOpen();
     setIsOpen((prevIsOpen) => !prevIsOpen);
     if (isOpen && onClose) onClose();
-  }, [onOpen, onClose, isOpen]);
+  }, [onOpen, onClose, isOpen, setIsOpen]);
 
   const handleClose = () => {
     if (!isOpen) return;
@@ -158,6 +173,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
     e.stopPropagation();
     if (query !== "" && e.key === "Escape") {
       setQuery("");
+      e.preventDefault();
     }
 
     if (query !== "" && e.key === "Enter" && !e.nativeEvent.isComposing && canCreateLabel) {
@@ -189,21 +205,31 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
       <button
         ref={setReferenceElement}
         type="button"
-        className={`clickable flex w-full h-full items-center justify-center gap-1 text-xs ${fullWidth && "hover:bg-custom-background-80"} ${
+        className={`clickable flex w-full h-full items-center justify-center gap-1 text-caption-sm-regular ${fullWidth && "hover:bg-layer-1"} ${
           disabled
-            ? "cursor-not-allowed text-custom-text-200"
+            ? "cursor-not-allowed text-secondary"
             : value.length <= maxRender
               ? "cursor-pointer"
-              : "cursor-pointer hover:bg-custom-background-80"
+              : "cursor-pointer hover:bg-layer-1"
         }  ${buttonClassName}`}
         onClick={handleOnClick}
         disabled={disabled}
       >
         {label}
-        {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
+        {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
       </button>
     ),
-    [buttonClassName, disabled, fullWidth, handleOnClick, hideDropdownArrow, label, maxRender, value.length]
+    [
+      buttonClassName,
+      disabled,
+      fullWidth,
+      handleOnClick,
+      hideDropdownArrow,
+      label,
+      maxRender,
+      value.length,
+      setReferenceElement,
+    ]
   );
 
   const preventPropagation = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -228,16 +254,16 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
         {isOpen && (
           <Combobox.Options className="fixed z-10" static>
             <div
-              className={`z-10 my-1 w-48 h-auto whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
+              className={`z-10 my-1 w-48 h-auto whitespace-nowrap rounded-sm border border-strong bg-surface-1 px-2 py-2.5 text-caption-sm-regular shadow-raised-200 focus:outline-none ${optionsClassName}`}
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}
             >
-              <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
-                <Search className="h-3.5 w-3.5 text-custom-text-300" />
+              <div className="flex w-full items-center justify-start rounded-sm border border-subtle bg-surface-2 px-2">
+                <SearchIcon className="h-3.5 w-3.5 text-tertiary" />
                 <Combobox.Input
                   ref={inputRef}
-                  className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                  className="w-full bg-transparent px-2 py-1 text-caption-sm-regular text-secondary placeholder:text-placeholder focus:outline-none"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("common.search.label")}
@@ -247,8 +273,8 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
               </div>
               <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
                 {isLoading ? (
-                  <p className="text-center text-custom-text-200">{t("common.loading")}</p>
-                ) : filteredOptions.length > 0 ? (
+                  <p className="text-center text-secondary">{t("common.loading")}</p>
+                ) : filteredOptions && filteredOptions.length > 0 ? (
                   filteredOptions.map((option) => (
                     <Combobox.Option
                       key={option.value}
@@ -260,9 +286,9 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
                         }
                       }}
                       className={({ active, selected }) =>
-                        `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
-                          active ? "bg-custom-background-80" : ""
-                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                        `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 hover:bg-layer-1 ${
+                          active ? "bg-layer-1" : ""
+                        } ${selected ? "text-primary" : "text-secondary"}`
                       }
                     >
                       {({ selected }) => (
@@ -270,7 +296,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
                           {option.content}
                           {selected && (
                             <div className="flex-shrink-0">
-                              <Check className={`h-3.5 w-3.5`} />
+                              <CheckIcon className={`h-3.5 w-3.5`} />
                             </div>
                           )}
                         </>
@@ -285,19 +311,19 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
                       if (!query.length) return;
                       handleAddLabel(query);
                     }}
-                    className={`text-left text-custom-text-200 ${query.length ? "cursor-pointer" : "cursor-default"}`}
+                    className={`text-left text-secondary ${query.length ? "cursor-pointer" : "cursor-default"}`}
                   >
                     {/* TODO: translate here */}
                     {query.length ? (
                       <>
-                        + Add <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
+                        + Add <span className="text-primary">&quot;{query}&quot;</span> to labels
                       </>
                     ) : (
                       t("label.create.type")
                     )}
                   </p>
                 ) : (
-                  <p className="text-left text-custom-text-200 ">{t("common.search.no_matching_results")}</p>
+                  <p className="text-left text-secondary ">{t("common.search.no_matching_results")}</p>
                 )}
               </div>
             </div>
@@ -306,4 +332,4 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
       </ComboDropDown>
     </div>
   );
-};
+}

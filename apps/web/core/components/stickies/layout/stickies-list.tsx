@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import type {
   DropTargetRecord,
@@ -6,19 +12,25 @@ import type {
 import type { ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 import Masonry from "react-masonry-component";
-import { Plus } from "lucide-react";
+
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { PlusIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
+// assets
+import darkStickiesAsset from "@/app/assets/empty-state/stickies/stickies-dark.webp?url";
+import lightStickiesAsset from "@/app/assets/empty-state/stickies/stickies-light.webp?url";
+import darkStickiesSearchAsset from "@/app/assets/empty-state/stickies/stickies-search-dark.webp?url";
+import lightStickiesSearchAsset from "@/app/assets/empty-state/stickies/stickies-search-light.webp?url";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { StickiesEmptyState } from "@/components/home/widgets/empty-states/stickies";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useSticky } from "@/hooks/use-stickies";
 // local imports
 import { useStickyOperations } from "../sticky/use-operations";
@@ -35,10 +47,12 @@ type TProps = TStickiesLayout & {
   columnCount: number;
 };
 
-export const StickiesList = observer((props: TProps) => {
+export const StickiesList = observer(function StickiesList(props: TProps) {
   const { workspaceSlug, intersectionElement, columnCount } = props;
   // navigation
   const pathname = usePathname();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -55,10 +69,8 @@ export const StickiesList = observer((props: TProps) => {
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     EUserPermissionsLevel.WORKSPACE
   );
-  const stickiesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/stickies/stickies" });
-  const stickiesSearchResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/stickies/stickies-search",
-  });
+  const stickiesResolvedPath = resolvedTheme === "light" ? lightStickiesAsset : darkStickiesAsset;
+  const stickiesSearchResolvedPath = resolvedTheme === "light" ? lightStickiesSearchAsset : darkStickiesSearchAsset;
   const masonryRef = useRef<any>(null);
 
   const handleLayout = () => {
@@ -117,7 +129,7 @@ export const StickiesList = observer((props: TProps) => {
                 description={t("stickies.empty_state.general.description")}
                 assetPath={stickiesResolvedPath}
                 primaryButton={{
-                  prependIcon: <Plus className="size-4" />,
+                  prependIcon: <PlusIcon className="size-4" />,
                   text: t("stickies.empty_state.general.primary_button.text"),
                   onClick: () => {
                     toggleShowNewSticky(true);
@@ -161,7 +173,7 @@ export const StickiesList = observer((props: TProps) => {
   );
 });
 
-export const StickiesLayout = (props: TStickiesLayout) => {
+export function StickiesLayout(props: TStickiesLayout) {
   // states
   const [containerWidth, setContainerWidth] = useState<number | null>(null);
   // refs
@@ -198,4 +210,4 @@ export const StickiesLayout = (props: TStickiesLayout) => {
       <StickiesList {...props} columnCount={columnCount} />
     </div>
   );
-};
+}

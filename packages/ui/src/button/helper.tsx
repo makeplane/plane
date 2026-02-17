@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export type TButtonVariant =
   | "primary"
   | "accent-primary"
@@ -23,10 +29,10 @@ export interface IButtonStyling {
 }
 
 enum buttonSizeStyling {
-  sm = `px-3 py-1.5 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
-  md = `px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
-  lg = `px-5 py-2 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
-  xl = `px-5 py-3.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
+  sm = `px-3 py-1.5 font-medium text-11 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
+  md = `px-4 py-1.5 font-medium text-13 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
+  lg = `px-5 py-2 font-medium text-13 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
+  xl = `px-5 py-3.5 font-medium text-13 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
 }
 
 enum buttonIconStyling {
@@ -38,71 +44,70 @@ enum buttonIconStyling {
 
 export const buttonStyling: IButtonStyling = {
   primary: {
-    default: `text-white bg-custom-primary-100`,
-    hover: `hover:bg-custom-primary-200`,
-    pressed: `focus:text-custom-brand-40 focus:bg-custom-primary-200`,
-    disabled: `cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60`,
+    default: `text-on-color bg-accent-primary`,
+    hover: `hover:bg-accent-primary/80`,
+    pressed: `focus:text-custom-brand-40 focus:bg-accent-primary/80`,
+    disabled: `cursor-not-allowed !bg-layer-1 !text-on-color-disabled`,
   },
   "accent-primary": {
-    default: `bg-custom-primary-100/20 text-custom-primary-100`,
-    hover: `hover:bg-custom-primary-100/10 hover:text-custom-primary-200`,
-    pressed: `focus:bg-custom-primary-100/10`,
-    disabled: `cursor-not-allowed !text-custom-primary-60`,
+    default: `bg-accent-primary/20 text-accent-primary`,
+    hover: `hover:bg-accent-primary/10 hover:text-accent-secondary`,
+    pressed: `focus:bg-accent-primary/10`,
+    disabled: `cursor-not-allowed !text-accent-primary/60`,
   },
   "outline-primary": {
-    default: `text-custom-primary-100 bg-transparent border border-custom-primary-100`,
-    hover: `hover:bg-custom-primary-100/20`,
-    pressed: `focus:text-custom-primary-100 focus:bg-custom-primary-100/30`,
-    disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
+    default: `text-accent-primary bg-transparent border border-accent-strong`,
+    hover: `hover:bg-accent-primary/20`,
+    pressed: `focus:text-accent-primary focus:bg-accent-primary/30`,
+    disabled: `cursor-not-allowed !text-accent-primary/60 !border-accent-strong-60 `,
   },
   "neutral-primary": {
-    default: `text-custom-text-200 bg-custom-background-100 border border-custom-border-200`,
-    hover: `hover:bg-custom-background-90`,
-    pressed: `focus:text-custom-text-300 focus:bg-custom-background-90`,
-    disabled: `cursor-not-allowed !text-custom-text-400`,
+    default: `text-secondary bg-surface-1 border border-subtle`,
+    hover: `hover:bg-surface-2`,
+    pressed: `focus:text-tertiary focus:bg-surface-2`,
+    disabled: `cursor-not-allowed !bg-layer-1 !text-placeholder`,
   },
   "link-primary": {
-    default: `text-custom-primary-100 bg-custom-background-100`,
-    hover: `hover:text-custom-primary-200`,
-    pressed: `focus:text-custom-primary-80 `,
-    disabled: `cursor-not-allowed !text-custom-primary-60`,
+    default: `text-accent-primary bg-surface-1`,
+    hover: `hover:text-accent-secondary`,
+    pressed: `focus:text-accent-primary/80 `,
+    disabled: `cursor-not-allowed !text-accent-primary/60`,
   },
-
   danger: {
-    default: `text-white bg-red-500`,
-    hover: ` hover:bg-red-600`,
-    pressed: `focus:text-red-200 focus:bg-red-600`,
-    disabled: `cursor-not-allowed !bg-red-300`,
+    default: `bg-danger-primary text-on-color`,
+    hover: ` hover:bg-danger-primary-hover`,
+    pressed: `focus:bg-danger-primary-active`,
+    disabled: `cursor-not-allowed bg-layer-disabled! text-disabled!`,
   },
   "accent-danger": {
-    default: `text-red-500 bg-red-50`,
-    hover: `hover:text-red-600 hover:bg-red-100`,
-    pressed: `focus:text-red-500 focus:bg-red-100`,
-    disabled: `cursor-not-allowed !text-red-300`,
+    default: `text-danger-primary bg-red-50`,
+    hover: `hover:text-danger-primary hover:bg-red-100`,
+    pressed: `focus:text-danger-primary focus:bg-red-100`,
+    disabled: `cursor-not-allowed !bg-layer-1 !text-placeholder`,
   },
   "outline-danger": {
-    default: `text-red-500 bg-transparent border border-red-500`,
-    hover: `hover:text-red-400 hover:border-red-400`,
-    pressed: `focus:text-red-400 focus:border-red-400`,
-    disabled: `cursor-not-allowed !text-red-300 !border-red-300`,
+    default: `bg-layer-2 text-danger-primary border border-danger-strong`,
+    hover: `hover:bg-danger-subtle`,
+    pressed: `focus:bg-danger-subtle-hover`,
+    disabled: `cursor-not-allowed text-disabled! border-subtle-1!`,
   },
   "link-danger": {
-    default: `text-red-500 bg-custom-background-100`,
-    hover: `hover:text-red-400`,
-    pressed: `focus:text-red-400`,
-    disabled: `cursor-not-allowed !text-red-300`,
+    default: `text-danger-primary bg-surface-1`,
+    hover: `hover:text-danger-primary`,
+    pressed: `focus:text-danger-primary`,
+    disabled: `cursor-not-allowed !bg-layer-1 !text-placeholder`,
   },
   "tertiary-danger": {
-    default: `text-red-500 bg-custom-background-100 border border-red-200`,
-    hover: `hover:bg-red-50 hover:border-red-300`,
-    pressed: `focus:text-red-400`,
-    disabled: `cursor-not-allowed !text-red-300`,
+    default: `text-danger-primary bg-surface-1 border border-danger-subtle`,
+    hover: `hover:bg-red-50 hover:border-danger-subtle`,
+    pressed: `focus:text-danger-primary`,
+    disabled: `cursor-not-allowed !bg-layer-1 !text-placeholder`,
   },
   "link-neutral": {
-    default: `text-custom-text-300`,
-    hover: `hover:text-custom-text-200`,
-    pressed: `focus:text-custom-text-100`,
-    disabled: `cursor-not-allowed !text-custom-text-400`,
+    default: `text-tertiary`,
+    hover: `hover:text-secondary`,
+    pressed: `focus:text-primary`,
+    disabled: `cursor-not-allowed !bg-layer-1 !text-placeholder`,
   },
 };
 

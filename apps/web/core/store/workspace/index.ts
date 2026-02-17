@@ -1,10 +1,21 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { clone, set } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // types
 import { computedFn } from "mobx-utils";
-import type { IWorkspaceSidebarNavigationItem, IWorkspace, IWorkspaceSidebarNavigation } from "@plane/types";
+import type {
+  IWorkspaceSidebarNavigationItem,
+  IWorkspace,
+  IWorkspaceSidebarNavigation,
+  IWorkspaceUserPropertiesResponse,
+} from "@plane/types";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // store
 import type { CoreRootStore } from "@/store/root.store";
 // sub-stores
@@ -23,6 +34,7 @@ export interface IWorkspaceRootStore {
   currentWorkspace: IWorkspace | null;
   workspacesCreatedByCurrentUser: IWorkspace[] | null;
   navigationPreferencesMap: Record<string, IWorkspaceSidebarNavigation>;
+  projectNavigationPreferencesMap: Record<string, IWorkspaceUserPropertiesResponse>;
   getWorkspaceRedirectionUrl: () => string;
   // computed actions
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
@@ -40,18 +52,30 @@ export interface IWorkspaceRootStore {
     key: string,
     data: Partial<IWorkspaceSidebarNavigationItem>
   ) => Promise<IWorkspaceSidebarNavigationItem | undefined>;
+  updateBulkSidebarPreferences: (
+    workspaceSlug: string,
+    data: Array<{ key: string; is_pinned: boolean; sort_order: number }>
+  ) => Promise<void>;
   getNavigationPreferences: (workspaceSlug: string) => IWorkspaceSidebarNavigation | undefined;
+  getProjectNavigationPreferences: (workspaceSlug: string) => IWorkspaceUserPropertiesResponse | undefined;
+  fetchProjectNavigationPreferences: (workspaceSlug: string) => Promise<void>;
+  updateProjectNavigationPreferences: (
+    workspaceSlug: string,
+    data: Partial<IWorkspaceUserPropertiesResponse>
+  ) => Promise<void>;
+  mutateWorkspaceMembersActivity: (workspaceSlug: string) => Promise<void>;
   // sub-stores
   webhook: IWebhookStore;
   apiToken: IApiTokenStore;
   home: IHomeStore;
 }
 
-export class WorkspaceRootStore implements IWorkspaceRootStore {
+export abstract class BaseWorkspaceRootStore implements IWorkspaceRootStore {
   loader: boolean = false;
   // observables
   workspaces: Record<string, IWorkspace> = {};
   navigationPreferencesMap: Record<string, IWorkspaceSidebarNavigation> = {};
+  projectNavigationPreferencesMap: Record<string, IWorkspaceUserPropertiesResponse> = {};
   // services
   workspaceService;
   // root store
@@ -68,6 +92,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       // observables
       workspaces: observable,
       navigationPreferencesMap: observable,
+      projectNavigationPreferencesMap: observable,
       // computed
       currentWorkspace: computed,
       workspacesCreatedByCurrentUser: computed,
@@ -82,6 +107,9 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       deleteWorkspace: action,
       fetchSidebarNavigationPreferences: action,
       updateSidebarPreference: action,
+      updateBulkSidebarPreferences: action,
+      fetchProjectNavigationPreferences: action,
+      updateProjectNavigationPreferences: action,
     });
 
     // services
@@ -200,7 +228,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * @param {string} workspaceSlug
    * @param {string} logoURL
    */
-  updateWorkspaceLogo = async (workspaceSlug: string, logoURL: string) => {
+  updateWorkspaceLogo = (workspaceSlug: string, logoURL: string) => {
     const workspaceId = this.getWorkspaceBySlug(workspaceSlug)?.id;
     if (!workspaceId) {
       throw new Error("Workspace not found");
@@ -214,15 +242,19 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * delete workspace using the workspace slug
    * @param workspaceSlug
    */
-  deleteWorkspace = async (workspaceSlug: string) =>
-    await this.workspaceService.deleteWorkspace(workspaceSlug).then(() => {
+  deleteWorkspace = async (workspaceSlug: string) => {
+    try {
+      await this.workspaceService.deleteWorkspace(workspaceSlug);
       const updatedWorkspacesList = this.workspaces;
       const workspaceId = this.getWorkspaceBySlug(workspaceSlug)?.id;
       delete updatedWorkspacesList[`${workspaceId}`];
       runInAction(() => {
         this.workspaces = updatedWorkspacesList;
       });
-    });
+    } catch (error) {
+      console.error("Failed to delete workspace:", error);
+    }
+  };
 
   fetchSidebarNavigationPreferences = async (workspaceSlug: string) => {
     try {
@@ -272,4 +304,87 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   getNavigationPreferences = computedFn(
     (workspaceSlug: string): IWorkspaceSidebarNavigation | undefined => this.navigationPreferencesMap[workspaceSlug]
   );
+
+  updateBulkSidebarPreferences = async (
+    workspaceSlug: string,
+    data: Array<{ key: string; is_pinned: boolean; sort_order: number }>
+  ) => {
+    const beforeUpdateData = clone(this.navigationPreferencesMap[workspaceSlug]);
+
+    try {
+      // Optimistically update store
+      const updatedPreferences: IWorkspaceSidebarNavigation = {};
+      data.forEach((item) => {
+        updatedPreferences[item.key] = item;
+      });
+
+      runInAction(() => {
+        this.navigationPreferencesMap[workspaceSlug] = {
+          ...this.navigationPreferencesMap[workspaceSlug],
+          ...updatedPreferences,
+        };
+      });
+
+      // Call API to persist changes
+      await this.workspaceService.updateBulkSidebarPreferences(workspaceSlug, data);
+    } catch (error) {
+      // Rollback on failure
+      runInAction(() => {
+        this.navigationPreferencesMap[workspaceSlug] = beforeUpdateData;
+      });
+      console.error("Failed to update bulk sidebar preferences:", error);
+      throw error;
+    }
+  };
+
+  getProjectNavigationPreferences = computedFn(
+    (workspaceSlug: string): IWorkspaceUserPropertiesResponse | undefined =>
+      this.projectNavigationPreferencesMap[workspaceSlug]
+  );
+
+  fetchProjectNavigationPreferences = async (workspaceSlug: string) => {
+    try {
+      const response = await this.workspaceService.fetchWorkspaceFilters(workspaceSlug);
+
+      runInAction(() => {
+        this.projectNavigationPreferencesMap[workspaceSlug] = response;
+      });
+    } catch (error) {
+      console.error("Failed to fetch project navigation preferences:", error);
+      throw error;
+    }
+  };
+
+  updateProjectNavigationPreferences = async (
+    workspaceSlug: string,
+    data: Partial<IWorkspaceUserPropertiesResponse>
+  ) => {
+    const beforeUpdateData = clone(this.projectNavigationPreferencesMap[workspaceSlug]);
+
+    try {
+      // Optimistically update store
+      runInAction(() => {
+        this.projectNavigationPreferencesMap[workspaceSlug] = {
+          ...this.projectNavigationPreferencesMap[workspaceSlug],
+          ...data,
+        };
+      });
+
+      // Call API to persist changes
+      await this.workspaceService.patchWorkspaceFilters(workspaceSlug, data);
+    } catch (error) {
+      // Rollback on failure
+      runInAction(() => {
+        this.projectNavigationPreferencesMap[workspaceSlug] = beforeUpdateData;
+      });
+      console.error("Failed to update project navigation preferences:", error);
+      throw error;
+    }
+  };
+
+  /**
+   * Mutate workspace members activity
+   * @param workspaceSlug
+   */
+  abstract mutateWorkspaceMembersActivity(workspaceSlug: string): Promise<void>;
 }

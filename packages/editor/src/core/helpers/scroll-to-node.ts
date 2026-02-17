@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Editor } from "@tiptap/react";
 // types
 import type { IMarking } from "@/types";
@@ -27,7 +33,6 @@ function scrollToNode(editor: Editor, pos: number): void {
   }
 }
 
-// eslint-disable-next-line no-undef
 export function scrollToNodeViaDOMCoordinates(editor: Editor, pos: number, behavior?: ScrollBehavior): void {
   const view = editor.view;
 

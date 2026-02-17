@@ -1,15 +1,19 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React, { useMemo, useState } from "react";
 import { Cell, PieChart as CorePieChart, Label, Legend, Pie, ResponsiveContainer, Tooltip } from "recharts";
 // plane imports
-import { TPieChartProps } from "@plane/types";
+import type { TPieChartProps } from "@plane/types";
 // local components
 import { getLegendProps } from "../components/legend";
 import { CustomActiveShape } from "./active-shape";
 import { CustomPieChartTooltip } from "./tooltip";
 
-export const PieChart = React.memo(<K extends string, T extends string>(props: TPieChartProps<K, T>) => {
+export const PieChart = React.memo(function PieChart<K extends string, T extends string>(props: TPieChartProps<K, T>) {
   const {
     data,
     dataKey,
@@ -86,7 +90,7 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
                       y={props.y}
                       textAnchor={props.textAnchor}
                       dominantBaseline={props.dominantBaseline}
-                      fill="rgba(var(--color-text-200))"
+                      fill="var(--text-color-secondary)"
                       opacity={!!activeLegend && activeLegend !== payload.key ? 0.1 : 1}
                     >
                       {customLabel?.(payload.count) ?? payload.count}
@@ -125,7 +129,7 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
             <Tooltip
               cursor={{
                 fill: "currentColor",
-                className: "text-custom-background-90/80 cursor-pointer",
+                className: "bg-layer-1-hover cursor-pointer",
               }}
               wrapperStyle={{
                 pointerEvents: "none",

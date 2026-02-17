@@ -1,18 +1,20 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
-// hooks
 import { Tooltip } from "@plane/propel/tooltip";
 import { generateWorkItemLink } from "@plane/utils";
+// hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// ui
 
 type TIssueLink = {
   activityId: string;
 };
 
-export const IssueLink: FC<TIssueLink> = (props) => {
+export function IssueLink(props: TIssueLink) {
   const { activityId } = props;
   // hooks
   const {
@@ -40,13 +42,13 @@ export const IssueLink: FC<TIssueLink> = (props) => {
         href={`${activity.issue_detail ? workItemLink : "#"}`}
         target={activity.issue === null ? "_self" : "_blank"}
         rel={activity.issue === null ? "" : "noopener noreferrer"}
-        className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+        className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
       >
         {activity.issue_detail
           ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`
           : "Work items"}{" "}
-        <span className="font-normal">{activity.issue_detail?.name}</span>
+        <span className="font-regular">{activity.issue_detail?.name}</span>
       </a>
     </Tooltip>
   );
-};
+}

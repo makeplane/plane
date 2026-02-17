@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import useSWR from "swr";
 import type { TTimezoneObject } from "@plane/types";
 // services
@@ -43,8 +49,8 @@ const useTimezone = () => {
     if (!timezone) return undefined;
     return (
       <div className="flex gap-1.5">
-        <span className="text-custom-text-400">{timezone.utc_offset}</span>
-        <span className="text-custom-text-200">{timezone.label}</span>
+        <span className="text-placeholder">{timezone.utc_offset}</span>
+        <span className="text-secondary">{timezone.label}</span>
       </div>
     );
   };
@@ -58,11 +64,6 @@ const useTimezone = () => {
       value: "UTC",
       query: "utc, coordinated universal time",
       content: "UTC",
-    },
-    {
-      value: "Universal",
-      query: "universal, coordinated universal time",
-      content: "Universal",
     },
   ];
 

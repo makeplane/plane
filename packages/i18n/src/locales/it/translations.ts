@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Progetti",
@@ -74,7 +80,7 @@ export default {
       },
       unique_code: {
         label: "Codice unico",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Incolla il codice inviato alla tua email",
         requesting_new_code: "Richiesta di nuovo codice",
         sending_code: "Invio codice",
@@ -340,13 +346,13 @@ export default {
   project_id_must_be_at_most_5_characters: "L'ID del progetto deve contenere al massimo 5 caratteri",
   project_id: "ID del progetto",
   project_id_tooltip_content:
-    "Ti aiuta a identificare in modo univoco gli elementi di lavoro nel progetto. Massimo 5 caratteri.",
+    "Ti aiuta a identificare in modo univoco gli elementi di lavoro nel progetto. Massimo 10 caratteri.",
   description_placeholder: "Descrizione",
   only_alphanumeric_non_latin_characters_allowed: "Sono ammessi solo caratteri alfanumerici e non latini.",
   project_id_is_required: "L'ID del progetto è obbligatorio",
   project_id_allowed_char: "Sono ammessi solo caratteri alfanumerici e non latini.",
   project_id_min_char: "L'ID del progetto deve contenere almeno 1 carattere",
-  project_id_max_char: "L'ID del progetto deve contenere al massimo 5 caratteri",
+  project_id_max_char: "L'ID del progetto deve contenere al massimo 10 caratteri",
   project_description_placeholder: "Inserisci la descrizione del progetto",
   select_network: "Seleziona rete",
   lead: "Responsabile",
@@ -647,6 +653,8 @@ export default {
   },
   common: {
     all: "Tutti",
+    no_items_in_this_group: "Nessun elemento in questo gruppo",
+    drop_here_to_move: "Rilascia qui per spostare",
     states: "Stati",
     state: "Stato",
     state_groups: "Gruppi di stati",
@@ -1532,6 +1540,47 @@ export default {
         "Se confermi, tutte le opzioni di ordinamento, filtro e visualizzazione + il layout che hai scelto per questa visualizzazione saranno eliminate permanentemente senza possibilità di ripristinarle.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Cambia email",
+        description: "Inserisci un nuovo indirizzo email per ricevere un link di verifica.",
+        toasts: {
+          success_title: "Successo!",
+          success_message: "Email aggiornata con successo. Accedi di nuovo.",
+        },
+        form: {
+          email: {
+            label: "Nuova email",
+            placeholder: "Inserisci la tua email",
+            errors: {
+              required: "L’email è obbligatoria",
+              invalid: "L’email non è valida",
+              exists: "L’email esiste già. Usane un’altra.",
+              validation_failed: "La verifica dell’email non è riuscita. Riprova.",
+            },
+          },
+          code: {
+            label: "Codice univoco",
+            placeholder: "123456",
+            helper_text: "Codice di verifica inviato alla tua nuova email.",
+            errors: {
+              required: "Il codice univoco è obbligatorio",
+              invalid: "Codice di verifica non valido. Riprova.",
+            },
+          },
+        },
+        actions: {
+          continue: "Continua",
+          confirm: "Conferma",
+          cancel: "Annulla",
+        },
+        states: {
+          sending: "Invio…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Impostazioni dello spazio di lavoro",
     page_label: "{workspace} - Impostazioni generali",
@@ -1547,6 +1596,7 @@ export default {
         name: "Nome dello spazio di lavoro",
         company_size: "Dimensione aziendale",
         url: "URL dello spazio di lavoro",
+        workspace_timezone: "Fuso orario dello spazio di lavoro",
         update_workspace: "Aggiorna spazio di lavoro",
         delete_workspace: "Elimina questo spazio di lavoro",
         delete_workspace_description:
@@ -1612,6 +1662,7 @@ export default {
         exporting: "Esportazione in corso",
         previous_exports: "Esportazioni precedenti",
         export_separate_files: "Esporta i dati in file separati",
+        filters_info: "Applica filtri per esportare elementi di lavoro specifici in base ai tuoi criteri.",
         modal: {
           title: "Esporta in",
           toasts: {
@@ -1939,6 +1990,46 @@ export default {
         title: "Nessun sistema di stime ancora",
         description: "Crea un set di stime per comunicare la quantità di lavoro per elemento di lavoro.",
         primary_button: "Aggiungi sistema di stime",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cicli",
+        short_title: "Cicli",
+        description:
+          "Pianifica il lavoro in periodi flessibili che si adattano al ritmo e al tempo unici di questo progetto.",
+        toggle_title: "Abilita cicli",
+        toggle_description: "Pianifica il lavoro in periodi di tempo mirati.",
+      },
+      modules: {
+        title: "Moduli",
+        short_title: "Moduli",
+        description: "Organizza il lavoro in sotto-progetti con responsabili e assegnatari dedicati.",
+        toggle_title: "Abilita moduli",
+        toggle_description: "I membri del progetto potranno creare e modificare moduli.",
+      },
+      views: {
+        title: "Viste",
+        short_title: "Viste",
+        description:
+          "Salva ordinamenti, filtri e opzioni di visualizzazione personalizzati o condividili con il tuo team.",
+        toggle_title: "Abilita viste",
+        toggle_description: "I membri del progetto potranno creare e modificare viste.",
+      },
+      pages: {
+        title: "Pagine",
+        short_title: "Pagine",
+        description: "Crea e modifica contenuti liberi: note, documenti, qualsiasi cosa.",
+        toggle_title: "Abilita pagine",
+        toggle_description: "I membri del progetto potranno creare e modificare pagine.",
+      },
+      intake: {
+        title: "Ricezione",
+        short_title: "Ricezione",
+        description:
+          "Consenti ai non membri di condividere bug, feedback e suggerimenti; senza interrompere il tuo flusso di lavoro.",
+        toggle_title: "Abilita ricezione",
+        toggle_description: "Consenti ai membri del progetto di creare richieste di ricezione nell'app.",
       },
     },
   },

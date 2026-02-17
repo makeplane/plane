@@ -1,8 +1,12 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React, { useState } from "react";
+import { useState } from "react";
 // plane imports
-import { ROLE, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { ROLE } from "@plane/constants";
 // types
 import { Button } from "@plane/propel/button";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
@@ -13,11 +17,10 @@ import { truncateText } from "@plane/utils";
 // helpers
 import { WorkspaceLogo } from "@/components/workspace/logo";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserSettings } from "@/hooks/store/user";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 
 type Props = {
   invitations: IWorkspaceMemberInvitation[];
@@ -26,7 +29,7 @@ type Props = {
 };
 const workspaceService = new WorkspaceService();
 
-export const Invitations: React.FC<Props> = (props) => {
+export function Invitations(props: Props) {
   const { invitations, handleNextStep, handleCurrentViewChange } = props;
   // states
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
@@ -45,31 +48,15 @@ export const Invitations: React.FC<Props> = (props) => {
 
   const submitInvitations = async () => {
     const invitation = invitations?.find((invitation) => invitation.id === invitationsRespond[0]);
-
     if (invitationsRespond.length <= 0 && !invitation?.role) return;
-
     setIsJoiningWorkspaces(true);
-
     try {
       await workspaceService.joinWorkspaces({ invitations: invitationsRespond });
-      captureSuccess({
-        eventName: MEMBER_TRACKER_EVENTS.accept,
-        payload: {
-          member_id: invitation?.id,
-        },
-      });
       await fetchWorkspaces();
       await fetchCurrentUserSettings();
       await handleNextStep();
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      captureError({
-        eventName: MEMBER_TRACKER_EVENTS.accept,
-        payload: {
-          member_id: invitation?.id,
-        },
-        error: error,
-      });
       setIsJoiningWorkspaces(false);
     }
   };
@@ -77,8 +64,8 @@ export const Invitations: React.FC<Props> = (props) => {
   return invitations && invitations.length > 0 ? (
     <div className="space-y-4">
       <div className="text-center space-y-1 py-4 mx-auto">
-        <h3 className="text-3xl font-bold text-custom-text-100">You are invited!</h3>
-        <p className="font-medium text-custom-text-400">Accept the invites to collaborate with your team.</p>
+        <h3 className="text-24 font-bold text-primary">You are invited!</h3>
+        <p className="font-medium text-placeholder">Accept the invites to collaborate with your team.</p>
       </div>
       <div>
         {invitations &&
@@ -89,7 +76,7 @@ export const Invitations: React.FC<Props> = (props) => {
             return (
               <div
                 key={invitation.id}
-                className={`flex cursor-pointer items-center gap-2 rounded border p-3.5 border-custom-border-200 hover:bg-custom-background-90`}
+                className={`flex cursor-pointer items-center gap-2 rounded-sm border p-3.5 border-subtle hover:bg-surface-2`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
                 <div className="flex-shrink-0">
@@ -100,8 +87,8 @@ export const Invitations: React.FC<Props> = (props) => {
                   />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
-                  <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
+                  <div className="text-13 font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
+                  <p className="text-11 text-secondary">{ROLE[invitation.role]}</p>
                 </div>
                 <span className={`flex-shrink-0`}>
                   <Checkbox checked={isSelected} />
@@ -112,23 +99,22 @@ export const Invitations: React.FC<Props> = (props) => {
       </div>
       <Button
         variant="primary"
-        size="lg"
+        size="xl"
         className="w-full"
         onClick={submitInvitations}
         disabled={isJoiningWorkspaces || !invitationsRespond.length}
-        data-ph-element={MEMBER_TRACKER_ELEMENTS.ONBOARDING_JOIN_WORKSPACE}
       >
         {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue to workspace"}
       </Button>
       <div className="mx-auto mt-4 flex items-center sm:w-96">
-        <hr className="w-full border-custom-border-300" />
-        <p className="mx-3 flex-shrink-0 text-center text-sm text-custom-text-400">or</p>
-        <hr className="w-full border-custom-border-300" />
+        <hr className="w-full border-strong" />
+        <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder">or</p>
+        <hr className="w-full border-strong" />
       </div>
       <Button
-        variant="link-neutral"
-        size="lg"
-        className="w-full text-base bg-custom-background-90"
+        variant="ghost"
+        size="xl"
+        className="w-full text-14 bg-surface-2"
         onClick={handleCurrentViewChange}
         disabled={isJoiningWorkspaces}
       >
@@ -138,4 +124,4 @@ export const Invitations: React.FC<Props> = (props) => {
   ) : (
     <div>No Invitations found</div>
   );
-};
+}

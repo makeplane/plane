@@ -1,34 +1,24 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import {
-  ArchiveRestoreIcon,
-  Copy,
-  ExternalLink,
-  FileOutput,
-  Globe2,
-  Link,
-  Lock,
-  LockKeyhole,
-  LockKeyholeOpen,
-  Trash2,
-} from "lucide-react";
+import { ArchiveRestoreIcon, FileOutput, LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // constants
-import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 // plane editor
-import type { EditorRefApi } from "@plane/editor";
+import { LinkIcon, CopyIcon, LockIcon, NewTabIcon, ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
 // plane ui
-import { ArchiveIcon } from "@plane/propel/icons";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
-// helpers
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web components
 import { MovePageModal } from "@/plane-web/components/pages";
@@ -54,7 +44,6 @@ export type TPageActions =
   | "move";
 
 type Props = {
-  editorRef?: EditorRefApi | null;
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];
   optionsOrder: TPageActions[];
   page: TPageInstance;
@@ -62,8 +51,8 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageActions: React.FC<Props> = observer((props) => {
-  const { editorRef, extraOptions, optionsOrder, page, parentRef, storeType } = props;
+export const PageActions = observer(function PageActions(props: Props) {
+  const { extraOptions, optionsOrder, page, parentRef, storeType } = props;
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [movePageModal, setMovePageModal] = useState(false);
@@ -75,7 +64,6 @@ export const PageActions: React.FC<Props> = observer((props) => {
   });
   // page operations
   const { pageOperations } = usePageOperations({
-    editorRef,
     page,
   });
   // derived values
@@ -91,114 +79,102 @@ export const PageActions: React.FC<Props> = observer((props) => {
     canCurrentUserMovePage,
   } = page;
   // menu items
-  const MENU_ITEMS: (TContextMenuItem & { key: TPageActions })[] = useMemo(() => {
-    const menuItems: (TContextMenuItem & { key: TPageActions })[] = [
-      {
-        key: "toggle-lock",
-        action: () => {
-          captureClick({
-            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.LOCK_BUTTON,
-          });
-          pageOperations.toggleLock();
+  const MENU_ITEMS = useMemo(
+    function MENU_ITEMS() {
+      const menuItems: (TContextMenuItem & { key: TPageActions })[] = [
+        {
+          key: "toggle-lock",
+          action: () => {
+            pageOperations.toggleLock();
+          },
+          title: is_locked ? "Unlock" : "Lock",
+          icon: is_locked ? LockKeyholeOpen : LockKeyhole,
+          shouldRender: canCurrentUserLockPage,
         },
-        title: is_locked ? "Unlock" : "Lock",
-        icon: is_locked ? LockKeyholeOpen : LockKeyhole,
-        shouldRender: canCurrentUserLockPage,
-      },
-      {
-        key: "toggle-access",
-        action: () => {
-          captureClick({
-            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.ACCESS_TOGGLE,
-          });
-          pageOperations.toggleAccess();
+        {
+          key: "toggle-access",
+          action: () => {
+            pageOperations.toggleAccess();
+          },
+          title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
+          icon: access === EPageAccess.PUBLIC ? LockIcon : GlobeIcon,
+          shouldRender: canCurrentUserChangeAccess && !archived_at,
         },
-        title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
-        icon: access === EPageAccess.PUBLIC ? Lock : Globe2,
-        shouldRender: canCurrentUserChangeAccess && !archived_at,
-      },
-      {
-        key: "open-in-new-tab",
-        action: pageOperations.openInNewTab,
-        title: "Open in new tab",
-        icon: ExternalLink,
-        shouldRender: true,
-      },
-      {
-        key: "copy-link",
-        action: pageOperations.copyLink,
-        title: "Copy link",
-        icon: Link,
-        shouldRender: true,
-      },
-      {
-        key: "make-a-copy",
-        action: () => {
-          captureClick({
-            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.DUPLICATE_BUTTON,
-          });
-          pageOperations.duplicate();
+        {
+          key: "open-in-new-tab",
+          action: pageOperations.openInNewTab,
+          title: "Open in new tab",
+          icon: NewTabIcon,
+          shouldRender: true,
         },
-        title: "Make a copy",
-        icon: Copy,
-        shouldRender: canCurrentUserDuplicatePage,
-      },
-      {
-        key: "archive-restore",
-        action: () => {
-          captureClick({
-            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.ARCHIVE_BUTTON,
-          });
-          pageOperations.toggleArchive();
+        {
+          key: "copy-link",
+          action: pageOperations.copyLink,
+          title: "Copy link",
+          icon: LinkIcon,
+          shouldRender: true,
         },
-        title: archived_at ? "Restore" : "Archive",
-        icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
-        shouldRender: canCurrentUserArchivePage,
-      },
-      {
-        key: "delete",
-        action: () => {
-          captureClick({
-            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.CONTEXT_MENU,
-          });
-          setDeletePageModal(true);
+        {
+          key: "make-a-copy",
+          action: () => {
+            pageOperations.duplicate();
+          },
+          title: "Make a copy",
+          icon: CopyIcon,
+          shouldRender: canCurrentUserDuplicatePage,
         },
-        title: "Delete",
-        icon: Trash2,
-        shouldRender: canCurrentUserDeletePage && !!archived_at,
-      },
-      {
-        key: "move",
-        action: () => setMovePageModal(true),
-        title: "Move",
-        icon: FileOutput,
-        shouldRender: canCurrentUserMovePage && isMovePageEnabled,
-      },
-    ];
-    if (extraOptions) {
-      menuItems.push(...extraOptions);
-    }
-    return menuItems;
-  }, [
-    access,
-    archived_at,
-    extraOptions,
-    is_locked,
-    isMovePageEnabled,
-    canCurrentUserArchivePage,
-    canCurrentUserChangeAccess,
-    canCurrentUserDeletePage,
-    canCurrentUserDuplicatePage,
-    canCurrentUserLockPage,
-    canCurrentUserMovePage,
-    pageOperations,
-  ]);
+        {
+          key: "archive-restore",
+          action: () => {
+            pageOperations.toggleArchive();
+          },
+          title: archived_at ? "Restore" : "Archive",
+          icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
+          shouldRender: canCurrentUserArchivePage,
+        },
+        {
+          key: "delete",
+          action: () => {
+            setDeletePageModal(true);
+          },
+          title: "Delete",
+          icon: TrashIcon,
+          shouldRender: canCurrentUserDeletePage && !!archived_at,
+        },
+        {
+          key: "move",
+          action: () => setMovePageModal(true),
+          title: "Move",
+          icon: FileOutput,
+          shouldRender: canCurrentUserMovePage && isMovePageEnabled,
+        },
+      ];
+      if (extraOptions) {
+        menuItems.push(...extraOptions);
+      }
+      return menuItems;
+    },
+    [
+      extraOptions,
+      is_locked,
+      canCurrentUserLockPage,
+      access,
+      canCurrentUserChangeAccess,
+      archived_at,
+      canCurrentUserDuplicatePage,
+      canCurrentUserArchivePage,
+      canCurrentUserDeletePage,
+      canCurrentUserMovePage,
+      isMovePageEnabled,
+      pageOperations,
+    ]
+  );
   // arrange options
-  const arrangedOptions = useMemo(
+  const arrangedOptions = useMemo<(TContextMenuItem & { key: TPageActions })[]>(
     () =>
       optionsOrder
         .map((key) => MENU_ITEMS.find((item) => item.key === key))
-        .filter((item) => !!item) as (TContextMenuItem & { key: TPageActions })[],
+        .filter((item): item is TContextMenuItem & { key: TPageActions } => !!item),
     [optionsOrder, MENU_ITEMS]
   );
 

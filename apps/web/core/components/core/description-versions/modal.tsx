@@ -1,20 +1,27 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
-import { ChevronLeft, ChevronRight, Copy } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { Button, getButtonStyling } from "@plane/propel/button";
+import { Button } from "@plane/propel/button";
+import { CopyIcon, ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TDescriptionVersion } from "@plane/types";
 import { Avatar, EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
-import { calculateTimeAgo, cn, copyTextToClipboard, getFileURL } from "@plane/utils";
+import { calculateTimeAgo, cn, getFileURL } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { IconButton } from "@plane/propel/icon-button";
 
 type Props = {
   activeVersionDescription: string | undefined;
@@ -30,7 +37,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
+export const DescriptionVersionsModal = observer(function DescriptionVersionsModal(props: Props) {
   const {
     activeVersionDescription,
     activeVersionDetails,
@@ -58,13 +65,12 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
 
   const handleCopyMarkdown = useCallback(() => {
     if (!editorRef.current) return;
-    copyTextToClipboard(editorRef.current.getMarkDown()).then(() =>
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("toast.success"),
-        message: "Markdown copied to clipboard.",
-      })
-    );
+    editorRef.current.copyMarkdownToClipboard();
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: t("toast.success"),
+      message: "Markdown copied to clipboard.",
+    });
   }, [t]);
 
   if (!workspaceId) return null;
@@ -74,7 +80,7 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
       <div className="p-4" data-prevent-outside-click>
         {/* Header */}
         <div className="flex items-center justify-between gap-2 py-0.5">
-          <div className="flex-shrink-0 flex items-center gap-2 text-sm">
+          <div className="flex-shrink-0 flex items-center gap-2 text-13">
             <p className="flex items-center gap-1">
               {t("description_versions.edited_by")}
               <span className="flex-shrink-0">
@@ -85,7 +91,7 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
                 />
               </span>
             </p>
-            <p className="flex-shrink-0 text-custom-text-200">
+            <p className="flex-shrink-0 text-secondary">
               {calculateTimeAgo(activeVersionDetails?.last_saved_at ?? "")}
             </p>
           </div>
@@ -93,30 +99,24 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
             <button
               type="button"
               onClick={() => handleNavigation("prev")}
-              className={cn(
-                "size-6 text-custom-text-200 grid place-items-center rounded outline-none transition-colors",
-                {
-                  "hover:bg-custom-background-80": !isPrevDisabled,
-                  "opacity-50": isPrevDisabled,
-                }
-              )}
+              className={cn("size-6 text-secondary grid place-items-center rounded-sm outline-none transition-colors", {
+                "hover:bg-layer-1": !isPrevDisabled,
+                "opacity-50": isPrevDisabled,
+              })}
               disabled={isPrevDisabled}
             >
-              <ChevronLeft className="size-4" />
+              <ChevronLeftIcon className="size-4" />
             </button>
             <button
               type="button"
               onClick={() => handleNavigation("next")}
-              className={cn(
-                "size-6 text-custom-text-200 grid place-items-center rounded outline-none transition-colors",
-                {
-                  "hover:bg-custom-background-80": !isNextDisabled,
-                  "opacity-50": isNextDisabled,
-                }
-              )}
+              className={cn("size-6 text-secondary grid place-items-center rounded-sm outline-none transition-colors", {
+                "hover:bg-layer-1": !isNextDisabled,
+                "opacity-50": isNextDisabled,
+              })}
               disabled={isNextDisabled}
             >
-              <ChevronRight className="size-4" />
+              <ChevronRightIcon className="size-4" />
             </button>
           </div>
         </div>
@@ -155,28 +155,18 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
         </div>
         {/* End version description */}
         {/* Footer */}
-        <div className="flex items-center justify-between gap-2 pt-4 border-t-[0.5px] border-custom-border-200">
+        <div className="flex items-center justify-between gap-2 pt-4 border-t-[0.5px] border-subtle">
           <Tooltip tooltipContent={t("common.actions.copy_markdown")}>
-            <button
-              type="button"
-              className={cn(
-                "flex-shrink-0",
-                getButtonStyling("neutral-primary", "sm"),
-                "border-none grid place-items-center"
-              )}
-              onClick={handleCopyMarkdown}
-            >
-              <Copy className="size-4" />
-            </button>
+            <IconButton type="button" variant="ghost" size="base" onClick={handleCopyMarkdown} icon={CopyIcon} />
           </Tooltip>
           <div className="flex items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={1}>
+            <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={1}>
               {t("common.cancel")}
             </Button>
             {!isRestoreDisabled && (
               <Button
                 variant="primary"
-                size="sm"
+                size="lg"
                 onClick={() => {
                   handleRestore(activeVersionDescription ?? "<p></p>");
                   handleClose();

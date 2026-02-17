@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { SmilePlus } from "lucide-react";
 // plane imports
-import { EmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
+import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 import { cn } from "@plane/utils";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -11,10 +17,10 @@ import { PageEditorHeaderLogoPicker } from "./logo-picker";
 
 type Props = {
   page: TPageInstance;
-  projectId: string;
+  projectId?: string;
 };
 
-export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
+export const PageEditorHeaderRoot = observer(function PageEditorHeaderRoot(props: Props) {
   const { page } = props;
   // states
   const [isLogoPickerOpen, setIsLogoPickerOpen] = useState(false);
@@ -32,7 +38,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
               "opacity-100": isTitleEmpty,
             })}
           >
-            <EmojiIconPicker
+            <EmojiPicker
               isOpen={isLogoPickerOpen}
               handleToggle={(val) => setIsLogoPickerOpen(val)}
               className="flex items-center justify-center"
@@ -41,9 +47,9 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
                 <button
                   type="button"
                   className={cn(
-                    "flex items-center gap-1 p-1 rounded font-medium text-sm hover:bg-custom-background-80 text-custom-text-300 outline-none transition-colors",
+                    "flex items-center gap-1 p-1 rounded-sm font-medium text-13 hover:bg-layer-1 text-tertiary outline-none transition-colors",
                     {
-                      "bg-custom-background-80": isLogoPickerOpen,
+                      "bg-layer-1": isLogoPickerOpen,
                     }
                   )}
                 >

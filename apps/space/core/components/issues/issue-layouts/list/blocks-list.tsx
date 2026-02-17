@@ -1,4 +1,10 @@
-import type { FC, MutableRefObject } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { MutableRefObject } from "react";
 // types
 import type { IIssueDisplayProperties } from "@plane/types";
 import { IssueBlock } from "./block";
@@ -10,16 +16,14 @@ interface Props {
   containerRef: MutableRefObject<HTMLDivElement | null>;
 }
 
-export const IssueBlocksList: FC<Props> = (props) => {
+export function IssueBlocksList(props: Props) {
   const { issueIds = [], groupId, displayProperties } = props;
 
   return (
-    <div className="relative h-full w-full">
-      {issueIds &&
-        issueIds?.length > 0 &&
-        issueIds.map((issueId: string) => (
-          <IssueBlock key={issueId} issueId={issueId} displayProperties={displayProperties} groupId={groupId} />
-        ))}
+    <div className="relative size-full">
+      {issueIds?.map((issueId) => (
+        <IssueBlock key={issueId} issueId={issueId} displayProperties={displayProperties} groupId={groupId} />
+      ))}
     </div>
   );
-};
+}

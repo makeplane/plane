@@ -1,15 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
-import type { TEmojiLogoProps } from "@plane/ui";
+import type { TLogoProps } from "@plane/types";
 import { sanitizeHTML } from "@plane/utils";
 // types
-import {
-  ECalloutAttributeNames,
-  TCalloutBlockAttributes,
-  TCalloutBlockEmojiAttributes,
-  TCalloutBlockIconAttributes,
-} from "./types";
+import type { TCalloutBlockAttributes, TCalloutBlockEmojiAttributes, TCalloutBlockIconAttributes } from "./types";
+import { ECalloutAttributeNames } from "./types";
 
 export const DEFAULT_CALLOUT_BLOCK_ATTRIBUTES: TCalloutBlockAttributes = {
+  [ECalloutAttributeNames.ID]: null,
   [ECalloutAttributeNames.LOGO_IN_USE]: "emoji",
   [ECalloutAttributeNames.ICON_COLOR]: undefined,
   [ECalloutAttributeNames.ICON_NAME]: undefined,
@@ -33,9 +36,9 @@ export const getStoredLogo = (): TStoredLogoValue => {
   if (typeof window !== "undefined") {
     const storedData = sanitizeHTML(localStorage.getItem("editor-calloutComponent-logo") ?? "");
     if (storedData) {
-      let parsedData: TEmojiLogoProps;
+      let parsedData: TLogoProps;
       try {
-        parsedData = JSON.parse(storedData);
+        parsedData = JSON.parse(storedData) as TLogoProps;
       } catch (error) {
         console.error(`Error parsing stored callout logo, stored value- ${storedData}`, error);
         localStorage.removeItem("editor-calloutComponent-logo");
@@ -65,7 +68,7 @@ export const getStoredLogo = (): TStoredLogoValue => {
   return fallBackValues;
 };
 // function to update the stored logo on local storage
-export const updateStoredLogo = (value: TEmojiLogoProps): void => {
+export const updateStoredLogo = (value: TLogoProps): void => {
   if (typeof window === "undefined") return;
   localStorage.setItem("editor-calloutComponent-logo", JSON.stringify(value));
 };

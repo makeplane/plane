@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import StarterKit from "@tiptap/starter-kit";
 
 type TArgs = {
@@ -10,12 +16,12 @@ export const CustomStarterKitExtension = (args: TArgs) => {
   return StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
-        class: "list-disc pl-7 space-y-[--list-spacing-y]",
+        class: "list-disc pl-7 space-y-(--list-spacing-y)",
       },
     },
     orderedList: {
       HTMLAttributes: {
-        class: "list-decimal pl-7 space-y-[--list-spacing-y]",
+        class: "list-decimal pl-7 space-y-(--list-spacing-y)",
       },
     },
     listItem: {
@@ -27,8 +33,6 @@ export const CustomStarterKitExtension = (args: TArgs) => {
     codeBlock: false,
     horizontalRule: false,
     blockquote: false,
-    link: false,
-    listKeymap: false,
     paragraph: {
       HTMLAttributes: {
         class: "editor-paragraph-block",
@@ -41,8 +45,8 @@ export const CustomStarterKitExtension = (args: TArgs) => {
     },
     dropcursor: {
       class:
-        "text-custom-text-300 transition-all motion-reduce:transition-none motion-reduce:hover:transform-none duration-200 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)]",
+        "text-tertiary transition-all motion-reduce:transition-none motion-reduce:hover:transform-none duration-200 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)]",
     },
-    ...(enableHistory ? {} : { undoRedo: false }),
+    ...(enableHistory ? {} : { history: false }),
   });
 };

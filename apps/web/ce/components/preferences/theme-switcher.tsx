@@ -1,6 +1,10 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
@@ -8,100 +12,91 @@ import type { I_THEME_OPTION } from "@plane/constants";
 import { THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
-import type { IUserTheme } from "@plane/types";
-import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
+import { applyCustomTheme } from "@plane/utils";
 // components
 import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
 import { ThemeSwitch } from "@/components/core/theme/theme-switch";
-// helpers
-import { PreferencesSection } from "@/components/preferences/section";
+import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 
-export const ThemeSwitcher = observer(
-  (props: {
-    option: {
-      id: string;
-      title: string;
-      description: string;
-    };
-  }) => {
-    // hooks
-    const { setTheme } = useTheme();
-    const { data: userProfile, updateUserTheme } = useUserProfile();
+export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
+  option: {
+    id: string;
+    title: string;
+    description: string;
+  };
+}) {
+  // store hooks
+  const { data: userProfile, updateUserTheme } = useUserProfile();
+  // theme
+  const { setTheme } = useTheme();
+  // translation
+  const { t } = useTranslation();
+  // derived values
+  const currentTheme = useMemo(() => {
+    const userThemeOption = THEME_OPTIONS.find((t) => t.value === userProfile?.theme?.theme);
+    return userThemeOption || null;
+  }, [userProfile?.theme?.theme]);
 
-    // states
-    const [currentTheme, setCurrentTheme] = useState<I_THEME_OPTION | null>(null);
+  const handleThemeChange = useCallback(
+    async (themeOption: I_THEME_OPTION) => {
+      try {
+        setTheme(themeOption.value);
 
-    const { t } = useTranslation();
+        // If switching to custom theme and user has saved custom colors, apply them immediately
+        if (
+          themeOption.value === "custom" &&
+          userProfile?.theme?.primary &&
+          userProfile?.theme?.background &&
+          userProfile?.theme?.darkPalette !== undefined
+        ) {
+          applyCustomTheme(
+            userProfile.theme.primary,
+            userProfile.theme.background,
+            userProfile.theme.darkPalette ? "dark" : "light"
+          );
+        }
 
-    // initialize theme
-    useEffect(() => {
-      if (!userProfile?.theme?.theme) return;
-
-      const userThemeOption = THEME_OPTIONS.find((t) => t.value === userProfile.theme.theme);
-
-      if (userThemeOption) {
-        setCurrentTheme(userThemeOption);
+        const updatePromise = updateUserTheme({ theme: themeOption.value });
+        setPromiseToast(updatePromise, {
+          loading: "Updating theme...",
+          success: {
+            title: "Theme updated",
+            message: () => "Reloading to apply changes...",
+          },
+          error: {
+            title: "Error!",
+            message: () => "Failed to update theme. Please try again.",
+          },
+        });
+        // Wait for the promise to resolve, then reload after showing toast
+        await updatePromise;
+        window.location.reload();
+      } catch (error) {
+        console.error("Error updating theme:", error);
       }
-    }, [userProfile?.theme?.theme]);
+    },
+    [setTheme, updateUserTheme, userProfile]
+  );
 
-    // handlers
-    const applyThemeChange = useCallback(
-      (theme: Partial<IUserTheme>) => {
-        const themeValue = theme?.theme || "system";
-        setTheme(themeValue);
+  if (!userProfile) return null;
 
-        if (theme?.theme === "custom" && theme?.palette) {
-          const defaultPalette = "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5";
-          const palette = theme.palette !== ",,,," ? theme.palette : defaultPalette;
-          applyTheme(palette, false);
-        } else {
-          unsetCustomCssVariables();
+  return (
+    <>
+      <SettingsControlItem
+        title={t(props.option.title)}
+        description={t(props.option.description)}
+        control={
+          <ThemeSwitch
+            value={currentTheme}
+            onChange={(themeOption) => {
+              void handleThemeChange(themeOption);
+            }}
+          />
         }
-      },
-      [setTheme]
-    );
-
-    const handleThemeChange = useCallback(
-      async (themeOption: I_THEME_OPTION) => {
-        try {
-          applyThemeChange({ theme: themeOption.value });
-
-          const updatePromise = updateUserTheme({ theme: themeOption.value });
-          setPromiseToast(updatePromise, {
-            loading: "Updating theme...",
-            success: {
-              title: "Success!",
-              message: () => "Theme updated successfully!",
-            },
-            error: {
-              title: "Error!",
-              message: () => "Failed to update the theme",
-            },
-          });
-        } catch (error) {
-          console.error("Error updating theme:", error);
-        }
-      },
-      [applyThemeChange, updateUserTheme]
-    );
-
-    if (!userProfile) return null;
-
-    return (
-      <>
-        <PreferencesSection
-          title={t(props.option.title)}
-          description={t(props.option.description)}
-          control={
-            <div className="">
-              <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
-            </div>
-          }
-        />
-        {userProfile.theme?.theme === "custom" && <CustomThemeSelector applyThemeChange={applyThemeChange} />}
-      </>
-    );
-  }
-);
+      />
+      {userProfile.theme?.theme === "custom" && <CustomThemeSelector />}
+    </>
+  );
+});

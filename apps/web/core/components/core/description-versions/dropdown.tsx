@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { History } from "lucide-react";
 // plane imports
@@ -18,7 +24,7 @@ type Props = {
   versions: TDescriptionVersion[] | undefined;
 };
 
-export const DescriptionVersionsDropdown: React.FC<Props> = observer((props) => {
+export const DescriptionVersionsDropdown = observer(function DescriptionVersionsDropdown(props: Props) {
   const { disabled, entityInformation, onVersionClick, versions } = props;
   // store hooks
   const { getUserDetails } = useMember();
@@ -34,11 +40,11 @@ export const DescriptionVersionsDropdown: React.FC<Props> = observer((props) => 
   return (
     <CustomMenu
       label={
-        <div className="flex items-center gap-1 text-custom-text-300">
+        <div className="flex items-center gap-1 text-tertiary">
           <span className="flex-shrink-0 size-4 grid place-items-center">
             <History className="size-3.5" />
           </span>
-          <p className="text-xs">
+          <p className="text-11">
             {t("description_versions.last_edited_by")}{" "}
             <span className="font-medium">{lastUpdatedByUserDisplayName ?? t("common.deactivated_user")}</span>{" "}
             {calculateTimeAgo(lastUpdatedAt)}
@@ -52,7 +58,7 @@ export const DescriptionVersionsDropdown: React.FC<Props> = observer((props) => 
       disabled={disabled}
       closeOnSelect
     >
-      <p className="text-xs text-custom-text-300 font-medium mb-1">{t("description_versions.previously_edited_by")}</p>
+      <p className="text-11 text-tertiary font-medium mb-1">{t("description_versions.previously_edited_by")}</p>
       {versions?.map((version) => (
         <DescriptionVersionsDropdownItem key={version.id} onClick={onVersionClick} version={version} />
       ))}

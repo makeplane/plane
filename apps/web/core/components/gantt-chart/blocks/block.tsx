@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { RefObject } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
@@ -26,7 +32,7 @@ type Props = {
   updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
 };
 
-export const GanttChartBlock: React.FC<Props> = observer((props) => {
+export const GanttChartBlock = observer(function GanttChartBlock(props: Props) {
   const {
     blockId,
     showAllBlocks,
@@ -77,7 +83,7 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
           horizontalOffset={100}
           verticalOffset={200}
           classNames="flex h-full w-full items-center"
-          placeholderChildren={<div className="h-8 w-full bg-custom-background-80 rounded" />}
+          placeholderChildren={<div className="h-8 w-full bg-layer-1 rounded-sm" />}
           shouldRecordHeights={false}
           forceRender={isCurrentDependencyDragging}
         >

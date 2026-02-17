@@ -1,16 +1,17 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Pencil, Trash2 } from "lucide-react";
 // plane imports
-import { GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { EditIcon, TrashIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 import { truncateText } from "@plane/utils";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
 // local imports
@@ -19,7 +20,7 @@ import { CreateUpdateWorkspaceViewModal } from "./modal";
 
 type Props = { viewId: string };
 
-export const GlobalViewListItem: React.FC<Props> = observer((props) => {
+export const GlobalViewListItem = observer(function GlobalViewListItem(props: Props) {
   const { viewId } = props;
   // states
   const [updateViewModal, setUpdateViewModal] = useState(false);
@@ -37,14 +38,14 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
     <>
       <CreateUpdateWorkspaceViewModal data={view} isOpen={updateViewModal} onClose={() => setUpdateViewModal(false)} />
       <DeleteGlobalViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
-      <div className="group border-b border-custom-border-200 hover:bg-custom-background-90">
+      <div className="group border-b border-subtle hover:bg-surface-2">
         <Link href={`/${workspaceSlug}/workspace-views/${view.id}`}>
-          <div className="relative flex h-[52px] w-full items-center justify-between rounded p-4">
+          <div className="relative flex h-[52px] w-full items-center justify-between rounded-sm p-4">
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex flex-col">
-                  <p className="truncate text-sm font-medium leading-4">{truncateText(view.name, 75)}</p>
-                  {view?.description && <p className="text-xs text-custom-text-200">{view.description}</p>}
+                  <p className="truncate text-13 font-medium leading-4">{truncateText(view.name, 75)}</p>
+                  {view?.description && <p className="text-11 text-secondary">{view.description}</p>}
                 </div>
               </div>
               <div className="ml-2 flex flex-shrink-0">
@@ -52,27 +53,21 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                   <CustomMenu ellipsis>
                     <CustomMenu.MenuItem
                       onClick={() => {
-                        captureClick({
-                          elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.LIST_ITEM,
-                        });
                         setUpdateViewModal(true);
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
-                        <Pencil size={14} strokeWidth={2} />
+                        <EditIcon width={14} height={14} strokeWidth={2} />
                         <span>Edit View</span>
                       </span>
                     </CustomMenu.MenuItem>
                     <CustomMenu.MenuItem
                       onClick={() => {
-                        captureClick({
-                          elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.LIST_ITEM,
-                        });
                         setDeleteViewModal(true);
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
-                        <Trash2 size={14} strokeWidth={2} />
+                        <TrashIcon width={14} height={14} strokeWidth={2} />
                         <span>Delete View</span>
                       </span>
                     </CustomMenu.MenuItem>

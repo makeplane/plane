@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -17,40 +23,41 @@ interface IFilterItemPropertyProps<P extends TFilterProperty, E extends TExterna
   tooltipContent?: React.ReactNode | undefined;
 }
 
-export const FilterItemProperty = observer(
-  <P extends TFilterProperty, E extends TExternalFilter>(props: IFilterItemPropertyProps<P, E>) => {
-    const { conditionId, filter, isDisabled } = props;
+export const FilterItemProperty = observer(function FilterItemProperty<
+  P extends TFilterProperty,
+  E extends TExternalFilter,
+>(props: IFilterItemPropertyProps<P, E>) {
+  const { conditionId, filter, isDisabled } = props;
 
-    if (isDisabled) {
-      return <PropertyButton {...props} />;
-    }
-
-    const handleFilterSelect = (property: P, operator: TSupportedOperators, isNegation: boolean) => {
-      filter.updateConditionProperty(conditionId, property, operator, isNegation);
-    };
-
-    return (
-      <AddFilterDropdown
-        {...props}
-        handleFilterSelect={handleFilterSelect}
-        customButton={<PropertyButton {...props} />}
-      />
-    );
+  if (isDisabled) {
+    return <PropertyButton {...props} />;
   }
-);
+
+  const handleFilterSelect = (property: P, operator: TSupportedOperators, isNegation: boolean) => {
+    filter.updateConditionProperty(conditionId, property, operator, isNegation);
+  };
+
+  return (
+    <AddFilterDropdown
+      {...props}
+      handleFilterSelect={handleFilterSelect}
+      customButton={<PropertyButton {...props} />}
+    />
+  );
+});
 
 type TPropertyButtonProps<P extends TFilterProperty, E extends TExternalFilter> = IFilterItemPropertyProps<P, E> & {
   className?: string;
 };
 
-const PropertyButton = <P extends TFilterProperty, E extends TExternalFilter>(props: TPropertyButtonProps<P, E>) => {
+function PropertyButton<P extends TFilterProperty, E extends TExternalFilter>(props: TPropertyButtonProps<P, E>) {
   const { icon: Icon, label, tooltipContent, className } = props;
 
   return (
     <Tooltip tooltipContent={tooltipContent} position="bottom-start" disabled={!tooltipContent}>
       <div
         className={cn(
-          "flex items-center gap-1 px-2 py-[5px] text-xs text-custom-text-300 min-w-0 h-full",
+          "flex items-center gap-1 px-2 py-[5px] text-11 text-tertiary min-w-0 h-full",
           COMMON_FILTER_ITEM_BORDER_CLASSNAME,
           className
         )}
@@ -64,4 +71,4 @@ const PropertyButton = <P extends TFilterProperty, E extends TExternalFilter>(pr
       </div>
     </Tooltip>
   );
-};
+}

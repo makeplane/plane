@@ -1,17 +1,19 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 // types
-import { PROJECT_ERROR_MESSAGES, CYCLE_TRACKER_EVENTS } from "@plane/constants";
+import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ICycle } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -24,7 +26,7 @@ interface ICycleDelete {
   projectId: string;
 }
 
-export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
+export const CycleDeleteModal = observer(function CycleDeleteModal(props: ICycleDelete) {
   const { isOpen, handleClose, cycle, workspaceSlug, projectId } = props;
   // states
   const [loader, setLoader] = useState(false);
@@ -50,12 +52,6 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
             title: "Success!",
             message: "Cycle deleted successfully.",
           });
-          captureSuccess({
-            eventName: CYCLE_TRACKER_EVENTS.delete,
-            payload: {
-              id: cycle.id,
-            },
-          });
         })
         .catch((errors) => {
           const isPermissionError = errors?.error === "You don't have the required permissions.";
@@ -66,13 +62,6 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
             title: t(currentError.i18n_title),
             type: TOAST_TYPE.ERROR,
             message: currentError.i18n_message && t(currentError.i18n_message),
-          });
-          captureError({
-            eventName: CYCLE_TRACKER_EVENTS.delete,
-            payload: {
-              id: cycle.id,
-            },
-            error: errors,
           });
         })
         .finally(() => handleClose());
@@ -97,7 +86,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
       content={
         <>
           Are you sure you want to delete cycle{' "'}
-          <span className="break-words font-medium text-custom-text-100">{cycle?.name}</span>
+          <span className="break-words font-medium text-primary">{cycle?.name}</span>
           {'"'}? All of the data related to the cycle will be permanently removed. This action cannot be undone.
         </>
       }

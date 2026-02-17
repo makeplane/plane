@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 
 type Props = {
@@ -9,14 +15,14 @@ type Props = {
   inactiveStrokeColor?: string;
 };
 
-export const ProgressBar: React.FC<Props> = ({
+export function ProgressBar({
   maxValue = 0,
   value = 0,
   radius = 8,
   strokeWidth = 2,
   activeStrokeColor = "#3e98c7",
   inactiveStrokeColor = "#ddd",
-}) => {
+}: Props) {
   // PIE Calc Fn
   const generatePie = (value: any) => {
     const x = radius - Math.cos((2 * Math.PI) / (100 / value)) * radius;
@@ -65,4 +71,4 @@ export const ProgressBar: React.FC<Props> = ({
       <circle r={radius - strokeWidth} cx={radius} cy={radius} className="progress-bar" />
     </svg>
   );
-};
+}

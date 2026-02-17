@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Dự án",
@@ -74,7 +80,7 @@ export default {
       },
       unique_code: {
         label: "Mã duy nhất",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Dán mã xác minh đã gửi đến email của bạn",
         requesting_new_code: "Đang yêu cầu mã mới",
         sending_code: "Đang gửi mã",
@@ -338,13 +344,13 @@ export default {
   project_id_must_be_at_least_1_character: "ID dự án phải có ít nhất 1 ký tự",
   project_id_must_be_at_most_5_characters: "ID dự án chỉ được tối đa 5 ký tự",
   project_id: "ID dự án",
-  project_id_tooltip_content: "Giúp xác định duy nhất mục công việc trong dự án của bạn. Tối đa 5 ký tự.",
+  project_id_tooltip_content: "Giúp xác định duy nhất mục công việc trong dự án của bạn. Tối đa 10 ký tự.",
   description_placeholder: "Mô tả",
   only_alphanumeric_non_latin_characters_allowed: "Chỉ cho phép các ký tự chữ số và không phải Latin.",
   project_id_is_required: "ID dự án là bắt buộc",
   project_id_allowed_char: "Chỉ cho phép các ký tự chữ số và không phải Latin.",
   project_id_min_char: "ID dự án phải có ít nhất 1 ký tự",
-  project_id_max_char: "ID dự án chỉ được tối đa 5 ký tự",
+  project_id_max_char: "ID dự án chỉ được tối đa 10 ký tự",
   project_description_placeholder: "Nhập mô tả dự án",
   select_network: "Chọn mạng",
   lead: "Người phụ trách",
@@ -648,6 +654,8 @@ export default {
   },
   common: {
     all: "Tất cả",
+    no_items_in_this_group: "Không có mục nào trong nhóm này",
+    drop_here_to_move: "Thả vào đây để di chuyển",
     states: "Trạng thái",
     state: "Trạng thái",
     state_groups: "Nhóm trạng thái",
@@ -1529,6 +1537,47 @@ export default {
         "Nếu bạn xác nhận, tất cả các tùy chọn sắp xếp, lọc và hiển thị + bố cục mà bạn đã chọn cho chế độ xem này sẽ bị xóa vĩnh viễn mà không có cách nào khôi phục.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Đổi email",
+        description: "Nhập địa chỉ email mới để nhận liên kết xác minh.",
+        toasts: {
+          success_title: "Thành công!",
+          success_message: "Email đã được cập nhật. Vui lòng đăng nhập lại.",
+        },
+        form: {
+          email: {
+            label: "Email mới",
+            placeholder: "Nhập email của bạn",
+            errors: {
+              required: "Email là bắt buộc",
+              invalid: "Email không hợp lệ",
+              exists: "Email đã tồn tại. Vui lòng dùng email khác.",
+              validation_failed: "Xác thực email thất bại. Thử lại.",
+            },
+          },
+          code: {
+            label: "Mã duy nhất",
+            placeholder: "123456",
+            helper_text: "Mã xác minh đã được gửi tới email mới của bạn.",
+            errors: {
+              required: "Mã duy nhất là bắt buộc",
+              invalid: "Mã xác minh không hợp lệ. Thử lại.",
+            },
+          },
+        },
+        actions: {
+          continue: "Tiếp tục",
+          confirm: "Xác nhận",
+          cancel: "Hủy",
+        },
+        states: {
+          sending: "Đang gửi…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Cài đặt không gian làm việc",
     page_label: "{workspace} - Cài đặt chung",
@@ -1544,6 +1593,7 @@ export default {
         name: "Tên không gian làm việc",
         company_size: "Quy mô công ty",
         url: "URL không gian làm việc",
+        workspace_timezone: "Múi giờ không gian làm việc",
         update_workspace: "Cập nhật không gian làm việc",
         delete_workspace: "Xóa không gian làm việc này",
         delete_workspace_description:
@@ -1608,6 +1658,7 @@ export default {
         exporting: "Đang xuất",
         previous_exports: "Xuất trước đây",
         export_separate_files: "Xuất dữ liệu thành các tệp riêng biệt",
+        filters_info: "Áp dụng bộ lọc để xuất các mục công việc cụ thể dựa trên tiêu chí của bạn.",
         modal: {
           title: "Xuất đến",
           toasts: {
@@ -1933,6 +1984,45 @@ export default {
         title: "Chưa có hệ thống ước tính",
         description: "Tạo một tập hợp ước tính để truyền đạt khối lượng công việc cho mỗi mục công việc.",
         primary_button: "Thêm hệ thống ước tính",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Chu kỳ",
+        short_title: "Chu kỳ",
+        description:
+          "Lên lịch công việc trong các khoảng thời gian linh hoạt thích ứng với nhịp điệu và tốc độ độc đáo của dự án này.",
+        toggle_title: "Bật chu kỳ",
+        toggle_description: "Lập kế hoạch công việc trong khung thời gian tập trung.",
+      },
+      modules: {
+        title: "Mô-đun",
+        short_title: "Mô-đun",
+        description: "Tổ chức công việc thành các dự án phụ với người dẫn đầu và người được phân công chuyên trách.",
+        toggle_title: "Bật mô-đun",
+        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa mô-đun.",
+      },
+      views: {
+        title: "Chế độ xem",
+        short_title: "Chế độ xem",
+        description: "Lưu các tùy chọn sắp xếp, bộ lọc và hiển thị tùy chỉnh hoặc chia sẻ chúng với nhóm của bạn.",
+        toggle_title: "Bật chế độ xem",
+        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa chế độ xem.",
+      },
+      pages: {
+        title: "Trang",
+        short_title: "Trang",
+        description: "Tạo và chỉnh sửa nội dung tự do: ghi chú, tài liệu, bất cứ thứ gì.",
+        toggle_title: "Bật trang",
+        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa trang.",
+      },
+      intake: {
+        title: "Tiếp nhận",
+        short_title: "Tiếp nhận",
+        description:
+          "Cho phép những người không phải thành viên chia sẻ lỗi, phản hồi và đề xuất; mà không làm gián đoạn quy trình làm việc của bạn.",
+        toggle_title: "Bật tiếp nhận",
+        toggle_description: "Cho phép thành viên dự án tạo yêu cầu tiếp nhận trong ứng dụng.",
       },
     },
   },

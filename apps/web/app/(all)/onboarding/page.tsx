@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -16,11 +20,11 @@ import { useUser } from "@/hooks/store/user";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 
 const workspaceService = new WorkspaceService();
 
-const OnboardingPage = observer(() => {
+function OnboardingPage() {
   // store hooks
   const { data: user } = useUser();
   const { fetchWorkspaces } = useWorkspace();
@@ -42,9 +46,9 @@ const OnboardingPage = observer(() => {
 
   return (
     <AuthenticationWrapper pageType={EPageTypes.ONBOARDING}>
-      <div className="flex relative size-full overflow-hidden bg-custom-background-90 rounded-lg transition-all ease-in-out duration-300">
+      <div className="flex relative size-full overflow-hidden bg-canvas rounded-lg transition-all ease-in-out duration-300">
         <div className="size-full p-2 flex-grow transition-all ease-in-out duration-300 overflow-hidden">
-          <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg bg-custom-background-100 shadow-md border border-custom-border-200">
+          <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg bg-surface-1 shadow-md border border-subtle">
             {user && !invitationsLoader ? (
               <OnboardingRoot invitations={invitations ?? []} />
             ) : (
@@ -57,6 +61,6 @@ const OnboardingPage = observer(() => {
       </div>
     </AuthenticationWrapper>
   );
-});
+}
 
-export default OnboardingPage;
+export default observer(OnboardingPage);

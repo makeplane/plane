@@ -1,8 +1,10 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
-import Head from "next/head";
-import { useParams } from "next/navigation";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // components
@@ -10,35 +12,27 @@ import { PageHead } from "@/components/core/page-title";
 import { ProjectLayoutRoot } from "@/components/issues/issue-layouts/roots/project-layout-root";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+import type { Route } from "./+types/page";
 
-const ProjectIssuesPage = observer(() => {
-  const { projectId } = useParams();
+function ProjectIssuesPage({ params }: Route.ComponentProps) {
+  const { projectId } = params;
   // i18n
   const { t } = useTranslation();
   // store
   const { getProjectById } = useProject();
 
-  if (!projectId) {
-    return <></>;
-  }
-
   // derived values
-  const project = getProjectById(projectId.toString());
+  const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - ${t("issue.label", { count: 2 })}` : undefined; // Count is for pluralization
 
   return (
     <>
       <PageHead title={pageTitle} />
-      <Head>
-        <title>
-          {project?.name} - {t("issue.label", { count: 2 })}
-        </title>
-      </Head>
       <div className="h-full w-full">
         <ProjectLayoutRoot />
       </div>
     </>
   );
-});
+}
 
-export default ProjectIssuesPage;
+export default observer(ProjectIssuesPage);

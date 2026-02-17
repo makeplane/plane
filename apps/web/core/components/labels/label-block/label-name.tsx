@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Component } from "lucide-react";
 
 interface ILabelName {
@@ -6,7 +12,7 @@ interface ILabelName {
   isGroup: boolean;
 }
 
-export const LabelName = (props: ILabelName) => {
+export function LabelName(props: ILabelName) {
   const { name, color, isGroup } = props;
 
   return (
@@ -21,7 +27,7 @@ export const LabelName = (props: ILabelName) => {
           }}
         />
       )}
-      <h6 className="text-sm">{name}</h6>
+      <h6 className="text-13">{name}</h6>
     </div>
   );
-};
+}

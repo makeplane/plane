@@ -1,5 +1,12 @@
-import { Mark, markPasteRule, mergeAttributes, PasteRuleMatch } from "@tiptap/core";
-import { Plugin } from "@tiptap/pm/state";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { PasteRuleMatch } from "@tiptap/core";
+import { Mark, markPasteRule, mergeAttributes } from "@tiptap/core";
+import type { Plugin } from "@tiptap/pm/state";
 import { find, registerCustomProtocol, reset } from "linkifyjs";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -50,6 +57,32 @@ type LinkOptions = {
 };
 
 declare module "@tiptap/core" {
+  interface Commands<ReturnType> {
+    [CORE_EXTENSIONS.CUSTOM_LINK]: {
+      /**
+       * Set a link mark
+       */
+      setLink: (attributes: {
+        href: string;
+        target?: string | null;
+        rel?: string | null;
+        class?: string | null;
+      }) => ReturnType;
+      /**
+       * Toggle a link mark
+       */
+      toggleLink: (attributes: {
+        href: string;
+        target?: string | null;
+        rel?: string | null;
+        class?: string | null;
+      }) => ReturnType;
+      /**
+       * Unset a link mark
+       */
+      unsetLink: () => ReturnType;
+    };
+  }
   interface Storage {
     [CORE_EXTENSIONS.CUSTOM_LINK]: CustomLinkStorage;
   }
@@ -97,7 +130,7 @@ export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
         target: "_blank",
         rel: "noopener noreferrer nofollow",
         class:
-          "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
+          "text-accent-secondary underline underline-offset-[3px] hover:text-accent-primary transition-colors cursor-pointer",
       },
       validate: (url: string) => isValidHttpUrl(url).isValid,
     };

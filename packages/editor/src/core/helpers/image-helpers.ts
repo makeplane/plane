@@ -1,8 +1,14 @@
-import { Editor } from "@tiptap/core";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { Editor } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
-import { TFileHandler } from "@/types";
+import type { TFileHandler } from "@/types";
 
 /**
  * Finds all public image nodes in the document and restores them using the provided restore function

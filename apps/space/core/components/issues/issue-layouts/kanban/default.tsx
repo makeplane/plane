@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { MutableRefObject } from "react";
 import { isNil } from "lodash-es";
 import { observer } from "mobx-react";
@@ -37,12 +43,12 @@ export interface IKanBan {
     isSubGroupCumulative: boolean
   ) => number | undefined;
   getPaginationData: (groupId: string | undefined, subGroupId: string | undefined) => TPaginationData | undefined;
-  getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
+  getIssueLoader: (groupId?: string, subGroupId?: string) => TLoader;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   showEmptyGroup?: boolean;
 }
 
-export const KanBan: React.FC<IKanBan> = observer((props) => {
+export const KanBan = observer(function KanBan(props: IKanBan) {
   const {
     groupedIssueIds,
     displayProperties,
@@ -80,48 +86,46 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   };
 
   return (
-    <div className={`relative w-full flex gap-2 px-2 ${subGroupBy ? "h-full" : "h-full"}`}>
-      {groupList &&
-        groupList.length > 0 &&
-        groupList.map((subList: IGroupByColumn) => {
-          const groupByVisibilityToggle = visibilityGroupBy(subList);
+    <div className="relative size-full flex gap-2 px-2">
+      {groupList?.map((subList) => {
+        const groupByVisibilityToggle = visibilityGroupBy(subList);
 
-          if (groupByVisibilityToggle.showGroup === false) return <></>;
-          return (
-            <div
-              key={subList.id}
-              className={`group relative flex flex-shrink-0 flex-col ${
-                groupByVisibilityToggle.showIssues ? `w-[350px]` : ``
-              } `}
-            >
-              {isNil(subGroupBy) && (
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
-                  <HeaderGroupByCard
-                    groupBy={groupBy}
-                    icon={subList.icon as any}
-                    title={subList.name}
-                    count={getGroupIssueCount(subList.id, undefined, false) ?? 0}
-                  />
-                </div>
-              )}
-
-              {groupByVisibilityToggle.showIssues && (
-                <KanbanGroup
-                  groupId={subList.id}
-                  groupedIssueIds={groupedIssueIds}
-                  displayProperties={displayProperties}
-                  subGroupBy={subGroupBy}
-                  subGroupId={subGroupId}
-                  scrollableContainerRef={scrollableContainerRef}
-                  loadMoreIssues={loadMoreIssues}
-                  getGroupIssueCount={getGroupIssueCount}
-                  getPaginationData={getPaginationData}
-                  getIssueLoader={getIssueLoader}
+        if (groupByVisibilityToggle.showGroup === false) return <></>;
+        return (
+          <div
+            key={subList.id}
+            className={`group relative flex shrink-0 flex-col ${
+              groupByVisibilityToggle.showIssues ? `w-[350px]` : ``
+            } `}
+          >
+            {isNil(subGroupBy) && (
+              <div className="sticky top-0 z-2 w-full shrink-0 py-1">
+                <HeaderGroupByCard
+                  groupBy={groupBy}
+                  icon={subList.icon as any}
+                  title={subList.name}
+                  count={getGroupIssueCount(subList.id, undefined, false) ?? 0}
                 />
-              )}
-            </div>
-          );
-        })}
+              </div>
+            )}
+
+            {groupByVisibilityToggle.showIssues && (
+              <KanbanGroup
+                groupId={subList.id}
+                groupedIssueIds={groupedIssueIds}
+                displayProperties={displayProperties}
+                subGroupBy={subGroupBy}
+                subGroupId={subGroupId}
+                scrollableContainerRef={scrollableContainerRef}
+                loadMoreIssues={loadMoreIssues}
+                getGroupIssueCount={getGroupIssueCount}
+                getPaginationData={getPaginationData}
+                getIssueLoader={getIssueLoader}
+              />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 });

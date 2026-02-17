@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback } from "react";
 // plane imports
 import type { TFileHandler } from "@plane/editor";
@@ -14,6 +20,7 @@ const fileService = new FileService();
 type TArgs = {
   projectId?: string;
   uploadFile: TFileHandler["upload"];
+  duplicateFile: TFileHandler["duplicate"];
   workspaceId: string;
   workspaceSlug: string;
 };
@@ -27,7 +34,7 @@ export const useEditorConfig = () => {
 
   const getEditorFileHandlers = useCallback(
     (args: TArgs): TFileHandler => {
-      const { projectId, uploadFile, workspaceId, workspaceSlug } = args;
+      const { projectId, uploadFile, duplicateFile, workspaceId, workspaceSlug } = args;
 
       return {
         assetsUploadStatus: assetsUploadPercentage,
@@ -85,6 +92,7 @@ export const useEditorConfig = () => {
           }
         },
         upload: uploadFile,
+        duplicate: duplicateFile,
         validation: {
           maxFileSize,
         },

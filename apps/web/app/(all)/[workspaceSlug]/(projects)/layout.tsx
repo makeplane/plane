@@ -1,26 +1,32 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import { CommandPalette } from "@/components/command-palette";
-import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
+import { observer } from "mobx-react";
+import { Outlet } from "react-router";
+import { ProjectsAppPowerKProvider } from "@/components/power-k/projects-app-provider";
 // plane web components
-import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 import { ProjectAppSidebar } from "./_sidebar";
+import { ExtendedProjectSidebar } from "./extended-project-sidebar";
 
-export default function WorkspaceLayout({ children }: { children: React.ReactNode }) {
+function WorkspaceLayout() {
   return (
-    <AuthenticationWrapper>
-      <CommandPalette />
-      <WorkspaceAuthWrapper>
-        <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
-          <div id="full-screen-portal" className="inset-0 absolute w-full" />
-          <div className="relative flex size-full overflow-hidden">
-            <ProjectAppSidebar />
-            <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
-              {children}
-            </main>
-          </div>
+    <>
+      <ProjectsAppPowerKProvider />
+      <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg border border-subtle">
+        <div id="full-screen-portal" className="inset-0 absolute w-full" />
+        <div className="relative flex size-full overflow-hidden">
+          <ProjectAppSidebar />
+          <ExtendedProjectSidebar />
+          <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">
+            <Outlet />
+          </main>
         </div>
-      </WorkspaceAuthWrapper>
-    </AuthenticationWrapper>
+      </div>
+    </>
   );
 }
+
+export default observer(WorkspaceLayout);

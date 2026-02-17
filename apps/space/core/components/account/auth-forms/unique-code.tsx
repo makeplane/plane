@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import React, { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
@@ -33,7 +37,7 @@ const defaultValues: TUniqueCodeFormValues = {
   code: "",
 };
 
-export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
+export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
   const { mode, email, nextPath, handleEmailClear, generateEmailUniqueCode } = props;
   // derived values
   const defaultResetTimerValue = 5;
@@ -82,12 +86,10 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       <input type="hidden" value={uniqueCodeFormData.email} name="email" />
       <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
-        <label className="text-sm font-medium text-custom-text-300" htmlFor="email">
+        <label className="text-13 font-medium text-tertiary" htmlFor="email">
           Email
         </label>
-        <div
-          className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-100`}
-        >
+        <div className={`relative flex items-center rounded-md bg-surface-1 border border-subtle`}>
           <Input
             id="email"
             name="email"
@@ -95,12 +97,13 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
             value={uniqueCodeFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 border-0`}
+            className={`disable-autofill-style h-10 w-full placeholder:text-placeholder border-0`}
+            autoComplete="off"
             disabled
           />
           {uniqueCodeFormData.email.length > 0 && (
             <XCircle
-              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+              className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
               onClick={handleEmailClear}
             />
           )}
@@ -108,19 +111,20 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-custom-text-300" htmlFor="code">
+        <label className="text-13 font-medium text-tertiary" htmlFor="code">
           Unique code
         </label>
         <Input
           name="code"
           value={uniqueCodeFormData.code}
           onChange={(e) => handleFormChange("code", e.target.value)}
-          placeholder="gets-sets-flys"
-          className="disable-autofill-style h-10 w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+          placeholder="123456"
+          className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
+          autoComplete="off"
           autoFocus
         />
-        <div className="flex w-full items-center justify-between px-1 text-xs pt-1">
-          <p className="flex items-center gap-1 font-medium text-green-700">
+        <div className="flex w-full items-center justify-between px-1 text-11 pt-1">
+          <p className="flex items-center gap-1 font-medium text-success-primary">
             <CircleCheck height={12} width={12} />
             Paste the code sent to your email
           </p>
@@ -129,8 +133,8 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
             onClick={() => generateNewCode(uniqueCodeFormData.email)}
             className={`${
               isRequestNewCodeDisabled
-                ? "text-custom-text-400"
-                : "font-medium text-custom-primary-300 hover:text-custom-primary-200"
+                ? "text-placeholder"
+                : "font-medium text-accent-secondary hover:text-accent-secondary"
             }`}
             disabled={isRequestNewCodeDisabled}
           >
@@ -144,10 +148,10 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       </div>
 
       <div className="space-y-2.5">
-        <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
           {isRequestingNewCode ? "Sending code" : isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
         </Button>
       </div>
     </form>
   );
-};
+}

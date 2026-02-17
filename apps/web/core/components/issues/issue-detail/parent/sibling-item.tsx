@@ -1,6 +1,9 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // ui
 import { CustomMenu } from "@plane/ui";
@@ -17,7 +20,7 @@ type TIssueParentSiblingItem = {
   issueId: string;
 };
 
-export const IssueParentSiblingItem: FC<TIssueParentSiblingItem> = observer((props) => {
+export const IssueParentSiblingItem = observer(function IssueParentSiblingItem(props: TIssueParentSiblingItem) {
   const { workspaceSlug, issueId } = props;
   // hooks
   const { getProjectById } = useProject();
@@ -52,7 +55,7 @@ export const IssueParentSiblingItem: FC<TIssueParentSiblingItem> = observer((pro
               issueTypeId={issueDetail.type_id}
               projectIdentifier={projectDetails?.identifier}
               issueSequenceId={issueDetail.sequence_id}
-              textContainerClassName="text-xs"
+              size="xs"
             />
           )}
         </div>

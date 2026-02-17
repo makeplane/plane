@@ -1,4 +1,8 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import { observer } from "mobx-react";
 // plane web components
@@ -21,7 +25,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageHeaderActions: React.FC<Props> = observer((props) => {
+export const PageHeaderActions = observer(function PageHeaderActions(props: Props) {
   const { page, storeType } = props;
 
   return (

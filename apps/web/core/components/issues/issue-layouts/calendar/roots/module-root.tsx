@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -9,20 +15,22 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { ModuleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseCalendarRoot } from "../base-calendar-root";
 
-export const ModuleCalendarLayout: React.FC = observer(() => {
+export const ModuleCalendarLayout = observer(function ModuleCalendarLayout() {
   const { workspaceSlug, projectId, moduleId } = useParams();
 
-  const { issues } = useIssues(EIssuesStoreType.MODULE);
-
-  if (!moduleId) return null;
+  const {
+    issues: { addIssuesToModule },
+  } = useIssues(EIssuesStoreType.MODULE);
 
   const addIssuesToView = useCallback(
     (issueIds: string[]) => {
       if (!workspaceSlug || !projectId || !moduleId) throw new Error();
-      return issues.addIssuesToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds);
+      return addIssuesToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds);
     },
-    [issues?.addIssuesToModule, workspaceSlug, projectId, moduleId]
+    [addIssuesToModule, workspaceSlug, projectId, moduleId]
   );
+
+  if (!moduleId) return null;
 
   return (
     <BaseCalendarRoot

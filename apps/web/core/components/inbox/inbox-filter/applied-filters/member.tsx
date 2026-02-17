@@ -1,9 +1,14 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
+
 // plane types
+import { CloseIcon } from "@plane/propel/icons";
 import type { TInboxIssueFilterMemberKeys } from "@plane/types";
 // plane ui
 import { Avatar, Tag } from "@plane/ui";
@@ -18,7 +23,9 @@ type InboxIssueAppliedFiltersMember = {
   label: string;
 };
 
-export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> = observer((props) => {
+export const InboxIssueAppliedFiltersMember = observer(function InboxIssueAppliedFiltersMember(
+  props: InboxIssueAppliedFiltersMember
+) {
   const { filterKey, label } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
@@ -35,12 +42,12 @@ export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> 
   if (filteredValues.length === 0) return <></>;
   return (
     <Tag>
-      <div className="text-xs text-custom-text-200">{label}</div>
+      <div className="text-11 text-secondary">{label}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
         return (
-          <div key={value} className="relative flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+          <div key={value} className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
             <div className="flex-shrink-0 relative flex justify-center items-center overflow-hidden">
               <Avatar
                 name={optionDetail.display_name}
@@ -49,22 +56,22 @@ export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> 
                 size="sm"
               />
             </div>
-            <div className="text-xs truncate">{optionDetail?.display_name}</div>
+            <div className="text-11 truncate">{optionDetail?.display_name}</div>
             <div
-              className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
+              className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
               onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(value))}
             >
-              <X className={`w-3 h-3`} />
+              <CloseIcon className={`w-3 h-3`} />
             </div>
           </div>
         );
       })}
 
       <div
-        className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
+        className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
         onClick={clearFilter}
       >
-        <X className={`w-3 h-3`} />
+        <CloseIcon className={`w-3 h-3`} />
       </div>
     </Tag>
   );

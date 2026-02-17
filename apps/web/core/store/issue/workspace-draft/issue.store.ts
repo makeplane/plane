@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { clone, update, unset, orderBy, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -17,8 +23,6 @@ import type {
   TBulkOperationsPayload,
 } from "@plane/types";
 import { getCurrentDateTimeInISO, convertToISODateString } from "@plane/utils";
-// local-db
-import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";
 // services
 import workspaceDraftService from "@/services/issue/workspace_draft.service";
 // types
@@ -349,9 +353,6 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
             total_count: this.paginationInfo.total_count - 1,
           });
         }
-
-        // sync issue to local db
-        addIssueToPersistanceLayer({ ...payload, ...response });
 
         // Update draft issue count in workspaceUserInfo
         this.updateWorkspaceUserDraftIssueCount(workspaceSlug, -1);

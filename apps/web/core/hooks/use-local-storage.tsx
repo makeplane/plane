@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect, useCallback } from "react";
 
 export const getValueFromLocalStorage = (key: string, defaultValue: any) => {
@@ -5,7 +11,7 @@ export const getValueFromLocalStorage = (key: string, defaultValue: any) => {
   try {
     const item = window.localStorage.getItem(key);
     return item ? JSON.parse(item) : defaultValue;
-  } catch (error) {
+  } catch (_error) {
     window.localStorage.removeItem(key);
     return defaultValue;
   }
@@ -16,7 +22,7 @@ export const setValueIntoLocalStorage = (key: string, value: any) => {
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
     return true;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 };

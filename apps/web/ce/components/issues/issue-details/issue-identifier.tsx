@@ -1,83 +1,19 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
-// types
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
-import type { IIssueDisplayProperties } from "@plane/types";
-// ui
-// helpers
-import { cn } from "@plane/utils";
+// plane imports
+import type { TIssueIdentifierProps, TIssueTypeIdentifier } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
+import { IdentifierText } from "@/components/issues/issue-detail/identifier-text";
 
-type TIssueIdentifierBaseProps = {
-  projectId: string;
-  size?: "xs" | "sm" | "md" | "lg";
-  textContainerClassName?: string;
-  displayProperties?: IIssueDisplayProperties | undefined;
-  enableClickToCopyIdentifier?: boolean;
-};
-
-type TIssueIdentifierFromStore = TIssueIdentifierBaseProps & {
-  issueId: string;
-};
-
-type TIssueIdentifierWithDetails = TIssueIdentifierBaseProps & {
-  issueTypeId?: string | null;
-  projectIdentifier: string;
-  issueSequenceId: string | number;
-};
-
-export type TIssueIdentifierProps = TIssueIdentifierFromStore | TIssueIdentifierWithDetails;
-
-type TIssueTypeIdentifier = {
-  issueTypeId: string;
-  size?: "xs" | "sm" | "md" | "lg";
-};
-
-export const IssueTypeIdentifier: FC<TIssueTypeIdentifier> = observer((props) => <></>);
-
-type TIdentifierTextProps = {
-  identifier: string;
-  enableClickToCopyIdentifier?: boolean;
-  textContainerClassName?: string;
-};
-
-export const IdentifierText: React.FC<TIdentifierTextProps> = (props) => {
-  const { identifier, enableClickToCopyIdentifier = false, textContainerClassName } = props;
-  // handlers
-  const handleCopyIssueIdentifier = () => {
-    if (enableClickToCopyIdentifier) {
-      navigator.clipboard.writeText(identifier).then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Work item ID copied to clipboard",
-        });
-      });
-    }
-  };
-
-  return (
-    <Tooltip tooltipContent="Click to copy" disabled={!enableClickToCopyIdentifier} position="top">
-      <span
-        className={cn(
-          "text-base font-medium text-custom-text-300",
-          {
-            "cursor-pointer": enableClickToCopyIdentifier,
-          },
-          textContainerClassName
-        )}
-        onClick={handleCopyIssueIdentifier}
-      >
-        {identifier}
-      </span>
-    </Tooltip>
-  );
-};
-
-export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props) => {
-  const { projectId, textContainerClassName, displayProperties, enableClickToCopyIdentifier = false } = props;
+export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueIdentifierProps) {
+  const { projectId, variant, size, displayProperties, enableClickToCopyIdentifier = false } = props;
   // store hooks
   const { getProjectIdentifierById } = useProject();
   const {
@@ -94,12 +30,17 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   if (!shouldRenderIssueID) return null;
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="shrink-0 flex items-center space-x-2">
       <IdentifierText
         identifier={`${projectIdentifier}-${issueSequenceId}`}
         enableClickToCopyIdentifier={enableClickToCopyIdentifier}
-        textContainerClassName={textContainerClassName}
+        variant={variant}
+        size={size}
       />
     </div>
   );
+});
+
+export const IssueTypeIdentifier = observer(function IssueTypeIdentifier(_props: TIssueTypeIdentifier) {
+  return <></>;
 });

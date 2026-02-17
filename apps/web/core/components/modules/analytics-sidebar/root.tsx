@@ -1,22 +1,27 @@
-"use client";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { CalendarClock, ChevronDown, ChevronRight, Info, Plus, SquareUser, Users } from "lucide-react";
+import { Info, SquareUser } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import {
-  MODULE_STATUS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  EEstimateSystem,
-  MODULE_TRACKER_EVENTS,
-  MODULE_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, EEstimateSystem } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon, WorkItemsIcon } from "@plane/propel/icons";
+import {
+  PlusIcon,
+  MembersPropertyIcon,
+  ModuleStatusIcon,
+  WorkItemsIcon,
+  StartDatePropertyIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
@@ -27,7 +32,6 @@ import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { CreateUpdateModuleLinkModal, ModuleAnalyticsProgress, ModuleLinksList } from "@/components/modules";
-import { captureElementAndEvent, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useModule } from "@/hooks/store/use-module";
@@ -48,7 +52,7 @@ type Props = {
 };
 
 // TODO: refactor this component
-export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
+export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(props: Props) {
   const { moduleId, handleClose, isArchived } = props;
   // states
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
@@ -73,98 +77,39 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
     defaultValues,
   });
 
-  const submitChanges = (data: Partial<IModule>) => {
+  const submitChanges = async (data: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
-    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data)
-      .then((res) => {
-        captureElementAndEvent({
-          element: {
-            elementName: MODULE_TRACKER_ELEMENTS.RIGHT_SIDEBAR,
-          },
-          event: {
-            eventName: MODULE_TRACKER_EVENTS.update,
-            payload: { id: res.id },
-            state: "SUCCESS",
-          },
-        });
-      })
-      .catch((error) => {
-        captureError({
-          eventName: MODULE_TRACKER_EVENTS.update,
-          payload: { id: moduleId },
-          error,
-        });
-      });
+    await updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data);
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
-
     const payload = { metadata: {}, ...formData };
-
-    await createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload)
-      .then(() =>
-        captureSuccess({
-          eventName: MODULE_TRACKER_EVENTS.link.create,
-          payload: { id: moduleId },
-        })
-      )
-      .catch((error) => {
-        captureError({
-          eventName: MODULE_TRACKER_EVENTS.link.create,
-          payload: { id: moduleId },
-          error,
-        });
-      });
+    await createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload);
   };
 
   const handleUpdateLink = async (formData: ModuleLink, linkId: string) => {
-    if (!workspaceSlug || !projectId || !module) return;
-
+    if (!workspaceSlug || !projectId) return;
     const payload = { metadata: {}, ...formData };
-
-    await updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload)
-      .then(() =>
-        captureSuccess({
-          eventName: MODULE_TRACKER_EVENTS.link.update,
-          payload: { id: moduleId },
-        })
-      )
-      .catch((error) => {
-        captureError({
-          eventName: MODULE_TRACKER_EVENTS.link.update,
-          payload: { id: moduleId },
-          error,
-        });
-      });
+    await updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload);
   };
 
   const handleDeleteLink = async (linkId: string) => {
-    if (!workspaceSlug || !projectId || !module) return;
-
-    deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
-      .then(() => {
-        captureSuccess({
-          eventName: MODULE_TRACKER_EVENTS.link.delete,
-          payload: { id: moduleId },
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Module link deleted successfully.",
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Some error occurred",
-        });
-        captureError({
-          eventName: MODULE_TRACKER_EVENTS.link.delete,
-          payload: { id: moduleId },
-        });
+    if (!workspaceSlug || !projectId) return;
+    try {
+      await deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Module link deleted successfully.",
       });
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Some error occurred",
+      });
+    }
   };
 
   const handleDateChange = async (startDate: Date | undefined, targetDate: Date | undefined) => {
@@ -238,15 +183,13 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
         updateLink={handleUpdateLink}
       />
       <>
-        <div
-          className={`sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 pb-5 pt-5`}
-        >
+        <div className={`sticky z-10 top-0 flex items-center justify-between bg-surface-1 pb-5 pt-5`}>
           <div>
             <button
-              className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-border-300"
+              className="flex h-5 w-5 items-center justify-center rounded-full bg-layer-3"
               onClick={() => handleClose()}
             >
-              <ChevronRight className="h-3 w-3 stroke-2 text-white" />
+              <ChevronRightIcon className="h-3 w-3 stroke-2 text-on-color" />
             </button>
           </div>
         </div>
@@ -260,7 +203,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                 <CustomSelect
                   customButton={
                     <span
-                      className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${
+                      className={`flex h-6 w-20 items-center justify-center rounded-xs text-center text-11 ${
                         isEditingAllowed && !isArchived ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       style={{
@@ -289,12 +232,12 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
               )}
             />
           </div>
-          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{moduleDetails.name}</h4>
+          <h4 className="w-full break-words text-18 font-semibold text-primary">{moduleDetails.name}</h4>
         </div>
 
         {moduleDetails.description && (
           <TextArea
-            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-sm leading-5 text-custom-text-200"
+            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-13 leading-5 text-secondary"
             value={moduleDetails.description}
             disabled
           />
@@ -302,9 +245,9 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <CalendarClock className="h-4 w-4" />
-              <span className="text-base">{t("date_range")}</span>
+            <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
+              <StartDatePropertyIcon className="h-4 w-4" />
+              <span className="text-14">{t("date_range")}</span>
             </div>
             <div className="h-7">
               <Controller
@@ -344,9 +287,9 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
             </div>
           </div>
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <SquareUser className="h-4 w-4" />
-              <span className="text-base">{t("lead")}</span>
+              <span className="text-14">{t("lead")}</span>
             </div>
             <Controller
               control={control}
@@ -370,9 +313,9 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
             />
           </div>
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <Users className="h-4 w-4" />
-              <span className="text-base">{t("members")}</span>
+            <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
+              <MembersPropertyIcon className="h-4 w-4" />
+              <span className="text-14">{t("members")}</span>
             </div>
             <Controller
               control={control}
@@ -395,12 +338,12 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
             />
           </div>
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <WorkItemsIcon className="h-4 w-4" />
-              <span className="text-base">{t("issues")}</span>
+              <span className="text-14">{t("issues")}</span>
             </div>
             <div className="flex h-7 w-3/5 items-center">
-              <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
+              <span className="px-1.5 text-13 text-tertiary">{issueCount}</span>
             </div>
           </div>
 
@@ -409,12 +352,12 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
            */}
           {isEstimatePointValid && (
             <div className="flex items-center justify-start gap-1">
-              <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+              <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
                 <WorkItemsIcon className="h-4 w-4" />
-                <span className="text-base">{t("points")}</span>
+                <span className="text-14">{t("points")}</span>
               </div>
               <div className="flex h-7 w-3/5 items-center">
-                <span className="px-1.5 text-sm text-custom-text-300">{issueEstimatePointCount}</span>
+                <span className="px-1.5 text-13 text-tertiary">{issueEstimatePointCount}</span>
               </div>
             </div>
           )}
@@ -429,18 +372,20 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
         )}
 
         <div className="flex flex-col">
-          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 px-1.5 py-5">
+          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-subtle px-1.5 py-5">
             {/* Accessing link outside the disclosure as mobx is not  considering the children inside Disclosure as part of the component hence not observing their state change*/}
             <Disclosure defaultOpen={!!moduleDetails?.link_module?.length}>
               {({ open }) => (
                 <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                   <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
-                    <div className="flex items-center justify-start gap-2 text-sm">
-                      <span className="font-medium text-custom-text-200">{t("common.links")}</span>
+                    <div className="flex items-center justify-start gap-2 text-13">
+                      <span className="font-medium text-secondary">{t("common.links")}</span>
                     </div>
-
                     <div className="flex items-center gap-2.5">
-                      <ChevronDown className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
+                      <ChevronDownIcon
+                        className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`}
+                        aria-hidden="true"
+                      />
                     </div>
                   </Disclosure.Button>
                   <Transition show={open}>
@@ -451,10 +396,10 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                             {isEditingAllowed && !isArchived && (
                               <div className="flex w-full items-center justify-end">
                                 <button
-                                  className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
+                                  className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
                                   onClick={() => setModuleLinkModal(true)}
                                 >
-                                  <Plus className="h-3 w-3" />
+                                  <PlusIcon className="h-3 w-3" />
                                   {t("add_link")}
                                 </button>
                               </div>
@@ -472,17 +417,15 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                         ) : (
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
-                              <Info className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
-                              <span className="p-0.5 text-xs text-custom-text-300">
-                                {t("common.no_links_added_yet")}
-                              </span>
+                              <Info className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
+                              <span className="p-0.5 text-11 text-tertiary">{t("common.no_links_added_yet")}</span>
                             </div>
                             {isEditingAllowed && !isArchived && (
                               <button
-                                className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
+                                className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
                                 onClick={() => setModuleLinkModal(true)}
                               >
-                                <Plus className="h-3 w-3" />
+                                <PlusIcon className="h-3 w-3" />
                                 {t("add_link")}
                               </button>
                             )}
