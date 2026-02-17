@@ -49,9 +49,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
       <p className="text-13 font-medium mb-2">{t("customers.sidebar.properties")}</p>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-13 text-secondary">
-            {t("customers.properties.default.email.name")} <span className="text-danger-primary">*</span>
-          </span>
+          <span className="text-13 text-secondary">{t("customers.properties.default.email.name")}</span>
         </div>
         <div className="flex-grow">
           <PropertyField
@@ -61,13 +59,13 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
               updateProperty({ email: value.toString() });
             }}
             rules={{
-              required: t("customers.properties.default.email.validation.required"),
               pattern: {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
                 message: t("customers.properties.default.email.validation.pattern"),
               },
             }}
             type="email"
+            placeholder={t("customers.properties.default.email.placeholder")}
             disabled={isDisabled}
           />
         </div>

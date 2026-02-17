@@ -202,13 +202,12 @@ export function DefaultProperties(props: Props) {
         </div>
         <div className="space-y-1">
           <label htmlFor="email" className="text-13">
-            {t("customers.properties.default.email.name")} <span className="text-danger-primary">*</span>
+            {t("customers.properties.default.email.name")}
           </label>
           <Controller
             name="email"
             control={control}
             rules={{
-              required: t("customers.properties.default.email.validation.required"),
               pattern: {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                 message: t("customers.properties.default.email.validation.pattern"),
