@@ -1,7 +1,7 @@
 {
   "name": "admin",
   "description": "Admin UI for Plane",
-  "version": "1.2.0",
+  "version": "2.3.0",
   "license": "AGPL-3.0",
   "private": true,
   "type": "module",
@@ -34,6 +34,7 @@
     "@sentry/react-router": "catalog:",
     "@tanstack/react-virtual": "^3.13.12",
     "@tanstack/virtual-core": "^3.13.12",
+    "@vercel/react-router": "catalog:",
     "axios": "catalog:",
     "isbot": "^5.1.35",
     "lodash-es": "catalog:",
@@ -60,7 +61,6 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@vercel/react-router": "^1.2.3",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-tsconfig-paths": "^6.1.1"

@@ -1,6 +1,6 @@
 {
   "name": "flux",
-  "version": "1.0.0",
+  "version": "2.3.0",
   "license": "AGPL-3.0",
   "description": "WebSocket flux service for horizontal scaling with Redis pub/sub",
   "main": "./dist/index.mjs",

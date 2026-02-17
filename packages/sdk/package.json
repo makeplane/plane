@@ -1,6 +1,6 @@
 {
   "name": "@plane/sdk",
-  "version": "0.23.0",
+  "version": "2.3.0",
   "private": true,
   "type": "module",
   "types": "./dist/index.d.ts",

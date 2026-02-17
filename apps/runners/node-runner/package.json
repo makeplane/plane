@@ -1,6 +1,6 @@
 {
   "name": "plane-runner-host",
-  "version": "1.0.0",
+  "version": "2.3.0",
   "description": "Plane Runner Host for executing isolated JS/TS scripts",
   "main": "dist/index.mjs",
   "scripts": {

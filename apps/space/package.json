@@ -1,6 +1,6 @@
 {
   "name": "space",
-  "version": "1.2.0",
+  "version": "2.3.0",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
@@ -36,6 +36,7 @@
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
     "@sentry/react-router": "catalog:",
+    "@vercel/react-router": "catalog:",
     "axios": "catalog:",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
@@ -66,7 +67,6 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@vercel/react-router": "^1.2.3",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-tsconfig-paths": "^6.1.1"

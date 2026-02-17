@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "1.2.0",
+  "version": "2.3.0",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
@@ -48,6 +48,7 @@
     "@sentry/react-router": "catalog:",
     "@tanstack/react-table": "^8.21.3",
     "@todesktop/client-core": "^1.12.4",
+    "@vercel/react-router": "catalog:",
     "axios": "catalog:",
     "clsx": "^2.0.0",
     "cmdk": "^1.0.0",
@@ -80,6 +81,7 @@
     "react-popper": "^2.3.0",
     "react-resizable": "^3.0.5",
     "react-router": "catalog:",
+    "react-turnstile": "^1.1.4",
     "recharts": "^2.12.7",
     "remark-gfm": "^4.0.1",
     "serve": "14.2.5",
@@ -104,7 +106,6 @@
     "@types/react-color": "catalog:",
     "@types/react-dom": "catalog:",
     "@types/react-grid-layout": "catalog:",
-    "@vercel/react-router": "^1.2.3",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-tsconfig-paths": "^6.1.1"

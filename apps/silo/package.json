@@ -1,6 +1,6 @@
 {
   "name": "silo",
-  "version": "0.24.1",
+  "version": "2.3.0",
   "description": "A simple, lightweight, and fast integrations engine.",
   "private": true,
   "author": "engineering@plane.so",

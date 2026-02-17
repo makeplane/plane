@@ -1,6 +1,6 @@
 {
   "name": "@plane/etl",
-  "version": "0.24.1",
+  "version": "2.3.0",
   "repository": "https://github.com/makeplane/plane-ee",
   "author": "Plane Engineering",
   "license": "AGPL",
