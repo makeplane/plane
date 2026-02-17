@@ -429,7 +429,11 @@ async def extract_execution_status_from_flow_steps(
 
 
 async def retrieve_chat_history(
-    chat_id: UUID4, db: AsyncSession, pi_internal: bool = False, dialogue_object: bool = False, user_id: Optional[UUID4] = None
+    chat_id: UUID4,
+    db: AsyncSession,
+    pi_internal: bool = False,
+    dialogue_object: bool = False,
+    user_id: Optional[UUID4] = None,
 ) -> dict[str, Any]:
     """Retrieves chat history for a specific chat ID with optional formatting options using database."""
     try:

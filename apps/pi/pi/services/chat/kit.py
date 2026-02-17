@@ -218,18 +218,18 @@ class ChatKit(AttachmentMixin):
             return ""
 
         try:
-            from pi import settings
             from pi.app.models.enums import MessageMetaStepType
-            from pi.services.llm.llms import LLMConfig
-            from pi.services.llm.llms import _create_custom_llm_config
-            from pi.services.llm.llms import create_openai_llm
+            from pi.services.llm.llms import LLMFactory
 
             # Create a lightweight LLM for context extraction
-            if _is_custom_model(self.switch_llm):
-                context_llm_config = _create_custom_llm_config(streaming=False, temperature=0.1)
-            else:
-                context_llm_config = LLMConfig.openai(settings.llm_model.GPT_4_1, temperature=0.1, streaming=False)
-            context_llm = create_openai_llm(context_llm_config)
+            # Use LLMFactory.get_fast_llm() which handles API key detection and provider selection
+            context_llm = LLMFactory.get_fast_llm(streaming=False, model_name=self.switch_llm)
+
+            # Ensure we got a valid LLM
+            if context_llm is None:
+                log.error("Failed to create LLM for attachment context extraction - no valid API keys configured")
+                return ""
+
             context_llm.set_tracking_context(message_id, db, MessageMetaStepType.ATTACHMENT_CONTEXT_EXTRACTION)
 
             # Create shorter, more generic context extraction prompt

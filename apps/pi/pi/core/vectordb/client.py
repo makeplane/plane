@@ -51,7 +51,7 @@ class VectorStore:
             use_ssl=True,
             verify_certs=False,
             ssl_show_warn=False,
-            timeout=60 * 10,
+            timeout=settings.vector_db.CONNECTION_TIMEOUT,
             connections_per_node=1,  # Prevent concurrent ML requests that hit rate limits
         )
 
@@ -61,7 +61,7 @@ class VectorStore:
             use_ssl=True,
             verify_certs=False,
             ssl_show_warn=False,
-            timeout=60 * 10,
+            timeout=settings.vector_db.CONNECTION_TIMEOUT,
             connections_per_node=1,  # Prevent concurrent ML requests that hit rate limits
         )
 
@@ -680,18 +680,6 @@ class VectorStore:
         return
 
     # ──────────────── ML Model Setup Operations ────────────────
-    def configure_ml_commons(self, allow_non_ml_nodes: bool = False) -> dict:
-        """
-        Configure ML Commons settings for OpenSearch.
-
-        Args:
-            allow_non_ml_nodes: If True, allows ML to run on non-ML nodes (useful for dev)
-
-        Returns:
-            dict: OpenSearch cluster settings update response
-        """
-        settings_body = {"persistent": {"plugins.ml_commons.only_run_on_ml_node": not allow_non_ml_nodes}}
-        return self.os.cluster.put_settings(body=settings_body)
 
     def configure_trusted_endpoints(self, endpoint_patterns: list[str]) -> dict:
         """

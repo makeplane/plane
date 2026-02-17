@@ -224,3 +224,64 @@ def bootstrap_db():
     except Exception as e:
         log.error(f"Bootstrap failed with unexpected error: {e}")
         sys.exit(1)
+
+
+@app.command("check-db-connectivity")
+def check_db_connectivity():
+    """
+    Check PostgreSQL database connectivity.
+
+    Tests the connection to PostgreSQL and displays database information.
+
+    Example:
+        python -m pi.manage check-db-connectivity
+    """
+    typer.echo("Checking PostgreSQL connectivity...")
+    typer.echo("-" * 60)
+
+    try:
+        with sync_engine.connect() as connection:
+            # Test basic connectivity with a simple query
+            result = connection.execute(text("SELECT version()"))
+            version = result.scalar()
+
+            typer.echo("✓ PostgreSQL is reachable")
+            typer.echo("")
+            typer.echo("Database Information:")
+            typer.echo(f"  Version: {version}")
+            typer.echo("")
+
+            # Get database name
+            result = connection.execute(text("SELECT current_database()"))
+            db_name = result.scalar()
+            typer.echo(f"  Database: {db_name}")
+
+            # Get current user
+            result = connection.execute(text("SELECT current_user"))
+            db_user = result.scalar()
+            typer.echo(f"  User: {db_user}")
+
+        typer.echo("-" * 60)
+        typer.echo("✓ PostgreSQL connectivity check PASSED")
+
+        log.info("PostgreSQL connectivity check successful")
+
+    except OperationalError as exc:
+        log.error("PostgreSQL connectivity check failed: %s", exc, exc_info=True)
+        typer.echo("-" * 60)
+        typer.echo("✗ PostgreSQL connectivity check FAILED")
+        typer.echo(f"Error: {exc}")
+        typer.echo("")
+        typer.echo("Please verify:")
+        typer.echo("  - DATABASE_URL is correctly configured")
+        typer.echo("  - PostgreSQL service is running")
+        typer.echo("  - Database credentials are correct")
+        typer.echo("  - Network connectivity is available")
+        raise typer.Exit(code=1)
+
+    except Exception as exc:
+        log.error("Unexpected error during connectivity check: %s", exc, exc_info=True)
+        typer.echo("-" * 60)
+        typer.echo("✗ PostgreSQL connectivity check FAILED")
+        typer.echo(f"Unexpected error: {exc}")
+        raise typer.Exit(code=1)

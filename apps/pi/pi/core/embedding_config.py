@@ -41,7 +41,7 @@ class EmbeddingModelConfig(TypedDict):
     supports_batch: bool  # Whether the model supports batch _predict calls
 
 
-_BEDROCK_REGION = settings.AWS_S3_REGION
+_BEDROCK_REGION = settings.BR_AWS_REGION
 
 # Registry of all supported embedding models
 EMBEDDING_MODELS: dict[str, EmbeddingModelConfig] = {
@@ -170,7 +170,7 @@ EMBEDDING_MODELS: dict[str, EmbeddingModelConfig] = {
         "trusted_endpoint_regex": r"^https://bedrock-runtime\..*\.amazonaws\.com(/.*)?",
         "protocol": "aws_sigv4",
         "credential_key": "access_key",
-        "api_key_env": "AWS_ACCESS_KEY_ID",
+        "api_key_env": "BR_AWS_ACCESS_KEY_ID",
         "request_body": '{ "inputText": "${parameters.inputText}" }',
         "pre_process": "connector.pre_process.bedrock.embedding",
         "post_process": "connector.post_process.bedrock.embedding",
@@ -186,7 +186,7 @@ EMBEDDING_MODELS: dict[str, EmbeddingModelConfig] = {
     #     "trusted_endpoint_regex": r"^https://bedrock-runtime\..*\.amazonaws\.com(/.*)?",
     #     "protocol": "aws_sigv4",
     #     "credential_key": "access_key",
-    #     "api_key_env": "AWS_ACCESS_KEY_ID",
+    #     "api_key_env": "BR_AWS_ACCESS_KEY_ID",
     #     "request_body": '{ "inputText": "${parameters.inputText}", "embeddingTypes": ["float"] }',
     #     "pre_process": "connector.pre_process.bedrock.embedding",
     #     "post_process": "connector.post_process.bedrock_v2.embedding.float",
@@ -202,7 +202,7 @@ EMBEDDING_MODELS: dict[str, EmbeddingModelConfig] = {
     #     "trusted_endpoint_regex": r"^https://bedrock-runtime\..*\.amazonaws\.com(/.*)?",
     #     "protocol": "aws_sigv4",
     #     "credential_key": "access_key",
-    #     "api_key_env": "AWS_ACCESS_KEY_ID",
+    #     "api_key_env": "BR_AWS_ACCESS_KEY_ID",
     #     "request_body": '{ "texts": ${parameters.texts}, "input_type": "search_document" }',
     #     "pre_process": "connector.pre_process.cohere.embedding",
     #     "post_process": "connector.post_process.cohere.embedding",
@@ -218,7 +218,7 @@ EMBEDDING_MODELS: dict[str, EmbeddingModelConfig] = {
     #     "trusted_endpoint_regex": r"^https://bedrock-runtime\..*\.amazonaws\.com(/.*)?",
     #     "protocol": "aws_sigv4",
     #     "credential_key": "access_key",
-    #     "api_key_env": "AWS_ACCESS_KEY_ID",
+    #     "api_key_env": "BR_AWS_ACCESS_KEY_ID",
     #     "request_body": '{ "texts": ${parameters.texts}, "input_type": "search_document" }',
     #     "pre_process": "connector.pre_process.cohere.embedding",
     #     "post_process": "connector.post_process.cohere.embedding",

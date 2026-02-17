@@ -190,7 +190,12 @@ async def _openai_web_search(query: str, workspace_in_context: bool, max_results
     return None
 
 
-async def _anthropic_web_search(query: str, workspace_in_context: bool, max_results: int, model: str) -> Optional[WebSearchResult]:
+async def _anthropic_web_search(
+    query: str,
+    workspace_in_context: bool,
+    max_results: int,
+    model: str,
+) -> Optional[WebSearchResult]:
     """Anthropic web search using the direct Anthropic SDK.
 
     NOTE: We use the direct Anthropic SDK here instead of LangChain because:
@@ -210,13 +215,27 @@ async def _anthropic_web_search(query: str, workspace_in_context: bool, max_resu
         return None
 
     normalized_model = _normalize_anthropic_model(model)
-    candidate_models = list(dict.fromkeys([normalized_model, settings.llm_model.CLAUDE_SONNET_4_5, settings.llm_model.CLAUDE_SONNET_4_0]))
+    candidate_models = list(
+        dict.fromkeys([
+            normalized_model,
+            settings.llm_model.CLAUDE_SONNET_4_5,
+            settings.llm_model.CLAUDE_SONNET_4_0,
+        ])
+    )
 
     system_prompt, user_prompt = _build_web_search_prompts(query, workspace_in_context, max_results)
-    try:
-        client = AsyncAnthropic(api_key=settings.llm_config.CLAUDE_API_KEY, base_url=settings.llm_config.CLAUDE_BASE_URL)
-    except TypeError:
-        client = AsyncAnthropic(api_key=settings.llm_config.CLAUDE_API_KEY)
+
+    # Only pass base_url if it is actually set (not None / not empty string)
+    client_kwargs: dict[str, Any] = {
+        "api_key": settings.llm_config.CLAUDE_API_KEY,
+    }
+
+    base_url = getattr(settings.llm_config, "CLAUDE_BASE_URL", None)
+    if base_url:
+        client_kwargs["base_url"] = base_url
+
+    client = AsyncAnthropic(**client_kwargs)
+
     last_error: Exception | None = None
 
     for candidate_model in candidate_models:
@@ -229,6 +248,7 @@ async def _anthropic_web_search(query: str, workspace_in_context: bool, max_resu
                 messages=[{"role": "user", "content": user_prompt}],
                 tools=[{"type": ANTHROPIC_TOOL_TYPE, "name": "web_search"}],  # type: ignore[misc,list-item]
             )
+
             text = _extract_anthropic_text(response)
             if text:
                 input_tokens, output_tokens, cached_input_tokens = _extract_anthropic_usage(response)
@@ -240,10 +260,12 @@ async def _anthropic_web_search(query: str, workspace_in_context: bool, max_resu
                     output_tokens=output_tokens,
                     cached_input_tokens=cached_input_tokens,
                 )
+
         except Exception as exc:  # pragma: no cover - network/SDK errors
             last_error = exc
             continue
 
     if last_error:
         log.warning(f"Anthropic web search failed: {last_error}")
+
     return None

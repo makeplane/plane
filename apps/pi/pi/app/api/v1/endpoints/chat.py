@@ -831,7 +831,12 @@ async def get_chat_history_object(
     try:
         user_id = current_user.id
         log.info(f"chat history retrieve request received for chat_id: {chat_id}")
-        results: dict[str, Any] = await retrieve_chat_history(chat_id=chat_id, dialogue_object=True, db=db, user_id=user_id)
+        results: dict[str, Any] = await retrieve_chat_history(
+            chat_id=chat_id,
+            dialogue_object=True,
+            db=db,
+            user_id=user_id,
+        )
         error_type = results.get("error")
         if error_type == "not_found":
             return JSONResponse(status_code=404, content={"detail": results["detail"]})

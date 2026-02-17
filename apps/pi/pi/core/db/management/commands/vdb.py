@@ -406,6 +406,48 @@ def init_opensearch_index(index_name: str = typer.Option(..., "--index-name", "-
         raise typer.Exit(code=1)
 
 
+@app.command("check-opensearch-connectivity")
+def check_opensearch_connectivity():
+    """
+    Check OpenSearch database connectivity.
+
+    Tests the connection to OpenSearch and displays cluster health information.
+
+    Example:
+        python -m pi.manage check-opensearch-connectivity
+    """
+    typer.echo("Checking OpenSearch connectivity...")
+    typer.echo("-" * 60)
+
+    try:
+        vdb = VectorStore()
+
+        typer.echo("Testing connection...")
+        from pi.core.vectordb.management.index_configs import INDEX_CONFIGS
+
+        test_index = INDEX_CONFIGS.get("docs_semantic", {}).get("name", "plane-docs-semantic")
+        vdb.os.indices.exists(index=test_index)
+
+        typer.echo("✓ OpenSearch is reachable")
+        typer.echo("-" * 60)
+        typer.echo("✓ OpenSearch connectivity check PASSED")
+
+        log.info("OpenSearch connectivity check successful")
+
+    except Exception as exc:
+        log.error("OpenSearch connectivity check failed: %s", exc, exc_info=True)
+        typer.echo("-" * 60)
+        typer.echo("✗ OpenSearch connectivity check FAILED")
+        typer.echo(f"Error: {exc}")
+        typer.echo("")
+        typer.echo("Please verify:")
+        typer.echo("  - OPENSEARCH_HOST is correctly configured")
+        typer.echo("  - OPENSEARCH_PORT is correctly configured")
+        typer.echo("  - OpenSearch service is running")
+        typer.echo("  - Network connectivity is available")
+        raise typer.Exit(code=1)
+
+
 @app.command("init-vector-indexes")
 def init_vector_indexes():
     """

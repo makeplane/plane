@@ -572,7 +572,9 @@ async def get_user_threads(
 
 @mobile_router.post("/get-chat-history/")
 async def get_chat_history(
-    data: TitleRequestMobile, token: HTTPAuthorizationCredentials = Depends(jwt_schema), db: AsyncSession = Depends(get_async_session)
+    data: TitleRequestMobile,
+    token: HTTPAuthorizationCredentials = Depends(jwt_schema),
+    db: AsyncSession = Depends(get_async_session),
 ):
     try:
         auth = await validate_jwt_token(token)
@@ -583,7 +585,11 @@ async def get_chat_history(
         log.error(f"Error validating JWT: {e!s}")
         return JSONResponse(status_code=401, content={"detail": "Invalid JWT"})
     try:
-        results = await retrieve_chat_history(chat_id=data.chat_id, db=db, user_id=user_id)
+        results = await retrieve_chat_history(
+            chat_id=data.chat_id,
+            db=db,
+            user_id=user_id,
+        )
         error_type = results.get("error")
         if error_type == "not_found":
             return JSONResponse(status_code=404, content={"detail": results["detail"]})
@@ -615,7 +621,9 @@ async def get_chat_history(
 
 @mobile_router.post("/get-chat-history-object/")
 async def get_chat_history_object(
-    data: TitleRequestMobile, token: HTTPAuthorizationCredentials = Depends(jwt_schema), db: AsyncSession = Depends(get_async_session)
+    data: TitleRequestMobile,
+    token: HTTPAuthorizationCredentials = Depends(jwt_schema),
+    db: AsyncSession = Depends(get_async_session),
 ):
     try:
         auth = await validate_jwt_token(token)
@@ -628,7 +636,12 @@ async def get_chat_history_object(
     try:
         chat_id = data.chat_id
         log.info(f"Mobile chat history object request received for chat_id: {chat_id}")
-        results = await retrieve_chat_history(chat_id=chat_id, dialogue_object=True, db=db, user_id=user_id)
+        results = await retrieve_chat_history(
+            chat_id=chat_id,
+            dialogue_object=True,
+            db=db,
+            user_id=user_id,
+        )
         error_type = results.get("error")
         if error_type == "not_found":
             return JSONResponse(status_code=404, content={"detail": results["detail"]})

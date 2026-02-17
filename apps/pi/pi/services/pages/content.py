@@ -26,6 +26,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi.services.llm.llms import get_chat_llm
+from pi.services.llm.llms import get_fallback_model_name
 from pi.services.llm.token_tracker import TokenTracker
 from pi.services.pages.utils import get_entity_context
 
@@ -50,17 +51,16 @@ class PageContentService(ABC):
     def __init__(
         self,
         db: AsyncSession,
-        model_key: str = "gpt-4.1",
     ):
         """
         Initialize the service.
 
         Args:
             db: Database session for token tracking
-            model_key: LLM model to use (default: "gpt-4.1")
+            model_key: LLM model to use
         """
         self.db = db
-        self.model_key = model_key
+        self.model_key = get_fallback_model_name()
 
     @abstractmethod
     def build_system_prompt(self) -> str:

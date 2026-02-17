@@ -17,6 +17,7 @@ import unicodedata
 from pathlib import Path
 from typing import Optional
 from typing import Tuple
+from urllib.parse import urlparse
 
 import boto3
 from botocore.client import Config
@@ -40,18 +41,57 @@ MIN_FILE_SIZE_BYTES = 32  # reject obviously empty/corrupt payloads
 MIN_PDF_SIZE_BYTES = 256  # PDFs below this are almost always bogus junk
 
 
-def get_s3_client():
-    """Get configured S3 client."""
-    return boto3.client(
-        "s3",
-        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        region_name=S3_REGION,
-        config=Config(signature_version="s3v4"),
-    )
+def get_s3_client(use_public_url: bool = False):
+    """
+    Get configured S3 client. Matches the logic from main API's S3Storage class.
+
+    For presigned URLs (user-facing): uses FRONTEND_URL for MinIO public URLs.
+    For uploads (server-to-S3): uses AWS_S3_ENDPOINT_URL (internal endpoint).
+
+    Args:
+        use_public_url:
+            - False (default):
+                Used for server-side S3 operations such as uploads.
+                Always uses AWS_S3_ENDPOINT_URL (internal/private endpoint).
+
+            - True:
+                Used for generating presigned URLs (preview/download).
+                If USE_MINIO is enabled, derives the public endpoint from
+                plane_api.FRONTEND_URL so that the URL is accessible externally.
+                Otherwise, falls back to AWS_S3_ENDPOINT_URL or standard AWS S3.
+    """
+    client_kwargs = {
+        "service_name": "s3",
+        "aws_access_key_id": settings.AWS_ACCESS_KEY_ID,
+        "aws_secret_access_key": settings.AWS_SECRET_ACCESS_KEY,
+        "region_name": S3_REGION,
+        "config": Config(signature_version="s3v4"),
+    }
+
+    if not use_public_url:
+        # Server-side operations: always use internal endpoint
+        endpoint_url = settings.AWS_S3_ENDPOINT_URL
+    elif settings.USE_MINIO and settings.plane_api.FRONTEND_URL:
+        # MinIO presigned URLs: derive public endpoint from FRONTEND_URL
+        parsed = urlparse(settings.plane_api.FRONTEND_URL)
+        endpoint_url = f"{parsed.scheme}://{parsed.netloc}"
+    elif settings.AWS_S3_ENDPOINT_URL:
+        # Custom S3-compatible endpoint
+        endpoint_url = settings.AWS_S3_ENDPOINT_URL
+    else:
+        # Standard AWS S3 — boto3 auto-resolves from region
+        endpoint_url = None
+
+    if endpoint_url:
+        client_kwargs["endpoint_url"] = endpoint_url
+
+    return boto3.client(**client_kwargs)
 
 
-def get_presigned_url_download(attachment: MessageAttachment, expires_in: Optional[int] = 600) -> Optional[str]:
+def get_presigned_url_download(
+    attachment: MessageAttachment,
+    expires_in: Optional[int] = 600,
+) -> Optional[str]:
     """
     Generate presigned download URL for an attachment.
 
@@ -66,7 +106,7 @@ def get_presigned_url_download(attachment: MessageAttachment, expires_in: Option
         return None
 
     try:
-        s3_client = get_s3_client()
+        s3_client = get_s3_client(use_public_url=True)
         download_url = s3_client.generate_presigned_url(
             "get_object",
             Params={
@@ -82,7 +122,10 @@ def get_presigned_url_download(attachment: MessageAttachment, expires_in: Option
         return None
 
 
-def get_presigned_url_preview(attachment: MessageAttachment, expires_in: int = 300) -> Optional[str]:
+def get_presigned_url_preview(
+    attachment: MessageAttachment,
+    expires_in: int = 300,
+) -> Optional[str]:
     """
     Generate presigned preview URL for an attachment (inline render).
 
@@ -97,7 +140,7 @@ def get_presigned_url_preview(attachment: MessageAttachment, expires_in: int = 3
         return None
 
     try:
-        s3_client = get_s3_client()
+        s3_client = get_s3_client(use_public_url=True)
         preview_url = s3_client.generate_presigned_url(
             "get_object",
             Params={
@@ -161,7 +204,7 @@ async def get_attachment_urls_internal(
     if not attachment:
         raise FileNotFoundError("Attachment not found")
 
-    # Verify file exists in S3
+    # Verify file exists in S3 (use upload client for internal access)
     try:
         s3_client = get_s3_client()
         s3_client.head_object(Bucket=S3_BUCKET, Key=attachment.file_path)

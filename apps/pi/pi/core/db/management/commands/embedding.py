@@ -59,11 +59,11 @@ def _build_connector_config(model_key: str, custom_base_url: str = "") -> dict:
     # Build credentials based on provider
     if config["provider"] == "bedrock":
         credential = {
-            "access_key": settings.AWS_ACCESS_KEY_ID,
-            "secret_key": settings.AWS_SECRET_ACCESS_KEY,
+            "access_key": settings.BR_AWS_ACCESS_KEY_ID,
+            "secret_key": settings.BR_AWS_SECRET_ACCESS_KEY,
         }
         # Only include session token if it's set
-        session_token = settings.AWS_SESSION_TOKEN or None
+        session_token = settings.BR_AWS_SESSION_TOKEN or None
         if session_token:
             credential["session_token"] = session_token
     else:
@@ -210,18 +210,6 @@ def init_embedding_model(
             # Initialize database
             await init_async_db()
 
-            # Determine which model to use
-            model_key = model or settings.vector_db.EMBEDDING_MODEL
-            log.info("Using embedding model: %s", model_key)
-
-            # Validate model key
-            try:
-                config = get_embedding_model_config(model_key)
-            except ValueError as e:
-                typer.echo(f"Error: {e}")
-                typer.echo(f"Available models: {", ".join(get_available_embedding_models())}")
-                sys.exit(1)
-
             # Step 1: Check if OPENSEARCH_ML_MODEL_ID is already set
             ml_model_id = ML_MODEL_ID
             if ml_model_id and ml_model_id.strip():
@@ -312,7 +300,19 @@ def init_embedding_model(
 
             log.info("No valid embedding model found in OpenSearch, checking if we can auto-create one...")
 
-            # Step 3: Check if we can auto-create a model (check API key based on provider)
+            # Step 3: Determine which model to use and validate it
+            model_key = model or settings.vector_db.EMBEDDING_MODEL
+            log.info("Using embedding model: %s", model_key)
+
+            # Validate model key
+            try:
+                config = get_embedding_model_config(model_key)
+            except ValueError as e:
+                typer.echo(f"Error: {e}")
+                typer.echo(f"Available models: {", ".join(get_available_embedding_models())}")
+                sys.exit(1)
+
+            # Step 4: Check if we can auto-create a model (check API key based on provider)
             api_key = os.getenv(config["api_key_env"], "")
             if not api_key or not api_key.strip():
                 log.error("Cannot setup embedding model: %s not configured", config["api_key_env"])
@@ -326,7 +326,7 @@ def init_embedding_model(
                 typer.echo(f"  2. Set {config["api_key_env"]} and run: python -m pi.manage create-embedding-model --model {model_key}")
                 sys.exit(1)
 
-            # Step 4: Auto-create the model
+            # Step 5: Auto-create the model
             log.info("%s found, auto-creating embedding model...", config["api_key_env"])
             typer.echo(f"Creating embedding model ({model_key}) automatically...")
 
@@ -361,16 +361,6 @@ async def _setup_embedding_model_internal(model_key: str | None = None):
 
         # Initialize VectorStore client
         vector_store = VectorStore()
-
-        # Step 1: Configure ML Commons
-        log.info("Configuring ML Commons...")
-        try:
-            _ = vector_store.configure_ml_commons(allow_non_ml_nodes=True)
-        except Exception as e:
-            log.error("Failed to configure ML Commons: %s", e, exc_info=True)
-            typer.echo(f"Failed to configure ML Commons: {e}")
-            sys.exit(1)
-        log.info("ML Commons configured")
 
         # Step 2: Configure trusted endpoints from model config
         log.info("Configuring trusted endpoints...")

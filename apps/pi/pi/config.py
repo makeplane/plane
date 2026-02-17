@@ -97,6 +97,7 @@ class VectorDB:
     FEED_SLICES: int = get_env_int("FEED_SLICES", "1")
 
     SCROLL_TIMEOUT: str = os.getenv("SCROLL_TIMEOUT", "10m")
+    CONNECTION_TIMEOUT: int = 120
     BULK_SIZE: int = 100
     BATCH_SIZE: int = get_env_int("BATCH_SIZE", "64")
 
@@ -421,9 +422,20 @@ class Settings:
     AWS_S3_REGION: str = os.getenv("AWS_S3_REGION", "")
     AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID", "")
     AWS_SECRET_ACCESS_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "")
-    AWS_SESSION_TOKEN: str | None = os.getenv("AWS_SESSION_TOKEN")
+    # If AWS_S3_ENDPOINT_URL is set, use it (for MinIO or S3-compatible storage)
+    # If empty/unset, boto3 will use default AWS S3 endpoints
+    AWS_S3_ENDPOINT_URL: str | None = os.getenv("AWS_S3_ENDPOINT_URL") or None
+    # Use MinIO mode (generates public URLs using request host instead of internal endpoint)
+    # When True, presigned URLs use the request's public hostname instead of AWS_S3_ENDPOINT_URL
+    USE_MINIO: bool = get_env_bool("USE_MINIO", "0")
     FILE_SIZE_LIMIT: int = 10485760  # 10MB
     AWS_S3_ENV: str = os.getenv("AWS_S3_ENV", "")
+
+    # AWS Bedrock Configuration (for embeddings) - separate credentials
+    BR_AWS_ACCESS_KEY_ID: str = os.getenv("BR_AWS_ACCESS_KEY_ID") or os.getenv("AWS_ACCESS_KEY_ID") or ""
+    BR_AWS_SECRET_ACCESS_KEY: str = os.getenv("BR_AWS_SECRET_ACCESS_KEY") or os.getenv("AWS_SECRET_ACCESS_KEY") or ""
+    BR_AWS_SESSION_TOKEN: str | None = os.getenv("BR_AWS_SESSION_TOKEN")
+    BR_AWS_REGION: str = os.getenv("BR_AWS_REGION", "us-east-1")
 
     DD_ENABLED: bool = get_env_bool("DD_ENABLED", "0")
     DD_ENV: str = os.getenv("DD_ENV", "dev")

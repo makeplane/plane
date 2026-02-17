@@ -27,7 +27,7 @@ Two issues are duplicates if they:
 3. Would require the same or very similar solution
 4. Are not just related but actually requesting the same functionality
 
-Return the serial numbers of duplicate candidates, not their IDs."""  # noqa: E501
+Return the serial numbers of duplicate candidates in a comma-separated list, not their IDs."""  # noqa: E501
 
 # O3 suggested prompt
 # SYSTEM:

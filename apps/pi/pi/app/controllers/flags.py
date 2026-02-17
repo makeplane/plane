@@ -71,7 +71,8 @@ async def _get_ml_model_id_source() -> tuple[bool, str]:
 
 @dataclass(frozen=True)
 class _EnvCapabilities:
-    openai_or_claude: bool
+    llm_present: bool  # OpenAI, Claude, or Custom LLM configured
+    embedding_present: bool  # ML_MODEL_ID or EMBEDDING_MODEL configured
     opensearch: bool
     cohere: bool
     ml_model_id: bool
@@ -85,7 +86,21 @@ class _EnvCapabilities:
 
 
 async def _compute_env_capabilities() -> _EnvCapabilities:
-    openai_or_claude = _has_value(settings.llm_config.OPENAI_API_KEY) or _has_value(settings.llm_config.CLAUDE_API_KEY)
+    # LLM presence: OpenAI, Claude, or Custom LLM with required config
+    openai_present = _has_value(settings.llm_config.OPENAI_API_KEY)
+    claude_present = _has_value(settings.llm_config.CLAUDE_API_KEY)
+    custom_llm_present = (
+        settings.llm_config.CUSTOM_LLM_ENABLED
+        and _has_value(settings.llm_config.CUSTOM_LLM_BASE_URL)
+        and _has_value(settings.llm_config.CUSTOM_LLM_API_KEY)
+        and _has_value(settings.llm_config.CUSTOM_LLM_MODEL_KEY)
+        and _has_value(settings.llm_config.CUSTOM_LLM_NAME)
+    )
+    llm_present = openai_present or claude_present or custom_llm_present
+
+    # Embedding presence: ML_MODEL_ID or EMBEDDING_MODEL configured
+    embedding_present = _has_value(settings.vector_db.ML_MODEL_ID) or _has_value(settings.vector_db.EMBEDDING_MODEL)
+
     opensearch = (
         _has_value(settings.vector_db.OPENSEARCH_URL)
         and _has_value(settings.vector_db.OPENSEARCH_USER)
@@ -109,7 +124,8 @@ async def _compute_env_capabilities() -> _EnvCapabilities:
         ml_model_id_source = source
 
     return _EnvCapabilities(
-        openai_or_claude=openai_or_claude,
+        llm_present=llm_present,
+        embedding_present=embedding_present,
         opensearch=opensearch,
         cohere=cohere,
         ml_model_id=bool(ml_model_id),
@@ -121,8 +137,10 @@ async def _compute_env_capabilities() -> _EnvCapabilities:
 
 def _env_readiness_from_caps(caps: _EnvCapabilities) -> Dict[FeatureKey, bool]:
     return {
-        settings.feature_flags.PI_CHAT: bool(caps.openai_or_claude and caps.opensearch and caps.cohere_or_ml_model),
-        settings.feature_flags.PI_DEDUPE: bool(caps.cohere_or_ml_model),
+        # PI_CHAT requires: LLM model + Embedding model + OpenSearch
+        settings.feature_flags.PI_CHAT: bool(caps.llm_present and caps.embedding_present and caps.opensearch),
+        # PI_DEDUPE requires: LLM model + Embedding model
+        settings.feature_flags.PI_DEDUPE: bool(caps.llm_present and caps.embedding_present),
         settings.feature_flags.PI_CONVERSE: bool(caps.groq),
         settings.feature_flags.PI_FILE_UPLOADS: bool(caps.uploads),
     }
@@ -144,7 +162,7 @@ async def _evaluate_remote_flags(*, user_id: str, workspace_slug: str, flags: It
 
 
 def _combine_env_and_remote(env_ready: Dict[FeatureKey, bool], remote_enabled: Dict[FeatureKey, bool]) -> Dict[FeatureKey, bool]:
-    return {k: bool(env_ready.get(k, False) and remote_enabled.get(k, True)) for k in env_ready.keys()}
+    return {k: bool(env_ready.get(k, False) and remote_enabled.get(k, False)) for k in env_ready.keys()}
 
 
 def _apply_dependencies(flags: Dict[FeatureKey, bool]) -> Dict[FeatureKey, bool]:
@@ -164,11 +182,11 @@ async def get_workspace_feature_availability(
     caps = await _compute_env_capabilities()
     env_ready = _env_readiness_from_caps(caps)
 
-    # No remote server configured: env-only readiness + dependency forcing.
+    # No remote server configured: disable all remote-gated features for security.
     if not _flag_server_configured():
-        combined = _apply_dependencies(env_ready)
-        log.info("Flags (env-only): %s", combined)
-        return combined
+        log.warning("Feature flag server not configured. Disabling all remote-gated features.")
+        # Return all flags as False since we can't verify authorization without remote server
+        return {k: False for k in env_ready.keys()}
 
     remote_enabled = await _evaluate_remote_flags(user_id=user_id, workspace_slug=workspace_slug, flags=_remote_gated_features())
     combined = _combine_env_and_remote(env_ready, remote_enabled)

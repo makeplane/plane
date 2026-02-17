@@ -309,7 +309,7 @@ async def get_attachments_by_chat(
         # Build response with attachment details and URLs
         attachment_list = []
         for attachment in attachments:
-            # Generate download and preview URLs
+            # Generate download URL
             download_url = get_presigned_url_download(attachment)
 
             attachment_data = {

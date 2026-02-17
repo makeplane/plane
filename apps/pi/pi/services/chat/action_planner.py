@@ -1220,6 +1220,18 @@ async def execute_tools_for_build_mode(
             if not content:
                 # Fallback if no content provided
                 content = "I wasn't able to find a suitable response. Could you please rephrase your request?"
+                # Emit final_response reasoning stage to close the frontend reasoning panel
+                try:
+                    stage = "final_response"
+                    reasoning_chunk_dict = reasoning_dict_maker(stage=stage, tool_name="", tool_query="", content="")
+                    if reasoning_container is not None:
+                        reasoning_container["content"] += reasoning_chunk_dict["header"] + reasoning_chunk_dict["content"]
+                    yield reasoning_chunk_dict
+                except Exception as e:
+                    log.warning(f"ChatID: {chat_id} - Failed to emit final_response reasoning stage in fallback: {e}")
+
+                # Yield the fallback content so the user sees it
+                yield content
 
             # Record the flow steps
             try:
