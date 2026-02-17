@@ -100,7 +100,7 @@ def llm_error_handler(
                         # Switch to best available fallback model (compact JSON serialization)
                         fallback_model = get_fallback_model_name()
                         log.warning(
-                            f"{log_context} Length finish encountered, switching model to {fallback_model} and retrying {func.__name__} (attempt {attempt + 1})" # noqa: E501
+                            f"{log_context} Length finish encountered, switching model to {fallback_model} and retrying {func.__name__} (attempt {attempt + 1})"  # noqa: E501
                         )
                         # Only set model override if the function supports an LLM model kwarg
                         for model_kw in ("llm_model", "model", "switch_llm"):

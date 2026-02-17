@@ -46,7 +46,7 @@ import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 import { useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
 import { EditorAIMenu } from "@/plane-web/components/pages";
 import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
-import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { EPageStoreType } from "@/plane-web/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -54,6 +54,7 @@ import type { TPageInstance } from "@/store/pages/base-page";
 import { PageContentLoader } from "../loaders/page-content-loader";
 import { PageEditorHeaderRoot } from "./header";
 import { PageContentBrowser } from "./summary";
+import { PageSummary } from "./ai/page-summary";
 // types
 
 // Add a CSS keyframe animation
@@ -85,6 +86,8 @@ type Props = {
   extendedEditorProps: TExtendedEditorExtensionsConfig;
   isFetchingFallbackBinary?: boolean;
   onCollaborationStateChange?: (state: CollaborationState) => void;
+  isGeneratingPageSummary: boolean;
+  setIsGeneratingPageSummary: (isGenerating: boolean) => void;
 };
 
 export const PageEditorBody = observer(function PageEditorBody(props: Props) {
@@ -104,6 +107,8 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
     extendedEditorProps,
     isFetchingFallbackBinary,
     onCollaborationStateChange,
+    isGeneratingPageSummary,
+    setIsGeneratingPageSummary,
   } = props;
 
   // states
@@ -287,6 +292,13 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
         <div>
           <div className="page-header-container group/page-header">
             <div className={blockWidthClassName}>
+              {storeType === EPageStoreType.WORKSPACE && (
+                <PageSummary
+                  isGeneratingPageSummary={isGeneratingPageSummary}
+                  pageId={pageId}
+                  setIsGeneratingPageSummary={setIsGeneratingPageSummary}
+                />
+              )}
               <PageEditorHeaderRoot
                 isEditorContentEmpty={isDescriptionEmpty && isTitleEmpty}
                 isPageLoading={isPageLoading}

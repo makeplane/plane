@@ -430,4 +430,86 @@ export class PiChatService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  // generate page summary (SSE stream)
+  // Returns an abort function to cancel the stream.
+  generatePageSummary(
+    data: {
+      page_id: string;
+      entity_type: string;
+      workspace_id: string;
+    },
+    callbacks: {
+      onChunk: (chunk: string) => void;
+      onComplete?: () => void;
+      onError?: (error: { code: string; message: string }) => void;
+    }
+  ): () => void {
+    const controller = new AbortController();
+    let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+
+    const run = async () => {
+      const response = await this.post(`/api/v1/pages/summarize/`, data, {
+        responseType: "stream",
+        adapter: "fetch",
+        signal: controller.signal,
+      });
+
+      const stream = response.data as ReadableStream<Uint8Array>;
+
+      if (!stream) {
+        callbacks.onError?.({ code: "NO_BODY", message: "Response body is empty" });
+        return;
+      }
+
+      reader = stream.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        const messages = buffer.split("\n\n");
+        buffer = messages.pop() || "";
+
+        for (const message of messages) {
+          if (message.startsWith(":")) continue;
+
+          let eventData = "";
+
+          for (const line of message.split("\n")) {
+            if (line.startsWith("data: ")) eventData += line.slice(6);
+          }
+
+          if (!eventData || eventData === "[DONE]") continue;
+
+          try {
+            const parsed = JSON.parse(eventData) as { chunk?: string };
+            if (parsed.chunk) callbacks.onChunk(parsed.chunk);
+          } catch {
+            // If not JSON, treat as plain text chunk
+            callbacks.onChunk(eventData);
+          }
+        }
+      }
+
+      callbacks.onComplete?.();
+    };
+
+    run().catch((err: unknown) => {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      callbacks.onError?.({
+        code: "CONNECTION_ERROR",
+        message: err instanceof Error ? err.message : "Failed to generate page summary",
+      });
+    });
+
+    return () => {
+      void reader?.cancel();
+      controller.abort();
+    };
+  }
 }

@@ -2287,7 +2287,8 @@ async def get_page_content(page_id: str) -> Optional[Dict[str, Any]]:
         p.description_stripped,
         p.description_html
     FROM pages p
-    WHERE p.id = $1;
+    WHERE p.id = $1
+    AND p.deleted_at IS NULL;
     """
     try:
         result = await PlaneDBPool.fetchrow(query, (page_id,))

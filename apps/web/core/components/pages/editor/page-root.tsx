@@ -76,6 +76,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   const [editorReady, setEditorReady] = useState(false);
   const [collaborationState, setCollaborationState] = useState<CollaborationState | null>(null);
   const [showContentTooLargeBanner, setShowContentTooLargeBanner] = useState(false);
+  const [isGeneratingPageSummary, setIsGeneratingPageSummary] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
@@ -200,6 +201,8 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
             handleOpenNavigationPane={handleOpenNavigationPane}
             isNavigationPaneOpen={isNavigationPaneOpen}
             page={page}
+            storeType={storeType}
+            setIsGeneratingPageSummary={setIsGeneratingPageSummary}
           />
           <PageEditorBody
             config={config}
@@ -218,6 +221,8 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
             extendedEditorProps={extendedEditorProps}
             isFetchingFallbackBinary={isFetchingFallbackBinary}
             onCollaborationStateChange={setCollaborationState}
+            isGeneratingPageSummary={isGeneratingPageSummary}
+            setIsGeneratingPageSummary={setIsGeneratingPageSummary}
           />
         </div>
       </div>

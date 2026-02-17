@@ -38,16 +38,18 @@ from pi.app.schemas.pages import PageAIBlockRevisionCreateRequest
 from pi.app.schemas.pages import PageAIBlockRevisionResponse
 from pi.app.schemas.pages import PageAIBlockRevisionTypesResponse
 from pi.app.schemas.pages import PageAIBlockTypesResponse
+from pi.app.schemas.pages import PageSummarizeRequest
+from pi.app.schemas.pages import PageSummarizeResponse
 from pi.app.utils.markdown_to_html import md_to_html
 from pi.core.db.plane import PlaneDBPool
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.services.actions.method_executor import MethodExecutor
 from pi.services.actions.oauth_service import PlaneOAuthService
 from pi.services.actions.plane_actions_executor import PlaneActionsExecutor
+from pi.services.pages.ai_block import AIBlockService
 from pi.services.pages.constants import PAGE_BLOCK_TYPES
 from pi.services.pages.constants import REVISION_BLOCK_TYPES
-from pi.services.pages.pages import generate_page_ai_block_content
-from pi.services.pages.pages import generate_page_ai_block_revision
+from pi.services.pages.summarize import SummarizeService
 from pi.services.pages.utils import has_content_for_block
 from pi.services.pages.utils import validate_block_type
 from pi.services.pages.utils import validate_revision_type
@@ -338,7 +340,12 @@ async def create_or_generate_ai_block(
         if not block_result:
             return JSONResponse(status_code=400, content=result)
 
-    generated_content = await generate_page_ai_block_content(block_result, db, current_user.id)
+    service = AIBlockService(db=db, block_type=request.block_type)
+    generated_content = await service.generate_block_content(
+        block=block_result,
+        user_id=current_user.id,
+        user_input=request.content,
+    )
 
     if generated_content is None:
         return JSONResponse(
@@ -390,7 +397,12 @@ async def generate_ai_block_revision(
     if error_response:
         return error_response
 
-    revised_content = await generate_page_ai_block_revision(request, db, current_user.id)
+    service = AIBlockService(db=db, block_type=request.revision_type)
+    revised_content = await service.generate_revision(
+        block_id=request.block_id,
+        revision_type=request.revision_type,
+        user_id=current_user.id,
+    )
     if not revised_content:
         return JSONResponse(status_code=400, content={"error": "Failed to generate revision"})
 
@@ -401,3 +413,55 @@ async def generate_ai_block_revision(
             "revised_content": revised_content,
         },
     )
+
+
+@router.post("/summarize", response_model=PageSummarizeResponse)
+async def summarize_page(
+    request: PageSummarizeRequest,
+    current_user=Depends(get_current_user),
+    db=Depends(get_async_session),
+):
+    """
+    Generate a summary for a page.
+
+    Uses the SummarizeService which is completely independent of AI blocks.
+    Token usage is tracked with usage_type="summarize" in the LlmModelUsageTracking table.
+    """
+    try:
+        service = SummarizeService(db=db)
+        summary = await service.generate_content(
+            page_id=request.page_id,
+            entity_type=request.entity_type,
+            workspace_id=request.workspace_id,
+            user_id=current_user.id,
+        )
+
+        if not summary:
+            return JSONResponse(
+                status_code=400,
+                content={
+                    "success": False,
+                    "summary": None,
+                    "message": "Failed to generate summary. The page may be empty or an error occurred.",
+                },
+            )
+
+        return JSONResponse(
+            status_code=200,
+            content={
+                "success": True,
+                "summary": summary,
+                "message": "Summary generated successfully",
+            },
+        )
+
+    except Exception as e:
+        log.error(f"Error in summarize_page endpoint: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "summary": None,
+                "message": f"Internal server error: {str(e)}",
+            },
+        )

@@ -9,6 +9,17 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
+"""
+Centralized prompts for all page-related AI features.
+
+This file contains all LLM prompts used across page services.
+To add a new feature, simply add your prompt here and reference it in your service class.
+"""
+
+# ============================================================================
+# SUMMARIZATION PROMPTS
+# ============================================================================
+
 SUMMARY_PROMPT = """
 Summarize the following text according to these strict guidelines:
 
@@ -19,14 +30,17 @@ Summarize the following text according to these strict guidelines:
 5. Do **not introduce any new information**.
 6. If the input is < 100 words, produce **1-2 concise sentences**.
 7. Structure the summary with:
-   <ul>
-     <li><strong>Bullet points</strong> if there are multiple key ideas</li>
-     <li><strong>One short paragraph</strong> if it is a single core concept</li>
-   </ul>
-8. Do not restate the prompt itself or preface the summary with meta commentary.
-9. Exclude all image URLs, video URLs, and media links from your output.
-10. Do not include anything realted to the prompt itself or meta-commentary about your instructions.
+   - **Bullet points** (using <ul> and <li> tags) if there are multiple key ideas
+   - **One short paragraph** (using <p> tag) if it is a single core concept
+8. **Output valid HTML only.** Use appropriate HTML tags: <p> for paragraphs, <ul>/<li> for lists, <strong> for emphasis, <em> for italics.
+9. Do not restate the prompt itself or preface the summary with meta commentary.
+10. Exclude all image URLs, video URLs, and media links from your output.
+11. Do not include anything related to the prompt itself or meta-commentary about your instructions.
 """
+
+# ============================================================================
+# AI BLOCK PROMPTS
+# ============================================================================
 
 CUSTOM_PROMPT = """
 You are a highly capable AI assistant. Using the provided context and any additional relevant knowledge:
@@ -101,3 +115,35 @@ Task (shorten):
 6. Output valid HTML only (use <p>, <ul>, <li>, <strong>, <em> as needed). No markdown.
 7. Do not include anything related to the prompt itself or meta-commentary about your instructions.
 """
+
+# ============================================================================
+# PROMPT REGISTRY
+# ============================================================================
+# This makes it easy to reference prompts by key
+
+PROMPTS = {
+    # Summarization
+    "summarize": SUMMARY_PROMPT,
+    # AI Blocks
+    "custom_prompt": CUSTOM_PROMPT,
+    "elaborate": ELABORATE_PROMPT,
+    "shorten": SHORTEN_PROMPT,
+}
+
+
+def get_prompt(key: str) -> str:
+    """
+    Get a prompt by key.
+
+    Args:
+        key: Prompt key (e.g., "summarize", "custom_prompt", "elaborate", "shorten")
+
+    Returns:
+        Prompt string
+
+    Raises:
+        KeyError: If prompt key not found
+    """
+    if key not in PROMPTS:
+        raise KeyError(f"Prompt '{key}' not found. Available prompts: {list(PROMPTS.keys())}")
+    return PROMPTS[key]

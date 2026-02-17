@@ -25,15 +25,19 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 import { PageCollaboratorsList } from "@/plane-web/components/pages/header/collaborators-list";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
+import { PageAiSummaryAction } from "../ai/summary-action";
+import { EPageStoreType } from "@/plane-web/hooks/store";
 
 type Props = {
   handleOpenNavigationPane: () => void;
   isNavigationPaneOpen: boolean;
   page: TPageInstance;
+  storeType: EPageStoreType;
+  setIsGeneratingPageSummary: (isGenerating: boolean) => void;
 };
 
 export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(props: Props) {
-  const { handleOpenNavigationPane, isNavigationPaneOpen, page } = props;
+  const { handleOpenNavigationPane, isNavigationPaneOpen, page, storeType, setIsGeneratingPageSummary } = props;
   // translation
   const { t } = useTranslation();
   // derived values
@@ -66,6 +70,9 @@ export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(pro
             <div className="flex-1">{editorRef && <PageToolbar editorRef={editorRef} />}</div>
             <div className="flex items-center gap-2">
               <PageCollaboratorsList page={page} />
+              {storeType === EPageStoreType.WORKSPACE && (
+                <PageAiSummaryAction pageId={page.id} handleLoading={setIsGeneratingPageSummary} />
+              )}
               {!isNavigationPaneOpen && (
                 <button
                   type="button"

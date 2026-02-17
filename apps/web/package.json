@@ -85,6 +85,7 @@
     "serve": "14.2.5",
     "smooth-scroll-into-view-if-needed": "^2.0.2",
     "socket.io-client": "^4.8.1",
+    "streamdown": "^2.2.0",
     "swr": "catalog:",
     "use-font-face-observer": "^1.2.2",
     "uuid": "catalog:"
