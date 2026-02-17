@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -10,11 +16,12 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
 import { CustomSelect, Input, Spinner } from "@plane/ui";
+import { validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserProfile, useUserSettings } from "@/hooks/store/user";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 
 type Props = {
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
@@ -132,8 +139,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
             name="name"
             rules={{
               required: t("common.errors.required"),
-              validate: (value) =>
-                /^[\w\s-]*$/.test(value) || t("workspace_creation.errors.validation.name_alphanumeric"),
+              validate: (value) => validateWorkspaceName(value, true),
               maxLength: {
                 value: 80,
                 message: t("workspace_creation.errors.validation.name_length"),
@@ -194,7 +200,8 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
                   type="text"
                   value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
                   onChange={(e) => {
-                    if (/^[a-zA-Z0-9_-]+$/.test(e.target.value)) setInvalidSlug(false);
+                    const validation = validateSlug(e.target.value);
+                    if (validation === true) setInvalidSlug(false);
                     else setInvalidSlug(true);
                     onChange(e.target.value.toLowerCase());
                   }}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -207,7 +213,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
-              autoComplete="on"
+              autoComplete="off"
               autoFocus
             />
             <button
@@ -244,6 +250,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
+                autoComplete="off"
               />
               <button
                 type="button"

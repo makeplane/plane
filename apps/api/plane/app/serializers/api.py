@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django import
 from django.utils import timezone
 
@@ -20,6 +24,9 @@ class APITokenSerializer(BaseSerializer):
             "updated_at",
             "workspace",
             "user",
+            "is_active",
+            "last_used",
+            "user_type",
         ]
 
 

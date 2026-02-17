@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -11,7 +17,7 @@ import type { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
 import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 // components
-import { cn, getFileURL, getPasswordStrength } from "@plane/utils";
+import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // hooks
 import { useUser, useUserProfile } from "@/hooks/store/user";
@@ -297,9 +303,10 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     name="first_name"
                     rules={{
                       required: "First name is required",
+                      validate: validatePersonName,
                       maxLength: {
-                        value: 24,
-                        message: "First name must be within 24 characters.",
+                        value: 50,
+                        message: "First name must be within 50 characters.",
                       },
                     }}
                     render={({ field: { value, onChange, ref } }) => (
@@ -334,9 +341,10 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     name="last_name"
                     rules={{
                       required: "Last name is required",
+                      validate: validatePersonName,
                       maxLength: {
-                        value: 24,
-                        message: "Last name must be within 24 characters.",
+                        value: 50,
+                        message: "Last name must be within 50 characters.",
                       },
                     }}
                     render={({ field: { value, onChange, ref } }) => (
@@ -384,7 +392,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             className="w-full border-[0.5px] border-subtle pr-12 placeholder:text-placeholder"
                             onFocus={() => setIsPasswordInputFocused(true)}
                             onBlur={() => setIsPasswordInputFocused(false)}
-                            autoComplete="on"
+                            autoComplete="new-password"
                           />
                           {showPassword.password ? (
                             <EyeOff
@@ -425,6 +433,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             hasError={Boolean(errors.confirm_password)}
                             placeholder={t("auth.common.password.confirm_password.placeholder")}
                             className="w-full border-subtle pr-12 placeholder:text-placeholder"
+                            autoComplete="new-password"
                           />
                           {showPassword.retypePassword ? (
                             <EyeOff

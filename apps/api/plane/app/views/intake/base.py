@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import json
 
@@ -394,7 +398,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 issue_data = {
                     "name": issue_data.get("name", issue.name),
                     "description_html": issue_data.get("description_html", issue.description_html),
-                    "description": issue_data.get("description", issue.description),
+                    "description_json": issue_data.get("description_json", issue.description_json),
                 }
 
             issue_current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)

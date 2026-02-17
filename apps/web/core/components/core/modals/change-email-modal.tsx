@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -158,6 +164,7 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
                   { "border-danger-strong": errors.email },
                   { "cursor-not-allowed !bg-surface-2": secondStep }
                 )}
+                autoComplete="off"
                 disabled={secondStep}
               />
             )}
@@ -181,6 +188,7 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
                   ref={ref}
                   placeholder={changeEmailT("form.code.placeholder")}
                   className={cn({ "border-danger-strong": errors.code })}
+                  autoComplete="off"
                   autoFocus
                 />
               )}

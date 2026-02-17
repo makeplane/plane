@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Dự án",
@@ -1980,6 +1986,45 @@ export default {
         title: "Chưa có hệ thống ước tính",
         description: "Tạo một tập hợp ước tính để truyền đạt khối lượng công việc cho mỗi mục công việc.",
         primary_button: "Thêm hệ thống ước tính",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Chu kỳ",
+        short_title: "Chu kỳ",
+        description:
+          "Lên lịch công việc trong các khoảng thời gian linh hoạt thích ứng với nhịp điệu và tốc độ độc đáo của dự án này.",
+        toggle_title: "Bật chu kỳ",
+        toggle_description: "Lập kế hoạch công việc trong khung thời gian tập trung.",
+      },
+      modules: {
+        title: "Mô-đun",
+        short_title: "Mô-đun",
+        description: "Tổ chức công việc thành các dự án phụ với người dẫn đầu và người được phân công chuyên trách.",
+        toggle_title: "Bật mô-đun",
+        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa mô-đun.",
+      },
+      views: {
+        title: "Chế độ xem",
+        short_title: "Chế độ xem",
+        description: "Lưu các tùy chọn sắp xếp, bộ lọc và hiển thị tùy chỉnh hoặc chia sẻ chúng với nhóm của bạn.",
+        toggle_title: "Bật chế độ xem",
+        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa chế độ xem.",
+      },
+      pages: {
+        title: "Trang",
+        short_title: "Trang",
+        description: "Tạo và chỉnh sửa nội dung tự do: ghi chú, tài liệu, bất cứ thứ gì.",
+        toggle_title: "Bật trang",
+        toggle_description: "Thành viên dự án sẽ có thể tạo và chỉnh sửa trang.",
+      },
+      intake: {
+        title: "Tiếp nhận",
+        short_title: "Tiếp nhận",
+        description:
+          "Cho phép những người không phải thành viên chia sẻ lỗi, phản hồi và đề xuất; mà không làm gián đoạn quy trình làm việc của bạn.",
+        toggle_title: "Bật tiếp nhận",
+        toggle_description: "Cho phép thành viên dự án tạo yêu cầu tiếp nhận trong ứng dụng.",
       },
     },
   },

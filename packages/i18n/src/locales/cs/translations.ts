@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Projekty",
@@ -1966,6 +1972,44 @@ export default {
         title: "Zatím žádné systémy odhadů",
         description: "Vytvořte sadu odhadů pro komunikaci množství práce na pracovní položku.",
         primary_button: "Přidat systém odhadů",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cykly",
+        short_title: "Cykly",
+        description:
+          "Naplánujte práci v flexibilních obdobích, která se přizpůsobí jedinečnému rytmu a tempu tohoto projektu.",
+        toggle_title: "Povolit cykly",
+        toggle_description: "Naplánujte práci v soustředěných časových rámcích.",
+      },
+      modules: {
+        title: "Moduly",
+        short_title: "Moduly",
+        description: "Organizujte práci do dílčích projektů s vyhrazenými vedoucími a přiřazenými osobami.",
+        toggle_title: "Povolit moduly",
+        toggle_description: "Členové projektu budou moci vytvářet a upravovat moduly.",
+      },
+      views: {
+        title: "Zobrazení",
+        short_title: "Zobrazení",
+        description: "Uložte vlastní řazení, filtry a možnosti zobrazení nebo je sdílejte se svým týmem.",
+        toggle_title: "Povolit zobrazení",
+        toggle_description: "Členové projektu budou moci vytvářet a upravovat zobrazení.",
+      },
+      pages: {
+        title: "Stránky",
+        short_title: "Stránky",
+        description: "Vytvářejte a upravujte volný obsah: poznámky, dokumenty, cokoliv.",
+        toggle_title: "Povolit stránky",
+        toggle_description: "Členové projektu budou moci vytvářet a upravovat stránky.",
+      },
+      intake: {
+        title: "Příjem",
+        short_title: "Příjem",
+        description: "Umožněte nečlenům sdílet chyby, zpětnou vazbu a návrhy; bez narušení vašeho pracovního postupu.",
+        toggle_title: "Povolit příjem",
+        toggle_description: "Povolit členům projektu vytvářet žádosti o příjem v aplikaci.",
       },
     },
   },

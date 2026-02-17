@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Progetti",
@@ -1986,6 +1992,46 @@ export default {
         title: "Nessun sistema di stime ancora",
         description: "Crea un set di stime per comunicare la quantità di lavoro per elemento di lavoro.",
         primary_button: "Aggiungi sistema di stime",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Cicli",
+        short_title: "Cicli",
+        description:
+          "Pianifica il lavoro in periodi flessibili che si adattano al ritmo e al tempo unici di questo progetto.",
+        toggle_title: "Abilita cicli",
+        toggle_description: "Pianifica il lavoro in periodi di tempo mirati.",
+      },
+      modules: {
+        title: "Moduli",
+        short_title: "Moduli",
+        description: "Organizza il lavoro in sotto-progetti con responsabili e assegnatari dedicati.",
+        toggle_title: "Abilita moduli",
+        toggle_description: "I membri del progetto potranno creare e modificare moduli.",
+      },
+      views: {
+        title: "Viste",
+        short_title: "Viste",
+        description:
+          "Salva ordinamenti, filtri e opzioni di visualizzazione personalizzati o condividili con il tuo team.",
+        toggle_title: "Abilita viste",
+        toggle_description: "I membri del progetto potranno creare e modificare viste.",
+      },
+      pages: {
+        title: "Pagine",
+        short_title: "Pagine",
+        description: "Crea e modifica contenuti liberi: note, documenti, qualsiasi cosa.",
+        toggle_title: "Abilita pagine",
+        toggle_description: "I membri del progetto potranno creare e modificare pagine.",
+      },
+      intake: {
+        title: "Ricezione",
+        short_title: "Ricezione",
+        description:
+          "Consenti ai non membri di condividere bug, feedback e suggerimenti; senza interrompere il tuo flusso di lavoro.",
+        toggle_title: "Abilita ricezione",
+        toggle_description: "Consenti ai membri del progetto di creare richieste di ricezione nell'app.",
       },
     },
   },

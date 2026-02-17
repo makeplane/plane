@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -14,7 +20,9 @@ import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "@/compone
 import { useWebhook } from "@/hooks/store/use-webhook";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
+// local imports
 import type { Route } from "./+types/page";
+import { WebhookDetailsWorkspaceSettingsHeader } from "./header";
 
 function WebhookDetailsPage({ params }: Route.ComponentProps) {
   // states
@@ -87,7 +95,7 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
     );
 
   return (
-    <SettingsContentWrapper>
+    <SettingsContentWrapper header={<WebhookDetailsWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
       <DeleteWebhookModal isOpen={deleteWebhookModal} onClose={() => setDeleteWebhookModal(false)} />
       <div className="w-full space-y-8 overflow-y-auto">

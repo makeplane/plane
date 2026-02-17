@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 // helpers
 import { cn } from "../utils";
@@ -20,8 +26,8 @@ export function Table<T>(props: TTableData<T>) {
 
   return (
     <table className={cn("table-auto w-full overflow-hidden whitespace-nowrap", tableClassName)}>
-      <thead className={cn("divide-y divide-subtle-1", tHeadClassName)}>
-        <tr className={cn("divide-x divide-subtle-1 text-13 text-primary", tHeadTrClassName)}>
+      <thead className={cn("divide-y divide-subtle", tHeadClassName)}>
+        <tr className={cn("divide-x divide-subtle text-13 text-primary", tHeadTrClassName)}>
           {columns.map((column) => (
             <th key={column.key} className={cn("px-2.5 py-2", thClassName)}>
               {(column?.thRender && column?.thRender()) || column.content}
@@ -29,11 +35,11 @@ export function Table<T>(props: TTableData<T>) {
           ))}
         </tr>
       </thead>
-      <tbody className={cn("divide-y divide-subtle-1", tBodyClassName)}>
+      <tbody className={cn("divide-y divide-subtle", tBodyClassName)}>
         {data.map((item) => (
           <tr
             key={keyExtractor(item)}
-            className={cn("divide-x divide-subtle-1 text-13 text-secondary", tBodyTrClassName)}
+            className={cn("divide-x divide-subtle text-13 text-secondary", tBodyTrClassName)}
           >
             {columns.map((column) => (
               <td key={`${column.key}-${keyExtractor(item)}`} className={cn("px-2.5 py-2", tdClassName)}>

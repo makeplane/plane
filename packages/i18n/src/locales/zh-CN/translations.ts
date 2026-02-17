@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "项目",
@@ -1929,6 +1935,43 @@ export default {
         title: "尚无估算系统",
         description: "创建一组估算以传达每个工作项的工作量。",
         primary_button: "添加估算系统",
+      },
+    },
+    features: {
+      cycles: {
+        title: "周期",
+        short_title: "周期",
+        description: "在灵活的时间段内安排工作，以适应该项目独特的节奏和步调。",
+        toggle_title: "启用周期",
+        toggle_description: "在集中的时间段内规划工作。",
+      },
+      modules: {
+        title: "模块",
+        short_title: "模块",
+        description: "将工作组织成具有专门负责人和受让人的子项目。",
+        toggle_title: "启用模块",
+        toggle_description: "项目成员将能够创建和编辑模块。",
+      },
+      views: {
+        title: "视图",
+        short_title: "视图",
+        description: "保存自定义排序、过滤器和显示选项，或与团队共享。",
+        toggle_title: "启用视图",
+        toggle_description: "项目成员将能够创建和编辑视图。",
+      },
+      pages: {
+        title: "页面",
+        short_title: "页面",
+        description: "创建和编辑自由格式的内容：笔记、文档、任何内容。",
+        toggle_title: "启用页面",
+        toggle_description: "项目成员将能够创建和编辑页面。",
+      },
+      intake: {
+        title: "接收",
+        short_title: "接收",
+        description: "让非成员分享错误、反馈和建议；而不会中断您的工作流程。",
+        toggle_title: "启用接收",
+        toggle_description: "允许项目成员在应用中创建接收请求。",
       },
     },
   },

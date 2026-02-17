@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "프로젝트",
@@ -1964,6 +1970,43 @@ export default {
         title: "추정 시스템 없음",
         description: "작업 항목당 작업량을 전달하는 추정 세트를 생성하세요.",
         primary_button: "추정 시스템 추가",
+      },
+    },
+    features: {
+      cycles: {
+        title: "사이클",
+        short_title: "사이클",
+        description: "이 프로젝트의 고유한 리듬과 속도에 적응하는 유연한 기간으로 작업을 예약합니다.",
+        toggle_title: "사이클 활성화",
+        toggle_description: "집중된 기간에 작업을 계획합니다.",
+      },
+      modules: {
+        title: "모듈",
+        short_title: "모듈",
+        description: "전담 리더와 담당자가 있는 하위 프로젝트로 작업을 구성합니다.",
+        toggle_title: "모듈 활성화",
+        toggle_description: "프로젝트 멤버가 모듈을 생성하고 편집할 수 있습니다.",
+      },
+      views: {
+        title: "보기",
+        short_title: "보기",
+        description: "사용자 정의 정렬, 필터 및 표시 옵션을 저장하거나 팀과 공유합니다.",
+        toggle_title: "보기 활성화",
+        toggle_description: "프로젝트 멤버가 보기를 생성하고 편집할 수 있습니다.",
+      },
+      pages: {
+        title: "페이지",
+        short_title: "페이지",
+        description: "자유 형식 콘텐츠를 생성하고 편집합니다: 메모, 문서, 무엇이든.",
+        toggle_title: "페이지 활성화",
+        toggle_description: "프로젝트 멤버가 페이지를 생성하고 편집할 수 있습니다.",
+      },
+      intake: {
+        title: "접수",
+        short_title: "접수",
+        description: "워크플로를 방해하지 않고 비회원이 버그, 피드백 및 제안을 공유할 수 있도록 합니다.",
+        toggle_title: "접수 활성화",
+        toggle_description: "프로젝트 멤버가 앱 내에서 접수 요청을 생성할 수 있도록 허용합니다.",
       },
     },
   },

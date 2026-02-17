@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -9,13 +15,13 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspace } from "@plane/types";
 import { Spinner } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserProfile, useUserSettings } from "@/hooks/store/user";
-// plane-web imports
-import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
-import { WorkspaceService } from "@/plane-web/services";
+// services
+import { WorkspaceService } from "@/services/workspace.service";
 // local components
 import { CommonOnboardingHeader } from "../common";
 
@@ -40,11 +46,12 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
   // plane hooks
   const { t } = useTranslation();
   // store hooks
+  const { config } = useInstance();
   const { updateUserProfile } = useUserProfile();
   const { fetchCurrentUserSettings } = useUserSettings();
   const { createWorkspace, fetchWorkspaces } = useWorkspace();
 
-  const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
+  const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled ?? false;
 
   // form info
   const {
@@ -107,7 +114,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
 
   const isButtonDisabled = !isValid || invalidSlug || isSubmitting;
 
-  if (!isWorkspaceCreationEnabled) {
+  if (isWorkspaceCreationDisabled) {
     return (
       <div className="flex flex-col gap-10">
         <span className="text-center text-14 text-tertiary">
@@ -139,8 +146,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
             name="name"
             rules={{
               required: t("common.errors.required"),
-              validate: (value) =>
-                /^[\w\s-]*$/.test(value) || t("workspace_creation.errors.validation.name_alphanumeric"),
+              validate: (value) => validateWorkspaceName(value, true),
               maxLength: {
                 value: 80,
                 message: t("workspace_creation.errors.validation.name_length"),
@@ -213,7 +219,8 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                   type="text"
                   value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
                   onChange={(e) => {
-                    if (/^[a-zA-Z0-9_-]+$/.test(e.target.value)) setInvalidSlug(false);
+                    const validation = validateSlug(e.target.value);
+                    if (validation === true) setInvalidSlug(false);
                     else setInvalidSlug(true);
                     onChange(e.target.value.toLowerCase());
                   }}

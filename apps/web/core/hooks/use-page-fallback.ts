@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { EditorRefApi, CollaborationState } from "@plane/editor";
 // plane editor
@@ -59,7 +65,7 @@ export const usePageFallback = (args: TArgs) => {
       await updatePageDescription({
         description_binary: encodedBinary,
         description_html: html,
-        description: json,
+        description_json: json,
       });
     } catch (error: any) {
       console.error(error);

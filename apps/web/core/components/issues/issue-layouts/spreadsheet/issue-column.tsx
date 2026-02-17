@@ -1,10 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
 // components
 import { SPREADSHEET_COLUMNS } from "@/plane-web/components/issues/issue-layouts/utils";
-import { shouldRenderColumn } from "@/plane-web/helpers/issue-filter.helper";
+import { shouldRenderColumn } from "@/helpers/issue-filter.helper";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 
 type Props = {

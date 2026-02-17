@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export * from "./array";
 export * from "./attachment";
 export * from "./auth";
@@ -30,6 +36,7 @@ export * from "./tab-indices";
 export * from "./theme";
 export { resolveGeneralTheme } from "./theme-legacy";
 export * from "./url";
+export * from "./validation";
 export * from "./work-item-filters";
 export * from "./work-item";
 export * from "./workspace";
