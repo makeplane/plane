@@ -144,6 +144,51 @@ gitea_config_variables = [
     },
 ]
 
+ldap_config_variables = [
+    {
+        "key": "IS_LDAP_ENABLED",
+        "value": os.environ.get("IS_LDAP_ENABLED", "0"),
+        "category": "LDAP",
+        "is_encrypted": False,
+    },
+    {
+        "key": "LDAP_SERVER_URI",
+        "value": os.environ.get("LDAP_SERVER_URI", ""),
+        "category": "LDAP",
+        "is_encrypted": False,
+    },
+    {
+        "key": "LDAP_BIND_DN",
+        "value": os.environ.get("LDAP_BIND_DN", ""),
+        "category": "LDAP",
+        "is_encrypted": False,
+    },
+    {
+        "key": "LDAP_BIND_PASSWORD",
+        "value": os.environ.get("LDAP_BIND_PASSWORD", ""),
+        "category": "LDAP",
+        "is_encrypted": True,
+    },
+    {
+        "key": "LDAP_USER_SEARCH_BASE",
+        "value": os.environ.get("LDAP_USER_SEARCH_BASE", ""),
+        "category": "LDAP",
+        "is_encrypted": False,
+    },
+    {
+        "key": "LDAP_USER_FILTER",
+        "value": os.environ.get("LDAP_USER_FILTER", "(sAMAccountName=%(user)s)"),
+        "category": "LDAP",
+        "is_encrypted": False,
+    },
+    {
+        "key": "LDAP_USE_TLS",
+        "value": os.environ.get("LDAP_USE_TLS", "0"),
+        "category": "LDAP",
+        "is_encrypted": False,
+    },
+]
+
 smtp_config_variables = [
     {
         "key": "ENABLE_SMTP",
@@ -254,6 +299,7 @@ core_config_variables = [
     *github_config_variables,
     *gitlab_config_variables,
     *gitea_config_variables,
+    *ldap_config_variables,
     *smtp_config_variables,
     *llm_config_variables,
     *unsplash_config_variables,

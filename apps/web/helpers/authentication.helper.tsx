@@ -96,6 +96,13 @@ export enum EAuthenticationErrorCodes {
   ADMIN_USER_ALREADY_EXIST = "5180",
   ADMIN_USER_DOES_NOT_EXIST = "5185",
   ADMIN_USER_DEACTIVATED = "5190",
+  // LDAP
+  LDAP_NOT_CONFIGURED = "5200",
+  LDAP_SERVER_UNREACHABLE = "5201",
+  LDAP_BIND_FAILED = "5202",
+  LDAP_USER_NOT_FOUND = "5203",
+  LDAP_AUTHENTICATION_FAILED = "5204",
+  LDAP_PLANE_USER_NOT_FOUND = "5205",
   // Rate limit
   RATE_LIMIT_EXCEEDED = "5900",
 }
@@ -360,6 +367,30 @@ const errorCodeMessages: {
     title: `Admin user deactivated`,
     message: () => <div>Your account is deactivated</div>,
   },
+  [EAuthenticationErrorCodes.LDAP_NOT_CONFIGURED]: {
+    title: `LDAP not configured`,
+    message: () => `LDAP authentication is not configured. Please contact your administrator.`,
+  },
+  [EAuthenticationErrorCodes.LDAP_SERVER_UNREACHABLE]: {
+    title: `LDAP server unreachable`,
+    message: () => `Cannot connect to the LDAP server. Please try again later.`,
+  },
+  [EAuthenticationErrorCodes.LDAP_BIND_FAILED]: {
+    title: `LDAP configuration error`,
+    message: () => `LDAP service account authentication failed. Please contact your administrator.`,
+  },
+  [EAuthenticationErrorCodes.LDAP_USER_NOT_FOUND]: {
+    title: `User not found`,
+    message: () => `Staff ID not found in the directory. Please check your Staff ID.`,
+  },
+  [EAuthenticationErrorCodes.LDAP_AUTHENTICATION_FAILED]: {
+    title: `Authentication failed`,
+    message: () => `Invalid Staff ID or password. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.LDAP_PLANE_USER_NOT_FOUND]: {
+    title: `Account not activated`,
+    message: () => `Your account has not been activated yet. Please contact your administrator.`,
+  },
   [EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED]: {
     title: "",
     message: () => `Rate limit exceeded. Please try again later.`,
@@ -417,6 +448,12 @@ export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: s
     EAuthenticationErrorCodes.ADMIN_USER_ALREADY_EXIST,
     EAuthenticationErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
     EAuthenticationErrorCodes.ADMIN_USER_DEACTIVATED,
+    EAuthenticationErrorCodes.LDAP_NOT_CONFIGURED,
+    EAuthenticationErrorCodes.LDAP_SERVER_UNREACHABLE,
+    EAuthenticationErrorCodes.LDAP_BIND_FAILED,
+    EAuthenticationErrorCodes.LDAP_USER_NOT_FOUND,
+    EAuthenticationErrorCodes.LDAP_AUTHENTICATION_FAILED,
+    EAuthenticationErrorCodes.LDAP_PLANE_USER_NOT_FOUND,
     EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED,
   ];
 

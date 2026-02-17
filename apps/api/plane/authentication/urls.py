@@ -10,6 +10,7 @@ from .views import (
     SetUserPasswordEndpoint,
     ResetPasswordEndpoint,
     ChangePasswordEndpoint,
+    LDAPSignInEndpoint,
     # App
     EmailCheckEndpoint,
     GitLabCallbackEndpoint,
@@ -115,6 +116,8 @@ urlpatterns = [
         GitLabCallbackSpaceEndpoint.as_view(),
         name="space-gitlab-callback",
     ),
+    ## LDAP
+    path("ldap/sign-in/", LDAPSignInEndpoint.as_view(), name="ldap-sign-in"),
     # Email Check
     path("email-check/", EmailCheckEndpoint.as_view(), name="email-check"),
     path("spaces/email-check/", EmailCheckSpaceEndpoint.as_view(), name="email-check"),
