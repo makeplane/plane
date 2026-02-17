@@ -131,6 +131,7 @@ export const UpdatesWrapper = observer(function UpdatesWrapper({
               handleUpdateOperations={handleUpdateOperations}
               entityType={entityType}
               customTitle={customTitle}
+              disabled={!allowNew}
             />
           ))}
         </div>

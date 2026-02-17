@@ -66,6 +66,7 @@ export const EpicView = observer(function EpicView(props: IEpicView) {
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [deleteEpicModal, setDeleteEpicModal] = useState(false);
+  const [archiveEpicModal, setArchiveEpicModal] = useState(false);
   const [editEpicModal, setEditEpicModal] = useState(false);
   const [duplicateEpicModal, setDuplicateEpicModal] = useState(false);
   // refs
@@ -102,6 +103,7 @@ export const EpicView = observer(function EpicView(props: IEpicView) {
           !isAnyModalOpen &&
           !isAnyIssueModalOpen &&
           !deleteEpicModal &&
+          !archiveEpicModal &&
           !editEpicModal &&
           !deleteModalId &&
           !isAnyCustomerModalOpen &&
@@ -151,6 +153,7 @@ export const EpicView = observer(function EpicView(props: IEpicView) {
 
   const toggleEditEpicModal = (value: boolean) => setEditEpicModal(value);
   const toggleDeleteEpicModal = (value: boolean) => setDeleteEpicModal(value);
+  const toggleArchiveEpicModal = (value: boolean) => setArchiveEpicModal(value);
   const toggleDuplicateEpicModal = (value: boolean) => setDuplicateEpicModal(value);
 
   const shouldUsePortal = !embedIssue;
@@ -184,6 +187,7 @@ export const EpicView = observer(function EpicView(props: IEpicView) {
                 removeRoutePeekId={removeRoutePeekId}
                 toggleEditEpicModal={toggleEditEpicModal}
                 toggleDeleteEpicModal={toggleDeleteEpicModal}
+                toggleArchiveEpicModal={toggleArchiveEpicModal}
                 toggleDuplicateEpicModal={toggleDuplicateEpicModal}
                 handleRestoreIssue={handleRestore}
                 isArchived={is_archived}
@@ -200,6 +204,7 @@ export const EpicView = observer(function EpicView(props: IEpicView) {
                 workspaceSlug={workspaceSlug.toString()}
                 projectId={projectId.toString()}
                 epicId={issueId.toString()}
+                isArchived={is_archived}
               />
             </>
           )}

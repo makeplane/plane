@@ -1040,6 +1040,20 @@ export default {
       label: "Titolo Epic",
       required: "Il titolo dell'Epic è obbligatorio.",
     },
+    archive: {
+      description: `Solo gli epic completati o annullati
+possono essere archiviati`,
+      label: "Archivia Epic",
+      confirm_message:
+        "Sei sicuro di voler archiviare l'epic? Tutti i tuoi epic archiviati possono essere ripristinati in seguito.",
+      success: {
+        label: "Archiviazione riuscita",
+        message: "I tuoi archivi si trovano negli archivi del progetto.",
+      },
+      failed: {
+        message: "Impossibile archiviare l'epic. Riprova.",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {Elemento di lavoro} other {Elementi di lavoro}}",

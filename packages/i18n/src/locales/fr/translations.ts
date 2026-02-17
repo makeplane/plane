@@ -1048,6 +1048,20 @@ maintenant pour améliorer votre expérience !`,
       label: "Titre de l’Epic",
       required: "Le titre de l’Epic est requis.",
     },
+    archive: {
+      description: `Seuls les epics terminés ou annulés
+peuvent être archivés`,
+      label: "Archiver l'Epic",
+      confirm_message:
+        "Êtes-vous sûr de vouloir archiver l'epic ? Tous vos epics archivés pourront être restaurés plus tard.",
+      success: {
+        label: "Archivage réussi",
+        message: "Vos archives se trouvent dans les archives du projet.",
+      },
+      failed: {
+        message: "L'epic n'a pas pu être archivé. Veuillez réessayer.",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {Élément de travail} other {Éléments de travail}}",

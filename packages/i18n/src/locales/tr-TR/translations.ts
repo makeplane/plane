@@ -1039,6 +1039,20 @@ export default {
       label: "Epik Başlığı",
       required: "Epik başlığı gereklidir.",
     },
+    archive: {
+      description: `Yalnızca tamamlanmış veya iptal edilmiş
+epikler arşivlenebilir`,
+      label: "Epiki Arşivle",
+      confirm_message:
+        "Epiki arşivlemek istediğinizden emin misiniz? Arşivlenen tüm epikler daha sonra geri yüklenebilir.",
+      success: {
+        label: "Arşivleme başarılı",
+        message: "Arşivleriniz proje arşivlerinde bulunabilir.",
+      },
+      failed: {
+        message: "Epik arşivlenemedi. Lütfen tekrar deneyin.",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {İş öğesi} other {İş öğeleri}}",

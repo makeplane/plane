@@ -1043,6 +1043,20 @@ export default {
       label: "Titlu sarcină majoră",
       required: "Titlul sarcinii majore este obligatoriu.",
     },
+    archive: {
+      description: `Doar sarcinile majore finalizate sau anulate
+pot fi arhivate`,
+      label: "Arhivează sarcina majoră",
+      confirm_message:
+        "Ești sigur că vrei să arhivezi sarcina majoră? Toate sarcinile majore arhivate pot fi restaurate mai târziu.",
+      success: {
+        label: "Arhivare reușită",
+        message: "Arhivele tale se găsesc în arhivele proiectului.",
+      },
+      failed: {
+        message: "Sarcina majoră nu a putut fi arhivată. Te rugăm să încerci din nou.",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {Activitate} other {Activități}}",

@@ -27,10 +27,11 @@ type TProps = {
   workItemId: string;
   value: string[] | null;
   workspaceSlug: string;
+  disabled?: boolean;
 };
 
 export const CustomerSelect = observer(function CustomerSelect(props: TProps) {
-  const { workItemId, value, workspaceSlug, customButtonClassName } = props;
+  const { workItemId, value, workspaceSlug, customButtonClassName, disabled = false } = props;
   // hooks
   const {
     workItems: { addWorkItemsToCustomer, removeWorkItemFromCustomer },
@@ -79,7 +80,7 @@ export const CustomerSelect = observer(function CustomerSelect(props: TProps) {
       value={value || []}
       multiple
       onChange={handleChange}
-      disabled={false}
+      disabled={disabled}
     />
   );
 });

@@ -1051,6 +1051,20 @@ export default {
       label: "Epik-Titel",
       required: "Ein Titel für den Epik ist erforderlich.",
     },
+    archive: {
+      description: `Nur abgeschlossene oder abgebrochene
+Epiks können archiviert werden`,
+      label: "Epik archivieren",
+      confirm_message:
+        "Sind Sie sicher, dass Sie den Epik archivieren möchten? Alle archivierten Epiks können später wiederhergestellt werden.",
+      success: {
+        label: "Archivierung erfolgreich",
+        message: "Ihre Archive finden Sie in den Projektarchiven.",
+      },
+      failed: {
+        message: "Epik konnte nicht archiviert werden. Bitte versuchen Sie es erneut.",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {Arbeitselement} few {Arbeitselemente} other {Arbeitselemente}}",

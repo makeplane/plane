@@ -17,19 +17,21 @@ import { observer } from "mobx-react";
 import { Ellipsis } from "lucide-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS, EUserPermissionsLevel } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType, EUserProjectRoles, EIssueServiceType } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
+import { ArchiveIssueModal } from "@/components/issues/archive-issue-modal";
 // helpers
 import type { IQuickActionProps } from "@/components/issues/issue-layouts/list/list-view-types";
 // hooks
 import type { MenuItemFactoryProps } from "@/components/issues/issue-layouts/quick-action-dropdowns/helper";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane-web
 import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
@@ -41,8 +43,10 @@ import { IconButton } from "@plane/propel/icon-button";
 type TProjectEpicQuickActionProps = IQuickActionProps & {
   toggleEditEpicModal?: (value: boolean) => void;
   toggleDeleteEpicModal?: (value: boolean) => void;
+  toggleArchiveEpicModal?: (value: boolean) => void;
   toggleDuplicateEpicModal?: (value: boolean) => void;
   isPeekMode?: boolean;
+  workItemId?: string;
 };
 
 export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions(props: TProjectEpicQuickActionProps) {
@@ -50,13 +54,17 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
     issue,
     handleDelete,
     handleUpdate,
+    handleArchive,
+    handleRestore,
     readOnly = false,
     parentRef,
     toggleEditEpicModal,
     toggleDeleteEpicModal,
+    toggleArchiveEpicModal,
     toggleDuplicateEpicModal,
     isPeekMode = false,
     portalElement,
+    workItemId,
   } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -64,13 +72,16 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
+  const [archiveIssueModal, setArchiveIssueModal] = useState(false);
   const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
+  const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
   // derived values
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
+  const stateDetails = getStateById(issue.state_id);
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
   const isEditingAllowed =
@@ -80,6 +91,10 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
       workspaceSlug?.toString(),
       issue?.project_id ?? ""
     ) && !readOnly;
+  const isArchivingAllowed = !issue?.archived_at && isEditingAllowed;
+  const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
+  const isRestoringAllowed = !!issue?.archived_at && isEditingAllowed;
+
   const isDeletingAllowed = isEditingAllowed;
 
   const duplicateEpicPayload = pick(
@@ -113,9 +128,18 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
     if (toggleDeleteEpicModal) toggleDeleteEpicModal(true);
   };
 
+  const customArchiveAction = async () => {
+    setArchiveIssueModal(true);
+    if (toggleArchiveEpicModal) toggleArchiveEpicModal(true);
+  };
+
   const customDuplicateAction = () => {
     setDuplicateWorkItemModal(true);
     if (toggleDuplicateEpicModal) toggleDuplicateEpicModal(true);
+  };
+
+  const customRestoreAction = async () => {
+    if (handleRestore) await handleRestore();
   };
 
   // Menu items using helper
@@ -125,13 +149,18 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
     projectIdentifier,
     activeLayout,
     isEditingAllowed,
+    isArchivingAllowed,
+    isRestoringAllowed,
     isDeletingAllowed,
+    isInArchivableGroup,
     setIssueToEdit,
     setCreateUpdateIssueModal: customEditAction,
     setDeleteIssueModal: customDeleteAction,
+    setArchiveIssueModal: customArchiveAction,
     setDuplicateWorkItemModal: customDuplicateAction,
     handleDelete,
     handleUpdate,
+    handleRestore: customRestoreAction,
     storeType: EIssuesStoreType.PROJECT,
   };
 
@@ -144,13 +173,14 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
       if (item.key === "edit") {
         return {
           ...item,
-          shouldRender: isEditingAllowed && !isPeekMode,
+          shouldRender: isEditingAllowed && !isPeekMode && !issue?.archived_at && !workItemId,
         };
       }
       // Customize delete action for epic
       if (item.key === "delete") {
         return {
           ...item,
+          shouldRender: isEditingAllowed,
         };
       }
       // Hide copy link in peek mode
@@ -174,6 +204,16 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
           if (toggleDeleteEpicModal) toggleDeleteEpicModal(false);
         }}
         onSubmit={handleDelete}
+        isEpic
+      />
+      <ArchiveIssueModal
+        data={issue}
+        isOpen={archiveIssueModal}
+        handleClose={() => {
+          setArchiveIssueModal(false);
+          if (toggleArchiveEpicModal) toggleArchiveEpicModal(false);
+        }}
+        onSubmit={handleArchive}
         isEpic
       />
       <CreateUpdateEpicModal

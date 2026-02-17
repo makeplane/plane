@@ -1036,6 +1036,19 @@ pro lepší zážitek!`,
       label: "Název epiku",
       required: "Název epiku je povinný.",
     },
+    archive: {
+      description: `Lze archivovat pouze dokončené nebo zrušené
+epiky`,
+      label: "Archivovat epiku",
+      confirm_message: "Opravdu chcete archivovat epiku? Všechny archivované epiky lze později obnovit.",
+      success: {
+        label: "Archivace úspěšná",
+        message: "Vaše archivy najdete v archivech projektu.",
+      },
+      failed: {
+        message: "Epiku se nepodařilo archivovat. Zkuste to prosím znovu.",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {Pracovní položka} few {Pracovní položky} other {Pracovních položek}}",

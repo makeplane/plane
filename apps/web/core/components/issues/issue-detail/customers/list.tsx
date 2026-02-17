@@ -26,10 +26,11 @@ type TProps = {
   isPeekView: boolean;
   workspaceSlug: string;
   workItemId: string;
+  disabled?: boolean;
 };
 
 export const SidebarCustomersList = observer(function SidebarCustomersList(props: TProps) {
-  const { isPeekView, workspaceSlug, workItemId } = props;
+  const { isPeekView, workspaceSlug, workItemId, disabled = false } = props;
   // hooks
   const { t } = useTranslation();
   const {
@@ -55,6 +56,7 @@ export const SidebarCustomersList = observer(function SidebarCustomersList(props
           workspaceSlug={workspaceSlug}
           value={customerIds || null}
           workItemId={workItemId}
+          disabled={disabled}
         />
       )}
     </SidebarPropertyListItem>

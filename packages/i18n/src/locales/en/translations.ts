@@ -844,6 +844,19 @@ now to enhance your experience!`,
       label: "Epic Title",
       required: "Epic title is required.",
     },
+    archive: {
+      description: `Only completed or canceled
+epics can be archived`,
+      label: "Archive Epic",
+      confirm_message: "Are you sure you want to archive the epic? All your archived epics can be restored later.",
+      success: {
+        label: "Archive success",
+        message: "Your archives can be found in project archives.",
+      },
+      failed: {
+        message: "Epic could not be archived. Please try again.",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {Work item} other {Work items}}",

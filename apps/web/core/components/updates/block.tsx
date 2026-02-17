@@ -40,9 +40,18 @@ type TProps = {
   handleUpdateOperations: TUpdateOperations;
   entityType: EUpdateEntityType;
   customTitle?: (updateData: TUpdate) => React.ReactNode;
+  disabled?: boolean;
 };
 export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
-  const { updateId, workspaceSlug, entityId, handleUpdateOperations, entityType, customTitle } = props;
+  const {
+    updateId,
+    workspaceSlug,
+    entityId,
+    handleUpdateOperations,
+    entityType,
+    customTitle,
+    disabled = false,
+  } = props;
   //router
   const { projectId } = useParams();
   // state
@@ -133,8 +142,8 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
               }}
               setDeleteModalId={setDeleteModalId}
               deleteModalId={deleteModalId}
-              allowEdit={isCreator}
-              allowDelete={isProjectAdmin || isWorkspaceAdmin || isCreator}
+              allowEdit={isCreator && !disabled}
+              allowDelete={(isProjectAdmin || isWorkspaceAdmin || isCreator) && !disabled}
             />
           </div>
 
@@ -154,10 +163,12 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
                 currentUser={currentUser}
                 entityType={entityType}
                 handleUpdateOperations={handleUpdateOperations}
+                disabled={disabled}
               />
               <button
                 className="text-tertiary bg-layer-1 rounded-sm h-7 flex px-2 gap-2 text-11 font-medium items-center"
                 onClick={() => setShowComment(!showComment)}
+                disabled={disabled}
               >
                 <MessageCircle className="h-3.5 w-3.5 m-auto" />
                 {updateData.comments_count > 0 && (
@@ -175,6 +186,7 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
               entityId={entityId}
               entityType={entityType}
               handleUpdateOperations={handleUpdateOperations}
+              disabled={disabled}
             />
           )}
         </div>

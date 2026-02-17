@@ -35,10 +35,11 @@ export type TIssueDetailRoot = {
   workspaceSlug: string;
   projectId: string;
   epicId: string;
+  isArchived: boolean;
 };
 
 export const EpicDetailRoot = observer(function EpicDetailRoot(props: TIssueDetailRoot) {
-  const { editorRef, workspaceSlug, projectId, epicId } = props;
+  const { editorRef, workspaceSlug, projectId, epicId, isArchived } = props;
   // hooks
   const { fetchEpicAnalytics } = useEpicAnalytics();
   const {
@@ -78,14 +79,14 @@ export const EpicDetailRoot = observer(function EpicDetailRoot(props: TIssueDeta
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           epicId={epicId}
-          disabled={!isEditable}
+          disabled={!isEditable || isArchived}
         />
 
         <EpicDetailsSidebar
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           epicId={epicId}
-          disabled={!isEditable}
+          disabled={!isEditable || isArchived}
         />
       </LayoutRoot>
 

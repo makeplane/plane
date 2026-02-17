@@ -29,10 +29,11 @@ type Props = {
   handleClose: () => void;
   isOpen: boolean;
   onSubmit?: () => Promise<void>;
+  isEpic?: boolean;
 };
 
 export function ArchiveIssueModal(props: Props) {
-  const { dataId, data, isOpen, handleClose, onSubmit } = props;
+  const { dataId, data, isOpen, handleClose, onSubmit, isEpic = false } = props;
   const { t } = useTranslation();
   // states
   const [isArchiving, setIsArchiving] = useState(false);
@@ -78,9 +79,11 @@ export function ArchiveIssueModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.LG}>
       <div className="px-5 py-4">
         <h3 className="text-18 font-medium 2xl:text-20">
-          {t("issue.archive.label")} {projectDetails?.identifier} {issue.sequence_id}
+          {isEpic ? t("epic.archive.label") : t("issue.archive.label")} {projectDetails?.identifier} {issue.sequence_id}
         </h3>
-        <p className="mt-3 text-13 text-secondary">{t("issue.archive.confirm_message")}</p>
+        <p className="mt-3 text-13 text-secondary">
+          {isEpic ? t("epic.archive.confirm_message") : t("issue.archive.confirm_message")}
+        </p>
         <div className="mt-3 flex justify-end gap-2">
           <Button variant="secondary" size="lg" onClick={onClose}>
             {t("common.cancel")}

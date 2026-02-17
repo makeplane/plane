@@ -167,6 +167,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
               }
             )}
             onClick={() => toggleInitiativeModal(epicId)}
+            disabled={disabled}
           >
             {epicDetails.initiative_ids?.length
               ? t("initiatives.placeholder", { count: epicDetails.initiative_ids?.length })
@@ -253,7 +254,12 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
         </SidebarPropertyListItem>
 
         {isCustomersFeatureEnabled && (
-          <WorkItemSidebarCustomers workItemId={epicId} workspaceSlug={workspaceSlug} isPeekView={false} />
+          <WorkItemSidebarCustomers
+            workItemId={epicId}
+            workspaceSlug={workspaceSlug}
+            isPeekView={false}
+            disabled={disabled}
+          />
         )}
 
         {isMilestonesFeatureEnabled && (
@@ -263,6 +269,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             updateWorkItemMilestone={(milestoneId) =>
               epicOperations.updateWorkItemMilestone?.(workspaceSlug, projectId, epicId, milestoneId)
             }
+            disabled={disabled}
           />
         )}
 

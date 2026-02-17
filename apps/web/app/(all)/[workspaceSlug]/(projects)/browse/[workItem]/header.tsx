@@ -13,7 +13,6 @@
 
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { Header, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -32,16 +31,21 @@ import { ProjectArchivedIssueDetailsHeader } from "../../projects/(detail)/[proj
 import { EpicItemDetailsHeader } from "./epic-header";
 import { WorkItemDetailsHeader } from "./work-item-header";
 
-export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDetailsHeader() {
-  // router
-  const { workspaceSlug, workItem } = useParams();
+type TProjectWorkItemDetailsHeaderProps = {
+  workspaceSlug: string;
+  workItem: string;
+};
+export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDetailsHeader(
+  props: TProjectWorkItemDetailsHeaderProps
+) {
+  const { workspaceSlug, workItem } = props;
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   const {
     issue: { getIssueById, getIssueIdByIdentifier },
   } = useIssueDetail();
   // derived values
-  const issueId = getIssueIdByIdentifier(workItem?.toString());
+  const issueId = getIssueIdByIdentifier(workItem);
   const issueDetails = issueId ? getIssueById(issueId?.toString()) : undefined;
   // preferences
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
@@ -49,6 +53,10 @@ export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDet
   // Memoize header component selection to avoid unnecessary re-renders
   const headerComponent = useMemo(() => {
     if (!issueDetails) return <WorkItemDetailsHeader />;
+
+    if (issueDetails.is_epic) {
+      return <EpicItemDetailsHeader workspaceSlug={workspaceSlug} workItem={workItem} />;
+    }
 
     if (issueDetails.archived_at) {
       return <ProjectArchivedIssueDetailsHeader />;
@@ -58,12 +66,8 @@ export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDet
       return <ProjectIntakeDetailHeader />;
     }
 
-    if (issueDetails.is_epic) {
-      return <EpicItemDetailsHeader />;
-    }
-
     return <WorkItemDetailsHeader />;
-  }, [issueDetails]);
+  }, [issueDetails, workspaceSlug, workItem]);
 
   return (
     <>

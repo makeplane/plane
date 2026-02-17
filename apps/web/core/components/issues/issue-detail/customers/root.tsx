@@ -22,12 +22,13 @@ type TWorkItemSidebarCustomerList = {
   workItemId: string;
   workspaceSlug: string;
   isPeekView?: boolean;
+  disabled?: boolean;
 };
 
 export const WorkItemSidebarCustomers = observer(function WorkItemSidebarCustomers(
   props: TWorkItemSidebarCustomerList
 ) {
-  const { workItemId, workspaceSlug, isPeekView = false } = props;
+  const { workItemId, workspaceSlug, isPeekView = false, disabled = false } = props;
 
   // hooks
   const {
@@ -52,7 +53,12 @@ export const WorkItemSidebarCustomers = observer(function WorkItemSidebarCustome
           </div>
         </Loader>
       ) : (
-        <SidebarCustomersList isPeekView={isPeekView} workspaceSlug={workspaceSlug} workItemId={workItemId} />
+        <SidebarCustomersList
+          isPeekView={isPeekView}
+          workspaceSlug={workspaceSlug}
+          workItemId={workItemId}
+          disabled={disabled}
+        />
       )}
     </>
   );

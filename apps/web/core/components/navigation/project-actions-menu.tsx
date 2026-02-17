@@ -109,7 +109,7 @@ export function ProjectActionsMenu({
       {isAuthorized && (
         <CustomMenu.MenuItem
           onClick={() => {
-            navigate(`/${workspaceSlug}/projects/${project?.id}/archives/issues`);
+            navigate(`/${workspaceSlug}/projects/${project?.id}/archives/issues/`);
           }}
         >
           <div className="flex items-center justify-start gap-2 cursor-pointer">

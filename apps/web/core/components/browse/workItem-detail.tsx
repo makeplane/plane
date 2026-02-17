@@ -38,23 +38,21 @@ export const WorkItemDetailRoot = observer(function WorkItemDetailRoot(props: TW
   // router
   const router = useAppRouter();
 
-  if (workItem.is_epic) {
-    return (
-      <EpicDetailRoot editorRef={editorRef} workspaceSlug={workspaceSlug} projectId={projectId} epicId={workItemId} />
-    );
-  }
+  const isEpic = !!workItem.is_epic;
 
   return (
     <>
       {workItem?.archived_at && (
         <Banner
           variant="warning"
-          title="This work item has been archived. Visit the Archives section to restore it."
+          title={`This ${isEpic ? "epic" : "work item"} has been archived. Visit the Archives section to restore it.`}
           icon={<ArchiveIcon className="size-4" />}
           action={
             <Button
               variant="secondary"
-              onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
+              onClick={() =>
+                router.push(`/${workspaceSlug}/projects/${projectId}/archives/${isEpic ? "epics" : "issues"}/`)
+              }
             >
               Go to archives
             </Button>
@@ -62,12 +60,23 @@ export const WorkItemDetailRoot = observer(function WorkItemDetailRoot(props: TW
           className="border-b border-subtle"
         />
       )}
-      <IssueDetailRoot
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        issueId={workItemId}
-        is_archived={!!workItem.archived_at}
-      />
+
+      {isEpic ? (
+        <EpicDetailRoot
+          editorRef={editorRef}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          epicId={workItemId}
+          isArchived={!!workItem.archived_at}
+        />
+      ) : (
+        <IssueDetailRoot
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={workItemId}
+          is_archived={!!workItem.archived_at}
+        />
+      )}
     </>
   );
 });

@@ -1024,6 +1024,19 @@ export default {
       label: "Epic 標題",
       required: "Epic 標題為必填。",
     },
+    archive: {
+      description: `只有已完成或取消的 Epic
+可以歸檔`,
+      label: "歸檔 Epic",
+      confirm_message: "確定要歸檔此 Epic 嗎？所有已歸檔的 Epic 之後都可以還原。",
+      success: {
+        label: "歸檔成功",
+        message: "可在專案歸檔中查看您的歸檔。",
+      },
+      failed: {
+        message: "無法歸檔 Epic，請重試。",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {工作事項} other {工作事項}}",

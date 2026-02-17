@@ -1038,6 +1038,20 @@ dla lepszego doświadczenia!`,
       label: "Tytuł epiku",
       required: "Tytuł epiku jest wymagany.",
     },
+    archive: {
+      description: `Tylko ukończone lub anulowane epiki
+mogą być zarchiwizowane`,
+      label: "Archiwizuj epik",
+      confirm_message:
+        "Czy na pewno chcesz zarchiwizować epik? Wszystkie zarchiwizowane epiki można później przywrócić.",
+      success: {
+        label: "Archiwizacja udana",
+        message: "Twoje archiwa znajdują się w archiwach projektu.",
+      },
+      failed: {
+        message: "Nie udało się zarchiwizować epiku. Spróbuj ponownie.",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {Element pracy} few {Elementy pracy} other {Elementów pracy}}",

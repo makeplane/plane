@@ -1030,6 +1030,19 @@ export default {
       label: "에픽 제목",
       required: "에픽 제목이 필요합니다.",
     },
+    archive: {
+      description: `완료되었거나 취소된 에픽만
+아카이브할 수 있습니다`,
+      label: "에픽 아카이브",
+      confirm_message: "에픽을 아카이브하시겠습니까? 아카이브한 에픽은 나중에 복원할 수 있습니다.",
+      success: {
+        label: "아카이브 성공",
+        message: "아카이브는 프로젝트 아카이브에서 확인할 수 있습니다.",
+      },
+      failed: {
+        message: "에픽을 아카이브할 수 없습니다. 다시 시도해 주세요.",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {작업 항목} other {작업 항목}}",

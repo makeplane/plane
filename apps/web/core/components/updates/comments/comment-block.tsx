@@ -31,9 +31,10 @@ type TProps = {
   entityId: string;
   operations: TUpdateOperations;
   entityType: EUpdateEntityType;
+  disabled?: boolean;
 };
 export const CommentBlock = observer(function CommentBlock(props: TProps) {
-  const { updateId, commentData, workspaceSlug, entityId, operations, entityType } = props;
+  const { updateId, commentData, workspaceSlug, entityId, operations, entityType, disabled = false } = props;
   const [isEditing, setIsEditing] = useState(false);
   // hooks
   const { getUserDetails } = useMember();
@@ -66,6 +67,8 @@ export const CommentBlock = observer(function CommentBlock(props: TProps) {
                 }}
                 setDeleteModalId={setDeleteModalId}
                 deleteModalId={deleteModalId}
+                allowEdit={!disabled}
+                allowDelete={!disabled}
               />
             )}
           </div>
@@ -77,6 +80,7 @@ export const CommentBlock = observer(function CommentBlock(props: TProps) {
             currentUser={currentUser}
             handleUpdateOperations={operations}
             entityType={entityType}
+            disabled={disabled}
           />
         </div>
       )}

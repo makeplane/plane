@@ -11,10 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import { Sidebar } from "lucide-react";
+import { ArchiveIcon, Sidebar } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EpicIcon } from "@plane/propel/icons";
@@ -33,28 +32,36 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+import { useIssues } from "@/hooks/store/use-issues";
 // plane-web components
 import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
 import { ConvertWorkItemAction } from "@/components/epics/conversions";
 import { ProjectEpicQuickActions } from "@/components/epics/quick-actions/epic-quick-action";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 
-export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader() {
+type TEpicItemDetailsHeaderProps = {
+  workspaceSlug: string;
+  workItem: string;
+};
+export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader(props: TEpicItemDetailsHeaderProps) {
+  const { workspaceSlug, workItem } = props;
   // router
   const router = useAppRouter();
-  const { workspaceSlug, workItem } = useParams();
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
   // store hooks
   const { getProjectById, loader } = useProject();
   const {
-    issue: { getIssueById, getIssueIdByIdentifier },
+    issues: { restoreIssue },
+  } = useIssues(EIssuesStoreType.ARCHIVED_EPIC);
+  const {
+    issue: { getIssueById, getIssueIdByIdentifier, archiveIssue },
   } = useIssueDetail(EIssueServiceType.EPICS);
   const { allowPermissions } = useUserPermissions();
   const { updateIssue, removeIssue } = useIssuesActions(EIssuesStoreType.EPIC);
   const { epicDetailSidebarCollapsed, toggleEpicDetailSidebar } = useAppTheme();
   // derived values
-  const epicId = getIssueIdByIdentifier(workItem?.toString());
+  const epicId = getIssueIdByIdentifier(workItem);
   const issueDetails = epicId ? getIssueById(epicId.toString()) : undefined;
   const projectId = issueDetails ? issueDetails?.project_id : undefined;
   const projectDetails = projectId ? getProjectById(projectId?.toString()) : undefined;
@@ -62,7 +69,7 @@ export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader() {
   const isEditingAllowed = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT,
-    workspaceSlug?.toString(),
+    workspaceSlug,
     projectId?.toString()
   );
 
@@ -72,6 +79,18 @@ export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader() {
         // TODO: add toast
         router.push(`/${workspaceSlug}/projects/${projectId}/epics`);
       });
+    }
+  };
+
+  const handleArchiveIssue = async () => {
+    if (issueDetails?.project_id) {
+      await archiveIssue(workspaceSlug, issueDetails.project_id, issueDetails.id);
+    }
+  };
+
+  const handleRestoreIssue = async () => {
+    if (issueDetails?.project_id) {
+      await restoreIssue(workspaceSlug, issueDetails.project_id, issueDetails.id);
     }
   };
 
@@ -86,20 +105,30 @@ export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader() {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-          {projectId && (
-            <ProjectBreadcrumbWithPreference workspaceSlug={workspaceSlug?.toString()} projectId={projectId} />
+          {projectId && <ProjectBreadcrumbWithPreference workspaceSlug={workspaceSlug} projectId={projectId} />}
+
+          {issueDetails?.archived_at && (
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink
+                  label="Archives"
+                  href={`/${workspaceSlug}/projects/${projectId}/archives/issues/`}
+                  icon={<ArchiveIcon className="h-4 w-4 text-tertiary" />}
+                />
+              }
+            />
           )}
+
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
                 label="Epics"
                 href={`/${workspaceSlug}/projects/${projectId}/epics/`}
                 icon={<EpicIcon className="h-4 w-4 text-tertiary" />}
-                isLast
               />
             }
-            isLast
           />
+
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
@@ -110,9 +139,9 @@ export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader() {
         </Breadcrumbs>
       </Header.LeftItem>
       <Header.RightItem>
-        {epicId && projectId && (
+        {epicId && projectId && !issueDetails?.archived_at && (
           <IssueSubscription
-            workspaceSlug={workspaceSlug?.toString()}
+            workspaceSlug={workspaceSlug}
             projectId={projectId?.toString()}
             issueId={epicId}
             serviceType={EIssueServiceType.EPICS}
@@ -120,7 +149,7 @@ export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader() {
         )}
         {issueDetails && (
           <div ref={parentRef} className="flex items-center gap-2">
-            <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
+            <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
               <ConvertWorkItemAction
                 workItemId={issueDetails?.id}
                 conversionType={EWorkItemConversionType.WORK_ITEM}
@@ -131,8 +160,11 @@ export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader() {
               parentRef={parentRef}
               issue={issueDetails}
               handleDelete={handleDelete}
+              handleArchive={handleArchiveIssue}
+              handleRestore={handleRestoreIssue}
               handleUpdate={handleUpdate}
               readOnly={!isEditingAllowed}
+              workItemId={workItem}
             />
             <Sidebar
               className={cn("size-4 cursor-pointer", {

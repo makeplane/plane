@@ -24,6 +24,7 @@ import type { ITeamProjectWorkItemsFilter, ITeamProjectWorkItems } from "@/store
 import type { ITeamViewIssues, ITeamViewIssuesFilter } from "@/store/work-items/team-views";
 import type { IWorkspaceIssues } from "@/store/work-items/workspace/issue.store";
 import type { IArchivedIssues, IArchivedIssuesFilter } from "@/store/work-items/archived";
+import type { IArchivedEpics, IArchivedEpicsFilter } from "@/store/issue/archived-epics";
 import type { ICycleIssues, ICycleIssuesFilter } from "@/store/work-items/cycle";
 import type { IModuleIssues, IModuleIssuesFilter } from "@/store/work-items/module";
 import type { IProfileIssues, IProfileIssuesFilter } from "@/store/work-items/profile";
@@ -77,6 +78,10 @@ export type TStoreIssues = {
   [EIssuesStoreType.ARCHIVED]: defaultIssueStore & {
     issues: IArchivedIssues;
     issuesFilter: IArchivedIssuesFilter;
+  };
+  [EIssuesStoreType.ARCHIVED_EPIC]: defaultIssueStore & {
+    issues: IArchivedEpics;
+    issuesFilter: IArchivedEpicsFilter;
   };
   [EIssuesStoreType.DEFAULT]: defaultIssueStore & {
     issues: IProjectIssues;
@@ -150,6 +155,11 @@ export const useIssues = <T extends EIssuesStoreType>(storeType?: T): TStoreIssu
       return merge(defaultStore, {
         issues: context.issue.archivedIssues,
         issuesFilter: context.issue.archivedIssuesFilter,
+      }) as TStoreIssues[T];
+    case EIssuesStoreType.ARCHIVED_EPIC:
+      return merge(defaultStore, {
+        issues: context.issue.archivedEpics,
+        issuesFilter: context.issue.archivedEpicsFilter,
       }) as TStoreIssues[T];
     case EIssuesStoreType.EPIC:
       return merge(defaultStore, {

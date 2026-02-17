@@ -1044,6 +1044,19 @@ export default {
       label: "Tiêu đề sử thi",
       required: "Tiêu đề sử thi là bắt buộc",
     },
+    archive: {
+      description: `Chỉ những sử thi đã hoàn thành hoặc đã hủy
+mới có thể được lưu trữ`,
+      label: "Lưu trữ sử thi",
+      confirm_message: "Bạn có chắc chắn muốn lưu trữ sử thi này? Tất cả sử thi đã lưu trữ có thể được khôi phục sau.",
+      success: {
+        label: "Lưu trữ thành công",
+        message: "Kho lưu trữ của bạn có thể tìm thấy trong kho lưu trữ dự án.",
+      },
+      failed: {
+        message: "Không thể lưu trữ sử thi. Vui lòng thử lại.",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {mục công việc} other {mục công việc}}",

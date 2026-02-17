@@ -271,7 +271,8 @@ class EpicArchiveViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.EPICS)
     def archive(self, request, slug, project_id, pk=None):
-        issue = Issue.issue_objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk, type__is_epic=True)
+
         if issue.state.group not in ["completed", "cancelled"]:
             return Response(
                 {
@@ -304,7 +305,9 @@ class EpicArchiveViewSet(BaseViewSet):
             project_id=project_id,
             archived_at__isnull=False,
             pk=pk,
+            type__is_epic=True,
         )
+
         issue_activity.delay(
             type="issue.activity.updated",
             requested_data=json.dumps({"archived_at": None}),

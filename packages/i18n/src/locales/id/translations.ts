@@ -1041,6 +1041,19 @@ export default {
       label: "Judul Epik",
       required: "Judul epik wajib diisi.",
     },
+    archive: {
+      description: `Hanya epik yang selesai atau dibatalkan
+yang dapat diarsipkan`,
+      label: "Arsipkan Epik",
+      confirm_message: "Apakah Anda yakin ingin mengarsipkan epik? Semua epik yang diarsipkan dapat dipulihkan nanti.",
+      success: {
+        label: "Arsip berhasil",
+        message: "Arsip Anda dapat ditemukan di arsip proyek.",
+      },
+      failed: {
+        message: "Epik tidak dapat diarsipkan. Silakan coba lagi.",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {Item Kerja} other {Item Kerja}}",

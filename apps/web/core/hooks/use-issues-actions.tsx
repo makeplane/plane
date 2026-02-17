@@ -63,6 +63,7 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
   const globalIssueActions = useGlobalIssueActions();
   const profileIssueActions = useProfileIssueActions();
   const archivedIssueActions = useArchivedIssueActions();
+  const archivedEpicsActions = useArchivedEpicsActions();
   const workspaceDraftIssueActions = useWorkspaceDraftIssueActions();
   const teamProjectWorkItemsActions = useTeamProjectWorkItemsActions();
 
@@ -77,6 +78,8 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
       return teamWorkItemActions;
     case EIssuesStoreType.ARCHIVED:
       return archivedIssueActions;
+    case EIssuesStoreType.ARCHIVED_EPIC:
+      return archivedEpicsActions;
     case EIssuesStoreType.CYCLE:
       return cycleIssueActions;
     case EIssuesStoreType.MODULE:
@@ -661,6 +664,62 @@ const useArchivedIssueActions = () => {
     async (projectId: string | undefined | null, issueId: string) => {
       if (!workspaceSlug || !projectId) return;
       return await issues.restoreIssue(workspaceSlug, projectId, issueId);
+    },
+    [issues.restoreIssue]
+  );
+
+  const updateFilters = useCallback(
+    async (projectId: string, filterType: TSupportedFilterTypeForUpdate, filters: TSupportedFilterForUpdate) => {
+      if (!workspaceSlug) return;
+      return await issuesFilter.updateFilters(workspaceSlug, projectId, filterType, filters);
+    },
+    [issuesFilter.updateFilters]
+  );
+
+  return useMemo(
+    () => ({
+      fetchIssues,
+      fetchNextIssues,
+      removeIssue,
+      restoreIssue,
+      updateFilters,
+    }),
+    [fetchIssues, fetchNextIssues, removeIssue, restoreIssue, updateFilters]
+  );
+};
+
+const useArchivedEpicsActions = () => {
+  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const projectId = routerProjectId?.toString();
+  const { issues, issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED_EPIC);
+
+  const fetchIssues = useCallback(
+    async (loadType: TLoader, options: IssuePaginationOptions) => {
+      if (!workspaceSlug || !projectId) return;
+      return issues.fetchIssues(workspaceSlug.toString(), projectId.toString(), loadType, options);
+    },
+    [issues.fetchIssues, workspaceSlug, projectId]
+  );
+  const fetchNextIssues = useCallback(
+    async (groupId?: string, subGroupId?: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return issues.fetchNextIssues(workspaceSlug.toString(), projectId.toString(), groupId, subGroupId);
+    },
+    [issues.fetchNextIssues, workspaceSlug, projectId]
+  );
+
+  const removeIssue = useCallback(
+    async (projectId: string | undefined | null, epicId: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return await issues.removeIssue(workspaceSlug, projectId, epicId);
+    },
+    [issues.removeIssue]
+  );
+  const restoreIssue = useCallback(
+    async (projectId: string | undefined | null, epicId: string) => {
+      if (!workspaceSlug || !projectId) return;
+      return await issues.restoreIssue(workspaceSlug, projectId, epicId);
     },
     [issues.restoreIssue]
   );

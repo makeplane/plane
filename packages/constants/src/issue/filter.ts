@@ -560,6 +560,34 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       },
     },
   },
+  archived_epics: {
+    filters: [
+      "priority",
+      "state_group",
+      "state_id",
+      "assignee_id",
+      "created_by_id",
+      "label_id",
+      "start_date",
+      "target_date",
+      "name",
+      "milestone_id",
+    ],
+    layoutOptions: {
+      list: {
+        display_properties: EPICS_DISPLAY_PROPERTIES_KEYS,
+        display_filters: {
+          group_by: ["state", "priority", "labels", "assignees", "created_by", null],
+          order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+          type: ["active", "backlog"],
+        },
+        extra_options: {
+          access: true,
+          values: ["show_empty_groups"],
+        },
+      },
+    },
+  },
   sub_work_items: {
     filters: ["priority", "state_id", "assignee_id", "start_date", "target_date", "type_id"],
     layoutOptions: {
@@ -597,6 +625,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
 export const ISSUE_STORE_TO_FILTERS_MAP: Partial<Record<EIssuesStoreType, TFilterPropertiesByPageType>> = {
   [EIssuesStoreType.PROJECT]: ISSUE_DISPLAY_FILTERS_BY_PAGE.issues,
   [EIssuesStoreType.EPIC]: ISSUE_DISPLAY_FILTERS_BY_PAGE.epics,
+  [EIssuesStoreType.ARCHIVED_EPIC]: ISSUE_DISPLAY_FILTERS_BY_PAGE.archived_epics,
 };
 
 export const SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE: (keyof IIssueFilterOptions)[] = [

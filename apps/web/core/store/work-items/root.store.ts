@@ -37,6 +37,8 @@ import type { IWorkspaceMembership } from "@/store/member/workspace/membership.s
 // issues data store
 import type { IArchivedIssuesFilter, IArchivedIssues } from "./archived";
 import { ArchivedIssuesFilter, ArchivedIssues } from "./archived";
+import type { IArchivedEpics, IArchivedEpicsFilter } from "../issue/archived-epics";
+import { ArchivedEpicsFilter, ArchivedEpics } from "../issue/archived-epics";
 import type { ICycleIssuesFilter, ICycleIssues } from "./cycle";
 import { CycleIssuesFilter, CycleIssues } from "./cycle";
 import type { IIssueStore } from "./issue.store";
@@ -119,6 +121,9 @@ export interface IIssueRootStore {
   archivedIssuesFilter: IArchivedIssuesFilter;
   archivedIssues: IArchivedIssues;
 
+  archivedEpicsFilter: IArchivedEpicsFilter;
+  archivedEpics: IArchivedEpics;
+
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
 
@@ -186,6 +191,9 @@ export class IssueRootStore implements IIssueRootStore {
 
   archivedIssuesFilter: IArchivedIssuesFilter;
   archivedIssues: IArchivedIssues;
+
+  archivedEpicsFilter: IArchivedEpicsFilter;
+  archivedEpics: IArchivedEpics;
 
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
@@ -277,6 +285,9 @@ export class IssueRootStore implements IIssueRootStore {
 
     this.archivedIssuesFilter = new ArchivedIssuesFilter(this);
     this.archivedIssues = new ArchivedIssues(this, this.archivedIssuesFilter);
+
+    this.archivedEpicsFilter = new ArchivedEpicsFilter(this);
+    this.archivedEpics = new ArchivedEpics(this, this.archivedEpicsFilter);
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.issueCalendarView = new CalendarStore(this);

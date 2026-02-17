@@ -1049,6 +1049,20 @@ agora para melhorar sua experiência!`,
       label: "Título do Épico",
       required: "O título do épico é obrigatório.",
     },
+    archive: {
+      description: `Apenas épicos concluídos ou cancelados
+podem ser arquivados`,
+      label: "Arquivar Épico",
+      confirm_message:
+        "Tem certeza de que deseja arquivar o épico? Todos os seus épicos arquivados podem ser restaurados posteriormente.",
+      success: {
+        label: "Arquivamento bem-sucedido",
+        message: "Seus arquivos podem ser encontrados nos arquivos do projeto.",
+      },
+      failed: {
+        message: "Não foi possível arquivar o épico. Por favor, tente novamente.",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {Item de trabalho} other {Itens de trabalho}}",

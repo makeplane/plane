@@ -16,11 +16,14 @@ import { Outlet } from "react-router";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { ProjectArchivesHeader } from "../header";
-
-export default function ProjectArchiveModulesLayout() {
+import type { Route } from "./+types/layout";
+export default function ProjectArchiveModulesLayout({ params }: Route.ComponentProps) {
+  const { workspaceSlug, projectId } = params;
   return (
     <>
-      <AppHeader header={<ProjectArchivesHeader activeTab="modules" />} />
+      <AppHeader
+        header={<ProjectArchivesHeader workspaceSlug={workspaceSlug} projectId={projectId} activeTab="modules" />}
+      />
       <ContentWrapper>
         <Outlet />
       </ContentWrapper>

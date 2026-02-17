@@ -59,7 +59,7 @@ export const EpicCustomersRoot = observer(function EpicCustomersRoot(props: TPro
           </Loader>
         </>
       ) : (
-        requestIds.length === 0 && <CustomerRequestEmptyState addRequest={handleFormOpen} />
+        requestIds.length === 0 && <CustomerRequestEmptyState addRequest={handleFormOpen} disabled={disabled} />
       )}
       <WorkItemRequestCollapsibleContent workItemId={epicId} workspaceSlug={workspaceSlug} disabled={disabled} isTabs />
     </>

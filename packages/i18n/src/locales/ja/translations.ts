@@ -1035,6 +1035,19 @@ export default {
       label: "エピックのタイトル",
       required: "エピックのタイトルは必須です。",
     },
+    archive: {
+      description: `完了またはキャンセルされたエピックのみ
+アーカイブできます`,
+      label: "エピックをアーカイブ",
+      confirm_message: "エピックをアーカイブしてもよろしいですか？アーカイブしたエピックは後で復元できます。",
+      success: {
+        label: "アーカイブ成功",
+        message: "アーカイブはプロジェクトのアーカイブで確認できます。",
+      },
+      failed: {
+        message: "エピックをアーカイブできませんでした。もう一度お試しください。",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {作業項目} other {作業項目}}",

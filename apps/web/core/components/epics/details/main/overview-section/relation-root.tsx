@@ -15,7 +15,7 @@ import type { FC } from "react";
 import React from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { getButtonStyling } from "@plane/propel/button";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { WorkItemsIcon } from "@plane/propel/icons";
 import { EIssueServiceType } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -57,9 +57,9 @@ export const EpicRelationsOverviewRoot = observer(function EpicRelationsOverview
                 issueServiceType={EIssueServiceType.EPICS}
                 disabled={disabled}
                 customButton={
-                  <span className={cn(getButtonStyling("secondary", "base"), "font-medium px-2 py-1")}>
+                  <Button variant="secondary" size="base" disabled={disabled}>
                     Add relation
-                  </span>
+                  </Button>
                 }
               />
             }

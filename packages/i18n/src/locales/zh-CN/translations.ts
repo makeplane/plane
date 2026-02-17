@@ -1023,6 +1023,19 @@ export default {
       label: "史诗标题",
       required: "史诗标题为必填项",
     },
+    archive: {
+      description: `只有已完成或已取消的史诗
+可以归档`,
+      label: "归档史诗",
+      confirm_message: "确定要归档该史诗吗？所有已归档的史诗之后都可以恢复。",
+      success: {
+        label: "归档成功",
+        message: "可在项目归档中查看您的归档。",
+      },
+      failed: {
+        message: "无法归档史诗，请重试。",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {工作项} other {工作项}}",

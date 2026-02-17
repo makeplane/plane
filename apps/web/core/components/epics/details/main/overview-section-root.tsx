@@ -48,12 +48,19 @@ export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props)
       {
         key: "issues",
         label: "Work items",
-        content: <EpicIssuesOverviewRoot workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} />,
+        content: (
+          <EpicIssuesOverviewRoot
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            epicId={epicId}
+            disabled={disabled}
+          />
+        ),
       },
       {
         key: "relations",
         label: "Relations",
-        content: <EpicRelationsOverviewRoot workspaceSlug={workspaceSlug} epicId={epicId} />,
+        content: <EpicRelationsOverviewRoot workspaceSlug={workspaceSlug} epicId={epicId} disabled={disabled} />,
       },
     ];
 
@@ -83,7 +90,7 @@ export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props)
         <RelationActionButton issueId={epicId} issueServiceType={EIssueServiceType.EPICS} disabled={disabled} />
       ),
       "customer-requests": (
-        <button onClick={() => toggleCreateUpdateRequestModal(epicId)}>
+        <button onClick={() => toggleCreateUpdateRequestModal(epicId)} disabled={disabled}>
           <PlusIcon className="h-4 w-4" />
         </button>
       ),

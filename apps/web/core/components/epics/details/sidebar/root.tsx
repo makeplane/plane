@@ -65,6 +65,7 @@ export const EpicDetailsSidebar = observer(function EpicDetailsSidebar(props: TE
             entityId={epicId}
             entityType={EUpdateEntityType.EPIC}
             handleUpdateOperations={handleUpdateOperations}
+            allowNew={!disabled}
           />
         </SidebarContentWrapper>
       ),

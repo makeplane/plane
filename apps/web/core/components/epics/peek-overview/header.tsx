@@ -70,8 +70,9 @@ export type PeekOverviewHeaderProps = {
   embedIssue: boolean;
   toggleEditEpicModal: (value: boolean) => void;
   toggleDeleteEpicModal: (value: boolean) => void;
+  toggleArchiveEpicModal: (value: boolean) => void;
   toggleDuplicateEpicModal: (value: boolean) => void;
-  handleRestoreIssue: () => void;
+  handleRestoreIssue: () => Promise<void>;
   isSubmitting: "submitting" | "submitted" | "saved";
 };
 
@@ -85,16 +86,18 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
     isArchived,
     toggleEditEpicModal,
     toggleDeleteEpicModal,
+    toggleArchiveEpicModal,
     toggleDuplicateEpicModal,
     embedIssue = false,
     removeRoutePeekId,
+    handleRestoreIssue,
     isSubmitting,
   } = props;
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
   // store hooks
   const {
-    issue: { getIssueById },
+    issue: { getIssueById, archiveIssue },
     setPeekIssue,
   } = useIssueDetail(EIssueServiceType.EPICS);
 
@@ -115,7 +118,6 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
     issueId,
     projectIdentifier,
     sequenceId: issue?.sequence_id,
-    isArchived,
   });
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -147,6 +149,12 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
         return;
       });
     }
+  };
+
+  const handleArchiveIssue = async () => {
+    await archiveIssue(workspaceSlug, projectId, issueId);
+    // check and remove if issue is peeked
+    removeRoutePeekId();
   };
 
   const handleUpdate = async (data: Partial<TIssue>) => {
@@ -208,12 +216,14 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
       </div>
       <div className="flex items-center gap-x-4">
         <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
-        <IssueSubscription
-          serviceType={EIssueServiceType.EPICS}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-        />
+        {!isArchived && (
+          <IssueSubscription
+            serviceType={EIssueServiceType.EPICS}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+          />
+        )}
         <div className="flex items-center gap-4">
           <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
             <ConvertWorkItemAction
@@ -231,10 +241,13 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
                 parentRef={parentRef}
                 issue={issue}
                 handleDelete={handleDelete}
+                handleArchive={handleArchiveIssue}
+                handleRestore={handleRestoreIssue}
                 handleUpdate={handleUpdate}
                 readOnly={!isEditingAllowed}
                 toggleEditEpicModal={toggleEditEpicModal}
                 toggleDeleteEpicModal={toggleDeleteEpicModal}
+                toggleArchiveEpicModal={toggleArchiveEpicModal}
                 toggleDuplicateEpicModal={toggleDuplicateEpicModal}
                 isPeekMode
               />

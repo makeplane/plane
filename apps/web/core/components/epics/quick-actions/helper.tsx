@@ -25,8 +25,19 @@ export const useEpicMenuItems = (props: MenuItemFactoryProps): TContextMenuItem[
       factory.createCopyMenuItem(props.workspaceSlug),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
+      factory.createArchiveMenuItem(),
+      factory.createRestoreMenuItem(),
       factory.createDeleteMenuItem(),
     ],
+    [factory, props.workspaceSlug]
+  );
+};
+
+export const useArchivedEpicMenuItems = (props: MenuItemFactoryProps): TContextMenuItem[] => {
+  const factory = useMenuItemFactory(props);
+
+  return useMemo(
+    () => [factory.createRestoreMenuItem(), factory.createOpenInNewTabMenuItem(), factory.createCopyLinkMenuItem()],
     [factory, props.workspaceSlug]
   );
 };

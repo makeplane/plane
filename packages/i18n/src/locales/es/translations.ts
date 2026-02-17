@@ -1051,6 +1051,20 @@ ahora para mejorar tu experiencia!`,
       label: "Título del Epic",
       required: "El título del epic es obligatorio.",
     },
+    archive: {
+      description: `Solo los epics completados o cancelados
+pueden ser archivados`,
+      label: "Archivar Epic",
+      confirm_message:
+        "¿Estás seguro de que quieres archivar el epic? Todos tus epics archivados pueden restaurarse más tarde.",
+      success: {
+        label: "Archivo exitoso",
+        message: "Tus archivos se encuentran en los archivos del proyecto.",
+      },
+      failed: {
+        message: "No se pudo archivar el epic. Por favor, inténtalo de nuevo.",
+      },
+    },
   },
   issue: {
     label: "{count, plural, one {Elemento de trabajo} other {Elementos de trabajo}}",

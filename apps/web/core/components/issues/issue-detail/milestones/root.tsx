@@ -24,12 +24,13 @@ type TWorkItemSideBarMilestoneItemProps = {
   projectId: string;
   milestoneId: string | undefined;
   updateWorkItemMilestone: (milestoneId: string | undefined) => Promise<void> | undefined;
+  disabled?: boolean;
 };
 
 export const WorkItemSideBarMilestoneItem = observer(function WorkItemSideBarMilestoneItem(
   props: TWorkItemSideBarMilestoneItemProps
 ) {
-  const { projectId, milestoneId, updateWorkItemMilestone } = props;
+  const { projectId, milestoneId, updateWorkItemMilestone, disabled = false } = props;
 
   // handlers
   const handleChange = async (milestoneId: string | undefined) => {
@@ -49,6 +50,7 @@ export const WorkItemSideBarMilestoneItem = observer(function WorkItemSideBarMil
         value={milestoneId}
         onChange={(milestoneId) => void handleChange(milestoneId)}
         buttonClassName="h-7.5 px-2"
+        disabled={disabled}
       />
     </SidebarPropertyListItem>
   );

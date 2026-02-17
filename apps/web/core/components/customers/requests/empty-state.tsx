@@ -11,21 +11,19 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/propel/button";
+import { Button } from "@plane/propel/button";
 import { CustomerRequestIcon } from "@plane/propel/icons";
-import { cn } from "@plane/utils";
 import { SectionEmptyState } from "@/components/common/layout/main/common/empty-state";
 
 type TProps = {
   addRequest: () => void;
+  disabled?: boolean;
 };
 
 export function CustomerRequestEmptyState(props: TProps) {
-  const { addRequest } = props;
+  const { addRequest, disabled = false } = props;
   // i18n
   const { t } = useTranslation();
   return (
@@ -34,12 +32,9 @@ export function CustomerRequestEmptyState(props: TProps) {
       subHeading={t("customers.requests.empty_state.list.description")}
       icon={<CustomerRequestIcon className="size-5" />}
       actionElement={
-        <span
-          onClick={addRequest}
-          className={cn(getButtonStyling("secondary", "base"), "font-medium px-2 py-1 cursor-pointer")}
-        >
+        <Button variant="secondary" size="base" onClick={addRequest} disabled={disabled}>
           {t("customers.requests.empty_state.list.button")}
-        </span>
+        </Button>
       }
     />
   );

@@ -50,7 +50,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
     ? archivedIssueIdFromRouter?.toString()
     : (getIssueIdByIdentifier(workItem?.toString()) ?? "");
 
-  const [projectIdentifier] = workItem?.toString()?.split("-");
+  const [projectIdentifier] = workItem ? workItem.toString().split("-") : [];
 
   const projectId = projectIdFromRouter
     ? projectIdFromRouter?.toString()
