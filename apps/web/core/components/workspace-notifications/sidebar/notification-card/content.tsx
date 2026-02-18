@@ -120,7 +120,7 @@ const createBaseNotificationContentMap = (t: ReturnType<typeof useTranslation>["
         : convertMinutesToHoursMinutesString(Number(oldValue)),
     showConnector: true,
   }),
-};
+});
 
 // Helper to get content details from maps
 const getNotificationContentDetails = (

@@ -104,6 +104,8 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
+    env_file:
+      - .env
 
   plane-db:
     container_name: plane-db
@@ -162,6 +164,7 @@ services:
       - ${LISTEN_HTTP_PORT}:80
       - ${LISTEN_HTTPS_PORT}:443
     environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-localhost}
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
       BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
     depends_on:
