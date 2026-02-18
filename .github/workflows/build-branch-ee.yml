@@ -174,7 +174,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Admin Build and Push
-        uses: makeplane/actions/build-push@v1.3.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -197,7 +197,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Web Build and Push
-        uses: makeplane/actions/build-push@v1.3.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -220,7 +220,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Space Build and Push
-        uses: makeplane/actions/build-push@v1.3.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -243,7 +243,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Live Build and Push
-        uses: makeplane/actions/build-push@v1.3.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -266,7 +266,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Silo Build and Push
-        uses: makeplane/actions/build-push@v1.3.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -289,7 +289,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Backend Build and Push
-        uses: makeplane/actions/build-push@v1.3.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -312,7 +312,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Proxy Build and Push
-        uses: makeplane/actions/build-push@v1.3.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -349,7 +349,7 @@ jobs:
           echo "PRIVATE_KEY=${PRIVATE_KEY}" >> $GITHUB_ENV
 
       - name: Monitor Build and Push
-        uses: makeplane/actions/build-push@v1.3.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -378,7 +378,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Email Build and Push
-        uses: makeplane/actions/build-push@v1.3.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -401,7 +401,7 @@ jobs:
     needs: [branch_build_setup]
     steps:
       - name: Plane PI Build and Push
-        uses: makeplane/actions/build-push@v1.3.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
@@ -458,7 +458,7 @@ jobs:
           name: aio-assets-dist
 
       - name: AIO Build and Push
-        uses: makeplane/actions/build-push@v1.3.0
+        uses: makeplane/actions/build-push@v1.4.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
