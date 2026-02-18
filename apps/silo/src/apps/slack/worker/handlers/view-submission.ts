@@ -609,9 +609,9 @@ async function createWorkItemFromViewSubmission(
       throw new Error("Issue id and project id are required for update mode");
     }
 
-    issue = await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
-      ...parsedData.data,
-    });
+    // Omit description_html to avoid overwriting the existing description on update
+    const { description_html, ...updateData } = parsedData.data;
+    issue = await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, updateData);
   } else {
     issue = await planeClient.issue.create(workspaceConnection.workspace_slug, parsedData.data.project, {
       ...parsedData.data,
