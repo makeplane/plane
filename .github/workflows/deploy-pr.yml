@@ -39,6 +39,7 @@ jobs:
     steps:
       - name: Guidelines
         uses: peter-evans/create-or-update-comment@v3
+        continue-on-error: true
         with:
           token: ${{ secrets.PAT }}
           issue-number: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}
@@ -50,6 +51,7 @@ jobs:
 
       - name: Add a comment on the PR with link to workflow run
         uses: peter-evans/create-or-update-comment@v3
+        continue-on-error: true
         with:
           token: ${{ secrets.PAT }}
           issue-number: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}
@@ -505,6 +507,8 @@ jobs:
           spec:
             database: ${DATABASE_NAME}
             dropOnDelete: true
+            schemas:
+              - public
           ---
           apiVersion: db.movetokube.com/v1alpha1
           kind: PostgresUser
@@ -638,6 +642,7 @@ jobs:
 
       - name: Comment URL to access plane deployment
         uses: peter-evans/create-or-update-comment@v3
+        continue-on-error: true
         with:
           token: ${{ secrets.PAT }}
           issue-number: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}
