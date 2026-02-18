@@ -32,6 +32,17 @@ class StaffEndpoint(BaseAPIView):
 
     permission_classes = [WorkSpaceAdminPermission]
 
+    ALLOWED_ORDERINGS = {
+        "staff_id", "-staff_id",
+        "display_name", "-display_name",
+        "department__name", "-department__name",
+        "employment_status", "-employment_status",
+        "position", "-position",
+        "job_grade", "-job_grade",
+        "date_of_joining", "-date_of_joining",
+        "created_at", "-created_at",
+    }
+
     def get(self, request, slug):
         staff = (
             StaffProfile.objects.filter(
@@ -57,10 +68,23 @@ class StaffEndpoint(BaseAPIView):
                 | Q(user__first_name__icontains=search)
                 | Q(user__last_name__icontains=search)
                 | Q(user__display_name__icontains=search)
+                | Q(phone__icontains=search)
             )
 
-        serializer = StaffProfileSerializer(staff, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # Ordering
+        ordering = request.query_params.get("ordering", "staff_id")
+        if ordering not in self.ALLOWED_ORDERINGS:
+            ordering = "staff_id"
+
+        # Use cursor-based pagination from BasePaginator
+        return self.paginate(
+            request=request,
+            queryset=staff,
+            on_results=lambda results: StaffProfileSerializer(results, many=True).data,
+            default_per_page=50,
+            max_per_page=200,
+            order_by=ordering,
+        )
 
     def post(self, request, slug):
         """Create staff: auto-create User + WorkspaceMember + ProjectMember."""
@@ -441,6 +465,106 @@ class StaffStatsEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class StaffBulkActionEndpoint(BaseAPIView):
+    """Bulk operations on staff: transfer, change status, delete."""
+
+    permission_classes = [WorkSpaceAdminPermission]
+
+    def post(self, request, slug):
+        action = request.data.get("action")
+        staff_ids = request.data.get("staff_ids", [])
+
+        if not staff_ids or not isinstance(staff_ids, list):
+            return Response(
+                {"error": "staff_ids must be a non-empty list"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if len(staff_ids) > 100:
+            return Response(
+                {"error": "Cannot process more than 100 staff at a time"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        workspace = Workspace.objects.get(slug=slug)
+        staff_qs = StaffProfile.objects.filter(
+            workspace=workspace,
+            id__in=staff_ids,
+            deleted_at__isnull=True,
+        ).select_related("user", "department")
+
+        if action == "transfer":
+            return self._bulk_transfer(request, workspace, staff_qs)
+        elif action == "status":
+            return self._bulk_status(request, staff_qs)
+        elif action == "delete":
+            return self._bulk_delete(staff_qs)
+        else:
+            return Response(
+                {"error": "Invalid action. Must be 'transfer', 'status', or 'delete'."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def _bulk_transfer(self, request, workspace, staff_qs):
+        department_id = request.data.get("department_id")
+        if not department_id:
+            return Response(
+                {"error": "department_id is required for transfer"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        new_dept = Department.objects.filter(
+            pk=department_id,
+            workspace=workspace,
+            deleted_at__isnull=True,
+        ).first()
+        if not new_dept:
+            return Response(
+                {"error": "Department not found"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        with transaction.atomic():
+            for staff in staff_qs:
+                old_dept = staff.department
+                user = staff.user
+                # Remove from old project
+                if old_dept and old_dept.linked_project:
+                    ProjectMember.objects.filter(
+                        project=old_dept.linked_project, member=user
+                    ).delete()
+                # Update department
+                staff.department = new_dept
+                staff.save(update_fields=["department"])
+                # Add to new project
+                if new_dept.linked_project:
+                    role = 20 if staff.is_department_manager else 15
+                    ProjectMember.objects.get_or_create(
+                        project=new_dept.linked_project,
+                        member=user,
+                        defaults={"role": role},
+                    )
+
+        return Response({"updated": staff_qs.count()}, status=status.HTTP_200_OK)
+
+    def _bulk_status(self, request, staff_qs):
+        new_status = request.data.get("employment_status")
+        valid_statuses = ["active", "probation", "resigned", "suspended", "transferred"]
+        if new_status not in valid_statuses:
+            return Response(
+                {"error": f"Invalid status. Must be one of: {', '.join(valid_statuses)}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        updated = staff_qs.update(employment_status=new_status)
+        return Response({"updated": updated}, status=status.HTTP_200_OK)
+
+    def _bulk_delete(self, staff_qs):
+        count = staff_qs.count()
+        staff_qs.delete()
+        return Response({"deleted": count}, status=status.HTTP_204_NO_CONTENT)
 
 
 def _create_staff(workspace, department, data, created_by):

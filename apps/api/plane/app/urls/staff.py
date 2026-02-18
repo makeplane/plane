@@ -6,6 +6,7 @@ from plane.app.views.workspace.staff import (
     StaffTransferEndpoint,
     StaffDeactivateEndpoint,
     StaffBulkImportEndpoint,
+    StaffBulkActionEndpoint,
     StaffExportEndpoint,
     StaffStatsEndpoint,
 )
@@ -20,6 +21,11 @@ urlpatterns = [
         "workspaces/<str:slug>/staff/bulk-import/",
         StaffBulkImportEndpoint.as_view(http_method_names=["post"]),
         name="staff-bulk-import",
+    ),
+    path(
+        "workspaces/<str:slug>/staff/bulk-actions/",
+        StaffBulkActionEndpoint.as_view(http_method_names=["post"]),
+        name="staff-bulk-actions",
     ),
     path(
         "workspaces/<str:slug>/staff/export/",
@@ -47,3 +53,4 @@ urlpatterns = [
         name="staff-deactivate",
     ),
 ]
+
