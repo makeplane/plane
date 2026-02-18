@@ -1,0 +1,162 @@
+TIME TRACKING FEATURE - CODE REVIEW SUMMARY
+=============================================
+Date: 2026-02-18 23:10
+Overall Score: 7/10 (Solid, needs critical fixes)
+Status: HOLD FOR FIXES before merge
+
+CRITICAL ISSUES (Must Fix)
+==========================
+1. Serializer lacks duration_minutes validation
+   - File: apps/api/plane/app/serializers/worklog.py
+   - Risk: Zero/negative/huge durations accepted
+   - Fix: Add validate_duration_minutes() method
+
+2. Race condition in optimistic delete
+   - File: apps/web/core/store/worklog.store.ts (lines 138-151)
+   - Risk: Concurrent deletes can corrupt state
+   - Fix: Track in-flight requests, prevent duplicates
+
+3. Missing workspace membership check
+   - File: apps/api/plane/app/views/workspace/time_tracking.py (line 72)
+   - Risk: Info disclosure across workspaces
+   - Fix: Verify WorkspaceMember exists before returning summary
+
+4. No future date validation on backend
+   - File: apps/api/plane/app/views/issue/worklog.py
+   - Risk: Backdated/forward-dated worklogs in reports
+   - Fix: Add validate_logged_at() to serializer
+
+HIGH PRIORITY ISSUES
+====================
+5. Missing project membership check on list endpoint
+   - Returns 200 with [] instead of 403 when no access
+   - Fix: Add explicit ProjectMember check
+
+6. Weak error handling in service
+   - catch((e) => throw e?.response?.data) fails on network errors
+   - Fix: Add proper error handling with status/message
+
+7. Timezone handling inconsistency
+   - Client uses local time, server assumes UTC
+   - Multi-timezone teams will see wrong dates
+   - Fix: Document timezone assumptions or convert to UTC
+
+8. Unhandled null in form state
+   - parseDisplayToMinutes() lacks null checks
+   - Risk: State corruption leads to NaN
+   - Fix: Add default values (hours ?? 0)
+
+9. List endpoint returns empty instead of permission error
+   - UX issue: Can't distinguish "no worklogs" from "no permission"
+   - Fix: Return 403 explicitly
+
+10. Unbounded workspace summary query
+    - No pagination/limit on large result sets
+    - Can return 100K+ worklogs, huge JSON
+    - Fix: Add limit parameter with max cap
+
+MEDIUM PRIORITY ISSUES
+======================
+11. Missing null handling in issue name display
+    - Issue deleted → issue_name=null → renders "null" string
+    - Fix: Use COALESCE in query or fallback in component
+
+12. No optimistic close in modal (UX)
+    - Modal waits for full response, feels slow
+    - Fix: Close modal immediately, catch errors
+
+13. Cache/refetch logic fragile
+    - useEffect has eslint-disable; dateFrom/dateTo not in deps
+    - Works but violates React best practices
+    - Fix: Either truly mount-only or add proper deps
+
+14. Unused imports
+    - time_tracking.py imports Value, CharField, Concat but doesn't use
+    - Fix: Remove unused imports
+
+LOW PRIORITY
+============
+15. Hardcoded error message (not i18n)
+    - "Failed to load time tracking data." should use t()
+    - Fix: Add translation key
+
+POSITIVE FINDINGS
+=================
+✓ Clean architecture (models → views → service → store → components)
+✓ Proper permission decorators
+✓ Good test of database indexes
+✓ Optimistic delete with rollback
+✓ Strong TypeScript typing (few any)
+✓ Audit fields tracked (created_by, updated_by, deleted_at)
+✓ i18n ready (most messages use t())
+
+SECURITY ASSESSMENT
+===================
+SQL Injection: ✓ Safe (ORM usage)
+Permission Checks: ⚠ Partial (workspace check weak)
+Input Validation: ⚠ Duration/date not validated
+Auth Bypass: ⚠ Workspace boundary may be crossable
+Data Exposure: ✓ OK by design (workspace members see all)
+
+PERFORMANCE NOTES
+=================
+- Workspace summary query unbounded (needs pagination)
+- No caching on report page (acceptable, one-off view)
+- Store optimistic adds help perceived performance
+- Database indexes good (issue+logged_by, project+logged_at)
+
+FILES REVIEWED (18 total)
+=========================
+Backend (7):
+  - models/worklog.py
+  - serializers/worklog.py
+  - views/issue/worklog.py
+  - views/workspace/time_tracking.py
+  - migrations/0124_issue_worklog...py
+  (+ URL routing, permissions implicit)
+
+Frontend (11):
+  - types/worklog.ts
+  - constants/worklog.ts
+  - services/worklog.service.ts
+  - store/worklog.store.ts
+  - components/issues/worklog/worklog-modal.tsx
+  - components/time-tracking/time-tracking-report-page.tsx
+  - components/time-tracking/time-tracking-summary-cards.tsx
+  - components/time-tracking/time-tracking-filters.tsx
+  - components/time-tracking/time-tracking-issue-table.tsx
+  - sidebar/project-navigation-root.tsx
+  - hooks/use-worklog.ts
+
+RECOMMENDATIONS
+===============
+1. Fix critical #1-4 immediately (security/data integrity)
+2. Fix high #5-7 in same PR (permission/error handling)
+3. Schedule medium issues for next sprint
+4. Add unit tests for:
+   - Duration validation edge cases
+   - Workspace permission boundary
+   - Delete race condition
+   - Date validation
+5. Add integration tests for full worklog CRUD
+6. Consider pagination for workspace summary before scaling
+
+UNRESOLVED QUESTIONS
+====================
+- Multi-timezone support strategy?
+- Should soft delete (deleted_at) be enforced?
+- Should worklog edits create audit trail of changes?
+- Are archived workspace members included in summaries?
+- Should report default-filter to active cycle (plan mentions this)?
+- Need capacity warnings (team over-budget alerts)?
+
+NEXT STEPS
+==========
+1. Implement critical fixes #1-4
+2. Address high priority #5-7
+3. Run existing test suite (if any)
+4. Type-check for regressions
+5. Create unit tests
+6. Code review after fixes
+7. Merge to preview branch
+8. Monitor for edge cases in staging

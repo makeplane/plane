@@ -1,7 +1,7 @@
 # System Architecture
 
-**Last Updated**: 2026-02-14
-**Version**: 1.2.1
+**Last Updated**: 2026-02-18
+**Version**: 1.2.2
 **Scope**: Production deployment architecture, data flows, real-time collaboration
 
 ## High-Level System Overview
@@ -286,6 +286,7 @@ User
 │   ├── Project (1:N)
 │   │   ├── ProjectMember (1:N) → User
 │   │   ├── linked_department → Department (optional, for auto-sync)
+│   │   ├── is_time_tracking_enabled (Boolean, default=True)
 │   │   ├── Issue (1:N)
 │   │   │   ├── IssueAssignee → User (M:N)
 │   │   │   ├── IssueLabel → Label (M:N)
@@ -293,7 +294,9 @@ User
 │   │   │   ├── IssueModule → Module (1:1 soft)
 │   │   │   ├── IssueComment (1:N)
 │   │   │   ├── IssueLink (1:N)
-│   │   │   └── IssueActivity (1:N)
+│   │   │   ├── IssueActivity (1:N)
+│   │   │   ├── IssueWorkLog (1:N) - Time tracking
+│   │   │   └── estimate_time (PositiveInt, nullable) - Time estimate in minutes
 │   │   ├── Cycle (1:N)
 │   │   │   └── CycleIssue → Issue (M:N)
 │   │   ├── Module (1:N)
@@ -464,6 +467,50 @@ Request
 
 - `/[workspaceSlug]/(settings)/settings/departments/` - Department tree UI
 - `/[workspaceSlug]/(settings)/settings/staff/` - Staff table + management
+
+## Time Tracking (Work Logs)
+
+### Core Model
+
+**IssueWorkLog**: Tracks time logged on issues per member
+
+| Field              | Type                 | Purpose                          |
+| ------------------ | -------------------- | -------------------------------- |
+| `issue`            | FK → Issue           | Work log belongs to issue        |
+| `logged_by`        | FK → User            | Team member who logged time      |
+| `duration_minutes` | PositiveInt          | Minutes spent (e.g., 120 = 2hrs) |
+| `description`      | TextField            | Notes on work completed          |
+| `logged_at`        | DateField            | Date work was performed          |
+
+**Issue Fields**:
+
+- `estimate_time` (PositiveInt, nullable) - Expected duration in minutes
+- Enables comparison of estimated vs actual time
+
+**Project Flag**:
+
+- `is_time_tracking_enabled` (Boolean, default=True) - Feature toggle per project
+
+### API Endpoints
+
+| Endpoint | Method | Purpose |
+| -------- | ------ | ------- |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/` | GET | List worklogs for issue |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/` | POST | Create worklog entry |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | PATCH | Update worklog |
+| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | DELETE | Delete worklog |
+| `/api/v1/workspaces/{slug}/projects/{pid}/worklogs/summary/` | GET | Project summary (by member/issue) |
+| `/api/v1/workspaces/{slug}/time-tracking/summary/` | GET | Workspace summary |
+
+**Permissions**: ROLE.ADMIN and ROLE.MEMBER; creator can edit own logs; requires `is_time_tracking_enabled`
+
+### Frontend
+
+- **Route**: `/:workspaceSlug/projects/:projectId/time-tracking`
+- **Page**: `TimeTrackingReportPage` - Summary, filters, worklog table
+- **Store**: `WorklogStore` (MobX) - CRUD + summary queries
+- **Components**: WorklogModal, IssueWorklogProperty
+- **Sidebar Nav**: "Time Tracking" link in project navigation
 
 ## Scalability Patterns
 
@@ -671,5 +718,5 @@ Volumes:
 ---
 
 **Document Location**: `/Volumes/Data/SHBVN/plane.so/docs/system-architecture.md`
-**Lines**: ~420
-**Status**: Final
+**Lines**: ~510
+**Status**: Updated with Time Tracking API & data model

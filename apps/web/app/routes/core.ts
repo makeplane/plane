@@ -223,6 +223,13 @@ export const coreRoutes: RouteConfigEntry[] = [
               "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/intake/page.tsx"
             ),
           ]),
+          // Time Tracking
+          layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/time-tracking/layout.tsx", [
+            route(
+              ":workspaceSlug/projects/:projectId/time-tracking",
+              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/time-tracking/page.tsx"
+            ),
+          ]),
         ]),
 
         // Project Archives - Issues, Cycles, Modules

@@ -44,4 +44,5 @@ export * from "./themes";
 export * from "./user";
 export * from "./views";
 export * from "./workspace-drafts";
+export * from "./worklog";
 export * from "./workspace";

@@ -82,6 +82,10 @@ from .workspace.module import WorkspaceModulesEndpoint
 from .workspace.cycle import WorkspaceCyclesEndpoint
 from .workspace.quick_link import QuickLinkViewSet
 from .workspace.sticky import WorkspaceStickyViewSet
+from .workspace.time_tracking import (
+    ProjectWorkLogSummaryEndpoint,
+    WorkspaceWorkLogSummaryEndpoint,
+)
 
 from .state.base import StateViewSet, IntakeStateEndpoint
 from .view.base import (
@@ -139,6 +143,7 @@ from .issue.attachment import (
 )
 
 from .issue.comment import IssueCommentViewSet, CommentReactionViewSet
+from .issue.worklog import IssueWorkLogViewSet
 
 from .issue.label import LabelViewSet, BulkCreateIssueLabelsEndpoint
 

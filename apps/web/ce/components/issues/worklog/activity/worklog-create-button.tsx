@@ -4,7 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
+import { useState } from "react";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { WorklogModal } from "../worklog-modal";
 
 type TIssueActivityWorklogCreateButton = {
   workspaceSlug: string;
@@ -13,6 +16,27 @@ type TIssueActivityWorklogCreateButton = {
   disabled: boolean;
 };
 
-export function IssueActivityWorklogCreateButton(_props: TIssueActivityWorklogCreateButton) {
-  return <></>;
+export function IssueActivityWorklogCreateButton(props: TIssueActivityWorklogCreateButton) {
+  const { workspaceSlug, projectId, issueId, disabled } = props;
+  const { t } = useTranslation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  if (disabled) return null;
+
+  return (
+    <>
+      <Button variant="tertiary" size="sm" onClick={() => setIsModalOpen(true)}>
+        {t("worklog.log_time")}
+      </Button>
+      {isModalOpen && (
+        <WorklogModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+        />
+      )}
+    </>
+  );
 }

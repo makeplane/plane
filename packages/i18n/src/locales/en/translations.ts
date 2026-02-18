@@ -2754,5 +2754,26 @@ export default {
   sidebar: {
     stickies: "Stickies",
     your_work: "Your work",
+    time_tracking: "Time Tracking",
+  },
+  // Worklog / Time Tracking
+  worklog: {
+    title: "Time Tracking",
+    log_time: "Log Time",
+    estimate: "Time Estimate",
+    logged: "Logged",
+    hours: "hours",
+    minutes: "minutes",
+    description: "Description",
+    date: "Date",
+    no_entries: "No time logged yet",
+    delete_confirm: "Delete this work log?",
+    over_budget: "Over estimate",
+    on_track: "On track",
+    total_logged: "Total Logged",
+    total_estimated: "Total Estimated",
+    variance: "Variance",
+    member: "Member",
+    report: "Time Tracking Report",
   },
 } as const;

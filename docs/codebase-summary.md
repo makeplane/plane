@@ -1,7 +1,7 @@
 # Plane.so Codebase Summary
 
-**Last Updated**: 2026-02-14
-**Version**: 1.2.1
+**Last Updated**: 2026-02-18
+**Version**: 1.2.2
 **Structure**: pnpm + Turborepo monorepo
 
 ## Repository Overview
@@ -167,6 +167,54 @@ plane.so/
 - `/auth/*` → api:8000
 - `/{BUCKET_NAME}/*` → plane-minio:9000 (S3)
 - `/*` → web:3000 (frontend)
+
+### Time Tracking / Work Log Feature
+
+**Backend**:
+
+- **IssueWorkLog Model** (`plane/db/models/worklog.py`)
+  - Tracks time logged by members on issues
+  - Fields: `issue` (FK), `logged_by` (FK), `duration_minutes` (int), `description` (text), `logged_at` (date)
+  - Indexes on `(issue, logged_by)` and `(project, logged_at)` for performance
+  - Related name: `issue.issue_worklogs`
+
+- **Issue.estimate_time Field** (`plane/db/models/issue.py`)
+  - New PositiveIntegerField on Issue model
+  - Stores time estimate in minutes
+  - Nullable field for optional usage
+
+- **Project.is_time_tracking_enabled Flag** (`plane/db/models/project.py`)
+  - Boolean field defaulting to `True`
+  - Controls worklog feature availability per project
+
+- **IssueWorkLogViewSet** (`plane/app/views/issue/worklog.py`)
+  - CRUD endpoints with permission checks (ROLE.ADMIN, ROLE.MEMBER)
+  - `create`, `partial_update`, `destroy` actions
+  - Checks `is_time_tracking_enabled` before allowing operations
+  - Logs worklog activities via `issue_activity.delay()`
+
+**Frontend**:
+
+- **WorklogStore** (`apps/web/core/store/worklog.store.ts`)
+  - MobX store managing worklog state per issue
+  - Methods: `fetchWorklogs()`, `createWorklog()`, `updateWorklog()`, `deleteWorklog()`, `fetchProjectSummary()`
+  - Helpers: `getWorklogsForIssue()`, `getTotalMinutesForIssue()`
+  - Optimistic updates with rollback on error
+
+- **WorklogService** (`apps/web/core/services/worklog.service.ts`)
+  - API integration layer for worklog endpoints
+  - Methods: `listWorklogs()`, `createWorklog()`, `updateWorklog()`, `deleteWorklog()`, `getProjectSummary()`
+
+- **Components**:
+  - **WorklogModal** - Modal for creating/editing worklogs
+  - **IssueWorklogProperty** - Displays worklog data on issue detail
+  - **TimeTrackingReportPage** - Project-level time tracking report with filters/summary/table
+
+- **Route**: `/:workspaceSlug/projects/:projectId/time-tracking`
+  - Located in `(detail)/[projectId]/time-tracking/`
+  - Page component displays `TimeTrackingReportPage`
+
+- **Sidebar Nav**: "Time Tracking" sidebar item under project navigation
 
 ## Packages (Shared Libraries)
 
@@ -360,10 +408,10 @@ apps/api/
 | Backend Apps               | 2 (api, proxy)              |
 | Shared Packages            | 12+                         |
 | Total Files (approx)       | 3,100+                      |
-| Database Models            | 33                          |
+| Database Models            | 34 (includes IssueWorkLog)  |
 | Django Migrations          | 120+                        |
 | Celery Tasks               | 36+                         |
-| MobX Stores (web)          | 33                          |
+| MobX Stores (web)          | 34 (includes WorklogStore)  |
 | MobX Stores (admin)        | 5                           |
 | MobX Stores (space)        | 14                          |
 | API v0 Modules             | 18 URL modules              |
@@ -431,5 +479,5 @@ apps/api/
 ---
 
 **Document Location**: `/Volumes/Data/SHBVN/plane.so/docs/codebase-summary.md`
-**Lines**: ~480
-**Status**: Final
+**Lines**: ~520
+**Status**: Updated with Time Tracking feature
