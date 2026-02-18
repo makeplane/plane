@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import pytz
 from typing import Optional, Any
@@ -204,6 +208,9 @@ class WorkspaceMember(BaseModel):
     default_props = models.JSONField(default=get_default_props)
     issue_props = models.JSONField(default=get_issue_props)
     is_active = models.BooleanField(default=True)
+    getting_started_checklist = models.JSONField(default=dict)
+    tips = models.JSONField(default=dict)
+    explored_features = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["workspace", "member", "deleted_at"]

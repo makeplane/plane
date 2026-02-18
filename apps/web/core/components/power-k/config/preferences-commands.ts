@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback } from "react";
 import { useTheme } from "next-themes";
 import { Calendar, Earth, Languages, Palette } from "lucide-react";
@@ -32,9 +38,7 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
             message: "Reloading to apply changes...",
           });
           // reload the page after showing the toast
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500);
+          window.location.reload();
           return;
         })
         .catch(() => {

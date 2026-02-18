@@ -1,11 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 import { cn } from "@plane/utils";
 import { AuthInput } from "./auth-input";
 
-export interface AuthConfirmPasswordInputProps extends Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  "autoComplete"
-> {
+export type TAuthConfirmPasswordInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   password: string;
   label?: string;
   error?: string;
@@ -13,9 +16,8 @@ export interface AuthConfirmPasswordInputProps extends Omit<
   containerClassName?: string;
   labelClassName?: string;
   errorClassName?: string;
-  autoComplete?: "on" | "off";
   onPasswordMatchChange?: (matches: boolean) => void;
-}
+};
 
 export function AuthConfirmPasswordInput({
   password,
@@ -29,7 +31,7 @@ export function AuthConfirmPasswordInput({
   onChange,
   onPasswordMatchChange,
   ...props
-}: AuthConfirmPasswordInputProps) {
+}: TAuthConfirmPasswordInputProps) {
   const [isFocused, setIsFocused] = useState(false);
 
   const confirmPassword = value as string;
@@ -71,9 +73,9 @@ export function AuthConfirmPasswordInput({
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        autoComplete="on"
+        autoComplete="off"
       />
-      {confirmPassword && passwordsMatch && <p className="text-13 text-green-500">Passwords match</p>}
+      {confirmPassword && passwordsMatch && <p className="text-13 text-success-primary">Passwords match</p>}
     </div>
   );
 }

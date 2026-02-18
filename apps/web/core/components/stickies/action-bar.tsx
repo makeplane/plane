@@ -1,12 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Plus, StickyNote as StickyIcon } from "lucide-react";
+import { StickyNote as StickyIcon } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // plane ui
-import { RecentStickyIcon, StickyNoteIcon, CloseIcon } from "@plane/propel/icons";
+import { RecentStickyIcon, StickyNoteIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
@@ -103,7 +109,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
               setNewSticky(true);
             }}
           >
-            <Plus className="size-5 rotate-90 text-tertiary" />
+            <PlusIcon className="size-5 rotate-90 text-tertiary" />
           </button>
         </Tooltip>
       </div>

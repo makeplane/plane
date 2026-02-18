@@ -1,15 +1,18 @@
-import React, { useCallback } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useCallback } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 // components
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
-// constants
 // hooks
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
 type Props = {
@@ -39,13 +42,6 @@ export const SpreadsheetModuleColumn = observer(function SpreadsheetModuleColumn
         else modulesToAdd.push(moduleId);
       }
       changeModulesInIssue(workspaceSlug.toString(), issue.project_id, issue.id, modulesToAdd, modulesToRemove);
-
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: {
-          id: issue.id,
-        },
-      });
     },
     [workspaceSlug, issue, changeModulesInIssue]
   );

@@ -1,7 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
-import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceMember } from "@plane/types";
@@ -10,8 +15,6 @@ import { Table } from "@plane/ui";
 import { MembersLayoutLoader } from "@/components/ui/loader/layouts/members-layout-loader";
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
 import type { RowData } from "@/components/workspace/settings/member-columns";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -35,7 +38,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
     workspace: { removeMemberFromWorkspace },
   } = useMember();
   const { leaveWorkspace } = useUserPermissions();
-  const { getWorkspaceRedirectionUrl, mutateWorkspaceMembersActivity } = useWorkspace();
+  const { getWorkspaceRedirectionUrl } = useWorkspace();
   const { fetchCurrentUserSettings } = useUserSettings();
   const { t } = useTranslation();
   // derived values
@@ -47,22 +50,8 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
       await leaveWorkspace(workspaceSlug.toString());
       await fetchCurrentUserSettings();
       router.push(getWorkspaceRedirectionUrl());
-      captureSuccess({
-        eventName: MEMBER_TRACKER_EVENTS.workspace.leave,
-        payload: {
-          workspace: workspaceSlug,
-        },
-      });
     } catch (err: unknown) {
       const error = err as { error?: string };
-      const errorForCapture: Error | string = err instanceof Error ? err : String(err);
-      captureError({
-        eventName: MEMBER_TRACKER_EVENTS.workspace.leave,
-        payload: {
-          workspace: workspaceSlug,
-        },
-        error: errorForCapture,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -76,7 +65,6 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
 
     try {
       await removeMemberFromWorkspace(workspaceSlug.toString(), memberId);
-      void mutateWorkspaceMembersActivity(workspaceSlug);
     } catch (err: unknown) {
       const error = err as { error?: string };
       setToast({
@@ -124,7 +112,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
         tHeadClassName="border-b border-subtle"
         thClassName="text-left font-medium divide-x-0 text-placeholder"
         tBodyClassName="divide-y-0"
-        tBodyTrClassName="divide-x-0 p-4 h-[40px] text-secondary"
+        tBodyTrClassName="divide-x-0 p-4 h-10 text-secondary"
         tHeadTrClassName="divide-x-0"
       />
     </div>

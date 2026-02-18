@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
@@ -121,7 +127,7 @@ export function SendTestEmailModal(props: Props) {
                     </Button>
                     {sendEmailStep === ESendEmailSteps.SEND_EMAIL && (
                       <Button variant="primary" size="lg" loading={isLoading} onClick={handleSubmit} tabIndex={3}>
-                        {isLoading ? "Sending email..." : "Send email"}
+                        {isLoading ? "Sending email" : "Send email"}
                       </Button>
                     )}
                   </div>

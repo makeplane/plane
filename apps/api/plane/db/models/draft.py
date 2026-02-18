@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.conf import settings
 from django.db import models
@@ -39,7 +43,7 @@ class DraftIssue(WorkspaceBaseModel):
         blank=True,
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name", blank=True, null=True)
-    description = models.JSONField(blank=True, default=dict)
+    description_json = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)

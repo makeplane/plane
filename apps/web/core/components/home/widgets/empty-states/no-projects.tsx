@@ -1,18 +1,22 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 // mobx
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Check, Hotel } from "lucide-react";
+import { Hotel } from "lucide-react";
 // plane ui
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { MembersPropertyIcon, ProjectIcon, CloseIcon } from "@plane/propel/icons";
+import { MembersPropertyIcon, CheckIcon, ProjectIcon, CloseIcon } from "@plane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
-// helpers
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -57,7 +61,6 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
           e.preventDefault();
           e.stopPropagation();
           toggleCreateProjectModal(true);
-          captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
         },
         disabled: !canCreateProject,
       },
@@ -111,7 +114,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
       flag: "visited_profile",
       cta: {
         text: "home.empty.personalize_account.cta",
-        link: `/${workspaceSlug}/settings/account`,
+        link: `/settings/profile/general`,
         disabled: false,
       },
     },
@@ -162,7 +165,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
               <p className="text-11 text-tertiary mb-2">{t(item.description)}</p>
               {isStateComplete ? (
                 <div className="flex items-center gap-2 bg-[#17a34a] rounded-full p-1 w-fit">
-                  <Check className="size-3 text-accent-primary text-on-color" />
+                  <CheckIcon className="size-3 text-accent-primary text-on-color" />
                 </div>
               ) : (
                 !item.cta.disabled &&

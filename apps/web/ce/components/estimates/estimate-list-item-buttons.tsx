@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
-import { Trash } from "lucide-react";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
+import { TrashIcon } from "@plane/propel/icons";
 
 type TEstimateListItem = {
   estimateId: string;
@@ -22,7 +28,7 @@ export const EstimateListItemButtons = observer(function EstimateListItemButtons
         onClick={() => onDeleteClick && onDeleteClick(estimateId)}
         data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.ESTIMATES_LIST_ITEM}
       >
-        <Trash size={12} />
+        <TrashIcon width={12} height={12} />
       </button>
     </div>
   );

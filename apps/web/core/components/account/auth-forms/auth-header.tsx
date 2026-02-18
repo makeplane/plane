@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
@@ -8,8 +13,8 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { WorkspaceLogo } from "@/components/workspace/logo";
 // helpers
 import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
-import { WorkspaceService } from "@/plane-web/services";
 // services
+import { WorkspaceService } from "@/services/workspace.service";
 
 type TAuthHeader = {
   workspaceSlug: string | undefined;
@@ -101,10 +106,19 @@ export const AuthHeader = observer(function AuthHeader(props: TAuthHeader) {
       </div>
     );
 
+  return <AuthHeaderBase subHeader={subHeader} header={header} />;
+});
+
+type TAuthHeaderBase = {
+  header: React.ReactNode;
+  subHeader: string;
+};
+
+export function AuthHeaderBase(props: TAuthHeaderBase) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-h4-semibold text-primary">{typeof header === "string" ? t(header) : header}</span>
-      <span className="text-h4-semibold text-placeholder">{subHeader}</span>
+      <span className="text-h4-semibold text-primary">{props.header}</span>
+      <span className="text-h4-semibold text-placeholder">{props.subHeader}</span>
     </div>
   );
-});
+}

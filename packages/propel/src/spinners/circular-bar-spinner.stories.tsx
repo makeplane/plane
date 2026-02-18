@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { CircularBarSpinner } from "./circular-bar-spinner";
 
@@ -49,7 +55,7 @@ export const ExtraLarge: Story = {
 
 export const CustomColor: Story = {
   args: {
-    className: "text-green-500",
+    className: "text-success-primary",
   },
 };
 
@@ -91,11 +97,11 @@ export const ColorVariations: Story = {
           <p className="mt-2 text-11 text-gray-600">Blue</p>
         </div>
         <div className="text-center">
-          <CircularBarSpinner className="text-green-500" height="24px" width="24px" />
+          <CircularBarSpinner className="text-success-primary" height="24px" width="24px" />
           <p className="mt-2 text-11 text-gray-600">Green</p>
         </div>
         <div className="text-center">
-          <CircularBarSpinner className="text-red-500" height="24px" width="24px" />
+          <CircularBarSpinner className="text-danger-primary" height="24px" width="24px" />
           <p className="mt-2 text-11 text-gray-600">Red</p>
         </div>
         <div className="text-center">

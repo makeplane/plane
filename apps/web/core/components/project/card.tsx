@@ -1,13 +1,20 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Trash2, UserPlus } from "lucide-react";
+import { ArchiveRestoreIcon, Settings, UserPlus } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
+import { LinkIcon, LockIcon, NewTabIcon, TrashIcon, CheckIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
@@ -22,10 +29,10 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
+import { CoverImage } from "@/components/common/cover-image";
 import { DeleteProjectModal } from "./delete-project-modal";
 import { JoinProjectModal } from "./join-project-modal";
-import { ArchiveRestoreProjectModal } from "./settings/archive-project/archive-restore-modal";
-import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
+import { ArchiveRestoreProjectModal } from "./archive-restore-modal";
 
 type Props = {
   project: IProject;
@@ -134,7 +141,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: "Open in new tab",
-      icon: ExternalLink,
+      icon: NewTabIcon,
       shouldRender: !isMemberOfProject && !isArchived,
     },
     {
@@ -155,7 +162,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
       key: "delete",
       action: () => setDeleteProjectModal(true),
       title: "Delete",
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: isArchived && hasAdminRole,
     },
   ];
@@ -206,10 +213,10 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
         <div className="relative h-[118px] w-full rounded-t ">
           <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />
 
-          <img
-            src={getCoverImageDisplayURL(project.cover_image_url, DEFAULT_COVER_IMAGE_URL)}
+          <CoverImage
+            src={project.cover_image_url}
             alt={project.name}
-            className="absolute left-0 top-0 h-full w-full rounded-t object-cover"
+            className="absolute left-0 top-0 h-full w-full rounded-t"
           />
 
           <div className="absolute bottom-4 z-[1] flex h-10 w-full items-center justify-between gap-3 px-4">
@@ -222,7 +229,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 <h3 className="truncate font-semibold text-on-color">{project.name}</h3>
                 <span className="flex items-center gap-1.5">
                   <p className="text-11 font-medium text-on-color">{project.identifier} </p>
-                  {project.network === 0 && <Lock className="h-2.5 w-2.5 text-on-color " />}
+                  {project.network === 0 && <LockIcon className="h-2.5 w-2.5 text-on-color " />}
                 </span>
               </div>
             </div>
@@ -321,7 +328,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                       setDeleteProjectModal(true);
                     }}
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <TrashIcon className="h-3.5 w-3.5" />
                   </div>
                 </div>
               )
@@ -340,7 +347,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </Link>
                   ) : (
                     <span className="flex items-center gap-1 text-placeholder text-13">
-                      <Check className="h-3.5 w-3.5" />
+                      <CheckIcon className="h-3.5 w-3.5" />
                       Joined
                     </span>
                   ))}

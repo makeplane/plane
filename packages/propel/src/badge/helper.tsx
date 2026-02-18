@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
 
@@ -6,9 +12,9 @@ export const badgeVariants = cva("inline-flex items-center justify-center gap-1 
     variant: {
       neutral: "bg-layer-3 text-tertiary",
       brand: "bg-accent-subtle-hover text-accent-primary",
-      warning: "bg-warning-subtle text-warning",
-      success: "bg-success-subtle-1 text-success",
-      danger: "bg-danger-subtle text-danger",
+      warning: "bg-warning-subtle text-warning-primary",
+      success: "bg-success-subtle-1 text-success-primary",
+      danger: "bg-danger-subtle text-danger-primary",
     },
     size: {
       sm: "h-4 px-1 text-caption-sm-medium rounded-sm",

@@ -1,15 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Search } from "lucide-react";
 // types
-import {
-  EUserPermissions,
-  EUserPermissionsLevel,
-  MEMBER_TRACKER_ELEMENTS,
-  MEMBER_TRACKER_EVENTS,
-} from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceBulkInviteFormData } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -18,10 +19,7 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 import { CountChip } from "@/components/common/count-chip";
 import { PageHead } from "@/components/core/page-title";
 import { MemberListFiltersDropdown } from "@/components/project/dropdowns/filters/member-list";
-import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { WorkspaceMembersList } from "@/components/workspace/settings/members-list";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -29,7 +27,10 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
 import { SendWorkspaceInvitationModal, MembersActivityButton } from "@/plane-web/components/workspace/members";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+// local imports
 import type { Route } from "./+types/page";
+import { MembersWorkspaceSettingsHeader } from "./header";
 
 const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
   // states
@@ -42,7 +43,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   const {
     workspace: { workspaceMemberIds, inviteMembersToWorkspace, filtersStore },
   } = useMember();
-  const { currentWorkspace, mutateWorkspaceMembersActivity } = useWorkspace();
+  const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
 
   // derived values
@@ -55,16 +56,8 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   const handleWorkspaceInvite = async (data: IWorkspaceBulkInviteFormData) => {
     try {
       await inviteMembersToWorkspace(workspaceSlug, data);
-      void mutateWorkspaceMembersActivity(workspaceSlug);
 
       setInviteModal(false);
-
-      captureSuccess({
-        eventName: MEMBER_TRACKER_EVENTS.invite,
-        payload: {
-          emails: data.emails.map((email) => email.email),
-        },
-      });
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -77,14 +70,6 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
         const err = error as Error & { error?: string };
         message = err.error;
       }
-      captureError({
-        eventName: MEMBER_TRACKER_EVENTS.invite,
-        payload: {
-          emails: data.emails.map((email) => email.email),
-        },
-        error: error as Error,
-      });
-
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -116,7 +101,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   }
 
   return (
-    <SettingsContentWrapper size="lg">
+    <SettingsContentWrapper header={<MembersWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
       <SendWorkspaceInvitationModal
         isOpen={inviteModal}
@@ -124,12 +109,12 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
         onSubmit={handleWorkspaceInvite}
       />
       <section
-        className={cn("w-full h-full", {
+        className={cn("size-full", {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >
         <div className="flex justify-between gap-4 pb-3.5 items-center">
-          <h4 className="flex items-center gap-2.5 text-h5-medium">
+          <h4 className="flex items-center gap-2.5 text-h3-medium">
             {t("workspace_settings.settings.members.title")}
             {workspaceMemberIds && workspaceMemberIds.length > 0 && (
               <CountChip count={workspaceMemberIds.length} className="h-5 m-auto" />
@@ -137,7 +122,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
           </h4>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5">
-              <Search className="h-3.5 w-3.5 text-placeholder" />
+              <SearchIcon className="h-3.5 w-3.5 text-placeholder" />
               <input
                 className="w-full max-w-[234px] border-none bg-transparent text-body-xs-regular outline-none placeholder:text-placeholder"
                 placeholder={`${t("search")}...`}
@@ -154,12 +139,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
             />
             <MembersActivityButton workspaceSlug={workspaceSlug} />
             {canPerformWorkspaceAdminActions && (
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => setInviteModal(true)}
-                data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
-              >
+              <Button variant="primary" size="lg" onClick={() => setInviteModal(true)}>
                 {t("workspace_settings.settings.members.add_member")}
               </Button>
             )}

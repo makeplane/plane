@@ -1,16 +1,15 @@
-import type { FC } from "react";
-import React, { useEffect } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ArrowRight } from "lucide-react";
 // Plane Imports
-import {
-  CYCLE_TRACKER_EVENTS,
-  CYCLE_STATUS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  CYCLE_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { CYCLE_STATUS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ChevronRightIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -19,7 +18,6 @@ import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 // hooks
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useTimeZoneConverter } from "@/hooks/use-timezone-converter";
@@ -64,37 +62,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
 
   const submitChanges = async (data: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId || !cycleDetails.id) return;
-
-    await updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleDetails.id.toString(), data)
-      .then(() => {
-        captureElementAndEvent({
-          element: {
-            elementName: CYCLE_TRACKER_ELEMENTS.RIGHT_SIDEBAR,
-          },
-          event: {
-            eventName: CYCLE_TRACKER_EVENTS.update,
-            state: "SUCCESS",
-            payload: {
-              id: cycleDetails.id,
-            },
-          },
-        });
-      })
-
-      .catch(() => {
-        captureElementAndEvent({
-          element: {
-            elementName: CYCLE_TRACKER_ELEMENTS.RIGHT_SIDEBAR,
-          },
-          event: {
-            eventName: CYCLE_TRACKER_EVENTS.update,
-            state: "ERROR",
-            payload: {
-              id: cycleDetails.id,
-            },
-          },
-        });
-      });
+    await updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleDetails.id.toString(), data);
   };
 
   useEffect(() => {

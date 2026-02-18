@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -100,7 +106,7 @@ export const UserAvatar = observer(function UserAvatar() {
                         type="submit"
                         className="flex items-center gap-2 rounded-sm p-2 whitespace-nowrap hover:bg-layer-transparent-hover text-13 min-w-36 cursor-pointer"
                       >
-                        <LogOut size={12} className="shrink-0 text-red-500" />
+                        <LogOut size={12} className="shrink-0 text-danger-primary" />
                         <div>Sign out</div>
                       </button>
                     </form>

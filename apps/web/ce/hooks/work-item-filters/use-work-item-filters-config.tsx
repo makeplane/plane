@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo } from "react";
-import { AtSign, Briefcase, Calendar } from "lucide-react";
+import { AtSign, Briefcase } from "lucide-react";
 // plane imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
+  CalendarLayoutIcon,
   CycleGroupIcon,
   CycleIcon,
   ModuleIcon,
@@ -21,7 +28,6 @@ import type {
   IState,
   IUserLite,
   TFilterConfig,
-  TFilterValue,
   IIssueLabel,
   IModule,
   IProject,
@@ -74,9 +80,9 @@ export type TUseWorkItemFiltersConfigProps = {
 
 export type TWorkItemFiltersConfig = {
   areAllConfigsInitialized: boolean;
-  configs: TFilterConfig<TWorkItemFilterProperty, TFilterValue>[];
+  configs: TFilterConfig<TWorkItemFilterProperty>[];
   configMap: {
-    [key in TWorkItemFilterProperty]?: TFilterConfig<TWorkItemFilterProperty, TFilterValue>;
+    [key in TWorkItemFilterProperty]?: TFilterConfig<TWorkItemFilterProperty>;
   };
   isFilterEnabled: (key: TWorkItemFilterProperty) => boolean;
   members: IUserLite[];
@@ -326,7 +332,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getCreatedAtFilterConfig<TWorkItemFilterProperty>("created_at")({
         isEnabled: true,
-        filterIcon: Calendar,
+        filterIcon: CalendarLayoutIcon,
         ...operatorConfigs,
       }),
     [operatorConfigs]
@@ -337,7 +343,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getUpdatedAtFilterConfig<TWorkItemFilterProperty>("updated_at")({
         isEnabled: true,
-        filterIcon: Calendar,
+        filterIcon: CalendarLayoutIcon,
         ...operatorConfigs,
       }),
     [operatorConfigs]

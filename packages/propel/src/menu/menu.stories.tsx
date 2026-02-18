@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Settings, User, LogOut, Mail, Bell, HelpCircle } from "lucide-react";
 import { Menu } from "./menu";
@@ -228,7 +234,7 @@ export const ComplexMenu: Story = {
         </Menu.SubMenu>
         <div className="my-1 border-t border-gray-200" />
         <Menu.MenuItem onClick={() => alert("Logout")}>
-          <div className="flex items-center gap-2 text-red-500">
+          <div className="flex items-center gap-2 text-danger-primary">
             <LogOut className="h-4 w-4" />
             <span>Logout</span>
           </div>

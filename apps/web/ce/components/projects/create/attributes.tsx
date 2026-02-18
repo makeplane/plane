@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { NETWORK_CHOICES, ETabIndices } from "@plane/constants";
@@ -79,7 +84,7 @@ function ProjectAttributes(props: Props) {
                   placeholder={t("lead")}
                   multiple={false}
                   buttonVariant="border-with-text"
-                  tabIndex={5}
+                  tabIndex={getIndex("lead")}
                 />
               </div>
             );

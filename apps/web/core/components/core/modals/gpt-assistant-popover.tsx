@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Ref } from "react";
 import React, { useEffect, useState, useRef, Fragment } from "react";
 import type { Placement } from "@popperjs/core";
@@ -244,7 +250,7 @@ export function GptAssistantPopover(props: Props) {
               </div>
             )}
             {invalidResponse && (
-              <div className="text-13 text-red-500">
+              <div className="text-13 text-danger-primary">
                 No response could be generated. This may be due to insufficient content or task information. Please try
                 again.
               </div>

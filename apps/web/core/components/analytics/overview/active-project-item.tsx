@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane package imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
@@ -16,7 +22,8 @@ type Props = {
 };
 
 function CompletionPercentage({ percentage }: { percentage: number }) {
-  const percentageColor = percentage > 50 ? "bg-green-500/30 text-green-500" : "bg-red-500/30 text-red-500";
+  const percentageColor =
+    percentage > 50 ? "bg-success-primary text-success-primary" : "bg-danger-primary text-danger-primary";
   return (
     <div className={cn("flex items-center gap-2 rounded-sm p-1 text-11", percentageColor)}>
       <span>{percentage}%</span>

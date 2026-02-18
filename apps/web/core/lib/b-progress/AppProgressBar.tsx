@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef } from "react";
 import { BProgress } from "@bprogress/core";
 import { useNavigation } from "react-router";
@@ -60,7 +66,7 @@ const PROGRESS_CONFIG: Readonly<ProgressConfig> = {
  * }
  * ```
  */
-export function AppProgressBar(): null {
+export default function AppProgressBar(): null {
   const navigation = useNavigation();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startedRef = useRef<boolean>(false);

@@ -1,7 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
-import { ExternalLink, LinkIcon } from "lucide-react";
-// plane imports
+
 import { useTranslation } from "@plane/i18n";
+// plane imports
+import { LinkIcon, NewTabIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
 import type { TStaticViewTypes } from "@plane/types";
@@ -38,7 +45,7 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: t("open_in_new_tab"),
-      icon: ExternalLink,
+      icon: NewTabIcon,
     },
     {
       key: "copy-link",

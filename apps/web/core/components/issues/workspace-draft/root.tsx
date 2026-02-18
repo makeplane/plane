@@ -1,15 +1,19 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Fragment } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissionsLevel, EDraftIssuePaginationType, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel, EDraftIssuePaginationType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
@@ -72,7 +76,6 @@ export const WorkspaceDraftIssuesRoot = observer(function WorkspaceDraftIssuesRo
             label: t("workspace_projects.empty_state.no_projects.primary_button.text"),
             onClick: () => {
               toggleCreateProjectModal(true);
-              captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
             },
             disabled: !hasMemberLevelPermission,
             variant: "primary",

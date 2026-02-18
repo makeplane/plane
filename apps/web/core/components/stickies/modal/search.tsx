@@ -1,13 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useRef, useState } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Search } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useSticky } from "@/hooks/use-stickies";
 import { IconButton } from "@plane/propel/icon-button";
@@ -54,7 +59,7 @@ export const StickySearch = observer(function StickySearch() {
           variant="ghost"
           size="lg"
           className="-mr-2"
-          icon={Search}
+          icon={SearchIcon}
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
@@ -69,7 +74,7 @@ export const StickySearch = observer(function StickySearch() {
           }
         )}
       >
-        <Search className="shrink-0 size-3.5" />
+        <SearchIcon className="shrink-0 size-3.5" />
         <input
           ref={inputRef}
           className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"

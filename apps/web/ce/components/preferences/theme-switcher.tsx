@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -10,8 +16,7 @@ import { applyCustomTheme } from "@plane/utils";
 // components
 import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
 import { ThemeSwitch } from "@/components/core/theme/theme-switch";
-// helpers
-import { PreferencesSection } from "@/components/preferences/section";
+import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 
@@ -67,9 +72,7 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
         });
         // Wait for the promise to resolve, then reload after showing toast
         await updatePromise;
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        window.location.reload();
       } catch (error) {
         console.error("Error updating theme:", error);
       }
@@ -81,18 +84,16 @@ export const ThemeSwitcher = observer(function ThemeSwitcher(props: {
 
   return (
     <>
-      <PreferencesSection
+      <SettingsControlItem
         title={t(props.option.title)}
         description={t(props.option.description)}
         control={
-          <div>
-            <ThemeSwitch
-              value={currentTheme}
-              onChange={(themeOption) => {
-                void handleThemeChange(themeOption);
-              }}
-            />
-          </div>
+          <ThemeSwitch
+            value={currentTheme}
+            onChange={(themeOption) => {
+              void handleThemeChange(themeOption);
+            }}
+          />
         }
       />
       {userProfile.theme?.theme === "custom" && <CustomThemeSelector />}

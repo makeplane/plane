@@ -1,8 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, TNameDescriptionLoader } from "@plane/types";
@@ -17,8 +22,6 @@ import type { TIssueOperations } from "@/components/issues/issue-detail";
 import { IssueActivity } from "@/components/issues/issue-detail/issue-activity";
 import { IssueReaction } from "@/components/issues/issue-detail/reactions";
 import { IssueTitleInput } from "@/components/issues/title-input";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
@@ -102,10 +105,6 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
             type: TOAST_TYPE.SUCCESS,
             message: "Work item deleted successfully",
           });
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-            payload: { id: _issueId },
-          });
         } catch (error) {
           console.log("Error in deleting work item:", error);
           setToast({
@@ -113,47 +112,24 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
             type: TOAST_TYPE.ERROR,
             message: "Work item delete failed",
           });
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-            payload: { id: _issueId },
-            error: error as Error,
-          });
         }
       },
       update: async (_workspaceSlug: string, _projectId: string, _issueId: string, data: Partial<TIssue>) => {
         try {
           await inboxIssue.updateIssue(data);
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: _issueId },
-          });
         } catch (error) {
           setToast({
             title: "Work item update failed",
             type: TOAST_TYPE.ERROR,
             message: "Work item update failed",
           });
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { id: _issueId },
-            error: error as Error,
-          });
         }
       },
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-            payload: { id: issueId },
-          });
         } catch (error) {
           console.error("Error in archiving issue:", error);
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-            payload: { id: issueId },
-            error: error as Error,
-          });
         }
       },
     }),
@@ -209,7 +185,6 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
             }}
             projectId={issue.project_id}
             setIsSubmitting={(value) => setIsSubmitting(value)}
-            swrDescription={issue.description_html ?? "<p></p>"}
             workspaceSlug={workspaceSlug}
           />
         )}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane package imports
 import React from "react";
 import { TrendingDown, TrendingUp } from "lucide-react";
@@ -33,19 +39,19 @@ const sizeConfig = {
 
 const variants: Record<NonNullable<Props["variant"]>, Record<"ontrack" | "offtrack" | "atrisk", string>> = {
   simple: {
-    ontrack: "text-green-500",
+    ontrack: "text-success-primary",
     offtrack: "text-yellow-500",
-    atrisk: "text-red-500",
+    atrisk: "text-danger-primary",
   },
   outlined: {
-    ontrack: "text-green-500 border border-green-500",
+    ontrack: "text-success-primary border border-success-strong",
     offtrack: "text-yellow-500 border border-yellow-500",
-    atrisk: "text-red-500 border border-red-500",
+    atrisk: "text-danger-primary border border-danger-strong",
   },
   tinted: {
-    ontrack: "text-green-500 bg-green-500/10",
+    ontrack: "text-success-primary bg-success-subtle",
     offtrack: "text-yellow-500 bg-yellow-500/10",
-    atrisk: "text-red-500 bg-red-500/10",
+    atrisk: "text-danger-primary bg-danger-subtle",
   },
 } as const;
 

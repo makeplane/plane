@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
   DragLocationHistory,
@@ -18,8 +24,6 @@ import { ChevronRightIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IFavorite } from "@plane/types";
-// constants
-
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -31,6 +35,7 @@ import { FavoriteRoot } from "./favorite-items";
 import type { TargetData } from "./favorites.helpers";
 import { getInstructionFromPayload } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
+import { IconButton } from "@plane/propel/icon-button";
 
 export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
   // states
@@ -111,6 +116,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
           title: t("success"),
           message: t("favorite_removed_successfully"),
         });
+        return;
       })
       .catch(() => {
         setToast({
@@ -201,17 +207,16 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
           </Disclosure.Button>
           <div className="flex items-center opacity-0 pointer-events-none group-hover/favorites-button:opacity-100 group-hover/favorites-button:pointer-events-auto">
             <Tooltip tooltipHeading={t("create_folder")} tooltipContent="">
-              <button
-                type="button"
-                className="p-0.5 rounded-sm hover:bg-layer-transparent-hover flex-shrink-0 grid place-items-center"
+              <IconButton
+                variant="ghost"
+                size="sm"
                 onClick={() => {
                   setCreateNewFolder(true);
                   if (!isFavoriteMenuOpen) toggleFavoriteMenu(!isFavoriteMenuOpen);
                 }}
                 aria-label={t("aria_labels.projects_sidebar.create_favorites_folder")}
-              >
-                <FolderPlus className="size-3" />
-              </button>
+                icon={FolderPlus}
+              />
             </Tooltip>
             <Disclosure.Button
               as="button"

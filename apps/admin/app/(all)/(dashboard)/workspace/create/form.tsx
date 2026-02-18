@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,6 +14,7 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { InstanceWorkspaceService } from "@plane/services";
 import type { IWorkspace } from "@plane/types";
+import { validateSlug, validateWorkspaceName } from "@plane/utils";
 // components
 import { CustomSelect, Input } from "@plane/ui";
 // hooks
@@ -90,14 +97,7 @@ export function WorkspaceCreateForm() {
               control={control}
               name="name"
               rules={{
-                required: "This is a required field.",
-                validate: (value) =>
-                  /^[\w\s-]*$/.test(value) ||
-                  `Workspaces names can contain only (" "), ( - ), ( _ ) and alphanumeric characters.`,
-                maxLength: {
-                  value: 80,
-                  message: "Limit your name to 80 characters.",
-                },
+                validate: (value) => validateWorkspaceName(value, true),
               }}
               render={({ field: { value, ref, onChange } }) => (
                 <Input
@@ -118,7 +118,7 @@ export function WorkspaceCreateForm() {
                 />
               )}
             />
-            <span className="text-11 text-red-500">{errors?.name?.message}</span>
+            <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
           </div>
         </div>
         <div className="flex flex-col gap-1">
@@ -129,11 +129,7 @@ export function WorkspaceCreateForm() {
               control={control}
               name="slug"
               rules={{
-                required: "The URL is a required field.",
-                maxLength: {
-                  value: 48,
-                  message: "Limit your URL to 48 characters.",
-                },
+                validate: (value) => validateSlug(value),
               }}
               render={({ field: { onChange, value, ref } }) => (
                 <Input
@@ -153,11 +149,11 @@ export function WorkspaceCreateForm() {
               )}
             />
           </div>
-          {slugError && <p className="text-13 text-red-500">This URL is taken. Try something else.</p>}
+          {slugError && <p className="text-13 text-danger-primary">This URL is taken. Try something else.</p>}
           {invalidSlug && (
-            <p className="text-13 text-red-500">{`URLs can contain only ( - ), ( _ ) and alphanumeric characters.`}</p>
+            <p className="text-13 text-danger-primary">{`URLs can contain only ( - ), ( _ ) and alphanumeric characters.`}</p>
           )}
-          {errors.slug && <span className="text-11 text-red-500">{errors.slug.message}</span>}
+          {errors.slug && <span className="text-11 text-danger-primary">{errors.slug.message}</span>}
         </div>
         <div className="flex flex-col gap-1">
           <h4 className="text-13 text-tertiary">How many people will use this workspace?</h4>
@@ -187,7 +183,7 @@ export function WorkspaceCreateForm() {
               )}
             />
             {errors.organization_size && (
-              <span className="text-13 text-red-500">{errors.organization_size.message}</span>
+              <span className="text-13 text-danger-primary">{errors.organization_size.message}</span>
             )}
           </div>
         </div>

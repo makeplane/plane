@@ -1,4 +1,10 @@
 /**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+/**
  * Theme System Constants
  * Defines shade stops, default configurations, and color modes
  */
@@ -126,7 +132,7 @@ export const EDITOR_COLORS_LIGHT = {
   "light-blue": "#c5eff9",
   "dark-blue": "#c9dafb",
   purple: "#e3d8fd",
-};
+} as const;
 
 /**
  * Editor color backgrounds for dark mode

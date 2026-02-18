@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import Link from "next/link";
@@ -196,7 +202,7 @@ export function InstanceGiteaConfigForm(props: Props) {
                   loading={isSubmitting}
                   disabled={!isDirty}
                 >
-                  {isSubmitting ? "Saving..." : "Save changes"}
+                  {isSubmitting ? "Saving" : "Save changes"}
                 </Button>
                 <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
                   Go back
@@ -205,7 +211,7 @@ export function InstanceGiteaConfigForm(props: Props) {
             </div>
           </div>
           <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-layer-1/60 rounded-lg">
+            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-layer-1 rounded-lg">
               <div className="pt-2 text-18 font-medium">Plane-provided details for Gitea</div>
               {GITEA_SERVICE_FIELD.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />

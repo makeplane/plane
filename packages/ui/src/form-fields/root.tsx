@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { cn } from "@plane/utils";
 
@@ -50,8 +56,8 @@ export function ValidationMessage({ type, message, className }: ValidationMessag
       className={cn(
         "text-13",
         {
-          "text-red-500": type === "error",
-          "text-green-500": type === "success",
+          "text-danger-primary": type === "error",
+          "text-success-primary": type === "success",
         },
         className
       )}

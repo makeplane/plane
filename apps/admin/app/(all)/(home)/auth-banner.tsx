@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Info } from "lucide-react";
 // plane constants
 import type { TAdminAuthErrorInfo } from "@plane/constants";
@@ -20,7 +26,7 @@ export function AuthBanner(props: TAuthBanner) {
       </div>
       <div className="w-full text-13 font-medium text-accent-primary">{bannerData?.message}</div>
       <div
-        className="relative ml-auto w-6 h-6 rounded-xs flex justify-center items-center transition-all cursor-pointer hover:bg-accent-primary/20 text-accent-primary/80"
+        className="relative ml-auto w-6 h-6 rounded-xs flex justify-center items-center transition-all cursor-pointer hover:bg-accent-primary/20 text-accent-primary"
         onClick={() => handleBannerData && handleBannerData(undefined)}
       >
         <CloseIcon className="w-4 h-4 flex-shrink-0" />

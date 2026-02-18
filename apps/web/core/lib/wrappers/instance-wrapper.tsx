@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -11,7 +17,7 @@ type TInstanceWrapper = {
   children: ReactNode;
 };
 
-export const InstanceWrapper = observer(function InstanceWrapper(props: TInstanceWrapper) {
+const InstanceWrapper = observer(function InstanceWrapper(props: TInstanceWrapper) {
   const { children } = props;
   // store
   const { isLoading, instance, error, fetchInstanceInfo } = useInstance();
@@ -40,3 +46,5 @@ export const InstanceWrapper = observer(function InstanceWrapper(props: TInstanc
 
   return <>{children}</>;
 });
+
+export default InstanceWrapper;

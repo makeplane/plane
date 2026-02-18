@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   useFloating,
   autoUpdate,
@@ -10,8 +16,8 @@ import {
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/react";
 import type { LucideIcon } from "lucide-react";
-import { Copy, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CopyIcon, TrashIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // constants
@@ -144,7 +150,7 @@ export function BlockMenu(props: Props) {
 
   const MENU_ITEMS: BlockMenuOption[] = [
     {
-      icon: Trash2,
+      icon: TrashIcon,
       key: "delete",
       label: "Delete",
       onClick: (_e) => {
@@ -153,7 +159,7 @@ export function BlockMenu(props: Props) {
       },
     },
     {
-      icon: Copy,
+      icon: CopyIcon,
       key: "duplicate",
       label: "Duplicate",
       isDisabled:

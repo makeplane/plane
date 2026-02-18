@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { isRouteErrorResponse } from "react-router";
 import { Banner } from "@plane/propel/banner";
@@ -46,7 +52,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
           <Card variant={ECardVariant.WITH_SHADOW} className="!p-6 transition-none">
             <div className="space-y-4">
               <div>
-                <h2 className="text-20 font-semibold text-red-500 mb-2">
+                <h2 className="text-20 font-semibold text-danger-primary mb-2">
                   {error.status} {error.statusText}
                 </h2>
                 <div className="h-px w-full bg-subtle-1" />
@@ -80,7 +86,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
           <Card variant={ECardVariant.WITH_SHADOW} className="!p-6 transition-none">
             <div className="space-y-4">
               <div>
-                <h2 className="text-20 font-semibold text-red-500 mb-2">Error</h2>
+                <h2 className="text-20 font-semibold text-danger-primary mb-2">Error</h2>
                 <div className="h-px w-full bg-subtle-1" />
               </div>
 

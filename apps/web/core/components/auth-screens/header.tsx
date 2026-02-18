@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -33,14 +39,12 @@ export const AuthHeader = observer(function AuthHeader({ type }: AuthHeaderProps
   const { config } = useInstance();
   // derived values
   const enableSignUpConfig = config?.enable_signup ?? false;
+
   return (
-    <>
-      <PageHead title={t(authContentMap[type].pageTitle) + " - Plane"} />
-      <div className="flex items-center justify-between gap-6 w-full flex-shrink-0 sticky top-0">
-        <Link href="/">
-          <PlaneLockup height={20} width={95} className="text-primary" />
-        </Link>
-        {enableSignUpConfig && (
+    <AuthHeaderBase
+      pageTitle={t(authContentMap[type].pageTitle)}
+      additionalAction={
+        enableSignUpConfig && (
           <div className="flex flex-col items-end text-13 font-medium text-center sm:items-center sm:gap-2 sm:flex-row text-tertiary">
             <span className="text-body-sm-regular text-tertiary">{t(authContentMap[type].text)}</span>
             <Link
@@ -51,8 +55,28 @@ export const AuthHeader = observer(function AuthHeader({ type }: AuthHeaderProps
               {t(authContentMap[type].linkText)}
             </Link>
           </div>
-        )}
+        )
+      }
+    />
+  );
+});
+
+type TAuthHeaderBase = {
+  pageTitle: string;
+  additionalAction?: React.ReactNode;
+};
+
+export function AuthHeaderBase(props: TAuthHeaderBase) {
+  const { pageTitle, additionalAction } = props;
+  return (
+    <>
+      <PageHead title={pageTitle + " - Plane"} />
+      <div className="flex items-center justify-between gap-6 w-full flex-shrink-0 sticky top-0">
+        <Link href="/">
+          <PlaneLockup height={20} width={95} className="text-primary" />
+        </Link>
+        {additionalAction}
       </div>
     </>
   );
-});
+}

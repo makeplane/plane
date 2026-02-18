@@ -1,13 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel, EUserPermissions, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { ContentWrapper } from "@plane/ui";
 // components
 import { calculateTotalFilters } from "@plane/utils";
 import { ProjectsLoader } from "@/components/ui/loader/projects-loader";
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
@@ -62,7 +67,6 @@ export const ProjectCardList = observer(function ProjectCardList(props: TProject
             label: t("workspace_projects.empty_state.general.primary_button.text"),
             onClick: () => {
               toggleCreateProjectModal(true);
-              captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
             },
             disabled: !canPerformEmptyStateActions,
             variant: "primary",

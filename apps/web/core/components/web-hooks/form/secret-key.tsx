@@ -1,12 +1,19 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useState } from "react";
 import { range } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
+import { Eye, EyeOff, RefreshCw } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { CopyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IWebhook } from "@plane/types";
@@ -89,7 +96,7 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
 
   const SECRET_KEY_OPTIONS = [
     { label: "View secret key", Icon: shouldShowKey ? EyeOff : Eye, onClick: toggleShowKey, key: "eye" },
-    { label: "Copy secret key", Icon: Copy, onClick: handleCopySecretKey, key: "copy" },
+    { label: "Copy secret key", Icon: CopyIcon, onClick: handleCopySecretKey, key: "copy" },
   ];
 
   return (

@@ -1,11 +1,16 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { ListFilter, Search } from "lucide-react";
+import { ListFilter } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { CloseIcon } from "@plane/propel/icons";
+import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // plane helpers
 // types
 import type { TCycleFilters } from "@plane/types";
@@ -81,7 +86,7 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
               inputRef.current?.focus();
             }}
           >
-            <Search className="h-3.5 w-3.5" />
+            <SearchIcon className="h-3.5 w-3.5" />
           </button>
         )}
         <div
@@ -92,7 +97,7 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
             }
           )}
         >
-          <Search className="h-3.5 w-3.5" />
+          <SearchIcon className="h-3.5 w-3.5" />
           <input
             ref={inputRef}
             className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"

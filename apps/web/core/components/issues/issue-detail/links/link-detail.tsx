@@ -1,4 +1,10 @@
-import { Pencil, Trash2, ExternalLink } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { NewTabIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
@@ -77,7 +83,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                   toggleIssueLinkModal(true);
                 }}
               >
-                <Pencil className="h-3 w-3 stroke-[1.5] text-secondary" />
+                <EditIcon className="h-3 w-3 stroke-[1.5] text-secondary" />
               </button>
               <a
                 href={linkDetail.url}
@@ -85,7 +91,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center p-1 hover:bg-layer-1"
               >
-                <ExternalLink className="h-3 w-3 stroke-[1.5] text-secondary" />
+                <NewTabIcon className="h-3 w-3 stroke-[1.5] text-secondary" />
               </a>
               <button
                 type="button"
@@ -96,7 +102,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                   linkOperations.remove(linkDetail.id);
                 }}
               >
-                <Trash2 className="h-3 w-3" />
+                <TrashIcon className="h-3 w-3" />
               </button>
             </div>
           )}

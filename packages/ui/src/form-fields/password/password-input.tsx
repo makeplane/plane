@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Eye, EyeClosed } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 
-interface PasswordInputProps {
+type TPasswordInputProps = {
   id: string;
   value: string;
   onChange: (value: string) => void;
@@ -11,7 +17,8 @@ interface PasswordInputProps {
   className?: string;
   showToggle?: boolean;
   error?: boolean;
-}
+  autoComplete?: React.HTMLInputAutoCompleteAttribute;
+};
 
 export function PasswordInput({
   id,
@@ -21,7 +28,8 @@ export function PasswordInput({
   className,
   showToggle = true,
   error = false,
-}: PasswordInputProps) {
+  autoComplete = "off",
+}: TPasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="relative">
@@ -34,11 +42,12 @@ export function PasswordInput({
           "w-full px-3 py-2 pr-10 text-secondary border rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-accent-strong placeholder:text-placeholder focus:border-transparent transition-all duration-200",
           {
             "border-strong": !error,
-            "border-red-500": error,
+            "border-danger-strong": error,
           },
           className
         )}
         placeholder={placeholder}
+        autoComplete={autoComplete}
       />
       {showToggle && (
         <Tooltip tooltipContent={showPassword ? "Hide password" : "Show password"} position="top">

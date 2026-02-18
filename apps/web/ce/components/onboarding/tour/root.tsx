@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -10,8 +16,6 @@ import IssuesTour from "@/app/assets/onboarding/issues.webp?url";
 import ModulesTour from "@/app/assets/onboarding/modules.webp?url";
 import PagesTour from "@/app/assets/onboarding/pages.webp?url";
 import ViewsTour from "@/app/assets/onboarding/views.webp?url";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUser } from "@/hooks/store/user";
@@ -107,9 +111,6 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                   <Button
                     variant="primary"
                     onClick={() => {
-                      captureClick({
-                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.START_BUTTON,
-                      });
                       setStep("work-items");
                     }}
                   >
@@ -119,9 +120,6 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                     type="button"
                     className="bg-transparent text-11 font-medium text-accent-primary outline-subtle-1"
                     onClick={() => {
-                      captureClick({
-                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.SKIP_BUTTON,
-                      });
                       onComplete();
                     }}
                   >
@@ -170,9 +168,6 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                   <Button
                     variant="primary"
                     onClick={() => {
-                      captureClick({
-                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.CREATE_PROJECT_BUTTON,
-                      });
                       onComplete();
                       toggleCreateProjectModal(true);
                     }}

@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Plus } from "lucide-react";
+
 import { useTranslation } from "@plane/i18n";
+import { PlusIcon } from "@plane/propel/icons";
 import type { THomeWidgetProps } from "@plane/types";
 import { useHome } from "@/hooks/store/use-home";
 import { LinkCreateUpdateModal } from "./create-update-link-modal";
@@ -46,7 +53,7 @@ export const DashboardQuickLinks = observer(function DashboardQuickLinks(props: 
             onClick={handleCreateLinkModal}
             className="flex gap-1 text-13 font-medium text-accent-primary my-auto"
           >
-            <Plus className="size-4 my-auto" /> <span>{t("home.quick_links.add")}</span>
+            <PlusIcon className="size-4 my-auto" /> <span>{t("home.quick_links.add")}</span>
           </button>
         </div>
         <div className="flex flex-wrap w-full">

@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo, useState } from "react";
 import { isEqual, cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel, PROJECT_VIEW_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IProjectView, TWorkItemFilterExpression } from "@plane/types";
 import { EUserProjectRoles, EViewAccess } from "@plane/types";
@@ -10,7 +16,6 @@ import { EUserProjectRoles, EViewAccess } from "@plane/types";
 import { removeNillKeys } from "@/components/issues/issue-layouts/utils";
 import { CreateUpdateProjectViewModal } from "@/components/views/modal";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
@@ -19,8 +24,6 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { getAdditionalProjectLevelFiltersHOCProps } from "@/plane-web/helpers/work-item-filters/project-level";
 // local imports
 import { WorkItemFiltersHOC } from "./base";
 import type { TEnableSaveViewProps, TEnableUpdateViewProps, TSharedWorkItemFiltersHOCProps } from "./shared";
@@ -153,24 +156,12 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
             title: "Success!",
             message: "Your view has been updated successfully.",
           });
-          captureSuccess({
-            eventName: PROJECT_VIEW_TRACKER_EVENTS.update,
-            payload: {
-              view_id: viewDetails.id,
-            },
-          });
         })
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: "Your view could not be updated. Please try again.",
-          });
-          captureError({
-            eventName: PROJECT_VIEW_TRACKER_EVENTS.update,
-            payload: {
-              view_id: viewDetails.id,
-            },
           });
         });
     },
@@ -210,11 +201,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
       />
       <WorkItemFiltersHOC
         {...props}
-        {...getAdditionalProjectLevelFiltersHOCProps({
-          entityType: props.entityType,
-          workspaceSlug,
-          projectId,
-        })}
+        workspaceSlug={workspaceSlug}
         cycleIds={getProjectCycleIds(projectId) ?? undefined}
         labelIds={getProjectLabelIds(projectId)}
         memberIds={getProjectMemberIds(projectId, false) ?? undefined}

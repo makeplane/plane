@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { HocuspocusProvider } from "@hocuspocus/provider";
 // react
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -187,7 +193,7 @@ export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseY
 
     provider.on("close", handleClose);
 
-    setYjsSession({ provider, ydoc: provider.document as Y.Doc });
+    setYjsSession({ provider, ydoc: provider.document });
 
     // Handle page visibility changes (sleep/wake, tab switching)
     const handleVisibilityChange = (event?: Event) => {

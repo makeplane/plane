@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
@@ -15,8 +21,6 @@ import { ForgotPasswordPopover } from "@/components/account/auth-forms/forgot-pa
 // constants
 // helpers
 import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
-// hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // services
 import { AuthService } from "@/services/auth.service";
 
@@ -124,17 +128,20 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
   return (
     <>
       {isBannerMessage && mode === EAuthModes.SIGN_UP && (
-        <div className="relative flex items-center p-2 rounded-md gap-2 border border-red-500/50 bg-red-500/10">
-          <div className="w-4 h-4 flex-shrink-0 relative flex justify-center items-center">
-            <Info size={16} className="text-red-500" />
+        <div className="relative flex items-center p-2 rounded-md gap-2 border border-danger-strong/50 bg-danger-subtle">
+          <div className="w-4 h-4 shrink-0 relative flex justify-center items-center">
+            <Info size={16} className="text-danger-primary" />
           </div>
-          <div className="w-full text-13 font-medium text-red-500">{t("auth.sign_up.errors.password.strength")}</div>
-          <div
-            className="relative ml-auto w-6 h-6 rounded-xs flex justify-center items-center transition-all cursor-pointer hover:bg-red-500/20 text-accent-primary/80"
+          <div className="w-full text-13 font-medium text-danger-primary">
+            {t("auth.sign_up.errors.password.strength")}
+          </div>
+          <button
+            type="button"
+            className="relative ml-auto w-6 h-6 rounded-xs flex justify-center items-center transition-all cursor-pointer hover:bg-danger-subtle-hover text-accent-primary/80"
             onClick={() => setBannerMessage(false)}
           >
-            <CloseIcon className="w-4 h-4 flex-shrink-0 text-red-500" />
-          </div>
+            <CloseIcon className="w-4 h-4 shrink-0 text-danger-primary" />
+          </button>
         </div>
       )}
       <form
@@ -151,15 +158,6 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               : true;
           if (isPasswordValid) {
             setIsSubmitting(true);
-            captureSuccess({
-              eventName:
-                mode === EAuthModes.SIGN_IN
-                  ? AUTH_TRACKER_EVENTS.sign_in_with_password
-                  : AUTH_TRACKER_EVENTS.sign_up_with_password,
-              payload: {
-                email: passwordFormData.email,
-              },
-            });
             if (formRef.current) formRef.current.submit(); // Manually submit the form if the condition is met
           } else {
             setBannerMessage(true);
@@ -167,15 +165,6 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         }}
         onError={() => {
           setIsSubmitting(false);
-          captureError({
-            eventName:
-              mode === EAuthModes.SIGN_IN
-                ? AUTH_TRACKER_EVENTS.sign_in_with_password
-                : AUTH_TRACKER_EVENTS.sign_up_with_password,
-            payload: {
-              email: passwordFormData.email,
-            },
-          });
         }}
       >
         <input type="hidden" name="csrfmiddlewaretoken" />
@@ -224,7 +213,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
-              autoComplete="on"
+              autoComplete="off"
               autoFocus
             />
             <button
@@ -261,6 +250,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
+                autoComplete="off"
               />
               <button
                 type="button"
@@ -282,7 +272,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             {!!passwordFormData.confirm_password &&
               passwordFormData.password !== passwordFormData.confirm_password &&
               renderPasswordMatchError && (
-                <span className="text-13 text-red-500">{t("auth.common.password.errors.match")}</span>
+                <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
               )}
           </div>
         )}

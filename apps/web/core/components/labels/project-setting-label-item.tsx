@@ -1,13 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Dispatch, SetStateAction } from "react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
-import { Pencil } from "lucide-react";
-import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
-import { CloseIcon } from "@plane/propel/icons";
+import { EditIcon, CloseIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useLabel } from "@/hooks/store/use-label";
 // components
 import type { TLabelOperationsCallbacks } from "./create-update-label-inline";
@@ -69,13 +72,10 @@ export function ProjectSettingLabelItem(props: Props) {
       key: "remove_from_group",
     },
     {
-      CustomIcon: Pencil,
+      CustomIcon: EditIcon,
       onClick: () => {
         setEditLabelForm(true);
         setIsUpdating(true);
-        captureClick({
-          elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_CONTEXT_MENU,
-        });
       },
       isVisible: true,
       text: "Edit label",

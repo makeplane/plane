@@ -1,20 +1,24 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
-import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
+import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
 // components
+import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { SettingsHeading } from "@/components/settings/heading";
-// helpers
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUser } from "@/hooks/store/user";
 // plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
-import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
+// local imports
 import { ProjectFeatureToggle } from "./helper";
 
 type Props = {
@@ -23,16 +27,63 @@ type Props = {
   isAdmin: boolean;
 };
 
+const PROJECT_FEATURES_LIST = {
+  cycles: {
+    key: "cycles",
+    property: "cycle_view",
+    title: "Cycles",
+    description: "Timebox work as you see fit per project and change frequency from one period to the next.",
+    icon: <CycleIcon className="h-5 w-5 flex-shrink-0 rotate-180 text-tertiary" />,
+    isPro: false,
+    isEnabled: true,
+  },
+  modules: {
+    key: "modules",
+    property: "module_view",
+    title: "Modules",
+    description: "Group work into sub-project-like set-ups with their own leads and assignees.",
+    icon: <ModuleIcon width={20} height={20} className="flex-shrink-0 text-tertiary" />,
+    isPro: false,
+    isEnabled: true,
+  },
+  views: {
+    key: "views",
+    property: "issue_views_view",
+    title: "Views",
+    description: "Save sorts, filters, and display options for later or share them.",
+    icon: <ViewsIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
+    isPro: false,
+    isEnabled: true,
+  },
+  pages: {
+    key: "pages",
+    property: "page_view",
+    title: "Pages",
+    description: "Write anything like you write anything.",
+    icon: <PageIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
+    isPro: false,
+    isEnabled: true,
+  },
+  inbox: {
+    key: "intake",
+    property: "inbox_view",
+    title: "Intake",
+    description: "Consider and discuss work items before you add them to your project.",
+    icon: <IntakeIcon className="h-5 w-5 flex-shrink-0 text-tertiary" />,
+    isPro: false,
+    isEnabled: true,
+  },
+};
+
 export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: Props) {
   const { workspaceSlug, projectId, isAdmin } = props;
   // store hooks
   const { t } = useTranslation();
-  const { data: currentUser } = useUser();
   const { getProjectById, updateProject } = useProject();
   // derived values
   const currentProjectDetails = getProjectById(projectId);
 
-  const handleSubmit = (featureKey: string, featureProperty: string) => {
+  const handleSubmit = (_featureKey: string, featureProperty: string) => {
     if (!workspaceSlug || !projectId || !currentProjectDetails) return;
 
     // making the request to update the project feature
@@ -53,59 +104,47 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
       },
     });
     void updateProjectPromise.then(() => {
-      captureSuccess({
-        eventName: PROJECT_TRACKER_EVENTS.feature_toggled,
-        payload: {
-          feature_key: featureKey,
-        },
-      });
       return undefined;
     });
   };
 
-  if (!currentUser) return <></>;
-
   return (
-    <div className="space-y-6">
-      {Object.entries(PROJECT_FEATURES_LIST).map(([featureSectionKey, feature]) => (
-        <div key={featureSectionKey} className="">
-          <SettingsHeading title={t(feature.key)} description={t(`${feature.key}_description`)} />
-          {Object.entries(feature.featureList).map(([featureItemKey, featureItem]) => (
-            <div key={featureItemKey} className="gap-x-8 gap-y-2 border-b border-subtle bg-surface-1 py-4">
-              <div key={featureItemKey} className="flex items-center justify-between">
-                <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center rounded-sm bg-surface-2 p-3">{featureItem.icon}</div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-13 font-medium leading-5">{t(featureItem.key)}</h4>
-                      {featureItem.isPro && (
-                        <Tooltip tooltipContent="Pro feature" position="top">
-                          <UpgradeBadge className="rounded-sm" />
-                        </Tooltip>
-                      )}
-                    </div>
-                    <p className="text-13 leading-5 tracking-tight text-tertiary">
-                      {t(`${featureItem.key}_description`)}
-                    </p>
-                  </div>
-                </div>
-                <ProjectFeatureToggle
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  featureItem={featureItem}
-                  value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
-                  handleSubmit={handleSubmit}
-                  disabled={!isAdmin}
-                />
-              </div>
-              <div className="pl-14">
-                {currentProjectDetails?.[featureItem.property as keyof IProject] &&
-                  featureItem.renderChildren?.(currentProjectDetails, workspaceSlug)}
-              </div>
+    <>
+      <div>
+        <SettingsHeading title={t("projects_and_issues")} description={t("projects_and_issues_description")} />
+        <div className="mt-6 flex flex-col gap-y-4">
+          {Object.entries(PROJECT_FEATURES_LIST).map(([featureItemKey, featureItem]) => (
+            <div key={featureItemKey}>
+              <SettingsBoxedControlItem
+                title={
+                  <span className="flex items-center gap-2">
+                    {t(featureItem.key)}
+                    {featureItem.isPro && (
+                      <Tooltip tooltipContent="Pro feature" position="top">
+                        <UpgradeBadge className="rounded-sm" />
+                      </Tooltip>
+                    )}
+                  </span>
+                }
+                description={t(`${featureItem.key}_description`)}
+                control={
+                  <ProjectFeatureToggle
+                    workspaceSlug={workspaceSlug}
+                    projectId={projectId}
+                    featureItem={featureItem}
+                    value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
+                    handleSubmit={handleSubmit}
+                    disabled={!isAdmin}
+                  />
+                }
+              />
+              {/* {currentProjectDetails?.[featureItem.property as keyof IProject] && (
+                <div className="pl-14">{featureItem.renderChildren?.(currentProjectDetails, workspaceSlug)}</div>
+              )} */}
             </div>
           ))}
         </div>
-      ))}
-    </div>
+      </div>
+    </>
   );
 });

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FormEvent } from "react";
 import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -52,7 +58,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
         <div
           className={cn(
             `relative flex items-center rounded-md bg-surface-1 border`,
-            !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-subtle`
+            !isFocused && Boolean(emailError?.email) ? `border-danger-strong` : `border-subtle`
           )}
           onFocus={() => {
             setIsFocused(true);
@@ -68,8 +74,8 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-10 w-full placeholder:text-placeholder autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
-            autoComplete="on"
+            className={`disable-autofill-style h-10 w-full placeholder:text-placeholder autofill:bg-danger-subtle border-0 focus:bg-none active:bg-transparent`}
+            autoComplete="off"
             autoFocus
             ref={inputRef}
           />
@@ -88,7 +94,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
           )}
         </div>
         {emailError?.email && !isFocused && (
-          <p className="flex items-center gap-1 text-11 text-red-600 px-0.5">
+          <p className="flex items-center gap-1 text-11 text-danger-primary px-0.5">
             <CircleAlert height={12} width={12} />
             {emailError.email}
           </p>

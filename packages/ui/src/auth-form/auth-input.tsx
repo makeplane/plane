@@ -1,15 +1,20 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Eye, EyeOff } from "lucide-react";
 import React, { useState } from "react";
 import { Input } from "../form-fields/input";
 import { cn } from "../utils";
 
-export interface AuthInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "autoComplete"> {
+export type TAuthInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   error?: string;
   showPasswordToggle?: boolean;
   errorClassName?: string;
-  autoComplete?: "on" | "off";
-}
+};
 
 const baseContainerClassName = "flex flex-col gap-1.5";
 
@@ -20,8 +25,9 @@ export function AuthInput({
   errorClassName = "",
   className = "",
   type = "text",
+  autoComplete = "off",
   ...props
-}: AuthInputProps) {
+}: TAuthInputProps) {
   const { id } = props;
   const [showPassword, setShowPassword] = useState(false);
   const isPasswordType = type === "password";
@@ -39,10 +45,11 @@ export function AuthInput({
         <Input
           {...props}
           type={inputType}
+          autoComplete={autoComplete}
           className={cn(
             "rounded-md disable-autofill-style h-6 w-full placeholder:text-14 placeholder:text-placeholder p-0 border-none",
             {
-              "border-red-500": error,
+              "border-danger-strong": error,
             },
             className
           )}
@@ -58,7 +65,7 @@ export function AuthInput({
         )}
       </div>
 
-      {error && <p className={cn("text-13 text-red-500", errorClassName)}>{error}</p>}
+      {error && <p className={cn("text-13 text-danger-primary", errorClassName)}>{error}</p>}
     </div>
   );
 }

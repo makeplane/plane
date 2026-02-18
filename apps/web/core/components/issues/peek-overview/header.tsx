@@ -1,10 +1,14 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { MoveDiagonal, MoveRight } from "lucide-react";
 // plane imports
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CenterPanelIcon, CopyLinkIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -13,13 +17,11 @@ import type { TNameDescriptionLoader } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
-// hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { IssueSubscription } from "../issue-detail/subscription";
@@ -132,42 +134,21 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
 
       return deleteIssue(workspaceSlug, projectId, issueId).then(() => {
         setPeekIssue(undefined);
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-          payload: { id: issueId },
-        });
       });
-    } catch (error) {
+    } catch (_error) {
       setToast({
         title: t("toast.error"),
         type: TOAST_TYPE.ERROR,
         message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
       });
-      captureError({
-        eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-        payload: { id: issueId },
-        error: error as Error,
-      });
     }
   };
 
   const handleArchiveIssue = async () => {
-    try {
-      await archiveIssue(workspaceSlug, projectId, issueId);
-      // check and remove if issue is peeked
-      if (getIsIssuePeeked(issueId)) {
-        removeRoutePeekId();
-      }
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-        payload: { id: issueId },
-      });
-    } catch (error) {
-      captureError({
-        eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-        payload: { id: issueId },
-        error: error as Error,
-      });
+    await archiveIssue(workspaceSlug, projectId, issueId);
+    // check and remove if issue is peeked
+    if (getIsIssuePeeked(issueId)) {
+      removeRoutePeekId();
     }
   };
 

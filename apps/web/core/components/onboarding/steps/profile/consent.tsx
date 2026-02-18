@@ -1,5 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
-import { Check } from "lucide-react";
+
+import { CheckIcon } from "@plane/propel/icons";
 
 type Props = {
   isChecked: boolean;
@@ -16,7 +23,7 @@ export function MarketingConsent({ isChecked, handleChange }: Props) {
           isChecked ? "bg-accent-primary border-accent-strong" : "border-strong"
         }`}
       >
-        {isChecked && <Check className="w-3 h-3 text-on-color" />}
+        {isChecked && <CheckIcon className="w-3 h-3 text-on-color" />}
       </button>
       <span className="text-13 text-tertiary">I agree to Plane marketing communications</span>
     </div>

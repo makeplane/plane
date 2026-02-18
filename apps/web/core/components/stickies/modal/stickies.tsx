@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Plus } from "lucide-react";
+
 // plane ui
-import { RecentStickyIcon, CloseIcon } from "@plane/propel/icons";
+import { RecentStickyIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
 // hooks
 import { useSticky } from "@/hooks/use-stickies";
 // components
@@ -43,7 +49,7 @@ export const Stickies = observer(function Stickies(props: TProps) {
             className="flex gap-1 text-13 font-medium text-accent-primary my-auto"
             disabled={creatingSticky}
           >
-            <Plus className="size-4 my-auto" /> <span>Add sticky</span>
+            <PlusIcon className="size-4 my-auto" /> <span>Add sticky</span>
             {creatingSticky && (
               <div className="flex items-center justify-center ml-2">
                 <div

@@ -1,12 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { usePopper } from "react-popper";
-import { Check, Search, SignalHigh } from "lucide-react";
+import { SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { PriorityIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon, PriorityIcon, ChevronDownIcon, SearchIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssuePriorities } from "@plane/types";
 // ui
@@ -465,7 +471,7 @@ export function PriorityDropdown(props: Props) {
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-              <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+              <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
@@ -494,7 +500,7 @@ export function PriorityDropdown(props: Props) {
                     {({ selected }) => (
                       <>
                         <span className="flex-grow truncate">{option.content}</span>
-                        {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                        {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                       </>
                     )}
                   </Combobox.Option>

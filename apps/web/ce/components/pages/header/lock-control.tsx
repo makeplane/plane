@@ -1,11 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // plane imports
-import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Tooltip } from "@plane/propel/tooltip";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // store
@@ -79,7 +82,6 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
           <button
             type="button"
             onClick={toggleLock}
-            data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.LOCK_BUTTON}
             className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-secondary hover:text-primary hover:bg-layer-1 transition-colors"
             aria-label="Lock"
           >
@@ -92,7 +94,6 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
         <button
           type="button"
           onClick={toggleLock}
-          data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.LOCK_BUTTON}
           className="h-6 flex items-center gap-1 px-2 rounded-sm text-accent-primary bg-accent-primary/20 hover:bg-accent-primary/30 transition-colors"
           aria-label="Locked"
         >

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FormEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -5,15 +11,13 @@ import { useSearchParams } from "next/navigation";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // plane imports
-import { AUTH_TRACKER_ELEMENTS, AUTH_TRACKER_EVENTS, E_PASSWORD_STRENGTH } from "@plane/constants";
+import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Input, PasswordStrengthIndicator } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -61,12 +65,6 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
   const { data: user, handleSetPassword } = useUser();
 
   useEffect(() => {
-    captureView({
-      elementName: AUTH_TRACKER_ELEMENTS.SET_PASSWORD_FORM,
-    });
-  }, []);
-
-  useEffect(() => {
     if (csrfToken === undefined)
       authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
   }, [csrfToken]);
@@ -92,9 +90,6 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
       e.preventDefault();
       if (!csrfToken) throw new Error("csrf token not found");
       await handleSetPassword(csrfToken, { password: passwordFormData.password });
-      captureSuccess({
-        eventName: AUTH_TRACKER_EVENTS.password_created,
-      });
       router.push("/");
     } catch (error: unknown) {
       let message = undefined;
@@ -102,9 +97,6 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
         const err = error as Error & { error?: string };
         message = err.error;
       }
-      captureError({
-        eventName: AUTH_TRACKER_EVENTS.password_created,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("common.errors.default.title"),
@@ -134,7 +126,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
               //hasError={Boolean(errors.email)}
               placeholder={t("auth.common.email.placeholder")}
               className="h-10 w-full border border-strong !bg-surface-1 pr-12 text-placeholder cursor-not-allowed"
-              autoComplete="on"
+              autoComplete="off"
               disabled
             />
           </div>
@@ -155,7 +147,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
               minLength={8}
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
-              autoComplete="on"
+              autoComplete="new-password"
               autoFocus
             />
             {showPassword.password ? (
@@ -186,6 +178,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
               className="h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
+              autoComplete="new-password"
             />
             {showPassword.retypePassword ? (
               <EyeOff
@@ -202,7 +195,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
           {!!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
             renderPasswordMatchError && (
-              <span className="text-13 text-red-500">{t("auth.common.password.errors.match")}</span>
+              <span className="text-13 text-danger-primary">{t("auth.common.password.errors.match")}</span>
             )}
         </div>
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>

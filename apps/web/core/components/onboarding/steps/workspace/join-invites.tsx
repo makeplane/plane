@@ -1,19 +1,23 @@
-import React, { useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useState } from "react";
 // plane imports
-import { MEMBER_TRACKER_ELEMENTS, MEMBER_TRACKER_EVENTS, ROLE } from "@plane/constants";
+import { ROLE } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { Checkbox, Spinner } from "@plane/ui";
 import { truncateText } from "@plane/utils";
 // constants
 import { WorkspaceLogo } from "@/components/workspace/logo";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserSettings } from "@/hooks/store/user";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // local components
 import { CommonOnboardingHeader } from "../common";
 
@@ -52,24 +56,11 @@ export function WorkspaceJoinInvitesStep(props: Props) {
 
     try {
       await workspaceService.joinWorkspaces({ invitations: invitationsRespond });
-      captureSuccess({
-        eventName: MEMBER_TRACKER_EVENTS.accept,
-        payload: {
-          member_id: invitation?.id,
-        },
-      });
       await fetchWorkspaces();
       await fetchCurrentUserSettings();
       await handleNextStep();
     } catch (error: any) {
       console.error(error);
-      captureError({
-        eventName: MEMBER_TRACKER_EVENTS.accept,
-        payload: {
-          member_id: invitation?.id,
-        },
-        error: error,
-      });
       setIsJoiningWorkspaces(false);
     }
   };
@@ -114,7 +105,6 @@ export function WorkspaceJoinInvitesStep(props: Props) {
           className="w-full"
           onClick={submitInvitations}
           disabled={isJoiningWorkspaces || !invitationsRespond.length}
-          data-ph-element={MEMBER_TRACKER_ELEMENTS.ONBOARDING_JOIN_WORKSPACE}
         >
           {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue"}
         </Button>

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "react-router";
@@ -16,7 +22,7 @@ export const ExtendedAppHeader = observer(function ExtendedAppHeader(props: { he
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   // derived values
-  const shouldShowSidebarToggleButton = projectPreferences.navigationMode === "accordion" || (!projectId && !workItem);
+  const shouldShowSidebarToggleButton = projectPreferences.navigationMode === "ACCORDION" || (!projectId && !workItem);
 
   return (
     <>

@@ -1,10 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { PlusIcon } from "lucide-react";
-// plane imports
+
 import { useTranslation } from "@plane/i18n";
+// plane imports
+import { PlusIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";

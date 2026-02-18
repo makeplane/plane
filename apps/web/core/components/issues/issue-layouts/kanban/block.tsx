@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { MutableRefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -119,7 +125,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
       </div>
 
       <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
-        <div className="w-full line-clamp-1 text-14 text-primary">
+        <div className="w-full line-clamp-1 text-body-sm-medium text-primary">
           <span>{issue.name}</span>
         </div>
       </Tooltip>

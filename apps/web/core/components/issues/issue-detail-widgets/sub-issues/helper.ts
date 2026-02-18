@@ -1,27 +1,24 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
-import { useParams } from "next/navigation";
 // plane imports
-import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { copyUrlToClipboard } from "@plane/utils";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useProjectState } from "@/hooks/store/use-project-state";
-// plane web helpers
-import { updateEpicAnalytics } from "@/plane-web/helpers/epic-analytics";
 
 export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSubIssueOperations => {
-  // router
-  const { epicId: epicIdParam } = useParams();
   // translation
   const { t } = useTranslation();
   // store hooks
   const {
-    issue: { getIssueById },
     subIssues: { setSubIssueHelpers },
     createSubIssues,
     fetchSubIssues,
@@ -29,28 +26,20 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
     deleteSubIssue,
     removeSubIssue,
   } = useIssueDetail(issueServiceType);
-  const { getStateById } = useProjectState();
-  const { peekIssue: epicPeekIssue } = useIssueDetail(EIssueServiceType.EPICS);
-  // const { updateEpicAnalytics } = useIssueTypes();
-  const { updateAnalytics } = updateEpicAnalytics();
-
-  // derived values
-  const epicId = epicIdParam || epicPeekIssue?.issueId;
 
   const subIssueOperations: TSubIssueOperations = useMemo(
     () => ({
-      copyLink: (path) => {
-        copyUrlToClipboard(path).then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: t("common.link_copied"),
-            message: t("entity.link_copied_to_clipboard", {
-              entity:
-                issueServiceType === EIssueServiceType.ISSUES
-                  ? t("common.sub_work_items", { count: 1 })
-                  : t("issue.label", { count: 1 }),
-            }),
-          });
+      copyLink: async (path) => {
+        await copyUrlToClipboard(path);
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("common.link_copied"),
+          message: t("entity.link_copied_to_clipboard", {
+            entity:
+              issueServiceType === EIssueServiceType.ISSUES
+                ? t("common.sub_work_items", { count: 1 })
+                : t("issue.label", { count: 1 }),
+          }),
         });
       },
       fetchSubIssues: async (workspaceSlug, projectId, parentIssueId) => {
@@ -107,46 +96,13 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           await updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, issueData, oldIssue, fromModal);
-
-          if (issueServiceType === EIssueServiceType.EPICS) {
-            const oldState = getStateById(oldIssue?.state_id)?.group;
-
-            if (oldState && oldIssue && issueData && epicId) {
-              // Check if parent_id is changed if yes then decrement the epic analytics count
-              if (issueData.parent_id && oldIssue?.parent_id && issueData.parent_id !== oldIssue?.parent_id) {
-                updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
-                  decrementStateGroupCount: `${oldState}_issues`,
-                });
-              }
-
-              // Check if state_id is changed if yes then decrement the old state group count and increment the new state group count
-              if (issueData.state_id) {
-                const newState = getStateById(issueData.state_id)?.group;
-                if (oldState && newState && oldState !== newState) {
-                  updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
-                    decrementStateGroupCount: `${oldState}_issues`,
-                    incrementStateGroupCount: `${newState}_issues`,
-                  });
-                }
-              }
-            }
-          }
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.update,
-            payload: { id: issueId, parent_id: parentIssueId },
-          });
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("toast.success"),
             message: t("sub_work_item.update.success"),
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-        } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.update,
-            payload: { id: issueId, parent_id: parentIssueId },
-            error: error as Error,
-          });
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
@@ -158,16 +114,6 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           await removeSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
-          if (issueServiceType === EIssueServiceType.EPICS) {
-            const issueBeforeRemoval = getIssueById(issueId);
-            const oldState = getStateById(issueBeforeRemoval?.state_id)?.group;
-
-            if (epicId && oldState) {
-              updateAnalytics(workspaceSlug, projectId, epicId.toString(), {
-                decrementStateGroupCount: `${oldState}_issues`,
-              });
-            }
-          }
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("toast.success"),
@@ -178,17 +124,8 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
                   : t("issue.label", { count: 1 }),
             }),
           });
-          captureSuccess({
-            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.remove,
-            payload: { id: issueId, parent_id: parentIssueId },
-          });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-        } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.remove,
-            payload: { id: issueId, parent_id: parentIssueId },
-            error: error as Error,
-          });
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
@@ -204,19 +141,9 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
       deleteSubIssue: async (workspaceSlug, projectId, parentIssueId, issueId) => {
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-          return deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId).then(() => {
-            captureSuccess({
-              eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.delete,
-              payload: { id: issueId, parent_id: parentIssueId },
-            });
-            setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-          });
-        } catch (error) {
-          captureError({
-            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.delete,
-            payload: { id: issueId, parent_id: parentIssueId },
-            error: error as Error,
-          });
+          await deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
+          setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
+        } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
@@ -233,15 +160,11 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
     [
       createSubIssues,
       deleteSubIssue,
-      epicId,
       fetchSubIssues,
-      getIssueById,
-      getStateById,
       issueServiceType,
       removeSubIssue,
       setSubIssueHelpers,
       t,
-      updateAnalytics,
       updateSubIssue,
     ]
   );

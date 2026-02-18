@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
@@ -174,7 +180,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               buttonContainerClassName="w-full text-left h-7.5"
               buttonClassName={cn("text-body-xs-medium", {
                 "text-placeholder": !issue.target_date,
-                "text-danger": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+                "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
               })}
               hideIcon
               clearIconClassName="h-3 w-3 hidden group-hover:inline text-primary"

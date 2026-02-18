@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Banner } from "./banner";
 
@@ -44,7 +50,7 @@ function SuccessIcon() {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="text-green-600"
+      className="text-success-primary"
     >
       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
       <polyline points="22 4 12 14.01 9 11.01" />
@@ -63,7 +69,7 @@ function ErrorIcon() {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="text-red-600"
+      className="text-danger-primary"
     >
       <circle cx="12" cy="12" r="10" />
       <line x1="15" y1="9" x2="9" y2="15" />
@@ -116,7 +122,7 @@ function CloseButton({ onClick }: { onClick?: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="rounded-sm p-1 hover:bg-alpha-black-100 dark:hover:bg-alpha-white-100 transition-colors"
+      className="rounded-sm p-1 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
       aria-label="Dismiss"
     >
       <svg

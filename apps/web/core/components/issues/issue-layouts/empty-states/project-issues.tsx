@@ -1,12 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
-// components
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -54,7 +58,6 @@ export const ProjectEmptyState = observer(function ProjectEmptyState() {
             {
               label: t("project_empty_state.work_items.cta_primary"),
               onClick: () => {
-                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.WORK_ITEMS });
                 toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
               },
               disabled: !canPerformEmptyStateActions,

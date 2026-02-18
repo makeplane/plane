@@ -1,12 +1,14 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useTheme } from "next-themes";
-import { PROJECT_SETTINGS_TRACKER_ELEMENTS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-// helpers
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 
 type TEstimateEmptyScreen = {
   onButtonClick: () => void;
@@ -30,15 +32,6 @@ export function EstimateEmptyScreen(props: TEstimateEmptyScreen) {
         text: t("project_settings.empty_state.estimates.primary_button"),
         onClick: () => {
           onButtonClick();
-          captureElementAndEvent({
-            element: {
-              elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.ESTIMATES_EMPTY_STATE_CREATE_BUTTON,
-            },
-            event: {
-              eventName: PROJECT_SETTINGS_TRACKER_EVENTS.estimate_created,
-              state: "SUCCESS",
-            },
-          });
         },
       }}
     />

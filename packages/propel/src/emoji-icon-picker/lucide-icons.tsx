@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import {
   Activity,
   Airplay,
@@ -134,7 +140,7 @@ import {
   LogIn,
   LogOut,
   Mail,
-  Map,
+  Map as MapIcon,
   MapPin,
   Maximize,
   Maximize2,
@@ -293,7 +299,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "LogIn", element: LogIn },
   { name: "LogOut", element: LogOut },
   { name: "Mail", element: Mail },
-  { name: "Map", element: Map },
+  { name: "Map", element: MapIcon },
   { name: "MapPin", element: MapPin },
   { name: "Maximize", element: Maximize },
   { name: "Maximize2", element: Maximize2 },

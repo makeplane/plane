@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -8,14 +14,14 @@ import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
-import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal } from "lucide-react";
+import { Settings, Share2, LogOut, MoreHorizontal } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ArchiveIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { LinkIcon, ArchiveIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
@@ -254,19 +260,21 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
 
   if (!project) return null;
 
+  const isAccordionMode = projectPreferences.navigationMode === "ACCORDION";
+
   const handleItemClick = () => {
-    if (projectPreferences.navigationMode === "accordion") {
+    if (projectPreferences.navigationMode === "ACCORDION") {
       setIsProjectListOpen(!isProjectListOpen);
     } else {
       router.push(defaultTabUrl);
     }
     // close the extended sidebar if it is open
-    if (isExtendedProjectSidebarOpened) {
+    if (isExtendedProjectSidebarOpened && !isAccordionMode) {
       toggleExtendedProjectSidebar(false);
     }
   };
 
-  const isAccordionMode = projectPreferences.navigationMode === "accordion";
+  const shouldHighlightProject = URLProjectId === project?.id && projectPreferences.navigationMode !== "ACCORDION";
 
   return (
     <>
@@ -286,6 +294,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
               "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
               {
                 "bg-surface-2": isMenuActive,
+                "bg-layer-transparent-active": shouldHighlightProject,
               }
             )}
             id={`${project?.id}`}
@@ -469,7 +478,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
             >
               {isProjectListOpen && (
                 <Disclosure.Panel as="div" className="relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5">
-                  <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-subtle-1" />
+                  <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-layer-3" />
                   <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
                 </Disclosure.Panel>
               )}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import type {
@@ -9,29 +15,22 @@ import type {
   UseFormWatch,
 } from "react-hook-form";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-// icons
 import { usePopper } from "react-popper";
-import { Check, Plus, XCircle } from "lucide-react";
+import { XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
 // plane imports
 import type { EUserPermissions } from "@plane/constants";
-import { ROLE, ROLE_DETAILS, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { ROLE, ROLE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { PlusIcon, CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-// types
 import { EOnboardingSteps } from "@plane/types";
-// ui
 import { Input, Spinner } from "@plane/ui";
-// constants
-// helpers
-
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // components
 import { CommonOnboardingHeader } from "../common";
 
@@ -227,7 +226,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                               <div className="text-13 font-medium">{t(value.i18n_title)}</div>
                               <div className="flex text-11 text-tertiary">{t(value.i18n_description)}</div>
                             </div>
-                            {selected && <Check className="h-4 w-4 shrink-0" />}
+                            {selected && <CheckIcon className="h-4 w-4 shrink-0" />}
                           </div>
                         )}
                       </Listbox.Option>
@@ -251,7 +250,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
       {email && !emailRegex.test(email) && (
         <div className="mx-8 my-1">
           <span className="text-13">🤥</span>{" "}
-          <span className="mt-1 text-11 text-red-500">That doesn{"'"}t look like an email address.</span>
+          <span className="mt-1 text-11 text-danger-primary">That doesn{"'"}t look like an email address.</span>
         </div>
       )}
     </div>
@@ -299,28 +298,14 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
         })),
       })
       .then(async () => {
-        captureSuccess({
-          eventName: MEMBER_TRACKER_EVENTS.invite,
-          payload: {
-            workspace: workspace.slug,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Invitations sent successfully.",
         });
-
         await nextStep();
       })
       .catch((err) => {
-        captureError({
-          eventName: MEMBER_TRACKER_EVENTS.invite,
-          payload: {
-            workspace: workspace.slug,
-          },
-          error: err,
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -388,7 +373,7 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
           className="flex items-center mx-8 gap-1.5 bg-transparent text-13 font-medium text-accent-primary outline-accent-strong"
           onClick={appendField}
         >
-          <Plus className="h-4 w-4" strokeWidth={2} />
+          <PlusIcon className="h-4 w-4" strokeWidth={2} />
           Add another
         </button>
       </div>
@@ -399,7 +384,6 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
           size="xl"
           className="w-full"
           disabled={isInvitationDisabled || !isValid || isSubmitting}
-          data-ph-element={MEMBER_TRACKER_ELEMENTS.ONBOARDING_INVITE_MEMBER}
         >
           {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
         </Button>

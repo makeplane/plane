@@ -1,28 +1,27 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { CircleCheck } from "lucide-react";
 // plane imports
-import {
-  ORGANIZATION_SIZE,
-  RESTRICTED_URLS,
-  WORKSPACE_TRACKER_ELEMENTS,
-  WORKSPACE_TRACKER_EVENTS,
-} from "@plane/constants";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspace } from "@plane/types";
 import { Spinner } from "@plane/ui";
-import { cn } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { cn, validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserProfile, useUserSettings } from "@/hooks/store/user";
-// plane-web imports
-import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
-import { WorkspaceService } from "@/plane-web/services";
+// services
+import { WorkspaceService } from "@/services/workspace.service";
 // local components
 import { CommonOnboardingHeader } from "../common";
 
@@ -47,11 +46,12 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
   // plane hooks
   const { t } = useTranslation();
   // store hooks
+  const { config } = useInstance();
   const { updateUserProfile } = useUserProfile();
   const { fetchCurrentUserSettings } = useUserSettings();
   const { createWorkspace, fetchWorkspaces } = useWorkspace();
 
-  const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
+  const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled ?? false;
 
   // form info
   const {
@@ -82,19 +82,10 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
             title: t("workspace_creation.toast.success.title"),
             message: t("workspace_creation.toast.success.message"),
           });
-          captureSuccess({
-            eventName: WORKSPACE_TRACKER_EVENTS.create,
-            payload: { slug: formData.slug },
-          });
           await fetchWorkspaces();
           await completeStep(workspaceResponse.id);
           onComplete(formData.organization_size === "Just myself");
         } catch {
-          captureError({
-            eventName: WORKSPACE_TRACKER_EVENTS.create,
-            payload: { slug: formData.slug },
-            error: new Error("Error creating workspace"),
-          });
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("workspace_creation.toast.error.title"),
@@ -123,7 +114,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
 
   const isButtonDisabled = !isValid || invalidSlug || isSubmitting;
 
-  if (!isWorkspaceCreationEnabled) {
+  if (isWorkspaceCreationDisabled) {
     return (
       <div className="flex flex-col gap-10">
         <span className="text-center text-14 text-tertiary">
@@ -145,7 +136,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
             htmlFor="name"
           >
             {t("workspace_creation.form.name.label")}
@@ -155,8 +146,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
             name="name"
             rules={{
               required: t("common.errors.required"),
-              validate: (value) =>
-                /^[\w\s-]*$/.test(value) || t("workspace_creation.errors.validation.name_alphanumeric"),
+              validate: (value) => validateWorkspaceName(value, true),
               maxLength: {
                 value: 80,
                 message: t("workspace_creation.errors.validation.name_length"),
@@ -182,7 +172,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                     "w-full px-3 py-2 text-secondary border border-strong rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-accent-strong placeholder:text-placeholder focus:border-transparent transition-all duration-200",
                     {
                       "border-strong": !errors.name,
-                      "border-red-500": errors.name,
+                      "border-danger-strong": errors.name,
                     }
                   )}
                   // eslint-disable-next-line jsx-a11y/no-autofocus
@@ -191,11 +181,11 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
               </div>
             )}
           />
-          {errors.name && <span className="text-13 text-red-500">{errors.name.message}</span>}
+          {errors.name && <span className="text-13 text-danger-primary">{errors.name.message}</span>}
         </div>
         <div className="flex flex-col gap-2">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
             htmlFor="slug"
           >
             {t("workspace_creation.form.url.label")}
@@ -216,7 +206,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                   "flex items-center w-full px-3 py-2 text-secondary border border-strong rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-accent-strong focus:border-transparent transition-all duration-200",
                   {
                     "border-strong": !errors.name,
-                    "border-red-500": errors.name,
+                    "border-danger-strong": errors.name,
                   }
                 )}
               >
@@ -229,7 +219,8 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                   type="text"
                   value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
                   onChange={(e) => {
-                    if (/^[a-zA-Z0-9_-]+$/.test(e.target.value)) setInvalidSlug(false);
+                    const validation = validateSlug(e.target.value);
+                    if (validation === true) setInvalidSlug(false);
                     else setInvalidSlug(true);
                     onChange(e.target.value.toLowerCase());
                   }}
@@ -244,16 +235,18 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
           />
           <p className="text-13 text-tertiary">{t("workspace_creation.form.url.edit_slug")}</p>
           {slugError && (
-            <p className="-mt-3 text-13 text-red-500">{t("workspace_creation.errors.validation.url_already_taken")}</p>
+            <p className="-mt-3 text-13 text-danger-primary">
+              {t("workspace_creation.errors.validation.url_already_taken")}
+            </p>
           )}
           {invalidSlug && (
-            <p className="text-13 text-red-500">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
+            <p className="text-13 text-danger-primary">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
           )}
-          {errors.slug && <span className="text-13 text-red-500">{errors.slug.message}</span>}
+          {errors.slug && <span className="text-13 text-danger-primary">{errors.slug.message}</span>}
         </div>
         <div className="flex flex-col gap-2">
           <label
-            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
             htmlFor="organization_size"
           >
             {t("workspace_creation.form.organization_size.label")}
@@ -291,20 +284,13 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
               )}
             />
             {errors.organization_size && (
-              <span className="text-13 text-red-500">{errors.organization_size.message}</span>
+              <span className="text-13 text-danger-primary">{errors.organization_size.message}</span>
             )}
           </div>
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        <Button
-          data-ph-element={WORKSPACE_TRACKER_ELEMENTS.ONBOARDING_CREATE_WORKSPACE_BUTTON}
-          variant="primary"
-          type="submit"
-          size="xl"
-          className="w-full"
-          disabled={isButtonDisabled}
-        >
+        <Button variant="primary" type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
           {isSubmitting ? <Spinner height="20px" width="20px" /> : t("workspace_creation.button.default")}
         </Button>
         {hasInvitations && (

@@ -1,11 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { LinkIcon, Trash2 } from "lucide-react";
 // plane imports
-import { ROLE, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { LinkIcon, TrashIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomSelect, CustomMenu } from "@plane/ui";
@@ -13,10 +18,8 @@ import { cn, copyTextToClipboard } from "@plane/utils";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   invitationId: string;
@@ -32,7 +35,6 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
   const { t } = useTranslation();
   // store hooks
   const { allowPermissions, workspaceInfoBySlug } = useUserPermissions();
-  const { mutateWorkspaceMembersActivity } = useWorkspace();
   const {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
   } = useMember();
@@ -61,7 +63,6 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
         title: "Success!",
         message: "Invitation removed successfully.",
       });
-      void mutateWorkspaceMembersActivity(workspaceSlug);
     } catch (err: unknown) {
       const error = err as { error?: string };
       setToast({
@@ -99,16 +100,13 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
     {
       key: "remove",
       action: () => {
-        captureClick({
-          elementName: MEMBER_TRACKER_ELEMENTS.WORKSPACE_INVITATIONS_LIST_CONTEXT_MENU,
-        });
         setRemoveMemberModal(true);
       },
       title: t("common.remove"),
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: isAdmin,
-      className: "text-danger",
-      iconClassName: "text-danger",
+      className: "text-danger-primary",
+      iconClassName: "text-danger-primary",
     },
   ];
 

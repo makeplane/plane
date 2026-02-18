@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Download } from "lucide-react";
 import type { IExportData } from "@plane/types";
 import { getDate, getFileURL, renderFormattedDate } from "@plane/utils";
@@ -72,11 +78,11 @@ export const useExportColumns = () => {
         <span
           className={`rounded-sm text-11 px-2 py-1 capitalize ${
             rowData.status === "completed"
-              ? "bg-green-500/20 text-green-500"
+              ? "bg-success-subtle text-success-primary"
               : rowData.status === "processing"
                 ? "bg-yellow-500/20 text-yellow-500"
                 : rowData.status === "failed"
-                  ? "bg-red-500/20 text-red-500"
+                  ? "bg-danger-subtle text-danger-primary"
                   : rowData.status === "expired"
                     ? "bg-orange-500/20 text-orange-500"
                     : "bg-gray-500/20 text-gray-500"
@@ -104,7 +110,7 @@ export const useExportColumns = () => {
             )}
           </>
         ) : (
-          <div className="text-11 text-red-500">Expired</div>
+          <div className="text-11 text-danger-primary">Expired</div>
         ),
     },
   ];

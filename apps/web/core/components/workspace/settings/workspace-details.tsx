@@ -1,26 +1,25 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Pencil } from "lucide-react";
-// constants
-import {
-  ORGANIZATION_SIZE,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  WORKSPACE_TRACKER_EVENTS,
-  WORKSPACE_TRACKER_ELEMENTS,
-} from "@plane/constants";
+// Plane Imports
+import { ORGANIZATION_SIZE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { EditIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
 import { CustomSelect, Input } from "@plane/ui";
-import { copyUrlToClipboard, getFileURL } from "@plane/utils";
+import { cn, copyUrlToClipboard, getFileURL, validateWorkspaceName } from "@plane/utils";
 // components
 import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
-// helpers
 import { TimezoneSelect } from "@/components/global/timezone-select";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
@@ -69,21 +68,12 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
 
     try {
       await updateWorkspace(currentWorkspace.slug, payload);
-      captureSuccess({
-        eventName: WORKSPACE_TRACKER_EVENTS.update,
-        payload: { slug: currentWorkspace.slug },
-      });
       setToast({
         title: "Success!",
         type: TOAST_TYPE.SUCCESS,
         message: "Workspace updated successfully",
       });
     } catch (err: unknown) {
-      captureError({
-        eventName: WORKSPACE_TRACKER_EVENTS.update,
-        payload: { slug: currentWorkspace.slug },
-        error: err instanceof Error ? err : new Error(String(err)),
-      });
       console.error(err);
     } finally {
       setTimeout(() => {
@@ -135,7 +125,8 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
 
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
-  if (!currentWorkspace) return <></>;
+  if (!currentWorkspace) return null;
+
   return (
     <>
       <Controller
@@ -154,20 +145,20 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
           />
         )}
       />
-      <div className={`w-full md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
-        <div className="flex gap-5 border-b border-subtle pb-7 items-start">
-          <div className="flex flex-col gap-1">
+      <div className={cn("w-full flex flex-col gap-y-7", { "opacity-60": !isAdmin })}>
+        <div className="flex items-center gap-5">
+          <div className="shrink-0 flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
               {workspaceLogo && workspaceLogo !== "" ? (
-                <div className="relative mx-auto flex h-14 w-14">
+                <div className="relative flex size-14">
                   <img
                     src={getFileURL(workspaceLogo)}
-                    className="absolute left-0 top-0 h-full w-full rounded-md object-cover"
+                    className="absolute left-0 top-0 size-full rounded-md object-cover"
                     alt="Workspace Logo"
                   />
                 </div>
               ) : (
-                <div className="relative flex h-14 w-14 items-center justify-center rounded-sm bg-accent-primary p-4 uppercase text-on-color">
+                <div className="relative size-14 text-24 grid place-items-center rounded-md bg-accent-primary uppercase text-on-color">
                   {currentWorkspace?.name?.charAt(0) ?? "N"}
                 </div>
               )}
@@ -180,12 +171,13 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
             }/${currentWorkspace.slug}`}</button>
             {isAdmin && (
               <button
+                type="button"
                 className="flex items-center gap-1.5 text-left text-caption-sm-medium text-accent-primary"
                 onClick={() => setIsImageUploadModalOpen(true)}
               >
                 {workspaceLogo && workspaceLogo !== "" ? (
                   <>
-                    <Pencil className="h-3 w-3" />
+                    <EditIcon className="h-3 w-3" />
                     {t("workspace_settings.settings.general.edit_logo")}
                   </>
                 ) : (
@@ -195,20 +187,15 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
             )}
           </div>
         </div>
-
-        <div className="my-8 flex flex-col gap-8">
+        <div className="flex flex-col gap-7">
           <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
-            <div className="flex flex-col gap-1">
-              <h4 className="text-body-xs-regular text-tertiary">{t("workspace_settings.settings.general.name")}</h4>
+            <div className="flex flex-col gap-2">
+              <h4 className="text-body-sm-medium text-tertiary">{t("workspace_settings.settings.general.name")}</h4>
               <Controller
                 control={control}
                 name="name"
                 rules={{
-                  required: t("workspace_settings.settings.general.errors.name.required"),
-                  maxLength: {
-                    value: 80,
-                    message: t("workspace_settings.settings.general.errors.name.max_length"),
-                  },
+                  validate: (value) => validateWorkspaceName(value, true),
                 }}
                 render={({ field: { value, onChange, ref } }) => (
                   <Input
@@ -225,10 +212,10 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                   />
                 )}
               />
+              {errors.name && <p className="text-caption-sm-regular text-danger-primary">{errors.name.message}</p>}
             </div>
-
-            <div className="flex flex-col gap-1 ">
-              <h4 className="text-body-xs-regular text-tertiary">
+            <div className="flex flex-col gap-2">
+              <h4 className="text-body-sm-medium text-tertiary">
                 {t("workspace_settings.settings.general.company_size")}
               </h4>
               <Controller
@@ -255,9 +242,8 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                 )}
               />
             </div>
-
-            <div className="flex flex-col gap-1 ">
-              <h4 className="text-body-xs-regular text-tertiary">{t("workspace_settings.settings.general.url")}</h4>
+            <div className="flex flex-col gap-2">
+              <h4 className="text-body-sm-medium text-tertiary">{t("workspace_settings.settings.general.url")}</h4>
               <Controller
                 control={control}
                 name="url"
@@ -279,9 +265,8 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                 )}
               />
             </div>
-
-            <div className="flex flex-col gap-1 ">
-              <h4 className="text-body-xs-regular text-tertiary">
+            <div className="flex flex-col gap-2">
+              <h4 className="text-body-sm-medium text-tertiary">
                 {t("workspace_settings.settings.general.workspace_timezone")}
               </h4>
               <Controller
@@ -289,36 +274,33 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <>
-                    <TimezoneSelect
-                      value={value}
-                      onChange={onChange}
-                      buttonClassName="border-none"
-                      disabled={!isAdmin}
-                    />
+                    <TimezoneSelect value={value} onChange={onChange} disabled={!isAdmin} />
                   </>
                 )}
               />
             </div>
           </div>
-
-          {isAdmin && (
-            <div className="flex items-center justify-between py-2">
-              <Button
-                data-ph-element={WORKSPACE_TRACKER_ELEMENTS.UPDATE_WORKSPACE_BUTTON}
-                variant="primary"
-                size="lg"
-                onClick={(e) => {
-                  void handleSubmit(onSubmit)(e);
-                }}
-                loading={isLoading}
-              >
-                {isLoading ? t("updating") : t("workspace_settings.settings.general.update_workspace")}
-              </Button>
-            </div>
-          )}
         </div>
-        {isAdmin && <DeleteWorkspaceSection workspace={currentWorkspace} />}
+        {isAdmin && (
+          <div className="flex items-center justify-between py-2">
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={(e) => {
+                void handleSubmit(onSubmit)(e);
+              }}
+              loading={isLoading}
+            >
+              {isLoading ? t("updating") : t("workspace_settings.settings.general.update_workspace")}
+            </Button>
+          </div>
+        )}
       </div>
+      {isAdmin && (
+        <div className="mt-10">
+          <DeleteWorkspaceSection workspace={currentWorkspace} />
+        </div>
+      )}
     </>
   );
 });

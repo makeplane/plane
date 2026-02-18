@@ -1,13 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
 import {
   Bell,
   BellOff,
-  LinkIcon,
   Signal,
   TagIcon,
   TicketCheck,
-  Trash2,
   Triangle,
   Type,
   UserMinus2,
@@ -17,7 +21,7 @@ import {
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
+import { LinkIcon, TrashIcon, ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { ICycle, IIssueLabel, IModule, TIssue, TIssuePriorities } from "@plane/types";
 import { EIssueServiceType, EUserPermissions } from "@plane/types";
@@ -400,7 +404,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     {
       id: "delete_work_item",
       i18n_title: "power_k.contextual_actions.work_item.delete",
-      icon: Trash2,
+      icon: TrashIcon,
       group: "contextual",
       contextType: "work-item",
       type: "action",

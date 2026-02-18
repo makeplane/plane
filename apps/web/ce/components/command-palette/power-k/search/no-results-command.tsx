@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Command } from "cmdk";
-import { Search } from "lucide-react";
-// plane imports
 import { useTranslation } from "@plane/i18n";
+import { SearchIcon } from "@plane/propel/icons";
+// plane imports
 // components
 import type { TPowerKContext } from "@/components/power-k/core/types";
 // plane web imports
@@ -21,7 +27,7 @@ export function PowerKModalNoSearchResultsCommand(props: TPowerKModalNoSearchRes
   return (
     <Command.Group>
       <PowerKModalCommandItem
-        icon={Search}
+        icon={SearchIcon}
         value="no-results"
         label={
           <p className="flex items-center gap-2">

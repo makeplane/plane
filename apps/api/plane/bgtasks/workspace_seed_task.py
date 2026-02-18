@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import os
 import json
@@ -21,7 +25,7 @@ from plane.db.models import (
     WorkspaceMember,
     Project,
     ProjectMember,
-    IssueUserProperty,
+    ProjectUserProperty,
     State,
     Label,
     Issue,
@@ -94,7 +98,7 @@ def create_project_and_member(workspace: Workspace, bot_user: User) -> Dict[int,
         project_seed.pop("name", None)
         project_seed.pop("identifier", None)
 
-        project = Project.objects.create(
+        project = Project(
             **project_seed,
             workspace=workspace,
             name=workspace.name,  # Use workspace name
@@ -105,6 +109,7 @@ def create_project_and_member(workspace: Workspace, bot_user: User) -> Dict[int,
             module_view=True,
             issue_views_view=True,
         )
+        project.save(created_by_id=bot_user.id, disable_auto_set_user=True)
 
         # Create project members
         ProjectMember.objects.bulk_create(
@@ -121,9 +126,9 @@ def create_project_and_member(workspace: Workspace, bot_user: User) -> Dict[int,
         )
 
         # Create issue user properties
-        IssueUserProperty.objects.bulk_create(
+        ProjectUserProperty.objects.bulk_create(
             [
-                IssueUserProperty(
+                ProjectUserProperty(
                     project=project,
                     user_id=workspace_member["member_id"],
                     workspace_id=workspace.id,
@@ -191,13 +196,13 @@ def create_project_states(
         state_id = state_seed.pop("id")
         project_id = state_seed.pop("project_id")
 
-        state = State.objects.create(
+        state = State(
             **state_seed,
             project_id=project_map[project_id],
             workspace=workspace,
             created_by_id=bot_user.id,
         )
-
+        state.save(created_by_id=bot_user.id, disable_auto_set_user=True)
         state_map[state_id] = state.id
         logger.info(f"Task: workspace_seed_task -> State {state_id} created")
     return state_map
@@ -224,12 +229,13 @@ def create_project_labels(
     for label_seed in label_seeds:
         label_id = label_seed.pop("id")
         project_id = label_seed.pop("project_id")
-        label = Label.objects.create(
+        label = Label(
             **label_seed,
             project_id=project_map[project_id],
             workspace=workspace,
             created_by_id=bot_user.id,
         )
+        label.save(created_by_id=bot_user.id, disable_auto_set_user=True)
         label_map[label_id] = label.id
 
         logger.info(f"Task: workspace_seed_task -> Label {label_id} created")
@@ -276,13 +282,14 @@ def create_project_issues(
         cycle_id = issue_seed.pop("cycle_id")
         module_ids = issue_seed.pop("module_ids")
 
-        issue = Issue.objects.create(
+        issue = Issue(
             **issue_seed,
             state_id=states_map[state_id],
             project_id=project_map[project_id],
             workspace=workspace,
             created_by_id=bot_user.id,
         )
+        issue.save(created_by_id=bot_user.id, disable_auto_set_user=True)
         IssueSequence.objects.create(
             issue=issue,
             project_id=project_map[project_id],
@@ -351,12 +358,12 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_us
     for page_seed in page_seeds:
         page_id = page_seed.pop("id")
 
-        page = Page.objects.create(
+        page = Page(
             workspace_id=workspace.id,
             is_global=False,
             access=page_seed.get("access", Page.PUBLIC_ACCESS),
             name=page_seed.get("name"),
-            description=page_seed.get("description", {}),
+            description_json=page_seed.get("description_json", {}),
             description_html=page_seed.get("description_html", "<p></p>"),
             description_binary=page_seed.get("description_binary", None),
             description_stripped=page_seed.get("description_stripped", None),
@@ -365,16 +372,18 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_us
             owned_by_id=bot_user.id,
         )
 
+        page.save(created_by_id=bot_user.id, disable_auto_set_user=True)
+
         logger.info(f"Task: workspace_seed_task -> Page {page_id} created")
         if page_seed.get("project_id") and page_seed.get("type") == "PROJECT":
-            ProjectPage.objects.create(
+            project_page = ProjectPage(
                 workspace_id=workspace.id,
                 project_id=project_map[page_seed.get("project_id")],
                 page_id=page.id,
                 created_by_id=bot_user.id,
                 updated_by_id=bot_user.id,
             )
-
+            project_page.save(created_by_id=bot_user.id, disable_auto_set_user=True)
             logger.info(f"Task: workspace_seed_task -> Project Page {page_id} created")
     return
 
@@ -414,7 +423,7 @@ def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_u
                 start_date = timezone.now() + timedelta(days=14)
                 end_date = start_date + timedelta(days=14)
 
-        cycle = Cycle.objects.create(
+        cycle = Cycle(
             **cycle_seed,
             start_date=start_date,
             end_date=end_date,
@@ -423,6 +432,7 @@ def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_u
             created_by_id=bot_user.id,
             owned_by_id=bot_user.id,
         )
+        cycle.save(created_by_id=bot_user.id, disable_auto_set_user=True)
 
         cycle_map[cycle_id] = cycle.id
         logger.info(f"Task: workspace_seed_task -> Cycle {cycle_id} created")
@@ -450,7 +460,7 @@ def create_modules(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_
         start_date = timezone.now() + timedelta(days=index * 2)
         end_date = start_date + timedelta(days=14)
 
-        module = Module.objects.create(
+        module = Module(
             **module_seed,
             start_date=start_date,
             target_date=end_date,
@@ -458,6 +468,7 @@ def create_modules(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_
             workspace=workspace,
             created_by_id=bot_user.id,
         )
+        module.save(created_by_id=bot_user.id, disable_auto_set_user=True)
         module_map[module_id] = module.id
         logger.info(f"Task: workspace_seed_task -> Module {module_id} created")
     return module_map
@@ -478,13 +489,15 @@ def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_us
 
     for view_seed in view_seeds:
         project_id = view_seed.pop("project_id")
-        IssueView.objects.create(
+        view_seed.pop("id")
+        issue_view = IssueView(
             **view_seed,
             project_id=project_map[project_id],
             workspace=workspace,
             created_by_id=bot_user.id,
             owned_by_id=bot_user.id,
         )
+        issue_view.save(created_by_id=bot_user.id, disable_auto_set_user=True)
 
 
 @shared_task
@@ -516,6 +529,14 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
             email=f"bot_user_{workspace.id}@plane.so",
             password=make_password(uuid.uuid4().hex),
             is_password_autoset=True,
+        )
+
+        # Add bot user to workspace as member
+        WorkspaceMember.objects.create(
+            workspace=workspace,
+            member=bot_user,
+            role=20,
+            company_role="",
         )
 
         # Create a project with the same name as workspace

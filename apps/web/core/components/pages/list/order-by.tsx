@@ -1,6 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
 // plane imports
 import { getButtonStyling } from "@plane/propel/button";
+// types
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TPageFiltersSortBy, TPageFiltersSortKey } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 
@@ -48,7 +56,7 @@ export function PageOrderByDropdown(props: Props) {
           }
         >
           {option.label}
-          {sortKey === option.key && <Check className="h-3 w-3" />}
+          {sortKey === option.key && <CheckIcon className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
       <hr className="my-2 border-subtle" />
@@ -62,7 +70,7 @@ export function PageOrderByDropdown(props: Props) {
         }}
       >
         Ascending
-        {!isDescending && <Check className="h-3 w-3" />}
+        {!isDescending && <CheckIcon className="h-3 w-3" />}
       </CustomMenu.MenuItem>
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
@@ -74,7 +82,7 @@ export function PageOrderByDropdown(props: Props) {
         }}
       >
         Descending
-        {isDescending && <Check className="h-3 w-3" />}
+        {isDescending && <CheckIcon className="h-3 w-3" />}
       </CustomMenu.MenuItem>
     </CustomMenu>
   );

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -8,7 +14,7 @@ export const GanttQuickAddIssueForm = observer(function GanttQuickAddIssueForm(p
   const { ref, projectDetail, hasError, register, onSubmit, isEpic } = props;
   const { t } = useTranslation();
   return (
-    <div className={cn("shadow-raised-200", hasError && "border border-red-500/20 bg-red-500/10")}>
+    <div className={cn("shadow-raised-200", hasError && "border border-danger-strong/20 bg-danger-subtle")}>
       <form
         ref={ref}
         onSubmit={onSubmit}

@@ -1,13 +1,16 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
-import { PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useEstimate } from "@/hooks/store/estimates/use-estimate";
 import { useProject } from "@/hooks/store/use-project";
@@ -34,18 +37,11 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
     try {
       if (!workspaceSlug || !projectId || !estimateId) return;
       setButtonLoader(true);
-
       await deleteEstimate(workspaceSlug, projectId, estimateId);
       if (areEstimateEnabledByProjectId(projectId)) {
         await updateProject(workspaceSlug, projectId, { estimate: null });
       }
       setButtonLoader(false);
-      captureSuccess({
-        eventName: PROJECT_SETTINGS_TRACKER_EVENTS.estimate_deleted,
-        payload: {
-          id: estimateId,
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Estimate deleted",
@@ -54,12 +50,6 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
       handleClose();
     } catch (error) {
       setButtonLoader(false);
-      captureError({
-        eventName: PROJECT_SETTINGS_TRACKER_EVENTS.estimate_deleted,
-        payload: {
-          id: estimateId,
-        },
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Estimate creation failed",

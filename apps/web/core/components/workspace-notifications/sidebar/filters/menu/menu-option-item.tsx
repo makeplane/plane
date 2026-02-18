@@ -1,7 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
-import { Check } from "lucide-react";
-// plane imports
+
 import type { ENotificationFilterType } from "@plane/constants";
+import { CheckIcon } from "@plane/propel/icons";
+// plane imports
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -36,7 +43,7 @@ export const NotificationFilterOptionItem = observer(function NotificationFilter
           "bg-surface-2": !isSelected,
         })}
       >
-        {isSelected && <Check className="h-2.5 w-2.5" />}
+        {isSelected && <CheckIcon className="h-2.5 w-2.5" />}
       </div>
       <div
         className={cn("whitespace-nowrap text-body-xs-medium", {

@@ -1,9 +1,14 @@
-import React, { useEffect, useRef } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
-import { Check } from "lucide-react";
 import type { EditorRefApi } from "@plane/editor";
-import { CloseIcon } from "@plane/propel/icons";
+import { CheckIcon, CloseIcon } from "@plane/propel/icons";
 // plane imports
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
@@ -112,40 +117,26 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
             onClick={handleSubmit(onEnter)}
             disabled={isDisabled}
             className={cn(
-              "group rounded-lg border size-7 flex items-center justify-center shadow-md duration-300",
-              isDisabled
-                ? "cursor-not-allowed border-green-500/50 bg-green-500/10"
-                : "border-green-500 bg-green-500/20 hover:bg-green-500"
+              "group rounded-lg border border-success-subtle size-7 grid place-items-center shadow-raised-100 bg-success-subtle duration-300",
+              isDisabled ? "" : "hover:bg-success-subtle-1"
             )}
           >
-            <Check
-              className={cn(
-                "size-4 duration-300",
-                isDisabled ? "text-green-500/50" : "text-green-500 group-hover:text-on-color"
-              )}
-            />
+            <CheckIcon className="size-4 text-success-primary" />
           </button>
         )}
         <button
           type="button"
           disabled={isSubmitting}
           className={cn(
-            "group rounded-lg border size-7 flex items-center justify-center shadow-md duration-300",
-            isSubmitting
-              ? "cursor-not-allowed border-red-500/50 bg-red-500/10"
-              : "border-red-500 bg-red-500/20 hover:bg-red-500"
+            "group rounded-lg border border-danger-subtle size-7 grid place-items-center shadow-raised-100 bg-danger-subtle duration-300",
+            isSubmitting ? "" : "hover:bg-danger-subtle-hover"
           )}
           onClick={() => {
             setIsEditing(false);
             editorRef.current?.setEditorValue(comment.comment_html ?? "<p></p>");
           }}
         >
-          <CloseIcon
-            className={cn(
-              "size-5 duration-300",
-              isSubmitting ? "text-red-500/50" : "text-red-500 group-hover:text-on-color"
-            )}
-          />
+          <CloseIcon className="size-4 text-danger-primary" />
         </button>
       </div>
     </form>

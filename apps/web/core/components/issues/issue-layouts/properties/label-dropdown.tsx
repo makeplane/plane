@@ -1,19 +1,26 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { Check, Loader, Search } from "lucide-react";
+import { Loader } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon, SearchIcon, ChevronDownIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { ComboDropDown } from "@plane/ui";
+import { sortBySelectedFirst } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -112,8 +119,11 @@ export function LabelDropdown(props: ILabelDropdownProps) {
 
   const filteredOptions = useMemo(
     () =>
-      query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase())),
-    [options, query]
+      sortBySelectedFirst(
+        query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase())),
+        value
+      ),
+    [options, query, value]
   );
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -250,7 +260,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
               {...attributes.popper}
             >
               <div className="flex w-full items-center justify-start rounded-sm border border-subtle bg-surface-2 px-2">
-                <Search className="h-3.5 w-3.5 text-tertiary" />
+                <SearchIcon className="h-3.5 w-3.5 text-tertiary" />
                 <Combobox.Input
                   ref={inputRef}
                   className="w-full bg-transparent px-2 py-1 text-caption-sm-regular text-secondary placeholder:text-placeholder focus:outline-none"
@@ -264,7 +274,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
               <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
                 {isLoading ? (
                   <p className="text-center text-secondary">{t("common.loading")}</p>
-                ) : filteredOptions.length > 0 ? (
+                ) : filteredOptions && filteredOptions.length > 0 ? (
                   filteredOptions.map((option) => (
                     <Combobox.Option
                       key={option.value}
@@ -286,7 +296,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
                           {option.content}
                           {selected && (
                             <div className="flex-shrink-0">
-                              <Check className={`h-3.5 w-3.5`} />
+                              <CheckIcon className={`h-3.5 w-3.5`} />
                             </div>
                           )}
                         </>

@@ -1,10 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
-import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Table } from "@plane/ui";
-// helpers
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
@@ -45,21 +48,8 @@ export const ProjectMemberListItem = observer(function ProjectMemberListItem(pro
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         .then(async () => {
           router.push(`/${workspaceSlug}/projects`);
-          captureSuccess({
-            eventName: MEMBER_TRACKER_EVENTS.project.leave,
-            payload: {
-              project: projectId,
-            },
-          });
         })
         .catch((err) => {
-          captureError({
-            eventName: MEMBER_TRACKER_EVENTS.project.leave,
-            payload: {
-              project: projectId,
-            },
-            error: err,
-          });
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "You can’t leave this project yet.",

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { LinkIcon } from "lucide-react";
@@ -114,7 +120,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
             {issueDetails.target_date ? (
               <div
                 className={cn("flex items-center gap-1.5 rounded-sm py-0.5 text-11 text-primary", {
-                  "text-red-500": shouldHighlightIssueDueDate(issueDetails.target_date, state?.group),
+                  "text-danger-primary": shouldHighlightIssueDueDate(issueDetails.target_date, state?.group),
                 })}
               >
                 <DueDatePropertyIcon className="size-3" />

@@ -1,9 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
-import { CalendarDays, LayersIcon, Link2, Paperclip } from "lucide-react";
+import { CalendarDays, LayersIcon, Paperclip } from "lucide-react";
 // types
 import { ISSUE_GROUP_BY_OPTIONS } from "@plane/constants";
 import type { ISvgIcons } from "@plane/propel/icons";
 import {
+  LinkIcon,
   CycleIcon,
   StatePropertyIcon,
   ModuleIcon,
@@ -82,7 +89,7 @@ export const SpreadSheetPropertyIconMap: Record<string, FC<ISvgIcons>> = {
   PriorityPropertyIcon: PriorityPropertyIcon,
   StartDatePropertyIcon: StartDatePropertyIcon,
   StatePropertyIcon: StatePropertyIcon,
-  Link2: Link2,
+  Link2: LinkIcon,
   Paperclip: Paperclip,
   LayersIcon: LayersIcon,
 };

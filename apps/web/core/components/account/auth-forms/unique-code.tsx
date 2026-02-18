@@ -1,6 +1,12 @@
-import React, { useEffect, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
-import { API_BASE_URL, AUTH_TRACKER_ELEMENTS, AUTH_TRACKER_EVENTS } from "@plane/constants";
+import { API_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Input, Spinner } from "@plane/ui";
@@ -8,7 +14,6 @@ import { Input, Spinner } from "@plane/ui";
 // helpers
 import { EAuthModes } from "@/helpers/authentication.helper";
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import useTimer from "@/hooks/use-timer";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -59,22 +64,10 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       setResendCodeTimer(defaultResetTimerValue);
       handleFormChange("code", uniqueCode?.code || "");
       setIsRequestingNewCode(false);
-      captureSuccess({
-        eventName: AUTH_TRACKER_EVENTS.new_code_requested,
-        payload: {
-          email: email,
-        },
-      });
     } catch {
       setResendCodeTimer(0);
       console.error("Error while requesting new code");
       setIsRequestingNewCode(false);
-      captureError({
-        eventName: AUTH_TRACKER_EVENTS.new_code_requested,
-        payload: {
-          email: email,
-        },
-      });
     }
   };
 
@@ -93,22 +86,9 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "magic-sign-in" : "magic-sign-up"}/`}
       onSubmit={() => {
         setIsSubmitting(true);
-        captureSuccess({
-          eventName: AUTH_TRACKER_EVENTS.code_verify,
-          payload: {
-            state: "SUCCESS",
-            first_time: !isExistingEmail,
-          },
-        });
       }}
       onError={() => {
         setIsSubmitting(false);
-        captureError({
-          eventName: AUTH_TRACKER_EVENTS.code_verify,
-          payload: {
-            state: "FAILED",
-          },
-        });
       }}
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
@@ -127,7 +107,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder={t("auth.common.email.placeholder")}
             className="disable-autofill-style h-10 w-full placeholder:text-placeholder border-0"
-            autoComplete="on"
+            autoComplete="off"
             disabled
           />
           {uniqueCodeFormData.email.length > 0 && (
@@ -154,16 +134,16 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
           onChange={(e) => handleFormChange("code", e.target.value)}
           placeholder={t("auth.common.unique_code.placeholder")}
           className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
+          autoComplete="off"
           autoFocus
         />
         <div className="flex w-full items-center justify-between px-1 text-11 pt-1">
-          <p className="flex items-center gap-1 font-medium text-green-700">
+          <p className="flex items-center gap-1 font-medium text-success-primary">
             <CircleCheck height={12} width={12} />
             {t("auth.common.unique_code.paste_code")}
           </p>
           <button
             type="button"
-            data-ph-element={AUTH_TRACKER_ELEMENTS.REQUEST_NEW_CODE}
             onClick={() => generateNewCode(uniqueCodeFormData.email)}
             className={
               isRequestNewCodeDisabled
@@ -182,14 +162,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       </div>
 
       <div className="space-y-2.5">
-        <Button
-          type="submit"
-          variant="primary"
-          className="w-full"
-          size="xl"
-          disabled={isButtonDisabled}
-          data-ph-element={AUTH_TRACKER_ELEMENTS.VERIFY_CODE}
-        >
+        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
           {isRequestingNewCode ? (
             t("auth.common.unique_code.sending_code")
           ) : isSubmitting ? (

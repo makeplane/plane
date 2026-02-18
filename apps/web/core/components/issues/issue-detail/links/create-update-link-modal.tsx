@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -100,7 +106,9 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
                   />
                 )}
               />
-              {errors.url && <span className="text-caption-sm-regular text-danger">{t("common.url_is_invalid")}</span>}
+              {errors.url && (
+                <span className="text-caption-sm-regular text-danger-primary">{t("common.url_is_invalid")}</span>
+              )}
             </div>
             <div>
               <label htmlFor="title" className="mb-2 text-secondary">

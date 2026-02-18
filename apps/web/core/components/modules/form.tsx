@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
@@ -132,7 +138,7 @@ export function ModuleForm(props: Props) {
                 />
               )}
             />
-            <span className="text-11 text-red-500">{errors?.name?.message}</span>
+            <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
           </div>
           <div>
             <Controller

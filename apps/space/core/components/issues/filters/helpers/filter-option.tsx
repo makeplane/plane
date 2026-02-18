@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
-// lucide icons
-import { Check } from "lucide-react";
+// plane imports
+import { CheckIcon } from "@plane/propel/icons";
 
 type Props = {
   icon?: React.ReactNode;
@@ -24,7 +30,7 @@ export function FilterOption(props: Props) {
           isChecked ? "border-accent-strong bg-accent-primary text-on-color" : "border-strong"
         } ${multiple ? "rounded-xs" : "rounded-full"}`}
       >
-        {isChecked && <Check size={10} strokeWidth={3} />}
+        {isChecked && <CheckIcon width={10} height={10} strokeWidth={3} />}
       </div>
       <div className="flex items-center gap-2 truncate">
         {icon && <div className="grid w-5 shrink-0 place-items-center">{icon}</div>}

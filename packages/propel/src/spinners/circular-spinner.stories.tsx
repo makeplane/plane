@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Spinner } from "./circular-spinner";
 
@@ -91,11 +97,11 @@ export const ColorVariations: Story = {
           <p className="mt-2 text-11 text-gray-600">Blue</p>
         </div>
         <div className="text-center">
-          <Spinner className="text-green-500" />
+          <Spinner className="text-success-primary" />
           <p className="mt-2 text-11 text-gray-600">Green</p>
         </div>
         <div className="text-center">
-          <Spinner className="text-red-500" />
+          <Spinner className="text-danger-primary" />
           <p className="mt-2 text-11 text-gray-600">Red</p>
         </div>
         <div className="text-center">

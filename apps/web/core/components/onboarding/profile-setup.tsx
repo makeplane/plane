@@ -1,13 +1,14 @@
-import React, { useMemo, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
-import {
-  AUTH_TRACKER_EVENTS,
-  E_PASSWORD_STRENGTH,
-  ONBOARDING_TRACKER_ELEMENTS,
-  USER_TRACKER_EVENTS,
-} from "@plane/constants";
+import { E_PASSWORD_STRENGTH } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -16,12 +17,9 @@ import type { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
 import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 // components
-import { cn, getFileURL, getPasswordStrength } from "@plane/utils";
+import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
-// constants
-// helpers
 // hooks
-import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -118,18 +116,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
 
   const handleSetPassword = async (password: string) => {
     const token = await authService.requestCSRFToken().then((data) => data?.csrf_token);
-    await authService
-      .setPassword(token, { password })
-      .then(() => {
-        captureSuccess({
-          eventName: AUTH_TRACKER_EVENTS.password_created,
-        });
-      })
-      .catch(() => {
-        captureError({
-          eventName: AUTH_TRACKER_EVENTS.password_created,
-        });
-      });
+    await authService.setPassword(token, { password });
   };
 
   const handleSubmitProfileSetup = async (formData: TProfileSetupFormValues) => {
@@ -148,13 +135,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         updateUserProfile(profileUpdatePayload),
         totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
-      captureSuccess({
-        eventName: USER_TRACKER_EVENTS.add_details,
-        payload: {
-          use_case: profileUpdatePayload.use_case,
-          role: formData.role,
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",
@@ -165,9 +145,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         finishOnboarding();
       }
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -188,20 +165,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         formData.password && handleSetPassword(formData.password),
       ]).then(() => {
         if (formData.password) {
-          captureView({
-            elementName: ONBOARDING_TRACKER_ELEMENTS.PASSWORD_CREATION_SELECTED,
-          });
         } else {
-          captureView({
-            elementName: ONBOARDING_TRACKER_ELEMENTS.PASSWORD_CREATION_SKIPPED,
-          });
+          setProfileSetupStep(EProfileSetupSteps.USER_PERSONALIZATION);
         }
-        setProfileSetupStep(EProfileSetupSteps.USER_PERSONALIZATION);
       });
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -220,13 +188,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         updateUserProfile(profileUpdatePayload),
         totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
-      captureSuccess({
-        eventName: USER_TRACKER_EVENTS.add_details,
-        payload: {
-          use_case: profileUpdatePayload.use_case,
-          role: formData.role,
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",
@@ -237,9 +198,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
         finishOnboarding();
       }
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -250,9 +208,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
 
   const onSubmit = async (formData: TProfileSetupFormValues) => {
     if (!user) return;
-    captureView({
-      elementName: ONBOARDING_TRACKER_ELEMENTS.PROFILE_SETUP_FORM,
-    });
     if (profileSetupStep === EProfileSetupSteps.ALL) await handleSubmitProfileSetup(formData);
     if (profileSetupStep === EProfileSetupSteps.USER_DETAILS) await handleSubmitUserDetail(formData);
     if (profileSetupStep === EProfileSetupSteps.USER_PERSONALIZATION) await handleSubmitUserPersonalization(formData);
@@ -338,7 +293,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label
-                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                     htmlFor="first_name"
                   >
                     First name
@@ -348,9 +303,10 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     name="first_name"
                     rules={{
                       required: "First name is required",
+                      validate: validatePersonName,
                       maxLength: {
-                        value: 24,
-                        message: "First name must be within 24 characters.",
+                        value: 50,
+                        message: "First name must be within 50 characters.",
                       },
                     }}
                     render={({ field: { value, onChange, ref } }) => (
@@ -369,11 +325,13 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       />
                     )}
                   />
-                  {errors.first_name && <span className="text-13 text-red-500">{errors.first_name.message}</span>}
+                  {errors.first_name && (
+                    <span className="text-13 text-danger-primary">{errors.first_name.message}</span>
+                  )}
                 </div>
                 <div className="space-y-1">
                   <label
-                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                     htmlFor="last_name"
                   >
                     Last name
@@ -383,9 +341,10 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     name="last_name"
                     rules={{
                       required: "Last name is required",
+                      validate: validatePersonName,
                       maxLength: {
-                        value: 24,
-                        message: "Last name must be within 24 characters.",
+                        value: 50,
+                        message: "Last name must be within 50 characters.",
                       },
                     }}
                     render={({ field: { value, onChange, ref } }) => (
@@ -403,7 +362,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       />
                     )}
                   />
-                  {errors.last_name && <span className="text-13 text-red-500">{errors.last_name.message}</span>}
+                  {errors.last_name && <span className="text-13 text-danger-primary">{errors.last_name.message}</span>}
                 </div>
               </div>
 
@@ -433,7 +392,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             className="w-full border-[0.5px] border-subtle pr-12 placeholder:text-placeholder"
                             onFocus={() => setIsPasswordInputFocused(true)}
                             onBlur={() => setIsPasswordInputFocused(false)}
-                            autoComplete="on"
+                            autoComplete="new-password"
                           />
                           {showPassword.password ? (
                             <EyeOff
@@ -474,6 +433,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             hasError={Boolean(errors.confirm_password)}
                             placeholder={t("auth.common.password.confirm_password.placeholder")}
                             className="w-full border-subtle pr-12 placeholder:text-placeholder"
+                            autoComplete="new-password"
                           />
                           {showPassword.retypePassword ? (
                             <EyeOff
@@ -490,7 +450,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       )}
                     />
                     {errors.confirm_password && (
-                      <span className="text-13 text-red-500">{errors.confirm_password.message}</span>
+                      <span className="text-13 text-danger-primary">{errors.confirm_password.message}</span>
                     )}
                   </div>
                 </>
@@ -503,7 +463,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
             <>
               <div className="space-y-1">
                 <label
-                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                   htmlFor="role"
                 >
                   What role are you working on? Choose one.
@@ -534,11 +494,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     </div>
                   )}
                 />
-                {errors.role && <span className="text-13 text-red-500">{errors.role.message}</span>}
+                {errors.role && <span className="text-13 text-danger-primary">{errors.role.message}</span>}
               </div>
               <div className="space-y-1">
                 <label
-                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-danger-primary"
                   htmlFor="use_case"
                 >
                   What is your domain expertise? Choose one or more.
@@ -576,7 +536,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     </div>
                   )}
                 />
-                {errors.use_case && <span className="text-13 text-red-500">{errors.use_case.message}</span>}
+                {errors.use_case && <span className="text-13 text-danger-primary">{errors.use_case.message}</span>}
               </div>
             </>
           )}

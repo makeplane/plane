@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from celery import shared_task
 from django.db import transaction
 from django.utils import timezone
@@ -19,7 +23,7 @@ def should_update_existing_version(
 
 
 def update_existing_version(version: IssueDescriptionVersion, issue) -> None:
-    version.description_json = issue.description
+    version.description_json = issue.description_json
     version.description_html = issue.description_html
     version.description_binary = issue.description_binary
     version.description_stripped = issue.description_stripped

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -171,7 +177,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                   />
                 )}
               />
-              <span className="text-11 text-red-500">{errors?.name?.message?.toString()}</span>
+              <span className="text-11 text-danger-primary">{errors?.name?.message?.toString()}</span>
             </div>
           </div>
           <div>

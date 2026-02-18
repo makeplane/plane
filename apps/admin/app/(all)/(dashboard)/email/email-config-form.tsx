@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 // types
@@ -209,7 +215,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
           loading={isSubmitting}
           disabled={!isValid || !isDirty}
         >
-          {isSubmitting ? "Saving..." : "Save changes"}
+          {isSubmitting ? "Saving" : "Save changes"}
         </Button>
         <Button
           variant="secondary"

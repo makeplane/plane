@@ -1,5 +1,11 @@
-import { PlusIcon } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useTranslation } from "@plane/i18n";
+import { PlusIcon } from "@plane/propel/icons";
 
 type TProps = {
   onClick: () => void;

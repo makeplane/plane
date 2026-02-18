@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { TIssuePriorities } from "../issues";
 import type { TStateGroups } from "../state";
 import type { TIssuePublicComment } from "./activity/issue_comment";
@@ -73,7 +79,7 @@ export type TBaseIssue = {
   is_intake?: boolean;
 };
 
-export type IssueRelation = {
+type IssueRelation = {
   id: string;
   name: string;
   project_id: string;
@@ -182,7 +188,7 @@ export interface IPublicIssue extends Pick<
   vote_items: IPublicVote[];
 }
 
-export type TPublicIssueResponseResults =
+type TPublicIssueResponseResults =
   | IPublicIssue[]
   | {
       [key: string]: {

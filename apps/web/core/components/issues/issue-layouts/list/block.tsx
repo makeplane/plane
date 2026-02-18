@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Dispatch, MouseEvent, SetStateAction } from "react";
 import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -276,7 +282,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               disabled={isCurrentBlockDragging}
               renderByDefault={false}
             >
-              <p className="truncate cursor-pointer text-body-xs-regular text-primary">{issue.name}</p>
+              <p className="truncate cursor-pointer text-body-xs-medium text-primary">{issue.name}</p>
             </Tooltip>
             {isEpic && displayProperties && (
               <WithDisplayPropertiesHOC

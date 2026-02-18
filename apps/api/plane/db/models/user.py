@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import random
 import string
@@ -32,6 +36,16 @@ def get_mobile_default_onboarding():
         "profile_complete": False,
         "workspace_create": False,
         "workspace_join": False,
+    }
+
+
+def get_default_product_tour():
+    return {
+        "work_items": False,
+        "cycles": False,
+        "modules": False,
+        "intake": False,
+        "pages": False,
     }
 
 
@@ -84,7 +98,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_email_verified = models.BooleanField(default=False)
     is_password_autoset = models.BooleanField(default=False)
-
+    is_password_reset_required = models.BooleanField(default=False)
     # random token generated
     token = models.CharField(max_length=64, blank=True)
 
@@ -192,6 +206,10 @@ class Profile(TimeAuditModel):
     FRIDAY = 5
     SATURDAY = 6
 
+    class NotificationViewMode(models.TextChoices):
+        FULL = "full", "Full"
+        COMPACT = "compact", "Compact"
+
     START_OF_THE_WEEK_CHOICES = (
         (SUNDAY, "Sunday"),
         (MONDAY, "Monday"),
@@ -221,7 +239,9 @@ class Profile(TimeAuditModel):
     billing_address = models.JSONField(null=True)
     has_billing_address = models.BooleanField(default=False)
     company_name = models.CharField(max_length=255, blank=True)
-
+    notification_view_mode = models.CharField(
+        max_length=255, choices=NotificationViewMode.choices, default=NotificationViewMode.FULL
+    )
     is_smooth_cursor_enabled = models.BooleanField(default=False)
     # mobile
     is_mobile_onboarded = models.BooleanField(default=False)
@@ -233,8 +253,13 @@ class Profile(TimeAuditModel):
     goals = models.JSONField(default=dict)
     background_color = models.CharField(max_length=255, default=get_random_color)
 
+    # navigation tour
+    is_navigation_tour_completed = models.BooleanField(default=False)
+
     # marketing
     has_marketing_email_consent = models.BooleanField(default=False)
+    is_subscribed_to_changelog = models.BooleanField(default=False)
+    product_tour = models.JSONField(default=get_default_product_tour)
 
     class Meta:
         verbose_name = "Profile"

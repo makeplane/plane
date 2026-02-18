@@ -1,16 +1,19 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Check } from "lucide-react";
 // plane imports
-import { ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS, USE_CASES } from "@plane/constants";
+import { USE_CASES } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { CheckIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
 import { cn } from "@plane/utils";
-// helpers
-import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 // local imports
@@ -51,21 +54,12 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
         updateUserProfile(profileUpdatePayload),
         // totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
-      captureSuccess({
-        eventName: USER_TRACKER_EVENTS.add_details,
-        payload: {
-          use_case: profileUpdatePayload.use_case,
-        },
-      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",
         message: "Profile setup completed!",
       });
     } catch {
-      captureError({
-        eventName: USER_TRACKER_EVENTS.add_details,
-      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -77,12 +71,8 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
   // on submit
   const onSubmit = async (formData: TProfileSetupFormValues) => {
     if (!profile) return;
-    captureView({
-      elementName: ONBOARDING_TRACKER_ELEMENTS.PROFILE_SETUP_FORM,
-    });
-    await handleSubmitUserPersonalization(formData).then(() => {
-      handleStepChange(EOnboardingSteps.USE_CASE_SETUP);
-    });
+    await handleSubmitUserPersonalization(formData);
+    handleStepChange(EOnboardingSteps.USE_CASE_SETUP);
   };
 
   // handle skip
@@ -140,7 +130,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
                         "border-strong": !isSelected,
                       })}
                     >
-                      <Check
+                      <CheckIcon
                         className={cn("w-3 h-3 text-on-color", {
                           "opacity-100": isSelected,
                           "opacity-0": !isSelected,
@@ -155,7 +145,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
             </div>
           )}
         />
-        {errors.use_case && <span className="text-13 text-red-500">{errors.use_case.message}</span>}
+        {errors.use_case && <span className="text-13 text-danger-primary">{errors.use_case.message}</span>}
       </div>
 
       {/* Action Buttons */}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export default {
   sidebar: {
     projects: "Projeler",
@@ -1954,6 +1960,44 @@ export default {
         title: "Henüz tahmin sistemi yok",
         description: "İş öğesi başına çalışma miktarını iletişim kurmak için bir tahmin seti oluşturun.",
         primary_button: "Tahmin sistemi ekle",
+      },
+    },
+    features: {
+      cycles: {
+        title: "Döngüler",
+        short_title: "Döngüler",
+        description: "Bu projenin benzersiz ritmine ve hızına uyum sağlayan esnek dönemlerde iş planlayın.",
+        toggle_title: "Döngüleri etkinleştir",
+        toggle_description: "Odaklanmış zaman dilimlerinde iş planlayın.",
+      },
+      modules: {
+        title: "Modüller",
+        short_title: "Modüller",
+        description: "İşi özel liderler ve atananlarla alt projelere organize edin.",
+        toggle_title: "Modülleri etkinleştir",
+        toggle_description: "Proje üyeleri modüller oluşturabilir ve düzenleyebilir.",
+      },
+      views: {
+        title: "Görünümler",
+        short_title: "Görünümler",
+        description: "Özel sıralamalar, filtreler ve görüntüleme seçeneklerini kaydedin veya ekibinizle paylaşın.",
+        toggle_title: "Görünümleri etkinleştir",
+        toggle_description: "Proje üyeleri görünümler oluşturabilir ve düzenleyebilir.",
+      },
+      pages: {
+        title: "Sayfalar",
+        short_title: "Sayfalar",
+        description: "Serbest biçimli içerik oluşturun ve düzenleyin: notlar, belgeler, herhangi bir şey.",
+        toggle_title: "Sayfaları etkinleştir",
+        toggle_description: "Proje üyeleri sayfalar oluşturabilir ve düzenleyebilir.",
+      },
+      intake: {
+        title: "Alım",
+        short_title: "Alım",
+        description:
+          "Üye olmayanların hataları, geri bildirimleri ve önerileri paylaşmasına izin verin; iş akışınızı aksatmadan.",
+        toggle_title: "Alımı etkinleştir",
+        toggle_description: "Proje üyelerinin uygulama içinde alım talepleri oluşturmasına izin verin.",
       },
     },
   },

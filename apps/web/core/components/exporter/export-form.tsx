@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { intersection } from "lodash-es";
 import { observer } from "mobx-react";
@@ -8,8 +14,6 @@ import {
   EUserPermissionsLevel,
   EXPORTERS_LIST,
   // ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  WORKSPACE_SETTINGS_TRACKER_EVENTS,
-  WORKSPACE_SETTINGS_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -20,10 +24,11 @@ import type { TWorkItemFilterExpression } from "@plane/types";
 import { CustomSearchSelect, CustomSelect } from "@plane/ui";
 // import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
 // import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { ProjectExportService } from "@/services/project/project-export.service";
+// local imports
+import { SettingsBoxedControlItem } from "../settings/boxed-control-item";
 
 type Props = {
   workspaceSlug: string;
@@ -105,12 +110,6 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         await projectExportService.csvExport(workspaceSlug, payload);
         mutateServices();
         setExportLoading(false);
-        captureSuccess({
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.csv_exported,
-          payload: {
-            provider: formData.provider.provider,
-          },
-        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("workspace_settings.settings.exports.modal.toasts.success.title"),
@@ -127,13 +126,6 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         });
       } catch (error) {
         setExportLoading(false);
-        captureError({
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.csv_exported,
-          payload: {
-            provider: formData.provider.provider,
-          },
-          error: error as Error,
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("error"),
@@ -150,68 +142,75 @@ export const ExportForm = observer(function ExportForm(props: Props) {
       onSubmit={(e) => {
         void handleSubmit(ExportCSVToMail)(e);
       }}
-      className="flex flex-col gap-4 mt-4"
+      className="flex flex-col gap-5"
     >
-      <div className="flex gap-4">
+      <div className="rounded-lg border border-subtle bg-layer-2">
         {/* Project Selector */}
-        <div className="w-1/2">
-          <div className="text-13 font-medium text-secondary mb-2">
-            {t("workspace_settings.settings.exports.exporting_projects")}
-          </div>
-          <Controller
-            control={control}
-            name="project"
-            disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
-            render={({ field: { value, onChange } }) => (
-              <CustomSearchSelect
-                value={value ?? []}
-                onChange={(val: string[]) => onChange(val)}
-                options={options}
-                input
-                label={
-                  value && value.length > 0
-                    ? value
-                        .map((projectId) => {
-                          const projectDetails = getProjectById(projectId);
+        <SettingsBoxedControlItem
+          className="rounded-none border-0 border-b"
+          title={t("workspace_settings.settings.exports.exporting_projects")}
+          control={
+            <Controller
+              control={control}
+              name="project"
+              disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
+              render={({ field: { value, onChange } }) => (
+                <CustomSearchSelect
+                  value={value ?? []}
+                  onChange={(val: string[]) => onChange(val)}
+                  options={options}
+                  input
+                  label={
+                    value && value.length > 0
+                      ? value
+                          .map((projectId) => {
+                            const projectDetails = getProjectById(projectId);
 
-                          return projectDetails?.identifier;
-                        })
-                        .join(", ")
-                    : "All projects"
-                }
-                optionsClassName="max-w-48 sm:max-w-[532px]"
-                placement="bottom-end"
-                multiple
-              />
-            )}
-          />
-        </div>
+                            return projectDetails?.identifier;
+                          })
+                          .join(", ")
+                      : "All projects"
+                  }
+                  optionsClassName="max-w-48 sm:max-w-[532px]"
+                  placement="bottom-end"
+                  multiple
+                />
+              )}
+            />
+          }
+        />
         {/* Format Selector */}
-        <div className="w-1/2">
-          <div className="text-13 font-medium text-secondary mb-2">
-            {t("workspace_settings.settings.exports.format")}
-          </div>
-          <Controller
-            control={control}
-            name="provider"
-            disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
-            render={({ field: { value, onChange } }) => (
-              <CustomSelect
-                value={value}
-                onChange={onChange}
-                label={t(value.i18n_title)}
-                optionsClassName="max-w-48 sm:max-w-[532px]"
-                placement="bottom-end"
-                buttonClassName="py-2 text-13"
-              >
-                {EXPORTERS_LIST.map((service) => (
-                  <CustomSelect.Option key={service.provider} className="flex items-center gap-2" value={service}>
-                    <span className="truncate">{t(service.i18n_title)}</span>
-                  </CustomSelect.Option>
-                ))}
-              </CustomSelect>
-            )}
-          />
+        <SettingsBoxedControlItem
+          className="rounded-none border-0 border-b"
+          title={t("workspace_settings.settings.exports.format")}
+          control={
+            <Controller
+              control={control}
+              name="provider"
+              disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
+              render={({ field: { value, onChange } }) => (
+                <CustomSelect
+                  value={value}
+                  onChange={onChange}
+                  label={t(value.i18n_title)}
+                  optionsClassName="max-w-48 sm:max-w-[532px]"
+                  placement="bottom-end"
+                  buttonClassName="py-2 text-13"
+                >
+                  {EXPORTERS_LIST.map((service) => (
+                    <CustomSelect.Option key={service.provider} className="flex items-center gap-2" value={service}>
+                      <span className="truncate">{t(service.i18n_title)}</span>
+                    </CustomSelect.Option>
+                  ))}
+                </CustomSelect>
+              )}
+            />
+          }
+        />
+        <div className="px-4 py-3">
+          <Button variant="primary" size="lg" type="submit" loading={exportLoading}>
+            {exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}
+          </Button>
         </div>
       </div>
       {/* Rich Filters */}
@@ -257,16 +256,6 @@ export const ExportForm = observer(function ExportForm(props: Props) {
           )}
         />
       </div> */}
-      <div className="flex items-center justify-between">
-        <Button
-          variant="primary"
-          type="submit"
-          loading={exportLoading}
-          data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.EXPORT_BUTTON}
-        >
-          {exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}
-        </Button>
-      </div>
     </form>
   );
 });
