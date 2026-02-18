@@ -102,8 +102,12 @@ export const WorkspaceEpicsListModal = observer(function WorkspaceEpicsListModal
     setSelectedEpics(_selectedEpics);
   }, [isOpen, workspaceSlug, selectedEpicIds]);
 
-  // filter by search term check for name and sequence
-  const filteredEpics = epics.filter((epic) => epic.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()));
+  // filter by search term check for name and epic identifier (e.g. PROJECT-123)
+  const filteredEpics = epics.filter((epic) => {
+    const searchLower = debouncedSearchTerm.toLowerCase();
+    const epicIdentifier = `${epic.project__identifier}-${epic.sequence_id}`.toLowerCase();
+    return epic.name.toLowerCase().includes(searchLower) || epicIdentifier.includes(searchLower);
+  });
 
   const showSubmitButton = useMemo(() => {
     const newEpicIds = selectedEpics.map((epic) => epic.id);
