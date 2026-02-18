@@ -275,8 +275,17 @@ Plus Real-time Layer:
 User
 ├── owns → Workspace (1:N)
 │   ├── WorkspaceMember (1:N) → User
+│   ├── Department (1:N) - Hierarchical, max 5 levels
+│   │   ├── manager → User (optional)
+│   │   ├── linked_project → Project (optional)
+│   │   └── parent → Department (self-referential, null=root)
+│   ├── StaffProfile (1:1) - Employee record per workspace
+│   │   ├── user → User
+│   │   ├── department → Department (optional)
+│   │   └── employment_status (active/probation/resigned/suspended/transferred)
 │   ├── Project (1:N)
 │   │   ├── ProjectMember (1:N) → User
+│   │   ├── linked_department → Department (optional, for auto-sync)
 │   │   ├── Issue (1:N)
 │   │   │   ├── IssueAssignee → User (M:N)
 │   │   │   ├── IssueLabel → Label (M:N)
@@ -318,7 +327,7 @@ User
 - Complex queries (JOINs, window functions)
 - Full-text search capabilities
 - JSON data type for flexible fields
-- 31 models covering entire domain
+- 33 models covering entire domain (includes Department, StaffProfile)
 
 **MongoDB 4.6 (Secondary)**:
 
@@ -364,6 +373,97 @@ Request
 1. Is user workspace member?
 2. Does user have required role?
 3. Can user access resource?
+
+## Organizational Structure: Department & Staff Management
+
+### Department Model
+
+**Hierarchical tree structure** supporting up to 5 levels:
+
+| Field            | Type                     | Purpose                           |
+| ---------------- | ------------------------ | --------------------------------- |
+| `workspace`      | FK → Workspace           | Scope (departments per workspace) |
+| `name`           | CharField(255)           | Full department name              |
+| `code`           | CharField(20)            | Department code (unique)          |
+| `short_name`     | CharField(10, uppercase) | Short code like "IT", "HR"        |
+| `dept_code`      | CharField(4, 4 digits)   | Numeric department ID             |
+| `parent`         | Self-FK (nullable)       | Parent department (null = root)   |
+| `level`          | SmallIntField (1-5)      | Depth in hierarchy                |
+| `manager`        | FK → User (nullable)     | Department manager                |
+| `linked_project` | FK → Project (nullable)  | Team project for auto-sync        |
+| `is_active`      | Boolean                  | Department status                 |
+
+**Key Constraints**:
+
+- Unique per workspace: `(workspace, code)`, `(workspace, short_name)`, `(workspace, dept_code)`
+- Circular parent prevention in `.clean()` method
+- Soft-delete support via `deleted_at` field
+
+**API Endpoints**:
+
+- `GET /api/v1/workspaces/{slug}/departments/` - List (filters: parent, level, is_active)
+- `POST /api/v1/workspaces/{slug}/departments/` - Create
+- `GET /api/v1/workspaces/{slug}/departments/tree/` - Hierarchical tree (nested JSON)
+- `GET /api/v1/workspaces/{slug}/departments/{id}/` - Retrieve
+- `PUT /api/v1/workspaces/{slug}/departments/{id}/` - Update
+- `DELETE /api/v1/workspaces/{slug}/departments/{id}/` - Soft delete
+
+### StaffProfile Model
+
+**Employee record** linked 1:1 to User, scoped per workspace:
+
+| Field                   | Type                 | Purpose                                         |
+| ----------------------- | -------------------- | ----------------------------------------------- |
+| `workspace`             | FK → Workspace       | Scope to single workspace                       |
+| `user`                  | OneToOne → User      | Linked user account                             |
+| `staff_id`              | CharField(8, unique) | Employee ID (unique per workspace)              |
+| `department`            | FK → Department      | Current department (nullable)                   |
+| `position`              | CharField(255)       | Job title                                       |
+| `job_grade`             | CharField(50)        | Salary/level grade                              |
+| `phone`                 | CharField(20)        | Contact phone                                   |
+| `date_of_joining`       | DateField            | Hiring date                                     |
+| `date_of_leaving`       | DateField            | Exit date (if applicable)                       |
+| `employment_status`     | Choices              | active/probation/resigned/suspended/transferred |
+| `is_department_manager` | Boolean              | Auto-join children projects                     |
+| `notes`                 | TextField            | Internal notes                                  |
+
+**Employment Status Choices**:
+
+- `active` - Currently employed
+- `probation` - Probationary period
+- `resigned` - Former employee
+- `suspended` - Temporarily inactive
+- `transferred` - Moved to different workspace
+
+**Auto-Sync Feature**:
+
+- When staff marked as department manager: automatically added to linked_project and child departments' projects
+- Reverse: when removed from department, auto-removed from project (if last department affiliation)
+
+**API Endpoints**:
+
+- `GET /api/v1/workspaces/{slug}/staff/` - List (filters: department, employment_status)
+- `POST /api/v1/workspaces/{slug}/staff/` - Create
+- `GET /api/v1/workspaces/{slug}/staff/{id}/` - Retrieve
+- `PUT /api/v1/workspaces/{slug}/staff/{id}/` - Update
+- `DELETE /api/v1/workspaces/{slug}/staff/{id}/` - Soft delete
+- `POST /api/v1/workspaces/{slug}/staff/{id}/transfer/` - Transfer to different department
+- `POST /api/v1/workspaces/{slug}/staff/{id}/deactivate/` - Set employment_status to resigned
+- `POST /api/v1/workspaces/{slug}/staff/bulk-import/` - CSV/JSON bulk import
+- `GET /api/v1/workspaces/{slug}/staff/export/` - Export to CSV
+- `GET /api/v1/workspaces/{slug}/staff/stats/` - Count per department, status
+
+**Frontend Components** (Workspace Settings):
+
+- **Department Management** - Create, edit, delete, reorder, view hierarchy
+- **Staff Management** - CRUD staff, assign departments, manage status
+- **Bulk Import/Export** - Import employees from CSV, export staff list
+- **Dashboard** - Staff count, active/inactive ratio per department
+
+**Frontend Routes**:
+
+- `/[workspaceSlug]/(settings)/settings/departments/` - Department tree UI
+- `/[workspaceSlug]/(settings)/settings/staff/` - Staff table + management
 
 ## Scalability Patterns
 

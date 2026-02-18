@@ -51,12 +51,13 @@
 - ✅ Custom workflows
 - ✅ Webhook integrations
 - ✅ Analytics Dashboard Pro Feature (6 widget types, multi-dashboard CRUD, widget config UI, backend API, data aggregation, favorites/pinning)
+- ✅ Department & Staff Management (hierarchical departments, employee profiles, bulk import/export, auto-sync to projects)
 
 ## Planned Roadmap (2026)
 
 ### Phase 1: Q1 2026 (Current - Mar 2026)
 
-**Focus**: Developer Experience & Documentation + Pro Features
+**Focus**: Developer Experience & Documentation + Pro Features + Org Structure
 
 **Tasks**:
 
@@ -66,6 +67,7 @@
 - ✅ System architecture diagrams
 - ✅ Deployment guide
 - ✅ Analytics Dashboard Pro feature (backend + frontend + tests + code review fixes)
+- ✅ Department & Staff Management (models, APIs, workspace settings UI, bulk import/export)
 - 🔄 ESLint enforcement migration
 - 🔄 TypeScript strict mode rollout
 
