@@ -68,7 +68,7 @@ export function PageForm(props: Props) {
   return (
     <form onSubmit={handlePageFormSubmit}>
       <div className="space-y-5 p-5">
-        <h3 className="text-18 font-medium text-secondary">Create page</h3>
+        <h3 className="text-18 font-medium text-secondary">{t("project_page.modal.title")}</h3>
         <div className="flex items-start gap-2 h-9 w-full">
           <EmojiPicker
             isOpen={isOpen}
@@ -119,7 +119,7 @@ export function PageForm(props: Props) {
               type="text"
               value={formData.name}
               onChange={(e) => handleFormData("name", e.target.value)}
-              placeholder="Title"
+              placeholder={t("project_page.modal.name_placeholder")}
               className="w-full resize-none text-14"
               tabIndex={getIndex("name")}
               required
@@ -127,7 +127,7 @@ export function PageForm(props: Props) {
             />
             {isTitleLengthMoreThan255Character && (
               <span className="text-11 text-danger-primary">
-                Max length of the name should be less than 255 characters
+                {t("project_page.modal.max_length_error")}
               </span>
             )}
           </div>
@@ -145,7 +145,7 @@ export function PageForm(props: Props) {
         </div>
         <div className="flex items-center justify-end gap-2">
           <Button variant="secondary" size="lg" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             variant="primary"
@@ -155,7 +155,7 @@ export function PageForm(props: Props) {
             disabled={isTitleLengthMoreThan255Character}
             tabIndex={getIndex("submit")}
           >
-            {isSubmitting ? "Creating" : "Create Page"}
+            {isSubmitting ? t("common.creating") : t("project_page.modal.create_button")}
           </Button>
         </div>
       </div>

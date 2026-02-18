@@ -166,7 +166,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
               </div>
             ) : (
               <div className="relative w-full flex justify-between items-center gap-2">
-                <div className="font-medium text-secondary text-13">Progress</div>
+                <div className="font-medium text-secondary text-13">{t("progress")}</div>
                 <div className="flex items-center gap-1">
                   <AlertCircle height={14} width={14} className="text-secondary" />
                   <span className="text-11 italic text-secondary">
@@ -188,13 +188,13 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
                         <ProgressChart
                           distribution={completionChartDistributionData}
                           totalIssues={totalEstimatePoints}
-                          plotTitle={"points"}
+                          plotTitle={t("points")}
                         />
                       ) : (
                         <ProgressChart
                           distribution={completionChartDistributionData}
                           totalIssues={totalIssues}
-                          plotTitle={"work items"}
+                          plotTitle={t("work_items")}
                         />
                       )}
                     </Fragment>

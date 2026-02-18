@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { WEB_BASE_URL, ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { InstanceWorkspaceService } from "@plane/services";
@@ -25,6 +26,8 @@ const instanceWorkspaceService = new InstanceWorkspaceService();
 export function WorkspaceCreateForm() {
   // router
   const router = useRouter();
+  // translation
+  const { t } = useTranslation();
   // states
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
@@ -56,16 +59,16 @@ export function WorkspaceCreateForm() {
             .then(async () => {
               setToast({
                 type: TOAST_TYPE.SUCCESS,
-                title: "Success!",
-                message: "Workspace created successfully.",
+                title: t("common.success"),
+                message: t("workspace_creation.toast.success.message"),
               });
               router.push(`/workspace`);
             })
             .catch(() => {
               setToast({
                 type: TOAST_TYPE.ERROR,
-                title: "Error!",
-                message: "Workspace could not be created. Please try again.",
+                title: t("common.error"),
+                message: t("workspace_creation.toast.error.message"),
               });
             });
         } else setSlugError(true);
@@ -73,8 +76,8 @@ export function WorkspaceCreateForm() {
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Some error occurred while creating workspace. Please try again.",
+          title: t("common.error"),
+          message: t("workspace_creation.toast.error.message"),
         });
       });
   };
@@ -91,7 +94,7 @@ export function WorkspaceCreateForm() {
     <div className="space-y-8">
       <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-start justify-between gap-x-10 gap-y-6 lg:grid-cols-2">
         <div className="flex flex-col gap-1">
-          <h4 className="text-13 text-tertiary">Name your workspace</h4>
+          <h4 className="text-13 text-tertiary">{t("workspace_creation.form.name.label")}</h4>
           <div className="flex flex-col gap-1">
             <Controller
               control={control}
@@ -113,7 +116,7 @@ export function WorkspaceCreateForm() {
                   }}
                   ref={ref}
                   hasError={Boolean(errors.name)}
-                  placeholder="Something familiar and recognizable is always best."
+                  placeholder={t("workspace_creation.form.name.placeholder")}
                   className="w-full"
                 />
               )}
@@ -122,7 +125,7 @@ export function WorkspaceCreateForm() {
           </div>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-13 text-tertiary">Set your workspace&apos;s URL</h4>
+          <h4 className="text-13 text-tertiary">{t("workspace_creation.form.url.label")}</h4>
           <div className="flex gap-0.5 w-full items-center rounded-md border-[0.5px] border-subtle px-3">
             <span className="whitespace-nowrap text-13 text-secondary">{workspaceBaseURL}</span>
             <Controller
@@ -149,26 +152,26 @@ export function WorkspaceCreateForm() {
               )}
             />
           </div>
-          {slugError && <p className="text-13 text-danger-primary">This URL is taken. Try something else.</p>}
+          {slugError && <p className="text-13 text-danger-primary">{t("workspace_creation.errors.validation.url_already_taken_alt")}</p>}
           {invalidSlug && (
-            <p className="text-13 text-danger-primary">{`URLs can contain only ( - ), ( _ ) and alphanumeric characters.`}</p>
+            <p className="text-13 text-danger-primary">{t("workspace_creation.errors.validation.url_alphanumeric_alt")}</p>
           )}
           {errors.slug && <span className="text-11 text-danger-primary">{errors.slug.message}</span>}
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-13 text-tertiary">How many people will use this workspace?</h4>
+          <h4 className="text-13 text-tertiary">{t("workspace_creation.form.organization_size.label")}</h4>
           <div className="w-full">
             <Controller
               name="organization_size"
               control={control}
-              rules={{ required: "This is a required field." }}
+              rules={{ required: t("common.errors.required") }}
               render={({ field: { value, onChange } }) => (
                 <CustomSelect
                   value={value}
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-placeholder">Select a range</span>
+                      <span className="text-placeholder">{t("workspace_creation.form.organization_size.placeholder")}</span>
                     )
                   }
                   buttonClassName="!border-[0.5px] !border-subtle !shadow-none"
@@ -196,10 +199,10 @@ export function WorkspaceCreateForm() {
           disabled={!isValid}
           loading={isSubmitting}
         >
-          {isSubmitting ? "Creating workspace" : "Create workspace"}
+          {isSubmitting ? t("workspace_creation.button.loading") : t("workspace_creation.button.default")}
         </Button>
         <Link className={getButtonStyling("secondary", "lg")} href="/workspace">
-          Go back
+          {t("common.go_back")}
         </Link>
       </div>
     </div>

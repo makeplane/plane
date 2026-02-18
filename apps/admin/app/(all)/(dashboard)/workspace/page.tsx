@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { Loader as LoaderIcon } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // types
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { setPromiseToast } from "@plane/propel/toast";
@@ -27,6 +28,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // store
+  const { t } = useTranslation();
   const { formattedConfig, fetchInstanceConfigurations, updateInstanceConfigurations } = useInstance();
   const {
     workspaceIds,
@@ -53,14 +55,14 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
     const updateConfigPromise = updateInstanceConfigurations(payload);
 
     setPromiseToast(updateConfigPromise, {
-      loading: "Saving configuration",
+      loading: t("admin.saving_configuration"),
       success: {
-        title: "Success",
-        message: () => "Configuration saved successfully",
+        title: t("common.success"),
+        message: () => t("admin.configuration_save_success"),
       },
       error: {
-        title: "Error",
-        message: () => "Failed to save configuration",
+        title: t("common.error"),
+        message: () => t("admin.configuration_save_error"),
       },
     });
 
@@ -77,8 +79,8 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
   return (
     <PageWrapper
       header={{
-        title: "Workspaces on this instance",
-        description: "See all workspaces and control who can create them.",
+        title: t("admin.workspaces_on_instance_title"),
+        description: t("admin.workspaces_on_instance_description"),
       }}
     >
       <div className="space-y-3">
@@ -86,9 +88,9 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
           <div className={cn("w-full flex items-center gap-14 rounded-sm")}>
             <div className="flex grow items-center gap-4">
               <div className="grow">
-                <div className="text-16 font-medium pb-1">Prevent anyone else from creating a workspace.</div>
+                <div className="text-16 font-medium pb-1">{t("admin.prevent_workspace_creation_title")}</div>
                 <div className={cn("font-regular leading-5 text-tertiary text-11")}>
-                  Toggling this on will let only you create workspaces. You will have to invite users to new workspaces.
+                  {t("admin.prevent_workspace_creation_description")}
                 </div>
               </div>
             </div>
@@ -119,19 +121,18 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
             <div className="pt-6 flex items-center justify-between gap-2">
               <div className="flex flex-col items-start gap-x-2">
                 <div className="flex items-center gap-2 text-16 font-medium">
-                  All workspaces on this instance <span className="text-tertiary">• {workspaceIds.length}</span>
+                  {t("admin.all_workspaces_title")} <span className="text-tertiary">• {workspaceIds.length}</span>
                   {workspaceLoader && ["mutation", "pagination"].includes(workspaceLoader) && (
                     <LoaderIcon className="w-4 h-4 animate-spin" />
                   )}
                 </div>
                 <div className={cn("font-regular leading-5 text-tertiary text-11")}>
-                  You can&apos;t yet delete workspaces and you can only go to the workspace if you are an Admin or a
-                  Member.
+                  {t("admin.workspace_management_notice")}
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <Link href="/workspace/create" className={getButtonStyling("primary", "base")}>
-                  Create workspace
+                  {t("create_workspace")}
                 </Link>
               </div>
             </div>
@@ -148,7 +149,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                   onClick={() => fetchNextWorkspaces()}
                   disabled={workspaceLoader === "pagination"}
                 >
-                  Load more
+                  {t("load_more")}
                   {workspaceLoader === "pagination" && <LoaderIcon className="w-3 h-3 animate-spin" />}
                 </Button>
               </div>

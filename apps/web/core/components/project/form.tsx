@@ -171,7 +171,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: error instanceof Error ? error.message : "Failed to process cover image",
+        message: error instanceof Error ? error.message : t("project_settings.general.cover_image_error"),
       });
       setIsLoading(false);
       return;
@@ -266,7 +266,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
       </div>
       <div className="mt-8 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
-          <h4 className="text-13">{t("common.project_name")}</h4>
+          <h4 className="text-13">{t("project_settings.general.project_name")}</h4>
           <Controller
             control={control}
             name="name"
@@ -274,7 +274,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               required: t("name_is_required"),
               maxLength: {
                 value: 255,
-                message: "Project name should be less than 255 characters",
+                message: t("project_settings.general.name_max_length_error"),
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
@@ -315,7 +315,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col gap-1">
-            <h4 className="text-13">Project ID</h4>
+            <h4 className="text-13">{t("project_settings.general.project_id")}</h4>
             <div className="relative">
               <Controller
                 control={control}

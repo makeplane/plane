@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane constants
 import { PROJECT_CREATED_AT_FILTER_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // components
 import { isInDateFormat } from "@plane/utils";
 import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
@@ -26,6 +27,7 @@ export const FilterCreatedDate = observer(function FilterCreatedDate(props: Prop
   // state
   const [previewEnabled, setPreviewEnabled] = useState(true);
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
+  const { t } = useTranslation();
   // derived values
   const appliedFiltersCount = appliedFilters?.length ?? 0;
   const filteredOptions = PROJECT_CREATED_AT_FILTER_OPTIONS.filter((d) =>
@@ -50,11 +52,11 @@ export const FilterCreatedDate = observer(function FilterCreatedDate(props: Prop
           handleClose={() => setIsDateFilterModalOpen(false)}
           isOpen={isDateFilterModalOpen}
           onSelect={(val) => handleUpdate(val)}
-          title="Created date"
+          title={t("common.created_date")}
         />
       )}
       <FilterHeader
-        title={`Created date${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("common.created_date")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -67,19 +69,19 @@ export const FilterCreatedDate = observer(function FilterCreatedDate(props: Prop
                   key={option.value}
                   isChecked={appliedFilters?.includes(option.value) ? true : false}
                   onClick={() => handleUpdate(option.value)}
-                  title={option.name}
+                  title={t(option.i18n_name)}
                   multiple={false}
                 />
               ))}
               <FilterOption
                 isChecked={isCustomDateSelected()}
                 onClick={handleCustomDate}
-                title="Custom"
+                title={t("common.custom")}
                 multiple={false}
               />
             </>
           ) : (
-            <p className="text-11 italic text-placeholder">No matches found</p>
+            <p className="text-11 italic text-placeholder">{t("common.no_matches_found")}</p>
           )}
         </div>
       )}

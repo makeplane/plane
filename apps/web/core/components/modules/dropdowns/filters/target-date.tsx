@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane constants
 import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // components
 import { isInDateFormat } from "@plane/utils";
 import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
@@ -25,6 +26,7 @@ export const FilterTargetDate = observer(function FilterTargetDate(props: Props)
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
+  const { t } = useTranslation();
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
@@ -50,11 +52,11 @@ export const FilterTargetDate = observer(function FilterTargetDate(props: Props)
           handleClose={() => setIsDateFilterModalOpen(false)}
           isOpen={isDateFilterModalOpen}
           onSelect={(val) => handleUpdate(val)}
-          title="Due date"
+          title={t("common.due_date")}
         />
       )}
       <FilterHeader
-        title={`Due date${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("common.due_date")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -67,14 +69,14 @@ export const FilterTargetDate = observer(function FilterTargetDate(props: Props)
                   key={option.value}
                   isChecked={appliedFilters?.includes(option.value) ? true : false}
                   onClick={() => handleUpdate(option.value)}
-                  title={option.name}
+                  title={t(option.i18n_name)}
                   multiple
                 />
               ))}
-              <FilterOption isChecked={isCustomDateSelected()} onClick={handleCustomDate} title="Custom" multiple />
+              <FilterOption isChecked={isCustomDateSelected()} onClick={handleCustomDate} title={t("common.custom")} multiple />
             </>
           ) : (
-            <p className="text-11 italic text-placeholder">No matches found</p>
+            <p className="text-11 italic text-placeholder">{t("common.no_matches_found")}</p>
           )}
         </div>
       )}

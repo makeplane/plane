@@ -54,8 +54,8 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
     copyTextToClipboard(urlToCopy).then(() => {
       setToast({
         type: TOAST_TYPE.INFO,
-        title: "Link copied!",
-        message: "Work item link copied to clipboard",
+        title: t("common.link_copied"),
+        message: t("common.link_copied_to_clipboard"),
       });
     });
   };
@@ -78,7 +78,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
         <div className="flex items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-13 text-tertiary">
             <StatePropertyIcon className="size-4 flex-shrink-0" />
-            <span>State</span>
+            <span>{t("state")}</span>
           </div>
           <div className="w-3/4 flex items-center gap-1.5 py-0.5 text-13">
             <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} />
@@ -89,7 +89,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
         <div className="flex items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-13 text-tertiary">
             <PriorityPropertyIcon className="size-4 flex-shrink-0" />
-            <span>Priority</span>
+            <span>{t("priority")}</span>
           </div>
           <div className="w-3/4">
             <div
@@ -114,7 +114,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
         <div className="flex items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-13 text-tertiary">
             <DueDatePropertyIcon className="size-4 flex-shrink-0" />
-            <span>Due date</span>
+            <span>{t("due_date")}</span>
           </div>
           <div>
             {issueDetails.target_date ? (
@@ -127,7 +127,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
                 {renderFormattedDate(issueDetails.target_date)}
               </div>
             ) : (
-              <span className="text-secondary text-13">Empty</span>
+              <span className="text-secondary text-13">{t("empty")}</span>
             )}
           </div>
         </div>

@@ -8,6 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { MessageSquare } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import type { IFormattedInstanceConfiguration } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // hooks
@@ -20,6 +21,7 @@ type TIntercomConfig = {
 export const IntercomConfig = observer(function IntercomConfig(props: TIntercomConfig) {
   const { isTelemetryEnabled } = props;
   // hooks
+  const { t } = useTranslation();
   const { instanceConfigurations, updateInstanceConfigurations, fetchInstanceConfigurations } = useInstance();
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -64,10 +66,9 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
           </div>
 
           <div className="grow">
-            <div className="text-13 font-medium text-primary leading-5">Chat with us</div>
+            <div className="text-13 font-medium text-primary leading-5">{t("admin.chat_with_us_title")}</div>
             <div className="text-11 font-regular text-tertiary leading-5">
-              Let your users chat with us via Intercom or another service. Toggling Telemetry off turns this off
-              automatically.
+              {t("admin.chat_with_us_description")}
             </div>
           </div>
 

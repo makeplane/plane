@@ -87,9 +87,9 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
         if (onSuccess) onSuccess();
         onClose();
         setToast({
-          title: "Success!",
+          title: t("project_settings.members.invite_members.success_title"),
           type: TOAST_TYPE.SUCCESS,
-          message: "Members added successfully.",
+          message: t("project_settings.members.invite_members.success_message"),
         });
       })
       .catch((error) => {
@@ -189,7 +189,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                   <Controller
                     control={control}
                     name={`members.${index}.member_id`}
-                    rules={{ required: "Please select a member" }}
+                    rules={{ required: t("project_settings.members.invite_members.member_required_error") }}
                     render={({ field: { value, onChange } }) => {
                       const selectedMember = getWorkspaceMemberDetails(value);
                       return (
@@ -206,7 +206,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                                   {selectedMember?.member.display_name}
                                 </div>
                               ) : (
-                                <div className="flex items-center gap-2 py-0.5">Select co-worker</div>
+                                <div className="flex items-center gap-2 py-0.5">{t("project_settings.members.invite_members.select_co_worker")}</div>
                               )}
                               <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                             </button>
@@ -240,13 +240,13 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                     <Controller
                       name={`members.${index}.role`}
                       control={control}
-                      rules={{ required: "Select Role" }}
+                      rules={{ required: t("project_settings.members.invite_members.role_required_error") }}
                       render={({ field }) => (
                         <CustomSelect
                           {...field}
                           customButton={
                             <div className="flex w-24 items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2.5 text-left text-13 text-secondary shadow-sm duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
-                              <span className="capitalize">{field.value ? ROLE[field.value] : "Select role"}</span>
+                              <span className="capitalize">{field.value ? ROLE[field.value] : t("project_settings.members.invite_members.select_role")}</span>
                               <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                             </div>
                           }

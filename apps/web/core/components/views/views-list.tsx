@@ -57,7 +57,7 @@ export const ProjectViewsList = observer(function ProjectViewsList() {
             {filteredProjectViews.length > 0 ? (
               filteredProjectViews.map((view) => <ProjectViewListItem key={view.id} view={view} />)
             ) : (
-              <p className="mt-10 text-center text-13 text-tertiary">No results found</p>
+              <p className="mt-10 text-center text-13 text-tertiary">{t("common.no_results_found")}</p>
             )}
           </ListLayout>
         </div>

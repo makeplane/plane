@@ -32,7 +32,7 @@ export const FilterAccess = observer(function FilterAccess(props: Props) {
   return (
     <>
       <FilterHeader
-        title={`Access${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("common.access.label")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -49,7 +49,7 @@ export const FilterAccess = observer(function FilterAccess(props: Props) {
               />
             ))
           ) : (
-            <p className="text-11 italic text-placeholder">No matches found</p>
+            <p className="text-11 italic text-placeholder">{t("common.no_matches_found")}</p>
           )}
         </div>
       )}

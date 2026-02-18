@@ -7,6 +7,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
@@ -27,6 +28,7 @@ export const ReadonlyLabels = observer(function ReadonlyLabels(props: TReadonlyL
 
   const { getLabelById, fetchProjectLabels } = useLabel();
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
   const labels = value
     .map((labelId) => getLabelById(labelId))
     .filter((label): label is NonNullable<typeof label> => Boolean(label));
@@ -43,7 +45,7 @@ export const ReadonlyLabels = observer(function ReadonlyLabels(props: TReadonlyL
         <>
           <Tooltip
             position="top"
-            tooltipHeading="Labels"
+            tooltipHeading={t("labels")}
             tooltipContent={labels.map((l) => l?.name).join(", ")}
             isMobile={isMobile}
             disabled={labels.length === 0}
@@ -51,7 +53,7 @@ export const ReadonlyLabels = observer(function ReadonlyLabels(props: TReadonlyL
             <div className="h-full flex items-center gap-1 rounded-sm py-1 text-body-xs-bold">
               <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
               <span>{value.length}</span>
-              <span>Labels</span>
+              <span>{t("labels")}</span>
             </div>
           </Tooltip>
         </>

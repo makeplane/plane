@@ -93,7 +93,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
           <SearchIcon className="flex-shrink-0 size-4 text-placeholder" aria-hidden="true" />
           <Combobox.Input
             className="h-12 w-full border-0 bg-transparent text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
-            placeholder="Search for projects"
+            placeholder={t("common.search_projects")}
             displayValue={() => ""}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

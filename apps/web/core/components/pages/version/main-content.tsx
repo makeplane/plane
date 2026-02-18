@@ -8,6 +8,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { EyeIcon, TriangleAlert } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -43,6 +44,7 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
   // states
   const [isRestoring, setIsRestoring] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
+  const { t } = useTranslation();
 
   const {
     data: versionDetails,
@@ -60,14 +62,14 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Page version restored.",
+          title: t("project_page.version_history.restore_success"),
         });
         handleClose();
       })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Failed to restore page version.",
+          title: t("project_page.version_history.restore_error"),
         })
       )
       .finally(() => setIsRestoring(false));
@@ -90,11 +92,11 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               <TriangleAlert className="size-10" />
             </span>
             <div>
-              <h6 className="text-16 font-semibold">Something went wrong!</h6>
-              <p className="text-13 text-tertiary">The version could not be loaded, please try again.</p>
+              <h6 className="text-16 font-semibold">{t("project_page.version_history.load_error_title")}</h6>
+              <p className="text-13 text-tertiary">{t("project_page.version_history.load_error_description")}</p>
             </div>
             <Button variant="link" onClick={handleRetry} loading={isRetrying}>
-              Try again
+              {t("common.try_again")}
             </Button>
           </div>
         </div>
@@ -105,16 +107,16 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               <h6 className="text-14 font-medium">
                 {versionDetails
                   ? `${renderFormattedDate(versionDetails.last_saved_at)} ${renderFormattedTime(versionDetails.last_saved_at)}`
-                  : "Loading version details"}
+                  : t("project_page.version_history.loading_details")}
               </h6>
               <span className="flex-shrink-0 flex items-center gap-1 text-11 font-medium text-accent-primary bg-accent-primary/20 py-1 px-1.5 rounded-sm">
                 <EyeIcon className="flex-shrink-0 size-3" />
-                View only
+                {t("project_page.version_history.view_only")}
               </span>
             </div>
             {restoreEnabled && (
               <Button variant="primary" className="flex-shrink-0" onClick={handleRestoreVersion} loading={isRestoring}>
-                {isRestoring ? "Restoring" : "Restore"}
+                {isRestoring ? t("project_page.version_history.restoring") : t("restore")}
               </Button>
             )}
           </div>

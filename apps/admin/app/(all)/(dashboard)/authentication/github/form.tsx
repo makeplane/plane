@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { Monitor } from "lucide-react";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGithubAuthenticationConfigurationKeys } from "@plane/types";
@@ -37,6 +38,7 @@ export function InstanceGithubConfigForm(props: Props) {
   // states
   const [isDiscardChangesModalOpen, setIsDiscardChangesModalOpen] = useState(false);
   // store hooks
+  const { t } = useTranslation();
   const { updateInstanceConfigurations } = useInstance();
   // form data
   const {
@@ -59,10 +61,10 @@ export function InstanceGithubConfigForm(props: Props) {
     {
       key: "GITHUB_CLIENT_ID",
       type: "text",
-      label: "Client ID",
+      label: t("admin.google_client_id_label"),
       description: (
         <>
-          You will get this from your{" "}
+          {t("admin.github_client_id_description")}{" "}
           <a
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
@@ -70,7 +72,7 @@ export function InstanceGithubConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            GitHub OAuth application settings.
+            {t("admin.github_oauth_apps_link")}
           </a>
         </>
       ),
@@ -81,10 +83,10 @@ export function InstanceGithubConfigForm(props: Props) {
     {
       key: "GITHUB_CLIENT_SECRET",
       type: "password",
-      label: "Client secret",
+      label: t("admin.google_client_secret_label"),
       description: (
         <>
-          Your client secret is also found in your{" "}
+          {t("admin.google_client_secret_description")}{" "}
           <a
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
@@ -92,7 +94,7 @@ export function InstanceGithubConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            GitHub OAuth application settings.
+            {t("admin.github_oauth_apps_link")}
           </a>
         </>
       ),
@@ -103,8 +105,8 @@ export function InstanceGithubConfigForm(props: Props) {
     {
       key: "GITHUB_ORGANIZATION_ID",
       type: "text",
-      label: "Organization ID",
-      description: <>The organization github ID.</>,
+      label: t("admin.github_org_id_label"),
+      description: <>{t("admin.github_org_id_description")}</>,
       placeholder: "123456789",
       error: Boolean(errors.GITHUB_ORGANIZATION_ID),
       required: false,
@@ -113,17 +115,18 @@ export function InstanceGithubConfigForm(props: Props) {
 
   const GITHUB_FORM_SWITCH_FIELD: TControllerSwitchFormField<GithubConfigFormValues> = {
     name: "ENABLE_GITHUB_SYNC",
-    label: "GitHub",
+    label: t("admin.github_sync_label"),
   };
 
   const GITHUB_COMMON_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Origin_URL",
-      label: "Origin URL",
+      label: t("admin.origin_url_label"),
       url: originURL,
       description: (
         <>
-          We will auto-generate this. Paste this into the <CodeBlock darkerShade>Authorized origin URL</CodeBlock> field{" "}
+          {t("admin.origin_url_description")} <CodeBlock darkerShade>{t("admin.auth_origin_url_field")}</CodeBlock>{" "}
+          {t("admin.origin_url_suffix")}{" "}
           <a
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
@@ -131,7 +134,7 @@ export function InstanceGithubConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            here.
+            {t("common.here")}
           </a>
         </>
       ),
@@ -141,12 +144,12 @@ export function InstanceGithubConfigForm(props: Props) {
   const GITHUB_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Callback_URI",
-      label: "Callback URI",
+      label: t("admin.callback_uri_label"),
       url: `${originURL}/auth/github/callback/`,
       description: (
         <>
-          We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Callback URI</CodeBlock>{" "}
-          field{" "}
+          {t("admin.callback_uri_description")} <CodeBlock darkerShade>{t("admin.auth_callback_uri_field")}</CodeBlock>{" "}
+          {t("admin.origin_url_suffix")}{" "}
           <a
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
@@ -154,7 +157,7 @@ export function InstanceGithubConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            here.
+            {t("common.here")}
           </a>
         </>
       ),
@@ -168,8 +171,8 @@ export function InstanceGithubConfigForm(props: Props) {
       const response = await updateInstanceConfigurations(payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Done!",
-        message: "Your GitHub authentication is configured. You should test it now.",
+        title: t("admin.google_auth_configured_title"),
+        message: t("admin.github_auth_configured_message"),
       });
       reset({
         GITHUB_CLIENT_ID: response.find((item) => item.key === "GITHUB_CLIENT_ID")?.value,
@@ -199,7 +202,7 @@ export function InstanceGithubConfigForm(props: Props) {
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
           <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
-            <div className="pt-2.5 text-18 font-medium">GitHub-provided details for Plane</div>
+            <div className="pt-2.5 text-18 font-medium">{t("admin.github_provided_details_title")}</div>
             {GITHUB_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -223,16 +226,16 @@ export function InstanceGithubConfigForm(props: Props) {
                   loading={isSubmitting}
                   disabled={!isDirty}
                 >
-                  {isSubmitting ? "Saving" : "Save changes"}
+                  {isSubmitting ? t("saving") : t("save_changes")}
                 </Button>
                 <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
-                  Go back
+                  {t("common.go_back")}
                 </Link>
               </div>
             </div>
           </div>
           <div className="col-span-2 md:col-span-1 flex flex-col gap-y-6">
-            <div className="pt-2 text-18 font-medium">Plane-provided details for GitHub</div>
+            <div className="pt-2 text-18 font-medium">{t("admin.plane_provided_details_github_title")}</div>
 
             <div className="flex flex-col gap-y-4">
               {/* common service details */}
@@ -246,7 +249,7 @@ export function InstanceGithubConfigForm(props: Props) {
               <div className="flex flex-col rounded-lg overflow-hidden">
                 <div className="px-6 py-3 bg-layer-3 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
                   <Monitor className="w-3 h-3" />
-                  Web
+                  {t("admin.web_title")}
                 </div>
                 <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
                   {GITHUB_SERVICE_DETAILS.map((field) => (

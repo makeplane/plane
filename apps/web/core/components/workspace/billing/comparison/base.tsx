@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 // constants
@@ -33,6 +34,7 @@ export const shouldRenderPlanDetail = (planKey: TPlanePlans) => {
 export const PlansComparisonBase = observer(function PlansComparisonBase(props: TPlansComparisonBaseProps) {
   const { planeDetails, isSelfManaged, isCompareAllFeaturesSectionOpen, setIsCompareAllFeaturesSectionOpen } = props;
   // plan details
+  const { t } = useTranslation();
   const { planDetails, planHighlights, planComparison } = PLANE_PLANS;
   const numberOfPlansToRender = Object.keys(planDetails).filter((planKey) =>
     shouldRenderPlanDetail(planKey as TPlanePlans)
@@ -60,7 +62,7 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
               className="grid gap-3 py-1 text-caption-md text-secondary even:bg-surface-2 rounded-xs"
               style={{ gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))` }}
             >
-              <div className="col-span-1 p-3 text-body-sm-medium">Highlights</div>
+              <div className="col-span-1 p-3 text-body-sm-medium">{t("workspace_settings.billing_and_plans.highlights")}</div>
               {Object.entries(planHighlights).map(
                 ([planKey, highlights]) =>
                   shouldRenderPlanDetail(planKey as TPlanePlans) && (
@@ -132,7 +134,7 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
             }}
             appendIcon={isCompareAllFeaturesSectionOpen ? <ArrowUp /> : <ArrowDown />}
           >
-            {isCompareAllFeaturesSectionOpen ? "Collapse comparison" : "Compare all features"}
+            {isCompareAllFeaturesSectionOpen ? t("workspace_settings.billing_and_plans.collapse_comparison") : t("workspace_settings.billing_and_plans.compare_all_features")}
           </Button>
         </div>
       </div>

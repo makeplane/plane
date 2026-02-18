@@ -149,7 +149,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
             rules={{
               pattern: {
                 value: emailRegex,
-                message: "Invalid Email ID",
+                message: t("onboarding.invite_members.invalid_email_error"),
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
@@ -254,7 +254,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
       {email && !emailRegex.test(email) && (
         <div className="mx-8 my-1">
           <span className="text-13">🤥</span>{" "}
-          <span className="mt-1 text-11 text-danger-primary">That doesn{"'"}t look like an email address.</span>
+          <span className="mt-1 text-11 text-danger-primary">{t("onboarding.invite_members.not_email_error")}</span>
         </div>
       )}
     </div>
@@ -265,6 +265,7 @@ export function InviteMembers(props: Props) {
   const { finishOnboarding, totalSteps, workspace } = props;
 
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
+  const { t } = useTranslation();
 
   const {
     control,
@@ -300,15 +301,15 @@ export function InviteMembers(props: Props) {
       .then(async () => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Invitations sent successfully.",
+          title: t("onboarding.invite_members.success_title"),
+          message: t("onboarding.invite_members.success_message"),
         });
         await nextStep();
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
+          title: t("common.error"),
           message: err?.error,
         });
       });
@@ -338,9 +339,9 @@ export function InviteMembers(props: Props) {
       <div className="w-full h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
         <div className="flex flex-col w-full items-center justify-center p-8 mt-6 md:w-4/5 mx-auto">
           <div className="text-center space-y-1 py-4 mx-auto w-4/5">
-            <h3 className="text-24 font-bold text-primary">Invite your teammates</h3>
+            <h3 className="text-24 font-bold text-primary">{t("onboarding.invite_members.title")}</h3>
             <p className="font-medium text-placeholder">
-              Work in plane happens best with your team. Invite them now to use Plane to its potential.
+              {t("onboarding.invite_members.description")}
             </p>
           </div>
           <form
@@ -352,8 +353,8 @@ export function InviteMembers(props: Props) {
           >
             <div className="w-full text-13 py-4">
               <div className="group relative grid grid-cols-10 gap-4 mx-8 py-2">
-                <div className="col-span-6 px-1 text-13 text-secondary font-medium">Email</div>
-                <div className="col-span-4 px-1 text-13 text-secondary font-medium">Role</div>
+                <div className="col-span-6 px-1 text-13 text-secondary font-medium">{t("onboarding.invite_members.email")}</div>
+                <div className="col-span-4 px-1 text-13 text-secondary font-medium">{t("onboarding.invite_members.role")}</div>
               </div>
               <div className="mb-3 space-y-3 sm:space-y-4">
                 {fields.map((field, index) => (
@@ -379,7 +380,7 @@ export function InviteMembers(props: Props) {
                 onClick={appendField}
               >
                 <PlusIcon className="h-4 w-4" strokeWidth={2} />
-                Add another
+                {t("onboarding.invite_members.add_another")}
               </button>
             </div>
             <div className="flex flex-col mx-auto px-8 sm:px-2 items-center justify-center gap-4 w-full max-w-96">
@@ -390,10 +391,10 @@ export function InviteMembers(props: Props) {
                 className="w-full"
                 disabled={isInvitationDisabled || !isValid || isSubmitting}
               >
-                {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
+                {isSubmitting ? <Spinner height="20px" width="20px" /> : t("common.continue")}
               </Button>
               <Button variant="ghost" size="xl" className="w-full" onClick={nextStep}>
-                I’ll do it later
+                {t("onboarding.invite_members.later")}
               </Button>
             </div>
           </form>

@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { LogOut } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -62,6 +63,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
   const { fetchWorkspaceStates } = useProjectState();
+  const { t } = useTranslation();
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -131,8 +133,8 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     await signOut().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to sign out. Please try again.",
+        title: t("common.error"),
+        message: t("workspace_wrapper.sign_out_error"),
       })
     );
   };
@@ -163,7 +165,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
                 className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm hover:bg-layer-1"
                 onClick={handleSignOut}
               >
-                <Tooltip tooltipContent={"Sign out"} position="top" className="ml-2" isMobile={isMobile}>
+                <Tooltip tooltipContent={t("workspace_wrapper.sign_out_tooltip")} position="top" className="ml-2" isMobile={isMobile}>
                   <LogOut size={14} />
                 </Tooltip>
               </div>
@@ -173,24 +175,24 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             <div className="relative flex-shrink-0">
               <img src={WorkSpaceNotAvailable} className="h-[220px] object-contain object-center" alt="Plane logo" />
             </div>
-            <h3 className="text-center text-16 font-semibold">Workspace not found</h3>
+            <h3 className="text-center text-16 font-semibold">{t("workspace_wrapper.title")}</h3>
             <p className="text-center text-13 text-secondary">
-              No workspace found with the URL. It may not exist or you lack authorization to view it.
+              {t("workspace_wrapper.description")}
             </p>
             <div className="flex items-center justify-center gap-2 pt-4">
               {allWorkspaces && allWorkspaces.length > 0 && (
                 <Link href="/" className={cn(getButtonStyling("primary", "base"))}>
-                  Go Home
+                  {t("workspace_wrapper.go_home")}
                 </Link>
               )}
               {allWorkspaces?.length > 0 && (
                 <Link href="/settings/profile/general/" className={cn(getButtonStyling("secondary", "base"))}>
-                  Visit Profile
+                  {t("workspace_wrapper.visit_profile")}
                 </Link>
               )}
               {allWorkspaces && allWorkspaces.length === 0 && (
                 <Link href="/create-workspace/" className={cn(getButtonStyling("secondary", "base"))}>
-                  Create new workspace
+                  {t("workspace_wrapper.create_new_workspace")}
                 </Link>
               )}
             </div>
@@ -209,21 +211,20 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
         <div className="grid h-full place-items-center p-4">
           <div className="space-y-8 text-center">
             <div className="space-y-2">
-              <h3 className="text-16 font-semibold">Not Authorized!</h3>
+              <h3 className="text-16 font-semibold">{t("workspace_wrapper.not_authorized.title")}</h3>
               <p className="mx-auto w-1/2 text-13 text-secondary">
-                You{"'"}re not a member of this workspace. Please contact the workspace admin to get an invitation or
-                check your pending invitations.
+                {t("workspace_wrapper.not_authorized.description")}
               </p>
             </div>
             <div className="flex items-center justify-center gap-2">
               <Link href="/invitations">
                 <span>
-                  <Button variant="secondary">Check pending invites</Button>
+                  <Button variant="secondary">{t("workspace_wrapper.check_pending_invites")}</Button>
                 </span>
               </Link>
               <Link href="/create-workspace">
                 <span>
-                  <Button variant="primary">Create new workspace</Button>
+                  <Button variant="primary">{t("workspace_wrapper.create_new_workspace")}</Button>
                 </span>
               </Link>
             </div>

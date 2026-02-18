@@ -25,6 +25,7 @@
     "@headlessui/react": "^1.7.19",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
+    "@plane/i18n": "workspace:*",
     "@plane/propel": "workspace:*",
     "@plane/services": "workspace:*",
     "@plane/types": "workspace:*",

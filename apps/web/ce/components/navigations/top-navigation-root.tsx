@@ -13,6 +13,7 @@ import { HelpMenuRoot } from "@/components/workspace/sidebar/help-section/root";
 import { UserMenuRoot } from "@/components/workspace/sidebar/user-menu-root";
 import { WorkspaceMenuRoot } from "@/components/workspace/sidebar/workspace-menu-root";
 import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
+import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 import { InboxIcon } from "@plane/propel/icons";
@@ -23,8 +24,10 @@ import { StarUsOnGitHubLink } from "@/app/(all)/[workspaceSlug]/(projects)/star-
 
 export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
+  // translation
+  const { t } = useTranslation();
 
   // store hooks
   const { unreadNotificationsCount, getUnreadNotificationsCount } = useWorkspaceNotifications();
@@ -60,7 +63,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
       </div>
       {/* Additional Actions */}
       <div className="shrink-0 flex-1 flex gap-1 items-center justify-end">
-        <Tooltip tooltipContent="Inbox" position="bottom">
+        <Tooltip tooltipContent={t("notification.label")} position="bottom">
           <AppSidebarItem
             variant="link"
             item={{

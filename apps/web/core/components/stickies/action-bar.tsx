@@ -12,6 +12,7 @@ import { StickyNote as StickyIcon } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // plane ui
+import { useTranslation } from "@plane/i18n";
 import { RecentStickyIcon, StickyNoteIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
@@ -29,6 +30,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [newSticky, setNewSticky] = useState(false);
   const [showRecentSticky, setShowRecentSticky] = useState(false);
+  const { t } = useTranslation();
   // navigation
   const { workspaceSlug } = useParams();
   // refs
@@ -61,7 +63,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
       <div
         className={`flex flex-col gap-2 transition-all duration-300 ease-in-out origin-bottom ${isExpanded ? "scale-y-100 opacity-100 mb-2 " : "scale-y-0 opacity-0 h-0"}`}
       >
-        <Tooltip tooltipContent="All stickies" isMobile={false} position="left">
+        <Tooltip tooltipContent={t("stickies.all")} isMobile={false} position="left">
           <button
             className="btn btn--icon rounded-full w-10 h-10 flex items-center justify-center shadow-sm bg-surface-1"
             onClick={() => toggleAllStickiesModal(true)}
@@ -100,7 +102,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
             </button>
           </Tooltip>
         )}
-        <Tooltip tooltipContent="Add sticky" isMobile={false} position="left">
+        <Tooltip tooltipContent={t("stickies.add")} isMobile={false} position="left">
           <button
             className="btn btn--icon rounded-full w-10 h-10 flex items-center justify-center shadow-sm bg-surface-1"
             onClick={() => {

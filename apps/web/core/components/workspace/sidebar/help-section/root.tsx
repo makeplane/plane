@@ -97,7 +97,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
           onClick={() => window.open("https://go.plane.so/p-discord", "_blank", "noopener,noreferrer")}
         >
           <div className="flex items-center gap-x-2 rounded-sm text-11">
-            <span className="text-11">Discord</span>
+            <span className="text-11">{t("discord")}</span>
           </div>
         </CustomMenu.MenuItem>
         <div className="px-1 pt-2 mt-1 text-11 text-secondary border-t border-subtle">

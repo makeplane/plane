@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 
 // plane ui
+import { useTranslation } from "@plane/i18n";
 import { RecentStickyIcon, PlusIcon, CloseIcon } from "@plane/propel/icons";
 // hooks
 import { useSticky } from "@/hooks/use-stickies";
@@ -26,6 +27,7 @@ export const Stickies = observer(function Stickies(props: TProps) {
   const { workspaceSlug } = useParams();
   // store hooks
   const { creatingSticky, toggleShowNewSticky } = useSticky();
+  const { t } = useTranslation();
   // sticky operations
   const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
 
@@ -36,7 +38,7 @@ export const Stickies = observer(function Stickies(props: TProps) {
         {/* Title */}
         <div className="text-secondary flex items-center gap-2">
           <RecentStickyIcon className="size-5 rotate-90 flex-shrink-0" />
-          <p className="text-18 font-medium">Your stickies</p>
+          <p className="text-18 font-medium">{t("stickies.title")}</p>
         </div>
         {/* actions */}
         <div className="flex gap-2">
@@ -49,7 +51,7 @@ export const Stickies = observer(function Stickies(props: TProps) {
             className="flex gap-1 text-13 font-medium text-accent-primary my-auto"
             disabled={creatingSticky}
           >
-            <PlusIcon className="size-4 my-auto" /> <span>Add sticky</span>
+            <PlusIcon className="size-4 my-auto" /> <span>{t("stickies.add")}</span>
             {creatingSticky && (
               <div className="flex items-center justify-center ml-2">
                 <div

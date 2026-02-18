@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IFormattedInstanceConfiguration, TInstanceGiteaAuthenticationConfigurationKeys } from "@plane/types";
@@ -36,6 +37,7 @@ export function InstanceGiteaConfigForm(props: Props) {
   // states
   const [isDiscardChangesModalOpen, setIsDiscardChangesModalOpen] = useState(false);
   // store hooks
+  const { t } = useTranslation();
   const { updateInstanceConfigurations } = useInstance();
   // form data
   const {
@@ -58,9 +60,9 @@ export function InstanceGiteaConfigForm(props: Props) {
     {
       key: "GITEA_HOST",
       type: "text",
-      label: "Gitea Host",
+      label: t("admin.gitea_host_label"),
       description: (
-        <>Use the URL of your Gitea instance. For the official Gitea instance, use &quot;https://gitea.com&quot;.</>
+        <>{t("admin.gitea_host_description")}</>
       ),
       placeholder: "https://gitea.com",
       error: Boolean(errors.GITEA_HOST),
@@ -69,10 +71,10 @@ export function InstanceGiteaConfigForm(props: Props) {
     {
       key: "GITEA_CLIENT_ID",
       type: "text",
-      label: "Client ID",
+      label: t("admin.google_client_id_label"),
       description: (
         <>
-          You will get this from your{" "}
+          {t("admin.github_client_id_description")}{" "}
           <a
             tabIndex={-1}
             href="https://gitea.com/user/settings/applications"
@@ -80,7 +82,7 @@ export function InstanceGiteaConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            Gitea OAuth application settings.
+            {t("admin.gitea_oauth_apps_link")}
           </a>
         </>
       ),
@@ -91,10 +93,10 @@ export function InstanceGiteaConfigForm(props: Props) {
     {
       key: "GITEA_CLIENT_SECRET",
       type: "password",
-      label: "Client secret",
+      label: t("admin.google_client_secret_label"),
       description: (
         <>
-          Your client secret is also found in your{" "}
+          {t("admin.google_client_secret_description")}{" "}
           <a
             tabIndex={-1}
             href="https://gitea.com/user/settings/applications"
@@ -102,7 +104,7 @@ export function InstanceGiteaConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            Gitea OAuth application settings.
+            {t("admin.gitea_oauth_apps_link")}
           </a>
         </>
       ),
@@ -114,17 +116,17 @@ export function InstanceGiteaConfigForm(props: Props) {
 
   const GITEA_FORM_SWITCH_FIELD: TControllerSwitchFormField<GiteaConfigFormValues> = {
     name: "ENABLE_GITEA_SYNC",
-    label: "Gitea",
+    label: t("admin.gitea_sync_label"),
   };
 
   const GITEA_SERVICE_FIELD: TCopyField[] = [
     {
       key: "Callback_URI",
-      label: "Callback URI",
+      label: t("admin.callback_uri_label"),
       url: `${originURL}/auth/gitea/callback/`,
       description: (
         <>
-          We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Callback URI</CodeBlock>{" "}
+          {t("admin.callback_uri_description")} <CodeBlock darkerShade>{t("admin.auth_callback_uri_field")}</CodeBlock>{" "}
           field{" "}
           <a
             tabIndex={-1}
@@ -133,7 +135,7 @@ export function InstanceGiteaConfigForm(props: Props) {
             className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
-            here.
+            {t("common.here")}
           </a>
         </>
       ),
@@ -147,8 +149,8 @@ export function InstanceGiteaConfigForm(props: Props) {
       const response = await updateInstanceConfigurations(payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Done!",
-        message: "Your Gitea authentication is configured. You should test it now.",
+        title: t("admin.google_auth_configured_title"),
+        message: t("admin.gitea_auth_configured_message"),
       });
       reset({
         GITEA_HOST: response.find((item) => item.key === "GITEA_HOST")?.value,
@@ -178,7 +180,7 @@ export function InstanceGiteaConfigForm(props: Props) {
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
           <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
-            <div className="pt-2.5 text-18 font-medium">Gitea-provided details for Plane</div>
+            <div className="pt-2.5 text-18 font-medium">{t("admin.gitea_provided_details_title")}</div>
             {GITEA_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -202,17 +204,17 @@ export function InstanceGiteaConfigForm(props: Props) {
                   loading={isSubmitting}
                   disabled={!isDirty}
                 >
-                  {isSubmitting ? "Saving" : "Save changes"}
+                  {isSubmitting ? t("saving") : t("save_changes")}
                 </Button>
                 <Link href="/authentication" className={getButtonStyling("secondary", "lg")} onClick={handleGoBack}>
-                  Go back
+                  {t("common.go_back")}
                 </Link>
               </div>
             </div>
           </div>
           <div className="col-span-2 md:col-span-1">
             <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-layer-1 rounded-lg">
-              <div className="pt-2 text-18 font-medium">Plane-provided details for Gitea</div>
+              <div className="pt-2 text-18 font-medium">{t("admin.plane_provided_details_gitea_title")}</div>
               {GITEA_SERVICE_FIELD.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
               ))}
