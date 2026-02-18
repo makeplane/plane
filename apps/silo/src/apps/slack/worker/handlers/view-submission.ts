@@ -611,7 +611,6 @@ async function createWorkItemFromViewSubmission(
 
     issue = await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
       ...parsedData.data,
-      description_html: parsedDescription,
     });
   } else {
     issue = await planeClient.issue.create(workspaceConnection.workspace_slug, parsedData.data.project, {
