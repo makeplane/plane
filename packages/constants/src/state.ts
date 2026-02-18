@@ -24,30 +24,35 @@ export const STATE_GROUPS: {
     label: "Backlog",
     defaultStateName: "Backlog",
     color: "#d9d9d9",
+    i18n_label: "scrum.states.backlog",
   },
   unstarted: {
     key: "unstarted",
     label: "Unstarted",
     defaultStateName: "Todo",
     color: "#3f76ff",
+    i18n_label: "scrum.states.unstarted",
   },
   started: {
     key: "started",
     label: "Started",
     defaultStateName: "In Progress",
     color: "#f59e0b",
+    i18n_label: "scrum.states.started",
   },
   completed: {
     key: "completed",
     label: "Completed",
     defaultStateName: "Done",
     color: "#16a34a",
+    i18n_label: "scrum.states.completed",
   },
   cancelled: {
     key: "cancelled",
     label: "Canceled",
     defaultStateName: "Cancelled",
     color: "#dc2626",
+    i18n_label: "scrum.states.cancelled",
   },
 };
 
@@ -91,22 +96,22 @@ export const STATE_DISTRIBUTION = {
 export const PROGRESS_STATE_GROUPS_DETAILS = [
   {
     key: "completed_issues",
-    title: "Completed",
+    titleKey: "scrum.states.completed",
     color: "#16A34A",
   },
   {
     key: "started_issues",
-    title: "Started",
+    titleKey: "scrum.states.started",
     color: "#F59E0B",
   },
   {
     key: "unstarted_issues",
-    title: "Unstarted",
+    titleKey: "scrum.states.unstarted",
     color: "#3A3A3A",
   },
   {
     key: "backlog_issues",
-    title: "Backlog",
+    titleKey: "scrum.states.backlog",
     color: "#A3A3A3",
   },
 ];

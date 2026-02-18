@@ -376,6 +376,87 @@ export default {
     success: "Success!",
     error: "Error!",
   },
+  restoring: "Restoring",
+  project_publish: {
+    unpublish: "Unpublish",
+    unpublishing: "Unpublishing",
+    publishing: "Publishing",
+    update_settings: "Update settings",
+    views: "Views",
+    allow_comments: "Allow comments",
+    allow_reactions: "Allow reactions",
+    allow_voting: "Allow voting",
+    link_access: "Anyone with the link can access",
+    live_status: "This project is now live on web",
+    toasts: {
+      settings_updated: "Publish settings updated successfully!",
+      unpublish_error: "Something went wrong while unpublishing the project.",
+      no_layout_selected: "Please select at least one view layout to publish the project.",
+      link_copied: "Published page link copied successfully.",
+    },
+  },
+  project_modals: {
+    leave: {
+      confirm_phrase: "Leave project",
+      description_prefix: "Are you sure you want to leave the project",
+      description_suffix: "? All of the work items associated with you will become inaccessible.",
+      enter_project_name: "Enter the project name",
+      confirm_instruction_prefix: "To confirm, type",
+      confirm_instruction_suffix: "below:",
+      placeholders: {
+        project_name: "Enter project name",
+        confirm_leave: "Enter leave confirmation phrase",
+      },
+      errors: {
+        confirm_phrase: "Please confirm leaving the project by typing the confirmation phrase.",
+        project_name: "Please enter the project name as shown in the description.",
+        fill_all_fields: "Please fill all fields.",
+      },
+    },
+    delete: {
+      confirm_phrase: "delete my project",
+      description_prefix: "Are you sure you want to delete project",
+      description_suffix: "All of the data related to the project will be permanently removed. This action cannot be undone.",
+      enter_project_name: "Enter the project name",
+      confirm_instruction_prefix: "To confirm, type",
+      confirm_instruction_suffix: "below:",
+      placeholders: {
+        project_name: "Project name",
+        confirm_delete: "Enter delete confirmation phrase",
+      },
+      toasts: {
+        success: "Project deleted successfully.",
+      },
+    },
+    member_remove: {
+      leave_title: "Leave project?",
+      remove_title: "Remove {name}?",
+      leave_description:
+        "Are you sure you want to leave the project {project}? You will be able to join the project if invited again or if it's public.",
+      remove_description:
+        "Are you sure you want to remove member {name}? They will no longer have access to this project. This action cannot be undone.",
+    },
+    archive_restore: {
+      archive_description:
+        "This project and its work items, cycles, modules, and pages will be archived. Its work items won't appear in search. Only project admins can restore the project.",
+      restore_description:
+        "Restoring a project will activate it and make it visible to all members of the project. Are you sure you want to continue?",
+      toasts: {
+        archive_success_title: "Archive success",
+        archive_success_message: "{project} has been archived successfully",
+        archive_error_message: "Project could not be archived. Please try again.",
+        restore_success_title: "Restore success",
+        restore_success_message: "You can find {project} in your projects.",
+        restore_error_message: "Project could not be restored. Please try again.",
+      },
+    },
+  },
+  workspace_member_modals: {
+    leave_title: "Leave workspace?",
+    remove_title: "Remove {name}?",
+    remove_description:
+      "Are you sure you want to remove member {name}? They will no longer have access to this workspace. This action cannot be undone.",
+  },
   links: {
     toasts: {
       created: {
@@ -2949,6 +3030,71 @@ export default {
     stickies: "Stickies",
     your_work: "Your work",
   },
+  pages_modals: {
+    export: {
+      title: "Export page",
+      export_format: "Export format",
+      include_content: "Include content",
+      page_format: "Page format",
+      content_everything: "Everything",
+      content_no_assets: "No images",
+      cancel: "Cancel",
+      export: "Export",
+      exporting: "Exporting",
+      success: "Page exported successfully.",
+      error: "Page could not be exported. Please try again later.",
+    },
+  },
+  notifications: {
+    actions: {
+      duplicate: {
+        created: "marked that this work item is a duplicate of",
+        removed: "marked that this work item is not a duplicate",
+      },
+      assignees: {
+        added: "added assignee",
+        removed: "removed assignee",
+      },
+      start_date: {
+        set: "set start date",
+        removed: "removed the start date",
+      },
+      target_date: {
+        set: "set due date",
+        removed: "removed the due date",
+      },
+      labels: {
+        added: "added label",
+        removed: "removed label",
+      },
+      parent: {
+        added: "added parent",
+        removed: "removed parent",
+      },
+      relates_to: "marked that this work item is related to",
+      comment: "commented",
+      archived: {
+        restore: "restored the work item",
+        archived: "archived the work item",
+      },
+    },
+    values: {
+      assigned_it_to_you: "the work item and assigned it to you.",
+      the_work_item: "the work item",
+    },
+  },
+  scrum: {
+    states: {
+      backlog: "Backlog",
+      unstarted: "To-do",
+      started: "In progress",
+      completed: "Done",
+      cancelled: "Cancelled",
+    },
+    work_items: "{count, plural, one {Work item} other {Work items}}",
+    excluded_from_report:
+      "{count, plural, one {{count} cancelled work item is} other {{count} cancelled work items are}} excluded from this report.",
+  },
   onboarding: {
     profile: {
       title: "Create your profile.",
@@ -3033,6 +3179,80 @@ export default {
       no_invitations: "No Invitations found",
       restricted:
         "You don't seem to have any invites to a workspace and your instance admin has restricted creation of new workspaces. Please ask a workspace owner or admin to invite you to a workspace first and come back to this screen to join.",
+    },
+    switch_account: {
+      title: "Switch account",
+      description_prefix: "If you have signed up via",
+      description_suffix: "unintentionally, you can switch your account to a different one from here.",
+      action: "Switch account",
+      switching: "Switching...",
+      wrong_email: "Wrong e-mail address?",
+    },
+    tour: {
+      welcome: {
+        heading: "Welcome to Plane, {firstName} {lastName}",
+        description:
+          "We're glad that you decided to try out Plane. You can now manage your projects with ease. Get started by creating a project.",
+        cta_tour: "Take a Product Tour",
+        cta_skip: "No thanks, I will explore it myself",
+      },
+      steps: {
+        work_items: {
+          title: "Plan with work items",
+          description:
+            "The work item is the building block of Plane. Most concepts in Plane are either associated with work items and their properties.",
+        },
+        cycles: {
+          title: "Move with cycles",
+          description:
+            "Cycles help you and your team progress faster, similar to the sprints commonly used in agile development.",
+        },
+        modules: {
+          title: "Break into modules",
+          description: "Modules break your big thing into projects or features to help you organize better.",
+        },
+        views: {
+          title: "Views",
+          description:
+            "Create custom filters to display only the work items that matter to you. Save and share your filters in just a few clicks.",
+        },
+        pages: {
+          title: "Document with pages",
+          description: "Use Pages to quickly jot down work items when you're in a meeting or starting a day.",
+        },
+      },
+      buttons: {
+        take_product_tour: "Take a Product Tour",
+        back: "Back",
+        next: "Next",
+        create_project: "Create your first project",
+      },
+      sidebar: {
+        heading: "Let's get started!",
+        subheading: "Get more out of Plane.",
+        options: {
+          work_items: "Work items",
+          cycles: "Cycles",
+          modules: "Modules",
+          views: "Views",
+          pages: "Pages",
+        },
+      },
+    },
+    role_setup: {
+      title: "What's your role?",
+      description: "Let's set up Plane for how you work.",
+      select_one: "Select one",
+      skip: "Skip",
+      roles: {
+        product_manager: "Product Manager",
+        engineering_manager: "Engineering Manager",
+        designer: "Designer",
+        developer: "Developer",
+        founder_executive: "Founder / Executive",
+        operations_manager: "Operations Manager",
+        others: "Others",
+      },
     },
     continue: "Continue",
   },

@@ -6,38 +6,39 @@
 
 // plane imports
 import { CycleIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import type { ISvgIcons } from "@plane/propel/icons";
 // types
 import type { TTourSteps } from "./root";
 
 const sidebarOptions: {
   key: TTourSteps;
-  label: string;
+  labelKey: string;
   Icon: React.FC<ISvgIcons>;
 }[] = [
   {
     key: "work-items",
-    label: "Work items",
+    labelKey: "onboarding.tour.sidebar.options.work_items",
     Icon: WorkItemsIcon,
   },
   {
     key: "cycles",
-    label: "Cycles",
+    labelKey: "onboarding.tour.sidebar.options.cycles",
     Icon: CycleIcon,
   },
   {
     key: "modules",
-    label: "Modules",
+    labelKey: "onboarding.tour.sidebar.options.modules",
     Icon: ModuleIcon,
   },
   {
     key: "views",
-    label: "Views",
+    labelKey: "onboarding.tour.sidebar.options.views",
     Icon: ViewsIcon,
   },
   {
     key: "pages",
-    label: "Pages",
+    labelKey: "onboarding.tour.sidebar.options.pages",
     Icon: PageIcon,
   },
 ];
@@ -48,12 +49,13 @@ type Props = {
 };
 
 export function TourSidebar({ step, setStep }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="col-span-3 hidden bg-surface-2 p-8 lg:block">
       <h3 className="text-16 font-medium">
-        Let{"'"}s get started!
+        {t("onboarding.tour.sidebar.heading")}
         <br />
-        Get more out of Plane.
+        {t("onboarding.tour.sidebar.subheading")}
       </h3>
       <div className="mt-8 space-y-5">
         {sidebarOptions.map((option) => (

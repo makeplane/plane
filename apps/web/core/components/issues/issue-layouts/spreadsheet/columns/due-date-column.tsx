@@ -23,8 +23,11 @@ type Props = {
   disabled: boolean;
 };
 
+import { useTranslation } from "@plane/i18n";
+
 export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
+  const { t } = useTranslation();
   // store hooks
   const { getStateById } = useProjectState();
   // derived values
@@ -47,7 +50,7 @@ export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColu
           );
         }}
         disabled={disabled}
-        placeholder="Due date"
+        placeholder={t("issues.spreadsheet.placeholders.due_date")}
         icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="transparent-with-text"
         buttonContainerClassName="w-full"

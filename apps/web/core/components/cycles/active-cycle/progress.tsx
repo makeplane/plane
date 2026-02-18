@@ -35,7 +35,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
   // derived values
   const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
-    name: group.title,
+    name: t(group.titleKey ?? ""),
     value: cycle && cycle.total_issues > 0 ? (cycle[group.key as keyof ICycle] as number) : 0,
     color: group.color,
   }));
@@ -84,11 +84,13 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
                           backgroundColor: PROGRESS_STATE_GROUPS_DETAILS[index].color,
                         }}
                       />
-                      <span className="text-tertiary capitalize font-medium w-16">{group}</span>
+                      <span className="text-tertiary capitalize font-medium w-16">
+                        {t(`scrum.states.${group}`)}
+                      </span>
                     </div>
-                    <span className="text-tertiary">{`${groupedIssues[group]} ${
-                      groupedIssues[group] > 1 ? "Work items" : "Work item"
-                    }`}</span>
+                    <span className="text-tertiary">
+                      {`${groupedIssues[group]} ${t("scrum.work_items", { count: groupedIssues[group] })}`}
+                    </span>
                   </div>
                 </div>
               )}
@@ -96,11 +98,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
           ))}
           {cycle.cancelled_issues > 0 && (
             <span className="flex items-center gap-2 text-13 text-tertiary">
-              <span>
-                {`${cycle.cancelled_issues} cancelled ${
-                  cycle.cancelled_issues > 1 ? "work items are" : "work item is"
-                } excluded from this report.`}{" "}
-              </span>
+              <span>{t("scrum.excluded_from_report", { count: cycle.cancelled_issues })}</span>
             </span>
           )}
         </div>

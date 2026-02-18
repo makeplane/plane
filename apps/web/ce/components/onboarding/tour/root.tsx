@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 import { PRODUCT_TOUR_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { CloseIcon, PlaneLockup } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 // assets
 import CyclesTour from "@/app/assets/onboarding/cycles.webp?url";
 import IssuesTour from "@/app/assets/onboarding/issues.webp?url";
@@ -30,17 +31,16 @@ export type TTourSteps = "welcome" | "work-items" | "cycles" | "modules" | "view
 
 const TOUR_STEPS: {
   key: TTourSteps;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   image: string;
   prevStep?: TTourSteps;
   nextStep?: TTourSteps;
 }[] = [
   {
     key: "work-items",
-    title: "Plan with work items",
-    description:
-      "The work item is the building block of the Plane. Most concepts in Plane are either associated with work items and their properties.",
+    titleKey: "onboarding.tour.steps.work_items.title",
+    descriptionKey: "onboarding.tour.steps.work_items.description",
     image: IssuesTour,
     nextStep: "cycles",
   },
@@ -72,8 +72,8 @@ const TOUR_STEPS: {
   },
   {
     key: "pages",
-    title: "Document with pages",
-    description: "Use Pages to quickly jot down work items when you're in a meeting or starting a day.",
+    titleKey: "onboarding.tour.steps.pages.title",
+    descriptionKey: "onboarding.tour.steps.pages.description",
     image: PagesTour,
     prevStep: "views",
   },
@@ -81,6 +81,7 @@ const TOUR_STEPS: {
 
 export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) {
   const { onComplete } = props;
+  const { t } = useTranslation();
   // states
   const [step, setStep] = useState<TTourSteps>("welcome");
   // store hooks
@@ -100,12 +101,12 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
             </div>
             <div className="flex flex-col overflow-y-auto p-6">
               <h3 className="font-semibold sm:text-18">
-                Welcome to Plane, {currentUser?.first_name} {currentUser?.last_name}
+                {t("onboarding.tour.welcome.heading", {
+                  firstName: currentUser?.first_name ?? "",
+                  lastName: currentUser?.last_name ?? "",
+                })}
               </h3>
-              <p className="mt-3 text-13 text-secondary">
-                We{"'"}re glad that you decided to try out Plane. You can now manage your projects with ease. Get
-                started by creating a project.
-              </p>
+              <p className="mt-3 text-13 text-secondary">{t("onboarding.tour.welcome.description")}</p>
               <div className="flex h-full items-end">
                 <div className="mt-12 flex items-center gap-6">
                   <Button
@@ -114,7 +115,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                       setStep("work-items");
                     }}
                   >
-                    Take a Product Tour
+                    {t("onboarding.tour.buttons.take_product_tour")}
                   </Button>
                   <button
                     type="button"
@@ -123,7 +124,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                       onComplete();
                     }}
                   >
-                    No thanks, I will explore it myself
+                    {t("onboarding.tour.welcome.cta_skip")}
                   </button>
                 </div>
               </div>
@@ -149,31 +150,31 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
               <img src={currentStep?.image} className="w-full h-full object-cover" alt={currentStep?.title} />
             </div>
             <div className="flex h-1/2 flex-col overflow-y-auto p-4 sm:h-2/5">
-              <h3 className="font-semibold sm:text-18">{currentStep?.title}</h3>
-              <p className="mt-3 text-13 text-secondary">{currentStep?.description}</p>
+              <h3 className="font-semibold sm:text-18">{t(currentStep?.titleKey ?? "")}</h3>
+              <p className="mt-3 text-13 text-secondary">{t(currentStep?.descriptionKey ?? "")}</p>
               <div className="mt-3 flex h-full items-end justify-between gap-4">
                 <div className="flex items-center gap-4">
                   {currentStep?.prevStep && (
                     <Button variant="secondary" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
-                      Back
+                      {t("onboarding.tour.buttons.back")}
                     </Button>
                   )}
                   {currentStep?.nextStep && (
                     <Button variant="primary" onClick={() => setStep(currentStep.nextStep ?? "work-items")}>
-                      Next
+                      {t("onboarding.tour.buttons.next")}
                     </Button>
                   )}
                 </div>
                 {currentStepIndex === TOUR_STEPS.length - 1 && (
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      onComplete();
-                      toggleCreateProjectModal(true);
-                    }}
-                  >
-                    Create your first project
-                  </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    onComplete();
+                    toggleCreateProjectModal(true);
+                  }}
+                >
+                  {t("onboarding.tour.buttons.create_project")}
+                </Button>
                 )}
               </div>
             </div>

@@ -181,7 +181,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
 
   const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
-    name: group.title,
+    name: t(group.titleKey ?? ""),
     value: moduleTotalIssues > 0 ? (moduleDetails[group.key as keyof IModule] as number) : 0,
     color: group.color,
   }));

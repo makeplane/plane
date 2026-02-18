@@ -8,12 +8,15 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { useUser } from "@/hooks/store/user";
 import type { Props } from "./confirm-workspace-member-remove";
 
 export const ConfirmWorkspaceMemberRemove = observer(function ConfirmWorkspaceMemberRemove(props: Props) {
   const { isOpen, onClose, onSubmit, userDetails } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
   const [isRemoving, setIsRemoving] = useState(false);
   // store hooks
@@ -67,20 +70,17 @@ export const ConfirmWorkspaceMemberRemove = observer(function ConfirmWorkspaceMe
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                       <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
                         {currentUser?.id === userDetails.id
-                          ? "Leave workspace?"
-                          : `Remove ${userDetails?.display_name}?`}
+                          ? t("workspace_member_modals.leave_title")
+                          : t("workspace_member_modals.remove_title", { name: userDetails?.display_name ?? "" })}
                       </Dialog.Title>
                       <div className="mt-2">
                         {currentUser?.id === userDetails.id ? (
                           <p className="text-13 text-secondary">
-                            Are you sure you want to leave the workspace? You will no longer have access to this
-                            workspace. This action cannot be undone.
+                            {t("workspace_settings.settings.members.leave_confirmation")}
                           </p>
                         ) : (
                           <p className="text-13 text-secondary">
-                            Are you sure you want to remove member-{" "}
-                            <span className="font-bold">{userDetails?.display_name}</span>? They will no longer have
-                            access to this workspace. This action cannot be undone.
+                            {t("workspace_member_modals.remove_description", { name: userDetails?.display_name ?? "" })}
                           </p>
                         )}
                       </div>
@@ -89,16 +89,16 @@ export const ConfirmWorkspaceMemberRemove = observer(function ConfirmWorkspaceMe
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
                   <Button variant="secondary" onClick={handleClose}>
-                    Cancel
+                    {t("cancel")}
                   </Button>
                   <Button variant="error-fill" tabIndex={1} onClick={handleDeletion} loading={isRemoving}>
                     {currentUser?.id === userDetails.id
                       ? isRemoving
-                        ? "Leaving"
-                        : "Leave"
+                        ? t("leaving")
+                        : t("leave")
                       : isRemoving
-                        ? "Removing"
-                        : "Remove"}
+                        ? t("removing")
+                        : t("remove")}
                   </Button>
                 </div>
               </Dialog.Panel>
