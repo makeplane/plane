@@ -240,7 +240,9 @@ class Command(BaseCommand):
     def _summary(self, ws):
         self.stdout.write("\n" + "=" * 50)
         self.stdout.write("SEED SUMMARY")
-        self.stdout.write(f"  Departments: {Department.objects.filter(workspace=ws).count()} (L1:{Department.objects.filter(workspace=ws, level=1).count()} L2:{Department.objects.filter(workspace=ws, level=2).count()} L3:{Department.objects.filter(workspace=ws, level=3).count()})")
+        dc = Department.objects.filter(workspace=ws)
+        lvl = " ".join(f"L{i}:{dc.filter(level=i).count()}" for i in range(1, 7) if dc.filter(level=i).exists())
+        self.stdout.write(f"  Departments: {dc.count()} ({lvl})")
         sp = StaffProfile.objects.filter(workspace=ws)
         self.stdout.write(f"  Staff: {sp.count()} (active:{sp.filter(employment_status='active').count()} probation:{sp.filter(employment_status='probation').count()} resigned:{sp.filter(employment_status='resigned').count()})")
         ids = _all_seed_identifiers()

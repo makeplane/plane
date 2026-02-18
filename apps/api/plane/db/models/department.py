@@ -9,7 +9,7 @@ from .base import BaseModel
 
 
 class Department(BaseModel):
-    """Hierarchical department model for organizational structure (max 5 levels)."""
+    """Hierarchical department model for organizational structure (max 6 levels)."""
 
     workspace = models.ForeignKey(
         "db.Workspace",
@@ -34,7 +34,7 @@ class Department(BaseModel):
     )
     level = models.PositiveSmallIntegerField(
         default=1,
-        validators=[MaxValueValidator(5)],
+        validators=[MaxValueValidator(6)],
     )
 
     # Department manager
