@@ -1851,6 +1851,68 @@ export default {
       worklogs: {
         title: "工作日誌",
       },
+      group_syncing: {
+        title: "群組同步",
+        heading: "群組同步",
+        description:
+          "將身份提供者群組與專案和角色連結。當 IdP 中的群組成員資格變更時，使用者存取權會自動更新，簡化入職與離職流程。",
+        enable: {
+          title: "啟用群組同步",
+          description: "根據身份提供者群組自動將使用者加入專案。",
+        },
+        config: {
+          title: "設定群組同步",
+          description: "設定身份提供者群組如何對應至專案和角色。",
+          sync_on_login: {
+            title: "登入時同步",
+            description: "使用者登入時更新群組成員資格與專案存取權。",
+          },
+          sync_offline: {
+            title: "離線同步",
+            description: "每六小時自動執行同步，無需等待使用者登入。",
+          },
+          auto_remove: {
+            title: "自動移除",
+            description: "當使用者不再符合群組時，自動將其從專案中移除。",
+          },
+          group_attribute_key: {
+            title: "群組屬性鍵",
+            description: "用於識別與同步使用者群組的身份提供者屬性。",
+            placeholder: "群組",
+          },
+        },
+        group_mapping: {
+          title: "群組對應",
+          description: "將身份提供者群組與專案和角色連結。",
+          button_text: "新增群組同步",
+        },
+        toast: {
+          updating: "正在更新群組同步功能",
+          success: "群組同步功能已成功更新。",
+          error: "更新群組同步功能失敗！",
+        },
+        delete_modal: {
+          title: "刪除群組同步",
+          content: "此身份群組的新使用者將不再被加入專案。已加入的使用者將保留其目前角色。",
+        },
+        modal: {
+          idp_group_name: {
+            text: "使用者群組",
+            required: "使用者群組為必填",
+            placeholder: "輸入 IdP 群組名稱",
+          },
+          project: {
+            text: "專案",
+            required: "專案為必填",
+            placeholder: "選擇專案",
+          },
+          default_role: {
+            text: "專案角色",
+            required: "專案角色為必填",
+            placeholder: "選擇專案角色",
+          },
+        },
+      },
       identity: {
         title: "身份",
         heading: "身份",

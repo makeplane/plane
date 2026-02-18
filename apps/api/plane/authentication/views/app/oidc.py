@@ -26,6 +26,7 @@ from plane.authentication.utils.workspace_project_join import (
 )
 from plane.authentication.utils.redirection_path import get_redirection_path
 from plane.authentication.utils.login import user_login
+from plane.authentication.utils.group_sync import process_group_sync_on_login
 from plane.license.models import Instance
 from plane.authentication.adapter.error import (
     AuthenticationException,
@@ -103,6 +104,12 @@ class OIDCallbackEndpoint(View):
             user_login(request=request, user=user)
             # Process workspace and project invitations
             process_workspace_project_invitations(user=user)
+            # Process group sync (self-hosted - syncs across all workspaces)
+            process_group_sync_on_login(
+                user=user,
+                userinfo_response=provider.userinfo_response,
+                is_cloud=False,
+            )
             # Get the redirection path
             path = get_redirection_path(user=user)
             # redirect to referer path

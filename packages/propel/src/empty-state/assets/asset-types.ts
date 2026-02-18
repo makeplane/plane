@@ -34,6 +34,7 @@ export type HorizontalStackAssetType =
   | "webhook"
   | "work-item"
   | "worklog"
+  | "group-syncing"
   | "runner-scripts"
   | "runner-functions";
 

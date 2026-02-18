@@ -34,6 +34,8 @@ logger = logging.getLogger("plane.authentication")
 class OIDCOAuthProvider(OauthAdapter):
     provider = "oidc"
     scope = "openid email profile"
+    # Store the raw userinfo response for group sync
+    userinfo_response = None
 
     def __init__(self, request, code=None, state=None, redirect_uri: Optional[str] = None):
         (
@@ -120,6 +122,8 @@ class OIDCOAuthProvider(OauthAdapter):
 
     def set_user_data(self):
         user_info_response = self.get_user_response()
+        # Store the raw userinfo response for group sync
+        self.userinfo_response = user_info_response
 
         # Get display name and email from user info response
         display_name = user_info_response.get("preferred_username")
@@ -220,6 +224,8 @@ class OIDCOAuthCloudProvider(OIDCOAuthProvider):
 
     def set_user_data(self):
         user_info_response = self.get_user_response()
+        # Store the raw userinfo response for group sync
+        self.userinfo_response = user_info_response
 
         email = user_info_response.get("email")
 

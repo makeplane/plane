@@ -118,6 +118,8 @@ class FeatureFlag(Enum):
     PROJECT_MEMBER_ACTIVITY = "PROJECT_MEMBER_ACTIVITY"
     # CLOUD_SSO
     CLOUD_SSO = "CLOUD_SSO"
+    # IDP_GROUP_SYNC
+    IDP_GROUP_SYNC = "IDP_GROUP_SYNC"
     # Workspace api token
     WORKSPACE_API_TOKEN = "WORKSPACE_API_TOKEN"
     # Import summary

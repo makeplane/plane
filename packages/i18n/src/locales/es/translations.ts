@@ -1899,6 +1899,71 @@ Crea un nuevo proyecto en su lugar`,
       worklogs: {
         title: "Registros de trabajo",
       },
+      group_syncing: {
+        title: "Sincronización de grupos",
+        heading: "Sincronización de grupos",
+        description:
+          "Vincule los grupos del proveedor de identidad con proyectos y roles. El acceso de los usuarios se actualiza automáticamente cuando cambia la pertenencia al grupo en su IdP, simplificando la incorporación y baja.",
+        enable: {
+          title: "Activar sincronización de grupos",
+          description: "Añadir automáticamente usuarios a proyectos según los grupos del proveedor de identidad.",
+        },
+        config: {
+          title: "Configurar sincronización de grupos",
+          description: "Configure cómo se asignan los grupos del proveedor de identidad a proyectos y roles.",
+          sync_on_login: {
+            title: "Sincronizar al iniciar sesión",
+            description: "Actualizar pertenencia al grupo y acceso al proyecto cuando un usuario inicia sesión.",
+          },
+          sync_offline: {
+            title: "Sincronización sin conexión",
+            description:
+              "Ejecuta la sincronización cada seis horas automáticamente, sin esperar a que los usuarios inicien sesión.",
+          },
+          auto_remove: {
+            title: "Eliminación automática",
+            description: "Eliminar automáticamente usuarios de proyectos cuando ya no coincidan con el grupo.",
+          },
+          group_attribute_key: {
+            title: "Clave del atributo de grupo",
+            description:
+              "El atributo del proveedor de identidad usado para identificar y sincronizar grupos de usuarios.",
+            placeholder: "Grupos",
+          },
+        },
+        group_mapping: {
+          title: "Asignación de grupos",
+          description: "Vincule los grupos del proveedor de identidad con proyectos y roles.",
+          button_text: "Añadir nueva sincronización de grupos",
+        },
+        toast: {
+          updating: "Actualizando función de sincronización de grupos",
+          success: "Función de sincronización de grupos actualizada correctamente.",
+          error: "¡Error al actualizar la función de sincronización de grupos!",
+        },
+        delete_modal: {
+          title: "Eliminar sincronización de grupos",
+          content:
+            "Los nuevos usuarios de este grupo de identidad ya no se añadirán al proyecto. Los usuarios ya añadidos conservarán su rol actual.",
+        },
+        modal: {
+          idp_group_name: {
+            text: "Grupo de usuario",
+            required: "El grupo de usuario es obligatorio",
+            placeholder: "Introduzca los nombres de grupos IdP",
+          },
+          project: {
+            text: "Proyecto",
+            required: "El proyecto es obligatorio",
+            placeholder: "Seleccione un proyecto",
+          },
+          default_role: {
+            text: "Rol del proyecto",
+            required: "El rol del proyecto es obligatorio",
+            placeholder: "Seleccione un rol del proyecto",
+          },
+        },
+      },
       identity: {
         title: "Identidad",
         heading: "Identidad",

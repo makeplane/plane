@@ -1873,6 +1873,69 @@ export default {
       worklogs: {
         title: "作業ログ",
       },
+      group_syncing: {
+        title: "グループ同期",
+        heading: "グループ同期",
+        description:
+          "IDプロバイダーのグループをプロジェクトとロールにリンクします。IdPのグループメンバーシップが変更されるとユーザーアクセスが自動的に更新され、オンボーディングとオフボーディングが簡素化されます。",
+        enable: {
+          title: "グループ同期を有効にする",
+          description: "IDプロバイダーのグループに基づいて、ユーザーをプロジェクトに自動的に追加します。",
+        },
+        config: {
+          title: "グループ同期の設定",
+          description: "IDプロバイダーのグループがプロジェクトとロールにどのようにマッピングされるかを設定します。",
+          sync_on_login: {
+            title: "ログイン時同期",
+            description: "ユーザーがログインしたときにグループメンバーシップとプロジェクトアクセスを更新します。",
+          },
+          sync_offline: {
+            title: "オフライン同期",
+            description: "ユーザーのログインを待たずに、6時間ごとに自動的に同期を実行します。",
+          },
+          auto_remove: {
+            title: "自動削除",
+            description: "グループに一致しなくなったユーザーをプロジェクトから自動的に削除します。",
+          },
+          group_attribute_key: {
+            title: "グループ属性キー",
+            description: "ユーザーグループの識別と同期に使用するIDプロバイダーの属性。",
+            placeholder: "グループ",
+          },
+        },
+        group_mapping: {
+          title: "グループマッピング",
+          description: "IDプロバイダーのグループをプロジェクトとロールにリンクします。",
+          button_text: "新しいグループ同期を追加",
+        },
+        toast: {
+          updating: "グループ同期機能を更新中",
+          success: "グループ同期機能が正常に更新されました。",
+          error: "グループ同期機能の更新に失敗しました！",
+        },
+        delete_modal: {
+          title: "グループ同期を削除",
+          content:
+            "このIDグループの新規ユーザーはプロジェクトに追加されなくなります。既に追加されたユーザーは現在のロールを維持します。",
+        },
+        modal: {
+          idp_group_name: {
+            text: "ユーザーグループ",
+            required: "ユーザーグループは必須です",
+            placeholder: "IdPグループ名を入力",
+          },
+          project: {
+            text: "プロジェクト",
+            required: "プロジェクトは必須です",
+            placeholder: "プロジェクトを選択",
+          },
+          default_role: {
+            text: "プロジェクトロール",
+            required: "プロジェクトロールは必須です",
+            placeholder: "プロジェクトロールを選択",
+          },
+        },
+      },
       identity: {
         title: "アイデンティティ",
         heading: "アイデンティティ",

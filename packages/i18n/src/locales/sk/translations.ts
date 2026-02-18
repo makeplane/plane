@@ -1874,6 +1874,71 @@ Vytvorte nový.`,
       worklogs: {
         title: "Pracovné záznamy",
       },
+      group_syncing: {
+        title: "Synchronizácia skupín",
+        heading: "Synchronizácia skupín",
+        description:
+          "Prepojte skupiny poskytovateľa identity s projektami a rolami. Prístup používateľov sa automaticky aktualizuje pri zmene členstva v skupine vo vašom IdP, čím sa zjednodušuje onboarding a offboarding.",
+        enable: {
+          title: "Povoliť synchronizáciu skupín",
+          description: "Automaticky pridávajte používateľov do projektov na základe skupín poskytovateľa identity.",
+        },
+        config: {
+          title: "Konfigurovať synchronizáciu skupín",
+          description: "Nastavte, ako sú skupiny poskytovateľa identity mapované na projekty a role.",
+          sync_on_login: {
+            title: "Synchronizácia pri prihlásení",
+            description: "Aktualizujte členstvo v skupine a prístup k projektu pri prihlásení používateľa.",
+          },
+          sync_offline: {
+            title: "Offline synchronizácia",
+            description:
+              "Spúšťa synchronizáciu každých šesť hodín automaticky, bez čakania na prihlásenie používateľov.",
+          },
+          auto_remove: {
+            title: "Automatické odstránenie",
+            description: "Automaticky odstráňte používateľov z projektov, keď už nezodpovedajú skupine.",
+          },
+          group_attribute_key: {
+            title: "Kľúč atribútu skupiny",
+            description:
+              "Atribút poskytovateľa identity používaný na identifikáciu a synchronizáciu používateľských skupín.",
+            placeholder: "Skupiny",
+          },
+        },
+        group_mapping: {
+          title: "Mapovanie skupín",
+          description: "Prepojte skupiny poskytovateľa identity s projektami a rolami.",
+          button_text: "Pridať novú synchronizáciu skupín",
+        },
+        toast: {
+          updating: "Aktualizácia funkcie synchronizácie skupín",
+          success: "Funkcia synchronizácie skupín bola úspešne aktualizovaná.",
+          error: "Nepodarilo sa aktualizovať funkciu synchronizácie skupín!",
+        },
+        delete_modal: {
+          title: "Zmazať synchronizáciu skupín",
+          content:
+            "Noví používatelia z tejto skupiny identity už nebudú pridávaní do projektu. Už pridaní používatelia si zachovajú svoju súčasnú rolu.",
+        },
+        modal: {
+          idp_group_name: {
+            text: "Používateľská skupina",
+            required: "Používateľská skupina je povinná",
+            placeholder: "Zadajte názvy skupín IdP",
+          },
+          project: {
+            text: "Projekt",
+            required: "Projekt je povinný",
+            placeholder: "Vyberte projekt",
+          },
+          default_role: {
+            text: "Rola projektu",
+            required: "Rola projektu je povinná",
+            placeholder: "Vyberte rolu projektu",
+          },
+        },
+      },
       identity: {
         title: "Identita",
         heading: "Identita",

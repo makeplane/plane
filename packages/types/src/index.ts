@@ -37,6 +37,7 @@ export * from "./etl";
 export * from "./favorite";
 export * from "./feature-flag";
 export * from "./file";
+export * from "./group-syncing";
 export * from "./home";
 export * from "./import-job-types";
 export * from "./importer";

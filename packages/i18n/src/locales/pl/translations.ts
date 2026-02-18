@@ -1876,6 +1876,70 @@ Utwórz nowy.`,
       worklogs: {
         title: "Logi pracy",
       },
+      group_syncing: {
+        title: "Synchronizacja grup",
+        heading: "Synchronizacja grup",
+        description:
+          "Połącz grupy dostawcy tożsamości z projektami i rolami. Dostęp użytkowników jest automatycznie aktualizowany przy zmianach członkostwa w grupie w Twoim IdP, upraszczając onboardingu i offboarding.",
+        enable: {
+          title: "Włącz synchronizację grup",
+          description: "Automatycznie dodawaj użytkowników do projektów na podstawie grup dostawcy tożsamości.",
+        },
+        config: {
+          title: "Skonfiguruj synchronizację grup",
+          description: "Ustaw, jak grupy dostawcy tożsamości są mapowane na projekty i role.",
+          sync_on_login: {
+            title: "Synchronizacja przy logowaniu",
+            description: "Aktualizuj członkostwo w grupie i dostęp do projektu przy logowaniu użytkownika.",
+          },
+          sync_offline: {
+            title: "Synchronizacja offline",
+            description:
+              "Uruchamia synchronizację co sześć godzin automatycznie, bez czekania na logowanie użytkowników.",
+          },
+          auto_remove: {
+            title: "Automatyczne usuwanie",
+            description: "Automatycznie usuwaj użytkowników z projektów, gdy nie pasują już do grupy.",
+          },
+          group_attribute_key: {
+            title: "Klucz atrybutu grupy",
+            description: "Atrybut dostawcy tożsamości używany do identyfikacji i synchronizacji grup użytkowników.",
+            placeholder: "Grupy",
+          },
+        },
+        group_mapping: {
+          title: "Mapowanie grup",
+          description: "Połącz grupy dostawcy tożsamości z projektami i rolami.",
+          button_text: "Dodaj nową synchronizację grupy",
+        },
+        toast: {
+          updating: "Aktualizowanie funkcji synchronizacji grup",
+          success: "Funkcja synchronizacji grup została pomyślnie zaktualizowana.",
+          error: "Nie udało się zaktualizować funkcji synchronizacji grup!",
+        },
+        delete_modal: {
+          title: "Usuń synchronizację grupy",
+          content:
+            "Nowi użytkownicy z tej grupy tożsamości nie będą już dodawani do projektu. Już dodani użytkownicy zachowają swoją obecną rolę.",
+        },
+        modal: {
+          idp_group_name: {
+            text: "Grupa użytkowników",
+            required: "Grupa użytkowników jest wymagana",
+            placeholder: "Wprowadź nazwy grup IdP",
+          },
+          project: {
+            text: "Projekt",
+            required: "Projekt jest wymagany",
+            placeholder: "Wybierz projekt",
+          },
+          default_role: {
+            text: "Rola projektu",
+            required: "Rola projektu jest wymagana",
+            placeholder: "Wybierz rolę projektu",
+          },
+        },
+      },
       identity: {
         title: "Tożsamość",
         heading: "Tożsamość",

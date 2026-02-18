@@ -26,6 +26,7 @@ export type TWorkspaceSettingsTabs =
   | "integrations"
   | "import"
   | "worklogs"
+  | "group-syncing"
   | "identity"
   | "project_states"
   | "teamspaces"

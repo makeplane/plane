@@ -1888,6 +1888,71 @@ Bunun yerine yeni bir proje oluşturun`,
       worklogs: {
         title: "Workloglar",
       },
+      group_syncing: {
+        title: "Grup senkronizasyonu",
+        heading: "Grup senkronizasyonu",
+        description:
+          "Kimlik sağlayıcı gruplarını projelere ve rollere bağlayın. IdP'nizde grup üyeliği değiştiğinde kullanıcı erişimi otomatik olarak güncellenir; işe alıştırma ve işten çıkarma süreçlerini basitleştirir.",
+        enable: {
+          title: "Grup senkronizasyonunu etkinleştir",
+          description: "Kimlik sağlayıcı gruplarına göre kullanıcıları projelere otomatik olarak ekleyin.",
+        },
+        config: {
+          title: "Grup senkronizasyonunu yapılandır",
+          description: "Kimlik sağlayıcı gruplarının projelere ve rollere nasıl eşlendiğini ayarlayın.",
+          sync_on_login: {
+            title: "Girişte senkronize et",
+            description: "Kullanıcı giriş yaptığında grup üyeliğini ve proje erişimini güncelleyin.",
+          },
+          sync_offline: {
+            title: "Çevrimdışı senkronizasyon",
+            description:
+              "Kullanıcıların giriş yapmasını beklemeden her altı saatte bir otomatik olarak senkronizasyon çalıştırır.",
+          },
+          auto_remove: {
+            title: "Otomatik kaldırma",
+            description: "Artık gruba uymayan kullanıcıları projelerden otomatik olarak kaldırın.",
+          },
+          group_attribute_key: {
+            title: "Grup öznitelik anahtarı",
+            description:
+              "Kullanıcı gruplarını tanımlamak ve senkronize etmek için kullanılan kimlik sağlayıcı özniteliği.",
+            placeholder: "Gruplar",
+          },
+        },
+        group_mapping: {
+          title: "Grup eşlemesi",
+          description: "Kimlik sağlayıcı gruplarını projelere ve rollere bağlayın.",
+          button_text: "Yeni grup senkronizasyonu ekle",
+        },
+        toast: {
+          updating: "Grup senkronizasyonu özelliği güncelleniyor",
+          success: "Grup senkronizasyonu özelliği başarıyla güncellendi.",
+          error: "Grup senkronizasyonu özelliği güncellenemedi!",
+        },
+        delete_modal: {
+          title: "Grup senkronizasyonunu sil",
+          content:
+            "Bu kimlik grubundan yeni kullanıcılar artık projeye eklenmeyecek. Zaten eklenen kullanıcılar mevcut rollerini koruyacaktır.",
+        },
+        modal: {
+          idp_group_name: {
+            text: "Kullanıcı grubu",
+            required: "Kullanıcı grubu zorunludur",
+            placeholder: "IdP grup adlarını girin",
+          },
+          project: {
+            text: "Proje",
+            required: "Proje zorunludur",
+            placeholder: "Proje seçin",
+          },
+          default_role: {
+            text: "Proje rolü",
+            required: "Proje rolü zorunludur",
+            placeholder: "Proje rolü seçin",
+          },
+        },
+      },
       identity: {
         title: "Kimlik",
         heading: "Kimlik",

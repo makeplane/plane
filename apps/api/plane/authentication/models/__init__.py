@@ -25,3 +25,8 @@ from .sso import (
     IdentityProvider,
     IdentityProviderDomain,
 )
+
+from .group_sync import (
+    GroupSyncConfig,
+    GroupMapping,
+)

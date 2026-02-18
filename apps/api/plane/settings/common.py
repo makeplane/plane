@@ -357,6 +357,8 @@ CELERY_IMPORTS = (
     "plane.agents.bgtasks.agent_run_user_comment_task",
     "plane.agents.bgtasks.agent_run_activity_webhook",
     "plane.agents.bgtasks.agent_run_webhook",
+    # authentication tasks
+    "plane.authentication.bgtasks.group_sync_task",
 )
 
 # Application Envs
@@ -724,5 +726,7 @@ ENTERPRISE_PLAN_API_RATE_LIMIT = os.environ.get("ENTERPRISE_PLAN_API_RATE_LIMIT"
 # Agent settings
 AGENT_RUN_STALE_TIMEOUT_IN_MINS = int(os.environ.get("AGENT_RUN_STALE_TIMEOUT_IN_MINS", 5))
 
+# IDP sync rate limit delay
+IDP_SYNC_RATE_LIMIT_DELAY = os.environ.get("IDP_SYNC_RATE_LIMIT_DELAY", 0.5)
 # Chat Support Identity Verification
 CHAT_SUPPORT_IDENTITY_VERIFICATION_SECRET = os.environ.get("CHAT_SUPPORT_IDENTITY_VERIFICATION_SECRET", "")

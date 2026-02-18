@@ -1898,6 +1898,75 @@ Créez plutôt un nouveau projet`,
       worklogs: {
         title: "Journaux de travail",
       },
+      group_syncing: {
+        title: "Synchronisation des groupes",
+        heading: "Synchronisation des groupes",
+        description:
+          "Associez les groupes du fournisseur d'identité aux projets et rôles. L'accès des utilisateurs est mis à jour automatiquement lorsque l'appartenance au groupe change dans votre IdP, simplifiant l'intégration et le départ.",
+        enable: {
+          title: "Activer la synchronisation des groupes",
+          description:
+            "Ajoutez automatiquement les utilisateurs aux projets en fonction des groupes du fournisseur d'identité.",
+        },
+        config: {
+          title: "Configurer la synchronisation des groupes",
+          description:
+            "Configurez la façon dont les groupes du fournisseur d'identité sont mappés aux projets et rôles.",
+          sync_on_login: {
+            title: "Synchronisation à la connexion",
+            description:
+              "Mettez à jour l'appartenance au groupe et l'accès au projet lorsqu'un utilisateur se connecte.",
+          },
+          sync_offline: {
+            title: "Synchronisation hors ligne",
+            description:
+              "Exécute la synchronisation toutes les six heures automatiquement, sans attendre que les utilisateurs se connectent.",
+          },
+          auto_remove: {
+            title: "Suppression automatique",
+            description:
+              "Supprimez automatiquement les utilisateurs des projets lorsqu'ils ne correspondent plus au groupe.",
+          },
+          group_attribute_key: {
+            title: "Clé d'attribut de groupe",
+            description:
+              "L'attribut du fournisseur d'identité utilisé pour identifier et synchroniser les groupes d'utilisateurs.",
+            placeholder: "Groupes",
+          },
+        },
+        group_mapping: {
+          title: "Correspondance des groupes",
+          description: "Associez les groupes du fournisseur d'identité aux projets et rôles.",
+          button_text: "Ajouter une nouvelle synchronisation de groupe",
+        },
+        toast: {
+          updating: "Mise à jour de la fonction de synchronisation des groupes",
+          success: "Fonction de synchronisation des groupes mise à jour avec succès.",
+          error: "Échec de la mise à jour de la fonction de synchronisation des groupes !",
+        },
+        delete_modal: {
+          title: "Supprimer la synchronisation de groupe",
+          content:
+            "Les nouveaux utilisateurs de ce groupe d'identité ne seront plus ajoutés au projet. Les utilisateurs déjà ajoutés conserveront leur rôle actuel.",
+        },
+        modal: {
+          idp_group_name: {
+            text: "Groupe d'utilisateurs",
+            required: "Le groupe d'utilisateurs est requis",
+            placeholder: "Saisissez les noms des groupes IdP",
+          },
+          project: {
+            text: "Projet",
+            required: "Le projet est requis",
+            placeholder: "Sélectionnez un projet",
+          },
+          default_role: {
+            text: "Rôle du projet",
+            required: "Le rôle du projet est requis",
+            placeholder: "Sélectionnez un rôle du projet",
+          },
+        },
+      },
       identity: {
         title: "Identité",
         heading: "Identité",

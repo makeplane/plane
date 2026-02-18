@@ -28,7 +28,14 @@ import {
 } from "lucide-react";
 // plane imports
 import type { ISvgIcons } from "@plane/propel/icons";
-import { CustomersIcon, InitiativeIcon, PiIcon, ProjectStatesIcon, TeamsIcon } from "@plane/propel/icons";
+import {
+  CustomersIcon,
+  GroupSyncingIcon,
+  InitiativeIcon,
+  PiIcon,
+  ProjectStatesIcon,
+  TeamsIcon,
+} from "@plane/propel/icons";
 import type { TWorkspaceSettingsTabs } from "@plane/types";
 
 export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon | React.FC<ISvgIcons>> = {
@@ -39,6 +46,7 @@ export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon
   webhooks: Webhook,
   import: ArrowDownToLine,
   worklogs: Timer,
+  "group-syncing": GroupSyncingIcon,
   identity: Building,
   teamspaces: TeamsIcon,
   initiatives: InitiativeIcon,

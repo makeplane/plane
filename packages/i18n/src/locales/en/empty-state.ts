@@ -302,6 +302,9 @@ export default {
       title: "Track timesheets for all members",
       description: "Log time on work items to view detailed timesheets for any team member across projects.",
     },
+    group_syncing: {
+      title: "No group mappings yet",
+    },
     customers_setting: {
       title: "Enable customer management to get started.",
       cta_primary: "Enable",

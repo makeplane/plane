@@ -15,6 +15,7 @@ export * from "./customer";
 export * from "./epic";
 export * from "./estimate";
 export * from "./export";
+export * from "./group-syncing";
 export * from "./intake";
 export * from "./label";
 export * from "./link";

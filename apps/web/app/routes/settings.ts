@@ -55,6 +55,12 @@ export const settingsRoutes: RouteConfigEntry[] = [
         "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/access-tokens/page.tsx"
       ),
 
+      // Group Syncing
+      route(
+        ":workspaceSlug/settings/group-syncing",
+        "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/group-syncing/page.tsx"
+      ),
+
       // Customers
       route(
         ":workspaceSlug/settings/customers",

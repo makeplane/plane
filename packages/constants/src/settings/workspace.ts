@@ -98,6 +98,13 @@ export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettin
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/worklogs/`,
   },
+  "group-syncing": {
+    key: "group-syncing",
+    i18n_label: "workspace_settings.settings.group_syncing.title",
+    href: `/settings/group-syncing`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/group-syncing/`,
+  },
   identity: {
     key: "identity",
     i18n_label: "workspace_settings.settings.identity.title",
@@ -168,6 +175,8 @@ export const GROUPED_WORKSPACE_SETTINGS: Record<WORKSPACE_SETTINGS_CATEGORY, TWo
     WORKSPACE_SETTINGS["import"],
     WORKSPACE_SETTINGS["export"],
     WORKSPACE_SETTINGS["worklogs"],
+    WORKSPACE_SETTINGS["group-syncing"],
+    // WORKSPACE_SETTINGS["identity"], // TODO: Enable it back once production testing is complete
     WORKSPACE_SETTINGS["identity"],
   ],
   [WORKSPACE_SETTINGS_CATEGORY.FEATURES]: [

@@ -1889,6 +1889,71 @@ Creează un proiect nou.`,
       worklogs: {
         title: "Jurnale de lucru",
       },
+      group_syncing: {
+        title: "Sincronizare grupuri",
+        heading: "Sincronizare grupuri",
+        description:
+          "Asociați grupurile furnizorului de identitate cu proiecte și roluri. Accesul utilizatorilor se actualizează automat când apartenența la grup se schimbă în IdP-ul dvs., simplificând onboarding-ul și offboarding-ul.",
+        enable: {
+          title: "Activați sincronizarea grupurilor",
+          description: "Adăugați automat utilizatori la proiecte pe baza grupurilor furnizorului de identitate.",
+        },
+        config: {
+          title: "Configurați sincronizarea grupurilor",
+          description: "Setați cum grupurile furnizorului de identitate sunt mapate la proiecte și roluri.",
+          sync_on_login: {
+            title: "Sincronizare la autentificare",
+            description: "Actualizați apartenența la grup și accesul la proiect când un utilizator se autentifică.",
+          },
+          sync_offline: {
+            title: "Sincronizare offline",
+            description:
+              "Rulează sincronizarea la fiecare șase ore automat, fără a aștepta autentificarea utilizatorilor.",
+          },
+          auto_remove: {
+            title: "Eliminare automată",
+            description: "Eliminați automat utilizatorii din proiecte când nu mai corespund grupului.",
+          },
+          group_attribute_key: {
+            title: "Cheie atribut grup",
+            description:
+              "Atributul furnizorului de identitate folosit pentru identificarea și sincronizarea grupurilor de utilizatori.",
+            placeholder: "Grupuri",
+          },
+        },
+        group_mapping: {
+          title: "Mapare grupuri",
+          description: "Asociați grupurile furnizorului de identitate cu proiecte și roluri.",
+          button_text: "Adăugați nouă sincronizare grup",
+        },
+        toast: {
+          updating: "Se actualizează funcția de sincronizare a grupurilor",
+          success: "Funcția de sincronizare a grupurilor a fost actualizată cu succes.",
+          error: "Actualizarea funcției de sincronizare a grupurilor a eșuat!",
+        },
+        delete_modal: {
+          title: "Ștergeți sincronizarea grupului",
+          content:
+            "Utilizatorii noi din acest grup de identitate nu vor mai fi adăugați la proiect. Utilizatorii deja adăugați își vor păstra rolul actual.",
+        },
+        modal: {
+          idp_group_name: {
+            text: "Grup utilizatori",
+            required: "Grupul utilizatori este obligatoriu",
+            placeholder: "Introduceți numele grupurilor IdP",
+          },
+          project: {
+            text: "Proiect",
+            required: "Proiectul este obligatoriu",
+            placeholder: "Selectați un proiect",
+          },
+          default_role: {
+            text: "Rol proiect",
+            required: "Rolul proiectului este obligatoriu",
+            placeholder: "Selectați un rol de proiect",
+          },
+        },
+      },
       identity: {
         title: "Identitate",
         heading: "Identitate",

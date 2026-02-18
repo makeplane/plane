@@ -1849,6 +1849,68 @@ export default {
       worklogs: {
         title: "工作日志",
       },
+      group_syncing: {
+        title: "组同步",
+        heading: "组同步",
+        description:
+          "将身份提供者组与项目和角色关联。当 IdP 中的组成员身份发生变化时，用户访问权限将自动更新，简化入职和离职流程。",
+        enable: {
+          title: "启用组同步",
+          description: "根据身份提供者组自动将用户添加到项目。",
+        },
+        config: {
+          title: "配置组同步",
+          description: "设置身份提供者组如何映射到项目和角色。",
+          sync_on_login: {
+            title: "登录时同步",
+            description: "用户登录时更新组成员身份和项目访问权限。",
+          },
+          sync_offline: {
+            title: "离线同步",
+            description: "每六小时自动运行同步，无需等待用户登录。",
+          },
+          auto_remove: {
+            title: "自动移除",
+            description: "当用户不再匹配组时，自动将其从项目中移除。",
+          },
+          group_attribute_key: {
+            title: "组属性键",
+            description: "用于识别和同步用户组的身份提供者属性。",
+            placeholder: "组",
+          },
+        },
+        group_mapping: {
+          title: "组映射",
+          description: "将身份提供者组与项目和角色关联。",
+          button_text: "添加新组同步",
+        },
+        toast: {
+          updating: "正在更新组同步功能",
+          success: "组同步功能已成功更新。",
+          error: "更新组同步功能失败！",
+        },
+        delete_modal: {
+          title: "删除组同步",
+          content: "此身份组的新用户将不再被添加到项目。已添加的用户将保留其当前角色。",
+        },
+        modal: {
+          idp_group_name: {
+            text: "用户组",
+            required: "用户组为必填项",
+            placeholder: "输入 IdP 组名称",
+          },
+          project: {
+            text: "项目",
+            required: "项目为必填项",
+            placeholder: "选择项目",
+          },
+          default_role: {
+            text: "项目角色",
+            required: "项目角色为必填项",
+            placeholder: "选择项目角色",
+          },
+        },
+      },
       identity: {
         title: "身份",
         heading: "身份",

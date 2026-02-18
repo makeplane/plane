@@ -1800,6 +1800,69 @@ Create a new project instead`,
         heading: "Worklogs",
         description: "Download worklogs AKA timesheets for anyone in any project.",
       },
+      group_syncing: {
+        title: "Group syncing",
+        heading: "Group syncing",
+        description:
+          "Link identity provider groups to projects and roles. User access updates automatically when group membership changes in your IdP, simplifying onboarding and offboarding.",
+        enable: {
+          title: "Enable group syncing",
+          description: "Automatically add users to projects based on identity provider groups.",
+        },
+        config: {
+          title: "Configure group sync",
+          description: "Set up how identity provider groups are mapped to projects and roles.",
+          sync_on_login: {
+            title: "Sync on login",
+            description: "Update group membership and project access when a user signs in.",
+          },
+          sync_offline: {
+            title: "Offline sync",
+            description: "Runs sync every six hours automatically, without waiting for users to log in.",
+          },
+          auto_remove: {
+            title: "Auto remove",
+            description: "Automatically remove users from projects when they no longer match the group.",
+          },
+          group_attribute_key: {
+            title: "Group attribute key",
+            description: "The identity provider attribute used to identify and sync user groups.",
+            placeholder: "Groups",
+          },
+        },
+        group_mapping: {
+          title: "Group mapping",
+          description: "Link identity provider groups to projects and roles.",
+          button_text: "Add new group sync",
+        },
+        toast: {
+          updating: "Updating group syncing feature",
+          success: "Group syncing feature updated successfully.",
+          error: "Failed to update group syncing feature!",
+        },
+        delete_modal: {
+          title: "Delete group sync",
+          content:
+            "New users from this identity group will no longer be added to the project. Users already added will keep their current role.",
+        },
+        modal: {
+          idp_group_name: {
+            text: "User group",
+            required: "User group is required",
+            placeholder: "Enter the IdP group names",
+          },
+          project: {
+            text: "Project",
+            required: "Project is required",
+            placeholder: "Select a project",
+          },
+          default_role: {
+            text: "Project role",
+            required: "Project role is required",
+            placeholder: "Select a project role",
+          },
+        },
+      },
       identity: {
         title: "Identity",
         heading: "Identity",

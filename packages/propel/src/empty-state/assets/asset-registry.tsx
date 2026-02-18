@@ -24,6 +24,7 @@ import {
   EpicHorizontalStackIllustration,
   EstimateHorizontalStackIllustration,
   ExportHorizontalStackIllustration,
+  GroupSyncingHorizontalStackIllustration,
   IntakeHorizontalStackIllustration,
   LabelHorizontalStackIllustration,
   LinkHorizontalStackIllustration,
@@ -92,6 +93,7 @@ export const HORIZONTAL_STACK_ASSETS: Record<HorizontalStackAssetType, React.Com
   webhook: WebhookHorizontalStackIllustration,
   "work-item": WorkItemHorizontalStackIllustration,
   worklog: WorklogHorizontalStackIllustration,
+  "group-syncing": GroupSyncingHorizontalStackIllustration,
   "runner-scripts": RunnerScriptsHorizontalStackIllustration,
   "runner-functions": RunnerFunctionsHorizontalStackIllustration,
 };

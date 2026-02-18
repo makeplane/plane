@@ -50,6 +50,7 @@ export * from "./filled-check";
 export * from "./filled-cross";
 export * from "./full-screen-panel-icon";
 export * from "./github-icon";
+export * from "./group-syncing-icon";
 export * from "./helpers";
 export * from "./icon-wrapper";
 export * from "./icon";

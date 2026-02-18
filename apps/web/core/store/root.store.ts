@@ -83,6 +83,8 @@ import type { IUserStore } from "./user";
 import { UserStore } from "./user";
 import type { IWorkspaceRootStore } from "./workspace";
 import { WorkspaceRootStore } from "./workspace";
+import type { IGroupSyncStore } from "./group-sync.store";
+import { GroupSyncStore } from "./group-sync.store";
 import type { IFunctionsStore } from "./runners/functions.store";
 import { FunctionsStore } from "./runners/functions.store";
 import type { IRunnersStore } from "./runners/runners.store";
@@ -230,6 +232,7 @@ export class CoreRootStore {
   editorAssetStore: IEditorAssetStore;
   workItemFilters: IWorkItemFilterStore;
   powerK: IPowerKStore;
+  groupSync: IGroupSyncStore;
   runners: IRunnersStore;
   functions: IFunctionsStore;
   baseDashboards: IBaseDashboardsStore;
@@ -311,6 +314,7 @@ export class CoreRootStore {
     this.analytics = new AnalyticsStore();
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
+    this.groupSync = new GroupSyncStore(this);
     // runners
     this.runners = new RunnersStore(this);
     this.functions = new FunctionsStore(this);
@@ -395,6 +399,7 @@ export class CoreRootStore {
     this.editorAssetStore = new EditorAssetStore();
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
+    this.groupSync = new GroupSyncStore(this);
     // runners
     this.runners = new RunnersStore(this);
     this.functions = new FunctionsStore(this);

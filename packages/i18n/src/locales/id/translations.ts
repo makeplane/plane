@@ -1883,6 +1883,70 @@ Buat proyek baru sebagai gantinya`,
       worklogs: {
         title: "Log kerja",
       },
+      group_syncing: {
+        title: "Sinkronisasi grup",
+        heading: "Sinkronisasi grup",
+        description:
+          "Tautkan grup penyedia identitas ke proyek dan peran. Akses pengguna diperbarui secara otomatis saat keanggotaan grup berubah di IdP Anda, menyederhanakan onboarding dan offboarding.",
+        enable: {
+          title: "Aktifkan sinkronisasi grup",
+          description: "Secara otomatis menambahkan pengguna ke proyek berdasarkan grup penyedia identitas.",
+        },
+        config: {
+          title: "Konfigurasi sinkronisasi grup",
+          description: "Atur cara grup penyedia identitas dipetakan ke proyek dan peran.",
+          sync_on_login: {
+            title: "Sinkronisasi saat login",
+            description: "Perbarui keanggotaan grup dan akses proyek saat pengguna masuk.",
+          },
+          sync_offline: {
+            title: "Sinkronisasi offline",
+            description: "Menjalankan sinkronisasi setiap enam jam secara otomatis, tanpa menunggu pengguna login.",
+          },
+          auto_remove: {
+            title: "Hapus otomatis",
+            description: "Secara otomatis menghapus pengguna dari proyek ketika mereka tidak lagi cocok dengan grup.",
+          },
+          group_attribute_key: {
+            title: "Kunci atribut grup",
+            description:
+              "Atribut penyedia identitas yang digunakan untuk mengidentifikasi dan menyinkronkan grup pengguna.",
+            placeholder: "Grup",
+          },
+        },
+        group_mapping: {
+          title: "Pemetaan grup",
+          description: "Tautkan grup penyedia identitas ke proyek dan peran.",
+          button_text: "Tambah sinkronisasi grup baru",
+        },
+        toast: {
+          updating: "Memperbarui fitur sinkronisasi grup",
+          success: "Fitur sinkronisasi grup berhasil diperbarui.",
+          error: "Gagal memperbarui fitur sinkronisasi grup!",
+        },
+        delete_modal: {
+          title: "Hapus sinkronisasi grup",
+          content:
+            "Pengguna baru dari grup identitas ini tidak akan lagi ditambahkan ke proyek. Pengguna yang sudah ditambahkan akan mempertahankan peran mereka saat ini.",
+        },
+        modal: {
+          idp_group_name: {
+            text: "Grup pengguna",
+            required: "Grup pengguna wajib diisi",
+            placeholder: "Masukkan nama grup IdP",
+          },
+          project: {
+            text: "Proyek",
+            required: "Proyek wajib diisi",
+            placeholder: "Pilih proyek",
+          },
+          default_role: {
+            text: "Peran proyek",
+            required: "Peran proyek wajib diisi",
+            placeholder: "Pilih peran proyek",
+          },
+        },
+      },
       identity: {
         title: "Identitas",
         heading: "Identitas",

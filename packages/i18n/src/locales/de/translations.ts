@@ -1896,6 +1896,70 @@ Erstellen Sie ein neues.`,
       worklogs: {
         title: "Arbeitsberichte",
       },
+      group_syncing: {
+        title: "Gruppensynchronisation",
+        heading: "Gruppensynchronisation",
+        description:
+          "Verknüpfen Sie Identity-Provider-Gruppen mit Projekten und Rollen. Der Benutzerzugriff wird automatisch aktualisiert, wenn sich die Gruppenzugehörigkeit in Ihrem IdP ändert – für einfacheres Onboarding und Offboarding.",
+        enable: {
+          title: "Gruppensynchronisation aktivieren",
+          description: "Benutzer werden automatisch basierend auf Identity-Provider-Gruppen zu Projekten hinzugefügt.",
+        },
+        config: {
+          title: "Gruppensync konfigurieren",
+          description: "Richten Sie ein, wie Identity-Provider-Gruppen Projekten und Rollen zugeordnet werden.",
+          sync_on_login: {
+            title: "Sync bei Anmeldung",
+            description: "Gruppenzugehörigkeit und Projektzugriff bei Benutzeranmeldung aktualisieren.",
+          },
+          sync_offline: {
+            title: "Offline-Sync",
+            description:
+              "Führt alle sechs Stunden automatisch einen Sync durch, ohne auf Benutzeranmeldungen zu warten.",
+          },
+          auto_remove: {
+            title: "Automatische Entfernung",
+            description: "Benutzer werden automatisch aus Projekten entfernt, wenn sie nicht mehr zur Gruppe passen.",
+          },
+          group_attribute_key: {
+            title: "Gruppenattributschlüssel",
+            description: "Das IdP-Attribut zur Identifikation und Synchronisation von Benutzergruppen.",
+            placeholder: "Gruppen",
+          },
+        },
+        group_mapping: {
+          title: "Gruppenzuordnung",
+          description: "Identity-Provider-Gruppen mit Projekten und Rollen verknüpfen.",
+          button_text: "Neuen Gruppensync hinzufügen",
+        },
+        toast: {
+          updating: "Gruppensynchronisation wird aktualisiert",
+          success: "Gruppensynchronisation wurde erfolgreich aktualisiert.",
+          error: "Aktualisierung der Gruppensynchronisation fehlgeschlagen!",
+        },
+        delete_modal: {
+          title: "Gruppensync löschen",
+          content:
+            "Neue Benutzer aus dieser Identity-Gruppe werden nicht mehr zum Projekt hinzugefügt. Bereits hinzugefügte Benutzer behalten ihre aktuelle Rolle.",
+        },
+        modal: {
+          idp_group_name: {
+            text: "Benutzergruppe",
+            required: "Benutzergruppe ist erforderlich",
+            placeholder: "IdP-Gruppennamen eingeben",
+          },
+          project: {
+            text: "Projekt",
+            required: "Projekt ist erforderlich",
+            placeholder: "Projekt auswählen",
+          },
+          default_role: {
+            text: "Projektrolle",
+            required: "Projektrolle ist erforderlich",
+            placeholder: "Projektrolle auswählen",
+          },
+        },
+      },
       identity: {
         title: "Identität",
         heading: "Identität",

@@ -1884,6 +1884,69 @@ Tạo dự án mới`,
       worklogs: {
         title: "Nhật ký công việc",
       },
+      group_syncing: {
+        title: "Đồng bộ nhóm",
+        heading: "Đồng bộ nhóm",
+        description:
+          "Liên kết các nhóm nhà cung cấp danh tính với dự án và vai trò. Quyền truy cập người dùng được cập nhật tự động khi thành viên nhóm thay đổi trong IdP của bạn, đơn giản hóa quy trình onboarding và offboarding.",
+        enable: {
+          title: "Bật đồng bộ nhóm",
+          description: "Tự động thêm người dùng vào dự án dựa trên các nhóm nhà cung cấp danh tính.",
+        },
+        config: {
+          title: "Cấu hình đồng bộ nhóm",
+          description: "Thiết lập cách các nhóm nhà cung cấp danh tính được ánh xạ tới dự án và vai trò.",
+          sync_on_login: {
+            title: "Đồng bộ khi đăng nhập",
+            description: "Cập nhật thành viên nhóm và quyền truy cập dự án khi người dùng đăng nhập.",
+          },
+          sync_offline: {
+            title: "Đồng bộ ngoại tuyến",
+            description: "Chạy đồng bộ mỗi sáu giờ tự động, không cần chờ người dùng đăng nhập.",
+          },
+          auto_remove: {
+            title: "Tự động xóa",
+            description: "Tự động xóa người dùng khỏi dự án khi họ không còn khớp với nhóm.",
+          },
+          group_attribute_key: {
+            title: "Khóa thuộc tính nhóm",
+            description: "Thuộc tính nhà cung cấp danh tính dùng để xác định và đồng bộ nhóm người dùng.",
+            placeholder: "Nhóm",
+          },
+        },
+        group_mapping: {
+          title: "Ánh xạ nhóm",
+          description: "Liên kết các nhóm nhà cung cấp danh tính với dự án và vai trò.",
+          button_text: "Thêm đồng bộ nhóm mới",
+        },
+        toast: {
+          updating: "Đang cập nhật tính năng đồng bộ nhóm",
+          success: "Tính năng đồng bộ nhóm đã được cập nhật thành công.",
+          error: "Cập nhật tính năng đồng bộ nhóm thất bại!",
+        },
+        delete_modal: {
+          title: "Xóa đồng bộ nhóm",
+          content:
+            "Người dùng mới từ nhóm danh tính này sẽ không còn được thêm vào dự án. Người dùng đã thêm sẽ giữ vai trò hiện tại của họ.",
+        },
+        modal: {
+          idp_group_name: {
+            text: "Nhóm người dùng",
+            required: "Nhóm người dùng là bắt buộc",
+            placeholder: "Nhập tên nhóm IdP",
+          },
+          project: {
+            text: "Dự án",
+            required: "Dự án là bắt buộc",
+            placeholder: "Chọn dự án",
+          },
+          default_role: {
+            text: "Vai trò dự án",
+            required: "Vai trò dự án là bắt buộc",
+            placeholder: "Chọn vai trò dự án",
+          },
+        },
+      },
       identity: {
         title: "Danh tính",
         heading: "Danh tính",

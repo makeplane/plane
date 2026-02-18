@@ -1872,6 +1872,70 @@ Vytvořte nový.`,
       worklogs: {
         title: "Pracovní záznamy",
       },
+      group_syncing: {
+        title: "Synchronizace skupin",
+        heading: "Synchronizace skupin",
+        description:
+          "Propojte skupiny poskytovatele identity s projekty a rolemi. Přístup uživatelů se automaticky aktualizuje při změnách členství ve skupině ve vašem IdP, což zjednodušuje onboarding a offboarding.",
+        enable: {
+          title: "Povolit synchronizaci skupin",
+          description: "Automaticky přidávejte uživatele do projektů na základě skupin poskytovatele identity.",
+        },
+        config: {
+          title: "Konfigurovat synchronizaci skupin",
+          description: "Nastavte, jak jsou skupiny poskytovatele identity mapovány na projekty a role.",
+          sync_on_login: {
+            title: "Synchronizace při přihlášení",
+            description: "Aktualizujte členství ve skupině a přístup k projektu při přihlášení uživatele.",
+          },
+          sync_offline: {
+            title: "Offline synchronizace",
+            description: "Spouští synchronizaci každých šest hodin automaticky, bez čekání na přihlášení uživatelů.",
+          },
+          auto_remove: {
+            title: "Automatické odebrání",
+            description: "Automaticky odeberte uživatele z projektů, když již neodpovídají skupině.",
+          },
+          group_attribute_key: {
+            title: "Klíč atributu skupiny",
+            description:
+              "Atribut poskytovatele identity používaný k identifikaci a synchronizaci uživatelských skupin.",
+            placeholder: "Skupiny",
+          },
+        },
+        group_mapping: {
+          title: "Mapování skupin",
+          description: "Propojte skupiny poskytovatele identity s projekty a rolemi.",
+          button_text: "Přidat novou synchronizaci skupin",
+        },
+        toast: {
+          updating: "Aktualizace funkce synchronizace skupin",
+          success: "Funkce synchronizace skupin byla úspěšně aktualizována.",
+          error: "Nepodařilo se aktualizovat funkci synchronizace skupin!",
+        },
+        delete_modal: {
+          title: "Smazat synchronizaci skupin",
+          content:
+            "Noví uživatelé z této skupiny identity již nebudou přidáváni do projektu. Již přidaní uživatelé si zachovají svou současnou roli.",
+        },
+        modal: {
+          idp_group_name: {
+            text: "Uživatelská skupina",
+            required: "Uživatelská skupina je povinná",
+            placeholder: "Zadejte názvy skupin IdP",
+          },
+          project: {
+            text: "Projekt",
+            required: "Projekt je povinný",
+            placeholder: "Vyberte projekt",
+          },
+          default_role: {
+            text: "Role projektu",
+            required: "Role projektu je povinná",
+            placeholder: "Vyberte roli projektu",
+          },
+        },
+      },
       identity: {
         title: "Identita",
         heading: "Identita",

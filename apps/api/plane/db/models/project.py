@@ -341,6 +341,12 @@ class ProjectMemberInvite(ProjectBaseModel):
         return f"{self.project.name} {self.email} {self.accepted}"
 
 
+class ProjectMemberSource(models.TextChoices):
+    MANUAL = "manual", "Manual"
+    GROUP_SYNC = "group_sync", "Group Sync"
+    TEAMSPACE = "teamspace", "Teamspace"
+
+
 class ProjectMember(ProjectBaseModel):
     member = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -356,6 +362,12 @@ class ProjectMember(ProjectBaseModel):
     preferences = models.JSONField(default=get_default_preferences)
     sort_order = models.FloatField(default=65535)
     is_active = models.BooleanField(default=True)
+    # Track how member was added to the project
+    source = models.CharField(
+        max_length=20,
+        choices=ProjectMemberSource.choices,
+        default=ProjectMemberSource.MANUAL,
+    )
 
     def save(self, *args, **kwargs):
         if self._state.adding and self.member:
@@ -366,12 +378,15 @@ class ProjectMember(ProjectBaseModel):
             min_sort_order = min_sort_order_result.get("min_sort_order")
 
             # create project user property with project sort order
-            ProjectUserProperty.objects.create(
-                workspace_id=self.project.workspace_id,
-                project=self.project,
-                user=self.member,
-                sort_order=(min_sort_order - 10000 if min_sort_order is not None else 65535),
-            )
+            if not ProjectUserProperty.objects.filter(
+                workspace_id=self.project.workspace_id, project=self.project, user=self.member
+            ).exists():
+                ProjectUserProperty.objects.create(
+                    workspace_id=self.project.workspace_id,
+                    project=self.project,
+                    user=self.member,
+                    sort_order=(min_sort_order - 10000 if min_sort_order is not None else 65535),
+                )
 
         super(ProjectMember, self).save(*args, **kwargs)
 

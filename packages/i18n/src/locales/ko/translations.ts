@@ -1860,6 +1860,69 @@ export default {
       worklogs: {
         title: "워크로그",
       },
+      group_syncing: {
+        title: "그룹 동기화",
+        heading: "그룹 동기화",
+        description:
+          "ID 공급자 그룹을 프로젝트 및 역할에 연결합니다. IdP에서 그룹 멤버십이 변경되면 사용자 액세스가 자동으로 업데이트되어 온보딩 및 오프보딩이 간소화됩니다.",
+        enable: {
+          title: "그룹 동기화 활성화",
+          description: "ID 공급자 그룹을 기반으로 사용자를 프로젝트에 자동으로 추가합니다.",
+        },
+        config: {
+          title: "그룹 동기화 구성",
+          description: "ID 공급자 그룹이 프로젝트 및 역할에 매핑되는 방식을 설정합니다.",
+          sync_on_login: {
+            title: "로그인 시 동기화",
+            description: "사용자가 로그인할 때 그룹 멤버십 및 프로젝트 액세스를 업데이트합니다.",
+          },
+          sync_offline: {
+            title: "오프라인 동기화",
+            description: "사용자 로그인을 기다리지 않고 6시간마다 자동으로 동기화를 실행합니다.",
+          },
+          auto_remove: {
+            title: "자동 제거",
+            description: "그룹과 더 이상 일치하지 않는 사용자를 프로젝트에서 자동으로 제거합니다.",
+          },
+          group_attribute_key: {
+            title: "그룹 속성 키",
+            description: "사용자 그룹을 식별하고 동기화하는 데 사용되는 ID 공급자 속성.",
+            placeholder: "그룹",
+          },
+        },
+        group_mapping: {
+          title: "그룹 매핑",
+          description: "ID 공급자 그룹을 프로젝트 및 역할에 연결합니다.",
+          button_text: "새 그룹 동기화 추가",
+        },
+        toast: {
+          updating: "그룹 동기화 기능 업데이트 중",
+          success: "그룹 동기화 기능이 성공적으로 업데이트되었습니다.",
+          error: "그룹 동기화 기능 업데이트에 실패했습니다!",
+        },
+        delete_modal: {
+          title: "그룹 동기화 삭제",
+          content:
+            "이 ID 그룹의 새 사용자는 더 이상 프로젝트에 추가되지 않습니다. 이미 추가된 사용자는 현재 역할을 유지합니다.",
+        },
+        modal: {
+          idp_group_name: {
+            text: "사용자 그룹",
+            required: "사용자 그룹은 필수입니다",
+            placeholder: "IdP 그룹 이름 입력",
+          },
+          project: {
+            text: "프로젝트",
+            required: "프로젝트는 필수입니다",
+            placeholder: "프로젝트 선택",
+          },
+          default_role: {
+            text: "프로젝트 역할",
+            required: "프로젝트 역할은 필수입니다",
+            placeholder: "프로젝트 역할 선택",
+          },
+        },
+      },
       identity: {
         title: "신원",
         heading: "신원",
