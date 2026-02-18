@@ -4,13 +4,14 @@
  * See the LICENSE file for details.
  */
 
-/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises */
 "use client";
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IStaff, IStaffCreate, IStaffUpdate } from "@/services/staff.service";
 import { StaffService } from "@/services/staff.service";
 import { DepartmentService } from "@/services/department.service";

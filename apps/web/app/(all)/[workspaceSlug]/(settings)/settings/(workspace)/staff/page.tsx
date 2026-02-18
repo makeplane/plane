@@ -4,14 +4,15 @@
  * See the LICENSE file for details.
  */
 
-/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-floating-promises, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, @typescript-eslint/no-floating-promises, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
-import { Button, Input, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input, Loader } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Download, Plus, Upload } from "lucide-react";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
@@ -23,13 +24,13 @@ import { StaffWorkspaceSettingsHeader } from "./header";
 import { StaffTable } from "./components/staff-table";
 import { StaffFormModal } from "./components/staff-form-modal";
 import { StaffImportModal } from "./components/staff-import-modal";
-import type { Route } from "./+types/page";
+import { useParams } from "react-router";
 
 const staffService = new StaffService();
 const departmentService = new DepartmentService();
 
-const StaffSettingsPage = observer(function StaffSettingsPage({ params }: Route.ComponentProps) {
-  const { workspaceSlug } = params;
+const StaffSettingsPage = observer(function StaffSettingsPage() {
+  const { workspaceSlug = "" } = useParams<{ workspaceSlug: string }>();
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
 

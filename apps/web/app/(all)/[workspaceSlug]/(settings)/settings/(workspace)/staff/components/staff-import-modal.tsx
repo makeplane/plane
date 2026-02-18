@@ -4,13 +4,14 @@
  * See the LICENSE file for details.
  */
 
-/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Upload } from "lucide-react";
 import { StaffService } from "@/services/staff.service";
 

@@ -4,13 +4,14 @@
  * See the LICENSE file for details.
  */
 
-/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises */
 "use client";
 
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, ChevronRight, Edit2, Link2, Trash2, Users } from "lucide-react";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IDepartment } from "@/services/department.service";
 import { DepartmentService } from "@/services/department.service";
 

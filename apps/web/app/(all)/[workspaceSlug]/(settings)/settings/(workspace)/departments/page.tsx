@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-floating-promises, @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-floating-promises, @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState } from "react";
@@ -13,6 +13,7 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { Button, Loader } from "@plane/ui";
 import { Plus } from "lucide-react";
+import { useParams } from "react-router";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -22,12 +23,11 @@ import { DepartmentsWorkspaceSettingsHeader } from "./header";
 import { DepartmentTree } from "./components/department-tree";
 import { DepartmentFormModal } from "./components/department-form-modal";
 import { LinkProjectModal } from "./components/link-project-modal";
-import type { Route } from "./+types/page";
 
 const departmentService = new DepartmentService();
 
-const DepartmentsSettingsPage = observer(function DepartmentsSettingsPage({ params }: Route.ComponentProps) {
-  const { workspaceSlug } = params;
+const DepartmentsSettingsPage = observer(function DepartmentsSettingsPage() {
+  const { workspaceSlug = "" } = useParams<{ workspaceSlug: string }>();
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
 

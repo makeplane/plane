@@ -4,13 +4,14 @@
  * See the LICENSE file for details.
  */
 
-/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { Button, Input, TOAST_TYPE, TextArea, setToast } from "@plane/ui";
+import { Button, Input, TextArea } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IDepartment, IDepartmentCreate, IDepartmentUpdate } from "@/services/department.service";
 import { DepartmentService } from "@/services/department.service";
 
@@ -113,39 +114,55 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({
         <h2 className="mb-4 text-xl font-semibold">{department ? "Edit Department" : "Add Department"}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <Input
-              id="name"
-              label="Department Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Enter department name"
-              required
-            />
-            <Input
-              id="code"
-              label="Code"
-              value={formData.code}
-              onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              placeholder="Enter code"
-              required
-            />
+            <div>
+              <label htmlFor="name" className="mb-1 block text-sm font-medium">
+                Department Name
+              </label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="Enter department name"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="code" className="mb-1 block text-sm font-medium">
+                Code
+              </label>
+              <Input
+                id="code"
+                value={formData.code}
+                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                placeholder="Enter code"
+                required
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Input
-              id="short_name"
-              label="Short Name"
-              value={formData.short_name}
-              onChange={(e) => setFormData({ ...formData, short_name: e.target.value })}
-              placeholder="Enter short name"
-            />
-            <Input
-              id="dept_code"
-              label="Department Code"
-              value={formData.dept_code}
-              onChange={(e) => setFormData({ ...formData, dept_code: e.target.value })}
-              placeholder="Enter department code"
-            />
+            <div>
+              <label htmlFor="short_name" className="mb-1 block text-sm font-medium">
+                Short Name
+              </label>
+              <Input
+                id="short_name"
+                value={formData.short_name}
+                onChange={(e) => setFormData({ ...formData, short_name: e.target.value })}
+                placeholder="Enter short name"
+              />
+            </div>
+            <div>
+              <label htmlFor="dept_code" className="mb-1 block text-sm font-medium">
+                Department Code
+              </label>
+              <Input
+                id="dept_code"
+                value={formData.dept_code}
+                onChange={(e) => setFormData({ ...formData, dept_code: e.target.value })}
+                placeholder="Enter department code"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -169,25 +186,33 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({
                   ))}
               </select>
             </div>
-            <Input
-              id="level"
-              type="number"
-              label="Level"
-              value={formData.level}
-              onChange={(e) => setFormData({ ...formData, level: parseInt(e.target.value) || 1 })}
-              placeholder="Enter level"
-              min={1}
-            />
+            <div>
+              <label htmlFor="level" className="mb-1 block text-sm font-medium">
+                Level
+              </label>
+              <Input
+                id="level"
+                type="number"
+                value={formData.level}
+                onChange={(e) => setFormData({ ...formData, level: parseInt(e.target.value) || 1 })}
+                placeholder="Enter level"
+                min={1}
+              />
+            </div>
           </div>
 
-          <TextArea
-            id="description"
-            label="Description"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            placeholder="Enter description"
-            rows={3}
-          />
+          <div>
+            <label htmlFor="description" className="mb-1 block text-sm font-medium">
+              Description
+            </label>
+            <TextArea
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Enter description"
+              rows={3}
+            />
+          </div>
 
           <div className="flex justify-end gap-2 pt-4">
             <Button variant="neutral-primary" onClick={onClose} disabled={isSubmitting}>
