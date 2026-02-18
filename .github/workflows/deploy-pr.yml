@@ -1,6 +1,27 @@
 name: Deploy PR on demand
 
 on:
+    workflow_dispatch:
+      inputs:
+        pull_request:
+          description: 'PR Number'
+          required: true
+        type:
+          description: 'Deploy type (enterprise or cloud)'
+          required: true
+          default: 'cloud'
+          type: choice
+          options:
+            - enterprise
+            - cloud
+        helm_repo:
+          description: 'Helm repo URL (optional, uses default if empty)'
+          required: false
+        aio:
+          description: 'Build AIO image'
+          required: false
+          default: false
+          type: boolean
     # This workflow is only triggered by the `/deploy` command dispatch
     repository_dispatch:
       types: [deploy-command]
@@ -20,7 +41,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v3
         with:
           token: ${{ secrets.PAT }}
-          issue-number: ${{ github.event.client_payload.pull_request.number }}
+          issue-number: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}
           body: |
             ## Deploy PR Guidelines
             Please fix merge conflicts IF ANY before using the deploy-pr command.
@@ -31,31 +52,31 @@ jobs:
         uses: peter-evans/create-or-update-comment@v3
         with:
           token: ${{ secrets.PAT }}
-          issue-number: ${{ github.event.client_payload.pull_request.number }}
+          issue-number: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}
           body: |
             Deploying Your PR: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}>.
-            type: ${{ github.event.client_payload.slash_command.args.named.type }}
-            airgap: ${{ github.event.client_payload.slash_command.args.named.airgap }}
-            aio: ${{ github.event.client_payload.slash_command.args.named.aio }}
-            identifier: ee-${{ github.event.client_payload.pull_request.number }}
-            helm_repo: ${{ github.event.client_payload.slash_command.args.named.helm_repo }}
+            type: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type }}
+            airgap: ${{ github.event_name == 'workflow_dispatch' && 'false' || github.event.client_payload.slash_command.args.named.airgap }}
+            aio: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.aio || github.event.client_payload.slash_command.args.named.aio }}
+            identifier: ee-${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}
+            helm_repo: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.helm_repo || github.event.client_payload.slash_command.args.named.helm_repo }}
 
       - name: Set Environment Variables
         id: set_env_variables
         run: |
-            echo "RELEASE_VERSION=ee-${{ github.event.client_payload.pull_request.number }}" >> $GITHUB_OUTPUT
+            echo "RELEASE_VERSION=ee-${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}" >> $GITHUB_OUTPUT
             echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
             echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
             echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
             echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
-            if [ "${{ github.event.client_payload.slash_command.args.named.type }}" == "enterprise" ]; then
+            if [ "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type }}" == "enterprise" ]; then
               echo "IMAGE_REPO=commercial" >> $GITHUB_OUTPUT
             else
               echo "IMAGE_REPO=cloud" >> $GITHUB_OUTPUT
             fi
       - name: Print PR number
         run: |
-            echo "PR number: ${{ github.event.client_payload.pull_request.number }}"
+            echo "PR number: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}"
 
   branch_build_push_admin:
     name: Build-Push Admin Docker Image
@@ -68,7 +89,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+          ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
         id: get_commit_short_hash
         run: |
@@ -103,7 +124,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+          ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
         id: get_commit_short_hash
         run: |
@@ -138,7 +159,7 @@ jobs:
         - name: Checkout Code
           uses: actions/checkout@v4
           with:
-            ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+            ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
         - name: Get commit short hash
           id: get_commit_short_hash
           run: |
@@ -173,7 +194,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+          ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
         id: get_commit_short_hash
         run: |
@@ -208,7 +229,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+          ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
         id: get_commit_short_hash
         run: |
@@ -243,7 +264,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+          ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
         id: get_commit_short_hash
         run: |
@@ -278,7 +299,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+          ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
         id: get_commit_short_hash
         run: |
@@ -304,7 +325,7 @@ jobs:
 
   branch_build_push_aio:
     name: Build-Push AIO Docker Image
-    if: ${{ github.event.client_payload.slash_command.args.named.aio == 'true' }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.aio == 'true') || github.event.client_payload.slash_command.args.named.aio == 'true' }}
     runs-on: ubuntu-22.04-4core
     needs:
       - pre-requisites
@@ -321,7 +342,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+          ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
       - name: Get commit short hash
         id: get_commit_short_hash
         run: |
@@ -389,16 +410,10 @@ jobs:
 
             CLOUDFLARE_TOKEN=$(echo "$SECRET_JSON" | jq -r '.cloudflare_api_token')
             REDIS_URL=$(echo "$SECRET_JSON" | jq -r '.redis_url')
-            RDS_HOST=$(echo "$SECRET_JSON" | jq -r '.rds_host')
-            RDS_USER=$(echo "$SECRET_JSON" | jq -r '.rds_user')
-            RDS_PASSWORD=$(echo "$SECRET_JSON" | jq -r '.rds_password')
 
             # Mask sensitive values immediately after extraction
-            echo "::add-mask::$RDS_PASSWORD"
             echo "::add-mask::$REDIS_URL"
             echo "::add-mask::$CLOUDFLARE_TOKEN"
-            echo "::add-mask::$RDS_HOST"
-            echo "::add-mask::$RDS_USER"
 
             # Generate random delimiter for heredoc to prevent injection
             DELIMITER=$(openssl rand -hex 16)
@@ -412,24 +427,6 @@ jobs:
             {
               echo "redis_url<<${DELIMITER}"
               echo "$REDIS_URL"
-              echo "${DELIMITER}"
-            } >> "$GITHUB_ENV"
-
-            {
-              echo "rds_host<<${DELIMITER}"
-              echo "$RDS_HOST"
-              echo "${DELIMITER}"
-            } >> "$GITHUB_ENV"
-
-            {
-              echo "rds_user<<${DELIMITER}"
-              echo "$RDS_USER"
-              echo "${DELIMITER}"
-            } >> "$GITHUB_ENV"
-
-            {
-              echo "rds_password<<${DELIMITER}"
-              echo "$RDS_PASSWORD"
               echo "${DELIMITER}"
             } >> "$GITHUB_ENV"
 
@@ -461,12 +458,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: refs/pull/${{ github.event.client_payload.pull_request.number }}/merge
+          ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
 
       - name: Decide the type of helm chart to deploy
         id: decide_chart
         run: |
-          if [ "${{ github.event.client_payload.slash_command.args.named.type }}" == "enterprise" ]; then
+          if [ "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type }}" == "enterprise" ]; then
             HELM_CHART="plane-enterprise"
           else
             HELM_CHART="plane-cloud"
@@ -476,8 +473,8 @@ jobs:
 
       - name: Add helm chart repository
         run: |
-          HELM_REPO="${{ github.event.client_payload.slash_command.args.named.helm_repo }}"
-          if [ "${{ github.event.client_payload.slash_command.args.named.type }}" == "enterprise" ]; then
+          HELM_REPO="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.helm_repo || github.event.client_payload.slash_command.args.named.helm_repo }}"
+          if [ "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type }}" == "enterprise" ]; then
             REPO_NAME="plane-enterprise"
             DEFAULT_URL="https://helm.plane.so"
           else
@@ -486,19 +483,11 @@ jobs:
           fi
           helm repo add "$REPO_NAME" "${HELM_REPO:-$DEFAULT_URL}"
           helm repo update
-
-      - name: Install PostgreSQL client
+      - name: create Database
+        id: create_db
         run: |
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client
-
-      - name: Create database
-        env:
-          PGPASSWORD: ${{ env.rds_password }}
-        run: |
-          set -e
-          PR_NUMBER="${{ github.event.client_payload.pull_request.number }}"
-          DEPLOY_TYPE="${{ github.event.client_payload.slash_command.args.named.type }}"
+          PR_NUMBER="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}"
+          DEPLOY_TYPE="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type }}"
 
           if [ "${DEPLOY_TYPE}" == "enterprise" ]; then
             DATABASE_NAME="ee${PR_NUMBER}ent"
@@ -506,42 +495,50 @@ jobs:
             DATABASE_NAME="ee${PR_NUMBER}cloud"
           fi
 
-          # Validate database name (ee + digits + ent/cloud)
-          if ! echo "${DATABASE_NAME}" | grep -qE '^ee[0-9]+(ent|cloud)$'; then
-            echo "::error::Invalid database name: ${DATABASE_NAME}"
-            exit 1
-          fi
+          cat <<EOF | kubectl apply -f -
+          ---
+          apiVersion: db.movetokube.com/v1alpha1
+          kind: Postgres
+          metadata:
+            name: ${DATABASE_NAME}
+            namespace: postgres-operator
+          spec:
+            database: ${DATABASE_NAME}
+            dropOnDelete: true
+          ---
+          apiVersion: db.movetokube.com/v1alpha1
+          kind: PostgresUser
+          metadata:
+            name: ${DATABASE_NAME}-appuser
+            namespace: postgres-operator
+          spec:
+            database: ${DATABASE_NAME}
+            role: ${DATABASE_NAME}_appuser
+            privileges: OWNER
+            secretName: ${DATABASE_NAME}-appuser-secret
+          EOF
 
-          if psql -h "${{ env.rds_host }}" \
-               -U "${{ env.rds_user }}" \
-               -d postgres \
-               -tc "SELECT 1 FROM pg_database WHERE datname = '${DATABASE_NAME}'" | grep -q 1; then
-            echo "Database ${DATABASE_NAME} already exists, skipping creation"
-            exit 0
-          fi
+          SECRET_NAME="${DATABASE_NAME}-appuser-secret-${DATABASE_NAME}-appuser"
+          echo "Waiting for database secret ${SECRET_NAME} to be created..."
+          kubectl wait --for=jsonpath='{.data.POSTGRES_URL}' \
+            secret/${SECRET_NAME} \
+            -n postgres-operator \
+            --timeout=120s || echo "Warning: timed out waiting for secret"
 
-          echo "Creating database ${DATABASE_NAME}"
-          if ! psql -h "${{ env.rds_host }}" \
-               -U "${{ env.rds_user }}" \
-               -d postgres \
-               -c "CREATE DATABASE \"${DATABASE_NAME}\""; then
-            # Handle race: another process may have created it
-            if psql -h "${{ env.rds_host }}" \
-                 -U "${{ env.rds_user }}" \
-                 -d postgres \
-                 -tc "SELECT 1 FROM pg_database WHERE datname = '${DATABASE_NAME}'" | grep -q 1; then
-              echo "Database ${DATABASE_NAME} exists (created concurrently), continuing"
-              exit 0
-            fi
-            echo "::error::Failed to create database ${DATABASE_NAME}"
-            exit 1
-          fi
+          PG_URI=$(kubectl get secret "${SECRET_NAME}" -n postgres-operator -o jsonpath='{.data.POSTGRES_URL}' | base64 -d)
+          echo "::add-mask::$PG_URI"
+          DELIMITER=$(openssl rand -hex 16)
+          {
+            echo "pg_uri<<${DELIMITER}"
+            echo "$PG_URI"
+            echo "${DELIMITER}"
+          } >> "$GITHUB_ENV"
 
       - name: Deploy using helm with custom values
         run: |
           RELEASE_NAME="${{ needs.pre-requisites.outputs.release_version }}"
-          PR_NUMBER="${{ github.event.client_payload.pull_request.number }}"
-          DEPLOY_TYPE="${{ github.event.client_payload.slash_command.args.named.type }}"
+          PR_NUMBER="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}"
+          DEPLOY_TYPE="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type }}"
           IMAGE_TAG="${{ needs.pre-requisites.outputs.release_version }}"
 
           if [ "${DEPLOY_TYPE}" == "enterprise" ]; then
@@ -560,7 +557,7 @@ jobs:
           if [ "${DEPLOY_TYPE}" == "enterprise" ]; then
             RELEASE_NAME="${RELEASE_NAME}-ent"
             DATABASE_NAME="ee${PR_NUMBER}ent"
-            PG_URI="postgresql://${{ env.rds_user }}:${{ env.rds_password }}@${{ env.rds_host }}:5432/${DATABASE_NAME}"
+            PG_URI="${{ env.pg_uri }}"
             APP_HOST="feat-${PR_NUMBER}-ee.feat.plane.town"
             NAMESPACE="${RELEASE_NAME}"
             helm upgrade --install "${RELEASE_NAME}" "${CHART_REF}" \
@@ -595,7 +592,7 @@ jobs:
             APP_HOST="feat-${PR_NUMBER}-cloud.feat.plane.town"
             NAMESPACE="${RELEASE_NAME}"
             DATABASE_NAME="ee${PR_NUMBER}cloud"
-            PG_URI="postgresql://${{ env.rds_user }}:${{ env.rds_password }}@${{ env.rds_host }}:5432/${DATABASE_NAME}"
+            PG_URI="${{ env.pg_uri }}"
             helm upgrade --install "${RELEASE_NAME}" "${CHART_REF}" \
               --namespace ${NAMESPACE} \
               --create-namespace \
@@ -643,7 +640,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v3
         with:
           token: ${{ secrets.PAT }}
-          issue-number: ${{ github.event.client_payload.pull_request.number }}
+          issue-number: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}
           body: |
-            Plane deployment will be available at https://feat-${{ github.event.client_payload.pull_request.number }}-${{ (github.event.client_payload.slash_command.args.named.type == 'enterprise' && 'ee') || 'cloud' }}.feat.plane.town in few minutes.
+            Plane deployment will be available at https://feat-${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}-${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type) == 'enterprise' && 'ee' || 'cloud' }}.feat.plane.town in few minutes.
           comment-id: deploy-plane-url

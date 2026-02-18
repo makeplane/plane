@@ -119,23 +119,14 @@ jobs:
                 done
               } || true
 
-              # DROP DATABASES - always runs for MERGED/CLOSED PRs, even if K8s cleanup failed
-              export PGPASSWORD="${{ env.rds_password }}"
-
               DB_ENT="ee${pr}ent"
               DB_CLOUD="ee${pr}cloud"
 
-              echo "Dropping database $DB_ENT (if exists)"
-              psql -h "${{ env.rds_host }}" \
-                   -U "${{ env.rds_user }}" \
-                   -d postgres \
-                   -c "DROP DATABASE IF EXISTS \"$DB_ENT\";"
-
-              echo "Dropping database $DB_CLOUD (if exists)"
-              psql -h "${{ env.rds_host }}" \
-                   -U "${{ env.rds_user }}" \
-                   -d postgres \
-                   -c "DROP DATABASE IF EXISTS \"$DB_CLOUD\";"
+              # Delete postgres-operator CRDs (operator will drop databases via dropOnDelete)
+              kubectl delete postgres "${DB_ENT}" -n postgres-operator --ignore-not-found || true
+              kubectl delete postgresuser "${DB_ENT}-appuser" -n postgres-operator --ignore-not-found || true
+              kubectl delete postgres "${DB_CLOUD}" -n postgres-operator --ignore-not-found || true
+              kubectl delete postgresuser "${DB_CLOUD}-appuser" -n postgres-operator --ignore-not-found || true
             fi
           done
 
