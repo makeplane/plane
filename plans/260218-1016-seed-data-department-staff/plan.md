@@ -4,147 +4,162 @@
 **Status**: Completed
 **Workspace**: `shinhan-bank-vn`
 
-## Mô hình dữ liệu
+## Department Hierarchy Levels
+
+Shinhan Bank VN uses a 6-level hierarchical org chart structure. **Levels must be sequential** (child level = parent level + 1, no skipping):
+
+| Level | Type          | Description                                        | Example                        |
+| ----- | ------------- | -------------------------------------------------- | ------------------------------ |
+| L0    | Workspace     | Shinhan Bank Vietnam — not stored as Department    | Shinhan Bank Vietnam           |
+| L1    | Group Biz     | Top-level business groups                          | RBG (Retail Banking Group)     |
+| L2    | Division/Unit | Divisions or units within a group                  | RBG-CR (Credit Division)       |
+| L3    | Department    | Departments within a division — primary work units | ITG-DEV-BE (Backend Dept)      |
+| L4    | Team          | Teams within a department                          | Available for future expansion |
+| L5    | Sub-Team      | Sub-teams within a team                            | Available for future expansion |
+
+**Current seed data**: Uses L1, L2, L3 (sequential). L4 Team and L5 Sub-Team available for future expansion.
+
+## Data Model
 
 ```
 Workspace: "Shinhan Bank Vietnam"
 │
-│  ═══ DEPARTMENT TREE (20 departments, 3 levels) ═══
+│  ═══ DEPARTMENT TREE (20 departments, 3 active levels: L1→L2→L3 sequential) ═══
 │
-│  RBG (Khối Bán lẻ) — GĐ: Nguyễn An
-│    ├── RBG-CR (Phòng Tín dụng) — TP: Vũ Thảo
-│    │     ├── RBG-CR-AP (Team Thẩm định)   — TL: Đinh Cường  → [Thẩm định] Nội bộ
-│    │     └── RBG-CR-CO (Team Thu hồi)     — TL: Trịnh Nga   → [Thu hồi nợ] Nội bộ
-│    └── RBG-TX (Phòng Giao dịch) — TP: Đỗ Minh
-│          ├── RBG-TX-01 (Team GD1)         — TL: Phan Phúc   → [Giao dịch 1] Nội bộ
-│          └── RBG-TX-02 (Team GD2)         — TL: Dương Yến   → [Giao dịch 2] Nội bộ
+│  RBG (Retail Banking Group) — Head: Nguyen An                    [L1 - Group Biz]
+│    ├── RBG-CR (Credit Division) — Head: Vu Thao                  [L2 - Division]
+│    │     ├── RBG-CR-AP (Credit Appraisal Dept) — TL: Dinh Cuong  [L3 - Department] → [Credit Appraisal] Internal
+│    │     └── RBG-CR-CO (Debt Collection Dept)  — TL: Trinh Nga   [L3 - Department] → [Debt Collection] Internal
+│    └── RBG-TX (Transaction Division) — Head: Do Minh             [L2 - Division]
+│          ├── RBG-TX-01 (Transaction Dept 1)    — TL: Phan Phuc   [L3 - Department] → [Transaction 1] Internal
+│          └── RBG-TX-02 (Transaction Dept 2)    — TL: Duong Yen   [L3 - Department] → [Transaction 2] Internal
 │
-│  WBG (Khối DN) — GĐ: Trần Bình
-│    └── WBG-LN (Phòng Cho vay DN) — TP: Hoàng Tuấn
-│          └── WBG-LN-SM (Team SME)         — TL: Tô Quang    → [SME Lending] Nội bộ
+│  WBG (Wholesale Banking Group) — Head: Tran Binh                 [L1 - Group Biz]
+│    └── WBG-LN (Corporate Lending Division) — Head: Hoang Tuan    [L2 - Division]
+│          └── WBG-LN-SM (SME Lending Dept)      — TL: To Quang    [L3 - Department] → [SME Lending] Internal
 │
-│  ITG (Khối CNTT) — GĐ: Lê Hùng
-│    ├── ITG-DEV (Phòng Phát triển) — TP: Ngô Dũng
-│    │     ├── ITG-DEV-BE (Team Backend)    — TL: Mai Đức     → [Backend] Nội bộ
-│    │     └── ITG-DEV-FE (Team Frontend)   — TL: Lương Trang → [Frontend] Nội bộ
-│    └── ITG-OPS (Phòng Vận hành) — TP: Bùi Linh
-│          ├── ITG-OPS-IF (Team Infra)      — TL: Đặng Sơn    → [Infra] Nội bộ
-│          └── ITG-OPS-SC (Team Security)   — TL: Cao Thanh   → [Security] Nội bộ
+│  ITG (IT Group) — Head: Le Hung                                  [L1 - Group Biz]
+│    ├── ITG-DEV (Software Development Division) — Head: Ngo Dung   [L2 - Division]
+│    │     ├── ITG-DEV-BE (Backend Dept)         — TL: Mai Duc      [L3 - Department] → [Backend] Internal
+│    │     └── ITG-DEV-FE (Frontend Dept)        — TL: Luong Trang  [L3 - Department] → [Frontend] Internal
+│    └── ITG-OPS (IT Operations Division) — Head: Bui Linh          [L2 - Division]
+│          ├── ITG-OPS-IF (Infrastructure Dept)  — TL: Dang Son     [L3 - Department] → [Infrastructure] Internal
+│          └── ITG-OPS-SC (Security Dept)        — TL: Cao Thanh    [L3 - Department] → [Security] Internal
 │
-│  HRG (Khối Nhân sự) — GĐ: Phạm Lan
-│    └── HRG-RC (Phòng Tuyển dụng) — TP: Lý Hà
-│          └── HRG-RC-ON (Team Onboarding)  — TL: Hồ Mai      → [Onboarding] Nội bộ
+│  HRG (HR & Training Group) — Head: Pham Lan                      [L1 - Group Biz]
+│    └── HRG-RC (Recruitment Division) — Head: Ly Ha                [L2 - Division]
+│          └── HRG-RC-ON (Onboarding Dept)       — TL: Ho Mai       [L3 - Department] → [Onboarding] Internal
 │
 │  ═══ CROSS-TEAM PROJECTS ═══
 │
-│  🚀 Core Banking Migration (CBM)        — 10 members liên phòng
-│  🚀 Digital Transformation 2026 (DT26)  — 5 members (GĐ + leads)
-│  📊 Khối CNTT Overview (ITOV)           — 7 members (GĐ + TP + TL)
+│  Core Banking Migration (CBM)        — 10 members cross-division
+│  Digital Transformation 2026 (DT26)  — 5 members (heads + leads)
+│  IT Division Overview (ITOV)         — 7 members (head + dept heads + TLs)
 ```
 
-## Tổng quan seed data
+## Seed Data Overview
 
-| Entity      | Count | Chi tiết                                               |
-| ----------- | ----- | ------------------------------------------------------ |
-| Departments | 20    | 4 Khối (L1) + 6 Phòng (L2) + 10 Team (L3)              |
-| Staff       | 56    | 4 GĐ + 6 TP + 10 TL + 34 NV + 1 probation + 1 resigned |
-| Projects    | 13    | 10 team-linked (SECRET) + 3 cross-team                 |
-| Issues      | 57    | Tasks thực tế tiếng Việt, đa dạng priority             |
-| Memberships | 65    | Auto-assign theo hierarchy                             |
+| Entity      | Count | Details                                                          |
+| ----------- | ----- | ---------------------------------------------------------------- |
+| Departments | 20    | 4 Groups (L1) + 6 Divisions (L2) + 10 Departments (L3)           |
+| Staff       | 56    | 4 Heads + 6 Dept Heads + 10 TLs + 34 Staff + 1 prob + 1 resigned |
+| Projects    | 13    | 10 team-linked (SECRET) + 3 cross-team                           |
+| Issues      | 57    | Realistic banking tasks, mixed priorities                        |
+| Memberships | 65    | Auto-assigned via hierarchy                                      |
 
-## Auto-membership logic
+## Auto-membership Logic
 
-### Nguyên tắc
+### Principles
 
-- **Staff → Team project**: NV tự động join project linked của department mình
-- **Manager → Children projects**: Trưởng phòng/GĐ Khối auto-join TẤT CẢ project con
-- **Cross-team**: Thành viên được chỉ định thủ công, không bị ảnh hưởng khi chuyển phòng
+- **Staff → Team project**: Staff auto-join their department's linked project
+- **Manager → Children projects**: Dept heads/Division heads auto-join ALL child team projects
+- **Cross-team**: Members manually assigned, unaffected by department transfers
 
-### Ví dụ cụ thể
+### Examples
 
-**Nguyễn Dương (18506320) — Sr. Dev, Team Backend:**
-
-```
-✅ [Backend] Nội bộ         (auto — department link)
-✅ Core Banking Migration   (cross-team — chỉ định)
-❌ [Frontend], [Infra]...   (không thấy)
-```
-
-**Ngô Dũng (10000013) — TP Phòng Phát triển:**
+**Nguyen Duong (18506320) — Sr. Developer, Backend Team:**
 
 ```
-✅ [Backend] Nội bộ         (auto — manager of parent dept)
-✅ [Frontend] Nội bộ        (auto — manager of parent dept)
-❌ [Infra], [Security]      (khác phòng)
+✅ [Backend] Internal         (auto — department link)
+✅ Core Banking Migration     (cross-team — manual assignment)
+❌ [Frontend], [Infra]...     (not visible)
 ```
 
-**Lê Hùng (10000003) — GĐ Khối CNTT:**
+**Ngo Dung (10000013) — Head of Software Development Division (L2 - Division):**
 
 ```
-✅ [Backend] Nội bộ         (auto — GĐ khối → all children)
-✅ [Frontend] Nội bộ        (auto)
-✅ [Infra] Nội bộ           (auto)
-✅ [Security] Nội bộ        (auto)
-✅ Core Banking Migration   (cross-team)
-✅ Digital Transformation   (cross-team)
-✅ Khối CNTT Overview       (cross-team)
+✅ [Backend] Internal         (auto — manager of parent dept)
+✅ [Frontend] Internal        (auto — manager of parent dept)
+❌ [Infra], [Security]        (different division)
 ```
 
-## Staff theo phòng ban
+**Le Hung (10000003) — Head of IT Group (L1 - Group Biz):**
 
-### ITG-DEV-BE — Team Backend (8 người)
+```
+✅ [Backend] Internal         (auto — group head → all descendants)
+✅ [Frontend] Internal        (auto)
+✅ [Infrastructure] Internal  (auto)
+✅ [Security] Internal        (auto)
+✅ Core Banking Migration     (cross-team)
+✅ Digital Transformation     (cross-team)
+✅ IT Division Overview       (cross-team)
+```
 
-| Mã NV    | Họ tên       | Chức vụ          | Grade  | Status        |
+## Staff by Department
+
+### ITG-DEV-BE — Backend Team (7 people)
+
+| Staff ID | Name         | Position         | Grade  | Status        |
 | -------- | ------------ | ---------------- | ------ | ------------- |
-| 10000025 | Mai Đức      | Team Leader      | Senior | Active        |
-| 18506320 | Nguyễn Dương | Senior Developer | Senior | Active        |
-| 18506321 | Trần Phong   | Developer        | Junior | Active        |
-| 18506322 | Lê Hải       | Developer        | Mid    | Active        |
-| 18506323 | Phạm Vy      | QA Engineer      | Mid    | Active        |
-| 18506324 | Vũ Long      | DevOps Engineer  | Senior | Active        |
-| 18506420 | Lương Khánh  | Intern Developer | Intern | **Probation** |
+| 10000025 | Mai Duc      | Team Leader      | Senior | Active        |
+| 18506320 | Nguyen Duong | Senior Developer | Senior | Active        |
+| 18506321 | Tran Phong   | Developer        | Junior | Active        |
+| 18506322 | Le Hai       | Developer        | Mid    | Active        |
+| 18506323 | Pham Vy      | QA Engineer      | Mid    | Active        |
+| 18506324 | Vu Long      | DevOps Engineer  | Senior | Active        |
+| 18506420 | Luong Khanh  | Intern Developer | Intern | **Probation** |
 
-### ITG-DEV-FE — Team Frontend (5 người)
+### ITG-DEV-FE — Frontend Team (5 people)
 
-| Mã NV    | Họ tên      | Chức vụ             | Grade  | Status |
-| -------- | ----------- | ------------------- | ------ | ------ |
-| 10000026 | Lương Trang | Team Leader         | Senior | Active |
-| 18506330 | Hoàng Linh  | Senior Frontend Dev | Senior | Active |
-| 18506331 | Ngô Hà      | Frontend Developer  | Mid    | Active |
-| 18506332 | Bùi Khoa    | UI/UX Developer     | Mid    | Active |
-| 18506333 | Đỗ Tùng     | Frontend Developer  | Junior | Active |
+| Staff ID | Name        | Position                  | Grade  | Status |
+| -------- | ----------- | ------------------------- | ------ | ------ |
+| 10000026 | Luong Trang | Team Leader               | Senior | Active |
+| 18506330 | Hoang Linh  | Senior Frontend Developer | Senior | Active |
+| 18506331 | Ngo Ha      | Frontend Developer        | Mid    | Active |
+| 18506332 | Bui Khoa    | UI/UX Developer           | Mid    | Active |
+| 18506333 | Do Tung     | Frontend Developer        | Junior | Active |
 
-### RBG-CR-AP — Team Thẩm định (7 người)
+### RBG-CR-AP — Credit Appraisal Team (7 people)
 
-| Mã NV    | Họ tên     | Chức vụ     | Grade  | Status       |
-| -------- | ---------- | ----------- | ------ | ------------ |
-| 10000020 | Đinh Cường | Team Leader | Senior | Active       |
-| 18506360 | Mai Thủy   | Chuyên viên | Mid    | Active       |
-| 18506361 | Lương Bảo  | Chuyên viên | Mid    | Active       |
-| 18506362 | Đặng Hiền  | Nhân viên   | Junior | Active       |
-| 18506363 | Cao Khải   | Nhân viên   | Junior | Active       |
-| 18506364 | Hồ Ngọc    | Chuyên viên | Senior | Active       |
-| 18506421 | Đặng Trúc  | Nhân viên   | Junior | **Resigned** |
+| Staff ID | Name       | Position                        | Grade  | Status       |
+| -------- | ---------- | ------------------------------- | ------ | ------------ |
+| 10000020 | Dinh Cuong | Team Leader                     | Senior | Active       |
+| 18506360 | Mai Thuy   | Credit Appraisal Officer        | Mid    | Active       |
+| 18506361 | Luong Bao  | Credit Appraisal Officer        | Mid    | Active       |
+| 18506362 | Dang Hien  | Credit Appraisal Analyst        | Junior | Active       |
+| 18506363 | Cao Khai   | Credit Appraisal Analyst        | Junior | Active       |
+| 18506364 | Ho Ngoc    | Senior Credit Appraisal Officer | Senior | Active       |
+| 18506421 | Dang Truc  | Credit Appraisal Analyst        | Junior | **Resigned** |
 
-## Issues mẫu theo project
+## Sample Issues by Project
 
-| Project                | Issues | Ví dụ                                          |
-| ---------------------- | ------ | ---------------------------------------------- |
-| [Backend] Nội bộ       | 8      | Fix bug timeout DB, API thanh toán, caching... |
-| [Frontend] Nội bộ      | 6      | Redesign dashboard, dark mode, bundle size...  |
-| [Infra] Nội bộ         | 5      | K8s upgrade, disaster recovery, SSL...         |
-| [Security] Nội bộ      | 4      | Pentest mobile, firewall, SIEM...              |
-| [Thẩm định] Nội bộ     | 5      | Hồ sơ vay 500tr, BĐS đảm bảo...                |
-| Core Banking Migration | 5      | Data migration T24, UAT, parallel run...       |
+| Project                     | Issues | Examples                                              |
+| --------------------------- | ------ | ----------------------------------------------------- |
+| [Backend] Internal          | 8      | DB timeout fix, payment API, caching layer...         |
+| [Frontend] Internal         | 6      | Dashboard redesign, dark mode, bundle optimization... |
+| [Infrastructure] Internal   | 5      | K8s upgrade, disaster recovery, SSL automation...     |
+| [Security] Internal         | 4      | Pentest mobile app, firewall, SIEM alerting...        |
+| [Credit Appraisal] Internal | 5      | Loan appraisal 500M, collateral review...             |
+| Core Banking Migration      | 5      | T24 data migration, UAT, parallel run...              |
 
-## Cách chạy
+## How to Run
 
 ```bash
-# Seed vào workspace cụ thể
+# Seed into specific workspace
 docker compose exec api python manage.py seed_department_staff \
   --workspace shinhan-bank-vn --email duong@shinhan.com
 
-# Clean + re-seed
+# Clean and re-seed
 docker compose exec api python manage.py seed_department_staff \
   --workspace shinhan-bank-vn --email duong@shinhan.com --clean
 
@@ -154,13 +169,13 @@ docker compose exec api python manage.py seed_department_staff
 
 ## Files
 
-| File                                                             | Mô tả                                                   |
-| ---------------------------------------------------------------- | ------------------------------------------------------- |
-| `apps/api/plane/bgtasks/seed_department_staff_data.py`           | Data definitions (departments, staff, projects, issues) |
-| `apps/api/plane/db/management/commands/seed_department_staff.py` | Django management command                               |
+| File                                                             | Description                                       |
+| ---------------------------------------------------------------- | ------------------------------------------------- |
+| `apps/api/plane/bgtasks/seed_department_staff_data.py`           | Data definitions (depts, staff, projects, issues) |
+| `apps/api/plane/db/management/commands/seed_department_staff.py` | Django management command                         |
 
-## Login test
+## Test Login
 
 - **Admin**: `duong@shinhan.com` / `Shinhan@1`
-- **Nhân viên**: `sh{mã NV}@swing.shinhan.com` / `Shinhan@2026`
-  - Ví dụ: `sh18506320@swing.shinhan.com` = Nguyễn Dương (Backend)
+- **Staff**: `sh{staff_id}@swing.shinhan.com` / `Shinhan@2026`
+  - Example: `sh18506320@swing.shinhan.com` = Nguyen Duong (Backend)

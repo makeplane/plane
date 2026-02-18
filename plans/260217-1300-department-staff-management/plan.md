@@ -3,13 +3,26 @@
 **Date**: 2026-02-17
 **Type**: Feature Implementation
 **Status**: Validated & Completed (TS fixes applied 2026-02-18)
-**Context Tokens**: Shinhan Bank VN, ~1000 NV, cấu trúc phòng ban đa cấp, AD Windows
+**Context**: Shinhan Bank VN, ~1000 employees, multi-level department structure, AD Windows
 
 ## Executive Summary
 
-Xây dựng hệ thống **phòng ban đa cấp** (Department) + **hồ sơ nhân viên** (StaffProfile) tích hợp vào Plane CE. Admin quản lý tổ chức qua God Mode. Nhân viên được **tự động gán** vào đúng Project (team workspace) dựa trên phòng ban. Trưởng phòng tự động xem được tất cả project của team dưới quyền.
+Build a **multi-level department hierarchy** (Department) + **staff profile management** (StaffProfile) integrated into Plane CE. Workspace admins manage organization via Workspace Settings. Employees are **auto-assigned** to the correct Project (team workspace) based on their department. Department managers automatically gain visibility into all projects under their scope.
 
-**Nguyên tắc cốt lõi:** Department = metadata tổ chức (ai ở đâu). Project = phân quyền (ai thấy gì). Link giữa 2 cái = tự động gán.
+**Core principle:** Department = organizational metadata (who belongs where). Project = access control (who sees what). Link between the two = auto-assignment.
+
+## Department Hierarchy Levels
+
+Shinhan Bank VN uses a 6-level hierarchical org chart structure. **Levels must be sequential** (child level = parent level + 1, no skipping):
+
+| Level | Type          | Description                                        | Example                        |
+| ----- | ------------- | -------------------------------------------------- | ------------------------------ |
+| L0    | Workspace     | Shinhan Bank Vietnam — not stored as Department    | Shinhan Bank Vietnam           |
+| L1    | Group Biz     | Top-level business groups                          | RBG (Retail Banking Group)     |
+| L2    | Division/Unit | Divisions or units within a group                  | RBG-CR (Credit Division)       |
+| L3    | Department    | Departments within a division — primary work units | ITG-DEV-BE (Backend Dept)      |
+| L4    | Team          | Teams within a department                          | Available for future expansion |
+| L5    | Sub-Team      | Sub-teams within a team                            | Available for future expansion |
 
 ## Context Links
 
@@ -20,114 +33,117 @@ Xây dựng hệ thống **phòng ban đa cấp** (Department) + **hồ sơ nhâ
 
 ---
 
-## 1. Phương án kiến trúc: Hybrid (Phương án C)
+## 1. Architecture: Hybrid Approach (Option C)
 
-### 1.1 Mapping tổ chức → Plane
+### 1.1 Organization → Plane Mapping
 
-| Tổ chức               | Plane concept                 | Chi tiết                                             |
-| --------------------- | ----------------------------- | ---------------------------------------------------- |
-| Shinhan Bank VN       | **Workspace**                 | 1 workspace duy nhất cho toàn ngân hàng              |
-| Khối / Phòng / Team   | **Department** (NEW)          | Cây đa cấp, metadata tổ chức, quản lý trong God Mode |
-| Team nội bộ           | **Project** (SECRET)          | Mỗi team = 1 project riêng, chỉ member thấy          |
-| Dự án liên phòng      | **Project** (SECRET)          | Mời thủ công member từ nhiều team                    |
-| Trưởng phòng overview | **Project** (SECRET)          | Auto-join project của các team dưới quyền            |
-| Nhân viên             | **User + StaffProfile** (NEW) | Mã NV, chức vụ, phòng ban                            |
-| Task                  | **Issue**                     | Trong project, chỉ member thấy                       |
+| Organization Entity     | Plane Concept                 | Details                                     | Level |
+| ----------------------- | ----------------------------- | ------------------------------------------- | ----- |
+| Shinhan Bank VN         | **Workspace**                 | Single workspace for the entire bank        | L0    |
+| Group Biz               | **Department** (NEW)          | Level 1 — Top-level business groups         | L1    |
+| Division/Unit           | **Department** (NEW)          | Level 2 — Divisions or units                | L2    |
+| Department              | **Department** (NEW)          | Level 3 — Departments, primary work units   | L3    |
+| Team                    | **Department** (NEW)          | Level 4 — Teams within a department         | L4    |
+| Sub-Team                | **Department** (NEW)          | Level 5 — Sub-teams within a team           | L5    |
+| Internal team workspace | **Project** (SECRET)          | Each team = 1 project, only members can see | -     |
+| Cross-team project      | **Project** (SECRET)          | Manually invite members from multiple teams | -     |
+| Manager overview        | **Project** (SECRET)          | Auto-join projects of all subordinate teams | -     |
+| Employee                | **User + StaffProfile** (NEW) | Staff ID, position, department              | -     |
+| Task                    | **Issue**                     | Within project, only members can see        | -     |
 
-### 1.2 Ví dụ cấu trúc thực tế
+### 1.2 Practical Structure Example
 
 ```
-Workspace: "Shinhan Bank VN"
+Workspace: "Shinhan Bank VN" (L0 - Workspace)
 │
-│  ═══ DEPARTMENT TREE (metadata, God Mode) ═══
+│  ═══ DEPARTMENT TREE (metadata, Workspace Settings) ═══
 │
-│  RBG (Khối Bán lẻ) — GĐ Khối: Ông A
-│    ├── RBG-CR (Phòng Tín dụng) — TP: Bà B
-│    │     ├── RBG-CR-AP (Team Thẩm định) — TL: Anh C  →  link Project
-│    │     └── RBG-CR-CO (Team Thu hồi)   — TL: Chị D  →  link Project
-│    └── RBG-TX (Phòng Giao dịch) — TP: Ông E
-│          ├── RBG-TX-01 (Team GD1)       — TL: Anh F  →  link Project
-│          └── RBG-TX-02 (Team GD2)       — TL: Chị G  →  link Project
+│  RBG (Retail Banking Group) — Group Head: Mr. A          [L1 - Group Biz]
+│    ├── RBG-CR (Credit Division) — Division Head: Ms. B   [L2 - Division]
+│    │     ├── RBG-CR-AP (Appraisal Dept) — Head: Mr. C   [L3 - Department] → link Project
+│    │     └── RBG-CR-CO (Collection Dept) — Head: Ms. D   [L3 - Department] → link Project
+│    └── RBG-TX (Transaction Division) — Division Head: Mr. E  [L2 - Division]
+│          ├── RBG-TX-01 (Transaction Dept 1) — Head: Mr. F [L3 - Department] → link Project
+│          └── RBG-TX-02 (Transaction Dept 2) — Head: Ms. G [L3 - Department] → link Project
 │
-│  ITG (Khối CNTT) — GĐ Khối: Ông H
-│    ├── ITG-DEV (Phòng Phát triển) — TP: Ông I
-│    │     ├── ITG-DEV-BE (Team Backend)  — TL: Anh J  →  link Project
-│    │     └── ITG-DEV-FE (Team Frontend) — TL: Chị K  →  link Project
-│    └── ITG-OPS (Phòng Vận hành) — TP: Ông L
-│          └── ITG-OPS-IF (Team Infra)    — TL: Anh M  →  link Project
+│  ITG (IT Group) — Group Head: Mr. H                      [L1 - Group Biz]
+│    ├── ITG-DEV (Software Dev Division) — Div Head: Mr. I [L2 - Division]
+│    │     ├── ITG-DEV-BE (Backend Dept) — Head: Mr. J     [L3 - Department] → link Project
+│    │     └── ITG-DEV-FE (Frontend Dept) — Head: Ms. K    [L3 - Department] → link Project
+│    └── ITG-OPS (IT Operations Division) — Div Head: Mr. L  [L2 - Division]
+│          └── ITG-OPS-IF (Infrastructure Dept) — Head: Mr. M [L3 - Department] → link Project
 │
-│  ═══ PROJECTS (phân quyền, workspace level) ═══
+│  ═══ PROJECTS (access control, workspace level) ═══
 │
-│  📁 [Thẩm định] Nội bộ       (SECRET) ← linked RBG-CR-AP
-│  📁 [Thu hồi nợ] Nội bộ      (SECRET) ← linked RBG-CR-CO
-│  📁 [GD1] Nội bộ             (SECRET) ← linked RBG-TX-01
-│  📁 [Backend] Nội bộ         (SECRET) ← linked ITG-DEV-BE
-│  📁 [Frontend] Nội bộ        (SECRET) ← linked ITG-DEV-FE
-│  📁 [Infra] Nội bộ           (SECRET) ← linked ITG-OPS-IF
-│  🚀 Core Banking Migration   (SECRET) ← cross-team, mời thủ công
-│  📊 [Khối CNTT] Overview     (SECRET) ← GĐ Khối + team leads
+│  📁 [Appraisal] Internal      (SECRET) ← linked RBG-CR-AP (L3)
+│  📁 [Collection] Internal     (SECRET) ← linked RBG-CR-CO (L3)
+│  📁 [Transaction 1] Internal  (SECRET) ← linked RBG-TX-01 (L3)
+│  📁 [Backend] Internal        (SECRET) ← linked ITG-DEV-BE (L3)
+│  📁 [Frontend] Internal       (SECRET) ← linked ITG-DEV-FE (L3)
+│  📁 [Infrastructure] Internal (SECRET) ← linked ITG-OPS-IF (L3)
+│  🚀 Core Banking Migration    (SECRET) ← cross-team, manually invite
+│  📊 [IT Group] Overview       (SECRET) ← Group head + dept heads
 ```
 
-### 1.3 Ai thấy gì?
+### 1.3 Visibility Rules
 
-**Nhân viên (Dev) — Nguyễn Dương, Team Backend:**
-
-```
-Thấy:  ✅ [Backend] Nội bộ (auto từ department)
-       ✅ Core Banking Migration (được mời thủ công)
-Không: ❌ [Frontend], [Thẩm định], [Thu hồi nợ]...
-```
-
-**Team Leader — Anh J, Team Backend:**
+**Employee (Developer) — Nguyen Duong, Backend Team:**
 
 ```
-Thấy:  ✅ [Backend] Nội bộ (Project Admin — leader)
-       ✅ Core Banking Migration (được mời)
-Quyền: Tạo/sửa/xóa task, quản lý members, cấu hình project
+Sees:    ✅ [Backend] Internal (auto from department)
+         ✅ Core Banking Migration (manually invited)
+Cannot:  ❌ [Frontend], [Appraisal], [Collection]...
 ```
 
-**Trưởng phòng — Ông I, Phòng Phát triển:**
+**Team Leader — Mr. J, Backend Team:**
 
 ```
-Thấy:  ✅ [Backend] Nội bộ (auto-join — trưởng phòng cha)
-       ✅ [Frontend] Nội bộ (auto-join — trưởng phòng cha)
-       ✅ [Phòng PT] Overview (project riêng)
-→ Tự động join TẤT CẢ project của team dưới quyền
+Sees:    ✅ [Backend] Internal (Project Admin — leader)
+         ✅ Core Banking Migration (manually invited)
+Rights:  Create/edit/delete tasks, manage members, configure project
 ```
 
-**Giám đốc Khối — Ông H, Khối CNTT:**
+**Division Head — Mr. I, Software Development Division (L2 - Division):**
 
 ```
-Thấy:  ✅ [Backend], [Frontend], [Infra] Nội bộ (auto-join tất cả)
-       ✅ [Khối CNTT] Overview
-→ Thấy TẤT CẢ project trong toàn khối
+Sees:    ✅ [Backend] Internal (auto-join — parent division manager)
+         ✅ [Frontend] Internal (auto-join — parent division manager)
+→ Auto-joins ALL projects of subordinate departments (L3)
 ```
 
-### 1.4 Chuyển phòng ban
+**Group Head — Mr. H, IT Group (L1 - Group Biz):**
 
 ```
-Dương chuyển: Team Backend → Team Frontend
+Sees:    ✅ [Backend], [Frontend], [Infrastructure] Internal (auto-join all)
+         ✅ [IT Group] Overview
+→ Sees ALL projects within the entire group (L2→L3 descendants)
+```
+
+### 1.4 Department Transfer
+
+```
+Duong transfers: Backend Team → Frontend Team
   │
-  Tự động:
-  ├── Remove khỏi "[Backend] Nội bộ"
-  ├── Thêm vào "[Frontend] Nội bộ"
-  └── Dự án cross-team (Core Banking) KHÔNG bị ảnh hưởng
+  Automatic actions:
+  ├── Remove from "[Backend] Internal"
+  ├── Add to "[Frontend] Internal"
+  └── Cross-team projects (Core Banking) NOT affected
 ```
 
-### 1.5 Dự án liên phòng (cross-team)
+### 1.5 Cross-team Projects
 
 ```
 Project "Core Banking Migration" (SECRET)
-  → Không link department nào
-  → Admin/PM tự mời người từ nhiều team
-  → Khi NV chuyển phòng, membership dự án này giữ nguyên
+  → Not linked to any department
+  → Admin/PM manually invites members from multiple teams
+  → When staff transfers departments, this membership is preserved
 ```
 
 ---
 
 ## 2. Data Models
 
-### 2.1 Department (Phòng ban — cây đa cấp)
+### 2.1 Department (Multi-level tree)
 
 ```python
 # File: apps/api/plane/db/models/department.py
@@ -135,25 +151,26 @@ Project "Core Banking Migration" (SECRET)
 class Department(BaseModel):
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="departments")
 
-    # Thông tin cơ bản
-    name = models.CharField(max_length=255)            # "Team Backend"
+    # Basic info
+    name = models.CharField(max_length=255)            # "Backend Team"
     code = models.CharField(max_length=20)              # "ITG-DEV-BE"
-    short_name = models.CharField(max_length=10)       # "BE", "FE", "INFRA" — viết hoa, min 2 ký tự, dùng làm prefix task ID
-    dept_code = models.CharField(max_length=4)         # "0947", "7128" — đúng 4 chữ số
+    short_name = models.CharField(max_length=10)       # "BE", "FE", "INFRA" — uppercase, min 2 chars, used as task ID prefix
+    dept_code = models.CharField(max_length=4)         # "0947", "7128" — exactly 4 digits
     description = models.TextField(blank=True, default="")
 
-    # Cây đa cấp (parent=NULL → top level)
+    # Multi-level tree (parent=NULL → top level)
     parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name="children")
-    level = models.PositiveSmallIntegerField(default=1, validators=[MaxValueValidator(5)]) # 1=Khối, 2=Phòng, 3=Team, 4-5=Sub-teams
-    <!-- Updated: Validation Session 1 - max level changed from 3 to 5 -->
+    level = models.PositiveSmallIntegerField(default=1, validators=[MaxValueValidator(5)])
+    # Level types (sequential, child = parent + 1):
+    # 0=Workspace (not stored), 1=Group Biz, 2=Division/Unit, 3=Department, 4=Team, 5=Sub-Team
 
-    # Trưởng đơn vị
+    # Department manager
     manager = models.ForeignKey("db.User", on_delete=models.SET_NULL, null=True, blank=True, related_name="managed_departments")
 
-    # Link → Project (team project tương ứng)
+    # Link → Project (corresponding team project)
     linked_project = models.ForeignKey("db.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="linked_department")
 
-    # Sắp xếp
+    # Ordering
     sort_order = models.FloatField(default=65535)
     is_active = models.BooleanField(default=True)
 
@@ -181,66 +198,68 @@ class Department(BaseModel):
     # Validation
     def clean(self):
         if self.short_name and (len(self.short_name) < 2 or not self.short_name.isupper()):
-            raise ValidationError("short_name phải viết hoa, tối thiểu 2 ký tự")
+            raise ValidationError("short_name must be uppercase, minimum 2 characters")
         if self.dept_code and (len(self.dept_code) != 4 or not self.dept_code.isdigit()):
-            raise ValidationError("dept_code phải đúng 4 chữ số")
+            raise ValidationError("dept_code must be exactly 4 digits")
 ```
 
-**Ví dụ data:**
+**Example data:**
 
-| code       | short_name | dept_code | name             | parent  | level | manager | linked_project         |
-| ---------- | ---------- | --------- | ---------------- | ------- | ----- | ------- | ---------------------- |
-| RBG        | RBG        | 0100      | Khối Bán lẻ      | NULL    | 1     | Ông A   | NULL                   |
-| RBG-CR     | CR         | 0110      | Phòng Tín dụng   | RBG     | 2     | Bà B    | NULL                   |
-| RBG-CR-AP  | AP         | 0111      | Team Thẩm định   | RBG-CR  | 3     | Anh C   | → "[Thẩm định] Nội bộ" |
-| ITG        | ITG        | 0900      | Khối CNTT        | NULL    | 1     | Ông H   | NULL                   |
-| ITG-DEV    | DEV        | 0910      | Phòng Phát triển | ITG     | 2     | Ông I   | NULL                   |
-| ITG-DEV-BE | BE         | 0911      | Team Backend     | ITG-DEV | 3     | Anh J   | → "[Backend] Nội bộ"   |
+| code       | short_name | dept_code | name                  | parent  | level | type          | manager | linked_project           |
+| ---------- | ---------- | --------- | --------------------- | ------- | ----- | ------------- | ------- | ------------------------ |
+| RBG        | RBG        | 0100      | Retail Banking Group  | NULL    | 1     | Group Biz     | Mr. A   | NULL                     |
+| RBG-CR     | CR         | 0110      | Credit Division       | RBG     | 2     | Division/Unit | Ms. B   | NULL                     |
+| RBG-CR-AP  | AP         | 0111      | Appraisal Dept        | RBG-CR  | 3     | Department    | Mr. C   | → "[Appraisal] Internal" |
+| ITG        | ITG        | 0900      | IT Group              | NULL    | 1     | Group Biz     | Mr. H   | NULL                     |
+| ITG-DEV    | DEV        | 0910      | Software Dev Division | ITG     | 2     | Division/Unit | Mr. I   | NULL                     |
+| ITG-DEV-BE | BE         | 0911      | Backend Dept          | ITG-DEV | 3     | Department    | Mr. J   | → "[Backend] Internal"   |
 
-**Ví dụ task ID prefix:** Task trong Team Backend → `BE-123`, Team Thẩm định → `AP-456`
+**Task ID prefix example:** Tasks in Backend Team → `BE-123`, Appraisal Team → `AP-456`
 
-**Quy tắc:**
+**Rules:**
 
-- Chỉ **cấp thấp nhất** (team) mới link project — vì team là đơn vị làm việc
-- Khối/Phòng **không link project** — trưởng phòng auto-join qua logic children
+- Only the **lowest-level departments** (L3 or deeper) link to projects — they are the actual work units
+- Groups (L1) / Divisions (L2) **do NOT link projects** — managers auto-join via children logic
+- L4 (Team) and L5 (Sub-Team) available for future expansion when departments need sub-divisions
+- **Sequential rule:** child level = parent level + 1 (no skipping levels)
 
-### 2.2 StaffProfile (Hồ sơ nhân viên)
+### 2.2 StaffProfile (Employee record)
 
 ```python
 # File: apps/api/plane/db/models/staff.py
 
 class EmploymentStatus(models.TextChoices):
-    ACTIVE = "active", "Đang làm việc"
-    PROBATION = "probation", "Thử việc"
-    RESIGNED = "resigned", "Đã nghỉ"
-    SUSPENDED = "suspended", "Tạm ngưng"
-    TRANSFERRED = "transferred", "Chuyển công tác"
+    ACTIVE = "active", "Active"
+    PROBATION = "probation", "Probation"
+    RESIGNED = "resigned", "Resigned"
+    SUSPENDED = "suspended", "Suspended"
+    TRANSFERRED = "transferred", "Transferred"
 
 class StaffProfile(BaseModel):
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="staff_profiles")
     user = models.OneToOneField("db.User", on_delete=models.CASCADE, related_name="staff_profile")
 
-    # Mã nhân viên
+    # Staff ID
     staff_id = models.CharField(max_length=8, db_index=True)  # "18506320"
 
-    # Phòng ban
+    # Department
     department = models.ForeignKey("db.Department", on_delete=models.SET_NULL, null=True, blank=True, related_name="staff_members")
 
-    # Công việc
+    # Job info
     position = models.CharField(max_length=255, blank=True, default="")    # "Senior Developer"
     job_grade = models.CharField(max_length=50, blank=True, default="")     # "Senior"
 
-    # Liên lạc
+    # Contact
     phone = models.CharField(max_length=20, blank=True, default="")
 
-    # Thời gian
+    # Dates
     date_of_joining = models.DateField(null=True, blank=True)
     date_of_leaving = models.DateField(null=True, blank=True)
 
-    # Trạng thái
+    # Status
     employment_status = models.CharField(max_length=20, choices=EmploymentStatus.choices, default=EmploymentStatus.ACTIVE)
 
-    # Quyền đặc biệt
+    # Special permissions
     is_department_manager = models.BooleanField(default=False)  # → auto-join children projects
 
     notes = models.TextField(blank=True, default="")
@@ -258,15 +277,15 @@ class StaffProfile(BaseModel):
         return f"sh{self.staff_id}@swing.shinhan.com"
 ```
 
-### 2.3 Quan hệ tổng thể
+### 2.3 Overall Relationships
 
 ```
 Workspace (1)
   │
   ├──── Department (N, tree)
-  │       │ parent → self (cây đa cấp)
+  │       │ parent → self (multi-level tree)
   │       │ manager → User
-  │       │ linked_project → Project (optional, chỉ team level)
+  │       │ linked_project → Project (optional, team level only)
   │       │
   │       └──── StaffProfile (N)
   │               │ user → User (1:1)
@@ -278,27 +297,27 @@ Workspace (1)
   │               │ member → User
   │               └ role: Admin(20) / Member(15) / Guest(5)
   │
-  └──── User (N, Plane core — KHÔNG SỬA)
+  └──── User (N, Plane core — DO NOT MODIFY)
 ```
 
 ---
 
 ## 3. Auto-membership Logic
 
-### 3.1 Khi thêm nhân viên vào department
+### 3.1 When adding staff to a department
 
 ```python
 def on_staff_created(staff_profile):
     dept = staff_profile.department
     user = staff_profile.user
 
-    # 1. Tạo WorkspaceMember nếu chưa có
+    # 1. Create WorkspaceMember if not exists
     WorkspaceMember.objects.get_or_create(
         workspace=dept.workspace, member=user,
         defaults={"role": 15}  # Member
     )
 
-    # 2. Nếu department có linked_project → add ProjectMember
+    # 2. If department has linked_project → add ProjectMember
     if dept.linked_project:
         role = 20 if staff_profile.is_department_manager else 15
         ProjectMember.objects.get_or_create(
@@ -306,43 +325,43 @@ def on_staff_created(staff_profile):
             defaults={"role": role}
         )
 
-    # 3. Nếu là trưởng đơn vị (is_department_manager) → join TẤT CẢ children projects
+    # 3. If is department manager → join ALL descendant projects
     if staff_profile.is_department_manager:
         for child_dept in get_all_descendants(dept):
             if child_dept.linked_project:
                 ProjectMember.objects.get_or_create(
                     project=child_dept.linked_project, member=user,
-                    defaults={"role": 15}  # Xem được, không phải Admin
+                    defaults={"role": 15}  # Viewer, not Admin
                 )
 ```
 
-### 3.2 Khi chuyển phòng ban
+### 3.2 When transferring departments
 
 ```python
 def on_staff_transferred(staff_profile, old_dept, new_dept):
     user = staff_profile.user
 
-    # 1. Remove khỏi project CŨ (chỉ linked project, không ảnh hưởng cross-team)
+    # 1. Remove from OLD project (only linked project, cross-team unaffected)
     if old_dept.linked_project:
         ProjectMember.objects.filter(
             project=old_dept.linked_project, member=user
         ).delete()
 
-    # 2. Add vào project MỚI
+    # 2. Add to NEW project
     if new_dept.linked_project:
         ProjectMember.objects.get_or_create(
             project=new_dept.linked_project, member=user,
             defaults={"role": 15}
         )
 
-    # 3. Nếu là manager → update children projects tương ứng
+    # 3. If manager → update children projects accordingly
 ```
 
-### 3.3 Khi link department ↔ project
+### 3.3 When linking department ↔ project
 
 ```python
 def on_department_linked_project(dept, project):
-    # Add TẤT CẢ nhân viên trong department vào project
+    # Add ALL active staff in department to project
     for staff in dept.staff_members.filter(employment_status="active"):
         role = 20 if staff.is_department_manager else 15
         ProjectMember.objects.get_or_create(
@@ -350,7 +369,7 @@ def on_department_linked_project(dept, project):
             defaults={"role": role}
         )
 
-    # Add managers của parent departments (trưởng phòng cấp trên)
+    # Add managers of parent departments (upstream managers)
     parent = dept.parent
     while parent:
         if parent.manager:
@@ -361,13 +380,13 @@ def on_department_linked_project(dept, project):
         parent = parent.parent
 ```
 
-### 3.4 Khi deactivate nhân viên (nghỉ việc)
+### 3.4 When deactivating staff (resignation)
 
 ```python
 def on_staff_deactivated(staff_profile):
     user = staff_profile.user
 
-    # 1. Remove TẤT CẢ ProjectMember (cả team + cross-team)
+    # 1. Remove ALL ProjectMember (team + cross-team)
     ProjectMember.objects.filter(member=user).delete()
 
     # 2. Deactivate WorkspaceMember
@@ -386,17 +405,17 @@ def on_staff_deactivated(staff_profile):
 
 **Base URL:** `/api/v1/workspaces/<slug>/departments/`
 
-| Method | Path                    | Mô tả                                         | Permission       |
+| Method | Path                    | Description                                   | Permission       |
 | ------ | ----------------------- | --------------------------------------------- | ---------------- |
 | GET    | `/`                     | List flat (filter: parent, level, is_active)  | Workspace Member |
-| GET    | `/tree/`                | Full tree nested JSON                         | Workspace Member |
-| GET    | `/<id>/`                | Chi tiết department                           | Workspace Member |
-| POST   | `/`                     | Tạo department                                | Workspace Admin  |
-| PATCH  | `/<id>/`                | Sửa department                                | Workspace Admin  |
+| GET    | `/tree/`                | Full nested tree JSON                         | Workspace Member |
+| GET    | `/<id>/`                | Department detail                             | Workspace Member |
+| POST   | `/`                     | Create department                             | Workspace Admin  |
+| PATCH  | `/<id>/`                | Update department                             | Workspace Admin  |
 | DELETE | `/<id>/`                | Soft delete department                        | Workspace Admin  |
-| GET    | `/<id>/staff/`          | List NV trong department                      | Workspace Member |
+| GET    | `/<id>/staff/`          | List staff in department                      | Workspace Member |
 | POST   | `/<id>/link-project/`   | Link department ↔ project (auto-sync members) | Workspace Admin  |
-| DELETE | `/<id>/unlink-project/` | Unlink (không remove members)                 | Workspace Admin  |
+| DELETE | `/<id>/unlink-project/` | Unlink (does not remove members)              | Workspace Admin  |
 
 **GET `/tree/` response:**
 
@@ -407,9 +426,9 @@ def on_staff_deactivated(staff_profile):
     "code": "ITG",
     "short_name": "ITG",
     "dept_code": "0900",
-    "name": "Khối CNTT",
+    "name": "IT Group",
     "level": 1,
-    "manager": { "id": "...", "display_name": "Ông H", "staff_id": "10000008" },
+    "manager": { "id": "...", "display_name": "Mr. H", "staff_id": "10000008" },
     "linked_project": null,
     "staff_count": 30,
     "children": [
@@ -418,9 +437,9 @@ def on_staff_deactivated(staff_profile):
         "code": "ITG-DEV",
         "short_name": "DEV",
         "dept_code": "0910",
-        "name": "Phòng Phát triển",
+        "name": "Software Development Division",
         "level": 2,
-        "manager": { "id": "...", "display_name": "Ông I" },
+        "manager": { "id": "...", "display_name": "Mr. I" },
         "staff_count": 15,
         "children": [
           {
@@ -428,10 +447,10 @@ def on_staff_deactivated(staff_profile):
             "code": "ITG-DEV-BE",
             "short_name": "BE",
             "dept_code": "0911",
-            "name": "Team Backend",
+            "name": "Backend Dept",
             "level": 3,
-            "manager": { "id": "...", "display_name": "Anh J" },
-            "linked_project": { "id": "...", "name": "[Backend] Nội bộ", "identifier": "BE" },
+            "manager": { "id": "...", "display_name": "Mr. J" },
+            "linked_project": { "id": "...", "name": "[Backend] Internal", "identifier": "BE" },
             "staff_count": 6,
             "children": []
           }
@@ -446,27 +465,27 @@ def on_staff_deactivated(staff_profile):
 
 **Base URL:** `/api/v1/workspaces/<slug>/staff/`
 
-| Method | Path                | Mô tả                                                 | Permission      |
-| ------ | ------------------- | ----------------------------------------------------- | --------------- |
-| GET    | `/`                 | List NV (filter: department, status, search)          | Workspace Admin |
-| GET    | `/<id>/`            | Chi tiết NV                                           | Workspace Admin |
-| POST   | `/`                 | Tạo NV (auto: User + WorkspaceMember + ProjectMember) | Workspace Admin |
-| PATCH  | `/<id>/`            | Sửa NV                                                | Workspace Admin |
-| DELETE | `/<id>/`            | Soft delete                                           | Workspace Admin |
-| POST   | `/<id>/transfer/`   | Chuyển phòng ban (auto-update project membership)     | Workspace Admin |
-| POST   | `/<id>/deactivate/` | Nghỉ việc (deactivate user + remove memberships)      | Workspace Admin |
-| POST   | `/bulk-import/`     | Import từ CSV/JSON                                    | Workspace Admin |
-| GET    | `/export/`          | Export CSV                                            | Workspace Admin |
-| GET    | `/stats/`           | Thống kê (tổng, theo phòng, theo status)              | Workspace Admin |
+| Method | Path                | Description                                                 | Permission      |
+| ------ | ------------------- | ----------------------------------------------------------- | --------------- |
+| GET    | `/`                 | List staff (filter: department, status, search)             | Workspace Admin |
+| GET    | `/<id>/`            | Staff detail                                                | Workspace Admin |
+| POST   | `/`                 | Create staff (auto: User + WorkspaceMember + ProjectMember) | Workspace Admin |
+| PATCH  | `/<id>/`            | Update staff                                                | Workspace Admin |
+| DELETE | `/<id>/`            | Soft delete                                                 | Workspace Admin |
+| POST   | `/<id>/transfer/`   | Transfer department (auto-update project membership)        | Workspace Admin |
+| POST   | `/<id>/deactivate/` | Resign (deactivate user + remove memberships)               | Workspace Admin |
+| POST   | `/bulk-import/`     | Import from CSV/JSON                                        | Workspace Admin |
+| GET    | `/export/`          | Export CSV                                                  | Workspace Admin |
+| GET    | `/stats/`           | Statistics (total, by department, by status)                | Workspace Admin |
 
-**POST `/` — Tạo nhân viên:**
+**POST `/` — Create staff:**
 
 ```json
 // Request
 {
   "staff_id": "18506320",
-  "first_name": "Dương",
-  "last_name": "Nguyễn",
+  "first_name": "Duong",
+  "last_name": "Nguyen",
   "department_id": "uuid-of-backend-team",
   "position": "Senior Developer",
   "job_grade": "Senior",
@@ -478,23 +497,23 @@ def on_staff_deactivated(staff_profile):
 
 // Auto-actions:
 // 1. Create User(email=sh18506320@swing.shinhan.com)
-// 2. Create StaffProfile(staff_id=18506320, department=Team Backend)
+// 2. Create StaffProfile(staff_id=18506320, department=Backend Team)
 // 3. Create WorkspaceMember(role=Member)
-// 4. Team Backend linked → "[Backend] Nội bộ"
-//    → Create ProjectMember(project="[Backend] Nội bộ", role=Member)
+// 4. Backend Team linked → "[Backend] Internal"
+//    → Create ProjectMember(project="[Backend] Internal", role=Member)
 ```
 
-**POST `/<id>/transfer/` — Chuyển phòng:**
+**POST `/<id>/transfer/` — Transfer department:**
 
 ```json
 // Request
 { "department_id": "uuid-of-frontend-team" }
 
 // Auto-actions:
-// 1. Remove ProjectMember từ "[Backend] Nội bộ"
-// 2. Update department → Team Frontend
-// 3. Add ProjectMember vào "[Frontend] Nội bộ"
-// 4. Cross-team projects KHÔNG ảnh hưởng
+// 1. Remove ProjectMember from "[Backend] Internal"
+// 2. Update department → Frontend Team
+// 3. Add ProjectMember to "[Frontend] Internal"
+// 4. Cross-team projects NOT affected
 ```
 
 **POST `/bulk-import/` — Import CSV:**
@@ -509,15 +528,13 @@ def on_staff_deactivated(staff_profile):
 
 // CSV format:
 // staff_id,last_name,first_name,department_code,position,job_grade,phone,date_of_joining
-// 18506320,Nguyễn,Dương,ITG-DEV-BE,Senior Developer,Senior,0901234567,2020-01-15
-// 10000002,Trần,Minh,ITG-DEV-FE,Developer,Junior,0912345678,2023-06-01
+// 18506320,Nguyen,Duong,ITG-DEV-BE,Senior Developer,Senior,0901234567,2020-01-15
+// 10000002,Tran,Minh,ITG-DEV-FE,Developer,Junior,0912345678,2023-06-01
 ```
 
 ---
 
-## 5. Admin Frontend (Workspace Settings)
-
-<!-- Updated: Validation Session 1 - Moved from God Mode to Workspace Settings -->
+## 5. Workspace Settings UI
 
 ### 5.1 Sidebar Navigation
 
@@ -530,52 +547,52 @@ Workspace Settings Sidebar
 ├── Exports
 ├── Webhooks
 ├── API Tokens
-├── 🏢 Phòng ban          ← NEW
-└── 👤 Nhân viên          ← NEW
+├── 🏢 Departments          ← NEW
+└── 👤 Staff                ← NEW
 ```
 
-### 5.2 Trang Phòng ban (`/<workspaceSlug>/settings/departments/`)
+### 5.2 Departments Page (`/<workspaceSlug>/settings/departments/`)
 
 ```
 ┌────────────────────────────────────────────────────────────┐
-│  🏢 Quản lý Phòng ban                       [+ Thêm mới] │
+│  🏢 Department Management                      [+ Add New] │
 ├────────────────────────────────────────────────────────────┤
-│  🔍 Tìm kiếm...                                           │
-│                                                            │
-│  ▼ RBG — Khối Ngân hàng Bán lẻ             (45 NV) [✏️🗑] │
-│    ▼ RBG-CR — Phòng Tín dụng               (20 NV) [✏️🗑] │
-│      ● RBG-CR-AP — Team Thẩm định           (8 NV) [✏️🗑] │
-│        🔗 Project: [Thẩm định] Nội bộ                      │
-│        👤 Leader: Nguyễn Văn C                              │
-│      ● RBG-CR-CO — Team Thu hồi nợ          (5 NV) [✏️🗑] │
-│    ▶ RBG-TX — Phòng Giao dịch              (25 NV)        │
-│                                                            │
-│  ▼ ITG — Khối CNTT                          (30 NV) [✏️🗑] │
-│    ▼ ITG-DEV — Phòng Phát triển            (15 NV) [✏️🗑] │
-│      ● ITG-DEV-BE — Team Backend             (6 NV) [✏️🗑] │
-│        🔗 Project: [Backend] Nội bộ                         │
-│      ● ITG-DEV-FE — Team Frontend            (5 NV) [✏️🗑] │
-│    ▶ ITG-OPS — Phòng Vận hành              (10 NV)        │
+│  🔍 Search...                                               │
+│                                                             │
+│  ▼ RBG — Retail Banking Group              (45 staff) [✏️🗑] │
+│    ▼ RBG-CR — Credit Division              (20 staff) [✏️🗑] │
+│      ● RBG-CR-AP — Appraisal Dept          (8 staff) [✏️🗑] │
+│        🔗 Project: [Appraisal] Internal                      │
+│        👤 Head: Mr. C                                        │
+│      ● RBG-CR-CO — Collection Dept          (5 staff) [✏️🗑] │
+│    ▶ RBG-TX — Transaction Division         (25 staff)        │
+│                                                             │
+│  ▼ ITG — IT Group                           (30 staff) [✏️🗑] │
+│    ▼ ITG-DEV — Software Dev Division       (15 staff) [✏️🗑] │
+│      ● ITG-DEV-BE — Backend Dept            (6 staff) [✏️🗑] │
+│        🔗 Project: [Backend] Internal                        │
+│      ● ITG-DEV-FE — Frontend Dept           (5 staff) [✏️🗑] │
+│    ▶ ITG-OPS — IT Operations Division      (10 staff)        │
 └────────────────────────────────────────────────────────────┘
 ```
 
-### 5.3 Trang Nhân viên (`/<workspaceSlug>/settings/staff/`)
+### 5.3 Staff Page (`/<workspaceSlug>/settings/staff/`)
 
 ```
 ┌───────────────────────────────────────────────────────────────────┐
-│  👤 Quản lý Nhân viên               [📥 Import CSV] [+ Thêm mới] │
+│  👤 Staff Management                   [📥 Import CSV] [+ Add New] │
 ├───────────────────────────────────────────────────────────────────┤
-│  🔍 Tìm...   Phòng ban: [Tất cả ▼]   Trạng thái: [Tất cả ▼]   │
+│  🔍 Search...   Department: [All ▼]      Status: [All ▼]         │
 │                                                                   │
 │  ┌────────┬──────────────┬──────────────┬───────────┬─────┬────┐ │
-│  │ Mã NV  │ Họ tên       │ Phòng ban    │ Chức vụ   │ TT  │    │ │
+│  │ ID     │ Full Name    │ Department   │ Position  │ St  │    │ │
 │  ├────────┼──────────────┼──────────────┼───────────┼─────┼────┤ │
-│  │18506320│ Nguyễn Dương │ Team Backend │ Sr. Dev   │ 🟢  │✏️🗑│ │
-│  │10000002│ Trần Minh    │ Team Frontend│ Dev       │ 🟢  │✏️🗑│ │
-│  │10000003│ Lê Hoa       │ Team Thẩm định│ NV      │ 🟡  │✏️🗑│ │
+│  │18506320│ Nguyen Duong │ Backend Dept │ Sr. Dev   │ 🟢  │✏️🗑│ │
+│  │10000002│ Tran Minh    │ Frontend Dept│ Dev       │ 🟢  │✏️🗑│ │
+│  │10000003│ Le Hoa       │ Appraisal    │ Officer   │ 🟡  │✏️🗑│ │
 │  └────────┴──────────────┴──────────────┴───────────┴─────┴────┘ │
 │                                                                   │
-│  📊 Tổng: 100 │ 🟢 Active: 95 │ 🟡 Thử việc: 3 │ 🔴 Nghỉ: 2  │
+│  📊 Total: 100 │ 🟢 Active: 95 │ 🟡 Probation: 3 │ 🔴 Resigned: 2│
 └───────────────────────────────────────────────────────────────────┘
 ```
 
@@ -583,156 +600,152 @@ Workspace Settings Sidebar
 
 ## 6. Implementation Phases
 
-### Phase 1: DB Models + Migrations (Est: 1 ngày)
+### Phase 1: DB Models + Migrations
 
 **Tasks:**
 
-1. [x] Tạo Department model - file: `apps/api/plane/db/models/department.py`
-2. [x] Tạo StaffProfile model - file: `apps/api/plane/db/models/staff.py`
-3. [x] Export models - file: `apps/api/plane/db/models/__init__.py`
-4. [x] Chạy `makemigrations` + `migrate`
+1. [x] Create Department model — file: `apps/api/plane/db/models/department.py`
+2. [x] Create StaffProfile model — file: `apps/api/plane/db/models/staff.py`
+3. [x] Export models — file: `apps/api/plane/db/models/__init__.py`
+4. [x] Run `makemigrations` + `migrate`
 5. [x] Unit test models
 
 **Acceptance Criteria:**
 
-- [x] Migration thành công, không conflict với Plane core
-- [x] Department tree: parent/children đúng
-- [x] StaffProfile 1:1 với User
+- [x] Migration succeeds without conflicts with Plane core
+- [x] Department tree: parent/children correct
+- [x] StaffProfile 1:1 with User
 - [x] Unique constraints: staff_id + workspace, code + workspace
 
 ---
 
-### Phase 2: Backend API — Department (Est: 1 ngày)
+### Phase 2: Backend API — Department
 
 **Tasks:**
 
-1. [x] DepartmentSerializer - file: `apps/api/plane/app/serializers/department.py`
-2. [x] DepartmentTreeSerializer (nested) - cùng file
-3. [x] DepartmentViewSet (CRUD + tree + link) - file: `apps/api/plane/app/views/workspace/department.py`
-4. [x] URL routing - file: `apps/api/plane/app/urls/workspace/department.py`
-5. [x] Include URLs - file: `apps/api/plane/app/urls/workspace/__init__.py`
-6. [x] Permission: Workspace Admin only (role=20) cho write
+1. [x] DepartmentSerializer — file: `apps/api/plane/app/serializers/department.py`
+2. [x] DepartmentTreeSerializer (nested) — same file
+3. [x] DepartmentViewSet (CRUD + tree + link) — file: `apps/api/plane/app/views/workspace/department.py`
+4. [x] URL routing — file: `apps/api/plane/app/urls/workspace/department.py`
+5. [x] Include URLs — file: `apps/api/plane/app/urls/workspace/__init__.py`
+6. [x] Permission: Workspace Admin only (role=20) for write operations
 7. [x] API tests
 
 **Acceptance Criteria:**
 
-- [x] GET `/tree/` trả nested JSON đúng
-- [x] CRUD hoạt động
+- [x] GET `/tree/` returns correct nested JSON
+- [x] CRUD works
 - [x] Link/unlink project + auto-sync members
-- [x] Permission denied cho non-admin
+- [x] Permission denied for non-admin
 
 ---
 
-### Phase 3: Backend API — StaffProfile (Est: 1.5 ngày)
+### Phase 3: Backend API — StaffProfile
 
 **Tasks:**
 
-1. [x] StaffProfileSerializer - file: `apps/api/plane/app/serializers/staff.py`
-2. [x] StaffProfileViewSet - file: `apps/api/plane/app/views/workspace/staff.py`
+1. [x] StaffProfileSerializer — file: `apps/api/plane/app/serializers/staff.py`
+2. [x] StaffProfileViewSet — file: `apps/api/plane/app/views/workspace/staff.py`
    - CRUD + transfer + deactivate + bulk-import + export + stats
 3. [x] Auto-create logic: User + WorkspaceMember + ProjectMember
 4. [x] Transfer logic: remove old project, add new project
 5. [x] Deactivate logic: remove memberships, deactivate user
 6. [x] Bulk import: parse CSV, validate, batch create
 7. [x] Export: CSV response
-8. [x] URL routing - file: `apps/api/plane/app/urls/workspace/staff.py`
+8. [x] URL routing — file: `apps/api/plane/app/urls/workspace/staff.py`
 9. [x] API tests
 
 **Acceptance Criteria:**
 
-- [x] POST tạo NV → auto-create User + project membership
+- [x] POST create staff → auto-create User + project membership
 - [x] Transfer → auto-update memberships
-- [x] Bulk import 100 NV OK
+- [x] Bulk import 100 staff OK
 - [x] Deactivate → user disabled, removed from projects
 
 ---
 
-### Phase 4: Workspace Settings UI — Phòng ban (Est: 2 ngày)
-
-<!-- Updated: Validation Session 1 - Moved from God Mode (apps/admin) to Workspace Settings (apps/web) -->
+### Phase 4: Workspace Settings UI — Departments
 
 **Tasks:**
 
-1. [x] Department service - file: `apps/web/core/services/department.service.ts`
-2. [x] Department tree component - file: `apps/web/app/[workspaceSlug]/(projects)/settings/departments/components/department-tree.tsx`
-3. [x] Department form modal - file: `apps/web/app/[workspaceSlug]/(projects)/settings/departments/components/department-form.tsx`
-4. [x] Department tree item - file: `apps/web/app/[workspaceSlug]/(projects)/settings/departments/components/department-item.tsx`
-5. [x] Department page - file: `apps/web/app/[workspaceSlug]/(projects)/settings/departments/page.tsx`
-6. [x] Sidebar menu item - file: workspace settings sidebar component
+1. [x] Department service — file: `apps/web/core/services/department.service.ts`
+2. [x] Department tree component — file: `apps/web/.../settings/departments/components/department-tree.tsx`
+3. [x] Department form modal — file: `apps/web/.../settings/departments/components/department-form-modal.tsx`
+4. [x] Department tree item — file: `apps/web/.../settings/departments/components/department-tree-item.tsx`
+5. [x] Department page — file: `apps/web/.../settings/departments/page.tsx`
+6. [x] Sidebar menu item — workspace settings sidebar component
 
 **Acceptance Criteria:**
 
-- [x] Tree view collapsible
-- [x] CRUD phòng ban qua UI
+- [x] Collapsible tree view
+- [x] Department CRUD via UI
 - [x] Link project selector
-- [x] Hiện staff count per department
+- [x] Show staff count per department
 
 ---
 
-### Phase 5: Workspace Settings UI — Nhân viên (Est: 2 ngày)
-
-<!-- Updated: Validation Session 1 - Moved from God Mode (apps/admin) to Workspace Settings (apps/web) -->
+### Phase 5: Workspace Settings UI — Staff
 
 **Tasks:**
 
-1. [x] Staff service - file: `apps/web/core/services/staff.service.ts`
-2. [x] Staff table component - file: `apps/web/app/[workspaceSlug]/(projects)/settings/staff/components/staff-table.tsx`
-3. [x] Staff form modal - file: `apps/web/app/[workspaceSlug]/(projects)/settings/staff/components/staff-form.tsx`
-4. [x] Staff filter component - file: `apps/web/app/[workspaceSlug]/(projects)/settings/staff/components/staff-filter.tsx`
-5. [x] CSV import dialog - file: `apps/web/app/[workspaceSlug]/(projects)/settings/staff/components/staff-import.tsx`
-6. [x] Staff page - file: `apps/web/app/[workspaceSlug]/(projects)/settings/staff/page.tsx`
+1. [x] Staff service — file: `apps/web/core/services/staff.service.ts`
+2. [x] Staff table component — file: `apps/web/.../settings/staff/components/staff-table.tsx`
+3. [x] Staff form modal — file: `apps/web/.../settings/staff/components/staff-form-modal.tsx`
+4. [x] Staff filter component — file: `apps/web/.../settings/staff/components/staff-filter.tsx`
+5. [x] CSV import dialog — file: `apps/web/.../settings/staff/components/staff-import-modal.tsx`
+6. [x] Staff page — file: `apps/web/.../settings/staff/page.tsx`
 7. [x] Sidebar menu item
 
 **Acceptance Criteria:**
 
-- [x] Table với pagination, sort, search
-- [x] CRUD NV → auto project membership
-- [x] Import CSV OK
-- [x] Export CSV OK
-- [x] Transfer phòng ban dialog
+- [x] Table with pagination, sort, search
+- [x] Staff CRUD → auto project membership
+- [x] CSV import OK
+- [x] CSV export OK
+- [x] Department transfer dialog
 
 ---
 
-### Phase 6: Auto-membership + Manager Access (Est: 1 ngày)
+### Phase 6: Auto-membership + Manager Access
 
 **Tasks:**
 
 1. [x] Django signal: StaffProfile post_save → sync project membership
 2. [x] Django signal: Department.linked_project change → sync all members
-3. [x] Manager auto-join: trưởng phòng join children linked projects
-4. [x] Celery task: bulk sync (khi link project vào department có nhiều NV)
-5. [x] Tests cho auto-membership logic
+3. [x] Manager auto-join: manager joins children linked projects
+4. [x] Celery task: bulk sync (when linking project to department with many staff)
+5. [x] Tests for auto-membership logic
 
 **Acceptance Criteria:**
 
-- [x] Link project → tất cả NV auto join
-- [x] Thêm NV → auto join linked project
-- [x] Trưởng phòng auto join children projects
-- [x] Chuyển phòng → auto remove/add project
+- [x] Link project → all staff auto-join
+- [x] Add staff → auto-join linked project
+- [x] Manager auto-joins children projects
+- [x] Transfer department → auto remove/add project
 
 ---
 
-### Phase 7: Integration + Polish (Est: 1 ngày)
+### Phase 7: Integration + Polish
 
 **Tasks:**
 
-1. [x] Staff ID login tự tạo StaffProfile nếu chưa có
-2. [x] Hiện phòng ban + chức vụ trên user profile (Plane web sidebar)
-3. [x] Dashboard stats: tổng NV, per department, per status
+1. [x] Staff ID login auto-creates StaffProfile if missing
+2. [x] Display department + position on user profile (Plane web sidebar)
+3. [x] Dashboard stats: total staff, per department, per status
 4. [x] Error handling + loading states
-5. [x] Responsive UI cho admin pages
+5. [x] Responsive UI for admin pages
 
 **Acceptance Criteria:**
 
-- [x] Login Mã NV → thấy đúng project
-- [x] Profile hiện phòng ban
+- [x] Login with Staff ID → sees correct projects
+- [x] Profile shows department
 - [x] Stats dashboard OK
 
 ---
 
 ## 7. File Summary
 
-### Files mới (16):
+### New files (16):
 
 | #   | File                                                               | Phase |
 | --- | ------------------------------------------------------------------ | ----- |
@@ -753,13 +766,13 @@ Workspace Settings Sidebar
 | 15  | `apps/web/.../settings/staff/page.tsx`                             | 5     |
 | 16  | `apps/web/.../settings/staff/components/*.tsx` (4 files)           | 5     |
 
-### Files sửa (4):
+### Modified files (4):
 
-| #   | File                                                 | Phase | Thay đổi                         |
+| #   | File                                                 | Phase | Changes                          |
 | --- | ---------------------------------------------------- | ----- | -------------------------------- |
 | 1   | `apps/api/plane/db/models/__init__.py`               | 1     | +export Department, StaffProfile |
 | 2   | `apps/api/plane/app/urls/workspace/__init__.py`      | 2,3   | +include department, staff URLs  |
-| 3   | `apps/web/.../settings/sidebar (workspace settings)` | 4     | +menu items Phòng ban, Nhân viên |
+| 3   | `apps/web/.../settings/sidebar (workspace settings)` | 4     | +menu items Departments, Staff   |
 | 4   | `apps/web/.../auth-root.tsx`                         | 7     | +staff profile on login          |
 
 ---
@@ -768,57 +781,57 @@ Workspace Settings Sidebar
 
 - **Unit Tests**: Models, serializers, auto-membership logic
 - **API Tests**: All endpoints, permission checks, edge cases
-- **Integration**: Bulk import 100 NV, transfer, deactivate flows
-- **E2E Manual**: Admin tạo phòng ban → thêm NV → NV login → thấy đúng project
+- **Integration**: Bulk import 100 staff, transfer, deactivate flows
+- **E2E Manual**: Admin creates department → adds staff → staff logs in → sees correct projects
 
 ## 9. Security Considerations
 
-- [ ] Workspace Admin only cho CRUD department/staff (role=20)
-- [ ] StaffProfile data không expose ra non-admin API
-- [ ] Bulk import validate CSV trước khi process
-- [ ] Deactivate NV → revoke tất cả access ngay lập tức
-- [ ] Password NV: hash bcrypt, không log plaintext
+- [ ] Workspace Admin only for CRUD department/staff (role=20)
+- [ ] StaffProfile data not exposed via non-admin API
+- [ ] Bulk import validates CSV before processing
+- [ ] Deactivate staff → revoke all access immediately
+- [ ] Staff passwords: hashed with bcrypt, never log plaintext
 
 ## 10. Risk Assessment
 
-| Risk                                   | Impact     | Mitigation                             |
-| -------------------------------------- | ---------- | -------------------------------------- |
-| Migration conflict Plane upstream      | Trung bình | Separate tables, không sửa core models |
-| Department tree query chậm (nhiều cấp) | Thấp       | Max 5 levels, cache tree response      |
-| Bulk import timeout                    | Trung bình | Celery background task + progress bar  |
-| Auto-membership loop (mutual parent)   | Thấp       | Validate no circular parent references |
-| Manager join quá nhiều project         | Thấp       | Limit depth, manual override option    |
+| Risk                                     | Impact | Mitigation                             |
+| ---------------------------------------- | ------ | -------------------------------------- |
+| Migration conflict with Plane upstream   | Medium | Separate tables, no core model changes |
+| Department tree query slow (many levels) | Low    | Max 5 levels, cache tree response      |
+| Bulk import timeout                      | Medium | Celery background task + progress bar  |
+| Auto-membership loop (circular parent)   | Low    | Validate no circular parent references |
+| Manager joins too many projects          | Low    | Limit depth, manual override option    |
 
 ## 11. Timeline
 
-| Phase                 | Thời gian    | Dependency    | Song song      |
-| --------------------- | ------------ | ------------- | -------------- |
-| 1: DB Models          | 1 ngày       | Không         | -              |
-| 2: API Department     | 1 ngày       | Phase 1       | ↕ cùng Phase 3 |
-| 3: API Staff          | 1.5 ngày     | Phase 1       | ↕ cùng Phase 2 |
-| 4: Admin UI Phòng ban | 2 ngày       | Phase 2       | ↕ cùng Phase 5 |
-| 5: Admin UI Nhân viên | 2 ngày       | Phase 3       | ↕ cùng Phase 4 |
-| 6: Auto-membership    | 1 ngày       | Phase 2, 3    | -              |
-| 7: Integration        | 1 ngày       | Phase 4, 5, 6 | -              |
-| **Tổng sequential**   | **9.5 ngày** |               |                |
-| **Tổng parallel**     | **~7 ngày**  |               |                |
+| Phase                | Duration     | Dependency    | Parallel       |
+| -------------------- | ------------ | ------------- | -------------- |
+| 1: DB Models         | 1 day        | None          | -              |
+| 2: API Department    | 1 day        | Phase 1       | ↕ with Phase 3 |
+| 3: API Staff         | 1.5 days     | Phase 1       | ↕ with Phase 2 |
+| 4: UI Departments    | 2 days       | Phase 2       | ↕ with Phase 5 |
+| 5: UI Staff          | 2 days       | Phase 3       | ↕ with Phase 4 |
+| 6: Auto-membership   | 1 day        | Phase 2, 3    | -              |
+| 7: Integration       | 1 day        | Phase 4, 5, 6 | -              |
+| **Total sequential** | **9.5 days** |               |                |
+| **Total parallel**   | **~7 days**  |               |                |
 
-## 12. Câu hỏi cần confirm
+## 12. Confirmed Questions
 
-1. **Email format:** `sh{mã NV}@swing.shinhan.com` — đúng cho tất cả NV?
-2. **Số cấp tối đa:** 3 (Khối→Phòng→Team) hay cần nhiều hơn?
-3. **Trưởng phòng:** Có quyền CRUD NV trong phòng mình qua God Mode hay chỉ Super Admin?
-4. **Password NV:** Admin đặt password ban đầu hay gửi email invite?
-5. **Tạo department:** Có tự tạo project SECRET tương ứng luôn không?
-6. **Dữ liệu hiện có:** Đã có NV nào trong Plane chưa hay bắt đầu từ đầu?
+1. **Email format:** `sh{staff_id}@swing.shinhan.com` — confirmed for all staff
+2. **Max levels:** 5, sequential (L1=Group Biz → L2=Division/Unit → L3=Department → L4=Team → L5=Sub-Team)
+3. **Manager permissions:** Only Super Admin can CRUD staff, not department managers
+4. **Staff password:** Admin sets initial password during creation
+5. **Auto-create project:** No — admin manually creates project then links to department
+6. **Existing data:** Fresh start, no migration needed
 
 ## 13. TODO Checklist
 
 - [x] Phase 1: Department + StaffProfile models + migrations
 - [x] Phase 2: Department API (CRUD + tree + link)
 - [x] Phase 3: StaffProfile API (CRUD + import + transfer + deactivate)
-- [x] Phase 4: Admin UI Phòng ban (tree view)
-- [x] Phase 5: Admin UI Nhân viên (table + import + transfer)
+- [x] Phase 4: UI Departments (tree view)
+- [x] Phase 5: UI Staff (table + import + transfer)
 - [x] Phase 6: Auto-membership logic
 - [x] Phase 7: Integration + polish
 - [x] All tests pass
@@ -836,47 +849,48 @@ Workspace Settings Sidebar
 
 #### Questions & Answers
 
-1. **[Assumptions]** Email format: sh{mã NV}@swing.shinhan.com — đúng cho tất cả NV? Hay có format khác?
-   - Options: sh{id}@swing.shinhan.com | Tùy chỉnh theo NV
+1. **[Assumptions]** Email format: sh{staff_id}@swing.shinhan.com — confirmed for all staff? Any other format?
+   - Options: sh{id}@swing.shinhan.com | Custom per employee
    - **Answer:** sh{id}@swing.shinhan.com
    - **Rationale:** Confirmed — email auto-generated from staff_id, no manual override needed.
 
-2. **[Architecture]** Số cấp phòng ban tối đa: 3 (Khối→Phòng→Team) hay cần hỗ trợ nhiều hơn?
-   - Options: Tối đa 3 cấp | Tối đa 5 cấp | Không giới hạn
-   - **Answer:** Tối đa 5 cấp
-   - **Rationale:** Changed from 3→5. Model `level` field max=5. Adds flexibility for sub-teams or future org expansion without unbounded query depth.
+2. **[Architecture]** Max department levels: 3 (Group→Division→Team) or need more?
+   - Options: Max 3 levels | Max 5 levels | Unlimited
+   - **Answer:** Max 5 levels (sequential)
+   - **Rationale:** Changed from 3→5. Model `level` field max=5. Levels must be sequential (child = parent + 1). Adds flexibility for future org expansion without unbounded query depth.
 
-3. **[Security]** Password nhân viên mới: Admin đặt password ban đầu hay hệ thống tự generate?
-   - Options: Admin đặt password | Auto-generate | Default password
-   - **Answer:** Admin đặt password
+3. **[Security]** New staff password: Admin sets initial password or system auto-generates?
+   - Options: Admin sets password | Auto-generate | Default password
+   - **Answer:** Admin sets password
    - **Rationale:** Confirmed — admin inputs password during staff creation. Plan already has this in POST request body.
 
-4. **[Scope]** Khi deactivate NV (nghỉ việc), plan xóa TẤT CẢ ProjectMember kể cả cross-team. Xác nhận đúng?
-   - Options: Xóa tất cả membership | Chỉ xóa team project
-   - **Answer:** Xóa tất cả membership
-   - **Rationale:** Confirmed — security-first approach. NV nghỉ việc → revoke ALL access immediately.
+4. **[Scope]** When deactivating staff (resignation), plan removes ALL ProjectMember including cross-team. Confirm?
+   - Options: Remove all memberships | Only remove team projects
+   - **Answer:** Remove all memberships
+   - **Rationale:** Confirmed — security-first approach. Resigned staff → revoke ALL access immediately.
 
-5. **[Architecture]** Quản lý Department/Staff ở God Mode (instance-level) hay Workspace Settings (workspace admin)?
+5. **[Architecture]** Manage Department/Staff in God Mode (instance-level) or Workspace Settings (workspace admin)?
    - Options: God Mode only | Workspace Settings
    - **Answer:** Workspace Settings
    - **Rationale:** **MAJOR CHANGE.** UI moves from `apps/admin` (God Mode) to `apps/web` (workspace settings). Workspace admins manage dept/staff. Affects Phase 4, 5 file paths and permissions.
 
-6. **[Scope]** Khi tạo department cấp team, có tự động tạo project SECRET tương ứng luôn không?
-   - Options: Không tự tạo | Tự động tạo + link
-   - **Answer:** Không tự tạo
+6. **[Scope]** When creating a team-level department, auto-create corresponding SECRET project?
+   - Options: Do not auto-create | Auto-create + link
+   - **Answer:** Do not auto-create
    - **Rationale:** Confirmed — admin manually creates project then links. Avoids orphaned projects and gives admin control.
 
-7. **[Assumptions]** Dữ liệu hiện tại: Đã có user/NV nào trong Plane chưa hay bắt đầu từ đầu?
-   - Options: Bắt đầu từ đầu | Đã có một số user
-   - **Answer:** Bắt đầu từ đầu
+7. **[Assumptions]** Existing data: Are there existing users/staff in Plane or starting fresh?
+   - Options: Starting fresh | Some existing users
+   - **Answer:** Starting fresh
    - **Rationale:** No migration script needed. Clean slate import via bulk CSV.
 
 #### Confirmed Decisions
 
 - **Email format:** sh{staff_id}@swing.shinhan.com — auto-generated, no override
-- **Max dept levels:** 5 (changed from 3)
+- **Max dept levels:** 5 (sequential: L1=Group Biz → L2=Division/Unit → L3=Department → L4=Team → L5=Sub-Team)
+- **Sequential rule:** child level = parent level + 1, no skipping
 - **Password:** Admin-set during creation
-- **Deactivation:** Remove ALL memberships (team + cross-team)
+- **Deactivation:** Remove ALL memberships (department + cross-team)
 - **Admin location:** Workspace Settings (NOT God Mode)
 - **Auto-create project:** No — manual link only
 - **Existing data:** Fresh start, no migration needed
