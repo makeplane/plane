@@ -13,13 +13,13 @@
 
 import { isDesktopApp as isDesktopAppFn } from "@todesktop/client-core/platform/todesktop";
 import { observer } from "mobx-react";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useNavigate } from "react-router";
+import { useParams, usePathname } from "next/navigation";
 import { useMemo } from "react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { CloseIcon, PiIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import type { TGettingStartedChecklistKeys } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -60,7 +60,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // router
   const { workspaceSlug, projectId, workItem } = useParams();
   const { getUnreadNotificationsCount } = useWorkspaceNotifications();
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const pathname = usePathname();
   // derived
@@ -126,7 +126,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
           <Button
             variant="secondary"
             onClick={() => {
-              router.push(`${workspaceSlug}/get-started/`);
+              void navigate(`/${workspaceSlug}/get-started/`);
             }}
           >
             Get Started
