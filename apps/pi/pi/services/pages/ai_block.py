@@ -18,7 +18,6 @@ from pi import logger
 from pi.services.pages.content import PageContentService
 from pi.services.pages.prompts import get_prompt
 from pi.services.retrievers.pg_store.pages import get_page_ai_block_by_id
-from pi.services.llm.llms import get_fallback_model_name
 from pi.services.retrievers.pg_store.pages import update_page_ai_block_generated_content
 
 log = logger.getChild(__name__)
@@ -37,12 +36,10 @@ class AIBlockService(PageContentService):
 
         Args:
             db: Database session
-            model_key: LLM model to use
             block_type: Type of AI block (custom_prompt, elaborate, shorten)
         """
-        super().__init__(db, model_key)
+        super().__init__(db)
         self.block_type = block_type
-        self.model_key = get_fallback_model_name()
 
     def build_system_prompt(self) -> str:
         """Return system prompt based on block type."""
