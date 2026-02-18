@@ -27,9 +27,9 @@ import type { IPowerKStore } from "@/plane-web/store/power-k.store";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IStateStore } from "@/plane-web/store/state.store";
 import { StateStore } from "@/plane-web/store/state.store";
-// stores
-import type { ICycleStore } from "./cycle.store";
-import { CycleStore } from "./cycle.store";
+// cycle
+import { CycleStore } from "@/plane-web/store/cycle/cycle.store";
+import type { ICycleStore } from "@/plane-web/store/cycle/cycle.store";
 import type { ICycleFilterStore } from "./cycle_filter.store";
 import { CycleFilterStore } from "./cycle_filter.store";
 import type { IEditorAssetStore } from "./editor/asset.store";
@@ -38,10 +38,9 @@ import type { IProjectEstimateStore } from "./estimates/project-estimate.store";
 import { ProjectEstimateStore } from "./estimates/project-estimate.store";
 import type { IFavoriteStore } from "./favorite.store";
 import { FavoriteStore } from "./favorite.store";
-import type { IGlobalViewStore } from "./global-view.store";
-import { GlobalViewStore } from "./global-view.store";
-import type { IProjectInboxStore } from "./inbox/project-inbox.store";
-import { ProjectInboxStore } from "./inbox/project-inbox.store";
+// project inbox
+import { ProjectInboxStore } from "@/plane-web/store/project-inbox.store";
+import type { IProjectInboxStore } from "@/plane-web/store/project-inbox.store";
 import type { IInstanceStore } from "./instance.store";
 import { InstanceStore } from "./instance.store";
 import type { IIssueRootStore } from "./work-items/root.store";
@@ -56,8 +55,9 @@ import type { IModuleFilterStore } from "./module_filter.store";
 import { ModuleFilterStore } from "./module_filter.store";
 import type { IMultipleSelectStore } from "./multiple_select.store";
 import { MultipleSelectStore } from "./multiple_select.store";
-import type { IWorkspaceNotificationStore } from "./notifications/workspace-notifications.store";
-import { WorkspaceNotificationStore } from "./notifications/workspace-notifications.store";
+// notifications
+import type { IWorkspaceNotificationStore } from "@/plane-web/store/notifications/notifications.store";
+import { WorkspaceNotificationStore } from "@/plane-web/store/notifications/notifications.store";
 import type { IProjectPageStore } from "./pages/project-page.store";
 import { ProjectPageStore } from "./pages/project-page.store";
 import type { IProjectFilterStore, IWorkspaceProjectStatesStore } from "./workspace-project-states";
@@ -66,14 +66,19 @@ import type { IProjectRootStore } from "./project";
 import { ProjectRootStore } from "./project";
 import type { IProjectDetailsStore } from "./project/project-details";
 import { ProjectDetailsStore } from "./project/project-details";
-import type { IProjectViewStore } from "./project-view.store";
-import { ProjectViewStore } from "./project-view.store";
+// global view
+import type { IGlobalViewStore } from "@/plane-web/store/global-view.store";
+import { GlobalViewStore } from "@/plane-web/store/global-view.store";
+// project view
+import type { IProjectViewStore } from "@/plane-web/store/project-view.store";
+import { ProjectViewStore } from "@/plane-web/store/project-view.store";
 import type { IRouterStore } from "./router.store";
 import { RouterStore } from "./router.store";
 import type { IStickyStore } from "./sticky/sticky.store";
 import { StickyStore } from "./sticky/sticky.store";
-import type { IThemeStore } from "./theme.store";
-import { ThemeStore } from "./theme.store";
+// theme
+import { ThemeStore } from "@/plane-web/store/theme.store";
+import type { IThemeStore } from "@/plane-web/store/theme.store";
 import type { IUserStore } from "./user";
 import { UserStore } from "./user";
 import type { IWorkspaceRootStore } from "./workspace";
@@ -286,12 +291,12 @@ export class CoreRootStore {
     this.projectRoot = new ProjectRootStore(this);
     this.projectDetails = new ProjectDetailsStore(this as unknown as RootStore);
     this.memberRoot = new MemberRootStore(this as unknown as RootStore);
-    this.cycle = new CycleStore(this);
+    this.cycle = new CycleStore(this as unknown as RootStore);
     this.cycleFilter = new CycleFilterStore(this);
     this.module = new ModulesStore(this);
     this.moduleFilter = new ModuleFilterStore(this);
-    this.projectView = new ProjectViewStore(this);
-    this.globalView = new GlobalViewStore(this);
+    this.projectView = new ProjectViewStore(this as unknown as RootStore);
+    this.globalView = new GlobalViewStore(this as unknown as RootStore);
     this.issue = new IssueRootStore(this as unknown as RootStore);
     this.state = new StateStore(this as unknown as RootStore);
     this.label = new LabelStore(this);
@@ -299,7 +304,7 @@ export class CoreRootStore {
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this as unknown as RootStore);
     this.projectEstimate = new ProjectEstimateStore(this);
-    this.workspaceNotification = new WorkspaceNotificationStore(this);
+    this.workspaceNotification = new WorkspaceNotificationStore(this as unknown as RootStore);
     this.favorite = new FavoriteStore(this);
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
@@ -371,12 +376,12 @@ export class CoreRootStore {
     this.projectRoot = new ProjectRootStore(this);
     this.projectDetails = new ProjectDetailsStore(this as unknown as RootStore);
     this.memberRoot = new MemberRootStore(this as unknown as RootStore);
-    this.cycle = new CycleStore(this);
+    this.cycle = new CycleStore(this as unknown as RootStore);
     this.cycleFilter = new CycleFilterStore(this);
     this.module = new ModulesStore(this);
     this.moduleFilter = new ModuleFilterStore(this);
-    this.projectView = new ProjectViewStore(this);
-    this.globalView = new GlobalViewStore(this);
+    this.projectView = new ProjectViewStore(this as unknown as RootStore);
+    this.globalView = new GlobalViewStore(this as unknown as RootStore);
     this.issue = new IssueRootStore(this as unknown as RootStore);
     this.state = new StateStore(this as unknown as RootStore);
     this.label = new LabelStore(this);
@@ -384,7 +389,7 @@ export class CoreRootStore {
     this.projectPages = new ProjectPageStore(this as unknown as RootStore);
     this.multipleSelect = new MultipleSelectStore();
     this.projectEstimate = new ProjectEstimateStore(this);
-    this.workspaceNotification = new WorkspaceNotificationStore(this);
+    this.workspaceNotification = new WorkspaceNotificationStore(this as unknown as RootStore);
     this.favorite = new FavoriteStore(this);
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();

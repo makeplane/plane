@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { set } from "lodash-es";
+import { set, update } from "lodash-es";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -217,7 +217,7 @@ export class TeamspaceCycleStore implements ITeamspaceCycleStore {
       runInAction(() => {
         // set cycles in the store
         cycles.forEach((cycle) => {
-          set(this.cycleStore.cycleMap, [cycle.id], cycle);
+          update(this.cycleStore.cycleMap, [cycle.id], (prevData) => ({ ...prevData, ...cycle }));
         });
         // set fetched map
         set(this.teamspaceCyclesFetchedMap, [teamspaceId], true);

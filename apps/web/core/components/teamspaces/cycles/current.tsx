@@ -68,13 +68,15 @@ export const TeamCurrentCyclesRoot = observer(function TeamCurrentCyclesRoot(pro
   // theme hook
   const { resolvedTheme } = useTheme();
   // store hooks
-  const { getTeamspaceFilteredActiveCycleIds, getTeamspaceGroupedActiveCycleIds } = useTeamspaceCycles();
+  const { getTeamspaceFilteredActiveCycleIds, getTeamspaceGroupedActiveCycleIds, getTeamspaceCyclesLoader } =
+    useTeamspaceCycles();
   // derived values
+  const teamspaceCyclesLoader = getTeamspaceCyclesLoader(teamspaceId);
   const filteredActiveCycleIds = getTeamspaceFilteredActiveCycleIds(teamspaceId);
   const groupedActiveCycleIds = getTeamspaceGroupedActiveCycleIds(teamspaceId);
   const resolvedPath = resolvedTheme === "light" ? currentCyclesLight : currentCyclesDark;
 
-  if (filteredActiveCycleIds.length === 0) {
+  if (filteredActiveCycleIds.length === 0 && teamspaceCyclesLoader === "loaded") {
     return (
       <DetailedEmptyState
         title={t("teamspace_cycles.empty_state.current.title")}

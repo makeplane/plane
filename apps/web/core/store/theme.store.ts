@@ -40,7 +40,7 @@ export interface IThemeStore {
   toggleProjectOverviewSidebar: (collapsed?: boolean) => void;
 }
 
-export class ThemeStore implements IThemeStore {
+export abstract class ThemeStore implements IThemeStore {
   // observables
   isAnySidebarDropdownOpen: boolean | undefined = undefined;
   sidebarCollapsed: boolean | undefined = undefined;

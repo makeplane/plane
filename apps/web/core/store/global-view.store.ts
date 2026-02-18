@@ -43,7 +43,7 @@ export interface IGlobalViewStore {
   deleteGlobalView: (workspaceSlug: string, viewId: string) => Promise<any>;
 }
 
-export class GlobalViewStore implements IGlobalViewStore {
+export abstract class GlobalViewStore implements IGlobalViewStore {
   // observables
   globalViewMap: Record<string, IWorkspaceView> = {};
   // root store
