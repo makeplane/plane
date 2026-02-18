@@ -246,10 +246,6 @@ class StaffDeactivateEndpoint(BaseAPIView):
                 workspace=workspace,
             ).update(is_active=False)
 
-            # Deactivate user
-            user.is_active = False
-            user.save(update_fields=["is_active"])
-
             # Update staff status
             staff.employment_status = "resigned"
             staff.save(update_fields=["employment_status"])
@@ -265,10 +261,19 @@ class StaffBulkImportEndpoint(BaseAPIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request, slug):
+        MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
+        MAX_ROWS = 5000
+
         csv_file = request.FILES.get("file")
         if not csv_file:
             return Response(
                 {"error": "CSV file is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if csv_file.size > MAX_FILE_SIZE:
+            return Response(
+                {"error": f"File too large. Maximum size is {MAX_FILE_SIZE // (1024 * 1024)}MB."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -296,6 +301,10 @@ class StaffBulkImportEndpoint(BaseAPIView):
         errors = []
 
         for row_num, row in enumerate(reader, start=2):
+            if row_num > MAX_ROWS + 1:
+                errors.append(f"Import stopped: exceeded maximum of {MAX_ROWS} rows.")
+                break
+
             staff_id = row.get("staff_id", "").strip()
             if not staff_id:
                 errors.append(f"Row {row_num}: missing staff_id")

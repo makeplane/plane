@@ -1,4 +1,5 @@
 # Django imports
+from django.db import transaction
 from django.db.models import Count, Q
 
 # Third party imports
@@ -208,14 +209,12 @@ class DepartmentLinkProjectEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        department.linked_project = project
-        department.save(update_fields=["linked_project"])
+        with transaction.atomic():
+            department.linked_project = project
+            department.save(update_fields=["linked_project"])
 
-        # Auto-sync: add all active staff as ProjectMembers
-        try:
+            # Auto-sync: add all active staff as ProjectMembers
             self._sync_members_to_project(department, project)
-        except Exception as e:
-            log_exception(e)
 
         serializer = DepartmentSerializer(department)
         return Response(serializer.data, status=status.HTTP_200_OK)

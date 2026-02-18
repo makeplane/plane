@@ -15,17 +15,17 @@ class EmploymentStatus(models.TextChoices):
 
 
 class StaffProfile(BaseModel):
-    """Employee profile linked 1:1 to User, scoped to workspace."""
+    """Employee profile linked to User, scoped to workspace (one per workspace)."""
 
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.CASCADE,
         related_name="staff_profiles",
     )
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="staff_profile",
+        related_name="staff_profiles",
     )
 
     # Staff ID
