@@ -5,9 +5,6 @@ from collections import defaultdict
 logger = logging.getLogger(__name__)
 
 # Django imports
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Count
-from django.contrib.postgres.fields import ArrayField
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import (
     Exists,
@@ -15,12 +12,7 @@ from django.db.models import (
     Func,
     OuterRef,
     Q,
-    UUIDField,
-    Value,
-    Subquery,
-    JSONField
 )
-from django.db.models.functions import Coalesce
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.db import transaction
@@ -49,7 +41,6 @@ from plane.db.models import (
     WorkspaceMember,
     ProjectMember,
     Project,
-    CycleIssue,
     IssueCustomProperty
 )
 from plane.utils.grouper import (
@@ -217,7 +208,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
     def get_queryset(self, filters):
         """Phase 1 queryset: lean, for filtering + ordering + pagination only.
 
-        No select_related (narrow rows → cheap DISTINCT).
+        No select_related, no JOIN-based membership filter (Exists instead)
+        → no duplicate rows → no DISTINCT needed.
         No correlated subqueries (sub_issues_count, link_count, attachment_count)
         — those run in Phase 2 on the small paginated ID set.
         No ArrayAgg annotations — batch-loaded after pagination.
@@ -228,15 +220,20 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             Issue.issue_objects
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
+                Exists(
+                    ProjectMember.objects.filter(
+                        project_id=OuterRef("project_id"),
+                        member=self.request.user,
+                        is_active=True,
+                    )
+                )
             )
-            # Phase 1: NO select_related — keep rows narrow for cheap DISTINCT
+            # Phase 1: NO select_related — Exists filters add no JOIN columns,
+            # no duplicate rows, no DISTINCT needed.
             # Phase 1: NO correlated subqueries — they run in Phase 2 on ~100 IDs
             .filter(
                 *custom_filters
             )
-            .distinct()
         )
         return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
 
@@ -248,10 +245,13 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         instead of the entire candidate set (10k+).
         """
         return (
-            Issue.objects.filter(id__in=page_ids)
+            Issue.issue_objects.filter(id__in=page_ids)
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
+                sub_issues_count=Issue.objects.filter(
+                    parent=OuterRef("id"),
+                    deleted_at__isnull=True,
+                    is_draft=False,
+                    archived_at__isnull=True,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -406,21 +406,22 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
         # check for the project member role, if the role is 5 then check for the guest_view_all_features if it is true then show all the issues else show only the issues created by the user
 
+        guest_pm = ProjectMember.objects.filter(
+            project_id=OuterRef("project_id"),
+            member=self.request.user,
+            is_active=True,
+            role=5,
+        )
+        non_guest_pm = ProjectMember.objects.filter(
+            project_id=OuterRef("project_id"),
+            member=self.request.user,
+            is_active=True,
+            role__gt=5,
+        )
         issue_queryset = issue_queryset.filter(
-            Q(
-                project__project_projectmember__role=5,
-                project__guest_view_all_features=True,
-            )
-            | Q(
-                project__project_projectmember__role=5,
-                project__guest_view_all_features=False,
-                created_by=self.request.user,
-            )
-            |
-            # For other roles (role < 5), show all issues
-            Q(project__project_projectmember__role__gt=5),
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
+            Exists(non_guest_pm)
+            | (Exists(guest_pm) & Q(project__guest_view_all_features=True))
+            | (Exists(guest_pm) & Q(project__guest_view_all_features=False) & Q(created_by=self.request.user))
         )
 
         # Issue queryset
@@ -479,9 +480,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 return []
 
             # ── Phase 2: detail query on the small ID set ──
-            detail_qs = self._build_detail_queryset(page_ids)
-            print(f"\n[WorkspaceViewIssues] Phase 2 SQL ({len(page_ids)} IDs):\n{detail_qs.values(*detail_fields).query}\n")
-            results = list(detail_qs.values(*detail_fields))
+            detail_qs_values = self._build_detail_queryset(page_ids).values(*detail_fields)
+            print(f"\n[WorkspaceViewIssues] Phase 2 SQL ({len(page_ids)} IDs):\n{detail_qs_values.query}\n")
+            results = list(detail_qs_values)
             id_to_result = {r["id"]: r for r in results}
 
             if has_m2m_group or has_m2m_subgroup:

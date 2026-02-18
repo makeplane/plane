@@ -21,7 +21,6 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
     FIELD_MAPPER = {
         "label_ids": "labels__id",
         "assignee_ids": "assignees__id",
-        # "module_ids": "issue_module__module_id",  # commented out
     }
 
     annotations_map = {
@@ -35,14 +34,6 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
             ~Q(labels__id__isnull=True)
             & Q(label_issue__deleted_at__isnull=True),
         ),
-        # "module_ids": (
-        #     "issue_module__module_id",
-        #     (
-        #         ~Q(issue_module__module_id__isnull=True)
-        #         & Q(issue_module__module__archived_at__isnull=True)
-        #         & Q(issue_module__deleted_at__isnull=True)
-        #     ),
-        # ),
     }
     default_annotations = {
         key: Coalesce(
@@ -65,10 +56,9 @@ def issue_on_results(issues, group_by, sub_group_by):
     FIELD_MAPPER = {
         "labels__id": "label_ids",
         "assignees__id": "assignee_ids",
-        # "issue_module__module_id": "module_ids",  # commented out
     }
 
-    original_list = ["assignee_ids", "label_ids"]  # removed module_ids
+    original_list = ["assignee_ids", "label_ids"]
 
     required_fields = [
         "id",
@@ -76,14 +66,12 @@ def issue_on_results(issues, group_by, sub_group_by):
         "state_id",
         "sort_order",
         "completed_at",
-        # "estimate_point",  # commented out
         "priority",
         "start_date",
         "target_date",
         "sequence_id",
         "project_id",
         "parent_id",
-        # "cycle_id",  # commented out
         "sub_issues_count",
         "created_at",
         "updated_at",
@@ -103,7 +91,6 @@ def issue_on_results(issues, group_by, sub_group_by):
         "vendor_name",
         "vendor_code",
         "worker_code",
-        # "worker_name",  # commented out
         "business_type",
         "custom_propertiess"
     ]
