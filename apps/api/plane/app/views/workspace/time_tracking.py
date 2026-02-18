@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from django.db.models import Sum, F, Value, CharField
-from django.db.models.functions import Concat
+from django.db.models import Sum, F
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,6 +10,9 @@ from rest_framework import status
 from plane.app.views.base import BaseAPIView
 from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import IssueWorkLog
+
+# Cap grouped results to prevent huge response payloads
+SUMMARY_RESULT_LIMIT = 500
 
 
 class ProjectWorkLogSummaryEndpoint(BaseAPIView):
@@ -40,7 +42,7 @@ class ProjectWorkLogSummaryEndpoint(BaseAPIView):
                 total_minutes=Sum("duration_minutes"),
             )
             .values("member_id", "display_name", "total_minutes")
-            .order_by("-total_minutes")
+            .order_by("-total_minutes")[:SUMMARY_RESULT_LIMIT]
         )
 
         by_issue = list(
@@ -52,7 +54,7 @@ class ProjectWorkLogSummaryEndpoint(BaseAPIView):
                 total_minutes=Sum("duration_minutes"),
             )
             .values("issue_id", "issue_name", "estimate_time", "total_minutes")
-            .order_by("-total_minutes")
+            .order_by("-total_minutes")[:SUMMARY_RESULT_LIMIT]
         )
 
         return Response(
@@ -99,7 +101,7 @@ class WorkspaceWorkLogSummaryEndpoint(BaseAPIView):
                 total_minutes=Sum("duration_minutes"),
             )
             .values("member_id", "display_name", "total_minutes")
-            .order_by("-total_minutes")
+            .order_by("-total_minutes")[:SUMMARY_RESULT_LIMIT]
         )
 
         by_issue = list(
@@ -111,7 +113,7 @@ class WorkspaceWorkLogSummaryEndpoint(BaseAPIView):
                 total_minutes=Sum("duration_minutes"),
             )
             .values("issue_id", "issue_name", "estimate_time", "total_minutes")
-            .order_by("-total_minutes")
+            .order_by("-total_minutes")[:SUMMARY_RESULT_LIMIT]
         )
 
         return Response(

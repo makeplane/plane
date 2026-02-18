@@ -38,8 +38,7 @@ export const TimeTrackingIssueTable: FC<TTimeTrackingIssueTableProps> = ({ byIss
         </thead>
         <tbody>
           {byIssue.map((issue) => {
-            const variance =
-              issue.estimate_time != null ? issue.total_minutes - issue.estimate_time : null;
+            const variance = issue.estimate_time != null ? issue.total_minutes - issue.estimate_time : null;
             const varianceDisplay =
               variance != null
                 ? variance === 0
@@ -60,7 +59,9 @@ export const TimeTrackingIssueTable: FC<TTimeTrackingIssueTableProps> = ({ byIss
                 key={issue.issue_id}
                 className="border-b border-custom-border-100 last:border-0 hover:bg-custom-background-90 transition-colors"
               >
-                <td className="px-4 py-3 text-custom-text-100 font-medium">{issue.issue_name}</td>
+                <td className="px-4 py-3 text-custom-text-100 font-medium">
+                  {issue.issue_name || <span className="italic text-custom-text-300">(Deleted issue)</span>}
+                </td>
                 <td className="px-4 py-3 text-right text-custom-text-200">
                   {issue.estimate_time != null ? formatMinutesToDisplay(issue.estimate_time) : "—"}
                 </td>

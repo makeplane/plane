@@ -17,12 +17,7 @@ export interface IWorklogStore {
   getTotalMinutesForIssue(issueId: string): number;
   // actions
   fetchWorklogs(workspaceSlug: string, projectId: string, issueId: string): Promise<IWorkLog[]>;
-  createWorklog(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: IWorkLogCreate
-  ): Promise<IWorkLog>;
+  createWorklog(workspaceSlug: string, projectId: string, issueId: string, data: IWorkLogCreate): Promise<IWorkLog>;
   updateWorklog(
     workspaceSlug: string,
     projectId: string,
@@ -30,12 +25,7 @@ export interface IWorklogStore {
     worklogId: string,
     data: IWorkLogUpdate
   ): Promise<IWorkLog>;
-  deleteWorklog(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    worklogId: string
-  ): Promise<void>;
+  deleteWorklog(workspaceSlug: string, projectId: string, issueId: string, worklogId: string): Promise<void>;
   fetchProjectSummary(
     workspaceSlug: string,
     projectId: string,
@@ -48,6 +38,8 @@ export class WorklogStore implements IWorklogStore {
   isLoading = false;
 
   private worklogService: WorklogService;
+  // Tracks in-flight delete requests to prevent duplicate calls
+  private deleteInFlight: Set<string> = new Set();
 
   constructor() {
     makeObservable(this, {
@@ -71,11 +63,7 @@ export class WorklogStore implements IWorklogStore {
     return worklogs.reduce((sum, w) => sum + w.duration_minutes, 0);
   }
 
-  fetchWorklogs = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string
-  ): Promise<IWorkLog[]> => {
+  fetchWorklogs = async (workspaceSlug: string, projectId: string, issueId: string): Promise<IWorkLog[]> => {
     this.isLoading = true;
     try {
       const worklogs = await this.worklogService.listWorklogs(workspaceSlug, projectId, issueId);
@@ -113,13 +101,7 @@ export class WorklogStore implements IWorklogStore {
     worklogId: string,
     data: IWorkLogUpdate
   ): Promise<IWorkLog> => {
-    const updated = await this.worklogService.updateWorklog(
-      workspaceSlug,
-      projectId,
-      issueId,
-      worklogId,
-      data
-    );
+    const updated = await this.worklogService.updateWorklog(workspaceSlug, projectId, issueId, worklogId, data);
     runInAction(() => {
       const list = this.worklogsByIssueId[issueId] ?? [];
       const idx = list.findIndex((w) => w.id === worklogId);
@@ -135,19 +117,22 @@ export class WorklogStore implements IWorklogStore {
     issueId: string,
     worklogId: string
   ): Promise<void> => {
-    // Optimistic delete
+    if (this.deleteInFlight.has(worklogId)) return;
+
     const prevList = this.worklogsByIssueId[issueId] ?? [];
+    this.deleteInFlight.add(worklogId);
     runInAction(() => {
       this.worklogsByIssueId[issueId] = prevList.filter((w) => w.id !== worklogId);
     });
     try {
       await this.worklogService.deleteWorklog(workspaceSlug, projectId, issueId, worklogId);
     } catch (error) {
-      // Revert on failure
       runInAction(() => {
         this.worklogsByIssueId[issueId] = prevList;
       });
       throw error;
+    } finally {
+      this.deleteInFlight.delete(worklogId);
     }
   };
 
