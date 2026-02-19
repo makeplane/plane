@@ -406,12 +406,22 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         ).values_list("issue_id", "label_id"):
             label_map[iid].append(lid)
 
-        # assignee_ids
+        # assignee_ids — only active project members.
+        # IssueAssignee has no direct project_member FK; use Exists into
+        # ProjectMember matching on both assignee_id and project_id.
         assignee_map = defaultdict(list)
         for iid, aid in IssueAssignee.objects.filter(
             issue_id__in=issue_ids,
             deleted_at__isnull=True,
-            project_member__is_active=True,
+        ).filter(
+            Exists(
+                ProjectMember.objects.filter(
+                    member_id=OuterRef("assignee_id"),
+                    project_id=OuterRef("project_id"),
+                    is_active=True,
+                    deleted_at__isnull=True,
+                )
+            )
         ).values_list("issue_id", "assignee_id"):
             assignee_map[iid].append(aid)
 
