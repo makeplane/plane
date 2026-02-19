@@ -18,49 +18,6 @@ jobs:
       # Checkout the code
       - uses: actions/checkout@v4
 
-      - name: Configure AWS credentials to assume the secret role
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_SECRET_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
-
-      - name: Retrieve DB secrets
-        run: |
-          SECRET_JSON=$(aws secretsmanager get-secret-value \
-            --secret-id ${{ secrets.AWS_SECRET_NAME || 'github-actions/github-actions-secrets' }} \
-            --query SecretString \
-            --output text)
-
-          RDS_HOST=$(echo "$SECRET_JSON" | jq -r '.rds_host')
-          RDS_USER=$(echo "$SECRET_JSON" | jq -r '.rds_user')
-          RDS_PASSWORD=$(echo "$SECRET_JSON" | jq -r '.rds_password')
-
-          # Mask sensitive values immediately after extraction
-          echo "::add-mask::$RDS_PASSWORD"
-          echo "::add-mask::$RDS_HOST"
-          echo "::add-mask::$RDS_USER"
-
-          # Generate random delimiter for heredoc to prevent injection
-          DELIMITER=$(openssl rand -hex 16)
-
-          {
-            echo "rds_host<<${DELIMITER}"
-            echo "$RDS_HOST"
-            echo "${DELIMITER}"
-          } >> "$GITHUB_ENV"
-
-          {
-            echo "rds_user<<${DELIMITER}"
-            echo "$RDS_USER"
-            echo "${DELIMITER}"
-          } >> "$GITHUB_ENV"
-
-          {
-            echo "rds_password<<${DELIMITER}"
-            echo "$RDS_PASSWORD"
-            echo "${DELIMITER}"
-          } >> "$GITHUB_ENV"
-
       - name: Configure AWS credentials to assume the EKS role
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -81,11 +38,6 @@ jobs:
         uses: azure/setup-helm@v4
         with:
           version: v3.14.4
-
-      - name: Install PostgreSQL client
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client
 
       # ---------------- CLEANUP ----------------
       - name: Cleanup merged or closed PR deployments
