@@ -174,7 +174,10 @@ export function EditorBubbleMenu(props: Props) {
 
   useEffect(() => {
     function handleMouseDown(e: MouseEvent) {
-      if (menuRef.current?.contains(e.target as Node)) return;
+      const target = e.target as HTMLElement;
+      // Skip if the click is inside the bubble menu or any floating portal
+      // (color selector, node selector, link selector render in portals outside menuRef)
+      if (menuRef.current?.contains(target) || target.closest?.("[data-floating-ui-portal]")) return;
 
       function handleMouseMove() {
         if (!editor.state.selection.empty) {
