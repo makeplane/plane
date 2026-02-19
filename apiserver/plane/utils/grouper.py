@@ -21,6 +21,7 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
     FIELD_MAPPER = {
         "label_ids": "labels__id",
         "assignee_ids": "assignees__id",
+        "module_ids": "issue_module__module_id",
     }
 
     annotations_map = {
@@ -33,6 +34,14 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
             "labels__id",
             ~Q(labels__id__isnull=True)
             & Q(label_issue__deleted_at__isnull=True),
+        ),
+        "module_ids": (
+            "issue_module__module_id",
+            (
+                ~Q(issue_module__module_id__isnull=True)
+                & Q(issue_module__module__archived_at__isnull=True)
+                & Q(issue_module__deleted_at__isnull=True)
+            ),
         ),
     }
     default_annotations = {
@@ -56,9 +65,10 @@ def issue_on_results(issues, group_by, sub_group_by):
     FIELD_MAPPER = {
         "labels__id": "label_ids",
         "assignees__id": "assignee_ids",
+        "issue_module__module_id": "module_ids",
     }
 
-    original_list = ["assignee_ids", "label_ids"]
+    original_list = ["assignee_ids", "label_ids", "module_ids"]
 
     required_fields = [
         "id",
@@ -66,12 +76,14 @@ def issue_on_results(issues, group_by, sub_group_by):
         "state_id",
         "sort_order",
         "completed_at",
+        "estimate_point",
         "priority",
         "start_date",
         "target_date",
         "sequence_id",
         "project_id",
         "parent_id",
+        "cycle_id",
         "sub_issues_count",
         "created_at",
         "updated_at",
@@ -91,6 +103,7 @@ def issue_on_results(issues, group_by, sub_group_by):
         "vendor_name",
         "vendor_code",
         "worker_code",
+        "worker_name",
         "business_type",
         "custom_propertiess"
     ]

@@ -12,6 +12,7 @@ from django.db.models import (
     Func,
     OuterRef,
     Q,
+    Subquery,
 )
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -33,10 +34,12 @@ from plane.app.serializers import (
 from plane.db.models import (
     Issue,
     FileAsset,
+    CycleIssue,
     IssueLabel,
     IssueAssignee,
     IssueLink,
     IssueView,
+    ModuleIssue,
     State,
     Workspace,
     WorkspaceMember,
@@ -209,13 +212,14 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
     def get_queryset(self, filters):
         """Phase 1 queryset: lean, for filtering + ordering + pagination only.
 
-        No select_related, no JOIN-based membership filter (Exists instead)
-        → no duplicate rows → no DISTINCT needed.
-        No correlated subqueries (sub_issues_count, link_count, attachment_count)
-        — those run in Phase 2 on the small paginated ID set.
+        No select_related, no JOIN-based membership filter (Exists instead).
+        cycle_id annotated as a scalar Subquery so group_by=cycle_id works in
+        the paginator without a JOIN.
+        .distinct() guards against duplicate rows from M2M filter JOINs
+        (labels__in, assignees__in, etc.) that issue_filters may apply —
+        Phase 1 rows are narrow so DISTINCT is cheap.
         No ArrayAgg annotations — batch-loaded after pagination.
-        Triage states excluded via subquery instead of JOIN to avoid the
-        states INNER JOIN that IssueManager adds to Phase 1.
+        Triage states excluded via subquery instead of JOIN.
         """
         custom_properties = filters.get("custom_properties", {})
         custom_filters = build_custom_property_q_objects(custom_properties)
@@ -236,12 +240,23 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             .exclude(
                 state_id__in=State.objects.filter(is_triage=True).values("id")
             )
-            # Phase 1: NO select_related — Exists filters add no JOIN columns,
-            # no duplicate rows, no DISTINCT needed.
-            # Phase 1: NO correlated subqueries — they run in Phase 2 on ~100 IDs
+            # Annotate cycle_id so the paginator can partition by it when
+            # group_by=cycle_id. Uses a cheap scalar subquery — one index scan
+            # on cycle_issues(issue_id), runs only on the Phase 1 candidate set.
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"),
+                        deleted_at__isnull=True,
+                    ).values("cycle_id")[:1]
+                )
+            )
             .filter(
                 *custom_filters
             )
+            # Guard against duplicate rows from M2M filter JOINs (labels__in,
+            # assignees__in, etc.). Phase 1 rows are narrow so DISTINCT is cheap.
+            .distinct()
         )
         return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
 
@@ -361,7 +376,10 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
     @staticmethod
     def _enrich_issues_with_relations(results_list):
-        """Batch-load label_ids, assignee_ids, custom_propertiess for paginated issues."""
+        """Batch-load all M2M and derived fields for paginated issues.
+
+        Runs 5 flat IN-queries on ~100 IDs — no N+1, no row multiplication.
+        """
         if not results_list:
             return results_list
 
@@ -381,6 +399,23 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         ).values_list("issue_id", "assignee_id"):
             assignee_map[iid].append(aid)
 
+        # module_ids (non-archived, non-deleted)
+        module_map = defaultdict(list)
+        for iid, mid in ModuleIssue.objects.filter(
+            issue_id__in=issue_ids,
+            deleted_at__isnull=True,
+            module__archived_at__isnull=True,
+        ).values_list("issue_id", "module_id"):
+            module_map[iid].append(mid)
+
+        # cycle_id — take the first active cycle per issue
+        cycle_map = {}
+        for iid, cid in CycleIssue.objects.filter(
+            issue_id__in=issue_ids,
+            deleted_at__isnull=True,
+        ).values_list("issue_id", "cycle_id"):
+            cycle_map.setdefault(iid, cid)
+
         # custom_propertiess
         cp_map = defaultdict(list)
         for row in IssueCustomProperty.objects.filter(
@@ -392,11 +427,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             iid = r["id"]
             r["label_ids"] = label_map.get(iid, [])
             r["assignee_ids"] = assignee_map.get(iid, [])
+            r["module_ids"] = module_map.get(iid, [])
+            r["cycle_id"] = cycle_map.get(iid)
             r["custom_propertiess"] = cp_map.get(iid, [])
-            # Intentionally deferred fields — not available in workspace list view
-            # TODO: implement batch-load for cycle_id and module_ids if needed
-            r["cycle_id"] = None
-            r["module_ids"] = []
 
         return results_list
 
@@ -449,10 +482,13 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         # M2M relations (labels, assignees, custom_properties) are batch-loaded in
         #   _enrich_issues_with_relations after Phase 2.
 
-        # M2M fields that need the raw FK in .values() when used as group_by
+        # M2M fields that need the raw FK in .values() when used as group_by.
+        # Any field listed here will be extracted from Phase 1 rows and merged
+        # back onto Phase 2 results so the paginator can group correctly.
         FIELD_MAPPER = {
             "labels__id": "label_ids",
             "assignees__id": "assignee_ids",
+            "issue_module__module_id": "module_ids",
         }
 
         # Fields fetched in Phase 2 (includes annotated counts)
