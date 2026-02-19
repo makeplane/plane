@@ -210,26 +210,12 @@ class WorkspaceViewViewSet(BaseViewSet):
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
     def get_queryset(self, filters):
-        """Phase 1 queryset: lean, for filtering + ordering + pagination only.
+        """Phase 1: lean queryset for filtering, ordering, and pagination.
 
-        Uses Issue.objects (base manager) instead of Issue.issue_objects to
-        avoid the 3 expensive JOINs that IssueManager bakes in automatically:
-          1. INNER JOIN states  (is_triage=False) → replaced by state_id NOT IN
-             subquery, which Postgres hashes once and reuses — no per-row JOIN.
-          2. LEFT JOIN inbox_issues → skipped; inbox_issues is empty for most
-             workspaces and Phase 2 (via issue_objects) filters correctly.
-          3. INNER JOIN projects (archived_at IS NULL) → skipped; archived
-             projects are rare and Phase 2 (via issue_objects) filters correctly.
-             Minor trade-off: archived-project issues are counted in Phase 1
-             totals but excluded from Phase 2 results (negligible in practice).
-
-        The three scalar column filters (deleted_at, archived_at, is_draft) align
-        exactly with the idx_issues_workspace_list partial index predicate, so
-        Postgres can use that index directly without any JOIN overhead.
-
-        .distinct() guards against duplicate rows from M2M filter JOINs
-        (labels__in, assignees__in, etc.) that issue_filters may apply.
-        No ArrayAgg annotations — batch-loaded after pagination in Phase 2.
+        Uses Issue.objects (base manager) to avoid IssueManager's expensive
+        JOINs on states/inbox_issues/projects. Triage exclusion is done via a
+        cheap NOT IN subquery. Phase 2 (issue_objects) handles inbox and
+        archived-project filtering on the small paginated ID set.
         """
         custom_properties = filters.get("custom_properties", {})
         custom_filters = build_custom_property_q_objects(custom_properties)
@@ -241,13 +227,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 archived_at__isnull=True,
                 is_draft=False,
             )
-            # Exclude triage states via subquery — Postgres hashes the small
-            # state ID list once; no JOIN on the states table per row.
             .exclude(
                 state_id__in=State.objects.filter(is_triage=True).values("id")
             )
-            # Project membership check via Exists — one index lookup per row,
-            # no row multiplication.
             .filter(
                 Exists(
                     ProjectMember.objects.filter(
@@ -257,9 +239,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     )
                 )
             )
-            # Annotate cycle_id so the paginator can partition by it when
-            # group_by=cycle_id. Uses a cheap scalar subquery — one index scan
-            # on cycle_issues(issue_id), runs only on the Phase 1 candidate set.
+            # cycle_id needed here only for group_by=cycle_id support in paginator.
             .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
@@ -269,7 +249,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 )
             )
             .filter(*custom_filters)
-            # Guard against duplicate rows from M2M filter JOINs.
+            # Guard against duplicate rows from any M2M filter JOINs.
             .distinct()
         )
         return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
@@ -406,9 +386,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         ).values_list("issue_id", "label_id"):
             label_map[iid].append(lid)
 
-        # assignee_ids — only active project members.
-        # IssueAssignee has no direct project_member FK; use Exists into
-        # ProjectMember matching on both assignee_id and project_id.
+        # assignee_ids — only active project members (Exists avoids row multiplication).
         assignee_map = defaultdict(list)
         for iid, aid in IssueAssignee.objects.filter(
             issue_id__in=issue_ids,
@@ -470,8 +448,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             .filter(**filtersWithoutCustomProperties)
         )
 
-        # check for the project member role, if the role is 5 then check for the guest_view_all_features if it is true then show all the issues else show only the issues created by the user
-
+        # Guests (role=5) only see all issues when guest_view_all_features is enabled; otherwise restricted to their own.
         guest_pm = ProjectMember.objects.filter(
             project_id=OuterRef("project_id"),
             member=self.request.user,
@@ -490,27 +467,19 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             | (Exists(guest_pm) & Q(project__guest_view_all_features=False) & Q(created_by=self.request.user))
         )
 
-        # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
             issue_queryset=issue_queryset,
             order_by_param=order_by_param,
         )
 
-        # Group by
         group_by = request.GET.get("group_by", False)
         sub_group_by = request.GET.get("sub_group_by", False)
 
-        # ── Two-phase query strategy ──
-        # Phase 1 (issue_queryset) is lean: only filters + ordering + pagination.
-        #   No select_related, no correlated subqueries → narrow DISTINCT, fast sort.
-        # Phase 2 (_build_detail_queryset) fetches counts + fields for the ~100 IDs
-        #   returned by Phase 1.  Correlated subqueries on ~100 rows are trivial.
-        # M2M relations (labels, assignees, custom_properties) are batch-loaded in
-        #   _enrich_issues_with_relations after Phase 2.
+        # Two-phase strategy: Phase 1 = lean filter/order/paginate; Phase 2 = full
+        # details on the small ID set. M2M relations enriched via batch IN-queries.
 
-        # M2M fields that need the raw FK in .values() when used as group_by.
-        # Any field listed here will be extracted from Phase 1 rows and merged
-        # back onto Phase 2 results so the paginator can group correctly.
+        # M2M fields that expose the raw FK in .values() when used as group_by;
+        # Phase 1 rows carry these values so the paginator can group correctly.
         FIELD_MAPPER = {
             "labels__id": "label_ids",
             "assignees__id": "assignee_ids",
@@ -534,8 +503,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         has_m2m_subgroup = sub_group_by and sub_group_by in FIELD_MAPPER
 
         def on_results_fn(issues):
-            """Two-phase callback: Phase 1 → IDs, Phase 2 → details + counts."""
-            # ── Phase 1: extract IDs (+ M2M group keys if needed) ──
+            # Phase 1: extract IDs (+ M2M group-by keys if needed).
             phase1_fields = ["id"]
             if has_m2m_group:
                 phase1_fields.append(group_by)
@@ -543,22 +511,19 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 phase1_fields.append(sub_group_by)
 
             phase1_rows = list(issues.values(*phase1_fields))
-            # Ordered-unique IDs (preserves Phase 1 sort order)
-            page_ids = list(dict.fromkeys(r["id"] for r in phase1_rows))
+            page_ids = list(dict.fromkeys(r["id"] for r in phase1_rows))  # ordered-unique
 
             if not page_ids:
                 return []
 
-            # ── Phase 2: detail query on the small ID set ──
+            # Phase 2: full details on the small ID set.
             detail_qs_values = self._build_detail_queryset(page_ids).values(*detail_fields)
             logger.debug("[WorkspaceViewIssues] Phase 2 SQL (%d IDs):\n%s", len(page_ids), detail_qs_values.query)
             results = list(detail_qs_values)
             id_to_result = {r["id"]: r for r in results}
 
             if has_m2m_group or has_m2m_subgroup:
-                # For M2M grouping the paginator produced multiple rows per issue
-                # (one per M2M value).  Reconstruct those pairs so process_results
-                # can group correctly.
+                # Re-attach M2M group values to Phase 2 rows for the paginator.
                 merged = []
                 for p1 in phase1_rows:
                     base = id_to_result.get(p1["id"])
@@ -572,7 +537,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     merged.append(row)
                 results = merged
             else:
-                # Preserve Phase 1 ordering
+                # Restore Phase 1 ordering.
                 results = [id_to_result[pid] for pid in page_ids if pid in id_to_result]
 
             return self._enrich_issues_with_relations(results)
@@ -580,7 +545,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         logger.debug("[WorkspaceViewIssues] Phase 1 SQL (slug=%s, group_by=%s, sub_group_by=%s):\n%s", slug, group_by, sub_group_by, issue_queryset.query)
 
         if group_by:
-            # Check group and sub group value paginate
             if sub_group_by:
                 if group_by == sub_group_by:
                     return Response(
@@ -590,7 +554,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 else:
-                    # group and sub group pagination
                     return self.paginate(
                         request=request,
                         order_by=order_by_param,
@@ -621,9 +584,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                         ),
                         skip_count=True,
                     )
-            # Group Paginate
             else:
-                # Group paginate
                 return self.paginate(
                     request=request,
                     order_by=order_by_param,
@@ -648,7 +609,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     skip_count=True,
                 )
         else:
-            # List Paginate
             return self.paginate(
                 order_by=order_by_param,
                 request=request,
