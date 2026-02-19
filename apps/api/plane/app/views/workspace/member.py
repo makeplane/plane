@@ -341,8 +341,11 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
             .annotate(active_cycles_count=Coalesce(Subquery(active_cycles_count, output_field=IntegerField()), 0))
             .first()
         )
-        serializer = WorkspaceMemberMeSerializer(workspace_member)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if workspace_member:
+            serializer = WorkspaceMemberMeSerializer(workspace_member)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "You are not a member of this workspace"}, status=status.HTTP_403_FORBIDDEN)
 
 
 # For WorkspaceMember fields:
