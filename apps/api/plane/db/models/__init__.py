@@ -42,6 +42,7 @@ from .issue import (
     IssueAssignee,
     IssueBlocker,
     IssueComment,
+    WorkItemCommentSource,
     IssueLabel,
     IssueLink,
     IssueMention,

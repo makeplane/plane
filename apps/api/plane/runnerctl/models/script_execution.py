@@ -39,7 +39,7 @@ class ScriptExecution(BaseModel):
     script = models.ForeignKey(Script, on_delete=models.CASCADE, related_name="executions", null=True, blank=True)
     trigger_type = models.CharField(max_length=30, choices=TRIGGER_TYPE_CHOICES, default="manual")
     trigger_id = models.UUIDField(
-        null=True, blank=True, help_text="ID of the triggering entity (automation rule, etc.)"
+        null=True, blank=True, help_text="ID of the triggering entity (automation rule, runner task, etc.)"
     )
     trigger_context = models.JSONField(
         null=True, blank=True, help_text="Additional context about the trigger (event payload, etc.)"

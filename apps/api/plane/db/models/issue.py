@@ -332,12 +332,12 @@ class IssueRelation(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "related_issue", "deleted_at"]
+        unique_together = ["issue", "related_issue", "relation_type", "deleted_at"]
         constraints = [
             models.UniqueConstraint(
-                fields=["issue", "related_issue"],
+                fields=["issue", "related_issue", "relation_type"],
                 condition=Q(deleted_at__isnull=True),
-                name="issue_relation_unique_issue_related_issue_when_deleted_at_null",
+                name="issue_relation_unique_issue_related_issue_relation_type_when_deleted_at_null",
             )
         ]
         verbose_name = "Issue Relation"
@@ -520,6 +520,9 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
         blank=True,
         related_name="parent_issue_comment",  # TODO (Dheeraj): The related_name should be changed to replies
     )
+    source = models.OneToOneField(
+        "db.WorkItemCommentSource", on_delete=models.CASCADE, related_name="issue_comment", null=True, blank=True
+    )
 
     TRACKED_FIELDS = ["comment_stripped", "comment_json", "comment_html", "access"]
 
@@ -598,6 +601,27 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
     def __str__(self):
         """Return issue of the comment"""
         return str(self.issue)
+
+
+class WorkItemCommentSource(ProjectBaseModel):
+    class SOURCE_CHOICES(models.TextChoices):
+        IN_APP = "IN_APP", "In App"
+        PUBLISHED_BOARD = "PUBLISHED_BOARD", "Published Board"
+        TRACKABLE_LINK = "TRACKABLE_LINK", "Trackable Link"
+        EMAIL = "EMAIL", "Email"
+
+    source_type = models.CharField(max_length=255, choices=SOURCE_CHOICES.choices, default=SOURCE_CHOICES.IN_APP)
+    source_email = models.EmailField(null=True, blank=True)
+    extra = models.JSONField(default=dict)
+
+    class Meta:
+        verbose_name = "Work Item Comment Source"
+        verbose_name_plural = "Work Item Comment Sources"
+        db_table = "work_item_comment_sources"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue_comment.id} {self.source_type}"
 
 
 class IssueLabel(ProjectBaseModel):

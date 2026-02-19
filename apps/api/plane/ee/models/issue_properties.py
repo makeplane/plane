@@ -31,6 +31,7 @@ class PropertyTypeEnum(models.TextChoices):
     URL = "URL", "URL"
     EMAIL = "EMAIL", "Email"
     FILE = "FILE", "File"
+    FORMULA = "FORMULA", "Formula"
 
 
 class RelationTypeEnum(models.TextChoices):
@@ -57,6 +58,9 @@ class IssueProperty(ChangeTrackerMixin, WorkspaceBaseModel):
     validation_rules = models.JSONField(blank=True, default=dict)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+    formula_config = models.OneToOneField(
+        "ee.FormulaProperty", on_delete=models.SET_NULL, related_name="property", null=True, blank=True
+    )
 
     TRACKED_FIELDS = [
         "is_required",
@@ -228,3 +232,15 @@ class IssuePropertyActivity(WorkspaceBaseModel):
 
     def __str__(self):
         return f"{self.property.display_name} - {self.issue_id}"
+
+
+class FormulaProperty(WorkspaceBaseModel):
+    formula = models.TextField()
+    example_output = models.TextField(blank=True, null=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        db_table = "formula_properties"
+
+    def __str__(self):
+        return f"{self.formula}"

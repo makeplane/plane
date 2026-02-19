@@ -24,6 +24,7 @@ class IntakeSetting(ProjectBaseModel):
     is_in_app_enabled = models.BooleanField(default=True)
     is_email_enabled = models.BooleanField(default=False)
     is_form_enabled = models.BooleanField(default=False)
+    is_trackable_link_enabled = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Intake Setting"
@@ -167,6 +168,9 @@ class IntakeResponsibility(ProjectBaseModel):
 
 class IntakeEmail(ProjectBaseModel):
     intake = models.ForeignKey("db.Intake", on_delete=models.CASCADE, related_name="intake_emails")
+    work_item = models.ForeignKey(
+        "db.Issue", on_delete=models.CASCADE, related_name="intake_work_item_emails", blank=True, null=True
+    )
     anchor = models.CharField(max_length=255, default=get_anchor, unique=True, db_index=True)
     is_disabled = models.BooleanField(default=False)
 

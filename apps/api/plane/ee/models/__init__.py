@@ -16,6 +16,7 @@ from .issue_properties import (
     IssuePropertyActivity,
     PropertyTypeEnum,
     RelationTypeEnum,
+    FormulaProperty,
 )
 
 from .draft import DraftIssuePropertyValue

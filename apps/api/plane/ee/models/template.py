@@ -452,6 +452,10 @@ class ProjectTemplate(BaseModel):
     epics = models.JSONField(default=dict)
     members = models.JSONField(default=dict)
     intake_settings = models.JSONField(default=dict)
+    milestones = models.JSONField(default=dict)
+    modules = models.JSONField(default=dict)
+    recurring_work_items = models.JSONField(default=dict)
+    automations = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["name", "workspace", "deleted_at"]
