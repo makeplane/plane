@@ -37,6 +37,7 @@ from plane.db.models import (
     IssueAssignee,
     IssueLink,
     IssueView,
+    State,
     Workspace,
     WorkspaceMember,
     ProjectMember,
@@ -213,6 +214,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         No correlated subqueries (sub_issues_count, link_count, attachment_count)
         — those run in Phase 2 on the small paginated ID set.
         No ArrayAgg annotations — batch-loaded after pagination.
+        Triage states excluded via subquery instead of JOIN to avoid the
+        states INNER JOIN that IssueManager adds to Phase 1.
         """
         custom_properties = filters.get("custom_properties", {})
         custom_filters = build_custom_property_q_objects(custom_properties)
@@ -227,6 +230,11 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                         is_active=True,
                     )
                 )
+            )
+            # Exclude triage states via subquery — avoids the INNER JOIN on states
+            # that IssueManager applies, which costs ~8ms on Phase 1 at scale.
+            .exclude(
+                state_id__in=State.objects.filter(is_triage=True).values("id")
             )
             # Phase 1: NO select_related — Exists filters add no JOIN columns,
             # no duplicate rows, no DISTINCT needed.
@@ -385,11 +393,10 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             r["label_ids"] = label_map.get(iid, [])
             r["assignee_ids"] = assignee_map.get(iid, [])
             r["custom_propertiess"] = cp_map.get(iid, [])
-            # Removed fields -- send explicit defaults so frontend can hide columns
+            # Intentionally deferred fields — not available in workspace list view
+            # TODO: implement batch-load for cycle_id and module_ids if needed
             r["cycle_id"] = None
             r["module_ids"] = []
-            r["estimate_point"] = None
-            r["worker_name"] = None
 
         return results_list
 
@@ -457,7 +464,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             "attachment_count", "link_count", "is_draft", "archived_at",
             "state__group", "trip_reference_number", "reference_number",
             "hub_code", "hub_name", "customer_code", "customer_name",
-            "vendor_name", "vendor_code", "worker_code", "business_type",
+            "vendor_name", "vendor_code", "worker_code", "worker_name",
+            "business_type", "estimate_point",
         ]
 
         has_m2m_group = group_by and group_by in FIELD_MAPPER
@@ -481,7 +489,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
             # ── Phase 2: detail query on the small ID set ──
             detail_qs_values = self._build_detail_queryset(page_ids).values(*detail_fields)
-            print(f"\n[WorkspaceViewIssues] Phase 2 SQL ({len(page_ids)} IDs):\n{detail_qs_values.query}\n")
+            logger.debug("[WorkspaceViewIssues] Phase 2 SQL (%d IDs):\n%s", len(page_ids), detail_qs_values.query)
             results = list(detail_qs_values)
             id_to_result = {r["id"]: r for r in results}
 
@@ -507,8 +515,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
             return self._enrich_issues_with_relations(results)
 
-        # Log Phase 1 SQL for analysis (print so it's visible regardless of log level)
-        print(f"\n[WorkspaceViewIssues] Phase 1 SQL (slug={slug}, group_by={group_by}, sub_group_by={sub_group_by}):\n{issue_queryset.query}\n")
+        logger.debug("[WorkspaceViewIssues] Phase 1 SQL (slug=%s, group_by=%s, sub_group_by=%s):\n%s", slug, group_by, sub_group_by, issue_queryset.query)
 
         if group_by:
             # Check group and sub group value paginate
