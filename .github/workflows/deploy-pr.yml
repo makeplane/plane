@@ -255,6 +255,52 @@ jobs:
             makeplane/plane-live-${{ needs.pre-requisites.outputs.image_repo }}:${{ needs.pre-requisites.outputs.release_version }}
             makeplane/plane-live-${{ needs.pre-requisites.outputs.image_repo }}:${{ steps.get_commit_short_hash.outputs.COMMIT_SHORT_HASH }}
 
+  branch_build_push_monitor:
+    name: Build-Push Monitor Docker Image
+    if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.type || github.event.client_payload.slash_command.args.named.type) == 'enterprise' }}
+    runs-on: ubuntu-22.04-4core
+    needs: [pre-requisites]
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pull_request || github.event.client_payload.pull_request.number }}/merge
+      - name: Get commit short hash
+        id: get_commit_short_hash
+        run: |
+          echo "COMMIT_SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Generate Keypair
+        run: |
+          echo "${{ secrets.DEFAULT_PRIME_PRIVATE_KEY }}" > private_key.pem
+          openssl rsa -in private_key.pem -pubout -out public_key.pem
+          cat public_key.pem
+
+          PRIVATE_KEY=$(cat private_key.pem | base64 -w 0)
+          echo "PRIVATE_KEY=${PRIVATE_KEY}" >> $GITHUB_ENV
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: ./apps/monitor
+          file: ./apps/monitor/Dockerfile
+          build-args: |
+            PRIVATE_KEY=${{ env.PRIVATE_KEY }}
+          tags: |
+            makeplane/plane-monitor-${{ needs.pre-requisites.outputs.image_repo }}:${{ needs.pre-requisites.outputs.release_version }}
+            makeplane/plane-monitor-${{ needs.pre-requisites.outputs.image_repo }}:${{ steps.get_commit_short_hash.outputs.COMMIT_SHORT_HASH }}
+
   branch_build_push_api:
     name: Build-Push API Server Docker Image
     runs-on: ubuntu-22.04-4core
@@ -388,9 +434,11 @@ jobs:
       branch_build_push_web,
       branch_build_push_space,
       branch_build_push_live,
+      branch_build_push_monitor,
       branch_build_push_api,
       branch_build_push_proxy
     ]
+    if: always() && needs.pre-requisites.result == 'success' && needs.branch_build_push_admin.result == 'success' && needs.branch_build_push_web.result == 'success' && needs.branch_build_push_space.result == 'success' && needs.branch_build_push_live.result == 'success' && (needs.branch_build_push_monitor.result == 'success' || needs.branch_build_push_monitor.result == 'skipped') && needs.branch_build_push_api.result == 'success' && needs.branch_build_push_proxy.result == 'success'
     runs-on: ubuntu-22.04-4core
     permissions:
       id-token: write
@@ -575,6 +623,7 @@ jobs:
               --set services.web.image=makeplane/plane-web-${{ needs.pre-requisites.outputs.image_repo }} \
               --set services.space.image=makeplane/plane-space-${{ needs.pre-requisites.outputs.image_repo }} \
               --set services.live.image=makeplane/plane-live-${{ needs.pre-requisites.outputs.image_repo }} \
+              --set services.monitor.image=makeplane/plane-monitor-${{ needs.pre-requisites.outputs.image_repo }} \
               --set services.admin.image=makeplane/plane-admin-${{ needs.pre-requisites.outputs.image_repo }} \
               --set services.proxy.image=makeplane/plane-proxy-${{ needs.pre-requisites.outputs.image_repo }} \
               --set services.postgres.local_setup=false \
