@@ -16,11 +16,13 @@ import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { AppHeader } from "@/components/core/app-header";
+import { PageHead } from "@/components/core/page-title";
 import { RecentActivityWidget } from "@/components/home/widgets/recents/index";
 import { StickiesWidget } from "@/components/stickies/widget";
 import { UserGreetingsView } from "@/components/user";
 // hooks
 import { useUser } from "@/hooks/store/user/user-user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import type { Route } from "./+types/page";
 import { PagesAppDashboardHeader } from "./header";
@@ -30,11 +32,15 @@ export default function WorkspacePagesPage({ params }: Route.ComponentProps) {
   const { workspaceSlug } = params;
   // store hooks
   const { data: currentUser } = useUser();
+  const { currentWorkspace } = useWorkspace();
+  // derived values
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Wiki` : undefined;
 
   return (
     <>
       <AppHeader header={<PagesAppDashboardHeader />} />
       <ContentWrapper className={cn("gap-6 bg-surface-1 max-w-[800px] mx-auto scrollbar-hide px-page-x lg:px-0")}>
+        <PageHead title={pageTitle} />
         {currentUser && <UserGreetingsView user={currentUser} />}
         <div className="size-full divide-y-[1px] divide-subtle">
           <div className="py-4">
