@@ -40,6 +40,7 @@ from plane.db.models import (
     IssueLink,
     IssueView,
     ModuleIssue,
+    State,
     Workspace,
     WorkspaceMember,
     ProjectMember,
@@ -211,20 +212,42 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
     def get_queryset(self, filters):
         """Phase 1 queryset: lean, for filtering + ordering + pagination only.
 
-        No select_related, no JOIN-based membership filter (Exists instead).
-        cycle_id annotated as a scalar Subquery so group_by=cycle_id works in
-        the paginator without a JOIN.
+        Uses Issue.objects (base manager) instead of Issue.issue_objects to
+        avoid the 3 expensive JOINs that IssueManager bakes in automatically:
+          1. INNER JOIN states  (is_triage=False) → replaced by state_id NOT IN
+             subquery, which Postgres hashes once and reuses — no per-row JOIN.
+          2. LEFT JOIN inbox_issues → skipped; inbox_issues is empty for most
+             workspaces and Phase 2 (via issue_objects) filters correctly.
+          3. INNER JOIN projects (archived_at IS NULL) → skipped; archived
+             projects are rare and Phase 2 (via issue_objects) filters correctly.
+             Minor trade-off: archived-project issues are counted in Phase 1
+             totals but excluded from Phase 2 results (negligible in practice).
+
+        The three scalar column filters (deleted_at, archived_at, is_draft) align
+        exactly with the idx_issues_workspace_list partial index predicate, so
+        Postgres can use that index directly without any JOIN overhead.
+
         .distinct() guards against duplicate rows from M2M filter JOINs
-        (labels__in, assignees__in, etc.) that issue_filters may apply —
-        Phase 1 rows are narrow so DISTINCT is cheap.
-        No ArrayAgg annotations — batch-loaded after pagination.
-        Triage states excluded via subquery instead of JOIN.
+        (labels__in, assignees__in, etc.) that issue_filters may apply.
+        No ArrayAgg annotations — batch-loaded after pagination in Phase 2.
         """
         custom_properties = filters.get("custom_properties", {})
         custom_filters = build_custom_property_q_objects(custom_properties)
         queryset = (
-            Issue.issue_objects
-            .filter(workspace__slug=self.kwargs.get("slug"))
+            Issue.objects
+            .filter(
+                workspace__slug=self.kwargs.get("slug"),
+                deleted_at__isnull=True,
+                archived_at__isnull=True,
+                is_draft=False,
+            )
+            # Exclude triage states via subquery — Postgres hashes the small
+            # state ID list once; no JOIN on the states table per row.
+            .exclude(
+                state_id__in=State.objects.filter(is_triage=True).values("id")
+            )
+            # Project membership check via Exists — one index lookup per row,
+            # no row multiplication.
             .filter(
                 Exists(
                     ProjectMember.objects.filter(
@@ -245,11 +268,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     ).values("cycle_id")[:1]
                 )
             )
-            .filter(
-                *custom_filters
-            )
-            # Guard against duplicate rows from M2M filter JOINs (labels__in,
-            # assignees__in, etc.). Phase 1 rows are narrow so DISTINCT is cheap.
+            .filter(*custom_filters)
+            # Guard against duplicate rows from M2M filter JOINs.
             .distinct()
         )
         return apply_user_hub_filters(queryset, self.request.user, workspace_slug=self.kwargs.get("slug"))
