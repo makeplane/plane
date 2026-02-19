@@ -40,7 +40,6 @@ from plane.db.models import (
     IssueLink,
     IssueView,
     ModuleIssue,
-    State,
     Workspace,
     WorkspaceMember,
     ProjectMember,
@@ -235,11 +234,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     )
                 )
             )
-            # Exclude triage states via subquery — avoids the INNER JOIN on states
-            # that IssueManager applies, which costs ~8ms on Phase 1 at scale.
-            .exclude(
-                state_id__in=State.objects.filter(is_triage=True).values("id")
-            )
             # Annotate cycle_id so the paginator can partition by it when
             # group_by=cycle_id. Uses a cheap scalar subquery — one index scan
             # on cycle_issues(issue_id), runs only on the Phase 1 candidate set.
@@ -395,7 +389,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         # assignee_ids
         assignee_map = defaultdict(list)
         for iid, aid in IssueAssignee.objects.filter(
-            issue_id__in=issue_ids, deleted_at__isnull=True
+            issue_id__in=issue_ids,
+            deleted_at__isnull=True,
+            project_member__is_active=True,
         ).values_list("issue_id", "assignee_id"):
             assignee_map[iid].append(aid)
 
@@ -416,7 +412,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         ).values_list("issue_id", "cycle_id"):
             cycle_map.setdefault(iid, cid)
 
-        # custom_propertiess
+        # custom_properties
         cp_map = defaultdict(list)
         for row in IssueCustomProperty.objects.filter(
             issue_id__in=issue_ids, key__isnull=False
@@ -429,7 +425,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             r["assignee_ids"] = assignee_map.get(iid, [])
             r["module_ids"] = module_map.get(iid, [])
             r["cycle_id"] = cycle_map.get(iid)
-            r["custom_propertiess"] = cp_map.get(iid, [])
+            r["custom_properties"] = cp_map.get(iid, [])
 
         return results_list
 
@@ -501,7 +497,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             "state__group", "trip_reference_number", "reference_number",
             "hub_code", "hub_name", "customer_code", "customer_name",
             "vendor_name", "vendor_code", "worker_code", "worker_name",
-            "business_type", "estimate_point",
+            "business_type", "estimate_point", "source", "type_id",
         ]
 
         has_m2m_group = group_by and group_by in FIELD_MAPPER
