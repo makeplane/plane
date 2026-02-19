@@ -107,27 +107,17 @@ export function Layout({ children }: { children: ReactNode }) {
         <Links />
       </head>
       <body suppressHydrationWarning>
-        <ThemeProvider
-          attribute="data-theme"
-          storageKey="theme"
-          themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]}
-          defaultTheme="system"
-          enableSystem
-          enableColorScheme
-          disableTransitionOnChange
-        >
-          <div id="context-menu-portal" />
-          <div id="editor-portal" />
-          {children}
-          <Scripts />
-          {!!isSessionRecorderEnabled && process.env.VITE_SESSION_RECORDER_KEY && (
-            <script
-              id="clarity-tracking"
-              src={clarityTrackingScript}
-              data-clarity-key={process.env.VITE_SESSION_RECORDER_KEY}
-            />
-          )}
-        </ThemeProvider>
+        <div id="context-menu-portal" />
+        <div id="editor-portal" />
+        {children}
+        <Scripts />
+        {!!isSessionRecorderEnabled && process.env.VITE_SESSION_RECORDER_KEY && (
+          <script
+            id="clarity-tracking"
+            src={clarityTrackingScript}
+            data-clarity-key={process.env.VITE_SESSION_RECORDER_KEY}
+          />
+        )}
       </body>
     </html>
   );
@@ -186,22 +176,32 @@ export default function Root() {
   }, []);
 
   return (
-    <AppProvider>
-      <div
-        className={cn(
-          "h-screen w-full overflow-hidden bg-canvas relative flex flex-col transition-opacity duration-300 ease-out",
-          isContentVisible ? "opacity-100" : "opacity-0",
-          "desktop-app-container"
-        )}
-      >
-        <GetMobileApp />
-        {/* free trial banner */}
-        <TrialBanner />
-        <main className="w-full h-full overflow-hidden relative">
-          <Outlet />
-        </main>
-      </div>
-    </AppProvider>
+    <ThemeProvider
+      attribute="data-theme"
+      storageKey="theme"
+      themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]}
+      defaultTheme="system"
+      enableSystem
+      enableColorScheme
+      disableTransitionOnChange
+    >
+      <AppProvider>
+        <div
+          className={cn(
+            "h-screen w-full overflow-hidden bg-canvas relative flex flex-col transition-opacity duration-300 ease-out",
+            isContentVisible ? "opacity-100" : "opacity-0",
+            "desktop-app-container"
+          )}
+        >
+          <GetMobileApp />
+          {/* free trial banner */}
+          <TrialBanner />
+          <main className="w-full h-full overflow-hidden relative">
+            <Outlet />
+          </main>
+        </div>
+      </AppProvider>
+    </ThemeProvider>
   );
 }
 
