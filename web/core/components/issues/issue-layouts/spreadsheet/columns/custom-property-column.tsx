@@ -15,7 +15,7 @@ type TCustomProperty = {
 
 export const SpreadsheetCustomPropertiesColumn: React.FC<Props> = observer((props) => {
   const { issue, property } = props;
-  const customProperties: TCustomProperty[] = issue?.custom_propertiess ?? [];
+  const customProperties: TCustomProperty[] = issue?.custom_properties ?? [];
   const propertyValue = customProperties.find((item: TCustomProperty) => item.hasOwnProperty(property))?.[property] ?? "N/A";
 
   return (
