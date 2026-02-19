@@ -11,22 +11,19 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
+
 import { Separator } from "./separator";
 
-const meta = {
-  title: "Components/Separator",
+const meta = preview.meta({
   component: Separator,
   parameters: {
     layout: "centered",
   },
-} satisfies Meta<typeof Separator>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-  render() {
+export const Default = meta.story({
+  render(_args) {
     return (
       <div className="w-[300px] space-y-4">
         <div>Content Above</div>
@@ -35,10 +32,10 @@ export const Default: Story = {
       </div>
     );
   },
-};
+});
 
-export const Vertical: Story = {
-  render() {
+export const Vertical = meta.story({
+  render(_args) {
     return (
       <div className="flex h-[100px] items-center space-x-4">
         <div>Left Content</div>
@@ -47,10 +44,10 @@ export const Vertical: Story = {
       </div>
     );
   },
-};
+});
 
-export const WithinContainer: Story = {
-  render() {
+export const WithinContainer = meta.story({
+  render(_args) {
     return (
       <div className="w-[300px] rounded-lg border p-6 space-y-4">
         <div className="space-y-2">
@@ -65,4 +62,4 @@ export const WithinContainer: Story = {
       </div>
     );
   },
-};
+});

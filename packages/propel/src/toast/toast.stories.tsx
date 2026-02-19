@@ -11,177 +11,174 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Toast, ToastStatic, setToast, updateToast, setPromiseToast, TOAST_TYPE } from "./toast";
+import preview from "#.storybook/preview";
+import { expect, screen } from "storybook/test";
+import { Toast, setToast, updateToast, setPromiseToast, dismissToast, TOAST_TYPE } from "./toast";
+import type { ToastProps } from "./toast";
 
-const meta = {
-  title: "Components/Toast",
+const meta = preview.type<{ parameters: { toast: ToastProps } }>().meta({
   component: Toast,
   parameters: {
     layout: "centered",
+    toast: { theme: "light" } satisfies ToastProps,
   },
-  args: {
-    theme: "light",
-  },
-} satisfies Meta<typeof Toast>;
+  decorators: [
+    (Story, { parameters }: { parameters: { toast?: ToastProps } }) => {
+      const { toast } = parameters;
+      return (
+        <>
+          {toast && <Toast {...toast} />}
+          <Story />
+        </>
+      );
+    },
+  ],
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Provider: Story = {
+export const Success = meta.story({
   render() {
     return (
-      <div>
-        <Toast theme="light" />
-        <div className="space-y-2">
-          <p className="text-13 text-gray-600">
-            Toast provider is required to display toasts. It should be added to your app root.
-          </p>
-          <code className="block rounded-sm bg-gray-100 p-2 text-11">{`<Toast theme="light" />`}</code>
-        </div>
-      </div>
+      <button
+        onClick={() =>
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Success!",
+            message: "Your changes have been saved successfully.",
+          })
+        }
+        className="rounded-sm bg-success-primary px-4 py-2 text-13 text-on-color hover:bg-success-primary/90"
+      >
+        Show Success Toast
+      </button>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Show Success Toast" }));
+    await expect(await screen.findByText("Success!")).toBeVisible();
+  },
+});
 
-export const Success: Story = {
+export const Error = meta.story({
   render() {
     return (
-      <>
-        <Toast theme="light" />
-        <button
-          onClick={() =>
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "Success!",
-              message: "Your changes have been saved successfully.",
-            })
-          }
-          className="rounded-sm bg-success-primary px-4 py-2 text-13 text-on-color hover:bg-success-primary/90"
-        >
-          Show Success Toast
-        </button>
-      </>
+      <button
+        onClick={() =>
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error",
+            message: "Something went wrong. Please try again.",
+          })
+        }
+        className="rounded-sm bg-danger-primary px-4 py-2 text-13 text-on-color hover:bg-danger-primary/90"
+      >
+        Show Error Toast
+      </button>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Show Error Toast" }));
+    await expect(await screen.findByText("Error")).toBeVisible();
+  },
+});
 
-export const Error: Story = {
+export const Warning = meta.story({
   render() {
     return (
-      <>
-        <Toast theme="light" />
-        <button
-          onClick={() =>
-            setToast({
-              type: TOAST_TYPE.ERROR,
-              title: "Error",
-              message: "Something went wrong. Please try again.",
-            })
-          }
-          className="rounded-sm bg-danger-primary px-4 py-2 text-13 text-on-color hover:bg-danger-primary/90"
-        >
-          Show Error Toast
-        </button>
-      </>
+      <button
+        onClick={() =>
+          setToast({
+            type: TOAST_TYPE.WARNING,
+            title: "Warning",
+            message: "This action cannot be undone.",
+          })
+        }
+        className="rounded-sm bg-warning-primary px-4 py-2 text-13 text-on-color hover:bg-warning-primary/90"
+      >
+        Show Warning Toast
+      </button>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Show Warning Toast" }));
+    await expect(await screen.findByText("Warning")).toBeVisible();
+  },
+});
 
-export const Warning: Story = {
+export const Info = meta.story({
   render() {
     return (
-      <>
-        <Toast theme="light" />
-        <button
-          onClick={() =>
-            setToast({
-              type: TOAST_TYPE.WARNING,
-              title: "Warning",
-              message: "This action cannot be undone.",
-            })
-          }
-          className="rounded-sm bg-warning-primary px-4 py-2 text-13 text-on-color hover:bg-warning-primary/90"
-        >
-          Show Warning Toast
-        </button>
-      </>
+      <button
+        onClick={() =>
+          setToast({
+            type: TOAST_TYPE.INFO,
+            title: "Information",
+            message: "Here's some helpful information for you.",
+          })
+        }
+        className="rounded-sm bg-accent-primary px-4 py-2 text-13 text-on-color hover:bg-accent-primary/90"
+      >
+        Show Info Toast
+      </button>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Show Info Toast" }));
+    await expect(await screen.findByText("Information")).toBeVisible();
+  },
+});
 
-export const Info: Story = {
+export const Loading = meta.story({
   render() {
     return (
-      <>
-        <Toast theme="light" />
-        <button
-          onClick={() =>
-            setToast({
-              type: TOAST_TYPE.INFO,
-              title: "Information",
-              message: "Here's some helpful information for you.",
-            })
-          }
-          className="rounded-sm bg-accent-primary px-4 py-2 text-13 text-on-color hover:bg-accent-primary/90"
-        >
-          Show Info Toast
-        </button>
-      </>
+      <button
+        onClick={() =>
+          setToast({
+            type: TOAST_TYPE.LOADING,
+            title: "Loading...",
+          })
+        }
+        className="rounded-sm bg-layer-2 border border-subtle px-4 py-2 text-13 text-primary hover:bg-layer-1"
+      >
+        Show Loading Toast
+      </button>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Show Loading Toast" }));
+    await expect(await screen.findByText("Loading...")).toBeVisible();
+  },
+});
 
-export const Loading: Story = {
+export const WithActionItems = meta.story({
   render() {
     return (
-      <>
-        <Toast theme="light" />
-        <button
-          onClick={() =>
-            setToast({
-              type: TOAST_TYPE.LOADING,
-              title: "Loading...",
-            })
-          }
-          className="rounded-sm bg-layer-2 border border-subtle px-4 py-2 text-13 text-primary hover:bg-layer-1"
-        >
-          Show Loading Toast
-        </button>
-      </>
+      <button
+        onClick={() =>
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "File uploaded",
+            message: "Your file has been uploaded successfully.",
+            actionItems: (
+              <>
+                <button className="text-13 font-medium text-primary hover:text-secondary">Button</button>
+                <button className="text-13 font-medium text-primary hover:text-secondary">Button</button>
+              </>
+            ),
+          })
+        }
+        className="rounded-sm bg-success-primary px-4 py-2 text-13 text-on-color hover:bg-success-primary/90"
+      >
+        Show Toast with Action
+      </button>
     );
   },
-};
-
-export const WithActionItems: Story = {
-  render() {
-    return (
-      <>
-        <Toast theme="light" />
-        <button
-          onClick={() =>
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "File uploaded",
-              message: "Your file has been uploaded successfully.",
-              actionItems: (
-                <>
-                  <button className="text-13 font-medium text-primary hover:text-secondary">Button</button>
-                  <button className="text-13 font-medium text-primary hover:text-secondary">Button</button>
-                </>
-              ),
-            })
-          }
-          className="rounded-sm bg-success-primary px-4 py-2 text-13 text-on-color hover:bg-success-primary/90"
-        >
-          Show Toast with Action
-        </button>
-      </>
-    );
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Show Toast with Action" }));
+    await expect(await screen.findByText("File uploaded")).toBeVisible();
   },
-};
+});
 
-export const UpdateToast: Story = {
+export const UpdateToast = meta.story({
   render() {
     const handleUpdate = () => {
       const id = setToast({
@@ -199,26 +196,25 @@ export const UpdateToast: Story = {
     };
 
     return (
-      <>
-        <Toast theme="light" />
-        <button
-          onClick={handleUpdate}
-          className="rounded-sm bg-accent-primary px-4 py-2 text-13 text-on-color hover:bg-accent-primary/90"
-        >
-          Update Toast After 2s
-        </button>
-      </>
+      <button
+        onClick={handleUpdate}
+        className="rounded-sm bg-accent-primary px-4 py-2 text-13 text-on-color hover:bg-accent-primary/90"
+      >
+        Update Toast After 2s
+      </button>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Update Toast After 2s" }));
+    await expect(await screen.findByText("Processing...")).toBeVisible();
+  },
+});
 
-export const PromiseToast: Story = {
+export const PromiseToast = meta.story({
   render() {
     const handlePromise = () => {
-      const promise = new Promise<{ name?: string; error?: string }>((resolve, reject) => {
-        setTimeout(() => {
-          Math.random() > 0.5 ? resolve({ name: "Success data" }) : reject({ error: "Failed" });
-        }, 2000);
+      const promise = new Promise<{ name?: string; error?: string }>((resolve) => {
+        setTimeout(() => resolve({ name: "Success data" }), 2000);
       });
 
       setPromiseToast(promise, {
@@ -235,481 +231,296 @@ export const PromiseToast: Story = {
     };
 
     return (
-      <>
-        <Toast theme="light" />
-        <button
-          onClick={handlePromise}
-          className="rounded-sm bg-accent-primary px-4 py-2 text-13 text-on-color hover:bg-accent-primary/90"
-        >
-          Show Promise Toast
-        </button>
-      </>
+      <button
+        onClick={handlePromise}
+        className="rounded-sm bg-accent-primary px-4 py-2 text-13 text-on-color hover:bg-accent-primary/90"
+      >
+        Show Promise Toast
+      </button>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Show Promise Toast" }));
+    await expect(await screen.findByText("Processing request...")).toBeVisible();
+  },
+});
 
-export const AllTypes: Story = {
+export const TitleOnly = meta.story({
   render() {
     return (
-      <>
-        <Toast theme="light" />
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() =>
-              setToast({
-                type: TOAST_TYPE.SUCCESS,
-                title: "Success",
-                message: "Operation successful",
-              })
-            }
-            className="rounded-sm bg-success-primary px-3 py-2 text-13 text-on-color hover:bg-success-primary/90"
-          >
-            Success
-          </button>
-          <button
-            onClick={() =>
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: "Error",
-                message: "Operation failed",
-              })
-            }
-            className="rounded-sm bg-danger-primary px-3 py-2 text-13 text-on-color hover:bg-danger-primary/90"
-          >
-            Error
-          </button>
-          <button
-            onClick={() =>
-              setToast({
-                type: TOAST_TYPE.WARNING,
-                title: "Warning",
-                message: "Please be careful",
-              })
-            }
-            className="rounded-sm bg-warning-primary px-3 py-2 text-13 text-on-color hover:bg-warning-primary/90"
-          >
-            Warning
-          </button>
-          <button
-            onClick={() =>
-              setToast({
-                type: TOAST_TYPE.INFO,
-                title: "Info",
-                message: "Here's some info",
-              })
-            }
-            className="rounded-sm bg-accent-primary px-3 py-2 text-13 text-on-color hover:bg-accent-primary/90"
-          >
-            Info
-          </button>
-          <button
-            onClick={() =>
-              setToast({
-                type: TOAST_TYPE.LOADING,
-                title: "Loading",
-              })
-            }
-            className="rounded-sm bg-layer-2 border border-subtle px-3 py-2 text-13 text-primary hover:bg-layer-1"
-          >
-            Loading
-          </button>
-        </div>
-      </>
-    );
-  },
-};
-
-export const MultipleToasts: Story = {
-  render() {
-    return (
-      <>
-        <Toast theme="light" />
-        <button
-          onClick={() => {
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "First toast",
-              message: "This is the first toast",
-            });
-            setTimeout(() => {
-              setToast({
-                type: TOAST_TYPE.INFO,
-                title: "Second toast",
-                message: "This is the second toast",
-              });
-            }, 500);
-            setTimeout(() => {
-              setToast({
-                type: TOAST_TYPE.WARNING,
-                title: "Third toast",
-                message: "This is the third toast",
-              });
-            }, 1000);
-          }}
-          className="rounded-sm bg-accent-primary px-4 py-2 text-13 text-on-color hover:bg-accent-primary/90"
-        >
-          Show Multiple Toasts
-        </button>
-      </>
-    );
-  },
-};
-
-export const TitleOnly: Story = {
-  render() {
-    return (
-      <>
-        <Toast theme="light" />
-        <button
-          onClick={() =>
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "Saved!",
-            })
-          }
-          className="rounded-sm bg-success-primary px-4 py-2 text-13 text-on-color hover:bg-success-primary/90"
-        >
-          Show Title Only
-        </button>
-      </>
-    );
-  },
-};
-
-export const LongMessage: Story = {
-  render() {
-    return (
-      <>
-        <Toast theme="light" />
-        <button
-          onClick={() =>
-            setToast({
-              type: TOAST_TYPE.INFO,
-              title: "Important Information",
-              message:
-                "This is a longer message that provides more detailed information about what happened and what the user should do next.",
-            })
-          }
-          className="rounded-sm bg-accent-primary px-4 py-2 text-13 text-on-color hover:bg-accent-primary/90"
-        >
-          Show Long Message
-        </button>
-      </>
-    );
-  },
-};
-
-// ========== Static Variants ==========
-
-export const StaticVariants: Story = {
-  render() {
-    return (
-      <div className="grid grid-cols-1 gap-4">
-        <div>
-          <p className="text-13 text-secondary mb-2 font-medium">All toast variants (static):</p>
-        </div>
-        <div className="flex flex-col gap-3">
-          <ToastStatic type={TOAST_TYPE.SUCCESS} title="Success" message="Your changes have been saved successfully." />
-          <ToastStatic type={TOAST_TYPE.ERROR} title="Error" message="Something went wrong. Please try again." />
-          <ToastStatic type={TOAST_TYPE.WARNING} title="Warning" message="This action cannot be undone." />
-          <ToastStatic type={TOAST_TYPE.INFO} title="Information" message="Here's some helpful information for you." />
-          <ToastStatic type={TOAST_TYPE.LOADING} title="Loading..." />
-        </div>
-      </div>
-    );
-  },
-};
-
-export const StaticSuccess: Story = {
-  render() {
-    return (
-      <ToastStatic
-        type={TOAST_TYPE.SUCCESS}
-        title="Changes saved"
-        message="Your changes have been saved successfully."
-      />
-    );
-  },
-};
-
-export const StaticError: Story = {
-  render() {
-    return <ToastStatic type={TOAST_TYPE.ERROR} title="Upload failed" message="Failed to upload file. Try again." />;
-  },
-};
-
-export const StaticWarning: Story = {
-  render() {
-    return (
-      <ToastStatic
-        type={TOAST_TYPE.WARNING}
-        title="Unsaved changes"
-        message="You have unsaved changes. Save before leaving."
-      />
-    );
-  },
-};
-
-export const StaticInfo: Story = {
-  render() {
-    return (
-      <ToastStatic
-        type={TOAST_TYPE.INFO}
-        title="New feature available"
-        message="Check out our latest feature in settings."
-      />
-    );
-  },
-};
-
-export const StaticLoading: Story = {
-  render() {
-    return <ToastStatic type={TOAST_TYPE.LOADING} title="Processing your request..." />;
-  },
-};
-
-export const StaticWithActions: Story = {
-  render() {
-    return (
-      <ToastStatic
-        type={TOAST_TYPE.SUCCESS}
-        title="File uploaded"
-        message="Your file has been uploaded successfully."
-        actionItems={
-          <>
-            <button className="text-13 font-medium text-primary hover:text-secondary">Button</button>
-            <button className="text-13 font-medium text-primary hover:text-secondary">Button</button>
-          </>
+      <button
+        onClick={() =>
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Saved!",
+          })
         }
-      />
+        className="rounded-sm bg-success-primary px-4 py-2 text-13 text-on-color hover:bg-success-primary/90"
+      >
+        Show Title Only
+      </button>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Show Title Only" }));
+    await expect(await screen.findByText("Saved!")).toBeVisible();
+  },
+});
 
-export const StaticDarkMode: Story = {
+export const LongMessage = meta.story({
   render() {
     return (
-      <div className="flex flex-col gap-3 p-6 bg-canvas rounded-lg" data-theme="dark">
-        <p className="text-13 text-secondary mb-2 font-medium">Toast variants in dark mode:</p>
-        <ToastStatic
-          type={TOAST_TYPE.SUCCESS}
-          title="Success"
-          message="Operation completed successfully."
-          theme="dark"
-        />
-        <ToastStatic type={TOAST_TYPE.ERROR} title="Error" message="An error occurred." theme="dark" />
-        <ToastStatic type={TOAST_TYPE.WARNING} title="Warning" message="Please proceed with caution." theme="dark" />
-        <ToastStatic type={TOAST_TYPE.INFO} title="Information" message="Here's some useful info." theme="dark" />
-        <ToastStatic type={TOAST_TYPE.LOADING} title="Loading..." theme="dark" />
-      </div>
+      <button
+        onClick={() =>
+          setToast({
+            type: TOAST_TYPE.INFO,
+            title: "Important Information",
+            message:
+              "This is a longer message that provides more detailed information about what happened and what the user should do next.",
+          })
+        }
+        className="rounded-sm bg-accent-primary px-4 py-2 text-13 text-on-color hover:bg-accent-primary/90"
+      >
+        Show Long Message
+      </button>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Show Long Message" }));
+    await expect(await screen.findByText("Important Information")).toBeVisible();
+  },
+});
 
-// ========== Design Tokens Documentation ==========
-
-export const DesignTokens: Story = {
+export const DarkTheme = meta.story({
+  parameters: {
+    toast: { theme: "dark" },
+  },
   render() {
     return (
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-16 font-semibold text-primary mb-2">Toast Design Tokens</h2>
-          <p className="text-13 text-secondary">
-            The toast component uses semantic design tokens from the Plane design system.
-          </p>
-        </div>
-
-        <div>
-          <h3 className="text-14 font-semibold text-primary mb-3">Token Mapping by Variant</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-11 border border-subtle rounded-lg">
-              <thead>
-                <tr className="bg-layer-1">
-                  <th className="text-left px-3 py-2 font-semibold text-primary border-b border-subtle">Variant</th>
-                  <th className="text-left px-3 py-2 font-semibold text-primary border-b border-subtle">Title Text</th>
-                  <th className="text-left px-3 py-2 font-semibold text-primary border-b border-subtle">Icon BG</th>
-                  <th className="text-left px-3 py-2 font-semibold text-primary border-b border-subtle">Toast BG</th>
-                  <th className="text-left px-3 py-2 font-semibold text-primary border-b border-subtle">Border</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-subtle">
-                  <td className="px-3 py-2 font-medium text-primary">Success</td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-primary</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-success-primary</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-surface-1</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">border-subtle</code>
-                  </td>
-                </tr>
-                <tr className="border-b border-subtle">
-                  <td className="px-3 py-2 font-medium text-primary">Error</td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-primary</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-danger-primary</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-surface-1</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">border-subtle</code>
-                  </td>
-                </tr>
-                <tr className="border-b border-subtle">
-                  <td className="px-3 py-2 font-medium text-primary">Warning</td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-primary</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-warning-primary</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-surface-1</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">border-subtle</code>
-                  </td>
-                </tr>
-                <tr className="border-b border-subtle">
-                  <td className="px-3 py-2 font-medium text-primary">Info</td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-primary</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-accent-primary</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-surface-1</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">border-subtle</code>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-2 font-medium text-primary">Loading</td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-primary</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-layer-2</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">bg-surface-1</code>
-                  </td>
-                  <td className="px-3 py-2">
-                    <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">border-subtle</code>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <h3 className="text-14 font-semibold text-primary mb-3">Typography</h3>
-            <ul className="space-y-2 text-12 text-secondary">
-              <li>
-                <span className="font-medium text-primary">Title:</span>{" "}
-                <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-14 font-semibold</code>
-              </li>
-              <li>
-                <span className="font-medium text-primary">Message:</span>{" "}
-                <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-13</code>
-              </li>
-              <li>
-                <span className="font-medium text-primary">Message Color:</span>{" "}
-                <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-secondary</code>
-              </li>
-              <li>
-                <span className="font-medium text-primary">Action Button:</span>{" "}
-                <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-13 font-medium</code>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-14 font-semibold text-primary mb-3">Dimensions & Styling</h3>
-            <ul className="space-y-2 text-12 text-secondary">
-              <li>
-                <span className="font-medium text-primary">Width:</span> 350px
-              </li>
-              <li>
-                <span className="font-medium text-primary">Padding:</span> 16px (p-4)
-              </li>
-              <li>
-                <span className="font-medium text-primary">Border Radius:</span> 8px (rounded-lg)
-              </li>
-              <li>
-                <span className="font-medium text-primary">Shadow:</span>{" "}
-                <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">shadow-raised-200</code>
-              </li>
-              <li>
-                <span className="font-medium text-primary">Border Width:</span> 1px
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div>
-          <h3 className="text-14 font-semibold text-primary mb-3">Icon Specifications</h3>
-          <ul className="space-y-2 text-12 text-secondary">
-            <li>
-              <span className="font-medium text-primary">Icon Size:</span> 20x20px
-            </li>
-            <li>
-              <span className="font-medium text-primary">Icon Stroke Width:</span> 2px
-            </li>
-            <li>
-              <span className="font-medium text-primary">Icon Container:</span> 40x40px circular (w-10 h-10
-              rounded-full)
-            </li>
-            <li>
-              <span className="font-medium text-primary">Icon Color:</span>{" "}
-              <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">text-on-color</code>
-            </li>
-            <li>
-              <span className="font-medium text-primary">Icon Background:</span>{" "}
-              <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">
-                bg-{"{"}variant{"}"}-primary
-              </code>
-            </li>
-            <li>
-              <span className="font-medium text-primary">Close Icon Size:</span> 16x16px
-            </li>
-            <li>
-              <span className="font-medium text-primary">Close Icon Color:</span>{" "}
-              <code className="text-10 bg-layer-1 px-1.5 py-0.5 rounded">
-                text-icon-secondary hover:text-icon-tertiary
-              </code>
-            </li>
-          </ul>
-        </div>
-
-        <div className="bg-layer-1 p-4 rounded-lg">
-          <h3 className="text-14 font-semibold text-primary mb-2">Visual Examples</h3>
-          <p className="text-12 text-secondary mb-4">See how the tokens are applied across all toast variants:</p>
-          <div className="flex flex-col gap-3">
-            <ToastStatic
-              type={TOAST_TYPE.SUCCESS}
-              title="Success"
-              message="Your changes have been saved successfully."
-            />
-            <ToastStatic type={TOAST_TYPE.ERROR} title="Error" message="Something went wrong. Please try again." />
-            <ToastStatic type={TOAST_TYPE.WARNING} title="Warning" message="This action cannot be undone." />
-            <ToastStatic type={TOAST_TYPE.INFO} title="Information" message="Here's some helpful information." />
-            <ToastStatic type={TOAST_TYPE.LOADING} title="Loading..." />
-          </div>
-        </div>
-      </div>
+      <button
+        onClick={() =>
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Dark Theme Toast",
+            message: "This toast uses dark theme.",
+          })
+        }
+        className="rounded-sm bg-gray-800 px-4 py-2 text-13 text-on-color"
+      >
+        Show Dark Toast
+      </button>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Show Dark Toast" }));
+    await expect(await screen.findByText("Dark Theme Toast")).toBeVisible();
+  },
+});
+
+export const DismissToast = meta.story({
+  render() {
+    const handleDismiss = () => {
+      const id = setToast({
+        type: TOAST_TYPE.INFO,
+        title: "Will be dismissed",
+        message: "This toast will be dismissed programmatically.",
+      });
+      setTimeout(() => dismissToast(id), 1000);
+    };
+
+    return (
+      <button onClick={handleDismiss} className="rounded-sm bg-accent-primary px-4 py-2 text-13 text-on-color">
+        Show & Dismiss Toast
+      </button>
+    );
+  },
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Show & Dismiss Toast" }));
+    await expect(await screen.findByText("Will be dismissed")).toBeVisible();
+  },
+});
+
+export const PromiseToastError = meta.story({
+  render() {
+    const handleReject = () => {
+      const promise = new Promise<{ error: string }>((resolve) => {
+        setTimeout(() => resolve({ error: "Network timeout" }), 100);
+      });
+      setPromiseToast(promise, {
+        loading: "Sending request...",
+        success: {
+          title: "Request completed",
+          message: (data) => `Result: ${data.error}`,
+        },
+        error: {
+          title: "Request failed",
+        },
+      });
+    };
+    return (
+      <button onClick={handleReject} className="rounded-sm bg-danger-primary px-4 py-2 text-13 text-on-color">
+        Trigger Promise Toast
+      </button>
+    );
+  },
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Trigger Promise Toast" }));
+    await expect(await screen.findByText("Request completed")).toBeVisible();
+  },
+});
+
+export const DismissToastImmediate = meta.story({
+  render() {
+    const handleDismiss = () => {
+      const id = setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Quick dismiss",
+      });
+      dismissToast(id);
+    };
+    return (
+      <button onClick={handleDismiss} className="rounded-sm bg-accent-primary px-4 py-2 text-13 text-on-color">
+        Dismiss Immediately
+      </button>
+    );
+  },
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Dismiss Immediately" }));
+  },
+});
+
+export const LoadingDefaultTitle = meta.story({
+  render() {
+    return (
+      <button
+        onClick={() =>
+          setToast({
+            type: TOAST_TYPE.LOADING,
+          })
+        }
+        className="rounded-sm bg-layer-2 border border-subtle px-4 py-2 text-13 text-primary"
+      >
+        Show Loading No Title
+      </button>
+    );
+  },
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Show Loading No Title" }));
+    // covers `toastData.title ?? "Loading..."` branch where title is undefined
+    await expect(await screen.findByText("Loading...")).toBeVisible();
+  },
+});
+
+export const InteractWithToast = meta.story({
+  render() {
+    return (
+      <button
+        onClick={() =>
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Clickable toast",
+            message: "Try clicking me.",
+          })
+        }
+        className="rounded-sm bg-success-primary px-4 py-2 text-13 text-on-color"
+      >
+        Show Clickable Toast
+      </button>
+    );
+  },
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Show Clickable Toast" }));
+    const toastEl = await screen.findByText("Clickable toast");
+    // mousedown on the toast root to cover onMouseDown handler (lines 168-171)
+    const toastRoot = toastEl.closest("[class*='flex group']");
+    if (toastRoot) {
+      toastRoot.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+    }
+  },
+});
+
+export const PromiseToastSuccess = meta.story({
+  render() {
+    const handleSuccess = () => {
+      const promise = new Promise<{ name: string }>((resolve) => {
+        setTimeout(() => resolve({ name: "test" }), 100);
+      });
+      setPromiseToast(promise, {
+        success: {
+          title: "Promise succeeded!",
+          message: (data) => `Got: ${data.name}`,
+          actionItems: (data) => <button className="text-13 font-medium text-primary">{data.name}</button>,
+        },
+        error: {
+          title: "Failed",
+        },
+      });
+    };
+    return (
+      <button onClick={handleSuccess} className="rounded-sm bg-success-primary px-4 py-2 text-13 text-on-color">
+        Trigger Promise Success
+      </button>
+    );
+  },
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Trigger Promise Success" }));
+    // covers setPromiseToast success path with message and actionItems callbacks
+    await expect(await screen.findByText("Promise succeeded!")).toBeVisible();
+  },
+});
+
+export const PromiseWithActions = meta.story({
+  render() {
+    const handleSuccess = () => {
+      const promise = new Promise<{ name: string }>((resolve) => {
+        setTimeout(() => resolve({ name: "done" }), 100);
+      });
+      setPromiseToast(promise, {
+        success: {
+          title: "Completed with action",
+          message: (data) => `Result: ${data.name}`,
+          actionItems: (data) => <button className="text-13">{data.name}</button>,
+        },
+        error: {
+          title: "Failed",
+        },
+      });
+    };
+    return (
+      <button onClick={handleSuccess} className="rounded-sm bg-success-primary px-4 py-2 text-13 text-on-color">
+        Promise With Actions
+      </button>
+    );
+  },
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Promise With Actions" }));
+    await expect(await screen.findByText("Completed with action")).toBeVisible();
+  },
+});
+
+export const UpdateToLoading = meta.story({
+  render() {
+    const handleUpdate = () => {
+      const id = setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Initial toast",
+      });
+      setTimeout(() => {
+        updateToast(id, {
+          type: TOAST_TYPE.LOADING,
+          title: "Now loading...",
+        });
+      }, 100);
+    };
+    return (
+      <button onClick={handleUpdate} className="rounded-sm bg-accent-primary px-4 py-2 text-13 text-on-color">
+        Update To Loading
+      </button>
+    );
+  },
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Update To Loading" }));
+    // covers updateToast with LOADING type branch
+    await expect(await screen.findByText("Initial toast")).toBeVisible();
+  },
+});

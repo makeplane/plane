@@ -11,12 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
 import { File, Folder, Settings, User } from "lucide-react";
+import { expect } from "storybook/test";
 import { Command } from "./command";
 
-const meta = {
-  title: "Components/Command",
+const meta = preview.meta({
   component: Command,
   subcomponents: {
     CommandInput: Command.Input,
@@ -27,15 +27,15 @@ const meta = {
   parameters: {
     layout: "centered",
   },
-} satisfies Meta<typeof Command>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-  render() {
+export const Default = meta.story({
+  args: {
+    className: "w-96 rounded-lg border border-gray-200 p-2",
+  },
+  render(args) {
     return (
-      <Command className="w-96 rounded-lg border border-gray-200 p-2">
+      <Command {...args}>
         <Command.Input placeholder="Search..." className="h-9 w-full bg-transparent py-3 text-13 outline-none" />
         <Command.List className="max-h-80 overflow-auto py-2">
           <Command.Item className="cursor-pointer rounded-sm px-3 py-2 hover:bg-gray-100">Item 1</Command.Item>
@@ -46,12 +46,22 @@ export const Default: Story = {
       </Command>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await expect(canvas.getByText("Item 1")).toBeVisible();
+    await expect(canvas.getByText("Item 2")).toBeVisible();
+    await expect(canvas.getByText("Item 3")).toBeVisible();
+    const input = canvas.getByPlaceholderText("Search...");
+    await userEvent.type(input, "Item 1");
+  },
+});
 
-export const WithIcons: Story = {
-  render() {
+export const WithIcons = meta.story({
+  args: {
+    className: "w-96 rounded-lg border border-gray-200 p-2",
+  },
+  render(args) {
     return (
-      <Command className="w-96 rounded-lg border border-gray-200 p-2">
+      <Command {...args}>
         <Command.Input
           placeholder="Search files and folders..."
           className="h-9 w-full bg-transparent py-3 text-13 outline-none"
@@ -78,12 +88,15 @@ export const WithIcons: Story = {
       </Command>
     );
   },
-};
+});
 
-export const WithCategories: Story = {
-  render() {
+export const WithCategories = meta.story({
+  args: {
+    className: "w-96 rounded-lg border border-gray-200 p-2",
+  },
+  render(args) {
     return (
-      <Command className="w-96 rounded-lg border border-gray-200 p-2">
+      <Command {...args}>
         <Command.Input
           placeholder="Search commands..."
           className="h-9 w-full bg-transparent py-3 text-13 outline-none"
@@ -113,12 +126,15 @@ export const WithCategories: Story = {
       </Command>
     );
   },
-};
+});
 
-export const EmptyState: Story = {
-  render() {
+export const EmptyState = meta.story({
+  args: {
+    className: "w-96 rounded-lg border border-gray-200 p-2",
+  },
+  render(args) {
     return (
-      <Command className="w-96 rounded-lg border border-gray-200 p-2">
+      <Command {...args}>
         <Command.Input placeholder="Search..." className="h-9 w-full bg-transparent py-3 text-13 outline-none" />
         <Command.List className="max-h-80 overflow-auto py-2">{/* No items - will show empty state */}</Command.List>
         <Command.Empty className="py-6 text-center text-13 text-gray-500">
@@ -128,12 +144,15 @@ export const EmptyState: Story = {
       </Command>
     );
   },
-};
+});
 
-export const LongList: Story = {
-  render() {
+export const LongList = meta.story({
+  args: {
+    className: "w-96 rounded-lg border border-gray-200 p-2",
+  },
+  render(args) {
     return (
-      <Command className="w-96 rounded-lg border border-gray-200 p-2">
+      <Command {...args}>
         <Command.Input placeholder="Search items..." className="h-9 w-full bg-transparent py-3 text-13 outline-none" />
         <Command.List className="max-h-60 overflow-auto py-2">
           {Array.from({ length: 20 }, (_, i) => (
@@ -146,12 +165,15 @@ export const LongList: Story = {
       </Command>
     );
   },
-};
+});
 
-export const WithoutSearch: Story = {
-  render() {
+export const WithoutSearch = meta.story({
+  args: {
+    className: "w-96 rounded-lg border border-gray-200 p-2",
+  },
+  render(args) {
     return (
-      <Command className="w-96 rounded-lg border border-gray-200 p-2">
+      <Command {...args}>
         <Command.List className="max-h-80 overflow-auto py-2">
           <Command.Item className="flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2 hover:bg-gray-100">
             <User className="h-4 w-4" />
@@ -169,12 +191,15 @@ export const WithoutSearch: Story = {
       </Command>
     );
   },
-};
+});
 
-export const CustomStyling: Story = {
-  render() {
+export const CustomStyling = meta.story({
+  args: {
+    className: "w-96 rounded-lg border-2 border-blue-300 bg-blue-50 p-2 shadow-lg",
+  },
+  render(args) {
     return (
-      <Command className="w-96 rounded-lg border-2 border-blue-300 bg-blue-50 p-2 shadow-lg">
+      <Command {...args}>
         <Command.Input
           placeholder="Search with custom styling..."
           className="h-9 w-full bg-transparent py-3 text-13 text-blue-900 outline-none placeholder:text-blue-400"
@@ -194,12 +219,15 @@ export const CustomStyling: Story = {
       </Command>
     );
   },
-};
+});
 
-export const DisabledItems: Story = {
-  render() {
+export const DisabledItems = meta.story({
+  args: {
+    className: "w-96 rounded-lg border border-gray-200 p-2",
+  },
+  render(args) {
     return (
-      <Command className="w-96 rounded-lg border border-gray-200 p-2">
+      <Command {...args}>
         <Command.Input placeholder="Search..." className="h-9 w-full bg-transparent py-3 text-13 outline-none" />
         <Command.List className="max-h-80 overflow-auto py-2">
           <Command.Item className="cursor-pointer rounded-sm px-3 py-2 hover:bg-gray-100">Active Item 1</Command.Item>
@@ -212,4 +240,4 @@ export const DisabledItems: Story = {
       </Command>
     );
   },
-};
+});

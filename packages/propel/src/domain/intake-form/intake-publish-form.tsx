@@ -344,7 +344,9 @@ export function IntakePublishForm({
           </div>
 
           {/* Dynamic Property Fields */}
-          {properties.map((propertyConfig) => renderPropertyInput(propertyConfig))}
+          {properties.map((propertyConfig) => (
+            <React.Fragment key={propertyConfig.property.id}>{renderPropertyInput(propertyConfig)}</React.Fragment>
+          ))}
 
           {/* Attachments Field */}
           <div className="w-full">

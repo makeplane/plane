@@ -64,7 +64,6 @@ function MenuItem(props: TMenuItemProps) {
         className
       )}
       onClick={(e) => {
-        close();
         onClick?.(e);
         submenuContext?.closeSubmenu();
       }}

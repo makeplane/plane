@@ -11,12 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
 import { EmptyStateDetailed } from "./detailed-empty-state";
-import type { BaseEmptyStateCommonProps } from "./types";
 
-const meta: Meta<BaseEmptyStateCommonProps> = {
-  title: "Components/EmptyState/Detailed",
+const meta = preview.meta({
   component: EmptyStateDetailed,
   parameters: {
     layout: "centered",
@@ -82,13 +80,10 @@ const meta: Meta<BaseEmptyStateCommonProps> = {
       description: "Array of action buttons to display",
     },
   },
-};
-
-export default meta;
-type Story = StoryObj<BaseEmptyStateCommonProps>;
+});
 
 // Primary story - showcases the most common usage
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     assetKey: "epic",
     assetClassName: "w-40 h-45",
@@ -102,9 +97,9 @@ export const Default: Story = {
       },
     ],
   },
-};
+});
 
-export const WithSingleAction: Story = {
+export const WithSingleAction = meta.story({
   args: {
     assetKey: "project",
     assetClassName: "w-40 h-45",
@@ -118,9 +113,9 @@ export const WithSingleAction: Story = {
       },
     ],
   },
-};
+});
 
-export const WithMultipleActions: Story = {
+export const WithMultipleActions = meta.story({
   args: {
     assetKey: "module",
     assetClassName: "w-40 h-45",
@@ -139,18 +134,18 @@ export const WithMultipleActions: Story = {
       },
     ],
   },
-};
+});
 
-export const WithoutActions: Story = {
+export const WithoutActions = meta.story({
   args: {
     assetKey: "dashboard",
     assetClassName: "w-40 h-45",
     title: "No activity yet",
     description: "Your activity feed will show up here once you start using the platform.",
   },
-};
+});
 
-export const ErrorState: Story = {
+export const ErrorState = meta.story({
   args: {
     assetKey: "error-404",
     assetClassName: "w-40 h-45",
@@ -164,9 +159,9 @@ export const ErrorState: Story = {
       },
     ],
   },
-};
+});
 
-export const ServerErrorState: Story = {
+export const ServerErrorState = meta.story({
   name: "Error - Server",
   args: {
     assetKey: "server-error",
@@ -186,9 +181,9 @@ export const ServerErrorState: Story = {
       },
     ],
   },
-};
+});
 
-export const NoAccessState: Story = {
+export const NoAccessState = meta.story({
   name: "Access Denied",
   args: {
     assetKey: "no-access",
@@ -196,9 +191,9 @@ export const NoAccessState: Story = {
     title: "You don't have access",
     description: "Contact your workspace admin to request access to this resource.",
   },
-};
+});
 
-export const ArchivedState: Story = {
+export const ArchivedState = meta.story({
   name: "Archived Content",
   args: {
     assetKey: "archived-work-item",
@@ -206,9 +201,9 @@ export const ArchivedState: Story = {
     title: "No archived items",
     description: "Archived items will appear here when you archive them.",
   },
-};
+});
 
-export const CycleState: Story = {
+export const CycleState = meta.story({
   name: "Cycles",
   args: {
     assetKey: "cycle",
@@ -223,9 +218,9 @@ export const CycleState: Story = {
       },
     ],
   },
-};
+});
 
-export const ModuleState: Story = {
+export const ModuleState = meta.story({
   name: "Modules",
   args: {
     assetKey: "module",
@@ -240,9 +235,9 @@ export const ModuleState: Story = {
       },
     ],
   },
-};
+});
 
-export const ViewState: Story = {
+export const ViewState = meta.story({
   name: "Views",
   args: {
     assetKey: "view",
@@ -257,9 +252,9 @@ export const ViewState: Story = {
       },
     ],
   },
-};
+});
 
-export const PageState: Story = {
+export const PageState = meta.story({
   name: "Pages",
   args: {
     assetKey: "page",
@@ -274,10 +269,10 @@ export const PageState: Story = {
       },
     ],
   },
-};
+});
 
 // Using custom asset (for special cases)
-export const WithCustomAsset: Story = {
+export const WithCustomAsset = meta.story({
   name: "Custom Asset",
   args: {
     asset: (
@@ -296,13 +291,13 @@ export const WithCustomAsset: Story = {
       },
     ],
   },
-};
+});
 
 // Minimal example
-export const Minimal: Story = {
+export const Minimal = meta.story({
   name: "Minimal - Text Only",
   args: {
     title: "No data available",
     description: "Data will appear here once available.",
   },
-};
+});

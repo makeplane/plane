@@ -11,11 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
+
 import { ScrollArea } from "./scrollarea";
 
-const meta = {
-  title: "Components/ScrollArea",
+const meta = preview.meta({
   component: ScrollArea,
   parameters: {
     layout: "padded",
@@ -31,15 +31,15 @@ const meta = {
     scrollType: "always",
     orientation: "vertical",
   },
-} satisfies Meta<typeof ScrollArea>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
+  args: {
+    className: "h-64 w-80 border rounded-lg",
+  },
   render(args) {
     return (
-      <ScrollArea {...args} className="h-64 w-80 border rounded-lg">
+      <ScrollArea {...args}>
         <div className="p-4 space-y-4">
           <h3 className="text-16 font-semibold">Long Text Content</h3>
           <p>
@@ -64,13 +64,16 @@ export const Default: Story = {
       </ScrollArea>
     );
   },
-};
+});
 
-export const Sizes: Story = {
-  render() {
+export const Sizes = meta.story({
+  args: {
+    className: "h-48 w-80 border rounded-lg",
+  },
+  render(args) {
     const content = (
       <div className="p-4 space-y-2">
-        {[...Array(10)].map((_, i) => (
+        {Array.from({ length: 10 }, (_, i) => (
           <p key={i}>Line {i + 1}: This is some scrollable content to demonstrate different sizes.</p>
         ))}
       </div>
@@ -80,80 +83,96 @@ export const Sizes: Story = {
       <div className="flex flex-col gap-6">
         <div className="space-y-2">
           <div className="text-13 font-medium">Small</div>
-          <ScrollArea className="h-48 w-80 border rounded-lg" size="sm">
+          <ScrollArea {...args} size="sm">
             {content}
           </ScrollArea>
         </div>
         <div className="space-y-2">
           <div className="text-13 font-medium">Medium</div>
-          <ScrollArea className="h-48 w-80 border rounded-lg" size="md">
+          <ScrollArea {...args} size="md">
             {content}
           </ScrollArea>
         </div>
         <div className="space-y-2">
           <div className="text-13 font-medium">Large</div>
-          <ScrollArea className="h-48 w-80 border rounded-lg" size="lg">
+          <ScrollArea {...args} size="lg">
             {content}
           </ScrollArea>
         </div>
       </div>
     );
   },
-};
+});
 
-export const ScrollTypeAlways: Story = {
-  render() {
+export const ScrollTypeAlways = meta.story({
+  args: {
+    className: "h-64 w-80 border rounded-lg",
+    scrollType: "always",
+  },
+  render(args) {
     return (
-      <ScrollArea className="h-64 w-80 border rounded-lg" scrollType="always">
+      <ScrollArea {...args}>
         <div className="p-4 space-y-2">
           <h3 className="text-16 font-semibold">Always Visible Scrollbar</h3>
-          {[...Array(15)].map((_, i) => (
+          {Array.from({ length: 15 }, (_, i) => (
             <p key={i}>Line {i + 1}: The scrollbar is always visible.</p>
           ))}
         </div>
       </ScrollArea>
     );
   },
-};
+});
 
-export const ScrollTypeScroll: Story = {
-  render() {
+export const ScrollTypeScroll = meta.story({
+  args: {
+    className: "h-64 w-80 border rounded-lg",
+    scrollType: "scroll",
+  },
+  render(args) {
     return (
-      <ScrollArea className="h-64 w-80 border rounded-lg" scrollType="scroll">
+      <ScrollArea {...args}>
         <div className="p-4 space-y-2">
           <h3 className="text-16 font-semibold">Scroll to Show</h3>
           <p className="text-13 text-placeholder">Scrollbar appears when scrolling</p>
-          {[...Array(15)].map((_, i) => (
+          {Array.from({ length: 15 }, (_, i) => (
             <p key={i}>Line {i + 1}: Try scrolling to see the scrollbar appear.</p>
           ))}
         </div>
       </ScrollArea>
     );
   },
-};
+});
 
-export const ScrollTypeHover: Story = {
-  render() {
+export const ScrollTypeHover = meta.story({
+  args: {
+    className: "h-64 w-80 border rounded-lg",
+    scrollType: "hover",
+  },
+  render(args) {
     return (
-      <ScrollArea className="h-64 w-80 border rounded-lg" scrollType="hover">
+      <ScrollArea {...args}>
         <div className="p-4 space-y-2">
           <h3 className="text-16 font-semibold">Hover to Show</h3>
           <p className="text-13 text-placeholder">Scrollbar appears on hover</p>
-          {[...Array(15)].map((_, i) => (
+          {Array.from({ length: 15 }, (_, i) => (
             <p key={i}>Line {i + 1}: Hover over the area to see the scrollbar.</p>
           ))}
         </div>
       </ScrollArea>
     );
   },
-};
+});
 
-export const HorizontalScroll: Story = {
-  render() {
+export const HorizontalScroll = meta.story({
+  args: {
+    className: "h-32 w-96 border rounded-lg",
+    orientation: "horizontal",
+  },
+  render(args) {
     return (
-      <ScrollArea className="h-32 w-96 border rounded-lg" orientation="horizontal">
+      <ScrollArea {...args}>
         <div className="flex gap-4 p-4 w-[1200px]">
-          {[...Array(12)].map((_, i) => (
+          {Array.from({ length: 12 }, (_, i) => (
             <div key={i} className="flex-shrink-0 w-32 h-20 bg-layer-1 rounded-sm flex items-center justify-center">
               Item {i + 1}
             </div>
@@ -162,16 +181,19 @@ export const HorizontalScroll: Story = {
       </ScrollArea>
     );
   },
-};
+});
 
-export const BothDirections: Story = {
-  render() {
+export const BothDirections = meta.story({
+  args: {
+    className: "h-64 w-96 border rounded-lg",
+  },
+  render(args) {
     return (
-      <ScrollArea className="h-64 w-96 border rounded-lg">
+      <ScrollArea {...args}>
         <div className="w-[800px] p-4 space-y-2">
           <h3 className="text-16 font-semibold">Both Directions</h3>
           <p className="text-13 text-placeholder">Content scrolls both vertically and horizontally</p>
-          {[...Array(20)].map((_, i) => (
+          {Array.from({ length: 20 }, (_, i) => (
             <p key={i}>
               Line {i + 1}: This line is very long and extends beyond the container width to demonstrate horizontal
               scrolling along with vertical scrolling.
@@ -181,16 +203,19 @@ export const BothDirections: Story = {
       </ScrollArea>
     );
   },
-};
+});
 
-export const ListExample: Story = {
-  render() {
+export const ListExample = meta.story({
+  args: {
+    className: "h-80 w-96 border rounded-lg",
+  },
+  render(args) {
     return (
-      <ScrollArea className="h-80 w-96 border rounded-lg">
+      <ScrollArea {...args}>
         <div className="p-4">
           <h3 className="text-16 font-semibold mb-4">User List</h3>
           <div className="space-y-2">
-            {[...Array(25)].map((_, i) => (
+            {Array.from({ length: 25 }, (_, i) => (
               <div
                 key={i}
                 className="flex items-center gap-3 p-3 bg-layer-1 rounded-sm hover:bg-surface-2 cursor-pointer"
@@ -209,10 +234,13 @@ export const ListExample: Story = {
       </ScrollArea>
     );
   },
-};
+});
 
-export const CodeBlock: Story = {
-  render() {
+export const CodeBlock = meta.story({
+  args: {
+    className: "h-96 w-full max-w-2xl border rounded-lg bg-surface-1",
+  },
+  render(args) {
     const code = `function fibonacci(n) {
   if (n <= 1) return n;
 
@@ -245,21 +273,24 @@ async function fetchData() {
 }`;
 
     return (
-      <ScrollArea className="h-96 w-full max-w-2xl border rounded-lg bg-surface-1">
+      <ScrollArea {...args}>
         <pre className="p-4 text-13">
           <code>{code}</code>
         </pre>
       </ScrollArea>
     );
   },
-};
+});
 
-export const ChatMessages: Story = {
-  render() {
+export const ChatMessages = meta.story({
+  args: {
+    className: "h-96 w-full max-w-md border rounded-lg",
+  },
+  render(args) {
     return (
-      <ScrollArea className="h-96 w-full max-w-md border rounded-lg">
+      <ScrollArea {...args}>
         <div className="p-4 space-y-4">
-          {[...Array(20)].map((_, i) => (
+          {Array.from({ length: 20 }, (_, i) => (
             <div key={i} className={`flex ${i % 3 === 0 ? "justify-end" : "justify-start"}`}>
               <div
                 className={`max-w-[70%] p-3 rounded-lg ${i % 3 === 0 ? "bg-accent-primary text-on-color" : "bg-layer-1"}`}
@@ -273,12 +304,15 @@ export const ChatMessages: Story = {
       </ScrollArea>
     );
   },
-};
+});
 
-export const DataTable: Story = {
-  render() {
+export const DataTable = meta.story({
+  args: {
+    className: "h-96 w-full max-w-3xl border rounded-lg",
+  },
+  render(args) {
     return (
-      <ScrollArea className="h-96 w-full max-w-3xl border rounded-lg">
+      <ScrollArea {...args}>
         <table className="w-full">
           <thead className="bg-layer-1 sticky top-0">
             <tr>
@@ -289,7 +323,7 @@ export const DataTable: Story = {
             </tr>
           </thead>
           <tbody>
-            {[...Array(50)].map((_, i) => (
+            {Array.from({ length: 50 }, (_, i) => (
               <tr key={i} className="border-t border-subtle hover:bg-layer-1">
                 <td className="px-4 py-2">#{i + 1}</td>
                 <td className="px-4 py-2">User {i + 1}</td>
@@ -308,4 +342,4 @@ export const DataTable: Story = {
       </ScrollArea>
     );
   },
-};
+});

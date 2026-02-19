@@ -11,20 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useState } from "react";
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
+import { expect } from "storybook/test";
 import { ChevronDownIcon } from "../icons/arrows/chevron-down";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "./collapsible";
-import type { ComponentProps } from "react";
 
-/* -------------------------------------------------------------------------- */
-/*                                   Meta                                     */
-/* -------------------------------------------------------------------------- */
-
-type CollapsibleProps = ComponentProps<typeof Collapsible>;
-
-const meta: Meta<CollapsibleProps> = {
-  title: "Components/Collapsible",
+const meta = preview.meta({
   component: Collapsible,
   subcomponents: {
     CollapsibleTrigger,
@@ -33,19 +25,15 @@ const meta: Meta<CollapsibleProps> = {
   parameters: {
     layout: "centered",
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-/* -------------------------------------------------------------------------- */
-/*                               Uncontrolled                                 */
-/* -------------------------------------------------------------------------- */
-
-export const Default: Story = {
-  render() {
+export const Default = meta.story({
+  args: {
+    className: "w-96",
+  },
+  render(args) {
     return (
-      <Collapsible className="w-96">
+      <Collapsible {...args}>
         <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-gray-100 px-4 py-2 hover:bg-gray-200">
           <span className="font-semibold">Click to toggle</span>
           <ChevronDownIcon className="h-4 w-4 transition-transform group-data-[panel-open]:rotate-180" />
@@ -59,12 +47,23 @@ export const Default: Story = {
       </Collapsible>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    const trigger = canvas.getByText("Click to toggle");
+    await expect(trigger).toBeVisible();
+    await userEvent.click(trigger);
+    await expect(canvas.getByText("This is the collapsible content that can be shown or hidden.")).toBeVisible();
+    await userEvent.click(trigger);
+  },
+});
 
-export const DefaultOpen: Story = {
-  render() {
+export const DefaultOpen = meta.story({
+  args: {
+    defaultOpen: true,
+    className: "w-96",
+  },
+  render(args) {
     return (
-      <Collapsible defaultOpen className="w-96">
+      <Collapsible {...args}>
         <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-gray-100 px-4 py-2 hover:bg-gray-200">
           <span className="font-semibold">Default open</span>
           <ChevronDownIcon className="h-4 w-4 transition-transform group-data-[panel-open]:rotate-180" />
@@ -78,55 +77,38 @@ export const DefaultOpen: Story = {
       </Collapsible>
     );
   },
-};
+});
 
-/* -------------------------------------------------------------------------- */
-/*                                Controlled                                  */
-/* -------------------------------------------------------------------------- */
-
-export const Controlled: Story = {
-  render() {
-    const [open, setOpen] = useState(false);
-
+export const Controlled = meta.story({
+  args: {
+    open: true,
+    className: "w-96",
+  },
+  render(args) {
     return (
-      <div className="space-y-4">
-        <div className="flex gap-2">
-          <button onClick={() => setOpen(true)} className="rounded-sm bg-blue-500 px-4 py-2 text-13 text-white">
-            Open
-          </button>
-          <button onClick={() => setOpen(false)} className="rounded-sm bg-gray-500 px-4 py-2 text-13 text-white">
-            Close
-          </button>
-          <button onClick={() => setOpen((v) => !v)} className="rounded-sm bg-green-500 px-4 py-2 text-13 text-white">
-            Toggle
-          </button>
-        </div>
+      <Collapsible {...args}>
+        <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-gray-100 px-4 py-2 hover:bg-gray-200">
+          <span className="font-semibold">Controlled collapsible</span>
+          <ChevronDownIcon className="h-4 w-4 transition-transform group-data-[panel-open]:rotate-180" />
+        </CollapsibleTrigger>
 
-        <Collapsible open={open} onOpenChange={setOpen} className="w-96">
-          <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-gray-100 px-4 py-2 hover:bg-gray-200">
-            <span className="font-semibold">Controlled collapsible</span>
-            <ChevronDownIcon className="h-4 w-4 transition-transform group-data-[panel-open]:rotate-180" />
-          </CollapsibleTrigger>
-
-          <CollapsibleContent className="mt-2">
-            <div className="rounded-md border border-gray-200 p-4">
-              <p className="text-13">Current state: {open ? "Open" : "Closed"}</p>
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
-      </div>
+        <CollapsibleContent className="mt-2">
+          <div className="rounded-md border border-gray-200 p-4">
+            <p className="text-13">Controlled open state.</p>
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
     );
   },
-};
+});
 
-/* -------------------------------------------------------------------------- */
-/*                              Nested Content                                */
-/* -------------------------------------------------------------------------- */
-
-export const NestedContent: Story = {
-  render() {
+export const NestedContent = meta.story({
+  args: {
+    className: "w-96",
+  },
+  render(args) {
     return (
-      <Collapsible className="w-96">
+      <Collapsible {...args}>
         <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-gray-100 px-4 py-2 hover:bg-gray-200">
           <span className="font-semibold">Nested content</span>
           <ChevronDownIcon className="h-4 w-4 transition-transform group-data-[panel-open]:rotate-180" />
@@ -148,16 +130,15 @@ export const NestedContent: Story = {
       </Collapsible>
     );
   },
-};
+});
 
-/* -------------------------------------------------------------------------- */
-/*                               Custom Styling                               */
-/* -------------------------------------------------------------------------- */
-
-export const CustomStyling: Story = {
-  render() {
+export const CustomStyling = meta.story({
+  args: {
+    className: "w-96",
+  },
+  render(args) {
     return (
-      <Collapsible className="w-96">
+      <Collapsible {...args}>
         <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 text-tertiary shadow-lg transition-all hover:shadow-xl">
           <span className="text-16 font-bold">Custom styled trigger</span>
           <ChevronDownIcon className="h-5 w-5 transition-transform group-data-[panel-open]:rotate-180" />
@@ -171,18 +152,18 @@ export const CustomStyling: Story = {
       </Collapsible>
     );
   },
-};
+});
 
-/* -------------------------------------------------------------------------- */
-/*                           Trigger Render Prop                               */
-/* -------------------------------------------------------------------------- */
-
-export const TriggerWithRenderProp: Story = {
-  render() {
+export const TriggerWithRenderProp = meta.story({
+  args: {
+    className: "w-96",
+  },
+  render(args) {
     return (
-      <Collapsible className="w-96">
+      <Collapsible {...args}>
         <CollapsibleTrigger
           render={<div />}
+          nativeButton={false}
           className="flex cursor-pointer items-center justify-between rounded-md bg-blue-100 px-4 py-2 hover:bg-blue-200"
         >
           <span className="font-semibold">Trigger rendered as div</span>
@@ -197,16 +178,15 @@ export const TriggerWithRenderProp: Story = {
       </Collapsible>
     );
   },
-};
+});
 
-/* -------------------------------------------------------------------------- */
-/*                           Content Render Prop                               */
-/* -------------------------------------------------------------------------- */
-
-export const ContentWithRenderProp: Story = {
-  render() {
+export const ContentWithRenderProp = meta.story({
+  args: {
+    className: "w-96",
+  },
+  render(args) {
     return (
-      <Collapsible className="w-96">
+      <Collapsible {...args}>
         <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-gray-100 px-4 py-2 hover:bg-gray-200">
           <span className="font-semibold">Render content as section</span>
           <ChevronDownIcon className="h-4 w-4 transition-transform group-data-[panel-open]:rotate-180" />
@@ -220,18 +200,18 @@ export const ContentWithRenderProp: Story = {
       </Collapsible>
     );
   },
-};
+});
 
-/* -------------------------------------------------------------------------- */
-/*                     Trigger + Content Render Props                          */
-/* -------------------------------------------------------------------------- */
-
-export const WithRenderProps: Story = {
-  render() {
+export const WithRenderProps = meta.story({
+  args: {
+    className: "w-96",
+  },
+  render(args) {
     return (
-      <Collapsible className="w-96">
+      <Collapsible {...args}>
         <CollapsibleTrigger
           render={<div />}
+          nativeButton={false}
           className="flex cursor-pointer items-center justify-between rounded-md bg-purple-100 px-4 py-2 hover:bg-purple-200"
         >
           <span className="font-semibold">Custom trigger</span>
@@ -246,4 +226,4 @@ export const WithRenderProps: Story = {
       </Collapsible>
     );
   },
-};
+});

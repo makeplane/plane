@@ -11,15 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
 import { Download, Edit, Share, Star, Archive } from "lucide-react";
 import { CopyIcon, TrashIcon } from "../icons";
 import { ChevronRightIcon } from "../icons/arrows/chevron-right";
 import { ContextMenu } from "./context-menu";
 
 // cannot use satisfies here because base-ui does not have portable types.
-const meta: Meta<typeof ContextMenu> = {
-  title: "Components/ContextMenu",
+const meta = preview.meta({
   component: ContextMenu,
   subcomponents: {
     ContextMenuTrigger: ContextMenu.Trigger,
@@ -36,15 +35,12 @@ const meta: Meta<typeof ContextMenu> = {
   parameters: {
     layout: "centered",
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-  render() {
+export const Default = meta.story({
+  render(args) {
     return (
-      <ContextMenu>
+      <ContextMenu {...args}>
         <ContextMenu.Trigger>
           <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-13">
             Right click here
@@ -62,12 +58,12 @@ export const Default: Story = {
       </ContextMenu>
     );
   },
-};
+});
 
-export const WithIcons: Story = {
-  render() {
+export const WithIcons = meta.story({
+  render(args) {
     return (
-      <ContextMenu>
+      <ContextMenu {...args}>
         <ContextMenu.Trigger>
           <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-13">
             Right click here
@@ -101,12 +97,12 @@ export const WithIcons: Story = {
       </ContextMenu>
     );
   },
-};
+});
 
-export const WithSubmenus: Story = {
-  render() {
+export const WithSubmenus = meta.story({
+  render(args) {
     return (
-      <ContextMenu>
+      <ContextMenu {...args}>
         <ContextMenu.Trigger>
           <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-13">
             Right click here
@@ -147,12 +143,12 @@ export const WithSubmenus: Story = {
       </ContextMenu>
     );
   },
-};
+});
 
-export const DisabledItems: Story = {
-  render() {
+export const DisabledItems = meta.story({
+  render(args) {
     return (
-      <ContextMenu>
+      <ContextMenu {...args}>
         <ContextMenu.Trigger>
           <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-13">
             Right click here
@@ -186,12 +182,12 @@ export const DisabledItems: Story = {
       </ContextMenu>
     );
   },
-};
+});
 
-export const OnFileCard: Story = {
-  render() {
+export const OnFileCard = meta.story({
+  render(args) {
     return (
-      <ContextMenu>
+      <ContextMenu {...args}>
         <ContextMenu.Trigger>
           <div className="w-64 p-4 border border-subtle rounded-lg hover:bg-layer-1 cursor-pointer">
             <div className="flex items-center gap-3">
@@ -233,12 +229,12 @@ export const OnFileCard: Story = {
       </ContextMenu>
     );
   },
-};
+});
 
-export const OnImage: Story = {
-  render() {
+export const OnImage = meta.story({
+  render(args) {
     return (
-      <ContextMenu>
+      <ContextMenu {...args}>
         <ContextMenu.Trigger>
           <div className="relative w-80 h-56 bg-layer-1 rounded-lg overflow-hidden cursor-pointer">
             <div className="absolute inset-0 flex items-center justify-center text-placeholder">Image Placeholder</div>
@@ -265,12 +261,12 @@ export const OnImage: Story = {
       </ContextMenu>
     );
   },
-};
+});
 
-export const OnText: Story = {
-  render() {
+export const OnText = meta.story({
+  render(args) {
     return (
-      <ContextMenu>
+      <ContextMenu {...args}>
         <ContextMenu.Trigger>
           <div className="w-96 p-6 border border-subtle rounded-lg">
             <h3 className="text-16 font-semibold mb-2">Context Menu on Text</h3>
@@ -297,12 +293,12 @@ export const OnText: Story = {
       </ContextMenu>
     );
   },
-};
+});
 
-export const NestedSubmenus: Story = {
-  render() {
+export const NestedSubmenus = meta.story({
+  render(args) {
     return (
-      <ContextMenu>
+      <ContextMenu {...args}>
         <ContextMenu.Trigger>
           <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-13">
             Right click here
@@ -348,12 +344,12 @@ export const NestedSubmenus: Story = {
       </ContextMenu>
     );
   },
-};
+});
 
-export const WithKeyboardShortcuts: Story = {
-  render() {
+export const WithKeyboardShortcuts = meta.story({
+  render(args) {
     return (
-      <ContextMenu>
+      <ContextMenu {...args}>
         <ContextMenu.Trigger>
           <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-13">
             Right click here
@@ -387,4 +383,56 @@ export const WithKeyboardShortcuts: Story = {
       </ContextMenu>
     );
   },
-};
+});
+
+export const WithSideAndOffset = meta.story({
+  render(args) {
+    return (
+      <ContextMenu {...args}>
+        <ContextMenu.Trigger>
+          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-13">
+            Right click for positioned menu
+          </div>
+        </ContextMenu.Trigger>
+        <ContextMenu.Portal>
+          <ContextMenu.Content side="right" sideOffset={12} positionerClassName="z-50">
+            <ContextMenu.Item>
+              <CopyIcon className="mr-2 h-4 w-4" />
+              Copy
+            </ContextMenu.Item>
+            <ContextMenu.Item>
+              <Edit className="mr-2 h-4 w-4" />
+              Edit
+            </ContextMenu.Item>
+            <ContextMenu.Separator />
+            <ContextMenu.Item>
+              <TrashIcon className="mr-2 h-4 w-4 text-danger-primary" />
+              <span className="text-danger-primary">Delete</span>
+            </ContextMenu.Item>
+          </ContextMenu.Content>
+        </ContextMenu.Portal>
+      </ContextMenu>
+    );
+  },
+});
+
+export const WithCustomContentClass = meta.story({
+  render(args) {
+    return (
+      <ContextMenu {...args}>
+        <ContextMenu.Trigger>
+          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-13">
+            Right click for styled menu
+          </div>
+        </ContextMenu.Trigger>
+        <ContextMenu.Portal>
+          <ContextMenu.Content className="bg-blue-50 border-blue-200" side="top" sideOffset={8}>
+            <ContextMenu.Item className="hover:bg-blue-100">Option A</ContextMenu.Item>
+            <ContextMenu.Item className="hover:bg-blue-100">Option B</ContextMenu.Item>
+            <ContextMenu.Item className="hover:bg-blue-100">Option C</ContextMenu.Item>
+          </ContextMenu.Content>
+        </ContextMenu.Portal>
+      </ContextMenu>
+    );
+  },
+});
