@@ -67,7 +67,10 @@ class CustomGraphQLView(AsyncGraphQLView):
 
         try:
             if auth_header:
-                bearer_token = auth_header.split()[1]
+                parts = auth_header.split()
+                if len(parts) < 2:
+                    return JsonResponse({"message": "Invalid authorization header"}, status=401)
+                bearer_token = parts[1]
                 validated_token = await get_validated_token(bearer_token)
                 user = await get_jwt_user(validated_token)
                 if user:
