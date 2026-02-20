@@ -13,22 +13,14 @@ type NumberWidgetProps = {
   chartMetric: string;
 };
 
-export const NumberWidget = observer(function NumberWidget({
-  data,
-  _config,
-  chartMetric,
-}: NumberWidgetProps) {
-  const metricLabel = chartMetric.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const NumberWidget = observer(function NumberWidget({ data, config, chartMetric }: NumberWidgetProps) {
+  const metricLabel = chartMetric.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-      <div className="text-5xl font-bold text-accent-primary">
-        {data.value.toLocaleString()}
-      </div>
-      <div className="text-sm font-medium text-tertiary">
-        {metricLabel}
-      </div>
+      <div className="text-5xl font-bold text-accent-primary">{data.value.toLocaleString()}</div>
+      <div className="text-sm font-medium text-tertiary">{metricLabel}</div>
     </div>
   );
 });
-

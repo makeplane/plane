@@ -19,14 +19,14 @@ type PieChartWidgetProps = {
 export const PieChartWidget = observer(function PieChartWidget({
   data,
   config,
-  _chartProperty,
-  _chartMetric,
+  chartProperty: _chartProperty,
+  chartMetric: _chartMetric,
 }: PieChartWidgetProps) {
   const { data: chartData, schema } = data;
   const colorPreset = ANALYTICS_COLOR_PRESETS[config.color_preset] || ANALYTICS_COLOR_PRESETS.modern;
 
   // Find metric key (first non-name key)
-  const metricKey = Object.keys(schema).find(key => key !== "name") || "count";
+  const metricKey = Object.keys(schema).find((key) => key !== "name") || "count";
 
   // Create cells array - map each data item to a color
   const cells: TCellItem<string>[] = chartData.map((item, index) => ({
@@ -44,9 +44,11 @@ export const PieChartWidget = observer(function PieChartWidget({
       outerRadius={"70%"}
       showLabel={true}
       showTooltip={config.show_tooltip !== false}
-      legend={config.show_legend !== false ? { align: "center", verticalAlign: "bottom", layout: "horizontal" } : undefined}
+      legend={
+        config.show_legend !== false ? { align: "center", verticalAlign: "bottom", layout: "horizontal" } : undefined
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
       tooltipLabel={(payload: any) => `${payload.name}: ${payload[metricKey]}`}
     />
   );
 });
-

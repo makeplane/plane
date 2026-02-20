@@ -19,14 +19,14 @@ type DonutChartWidgetProps = {
 export const DonutChartWidget = observer(function DonutChartWidget({
   data,
   config,
-  _chartProperty,
-  _chartMetric,
+  chartProperty: _chartProperty,
+  chartMetric: _chartMetric,
 }: DonutChartWidgetProps) {
   const { data: chartData, schema } = data;
   const colorPreset = ANALYTICS_COLOR_PRESETS[config.color_preset] || ANALYTICS_COLOR_PRESETS.modern;
 
   // Find metric key (first non-name key)
-  const metricKey = Object.keys(schema).find(key => key !== "name") || "count";
+  const metricKey = Object.keys(schema).find((key) => key !== "name") || "count";
 
   // Create cells array - map each data item to a color
   const cells: TCellItem<string>[] = chartData.map((item, index) => ({
@@ -47,14 +47,20 @@ export const DonutChartWidget = observer(function DonutChartWidget({
       outerRadius={"80%"}
       showLabel={false}
       showTooltip={config.show_tooltip !== false}
-      centerLabel={config.center_value !== false ? {
-        text: String(total),
-        fill: "var(--text-color-primary)",
-        className: "text-2xl font-semibold",
-      } : undefined}
-      legend={config.show_legend !== false ? { align: "center", verticalAlign: "bottom", layout: "horizontal" } : undefined}
+      centerLabel={
+        config.center_value !== false
+          ? {
+              text: String(total),
+              fill: "var(--text-color-primary)",
+              className: "text-2xl font-semibold",
+            }
+          : undefined
+      }
+      legend={
+        config.show_legend !== false ? { align: "center", verticalAlign: "bottom", layout: "horizontal" } : undefined
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
       tooltipLabel={(payload: any) => `${payload.name}: ${payload[metricKey]}`}
     />
   );
 });
-

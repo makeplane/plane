@@ -8,7 +8,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ResponsiveGridLayout } from "react-grid-layout";
 import type { Layout } from "react-grid-layout";
-import { Plus } from "lucide-react";
 import type { IAnalyticsDashboardWidget } from "@plane/types";
 import { EAnalyticsWidgetType } from "@plane/types";
 import { AnalyticsDashboardWidgetCard } from "./analytics-dashboard-widget-card";
@@ -46,7 +45,7 @@ export const AnalyticsDashboardWidgetGrid = observer(function AnalyticsDashboard
   workspaceSlug,
   dashboardId,
   isEditMode,
-  onAddWidget,
+  onAddWidget: _onAddWidget,
   onDeleteWidget,
   onConfigureWidget,
   onDuplicateWidget,
@@ -127,7 +126,6 @@ export const AnalyticsDashboardWidgetGrid = observer(function AnalyticsDashboard
           onLayoutChange={(layout) => handleLayoutChange(layout)}
           margin={[16, 16] as [number, number]}
           containerPadding={[0, 0] as [number, number]}
-          compactType="vertical"
           dragConfig={{ enabled: isEditMode, bounded: false, handle: ".widget-drag-handle" }}
           resizeConfig={{ enabled: isEditMode }}
         >
@@ -144,8 +142,6 @@ export const AnalyticsDashboardWidgetGrid = observer(function AnalyticsDashboard
               />
             </div>
           ))}
-
-
         </ResponsiveGridLayout>
       )}
     </div>

@@ -20,6 +20,4 @@ const TimeTrackingPage = observer(({ params }: Route.ComponentProps) => {
   );
 });
 
-TimeTrackingPage.displayName = "TimeTrackingPage";
-
 export default TimeTrackingPage;
