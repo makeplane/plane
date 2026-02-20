@@ -90,7 +90,10 @@ def find_favicon_url(soup: Optional[BeautifulSoup], base_url: str) -> Optional[s
             favicon_tag = soup.select_one(selector)
             if favicon_tag and favicon_tag.get("href"):
                 favicon_href = urljoin(base_url, favicon_tag["href"])
-                validate_url_ip(favicon_href)
+                try:
+                    validate_url_ip(favicon_href)
+                except ValueError:
+                    continue
                 return favicon_href
 
     parsed_url = urlparse(base_url)
@@ -101,7 +104,7 @@ def find_favicon_url(soup: Optional[BeautifulSoup], base_url: str) -> Optional[s
         response = requests.head(fallback_url, timeout=2, allow_redirects=False)
         if response.status_code == 200:
             return fallback_url
-    except requests.RequestException as e:
+    except (requests.RequestException, ValueError) as e:
         log_exception(e, warning=True)
         return None
 
@@ -168,7 +171,16 @@ def crawl_link_metadata(url: str) -> Dict[str, Any]:
         title = None
         final_url = url
 
-        validate_url_ip(final_url)
+        try:
+            validate_url_ip(final_url)
+        except ValueError as e:
+            logger.warning(f"URL validation failed for {url}: {e}")
+            return {
+                "title": None,
+                "favicon": f"data:image/svg+xml;base64,{DEFAULT_FAVICON}",
+                "url": url,
+                "favicon_url": None,
+            }
 
         try:
             redirect_count = 0
@@ -190,7 +202,7 @@ def crawl_link_metadata(url: str) -> Dict[str, Any]:
             title_tag = soup.find("title")
             title = title_tag.get_text().strip() if title_tag else None
 
-        except requests.RequestException as e:
+        except (requests.RequestException, ValueError) as e:
             logger.warning(f"Failed to fetch HTML for title: {str(e)}")
 
         favicon_base64 = fetch_and_encode_favicon(headers, soup, final_url)
