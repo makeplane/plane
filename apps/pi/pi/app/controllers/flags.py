@@ -49,8 +49,8 @@ def _has_value(value: object) -> bool:
 
 
 def _flag_server_configured() -> bool:
-    """Remote flag checks are meaningful only when base URL + auth token exist."""
-    return _has_value(settings.FEATURE_FLAG_SERVER_BASE_URL) and _has_value(settings.FEATURE_FLAG_SERVER_AUTH_TOKEN)
+    """Remote flag checks are meaningful only when base URL"""
+    return _has_value(settings.FEATURE_FLAG_SERVER_BASE_URL)
 
 
 async def _get_ml_model_id_source() -> tuple[bool, str]:
@@ -151,6 +151,7 @@ def _remote_gated_features() -> Iterable[FeatureKey]:
         settings.feature_flags.PI_CHAT,
         settings.feature_flags.PI_DEDUPE,
         settings.feature_flags.PI_CONVERSE,
+        settings.feature_flags.PI_FILE_UPLOADS,
     )
 
 
