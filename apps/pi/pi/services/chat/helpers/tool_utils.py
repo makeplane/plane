@@ -136,6 +136,9 @@ async def stream_llm_with_delimiter(
     content_buffer = ""
     stream_mode: Optional[str] = None  # "final_answer" or None (reasoning by default)
 
+    # Batch reasoning chunks (~15 words) to reduce browser SSE event overhead
+    _reasoning_batcher = WordBatcher(words_per_batch=15)
+
     try:
         # Get event iterator
         try:
@@ -186,7 +189,9 @@ async def stream_llm_with_delimiter(
                             delta = mask_uuids_in_text(reasoning_content)
                             if delta.strip():
                                 streamed_reasoning = True
-                                yield StreamEvent(type="reasoning_chunk", content=delta)
+                                batched = _reasoning_batcher.add(delta)
+                                if batched:
+                                    yield StreamEvent(type="reasoning_chunk", content=batched)
                         # Keep delimiter and answer in buffer for later processing
                         content_buffer = content_buffer[delimiter_pos:]
                     elif content_buffer:
@@ -194,8 +199,14 @@ async def stream_llm_with_delimiter(
                         delta = mask_uuids_in_text(content_buffer)
                         if delta.strip():
                             streamed_reasoning = True
-                            yield StreamEvent(type="reasoning_chunk", content=delta)
+                            batched = _reasoning_batcher.add(delta)
+                            if batched:
+                                yield StreamEvent(type="reasoning_chunk", content=batched)
                         content_buffer = ""
+                    # Flush reasoning batcher before tool header so UI sees all reasoning before the tool tick
+                    _remaining = _reasoning_batcher.flush()
+                    if _remaining:
+                        yield StreamEvent(type="reasoning_chunk", content=_remaining)
                     yield StreamEvent(type="tool_detected", tool_name=name)
 
             # 3. Delimiter-based routing (the ONLY logic for content routing)
@@ -212,7 +223,14 @@ async def stream_llm_with_delimiter(
                     delta = mask_uuids_in_text(reasoning_content)
                     if delta.strip():
                         streamed_reasoning = True
-                        yield StreamEvent(type="reasoning_chunk", content=delta)
+                        batched = _reasoning_batcher.add(delta)
+                        if batched:
+                            yield StreamEvent(type="reasoning_chunk", content=batched)
+
+                # Flush reasoning batcher before switching to final answer mode
+                _remaining = _reasoning_batcher.flush()
+                if _remaining:
+                    yield StreamEvent(type="reasoning_chunk", content=_remaining)
 
                 # Everything after delimiter goes to answer
                 answer_start = delimiter_pos + len(ANSWER_DELIMITER)
@@ -243,7 +261,9 @@ async def stream_llm_with_delimiter(
                         delta = mask_uuids_in_text(to_emit)
                         if delta:
                             streamed_reasoning = True
-                            yield StreamEvent(type="reasoning_chunk", content=delta)
+                            batched = _reasoning_batcher.add(delta)
+                            if batched:
+                                yield StreamEvent(type="reasoning_chunk", content=batched)
 
         # 5. End of Stream - Flush Remainder
         ANSWER_DELIMITER = "ππANSWERππ"
@@ -258,7 +278,14 @@ async def stream_llm_with_delimiter(
                     delta = mask_uuids_in_text(reasoning_content)
                     if delta.strip():
                         streamed_reasoning = True
-                        yield StreamEvent(type="reasoning_chunk", content=delta)
+                        batched = _reasoning_batcher.add(delta)
+                        if batched:
+                            yield StreamEvent(type="reasoning_chunk", content=batched)
+
+                # Flush reasoning batcher before switching to answer
+                _remaining = _reasoning_batcher.flush()
+                if _remaining:
+                    yield StreamEvent(type="reasoning_chunk", content=_remaining)
 
                 answer_start = delimiter_pos + len(ANSWER_DELIMITER)
                 answer_content = content_buffer[answer_start:].lstrip("\n")
@@ -273,11 +300,18 @@ async def stream_llm_with_delimiter(
                 delta = mask_uuids_in_text(content_buffer)
                 if delta.strip():
                     streamed_reasoning = True
-                    yield StreamEvent(type="reasoning_chunk", content=delta)
+                    batched = _reasoning_batcher.add(delta)
+                    if batched:
+                        yield StreamEvent(type="reasoning_chunk", content=batched)
             else:
                 # Flush as final answer
                 if stream_final_answer:
                     yield StreamEvent(type="final_answer_chunk", content=content_buffer)
+
+        # Flush any remaining reasoning in the batcher
+        _remaining = _reasoning_batcher.flush()
+        if _remaining:
+            yield StreamEvent(type="reasoning_chunk", content=_remaining)
 
         # Convert accumulated chunk to message if needed
         response = accumulated
@@ -2505,6 +2539,57 @@ async def stream_content_in_chunks(content: str, words_per_chunk: int = 15, dela
         yield "".join(current_chunk)
 
 
+class WordBatcher:
+    """Stateful word-level batcher that accumulates text and yields when a word threshold is reached.
+
+    Use this to reduce the number of SSE events sent to the browser by batching
+    individual LLM tokens (~1-3 chars each) into larger chunks (~15 words).
+
+    Usage::
+
+        batcher = WordBatcher(words_per_batch=15)
+        for token in tokens:
+            batched = batcher.add(token)
+            if batched:
+                yield batched
+        remaining = batcher.flush()
+        if remaining:
+            yield remaining
+    """
+
+    __slots__ = ("_batch", "_word_count", "_threshold")
+
+    def __init__(self, words_per_batch: int = 15) -> None:
+        self._batch: list[str] = []
+        self._word_count = 0
+        self._threshold = words_per_batch
+
+    def add(self, text: str) -> str | None:
+        """Add *text* to the buffer. Returns accumulated batch when threshold is reached, else ``None``."""
+        tokens = re.split(r"(\s+)", text)
+        to_yield_parts: list[str] = []
+        for token in tokens:
+            self._batch.append(token)
+            if token and not token.isspace():
+                self._word_count += 1
+            if self._word_count >= self._threshold:
+                to_yield_parts.append("".join(self._batch))
+                self._batch = []
+                self._word_count = 0
+        if to_yield_parts:
+            return "".join(to_yield_parts)
+        return None
+
+    def flush(self) -> str | None:
+        """Flush any remaining buffered text. Returns ``None`` if buffer is empty."""
+        if not self._batch:
+            return None
+        result = "".join(self._batch)
+        self._batch = []
+        self._word_count = 0
+        return result
+
+
 async def batch_llm_stream_by_words(llm_stream: AsyncIterator[Any], words_per_batch: int = 10) -> AsyncIterator[str]:
     """
     Batch LLM stream chunks in real-time by word count to reduce browser event overhead.
@@ -2521,8 +2606,7 @@ async def batch_llm_stream_by_words(llm_stream: AsyncIterator[Any], words_per_ba
     Yields:
         Batched content chunks as strings
     """
-    current_batch = []
-    word_count = 0
+    batcher = WordBatcher(words_per_batch)
 
     async for chunk in llm_stream:
         # Extract content from LLM chunk (handles different LLM response formats)
@@ -2530,24 +2614,11 @@ async def batch_llm_stream_by_words(llm_stream: AsyncIterator[Any], words_per_ba
         if not chunk_content:
             continue
 
-        chunk_str = str(chunk_content)
-
-        # Split the chunk into tokens (words and whitespace)
-        # Using the same pattern as stream_content_in_chunks to preserve formatting
-        tokens = re.split(r"(\s+)", chunk_str)
-
-        for token in tokens:
-            current_batch.append(token)
-            # Count non-whitespace tokens as words
-            if token and not token.isspace():
-                word_count += 1
-
-            # Yield batch when word count threshold is reached
-            if word_count >= words_per_batch:
-                yield "".join(current_batch)
-                current_batch = []
-                word_count = 0
+        batched = batcher.add(str(chunk_content))
+        if batched:
+            yield batched
 
     # Yield any remaining content
-    if current_batch:
-        yield "".join(current_batch)
+    remaining = batcher.flush()
+    if remaining:
+        yield remaining

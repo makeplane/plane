@@ -35,6 +35,7 @@ from pi.services.chat.helpers.flow_tracking import execute_tool_step
 from pi.services.chat.helpers.flow_tracking import orchestrate_llm_step
 from pi.services.chat.helpers.flow_tracking import persist_precomputed_ai_message
 from pi.services.chat.helpers.flow_tracking import store_and_format_clarification
+from pi.services.chat.helpers.tool_utils import WordBatcher
 from pi.services.chat.helpers.tool_utils import extract_text_from_content
 from pi.services.chat.helpers.tool_utils import format_tool_query_for_display
 from pi.services.chat.helpers.tool_utils import stream_content_in_chunks
@@ -240,6 +241,9 @@ async def execute_tools_for_ask_mode(
             # Buffer for final answer to prevent splitting plane-attachment:// URLs
             final_answer_buffer = ""
 
+            # Word-level batcher to reduce browser SSE event overhead
+            _batcher = WordBatcher(words_per_batch=15)
+
             async for event in stream_llm_with_delimiter(llm_with_tools, messages, stream_final_answer=stream_final_answer):
                 event_type = event.get("type", "")
 
@@ -268,8 +272,10 @@ async def execute_tools_for_ask_mode(
                                 }
                         if not has_plotting_tool_result:
                             # Fast path: No plotting tools used, so no plane-attachment:// URLs expected.
-                            # Stream raw chunks immediately.
-                            yield content
+                            # Batch tokens by word count to reduce browser event overhead.
+                            batched = _batcher.add(content)
+                            if batched:
+                                yield batched
                         else:
                             final_answer_buffer += content
 
@@ -290,12 +296,16 @@ async def execute_tools_for_ask_mode(
                                 to_yield = final_answer_buffer[:end_idx]
                                 remaining = final_answer_buffer[end_idx:]
 
-                                yield to_yield
+                                batched = _batcher.add(to_yield)
+                                if batched:
+                                    yield batched
                                 final_answer_buffer = remaining
                             elif len(final_answer_buffer) > 300:
                                 # Safety valve: if buffer gets too huge without a match, flush it
                                 # This prevents infinite buffering if something malformed appears
-                                yield final_answer_buffer
+                                batched = _batcher.add(final_answer_buffer)
+                                if batched:
+                                    yield batched
                                 final_answer_buffer = ""
                             # Else: keep buffering (wait for rest of URL)
 
@@ -311,13 +321,17 @@ async def execute_tools_for_ask_mode(
                                     # Yield everything BEFORE that suffix.
                                     to_yield = final_answer_buffer[:-i]
                                     if to_yield:
-                                        yield to_yield
+                                        batched = _batcher.add(to_yield)
+                                        if batched:
+                                            yield batched
                                     final_answer_buffer = suffix
                                     break
 
                             if not partial_match:
                                 # No prefix, no partial prefix. Safe to yield everything.
-                                yield final_answer_buffer
+                                batched = _batcher.add(final_answer_buffer)
+                                if batched:
+                                    yield batched
                                 final_answer_buffer = ""
 
                 elif event_type == "tool_detected":
@@ -375,11 +389,22 @@ async def execute_tools_for_ask_mode(
                             if content:
                                 answer_streaming_started = True
                                 final_answer_streamed = True
-                                yield content
+                                # Batch the fallback content through word batcher
+                                # (could be large accumulated text)
+                                batched = _batcher.add(content)
+                                if batched:
+                                    yield batched
 
-            # Flush any remaining buffer
+            # Flush any remaining URL buffer through the word batcher
             if final_answer_buffer:
-                yield final_answer_buffer
+                batched = _batcher.add(final_answer_buffer)
+                if batched:
+                    yield batched
+
+            # Flush any remaining word batch
+            remaining_batch = _batcher.flush()
+            if remaining_batch:
+                yield remaining_batch
 
             # If streaming produced no message (unexpected), fail fast
             if ai_message is None:

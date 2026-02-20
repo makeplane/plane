@@ -57,6 +57,7 @@ from .helpers.build_mode_helpers import plan_action_and_prepare_outputs
 from .helpers.build_mode_helpers import recover_clarification_categories
 from .helpers.build_mode_helpers import run_category_router_and_persist
 from .helpers.build_mode_helpers import selected_action_categories_display
+from .helpers.tool_utils import WordBatcher
 from .helpers.tool_utils import build_method_prompt
 from .helpers.tool_utils import classify_tool
 from .helpers.tool_utils import format_tool_query_for_display
@@ -472,6 +473,9 @@ async def execute_tools_for_build_mode(
             answer_streaming_started = False
             streamed_reasoning_chunks = False
 
+            # Word-level batcher to reduce browser SSE event overhead
+            _batcher = WordBatcher(words_per_batch=15)
+
             async for event in stream_llm_with_delimiter(llm, messages, stream_final_answer=stream_final_answer):
                 event_type = event.get("type", "")
 
@@ -493,7 +497,10 @@ async def execute_tools_for_build_mode(
                             if not final_response_marker_emitted:
                                 final_response_marker_emitted = True
                                 yield {"chunk_type": "reasoning", "header": "", "content": "", "stage": "final_response"}
-                        yield content  # type: ignore[misc]
+                        # Batch tokens by word count to reduce browser event overhead
+                        batched = _batcher.add(content)
+                        if batched:
+                            yield batched  # type: ignore[misc]
 
                 elif event_type == "tool_detected":
                     # Build mode doesn't announce individual tools during streaming
@@ -530,8 +537,14 @@ async def execute_tools_for_build_mode(
                             if content_str:
                                 answer_streaming_started = True
                                 final_answer_streamed = True
-                                yield content_str  # type: ignore[misc]
+                                batched = _batcher.add(content_str)
+                                if batched:
+                                    yield batched  # type: ignore[misc]
 
+                    # Flush any remaining word batch before returning
+                    remaining_batch = _batcher.flush()
+                    if remaining_batch:
+                        yield remaining_batch  # type: ignore[misc]
                     return
 
         # Continue iterative tool calling with method tools (streaming)

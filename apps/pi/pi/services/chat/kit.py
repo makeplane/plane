@@ -45,6 +45,8 @@ from pi.services.retrievers.pages_search import PageChunkRetriever
 from pi.services.schemas.chat import QueryFlowStore
 
 from .helpers.build_mode_helpers import build_method_executor_and_context
+from .helpers.tool_utils import WordBatcher
+from .helpers.tool_utils import extract_text_from_content
 from .mixins import AttachmentMixin
 from .prompts import combination_system_prompt
 from .prompts import combination_user_prompt
@@ -1677,14 +1679,23 @@ Provide concise, relevant context from the attachment(s):"""
                     "conversation_history": conversation_history,
                 })
 
+                # Word-level batcher to reduce browser SSE event overhead
+                _batcher = WordBatcher(words_per_batch=15)
+
                 async for chunk in stream_generator:
                     error_context.add_chunk(chunk)
                     # Use helper to handle both OpenAI (string) and Anthropic (list of blocks) formats
-                    from pi.services.chat.helpers.tool_utils import extract_text_from_content
-
                     raw_content = chunk.content if hasattr(chunk, "content") else str(chunk)
                     content = extract_text_from_content(raw_content) if raw_content else ""
-                    yield content
+                    if content:
+                        batched = _batcher.add(content)
+                        if batched:
+                            yield batched
+
+                # Flush remaining word batch
+                remaining = _batcher.flush()
+                if remaining:
+                    yield remaining
 
             except Exception:
                 # Error was handled by context manager, yield fallback message
