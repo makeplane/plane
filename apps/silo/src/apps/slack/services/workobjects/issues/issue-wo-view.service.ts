@@ -200,7 +200,7 @@ export class IssueWorkObjectViewService implements IIssueWorkObjectViewService {
         /* ----------- Available Properties --------------- */
         description: {
           type: EWorkObjectFieldType.STRING,
-          value: `${issueDetails.description_stripped.substring(0, 100)}...`,
+          value: issueDetails.description_stripped ? `${issueDetails.description_stripped.substring(0, 100)}...` : "",
         },
         status: {
           type: EWorkObjectFieldType.STRING,

@@ -192,7 +192,7 @@ export const getAssigneeDmAlertText = (
   action: ESlackDMAlertActivityAction,
   workItemHyperlink: string
 ) =>
-  `<${getUserProfileUrl(workspaceSlug, actorDisplayName)}|${actorDisplayName}> ${action} you as assignee from work item ${workItemHyperlink}`;
+  `<${getUserProfileUrl(workspaceSlug, actorDisplayName)}|${actorDisplayName}> ${action} you as an assignee for the work item ${workItemHyperlink}`;
 
 export const getCommentDmAlertText = (workspaceSlug: string, actorDisplayName: string, workItemHyperlink: string) =>
   `<${getUserProfileUrl(workspaceSlug, actorDisplayName)}|${actorDisplayName}> mentioned you in the comment of work item ${workItemHyperlink}`;
