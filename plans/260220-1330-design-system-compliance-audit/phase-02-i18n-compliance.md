@@ -1,7 +1,7 @@
 # Phase 2 — i18n Compliance
 
 **Priority**: Medium
-**Status**: [ ] Pending
+**Status**: [x] Complete
 **Risk**: Low — additive changes, no logic impact
 **Estimated effort**: ~1-2 hours
 
