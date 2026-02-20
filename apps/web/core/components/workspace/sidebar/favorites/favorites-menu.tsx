@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
   DragLocationHistory,
@@ -23,7 +23,6 @@ import { orderBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FolderPlus } from "lucide-react";
-import { Transition } from "@headlessui/react";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -197,7 +196,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
         <div
           ref={elementRef}
           className={cn(
-            "group/favorites-button w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-placeholder hover:bg-layer-transparent-hover"
+            "group/favorites-button w-full flex items-center justify-between px-1.5 py-2 rounded-sm text-placeholder hover:bg-layer-transparent-hover"
           )}
         >
           <CollapsibleTrigger
@@ -217,7 +216,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
           >
             <span className="text-13 font-semibold">{t("favorites")}</span>
           </CollapsibleTrigger>
-          <div className="flex items-center opacity-0 pointer-events-none group-hover/favorites-button:opacity-100 group-hover/favorites-button:pointer-events-auto">
+          <div className="flex items-center gap-1 opacity-0 pointer-events-none group-hover/favorites-button:opacity-100 group-hover/favorites-button:pointer-events-auto">
             <Tooltip tooltipHeading={t("create_folder")} tooltipContent="">
               <IconButton
                 variant="ghost"
@@ -226,73 +225,63 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
                   setCreateNewFolder(true);
                   if (!isFavoriteMenuOpen) toggleFavoriteMenu(!isFavoriteMenuOpen);
                 }}
+                className="text-placeholder"
                 aria-label={t("aria_labels.projects_sidebar.create_favorites_folder")}
                 icon={FolderPlus}
               />
             </Tooltip>
-            <CollapsibleTrigger
-              type="button"
-              className="p-0.5 rounded-sm hover:bg-layer-transparent-hover flex-shrink-0 grid place-items-center"
+            <IconButton
+              variant="ghost"
+              size="sm"
+              icon={ChevronRightIcon}
               onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
+              className="text-placeholder"
+              iconClassName={cn("transition-transform", {
+                "rotate-90": isFavoriteMenuOpen,
+              })}
               aria-label={t(
                 isFavoriteMenuOpen
                   ? "aria_labels.projects_sidebar.close_favorites_menu"
                   : "aria_labels.projects_sidebar.open_favorites_menu"
               )}
-            >
-              <ChevronRightIcon
-                className={cn("flex-shrink-0 size-3 transition-all", {
-                  "rotate-90": isFavoriteMenuOpen,
-                })}
-              />
-            </CollapsibleTrigger>
+            />
           </div>
         </div>
-        <Transition
-          show={isFavoriteMenuOpen}
-          enter="transition duration-100 ease-out"
-          enterFrom="transform scale-95 opacity-0"
-          enterTo="transform scale-100 opacity-100"
-          leave="transition duration-75 ease-out"
-          leaveFrom="transform scale-100 opacity-100"
-          leaveTo="transform scale-95 opacity-0"
-        >
-          {isFavoriteMenuOpen && (
-            <CollapsibleContent className="flex flex-col mt-0.5 gap-0.5 overflow-visible">
-              {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
-              {Object.keys(groupedFavorites).length === 0 ? (
-                <>
-                  <span className="text-placeholder text-11 font-medium px-8 py-1.5">{t("no_favorites_yet")}</span>
-                </>
-              ) : (
-                orderBy(Object.values(groupedFavorites), "sequence", "desc")
-                  .filter((fav) => !fav.parent)
-                  .map((fav, index, { length }) => (
-                    <>
-                      {fav?.is_folder ? (
-                        <FavoriteFolder
-                          favorite={fav}
-                          isLastChild={index === length - 1}
-                          handleRemoveFromFavorites={handleRemoveFromFavorites}
-                          handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
-                          handleDrop={handleDrop}
-                        />
-                      ) : (
-                        <FavoriteRoot
-                          workspaceSlug={workspaceSlug.toString()}
-                          favorite={fav}
-                          isLastChild={index === length - 1}
-                          parentId={undefined}
-                          handleRemoveFromFavorites={handleRemoveFromFavorites}
-                          handleDrop={handleDrop}
-                        />
-                      )}
-                    </>
-                  ))
-              )}
-            </CollapsibleContent>
-          )}
-        </Transition>
+        {isFavoriteMenuOpen && (
+          <CollapsibleContent className="flex flex-col gap-0.5 overflow-visible">
+            {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
+            {Object.keys(groupedFavorites).length === 0 ? (
+              <>
+                <span className="text-placeholder text-11 font-medium px-8 py-1.5">{t("no_favorites_yet")}</span>
+              </>
+            ) : (
+              orderBy(Object.values(groupedFavorites), "sequence", "desc")
+                .filter((fav) => !fav.parent)
+                .map((fav, index, { length }) => (
+                  <Fragment key={fav.id}>
+                    {fav?.is_folder ? (
+                      <FavoriteFolder
+                        favorite={fav}
+                        isLastChild={index === length - 1}
+                        handleRemoveFromFavorites={handleRemoveFromFavorites}
+                        handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
+                        handleDrop={handleDrop}
+                      />
+                    ) : (
+                      <FavoriteRoot
+                        workspaceSlug={workspaceSlug.toString()}
+                        favorite={fav}
+                        isLastChild={index === length - 1}
+                        parentId={undefined}
+                        handleRemoveFromFavorites={handleRemoveFromFavorites}
+                        handleDrop={handleDrop}
+                      />
+                    )}
+                  </Fragment>
+                ))
+            )}
+          </CollapsibleContent>
+        )}
       </Collapsible>
     </>
   );

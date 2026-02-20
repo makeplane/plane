@@ -169,7 +169,7 @@ export function FavoriteFolder(props: Props) {
           <DropIndicator isVisible={instruction === "reorder-above"} />
           <div
             className={cn(
-              "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-1-hover",
+              "group/project-item relative w-full p-1 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
               {
                 "bg-surface-2": isMenuActive,
               }
