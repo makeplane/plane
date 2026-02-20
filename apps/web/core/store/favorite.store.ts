@@ -340,10 +340,16 @@ export class FavoriteStore implements IFavoriteStore {
           (this.projectStore.projectMap[entity_identifier].is_favorite = false)
         );
       case "analytics_dashboard": {
-        const dashboard = this.rootStore.analyticsDashboard.dashboardMap.get(entity_identifier);
-        if (dashboard) {
-          this.rootStore.analyticsDashboard.dashboardMap.set(entity_identifier, { ...dashboard, is_favorite: false });
+        // analyticsDashboard lives on CE RootStore, not CoreRootStore
+        /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call */
+        const store = (this.rootStore as any).analyticsDashboard;
+        if (store) {
+          const dashboard = store.dashboardMap.get(entity_identifier);
+          if (dashboard) {
+            store.dashboardMap.set(entity_identifier, { ...dashboard, is_favorite: false });
+          }
         }
+        /* eslint-enable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call */
         return;
       }
       default:

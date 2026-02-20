@@ -2,137 +2,159 @@
 
 **Priority**: Medium
 **Status**: [ ] Pending
-**Risk**: HIGH — moving files changes import paths, may break many references
-**Estimated effort**: ~3-4 hours
-**Prerequisite**: Complete Phase 1-4 first
+**Risk**: Medium — import path updates, but `pnpm check:types` catches all errors immediately
+**Estimated effort**: ~2 hours
 
 ## Context
 
-- Rule: Custom/CE-specific code should be in `apps/web/ce/` directory, NOT in `core/`
-- `core/` is shared upstream code; `ce/` is Community Edition override layer
-- Path alias: `@/plane-web/*` → `./ce/*`
-- CE root store extends `CoreRootStore` via `ce/store/root.store.ts`
+All custom Shinhan Bank features (Analytics Dashboard Pro, Department, Staff) are **NOT in upstream Plane** — verified via `git show upstream/preview`. They belong in `ce/` (CE override layer), not `core/` (shared upstream code).
 
-## Key Insights
+The CE override pattern is already established:
+- `ce/store/root.store.ts` extends `CoreRootStore` — custom stores register here (e.g., `WorklogStore`, `TimeLineStore`)
+- `@/plane-web/*` → `./ce/*` (tsconfig alias)
 
-This is the **highest risk** phase because:
+## What Needs to Move
 
-1. Moving files requires updating ALL import paths across the codebase
-2. Store registration changes in `ce/store/root.store.ts`
-3. Services are imported from many components
-4. Must verify no circular dependencies after move
+### A. Services (3 files) — `core/services/` → `ce/services/`
 
-## Files in Wrong Location
+| File | Imports to Update |
+|------|-------------------|
+| `department.service.ts` | 13 imports across 7 files: `@/services/department.service` → `@/plane-web/services/department.service` |
+| `staff.service.ts` | 9 imports across 6 files: `@/services/staff.service` → `@/plane-web/services/staff.service` |
+| `analytics-dashboard.service.ts` | 1 import (store file): `@/services/analytics-dashboard.service` → `@/plane-web/services/analytics-dashboard.service` |
 
-### Dashboard Components (core/ → ce/)
+### B. Store (1 file) — `core/store/` → `ce/store/`
 
-| Current Location                                                 | Target Location                                                |
-| ---------------------------------------------------------------- | -------------------------------------------------------------- |
-| `core/components/dashboards/analytics-dashboard-widget-card.tsx` | `ce/components/dashboards/analytics-dashboard-widget-card.tsx` |
-| `core/components/dashboards/analytics-dashboard-widget-grid.tsx` | `ce/components/dashboards/analytics-dashboard-widget-grid.tsx` |
-| `core/components/dashboards/widget-config-modal.tsx`             | `ce/components/dashboards/widget-config-modal.tsx`             |
-| `core/components/dashboards/config/` (entire folder)             | `ce/components/dashboards/config/`                             |
+| File | What Changes |
+|------|-------------|
+| `analytics-dashboard.store.ts` | Move to `ce/store/` |
 
-### Store (core/ → ce/)
-
-| Current Location                          | Target Location                         |
-| ----------------------------------------- | --------------------------------------- |
-| `core/store/analytics-dashboard.store.ts` | `ce/store/analytics-dashboard.store.ts` |
-
-**Also update** `ce/store/root.store.ts` to import from local instead of `@/store/`:
+**Store registration change** — move from `CoreRootStore` to `RootStore` (ce):
 
 ```typescript
-// Before:
-import { AnalyticsDashboardStore } from "@/store/analytics-dashboard.store";
-
-// After:
+// REMOVE from core/store/root.store.ts:
+import type { IAnalyticsDashboardStore } from "./analytics-dashboard.store";
 import { AnalyticsDashboardStore } from "./analytics-dashboard.store";
+// Remove from class: analyticsDashboard property + constructor init
+
+// ADD to ce/store/root.store.ts:
+import type { IAnalyticsDashboardStore } from "./analytics-dashboard.store";
+import { AnalyticsDashboardStore } from "./analytics-dashboard.store";
+
+export class RootStore extends CoreRootStore {
+  timelineStore: ITimelineStore;
+  worklog: IWorklogStore;
+  analyticsDashboard: IAnalyticsDashboardStore;  // ← ADD
+
+  constructor() {
+    super();
+    this.timelineStore = new TimeLineStore(this);
+    this.worklog = new WorklogStore();
+    this.analyticsDashboard = new AnalyticsDashboardStore(this);  // ← ADD
+  }
+}
 ```
 
-### Services (core/ → ce/)
+This follows the same pattern as `WorklogStore` and `TimeLineStore` — custom stores register in CE, not core.
 
-| Current Location                               | Target Location                              |
-| ---------------------------------------------- | -------------------------------------------- |
-| `core/services/department.service.ts`          | `ce/services/department.service.ts`          |
-| `core/services/staff.service.ts`               | `ce/services/staff.service.ts`               |
-| `core/services/analytics-dashboard.service.ts` | `ce/services/analytics-dashboard.service.ts` |
+### C. Hook (1 file) — `core/hooks/store/` → `ce/hooks/store/`
 
-**Note**: Create `ce/services/` directory if it doesn't exist.
+| File | Imports to Update |
+|------|-------------------|
+| `use-analytics-dashboard.ts` | Update internal import: `@/store/analytics-dashboard.store` → `@/plane-web/store/analytics-dashboard.store`. All consumers update: `@/hooks/store/use-analytics-dashboard` → `@/plane-web/hooks/store/use-analytics-dashboard` |
+
+### D. Dashboard Components (6 files) — `core/components/dashboards/` → `ce/components/dashboards/`
+
+| File | Notes |
+|------|-------|
+| `analytics-dashboard-widget-card.tsx` | Relative imports to widget-chart-renderer → auto OK after move |
+| `analytics-dashboard-widget-grid.tsx` | Relative import to widget-card → auto OK |
+| `widget-config-modal.tsx` | Relative imports to tab-content + config/ → auto OK |
+| `widget-chart-renderer.tsx` | No external imports |
+| `widget-config-tab-content.tsx` | No external imports |
+| `config/` (entire folder) | Relative imports → auto OK |
+
+External imports to update (2 files):
+- `[dashboardId]/page.tsx`: `@/components/dashboards/` → `@/plane-web/components/dashboards/`
+
+## Total Impact
+
+| Category | Files to Move | Import Paths to Update |
+|----------|--------------|----------------------|
+| Services | 3 | ~23 imports across 13 files |
+| Store | 1 | 3 imports (core root, ce root, hook) |
+| Hook | 1 | ~4 imports (dashboard pages) |
+| Components | 6 + config folder | 2 external imports |
+| **Total** | **11+ files moved** | **~32 import paths** |
 
 ## Implementation Steps
 
 1. **Create target directories**:
-
    ```bash
    mkdir -p apps/web/ce/components/dashboards/config
    mkdir -p apps/web/ce/services
+   mkdir -p apps/web/ce/hooks/store
    ```
 
 2. **Move files** (use `git mv` to preserve history):
-
    ```bash
-   # Dashboard components
-   git mv core/components/dashboards/analytics-dashboard-widget-card.tsx ce/components/dashboards/
-   git mv core/components/dashboards/analytics-dashboard-widget-grid.tsx ce/components/dashboards/
-   git mv core/components/dashboards/widget-config-modal.tsx ce/components/dashboards/
-   git mv core/components/dashboards/config/ ce/components/dashboards/config/
-
-   # Store
-   git mv core/store/analytics-dashboard.store.ts ce/store/
-
+   cd apps/web
    # Services
    git mv core/services/department.service.ts ce/services/
    git mv core/services/staff.service.ts ce/services/
    git mv core/services/analytics-dashboard.service.ts ce/services/
+   
+   # Store
+   git mv core/store/analytics-dashboard.store.ts ce/store/
+   
+   # Hook
+   git mv core/hooks/store/use-analytics-dashboard.ts ce/hooks/store/
+   
+   # Dashboard components
+   git mv core/components/dashboards/analytics-dashboard-widget-card.tsx ce/components/dashboards/
+   git mv core/components/dashboards/analytics-dashboard-widget-grid.tsx ce/components/dashboards/
+   git mv core/components/dashboards/widget-config-modal.tsx ce/components/dashboards/
+   git mv core/components/dashboards/widget-chart-renderer.tsx ce/components/dashboards/
+   git mv core/components/dashboards/widget-config-tab-content.tsx ce/components/dashboards/
+   git mv core/components/dashboards/config/ ce/components/dashboards/
    ```
 
-3. **Update all imports** — search and replace:
-   - `@/store/analytics-dashboard.store` → `@/plane-web/store/analytics-dashboard.store`
+3. **Update store registration**:
+   - Remove `AnalyticsDashboardStore` from `core/store/root.store.ts`
+   - Add `AnalyticsDashboardStore` to `ce/store/root.store.ts`
+
+4. **Search & replace import paths** (all within `apps/web/`):
    - `@/services/department.service` → `@/plane-web/services/department.service`
    - `@/services/staff.service` → `@/plane-web/services/staff.service`
    - `@/services/analytics-dashboard.service` → `@/plane-web/services/analytics-dashboard.service`
-   - `@/core/components/dashboards/` → `@/plane-web/components/dashboards/` (check actual import paths)
+   - `@/store/analytics-dashboard.store` → `@/plane-web/store/analytics-dashboard.store`
+   - `@/hooks/store/use-analytics-dashboard` → `@/plane-web/hooks/store/use-analytics-dashboard`
+   - `@/components/dashboards/analytics-dashboard-widget-grid` → `@/plane-web/components/dashboards/analytics-dashboard-widget-grid`
+   - `@/components/dashboards/widget-config-modal` → `@/plane-web/components/dashboards/widget-config-modal`
 
-4. **Update ce/store/root.store.ts**:
-   - Change analytics-dashboard store import to local path
-
-5. **Verify no broken imports**:
-
+5. **Verify**:
    ```bash
    pnpm check:types
-   pnpm check:lint
+   pnpm exec eslint apps/web/ --max-warnings=0
    ```
-
-6. **Test all affected pages**:
-   - Dashboard listing page
-   - Dashboard detail page
-   - Department settings page
-   - Staff settings page
 
 ## Todo List
 
 - [ ] Create target directories
-- [ ] Move dashboard components (git mv)
-- [ ] Move analytics-dashboard store (git mv)
-- [ ] Move services (git mv)
-- [ ] Update ce/store/root.store.ts
-- [ ] Search & replace all import paths
+- [ ] Move services (3 files)
+- [ ] Move store + update registration (CoreRootStore → RootStore)
+- [ ] Move hook
+- [ ] Move dashboard components (6 files + config/)
+- [ ] Update all ~32 import paths
 - [ ] Run `pnpm check:types`
-- [ ] Run `pnpm check:lint`
+- [ ] Run ESLint
 - [ ] Test dashboard pages
 - [ ] Test department settings
 - [ ] Test staff settings
-- [ ] Verify no visual regressions
-- [ ] Verify no circular dependencies
 
 ## Risk Assessment
 
-- **HIGH**: Breaking imports will cause build failures
-- **Mitigation**: Do all moves + import updates in a single commit; run type checker immediately
+- **Medium risk** (downgraded from HIGH): all errors caught by `pnpm check:types`
+- **No logic changes**: only file locations + import paths
+- **No API changes**: backend unchanged
 - **Rollback**: `git revert` if build breaks
-- **Testing**: Manual testing on all affected pages is mandatory
-
-## Security Considerations
-
-- No security impact — file location changes only
-- No API changes, no model changes, no permission changes

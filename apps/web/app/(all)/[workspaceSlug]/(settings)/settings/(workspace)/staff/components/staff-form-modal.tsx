@@ -13,9 +13,9 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IStaff, IStaffCreate, IStaffUpdate } from "@/services/staff.service";
-import { StaffService } from "@/services/staff.service";
-import { DepartmentService } from "@/services/department.service";
+import type { IStaff, IStaffCreate, IStaffUpdate } from "@/plane-web/services/staff.service";
+import { StaffService } from "@/plane-web/services/staff.service";
+import { DepartmentService } from "@/plane-web/services/department.service";
 import { StaffFormFields } from "./staff-form-fields";
 
 interface StaffFormModalProps {

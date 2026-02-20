@@ -37,8 +37,6 @@ import type { IGlobalViewStore } from "./global-view.store";
 import { GlobalViewStore } from "./global-view.store";
 import type { IProjectInboxStore } from "./inbox/project-inbox.store";
 import { ProjectInboxStore } from "./inbox/project-inbox.store";
-import type { IAnalyticsDashboardStore } from "./analytics-dashboard.store";
-import { AnalyticsDashboardStore } from "./analytics-dashboard.store";
 import type { IInstanceStore } from "./instance.store";
 import { InstanceStore } from "./instance.store";
 import type { IIssueRootStore } from "./issue/root.store";
@@ -87,7 +85,6 @@ export class CoreRootStore {
   state: IStateStore;
   label: ILabelStore;
   dashboard: IDashboardStore;
-  analyticsDashboard: IAnalyticsDashboardStore;
   analytics: IAnalyticsStore;
   projectPages: IProjectPageStore;
   router: IRouterStore;
@@ -132,7 +129,6 @@ export class CoreRootStore {
     this.favorite = new FavoriteStore(this);
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
-    this.analyticsDashboard = new AnalyticsDashboardStore(this);
     this.analytics = new AnalyticsStore();
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
@@ -167,7 +163,6 @@ export class CoreRootStore {
     this.favorite = new FavoriteStore(this);
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
-    this.analyticsDashboard = new AnalyticsDashboardStore(this);
     this.workItemFilters = new WorkItemFilterStore();
     this.powerK = new PowerKStore();
   }

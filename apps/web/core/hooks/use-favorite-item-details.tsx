@@ -14,7 +14,7 @@ import {
 } from "@/components/workspace/sidebar/favorites/favorite-items/common";
 // helpers
 // hooks
-import { useAnalyticsDashboard } from "@/hooks/store/use-analytics-dashboard";
+import { useAnalyticsDashboard } from "@/plane-web/hooks/store/use-analytics-dashboard";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";

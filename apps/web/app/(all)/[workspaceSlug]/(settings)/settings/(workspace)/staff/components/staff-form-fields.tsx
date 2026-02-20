@@ -6,8 +6,8 @@
 
 import { useTranslation } from "@plane/i18n";
 import { Input } from "@plane/propel/input";
-import type { IStaffCreate } from "@/services/staff.service";
-import type { IDepartment } from "@/services/department.service";
+import type { IStaffCreate } from "@/plane-web/services/staff.service";
+import type { IDepartment } from "@/plane-web/services/department.service";
 
 interface StaffFormFieldsProps {
   formData: IStaffCreate;

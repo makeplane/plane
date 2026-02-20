@@ -13,7 +13,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Upload } from "lucide-react";
-import { StaffService } from "@/services/staff.service";
+import { StaffService } from "@/plane-web/services/staff.service";
 
 interface StaffImportModalProps {
   workspaceSlug: string;

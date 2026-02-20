@@ -10,7 +10,7 @@ import { Copy, GripVertical, MoreVertical, Settings, Trash2 } from "lucide-react
 import { useOutsideClickDetector } from "@plane/hooks";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IAnalyticsDashboardWidget } from "@plane/types";
-import { useAnalyticsDashboard } from "@/hooks/store/use-analytics-dashboard";
+import { useAnalyticsDashboard } from "@/plane-web/hooks/store/use-analytics-dashboard";
 import { WidgetChartRenderer } from "./widget-chart-renderer";
 
 type AnalyticsDashboardWidgetCardProps = {

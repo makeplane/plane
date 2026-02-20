@@ -6,7 +6,7 @@
 
 import { Input } from "@plane/propel/input";
 import { TextArea } from "@plane/ui";
-import type { IDepartment, IDepartmentCreate } from "@/services/department.service";
+import type { IDepartment, IDepartmentCreate } from "@/plane-web/services/department.service";
 
 interface DepartmentFormFieldsProps {
   formData: IDepartmentCreate;

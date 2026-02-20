@@ -8,7 +8,7 @@
 
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import type { IDepartment } from "@/services/department.service";
+import type { IDepartment } from "@/plane-web/services/department.service";
 import { DepartmentTreeItem } from "./department-tree-item";
 
 interface DepartmentTreeProps {

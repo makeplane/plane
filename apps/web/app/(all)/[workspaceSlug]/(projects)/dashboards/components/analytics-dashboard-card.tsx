@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { DashboardIcon } from "@plane/propel/icons";
 import type { IAnalyticsDashboard } from "@plane/types";
 import { FavoriteStar } from "@plane/ui";
-import { useAnalyticsDashboard } from "@/hooks/store/use-analytics-dashboard";
+import { useAnalyticsDashboard } from "@/plane-web/hooks/store/use-analytics-dashboard";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {

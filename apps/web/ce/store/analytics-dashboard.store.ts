@@ -18,9 +18,9 @@ import type {
   IAnalyticsNumberWidgetData,
 } from "@plane/types";
 // services
-import { AnalyticsDashboardService } from "@/services/analytics-dashboard.service";
+import { AnalyticsDashboardService } from "@/plane-web/services/analytics-dashboard.service";
 // store
-import type { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 interface APIError {
   detail?: string;

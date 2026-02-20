@@ -13,8 +13,8 @@ import { ChevronDown, ChevronRight, Edit2, Link2, Trash2, Users } from "lucide-r
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IDepartment } from "@/services/department.service";
-import { DepartmentService } from "@/services/department.service";
+import type { IDepartment } from "@/plane-web/services/department.service";
+import { DepartmentService } from "@/plane-web/services/department.service";
 
 interface DepartmentTreeItemProps {
   department: IDepartment;

@@ -10,8 +10,8 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IStaff } from "@/services/staff.service";
-import { StaffService } from "@/services/staff.service";
+import type { IStaff } from "@/plane-web/services/staff.service";
+import { StaffService } from "@/plane-web/services/staff.service";
 import { StaffStatusBadge } from "./staff-status-badge";
 import { StaffActionButtons } from "./staff-action-buttons";
 

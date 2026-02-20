@@ -8,7 +8,7 @@ import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
 // types
-import type { IAnalyticsDashboardStore } from "@/store/analytics-dashboard.store";
+import type { IAnalyticsDashboardStore } from "@/plane-web/store/analytics-dashboard.store";
 
 export const useAnalyticsDashboard = (): IAnalyticsDashboardStore => {
   const context = useContext(StoreContext);

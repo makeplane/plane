@@ -13,7 +13,7 @@ import type { IAnalyticsDashboard, TAnalyticsDashboardCreate, TAnalyticsDashboar
 import { Button } from "@plane/propel/button";
 import { Loader } from "@plane/ui";
 import { PageHead } from "@/components/core/page-title";
-import { useAnalyticsDashboard } from "@/hooks/store/use-analytics-dashboard";
+import { useAnalyticsDashboard } from "@/plane-web/hooks/store/use-analytics-dashboard";
 import type { Route } from "./+types/page";
 import { AnalyticsDashboardCard } from "./components/analytics-dashboard-card";
 import { AnalyticsDashboardDeleteModal } from "./components/analytics-dashboard-delete-modal";
