@@ -24,6 +24,8 @@ from typing import Any, Dict, List, Union
 
 from openpyxl import Workbook, load_workbook
 
+from plane.utils.csv_utils import sanitize_csv_row
+
 
 class BaseFormatter(ABC):
     @abstractmethod
@@ -133,15 +135,16 @@ class CSVFormatter(BaseFormatter):
 
             # Write pretty headers manually, then write data rows
             writer = csv.writer(output, delimiter=self.delimiter)
-            writer.writerow(pretty_headers)
+            writer.writerow(sanitize_csv_row(pretty_headers))
 
             # Write data rows in the same field order
             for row in data:
-                writer.writerow([row.get(key, "") for key in fieldnames])
+                writer.writerow(sanitize_csv_row([row.get(key, "") for key in fieldnames]))
         else:
-            writer = csv.DictWriter(output, fieldnames=fieldnames, delimiter=self.delimiter)
-            writer.writeheader()
-            writer.writerows(data)
+            writer = csv.writer(output, delimiter=self.delimiter)
+            writer.writerow(sanitize_csv_row(fieldnames))
+            for row in data:
+                writer.writerow(sanitize_csv_row([row.get(key, "") for key in fieldnames]))
 
         return output.getvalue()
 

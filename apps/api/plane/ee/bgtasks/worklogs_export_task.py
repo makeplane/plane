@@ -26,6 +26,7 @@ from openpyxl import Workbook
 # Module imports
 from plane.db.models import ExporterHistory
 from plane.ee.models import IssueWorkLog
+from plane.utils.csv_utils import sanitize_csv_row
 from plane.utils.exception_logger import log_exception
 
 
@@ -45,7 +46,7 @@ def create_csv_file(data):
     csv_writer = csv.writer(csv_buffer, delimiter=",", quoting=csv.QUOTE_ALL)
 
     for row in data:
-        csv_writer.writerow(row)
+        csv_writer.writerow(sanitize_csv_row(row))
 
     csv_buffer.seek(0)
 
