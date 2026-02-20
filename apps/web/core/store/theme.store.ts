@@ -124,6 +124,10 @@ export abstract class ThemeStore implements IThemeStore {
     const updatedState = collapsed ?? !this.isExtendedSidebarOpened;
     runInAction(() => {
       this.isExtendedSidebarOpened = updatedState;
+      if (updatedState) {
+        this.isExtendedProjectSidebarOpened = false;
+        localStorage.setItem("extended_project_sidebar_collapsed", "false");
+      }
     });
     localStorage.setItem("extended_sidebar_collapsed", updatedState.toString());
   };
@@ -137,6 +141,10 @@ export abstract class ThemeStore implements IThemeStore {
       this.isExtendedProjectSidebarOpened = !this.isExtendedProjectSidebarOpened;
     } else {
       this.isExtendedProjectSidebarOpened = collapsed;
+    }
+    if (this.isExtendedProjectSidebarOpened) {
+      this.isExtendedSidebarOpened = false;
+      localStorage.setItem("extended_sidebar_collapsed", "false");
     }
     localStorage.setItem("extended_project_sidebar_collapsed", this.isExtendedProjectSidebarOpened.toString());
   };
