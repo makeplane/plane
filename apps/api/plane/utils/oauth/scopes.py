@@ -106,6 +106,11 @@ TEAMSPACES_MEMBERS_WRITE_SCOPE = "teamspaces.members:write"
 # PROFILE SCOPES
 PROFILE_READ_SCOPE = "profile:read"
 
+# AGENTS SCOPES
+AGENT_RUNS_READ_SCOPE = "agent_runs:read"
+AGENT_RUNS_WRITE_SCOPE = "agent_runs:write"
+AGENT_RUN_ACTIVITIES_READ_SCOPE = "agent_runs.activities:read"
+AGENT_RUN_ACTIVITIES_WRITE_SCOPE = "agent_runs.activities:write"
 
 # SCOPES DICT --- any scope added above should be added here
 ALL_OAUTH_SCOPES = {
@@ -196,4 +201,9 @@ ALL_OAUTH_SCOPES = {
     TEAMSPACES_MEMBERS_WRITE_SCOPE: "Write access to teamspaces members",
     # Profile scopes
     PROFILE_READ_SCOPE: "Read access to profile",
+    # Agents scopes
+    AGENT_RUNS_READ_SCOPE: "Read access to agent runs",
+    AGENT_RUNS_WRITE_SCOPE: "Write access to agent runs",
+    AGENT_RUN_ACTIVITIES_READ_SCOPE: "Read access to agent run activities",
+    AGENT_RUN_ACTIVITIES_WRITE_SCOPE: "Write access to agent run activities",
 }

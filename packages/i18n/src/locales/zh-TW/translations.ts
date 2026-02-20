@@ -2114,6 +2114,7 @@ export default {
           stickies: "存取便利貼及所有便利貼相關實體",
           teamspaces: "存取團隊空間及所有團隊空間相關實體",
           profile: "存取使用者個人資料資訊",
+          agents: "存取代理以及所有代理相關實體",
         },
         build_your_own_app: "建立您自己的應用程式",
         edit_app_details: "編輯應用程式詳情",

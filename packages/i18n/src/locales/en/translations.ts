@@ -2102,6 +2102,7 @@ Create a new project instead`,
           stickies: "Access to stickies, and all sticky related entities",
           teamspaces: "Access to teamspaces, and all teamspace related entities",
           profile: "Access to user profile information",
+          agents: "Access to agents, and all agent related entities",
         },
       },
       "plane-intelligence": {

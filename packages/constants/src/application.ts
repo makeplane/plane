@@ -357,4 +357,25 @@ export const RESOURCE_PERMISSIONS_GROUPS = [
       },
     ],
   },
+  {
+    group_key: "agents",
+    title: "Agents",
+    description: "Agents and all related entities",
+    scopes: [
+      {
+        key: "agents.runs",
+        title: "Agent Runs",
+        description: "Agent runs and all related entities",
+        read_permission: "agents.runs:read",
+        write_permission: "agents.runs:write",
+      },
+      {
+        key: "agents.run_activities",
+        title: "Agent Run Activities",
+        description: "Agent run activities and all related entities",
+        read_permission: "agents.run_activities:read",
+        write_permission: "agents.run_activities:write",
+      },
+    ],
+  },
 ];

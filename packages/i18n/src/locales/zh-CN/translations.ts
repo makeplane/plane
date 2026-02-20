@@ -2114,6 +2114,7 @@ export default {
           stickies: "访问便签及所有便签相关实体",
           teamspaces: "访问团队空间及所有团队空间相关实体",
           profile: "访问用户资料信息",
+          agents: "访问代理以及所有代理相关实体",
         },
         internal: "内部",
       },
