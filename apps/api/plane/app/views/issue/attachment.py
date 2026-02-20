@@ -60,7 +60,10 @@ class IssueAttachmentEndpoint(BaseAPIView):
             pk=pk, workspace__slug=slug, project_id=project_id, issue_id=issue_id
         ).first()
         if not issue_attachment:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Issue attachment not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         issue_attachment.asset.delete(save=False)
         issue_attachment.delete()
         issue_activity.delay(
