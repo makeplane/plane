@@ -313,7 +313,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
         className={cn(
           "flex flex-col px-2 md:px-0 rounded-2xl w-full my-auto",
           {
-            "absolute bottom-[32px] left-0": !isNewChat || !isFullScreen,
+            "absolute bottom-[32px] left-0": !onlyInput && (!isNewChat || !isFullScreen),
           },
           className
         )}
