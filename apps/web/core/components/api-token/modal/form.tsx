@@ -248,7 +248,7 @@ export function CreateApiTokenForm(props: Props) {
       <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle">
         <div className="flex cursor-pointer items-center gap-1.5" onClick={toggleNeverExpires}>
           <div className="flex cursor-pointer items-center justify-center">
-            <Switch value={neverExpires} onChange={() => {}} />
+            <Switch value={neverExpires} onChange={toggleNeverExpires} />
           </div>
           <span className="text-11">{t("workspace_settings.settings.api_tokens.never_expires")}</span>
         </div>
