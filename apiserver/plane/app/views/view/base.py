@@ -434,7 +434,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             r["assignee_ids"] = assignee_map.get(iid, [])
             r["module_ids"] = module_map.get(iid, [])
             r["cycle_id"] = cycle_map.get(iid)
-            r["custom_properties"] = cp_map.get(iid, [])
+            r["custom_property_values"] = cp_map.get(iid, [])
 
         return results_list
 
