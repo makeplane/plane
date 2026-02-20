@@ -13,11 +13,11 @@ import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { AuthService } from "@plane/services";
 import { Checkbox, Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
-import { getPasswordStrength } from "@plane/utils";
+import { getPasswordStrength, validatePersonName, validateCompanyName } from "@plane/utils";
 // components
 import { AuthHeader } from "@/app/(all)/(home)/auth-header";
-import { Banner } from "@/components/common/banner";
-import { FormHeader } from "@/components/instance/form-header";
+import { Banner } from "../common/banner";
+import { FormHeader } from "./form-header";
 
 // service initialization
 const authService = new AuthService();
@@ -173,9 +173,15 @@ export function InstanceSetupForm() {
                   inputSize="md"
                   placeholder="Wilber"
                   value={formData.first_name}
-                  onChange={(e) => handleFormChange("first_name", e.target.value)}
-                  autoComplete="on"
+                  onChange={(e) => {
+                    const validation = validatePersonName(e.target.value);
+                    if (validation === true || e.target.value === "") {
+                      handleFormChange("first_name", e.target.value);
+                    }
+                  }}
+                  autoComplete="off"
                   autoFocus
+                  maxLength={50}
                 />
               </div>
               <div className="w-full space-y-1">
@@ -190,8 +196,14 @@ export function InstanceSetupForm() {
                   inputSize="md"
                   placeholder="Wright"
                   value={formData.last_name}
-                  onChange={(e) => handleFormChange("last_name", e.target.value)}
-                  autoComplete="on"
+                  onChange={(e) => {
+                    const validation = validatePersonName(e.target.value);
+                    if (validation === true || e.target.value === "") {
+                      handleFormChange("last_name", e.target.value);
+                    }
+                  }}
+                  autoComplete="off"
+                  maxLength={50}
                 />
               </div>
             </div>
@@ -210,7 +222,7 @@ export function InstanceSetupForm() {
                 value={formData.email}
                 onChange={(e) => handleFormChange("email", e.target.value)}
                 hasError={errorData.type && errorData.type === EErrorCodes.INVALID_EMAIL ? true : false}
-                autoComplete="on"
+                autoComplete="off"
               />
               {errorData.type && errorData.type === EErrorCodes.INVALID_EMAIL && errorData.message && (
                 <p className="px-1 text-11 text-danger-primary">{errorData.message}</p>
@@ -229,7 +241,13 @@ export function InstanceSetupForm() {
                 inputSize="md"
                 placeholder="Company name"
                 value={formData.company_name}
-                onChange={(e) => handleFormChange("company_name", e.target.value)}
+                onChange={(e) => {
+                  const validation = validateCompanyName(e.target.value, false);
+                  if (validation === true || e.target.value === "") {
+                    handleFormChange("company_name", e.target.value);
+                  }
+                }}
+                maxLength={80}
               />
             </div>
 
@@ -250,7 +268,7 @@ export function InstanceSetupForm() {
                   hasError={errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD ? true : false}
                   onFocus={() => setIsPasswordInputFocused(true)}
                   onBlur={() => setIsPasswordInputFocused(false)}
-                  autoComplete="on"
+                  autoComplete="new-password"
                 />
                 {showPassword.password ? (
                   <button
@@ -294,6 +312,7 @@ export function InstanceSetupForm() {
                   className="w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
                   onFocus={() => setIsRetryPasswordInputFocused(true)}
                   onBlur={() => setIsRetryPasswordInputFocused(false)}
+                  autoComplete="new-password"
                 />
                 {showPassword.retypePassword ? (
                   <button

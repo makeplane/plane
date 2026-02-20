@@ -20,6 +20,7 @@ import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { ComboDropDown } from "@plane/ui";
+import { sortBySelectedFirst } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -118,8 +119,11 @@ export function LabelDropdown(props: ILabelDropdownProps) {
 
   const filteredOptions = useMemo(
     () =>
-      query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase())),
-    [options, query]
+      sortBySelectedFirst(
+        query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase())),
+        value
+      ),
+    [options, query, value]
   );
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -270,7 +274,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
               <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
                 {isLoading ? (
                   <p className="text-center text-secondary">{t("common.loading")}</p>
-                ) : filteredOptions.length > 0 ? (
+                ) : filteredOptions && filteredOptions.length > 0 ? (
                   filteredOptions.map((option) => (
                     <Combobox.Option
                       key={option.value}

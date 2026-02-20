@@ -183,6 +183,7 @@ export const MemberDropdownBase = observer(function MemberDropdownBase(props: TM
           optionsClassName={optionsClassName}
           placement={placement}
           referenceElement={referenceElement}
+          value={value}
         />
       )}
     </ComboDropDown>

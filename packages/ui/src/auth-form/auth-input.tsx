@@ -9,13 +9,12 @@ import React, { useState } from "react";
 import { Input } from "../form-fields/input";
 import { cn } from "../utils";
 
-export interface AuthInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "autoComplete"> {
+export type TAuthInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   error?: string;
   showPasswordToggle?: boolean;
   errorClassName?: string;
-  autoComplete?: "on" | "off";
-}
+};
 
 const baseContainerClassName = "flex flex-col gap-1.5";
 
@@ -26,8 +25,9 @@ export function AuthInput({
   errorClassName = "",
   className = "",
   type = "text",
+  autoComplete = "off",
   ...props
-}: AuthInputProps) {
+}: TAuthInputProps) {
   const { id } = props;
   const [showPassword, setShowPassword] = useState(false);
   const isPasswordType = type === "password";
@@ -45,6 +45,7 @@ export function AuthInput({
         <Input
           {...props}
           type={inputType}
+          autoComplete={autoComplete}
           className={cn(
             "rounded-md disable-autofill-style h-6 w-full placeholder:text-14 placeholder:text-placeholder p-0 border-none",
             {

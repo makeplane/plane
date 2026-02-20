@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
@@ -34,8 +33,8 @@ function WorkspaceInvitationPage() {
   // query params
   const searchParams = useSearchParams();
   const invitation_id = searchParams.get("invitation_id");
-  const email = searchParams.get("email");
   const slug = searchParams.get("slug");
+  const token = searchParams.get("token");
   // store hooks
   const { data: currentUser } = useUser();
 
@@ -51,29 +50,29 @@ function WorkspaceInvitationPage() {
     workspaceService
       .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
         accepted: true,
-        email: invitationDetail.email,
+        token: token,
       })
       .then(() => {
-        if (email === currentUser?.email) {
+        if (invitationDetail.email === currentUser?.email) {
           router.push(`/${invitationDetail.workspace.slug}`);
         } else {
-          router.push(`/?${searchParams.toString()}`);
+          router.push("/");
         }
       })
-      .catch((err) => console.error(err));
+      .catch((err: unknown) => console.error(err));
   };
 
   const handleReject = () => {
-    if (!invitationDetail) return;
-    workspaceService
+    if (!invitationDetail || !token) return;
+    void workspaceService
       .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
         accepted: false,
-        email: invitationDetail.email,
+        token: token,
       })
       .then(() => {
         router.push("/");
       })
-      .catch((err) => console.error(err));
+      .catch((err: unknown) => console.error(err));
   };
 
   return (

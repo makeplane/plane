@@ -85,8 +85,8 @@ class Adapter:
         results = zxcvbn(self.code)
         if results["score"] < 3:
             raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
-                error_message="INVALID_PASSWORD",
+                error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
+                error_message="PASSWORD_TOO_WEAK",
                 payload={"email": email},
             )
         return

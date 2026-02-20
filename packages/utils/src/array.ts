@@ -200,3 +200,79 @@ export const convertStringArrayToBooleanObject = (arrayStrings: string[]) => {
 
   return obj;
 };
+
+/**
+ * @description Sorts dropdown options with selected items appearing first
+ * @param {T[]} options Array of dropdown options with value property
+ * @param {string[] | string | null | undefined} selectedValues Selected value(s) - array for multi-select, string for single-select
+ * @returns {T[]} Sorted array with selected items first
+ * @example
+ * const options = [{value: '1', label: 'A'}, {value: '2', label: 'B'}];
+ * sortBySelectedFirst(options, ['2']) // returns [{value: '2', label: 'B'}, {value: '1', label: 'A'}]
+ */
+export const sortBySelectedFirst = <T extends { value: string | null }>(
+  options: T[] | undefined,
+  selectedValues: string[] | string | null | undefined
+): T[] | undefined => {
+  if (!options || options.length === 0) return options;
+
+  // Normalize selectedValues to array for consistent handling
+  const selectedSet = new Set(Array.isArray(selectedValues) ? selectedValues : selectedValues ? [selectedValues] : []);
+
+  if (selectedSet.size === 0) return options;
+
+  // Create a shallow copy to avoid mutating the original array
+  return [...options].sort((a, b) => {
+    const aSelected = a.value !== null && selectedSet.has(a.value);
+    const bSelected = b.value !== null && selectedSet.has(b.value);
+
+    // If both selected or both unselected, maintain original order
+    if (aSelected === bSelected) return 0;
+
+    // Selected items come first
+    return aSelected ? -1 : 1;
+  });
+};
+
+/**
+ * @description Sorts dropdown options with current user first, then selected items, then unselected items
+ * @param {T[]} options Array of dropdown options with value property
+ * @param {string[] | string | null | undefined} selectedValues Selected value(s) - array for multi-select, string for single-select
+ * @param {string | undefined} currentUserId ID of the current user to prioritize
+ * @returns {T[]} Sorted array with current user first, then selected items, then unselected
+ * @example
+ * const options = [{value: 'user1'}, {value: 'user2'}, {value: 'user3'}];
+ * sortByCurrentUserThenSelected(options, ['user2'], 'user3')
+ * // returns [{value: 'user3'}, {value: 'user2'}, {value: 'user1'}]
+ */
+export const sortByCurrentUserThenSelected = <T extends { value: string | null }>(
+  options: T[] | undefined,
+  selectedValues: string[] | string | null | undefined,
+  currentUserId: string | undefined
+): T[] | undefined => {
+  if (!options || options.length === 0) return options;
+
+  // Normalize selectedValues to array for consistent handling
+  const selectedSet = new Set(Array.isArray(selectedValues) ? selectedValues : selectedValues ? [selectedValues] : []);
+
+  // Create a shallow copy to avoid mutating the original array
+  return [...options].sort((a, b) => {
+    const aIsCurrent = currentUserId && a.value === currentUserId;
+    const bIsCurrent = currentUserId && b.value === currentUserId;
+
+    // Current user always comes first
+    if (aIsCurrent && !bIsCurrent) return -1;
+    if (!aIsCurrent && bIsCurrent) return 1;
+    if (aIsCurrent && bIsCurrent) return 0;
+
+    // If neither is current user, sort by selection state
+    const aSelected = a.value !== null && selectedSet.has(a.value);
+    const bSelected = b.value !== null && selectedSet.has(b.value);
+
+    // If both selected or both unselected, maintain original order
+    if (aSelected === bSelected) return 0;
+
+    // Selected items come before unselected
+    return aSelected ? -1 : 1;
+  });
+};

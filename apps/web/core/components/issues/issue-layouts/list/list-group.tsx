@@ -312,7 +312,17 @@ export const ListGroup = observer(function ListGroup(props: Props) {
             />
           )}
 
-          {shouldLoadMore && (group_by ? <>{loadMore}</> : <ListLoaderItemRow ref={setIntersectionElement} />)}
+          {shouldLoadMore &&
+            (group_by ? (
+              <>{loadMore}</>
+            ) : (
+              <>
+                {Array.from({ length: 2 }).map((_, index) => (
+                  <ListLoaderItemRow key={index} />
+                ))}
+                <ListLoaderItemRow ref={setIntersectionElement} />
+              </>
+            ))}
 
           {enableIssueQuickAdd &&
             !disableIssueCreation &&

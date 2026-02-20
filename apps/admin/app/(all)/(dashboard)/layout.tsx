@@ -11,7 +11,7 @@ import { Outlet } from "react-router";
 // components
 import { AdminHeader } from "@/components/common/header";
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import { NewUserPopup } from "@/components/new-user-popup";
+import { NewUserPopup } from "@/components/common/new-user-popup";
 // hooks
 import { useUser } from "@/hooks/store";
 // local components
