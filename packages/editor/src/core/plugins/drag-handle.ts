@@ -22,7 +22,7 @@ import type { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
 import { canCreateColumns, handleColumnDrop } from "@/plane-editor/extensions/multi-column/column-drop";
 import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 // utils
-import { EDGE_DROP_THRESHOLD, isInsideColumn, isInsideColumnStructure } from "./utils";
+import { EDGE_OUTSIDE_THRESHOLD, isInsideColumn, isInsideColumnStructure } from "./utils";
 import { columnResizePluginKey } from "@/plane-editor/extensions/multi-column/column/plugins/column-resize";
 import type { Editor } from "@tiptap/core";
 import type { MultiColumnExtensionOptions } from "src/ee/extensions/multi-column/types";
@@ -183,11 +183,13 @@ function detectEdgeDrop(
   if (!(blockElement instanceof HTMLElement)) return null;
 
   const rect = blockElement.getBoundingClientRect();
-  const relativeX = mouseX - rect.left;
-  const threshold = rect.width * EDGE_DROP_THRESHOLD;
+  const distanceOutsideLeft = rect.left - mouseX;
+  const distanceOutsideRight = mouseX - rect.right;
 
-  if (relativeX <= threshold) return { blockPos, position: "left" };
-  if (relativeX >= rect.width - threshold) return { blockPos, position: "right" };
+  // Only trigger when cursor is outside the block but within EDGE_OUTSIDE_THRESHOLD px of its edge
+  if (distanceOutsideLeft > 0 && distanceOutsideLeft <= EDGE_OUTSIDE_THRESHOLD) return { blockPos, position: "left" };
+  if (distanceOutsideRight > 0 && distanceOutsideRight <= EDGE_OUTSIDE_THRESHOLD)
+    return { blockPos, position: "right" };
   return null;
 }
 

@@ -69,6 +69,10 @@ export const PageEmbedContent = observer(function PageEmbedContent(props: Props)
   const dropTargetRef = useRef<HTMLDivElement>(null);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragCountRef = useRef(0); // Used to track enter/leave events for nested elements
+  const dragStateRef = useRef<{ timer: ReturnType<typeof setTimeout> | null; nesting: boolean }>({
+    timer: null,
+    nesting: false,
+  });
   // navigation
   const { workspaceSlug } = useParams();
   const router = useAppRouter();
@@ -175,12 +179,10 @@ export const PageEmbedContent = observer(function PageEmbedContent(props: Props)
     }
   }, []);
 
-  // Clean up the timer when the component unmounts
   useEffect(
     () => () => {
-      if (hoverTimerRef.current) {
-        clearTimeout(hoverTimerRef.current);
-      }
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+      if (dragStateRef.current.timer) clearTimeout(dragStateRef.current.timer);
     },
     []
   );
@@ -200,46 +202,55 @@ export const PageEmbedContent = observer(function PageEmbedContent(props: Props)
     }
   }, [showPreview]);
 
+  // Helper to check if the drag data contains a page-embed-component
+  const isPageEmbedDrag = useCallback(
+    (e: React.DragEvent): boolean => {
+      if (!isDroppable || !onPageDrop) return false;
+      // During dragenter/dragover, we can only check types, not data (browser restriction)
+      // We rely on the text/html type being present as a signal for editor drag content
+      return e.dataTransfer.types.includes("text/html");
+    },
+    [isDroppable, onPageDrop]
+  );
+
   const onDragEnter = useCallback(
     (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (!isDroppable) return;
-
+      if (!isPageEmbedDrag(e)) return;
       dragCountRef.current += 1;
-
       if (dragCountRef.current === 1) {
-        setDraggedInside(true);
+        dragStateRef.current.timer = setTimeout(() => {
+          dragStateRef.current.nesting = true;
+          setDraggedInside(true);
+          if (dropTargetRef.current) dropTargetRef.current.dataset.dropTargetActive = "true";
+        }, 1000);
       }
     },
-    [isDroppable]
+    [isPageEmbedDrag]
   );
 
   const onDragOver = useCallback(
     (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
+      if (!isPageEmbedDrag(e)) return;
 
-      if (!isDroppable) return;
+      e.preventDefault();
 
       // Set the drop effect
       e.dataTransfer.dropEffect = "move";
     },
-    [isDroppable]
+    [isPageEmbedDrag]
   );
 
   const onDragLeave = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-
+    (_e: React.DragEvent) => {
       if (!isDroppable) return;
-
       dragCountRef.current -= 1;
-
       if (dragCountRef.current === 0) {
+        const s = dragStateRef.current;
+        if (s.timer) clearTimeout(s.timer);
+        s.timer = null;
+        s.nesting = false;
         setDraggedInside(false);
+        if (dropTargetRef.current) delete dropTargetRef.current.dataset.dropTargetActive;
       }
     },
     [isDroppable]
@@ -247,34 +258,30 @@ export const PageEmbedContent = observer(function PageEmbedContent(props: Props)
 
   const onDrop = useCallback(
     (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-
+      const wasNesting = dragStateRef.current.nesting;
+      const s = dragStateRef.current;
+      if (s.timer) clearTimeout(s.timer);
+      s.timer = null;
+      s.nesting = false;
       dragCountRef.current = 0;
       setDraggedInside(false);
+      if (dropTargetRef.current) delete dropTargetRef.current.dataset.dropTargetActive;
 
-      if (!isDroppable || !onPageDrop) return;
+      if (!wasNesting || !isDroppable || !onPageDrop) return;
 
-      const htmlString = e.dataTransfer.getData("text/plain");
+      const htmlString = e.dataTransfer.getData("text/html");
       if (!htmlString) return;
-
       try {
-        // Parse the HTML string
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlString, "text/html");
-        const element = doc.body.firstElementChild;
-
-        if (!element || element.tagName.toLowerCase() !== "page-embed-component") return;
-
-        // Extract page ID
-        const droppedPageId = element.getAttribute("entity_identifier");
-
+        const el = new DOMParser().parseFromString(htmlString, "text/html").body.firstElementChild;
+        const droppedPageId =
+          el?.tagName?.toLowerCase() === "page-embed-component" ? el.getAttribute("entity_identifier") : null;
         if (droppedPageId && droppedPageId !== embedPageId && !page?.archived_at) {
-          // Execute callback with the dropped page ID
+          e.preventDefault();
+          e.stopPropagation();
           onPageDrop(droppedPageId);
         }
-      } catch (error) {
-        console.error("Error processing dropped page:", error);
+      } catch (err) {
+        console.error("Error processing dropped page:", err);
       }
     },
     [isDroppable, onPageDrop, embedPageId, page?.archived_at]
@@ -301,9 +308,9 @@ export const PageEmbedContent = observer(function PageEmbedContent(props: Props)
           role="button"
           data-drag-handle
           className={cn(
-            "page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors duration-150 flex items-center gap-1.5 !no-underline hover:bg-layer-transparent-hover ease",
+            "page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors duration-150 flex items-center gap-1.5 !no-underline hover:bg-layer-transparent-hover ease border border-transparent",
             {
-              "bg-layer-1": draggedInside && isDroppable,
+              "!border !border-dashed !border-accent-strong !bg-accent-primary/10": draggedInside && isDroppable,
             },
             displayState.bgColor
           )}

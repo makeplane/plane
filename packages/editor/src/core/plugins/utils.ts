@@ -17,8 +17,8 @@ import type { EditorState } from "@tiptap/pm/state";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 
-/** Threshold percentage for detecting edge drops (10% of block width) */
-export const EDGE_DROP_THRESHOLD = 0.1;
+/** Max distance (px) outside the block edge where the vertical drop indicator is shown */
+export const EDGE_OUTSIDE_THRESHOLD = 40;
 
 export function isInsideColumn($pos: ResolvedPos): boolean {
   for (let d = $pos.depth; d > 0; d--) {

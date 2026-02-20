@@ -22,7 +22,7 @@ import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 // extensions
 import { canCreateColumns } from "@/plane-editor/extensions/multi-column/column-drop";
 // utils
-import { EDGE_DROP_THRESHOLD, getTargetBlockInfo, isInsideColumn, isInsideColumnStructure } from "./utils";
+import { EDGE_OUTSIDE_THRESHOLD, getTargetBlockInfo, isInsideColumn, isInsideColumnStructure } from "./utils";
 import { columnResizePluginKey } from "@/plane-editor/extensions/multi-column/column/plugins/column-resize";
 
 // Helper function to check if a node is a list item for column cursor purposes
@@ -70,6 +70,11 @@ export function DropCursorPlugin(options: DropCursorOptions): Plugin {
     key: DropCursorPluginKey,
     view(editorView) {
       return new DropCursorView(editorView, options);
+    },
+    props: {
+      handleDrop(_view, e) {
+        return !!(e.target as HTMLElement)?.closest?.("[data-drop-target-active]");
+      },
     },
   });
 }
@@ -250,7 +255,10 @@ class DropCursorView {
 
   dragover(event: DragEvent) {
     if (!this.editorView.editable) return;
-
+    if ((event.target as HTMLElement)?.closest?.("[data-drop-target-active]")) {
+      this.setCursor(null);
+      return;
+    }
     const pos = this.editorView.posAtCoords({ left: event.clientX, top: event.clientY });
 
     // Check disableDropCursor (same as original)
@@ -305,11 +313,13 @@ class DropCursorView {
     }
 
     const rect = block.getBoundingClientRect();
-    const threshold = rect.width * EDGE_DROP_THRESHOLD;
-    const relativeX = event.clientX - rect.left;
+    const distanceOutsideLeft = rect.left - event.clientX;
+    const distanceOutsideRight = event.clientX - rect.right;
 
-    const isLeftEdge = relativeX <= threshold;
-    const isRightEdge = relativeX >= rect.width - threshold;
+    // Show vertical indicator only when cursor is outside the block but within
+    // EDGE_OUTSIDE_THRESHOLD px of the block edge (a narrow band just outside)
+    const isLeftEdge = distanceOutsideLeft > 0 && distanceOutsideLeft <= EDGE_OUTSIDE_THRESHOLD;
+    const isRightEdge = distanceOutsideRight > 0 && distanceOutsideRight <= EDGE_OUTSIDE_THRESHOLD;
 
     const $blockPos = this.editorView.state.doc.resolve(blockInfo.pos);
 
