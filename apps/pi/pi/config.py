@@ -112,7 +112,7 @@ class VectorDB:
 
     # OpenSearch Configuration
     OPENSEARCH_URL: str = os.getenv("OPENSEARCH_URL", "")
-    OPENSEARCH_USER: str = os.getenv("OPENSEARCH_USER", "")
+    OPENSEARCH_USER: str = os.getenv("OPENSEARCH_USER", "") or os.getenv("OPENSEARCH_USERNAME", "")
     OPENSEARCH_PASSWORD: str = os.getenv("OPENSEARCH_PASSWORD", "")
 
     # Model Configuration
@@ -382,7 +382,7 @@ class Celery:
 
     # Using RabbitMQ for message brokering only (no result backend)
     # Tasks run asynchronously but progress is tracked via logs only
-    BROKER_URL: str = os.getenv("CELERY_BROKER_URL", "pyamqp://guest@localhost:5672//")  # RabbitMQ default
+    BROKER_URL: str = os.getenv("CELERY_BROKER_URL", None) or os.getenv("AMQP_URL", None) or "pyamqp://guest@localhost:5672//"
     RESULT_BACKEND: str | None = None
 
     TASK_SERIALIZER: str = "json"
@@ -422,7 +422,7 @@ class Settings:
     SENTRY_ENVIRONMENT: str = os.getenv("SENTRY_ENVIRONMENT", "development")
 
     # AWS Configuration for S3 attachments
-    AWS_S3_BUCKET: str = os.getenv("AWS_S3_BUCKET", "")
+    AWS_S3_BUCKET: str = os.getenv("AWS_S3_BUCKET", "") or os.getenv("AWS_S3_BUCKET_NAME", "")
     AWS_S3_REGION: str = os.getenv("AWS_S3_REGION", "")
     AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID", "")
     AWS_SECRET_ACCESS_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "")
