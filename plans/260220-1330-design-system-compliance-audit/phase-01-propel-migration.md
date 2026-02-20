@@ -1,7 +1,7 @@
 # Phase 1 — Propel Migration & Semantic Tokens
 
 **Priority**: High
-**Status**: [ ] Pending
+**Status**: [x] Complete
 **Risk**: Low — import swaps, no logic changes
 **Estimated effort**: ~1 hour
 
@@ -187,20 +187,20 @@ import { Input } from "@plane/propel/input";
 
 ## Todo List
 
-- [ ] Dashboard: analytics-dashboard-list-header.tsx
-- [ ] Dashboard: analytics-dashboard-form-modal.tsx
-- [ ] Dashboard: dashboards/page.tsx
-- [ ] Dashboard: dashboards/[dashboardId]/page.tsx
-- [ ] Dashboard: widget-config-modal.tsx
-- [ ] Dashboard: config/basic-settings-section.tsx
-- [ ] Department: department-form-modal.tsx
-- [ ] Department: department-tree-item.tsx
-- [ ] Department: link-project-modal.tsx
-- [ ] Department: departments/page.tsx
-- [ ] Staff: staff-table.tsx (imports + hardcoded colors)
-- [ ] Staff: staff-form-modal.tsx
-- [ ] Staff: staff-import-modal.tsx
-- [ ] Staff: staff/page.tsx (imports + hardcoded colors)
-- [ ] Run `pnpm check:lint`
-- [ ] Run `pnpm check:types`
-- [ ] Verify dark mode
+- [x] Dashboard: analytics-dashboard-list-header.tsx
+- [x] Dashboard: analytics-dashboard-form-modal.tsx
+- [x] Dashboard: dashboards/page.tsx
+- [x] Dashboard: dashboards/[dashboardId]/page.tsx
+- [x] Dashboard: widget-config-modal.tsx
+- [x] Dashboard: config/basic-settings-section.tsx
+- [x] Department: department-form-modal.tsx
+- [x] Department: department-tree-item.tsx
+- [x] Department: link-project-modal.tsx
+- [x] Department: departments/page.tsx
+- [x] Staff: staff-table.tsx (imports + hardcoded colors)
+- [x] Staff: staff-form-modal.tsx
+- [x] Staff: staff-import-modal.tsx
+- [x] Staff: staff/page.tsx (imports + hardcoded colors)
+- [x] Run `pnpm check:lint`
+- [x] Run `pnpm check:types`
+- [x] Verify dark mode

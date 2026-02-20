@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 
 type Props = {
   onCreateClick: () => void;

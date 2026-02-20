@@ -10,10 +10,11 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { Button, Input, TextArea } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IDepartment, IDepartmentCreate, IDepartmentUpdate } from "@/services/department.service";
 import { DepartmentService } from "@/services/department.service";
+import { DepartmentFormFields } from "./department-form-fields";
 
 interface DepartmentFormModalProps {
   workspaceSlug: string;
@@ -26,6 +27,17 @@ interface DepartmentFormModalProps {
 
 const departmentService = new DepartmentService();
 
+const INITIAL_FORM_DATA: IDepartmentCreate = {
+  name: "",
+  code: "",
+  short_name: "",
+  dept_code: "",
+  description: "",
+  parent: "",
+  level: 1,
+  manager: "",
+};
+
 export const DepartmentFormModal = observer(function DepartmentFormModal({
   workspaceSlug,
   department,
@@ -35,16 +47,7 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({
   onSuccess,
 }: DepartmentFormModalProps) {
   const { t } = useTranslation();
-  const [formData, setFormData] = useState<IDepartmentCreate>({
-    name: "",
-    code: "",
-    short_name: "",
-    dept_code: "",
-    description: "",
-    parent: "",
-    level: 1,
-    manager: "",
-  });
+  const [formData, setFormData] = useState<IDepartmentCreate>(INITIAL_FORM_DATA);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -60,16 +63,7 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({
         manager: department.manager || "",
       });
     } else {
-      setFormData({
-        name: "",
-        code: "",
-        short_name: "",
-        dept_code: "",
-        description: "",
-        parent: "",
-        level: 1,
-        manager: "",
-      });
+      setFormData(INITIAL_FORM_DATA);
     }
   }, [department, isOpen]);
 
@@ -80,27 +74,15 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({
     try {
       if (department) {
         await departmentService.updateDepartment(workspaceSlug, department.id, formData as IDepartmentUpdate);
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Department updated",
-          message: "Department has been updated successfully.",
-        });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: "Department updated", message: "Department has been updated successfully." });
       } else {
         await departmentService.createDepartment(workspaceSlug, formData);
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Department created",
-          message: "Department has been created successfully.",
-        });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: "Department created", message: "Department has been created successfully." });
       }
       onSuccess();
       onClose();
     } catch (error: any) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error",
-        message: error?.message || "Something went wrong. Please try again.",
-      });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Error", message: error?.message || "Something went wrong. Please try again." });
     } finally {
       setIsSubmitting(false);
     }
@@ -113,109 +95,14 @@ export const DepartmentFormModal = observer(function DepartmentFormModal({
       <div className="w-full max-w-2xl rounded-lg bg-custom-background-100 p-6 shadow-lg">
         <h2 className="mb-4 text-xl font-semibold">{department ? "Edit Department" : "Add Department"}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="name" className="mb-1 block text-sm font-medium">
-                Department Name
-              </label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Enter department name"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="code" className="mb-1 block text-sm font-medium">
-                Code
-              </label>
-              <Input
-                id="code"
-                value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                placeholder="Enter code"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="short_name" className="mb-1 block text-sm font-medium">
-                Short Name
-              </label>
-              <Input
-                id="short_name"
-                value={formData.short_name}
-                onChange={(e) => setFormData({ ...formData, short_name: e.target.value })}
-                placeholder="Enter short name"
-              />
-            </div>
-            <div>
-              <label htmlFor="dept_code" className="mb-1 block text-sm font-medium">
-                Department Code
-              </label>
-              <Input
-                id="dept_code"
-                value={formData.dept_code}
-                onChange={(e) => setFormData({ ...formData, dept_code: e.target.value })}
-                placeholder="Enter department code"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="parent" className="mb-2 block text-sm font-medium">
-                Parent Department
-              </label>
-              <select
-                id="parent"
-                value={formData.parent}
-                onChange={(e) => setFormData({ ...formData, parent: e.target.value })}
-                className="w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm"
-              >
-                <option value="">None (Root Department)</option>
-                {departments
-                  .filter((d) => d.id !== department?.id)
-                  .map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.name}
-                    </option>
-                  ))}
-              </select>
-            </div>
-            <div>
-              <label htmlFor="level" className="mb-1 block text-sm font-medium">
-                Level
-              </label>
-              <Input
-                id="level"
-                type="number"
-                value={formData.level}
-                onChange={(e) => setFormData({ ...formData, level: parseInt(e.target.value) || 1 })}
-                placeholder="Enter level"
-                min={1}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="description" className="mb-1 block text-sm font-medium">
-              Description
-            </label>
-            <TextArea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Enter description"
-              rows={3}
-            />
-          </div>
-
+          <DepartmentFormFields
+            formData={formData}
+            onChange={setFormData}
+            departments={departments}
+            editingDepartmentId={department?.id}
+          />
           <div className="flex justify-end gap-2 pt-4">
-            <Button variant="neutral-primary" onClick={onClose} disabled={isSubmitting}>
+            <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </Button>
             <Button type="submit" variant="primary" loading={isSubmitting}>

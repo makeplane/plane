@@ -95,14 +95,14 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
 
   return (
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.MD}>
-      <form onSubmit={handleSubmit} className="p-5 space-y-4">
-        <h2 className="text-base font-semibold text-custom-text-100">
+      <form onSubmit={handleSubmit} className="p-5 space-y-4" data-prevent-outside-click>
+        <h2 className="text-base font-semibold text-primary">
           {existingWorklog ? t("worklog.edit_log") : t("worklog.log_time")}
         </h2>
 
         {/* Date */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="worklog-date" className="text-xs font-medium text-custom-text-300">
+          <label htmlFor="worklog-date" className="text-xs font-medium text-tertiary">
             {t("worklog.date")}
           </label>
           <input
@@ -111,7 +111,7 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
             value={loggedAt}
             max={todayDate()}
             onChange={(e) => setLoggedAt(e.target.value)}
-            className="border border-custom-border-200 rounded-md px-3 py-2 text-sm bg-custom-background-100 text-custom-text-100 focus:outline-none focus:ring-1 focus:ring-custom-primary"
+            className="border border-subtle rounded-md px-3 py-2 text-sm bg-surface-1 text-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
             required
           />
         </div>
@@ -119,7 +119,7 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
         {/* Duration: hours + minutes side by side */}
         <div className="flex gap-3">
           <div className="flex flex-col gap-1 flex-1">
-            <label htmlFor="worklog-hours" className="text-xs font-medium text-custom-text-300">
+            <label htmlFor="worklog-hours" className="text-xs font-medium text-tertiary">
               {t("worklog.hours")}
             </label>
             <input
@@ -129,11 +129,11 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
               max={23}
               value={hours}
               onChange={(e) => setHours(Math.max(0, Math.min(23, Number(e.target.value))))}
-              className="border border-custom-border-200 rounded-md px-3 py-2 text-sm bg-custom-background-100 text-custom-text-100 focus:outline-none focus:ring-1 focus:ring-custom-primary"
+              className="border border-subtle rounded-md px-3 py-2 text-sm bg-surface-1 text-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
             />
           </div>
           <div className="flex flex-col gap-1 flex-1">
-            <label htmlFor="worklog-minutes" className="text-xs font-medium text-custom-text-300">
+            <label htmlFor="worklog-minutes" className="text-xs font-medium text-tertiary">
               {t("worklog.minutes")}
             </label>
             <input
@@ -143,14 +143,14 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
               max={59}
               value={minutes}
               onChange={(e) => setMinutes(Math.max(0, Math.min(59, Number(e.target.value))))}
-              className="border border-custom-border-200 rounded-md px-3 py-2 text-sm bg-custom-background-100 text-custom-text-100 focus:outline-none focus:ring-1 focus:ring-custom-primary"
+              className="border border-subtle rounded-md px-3 py-2 text-sm bg-surface-1 text-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
             />
           </div>
         </div>
 
         {/* Description (optional) */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="worklog-description" className="text-xs font-medium text-custom-text-300">
+          <label htmlFor="worklog-description" className="text-xs font-medium text-tertiary">
             {t("worklog.description_optional")}
           </label>
           <textarea
@@ -159,7 +159,7 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
             placeholder={t("worklog.description_placeholder")}
-            className="border border-custom-border-200 rounded-md px-3 py-2 text-sm bg-custom-background-100 text-custom-text-100 focus:outline-none focus:ring-1 focus:ring-custom-primary resize-none"
+            className="border border-subtle rounded-md px-3 py-2 text-sm bg-surface-1 text-primary focus:outline-none focus:ring-1 focus:ring-accent-primary resize-none"
           />
         </div>
 

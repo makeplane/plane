@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 import { Copy, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { DashboardIcon } from "@plane/propel/icons";
 import type { IAnalyticsDashboard } from "@plane/types";
 import { FavoriteStar } from "@plane/ui";
@@ -27,6 +28,7 @@ export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
   onDelete,
   onDuplicate,
 }: Props) {
+  const { t } = useTranslation();
   const router = useAppRouter();
   const { addDashboardToFavorites, removeDashboardFromFavorites } = useAnalyticsDashboard();
 
@@ -62,7 +64,7 @@ export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
           </div>
           <div className="min-w-0 flex-1">
             <h3 className="truncate font-medium text-custom-text-100">{dashboard.name}</h3>
-            {dashboard.is_default && <span className="text-xs text-custom-text-300">Default</span>}
+            {dashboard.is_default && <span className="text-xs text-custom-text-300">{t("analytics_dashboard.default")}</span>}
           </div>
         </div>
 
@@ -87,7 +89,7 @@ export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
                 }}
               >
                 <Pencil className="h-3.5 w-3.5" />
-                Edit
+                {t("analytics_dashboard.edit")}
               </button>
               {onDuplicate && (
                 <button
@@ -98,7 +100,7 @@ export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
                   }}
                 >
                   <Copy className="h-3.5 w-3.5" />
-                  Duplicate
+                  {t("analytics_dashboard.duplicate")}
                 </button>
               )}
               <button
@@ -109,7 +111,7 @@ export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
                 }}
               >
                 <Trash2 className="h-3.5 w-3.5" />
-                Delete
+                {t("analytics_dashboard.delete")}
               </button>
             </div>
           </div>
@@ -123,8 +125,10 @@ export const AnalyticsDashboardCard = observer(function AnalyticsDashboardCard({
 
       {/* Footer */}
       <div className="mt-auto flex items-center gap-4 text-xs text-custom-text-300">
-        <span>{dashboard.widget_count} widgets</span>
-        {dashboard.config?.project_ids?.length > 0 && <span>{dashboard.config.project_ids.length} projects</span>}
+        <span>{t("analytics_dashboard.widgets", { count: dashboard.widget_count })}</span>
+        {dashboard.config?.project_ids?.length > 0 && (
+          <span>{t("analytics_dashboard.projects", { count: dashboard.config.project_ids.length })}</span>
+        )}
       </div>
     </div>
   );

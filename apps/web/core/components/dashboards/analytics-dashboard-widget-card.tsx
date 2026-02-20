@@ -8,17 +8,10 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Copy, GripVertical, MoreVertical, Settings, Trash2 } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { Loader } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EAnalyticsWidgetType } from "@plane/types";
-import type { IAnalyticsDashboardWidget, IAnalyticsChartData, IAnalyticsNumberWidgetData } from "@plane/types";
+import type { IAnalyticsDashboardWidget } from "@plane/types";
 import { useAnalyticsDashboard } from "@/hooks/store/use-analytics-dashboard";
-import { BarChartWidget } from "./widgets/bar-chart-widget";
-import { LineChartWidget } from "./widgets/line-chart-widget";
-import { AreaChartWidget } from "./widgets/area-chart-widget";
-import { DonutChartWidget } from "./widgets/donut-chart-widget";
-import { PieChartWidget } from "./widgets/pie-chart-widget";
-import { NumberWidget } from "./widgets/number-widget";
+import { WidgetChartRenderer } from "./widget-chart-renderer";
 
 type AnalyticsDashboardWidgetCardProps = {
   widget: IAnalyticsDashboardWidget;
@@ -55,118 +48,15 @@ export const AnalyticsDashboardWidgetCard = observer(function AnalyticsDashboard
       } catch (error) {
         console.error("Failed to fetch widget data:", error);
         setHasError(true);
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Failed to load widget data",
-          message: error instanceof Error ? error.message : "Unknown error",
-        });
+        setToast({ type: TOAST_TYPE.ERROR, title: "Failed to load widget data", message: error instanceof Error ? error.message : "Unknown error" });
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchData();
   }, [workspaceSlug, dashboardId, widget.id, analyticsDashboardStore]);
 
   const widgetData = analyticsDashboardStore.widgetDataMap.get(widget.id);
-
-  // Type guard to check if data is chart data
-  const isChartData = (data: any): data is IAnalyticsChartData => {
-    return data && "data" in data && "schema" in data;
-  };
-
-  // Type guard to check if data is number widget data
-  const isNumberData = (data: any): data is IAnalyticsNumberWidgetData => {
-    return data && "value" in data && "metric" in data;
-  };
-
-  const renderWidget = () => {
-    if (isLoading) {
-      return (
-        <div className="flex h-full items-center justify-center">
-          <Loader>
-            <Loader.Item height="40px" width="40px" />
-          </Loader>
-        </div>
-      );
-    }
-
-    if (hasError || !widgetData) {
-      return (
-        <div className="flex h-full flex-col items-center justify-center gap-2">
-          <p className="text-sm text-tertiary">Failed to load widget data</p>
-        </div>
-      );
-    }
-
-    switch (widget.widget_type) {
-      case EAnalyticsWidgetType.BAR:
-        if (!isChartData(widgetData)) return null;
-        return (
-          <BarChartWidget
-            data={widgetData}
-            config={widget.config}
-            chartProperty={widget.chart_property}
-            chartMetric={widget.chart_metric}
-          />
-        );
-      case EAnalyticsWidgetType.LINE:
-        if (!isChartData(widgetData)) return null;
-        return (
-          <LineChartWidget
-            data={widgetData}
-            config={widget.config}
-            chartProperty={widget.chart_property}
-            chartMetric={widget.chart_metric}
-          />
-        );
-      case EAnalyticsWidgetType.AREA:
-        if (!isChartData(widgetData)) return null;
-        return (
-          <AreaChartWidget
-            data={widgetData}
-            config={widget.config}
-            chartProperty={widget.chart_property}
-            chartMetric={widget.chart_metric}
-          />
-        );
-      case EAnalyticsWidgetType.DONUT:
-        if (!isChartData(widgetData)) return null;
-        return (
-          <DonutChartWidget
-            data={widgetData}
-            config={widget.config}
-            chartProperty={widget.chart_property}
-            chartMetric={widget.chart_metric}
-          />
-        );
-      case EAnalyticsWidgetType.PIE:
-        if (!isChartData(widgetData)) return null;
-        return (
-          <PieChartWidget
-            data={widgetData}
-            config={widget.config}
-            chartProperty={widget.chart_property}
-            chartMetric={widget.chart_metric}
-          />
-        );
-      case EAnalyticsWidgetType.NUMBER:
-        if (!isNumberData(widgetData)) return null;
-        return (
-          <NumberWidget
-            data={widgetData}
-            config={widget.config}
-            chartMetric={widget.chart_metric}
-          />
-        );
-      default:
-        return (
-          <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-tertiary">Unsupported widget type</p>
-          </div>
-        );
-    }
-  };
 
   return (
     <div className="relative h-full rounded-lg border border-subtle bg-surface-1 p-4">
@@ -182,45 +72,21 @@ export const AnalyticsDashboardWidgetCard = observer(function AnalyticsDashboard
         </div>
         {isEditMode && (
           <div className="relative" ref={menuRef}>
-            <button
-              onClick={() => setShowMenu(!showMenu)}
-              className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-2"
-            >
+            <button onClick={() => setShowMenu(!showMenu)} className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-2">
               <MoreVertical className="h-4 w-4 text-tertiary" />
             </button>
             {showMenu && (
               <div className="absolute right-0 top-8 z-10 min-w-[160px] rounded-md border border-subtle bg-surface-1 shadow-lg">
-                <button
-                  onClick={() => {
-                    onConfigure(widget.id);
-                    setShowMenu(false);
-                  }}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-secondary hover:bg-layer-2"
-                >
-                  <Settings className="h-4 w-4" />
-                  Configure
+                <button onClick={() => { onConfigure(widget.id); setShowMenu(false); }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-secondary hover:bg-layer-2">
+                  <Settings className="h-4 w-4" /> Configure
                 </button>
                 {onDuplicate && (
-                  <button
-                    onClick={() => {
-                      onDuplicate(widget.id);
-                      setShowMenu(false);
-                    }}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-secondary hover:bg-layer-2"
-                  >
-                    <Copy className="h-4 w-4" />
-                    Duplicate
+                  <button onClick={() => { onDuplicate(widget.id); setShowMenu(false); }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-secondary hover:bg-layer-2">
+                    <Copy className="h-4 w-4" /> Duplicate
                   </button>
                 )}
-                <button
-                  onClick={() => {
-                    onDelete(widget.id);
-                    setShowMenu(false);
-                  }}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-layer-2"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Delete
+                <button onClick={() => { onDelete(widget.id); setShowMenu(false); }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-layer-2">
+                  <Trash2 className="h-4 w-4" /> Delete
                 </button>
               </div>
             )}
@@ -230,9 +96,8 @@ export const AnalyticsDashboardWidgetCard = observer(function AnalyticsDashboard
 
       {/* Widget Content */}
       <div className="h-[calc(100%-3rem)]">
-        {renderWidget()}
+        <WidgetChartRenderer widget={widget} widgetData={widgetData} isLoading={isLoading} hasError={hasError} />
       </div>
     </div>
   );
 });
-

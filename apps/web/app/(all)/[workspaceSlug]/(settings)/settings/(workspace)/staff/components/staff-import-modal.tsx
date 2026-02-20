@@ -10,7 +10,7 @@
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Upload } from "lucide-react";
 import { StaffService } from "@/services/staff.service";
@@ -109,7 +109,7 @@ export const StaffImportModal = observer(function StaffImportModal({
           <div>
             <input ref={fileInputRef} type="file" accept=".csv" onChange={handleFileSelect} className="hidden" />
             <Button
-              variant="neutral-primary"
+              variant="secondary"
               onClick={() => fileInputRef.current?.click()}
               className="w-full flex items-center justify-center gap-2"
             >
@@ -132,7 +132,7 @@ export const StaffImportModal = observer(function StaffImportModal({
           )}
 
           <div className="flex justify-end gap-2 pt-4">
-            <Button variant="neutral-primary" onClick={onClose} disabled={isUploading}>
+            <Button variant="secondary" onClick={onClose} disabled={isUploading}>
               Cancel
             </Button>
             <Button variant="primary" onClick={handleUpload} loading={isUploading} disabled={!selectedFile}>

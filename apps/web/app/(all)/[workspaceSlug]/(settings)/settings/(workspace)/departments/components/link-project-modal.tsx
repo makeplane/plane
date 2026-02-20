@@ -10,7 +10,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IDepartment } from "@/services/department.service";
 import { DepartmentService } from "@/services/department.service";
@@ -94,7 +94,7 @@ export const LinkProjectModal = observer(function LinkProjectModal({
           </div>
 
           <div className="flex justify-end gap-2 pt-4">
-            <Button variant="neutral-primary" onClick={onClose} disabled={isSubmitting}>
+            <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </Button>
             <Button type="submit" variant="primary" loading={isSubmitting}>

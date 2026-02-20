@@ -1,7 +1,7 @@
 # Phase 4 — File Size & Modularization
 
 **Priority**: Medium
-**Status**: [ ] Pending
+**Status**: [x] Complete
 **Risk**: Medium — requires careful refactoring to avoid breaking imports
 **Estimated effort**: ~2 hours
 
@@ -71,16 +71,16 @@
 
 ## Todo List
 
-- [ ] department-form-modal.tsx → extract DepartmentFormFields
-- [ ] staff-form-modal.tsx → extract StaffFormFields
-- [ ] staff-table.tsx → extract StaffStatusBadge + StaffActionButtons
-- [ ] staff/page.tsx → extract StaffStatsCards
-- [ ] dashboards/[dashboardId]/page.tsx → extract DashboardToolbar
-- [ ] widget-config-modal.tsx → extract tab sections
-- [ ] analytics-dashboard-widget-card.tsx → extract WidgetChartRenderer
-- [ ] Update all imports in consuming files
-- [ ] Run `pnpm check:lint` and `pnpm check:types`
-- [ ] Verify no visual regressions
+- [x] department-form-modal.tsx → extract DepartmentFormFields
+- [x] staff-form-modal.tsx → extract StaffFormFields
+- [x] staff-table.tsx → extract StaffStatusBadge + StaffActionButtons
+- [x] staff/page.tsx → extract StaffStatsCards
+- [x] dashboards/[dashboardId]/page.tsx → extract DashboardToolbar
+- [x] widget-config-modal.tsx → extract WidgetConfigTabContent
+- [x] analytics-dashboard-widget-card.tsx → extract WidgetChartRenderer
+- [x] Update all imports in consuming files
+- [x] Run `pnpm check:types` — web passes clean
+- [ ] Verify no visual regressions (manual)
 
 ## Risk Assessment
 

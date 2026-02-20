@@ -10,11 +10,13 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Button, Input } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IStaff, IStaffCreate, IStaffUpdate } from "@/services/staff.service";
 import { StaffService } from "@/services/staff.service";
 import { DepartmentService } from "@/services/department.service";
+import { StaffFormFields } from "./staff-form-fields";
 
 interface StaffFormModalProps {
   workspaceSlug: string;
@@ -48,6 +50,7 @@ export const StaffFormModal = observer(function StaffFormModal({
   onClose,
   onSuccess,
 }: StaffFormModalProps) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<IStaffCreate>(INITIAL_CREATE);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isEditing = !!staff;
@@ -92,18 +95,18 @@ export const StaffFormModal = observer(function StaffFormModal({
           notes: formData.notes,
         };
         await staffService.updateStaff(workspaceSlug, staff.id, updateData);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Staff updated" });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: t("staff.updated") });
       } else {
         await staffService.createStaff(workspaceSlug, formData);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Staff created" });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: t("staff.created") });
       }
       onSuccess();
       onClose();
     } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
-        message: error?.message || error?.error || "Something went wrong.",
+        title: t("error"),
+        message: error?.message || error?.error || t("something_went_wrong"),
       });
     } finally {
       setIsSubmitting(false);
@@ -115,111 +118,20 @@ export const StaffFormModal = observer(function StaffFormModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-custom-backdrop">
       <div className="w-full max-w-2xl rounded-lg bg-custom-background-100 p-6 shadow-lg">
-        <h2 className="mb-4 text-xl font-semibold">{isEditing ? "Edit Staff" : "Add Staff"}</h2>
+        <h2 className="mb-4 text-xl font-semibold">{isEditing ? t("staff.edit") : t("staff.add")}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-3 gap-4">
-            <Input
-              id="staff_id"
-              placeholder="Staff ID (e.g. 18506320)"
-              value={formData.staff_id}
-              onChange={(e) => setFormData({ ...formData, staff_id: e.target.value })}
-              required
-              disabled={isEditing}
-            />
-            <Input
-              id="last_name"
-              placeholder="Last name"
-              value={formData.last_name}
-              onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-              required
-              disabled={isEditing}
-            />
-            <Input
-              id="first_name"
-              placeholder="First name"
-              value={formData.first_name}
-              onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-              required
-              disabled={isEditing}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="department" className="mb-1 block text-sm font-medium">
-                Department
-              </label>
-              <select
-                id="department"
-                value={formData.department_id || ""}
-                onChange={(e) => setFormData({ ...formData, department_id: e.target.value || null })}
-                className="w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm"
-              >
-                <option value="">Select Department</option>
-                {departments?.map((dept) => (
-                  <option key={dept.id} value={dept.id}>
-                    {dept.code} - {dept.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <Input
-              id="position"
-              placeholder="Position"
-              value={formData.position}
-              onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-            />
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <Input
-              id="job_grade"
-              placeholder="Job grade"
-              value={formData.job_grade}
-              onChange={(e) => setFormData({ ...formData, job_grade: e.target.value })}
-            />
-            <Input
-              id="phone"
-              placeholder="Phone"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            />
-            <Input
-              id="date_of_joining"
-              type="date"
-              placeholder="Date of joining"
-              value={formData.date_of_joining || ""}
-              onChange={(e) => setFormData({ ...formData, date_of_joining: e.target.value })}
-            />
-          </div>
-
-          {!isEditing && (
-            <Input
-              id="password"
-              type="password"
-              placeholder="Initial password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              required
-            />
-          )}
-
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={formData.is_department_manager}
-              onChange={(e) => setFormData({ ...formData, is_department_manager: e.target.checked })}
-              className="rounded border-custom-border-200"
-            />
-            Department Manager (auto-join children projects)
-          </label>
-
+          <StaffFormFields
+            formData={formData}
+            onChange={setFormData}
+            departments={departments}
+            isEditing={isEditing}
+          />
           <div className="flex justify-end gap-2 pt-4">
-            <Button variant="neutral-primary" onClick={onClose} disabled={isSubmitting}>
-              Cancel
+            <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>
+              {t("cancel")}
             </Button>
             <Button type="submit" variant="primary" loading={isSubmitting}>
-              {isEditing ? "Update" : "Create"}
+              {isEditing ? t("update") : t("create")}
             </Button>
           </div>
         </form>

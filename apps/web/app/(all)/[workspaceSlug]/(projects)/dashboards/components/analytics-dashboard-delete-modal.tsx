@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import type { IAnalyticsDashboard } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 
@@ -22,6 +23,7 @@ export const AnalyticsDashboardDeleteModal = observer(function AnalyticsDashboar
   onConfirm,
   dashboard,
 }: Props) {
+  const { t } = useTranslation();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleClose = () => {
@@ -45,12 +47,10 @@ export const AnalyticsDashboardDeleteModal = observer(function AnalyticsDashboar
       handleClose={handleClose}
       handleSubmit={handleSubmit}
       isSubmitting={isDeleting}
-      title="Delete dashboard"
+      title={t("analytics_dashboard.delete")}
       content={
         <>
-          Are you sure you want to delete{" "}
-          <span className="font-medium text-custom-text-100">{dashboard?.name}</span>? This action cannot be undone
-          and will remove all widgets in this dashboard.
+          {t("analytics_dashboard.delete_confirm", { name: dashboard?.name ?? "" })}
         </>
       }
     />

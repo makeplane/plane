@@ -1,4 +1,8 @@
+# Python imports
+import json
+
 # Django imports
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.models import Count, Q
 
@@ -10,8 +14,10 @@ from rest_framework.response import Response
 from plane.app.permissions import WorkSpaceAdminPermission, WorkspaceEntityPermission
 from plane.app.serializers.department import DepartmentSerializer, DepartmentTreeSerializer
 from plane.app.views.base import BaseAPIView
+from plane.bgtasks.webhook_task import model_activity
 from plane.db.models import Department, Project, ProjectMember, Workspace
 from plane.utils.exception_logger import log_exception
+from plane.utils.host import base_host
 
 
 class DepartmentEndpoint(BaseAPIView):
@@ -63,6 +69,15 @@ class DepartmentEndpoint(BaseAPIView):
         serializer = DepartmentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(workspace=workspace)
+            model_activity.delay(
+                model_name="department",
+                model_id=str(serializer.data["id"]),
+                requested_data=request.data,
+                current_instance=None,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -110,9 +125,21 @@ class DepartmentDetailEndpoint(BaseAPIView):
                 {"error": "Department not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+        current_instance = json.dumps(
+            DepartmentSerializer(department).data, cls=DjangoJSONEncoder
+        )
         serializer = DepartmentSerializer(department, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            model_activity.delay(
+                model_name="department",
+                model_id=str(department.id),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -125,8 +152,20 @@ class DepartmentDetailEndpoint(BaseAPIView):
                 {"error": "Department not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+        current_instance = json.dumps(
+            DepartmentSerializer(department).data, cls=DjangoJSONEncoder
+        )
         # Soft delete
         department.delete()
+        model_activity.delay(
+            model_name="department",
+            model_id=str(pk),
+            requested_data=None,
+            current_instance=current_instance,
+            actor_id=request.user.id,
+            slug=slug,
+            origin=base_host(request=request, is_app=True),
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -209,12 +248,26 @@ class DepartmentLinkProjectEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        current_instance = json.dumps(
+            DepartmentSerializer(department).data, cls=DjangoJSONEncoder
+        )
+
         with transaction.atomic():
             department.linked_project = project
             department.save(update_fields=["linked_project"])
 
             # Auto-sync: add all active staff as ProjectMembers
             self._sync_members_to_project(department, project)
+
+        model_activity.delay(
+            model_name="department",
+            model_id=str(pk),
+            requested_data=request.data,
+            current_instance=current_instance,
+            actor_id=request.user.id,
+            slug=slug,
+            origin=base_host(request=request, is_app=True),
+        )
 
         serializer = DepartmentSerializer(department)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -230,8 +283,22 @@ class DepartmentLinkProjectEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        current_instance = json.dumps(
+            DepartmentSerializer(department).data, cls=DjangoJSONEncoder
+        )
+
         department.linked_project = None
         department.save(update_fields=["linked_project"])
+
+        model_activity.delay(
+            model_name="department",
+            model_id=str(pk),
+            requested_data=None,
+            current_instance=current_instance,
+            actor_id=request.user.id,
+            slug=slug,
+            origin=base_host(request=request, is_app=True),
+        )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

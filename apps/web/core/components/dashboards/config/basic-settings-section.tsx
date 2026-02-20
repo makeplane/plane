@@ -7,7 +7,8 @@
 import { observer } from "mobx-react";
 import { Controller } from "react-hook-form";
 import type { Control, FieldErrors } from "react-hook-form";
-import { Input, CustomSelect } from "@plane/ui";
+import { Input } from "@plane/propel/input";
+import { CustomSelect } from "@plane/ui";
 import { ANALYTICS_CHART_PROPERTY_OPTIONS, ANALYTICS_CHART_METRIC_OPTIONS } from "@plane/constants";
 
 interface BasicSettingsSectionProps {

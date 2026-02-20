@@ -1,7 +1,7 @@
 # Phase 3 — Backend Activity Tracking
 
 **Priority**: High
-**Status**: [ ] Pending
+**Status**: [x] Complete
 **Risk**: Low — additive changes, fire-and-forget Celery tasks
 **Estimated effort**: ~1 hour
 
@@ -140,26 +140,26 @@ model_activity.delay(
 
 ## Todo List
 
-- [ ] Department: add imports
-- [ ] Department: DepartmentViewSet.create
-- [ ] Department: DepartmentViewSet.partial_update (+ current_instance capture)
-- [ ] Department: DepartmentViewSet.destroy (+ current_instance capture)
-- [ ] Department: DepartmentLinkProjectEndpoint.post
-- [ ] Department: DepartmentLinkProjectEndpoint.delete
-- [ ] Staff: add imports
-- [ ] Staff: StaffProfileViewSet.create
-- [ ] Staff: StaffProfileViewSet.partial_update
-- [ ] Staff: StaffProfileViewSet.destroy
-- [ ] Staff: StaffBulkImportEndpoint.post
-- [ ] Staff: StaffAutoMembershipEndpoint.post
-- [ ] Dashboard: add imports
-- [ ] Dashboard: AnalyticsDashboardViewSet.create
-- [ ] Dashboard: AnalyticsDashboardViewSet.partial_update
-- [ ] Dashboard: AnalyticsDashboardViewSet.destroy
-- [ ] Dashboard: AnalyticsDashboardWidgetViewSet.create
-- [ ] Dashboard: AnalyticsDashboardWidgetViewSet.partial_update
-- [ ] Dashboard: AnalyticsDashboardWidgetViewSet.destroy
-- [ ] Run tests
+- [x]Department: add imports
+- [x]Department: DepartmentViewSet.create
+- [x]Department: DepartmentViewSet.partial_update (+ current_instance capture)
+- [x]Department: DepartmentViewSet.destroy (+ current_instance capture)
+- [x]Department: DepartmentLinkProjectEndpoint.post
+- [x]Department: DepartmentLinkProjectEndpoint.delete
+- [x]Staff: add imports
+- [x]Staff: StaffProfileViewSet.create
+- [x]Staff: StaffProfileViewSet.partial_update
+- [x]Staff: StaffProfileViewSet.destroy
+- [x]Staff: StaffBulkImportEndpoint.post
+- [x]Staff: StaffAutoMembershipEndpoint.post
+- [x]Dashboard: add imports
+- [x]Dashboard: AnalyticsDashboardViewSet.create
+- [x]Dashboard: AnalyticsDashboardViewSet.partial_update
+- [x]Dashboard: AnalyticsDashboardViewSet.destroy
+- [x]Dashboard: AnalyticsDashboardWidgetViewSet.create
+- [x]Dashboard: AnalyticsDashboardWidgetViewSet.partial_update
+- [x]Dashboard: AnalyticsDashboardWidgetViewSet.destroy
+- [x]Run tests
 
 ## Risk Assessment
 

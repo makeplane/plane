@@ -7,8 +7,11 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 import type { IAnalyticsDashboard, TAnalyticsDashboardCreate } from "@plane/types";
-import { Button, EModalPosition, EModalWidth, Input, ModalCore, TextArea } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Input } from "@plane/propel/input";
+import { EModalPosition, EModalWidth, ModalCore, TextArea } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
@@ -33,6 +36,7 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
   onSubmit,
   dashboard,
 }: Props) {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -79,22 +83,22 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
           <h3 className="text-xl font-medium text-custom-text-200">
-            {dashboard ? "Update dashboard" : "Create dashboard"}
+            {dashboard ? t("analytics_dashboard.update") : t("analytics_dashboard.create")}
           </h3>
 
           {/* Name */}
           <div className="space-y-1">
             <label className="text-sm font-medium text-custom-text-300">
-              Name <span className="text-red-500">*</span>
+              {t("analytics_dashboard.name.label")} <span className="text-red-500">*</span>
             </label>
             <Controller
               name="name"
               control={control}
-              rules={{ required: "Name is required", maxLength: { value: 255, message: "Max 255 characters" } }}
+              rules={{ required: t("analytics_dashboard.name_required"), maxLength: { value: 255, message: t("analytics_dashboard.max_characters", { count: 255 }) } }}
               render={({ field }) => (
                 <Input
                   {...field}
-                  placeholder="Analytics Dashboard"
+                  placeholder={t("analytics_dashboard.name.placeholder")}
                   className="w-full"
                   hasError={!!errors.name}
                   autoFocus
@@ -106,12 +110,12 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
 
           {/* Description */}
           <div className="space-y-1">
-            <label className="text-sm font-medium text-custom-text-300">Description</label>
+            <label className="text-sm font-medium text-custom-text-300">{t("analytics_dashboard.description.label")}</label>
             <Controller
               name="description"
               control={control}
               render={({ field }) => (
-                <TextArea {...field} placeholder="Dashboard description..." className="w-full" rows={3} />
+                <TextArea {...field} placeholder={t("analytics_dashboard.description.placeholder")} className="w-full" rows={3} />
               )}
             />
           </div>
@@ -119,11 +123,11 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-2 border-t border-custom-border-200 px-5 py-4">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose} type="button" disabled={isSubmitting}>
-            Cancel
+          <Button variant="secondary" size="sm" onClick={handleClose} type="button" disabled={isSubmitting}>
+            {t("cancel")}
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-            {dashboard ? "Update dashboard" : "Create dashboard"}
+            {dashboard ? t("analytics_dashboard.update") : t("analytics_dashboard.create")}
           </Button>
         </div>
       </form>

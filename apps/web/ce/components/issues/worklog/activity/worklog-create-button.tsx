@@ -28,15 +28,13 @@ export function IssueActivityWorklogCreateButton(props: TIssueActivityWorklogCre
       <Button variant="tertiary" size="sm" onClick={() => setIsModalOpen(true)}>
         {t("worklog.log_time")}
       </Button>
-      {isModalOpen && (
-        <WorklogModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-        />
-      )}
+      <WorklogModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        issueId={issueId}
+      />
     </>
   );
 }

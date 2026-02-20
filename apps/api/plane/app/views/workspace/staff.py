@@ -1,8 +1,10 @@
 # Python imports
 import csv
 import io
+import json
 
 # Django imports
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.models import Count, Q
 from django.http import HttpResponse
@@ -16,6 +18,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.app.serializers.staff import StaffProfileSerializer, StaffProfileCreateSerializer
 from plane.app.views.base import BaseAPIView
+from plane.bgtasks.webhook_task import model_activity
 from plane.db.models import (
     Department,
     ProjectMember,
@@ -25,6 +28,7 @@ from plane.db.models import (
     WorkspaceMember,
 )
 from plane.utils.exception_logger import log_exception
+from plane.utils.host import base_host
 
 
 class StaffEndpoint(BaseAPIView):
@@ -126,6 +130,15 @@ class StaffEndpoint(BaseAPIView):
             )
 
         serializer = StaffProfileSerializer(staff_profile)
+        model_activity.delay(
+            model_name="staff",
+            model_id=str(staff_profile.id),
+            requested_data=request.data,
+            current_instance=None,
+            actor_id=request.user.id,
+            slug=slug,
+            origin=base_host(request=request, is_app=True),
+        )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -159,9 +172,21 @@ class StaffDetailEndpoint(BaseAPIView):
                 {"error": "Staff not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+        current_instance = json.dumps(
+            StaffProfileSerializer(staff).data, cls=DjangoJSONEncoder
+        )
         serializer = StaffProfileSerializer(staff, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            model_activity.delay(
+                model_name="staff",
+                model_id=str(staff.id),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -174,7 +199,19 @@ class StaffDetailEndpoint(BaseAPIView):
                 {"error": "Staff not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+        current_instance = json.dumps(
+            StaffProfileSerializer(staff).data, cls=DjangoJSONEncoder
+        )
         staff.delete()
+        model_activity.delay(
+            model_name="staff",
+            model_id=str(pk),
+            requested_data=None,
+            current_instance=current_instance,
+            actor_id=request.user.id,
+            slug=slug,
+            origin=base_host(request=request, is_app=True),
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -366,6 +403,17 @@ class StaffBulkImportEndpoint(BaseAPIView):
                 created += 1
             except Exception as e:
                 errors.append(f"Row {row_num} ({staff_id}): {str(e)}")
+
+        if created > 0:
+            model_activity.delay(
+                model_name="staff",
+                model_id=None,
+                requested_data={"action": "bulk_import", "created": created, "skipped": skipped},
+                current_instance=None,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
+            )
 
         return Response(
             {

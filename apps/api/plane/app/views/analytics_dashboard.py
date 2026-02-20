@@ -2,16 +2,19 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+import json
 import logging
 from datetime import datetime
 
 from rest_framework import status
 from rest_framework.response import Response
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.models import Sum, Prefetch, Exists, OuterRef
 
 from plane.app.views.base import BaseAPIView
 from plane.app.permissions import WorkSpaceAdminPermission
+from plane.bgtasks.webhook_task import model_activity
 from plane.db.models import (
     AnalyticsDashboard,
     AnalyticsDashboardWidget,
@@ -25,6 +28,7 @@ from plane.api.serializers.analytics_dashboard import (
     AnalyticsDashboardWidgetSerializer,
 )
 from plane.utils.build_chart import build_analytics_chart
+from plane.utils.host import base_host
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +72,15 @@ class AnalyticsDashboardEndpoint(BaseAPIView):
         serializer = AnalyticsDashboardSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(workspace=workspace, owner=request.user)
+            model_activity.delay(
+                model_name="analytics_dashboard",
+                model_id=str(serializer.data["id"]),
+                requested_data=request.data,
+                current_instance=None,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -115,11 +128,23 @@ class AnalyticsDashboardDetailEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        current_instance = json.dumps(
+            AnalyticsDashboardSerializer(dashboard).data, cls=DjangoJSONEncoder
+        )
         serializer = AnalyticsDashboardSerializer(
             dashboard, data=request.data, partial=True,
         )
         if serializer.is_valid():
             serializer.save()
+            model_activity.delay(
+                model_name="analytics_dashboard",
+                model_id=str(dashboard.id),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -137,6 +162,9 @@ class AnalyticsDashboardDetailEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        current_instance = json.dumps(
+            AnalyticsDashboardSerializer(dashboard).data, cls=DjangoJSONEncoder
+        )
         # Clean up favorites referencing this dashboard
         UserFavorite.objects.filter(
             entity_identifier=dashboard_id,
@@ -144,6 +172,15 @@ class AnalyticsDashboardDetailEndpoint(BaseAPIView):
             workspace__slug=slug,
         ).delete()
         dashboard.delete()
+        model_activity.delay(
+            model_name="analytics_dashboard",
+            model_id=str(dashboard_id),
+            requested_data=None,
+            current_instance=current_instance,
+            actor_id=request.user.id,
+            slug=slug,
+            origin=base_host(request=request, is_app=True),
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -180,6 +217,15 @@ class AnalyticsDashboardWidgetEndpoint(BaseAPIView):
         serializer = AnalyticsDashboardWidgetSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(dashboard=dashboard)
+            model_activity.delay(
+                model_name="analytics_dashboard_widget",
+                model_id=str(serializer.data["id"]),
+                requested_data=request.data,
+                current_instance=None,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -222,11 +268,23 @@ class AnalyticsDashboardWidgetDetailEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        current_instance = json.dumps(
+            AnalyticsDashboardWidgetSerializer(widget).data, cls=DjangoJSONEncoder
+        )
         serializer = AnalyticsDashboardWidgetSerializer(
             widget, data=request.data, partial=True,
         )
         if serializer.is_valid():
             serializer.save()
+            model_activity.delay(
+                model_name="analytics_dashboard_widget",
+                model_id=str(widget.id),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -245,7 +303,19 @@ class AnalyticsDashboardWidgetDetailEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        current_instance = json.dumps(
+            AnalyticsDashboardWidgetSerializer(widget).data, cls=DjangoJSONEncoder
+        )
         widget.delete()
+        model_activity.delay(
+            model_name="analytics_dashboard_widget",
+            model_id=str(widget_id),
+            requested_data=None,
+            current_instance=current_instance,
+            actor_id=request.user.id,
+            slug=slug,
+            origin=base_host(request=request, is_app=True),
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

@@ -7,6 +7,7 @@
 "use client";
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import type { IDepartment } from "@/services/department.service";
 import { DepartmentTreeItem } from "./department-tree-item";
 
@@ -25,10 +26,12 @@ export const DepartmentTree = observer(function DepartmentTree({
   onDelete,
   onLinkProject,
 }: DepartmentTreeProps) {
+  const { t } = useTranslation();
+
   if (!departments || departments.length === 0) {
     return (
       <div className="flex h-full items-center justify-center py-12">
-        <p className="text-sm text-custom-text-400">No departments found. Add your first department to get started.</p>
+        <p className="text-sm text-custom-text-400">{t("department.empty")}</p>
       </div>
     );
   }

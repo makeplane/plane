@@ -10,7 +10,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, ChevronRight, Edit2, Link2, Trash2, Users } from "lucide-react";
-import { Button } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IDepartment } from "@/services/department.service";
 import { DepartmentService } from "@/services/department.service";
@@ -34,6 +35,7 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
   onLinkProject,
   level = 0,
 }: DepartmentTreeItemProps) {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -41,22 +43,22 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
   const isLeaf = !hasChildren;
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this department?")) return;
+    if (!confirm(t("department.delete_confirm"))) return;
 
     setIsDeleting(true);
     try {
       await departmentService.deleteDepartment(workspaceSlug, department.id);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Department deleted",
-        message: "Department has been deleted successfully.",
+        title: t("department.deleted"),
+        message: t("department.deleted_message"),
       });
       onDelete(department.id);
     } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
-        message: error?.message || "Failed to delete department.",
+        title: t("error"),
+        message: error?.message || t("department.delete_failed"),
       });
     } finally {
       setIsDeleting(false);
@@ -97,14 +99,14 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
 
             {department.manager_detail && (
               <div className="text-xs">
-                <span className="text-custom-text-400">Manager: </span>
+                <span className="text-custom-text-400">{t("department.manager.label")}: </span>
                 <span className="text-custom-text-300">{department.manager_detail.display_name}</span>
               </div>
             )}
 
             {department.linked_project_detail && (
               <div className="text-xs">
-                <span className="text-custom-text-400">Project: </span>
+                <span className="text-custom-text-400">{t("department.linked_project.label")}: </span>
                 <span className="text-custom-text-300">{department.linked_project_detail.name}</span>
               </div>
             )}
@@ -113,18 +115,18 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
           <div className="flex items-center gap-2">
             {isLeaf && !department.linked_project && (
               <Button
-                variant="neutral-primary"
+                variant="secondary"
                 size="sm"
                 onClick={() => onLinkProject(department)}
                 className="flex items-center gap-1"
               >
                 <Link2 className="h-3 w-3" />
-                Link Project
+                {t("department.linked_project.link")}
               </Button>
             )}
 
             <Button
-              variant="neutral-primary"
+              variant="secondary"
               size="sm"
               onClick={() => onEdit(department)}
               className="flex items-center gap-1"
@@ -133,7 +135,7 @@ export const DepartmentTreeItem = observer(function DepartmentTreeItem({
             </Button>
 
             <Button
-              variant="danger"
+              variant="error-outline"
               size="sm"
               onClick={handleDelete}
               loading={isDeleting}

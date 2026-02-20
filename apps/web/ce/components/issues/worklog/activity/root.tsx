@@ -34,15 +34,15 @@ export function IssueActivityWorklog(props: TIssueActivityWorklog) {
       })}
     >
       {/* icon */}
-      <span className="flex-shrink-0 mt-0.5 rounded-full bg-custom-background-80 p-1">
-        <Timer className="h-3 w-3 text-custom-text-300" />
+      <span className="flex-shrink-0 mt-0.5 rounded-full bg-layer-2 p-1">
+        <Timer className="h-3 w-3 text-tertiary" />
       </span>
 
       {/* message */}
-      <p className="text-xs text-custom-text-300 leading-5">
+      <p className="text-xs text-tertiary leading-5">
         {t("worklog.activity_logged")}
         {createdAt && (
-          <span className="ml-1 text-custom-text-400">{createdAt}</span>
+          <span className="ml-1 text-tertiary">{createdAt}</span>
         )}
       </p>
     </div>
