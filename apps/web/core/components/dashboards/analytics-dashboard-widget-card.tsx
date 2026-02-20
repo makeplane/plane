@@ -48,12 +48,16 @@ export const AnalyticsDashboardWidgetCard = observer(function AnalyticsDashboard
       } catch (error) {
         console.error("Failed to fetch widget data:", error);
         setHasError(true);
-        setToast({ type: TOAST_TYPE.ERROR, title: "Failed to load widget data", message: error instanceof Error ? error.message : "Unknown error" });
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Failed to load widget data",
+          message: error instanceof Error ? error.message : "Unknown error",
+        });
       } finally {
         setIsLoading(false);
       }
     };
-    fetchData();
+    void fetchData();
   }, [workspaceSlug, dashboardId, widget.id, analyticsDashboardStore]);
 
   const widgetData = analyticsDashboardStore.widgetDataMap.get(widget.id);
@@ -72,20 +76,41 @@ export const AnalyticsDashboardWidgetCard = observer(function AnalyticsDashboard
         </div>
         {isEditMode && (
           <div className="relative" ref={menuRef}>
-            <button onClick={() => setShowMenu(!showMenu)} className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-2">
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-2"
+            >
               <MoreVertical className="h-4 w-4 text-tertiary" />
             </button>
             {showMenu && (
               <div className="absolute right-0 top-8 z-10 min-w-[160px] rounded-md border border-subtle bg-surface-1 shadow-lg">
-                <button onClick={() => { onConfigure(widget.id); setShowMenu(false); }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-secondary hover:bg-layer-2">
+                <button
+                  onClick={() => {
+                    onConfigure(widget.id);
+                    setShowMenu(false);
+                  }}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-secondary hover:bg-layer-2"
+                >
                   <Settings className="h-4 w-4" /> Configure
                 </button>
                 {onDuplicate && (
-                  <button onClick={() => { onDuplicate(widget.id); setShowMenu(false); }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-secondary hover:bg-layer-2">
+                  <button
+                    onClick={() => {
+                      onDuplicate(widget.id);
+                      setShowMenu(false);
+                    }}
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-secondary hover:bg-layer-2"
+                  >
                     <Copy className="h-4 w-4" /> Duplicate
                   </button>
                 )}
-                <button onClick={() => { onDelete(widget.id); setShowMenu(false); }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-layer-2">
+                <button
+                  onClick={() => {
+                    onDelete(widget.id);
+                    setShowMenu(false);
+                  }}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-layer-2"
+                >
                   <Trash2 className="h-4 w-4" /> Delete
                 </button>
               </div>

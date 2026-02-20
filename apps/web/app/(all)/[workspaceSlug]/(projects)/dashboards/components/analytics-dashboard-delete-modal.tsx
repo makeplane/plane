@@ -45,14 +45,10 @@ export const AnalyticsDashboardDeleteModal = observer(function AnalyticsDashboar
     <AlertModalCore
       isOpen={isOpen}
       handleClose={handleClose}
-      handleSubmit={handleSubmit}
+      handleSubmit={() => void handleSubmit()}
       isSubmitting={isDeleting}
       title={t("analytics_dashboard.delete")}
-      content={
-        <>
-          {t("analytics_dashboard.delete_confirm", { name: dashboard?.name ?? "" })}
-        </>
-      }
+      content={<>{t("analytics_dashboard.delete_confirm", { name: dashboard?.name ?? "" })}</>}
     />
   );
 });

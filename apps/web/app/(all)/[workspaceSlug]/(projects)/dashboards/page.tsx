@@ -20,7 +20,7 @@ import { AnalyticsDashboardDeleteModal } from "./components/analytics-dashboard-
 import { AnalyticsDashboardFormModal } from "./components/analytics-dashboard-form-modal";
 import { AnalyticsDashboardListHeader } from "./components/analytics-dashboard-list-header";
 
-function DashboardListPage({ params }: Route.ComponentProps) {
+const DashboardListPage = observer(function DashboardListPage({ params }: Route.ComponentProps) {
   const { t } = useTranslation();
   const { workspaceSlug } = params;
   const analyticsDashboardStore = useAnalyticsDashboard();
@@ -32,7 +32,7 @@ function DashboardListPage({ params }: Route.ComponentProps) {
 
   // fetch dashboards on mount
   useEffect(() => {
-    if (workspaceSlug) analyticsDashboardStore.fetchDashboards(workspaceSlug);
+    if (workspaceSlug) void analyticsDashboardStore.fetchDashboards(workspaceSlug);
   }, [workspaceSlug, analyticsDashboardStore]);
 
   const handleCreate = useCallback(
@@ -68,8 +68,12 @@ function DashboardListPage({ params }: Route.ComponentProps) {
       if (!workspaceSlug) return;
       try {
         const newDashboard = await analyticsDashboardStore.duplicateDashboard(workspaceSlug, dashboard.id);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Dashboard duplicated", message: `Created "${newDashboard.name}"` });
-      } catch (error) {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Dashboard duplicated",
+          message: `Created "${newDashboard.name}"`,
+        });
+      } catch (_error) {
         setToast({ type: TOAST_TYPE.ERROR, title: "Failed to duplicate dashboard" });
       }
     },
@@ -118,11 +122,7 @@ function DashboardListPage({ params }: Route.ComponentProps) {
                   Create your first analytics dashboard to visualize work item data.
                 </p>
               </div>
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => setIsCreateOpen(true)}
-              >
+              <Button variant="primary" size="sm" onClick={() => setIsCreateOpen(true)}>
                 Create dashboard
               </Button>
             </div>
@@ -135,7 +135,7 @@ function DashboardListPage({ params }: Route.ComponentProps) {
                   workspaceSlug={workspaceSlug}
                   onEdit={setEditDashboard}
                   onDelete={setDeleteDashboard}
-                  onDuplicate={handleDuplicate}
+                  onDuplicate={(d) => void handleDuplicate(d)}
                 />
               ))}
             </div>
@@ -167,6 +167,6 @@ function DashboardListPage({ params }: Route.ComponentProps) {
       />
     </>
   );
-}
+});
 
-export default observer(DashboardListPage);
+export default DashboardListPage;

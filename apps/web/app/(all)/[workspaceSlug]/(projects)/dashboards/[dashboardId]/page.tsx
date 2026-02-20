@@ -18,7 +18,7 @@ import type { IAnalyticsDashboardWidget, TAnalyticsWidgetCreate, TAnalyticsWidge
 import type { Route } from "./+types/page";
 import { DashboardToolbar } from "./dashboard-toolbar";
 
-function DashboardDetailPage({ params }: Route.ComponentProps) {
+const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Route.ComponentProps) {
   const { workspaceSlug, dashboardId } = params;
   const router = useAppRouter();
   const analyticsDashboardStore = useAnalyticsDashboard();
@@ -29,9 +29,11 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
   useEffect(() => {
     if (workspaceSlug && dashboardId) {
       analyticsDashboardStore.setActiveDashboard(dashboardId);
-      analyticsDashboardStore.fetchDashboard(workspaceSlug, dashboardId);
+      void analyticsDashboardStore.fetchDashboard(workspaceSlug, dashboardId);
     }
-    return () => { analyticsDashboardStore.setActiveDashboard(null); };
+    return () => {
+      analyticsDashboardStore.setActiveDashboard(null);
+    };
   }, [workspaceSlug, dashboardId, analyticsDashboardStore]);
 
   const { currentDashboard, sortedWidgets, loader } = analyticsDashboardStore;
@@ -42,7 +44,11 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
       await analyticsDashboardStore.fetchDashboard(workspaceSlug, dashboardId);
       setToast({ type: TOAST_TYPE.SUCCESS, title: "Dashboard refreshed" });
     } catch (error) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to refresh dashboard", message: error instanceof Error ? error.message : "Unknown error" });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Failed to refresh dashboard",
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
     }
   };
 
@@ -51,11 +57,17 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
       await analyticsDashboardStore.deleteWidget(workspaceSlug, dashboardId, widgetId);
       setToast({ type: TOAST_TYPE.SUCCESS, title: "Widget deleted" });
     } catch (error) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to delete widget", message: error instanceof Error ? error.message : "Unknown error" });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Failed to delete widget",
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
     }
   };
 
-  const handleAddWidget = () => { setIsAddWidgetOpen(true); };
+  const handleAddWidget = () => {
+    setIsAddWidgetOpen(true);
+  };
 
   const handleConfigureWidget = (widgetId: string) => {
     setConfigWidget(sortedWidgets.find((w) => w.id === widgetId) ?? null);
@@ -67,7 +79,11 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
     try {
       await analyticsDashboardStore.updateWidgetPositions(workspaceSlug, dashboardId, positions);
     } catch (error) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to update layout", message: error instanceof Error ? error.message : "Unknown error" });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Failed to update layout",
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
     }
   };
 
@@ -76,14 +92,23 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
       await analyticsDashboardStore.duplicateWidget(workspaceSlug, dashboardId, widgetId);
       setToast({ type: TOAST_TYPE.SUCCESS, title: "Widget duplicated" });
     } catch (error) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to duplicate widget", message: error instanceof Error ? error.message : "Unknown error" });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Failed to duplicate widget",
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
     }
   };
 
   const handleWidgetSubmit = async (data: TAnalyticsWidgetCreate | TAnalyticsWidgetUpdate) => {
     try {
       if (configWidget) {
-        await analyticsDashboardStore.updateWidget(workspaceSlug, dashboardId, configWidget.id, data as TAnalyticsWidgetUpdate);
+        await analyticsDashboardStore.updateWidget(
+          workspaceSlug,
+          dashboardId,
+          configWidget.id,
+          data as TAnalyticsWidgetUpdate
+        );
         setToast({ type: TOAST_TYPE.SUCCESS, title: "Widget updated" });
       } else {
         await analyticsDashboardStore.createWidget(workspaceSlug, dashboardId, data as TAnalyticsWidgetCreate);
@@ -92,7 +117,11 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
       setIsAddWidgetOpen(false);
       setConfigWidget(null);
     } catch (error) {
-      setToast({ type: TOAST_TYPE.ERROR, title: configWidget ? "Failed to update widget" : "Failed to add widget", message: error instanceof Error ? error.message : "Unknown error" });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: configWidget ? "Failed to update widget" : "Failed to add widget",
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
       throw error;
     }
   };
@@ -107,7 +136,7 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
           isEditMode={isEditMode}
           onBack={() => router.push(`/${workspaceSlug}/dashboards`)}
           onAddWidget={handleAddWidget}
-          onRefresh={handleRefresh}
+          onRefresh={() => void handleRefresh()}
           onToggleEdit={() => setIsEditMode(!isEditMode)}
         />
 
@@ -124,7 +153,9 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
           ) : sortedWidgets.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-4">
               <p className="text-sm text-tertiary">No widgets yet. Add your first widget to get started.</p>
-              <Button onClick={handleAddWidget} className="gap-2">Add Widget</Button>
+              <Button onClick={handleAddWidget} className="gap-2">
+                Add Widget
+              </Button>
             </div>
           ) : (
             <AnalyticsDashboardWidgetGrid
@@ -133,10 +164,10 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
               dashboardId={dashboardId}
               isEditMode={isEditMode}
               onAddWidget={handleAddWidget}
-              onDeleteWidget={handleDeleteWidget}
+              onDeleteWidget={(id) => void handleDeleteWidget(id)}
               onConfigureWidget={handleConfigureWidget}
-              onDuplicateWidget={handleDuplicateWidget}
-              onLayoutChange={handleLayoutChange}
+              onDuplicateWidget={(id) => void handleDuplicateWidget(id)}
+              onLayoutChange={(positions) => void handleLayoutChange(positions)}
             />
           )}
         </div>
@@ -144,12 +175,15 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
 
       <WidgetConfigModal
         isOpen={isAddWidgetOpen || !!configWidget}
-        onClose={() => { setIsAddWidgetOpen(false); setConfigWidget(null); }}
+        onClose={() => {
+          setIsAddWidgetOpen(false);
+          setConfigWidget(null);
+        }}
         onSubmit={handleWidgetSubmit}
         widget={configWidget}
       />
     </>
   );
-}
+});
 
-export default observer(DashboardDetailPage);
+export default DashboardDetailPage;

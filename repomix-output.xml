@@ -1,0 +1,13 @@
+Fatal Error: {
+  name: 'Error',
+  message: "Cannot find module '/Users/duonglx/.local/lib/node_modules/repomix/node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js' imported from /Users/duonglx/.local/lib/node_modules/repomix/lib/mcp/mcpServer.js",
+  stack: "Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/Users/duonglx/.local/lib/node_modules/repomix/node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js' imported from /Users/duonglx/.local/lib/node_modules/repomix/lib/mcp/mcpServer.js\n" +
+    '    at finalizeResolution (node:internal/modules/esm/resolve:275:11)\n' +
+    '    at moduleResolve (node:internal/modules/esm/resolve:860:10)\n' +
+    '    at defaultResolve (node:internal/modules/esm/resolve:984:11)\n' +
+    '    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:780:12)\n' +
+    '    at #cachedDefaultResolve (node:internal/modules/esm/loader:704:25)\n' +
+    '    at ModuleLoader.resolve (node:internal/modules/esm/loader:687:38)\n' +
+    '    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)\n' +
+    '    at ModuleJob._link (node:internal/modules/esm/module_job:137:49)'
+}

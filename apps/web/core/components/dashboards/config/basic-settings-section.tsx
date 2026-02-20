@@ -54,9 +54,12 @@ export const BasicSettingsSection = observer(({ control, errors }: BasicSettings
           rules={{ required: "Property is required" }}
           render={({ field }) => (
             <CustomSelect
-              value={field.value}
-              onChange={(val: any) => field.onChange(val)}
-              label={ANALYTICS_CHART_PROPERTY_OPTIONS.find((o) => o.key === field.value)?.label || "Select property"}
+              value={field.value as string}
+              onChange={(val: string) => field.onChange(val)}
+              label={
+                ANALYTICS_CHART_PROPERTY_OPTIONS.find((o) => o.key === (field.value as string))?.label ||
+                "Select property"
+              }
               input
               buttonClassName={errors.chart_property ? "border-red-500" : ""}
             >
@@ -86,9 +89,11 @@ export const BasicSettingsSection = observer(({ control, errors }: BasicSettings
           rules={{ required: "Metric is required" }}
           render={({ field }) => (
             <CustomSelect
-              value={field.value}
-              onChange={(val: any) => field.onChange(val)}
-              label={ANALYTICS_CHART_METRIC_OPTIONS.find((o) => o.key === field.value)?.label || "Select metric"}
+              value={field.value as string}
+              onChange={(val: string) => field.onChange(val)}
+              label={
+                ANALYTICS_CHART_METRIC_OPTIONS.find((o) => o.key === (field.value as string))?.label || "Select metric"
+              }
               input
               buttonClassName={errors.chart_metric ? "border-red-500" : ""}
             >

@@ -80,7 +80,7 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
+      <form onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}>
         <div className="space-y-5 p-5">
           <h3 className="text-xl font-medium text-custom-text-200">
             {dashboard ? t("analytics_dashboard.update") : t("analytics_dashboard.create")}
@@ -94,13 +94,17 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
             <Controller
               name="name"
               control={control}
-              rules={{ required: t("analytics_dashboard.name_required"), maxLength: { value: 255, message: t("analytics_dashboard.max_characters", { count: 255 }) } }}
+              rules={{
+                required: t("analytics_dashboard.name_required"),
+                maxLength: { value: 255, message: t("analytics_dashboard.max_characters", { count: 255 }) },
+              }}
               render={({ field }) => (
                 <Input
                   {...field}
                   placeholder={t("analytics_dashboard.name.placeholder")}
                   className="w-full"
                   hasError={!!errors.name}
+                  // eslint-disable-next-line jsx-a11y/no-autofocus -- Modal input should auto-focus for UX
                   autoFocus
                 />
               )}
@@ -110,12 +114,19 @@ export const AnalyticsDashboardFormModal = observer(function AnalyticsDashboardF
 
           {/* Description */}
           <div className="space-y-1">
-            <label className="text-sm font-medium text-custom-text-300">{t("analytics_dashboard.description.label")}</label>
+            <label className="text-sm font-medium text-custom-text-300">
+              {t("analytics_dashboard.description.label")}
+            </label>
             <Controller
               name="description"
               control={control}
               render={({ field }) => (
-                <TextArea {...field} placeholder={t("analytics_dashboard.description.placeholder")} className="w-full" rows={3} />
+                <TextArea
+                  {...field}
+                  placeholder={t("analytics_dashboard.description.placeholder")}
+                  className="w-full"
+                  rows={3}
+                />
               )}
             />
           </div>
