@@ -5,7 +5,8 @@
  */
 
 import { observer } from "mobx-react";
-import { Controller, type Control } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { ToggleSwitch } from "@plane/ui";
 import { EAnalyticsWidgetType } from "@plane/types";
 

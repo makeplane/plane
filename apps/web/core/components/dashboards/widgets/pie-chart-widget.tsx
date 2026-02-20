@@ -19,8 +19,8 @@ type PieChartWidgetProps = {
 export const PieChartWidget = observer(function PieChartWidget({
   data,
   config,
-  chartProperty,
-  chartMetric,
+  _chartProperty,
+  _chartMetric,
 }: PieChartWidgetProps) {
   const { data: chartData, schema } = data;
   const colorPreset = ANALYTICS_COLOR_PRESETS[config.color_preset] || ANALYTICS_COLOR_PRESETS.modern;

@@ -15,7 +15,7 @@ type NumberWidgetProps = {
 
 export const NumberWidget = observer(function NumberWidget({
   data,
-  config,
+  _config,
   chartMetric,
 }: NumberWidgetProps) {
   const metricLabel = chartMetric.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());

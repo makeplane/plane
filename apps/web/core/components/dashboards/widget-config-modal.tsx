@@ -12,7 +12,6 @@ import { EAnalyticsWidgetType } from "@plane/types";
 import { ANALYTICS_DEFAULT_WIDGET_CONFIGS, ANALYTICS_DEFAULT_WIDGET_SIZES } from "@plane/constants";
 import { Button, ModalCore, EModalPosition, EModalWidth, TabList } from "@plane/ui";
 import { Tab } from "@headlessui/react";
-import { cn } from "@plane/utils";
 import { X } from "lucide-react";
 import { WidgetTypeSelector } from "./config/widget-type-selector";
 import { BasicSettingsSection } from "./config/basic-settings-section";
@@ -204,7 +203,7 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
               <div className="w-full">
                 <Tab.Group
                   selectedIndex={CONFIG_TABS.findIndex((t) => t.key === activeTab)}
-                  onChange={(index) => setActiveTab(CONFIG_TABS[index].key as ConfigTabKey)}
+                  onChange={(index) => setActiveTab(CONFIG_TABS[index].key)}
                 >
                   <TabList
                     autoWrap={false}

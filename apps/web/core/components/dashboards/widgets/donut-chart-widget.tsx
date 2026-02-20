@@ -19,8 +19,8 @@ type DonutChartWidgetProps = {
 export const DonutChartWidget = observer(function DonutChartWidget({
   data,
   config,
-  chartProperty,
-  chartMetric,
+  _chartProperty,
+  _chartMetric,
 }: DonutChartWidgetProps) {
   const { data: chartData, schema } = data;
   const colorPreset = ANALYTICS_COLOR_PRESETS[config.color_preset] || ANALYTICS_COLOR_PRESETS.modern;
