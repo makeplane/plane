@@ -294,7 +294,7 @@ async def get_answer_for_silo_app(data: ChatRequest, request: Request, db: Async
 
     # Use Claude if available, otherwise fall back to default model (e.g., custom LLM)
     has_claude_key = bool(settings.llm_config.CLAUDE_API_KEY and settings.llm_config.CLAUDE_API_KEY.strip())
-    plane_apps_llm = "claude-sonnet-4-5" if has_claude_key else settings.llm_model.DEFAULT
+    plane_apps_llm = "claude-sonnet-4-6" if has_claude_key else settings.llm_model.DEFAULT
     chatbot = PlaneChatBot(llm=plane_apps_llm, token=access_token)
 
     final_response = ""
@@ -455,7 +455,7 @@ async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSes
 
     # Use Claude if available, otherwise fall back to default model (e.g., custom LLM)
     has_claude_key = bool(settings.llm_config.CLAUDE_API_KEY and settings.llm_config.CLAUDE_API_KEY.strip())
-    slack_ai_llm = "claude-sonnet-4-5" if has_claude_key else settings.llm_model.DEFAULT
+    slack_ai_llm = "claude-sonnet-4-6" if has_claude_key else settings.llm_model.DEFAULT
     chatbot = PlaneChatBot(llm=slack_ai_llm, token=access_token)
 
     final_response = ""

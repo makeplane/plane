@@ -74,6 +74,7 @@ class ChatKit(AttachmentMixin):
         claude_model_name_mapping = {
             "claude-sonnet-4-0": settings.llm_model.CLAUDE_SONNET_4_0,
             "claude-sonnet-4-5": settings.llm_model.CLAUDE_SONNET_4_5,
+            "claude-sonnet-4-6": settings.llm_model.CLAUDE_SONNET_4_6,
         }
 
         tool_llm_streaming = False
@@ -87,7 +88,11 @@ class ChatKit(AttachmentMixin):
 
             if switch_llm in claude_model_name_mapping:
                 # This is a Claude model
-                if actual_model_name in [settings.llm_model.CLAUDE_SONNET_4_0, settings.llm_model.CLAUDE_SONNET_4_5]:
+                if actual_model_name in [
+                    settings.llm_model.CLAUDE_SONNET_4_0,
+                    settings.llm_model.CLAUDE_SONNET_4_5,
+                    settings.llm_model.CLAUDE_SONNET_4_6,
+                ]:
                     # Direct Anthropic API models
                     TOOL_LLM = actual_model_name
                     tool_config = LLMConfig.anthropic(TOOL_LLM, streaming=tool_llm_streaming, temperature=0.2)
@@ -150,9 +155,10 @@ class ChatKit(AttachmentMixin):
 
         # Create tool LLM with appropriate factory (Anthropic vs OpenAI)
         # Check if this is a direct Anthropic model (not LiteLLM proxy)
-        is_direct_anthropic = switch_llm in ["claude-sonnet-4-0", "claude-sonnet-4-5"] or tool_config.model in [
+        is_direct_anthropic = switch_llm in ["claude-sonnet-4-0", "claude-sonnet-4-5", "claude-sonnet-4-6"] or tool_config.model in [
             settings.llm_model.CLAUDE_SONNET_4_0,
             settings.llm_model.CLAUDE_SONNET_4_5,
+            settings.llm_model.CLAUDE_SONNET_4_6,
         ]
 
         if is_direct_anthropic:

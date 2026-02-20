@@ -218,6 +218,7 @@ async def _anthropic_web_search(
     candidate_models = list(
         dict.fromkeys([
             normalized_model,
+            settings.llm_model.CLAUDE_SONNET_4_6,
             settings.llm_model.CLAUDE_SONNET_4_5,
             settings.llm_model.CLAUDE_SONNET_4_0,
         ])

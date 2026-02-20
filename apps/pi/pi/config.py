@@ -199,6 +199,7 @@ class LLMModels:
     DEFAULT: str = GPT_5_2
     CLAUDE_SONNET_4_0: str = "claude-sonnet-4-0"
     CLAUDE_SONNET_4_5: str = "claude-sonnet-4-5"
+    CLAUDE_SONNET_4_6: str = "claude-sonnet-4-6"
     CLAUDE_HAIKU_4_5: str = "claude-haiku-4-5"  # Lightweight Claude model for fast/cheap tasks
     CUSTOM: str = field(default_factory=lambda: os.getenv("CUSTOM_LLM_MODEL_KEY", ""))
 
@@ -229,14 +230,16 @@ class LLMConfig:
     GROQ_BASE_URL: str = field(default_factory=lambda: os.getenv("GROQ_BASE_URL", "https://api.groq.com/"))
 
     USER_VISIBLE_MODELS_OPENAI: list[str] = field(default_factory=lambda: ["gpt-4.1", "gpt-5-fast", "gpt-5.2"])
-    USER_VISIBLE_MODELS_ANTHROPIC: list[str] = field(default_factory=lambda: ["claude-sonnet-4-0", "claude-sonnet-4-5"])
-    ALL_USER_VISIBLE_MODELS: list[str] = field(default_factory=lambda: ["gpt-4.1", "gpt-5-fast", "gpt-5.1", "claude-sonnet-4-0", "claude-sonnet-4-5"])
+    USER_VISIBLE_MODELS_ANTHROPIC: list[str] = field(default_factory=lambda: ["claude-sonnet-4-0", "claude-sonnet-4-5", "claude-sonnet-4-6"])
+    ALL_USER_VISIBLE_MODELS: list[str] = field(
+        default_factory=lambda: ["gpt-4.1", "gpt-5-fast", "gpt-5.1", "claude-sonnet-4-0", "claude-sonnet-4-5", "claude-sonnet-4-6"]
+    )
 
     # Provider default models
     PROVIDER_DEFAULT_MODELS: dict[str, str] = field(
         default_factory=lambda: {
             "openai": LLMModels.GPT_5_2,
-            "anthropic": LLMModels.CLAUDE_SONNET_4_5,
+            "anthropic": LLMModels.CLAUDE_SONNET_4_6,
         }
     )
 
@@ -264,6 +267,7 @@ class LLMConfig:
             LLMModels.GPT_5_2,
             LLMModels.CLAUDE_SONNET_4_0,
             LLMModels.CLAUDE_SONNET_4_5,
+            LLMModels.CLAUDE_SONNET_4_6,
         ]
     )
     CONTEXT_OFF_TEMPERATURE: float = 0.6

@@ -38,6 +38,7 @@ llm_id_map = {
     "gpt-5-mini": "5e5d7fa1-0a75-4318-87c6-7595c7b7133d",
     "gpt-5-nano": "0394e887-8140-4505-b4f9-5e9c59b40396",
     "claude-sonnet-4-5": "6a14a494-dc87-42cc-9d7c-1f82faa3d018",
+    "claude-sonnet-4-6": "d8e3f2a1-4b5c-6d7e-8f9a-0b1c2d3e4f5a",
     "claude-haiku-4-5": "b7c25e8f-9d41-4a3b-8e6f-2c7d4a5b6e3f",
 }
 
@@ -145,6 +146,14 @@ LLMS_DATA = [
         "description": "Anthropic's Claude Sonnet 4.5 model.",
         "provider": "Anthropic",
         "model_key": "claude-sonnet-4-5",
+        "max_tokens": 200000,
+    },
+    {
+        "id": llm_id_map["claude-sonnet-4-6"],
+        "name": "Claude Sonnet 4.6",
+        "description": "Anthropic's Claude Sonnet 4.6 model - combination of speed and intelligence.",
+        "provider": "Anthropic",
+        "model_key": "claude-sonnet-4-6",
         "max_tokens": 200000,
     },
     {

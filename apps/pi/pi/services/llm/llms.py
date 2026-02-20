@@ -384,7 +384,9 @@ def create_anthropic_llm(config: LLMConfig, track_tokens: bool = True, **overrid
     if track_tokens:
         # Map model names to database-friendly tracking keys
         tracking_model_key = config.model
-        if config.model == settings.llm_model.CLAUDE_SONNET_4_5:
+        if config.model == settings.llm_model.CLAUDE_SONNET_4_6:
+            tracking_model_key = "claude-sonnet-4-6"
+        elif config.model == settings.llm_model.CLAUDE_SONNET_4_5:
             tracking_model_key = "claude-sonnet-4-5"
         elif config.model == settings.llm_model.CLAUDE_SONNET_4_0:
             tracking_model_key = "claude-sonnet-4-0"
@@ -462,6 +464,11 @@ _ANTHROPIC_CONFIGS = {
     "claude-sonnet-4-5-decomposer": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_5, temperature=0.0),
     "claude-sonnet-4-5-fast": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_5),
     "claude-sonnet-4-5-fast-stream": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_5, streaming=True),
+    "claude-sonnet-4-6-default": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_6),
+    "claude-sonnet-4-6-stream": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_6, streaming=True),
+    "claude-sonnet-4-6-decomposer": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_6, temperature=0.0),
+    "claude-sonnet-4-6-fast": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_6),
+    "claude-sonnet-4-6-fast-stream": LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_6, streaming=True),
 }
 
 
@@ -529,6 +536,12 @@ def _get_config_name_for_model(model_name: Optional[str], config_type: str) -> O
             "stream": "claude-sonnet-4-5-stream",
             "decomposer": "claude-sonnet-4-5-decomposer",
             "fast": "claude-sonnet-4-5-fast",
+        },
+        "claude-sonnet-4-6": {
+            "default": "claude-sonnet-4-6-default",
+            "stream": "claude-sonnet-4-6-stream",
+            "decomposer": "claude-sonnet-4-6-decomposer",
+            "fast": "claude-sonnet-4-6-fast",
         },
     }
 
@@ -661,6 +674,8 @@ def get_chat_llm(llm_name: str) -> Any:
             config = LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_0, streaming=True)
         elif llm_name.lower() == "claude-sonnet-4-5":
             config = LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_5, streaming=True)
+        elif llm_name.lower() == "claude-sonnet-4-6":
+            config = LLMConfig.anthropic(settings.llm_model.CLAUDE_SONNET_4_6, streaming=True)
         elif _is_custom_model(llm_name):
             config = _create_custom_llm_config(streaming=True)
         else:
@@ -712,6 +727,13 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
         elif model == "claude-sonnet-4-5":
             config = LLMConfig.anthropic(
                 settings.llm_model.CLAUDE_SONNET_4_5,
+                streaming=False,
+                temperature=0.2,
+            )
+            return create_anthropic_llm(config, max_completion_tokens=4096)
+        elif model == "claude-sonnet-4-6":
+            config = LLMConfig.anthropic(
+                settings.llm_model.CLAUDE_SONNET_4_6,
                 streaming=False,
                 temperature=0.2,
             )
