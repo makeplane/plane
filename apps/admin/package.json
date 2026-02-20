@@ -1,7 +1,7 @@
 {
   "name": "admin",
   "description": "Admin UI for Plane",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "license": "AGPL-3.0",
   "private": true,
   "type": "module",
