@@ -156,7 +156,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
             />
           </div>
         ) : (
-          <div className="flex flex-col gap-0.5 overflow-x-hidden overflow-y-auto vertical-scrollbar scrollbar-sm flex-grow mt-4 pl-9 pr-2">
+          <div className="flex flex-col gap-0.5 overflow-x-hidden overflow-y-auto vertical-scrollbar scrollbar-sm flex-grow mt-4 px-4">
             {filteredProjects.map((projectId, index) => (
               <SidebarProjectsListItem
                 key={projectId}

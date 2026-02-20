@@ -359,11 +359,11 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 <button
                   type="button"
                   className={cn(
-                    "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded-sm text-placeholder cursor-grab",
+                    "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3.5 -translate-y-1/2 rounded-sm text-placeholder cursor-grab",
                     {
                       "cursor-not-allowed opacity-60": project.sort_order === null,
                       "cursor-grabbing": isDragging,
-                      flex: isMenuActive || renderInExtendedSidebar,
+                      flex: isMenuActive,
                     }
                   )}
                   ref={dragHandleRef}
