@@ -62,6 +62,8 @@ const MAIN_QUERY_PARAM_KEY = "q_main";
 const SECTION_QUERY_PARAM_KEY = "q_section";
 const MAIN_VIEW_PARAM_KEY = "view_main";
 const SECTION_VIEW_PARAM_KEY = "view_section";
+const MAIN_GROUP_PARAM_KEY = "group_main";
+const GROUPED_MEDIA_GROUP_VALUE = "grouped";
 const SECTION_PATH_SEGMENT = "/media-library/section/";
 // Temporarily disabled per product requirement; keep code path for future re-enable.
 const ENABLE_START_TIME_FILTER = false;
@@ -124,6 +126,7 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
     const viewParam = searchParams.get(activeViewParamKey);
     return viewParam === MediaLayoutTypes.LIST ? MediaLayoutTypes.LIST : MediaLayoutTypes.GRID;
   }, [activeViewParamKey, searchParams]);
+  const isAllMediaView = searchParams.get(MAIN_GROUP_PARAM_KEY) !== GROUPED_MEDIA_GROUP_VALUE;
   const normalizedLayouts = useMemo(
     () => layouts.filter((layout) => Object.values(MediaLayoutTypes).includes(layout.key)),
     [layouts]
@@ -233,6 +236,26 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
 
   const handleLayoutChange = (layout: MediaLayoutTypes) => {
     updateSearchParam(activeViewParamKey, layout);
+  };
+  const handleGroupModeToggle = () => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (isAllMediaView) {
+      params.set(MAIN_GROUP_PARAM_KEY, GROUPED_MEDIA_GROUP_VALUE);
+    } else {
+      params.delete(MAIN_GROUP_PARAM_KEY);
+    }
+
+    params.delete(LEGACY_QUERY_PARAM_KEY);
+    params.delete(LEGACY_VIEW_PARAM_KEY);
+    params.delete("page");
+    params.delete("cursor");
+
+    const nextQueryString = params.toString();
+    const currentQueryString = searchParams.toString();
+    if (nextQueryString === currentQueryString) return;
+
+    router.replace(nextQueryString ? `${pathname}?${nextQueryString}` : pathname);
   };
 
   const upsertTemporalRangeCondition = useCallback(
@@ -445,6 +468,11 @@ export const MediaLibraryListHeader: React.FC<Props> = observer(({ layouts = DEF
             ) : null}
           </div>
           {/* Layout Toggle */}
+          {!isSectionScope ? (
+            <Button variant="neutral-primary" size="sm" className="px-2 xl:px-3" onClick={handleGroupModeToggle}>
+              {isAllMediaView ? "Group by category" : "Show all media"}
+            </Button>
+          ) : null}
           <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
             {normalizedLayouts.map((layout) => (
               <Tooltip key={layout.key} tooltipContent={layout.i18n_title} isMobile={isMobile}>

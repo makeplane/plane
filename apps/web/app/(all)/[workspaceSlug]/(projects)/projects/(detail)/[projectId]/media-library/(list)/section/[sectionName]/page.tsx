@@ -17,6 +17,8 @@ import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../../../utils
 const SECTION_QUERY_PARAM_KEY = "q_section";
 const MAIN_QUERY_PARAM_KEY = "q_main";
 const MAIN_VIEW_PARAM_KEY = "view_main";
+const MAIN_GROUP_PARAM_KEY = "group_main";
+const GROUPED_MEDIA_GROUP_VALUE = "grouped";
 const SECTION_VIEW_PARAM_KEY = "view_section";
 const LEGACY_QUERY_PARAM_KEY = "q";
 const LEGACY_VIEW_PARAM_KEY = "view";
@@ -293,9 +295,11 @@ const MediaLibrarySectionPage = observer(() => {
     const allowedParams = new URLSearchParams();
     const mainQuery = params.get(MAIN_QUERY_PARAM_KEY);
     const mainView = params.get(MAIN_VIEW_PARAM_KEY);
+    const mainGroup = params.get(MAIN_GROUP_PARAM_KEY);
 
     if (mainQuery) allowedParams.set(MAIN_QUERY_PARAM_KEY, mainQuery);
     if (mainView === "list") allowedParams.set(MAIN_VIEW_PARAM_KEY, mainView);
+    if (mainGroup === GROUPED_MEDIA_GROUP_VALUE) allowedParams.set(MAIN_GROUP_PARAM_KEY, mainGroup);
 
     params.delete(SECTION_QUERY_PARAM_KEY);
     params.delete(SECTION_VIEW_PARAM_KEY);

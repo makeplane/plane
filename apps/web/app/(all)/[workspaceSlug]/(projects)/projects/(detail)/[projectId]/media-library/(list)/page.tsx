@@ -19,6 +19,8 @@ import { buildMetaFilterConfigs, collectMetaFilterOptions } from "../utils/media
 
 const MAIN_QUERY_PARAM_KEY = "q_main";
 const MAIN_VIEW_PARAM_KEY = "view_main";
+const MAIN_GROUP_PARAM_KEY = "group_main";
+const GROUPED_MEDIA_GROUP_VALUE = "grouped";
 const SECTION_VIEW_PARAM_KEY = "view_section";
 const LEGACY_VIEW_PARAM_KEY = "view";
 
@@ -29,7 +31,7 @@ const MediaRow = ({
 }: {
   section: TMediaSection;
   getItemHref: (item: TMediaItem) => string;
-  getSectionHref: (section: TMediaSection) => string;
+  getSectionHref?: (section: TMediaSection) => string;
 }) => {
   const rowId = useId().replace(/:/g, "");
   const prevId = `media-prev-${rowId}`;
@@ -50,12 +52,14 @@ const MediaRow = ({
     <section className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <div className="text-sm font-semibold text-custom-text-100">{section.title}</div>
-        <Link
-          href={getSectionHref(section)}
-          className="text-xs uppercase tracking-wider text-custom-text-300 hover:text-custom-text-100"
-        >
-          View all
-        </Link>
+        {getSectionHref ? (
+          <Link
+            href={getSectionHref(section)}
+            className="text-xs uppercase tracking-wider text-custom-text-300 hover:text-custom-text-100"
+          >
+            View all
+          </Link>
+        ) : null}
       </div>
       <div className="relative">
         <Swiper
@@ -165,6 +169,7 @@ const MediaLibraryListPage = observer(() => {
   const searchParams = useSearchParams();
   const query = (searchParams.get(MAIN_QUERY_PARAM_KEY) ?? "").trim();
   const viewMode = searchParams.get(MAIN_VIEW_PARAM_KEY) === "list" ? "list" : "grid";
+  const isAllMediaView = searchParams.get(MAIN_GROUP_PARAM_KEY) !== GROUPED_MEDIA_GROUP_VALUE;
   const filterConditions = useMemo(
     () =>
       mediaFilters.allConditionsForDisplay.map(({ property, operator, value }) => ({
@@ -195,6 +200,10 @@ const MediaLibraryListPage = observer(() => {
     [libraryItems]
   );
   const mediaSections = useMemo(() => groupMediaItemsByTag(filteredItems), [filteredItems]);
+  const visibleSections = useMemo<TMediaSection[]>(
+    () => (isAllMediaView ? [{ title: "All media", items: filteredItems }] : mediaSections),
+    [filteredItems, isAllMediaView, mediaSections]
+  );
   // console.log("Media Sections:", libraryItems);
   const filterConfigs = useMemo(
     () => buildMetaFilterConfigs(collectMetaFilterOptions(filteredItems), operatorConfigs),
@@ -291,15 +300,30 @@ const MediaLibraryListPage = observer(() => {
               ))}
             </div>
           )
-        ) : mediaSections.length === 0 ? (
+        ) : visibleSections.length === 0 ? (
           <div className="rounded-lg border border-dashed border-custom-border-200 bg-custom-background-100 p-6 text-center text-sm text-custom-text-300">
             No media find.
           </div>
         ) : viewMode === "list" ? (
-          <MediaListView sections={mediaSections} getItemHref={getItemHref} getSectionHref={getSectionHref} />
+          <MediaListView
+            sections={visibleSections}
+            getItemHref={getItemHref}
+            getSectionHref={isAllMediaView ? undefined : getSectionHref}
+          />
+        ) : isAllMediaView ? (
+          <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {filteredItems.map((item) => (
+              <MediaCard key={`all-media-${item.id}`} item={item} href={getItemHref(item)} forceThumbnail className="!w-full" />
+            ))}
+          </div>
         ) : (
-          mediaSections.map((section) => (
-            <MediaRow key={section.title} section={section} getItemHref={getItemHref} getSectionHref={getSectionHref} />
+          visibleSections.map((section) => (
+            <MediaRow
+              key={section.title}
+              section={section}
+              getItemHref={getItemHref}
+              getSectionHref={isAllMediaView ? undefined : getSectionHref}
+            />
           ))
         )}
       </div>
