@@ -73,7 +73,7 @@ export function InfoSection(props: TInfoSectionProps) {
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
   return (
-    <SectionWrapper>
+    <SectionWrapper className="border-0">
       <div className="flex w-full">
         <div className="flex flex-col gap-6 flex-1">
           {identifierElement && <>{identifierElement}</>}
