@@ -43,8 +43,8 @@ export const DonutChartWidget = observer(function DonutChartWidget({
       data={chartData}
       dataKey={metricKey}
       cells={cells}
-      innerRadius={60}
-      outerRadius={100}
+      innerRadius={"50%"}
+      outerRadius={"80%"}
       showLabel={false}
       showTooltip={config.show_tooltip !== false}
       centerLabel={config.center_value !== false ? {

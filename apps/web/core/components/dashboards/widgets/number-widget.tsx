@@ -22,10 +22,10 @@ export const NumberWidget = observer(function NumberWidget({
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-      <div className="text-5xl font-bold text-custom-primary-100">
+      <div className="text-5xl font-bold text-accent-primary">
         {data.value.toLocaleString()}
       </div>
-      <div className="text-sm font-medium text-custom-text-300">
+      <div className="text-sm font-medium text-tertiary">
         {metricLabel}
       </div>
     </div>

@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 import { ANALYTICS_COLOR_PRESETS } from "@plane/constants";
+import { cn } from "@plane/utils";
 
 interface ColorPresetSelectorProps {
   selectedPreset: string;
@@ -21,11 +22,12 @@ export const ColorPresetSelector = observer(
             key={preset.id}
             type="button"
             onClick={() => onChange(preset.id)}
-            className={`flex w-full items-center gap-3 rounded-lg border-2 p-3 text-left transition-all ${
+            className={cn(
+              "group flex w-full items-center gap-3 rounded-lg border-[1.5px] p-3 text-left transition-all",
               selectedPreset === preset.id
-                ? "border-custom-primary-100 bg-custom-primary-100/10"
-                : "border-custom-border-200 hover:border-custom-border-300"
-            }`}
+                ? "border-accent-strong bg-accent-subtle"
+                : "border-subtle hover:border-accent-subtle hover:bg-layer-1-hover bg-surface-1"
+            )}
           >
             {/* Color Swatches */}
             <div className="flex gap-1">
@@ -40,10 +42,10 @@ export const ColorPresetSelector = observer(
 
             {/* Preset Info */}
             <div className="flex-1">
-              <div className="font-medium text-custom-text-100">
+              <div className={cn("font-medium transition-colors", selectedPreset === preset.id ? "text-accent-primary" : "text-primary group-hover:text-accent-primary")}>
                 {preset.name}
               </div>
-              <div className="text-xs text-custom-text-300">
+              <div className="text-xs text-tertiary">
                 {preset.description}
               </div>
             </div>

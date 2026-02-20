@@ -94,7 +94,7 @@ export const AnalyticsDashboardWidgetCard = observer(function AnalyticsDashboard
     if (hasError || !widgetData) {
       return (
         <div className="flex h-full flex-col items-center justify-center gap-2">
-          <p className="text-sm text-custom-text-300">Failed to load widget data</p>
+          <p className="text-sm text-tertiary">Failed to load widget data</p>
         </div>
       );
     }
@@ -162,40 +162,40 @@ export const AnalyticsDashboardWidgetCard = observer(function AnalyticsDashboard
       default:
         return (
           <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-custom-text-300">Unsupported widget type</p>
+            <p className="text-sm text-tertiary">Unsupported widget type</p>
           </div>
         );
     }
   };
 
   return (
-    <div className="relative h-full rounded-lg border border-custom-border-200 bg-custom-background-100 p-4">
+    <div className="relative h-full rounded-lg border border-subtle bg-surface-1 p-4">
       {/* Header */}
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           {isEditMode && (
             <div className="widget-drag-handle cursor-grab active:cursor-grabbing">
-              <GripVertical className="h-4 w-4 text-custom-text-400" />
+              <GripVertical className="h-4 w-4 text-placeholder" />
             </div>
           )}
-          <h3 className="text-sm font-medium text-custom-text-200">{widget.title}</h3>
+          <h3 className="text-sm font-medium text-secondary">{widget.title}</h3>
         </div>
         {isEditMode && (
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="flex h-6 w-6 items-center justify-center rounded hover:bg-custom-background-80"
+              className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-2"
             >
-              <MoreVertical className="h-4 w-4 text-custom-text-300" />
+              <MoreVertical className="h-4 w-4 text-tertiary" />
             </button>
             {showMenu && (
-              <div className="absolute right-0 top-8 z-10 min-w-[160px] rounded-md border border-custom-border-200 bg-custom-background-100 shadow-lg">
+              <div className="absolute right-0 top-8 z-10 min-w-[160px] rounded-md border border-subtle bg-surface-1 shadow-lg">
                 <button
                   onClick={() => {
                     onConfigure(widget.id);
                     setShowMenu(false);
                   }}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-custom-text-200 hover:bg-custom-background-80"
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-secondary hover:bg-layer-2"
                 >
                   <Settings className="h-4 w-4" />
                   Configure
@@ -206,7 +206,7 @@ export const AnalyticsDashboardWidgetCard = observer(function AnalyticsDashboard
                       onDuplicate(widget.id);
                       setShowMenu(false);
                     }}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-custom-text-200 hover:bg-custom-background-80"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-secondary hover:bg-layer-2"
                   >
                     <Copy className="h-4 w-4" />
                     Duplicate
@@ -217,7 +217,7 @@ export const AnalyticsDashboardWidgetCard = observer(function AnalyticsDashboard
                     onDelete(widget.id);
                     setShowMenu(false);
                   }}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-custom-background-80"
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-layer-2"
                 >
                   <Trash2 className="h-4 w-4" />
                   Delete

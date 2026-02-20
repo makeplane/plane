@@ -40,11 +40,10 @@ function MultiSelectChips({
             key={opt.key}
             type="button"
             onClick={() => toggle(opt.key)}
-            className={`rounded-md border px-2 py-1 text-xs transition-colors ${
-              selected
-                ? "border-custom-primary-100 bg-custom-primary-100/10 text-custom-primary-100"
-                : "border-custom-border-200 text-custom-text-300 hover:bg-custom-background-80"
-            }`}
+            className={`rounded-md border px-2 py-1 text-xs transition-colors ${selected
+                ? "border-accent-strong bg-accent-subtle text-accent-primary"
+                : "border-subtle text-tertiary hover:bg-layer-2"
+              }`}
           >
             {opt.label}
           </button>
@@ -66,21 +65,21 @@ function DateRangeRow({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-xs font-medium text-custom-text-300">{label}</span>
+      <span className="text-xs font-medium text-tertiary">{label}</span>
       <div className="flex items-center gap-2">
         <input
           type="date"
           value={value?.after ?? ""}
           onChange={(e) => onChange({ ...value, after: e.target.value || undefined })}
-          className="w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5 text-xs text-custom-text-200 outline-none focus:border-custom-primary-100"
+          className="w-full rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5 text-xs text-secondary outline-none focus:border-accent-strong"
           placeholder="After"
         />
-        <span className="text-xs text-custom-text-400">to</span>
+        <span className="text-xs text-placeholder">to</span>
         <input
           type="date"
           value={value?.before ?? ""}
           onChange={(e) => onChange({ ...value, before: e.target.value || undefined })}
-          className="w-full rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5 text-xs text-custom-text-200 outline-none focus:border-custom-primary-100"
+          className="w-full rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5 text-xs text-secondary outline-none focus:border-accent-strong"
           placeholder="Before"
         />
       </div>
@@ -91,13 +90,13 @@ function DateRangeRow({
 export function FilterSettingsSection({ control }: FilterSettingsSectionProps) {
   return (
     <div className="flex flex-col gap-5">
-      <p className="text-xs text-custom-text-400">
+      <p className="text-xs text-placeholder">
         Filter widget data by specific dimensions. Only matching issues will be included in the chart.
       </p>
 
       {/* Priority filter */}
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-custom-text-300">Priority</span>
+        <span className="text-xs font-medium text-tertiary">Priority</span>
         <Controller
           name="config.filters.priority"
           control={control}
@@ -114,7 +113,7 @@ export function FilterSettingsSection({ control }: FilterSettingsSectionProps) {
 
       {/* State Group filter */}
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-custom-text-300">State Group</span>
+        <span className="text-xs font-medium text-tertiary">State Group</span>
         <Controller
           name="config.filters.state_group"
           control={control}
@@ -131,7 +130,7 @@ export function FilterSettingsSection({ control }: FilterSettingsSectionProps) {
 
       {/* Date range filters */}
       <div className="flex flex-col gap-3">
-        <span className="text-xs font-medium text-custom-text-200">Date Ranges</span>
+        <span className="text-xs font-medium text-secondary">Date Ranges</span>
         {ANALYTICS_DATE_FILTER_OPTIONS.map((opt) => (
           <Controller
             key={opt.key}

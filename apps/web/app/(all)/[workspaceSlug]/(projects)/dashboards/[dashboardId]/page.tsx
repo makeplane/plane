@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { ArrowLeft, Edit2, RefreshCw } from "lucide-react";
+import { ArrowLeft, Edit2, RefreshCw, Plus } from "lucide-react";
 import { DashboardIcon } from "@plane/propel/icons";
 import { Button, Loader } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -148,23 +148,34 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="flex h-full flex-col overflow-hidden">
+      <div className="flex h-full flex-col overflow-hidden relative">
         {/* Header */}
-        <div className="flex items-center gap-3 border-b border-custom-border-200 px-4 py-3">
-          <button
-            className="flex h-6 w-6 items-center justify-center rounded hover:bg-custom-background-80"
-            onClick={() => router.push(`/${workspaceSlug}/dashboards`)}
-          >
-            <ArrowLeft className="h-4 w-4 text-custom-text-300" />
-          </button>
-          <DashboardIcon className="h-5 w-5 text-custom-primary-100" />
-          <div className="min-w-0 flex-1">
-            <h1 className="truncate text-xl font-semibold">{pageTitle}</h1>
-            {currentDashboard?.description && (
-              <p className="truncate text-sm text-custom-text-300">{currentDashboard.description}</p>
-            )}
+        <div className="flex flex-shrink-0 items-center justify-between border-b border-subtle bg-surface-1 px-4 py-3 relative z-10">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <button
+              className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-2"
+              onClick={() => router.push(`/${workspaceSlug}/dashboards`)}
+            >
+              <ArrowLeft className="h-4 w-4 text-tertiary" />
+            </button>
+            <DashboardIcon className="h-5 w-5 text-accent-primary" />
+            <div className="min-w-0 flex-1">
+              <h1 className="truncate text-xl font-semibold">{pageTitle}</h1>
+              {currentDashboard?.description && (
+                <p className="truncate text-sm text-tertiary">{currentDashboard.description}</p>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              variant="neutral-primary"
+              size="sm"
+              onClick={handleAddWidget}
+              className="gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Add Widget
+            </Button>
             <Button
               variant="link-neutral"
               size="sm"
@@ -187,11 +198,11 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-4 relative z-0">
           {loader ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {Array.from({ length: 4 }).map((_, i) => (
-                <Loader key={i} className="rounded-lg border border-custom-border-200 p-4">
+                <Loader key={i} className="rounded-lg border border-subtle p-4">
                   <Loader.Item height="16px" width="40%" />
                   <Loader.Item height="200px" width="100%" className="mt-3" />
                 </Loader>
@@ -199,7 +210,7 @@ function DashboardDetailPage({ params }: Route.ComponentProps) {
             </div>
           ) : sortedWidgets.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-4">
-              <p className="text-sm text-custom-text-300">
+              <p className="text-sm text-tertiary">
                 No widgets yet. Add your first widget to get started.
               </p>
               <Button onClick={handleAddWidget} className="gap-2">

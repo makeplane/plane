@@ -6,8 +6,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { ResponsiveGridLayout  } from "react-grid-layout";
-import type {Layout} from "react-grid-layout";
+import { ResponsiveGridLayout } from "react-grid-layout";
+import type { Layout } from "react-grid-layout";
 import { Plus } from "lucide-react";
 import type { IAnalyticsDashboardWidget } from "@plane/types";
 import { EAnalyticsWidgetType } from "@plane/types";
@@ -112,11 +112,7 @@ export const AnalyticsDashboardWidgetGrid = observer(function AnalyticsDashboard
     [isEditMode, onLayoutChange]
   );
 
-  // Add widget placeholder to layout in edit mode
-  const fullLayout = useMemo(() => {
-    if (!isEditMode) return layout;
-    return [...layout, { i: "__add_widget__", x: 0, y: Infinity, w: 4, h: 4, static: true }];
-  }, [layout, isEditMode]);
+  const fullLayout = layout;
 
   return (
     <div ref={containerRef}>
@@ -149,20 +145,7 @@ export const AnalyticsDashboardWidgetGrid = observer(function AnalyticsDashboard
             </div>
           ))}
 
-          {/* Add widget button in edit mode */}
-          {isEditMode && (
-            <div key="__add_widget__">
-              <button
-                onClick={onAddWidget}
-                className="flex h-full w-full items-center justify-center rounded-lg border-2 border-dashed border-custom-border-200 bg-custom-background-80 transition-colors hover:border-custom-border-300 hover:bg-custom-background-90"
-              >
-                <div className="flex flex-col items-center gap-2">
-                  <Plus className="h-8 w-8 text-custom-text-300" />
-                  <span className="text-sm font-medium text-custom-text-300">Add Widget</span>
-                </div>
-              </button>
-            </div>
-          )}
+
         </ResponsiveGridLayout>
       )}
     </div>

@@ -26,7 +26,9 @@ export const AreaChartWidget = observer(function AreaChartWidget({
   const colorPreset = ANALYTICS_COLOR_PRESETS[config.color_preset] || ANALYTICS_COLOR_PRESETS.modern;
 
   // Find metric keys (exclude the property/dimension key)
-  const metricKeys = Object.keys(schema).filter(key => key !== "name");
+  const metricKeys = Object.keys(schema).length > 0
+    ? Object.keys(schema).filter(key => key !== "name")
+    : ["count"];
 
   // Create areas array
   const areas: TAreaItem<string>[] = metricKeys.map((key, index) => ({
@@ -50,7 +52,7 @@ export const AreaChartWidget = observer(function AreaChartWidget({
       className="h-full w-full"
       data={chartData}
       areas={areas}
-      margin={{ bottom: 30, left: 60 }}
+      margin={{ top: 20, bottom: 30, left: 60 }}
       xAxis={{ key: "name", label: xAxisLabel, dy: 30 }}
       yAxis={{ key: metricKeys[0] || "count", label: yAxisLabel, offset: -60, dx: -26 }}
       showTooltip={config.show_tooltip !== false}

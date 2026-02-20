@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 import { BarChart3, LineChart, AreaChart, PieChart, Hash } from "lucide-react";
 import { EAnalyticsWidgetType } from "@plane/types";
+import { cn } from "@plane/utils";
 
 interface WidgetTypeSelectorProps {
   selectedType: EAnalyticsWidgetType;
@@ -61,21 +62,21 @@ export const WidgetTypeSelector = observer(
             key={type}
             type="button"
             onClick={() => onChange(type)}
-            className={`flex flex-col items-start rounded-lg border-2 p-3 text-left transition-all ${
+            className={cn(
+              "group flex flex-col items-start rounded-lg border-[1.5px] p-3 text-left transition-all",
               selectedType === type
-                ? "border-custom-primary-100 bg-custom-primary-100/10"
-                : "border-custom-border-200 hover:border-custom-border-300"
-            }`}
+                ? "border-accent-strong bg-accent-subtle"
+                : "border-subtle hover:border-accent-subtle hover:bg-layer-1-hover bg-surface-1"
+            )}
           >
             <Icon
-              className={`mb-2 h-6 w-6 ${
-                selectedType === type
-                  ? "text-custom-primary-100"
-                  : "text-custom-text-300"
-              }`}
+              className={cn("mb-2 h-6 w-6 transition-colors", {
+                "text-accent-primary": selectedType === type,
+                "text-tertiary group-hover:text-accent-primary": selectedType !== type,
+              })}
             />
-            <div className="font-medium text-custom-text-100">{label}</div>
-            <div className="text-xs text-custom-text-300">{description}</div>
+            <div className={cn("font-medium transition-colors", selectedType === type ? "text-accent-primary" : "text-primary group-hover:text-accent-primary")}>{label}</div>
+            <div className="text-xs text-tertiary">{description}</div>
           </button>
         ))}
       </div>

@@ -26,14 +26,16 @@ export const BarChartWidget = observer(function BarChartWidget({
   const colorPreset = ANALYTICS_COLOR_PRESETS[config.color_preset] || ANALYTICS_COLOR_PRESETS.modern;
 
   // Find metric keys (exclude the property/dimension key which is typically "name")
-  const metricKeys = Object.keys(schema).filter(key => key !== "name");
+  const metricKeys = Object.keys(schema).length > 0
+    ? Object.keys(schema).filter(key => key !== "name")
+    : ["count"];
 
   // Create bars array
   const bars: TBarItem<string>[] = metricKeys.map((key, index) => ({
     key,
     label: key.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()),
     fill: colorPreset.colors[index % colorPreset.colors.length],
-    textClassName: "text-custom-text-200",
+    textClassName: "text-secondary",
     stackId: "stack",
   }));
 
@@ -46,7 +48,7 @@ export const BarChartWidget = observer(function BarChartWidget({
       className="h-full w-full"
       data={chartData}
       bars={bars}
-      margin={{ bottom: 30, left: 60 }}
+      margin={{ top: 20, bottom: 30, left: 60 }}
       xAxis={{ key: "name", label: xAxisLabel, dy: 30 }}
       yAxis={{ key: metricKeys[0] || "count", label: yAxisLabel, offset: -60, dx: -26 }}
       showTooltip={config.show_tooltip !== false}

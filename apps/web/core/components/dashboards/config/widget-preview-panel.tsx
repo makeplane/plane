@@ -44,14 +44,14 @@ export function WidgetPreviewPanel({ widgetType, config, chartProperty, chartMet
       case EAnalyticsWidgetType.NUMBER:
         return <NumberWidget data={numberData} config={config} chartMetric={chartMetric} />;
       default:
-        return <p className="text-sm text-custom-text-300">Select a widget type to see preview</p>;
+        return <p className="text-sm text-tertiary">Select a widget type to see preview</p>;
     }
   };
 
   return (
-    <div className="flex h-full flex-col rounded-lg border border-custom-border-200 bg-custom-background-90">
-      <div className="border-b border-custom-border-200 px-3 py-2">
-        <span className="text-xs font-medium text-custom-text-300">Preview</span>
+    <div className="flex h-full flex-col rounded-lg border border-subtle bg-layer-1-hover">
+      <div className="border-b border-subtle px-3 py-2">
+        <span className="text-xs font-medium text-tertiary">Preview</span>
       </div>
       <div className="flex-1 p-3">
         <div className="h-full min-h-[200px]">{renderPreview()}</div>

@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { Controller } from "react-hook-form";
 import type { Control, FieldErrors } from "react-hook-form";
-import { Input } from "@plane/ui";
+import { Input, CustomSelect } from "@plane/ui";
 import { ANALYTICS_CHART_PROPERTY_OPTIONS, ANALYTICS_CHART_METRIC_OPTIONS } from "@plane/constants";
 
 interface BasicSettingsSectionProps {
@@ -22,7 +22,7 @@ export const BasicSettingsSection = observer(({ control, errors }: BasicSettings
     <div className="space-y-4">
       {/* Title */}
       <div>
-        <label htmlFor="title" className="mb-1 block text-sm font-medium text-custom-text-200">
+        <label htmlFor="title" className="mb-1 block text-sm font-medium text-secondary">
           Widget Title <span className="text-red-500">*</span>
         </label>
         <Controller
@@ -44,7 +44,7 @@ export const BasicSettingsSection = observer(({ control, errors }: BasicSettings
 
       {/* Property (X-Axis) */}
       <div>
-        <label htmlFor="chart_property" className="mb-1 block text-sm font-medium text-custom-text-200">
+        <label htmlFor="chart_property" className="mb-1 block text-sm font-medium text-secondary">
           Property (X-Axis) <span className="text-red-500">*</span>
         </label>
         <Controller
@@ -52,24 +52,19 @@ export const BasicSettingsSection = observer(({ control, errors }: BasicSettings
           control={control}
           rules={{ required: "Property is required" }}
           render={({ field }) => (
-            <select
-              id="chart_property"
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            <CustomSelect
               value={field.value}
-              onChange={(e) => field.onChange(e.target.value)}
-              aria-invalid={!!errors.chart_property}
-              aria-describedby={errors.chart_property ? "chart-property-error" : undefined}
-              className="w-full rounded border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm text-custom-text-100 outline-none focus:border-custom-primary-100 focus:ring-1 focus:ring-custom-primary-100"
+              onChange={(val: any) => field.onChange(val)}
+              label={ANALYTICS_CHART_PROPERTY_OPTIONS.find((o) => o.key === field.value)?.label || "Select property"}
+              input
+              buttonClassName={errors.chart_property ? "border-red-500" : ""}
             >
-              <option value="" disabled>
-                Select property
-              </option>
               {ANALYTICS_CHART_PROPERTY_OPTIONS.map((option) => (
-                <option key={option.key} value={option.key}>
+                <CustomSelect.Option key={option.key} value={option.key}>
                   {option.label}
-                </option>
+                </CustomSelect.Option>
               ))}
-            </select>
+            </CustomSelect>
           )}
         />
         {errors.chart_property && (
@@ -81,7 +76,7 @@ export const BasicSettingsSection = observer(({ control, errors }: BasicSettings
 
       {/* Metric (Y-Axis) */}
       <div>
-        <label htmlFor="chart_metric" className="mb-1 block text-sm font-medium text-custom-text-200">
+        <label htmlFor="chart_metric" className="mb-1 block text-sm font-medium text-secondary">
           Metric (Y-Axis) <span className="text-red-500">*</span>
         </label>
         <Controller
@@ -89,24 +84,19 @@ export const BasicSettingsSection = observer(({ control, errors }: BasicSettings
           control={control}
           rules={{ required: "Metric is required" }}
           render={({ field }) => (
-            <select
-              id="chart_metric"
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            <CustomSelect
               value={field.value}
-              onChange={(e) => field.onChange(e.target.value)}
-              aria-invalid={!!errors.chart_metric}
-              aria-describedby={errors.chart_metric ? "chart-metric-error" : undefined}
-              className="w-full rounded border border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm text-custom-text-100 outline-none focus:border-custom-primary-100 focus:ring-1 focus:ring-custom-primary-100"
+              onChange={(val: any) => field.onChange(val)}
+              label={ANALYTICS_CHART_METRIC_OPTIONS.find((o) => o.key === field.value)?.label || "Select metric"}
+              input
+              buttonClassName={errors.chart_metric ? "border-red-500" : ""}
             >
-              <option value="" disabled>
-                Select metric
-              </option>
               {ANALYTICS_CHART_METRIC_OPTIONS.map((option) => (
-                <option key={option.key} value={option.key}>
+                <CustomSelect.Option key={option.key} value={option.key}>
                   {option.label}
-                </option>
+                </CustomSelect.Option>
               ))}
-            </select>
+            </CustomSelect>
           )}
         />
         {errors.chart_metric && (

@@ -41,7 +41,7 @@ export const PieChartWidget = observer(function PieChartWidget({
       dataKey={metricKey}
       cells={cells}
       innerRadius={0}
-      outerRadius={100}
+      outerRadius={"70%"}
       showLabel={true}
       showTooltip={config.show_tooltip !== false}
       legend={config.show_legend !== false ? { align: "center", verticalAlign: "bottom", layout: "horizontal" } : undefined}

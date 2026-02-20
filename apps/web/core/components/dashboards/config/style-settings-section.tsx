@@ -31,7 +31,7 @@ export const StyleSettingsSection = observer(
       <div className="space-y-4">
         {/* Color Preset */}
         <div>
-          <label className="mb-2 block text-sm font-medium text-custom-text-200">
+          <label className="mb-2 block text-sm font-medium text-secondary">
             Color Preset
           </label>
           <Controller
@@ -49,7 +49,7 @@ export const StyleSettingsSection = observer(
         {/* Fill Opacity */}
         {showFillOpacity && (
           <div>
-            <label className="mb-2 block text-sm font-medium text-custom-text-200">
+            <label className="mb-2 block text-sm font-medium text-secondary">
               Fill Opacity
             </label>
             <Controller
@@ -66,16 +66,14 @@ export const StyleSettingsSection = observer(
                     onChange={(e) =>
                       field.onChange(parseInt(e.target.value) / 100)
                     }
-                    className="h-2 flex-1 cursor-pointer appearance-none rounded-lg bg-custom-background-80"
+                    className="h-2 flex-1 cursor-pointer appearance-none rounded-lg bg-layer-2"
                     style={{
-                      background: `linear-gradient(to right, rgb(var(--color-primary-100)) 0%, rgb(var(--color-primary-100)) ${
-                        (field.value || 0) * 100
-                      }%, rgb(var(--color-background-80)) ${
-                        (field.value || 0) * 100
-                      }%, rgb(var(--color-background-80)) 100%)`,
+                      background: `linear-gradient(to right, var(--bg-accent-primary) 0%, var(--bg-accent-primary) ${(field.value || 0) * 100
+                        }%, var(--border-subtle) ${(field.value || 0) * 100
+                        }%, var(--border-subtle) 100%)`,
                     }}
                   />
-                  <span className="text-sm text-custom-text-300 min-w-[3rem] text-right">
+                  <span className="text-sm text-tertiary min-w-[3rem] text-right">
                     {Math.round((field.value || 0) * 100)}%
                   </span>
                 </div>
@@ -87,7 +85,7 @@ export const StyleSettingsSection = observer(
         {/* Show Border */}
         {showBorder && (
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-custom-text-200">
+            <label className="text-sm font-medium text-secondary">
               Show Border
             </label>
             <Controller
@@ -106,7 +104,7 @@ export const StyleSettingsSection = observer(
         {/* Smoothing */}
         {showSmoothing && (
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-custom-text-200">
+            <label className="text-sm font-medium text-secondary">
               Smooth Lines
             </label>
             <Controller

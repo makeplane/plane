@@ -29,7 +29,7 @@ export const DisplaySettingsSection = observer(
         {/* Legend */}
         {showLegend && (
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-custom-text-200">
+            <label className="text-sm font-medium text-secondary">
               Show Legend
             </label>
             <Controller
@@ -48,7 +48,7 @@ export const DisplaySettingsSection = observer(
         {/* Tooltip */}
         {showTooltip && (
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-custom-text-200">
+            <label className="text-sm font-medium text-secondary">
               Show Tooltip
             </label>
             <Controller
@@ -67,7 +67,7 @@ export const DisplaySettingsSection = observer(
         {/* Center Value */}
         {showCenterValue && (
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-custom-text-200">
+            <label className="text-sm font-medium text-secondary">
               Show Center Value
             </label>
             <Controller
@@ -86,7 +86,7 @@ export const DisplaySettingsSection = observer(
         {/* Markers */}
         {showMarkers && (
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-custom-text-200">
+            <label className="text-sm font-medium text-secondary">
               Show Data Points
             </label>
             <Controller

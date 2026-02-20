@@ -10,7 +10,8 @@ import { useForm } from "react-hook-form";
 import type { IAnalyticsDashboardWidget, IAnalyticsWidgetConfig, TAnalyticsWidgetCreate, TAnalyticsWidgetUpdate } from "@plane/types";
 import { EAnalyticsWidgetType } from "@plane/types";
 import { ANALYTICS_DEFAULT_WIDGET_CONFIGS, ANALYTICS_DEFAULT_WIDGET_SIZES } from "@plane/constants";
-import { Button, ModalCore, EModalPosition, EModalWidth } from "@plane/ui";
+import { Button, ModalCore, EModalPosition, EModalWidth, TabList } from "@plane/ui";
+import { Tab } from "@headlessui/react";
 import { cn } from "@plane/utils";
 import { X } from "lucide-react";
 import { WidgetTypeSelector } from "./config/widget-type-selector";
@@ -65,25 +66,25 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
   } = useForm<FormData>({
     defaultValues: widget
       ? {
-          widget_type: widget.widget_type,
-          title: widget.title,
-          chart_property: widget.chart_property,
-          chart_metric: widget.chart_metric,
-          config: widget.config,
-          position: widget.position,
-        }
+        widget_type: widget.widget_type,
+        title: widget.title,
+        chart_property: widget.chart_property,
+        chart_metric: widget.chart_metric,
+        config: widget.config,
+        position: widget.position,
+      }
       : {
-          widget_type: EAnalyticsWidgetType.BAR,
-          title: "",
-          chart_property: "priority",
-          chart_metric: "count",
-          config: ANALYTICS_DEFAULT_WIDGET_CONFIGS.bar || {},
-          position: {
-            row: 0,
-            col: 0,
-            ...(ANALYTICS_DEFAULT_WIDGET_SIZES.bar || { width: 6, height: 4 }),
-          },
+        widget_type: EAnalyticsWidgetType.BAR,
+        title: "",
+        chart_property: "priority",
+        chart_metric: "count",
+        config: ANALYTICS_DEFAULT_WIDGET_CONFIGS.bar || {},
+        position: {
+          row: 0,
+          col: 0,
+          ...(ANALYTICS_DEFAULT_WIDGET_SIZES.bar || { width: 6, height: 4 }),
         },
+      },
   });
 
   const widgetType = watch("widget_type");
@@ -109,25 +110,25 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
       reset(
         widget
           ? {
-              widget_type: widget.widget_type,
-              title: widget.title,
-              chart_property: widget.chart_property,
-              chart_metric: widget.chart_metric,
-              config: widget.config,
-              position: widget.position,
-            }
+            widget_type: widget.widget_type,
+            title: widget.title,
+            chart_property: widget.chart_property,
+            chart_metric: widget.chart_metric,
+            config: widget.config,
+            position: widget.position,
+          }
           : {
-              widget_type: EAnalyticsWidgetType.BAR,
-              title: "",
-              chart_property: "priority",
-              chart_metric: "count",
-              config: ANALYTICS_DEFAULT_WIDGET_CONFIGS.bar || {},
-              position: {
-                row: 0,
-                col: 0,
-                ...(ANALYTICS_DEFAULT_WIDGET_SIZES.bar || { width: 6, height: 4 }),
-              },
-            }
+            widget_type: EAnalyticsWidgetType.BAR,
+            title: "",
+            chart_property: "priority",
+            chart_metric: "count",
+            config: ANALYTICS_DEFAULT_WIDGET_CONFIGS.bar || {},
+            position: {
+              row: 0,
+              col: 0,
+              ...(ANALYTICS_DEFAULT_WIDGET_SIZES.bar || { width: 6, height: 4 }),
+            },
+          }
       );
     }
   }, [widget, isOpen, reset]);
@@ -183,14 +184,14 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <div className="flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-custom-border-200 px-5 py-4">
-          <h3 className="text-lg font-semibold text-custom-text-100">{widget ? "Configure Widget" : "Add Widget"}</h3>
+        <div className="flex items-center justify-between border-b border-subtle px-5 py-4">
+          <h3 className="text-lg font-semibold text-primary">{widget ? "Configure Widget" : "Add Widget"}</h3>
           <button
             type="button"
             onClick={handleClose}
-            className="flex h-6 w-6 items-center justify-center rounded hover:bg-custom-background-80"
+            className="flex h-6 w-6 items-center justify-center rounded hover:bg-layer-2"
           >
-            <X className="h-4 w-4 text-custom-text-300" />
+            <X className="h-4 w-4 text-tertiary" />
           </button>
         </div>
 
@@ -200,27 +201,30 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
             {/* Config panel (left) */}
             <div className="w-[55%] min-w-0">
               {/* Tab buttons */}
-              <div className="flex w-full items-center gap-1.5 rounded-md p-0.5 bg-custom-background-80">
-                {CONFIG_TABS.map((tab) => (
-                  <button
-                    key={tab.key}
-                    type="button"
-                    onClick={() => setActiveTab(tab.key)}
-                    className={cn(
-                      "flex items-center justify-center p-1 min-w-fit w-full text-13 font-medium outline-none cursor-pointer transition-all rounded-sm",
-                      activeTab === tab.key
-                        ? "bg-custom-background-100 text-custom-text-100 shadow-sm"
-                        : "text-custom-text-400 hover:text-custom-text-300 hover:bg-custom-background-90"
-                    )}
-                  >
-                    {tab.label}
-                    {tab.key === "filters" && activeFilterCount > 0 && (
-                      <span className="ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-custom-primary-100 px-1 text-[10px] font-medium text-white">
-                        {activeFilterCount}
-                      </span>
-                    )}
-                  </button>
-                ))}
+              <div className="w-full">
+                <Tab.Group
+                  selectedIndex={CONFIG_TABS.findIndex((t) => t.key === activeTab)}
+                  onChange={(index) => setActiveTab(CONFIG_TABS[index].key as ConfigTabKey)}
+                >
+                  <TabList
+                    autoWrap={false}
+                    tabs={CONFIG_TABS.map((tab) => ({
+                      key: tab.key,
+                      label: (
+                        <span className="flex items-center gap-1">
+                          {tab.label}
+                          {tab.key === "filters" && activeFilterCount > 0 && (
+                            <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-accent-primary px-1 text-[10px] font-medium text-white">
+                              {activeFilterCount}
+                            </span>
+                          )}
+                        </span>
+                      ),
+                    }))}
+                    selectedTab={activeTab}
+                    tabListClassName="bg-layer-2"
+                  />
+                </Tab.Group>
               </div>
 
               {/* Tab content */}
@@ -239,7 +243,7 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
             <div className="w-[45%] min-w-0">
               <WidgetPreviewPanel
                 widgetType={widgetType}
-                config={configValue as any}
+                config={(configValue ? { ...configValue } : {}) as any}
                 chartProperty={chartProperty}
                 chartMetric={chartMetric}
               />
@@ -247,7 +251,7 @@ export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-end gap-2 border-t border-custom-border-200 px-5 py-4">
+          <div className="flex items-center justify-end gap-2 border-t border-subtle px-5 py-4">
             <Button type="button" variant="neutral-primary" size="sm" onClick={handleClose} disabled={isSubmitting}>
               Cancel
             </Button>
