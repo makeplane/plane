@@ -9,7 +9,8 @@
 import { useCallback } from "react";
 import { Timer } from "lucide-react";
 import { EUserPermissions } from "@plane/constants";
-import { ProjectNavigation, type TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
+import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
+import { ProjectNavigation } from "@/components/workspace/sidebar/project-navigation";
 import { useProject } from "@/hooks/store/use-project";
 
 type TProjectItemsRootProps = {

@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { useState, useEffect, type FormEvent } from "react";
+import type { FormEvent } from "react";
+import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { parseDisplayToMinutes } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -60,7 +61,7 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
       return;
     }
     setIsSubmitting(true);
-    
+
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     (async () => {
       try {
@@ -70,7 +71,11 @@ export const WorklogModal = observer(function WorklogModal(props: TWorklogModal)
             logged_at: loggedAt,
             description: description || undefined,
           });
-          setToast({ type: TOAST_TYPE.SUCCESS, title: t("worklog.updated"), message: t("worklog.updated_successfully") });
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: t("worklog.updated"),
+            message: t("worklog.updated_successfully"),
+          });
         } else {
           await store.createWorklog(workspaceSlug, projectId, issueId, {
             duration_minutes,

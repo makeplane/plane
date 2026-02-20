@@ -7,7 +7,8 @@
  * Fetches summary data and renders filters, KPI cards, and issue table.
  */
 
-import { useState, useEffect, useCallback, type FC } from "react";
+import type { FC } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { IWorkLogSummary } from "@plane/types";
 import { WorklogService } from "@/services/worklog.service";
 import { TimeTrackingFilters } from "./time-tracking-filters";
@@ -69,7 +70,7 @@ export const TimeTrackingReportPage: FC<TTimeTrackingReportPageProps> = ({ works
       {/* Loading state */}
       {isLoading && (
         <div className="flex items-center justify-center py-16">
-          <span className="text-sm text-custom-text-300">Loading...</span>
+          <span className="text-sm text-tertiary">Loading...</span>
         </div>
       )}
 
@@ -83,7 +84,7 @@ export const TimeTrackingReportPage: FC<TTimeTrackingReportPageProps> = ({ works
       {/* Empty state */}
       {!isLoading && !error && isEmpty && (
         <div className="flex items-center justify-center py-16">
-          <span className="text-sm text-custom-text-300">No time logged yet.</span>
+          <span className="text-sm text-tertiary">No time logged yet.</span>
         </div>
       )}
 

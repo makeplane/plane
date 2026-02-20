@@ -25,7 +25,7 @@ export const TimeTrackingFilters: FC<TTimeTrackingFiltersProps> = ({
 }) => (
   <div className="flex items-center gap-3 flex-wrap">
     <div className="flex items-center gap-2">
-      <label htmlFor="date-from" className="text-xs font-medium text-custom-text-300">
+      <label htmlFor="date-from" className="text-xs font-medium text-tertiary">
         From
       </label>
       <input
@@ -33,11 +33,11 @@ export const TimeTrackingFilters: FC<TTimeTrackingFiltersProps> = ({
         type="date"
         value={dateFrom}
         onChange={(e) => onDateFromChange(e.target.value)}
-        className="text-xs border border-custom-border-200 rounded px-2 py-1.5 bg-custom-background-100 text-custom-text-100 focus:outline-none focus:ring-1 focus:ring-custom-primary-100"
+        className="text-xs border border-subtle rounded px-2 py-1.5 bg-surface-1 text-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
       />
     </div>
     <div className="flex items-center gap-2">
-      <label htmlFor="date-to" className="text-xs font-medium text-custom-text-300">
+      <label htmlFor="date-to" className="text-xs font-medium text-tertiary">
         To
       </label>
       <input
@@ -45,13 +45,13 @@ export const TimeTrackingFilters: FC<TTimeTrackingFiltersProps> = ({
         type="date"
         value={dateTo}
         onChange={(e) => onDateToChange(e.target.value)}
-        className="text-xs border border-custom-border-200 rounded px-2 py-1.5 bg-custom-background-100 text-custom-text-100 focus:outline-none focus:ring-1 focus:ring-custom-primary-100"
+        className="text-xs border border-subtle rounded px-2 py-1.5 bg-surface-1 text-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
       />
     </div>
     <button
       onClick={onApply}
       type="button"
-      className="text-xs font-medium px-3 py-1.5 rounded bg-custom-primary-100 text-white hover:bg-custom-primary-200 transition-colors"
+      className="text-xs font-medium px-3 py-1.5 rounded bg-accent-primary text-white hover:bg-accent-primary/90 transition-colors"
     >
       Apply
     </button>

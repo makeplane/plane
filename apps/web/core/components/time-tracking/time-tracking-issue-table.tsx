@@ -18,20 +18,18 @@ export const TimeTrackingIssueTable: FC<TTimeTrackingIssueTableProps> = ({ byIss
   if (byIssue.length === 0) return null;
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-custom-border-200">
+    <div className="overflow-x-auto rounded-lg border border-subtle">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-custom-border-200 bg-custom-background-90">
-            <th className="px-4 py-3 text-left text-xs font-semibold text-custom-text-300 uppercase tracking-wide">
-              Issue
-            </th>
-            <th className="px-4 py-3 text-right text-xs font-semibold text-custom-text-300 uppercase tracking-wide w-32">
+          <tr className="border-b border-subtle bg-layer-1-hover">
+            <th className="px-4 py-3 text-left text-xs font-semibold text-tertiary uppercase tracking-wide">Issue</th>
+            <th className="px-4 py-3 text-right text-xs font-semibold text-tertiary uppercase tracking-wide w-32">
               Estimate
             </th>
-            <th className="px-4 py-3 text-right text-xs font-semibold text-custom-text-300 uppercase tracking-wide w-32">
+            <th className="px-4 py-3 text-right text-xs font-semibold text-tertiary uppercase tracking-wide w-32">
               Logged
             </th>
-            <th className="px-4 py-3 text-right text-xs font-semibold text-custom-text-300 uppercase tracking-wide w-32">
+            <th className="px-4 py-3 text-right text-xs font-semibold text-tertiary uppercase tracking-wide w-32">
               Variance
             </th>
           </tr>
@@ -47,25 +45,25 @@ export const TimeTrackingIssueTable: FC<TTimeTrackingIssueTableProps> = ({ byIss
                 : "—";
             const varianceClass =
               variance == null
-                ? "text-custom-text-300"
+                ? "text-tertiary"
                 : variance > 0
                   ? "text-red-500"
                   : variance < 0
                     ? "text-green-500"
-                    : "text-custom-text-200";
+                    : "text-secondary";
 
             return (
               <tr
                 key={issue.issue_id}
-                className="border-b border-custom-border-100 last:border-0 hover:bg-custom-background-90 transition-colors"
+                className="border-b border-subtle last:border-0 hover:bg-layer-1-hover transition-colors"
               >
-                <td className="px-4 py-3 text-custom-text-100 font-medium">
-                  {issue.issue_name || <span className="italic text-custom-text-300">(Deleted issue)</span>}
+                <td className="px-4 py-3 text-primary font-medium">
+                  {issue.issue_name || <span className="italic text-tertiary">(Deleted issue)</span>}
                 </td>
-                <td className="px-4 py-3 text-right text-custom-text-200">
+                <td className="px-4 py-3 text-right text-secondary">
                   {issue.estimate_time != null ? formatMinutesToDisplay(issue.estimate_time) : "—"}
                 </td>
-                <td className="px-4 py-3 text-right text-custom-text-100 font-medium">
+                <td className="px-4 py-3 text-right text-primary font-medium">
                   {formatMinutesToDisplay(issue.total_minutes)}
                 </td>
                 <td className={`px-4 py-3 text-right font-medium ${varianceClass}`}>{varianceDisplay}</td>
