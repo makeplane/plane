@@ -16,6 +16,14 @@ from plane.ee.models import Milestone, MilestoneIssue
 
 
 class MilestoneSerializer(BaseSerializer):
+    def validate_title(self, value):
+        project_id = self.context.get("project_id") or (self.instance.project_id if self.instance else None)
+        exclude_id = self.instance.id if self.instance else None
+        if project_id:
+            if not Milestone.is_valid_title(value, project_id, exclude_id=exclude_id):
+                raise serializers.ValidationError("A milestone with this title already exists in the project.")
+        return value
+
     class Meta:
         model = Milestone
         fields = [
