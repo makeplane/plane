@@ -18,6 +18,7 @@ import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TInboxIssueCurrentTab } from "@plane/types";
 import { EInboxIssueCurrentTab } from "@plane/types";
 // plane imports
+import { ScrollArea } from "@plane/propel/scrollarea";
 import { Header, Loader, EHeaderVariant } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -133,63 +134,68 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
         {loader != undefined && loader === "filter-loading" && !inboxIssuePaginationInfo?.next_page_results ? (
           <InboxSidebarLoader />
         ) : (
-          <div
-            className="w-full h-full overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-md"
-            ref={containerRef}
-          >
-            {filteredInboxIssueIds.length > 0 ? (
-              <InboxIssueList
-                setIsMobileSidebar={setIsMobileSidebar}
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                projectIdentifier={currentProjectDetails?.identifier}
-                inboxIssueIds={filteredInboxIssueIds}
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full w-full">
-                {getAppliedFiltersCount > 0 ? (
-                  <EmptyStateDetailed
-                    assetKey="search"
-                    title={t("common_empty_state.search.title")}
-                    description={t("common_empty_state.search.description")}
-                    assetClassName="size-20"
-                    rootClassName="px-page-x"
-                  />
-                ) : currentTab === EInboxIssueCurrentTab.OPEN ? (
-                  <EmptyStateDetailed
-                    assetKey="inbox"
-                    title={t("project_empty_state.intake_sidebar.title")}
-                    description={t("project_empty_state.intake_sidebar.description")}
-                    assetClassName="size-20"
-                    actions={[
-                      {
-                        label: t("project_empty_state.intake_sidebar.cta_primary"),
-                        onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/intake`),
-                        variant: "primary",
-                      },
-                    ]}
-                    rootClassName="px-page-x"
-                  />
-                ) : (
-                  // TODO: Add translation
-                  <EmptyStateDetailed
-                    assetKey="inbox"
-                    title="No request closed yet"
-                    description="All the work items whether accepted or declined can be found here."
-                    assetClassName="size-20"
-                    className="px-10"
-                  />
+          <div className="w-full h-full" ref={containerRef}>
+            <ScrollArea
+              orientation="vertical"
+              scrollType="hover"
+              size="sm"
+              rootClassName="size-full"
+              viewportClassName="size-full"
+            >
+              {filteredInboxIssueIds.length > 0 ? (
+                <InboxIssueList
+                  setIsMobileSidebar={setIsMobileSidebar}
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  projectIdentifier={currentProjectDetails?.identifier}
+                  inboxIssueIds={filteredInboxIssueIds}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full w-full">
+                  {getAppliedFiltersCount > 0 ? (
+                    <EmptyStateDetailed
+                      assetKey="search"
+                      title={t("common_empty_state.search.title")}
+                      description={t("common_empty_state.search.description")}
+                      assetClassName="size-20"
+                      rootClassName="px-page-x"
+                    />
+                  ) : currentTab === EInboxIssueCurrentTab.OPEN ? (
+                    <EmptyStateDetailed
+                      assetKey="inbox"
+                      title={t("project_empty_state.intake_sidebar.title")}
+                      description={t("project_empty_state.intake_sidebar.description")}
+                      assetClassName="size-20"
+                      actions={[
+                        {
+                          label: t("project_empty_state.intake_sidebar.cta_primary"),
+                          onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/intake`),
+                          variant: "primary",
+                        },
+                      ]}
+                      rootClassName="px-page-x"
+                    />
+                  ) : (
+                    // TODO: Add translation
+                    <EmptyStateDetailed
+                      assetKey="inbox"
+                      title="No request closed yet"
+                      description="All the work items whether accepted or declined can be found here."
+                      assetClassName="size-20"
+                      className="px-10"
+                    />
+                  )}
+                </div>
+              )}
+              <div ref={setElementRef}>
+                {inboxIssuePaginationInfo?.next_page_results && (
+                  <Loader className="mx-auto w-full space-y-4 py-4 px-2">
+                    <Loader.Item height="64px" width="w-100" />
+                    <Loader.Item height="64px" width="w-100" />
+                  </Loader>
                 )}
               </div>
-            )}
-            <div ref={setElementRef}>
-              {inboxIssuePaginationInfo?.next_page_results && (
-                <Loader className="mx-auto w-full space-y-4 py-4 px-2">
-                  <Loader.Item height="64px" width="w-100" />
-                  <Loader.Item height="64px" width="w-100" />
-                </Loader>
-              )}
-            </div>
+            </ScrollArea>
           </div>
         )}
       </div>
