@@ -72,8 +72,6 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
       return;
     }
 
-    setResolvedSrc(undefined);
-    setResolvedDownloadSrc(undefined);
     setFailedToLoadImage(false);
 
     const getImageSource = async () => {
@@ -82,17 +80,19 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
         if (url) {
           setResolvedSrc(url);
         } else {
+          setResolvedSrc(undefined);
           setFailedToLoadImage(true);
         }
         const downloadUrl = await extension.options.getImageDownloadSource?.(imgNodeSrc);
         setResolvedDownloadSrc(downloadUrl);
       } catch (error) {
         console.error("Error fetching image source:", error);
+        setResolvedSrc(undefined);
         setFailedToLoadImage(true);
       }
     };
     getImageSource();
-  }, [imgNodeSrc, extension.options, editor.isEditable, status]);
+  }, [imgNodeSrc, extension.options, editor.isEditable]);
 
   useEffect(() => {
     const handleDuplication = async () => {
@@ -151,7 +151,7 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
   }, [status]);
 
   const hasDuplicationFailed = hasImageDuplicationFailed(status);
-  const hasValidImageSource = imageFromFileSystem || (isUploaded && resolvedSrc);
+  const hasValidImageSource = imageFromFileSystem || (isUploaded && (resolvedSrc || imgNodeSrc));
   const shouldShowBlock = hasValidImageSource && !failedToLoadImage && !hasDuplicationFailed;
 
   return (

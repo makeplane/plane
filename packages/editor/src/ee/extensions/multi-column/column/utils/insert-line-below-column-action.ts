@@ -15,44 +15,49 @@ import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 import type { KeyboardShortcutCommand } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
-// helpers
-import { findParentNodeOfType } from "@/helpers/common";
 
 export const insertLineBelowColumnAction: KeyboardShortcutCommand = ({ editor }) => {
   // Check if the current selection or the closest node is a column
   if (!editor.isActive(ADDITIONAL_EXTENSIONS.COLUMN)) return false;
 
   try {
-    // Get the current selection
     const { selection } = editor.state;
+    const $anchor = selection.$anchor;
 
-    // Find the column node and its position
-    const columnNode = findParentNodeOfType(selection, [ADDITIONAL_EXTENSIONS.COLUMN]);
-    if (!columnNode) return false;
+    // Find column and columnList depths
+    let columnDepth = -1;
+    let columnListDepth = -1;
+    for (let d = $anchor.depth; d > 0; d--) {
+      const node = $anchor.node(d);
+      if (node.type.name === (ADDITIONAL_EXTENSIONS.COLUMN as string) && columnDepth === -1) {
+        columnDepth = d;
+      }
+      if (node.type.name === (ADDITIONAL_EXTENSIONS.COLUMN_LIST as string) && columnListDepth === -1) {
+        columnListDepth = d;
+      }
+      if (columnDepth !== -1 && columnListDepth !== -1) break;
+    }
 
-    const columnPos = columnNode.pos;
-    const column = columnNode.node;
+    if (columnDepth === -1 || columnListDepth === -1) return false;
 
-    // Determine if the selection is in the last row of the column
-    const rowCount = column.childCount;
-    const lastRow = column.child(rowCount - 1);
-    const selectionPath = (selection.$anchor as any).path;
-    const selectionInLastRow = selectionPath.includes(lastRow);
+    const column = $anchor.node(columnDepth);
 
-    if (!selectionInLastRow) return false;
+    // Check if cursor is in the last child block of the column
+    const indexInColumn = $anchor.index(columnDepth);
+    if (indexInColumn !== column.childCount - 1) return false;
 
-    // Calculate the position immediately after the column
-    const nextNodePos = columnPos + column.nodeSize;
+    // Calculate position after the entire columnList
+    const columnList = $anchor.node(columnListDepth);
+    const columnListPos = $anchor.before(columnListDepth);
+    const nextNodePos = columnListPos + columnList.nodeSize;
 
-    // Check for an existing node immediately after the column
+    // Check for an existing node immediately after the columnList
     const nextNode = editor.state.doc.nodeAt(nextNodePos);
 
     if (nextNode && nextNode.type.name === CORE_EXTENSIONS.PARAGRAPH) {
-      // If the next node is an paragraph, move the cursor there
       const endOfParagraphPos = nextNodePos + nextNode.nodeSize - 1;
       editor.chain().setTextSelection(endOfParagraphPos).run();
     } else if (!nextNode) {
-      // If the next node doesn't exist i.e. we're at the end of the document, create and insert a new empty node there
       editor.chain().insertContentAt(nextNodePos, { type: CORE_EXTENSIONS.PARAGRAPH }).run();
       editor
         .chain()
@@ -64,7 +69,7 @@ export const insertLineBelowColumnAction: KeyboardShortcutCommand = ({ editor })
 
     return true;
   } catch (e) {
-    console.error("failed to insert line above column", e);
+    console.error("failed to insert line below column", e);
     return false;
   }
 };

@@ -153,7 +153,9 @@ export const columnListCommands = (nodeType: NodeType): Partial<RawCommands> => 
 
   clearColumnContents:
     (options?: ColumnPositionCommandOptions) =>
-    ({ tr, state, dispatch }) => {
+    ({ tr, state, dispatch, editor }) => {
+      if (getIsFlagged(editor)) return false;
+
       const pos = options?.columnPos ?? state.selection.from;
       const columnInfo = findColumnAtPos(state, pos);
       if (!columnInfo) return false;

@@ -28,6 +28,7 @@ const DROP_MARKER_THICKNESS = 4;
 export type DragHandleInstance = {
   element: HTMLElement;
   destroy: () => void;
+  updateGetColumnPos: (fn: () => number) => void;
 };
 
 type DropdownItem = {
@@ -121,7 +122,13 @@ function createDragPreview(columnElement: HTMLElement | null, clientX: number, c
   return preview;
 }
 
-export function createColumnDragHandle(editor: Editor, columnPos: number, _columnIndex: number): DragHandleInstance {
+export function createColumnDragHandle(
+  editor: Editor,
+  initialGetColumnPos: () => number,
+  _columnIndex: number
+): DragHandleInstance {
+  let getColumnPos = initialGetColumnPos;
+
   // Container
   const container = document.createElement("div");
   container.className =
@@ -141,6 +148,7 @@ export function createColumnDragHandle(editor: Editor, columnPos: number, _colum
   let backdropElement: HTMLElement | null = null;
   let cleanupFloating: (() => void) | null = null;
   let backdropClickHandler: (() => void) | null = null;
+  let keydownHandler: ((e: KeyboardEvent) => void) | null = null;
 
   // Separate drag listeners tracking (cleaned on each drag finish)
   let dragListeners: {
@@ -169,6 +177,11 @@ export function createColumnDragHandle(editor: Editor, columnPos: number, _colum
       backdropElement = null;
     }
 
+    if (keydownHandler) {
+      document.removeEventListener("keydown", keydownHandler);
+      keydownHandler = null;
+    }
+
     if (cleanupFloating) {
       cleanupFloating();
       cleanupFloating = null;
@@ -181,7 +194,7 @@ export function createColumnDragHandle(editor: Editor, columnPos: number, _colum
     if (isDropdownOpen) return;
     isDropdownOpen = true;
 
-    setSelectedColumn(editor, columnPos);
+    setSelectedColumn(editor, getColumnPos());
     button.classList.add("!opacity-100", "bg-accent-primary", "border-accent-strong");
     button.classList.remove("hover:bg-layer-1-hover");
 
@@ -218,7 +231,7 @@ export function createColumnDragHandle(editor: Editor, columnPos: number, _colum
         e.stopPropagation();
 
         // Resolve the current column position from the latest editor state.
-        const columnInfo = findColumnAtPos(editor.state, columnPos);
+        const columnInfo = findColumnAtPos(editor.state, getColumnPos());
         if (!columnInfo) {
           // Column no longer exists or cannot be resolved; just close the dropdown.
           closeDropdown();
@@ -267,22 +280,14 @@ export function createColumnDragHandle(editor: Editor, columnPos: number, _colum
       });
     });
 
-    // Handle keyboard events
-    const handleKeyDown = (event: KeyboardEvent) => {
+    keydownHandler = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         closeDropdown();
         event.preventDefault();
         event.stopPropagation();
       }
     };
-    document.addEventListener("keydown", handleKeyDown);
-
-    // Chain keydown cleanup into cleanupFloating
-    const originalCleanup = cleanupFloating;
-    cleanupFloating = () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      if (originalCleanup) originalCleanup();
-    };
+    document.addEventListener("keydown", keydownHandler);
   };
 
   const handleMouseDown = (e: MouseEvent) => {
@@ -290,6 +295,7 @@ export function createColumnDragHandle(editor: Editor, columnPos: number, _colum
     e.stopPropagation();
     e.preventDefault();
 
+    const columnPos = getColumnPos();
     const startX = e.clientX;
     const startY = e.clientY;
     let hasMoved = false;
@@ -405,5 +411,9 @@ export function createColumnDragHandle(editor: Editor, columnPos: number, _colum
     container.remove();
   };
 
-  return { element: container, destroy };
+  const updateGetColumnPos = (fn: () => number) => {
+    getColumnPos = fn;
+  };
+
+  return { element: container, destroy, updateGetColumnPos };
 }

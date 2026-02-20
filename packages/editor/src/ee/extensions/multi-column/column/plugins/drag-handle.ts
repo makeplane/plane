@@ -28,7 +28,7 @@ type ColumnListInfo = {
 type ColumnDragHandlePluginState = {
   decorations: DecorationSet;
   columnLists: ColumnListInfo[];
-  dragHandles: DragHandleInstance[];
+  dragHandles: Map<number, DragHandleInstance>;
 };
 
 export const COLUMN_DRAG_HANDLE_PLUGIN_KEY = new PluginKey<ColumnDragHandlePluginState>("columnDragHandlePlugin");
@@ -99,7 +99,7 @@ function collectColumnPositions(doc: ProseMirrorNode): number[] {
 /**
  * Cleanup drag handles safely
  */
-function cleanupDragHandles(dragHandles: DragHandleInstance[]): void {
+function cleanupDragHandles(dragHandles: Map<number, DragHandleInstance>): void {
   dragHandles.forEach((handle) => {
     try {
       handle.destroy();
@@ -107,28 +107,6 @@ function cleanupDragHandles(dragHandles: DragHandleInstance[]): void {
       console.error("[ColumnDragHandle] Error destroying handle:", error);
     }
   });
-}
-
-/**
- * Create decorations for all columns using vanilla DOM
- */
-function createColumnDecorations(
-  positions: number[],
-  editor: Editor
-): {
-  decorations: Decoration[];
-  dragHandles: DragHandleInstance[];
-} {
-  const decorations: Decoration[] = [];
-  const dragHandles: DragHandleInstance[] = [];
-
-  positions.forEach((pos, index) => {
-    const handle = createColumnDragHandle(editor, pos, index);
-    dragHandles.push(handle);
-    decorations.push(Decoration.widget(pos + 1, () => handle.element, { side: -1 }));
-  });
-
-  return { decorations, dragHandles };
 }
 
 export const ColumnDragHandlePlugin = (editor: Editor, isFlagged: boolean): Plugin<ColumnDragHandlePluginState> =>
@@ -139,19 +117,19 @@ export const ColumnDragHandlePlugin = (editor: Editor, isFlagged: boolean): Plug
       init: () => ({
         decorations: DecorationSet.empty,
         columnLists: [],
-        dragHandles: [],
+        dragHandles: new Map<number, DragHandleInstance>(),
       }),
 
       apply(tr, prev, oldState, newState) {
         // Early exit if flagged
         if (isFlagged) {
-          if (prev.dragHandles.length > 0) {
+          if (prev.dragHandles.size > 0) {
             cleanupDragHandles(prev.dragHandles);
           }
           return {
             decorations: DecorationSet.empty,
             columnLists: [],
-            dragHandles: [],
+            dragHandles: new Map<number, DragHandleInstance>(),
           };
         }
 
@@ -159,13 +137,13 @@ export const ColumnDragHandlePlugin = (editor: Editor, isFlagged: boolean): Plug
 
         // No columns exist - cleanup and return empty state
         if (currentColumnLists.length === 0) {
-          if (prev.dragHandles.length > 0) {
+          if (prev.dragHandles.size > 0) {
             cleanupDragHandles(prev.dragHandles);
           }
           return {
             decorations: DecorationSet.empty,
             columnLists: [],
-            dragHandles: [],
+            dragHandles: new Map<number, DragHandleInstance>(),
           };
         }
 
@@ -183,7 +161,7 @@ export const ColumnDragHandlePlugin = (editor: Editor, isFlagged: boolean): Plug
 
           // Verify decorations are still valid
           const positions = collectColumnPositions(newState.doc);
-          let decorationsValid = positions.length === prev.dragHandles.length;
+          let decorationsValid = positions.length === prev.dragHandles.size;
 
           if (decorationsValid) {
             for (const pos of positions) {
@@ -203,10 +181,37 @@ export const ColumnDragHandlePlugin = (editor: Editor, isFlagged: boolean): Plug
           }
         }
 
-        // Structure changed or decorations invalid - recreate all
-        cleanupDragHandles(prev.dragHandles);
         const positions = collectColumnPositions(newState.doc);
-        const { decorations, dragHandles } = createColumnDecorations(positions, editor);
+        const decorations: Decoration[] = [];
+        const dragHandles = new Map<number, DragHandleInstance>();
+
+        positions.forEach((pos, index) => {
+          let dragHandle: DragHandleInstance | undefined = prev.dragHandles.get(index);
+          if (dragHandle) {
+            dragHandle.updateGetColumnPos(() => pos);
+          } else {
+            dragHandle = createColumnDragHandle(editor, () => pos, index);
+          }
+
+          dragHandles.set(index, dragHandle);
+          const handleElement = dragHandle.element;
+          decorations.push(
+            Decoration.widget(pos + 1, () => handleElement, {
+              key: `column-drag-handle-${index}`,
+              side: -1,
+            })
+          );
+        });
+
+        prev.dragHandles.forEach((handle: DragHandleInstance, index: number) => {
+          if (!dragHandles.has(index)) {
+            try {
+              handle.destroy();
+            } catch (error) {
+              console.error("[ColumnDragHandle] Error destroying handle:", error);
+            }
+          }
+        });
 
         return {
           decorations: DecorationSet.create(newState.doc, decorations),

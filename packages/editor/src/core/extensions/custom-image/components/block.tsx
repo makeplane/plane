@@ -70,7 +70,9 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
     aspectRatio: nodeAspectRatio || null,
   });
   const [isResizing, setIsResizing] = useState(false);
-  const [initialResizeComplete, setInitialResizeComplete] = useState(false);
+  const [initialResizeComplete, setInitialResizeComplete] = useState(
+    nodeWidth !== "35%" && nodeWidth !== null && nodeWidth !== undefined
+  );
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
   const containerRect = useRef<DOMRect | null>(null);

@@ -33,6 +33,8 @@ export function findColumnList(
   state: EditorState,
   pos: number
 ): { node: ProseMirrorNode; pos: number; depth: number } | null {
+  if (pos < 0 || pos > state.doc.content.size) return null;
+
   const $pos = state.doc.resolve(pos);
 
   for (let depth = $pos.depth; depth > 0; depth--) {
@@ -57,6 +59,8 @@ export function findColumnAtPos(
   state: EditorState,
   pos: number
 ): { node: ProseMirrorNode; pos: number; depth: number } | null {
+  if (pos < 0 || pos > state.doc.content.size) return null;
+
   const $pos = state.doc.resolve(pos);
 
   // Check if node at position is a column

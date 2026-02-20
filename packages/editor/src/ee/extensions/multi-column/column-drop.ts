@@ -197,16 +197,14 @@ function applyColumnTransaction(
   // No-op if source and target are the same
   if (sourcePos === targetPos) return;
 
-  // Delete source before target (positions shift after deletion)
   if (sourcePos < targetPos) {
     tr.delete(sourcePos, sourcePos + sourceSize);
-    tr.replaceWith(targetPos - sourceSize, targetPos - sourceSize + targetSize, newColumnList);
-  }
-  // Delete source after target (need to account for size change)
-  else {
+    const mappedTargetPos = tr.mapping.map(targetPos);
+    tr.replaceWith(mappedTargetPos, mappedTargetPos + targetSize, newColumnList);
+  } else {
     tr.replaceWith(targetPos, targetPos + targetSize, newColumnList);
-    const sizeDiff = newColumnList.nodeSize - targetSize;
-    tr.delete(sourcePos + sizeDiff, sourcePos + sizeDiff + sourceSize);
+    const mappedSourcePos = tr.mapping.map(sourcePos);
+    tr.delete(mappedSourcePos, mappedSourcePos + sourceSize);
   }
 }
 
