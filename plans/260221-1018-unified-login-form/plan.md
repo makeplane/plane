@@ -44,17 +44,19 @@ Merged into `staff-id.tsx`.
 
 ### 3. `auth-root.tsx` — EDIT
 
-- Removed `AuthLDAPForm` import/render
+- Removed `AuthLDAPForm`, `OAuthOptions`, `AuthFormRoot` imports/render
+- Removed divider ("or sign in with email"), OAuth buttons, email form
+- Removed unused `useOAuthConfig` hook, `setEmail` state
 - Passes `isLDAPEnabled` prop to `StaffIdLoginForm`
-- Divider text: "or sign in with email" (English)
+- Login page now has only: AuthHeader + StaffIdLoginForm + TermsAndConditions
 
 ## Files Changed
 
-| File                                                        | Action                                     |
-| ----------------------------------------------------------- | ------------------------------------------ |
-| `apps/web/core/components/account/auth-forms/staff-id.tsx`  | REWRITE — unified config-aware form        |
-| `apps/web/core/components/account/auth-forms/ldap.tsx`      | DELETE                                     |
-| `apps/web/core/components/account/auth-forms/auth-root.tsx` | EDIT — pass isLDAPEnabled, English divider |
+| File                                                        | Action                                             |
+| ----------------------------------------------------------- | -------------------------------------------------- |
+| `apps/web/core/components/account/auth-forms/staff-id.tsx`  | REWRITE — unified config-aware form                |
+| `apps/web/core/components/account/auth-forms/ldap.tsx`      | DELETE                                             |
+| `apps/web/core/components/account/auth-forms/auth-root.tsx` | EDIT — sole unified form, removed OAuth/email form |
 
 ## Verification
 
@@ -63,4 +65,5 @@ Merged into `staff-id.tsx`.
 3. Any mode + `user@co.com` → POST `/auth/sign-in/` email=`user@co.com`
 4. LDAP on + `john.doe` → POST `/auth/ldap/sign-in/` username=`john.doe`
 5. LDAP off + `john.doe` → validation error
-6. Build: `pnpm turbo run build --filter=web` ✓
+6. No OAuth buttons or email form visible on login page
+7. Build: `pnpm turbo run build --filter=web` ✓
