@@ -1,7 +1,7 @@
 ---
 title: "Unified Login Form — Merge Staff ID + LDAP + Email, Config-Aware"
 description: "Single auto-detect login form routing by input type and LDAP admin config"
-status: complete
+status: in-progress
 priority: P1
 effort: 1h
 branch: preview
@@ -44,19 +44,35 @@ Merged into `staff-id.tsx`.
 
 ### 3. `auth-root.tsx` — EDIT
 
-- Removed `AuthLDAPForm`, `OAuthOptions`, `AuthFormRoot` imports/render
-- Removed divider ("or sign in with email"), OAuth buttons, email form
-- Removed unused `useOAuthConfig` hook, `setEmail` state
+- Conditional rendering by `authMode`:
+  - **SIGN_IN**: `StaffIdLoginForm` only (unified staff ID / LDAP / email auto-detect)
+  - **SIGN_UP**: original `OAuthOptions` + `AuthFormRoot` (email → password/magic-code flow)
+- Restored `OAuthOptions`, `useOAuthConfig`, `AuthFormRoot` imports for sign-up
+- Restored `setEmail` setter for sign-up form state
+- `noAuthMethodsAvailable` now includes `isOAuthEnabled` check
 - Passes `isLDAPEnabled` prop to `StaffIdLoginForm`
-- Login page now has only: AuthHeader + StaffIdLoginForm + TermsAndConditions
 
 ## Files Changed
 
-| File                                                        | Action                                             |
-| ----------------------------------------------------------- | -------------------------------------------------- |
-| `apps/web/core/components/account/auth-forms/staff-id.tsx`  | REWRITE — unified config-aware form                |
-| `apps/web/core/components/account/auth-forms/ldap.tsx`      | DELETE                                             |
-| `apps/web/core/components/account/auth-forms/auth-root.tsx` | EDIT — sole unified form, removed OAuth/email form |
+| File                                                        | Action                                                             |
+| ----------------------------------------------------------- | ------------------------------------------------------------------ |
+| `apps/web/core/components/account/auth-forms/staff-id.tsx`  | REWRITE — unified config-aware form                                |
+| `apps/web/core/components/account/auth-forms/ldap.tsx`      | DELETE                                                             |
+| `apps/web/core/components/account/auth-forms/auth-root.tsx` | EDIT — sign-in: unified form; sign-up: original OAuth + email form |
+
+## Phase 2 — Shinhan Bank Branding ([phase-02](./phase-02-shinhan-branding-login.md)) `pending`
+
+- Add Shinhan Bank logo next to Plane logo (top-left header)
+- Remove Zerodha/Sony/Dolby/Accenture brand logos from footer
+- Add "Powered by Plane CE — Customized for Shinhan Bank Vietnam" attribution
+
+### Files Changed (Phase 2)
+
+| File                                               | Action                         |
+| -------------------------------------------------- | ------------------------------ |
+| `apps/web/app/assets/logos/shinhan-bank-logo.svg`  | CREATE — Shinhan Bank SVG logo |
+| `apps/web/core/components/auth-screens/header.tsx` | EDIT — co-branded logos        |
+| `apps/web/core/components/auth-screens/footer.tsx` | REWRITE — attribution text     |
 
 ## Verification
 
@@ -65,5 +81,6 @@ Merged into `staff-id.tsx`.
 3. Any mode + `user@co.com` → POST `/auth/sign-in/` email=`user@co.com`
 4. LDAP on + `john.doe` → POST `/auth/ldap/sign-in/` username=`john.doe`
 5. LDAP off + `john.doe` → validation error
-6. No OAuth buttons or email form visible on login page
-7. Build: `pnpm turbo run build --filter=web` ✓
+6. No OAuth buttons or email form visible on **login** page
+7. Sign-up page (`/sign-up/`) shows email/password form + OAuth as before
+8. Build: `pnpm turbo run build --filter=web` ✓
