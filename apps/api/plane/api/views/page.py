@@ -108,7 +108,7 @@ class PageListCreateAPIEndpoint(PageQuerySetMixin, BaseAPIView):
         if owned:
             queryset = queryset.filter(owned_by=request.user)
         else:
-            queryset = queryset.filter(Q(owned_by=request.user) | Q(access=0))
+            queryset = queryset.filter(Q(owned_by=request.user) | Q(access=Page.PUBLIC_ACCESS))
 
         # Default: top-level pages only
         queryset = queryset.filter(parent__isnull=True)
@@ -266,7 +266,7 @@ class PageDetailAPIEndpoint(PageQuerySetMixin, BaseAPIView):
 
         # Clean up related records before deleting the page
         UserFavorite.objects.filter(
-            project=project_id,
+            project_id=project_id,
             workspace__slug=slug,
             entity_identifier=pk,
             entity_type="page",
