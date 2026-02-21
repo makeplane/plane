@@ -650,7 +650,7 @@ packages/i18n/src/locales/
 
 When adding new user-facing strings:
 
-1. Add key to ALL language files (use English as placeholder)
+1. Add key to all 3 language files — en, ko, vi (use English as placeholder)
 2. Keep nesting structure consistent across languages
 3. Use `useTranslation()` hook in frontend components
 

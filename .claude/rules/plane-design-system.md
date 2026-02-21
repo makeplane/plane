@@ -441,7 +441,7 @@ export const MyComponent = observer(() => {
 }
 ```
 
-When adding new strings: add key to ALL language files (use English as placeholder).
+When adding new strings: add key to all 3 language files — en, ko, vi (use English as placeholder).
 
 ## Icons
 
@@ -504,7 +504,7 @@ When exceeding: split into sub-components, extract hooks, create utils.
 4. **Hook**: Create store hook in `apps/web/ce/hooks/store/` or `core/hooks/store/`
 5. **Components**: Build in `apps/web/ce/components/` using propel components + semantic tokens
 6. **Routes**: Add route in `app/routes/core.ts` or `app/routes/extended.ts`
-7. **Translations**: Add keys to ALL language files in `packages/i18n/src/locales/`
+7. **Translations**: Add keys to all 3 language files (en, ko, vi) in `packages/i18n/src/locales/`
 
 ## Common Mistakes to Avoid
 
