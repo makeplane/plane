@@ -7,8 +7,6 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
-// plane imports
-import { OAuthOptions } from "@plane/ui";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import {
@@ -19,13 +17,11 @@ import {
   authErrorHandler,
 } from "@/helpers/authentication.helper";
 // hooks
-import { useOAuthConfig } from "@/hooks/oauth";
 import { useInstance } from "@/hooks/store/use-instance";
 // local imports
 import { TermsAndConditions } from "../terms-and-conditions";
 import { AuthBanner } from "./auth-banner";
 import { AuthHeader, AuthHeaderBase } from "./auth-header";
-import { AuthFormRoot } from "./form-root";
 import { StaffIdLoginForm } from "./staff-id";
 
 type TAuthRoot = {
@@ -46,16 +42,14 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   // states
   const [authMode, setAuthMode] = useState<EAuthModes | undefined>(undefined);
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
-  const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
+  const [email] = useState(emailParam ? emailParam.toString() : "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
   // store hooks
   const { config } = useInstance();
   // derived values
-  const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
-  const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
-  const isEmailBasedAuthEnabled = config?.is_email_password_enabled || config?.is_magic_login_enabled;
   const isLDAPEnabled = config?.is_ldap_enabled || false;
-  const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled && !isLDAPEnabled;
+  const isEmailBasedAuthEnabled = config?.is_email_password_enabled || config?.is_magic_login_enabled;
+  const noAuthMethodsAvailable = !isEmailBasedAuthEnabled && !isLDAPEnabled;
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
@@ -128,34 +122,8 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
         authMode={authMode}
         currentAuthStep={authStep}
       />
-      {/* Staff ID login — primary login method */}
+      {/* Unified login — Staff ID / LDAP / Email auto-detect */}
       <StaffIdLoginForm nextPath={nextPath || undefined} isLDAPEnabled={isLDAPEnabled} />
-      {(isOAuthEnabled || isEmailBasedAuthEnabled || isLDAPEnabled) && (
-        <div className="flex items-center gap-2">
-          <hr className="flex-1 border-strong" />
-          <span className="text-13 text-tertiary">or sign in with email</span>
-          <hr className="flex-1 border-strong" />
-        </div>
-      )}
-      {isOAuthEnabled && (
-        <OAuthOptions
-          options={oAuthOptions}
-          compact={authStep === EAuthSteps.PASSWORD}
-          showDivider={isEmailBasedAuthEnabled}
-        />
-      )}
-      {isEmailBasedAuthEnabled && (
-        <AuthFormRoot
-          authStep={authStep}
-          authMode={authMode}
-          email={email}
-          setEmail={(email) => setEmail(email)}
-          setAuthMode={(authMode) => setAuthMode(authMode)}
-          setAuthStep={(authStep) => setAuthStep(authStep)}
-          setErrorInfo={(errorInfo) => setErrorInfo(errorInfo)}
-          currentAuthMode={currentAuthMode}
-        />
-      )}
       <TermsAndConditions authType={authMode} />
     </AuthContainer>
   );
