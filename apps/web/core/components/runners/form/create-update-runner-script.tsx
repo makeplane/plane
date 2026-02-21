@@ -21,7 +21,7 @@ import type { RunnerScript, RunnerScriptFormData } from "@plane/types";
 import { cn, Input } from "@plane/ui";
 import { useRunners } from "@/hooks/store/runners/use-runners";
 import { LazyPlaneSDKCodeEditor } from "@/components/plane-sdk-editor/root";
-import { EnvVariablesField, formDataToScriptPayload, scriptToFormData } from "./env-variables-field";
+import { formDataToScriptPayload, scriptToFormData } from "./env-variables-field";
 import { VariablesField } from "./variables-field";
 import { TestScript } from "./test-script";
 
@@ -39,7 +39,7 @@ const DEFAULT_FORM_VALUES: RunnerScriptFormData = {
 
 export async function main(input: AutomationEventInput, variables: Record<string, string>) {
   const { event, context } = input;
-  const workItemId = event.payload.data.id as string;
+  const workItemId = event.payload.data.id;
   const projectId = event.project_id;
   const workItem = await Plane.workItems.retrieve(workspaceSlug, projectId, workItemId);
   console.log("Work Item:", workItem);
@@ -60,6 +60,7 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
   const { workspaceSlug } = useParams();
   const { createScript, updateScript } = useRunners();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isReadOnly = scriptData?.is_system;
 
   const methods = useForm<RunnerScriptFormData>({
     defaultValues: scriptData ? scriptToFormData(scriptData) : DEFAULT_FORM_VALUES,
@@ -75,7 +76,7 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
   const formValues = watch();
 
   const onSubmit = async (formData: RunnerScriptFormData) => {
-    if (!workspaceSlug) return;
+    if (!workspaceSlug || isReadOnly) return;
     setIsSubmitting(true);
     try {
       const payload = formDataToScriptPayload(formData);
@@ -122,7 +123,7 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
         <div className="space-y-3">
           {/* Name */}
           <div
-            className={cn("space-y-1 flex items-center justify-between", {
+            className={cn("space-y-1 flex gap-2 items-center justify-between", {
               "border-b border-subtle pb-3": headerAction,
             })}
           >
@@ -134,11 +135,12 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
                   id="name"
                   type="text"
                   placeholder="Add title"
-                  className={"w-fit inline-block text-h3-medium bg-transparent p-0 border-none text-tertiary m-0"}
+                  className={"w-full inline-block text-h3-medium bg-transparent p-0 border-none text-tertiary m-0"}
                   hasError={Boolean(errors.name)}
                   value={value}
                   onChange={onChange}
                   ref={ref}
+                  readOnly={isReadOnly}
                 />
               )}
             />
@@ -146,7 +148,7 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
           </div>
 
           {/* Variables */}
-          <VariablesField />
+          <VariablesField readOnly={isReadOnly} />
 
           {/* Code Editor */}
           <Controller
@@ -154,27 +156,31 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
             control={control}
             rules={{ required: "Code is required" }}
             render={({ field }) => (
-              <LazyPlaneSDKCodeEditor value={field.value} onChange={field.onChange} allowFunctionBrowser />
+              <LazyPlaneSDKCodeEditor
+                value={field.value}
+                onChange={field.onChange}
+                allowFunctionBrowser
+                readOnly={isReadOnly}
+              />
             )}
           />
           {errors.code && <p className="text-danger-primary text-11">{errors.code.message}</p>}
-
-          {/* Environment Variables */}
-          <EnvVariablesField />
 
           {/* Test Script */}
           <TestScript workspaceSlug={workspaceSlug || ""} config={formValues} />
         </div>
 
         {/* Form Actions */}
-        <div className="flex justify-end gap-3">
-          <Button type="button" variant="secondary" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" variant="primary" loading={isSubmitting} disabled={isSubmitting}>
-            Save
-          </Button>
-        </div>
+        {!isReadOnly && (
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="secondary" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" loading={isSubmitting} disabled={isSubmitting}>
+              Save
+            </Button>
+          </div>
+        )}
       </form>
     </FormProvider>
   );

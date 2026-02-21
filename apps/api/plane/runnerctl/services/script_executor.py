@@ -209,12 +209,13 @@ def execute_sync(
     # If script_id provided, fetch script and use its values
     if script_id:
         try:
-            script = Script.objects.get(id=script_id)
+            script = Script.objects.select_related("workspace").get(id=script_id)
             exec_code = script.code
             exec_build = script.build  # Use pre-built bundle if available
             exec_function_names = script.function_names  # Use stored function names
-            exec_workspace_id = script.workspace.id
-            exec_workspace_slug = script.workspace.slug
+            # For system scripts, workspace is null — use the caller-provided values
+            exec_workspace_id = script.workspace_id or workspace_id
+            exec_workspace_slug = script.workspace.slug if script.workspace else workspace_slug
             exec_code_type = script.code_type
             exec_env_variables = script.env_variables
             exec_allowed_domains = script.allowed_domains

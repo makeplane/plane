@@ -23,8 +23,13 @@ from django.db.models import (
 from drf_spectacular.utils import (
     OpenApiExample,
     OpenApiRequest,
+    OpenApiResponse,
     extend_schema,
 )
+
+# Third party imports
+from rest_framework import status
+from rest_framework.response import Response
 
 # Module imports
 from plane.api.serializers import (
@@ -40,11 +45,8 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.openapi import (
-    CURSOR_PARAMETER,
     INVALID_REQUEST_RESPONSE,
-    PER_PAGE_PARAMETER,
     WORKSPACE_SLUG_PARAMETER,
-    create_paginated_response,
 )
 
 from .base import BaseAPIView
@@ -71,11 +73,9 @@ class WorkItemAdvancedSearchEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="work_item_advanced_search",
         summary="Work Item Advanced Search",
-        description="Search for work items with advanced filters and search query. Returns paginated results.",
+        description="Search for work items with advanced filters and search query.",
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
-            CURSOR_PARAMETER,
-            PER_PAGE_PARAMETER,
         ],
         request=OpenApiRequest(
             request=WorkItemAdvancedSearchRequestSerializer,
@@ -85,6 +85,7 @@ class WorkItemAdvancedSearchEndpoint(BaseAPIView):
                     value={
                         "query": "login",
                         "project_id": "11111111-1111-1111-1111-111111111111",
+                        "limit": 10,
                     },
                 ),
                 OpenApiExample(
@@ -98,6 +99,7 @@ class WorkItemAdvancedSearchEndpoint(BaseAPIView):
                             ]
                         },
                         "workspace_search": True,
+                        "limit": 20,
                     },
                 ),
                 OpenApiExample(
@@ -117,6 +119,7 @@ class WorkItemAdvancedSearchEndpoint(BaseAPIView):
                             ]
                         },
                         "project_id": "66666666-6666-6666-6666-666666666666",
+                        "limit": 15,
                     },
                 ),
                 OpenApiExample(
@@ -135,6 +138,7 @@ class WorkItemAdvancedSearchEndpoint(BaseAPIView):
                             ]
                         },
                         "workspace_search": True,
+                        "limit": 25,
                     },
                 ),
                 OpenApiExample(
@@ -173,16 +177,48 @@ class WorkItemAdvancedSearchEndpoint(BaseAPIView):
                             ]
                         },
                         "project_id": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+                        "limit": 30,
                     },
                 ),
             ],
         ),
         responses={
-            200: create_paginated_response(
-                WorkItemAdvancedSearchResponseSerializer,
-                "PaginatedWorkItemAdvancedSearchResponse",
-                "Paginated work item advanced search results",
-                "Paginated Work Item Advanced Search Results",
+            200: OpenApiResponse(
+                description="Work item advanced search results",
+                response=WorkItemAdvancedSearchResponseSerializer(many=True),
+                examples=[
+                    OpenApiExample(
+                        name="Work Item Advanced Search Results",
+                        value=[
+                            {
+                                "id": "0f5e2c9a-1b2c-4d5e-8f01-23456789abcd",
+                                "name": "Fix login redirect loop",
+                                "sequence_id": 102,
+                                "project_identifier": "WEB",
+                                "project_id": "11111111-1111-1111-1111-111111111111",
+                                "workspace_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                                "type_id": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+                                "state_id": "cccccccc-cccc-cccc-cccc-cccccccccccc",
+                                "priority": "high",
+                                "target_date": "2025-01-15",
+                                "start_date": "2025-01-10",
+                            },
+                            {
+                                "id": "1a2b3c4d-5e6f-7081-92a3-b4c5d6e7f890",
+                                "name": "Update billing email validation",
+                                "sequence_id": 245,
+                                "project_identifier": "API",
+                                "project_id": "22222222-2222-2222-2222-222222222222",
+                                "workspace_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                                "type_id": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+                                "state_id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+                                "priority": "medium",
+                                "target_date": None,
+                                "start_date": "2025-01-05",
+                            },
+                        ],
+                    )
+                ],
             ),
             400: INVALID_REQUEST_RESPONSE,
         },
@@ -191,15 +227,12 @@ class WorkItemAdvancedSearchEndpoint(BaseAPIView):
         """Work Item Advanced Search"""
         query = request.data.get("query", False)
         filters = request.data.get("filters", False)
+        limit = request.data.get("limit", 25)
         workspace_search = request.data.get("workspace_search", False)
         project_id = request.data.get("project_id", False)
 
         if not (query or filters):
-            return self.paginate(
-                request=request,
-                queryset=Issue.issue_and_epics_objects.none(),
-                on_results=lambda issues: WorkItemAdvancedSearchResponseSerializer(issues, many=True).data,
-            )
+            return Response([], status=status.HTTP_200_OK)
 
         q = Q()
 
@@ -226,7 +259,7 @@ class WorkItemAdvancedSearchEndpoint(BaseAPIView):
                     search_fields=search_fields,
                     source_fields=fields_to_retrieve,
                     page=1,
-                    page_size=1000,
+                    page_size=100,
                     boosts=boosts,
                     operator="and",  # Use AND operator for stricter matching
                 )
@@ -258,10 +291,8 @@ class WorkItemAdvancedSearchEndpoint(BaseAPIView):
             backend = ComplexFilterBackend()
             issues = backend.filter_queryset(request, issues, self, filter_data=filters)
 
-        issues = issues.distinct().order_by("-created_at")
+        issues = issues.distinct()[: int(limit)]
 
-        return self.paginate(
-            request=request,
-            queryset=issues,
-            on_results=lambda issues: WorkItemAdvancedSearchResponseSerializer(issues, many=True).data,
-        )
+        issue_results = WorkItemAdvancedSearchResponseSerializer(issues, many=True).data
+
+        return Response(issue_results, status=status.HTTP_200_OK)

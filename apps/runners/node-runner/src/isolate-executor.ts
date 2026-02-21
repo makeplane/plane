@@ -19,6 +19,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as vm from "vm";
 import { promises as fs } from "fs";
+import { logger } from "@plane/logger";
 import type { RunnerConfig } from "./config";
 import type { ExecutionContext, ScriptFunction } from "./types";
 import { serverConfig } from "./env";
@@ -38,22 +39,24 @@ export interface ExecutionResult {
  */
 function buildFunctionsLibrary(
   functions: ScriptFunction[],
-  sandboxedFetch: (url: string, options?: any) => Promise<Response>
+  sandboxedFetch: (url: string, options?: any) => Promise<Response>,
+  planeClient: any,
+  workspaceSlug: string
 ): Record<string, (...args: any[]) => any> {
   const library: Record<string, (...args: any[]) => any> = {};
 
   for (const fn of functions) {
     try {
       // Create a factory function that:
-      // 1. Takes 'fetch' as a parameter (our sandboxed fetch)
+      // 1. Takes 'fetch', 'Plane', and 'workspaceSlug' as parameters
       // 2. Defines the function from the code
       // 3. Returns the named function
       // The code defines functions like: async function httpRequest({ url, ... }) { ... }
       // eslint-disable-next-line @typescript-eslint/no-implied-eval
-      const factory = new Function("fetch", `${fn.code}\nreturn ${fn.name};`);
+      const factory = new Function("fetch", "Plane", "workspaceSlug", `${fn.code}\nreturn ${fn.name};`);
 
-      // Call the factory with sandboxed fetch to get the actual function
-      const executableFn = factory(sandboxedFetch);
+      // Call the factory with injected dependencies to get the actual function
+      const executableFn = factory(sandboxedFetch, planeClient, workspaceSlug);
 
       if (typeof executableFn !== "function") {
         throw new Error(`${fn.name} is not a function after evaluation`);
@@ -61,7 +64,7 @@ function buildFunctionsLibrary(
 
       library[fn.name] = executableFn;
     } catch (err: any) {
-      console.error(`[runner-error] Failed to load function ${fn.name}:`, err.message);
+      logger.error(`[runner-error] Failed to load function ${fn.name}:`, { error: err.message });
       // Provide a stub that throws an error
       library[fn.name] = () => {
         throw new Error(`Function ${fn.name} failed to load: ${err.message}`);
@@ -97,7 +100,12 @@ export async function runInIsolate(
   });
 
   // Build Functions library from available functions
-  const functionsLibrary = buildFunctionsLibrary(execCtx.functions || [], sandboxedFetch);
+  const functionsLibrary = buildFunctionsLibrary(
+    execCtx.functions || [],
+    sandboxedFetch,
+    planeClientInstance,
+    execCtx.workspaceSlug
+  );
 
   // Create hardened context - SECURITY: Only expose safe APIs
   // Removed: require (allows fs, net, child_process access)
@@ -106,11 +114,11 @@ export async function runInIsolate(
   const context = vm.createContext({
     // Safe console wrapper
     console: {
-      log: (...args: any[]) => console.log("[runner-log]", cfg.executionId, ...args),
-      error: (...args: any[]) => console.error("[runner-error]", cfg.executionId, ...args),
-      warn: (...args: any[]) => console.warn("[runner-warn]", cfg.executionId, ...args),
-      info: (...args: any[]) => console.info("[runner-info]", cfg.executionId, ...args),
-      debug: (...args: any[]) => console.debug("[runner-debug]", cfg.executionId, ...args),
+      log: (...args: any[]) => logger.info("[runner-log]", { executionId: cfg.executionId, args }),
+      error: (...args: any[]) => logger.error("[runner-error]", { executionId: cfg.executionId, args }),
+      warn: (...args: any[]) => logger.warn("[runner-warn]", { executionId: cfg.executionId, args }),
+      info: (...args: any[]) => logger.info("[runner-info]", { executionId: cfg.executionId, args }),
+      debug: (...args: any[]) => logger.debug("[runner-debug]", { executionId: cfg.executionId, args }),
     },
     // Safe standard globals
     JSON: JSON,

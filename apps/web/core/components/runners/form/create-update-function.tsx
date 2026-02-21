@@ -107,7 +107,7 @@ export const CreateUpdateFunction = observer(function CreateUpdateFunction(props
   // Track the last auto-generated code to know if user has manually edited
   const lastGeneratedCodeRef = useRef<string>("");
   const isEditMode = Boolean(functionData?.id);
-
+  const isReadOnly = functionData?.is_system;
   const methods = useForm<FormData>({
     defaultValues: functionData ? functionToFormData(functionData) : DEFAULT_FORM_VALUES,
   });
@@ -158,7 +158,7 @@ ${params}
   };
 
   const onSubmit = async (formData: FormData) => {
-    if (!workspaceSlug) return;
+    if (!workspaceSlug || isReadOnly) return;
 
     setIsSubmitting(true);
     try {
@@ -237,11 +237,12 @@ ${params}
                     id="name"
                     type="text"
                     placeholder="functionName"
-                    className="w-fit inline-block text-h3-medium bg-transparent p-0 border-none text-tertiary m-0 font-mono"
+                    className="w-full inline-block text-h3-medium bg-transparent p-0 border-none text-tertiary m-0 font-mono"
                     hasError={Boolean(errors.name)}
                     value={value}
                     onChange={(e) => handleNameChange(e.target.value, onChange)}
                     ref={ref}
+                    readOnly={isReadOnly}
                   />
                 )}
               />
@@ -256,8 +257,11 @@ ${params}
                 render={({ field }) => (
                   <Input
                     placeholder="Add description"
-                    className="w-full text-body-sm-regular border-none p-0 rounded-none bg-transparent"
+                    className={cn("w-full text-body-sm-regular border-none p-0 rounded-none bg-transparent", {
+                      "text-tertiary": isReadOnly,
+                    })}
                     {...field}
+                    readOnly={isReadOnly}
                   />
                 )}
               />
@@ -272,14 +276,17 @@ ${params}
               name="category"
               control={control}
               render={({ field }) => (
-                <Combobox {...field} value={field.value} onValueChange={field.onChange}>
+                <Combobox {...field} value={field.value} onValueChange={field.onChange} disabled={isReadOnly}>
                   <Combobox.Button
                     className={cn(
-                      "flex justify-between items-center gap-1 rounded-lg h-8 px-2 bg-layer-2 border border-subtle-1 overflow-hidden hover:bg-surface-1 hover:shadow-raised-100 shrink-0 m-0"
+                      "flex text-primary justify-between items-center gap-1 rounded-lg h-8 px-2 bg-layer-2 border border-subtle-1 overflow-hidden hover:bg-surface-1 hover:shadow-raised-100 shrink-0 m-0",
+                      {
+                        "text-tertiary": isReadOnly,
+                      }
                     )}
                   >
-                    <span className="capitalize text-body-xs-medium truncate text-primary">{field.value}</span>
-                    <ChevronDownIcon className="size-4 text-icon-secondary" />
+                    <span className="capitalize text-body-xs-medium truncate ">{field.value}</span>
+                    <ChevronDownIcon className="size-4" />
                   </Combobox.Button>
                   <Combobox.Options className="max-h-[70vh] overflow-y-auto" maxHeight="lg">
                     {CATEGORY_OPTIONS.map((option) => (
@@ -298,7 +305,7 @@ ${params}
           </div>
 
           {/* Parameters */}
-          <ParametersField />
+          <ParametersField readOnly={isReadOnly} />
 
           {/* Return Type */}
           <div className="flex flex-col space-y-2">
@@ -309,8 +316,11 @@ ${params}
               render={({ field }) => (
                 <Input
                   placeholder="Promise<{ success: boolean }>"
-                  className="w-full h-8 text-body-sm-regular border border-subtle rounded-lg font-mono"
+                  className={cn("w-full h-8 text-body-sm-regular border border-subtle rounded-lg font-mono", {
+                    "text-tertiary": isReadOnly,
+                  })}
                   {...field}
+                  readOnly={isReadOnly}
                 />
               )}
             />
@@ -332,7 +342,13 @@ ${params}
                   return true;
                 },
               }}
-              render={({ field }) => <LazyPlaneSDKCodeEditor value={field.value} onChange={field.onChange} />}
+              render={({ field }) => (
+                <LazyPlaneSDKCodeEditor
+                  value={field.value}
+                  onChange={field.onChange}
+                  readOnly={functionData?.is_system}
+                />
+              )}
             />
             {errors.code && <p className="text-danger-primary text-11">{errors.code.message}</p>}
           </div>
@@ -347,14 +363,16 @@ ${params}
         </div>
 
         {/* Form Actions */}
-        <div className="flex justify-end gap-3">
-          <Button type="button" variant="secondary" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" variant="primary" loading={isSubmitting} disabled={isSubmitting}>
-            {functionData?.id ? "Update" : "Create"} Function
-          </Button>
-        </div>
+        {!isReadOnly && (
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="secondary" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" loading={isSubmitting} disabled={isSubmitting}>
+              {functionData?.id ? "Update" : "Create"} Function
+            </Button>
+          </div>
+        )}
       </form>
     </FormProvider>
   );

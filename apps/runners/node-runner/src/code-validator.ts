@@ -11,8 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import * as acorn from "acorn";
+ 
+ 
+ 
+ 
 import * as walk from "acorn-walk";
+import { tsParser } from "./ts-parser";
+import type { ASTNode } from "./ts-parser";
 
 export interface ValidationResult {
   valid: boolean;
@@ -81,15 +86,16 @@ export function validateCodeSecurity(code: string): ValidationResult {
   const violations: string[] = [];
 
   try {
-    const ast = acorn.parse(code, {
+    const ast = tsParser.parse(code, {
       ecmaVersion: "latest",
       sourceType: "module",
+      locations: true,
     });
 
     walk.simple(ast, {
       // Block eval() and Function() calls
-      CallExpression(node: acorn.Node & { callee?: acorn.Node; arguments?: acorn.Node[] }) {
-        const callee = node.callee as acorn.Node & { type: string; name?: string };
+      CallExpression(node: ASTNode) {
+        const callee = node.callee;
 
         if (callee?.type === "Identifier" && callee.name) {
           if (BLOCKED_GLOBALS.has(callee.name)) {
@@ -99,7 +105,7 @@ export function validateCodeSecurity(code: string): ValidationResult {
 
         // Block setTimeout/setInterval with string arguments (implicit eval)
         if (callee?.type === "Identifier" && ["setTimeout", "setInterval"].includes(callee.name || "")) {
-          const args = node.arguments as (acorn.Node & { type: string; value?: unknown })[];
+          const args = node.arguments;
           if (args?.[0]?.type === "Literal" && typeof args[0].value === "string") {
             violations.push(`'${callee.name}' with string argument is not allowed - use a function instead`);
           }
@@ -107,8 +113,8 @@ export function validateCodeSecurity(code: string): ValidationResult {
       },
 
       // Block new Function() and new Proxy()
-      NewExpression(node: acorn.Node & { callee?: acorn.Node }) {
-        const callee = node.callee as acorn.Node & { type: string; name?: string };
+      NewExpression(node: ASTNode) {
+        const callee = node.callee;
 
         if (callee?.type === "Identifier" && callee.name) {
           if (BLOCKED_GLOBALS.has(callee.name)) {
@@ -118,16 +124,16 @@ export function validateCodeSecurity(code: string): ValidationResult {
       },
 
       // Block dangerous identifiers
-      Identifier(node: acorn.Node & { name?: string }) {
+      Identifier(node: ASTNode) {
         if (node.name && BLOCKED_IDENTIFIERS.has(node.name)) {
           violations.push(`'${node.name}' is not allowed - restricted API`);
         }
       },
 
       // Block dangerous property access
-      MemberExpression(node: acorn.Node & { object?: acorn.Node; property?: acorn.Node; computed?: boolean }) {
-        const obj = node.object as acorn.Node & { type: string; name?: string };
-        const prop = node.property as acorn.Node & { type: string; name?: string; value?: string };
+      MemberExpression(node: ASTNode) {
+        const obj = node.object;
+        const prop = node.property;
 
         // Get property name (handle both obj.prop and obj["prop"])
         const propName = prop?.type === "Identifier" ? prop.name : prop?.type === "Literal" ? String(prop.value) : null;
@@ -146,14 +152,14 @@ export function validateCodeSecurity(code: string): ValidationResult {
       },
 
       // Detect obvious infinite loops
-      WhileStatement(node: acorn.Node & { test?: acorn.Node }) {
-        const test = node.test as acorn.Node & { type: string; value?: unknown };
+      WhileStatement(node: ASTNode) {
+        const test = node.test;
         if (test?.type === "Literal" && test.value === true) {
           violations.push("'while(true)' is not allowed - infinite loop risk");
         }
       },
 
-      ForStatement(node: acorn.Node & { test?: acorn.Node | null }) {
+      ForStatement(node: ASTNode) {
         if (!node.test) {
           violations.push("'for(;;)' is not allowed - infinite loop risk");
         }

@@ -688,6 +688,12 @@ importers:
       '@makeplane/plane-node-sdk':
         specifier: 0.2.8
         version: 0.2.8(@babel/core@7.29.0)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.29.0))(jest-util@30.2.0)(jest@30.2.0(@types/node@22.19.11))(typescript@5.9.3)
+      '@plane/logger':
+        specifier: workspace:*
+        version: link:../../../packages/logger
+      '@sveltejs/acorn-typescript':
+        specifier: ^1.0.5
+        version: 1.0.9(acorn@8.15.0)
       acorn:
         specifier: ^8.15.0
         version: 8.15.0
@@ -697,6 +703,9 @@ importers:
       axios:
         specifier: 'catalog:'
         version: 1.13.5
+      dd-trace:
+        specifier: ^5.45.0
+        version: 5.86.0
       dotenv:
         specifier: ^16.3.1
         version: 16.6.1
@@ -719,6 +728,9 @@ importers:
       typescript:
         specifier: 5.9.3
         version: 5.9.3
+      vitest:
+        specifier: ^4.0.8
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.2)
 
   apps/silo:
     dependencies:
@@ -5580,6 +5592,11 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  '@sveltejs/acorn-typescript@1.0.9':
+    resolution: {integrity: sha512-lVJX6qEgs/4DOcRTpo56tmKzVPtoWAaVbL4hfO7t7NVwl9AAXzQR6cihesW1BmNMPl+bK6dreu2sOKBP2Q9CIA==}
+    peerDependencies:
+      acorn: ^8.9.0
 
   '@swc/helpers@0.5.18':
     resolution: {integrity: sha512-TXTnIcNJQEKwThMMqBXsZ4VGAza6bvN4pa41Rkqoio6QBKMvo+5lexeTMScGCIxtzgQJzElcvIltani+adC5PQ==}
@@ -16410,6 +16427,10 @@ snapshots:
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
+
+  '@sveltejs/acorn-typescript@1.0.9(acorn@8.15.0)':
+    dependencies:
+      acorn: 8.15.0
 
   '@swc/helpers@0.5.18':
     dependencies:

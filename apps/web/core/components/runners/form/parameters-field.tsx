@@ -12,6 +12,7 @@
  */
 import { Button } from "@plane/propel/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@plane/propel/collapsible";
+import { IconButton } from "@plane/propel/icon-button";
 import type { FunctionParameter, ScriptFunctionFormData } from "@plane/types";
 import { Checkbox, cn, Input } from "@plane/ui";
 import { ChevronDownIcon, Plus, Trash2 } from "lucide-react";
@@ -22,7 +23,7 @@ type FormData = ScriptFunctionFormData & {
   parameters: (FunctionParameter & { id?: string })[];
 };
 
-export function ParametersField() {
+export function ParametersField({ readOnly = false }: { readOnly?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const { control } = useFormContext<FormData>();
   const { fields, append, remove } = useFieldArray({
@@ -76,8 +77,14 @@ export function ParametersField() {
                 render={({ field }) => (
                   <Input
                     placeholder="Name"
-                    className="col-span-3 text-body-sm-regular bg-layer-2 border border-subtle-1 rounded-lg font-mono"
+                    className={cn(
+                      "col-span-3 text-body-sm-regular bg-layer-2 border border-subtle-1 rounded-lg font-mono",
+                      {
+                        "text-tertiary": readOnly,
+                      }
+                    )}
                     {...field}
+                    readOnly={readOnly}
                   />
                 )}
               />
@@ -88,8 +95,14 @@ export function ParametersField() {
                 render={({ field }) => (
                   <Input
                     placeholder="string"
-                    className="col-span-3 text-body-sm-regular bg-layer-2 border border-subtle-1 rounded-lg font-mono"
+                    className={cn(
+                      "col-span-3 text-body-sm-regular bg-layer-2 border border-subtle-1 rounded-lg font-mono",
+                      {
+                        "text-tertiary": readOnly,
+                      }
+                    )}
                     {...field}
+                    readOnly={readOnly}
                   />
                 )}
               />
@@ -99,8 +112,11 @@ export function ParametersField() {
                 render={({ field }) => (
                   <Input
                     placeholder="Description"
-                    className="col-span-4 text-body-sm-regular bg-layer-2 border border-subtle-1 rounded-lg"
+                    className={cn("col-span-4 text-body-sm-regular bg-layer-2 border border-subtle-1 rounded-lg", {
+                      "text-tertiary": readOnly,
+                    })}
                     {...field}
+                    readOnly={readOnly}
                   />
                 )}
               />
@@ -113,29 +129,32 @@ export function ParametersField() {
                       checked={Boolean(field.value) || false}
                       containerClassName="w-fit m-auto flex justify-center border-r border-subtle-1 rounded-none focus-none outline-none"
                       onChange={(e) => field.onChange(e.target.checked)}
+                      disabled={readOnly}
                     />
                   </div>
                 )}
               />
               <div className="col-span-1 flex justify-center">
-                <button
-                  type="button"
+                <IconButton
+                  variant={"ghost"}
+                  icon={Trash2}
                   onClick={() => remove(index)}
-                  className="p-1 text-icon-secondary hover:text-danger-primary transition-colors"
-                >
-                  <Trash2 className="size-4" />
-                </button>
+                  className="text-icon-secondary"
+                  disabled={readOnly}
+                />
               </div>
             </div>
           ))}
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => append({ name: "", type: "string", description: "", required: true, defaultValue: "" })}
-          >
-            <Plus className="size-3" />
-            Add parameter
-          </Button>
+          {!readOnly && (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => append({ name: "", type: "string", description: "", required: true, defaultValue: "" })}
+            >
+              <Plus className="size-3" />
+              Add parameter
+            </Button>
+          )}
         </div>
       </CollapsibleContent>
     </Collapsible>

@@ -37,6 +37,8 @@ class ExtendedIssueFilterSet(IssueFilterSet):
     type_id = filters.UUIDFilter(field_name="type_id")
     type_id__in = UUIDInFilter(field_name="type_id", lookup_expr="in")
 
+    parent_id = filters.UUIDFilter(field_name="parent_id")
+
     milestone_id = filters.UUIDFilter(method="filter_milestone_id")
     milestone_id__in = UUIDInFilter(method="filter_milestone_id_in", lookup_expr="in")
     milestone_id__isnull = filters.BooleanFilter(method="filter_milestone_id_isnull", lookup_expr="isnull")

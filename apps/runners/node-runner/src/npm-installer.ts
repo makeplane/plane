@@ -16,12 +16,13 @@ import { join } from "path";
 import { mkdirSync } from "fs";
 import { mkdtemp, writeFile } from "fs/promises";
 import { tmpdir } from "os";
+import { logger } from "@plane/logger";
 
 export async function buildFromSource(sourcePath: string): Promise<string> {
-  console.log(`Building from source at ${sourcePath}...`);
+  logger.info(`Building from source at ${sourcePath}...`);
 
   // 1. npm install
-  console.log("Running npm install...");
+  logger.info("Running npm install...");
   await new Promise<void>((resolve, reject) => {
     const child = spawn("npm", ["install", "--include=dev"], {
       stdio: "inherit",
@@ -59,7 +60,7 @@ export async function buildFromSource(sourcePath: string): Promise<string> {
 export async function buildFromCodeString(code: string, inlineScript: boolean = false): Promise<string> {
   // Create a temporary directory for this execution
   const tempDir = await mkdtemp(join(tmpdir(), "plane-runner-"));
-  console.log(`Building from code string in ${tempDir}...`);
+  logger.info(`Building from code string in ${tempDir}...`);
 
   // Conditionally wrap the code based on inlineScript flag
   // Note: PlaneClient is now injected by the server into the VM context, so no initialization needed here
@@ -68,10 +69,10 @@ export async function buildFromCodeString(code: string, inlineScript: boolean = 
     : `export async function main() {
     ${code}
   }`;
-  console.log(wrappedCode);
+  logger.debug("Wrapped code for build", { wrappedCode });
 
-  // Write index.js with the wrapped code
-  const indexPath = join(tempDir, "index.js");
+  // Write index.ts so esbuild handles TypeScript syntax (strips types natively)
+  const indexPath = join(tempDir, "index.ts");
   await writeFile(indexPath, wrappedCode, "utf8");
 
   // Write package.json with esbuild configuration
@@ -82,7 +83,7 @@ export async function buildFromCodeString(code: string, inlineScript: boolean = 
     main: "dist/bundle.js",
     scripts: {
       build:
-        "./node_modules/.bin/esbuild index.js --bundle --outfile=dist/bundle.js --platform=node --format=iife --global-name=globalThis",
+        "./node_modules/.bin/esbuild index.ts --bundle --outfile=dist/bundle.js --platform=node --format=iife --global-name=globalThis",
     },
     dependencies: {},
     devDependencies: {
@@ -98,7 +99,7 @@ export async function buildFromCodeString(code: string, inlineScript: boolean = 
 
   // Build using the same logic as buildFromSource
   // 1. npm install
-  console.log("Running npm install...");
+  logger.info("Running npm install...");
   await new Promise<void>((resolve, reject) => {
     const child = spawn("npm", ["install", "--include=dev"], {
       stdio: "inherit",
@@ -112,7 +113,7 @@ export async function buildFromCodeString(code: string, inlineScript: boolean = 
   });
 
   // 2. npm run build
-  console.log("Running npm run build...");
+  logger.info("Running npm run build...");
   await new Promise<void>((resolve, reject) => {
     const child = spawn("npm", ["run", "build"], {
       stdio: "inherit",
@@ -143,7 +144,7 @@ export interface ValidationResult {
 export async function validateCodeWithTsc(code: string, inlineScript: boolean = false): Promise<ValidationResult> {
   // Create a temporary directory for validation
   const tempDir = await mkdtemp(join(tmpdir(), "plane-validate-"));
-  console.log(`Validating code with tsc in ${tempDir}...`);
+  logger.info(`Validating code with tsc in ${tempDir}...`);
 
   try {
     // Conditionally wrap the code based on inlineScript flag

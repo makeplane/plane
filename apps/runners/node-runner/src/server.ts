@@ -12,14 +12,20 @@
  */
 
 /* eslint-disable @typescript-eslint/no-misused-promises */
+ 
+ 
+ 
+ 
 
-import * as acorn from "acorn";
 import * as walk from "acorn-walk";
 import express, { Request, Response } from "express";
+import { tsParser } from "./ts-parser";
+import type { ASTNode } from "./ts-parser";
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from "fs";
 import { readFile } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
+import { logger, loggerMiddleware } from "@plane/logger";
 import { buildFromCodeString } from "./npm-installer";
 import { runInIsolate } from "./isolate-executor";
 import { serverConfig } from "./env";
@@ -34,15 +40,16 @@ function detectFunctionNames(code: string): string[] {
   const functionNames = new Set<string>();
 
   try {
-    const ast = acorn.parse(code, {
+    const ast = tsParser.parse(code, {
       ecmaVersion: "latest",
       sourceType: "module",
+      locations: true,
     });
 
     walk.simple(ast, {
-      MemberExpression(node: acorn.Node & { object?: acorn.Node; property?: acorn.Node }) {
-        const obj = node.object as acorn.Node & { type: string; name?: string };
-        const prop = node.property as acorn.Node & { type: string; name?: string };
+      MemberExpression(node: ASTNode) {
+        const obj = node.object;
+        const prop = node.property;
 
         if (obj?.type === "Identifier" && obj.name === "Functions" && prop?.type === "Identifier" && prop.name) {
           functionNames.add(prop.name);
@@ -62,6 +69,7 @@ function detectFunctionNames(code: string): string[] {
 
 const app = express();
 app.use(express.json({ limit: "10mb" }));
+app.use(loggerMiddleware);
 
 // Environment configuration is now loaded from env.ts
 
@@ -89,7 +97,7 @@ app.post("/build", async (req: Request, res: Response) => {
     // Validate code security before building
     const validation = validateCodeSecurity(code);
     if (!validation.valid) {
-      console.log("[build] Security validation failed:", validation.violations);
+      logger.warn("[build] Security validation failed:", { violations: validation.violations });
       return res.status(400).json({
         success: false,
         error: "Security validation failed",
@@ -97,11 +105,11 @@ app.post("/build", async (req: Request, res: Response) => {
       });
     }
 
-    console.log("[build] Building code from request...");
+    logger.info("[build] Building code from request...");
 
     // Detect function names used in the code
     const functionNames = detectFunctionNames(code);
-    console.log("[build] Detected function names:", functionNames);
+    logger.info("[build] Detected function names:", { functionNames });
 
     // Support both code_type (from API) and inlineScript (legacy)
     const isInline = code_type === "inline" || inlineScript === true;
@@ -114,7 +122,7 @@ app.post("/build", async (req: Request, res: Response) => {
       sourcemap = await readFile(sourcemapPath, "utf8");
     }
 
-    console.log("[build] Build completed successfully");
+    logger.info("[build] Build completed successfully");
 
     res.json({
       success: true,
@@ -123,7 +131,7 @@ app.post("/build", async (req: Request, res: Response) => {
       function_names: functionNames,
     });
   } catch (err) {
-    console.error("[build] Build error:", err);
+    logger.error("[build] Build error:", err);
     res.status(400).json({
       success: false,
       error: (err as Error).message,
@@ -145,12 +153,12 @@ app.post("/validate", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "code is required and must be a string" });
     }
 
-    console.log("Validating code...");
+    logger.info("[validate] Validating code...");
 
     // First, validate code security
     const validation = validateCodeSecurity(code);
     if (!validation.valid) {
-      console.log("[validate] Security validation failed:", validation.violations);
+      logger.warn("[validate] Security validation failed:", { violations: validation.violations });
       return res.status(200).json({
         valid: false,
         errors: validation.violations,
@@ -163,7 +171,7 @@ app.post("/validate", async (req: Request, res: Response) => {
     // If build succeeds, code is valid
     res.json({ valid: true });
   } catch (err) {
-    console.error("Validation error:", err);
+    logger.error("[validate] Validation error:", err);
     res.status(200).json({
       valid: false,
       errors: [(err as Error).message],
@@ -208,7 +216,7 @@ app.post("/execute-sync", async (req: Request, res: Response) => {
       functions?: ScriptFunction[];
     };
 
-    console.debug("Request body", {
+    logger.debug("[execute-sync] Request body", {
       code,
       build,
       input_data,
@@ -232,7 +240,7 @@ app.post("/execute-sync", async (req: Request, res: Response) => {
     if (build) {
       // Use pre-built bundle - write to temp file for executor
       // Note: Pre-built bundles were already validated at build time
-      console.log("[execute-sync] Using pre-built bundle, skipping build step...");
+      logger.info("[execute-sync] Using pre-built bundle, skipping build step...");
       tempDir = mkdtempSync(join(tmpdir(), "runner-exec-"));
       bundlePath = join(tempDir, "bundle.js");
       writeFileSync(bundlePath, build);
@@ -241,7 +249,7 @@ app.post("/execute-sync", async (req: Request, res: Response) => {
       // Validate code security before building
       const validation = validateCodeSecurity(code);
       if (!validation.valid) {
-        console.log("[execute-sync] Security validation failed:", validation.violations);
+        logger.warn("[execute-sync] Security validation failed:", { violations: validation.violations });
         return res.json({
           status: "errored",
           error_data: {
@@ -251,7 +259,7 @@ app.post("/execute-sync", async (req: Request, res: Response) => {
         });
       }
 
-      console.log("[execute-sync] Building code from scratch...");
+      logger.info("[execute-sync] Building code from scratch...");
       bundlePath = await buildFromCodeString(code, inlineScript);
       sourcemapPath = existsSync(bundlePath.replace(".js", ".js.map")) ? bundlePath.replace(".js", ".js.map") : null;
     }
@@ -279,7 +287,7 @@ app.post("/execute-sync", async (req: Request, res: Response) => {
 
     const result = await runInIsolate(cfg, execCtx, bundlePath, sourcemapPath);
 
-    console.log("[execute-sync] Execution completed successfully");
+    logger.info("[execute-sync] Execution completed successfully");
 
     res.json({
       status: "completed",
@@ -307,6 +315,6 @@ app.post("/execute-sync", async (req: Request, res: Response) => {
 
 export function startServer() {
   app.listen(serverConfig.port, () => {
-    console.log(`Plane Runner server listening on port ${serverConfig.port}`);
+    logger.info(`Plane Runner server listening on port ${serverConfig.port}`);
   });
 }

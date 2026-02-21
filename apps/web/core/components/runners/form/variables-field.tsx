@@ -20,7 +20,7 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/prop
 import { Checkbox, Input } from "@plane/ui";
 import { cn } from "@plane/propel/utils";
 
-export function VariablesField() {
+export function VariablesField({ readOnly = false }: { readOnly?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const {
     control,
@@ -76,8 +76,14 @@ export function VariablesField() {
                 rules={{ required: "Key is required" }}
                 render={({ field }) => (
                   <Input
+                    readOnly={readOnly}
                     placeholder="Key"
-                    className="w-[80%] text-body-sm-regular text-primary bg-layer-2 border border-subtle-1 rounded-lg"
+                    className={cn(
+                      "w-[80%] text-body-sm-regular text-primary bg-layer-2 border border-subtle-1 rounded-lg",
+                      {
+                        "text-tertiary": readOnly,
+                      }
+                    )}
                     {...field}
                   />
                 )}
@@ -91,6 +97,7 @@ export function VariablesField() {
                       checked={Boolean(field.value) || false}
                       containerClassName="w-fit w-20 m-auto flex justify-center border-r border-subtle-1 rounded-none focus-none outline-none"
                       onChange={(e) => field.onChange(e.target.checked)}
+                      disabled={readOnly}
                     />
                   )}
                 />
@@ -99,6 +106,7 @@ export function VariablesField() {
                   icon={Trash2}
                   onClick={() => remove(index)}
                   className="text-icon-secondary"
+                  disabled={readOnly}
                 />
               </div>
               {errors.env_variables?.[index]?.key && (
@@ -106,10 +114,12 @@ export function VariablesField() {
               )}
             </div>
           ))}
-          <Button type="button" variant="secondary" onClick={() => append({ key: "", required: true })}>
-            <Plus className="size-3" />
-            Add more
-          </Button>
+          {!readOnly && (
+            <Button type="button" variant="secondary" onClick={() => append({ key: "", required: true })}>
+              <Plus className="size-3" />
+              Add more
+            </Button>
+          )}
         </div>
       </CollapsibleContent>
     </Collapsible>

@@ -107,7 +107,8 @@ export class RunnersStore implements IRunnersStore {
       runInAction(() => {
         this.scriptIds = new Map();
         scripts.forEach((script) => {
-          this.scriptMap.set(script.id, script);
+          const existingScript = this.scriptMap.get(script.id);
+          this.scriptMap.set(script.id, { ...script, ...(existingScript ?? {}) });
           this.scriptIds.set(workspaceSlug, [...(this.scriptIds.get(workspaceSlug) ?? []), script.id]);
         });
         this.isLoading = false;

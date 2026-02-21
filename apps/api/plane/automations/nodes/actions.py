@@ -786,6 +786,9 @@ class RunScriptAction(ActionNode):
         """Execute the script and return the result."""
         script_id = self.params.script_id
 
+        # Get workspace info from the automation (needed for system scripts where workspace is null)
+        automation = Automation.objects.select_related("workspace").get(id=context.get("automation_id"))
+
         # Prepare input data from event
         input_data = {
             "event": event,
@@ -806,6 +809,8 @@ class RunScriptAction(ActionNode):
             script_id=script_id,
             input_data=input_data,
             execution_variables=self.params.execution_variables,
+            workspace_id=str(automation.workspace_id),
+            workspace_slug=automation.workspace.slug,
             trigger_type="automation",
             trigger_id=context.get("automation_id"),
             trigger_context=trigger_context,

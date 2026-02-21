@@ -117,7 +117,8 @@ export class FunctionsStore implements IFunctionsStore {
         this.functionIds.set(workspaceSlug, []);
 
         functions.forEach((fn) => {
-          this.functionMap.set(fn.id, fn);
+          const existingFunction = this.functionMap.get(fn.id);
+          this.functionMap.set(fn.id, { ...fn, ...(existingFunction ?? {}) });
           this.functionIds.get(workspaceSlug)?.push(fn.id);
         });
         this.isLoading = false;

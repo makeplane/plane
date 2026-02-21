@@ -32,12 +32,14 @@ const ScriptDetailPage = observer(function ScriptDetailPage({ params }: Route.Co
   const router = useRouter();
   const { fetchScriptById, getScriptById } = useRunners();
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - New Runner Task` : undefined;
-  const script = scriptId ? getScriptById(scriptId) : undefined;
   // swr
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && scriptId ? `RUNNER_SCRIPT_DETAIL_${workspaceSlug}_${scriptId}` : null,
     workspaceSlug && scriptId ? () => fetchScriptById(workspaceSlug, scriptId) : null
   );
+  // Read from store only after the detail fetch has completed so we have
+  // the full script object (the list endpoint omits `code`).
+  const script = !isLoading && scriptId ? getScriptById(scriptId) : undefined;
   return (
     <WithFeatureFlagHOC flag="PLANE_RUNNER" fallback={null} workspaceSlug={workspaceSlug}>
       <SettingsContentWrapper header={<ScriptsWorkspaceSettingsHeader />}>

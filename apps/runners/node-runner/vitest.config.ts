@@ -11,7 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import "./tracer";
-import { startServer } from "./server";
+import { defineConfig } from "vitest/config";
 
-startServer();
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: "node",
+    include: ["tests/**/*.test.ts"],
+  },
+});

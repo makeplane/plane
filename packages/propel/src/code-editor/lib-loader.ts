@@ -61,12 +61,12 @@ export function configureTypeScript(monaco: Monaco, builtInLibs: TBuiltInLibrary
 
   // Enable diagnostics
   monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-    noSemanticValidation: false,
+    noSemanticValidation: true,
     noSyntaxValidation: false,
   });
 
   monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-    noSemanticValidation: false,
+    noSemanticValidation: true,
     noSyntaxValidation: false,
   });
 }

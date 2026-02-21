@@ -54,6 +54,7 @@ export interface RunnerScript {
   successful_executions?: number;
   success_rate?: number | null;
   last_run?: string | null;
+  is_system?: boolean;
 }
 
 export type TJSON = {

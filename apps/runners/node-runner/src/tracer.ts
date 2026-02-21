@@ -11,7 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import "./tracer";
-import { startServer } from "./server";
+import tracer from "dd-trace";
 
-startServer();
+// Initialize the tracer
+tracer.init({
+  logInjection: true,
+  profiling: true,
+  runtimeMetrics: true,
+});
+
+export default tracer;
