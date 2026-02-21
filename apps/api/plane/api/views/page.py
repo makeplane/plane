@@ -133,6 +133,7 @@ class PageListCreateAPIEndpoint(PageQuerySetMixin, BaseAPIView):
                 workspace__slug=slug,
                 external_id=external_id,
                 external_source=external_source,
+                project_pages__deleted_at__isnull=True,
             ).first()
             if existing_page:
                 return Response(
