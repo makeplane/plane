@@ -26,7 +26,6 @@ import { TermsAndConditions } from "../terms-and-conditions";
 import { AuthBanner } from "./auth-banner";
 import { AuthHeader, AuthHeaderBase } from "./auth-header";
 import { AuthFormRoot } from "./form-root";
-import { AuthLDAPForm } from "./ldap";
 import { StaffIdLoginForm } from "./staff-id";
 
 type TAuthRoot = {
@@ -130,15 +129,14 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
         currentAuthStep={authStep}
       />
       {/* Staff ID login — primary login method */}
-      <StaffIdLoginForm nextPath={nextPath || undefined} />
+      <StaffIdLoginForm nextPath={nextPath || undefined} isLDAPEnabled={isLDAPEnabled} />
       {(isOAuthEnabled || isEmailBasedAuthEnabled || isLDAPEnabled) && (
         <div className="flex items-center gap-2">
           <hr className="flex-1 border-strong" />
-          <span className="text-13 text-tertiary">hoặc đăng nhập bằng email</span>
+          <span className="text-13 text-tertiary">or sign in with email</span>
           <hr className="flex-1 border-strong" />
         </div>
       )}
-      {isLDAPEnabled && <AuthLDAPForm nextPath={nextPath || undefined} />}
       {isOAuthEnabled && (
         <OAuthOptions
           options={oAuthOptions}
