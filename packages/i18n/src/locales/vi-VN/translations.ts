@@ -2712,6 +2712,7 @@ export default {
     member: "Thành viên",
     report: "Báo cáo thời gian",
     activity_logged: "đã ghi nhận thời gian",
+    updated: "Đã cập nhật",
     updated_successfully: "Cập nhật nhật ký thành công.",
     logged_successfully: "Ghi nhận thời gian thành công.",
     error: "Lỗi",

@@ -2776,6 +2776,7 @@ export default {
     member: "Member",
     report: "Time Tracking Report",
     activity_logged: "logged time",
+    updated: "Updated",
     updated_successfully: "Work log updated successfully.",
     logged_successfully: "Time logged successfully.",
     error: "Error",
