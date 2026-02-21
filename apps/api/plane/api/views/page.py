@@ -193,8 +193,13 @@ class PageDetailAPIEndpoint(PageQuerySetMixin, BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Only the page owner may change the access level
-        if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
+        # Only the page owner may change the access level.
+        # Coerce to int before comparing to handle string values from form data.
+        try:
+            new_access = int(request.data.get("access", page.access))
+        except (TypeError, ValueError):
+            new_access = page.access
+        if new_access != page.access and page.owned_by_id != request.user.id:
             return Response(
                 {"error": "Access cannot be updated since this page is owned by someone else"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -328,7 +333,7 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
 
         Restore an archived page and all its descendants.
         """
-        page = Page.objects.get(
+        page = Page.objects.select_related("parent").get(
             pk=page_id,
             workspace__slug=slug,
             projects__id=project_id,

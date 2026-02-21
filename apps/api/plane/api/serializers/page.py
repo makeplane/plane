@@ -46,7 +46,7 @@ class PageSerializer(BaseSerializer):
             "created_by",
             "updated_by",
         ]
-        read_only_fields = ["workspace", "owned_by", "project_ids", "label_ids"]
+        read_only_fields = ["workspace", "owned_by", "project_ids", "label_ids", "is_locked", "archived_at"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
