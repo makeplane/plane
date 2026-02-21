@@ -145,14 +145,14 @@ Add new keys:
 
 ## Todo List
 
-- [ ] Add translation keys to `en/translations.json`
-- [ ] Copy keys to all other locale files
-- [ ] department-tree-item.tsx
-- [ ] department-tree.tsx
-- [ ] staff-form-modal.tsx
-- [ ] staff-table.tsx
-- [ ] analytics-dashboard-card.tsx
-- [ ] analytics-dashboard-delete-modal.tsx
-- [ ] analytics-dashboard-form-modal.tsx
-- [ ] Run `pnpm check:lint`
-- [ ] Run `pnpm check:types`
+- [x] Add translation keys to `en/translations.ts`
+- [x] Copy keys to all other locale files (19 locales)
+- [x] department-tree-item.tsx
+- [x] department-tree.tsx
+- [x] staff-form-modal.tsx
+- [x] staff-table.tsx
+- [x] analytics-dashboard-card.tsx
+- [x] analytics-dashboard-delete-modal.tsx
+- [x] analytics-dashboard-form-modal.tsx
+- [x] Run `pnpm check:lint`
+- [x] Run `pnpm check:types`

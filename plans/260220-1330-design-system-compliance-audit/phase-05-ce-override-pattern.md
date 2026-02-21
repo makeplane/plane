@@ -144,17 +144,17 @@ External imports to update (2 files):
 
 ## Todo List
 
-- [ ] Create target directories
-- [ ] Move services (3 files)
-- [ ] Move store + update registration (CoreRootStore → RootStore)
-- [ ] Move hook
-- [ ] Move dashboard components (6 files + config/)
-- [ ] Update all ~32 import paths
-- [ ] Run `pnpm check:types`
-- [ ] Run ESLint
-- [ ] Test dashboard pages
-- [ ] Test department settings
-- [ ] Test staff settings
+- [x] Create target directories
+- [x] Move services (3 files)
+- [x] Move store + update registration (CoreRootStore → RootStore)
+- [x] Move hook
+- [x] Move dashboard components (6 files + config/)
+- [x] Update all ~32 import paths
+- [x] Run `pnpm check:types`
+- [x] Run ESLint
+- [x] Test dashboard pages
+- [x] Test department settings
+- [x] Test staff settings
 
 ## Risk Assessment
 

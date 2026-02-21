@@ -51,4 +51,4 @@ Custom features (Dashboard Pro, Department & Staff Management, LDAP Auth) were d
 - [x] All component files <150 lines
 - [x] All custom stores/services in `ce/` directory
 - [x] Linting passes: `pnpm check:lint`
-- [ ] Dark mode verified for all custom features (manual)
+- [x] Dark mode verified for all custom features (manual)
