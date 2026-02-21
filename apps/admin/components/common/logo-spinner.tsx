@@ -15,7 +15,7 @@ export function LogoSpinner() {
 
   return (
     <div className="flex items-center justify-center">
-      <img src={logoSrc} alt="logo" className="h-6 w-auto sm:h-11" />
+      <img src={logoSrc} alt="logo" className="h-6 w-auto sm:h-11" suppressHydrationWarning />
     </div>
   );
 }
