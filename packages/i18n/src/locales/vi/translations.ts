@@ -1724,6 +1724,12 @@ export default {
           },
         },
       },
+      departments: {
+        title: "Phòng ban",
+      },
+      staff: {
+        title: "Nhân viên",
+      },
       api_tokens: {
         title: "Token API",
         add_token: "Thêm token API",

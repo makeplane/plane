@@ -1707,6 +1707,12 @@ export default {
           },
         },
       },
+      departments: {
+        title: "부서",
+      },
+      staff: {
+        title: "직원",
+      },
       api_tokens: {
         title: "API 토큰",
         add_token: "API 토큰 추가",

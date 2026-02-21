@@ -1577,6 +1577,12 @@ export default {
           },
         },
       },
+      departments: {
+        title: "Departments",
+      },
+      staff: {
+        title: "Staff",
+      },
       api_tokens: {
         title: "Personal Access Tokens",
         add_token: "Add personal access token",
