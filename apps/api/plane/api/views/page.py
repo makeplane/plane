@@ -2,14 +2,12 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-# Python imports
-from datetime import datetime
-
 # Django imports
 from django.db.models import Q, Value, UUIDField
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models.functions import Coalesce
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
@@ -21,13 +19,12 @@ from plane.app.permissions import ProjectEntityPermission, ProjectPagePermission
 from plane.app.views.page.base import unarchive_archive_page_and_descendants
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.db.models import Page, ProjectMember, UserFavorite, UserRecentVisit
+
 from .base import BaseAPIView
 
 
-class PageListCreateAPIEndpoint(BaseAPIView):
-    """Page List and Create Endpoint"""
-
-    permission_classes = [ProjectEntityPermission]
+class PageQuerySetMixin:
+    """Shared queryset with workspace/project filtering and label/project annotations."""
 
     def get_queryset(self):
         return (
@@ -57,6 +54,12 @@ class PageListCreateAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
+
+class PageListCreateAPIEndpoint(PageQuerySetMixin, BaseAPIView):
+    """Page List and Create Endpoint"""
+
+    permission_classes = [ProjectEntityPermission]
+
     def get(self, request, slug, project_id):
         """List pages
 
@@ -64,7 +67,7 @@ class PageListCreateAPIEndpoint(BaseAPIView):
         """
         queryset = self.get_queryset()
 
-        # External ID/source lookup
+        # External ID/source lookup returns a single object directly
         external_id = request.GET.get("external_id")
         external_source = request.GET.get("external_source")
         if external_id and external_source:
@@ -77,24 +80,30 @@ class PageListCreateAPIEndpoint(BaseAPIView):
                     {"error": "The requested resource does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
-            return Response(
-                PageSerializer(page).data,
-                status=status.HTTP_200_OK,
-            )
+            return Response(PageSerializer(page).data, status=status.HTTP_200_OK)
 
-        # Archived filter
+        # Archived filter (default: non-archived)
         archived = request.GET.get("archived", "false").lower() == "true"
         if archived:
             queryset = queryset.filter(archived_at__isnull=False)
         else:
             queryset = queryset.filter(archived_at__isnull=True)
 
-        # Access filter
-        access = request.GET.get("access")
-        if access is not None:
-            queryset = queryset.filter(access=access)
+        # Access filter — validate the value is 0 (public) or 1 (private)
+        access_param = request.GET.get("access")
+        if access_param is not None:
+            try:
+                access_value = int(access_param)
+                if access_value not in (Page.PUBLIC_ACCESS, Page.PRIVATE_ACCESS):
+                    raise ValueError
+                queryset = queryset.filter(access=access_value)
+            except (ValueError, TypeError):
+                return Response(
+                    {"error": "access must be 0 (public) or 1 (private)"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-        # Owned filter
+        # Visibility filter: own pages only, or own + all public pages
         owned = request.GET.get("owned", "false").lower() == "true"
         if owned:
             queryset = queryset.filter(owned_by=request.user)
@@ -143,53 +152,20 @@ class PageListCreateAPIEndpoint(BaseAPIView):
         )
         if serializer.is_valid():
             serializer.save()
-            # Capture the page transaction
             page_transaction.delay(
                 new_description_html=request.data.get("description_html", "<p></p>"),
                 old_description_html=None,
                 page_id=serializer.data["id"],
             )
-            # Re-fetch with annotations
             page = self.get_queryset().get(pk=serializer.data["id"])
-            return Response(
-                PageSerializer(page).data,
-                status=status.HTTP_201_CREATED,
-            )
+            return Response(PageSerializer(page).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PageDetailAPIEndpoint(BaseAPIView):
+class PageDetailAPIEndpoint(PageQuerySetMixin, BaseAPIView):
     """Page Detail Endpoint"""
 
     permission_classes = [ProjectPagePermission]
-
-    def get_queryset(self):
-        return (
-            Page.objects.filter(
-                workspace__slug=self.kwargs.get("slug"),
-                projects__id=self.kwargs.get("project_id"),
-                project_pages__deleted_at__isnull=True,
-            )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "page_labels__label_id",
-                        distinct=True,
-                        filter=~Q(page_labels__label_id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                project_ids=Coalesce(
-                    ArrayAgg(
-                        "projects__id",
-                        distinct=True,
-                        filter=~Q(projects__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
-            .distinct()
-        )
 
     def get(self, request, slug, project_id, pk):
         """Retrieve page
@@ -217,7 +193,7 @@ class PageDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Only update access if the page owner is the requesting user
+        # Only the page owner may change the access level
         if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
             return Response(
                 {"error": "Access cannot be updated since this page is owned by someone else"},
@@ -225,17 +201,20 @@ class PageDetailAPIEndpoint(BaseAPIView):
             )
 
         page_description = page.description_html
-        serializer = PageSerializer(page, data=request.data, partial=True)
+        serializer = PageSerializer(
+            page,
+            data=request.data,
+            partial=True,
+            context={"project_id": project_id},
+        )
         if serializer.is_valid():
             serializer.save()
-            # Capture the page transaction if description changed
             if request.data.get("description_html"):
                 page_transaction.delay(
                     new_description_html=request.data.get("description_html", "<p></p>"),
                     old_description_html=page_description,
                     page_id=pk,
                 )
-            # Re-fetch with annotations for the response
             page = self.get_queryset().get(pk=pk)
             return Response(PageSerializer(page).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -272,7 +251,7 @@ class PageDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # Remove parent from all children
+        # Remove parent reference from all children before deletion
         Page.objects.filter(
             parent_id=pk,
             projects__id=project_id,
@@ -280,9 +259,7 @@ class PageDetailAPIEndpoint(BaseAPIView):
             project_pages__deleted_at__isnull=True,
         ).update(parent=None)
 
-        page.delete()
-
-        # Delete the user favorite page
+        # Clean up related records before deleting the page
         UserFavorite.objects.filter(
             project=project_id,
             workspace__slug=slug,
@@ -290,13 +267,14 @@ class PageDetailAPIEndpoint(BaseAPIView):
             entity_type="page",
         ).delete()
 
-        # Delete the page from recent visit
         UserRecentVisit.objects.filter(
             project_id=project_id,
             workspace__slug=slug,
             entity_identifier=pk,
             entity_name="page",
         ).delete(soft=False)
+
+        page.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -330,7 +308,7 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
         ):
             return Response(
                 {"error": "Only the owner or admin can archive the page"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         UserFavorite.objects.filter(
@@ -340,9 +318,10 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
             workspace__slug=slug,
         ).delete()
 
-        unarchive_archive_page_and_descendants(page_id, datetime.now())
+        archived_at = timezone.now().date()
+        unarchive_archive_page_and_descendants(page_id, archived_at)
 
-        return Response({"archived_at": str(datetime.now())}, status=status.HTTP_200_OK)
+        return Response({"archived_at": archived_at.isoformat()}, status=status.HTTP_200_OK)
 
     def delete(self, request, slug, project_id, page_id):
         """Unarchive page
@@ -367,8 +346,8 @@ class PageArchiveUnarchiveAPIEndpoint(BaseAPIView):
             and request.user.id != page.owned_by_id
         ):
             return Response(
-                {"error": "Only the owner or admin can un archive the page"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Only the owner or admin can unarchive the page"},
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         # If parent is archived, break hierarchy by clearing parent
@@ -399,7 +378,7 @@ class PageLockUnlockAPIEndpoint(BaseAPIView):
         )
 
         page.is_locked = True
-        page.save()
+        page.save(update_fields=["is_locked"])
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -416,6 +395,6 @@ class PageLockUnlockAPIEndpoint(BaseAPIView):
         )
 
         page.is_locked = False
-        page.save()
+        page.save(update_fields=["is_locked"])
 
         return Response(status=status.HTTP_204_NO_CONTENT)
