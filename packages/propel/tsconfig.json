@@ -6,10 +6,10 @@
     "noUncheckedIndexedAccess": false,
     "noUnusedLocals": false,
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
-  "include": ["src"],
+  "include": ["src", ".storybook/preview.ts"],
   "exclude": ["dist", "node_modules", "*.config.ts"],
   "references": [{ "path": "../types" }, { "path": "../constants" }, { "path": "../hooks" }, { "path": "../utils" }]
 }

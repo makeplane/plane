@@ -11,11 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
+import { expect } from "storybook/test";
 import { Accordion } from "./accordion";
 
-const meta = {
-  title: "Components/Accordion",
+const meta = preview.meta({
   component: Accordion.Root,
   parameters: {
     layout: "centered",
@@ -28,16 +28,14 @@ const meta = {
   },
   args: {
     children: null,
+    className: "w-96",
   },
-} satisfies Meta<typeof Accordion.Root>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-  render() {
+export const Default = meta.story({
+  render(args) {
     return (
-      <Accordion.Root className="w-96">
+      <Accordion.Root {...args}>
         <Accordion.Item value="item-1">
           <Accordion.Trigger>What is Plane?</Accordion.Trigger>
           <Accordion.Content>
@@ -62,12 +60,34 @@ export const Default: Story = {
       </Accordion.Root>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    // Click the first trigger and verify its content is visible
+    const firstTrigger = canvas.getByText("What is Plane?");
+    await userEvent.click(firstTrigger);
+    await expect(
+      canvas.getByText(
+        "Plane is an open-source project management tool designed for developers and teams to plan, track, and manage their work efficiently."
+      )
+    ).toBeVisible();
 
-export const SingleOpen: Story = {
-  render() {
+    // Click the second trigger and verify its content is visible
+    const secondTrigger = canvas.getByText("How do I get started?");
+    await userEvent.click(secondTrigger);
+    await expect(
+      canvas.getByText(
+        "You can get started by signing up for an account, creating your first workspace, and inviting your team members to collaborate."
+      )
+    ).toBeVisible();
+  },
+});
+
+export const SingleOpen = meta.story({
+  args: {
+    defaultValue: ["item-1"],
+  },
+  render(args) {
     return (
-      <Accordion.Root defaultValue={["item-1"]} className="w-96">
+      <Accordion.Root {...args}>
         <Accordion.Item value="item-1">
           <Accordion.Trigger>Section 1</Accordion.Trigger>
           <Accordion.Content>Content for section 1. Only one section can be open at a time.</Accordion.Content>
@@ -83,12 +103,16 @@ export const SingleOpen: Story = {
       </Accordion.Root>
     );
   },
-};
+});
 
-export const AllowMultiple: Story = {
-  render() {
+export const AllowMultiple = meta.story({
+  args: {
+    allowMultiple: true,
+    defaultValue: ["item-1", "item-2"],
+  },
+  render(args) {
     return (
-      <Accordion.Root allowMultiple defaultValue={["item-1", "item-2"]} className="w-96">
+      <Accordion.Root {...args}>
         <Accordion.Item value="item-1">
           <Accordion.Trigger>First Section</Accordion.Trigger>
           <Accordion.Content>Multiple sections can be open at the same time.</Accordion.Content>
@@ -104,12 +128,12 @@ export const AllowMultiple: Story = {
       </Accordion.Root>
     );
   },
-};
+});
 
-export const WithDisabledItem: Story = {
-  render() {
+export const WithDisabledItem = meta.story({
+  render(args) {
     return (
-      <Accordion.Root className="w-96">
+      <Accordion.Root {...args}>
         <Accordion.Item value="item-1">
           <Accordion.Trigger>Enabled Section</Accordion.Trigger>
           <Accordion.Content>This section can be toggled.</Accordion.Content>
@@ -125,12 +149,22 @@ export const WithDisabledItem: Story = {
       </Accordion.Root>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    // Click the enabled trigger and verify its content is visible
+    const enabledTrigger = canvas.getByText("Enabled Section");
+    await userEvent.click(enabledTrigger);
+    await expect(canvas.getByText("This section can be toggled.")).toBeVisible();
 
-export const CustomIcon: Story = {
-  render() {
+    // Verify the disabled trigger button exists
+    const disabledTrigger = canvas.getByRole("button", { name: "Disabled Section" });
+    await expect(disabledTrigger).toBeVisible();
+  },
+});
+
+export const CustomIcon = meta.story({
+  render(args) {
     return (
-      <Accordion.Root className="w-96">
+      <Accordion.Root {...args}>
         <Accordion.Item value="item-1">
           <Accordion.Trigger
             icon={
@@ -180,17 +214,17 @@ export const CustomIcon: Story = {
       </Accordion.Root>
     );
   },
-};
+});
 
-export const AsChildTrigger: Story = {
-  render() {
+export const AsChildTrigger = meta.story({
+  render(args) {
     return (
-      <Accordion.Root className="w-96">
+      <Accordion.Root {...args}>
         <Accordion.Item value="item-1">
           <Accordion.Trigger asChild>
-            <button className="w-full rounded-md bg-blue-500 px-4 py-2 text-left text-on-color hover:bg-blue-600">
+            <span className="w-full rounded-md bg-blue-500 px-4 py-2 text-left text-on-color hover:bg-blue-600">
               Custom Button Trigger
-            </button>
+            </span>
           </Accordion.Trigger>
           <Accordion.Content>
             When using asChild, you can completely customize the trigger element without the default icon wrapper.
@@ -198,13 +232,13 @@ export const AsChildTrigger: Story = {
         </Accordion.Item>
         <Accordion.Item value="item-2">
           <Accordion.Trigger asChild>
-            <button className="w-full rounded-md bg-green-500 px-4 py-2 text-left text-on-color hover:bg-green-600">
+            <span className="w-full rounded-md bg-green-500 px-4 py-2 text-left text-on-color hover:bg-green-600">
               Another Custom Trigger
-            </button>
+            </span>
           </Accordion.Trigger>
           <Accordion.Content>This gives you full control over the trigger styling and behavior.</Accordion.Content>
         </Accordion.Item>
       </Accordion.Root>
     );
   },
-};
+});

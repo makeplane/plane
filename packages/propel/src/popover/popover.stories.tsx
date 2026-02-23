@@ -11,15 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useState } from "react";
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { useArgs } from "storybook/preview-api";
-import { CloseIcon } from "../icons/actions/close-icon";
+import preview from "#.storybook/preview";
+import { expect, fn, screen } from "storybook/test";
 import { Popover } from "./root";
 
-// cannot use satifies here because base-ui does not have portable types.
-const meta: Meta<typeof Popover> = {
-  title: "Components/Popover",
+const meta = preview.meta({
   component: Popover,
   subcomponents: {
     PopoverTrigger: Popover.Trigger,
@@ -30,15 +26,11 @@ const meta: Meta<typeof Popover> = {
   },
   args: {
     children: null,
-    open: undefined,
-    onOpenChange: () => {},
+    onOpenChange: fn(),
   },
   render(args) {
-    const [{ open }, updateArgs] = useArgs();
-    const setOpen = (value: boolean | undefined) => updateArgs({ open: value });
-
     return (
-      <Popover {...args} open={open} onOpenChange={setOpen}>
+      <Popover {...args}>
         <Popover.Trigger className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">
           Open Popover
         </Popover.Trigger>
@@ -49,55 +41,22 @@ const meta: Meta<typeof Popover> = {
       </Popover>
     );
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-  args: {
-    children: null,
+export const Default = meta.story({
+  async play({ canvas, userEvent }) {
+    const trigger = canvas.getByRole("button", { name: "Open Popover" });
+    await expect(trigger).toBeVisible();
+    await userEvent.click(trigger);
+    const title = await screen.findByText("Popover Title");
+    await expect(title).toBeVisible();
   },
-};
+});
 
-export const Controlled: Story = {
-  render() {
-    const [open, setOpen] = useState(false);
-
-    return (
-      <div className="space-y-4">
-        <div className="flex gap-2">
-          <button onClick={() => setOpen(true)} className="rounded-sm bg-blue-500 px-3 py-1.5 text-13 text-on-color">
-            Open
-          </button>
-          <button onClick={() => setOpen(false)} className="rounded-sm bg-gray-500 px-3 py-1.5 text-13 text-on-color">
-            Close
-          </button>
-        </div>
-        <Popover open={open} onOpenChange={setOpen}>
-          <Popover.Trigger className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">
-            Controlled Popover
-          </Popover.Trigger>
-          <Popover.Content className="w-64 rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
-            <div className="flex items-start justify-between">
-              <h3 className="text-13 font-semibold">Controlled State</h3>
-              <button onClick={() => setOpen(false)} className="rounded-full p-1 hover:bg-gray-100">
-                <CloseIcon className="h-4 w-4" />
-              </button>
-            </div>
-            <p className="mt-2 text-13 text-gray-600">Current state: {open ? "Open" : "Closed"}</p>
-          </Popover.Content>
-        </Popover>
-      </div>
-    );
-  },
-};
-
-export const SideTop: Story = {
+export const SideTop = meta.story({
   render(args) {
-    const [open, setOpen] = useState(args.open);
     return (
-      <Popover {...args} open={open} onOpenChange={setOpen}>
+      <Popover {...args}>
         <Popover.Trigger className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">
           Open Above
         </Popover.Trigger>
@@ -108,13 +67,16 @@ export const SideTop: Story = {
       </Popover>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Open Above" }));
+    await expect(await screen.findByText("Top Positioned")).toBeVisible();
+  },
+});
 
-export const SideBottom: Story = {
+export const SideBottom = meta.story({
   render(args) {
-    const [open, setOpen] = useState(args.open);
     return (
-      <Popover {...args} open={open} onOpenChange={setOpen}>
+      <Popover {...args}>
         <Popover.Trigger className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">
           Open Below
         </Popover.Trigger>
@@ -125,13 +87,16 @@ export const SideBottom: Story = {
       </Popover>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Open Below" }));
+    await expect(await screen.findByText("Bottom Positioned")).toBeVisible();
+  },
+});
 
-export const SideLeft: Story = {
+export const SideLeft = meta.story({
   render(args) {
-    const [open, setOpen] = useState(args.open);
     return (
-      <Popover {...args} open={open} onOpenChange={setOpen}>
+      <Popover {...args}>
         <Popover.Trigger className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">
           Open Left
         </Popover.Trigger>
@@ -142,13 +107,16 @@ export const SideLeft: Story = {
       </Popover>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Open Left" }));
+    await expect(await screen.findByText("Left Positioned")).toBeVisible();
+  },
+});
 
-export const SideRight: Story = {
+export const SideRight = meta.story({
   render(args) {
-    const [open, setOpen] = useState(args.open);
     return (
-      <Popover {...args} open={open} onOpenChange={setOpen}>
+      <Popover {...args}>
         <Popover.Trigger className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">
           Open Right
         </Popover.Trigger>
@@ -159,13 +127,16 @@ export const SideRight: Story = {
       </Popover>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Open Right" }));
+    await expect(await screen.findByText("Right Positioned")).toBeVisible();
+  },
+});
 
-export const AlignStart: Story = {
+export const AlignStart = meta.story({
   render(args) {
-    const [open, setOpen] = useState(args.open);
     return (
-      <Popover {...args} open={open} onOpenChange={setOpen}>
+      <Popover {...args}>
         <Popover.Trigger className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">
           Align Start
         </Popover.Trigger>
@@ -176,13 +147,16 @@ export const AlignStart: Story = {
       </Popover>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Align Start" }));
+    await expect(await screen.findByText("Start Aligned")).toBeVisible();
+  },
+});
 
-export const AlignEnd: Story = {
+export const AlignEnd = meta.story({
   render(args) {
-    const [open, setOpen] = useState(args.open);
     return (
-      <Popover {...args} open={open} onOpenChange={setOpen}>
+      <Popover {...args}>
         <Popover.Trigger className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">
           Align End
         </Popover.Trigger>
@@ -193,13 +167,16 @@ export const AlignEnd: Story = {
       </Popover>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Align End" }));
+    await expect(await screen.findByText("End Aligned")).toBeVisible();
+  },
+});
 
-export const CustomOffset: Story = {
+export const CustomOffset = meta.story({
   render(args) {
-    const [open, setOpen] = useState(args.open);
     return (
-      <Popover {...args} open={open} onOpenChange={setOpen}>
+      <Popover {...args}>
         <Popover.Trigger className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">
           Custom Offset
         </Popover.Trigger>
@@ -210,73 +187,16 @@ export const CustomOffset: Story = {
       </Popover>
     );
   },
-};
-
-export const WithForm: Story = {
-  render(args) {
-    const [open, setOpen] = useState(args.open ?? false);
-    const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      alert("Form submitted!");
-      setOpen(false);
-    };
-    return (
-      <Popover {...args} open={open} onOpenChange={setOpen}>
-        <Popover.Trigger className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">
-          Open Form
-        </Popover.Trigger>
-        <Popover.Content className="w-72 rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
-          <h3 className="text-13 font-semibold">Quick Form</h3>
-          <form onSubmit={handleSubmit} className="mt-3 space-y-3">
-            <div>
-              <label htmlFor="name" className="block text-11 font-medium text-gray-700">
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="mt-1 w-full rounded-sm border border-gray-300 px-2 py-1.5 text-13"
-                placeholder="Enter name"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-11 font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="mt-1 w-full rounded-sm border border-gray-300 px-2 py-1.5 text-13"
-                placeholder="Enter email"
-              />
-            </div>
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="rounded-sm bg-gray-200 px-3 py-1.5 text-11 hover:bg-gray-300"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="rounded-sm bg-blue-500 px-3 py-1.5 text-11 text-on-color hover:bg-blue-600"
-              >
-                Submit
-              </button>
-            </div>
-          </form>
-        </Popover.Content>
-      </Popover>
-    );
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Custom Offset" }));
+    await expect(await screen.findByText("Custom Side Offset")).toBeVisible();
   },
-};
+});
 
-export const WithList: Story = {
+export const WithList = meta.story({
   render(args) {
-    const [open, setOpen] = useState(args.open);
     return (
-      <Popover {...args} open={open} onOpenChange={setOpen}>
+      <Popover {...args}>
         <Popover.Trigger className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">
           Show Options
         </Popover.Trigger>
@@ -291,36 +211,31 @@ export const WithList: Story = {
       </Popover>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Show Options" }));
+    await expect(await screen.findByText("Option 1")).toBeVisible();
+  },
+});
 
-export const ColorPicker: Story = {
-  render() {
-    const [selectedColor, setSelectedColor] = useState("#3b82f6");
-    const colors = ["#ef4444", "#f59e0b", "#10b981", "#3b82f6", "#8b5cf6", "#ec4899", "#6b7280", "#000000", "#ffffff"];
-
+export const WithPlacement = meta.story({
+  render(args) {
     return (
-      <Popover>
-        <Popover.Trigger className="flex items-center gap-2 rounded-sm border border-gray-300 bg-white px-4 py-2 hover:bg-gray-50">
-          <div className="h-4 w-4 rounded-sm" style={{ backgroundColor: selectedColor }} />
-          <span className="text-13">Pick Color</span>
+      <Popover {...args}>
+        <Popover.Trigger className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">
+          Open With Placement
         </Popover.Trigger>
-        <Popover.Content className="w-48 rounded-lg border border-gray-200 bg-white p-3 shadow-lg">
-          <h3 className="mb-2 text-11 font-semibold">Select Color</h3>
-          <div className="grid grid-cols-5 gap-2">
-            {colors.map((color) => (
-              <button
-                key={color}
-                onClick={() => setSelectedColor(color)}
-                className="h-8 w-8 rounded-sm border-2 transition-transform hover:scale-110"
-                style={{
-                  backgroundColor: color,
-                  borderColor: selectedColor === color ? "#000" : "transparent",
-                }}
-              />
-            ))}
-          </div>
+        <Popover.Content
+          placement="top-start"
+          className="w-64 rounded-lg border border-gray-200 bg-white p-4 shadow-lg"
+        >
+          <h3 className="text-13 font-semibold">Placement Prop</h3>
+          <p className="mt-2 text-13 text-gray-600">This popover uses the placement prop instead of side/align.</p>
         </Popover.Content>
       </Popover>
     );
   },
-};
+  async play({ canvas, userEvent }) {
+    await userEvent.click(canvas.getByRole("button", { name: "Open With Placement" }));
+    await expect(await screen.findByText("Placement Prop")).toBeVisible();
+  },
+});

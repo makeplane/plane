@@ -14,7 +14,8 @@
     "fix:format": "prettier . --cache --write",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test": "vitest --project=storybook"
   },
   "exports": {
     "./accordion": "./dist/accordion/index.js",
@@ -93,14 +94,29 @@
   "devDependencies": {
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
+    "@storybook/addon-a11y": "10.2.8",
     "@storybook/addon-designs": "11.1.2",
     "@storybook/addon-docs": "10.2.8",
+    "@storybook/addon-vitest": "10.2.8",
     "@storybook/react-vite": "10.2.8",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@vitest/browser-playwright": "^4.0.18",
+    "@vitest/coverage-v8": "^4.0.18",
+    "playwright": "^1.58.2",
     "storybook": "10.2.8",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "^4.0.18"
   },
-  "types": "./dist/index.d.ts"
+  "types": "./dist/index.d.ts",
+  "imports": {
+    "#*": [
+      "./*",
+      "./*.ts",
+      "./*.tsx",
+      "./*.js",
+      "./*.jsx"
+    ]
+  }
 }

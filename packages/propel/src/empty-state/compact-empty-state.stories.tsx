@@ -11,12 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
 import { EmptyStateCompact } from "./compact-empty-state";
-import type { BaseEmptyStateCommonProps } from "./types";
 
-const meta: Meta<BaseEmptyStateCommonProps> = {
-  title: "Components/EmptyState/Compact",
+const meta = preview.meta({
   component: EmptyStateCompact,
   parameters: {
     layout: "centered",
@@ -80,21 +78,18 @@ const meta: Meta<BaseEmptyStateCommonProps> = {
       description: "Array of action buttons to display",
     },
   },
-};
-
-export default meta;
-type Story = StoryObj<BaseEmptyStateCommonProps>;
+});
 
 // Using assetKey (recommended approach)
-export const WithAssetKey: Story = {
+export const WithAssetKey = meta.story({
   args: {
     assetKey: "work-item",
     assetClassName: "size-20",
     title: "There're no progress metrics to show yet.",
   },
-};
+});
 
-export const WithAssetKeyAndAction: Story = {
+export const WithAssetKeyAndAction = meta.story({
   args: {
     assetKey: "project",
     assetClassName: "size-20",
@@ -107,9 +102,9 @@ export const WithAssetKeyAndAction: Story = {
       },
     ],
   },
-};
+});
 
-export const WithAssetKeyAndMultipleActions: Story = {
+export const WithAssetKeyAndMultipleActions = meta.story({
   args: {
     assetKey: "members",
     assetClassName: "size-20",
@@ -127,10 +122,10 @@ export const WithAssetKeyAndMultipleActions: Story = {
       },
     ],
   },
-};
+});
 
 // Using custom asset (legacy approach)
-export const WithCustomAsset: Story = {
+export const WithCustomAsset = meta.story({
   args: {
     asset: (
       <svg className="h-40 w-40" viewBox="0 0 160 180" fill="none">
@@ -146,10 +141,45 @@ export const WithCustomAsset: Story = {
       },
     ],
   },
-};
+});
 
-export const TitleOnly: Story = {
+export const TitleOnly = meta.story({
   args: {
     title: "No results found",
   },
-};
+});
+
+export const WithDescription = meta.story({
+  args: {
+    assetKey: "label",
+    assetClassName: "size-20",
+    title: "No labels found",
+    description: "Create labels to categorize and organize your work items.",
+    actions: [
+      {
+        label: "Create Label",
+        onClick: () => console.log("create-clicked"),
+        variant: "primary",
+      },
+    ],
+  },
+});
+
+export const WithCustomButton = meta.story({
+  args: {
+    assetKey: "settings",
+    assetClassName: "size-20",
+    title: "Configure your settings",
+    customButton: <button className="px-4 py-2 bg-blue-500 text-white rounded-md text-13">Custom Button</button>,
+  },
+});
+
+export const LeftAligned = meta.story({
+  args: {
+    assetKey: "note",
+    assetClassName: "size-20",
+    title: "No notes yet",
+    description: "Start writing notes to keep track of ideas.",
+    align: "start",
+  },
+});

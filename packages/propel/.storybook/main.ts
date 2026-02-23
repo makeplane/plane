@@ -11,15 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { StorybookConfig } from "@storybook/react-vite";
+import { defineMain } from "@storybook/react-vite/node";
 
-const config: StorybookConfig = {
+export default defineMain({
+  framework: "@storybook/react-vite",
   stories: ["../src/**/*.stories.@(ts|tsx)"],
-  addons: ["@storybook/addon-designs", "@storybook/addon-docs"],
-  framework: {
-    name: "@storybook/react-vite",
-    options: {},
-  },
+  addons: ["@storybook/addon-designs", "@storybook/addon-docs", "@storybook/addon-vitest", "@storybook/addon-a11y"],
   viteFinal: (config) => {
     config.define = {
       ...config.define,
@@ -27,5 +24,4 @@ const config: StorybookConfig = {
     };
     return config;
   },
-};
-export default config;
+});

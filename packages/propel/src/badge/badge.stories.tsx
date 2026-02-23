@@ -11,11 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
+
 import { Badge } from "./badge";
 
-const meta = {
-  title: "Components/Badge",
+const meta = preview.meta({
   component: Badge,
   parameters: {
     layout: "centered",
@@ -23,70 +23,27 @@ const meta = {
   args: {
     children: "Badge",
   },
-} satisfies Meta<typeof Badge>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export const Default = meta.story({});
 
-export const Default: Story = {};
+export const Neutral = Default.extend({ args: { variant: "neutral", children: "Neutral Badge" } });
 
-export const Neutral: Story = {
-  args: {
-    variant: "neutral",
-    children: "Neutral Badge",
-  },
-};
+export const Brand = Default.extend({ args: { variant: "brand", children: "Brand Badge" } });
 
-export const Brand: Story = {
-  args: {
-    variant: "brand",
-    children: "Brand Badge",
-  },
-};
+export const Warning = Default.extend({ args: { variant: "warning", children: "Warning Badge" } });
 
-export const Warning: Story = {
-  args: {
-    variant: "warning",
-    children: "Warning Badge",
-  },
-};
+export const Success = Default.extend({ args: { variant: "success", children: "Success Badge" } });
 
-export const Success: Story = {
-  args: {
-    variant: "success",
-    children: "Success Badge",
-  },
-};
+export const Danger = Default.extend({ args: { variant: "danger", children: "Danger Badge" } });
 
-export const Danger: Story = {
-  args: {
-    variant: "danger",
-    children: "Danger Badge",
-  },
-};
+export const Small = Default.extend({ args: { size: "sm", children: "Small Badge" } });
 
-export const Small: Story = {
-  args: {
-    size: "sm",
-    children: "Small Badge",
-  },
-};
+export const Base = Default.extend({ args: { size: "base", children: "Base Badge" } });
 
-export const Base: Story = {
-  args: {
-    size: "base",
-    children: "Base Badge",
-  },
-};
+export const Large = Default.extend({ args: { size: "lg", children: "Large Badge" } });
 
-export const Large: Story = {
-  args: {
-    size: "lg",
-    children: "Large Badge",
-  },
-};
-
-export const WithPrependIcon: Story = {
+export const WithPrependIcon = Default.extend({
   args: {
     prependIcon: (
       <svg
@@ -104,9 +61,9 @@ export const WithPrependIcon: Story = {
     ),
     children: "With Prepend Icon",
   },
-};
+});
 
-export const WithAppendIcon: Story = {
+export const WithAppendIcon = Default.extend({
   args: {
     appendIcon: (
       <svg
@@ -124,37 +81,4 @@ export const WithAppendIcon: Story = {
     ),
     children: "With Append Icon",
   },
-};
-
-export const AllVariants: Story = {
-  render() {
-    return (
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="text-16 font-semibold">Primary Variants</h3>
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="neutral">Neutral</Badge>
-            <Badge variant="brand">Brand</Badge>
-            <Badge variant="warning">Warning</Badge>
-            <Badge variant="success">Success</Badge>
-            <Badge variant="danger">Danger</Badge>
-          </div>
-        </div>
-      </div>
-    );
-  },
-};
-
-export const AllSizes: Story = {
-  render() {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Badge size="sm">Small</Badge>
-          <Badge size="base">Base</Badge>
-          <Badge size="lg">Large</Badge>
-        </div>
-      </div>
-    );
-  },
-};
+});
