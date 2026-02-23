@@ -329,7 +329,13 @@ export function Calendar({
   }
 
   // Omit props that would override controlled navigation/header behavior
-  const { month: _month, onMonthChange: _onMonthChange, components: _components, ...dayPickerProps } = props;
+  const {
+    month: _month,
+    onMonthChange: _onMonthChange,
+    components: _components,
+    captionLayout: _captionLayout,
+    ...dayPickerProps
+  } = props;
 
   return (
     <div className={cn("p-2 min-w-[280px]", className)}>
