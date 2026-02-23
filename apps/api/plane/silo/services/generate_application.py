@@ -58,6 +58,7 @@ def generate_application(
     webhook_url = app_data.get("webhook_url", None)
     setup_url = app_data.get("setup_url", None)
     skip_authorization = app_data.get("skip_authorization", True)
+    resource_permissions = app_data.get("resource_permissions", ["read", "write"])
 
     with transaction.atomic():
         client_secret = generate_client_secret()
@@ -77,6 +78,7 @@ def generate_application(
             "webhook_url": webhook_url,
             "setup_url": setup_url,
             "is_internal": True,
+            "resource_permissions": resource_permissions,
         }
 
         # check if application already exists
@@ -89,6 +91,7 @@ def generate_application(
             application.setup_url = setup_url
             application.skip_authorization = skip_authorization
             application.is_internal = True
+            application.resource_permissions = resource_permissions
             application.save()
         else:
             application = application_model.objects.create(**application_data)
