@@ -461,7 +461,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 project_id=str(project_id),
                 current_instance=intake_current_instance,
                 epoch=int(timezone.now().timestamp()),
-                notification=False,
+                notification=True,
                 origin=base_host(request=request, is_app=True),
                 intake=str(intake_issue.id),
             )
