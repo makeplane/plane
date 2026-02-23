@@ -11,8 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 import {
@@ -28,6 +27,7 @@ import type {
 } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { SubIssueDisplayFilters } from "./display-filters";
@@ -54,12 +54,21 @@ export const SubWorkItemTitleActions = observer(function SubWorkItemTitleActions
   const {
     project: { getProjectMemberIds },
   } = useMember();
+  const { areEstimateEnabledByProjectId } = useProjectEstimates();
 
   // derived values
   const projectStates = getProjectStates(projectId);
   const projectMemberIds = getProjectMemberIds(projectId, false);
   const subIssueFilters = getSubIssueFilters(parentId);
-  const layoutDisplayFiltersOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE["sub_work_items"].layoutOptions.list;
+  const layoutDisplayFiltersOptions = useMemo(() => {
+    const baseLayoutOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE["sub_work_items"].layoutOptions.list;
+    if (areEstimateEnabledByProjectId(projectId)) return baseLayoutOptions;
+
+    return {
+      ...baseLayoutOptions,
+      display_properties: baseLayoutOptions.display_properties.filter((property) => property !== "estimate"),
+    };
+  }, [areEstimateEnabledByProjectId, projectId]);
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {

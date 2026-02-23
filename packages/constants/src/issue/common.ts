@@ -186,6 +186,7 @@ export const SUB_ISSUES_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)
   "assignee",
   "start_date",
   "due_date",
+  "estimate",
   "priority",
   "state",
 ];

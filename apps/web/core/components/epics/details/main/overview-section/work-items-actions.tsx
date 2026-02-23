@@ -11,8 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 // constants
 import { observer } from "mobx-react";
 import {
@@ -32,6 +31,7 @@ import { EIssueServiceType } from "@plane/types";
 import { SubIssuesActionButton, SubIssueDisplayFilters } from "@/components/issues/issue-detail-widgets/sub-issues";
 import { SubIssueFilters } from "@/components/issues/issue-detail-widgets/sub-issues/filters/root";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectState } from "@/hooks/store/use-project-state";
 
@@ -57,6 +57,7 @@ export const SubWorkItemsActions = observer(function SubWorkItemsActions(props: 
   const {
     project: { getProjectMemberIds },
   } = useMember();
+  const { areEstimateEnabledByProjectId } = useProjectEstimates();
 
   // derived values
   const projectMemberIds = getProjectMemberIds(projectId, false);
@@ -100,7 +101,16 @@ export const SubWorkItemsActions = observer(function SubWorkItemsActions(props: 
     [workspaceSlug, projectId, subIssueFilters?.filters, updateSubWorkItemFilters, workItemId]
   );
 
-  const layoutDisplayFiltersOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE["sub_work_items"]?.layoutOptions["list"];
+  const layoutDisplayFiltersOptions = useMemo(() => {
+    const baseLayoutOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE["sub_work_items"]?.layoutOptions["list"];
+    if (!baseLayoutOptions) return undefined;
+    if (areEstimateEnabledByProjectId(projectId)) return baseLayoutOptions;
+
+    return {
+      ...baseLayoutOptions,
+      display_properties: baseLayoutOptions.display_properties.filter((property) => property !== "estimate"),
+    };
+  }, [areEstimateEnabledByProjectId, projectId]);
 
   return (
     <div className="flex items-center gap-2">
