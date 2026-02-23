@@ -82,7 +82,7 @@ export const PiChatUpgrade = observer(function PiChatUpgrade() {
         </div>
         <img
           src={resolvedTheme === "dark" ? PiUpgradeDark : PiUpgradeLight}
-          alt="Pi chat upgrade"
+          alt="AI chat upgrade"
           className="max-h-[300px] w-auto self-end flex p-5 pb-0 xl:p-0 object-contain rounded-br-xl"
         />
       </div>

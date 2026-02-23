@@ -32,7 +32,7 @@ export const isPiAllowed = (
   workItem: string | undefined
 ): boolean => {
   // restricted routes
-  if (pathname.includes(`/${workspaceSlug}/pi-chat/`)) return false;
+  if (pathname.includes(`/${workspaceSlug}/ai-chat/`)) return false;
   if (pathname.includes(`/${workspaceSlug}/settings/`)) return false;
   // allowed routes
   if (pathname.includes(`/${workspaceSlug}/initiatives/`)) return true;

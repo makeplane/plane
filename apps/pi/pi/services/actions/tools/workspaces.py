@@ -185,7 +185,7 @@ WORKSPACE_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 name="pi",
                 type="Optional[bool]",
                 required=False,
-                description="Enable/disable PI (Plane Intelligence) feature (optional)",
+                description="Enable/disable Plane AI feature (optional)",
             ),
         ],
     ),

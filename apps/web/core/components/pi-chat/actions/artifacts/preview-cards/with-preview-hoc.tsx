@@ -42,7 +42,7 @@ const BaseWithPreviewHOC = observer(function BaseWithPreviewHOC(props: IPreviewH
   // derived
   const updatedArtifact = getArtifactByVersion(artifactId, "updated");
   const originalArtifact = getArtifact(artifactId);
-  const isFullScreen = pathname.split("/").includes("pi-chat");
+  const isFullScreen = pathname.split("/").includes("ai-chat");
   return (
     <button
       className={cn(

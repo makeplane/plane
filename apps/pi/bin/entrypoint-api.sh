@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Starting Plane PI API server..."
+echo "Starting Plane AI API server..."
 
 # Set default values if not provided
 export FASTAPI_APP_HOST=${FASTAPI_APP_HOST:-0.0.0.0}

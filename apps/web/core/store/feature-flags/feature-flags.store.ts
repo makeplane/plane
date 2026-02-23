@@ -88,7 +88,7 @@ export class FeatureFlagsStore implements IFeatureFlagsStore {
       });
       return response;
     } catch (error) {
-      console.error("Error fetching Pi feature flags", error);
+      console.error("Error fetching AI feature flags", error);
       throw error;
     }
   };

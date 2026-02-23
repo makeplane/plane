@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Starting Plane PI Vector Database Feeder..."
+echo "Starting Plane AI Vector Database Feeder..."
 
 # Display configuration
 echo "Workspace ID: ${DEV_WORKSPACE_ID:-<not set>}"

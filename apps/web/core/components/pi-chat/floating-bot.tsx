@@ -57,7 +57,7 @@ export const PiChatFloatingBot = observer(function PiChatFloatingBot(props: TPro
     }
   }, [isPiEnabled, isSidePanelOpen, sidecarChatId]);
 
-  if (pathName.includes("pi-chat")) return null;
+  if (pathName.includes("ai-chat")) return null;
   if (!isPiEnabled || !shouldRenderPiChat) return <></>;
 
   return (

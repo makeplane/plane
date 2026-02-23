@@ -35,7 +35,7 @@ export function UnauthorizedView(props: { className?: string; imgClassName?: str
   // derived values
   const isPiChatSidecarOpen = activeSidecar === "pi-chat";
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
-  const isInFullScreen = pathname.includes("/pi-chat");
+  const isInFullScreen = pathname.includes("/ai-chat");
   // SWR
   const { data: instance } = useSWR(
     workspaceId ? `PI_STARTER_${workspaceId}` : null,

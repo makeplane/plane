@@ -20,12 +20,12 @@ import type { RouteConfigEntry } from "@react-router/dev/routes";
 export const piRoutes: RouteConfigEntry[] = [
   layout("./(all)/[workspaceSlug]/(pi)/pi-chat/layout.tsx", [
     // Pi Chat Home
-    route(":workspaceSlug/pi-chat", "./(all)/[workspaceSlug]/(pi)/pi-chat/page.tsx"),
+    route(":workspaceSlug/ai-chat", "./(all)/[workspaceSlug]/(pi)/pi-chat/page.tsx"),
 
     // Pi Chat New
-    route(":workspaceSlug/pi-chat/new", "./(all)/[workspaceSlug]/(pi)/pi-chat/new/page.tsx"),
+    route(":workspaceSlug/ai-chat/new", "./(all)/[workspaceSlug]/(pi)/pi-chat/new/page.tsx"),
 
     // Pi Chat Detail
-    route(":workspaceSlug/pi-chat/:chatId", "./(all)/[workspaceSlug]/(pi)/pi-chat/[chatId]/page.tsx"),
+    route(":workspaceSlug/ai-chat/:chatId", "./(all)/[workspaceSlug]/(pi)/pi-chat/[chatId]/page.tsx"),
   ]),
 ];

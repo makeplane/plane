@@ -381,10 +381,10 @@ async def oauth_callback(
 
     Redirect Examples:
         Success (with chat):
-        https://app.plane.so/workspace/pi-chat/abc-123/?oauth_success=true
+        https://app.plane.so/workspace/ai-chat/abc-123/?oauth_success=true
 
         Success (project chat):
-        https://app.plane.so/workspace/projects/pi-chat/abc-123/?oauth_success=true&message_token=xyz
+        https://app.plane.so/workspace/projects/ai-chat/abc-123/?oauth_success=true&message_token=xyz
 
         Error:
         https://app.plane.so/?oauth_error=true&message=authorization_failed
@@ -501,11 +501,11 @@ async def oauth_callback(
                 )
             # Project chat redirect
             elif getattr(oauth_state, "is_project_chat", False):
-                redirect_url = f"{settings.plane_api.FRONTEND_URL}/{workspace_slug}/projects/pi-chat/{oauth_state.chat_id}/?oauth_success=true{message_token_param}"  # noqa: E501
+                redirect_url = f"{settings.plane_api.FRONTEND_URL}/{workspace_slug}/projects/ai-chat/{oauth_state.chat_id}/?oauth_success=true{message_token_param}"  # noqa: E501
             # Default chat redirect
             else:
                 redirect_url = (
-                    f"{settings.plane_api.FRONTEND_URL}/{workspace_slug}/pi-chat/{oauth_state.chat_id}/?oauth_success=true{message_token_param}"
+                    f"{settings.plane_api.FRONTEND_URL}/{workspace_slug}/ai-chat/{oauth_state.chat_id}/?oauth_success=true{message_token_param}"
                 )
         else:
             # Fallback to default success page

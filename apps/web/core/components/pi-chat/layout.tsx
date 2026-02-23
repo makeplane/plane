@@ -53,7 +53,7 @@ export const PiChatLayout = observer(function PiChatLayout(props: TProps) {
   const { workspaceSlug, chatId } = useParams();
   const pathName = usePathname();
   // derived states
-  const isFullScreen = pathName.includes("pi-chat") || isFullScreenProp;
+  const isFullScreen = pathName.includes("ai-chat") || isFullScreenProp;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
 
   useSWR(

@@ -1,6 +1,6 @@
 # Management Commands
 
-This directory contains all management commands for Plane PI, organized by functionality.
+This directory contains all management commands for Plane AI, organized by functionality.
 
 ## Usage
 

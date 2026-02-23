@@ -30,7 +30,7 @@ export const AiSidecarQuickActions = observer(function AiSidecarQuickActions(pro
   const { workspaceSlug, chatId, initPiChat } = props;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const chatLink = `${workspaceSlug}/projects/pi-chat/${chatId}`;
+  const chatLink = `${workspaceSlug}/projects/ai-chat/${chatId}`;
 
   const handleOpenInNewTab = () => window.open(`/${chatLink}`, "_blank");
 

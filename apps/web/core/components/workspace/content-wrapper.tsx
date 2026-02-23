@@ -30,7 +30,7 @@ export const WorkspaceContentWrapper = observer(function WorkspaceContentWrapper
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const shouldRenderAiCanvas = pathname.split("/").includes("pi-chat");
+  const shouldRenderAiCanvas = pathname.split("/").includes("ai-chat");
 
   // Use the context to determine if app rail should render
   const { shouldRenderAppRail } = useAppRailVisibility();

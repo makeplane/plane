@@ -16,13 +16,13 @@ from celery import shared_task
 
 
 def trigger_vectorization():
-    """Trigger vectorization for all workspaces via PI internal API."""
+    """Trigger vectorization for all workspaces via AI internal API."""
     try:
         pi_internal_secret = settings.PI_INTERNAL_SECRET
         pi_url = settings.PI_URL
 
         if not pi_internal_secret or not pi_url:
-            print("ERROR: PI configuration missing")
+            print("ERROR: AI configuration missing")
             return False
 
         vectorize_url = f"{pi_url.rstrip('/')}/api/v1/internal/vectorize/all/"

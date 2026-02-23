@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Starting Plane PI Migrator..."
+echo "Starting Plane AI Migrator..."
 
 # Bootstrap database (wait for DB, apply migrations, sync LLMs)
 python -m pi.manage bootstrap-db
@@ -15,7 +15,7 @@ echo "Initializing OpenSearch pipelines..."
 python -m pi.manage init-vector-pipelines
 
 # Check and ensure OpenSearch indices are created
-echo "Initializing Pi OpenSearch indices..."
+echo "Initializing AI OpenSearch indices..."
 python -m pi.manage init-vector-indexes
 
 echo "Migrator completed successfully!"

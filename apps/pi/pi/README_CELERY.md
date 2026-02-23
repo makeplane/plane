@@ -1,6 +1,6 @@
 # Celery Tasks Documentation
 
-This document explains the Celery background tasks used in Plane AI (PI) for vectorization, search indexing, and workspace management.
+This document explains the Celery background tasks used in Plane AI for vectorization, search indexing, and workspace management.
 
 ## Overview
 
@@ -74,7 +74,7 @@ These tasks run automatically on a schedule:
 
 **How it works**:
 - Queries Plane database for workspace plans
-- Compares with PI database to identify changes
+- Compares with AI database to identify changes
 - Queues appropriate vectorization or removal tasks
 
 ---

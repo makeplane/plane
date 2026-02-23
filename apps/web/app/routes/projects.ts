@@ -19,7 +19,7 @@ import type { RouteConfigEntry } from "@react-router/dev/routes";
  *
  * Contains workspace-level routes (home, get-started, cycles, analytics, etc.),
  * project-level routes (list, detail, archives), and enterprise features
- * (dashboards, initiatives, customers, teamspaces, pi-chat).
+ * (dashboards, initiatives, customers, teamspaces, ai).
  */
 export const projectRoutes: RouteConfigEntry[] = [
   layout("./(all)/[workspaceSlug]/(projects)/layout.tsx", [
@@ -430,10 +430,10 @@ export const projectRoutes: RouteConfigEntry[] = [
     // ====================================================================
 
     layout("./(all)/[workspaceSlug]/(projects)/projects/pi-chat/layout.tsx", [
-      route(":workspaceSlug/projects/pi-chat", "./(all)/[workspaceSlug]/(projects)/projects/pi-chat/page.tsx"),
-      route(":workspaceSlug/projects/pi-chat/new", "./(all)/[workspaceSlug]/(projects)/projects/pi-chat/new/page.tsx"),
+      route(":workspaceSlug/projects/ai-chat", "./(all)/[workspaceSlug]/(projects)/projects/pi-chat/page.tsx"),
+      route(":workspaceSlug/projects/ai-chat/new", "./(all)/[workspaceSlug]/(projects)/projects/pi-chat/new/page.tsx"),
       route(
-        ":workspaceSlug/projects/pi-chat/:chatId",
+        ":workspaceSlug/projects/ai-chat/:chatId",
         "./(all)/[workspaceSlug]/(projects)/projects/pi-chat/[chatId]/page.tsx"
       ),
     ]),

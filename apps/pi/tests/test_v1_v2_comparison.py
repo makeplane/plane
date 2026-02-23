@@ -1830,8 +1830,8 @@ class APITester:
             "workspace_id": self.config.workspace_id,
             "chat_id": self.config.chat_id,
             "message_id": str(uuid.uuid4()),  # Test with dummy message ID
-            "page_name": "Test Page from PI Chat",
-            "description": "This is a test page created from PI chat",
+            "page_name": "Test Page from Plane AI Chat",
+            "description": "This is a test page created from Plane AI chat",
             "access": 0,  # Private
         }
 

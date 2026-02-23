@@ -49,7 +49,7 @@ export const HomePageHeader = observer(function HomePageHeader() {
             <BetaBadge />
           </div>
           <Tooltip tooltipContent="Maximize" position="top">
-            <Link href={`/${workspaceSlug}/projects/pi-chat/${activeChatId}`}>
+            <Link href={`/${workspaceSlug}/projects/ai-chat/${activeChatId}`}>
               <Maximize className="size-4 text-tertiary" />
             </Link>
           </Tooltip>

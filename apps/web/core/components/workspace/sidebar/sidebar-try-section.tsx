@@ -66,7 +66,7 @@ export const SidebarTrySection = observer(() => {
         title: "Try Plane AI",
         icon: <PiIcon className="size-4" />,
         feature: "ai_chat_tried",
-        getHref: (slug: string) => `/${slug}/pi-chat/`,
+        getHref: (slug: string) => `/${slug}/ai-chat/`,
       },
     ],
     []

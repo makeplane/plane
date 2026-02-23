@@ -117,7 +117,7 @@ const dockItems: TDockItem[] = [
   {
     label: "AI",
     icon: <PiIcon className="size-5" />,
-    href: `/${workspaceSlug}/pi-chat`,
+    href: `/${workspaceSlug}/ai-chat`,
     isActive: isPiPath,
     shouldRender: isAppRailFeatureEnabled("pi-chat"),
   },

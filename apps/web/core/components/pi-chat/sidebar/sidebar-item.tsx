@@ -110,7 +110,7 @@ export const SidebarItem = observer(function SidebarItem(props: TProps) {
           if (!isFullScreen) {
             initPiChat();
           } else {
-            router.push(`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat`);
+            router.push(`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}ai-chat`);
           }
         }}
         handleClose={() => setIsDeleteModalOpen(false)}
@@ -133,7 +133,7 @@ export const SidebarItem = observer(function SidebarItem(props: TProps) {
         <SidebarNavItem isActive={isActive} className="gap-0">
           {isFullScreen ? (
             <Link
-              href={joinUrlPath(workspaceSlug?.toString() || "", isProjectLevel ? "projects" : "", "pi-chat", chatId)}
+              href={joinUrlPath(workspaceSlug?.toString() || "", isProjectLevel ? "projects" : "", "ai-chat", chatId)}
               className="w-full overflow-hidden"
             >
               <div className="text-body-xs-medium text-secondary truncate capitalize"> {title || "No title"}</div>

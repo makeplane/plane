@@ -194,7 +194,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
     // Don't redirect if we are in the floating chat window
     if (shouldRedirect && !routeChatId)
       (showProgress ? routerWithProgress : router).push(
-        joinUrlPath(workspaceSlug?.toString(), isProjectLevel ? "projects" : "", "pi-chat", chatIdToUse)
+        joinUrlPath(workspaceSlug?.toString(), isProjectLevel ? "projects" : "", "ai-chat", chatIdToUse)
       );
     const attachmentIds = attachments.map((attachment) => attachment.id);
     void getAnswer(
@@ -278,7 +278,7 @@ export const InputBox = observer(function InputBox(props: TProps) {
         e.preventDefault();
         if (e.key === "n") {
           if (isFullScreen) {
-            router.push(joinUrlPath(workspaceSlug?.toString(), isProjectLevel ? "projects" : "", "pi-chat"));
+            router.push(joinUrlPath(workspaceSlug?.toString(), isProjectLevel ? "projects" : "", "ai-chat"));
           } else {
             void initPiChat();
           }

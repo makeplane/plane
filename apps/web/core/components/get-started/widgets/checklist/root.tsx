@@ -82,7 +82,7 @@ export const GetStartedSection: FC = observer(function GetStartedSection() {
           router.push(`/${workspaceSlug}/settings/members/`);
           break;
         case "ai_chat_tried":
-          router.push(`/${workspaceSlug}/pi-chat`);
+          router.push(`/${workspaceSlug}/ai-chat`);
           break;
         case "integration_linked":
           router.push(`/${workspaceSlug}/settings/integrations/`);

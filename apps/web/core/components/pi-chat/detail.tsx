@@ -41,7 +41,7 @@ export const PiChatDetail = observer(function PiChatDetail(props: TProps) {
   const { isAuthorized: isChatAuthorized, isWorkspaceAuthorized, isLoading, activeChatId } = usePiChat();
   const { data: currentUser } = useUser();
   // derived values
-  const isFullScreen = pathName.includes("pi-chat") || isFullScreenProp;
+  const isFullScreen = pathName.includes("ai-chat") || isFullScreenProp;
   return (
     <>
       {isChatAuthorized && isWorkspaceAuthorized ? (

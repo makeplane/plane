@@ -37,7 +37,7 @@ export default {
     favorites: "Favoriler",
     pro: "Pro",
     upgrade: "Yükselt",
-    pi_chat: "Pay Çet",
+    pi_chat: "AI Çet",
     initiatives: "İnisiyetivs",
     teamspaces: "Timspeys",
     epics: "Epiks",
