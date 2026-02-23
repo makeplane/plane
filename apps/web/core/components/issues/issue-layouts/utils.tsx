@@ -16,6 +16,7 @@ import { CycleGroupIcon, CycleIcon, ModuleIcon, PriorityIcon, StateGroupIcon } f
 import type {
   GroupByColumnTypes,
   IGroupByColumn,
+  IState,
   TCycleGroups,
   IIssueDisplayProperties,
   IPragmaticDropPayload,
@@ -60,6 +61,29 @@ export type IssueUpdates = {
     ADD: string[];
     REMOVE: string[];
   };
+};
+
+/**
+ * Find a state in a project that belongs to a specific state group.
+ * Prefers the default state for the group, falls back to first match.
+ *
+ * Used by workspace-level views where issues are grouped by state_detail.group
+ * instead of state_id (since states are project-specific).
+ *
+ * @param projectStates - Array of states for a project
+ * @param targetStateGroup - The state group to find a state for (e.g., "backlog", "started")
+ * @returns The matching state, or undefined if no match found
+ */
+export const findStateByGroup = (
+  projectStates: IState[] | undefined,
+  targetStateGroup: string
+): IState | undefined => {
+  if (!projectStates) return undefined;
+
+  return (
+    projectStates.find((s) => s.group === targetStateGroup && s.default) ||
+    projectStates.find((s) => s.group === targetStateGroup)
+  );
 };
 
 export const isWorkspaceLevel = (type: EIssuesStoreType) =>
@@ -544,41 +568,81 @@ export const handleGroupDragDrop = async (
 
   // update updatedIssue values based on the source and destination groupIds
   if (source.groupId && destination.groupId && source.groupId !== destination.groupId && groupBy) {
-    const groupKey = ISSUE_FILTER_DEFAULT_DATA[groupBy];
-    let groupValue: any = clone(sourceIssue[groupKey]);
+    // Special handling for state_detail.group - need to map to actual state_id
+    if (groupBy === "state_detail.group") {
+      const { getProjectStates } = store.state;
+      if (!sourceIssue.project_id) {
+        throw new Error("Cannot resolve state group without a project context");
+      }
+      const projectStates = getProjectStates(sourceIssue.project_id);
+      const targetState = findStateByGroup(projectStates, destination.groupId);
 
-    // If groupValues is an array, remove source groupId and add destination groupId
-    if (Array.isArray(groupValue)) {
-      pull(groupValue, source.groupId);
-      if (destination.groupId !== "None") groupValue = uniq(concat(groupValue, [destination.groupId]));
-    } // else just update the groupValue based on destination groupId
-    else {
-      groupValue = destination.groupId === "None" ? null : destination.groupId;
+      if (targetState) {
+        updatedIssue = { ...updatedIssue, state_id: targetState.id };
+        issueUpdates["state_id"] = {
+          ADD: [targetState.id],
+          REMOVE: sourceIssue.state_id ? [sourceIssue.state_id] : [],
+        };
+      } else {
+        throw new Error(`No state found for group "${destination.groupId}" in project`);
+      }
+    } else {
+      const groupKey = ISSUE_FILTER_DEFAULT_DATA[groupBy];
+      let groupValue: any = clone(sourceIssue[groupKey]);
+
+      // If groupValues is an array, remove source groupId and add destination groupId
+      if (Array.isArray(groupValue)) {
+        pull(groupValue, source.groupId);
+        if (destination.groupId !== "None") groupValue = uniq(concat(groupValue, [destination.groupId]));
+      } // else just update the groupValue based on destination groupId
+      else {
+        groupValue = destination.groupId === "None" ? null : destination.groupId;
+      }
+
+      // keep track of updates on what was added and what was removed
+      issueUpdates[groupKey] = { ADD: getGroupId(destination.groupId), REMOVE: getGroupId(source.groupId) };
+      updatedIssue = { ...updatedIssue, [groupKey]: groupValue };
     }
-
-    // keep track of updates on what was added and what was removed
-    issueUpdates[groupKey] = { ADD: getGroupId(destination.groupId), REMOVE: getGroupId(source.groupId) };
-    updatedIssue = { ...updatedIssue, [groupKey]: groupValue };
   }
 
   // do the same for subgroup
   // update updatedIssue values based on the source and destination subGroupIds
   if (subGroupBy && source.subGroupId && destination.subGroupId && source.subGroupId !== destination.subGroupId) {
-    const subGroupKey = ISSUE_FILTER_DEFAULT_DATA[subGroupBy];
-    let subGroupValue: any = clone(sourceIssue[subGroupKey]);
+    // Special handling for state_detail.group as subGroupBy - need to map to actual state_id
+    if (subGroupBy === "state_detail.group") {
+      const { getProjectStates } = store.state;
+      if (!sourceIssue.project_id) {
+        throw new Error("Cannot resolve state group without a project context");
+      }
+      const projectStates = getProjectStates(sourceIssue.project_id);
+      const targetState = findStateByGroup(projectStates, destination.subGroupId);
 
-    // If subGroupValue is an array, remove source subGroupId and add destination subGroupId
-    if (Array.isArray(subGroupValue)) {
-      pull(subGroupValue, source.subGroupId);
-      if (destination.subGroupId !== "None") subGroupValue = uniq(concat(subGroupValue, [destination.subGroupId]));
-    } // else just update the subGroupValue based on destination subGroupId
-    else {
-      subGroupValue = destination.subGroupId === "None" ? null : destination.subGroupId;
+      if (targetState) {
+        updatedIssue = { ...updatedIssue, state_id: targetState.id };
+        issueUpdates["state_id"] = {
+          ADD: [targetState.id],
+          REMOVE: sourceIssue.state_id ? [sourceIssue.state_id] : [],
+        };
+      } else {
+        throw new Error(`No state found for group "${destination.subGroupId}" in project`);
+      }
+    } else {
+      const subGroupKey = ISSUE_FILTER_DEFAULT_DATA[subGroupBy];
+      let subGroupValue: any = clone(sourceIssue[subGroupKey]);
+
+      // If subGroupValue is an array, remove source subGroupId and add destination subGroupId
+      if (Array.isArray(subGroupValue)) {
+        pull(subGroupValue, source.subGroupId);
+        if (destination.subGroupId !== "None") subGroupValue = uniq(concat(subGroupValue, [destination.subGroupId]));
+      } // else just update the subGroupValue based on destination subGroupId
+      else {
+        subGroupValue = destination.subGroupId === "None" ? null : destination.subGroupId;
+      }
+
+      // keep track of updates on what was added and what was removed
+      issueUpdates[subGroupKey] = { ADD: getGroupId(destination.subGroupId), REMOVE: getGroupId(source.subGroupId) };
+      updatedIssue = { ...updatedIssue, [subGroupKey]: subGroupValue };
     }
-
-    // keep track of updates on what was added and what was removed
-    issueUpdates[subGroupKey] = { ADD: getGroupId(destination.subGroupId), REMOVE: getGroupId(source.subGroupId) };
-    updatedIssue = { ...updatedIssue, [subGroupKey]: subGroupValue };
   }
 
   if (updatedIssue && sourceIssue?.project_id) {

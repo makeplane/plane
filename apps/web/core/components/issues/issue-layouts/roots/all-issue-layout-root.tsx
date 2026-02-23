@@ -43,10 +43,9 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
   // search params
   const searchParams = useSearchParams();
   // store hooks
-  const {
-    issuesFilter: { filters, fetchFilters, updateFilterExpression },
-    issues: { clear, groupedIssueIds, fetchIssues, fetchNextIssues },
-  } = useIssues(EIssuesStoreType.GLOBAL);
+  const { issuesFilter, issues } = useIssues(EIssuesStoreType.GLOBAL);
+  const { filters, fetchFilters, updateFilterExpression } = issuesFilter;
+  const { clear, groupedIssueIds, fetchIssues, fetchNextIssues } = issues;
   const { fetchAllGlobalViews, getViewDetailsById } = useGlobalView();
   // Derived values
   const viewDetails = globalViewId ? getViewDetailsById(globalViewId) : undefined;
@@ -102,10 +101,20 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
         clear();
         toggleLoading(true);
         await fetchFilters(workspaceSlug, globalViewId);
-        await fetchIssues(workspaceSlug, globalViewId, groupedIssueIds ? "mutation" : "init-loader", {
-          canGroup: false,
-          perPageCount: 100,
-        });
+        // Get the layout after filters are fetched to determine if grouping is needed
+        // Access issuesFilter.filters directly to get the updated value from the store
+        const currentFilters = issuesFilter.filters?.[globalViewId];
+        const layout = currentFilters?.displayFilters?.layout;
+        // Calendar layout needs date-range parameters that only the calendar component can provide
+        // Don't fetch here for calendar - let the calendar component handle it
+        if (layout !== "calendar") {
+          // Kanban layout needs grouped data
+          const needsGrouping = layout === "kanban";
+          await fetchIssues(workspaceSlug, globalViewId, groupedIssueIds ? "mutation" : "init-loader", {
+            canGroup: needsGrouping,
+            perPageCount: needsGrouping ? 30 : 100,
+          });
+        }
         toggleLoading(false);
       }
     },

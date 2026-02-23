@@ -22,6 +22,7 @@ import type {
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // ui
 import { Spinner } from "@plane/ui";
+import { ChevronRight } from "lucide-react";
 import { renderFormattedPayloadDate, cn } from "@plane/utils";
 // constants
 import { MONTHS_LIST } from "@/constants/calendar";
@@ -30,12 +31,8 @@ import { MONTHS_LIST } from "@/constants/calendar";
 import { useIssues } from "@/hooks/store/use-issues";
 import useSize from "@/hooks/use-window-size";
 // store
-import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-import type { ICycleIssuesFilter } from "@/store/issue/cycle";
+import type { IBaseIssueFilterStore } from "@/store/issue/helpers/issue-filter-helper.store";
 import type { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
-import type { IModuleIssuesFilter } from "@/store/issue/module";
-import type { IProjectIssuesFilter } from "@/store/issue/project";
-import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 // local imports
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import type { TRenderQuickActions } from "../list/list-view-types";
@@ -45,7 +42,7 @@ import { CalendarWeekDays } from "./week-days";
 import { CalendarWeekHeader } from "./week-header";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore: IBaseIssueFilterStore;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   layout: "month" | "week" | undefined;
@@ -62,7 +59,7 @@ type Props = {
     sourceDate: string | undefined,
     destinationDate: string | undefined
   ) => Promise<void>;
-  addIssuesToView?: (issueIds: string[]) => Promise<any>;
+  addIssuesToView?: (issueIds: string[]) => Promise<unknown>;
   readOnly?: boolean;
   updateFilters?: (
     projectId: string,
@@ -71,6 +68,12 @@ type Props = {
   ) => Promise<void>;
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;
+  // Optional overrides for quick add - when not provided, uses store's viewFlags
+  enableQuickIssueCreate?: boolean;
+  disableIssueCreation?: boolean;
+  // "No Date" section props (for workspace views)
+  noDateIssueIds?: string[];
+  noDateIssueCount?: number;
 };
 
 export const CalendarChart = observer(function CalendarChart(props: Props) {
@@ -92,9 +95,14 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
     canEditProperties,
     readOnly = false,
     isEpic = false,
+    enableQuickIssueCreate: enableQuickIssueCreateProp,
+    disableIssueCreation: disableIssueCreationProp,
+    noDateIssueIds,
+    noDateIssueCount,
   } = props;
   // states
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [isNoDateCollapsed, setIsNoDateCollapsed] = useState(false);
   //refs
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
   // store hooks
@@ -104,7 +112,10 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
 
   const [windowWidth] = useSize();
 
-  const { enableIssueCreation, enableQuickAdd } = viewFlags || {};
+  // Use props if provided, otherwise fall back to store's viewFlags
+  const enableQuickAdd = enableQuickIssueCreateProp ?? viewFlags?.enableQuickAdd ?? false;
+  const enableIssueCreation =
+    disableIssueCreationProp !== undefined ? !disableIssueCreationProp : (viewFlags?.enableIssueCreation ?? true);
 
   const calendarPayload = issueCalendarView.calendarPayload;
 
@@ -113,6 +124,9 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
   const formattedDatePayload = renderFormattedPayloadDate(selectedDate) ?? undefined;
 
   // Enable Auto Scroll for calendar
+  // Note: Empty dependency array is intentional - refs are populated before effects run,
+  // so scrollableContainerRef.current is available on mount. React doesn't track ref.current
+  // changes, so including it in deps wouldn't cause re-runs anyway.
   useEffect(() => {
     const element = scrollableContainerRef.current;
 
@@ -123,7 +137,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
         element,
       })
     );
-  }, [scrollableContainerRef?.current]);
+  }, []);
 
   if (!calendarPayload || !formattedDatePayload)
     return (
@@ -229,6 +243,45 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                 isEpic={isEpic}
               />
             </div>
+
+            {/* No Date section - for workspace views */}
+            {noDateIssueIds && noDateIssueIds.length > 0 && (
+              <div className="hidden md:block border-t border-subtle-1">
+                <button
+                  type="button"
+                  className="flex w-full items-center gap-2 px-4 py-2 bg-layer-1 cursor-pointer hover:bg-layer-2 text-left"
+                  onClick={() => setIsNoDateCollapsed(!isNoDateCollapsed)}
+                >
+                  <ChevronRight
+                    className={cn("size-4 text-tertiary transition-transform", {
+                      "rotate-90": !isNoDateCollapsed,
+                    })}
+                  />
+                  <span className="text-13 font-medium text-secondary">No Date</span>
+                  <span className="text-11 text-tertiary">({noDateIssueCount ?? noDateIssueIds.length})</span>
+                </button>
+                {!isNoDateCollapsed && (
+                  <div className="px-4 py-2 bg-surface-1">
+                    <CalendarIssueBlocks
+                      date={new Date()}
+                      issueIdList={noDateIssueIds}
+                      loadMoreIssues={() => {}}
+                      getPaginationData={() => undefined}
+                      getGroupIssueCount={() => noDateIssueCount}
+                      quickActions={quickActions}
+                      enableQuickIssueCreate={false}
+                      disableIssueCreation={true}
+                      quickAddCallback={quickAddCallback}
+                      addIssuesToView={addIssuesToView}
+                      readOnly={readOnly}
+                      canEditProperties={canEditProperties}
+                      isDragDisabled
+                      isEpic={isEpic}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </IssueLayoutHOC>
 
