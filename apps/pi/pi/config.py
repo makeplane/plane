@@ -382,7 +382,7 @@ class Celery:
 
     # Using RabbitMQ for message brokering only (no result backend)
     # Tasks run asynchronously but progress is tracked via logs only
-    BROKER_URL: str = os.getenv("CELERY_BROKER_URL", None) or os.getenv("AMQP_URL", None) or "pyamqp://guest@localhost:5672//"
+    BROKER_URL: str = os.getenv("CELERY_BROKER_URL") or os.getenv("AMQP_URL") or "pyamqp://guest@localhost:5672//"
     RESULT_BACKEND: str | None = None
 
     TASK_SERIALIZER: str = "json"
@@ -423,7 +423,7 @@ class Settings:
 
     # AWS Configuration for S3 attachments
     AWS_S3_BUCKET: str = os.getenv("AWS_S3_BUCKET", "") or os.getenv("AWS_S3_BUCKET_NAME", "")
-    AWS_S3_REGION: str = os.getenv("AWS_S3_REGION", "")
+    AWS_S3_REGION: str = os.getenv("AWS_S3_REGION", "") or os.getenv("AWS_REGION", "")
     AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID", "")
     AWS_SECRET_ACCESS_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "")
     # If AWS_S3_ENDPOINT_URL is set, use it (for MinIO or S3-compatible storage)
