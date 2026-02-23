@@ -209,6 +209,26 @@ class WorkspaceViewViewSet(BaseViewSet):
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
+    # M2M fields that expose the raw FK in .values() when used as group_by.
+    FIELD_MAPPER = {
+        "labels__id": "label_ids",
+        "assignees__id": "assignee_ids",
+        "issue_module__module_id": "module_ids",
+    }
+
+    # Fields fetched in Phase 2 (includes annotated counts).
+    DETAIL_FIELDS = [
+        "id", "name", "state_id", "sort_order", "completed_at",
+        "priority", "start_date", "target_date", "sequence_id",
+        "project_id", "parent_id", "sub_issues_count",
+        "created_at", "updated_at", "created_by", "updated_by",
+        "attachment_count", "link_count", "is_draft", "archived_at",
+        "state__group", "trip_reference_number", "reference_number",
+        "hub_code", "hub_name", "customer_code", "customer_name",
+        "vendor_name", "vendor_code", "worker_code", "worker_name",
+        "business_type", "estimate_point", "source", "type_id",
+    ]
+
     def get_queryset(self, filters):
         """Phase 1: lean queryset for filtering, ordering, and pagination.
 
@@ -476,32 +496,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         group_by = request.GET.get("group_by", False)
         sub_group_by = request.GET.get("sub_group_by", False)
 
-        # Two-phase strategy: Phase 1 = lean filter/order/paginate; Phase 2 = full
-        # details on the small ID set. M2M relations enriched via batch IN-queries.
-
-        # M2M fields that expose the raw FK in .values() when used as group_by;
-        # Phase 1 rows carry these values so the paginator can group correctly.
-        FIELD_MAPPER = {
-            "labels__id": "label_ids",
-            "assignees__id": "assignee_ids",
-            "issue_module__module_id": "module_ids",
-        }
-
-        # Fields fetched in Phase 2 (includes annotated counts)
-        detail_fields = [
-            "id", "name", "state_id", "sort_order", "completed_at",
-            "priority", "start_date", "target_date", "sequence_id",
-            "project_id", "parent_id", "sub_issues_count",
-            "created_at", "updated_at", "created_by", "updated_by",
-            "attachment_count", "link_count", "is_draft", "archived_at",
-            "state__group", "trip_reference_number", "reference_number",
-            "hub_code", "hub_name", "customer_code", "customer_name",
-            "vendor_name", "vendor_code", "worker_code", "worker_name",
-            "business_type", "estimate_point", "source", "type_id",
-        ]
-
-        has_m2m_group = group_by and group_by in FIELD_MAPPER
-        has_m2m_subgroup = sub_group_by and sub_group_by in FIELD_MAPPER
+        has_m2m_group = group_by and group_by in self.FIELD_MAPPER
+        has_m2m_subgroup = sub_group_by and sub_group_by in self.FIELD_MAPPER
 
         def on_results_fn(issues):
             # Phase 1: extract IDs (+ M2M group-by keys if needed).
@@ -518,7 +514,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 return []
 
             # Phase 2: full details on the small ID set.
-            detail_qs_values = self._build_detail_queryset(page_ids).values(*detail_fields)
+            detail_qs_values = self._build_detail_queryset(page_ids).values(*self.DETAIL_FIELDS)
             logger.debug("[WorkspaceViewIssues] Phase 2 SQL (%d IDs):\n%s", len(page_ids), detail_qs_values.query)
             results = list(detail_qs_values)
             id_to_result = {r["id"]: r for r in results}
