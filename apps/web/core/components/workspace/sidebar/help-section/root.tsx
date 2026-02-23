@@ -93,11 +93,9 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
             <span className="text-11">{t("whats_new")}</span>
           </button>
         </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem
-          onClick={() => window.open("https://go.plane.so/p-discord", "_blank", "noopener,noreferrer")}
-        >
+        <CustomMenu.MenuItem onClick={() => window.open("https://forum.plane.so", "_blank", "noopener,noreferrer")}>
           <div className="flex items-center gap-x-2 rounded-sm text-11">
-            <span className="text-11">Discord</span>
+            <span className="text-11">Forum</span>
           </div>
         </CustomMenu.MenuItem>
         <div className="px-1 pt-2 mt-1 text-11 text-secondary border-t border-subtle">

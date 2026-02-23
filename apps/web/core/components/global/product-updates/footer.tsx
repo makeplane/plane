@@ -52,12 +52,12 @@ export function ProductUpdatesFooter() {
           <circle cx={1} cy={1} r={1} />
         </svg>
         <a
-          href="https://go.plane.so/p-discord"
+          href="https://forum.plane.so"
           target="_blank"
           className="text-13 text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
           rel="noreferrer"
         >
-          Discord
+          Forum
         </a>
       </div>
       <a
