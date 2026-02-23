@@ -8,10 +8,11 @@ from django.conf import settings
 from django.utils import timezone
 
 # Django imports
-from django.db import models
+from django.db import connection, models, transaction
 
 # Module imports
 from plane.utils.html_processor import strip_tags
+from plane.utils.uuid import convert_uuid_to_integer
 
 from .base import BaseModel
 
@@ -67,6 +68,22 @@ class Page(BaseModel):
         """Return owner email and page name"""
         return f"{self.owned_by.email} <{self.name}>"
 
+    def _get_sort_order(self, project):
+        """Get the next sort order for the page within a specific project."""
+        if self.access == Page.PRIVATE_ACCESS:
+            largest = ProjectPage.objects.filter(
+                page__access=Page.PRIVATE_ACCESS,
+                page__owned_by=self.owned_by,
+                project=project,
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+        else:
+            largest = ProjectPage.objects.filter(
+                page__access=Page.PUBLIC_ACCESS,
+                project=project,
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+
+        return (largest or self.DEFAULT_SORT_ORDER) + 10000
+
     def save(self, *args, **kwargs):
         # Strip the html tags using html parser
         self.description_stripped = (
@@ -74,7 +91,27 @@ class Page(BaseModel):
             if (self.description_html == "" or self.description_html is None)
             else strip_tags(self.description_html)
         )
-        super(Page, self).save(*args, **kwargs)
+
+        if not self._state.adding:
+            original = Page.objects.get(pk=self.pk)
+            if original.access != self.access:
+                with transaction.atomic():
+                    # Get the project pages for the page and update the sort order
+                    project_pages = list(ProjectPage.objects.filter(page=self).select_related("project"))
+
+                    # Acquire advisory locks for all projects to prevent race conditions
+                    for project_page in project_pages:
+                        lock_key = convert_uuid_to_integer(project_page.project_id)
+                        with connection.cursor() as cursor:
+                            cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
+
+                    for project_page in project_pages:
+                        project_page.sort_order = self._get_sort_order(project_page.project)
+                    # Bulk update all project pages in a single query
+                    if project_pages:
+                        ProjectPage.objects.bulk_update(project_pages, ["sort_order"])
+
+                    super(Page, self).save(*args, **kwargs)
 
 
 class PageLog(BaseModel):
@@ -133,9 +170,12 @@ class PageLabel(BaseModel):
 
 
 class ProjectPage(BaseModel):
+    DEFAULT_SORT_ORDER = 65535
+
     project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="project_pages")
     page = models.ForeignKey("db.Page", on_delete=models.CASCADE, related_name="project_pages")
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="project_pages")
+    sort_order = models.FloatField(default=DEFAULT_SORT_ORDER)
 
     class Meta:
         unique_together = ["project", "page", "deleted_at"]
@@ -153,6 +193,42 @@ class ProjectPage(BaseModel):
 
     def __str__(self):
         return f"{self.project.name} {self.page.name}"
+
+    def _get_sort_order(self):
+        """Get the next sort order for the project page based on page access type."""
+        if self.page.access == Page.PRIVATE_ACCESS:
+            # For private pages, get max sort_order among pages owned by same user in same project
+            largest = ProjectPage.objects.filter(
+                page__access=Page.PRIVATE_ACCESS,
+                page__owned_by=self.page.owned_by,
+                project=self.project,
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+        else:
+            # For public pages, get max sort_order among all public pages in same project
+            largest = ProjectPage.objects.filter(
+                page__access=Page.PUBLIC_ACCESS,
+                project=self.project,
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+
+        return (largest or self.DEFAULT_SORT_ORDER) + 10000
+
+    def save(self, *args, **kwargs):
+        # Set sort_order for new project pages
+        if self._state.adding:
+            with transaction.atomic():
+                # Create a lock for this specific project using a transaction-level advisory lock
+                # This ensures only one transaction per project can execute this code at a time
+                # The lock is automatically released when the transaction ends
+                lock_key = convert_uuid_to_integer(self.project_id)
+
+                with connection.cursor() as cursor:
+                    # Get an exclusive transaction-level lock using the project ID as the lock key
+                    cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
+
+                self.sort_order = self._get_sort_order()
+                super(ProjectPage, self).save(*args, **kwargs)
+        else:
+            super(ProjectPage, self).save(*args, **kwargs)
 
 
 class PageVersion(BaseModel):
