@@ -198,6 +198,7 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
         {showContentTooLargeBanner && <ContentLimitBanner className="px-page-x" />}
         <div className="shrink-0 relative size-full flex flex-col overflow-hidden">
           <PageEditorToolbarRoot
+            isGeneratingPageSummary={isGeneratingPageSummary}
             handleOpenNavigationPane={handleOpenNavigationPane}
             isNavigationPaneOpen={isNavigationPaneOpen}
             page={page}

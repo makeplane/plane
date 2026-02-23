@@ -431,6 +431,14 @@ export class PiChatService extends APIService {
       });
   }
 
+  fetchPageSummary(pageId: string): Promise<{ summary: string; generated_at: string }> {
+    return this.get(`/api/v1/pages/${pageId}/summary/`, {})
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   // generate page summary (SSE stream)
   // Returns an abort function to cancel the stream.
   generatePageSummary(

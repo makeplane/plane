@@ -11,27 +11,35 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 import { Button } from "@plane/propel/button";
 import { IconButton } from "@plane/propel/icon-button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 import { RefreshCcwIcon, Sparkles } from "lucide-react";
 import { observer } from "mobx-react";
 
 export const PageAiSummaryAction = observer(function PageAiSummaryAction(props: {
+  workspaceSlug: string;
   pageId: string | undefined;
+  storeType: EPageStoreType;
   type?: "generate" | "regenerate";
+  updatedAt?: string;
+  isGenerating: boolean;
   handleLoading: (isGenerating: boolean) => void;
 }) {
-  const { pageId, type, handleLoading } = props;
-  const { fetchPageAiSummary } = usePageStore(EPageStoreType.WORKSPACE);
-
+  const { workspaceSlug, pageId, storeType, type, handleLoading, updatedAt, isGenerating } = props;
+  const { generatePageAiSummary } = usePageStore(storeType);
+  const { getWorkspaceBySlug } = useWorkspace();
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
   const handleGeneratePageAiSummary = () => {
-    if (!pageId) return;
+    if (!pageId || !workspaceId) return;
 
     handleLoading(true);
 
-    const abort = fetchPageAiSummary(pageId, {
+    const abort = generatePageAiSummary(pageId, workspaceId, {
       onComplete: () => {
         handleLoading(false);
       },
@@ -51,13 +59,20 @@ export const PageAiSummaryAction = observer(function PageAiSummaryAction(props: 
   };
   if (type === "regenerate") {
     return (
-      <IconButton
-        icon={RefreshCcwIcon}
-        variant="ghost"
-        size="sm"
-        color="secondary"
-        onClick={handleGeneratePageAiSummary}
-      />
+      <Tooltip
+        tooltipContent={
+          updatedAt && `Last updated on ${renderFormattedDate(updatedAt)} at ${renderFormattedTime(updatedAt)}`
+        }
+      >
+        <IconButton
+          icon={RefreshCcwIcon}
+          variant="ghost"
+          size="sm"
+          color="secondary"
+          onClick={handleGeneratePageAiSummary}
+          disabled={isGenerating}
+        />
+      </Tooltip>
     );
   }
 
@@ -67,6 +82,7 @@ export const PageAiSummaryAction = observer(function PageAiSummaryAction(props: 
       size="base"
       onClick={handleGeneratePageAiSummary}
       prependIcon={<Sparkles className="size-3" />}
+      disabled={isGenerating}
     >
       AI summary
     </Button>

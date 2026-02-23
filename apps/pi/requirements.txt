@@ -12,7 +12,6 @@ aenum==3.1.15
 cryptography==46.0.5
 groq==0.31.0
 redis==7.1.0
-
 boto3==1.40.16
 
 # langchain

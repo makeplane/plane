@@ -35,11 +35,19 @@ type Props = {
   isNavigationPaneOpen: boolean;
   page: TPageInstance;
   storeType: EPageStoreType;
+  isGeneratingPageSummary: boolean;
   setIsGeneratingPageSummary: (isGenerating: boolean) => void;
 };
 
 export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(props: Props) {
-  const { handleOpenNavigationPane, isNavigationPaneOpen, page, storeType, setIsGeneratingPageSummary } = props;
+  const {
+    handleOpenNavigationPane,
+    isNavigationPaneOpen,
+    page,
+    storeType,
+    setIsGeneratingPageSummary,
+    isGeneratingPageSummary,
+  } = props;
   // translation
   const { t } = useTranslation();
   // navigation
@@ -76,8 +84,14 @@ export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(pro
             <div className="flex-1">{editorRef && <PageToolbar editorRef={editorRef} />}</div>
             <div className="flex items-center gap-2">
               <PageCollaboratorsList page={page} />
-              {storeType === EPageStoreType.WORKSPACE && isPageAiSummaryEnabled && (
-                <PageAiSummaryAction pageId={page.id} handleLoading={setIsGeneratingPageSummary} />
+              {isPageAiSummaryEnabled && (
+                <PageAiSummaryAction
+                  workspaceSlug={workspaceSlug}
+                  isGenerating={isGeneratingPageSummary}
+                  pageId={page.id}
+                  handleLoading={setIsGeneratingPageSummary}
+                  storeType={storeType}
+                />
               )}
               {!isNavigationPaneOpen && (
                 <button

@@ -12,6 +12,7 @@
 # models/base.py
 import uuid
 from datetime import datetime
+from datetime import timezone
 from typing import Optional
 
 from sqlalchemy import TIMESTAMP
@@ -25,7 +26,7 @@ from pi.core.context import get_current_user_context
 
 
 def get_current_time() -> datetime:
-    return datetime.utcnow()
+    return datetime.now(timezone.utc)
 
 
 def utc_now() -> datetime:

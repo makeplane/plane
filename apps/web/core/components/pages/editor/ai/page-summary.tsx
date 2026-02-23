@@ -19,29 +19,52 @@ import { IconButton } from "@plane/propel/icon-button";
 import { PiIcon } from "@plane/propel/icons";
 import { Streamdown } from "streamdown";
 import { PageAiSummaryAction } from "./summary-action";
+import { EPillSize, EPillVariant, ERadius, Pill } from "@plane/propel/pill";
+import useSWR from "swr";
 
+const isStale = (pageUpdatedAt: Date | string, summaryUpdatedAt: Date | string) => {
+  const currentTime = new Date().getTime();
+  const pageTime = new Date(pageUpdatedAt).getTime();
+  const summaryTime = new Date(summaryUpdatedAt).getTime();
+
+  if (currentTime - summaryTime < 60 * 1000) return false;
+  return pageTime - summaryTime > 2 * 60 * 1000;
+};
 export const PageSummary = observer(function PageSummary({
+  workspaceSlug,
   isGeneratingPageSummary,
   pageId,
+  storeType,
   setIsGeneratingPageSummary,
 }: {
+  workspaceSlug: string;
   isGeneratingPageSummary: boolean;
   pageId: string;
+  storeType: EPageStoreType;
   setIsGeneratingPageSummary: (isGenerating: boolean) => void;
 }) {
-  const { getPageAiSummary, removePageAiSummary } = usePageStore(EPageStoreType.WORKSPACE);
-  const pageAiSummary = getPageAiSummary(pageId);
-
+  const { getPageAiSummary, removePageAiSummary, getPageById, fetchPageAiSummary } = usePageStore(storeType);
+  const summaryData = getPageAiSummary(pageId);
+  const page = getPageById(pageId);
   const gradientBackground = `linear-gradient(to right, var(--label-purple-bg), var(--label-indigo-bg), var(--bg-accent-subtle-hover), var(--label-emerald-bg), var(--label-yellow-bg), var(--label-orange-bg), var(--label-crimson-bg), var(--label-pink-bg))`;
+  const summary = summaryData?.summary;
+  const updatedAt = summaryData?.updated_at;
+
+  // fetch page AI summary
+  useSWR(pageId ? ["PAGE_AI_SUMMARY", pageId] : null, pageId ? () => fetchPageAiSummary(pageId) : null, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
 
   return (
     <div
       className={cn(
         "relative overflow-hidden rounded-2xl px-4 border border-transparent transition-all duration-200 ease-in-out mt-6",
         {
-          "h-[52px] border-subtle-1": isGeneratingPageSummary && !pageAiSummary,
-          "border-subtle-1": pageAiSummary,
-          "h-0": !isGeneratingPageSummary && !pageAiSummary,
+          "h-[52px] border-subtle-1": isGeneratingPageSummary && !summary,
+          "border-subtle-1": summary,
+          "h-0": !isGeneratingPageSummary && !summary,
         }
       )}
     >
@@ -49,7 +72,7 @@ export const PageSummary = observer(function PageSummary({
         className="blur-[140px] absolute top-0 left-0 w-full h-full z-0 pointer-events-none"
         style={{ background: gradientBackground }}
       />
-      {isGeneratingPageSummary && !pageAiSummary ? (
+      {isGeneratingPageSummary && !summary ? (
         <div className="h-[52px] flex items-center justify-start relative z-10">
           <span className="shimmer text-body-sm-regular">Generating summary of this page</span>
         </div>
@@ -63,7 +86,25 @@ export const PageSummary = observer(function PageSummary({
             <div className="flex items-center gap-2">
               {!isGeneratingPageSummary && (
                 <>
-                  <PageAiSummaryAction type="regenerate" pageId={pageId} handleLoading={setIsGeneratingPageSummary} />
+                  {page?.updated_at && updatedAt && isStale(page.updated_at, updatedAt) && (
+                    <Pill
+                      variant={EPillVariant.WARNING}
+                      size={EPillSize.SM}
+                      radius={ERadius.SQUARE}
+                      className="border-none bg-warning-subtle text-warning-secondary"
+                    >
+                      Stale
+                    </Pill>
+                  )}
+                  <PageAiSummaryAction
+                    workspaceSlug={workspaceSlug}
+                    isGenerating={isGeneratingPageSummary}
+                    type="regenerate"
+                    pageId={pageId}
+                    storeType={storeType}
+                    handleLoading={setIsGeneratingPageSummary}
+                    updatedAt={updatedAt}
+                  />
                   <IconButton
                     icon={X}
                     variant="ghost"
@@ -76,7 +117,7 @@ export const PageSummary = observer(function PageSummary({
             </div>
           </div>
           <div className="text-body-sm-regular text-primary">
-            <Streamdown isAnimating={isGeneratingPageSummary}>{pageAiSummary ?? ""}</Streamdown>
+            <Streamdown isAnimating={isGeneratingPageSummary}>{summary ?? ""}</Streamdown>
           </div>
           <div className="flex items-center gap-2 text-placeholder">
             <PiIcon />

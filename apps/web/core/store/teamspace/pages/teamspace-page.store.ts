@@ -39,6 +39,8 @@ import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import type { TTeamspacePage } from "./teamspace-page";
 import { TeamspacePage } from "./teamspace-page";
+import { PiChatService } from "@/services/pi-chat.service";
+import { createPageAiSummaryActions } from "@/store/pages/page-ai-summary.helpers";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 type TError = { title: string; description: string };
@@ -51,6 +53,7 @@ export interface ITeamspacePageStore {
   error: TError | undefined;
   filters: TPageFilters;
   pagesSummary: TTeamspacePagesSummary | undefined;
+  pageAiSummary: Map<string, { summary: string | undefined; updated_at: string }>;
   // page type arrays
   publicPageIds: string[];
   archivedPageIds: string[];
@@ -72,6 +75,7 @@ export interface ITeamspacePageStore {
   clearRootParentCache: () => void;
   getParentPages: (pageId: string) => TPage[] | undefined;
   getOrderedParentPages: (pageId: string) => TPage[] | undefined;
+  getPageAiSummary: (pageId: string) => { summary: string | undefined; updated_at: string } | undefined;
   // fetch actions
   fetchPagesList: (
     workspaceSlug: string,
@@ -118,6 +122,13 @@ export interface ITeamspacePageStore {
   // page sharing actions
   fetchPageSharedUsers: (pageId: string) => Promise<void>;
   bulkUpdatePageSharedUsers: (pageId: string, sharedUsers: TPageSharedUser[]) => Promise<void>;
+  fetchPageAiSummary: (pageId: string) => Promise<string | undefined>;
+  generatePageAiSummary: (
+    pageId: string,
+    workspaceId: string,
+    callbacks?: { onComplete?: () => void; onError?: (error: { code: string; message: string }) => void }
+  ) => (() => void) | undefined;
+  removePageAiSummary: (pageId: string) => void;
 }
 
 export class TeamspacePageStore implements ITeamspacePageStore {
@@ -131,6 +142,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
     sortBy: "desc",
   };
   pagesSummary: TTeamspacePagesSummary | undefined = undefined;
+  pageAiSummary: Map<string, { summary: string | undefined; updated_at: string }> = new Map();
   // page type arrays
   publicPageIds: string[] = [];
   archivedPageIds: string[] = [];
@@ -146,6 +158,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
   // services
   teamspacePageService;
   pageShareService;
+  piChatService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -155,6 +168,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       error: observable,
       filters: observable,
       pagesSummary: observable,
+      pageAiSummary: observable,
       // page type arrays
       publicPageIds: observable,
       archivedPageIds: observable,
@@ -185,7 +199,15 @@ export class TeamspacePageStore implements ITeamspacePageStore {
     // services
     this.teamspacePageService = new TeamspacePageService();
     this.pageShareService = new PageShareService();
-
+    this.piChatService = new PiChatService();
+    const pageAiSummaryActions = createPageAiSummaryActions({
+      piChatService: this.piChatService,
+      pageAiSummary: this.pageAiSummary,
+      entityType: "page",
+    });
+    this.fetchPageAiSummary = pageAiSummaryActions.fetchPageAiSummary;
+    this.generatePageAiSummary = pageAiSummaryActions.generatePageAiSummary;
+    this.removePageAiSummary = pageAiSummaryActions.removePageAiSummary;
     // Set up reactions to automatically update page type arrays
     this.setupReactions();
 
@@ -266,6 +288,8 @@ export class TeamspacePageStore implements ITeamspacePageStore {
     this.disposers = [];
     this._parentPagesMap.clear();
   }
+
+  getPageAiSummary = computedFn((pageId: string) => this.pageAiSummary.get(pageId));
 
   /**
    * @description check if any page is available
@@ -966,4 +990,12 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       await this.pageShareService.bulkUpdateWorkspacePageSharedUsers(workspaceSlug, pageId, sharedUsers);
     }
   };
+
+  fetchPageAiSummary!: (pageId: string) => Promise<string | undefined>;
+  generatePageAiSummary!: (
+    pageId: string,
+    workspaceId: string,
+    callbacks?: { onComplete?: () => void; onError?: (error: { code: string; message: string }) => void }
+  ) => (() => void) | undefined;
+  removePageAiSummary!: (pageId: string) => void;
 }

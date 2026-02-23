@@ -294,9 +294,10 @@ class PageContentService(ABC):
             # 4. Stream chunks - yield immediately AND collect for tracking
             chunks = []
             async for chunk in llm.astream(messages):
-                if chunk and chunk.content:
-                    chunks.append(chunk)  # Collect for token tracking
-                    yield chunk.content  # Send to user immediately (no delay!)
+                if chunk:
+                    chunks.append(chunk)  # Collect ALL chunks for token tracking (usage metadata arrives in empty-content chunks)
+                    if chunk.content:
+                        yield chunk.content  # Only yield content chunks to the client
 
             # 5. Track aggregated usage (after streaming completes)
             if chunks:

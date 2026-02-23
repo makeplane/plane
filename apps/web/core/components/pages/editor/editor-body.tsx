@@ -55,6 +55,7 @@ import { PageContentLoader } from "../loaders/page-content-loader";
 import { PageEditorHeaderRoot } from "./header";
 import { PageContentBrowser } from "./summary";
 import { PageSummary } from "./ai/page-summary";
+import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
 // types
 
 // Add a CSS keyframe animation
@@ -119,6 +120,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
   const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
   const { getUserDetails } = useMember();
+  const { isPageAiSummaryEnabled } = usePageFlag({ workspaceSlug: workspaceSlug?.toString() ?? "" });
 
   // derived values
   const {
@@ -292,10 +294,12 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
         <div>
           <div className="page-header-container group/page-header">
             <div className={blockWidthClassName}>
-              {storeType === EPageStoreType.WORKSPACE && (
+              {isPageAiSummaryEnabled && (
                 <PageSummary
+                  workspaceSlug={workspaceSlug}
                   isGeneratingPageSummary={isGeneratingPageSummary}
                   pageId={pageId}
+                  storeType={storeType}
                   setIsGeneratingPageSummary={setIsGeneratingPageSummary}
                 />
               )}

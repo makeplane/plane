@@ -41,4 +41,4 @@ class SummarizeService(PageContentService):
 
     def get_usage_type(self) -> str:
         """Return usage type for token tracking."""
-        return "summarize"
+        return "page_summary"
