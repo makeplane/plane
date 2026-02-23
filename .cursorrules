@@ -1,0 +1,36 @@
+---
+# Plane-FA Cursor Rules
+
+## Core Rule: Upstream Safety
+- Never modify core Plane files without strong reason
+- If you must modify a core file, add comment: // [FA-CUSTOM] reason
+- Prefer: create new file and extend, don't modify original
+- Prefer: wrapper component over modifying original component
+
+## FA File Structure
+- lib/fa/           → FA utility functions
+- components/fa/    → FA components
+- locales/fa/       → translations
+- hooks/fa/         → FA hooks
+
+## Naming Convention
+- Files: fa-date-utils.ts
+- Components: FaDatePicker.tsx
+- Env vars: FA_ENABLE_SHAMSI
+
+## TypeScript
+- No `any` — always explicit types
+- Date objects not raw strings
+- Keep interfaces in types/fa/
+
+## Git Commit Format
+[fa] feat: add shamsi date picker
+[fa] fix: rtl layout in sidebar
+[fa] chore: sync with upstream
+
+## Never
+- ❌ secrets in code
+- ❌ console.log in production code
+- ❌ commit directly to main
+- ❌ commit .env file
+---
