@@ -77,8 +77,8 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
   const isButtonDisabled = useMemo(
     () =>
       !!resetFormData.password &&
-      getPasswordStrength(resetFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
-      resetFormData.password === resetFormData.confirm_password
+        getPasswordStrength(resetFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
+        resetFormData.password === resetFormData.confirm_password
         ? false
         : true,
     [resetFormData]
@@ -146,6 +146,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               onBlur={() => setIsPasswordInputFocused(false)}
               autoComplete="new-password"
               autoFocus
+              dir="ltr"
             />
             {showPassword.password ? (
               <EyeOff
@@ -176,6 +177,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
               autoComplete="new-password"
+              dir="ltr"
             />
             {showPassword.retypePassword ? (
               <EyeOff

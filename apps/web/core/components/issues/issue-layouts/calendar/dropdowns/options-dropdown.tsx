@@ -142,7 +142,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                     <button
                       key={layout}
                       type="button"
-                      className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-left text-11 hover:bg-layer-1"
+                      className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-start text-11 hover:bg-layer-1"
                       onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
                     >
                       {layoutDetails.title}
@@ -151,7 +151,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                   ))}
                   <button
                     type="button"
-                    className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-left text-11 hover:bg-layer-1"
+                    className="flex w-full items-center justify-between gap-2 rounded-sm px-1 py-1.5 text-start text-11 hover:bg-layer-1"
                     onClick={handleToggleWeekends}
                   >
                     {t("common.actions.show_weekends")}

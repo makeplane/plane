@@ -65,9 +65,8 @@ export const CalendarIssueBlock = observer(
     const customActionButton = (
       <div
         ref={menuActionRef}
-        className={`w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
-          isMenuActive ? "bg-layer-1-active text-primary" : "text-secondary"
-        }`}
+        className={`w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${isMenuActive ? "bg-layer-1-active text-primary" : "text-secondary"
+          }`}
         onClick={() => setIsMenuActive(!isMenuActive)}
       >
         <MoreHorizontal className="h-3.5 w-3.5" />
@@ -134,7 +133,9 @@ export const CalendarIssueBlock = observer(
                         displayProperties={issuesFilter?.issueFilters?.displayProperties}
                       />
                     )}
-                    <div className="truncate text-13 font-medium md:font-regular md:text-11">{issue.name}</div>
+                    <div className="truncate text-13 font-medium md:font-regular md:text-11" dir="auto">
+                      {issue.name}
+                    </div>
                   </div>
                   <div
                     className={cn("flex-shrink-0 size-5", {

@@ -79,7 +79,9 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                 {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />}
               </div>
             </div>
-            <h3 className="truncate w-full text-13">{issue.name}</h3>
+            <h3 className="truncate w-full text-13 text-start" dir="auto">
+              {issue.name}
+            </h3>
           </div>
 
           <div className="flex items-center justify-between">

@@ -184,7 +184,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                   onChange(val);
                   setValue(`emails.${index}.role_active`, true);
                 }}
-                className="w-full flex-shrink-0 text-left"
+                className="w-full flex-shrink-0 text-start"
               >
                 <Listbox.Button
                   type="button"
@@ -192,17 +192,15 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                   className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-13 border-[0.5px] border-strong"
                 >
                   <span
-                    className={`text-13 ${
-                      !getValues(`emails.${index}.role_active`) ? "text-placeholder" : "text-primary"
-                    } sm:text-13`}
+                    className={`text-13 ${!getValues(`emails.${index}.role_active`) ? "text-placeholder" : "text-primary"
+                      } sm:text-13`}
                   >
                     {ROLE[value]}
                   </span>
 
                   <ChevronDownIcon
-                    className={`size-3 ${
-                      !getValues(`emails.${index}.role_active`) ? "stroke-placeholder" : "stroke-primary"
-                    }`}
+                    className={`size-3 ${!getValues(`emails.${index}.role_active`) ? "stroke-placeholder" : "stroke-primary"
+                      }`}
                   />
                 </Listbox.Button>
 
@@ -219,8 +217,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                         key={key}
                         value={parseInt(key)}
                         className={({ active, selected }) =>
-                          `cursor-pointer select-none truncate rounded-sm px-1 py-1.5 ${
-                            active || selected ? "bg-onboarding-background-400/40" : ""
+                          `cursor-pointer select-none truncate rounded-sm px-1 py-1.5 ${active || selected ? "bg-onboarding-background-400/40" : ""
                           } ${selected ? "text-primary" : "text-secondary"}`
                         }
                       >

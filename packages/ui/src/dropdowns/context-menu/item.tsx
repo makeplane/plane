@@ -158,7 +158,7 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
         ref={setReferenceElement}
         type="button"
         className={cn(
-          "w-full flex items-center gap-2 px-1 py-1.5 text-left text-secondary rounded-sm text-11 select-none",
+          "w-full flex items-center gap-2 px-1 py-1.5 text-start text-secondary rounded-sm text-11 select-none",
           {
             "bg-layer-transparent-hover": isActive,
             "text-placeholder": item.disabled,
@@ -205,7 +205,7 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
                   key={nestedItem.key}
                   type="button"
                   className={cn(
-                    "w-full flex items-center gap-2 px-1 py-1.5 text-left text-secondary rounded-sm text-11 select-none",
+                    "w-full flex items-center gap-2 px-1 py-1.5 text-start text-secondary rounded-sm text-11 select-none",
                     {
                       "bg-layer-transparent-hover": index === activeNestedIndex,
                       "text-placeholder": nestedItem.disabled,

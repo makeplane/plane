@@ -20,7 +20,7 @@ import { cn } from "../utils";
 import type { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
 
 // Context to share the close handler with option components
-const DropdownContext = createContext<() => void>(() => {});
+const DropdownContext = createContext<() => void>(() => { });
 
 function CustomSelect(props: ICustomSelectProps) {
   const {
@@ -76,7 +76,7 @@ function CustomSelect(props: ICustomSelectProps) {
           onChange?.(val);
           closeDropdown();
         }}
-        className={cn("relative flex-shrink-0 text-left", className)}
+        className={cn("relative flex-shrink-0 text-start", className)}
         onKeyDown={handleKeyDown}
         disabled={disabled}
       >
@@ -86,9 +86,8 @@ function CustomSelect(props: ICustomSelectProps) {
               <button
                 ref={setReferenceElement}
                 type="button"
-                className={`flex items-center justify-between gap-1 text-11 rounded ${
-                  disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover"
-                } ${customButtonClassName}`}
+                className={`flex items-center justify-between gap-1 text-11 rounded ${disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover"
+                  } ${customButtonClassName}`}
                 onClick={toggleDropdown}
               >
                 {customButton}

@@ -17,8 +17,8 @@ type Props = {
 } & ({ as: "button"; onClick: () => void } | { as: "link"; href: string }) &
   (
     | {
-        icon: LucideIcon | React.FC<ISvgIcons>;
-      }
+      icon: LucideIcon | React.FC<ISvgIcons>;
+    }
     | { iconNode: React.ReactElement }
   );
 
@@ -26,7 +26,7 @@ export function SettingsSidebarItem(props: Props) {
   const { as, isActive, label } = props;
   // common class
   const className = cn(
-    "flex items-center gap-2 py-1.5 px-2 rounded-lg text-body-sm-medium text-secondary text-left transition-colors",
+    "flex items-center gap-2 py-1.5 px-2 rounded-lg text-body-sm-medium text-secondary text-start transition-colors",
     {
       "bg-layer-transparent-selected text-primary": isActive,
       "hover:bg-layer-transparent-hover": !isActive,

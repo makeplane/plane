@@ -90,7 +90,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             disabled={disabled}
             buttonVariant="transparent-with-text"
             className="w-full grow group"
-            buttonContainerClassName="w-full text-left h-7.5"
+            buttonContainerClassName="w-full text-start h-7.5"
             buttonClassName={`text-body-xs-medium ${issue?.state_id ? "" : "text-placeholder"}`}
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
@@ -107,7 +107,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             multiple
             buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
             className="w-full grow group"
-            buttonContainerClassName="w-full text-left h-7.5"
+            buttonContainerClassName="w-full text-start h-7.5"
             buttonClassName={`text-body-xs-medium justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-placeholder"}`}
             hideIcon={issue.assignee_ids?.length === 0}
             dropdownArrow
@@ -122,7 +122,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             disabled={disabled}
             buttonVariant="transparent-with-text"
             className="w-full h-7.5 grow rounded-sm"
-            buttonContainerClassName="w-full text-left h-7.5"
+            buttonContainerClassName="w-full text-start h-7.5"
             buttonClassName={`text-body-xs-medium whitespace-nowrap [&_svg]:size-3.5 ${!issue?.priority || issue?.priority === "none" ? "text-placeholder" : ""}`}
           />
         </SidebarPropertyListItem>
@@ -156,7 +156,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             maxDate={maxDate ?? undefined}
             disabled={disabled}
             className="w-full grow group"
-            buttonContainerClassName="w-full text-left h-7.5"
+            buttonContainerClassName="w-full text-start h-7.5"
             buttonClassName={`text-body-xs-medium ${issue?.start_date ? "" : "text-placeholder"}`}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
@@ -177,7 +177,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               minDate={minDate ?? undefined}
               disabled={disabled}
               className="w-full grow group"
-              buttonContainerClassName="w-full text-left h-7.5"
+              buttonContainerClassName="w-full text-start h-7.5"
               buttonClassName={cn("text-body-xs-medium", {
                 "text-placeholder": !issue.target_date,
                 "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
@@ -198,7 +198,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               disabled={disabled}
               buttonVariant="transparent-with-text"
               className="w-full grow group"
-              buttonContainerClassName="w-full text-left h-7.5"
+              buttonContainerClassName="w-full text-start h-7.5"
               buttonClassName={`text-body-xs-medium ${issue?.estimate_point !== undefined ? "" : "text-placeholder"}`}
               placeholder="None"
               hideIcon

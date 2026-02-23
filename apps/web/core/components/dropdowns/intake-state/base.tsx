@@ -120,7 +120,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
           color={state?.color}
           className={cn("flex-shrink-0", iconSize)}
         />
-        <span className="flex-grow truncate text-left">{state?.name}</span>
+        <span className="flex-grow truncate text-start">{state?.name}</span>
       </div>
     ),
   }));
@@ -185,7 +185,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
                   />
                 )}
                 {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                  <span className="flex-grow truncate text-left">{selectedState?.name ?? t("state")}</span>
+                  <span className="flex-grow truncate text-start">{selectedState?.name ?? t("state")}</span>
                 )}
                 {dropdownArrow && (
                   <ChevronDownIcon

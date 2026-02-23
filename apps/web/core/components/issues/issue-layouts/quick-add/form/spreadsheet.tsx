@@ -28,6 +28,7 @@ export const SpreadsheetQuickAddIssueForm = observer(function SpreadsheetQuickAd
             required: isEpic ? t("epic.title.required") : t("issue.title.required"),
           })}
           className="w-full rounded-md bg-transparent py-3 text-13 leading-5 text-secondary outline-none"
+          dir="auto"
         />
       </form>
       <p className="ml-3 mt-3 text-11 italic text-secondary">

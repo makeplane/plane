@@ -13,9 +13,8 @@ export const CalendarQuickAddIssueForm = observer(function CalendarQuickAddIssue
 
   return (
     <div
-      className={`z-20 w-full transition-all ${
-        isOpen ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
-      }`}
+      className={`z-20 w-full transition-all ${isOpen ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
+        }`}
     >
       <form
         ref={ref}
@@ -30,7 +29,8 @@ export const CalendarQuickAddIssueForm = observer(function CalendarQuickAddIssue
           {...register("name", {
             required: `${isEpic ? "Epic" : "Work item"} title is required.`,
           })}
-          className="w-full rounded-md bg-transparent py-1.5 pr-2 text-13 md:text-11 font-medium leading-5 text-secondary outline-none"
+          className="w-full rounded-md bg-transparent py-1.5 pe-2 text-13 md:text-11 font-medium leading-5 text-secondary outline-none"
+          dir="auto"
         />
       </form>
     </div>

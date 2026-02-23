@@ -91,7 +91,7 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
           <AlertTriangle className="size-5 text-danger-primary" aria-hidden="true" />
         </span>
         <div>
-          <div className="text-center sm:text-left">
+          <div className="text-center sm:text-start">
             <h3 className="text-h5-medium">{t("workspace_settings.settings.general.delete_modal.title")}</h3>
             <p className="mt-1 text-body-xs-regular text-secondary">
               You are about to delete the workspace{" "}

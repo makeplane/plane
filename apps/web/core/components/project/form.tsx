@@ -234,7 +234,9 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               )}
             />
             <div className="flex flex-col gap-1 truncate text-on-color">
-              <span className="truncate text-16 font-semibold">{watch("name")}</span>
+              <span className="truncate text-16 font-semibold text-start block w-full" dir="auto">
+                {watch("name")}
+              </span>
               <span className="flex items-center gap-2 text-13">
                 <span>{watch("identifier")} .</span>
                 <span className="flex items-center gap-1.5">
@@ -386,7 +388,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                     buttonClassName="!border-subtle !shadow-none font-medium rounded-md"
                     input
                     disabled={!isAdmin}
-                    // optionsClassName="w-full"
+                  // optionsClassName="w-full"
                   >
                     {NETWORK_CHOICES.map((network) => (
                       <CustomSelect.Option key={network.key} value={network.key}>

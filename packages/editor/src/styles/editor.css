@@ -21,6 +21,18 @@
   -moz-appearance: textfield;
 }
 
+.ProseMirror p.editor-paragraph-block,
+.ProseMirror h1.editor-heading-block,
+.ProseMirror h2.editor-heading-block,
+.ProseMirror h3.editor-heading-block,
+.ProseMirror h4.editor-heading-block,
+.ProseMirror h5.editor-heading-block,
+.ProseMirror h6.editor-heading-block,
+.ProseMirror ul,
+.ProseMirror ol {
+  text-align: start;
+}
+
 /* Placeholder only for the first line in an empty editor. */
 .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
@@ -55,6 +67,7 @@
 .ProseMirror blockquote p::after {
   display: none;
 }
+
 /* end block quotes */
 
 .ProseMirror code::before,
@@ -84,7 +97,7 @@
 
 /* Custom gap cursor styles  */
 .ProseMirror-gapcursor::after {
-  @apply border-t! border-strong!;
+  @apply !border-t !border-strong;
 }
 
 /* to-do list */
@@ -105,7 +118,7 @@ ul[data-type="taskList"] li > div {
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"] {
-  @apply border! border-strong!;
+  @apply !border !border-strong;
   outline: none;
   border-radius: 2px;
   transform: scale(1.05);
@@ -200,6 +213,7 @@ ul[data-type="taskList"] li[data-checked="true"] {
     transition: opacity 0.2s ease;
   }
 }
+
 /* end to-do list */
 
 /* Overwrite tippy-box original max-width */
@@ -248,6 +262,7 @@ ul[data-type="taskList"] li[data-checked="true"] {
 .ProseMirror code {
   font-size: var(--font-size-code);
 }
+
 /* end code block, inline code */
 
 div[data-type="horizontalRule"] {
@@ -320,6 +335,7 @@ ul:not([data-type="taskList"]) ol {
 ul[data-type="taskList"] ul[data-type="taskList"] {
   margin-top: 0.6rem;
 }
+
 /* end numbered, bulleted and to-do lists spacing */
 
 h1.editor-heading-block,
@@ -435,60 +451,77 @@ p.editor-paragraph-block + p.editor-paragraph-block {
 .prose :where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 0;
 }
+
 /* end tailwind typography */
 
 /* text colors */
 [data-text-color="gray"] {
   color: var(--editor-colors-gray-text);
 }
+
 [data-text-color="peach"] {
   color: var(--editor-colors-peach-text);
 }
+
 [data-text-color="pink"] {
   color: var(--editor-colors-pink-text);
 }
+
 [data-text-color="orange"] {
   color: var(--editor-colors-orange-text);
 }
+
 [data-text-color="green"] {
   color: var(--editor-colors-green-text);
 }
+
 [data-text-color="light-blue"] {
   color: var(--editor-colors-light-blue-text);
 }
+
 [data-text-color="dark-blue"] {
   color: var(--editor-colors-dark-blue-text);
 }
+
 [data-text-color="purple"] {
   color: var(--editor-colors-purple-text);
 }
+
 /* end text colors */
 
 /* background colors */
 [data-background-color="gray"] {
   background-color: var(--editor-colors-gray-background);
 }
+
 [data-background-color="peach"] {
   background-color: var(--editor-colors-peach-background);
 }
+
 [data-background-color="pink"] {
   background-color: var(--editor-colors-pink-background);
 }
+
 [data-background-color="orange"] {
   background-color: var(--editor-colors-orange-background);
 }
+
 [data-background-color="green"] {
   background-color: var(--editor-colors-green-background);
 }
+
 [data-background-color="light-blue"] {
   background-color: var(--editor-colors-light-blue-background);
 }
+
 [data-background-color="dark-blue"] {
   background-color: var(--editor-colors-dark-blue-background);
 }
+
 [data-background-color="purple"] {
   background-color: var(--editor-colors-purple-background);
 }
+
 /* end background colors */
 
 /* emoji styles */

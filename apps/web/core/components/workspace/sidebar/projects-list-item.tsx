@@ -330,7 +330,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                   <Disclosure.Button
                     as="button"
                     type="button"
-                    className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {})}
+                    className={cn("flex-grow flex items-center gap-1.5 text-start select-none w-full", {})}
                     aria-label={
                       isProjectListOpen
                         ? t("aria_labels.projects_sidebar.close_project_menu")
@@ -343,7 +343,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                     <p className="truncate text-13 font-medium text-secondary">{project.name}</p>
                   </Disclosure.Button>
                 ) : (
-                  <div className="flex-grow flex items-center gap-1.5 text-left select-none w-full">
+                  <div className="flex-grow flex items-center gap-1.5 text-start select-none w-full">
                     <div className="size-4 grid place-items-center flex-shrink-0">
                       <Logo logo={project.logo_props} size={16} />
                     </div>

@@ -59,7 +59,7 @@ export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMember
           <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-danger-subtle sm:mx-0 sm:h-10 sm:w-10">
             <AlertTriangle className="h-6 w-6 text-danger-primary" aria-hidden="true" />
           </div>
-          <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+          <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-start">
             <h3 className="text-16 font-medium leading-6 text-primary">
               {isCurrentUser ? "Leave project?" : `Remove ${data?.display_name}?`}
             </h3>

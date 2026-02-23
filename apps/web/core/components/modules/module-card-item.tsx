@@ -190,7 +190,9 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
           <div>
             <div className="flex items-center justify-between gap-2">
               <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
-                <span className="truncate text-14 font-medium">{moduleDetails.name}</span>
+                <span className="truncate text-14 font-medium flex-grow text-start block" dir="auto">
+                  {moduleDetails.name}
+                </span>
               </Tooltip>
               <div className="flex items-center gap-2" onClick={handleEventPropagation}>
                 {moduleStatus && (

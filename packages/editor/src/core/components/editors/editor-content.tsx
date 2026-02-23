@@ -24,6 +24,7 @@ export function EditorContentWrapper(props: Props) {
       tabIndex={tabIndex}
       onFocus={() => editor?.chain().focus(undefined, { scrollIntoView: false }).run()}
       className={className}
+      dir="auto"
     >
       <EditorContent editor={editor} id={id} />
       {children}

@@ -203,9 +203,8 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                 <CustomSelect
                   customButton={
                     <span
-                      className={`flex h-6 w-20 items-center justify-center rounded-xs text-center text-11 ${
-                        isEditingAllowed && !isArchived ? "cursor-pointer" : "cursor-not-allowed"
-                      }`}
+                      className={`flex h-6 w-20 items-center justify-center rounded-xs text-center text-11 ${isEditingAllowed && !isArchived ? "cursor-pointer" : "cursor-not-allowed"
+                        }`}
                       style={{
                         color: moduleStatus ? moduleStatus.color : "#a3a3a2",
                         backgroundColor: moduleStatus ? `${moduleStatus.color}20` : "#a3a3a220",
@@ -232,7 +231,9 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
               )}
             />
           </div>
-          <h4 className="w-full break-words text-18 font-semibold text-primary">{moduleDetails.name}</h4>
+          <h4 className="w-full break-words text-18 font-semibold text-primary text-start" dir="auto">
+            {moduleDetails.name}
+          </h4>
         </div>
 
         {moduleDetails.description && (

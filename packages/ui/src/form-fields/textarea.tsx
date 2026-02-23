@@ -57,6 +57,7 @@ const TextArea = React.forwardRef(function TextArea(
         },
         className
       )}
+      dir="auto"
       {...rest}
     />
   );
