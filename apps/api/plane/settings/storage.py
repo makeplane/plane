@@ -90,14 +90,22 @@ class S3Storage(S3Boto3Storage):
                 )
         else:
             # Create an S3 client
-            self.s3_client = boto3.client(
-                "s3",
-                aws_access_key_id=self.aws_access_key_id,
-                aws_secret_access_key=self.aws_secret_access_key,
-                region_name=self.aws_region,
-                endpoint_url=self.aws_s3_endpoint_url,
-                config=boto3.session.Config(signature_version="s3v4"),
-            )
+            if self.aws_access_key_id and self.aws_secret_access_key:
+                self.s3_client = boto3.client(
+                    "s3",
+                    aws_access_key_id=self.aws_access_key_id,
+                    aws_secret_access_key=self.aws_secret_access_key,
+                    region_name=self.aws_region,
+                    endpoint_url=self.aws_s3_endpoint_url,
+                    config=boto3.session.Config(signature_version="s3v4"),
+                )
+            else:
+                self.s3_client = boto3.client(
+                    "s3",
+                    region_name=self.aws_region,
+                    endpoint_url=self.aws_s3_endpoint_url,
+                    config=boto3.session.Config(signature_version="s3v4"),
+                )
 
     def generate_presigned_post(self, object_name, file_type, file_size, expiration=None):
         """Generate a presigned URL to upload an S3 object"""
