@@ -23,6 +23,7 @@ export default {
     favorites: "Favorite",
     pro: "Pro",
     upgrade: "Treci la versiunea superioară",
+    stickies: "Notițe",
   },
   auth: {
     common: {

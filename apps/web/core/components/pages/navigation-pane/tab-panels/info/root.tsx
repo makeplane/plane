@@ -21,13 +21,14 @@ type Props = {
 
 export const PageNavigationPaneInfoTabPanel = observer(function PageNavigationPaneInfoTabPanel(props: Props) {
   const { page, versionHistory } = props;
-
   return (
-    <div className="mt-5">
-      <PageNavigationPaneInfoTabDocumentInfo page={page} />
-      <PageNavigationPaneInfoTabActorsInfo page={page} />
-      <div className="flex-shrink-0 h-px bg-layer-1 my-3" />
-      <PageNavigationPaneInfoTabVersionHistory page={page} versionHistory={versionHistory} />
+    <div className="flex flex-col h-full px-4">
+      <div className="flex-1 overflow-y-auto mt-5">
+        <PageNavigationPaneInfoTabDocumentInfo page={page} />
+        <PageNavigationPaneInfoTabActorsInfo page={page} />
+        <div className="flex-shrink-0 h-px bg-layer-1 my-3" />
+        <PageNavigationPaneInfoTabVersionHistory page={page} versionHistory={versionHistory} />
+      </div>
     </div>
   );
 });

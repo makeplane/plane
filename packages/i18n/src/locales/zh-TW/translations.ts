@@ -23,6 +23,7 @@ export default {
     favorites: "收藏",
     pro: "專業版",
     upgrade: "升級",
+    stickies: "便利貼",
   },
   auth: {
     common: {
