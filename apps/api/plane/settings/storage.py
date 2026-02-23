@@ -103,7 +103,6 @@ class S3Storage(S3Boto3Storage):
                 self.s3_client = boto3.client(
                     "s3",
                     region_name=self.aws_region,
-                    endpoint_url=self.aws_s3_endpoint_url,
                     config=boto3.session.Config(signature_version="s3v4"),
                 )
 
