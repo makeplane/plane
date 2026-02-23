@@ -1,8 +1,5 @@
 # Python imports
-import logging
 from collections import defaultdict
-
-logger = logging.getLogger(__name__)
 
 # Django imports
 from rest_framework.pagination import PageNumberPagination
@@ -515,7 +512,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
             # Phase 2: full details on the small ID set.
             detail_qs_values = self._build_detail_queryset(page_ids).values(*self.DETAIL_FIELDS)
-            logger.debug("[WorkspaceViewIssues] Phase 2 SQL (%d IDs):\n%s", len(page_ids), detail_qs_values.query)
             results = list(detail_qs_values)
             id_to_result = {r["id"]: r for r in results}
 
@@ -538,8 +534,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 results = [id_to_result[pid] for pid in page_ids if pid in id_to_result]
 
             return self._enrich_issues_with_relations(results)
-
-        logger.debug("[WorkspaceViewIssues] Phase 1 SQL (slug=%s, group_by=%s, sub_group_by=%s):\n%s", slug, group_by, sub_group_by, issue_queryset.query)
 
         if group_by:
             if sub_group_by:
