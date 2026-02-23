@@ -51,6 +51,8 @@ class IdentityProviderCreateSerializer(serializers.ModelSerializer):
             "certificate",
             "is_enabled",
             "disable_requested_authn_context",
+            "name_id_format",
+            "attribute_mapping",
         ]
         read_only_fields = [
             "id",
@@ -178,6 +180,8 @@ class IdentityProviderSerializer(IdentityProviderCreateSerializer):
             "entity_id",
             "is_enabled",
             "disable_requested_authn_context",
+            "name_id_format",
+            "attribute_mapping",
             "domains",
         ]
         read_only_fields = [

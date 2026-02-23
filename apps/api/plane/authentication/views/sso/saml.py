@@ -11,6 +11,7 @@
 
 # Python imports
 import logging
+from xml.sax.saxutils import escape as xml_escape
 
 # Django imports
 from django.http import HttpResponseRedirect, HttpResponse
@@ -20,7 +21,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth import logout
 
 # Module imports
-from plane.authentication.adapter.saml import SAMLAuthCloudAdapter
+from plane.authentication.adapter.saml import SAMLAuthCloudAdapter, DEFAULT_ATTRIBUTE_MAPPING, DEFAULT_NAME_ID_FORMAT
 from plane.authentication.utils.login import user_login
 from plane.authentication.utils.workspace_project_join import (
     process_workspace_project_invitations,
@@ -32,6 +33,7 @@ from plane.authentication.adapter.error import (
 )
 from plane.authentication.utils.host import base_host
 from plane.authentication.models.sso import IdentityProvider
+from plane.authentication.views.app.saml import build_metadata_requested_attributes_xml
 from plane.db.models import Workspace
 from plane.utils.path_validator import get_safe_redirect_url
 
@@ -83,7 +85,11 @@ class SAMLAuthCloudMetadataEndpoint(View):
                 error_message="WORKSPACE_NOT_FOUND",
                 payload={"workspace_id": str(workspace_id)},
             )
-        if not IdentityProvider.is_saml_configured(workspace_id):
+
+        identity_provider = IdentityProvider.objects.filter(
+            workspace_id=workspace_id, provider=IdentityProvider.SAML, is_enabled=True
+        ).first()
+        if not identity_provider:
             logger.warning(
                 "SAML not configured",
                 extra={
@@ -96,6 +102,10 @@ class SAMLAuthCloudMetadataEndpoint(View):
                 payload={"workspace_id": str(workspace_id)},
             )
 
+        name_id_format = identity_provider.name_id_format or DEFAULT_NAME_ID_FORMAT
+        attribute_mapping = identity_provider.attribute_mapping or DEFAULT_ATTRIBUTE_MAPPING
+        requested_attrs_xml = build_metadata_requested_attributes_xml(attribute_mapping)
+
         xml_template = f"""<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
                   entityID="{request.scheme}://{request.get_host()}/auth/saml/metadata/{workspace_id}/">
     <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
@@ -104,21 +114,10 @@ class SAMLAuthCloudMetadataEndpoint(View):
                                   index="1"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
                              Location="{request.scheme}://{request.get_host()}/auth/saml/logout/{workspace_id}/"/>
-        <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+        <NameIDFormat>{xml_escape(name_id_format)}</NameIDFormat>
         <AttributeConsumingService index="1">
             <ServiceName xml:lang="en">Plane</ServiceName>
-            <RequestedAttribute Name="user.firstName"
-                                FriendlyName="first_name"
-                                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
-                                isRequired="false"/>
-            <RequestedAttribute Name="user.lastName"
-                                FriendlyName="last_name"
-                                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
-                                isRequired="false"/>
-            <RequestedAttribute Name="user.email"
-                                FriendlyName="email"
-                                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
-                                isRequired="true"/>
+{requested_attrs_xml}
         </AttributeConsumingService>
     </SPSSODescriptor>
 </EntityDescriptor>

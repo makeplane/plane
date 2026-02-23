@@ -32,7 +32,9 @@ export type TInstanceSAMLAuthenticationConfigurationKeys =
   | "SAML_CERTIFICATE"
   | "SAML_PROVIDER_NAME"
   | "ENABLE_SAML_IDP_SYNC"
-  | "SAML_DISABLE_REQUESTED_AUTHN_CONTEXT";
+  | "SAML_DISABLE_REQUESTED_AUTHN_CONTEXT"
+  | "SAML_NAME_ID_FORMAT"
+  | "SAML_ATTRIBUTE_MAPPING";
 
 export type TInstanceLDAPAuthenticationConfigurationKeys =
   | "LDAP_SERVER_URI"

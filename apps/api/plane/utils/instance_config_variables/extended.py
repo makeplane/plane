@@ -117,6 +117,18 @@ saml_config_variables = [
         "category": "AUTHENTICATION",
         "is_encrypted": False,
     },
+    {
+        "key": "SAML_NAME_ID_FORMAT",
+        "value": "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+        "category": "AUTHENTICATION",
+        "is_encrypted": False,
+    },
+    {
+        "key": "SAML_ATTRIBUTE_MAPPING",
+        "value": '{"email": "email", "first_name": "first_name", "last_name": "last_name"}',
+        "category": "AUTHENTICATION",
+        "is_encrypted": False,
+    },
 ]
 
 # ldap config

@@ -10,7 +10,10 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Python imports
+import json
+import os
 from urllib.parse import urlencode, urljoin
+from xml.sax.saxutils import escape as xml_escape
 
 # Django imports
 from django.http import HttpResponseRedirect, HttpResponse
@@ -21,18 +24,35 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth import logout
 
 # Module imports
-from plane.authentication.adapter.saml import SAMLAdapter
+from plane.authentication.adapter.saml import SAMLAdapter, DEFAULT_ATTRIBUTE_MAPPING, DEFAULT_NAME_ID_FORMAT
 from plane.authentication.utils.login import user_login
 from plane.authentication.utils.workspace_project_join import (
     process_workspace_project_invitations,
 )
 from plane.authentication.utils.redirection_path import get_redirection_path
 from plane.license.models import Instance
+from plane.license.utils.instance_value import get_configuration_value
 from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
 from plane.authentication.utils.host import base_host
+
+
+def build_metadata_requested_attributes_xml(attribute_mapping):
+    """Build XML RequestedAttribute elements from an attribute mapping dict."""
+    xml_parts = []
+    for plane_field, idp_attr in attribute_mapping.items():
+        if not idp_attr:
+            continue
+        is_required = "true" if plane_field == "email" else "false"
+        xml_parts.append(
+            f'            <RequestedAttribute Name="{xml_escape(idp_attr)}"\n'
+            f'                                FriendlyName="{xml_escape(plane_field)}"\n'
+            f'                                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"\n'
+            f'                                isRequired="{is_required}"/>'
+        )
+    return "\n".join(xml_parts)
 
 
 class SAMLAuthInitiateEndpoint(View):
@@ -94,6 +114,32 @@ class SAMLLogoutEndpoint(View):
 @method_decorator(csrf_exempt, name="dispatch")
 class SAMLMetadataEndpoint(View):
     def get(self, request):
+        # Fetch configurable NameID format and attribute mapping from instance config
+        (SAML_NAME_ID_FORMAT, SAML_ATTRIBUTE_MAPPING) = get_configuration_value(
+            [
+                {
+                    "key": "SAML_NAME_ID_FORMAT",
+                    "default": os.environ.get("SAML_NAME_ID_FORMAT", DEFAULT_NAME_ID_FORMAT),
+                },
+                {
+                    "key": "SAML_ATTRIBUTE_MAPPING",
+                    "default": os.environ.get("SAML_ATTRIBUTE_MAPPING", ""),
+                },
+            ]
+        )
+
+        name_id_format = SAML_NAME_ID_FORMAT or DEFAULT_NAME_ID_FORMAT
+        attribute_mapping = DEFAULT_ATTRIBUTE_MAPPING.copy()
+        if SAML_ATTRIBUTE_MAPPING:
+            try:
+                parsed = json.loads(SAML_ATTRIBUTE_MAPPING)
+                if isinstance(parsed, dict):
+                    attribute_mapping = parsed
+            except (json.JSONDecodeError, TypeError):
+                pass
+
+        requested_attrs_xml = build_metadata_requested_attributes_xml(attribute_mapping)
+
         xml_template = f"""<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
                   entityID="{request.scheme}://{request.get_host()}/auth/saml/metadata/">
     <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
@@ -102,21 +148,10 @@ class SAMLMetadataEndpoint(View):
                                   index="1"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
                              Location="{request.scheme}://{request.get_host()}/auth/saml/logout/"/>
-        <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+        <NameIDFormat>{xml_escape(name_id_format)}</NameIDFormat>
         <AttributeConsumingService index="1">
             <ServiceName xml:lang="en">Plane</ServiceName>
-            <RequestedAttribute Name="user.firstName"
-                                FriendlyName="first_name"
-                                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
-                                isRequired="false"/>
-            <RequestedAttribute Name="user.lastName"
-                                FriendlyName="last_name"
-                                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
-                                isRequired="false"/>
-            <RequestedAttribute Name="user.email"
-                                FriendlyName="email"
-                                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"
-                                isRequired="true"/>
+{requested_attrs_xml}
         </AttributeConsumingService>
     </SPSSODescriptor>
 </EntityDescriptor>
