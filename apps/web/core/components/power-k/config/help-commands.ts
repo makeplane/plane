@@ -5,8 +5,6 @@
  */
 
 import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
-// plane imports
-import { DiscordIcon } from "@plane/propel/icons";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
@@ -48,13 +46,13 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "join_discord",
+      id: "join_forum",
       type: "action",
       group: "help",
-      i18n_title: "power_k.help_actions.join_discord",
-      icon: DiscordIcon,
+      i18n_title: "power_k.help_actions.join_forum",
+      icon: MessageSquare,
       action: () => {
-        window.open("https://discord.com/invite/A92xrEGCge", "_blank", "noopener,noreferrer");
+        window.open("https://forum.plane.so", "_blank", "noopener,noreferrer");
       },
       isEnabled: () => true,
       isVisible: () => true,
