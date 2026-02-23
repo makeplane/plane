@@ -61,6 +61,10 @@ type Props = {
    */
   initialValue: string | undefined;
   /**
+   * @description Key, to ensure the editor is re-rendered when the key changes
+   */
+  key: string;
+  /**
    * @description Submit handler, the actual function which will be called when the form is submitted
    */
   onSubmit: (value: string, isMigrationUpdate?: boolean) => Promise<void>;
