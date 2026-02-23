@@ -402,7 +402,7 @@ export default {
   docs: "문서",
   full_changelog: "전체 변경 로그",
   support: "지원",
-  discord: "디스코드",
+  forum: "Forum",
   powered_by_plane_pages: "Plane Pages 제공",
   please_select_at_least_one_invitation: "최소 하나의 초대를 선택하세요.",
   please_select_at_least_one_invitation_description: "작업 공간에 참여하려면 최소 하나의 초대를 선택하세요.",

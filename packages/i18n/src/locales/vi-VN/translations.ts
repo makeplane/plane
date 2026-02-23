@@ -411,7 +411,7 @@ export default {
   docs: "Tài liệu",
   full_changelog: "Nhật ký thay đổi đầy đủ",
   support: "Hỗ trợ",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Được hỗ trợ bởi Plane Pages",
   please_select_at_least_one_invitation: "Vui lòng chọn ít nhất một lời mời.",
   please_select_at_least_one_invitation_description:

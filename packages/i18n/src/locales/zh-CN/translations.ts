@@ -397,7 +397,7 @@ export default {
   docs: "文档",
   full_changelog: "完整更新日志",
   support: "支持",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "由Plane Pages提供支持",
   please_select_at_least_one_invitation: "请至少选择一个邀请。",
   please_select_at_least_one_invitation_description: "请至少选择一个加入工作区的邀请。",

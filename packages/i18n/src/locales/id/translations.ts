@@ -410,7 +410,7 @@ export default {
   docs: "Dokumen",
   full_changelog: "Changelog lengkap",
   support: "Dukungan",
-  discord: "Discord",
+  forum: "Forum",
   powered_by_plane_pages: "Ditenagai oleh Plane Pages",
   please_select_at_least_one_invitation: "Silakan pilih setidaknya satu undangan.",
   please_select_at_least_one_invitation_description:
