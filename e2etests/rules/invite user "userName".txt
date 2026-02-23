@@ -1,0 +1,6 @@
+click button on the left of "Open user menu"
+click "Invite members"
+click "Add member"
+enter string with parameters "${userName}@test.com" into "name@company.com"
+click "Send Invitations"
+click "Back to workspace"
