@@ -110,3 +110,4 @@ build/
 .react-router/
 temp/
 scripts/
+.worktrees/
