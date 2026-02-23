@@ -54,7 +54,7 @@ export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: 
         </div>
       </div>
       <div>
-        <h6 className="text-13">{workItem.name}</h6>
+        <h6 className="text-13 wrap-break-word">{workItem.name}</h6>
       </div>
       <div className="flex items-center gap-1 h-5">
         <PriorityIcon priority={workItem.priority} withContainer />
