@@ -53,6 +53,7 @@ RUN pnpm turbo run build --filter=plane-runner-host
 FROM base AS runner
 WORKDIR /app
 
+COPY --from=installer /app/packages ./packages
 COPY --from=installer /app/apps/runners/node-runner/dist ./apps/runners/node-runner/dist
 COPY --from=installer /app/apps/runners/node-runner/node_modules ./apps/runners/node-runner/node_modules
 COPY --from=installer /app/apps/runners/node-runner/package.json ./apps/runners/node-runner/package.json
