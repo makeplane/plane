@@ -9,7 +9,7 @@
 
 <p align="center">
     <a href="https://plane.so/"><b>Website</b></a> •
-    <a href="[https://github.com/makeplane/plane/releases](https://forum.plane.so/)"><b>Forum</b></a> •
+    <a href="https://forum.plane.so"><b>Forum</b></a> •
     <a href="https://twitter.com/planepowers"><b>Twitter</b></a> •
     <a href="https://docs.plane.so/"><b>Documentation</b></a>
 </p>
