@@ -62,6 +62,7 @@ const CustomHeader = ({
     <div className="flex items-center justify-between p-1">
       <div className="flex items-center gap-1">
         <button
+          type="button"
           onClick={view === "day" && onYearPrevClick ? onYearPrevClick : onPrevClick}
           className="p-1 hover:bg-surface-2 rounded-md transition-colors text-tertiary hover:text-primary"
         >
@@ -69,6 +70,7 @@ const CustomHeader = ({
         </button>
         {view === "day" && (
           <button
+            type="button"
             onClick={onPrevClick}
             className="p-1 hover:bg-surface-2 rounded-md transition-colors text-tertiary hover:text-primary"
           >
@@ -79,6 +81,7 @@ const CustomHeader = ({
 
       {isTitleClickable ? (
         <button
+          type="button"
           onClick={onTitleClick}
           className="text-sm font-semibold hover:bg-surface-2 px-2 py-1 rounded-md transition-colors text-primary"
         >
@@ -91,6 +94,7 @@ const CustomHeader = ({
       <div className="flex items-center gap-1">
         {view === "day" && (
           <button
+            type="button"
             onClick={onNextClick}
             className="p-1 hover:bg-surface-2 rounded-md transition-colors text-tertiary hover:text-primary"
           >
@@ -98,6 +102,7 @@ const CustomHeader = ({
           </button>
         )}
         <button
+          type="button"
           onClick={view === "day" && onYearNextClick ? onYearNextClick : onNextClick}
           className="p-1 hover:bg-surface-2 rounded-md transition-colors text-tertiary hover:text-primary"
         >
@@ -312,6 +317,7 @@ export function Calendar({
         <div className="grid grid-cols-3 gap-4 mt-4">
           {years.map((year) => (
             <button
+              type="button"
               key={year}
               onClick={() => handleYearSelect(year)}
               className={cn(
