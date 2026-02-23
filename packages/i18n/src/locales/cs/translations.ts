@@ -1714,8 +1714,10 @@ export default {
         },
       },
       api_tokens: {
+        heading: "API Tokeny",
+        description: "Generujte bezpečné API tokeny pro integraci vašich dat s externími systémy a aplikacemi.",
         title: "API Tokeny",
-        add_token: "Přidat API token",
+        add_token: "Přidat token přístupu",
         create_token: "Vytvořit token",
         never_expires: "Nikdy neexpiruje",
         generate_token: "Generovat token",

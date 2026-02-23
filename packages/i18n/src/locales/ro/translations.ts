@@ -1729,8 +1729,10 @@ export default {
         },
       },
       api_tokens: {
+        heading: "Chei secrete API",
+        description: "Generează chei secrete API sigure pentru a integra datele tale cu sisteme și aplicații externe.",
         title: "Chei secrete API",
-        add_token: "Adaugă cheie secretă API",
+        add_token: "Adaugă token de acces",
         create_token: "Creează cheie secretă",
         never_expires: "Nu expiră niciodată",
         generate_token: "Generează cheie secretă",

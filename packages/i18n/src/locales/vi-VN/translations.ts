@@ -1725,8 +1725,10 @@ export default {
         },
       },
       api_tokens: {
+        heading: "Token API",
+        description: "Tạo token API bảo mật để tích hợp dữ liệu của bạn với các hệ thống và ứng dụng bên ngoài.",
         title: "Token API",
-        add_token: "Thêm token API",
+        add_token: "Thêm token truy cập",
         create_token: "Tạo token",
         never_expires: "Không bao giờ hết hạn",
         generate_token: "Tạo token",

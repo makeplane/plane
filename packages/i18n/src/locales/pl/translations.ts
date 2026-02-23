@@ -1717,8 +1717,10 @@ export default {
         },
       },
       api_tokens: {
+        heading: "Tokeny API",
+        description: "Generuj bezpieczne tokeny API, aby integrować swoje dane z zewnętrznymi systemami i aplikacjami.",
         title: "Tokeny API",
-        add_token: "Dodaj token API",
+        add_token: "Dodaj token dostępu",
         create_token: "Utwórz token",
         never_expires: "Nigdy nie wygasa",
         generate_token: "Wygeneruj token",

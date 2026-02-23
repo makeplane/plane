@@ -1697,8 +1697,10 @@ export default {
         },
       },
       api_tokens: {
+        heading: "API 權杖",
+        description: "產生安全的 API 權杖，將您的資料與外部系統和應用程式整合。",
         title: "API 權杖",
-        add_token: "新增 API 權杖",
+        add_token: "新增存取權杖",
         create_token: "建立權杖",
         never_expires: "永不過期",
         generate_token: "產生權杖",

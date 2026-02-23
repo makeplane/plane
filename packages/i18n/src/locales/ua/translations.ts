@@ -1761,8 +1761,10 @@ export default {
         },
       },
       api_tokens: {
+        heading: "API токени",
+        description: "Створюйте безпечні API токени для інтеграції ваших даних із зовнішніми системами та додатками.",
         title: "API токени",
-        add_token: "Додати API токен",
+        add_token: "Додати токен доступу",
         create_token: "Створити токен",
         never_expires: "Ніколи не спливає",
         generate_token: "Згенерувати токен",

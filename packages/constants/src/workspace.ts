@@ -172,23 +172,23 @@ export const DEFAULT_GLOBAL_VIEWS_LIST: {
   key: TStaticViewTypes;
   i18n_label: string;
 }[] = [
-  {
-    key: "all-issues",
-    i18n_label: "default_global_view.all_issues",
-  },
-  {
-    key: "assigned",
-    i18n_label: "default_global_view.assigned",
-  },
-  {
-    key: "created",
-    i18n_label: "default_global_view.created",
-  },
-  {
-    key: "subscribed",
-    i18n_label: "default_global_view.subscribed",
-  },
-];
+    {
+      key: "all-issues",
+      i18n_label: "default_global_view.all_issues",
+    },
+    {
+      key: "assigned",
+      i18n_label: "default_global_view.assigned",
+    },
+    {
+      key: "created",
+      i18n_label: "default_global_view.created",
+    },
+    {
+      key: "subscribed",
+      i18n_label: "default_global_view.subscribed",
+    },
+  ];
 
 export interface IWorkspaceSidebarNavigationItem {
   key: string;
