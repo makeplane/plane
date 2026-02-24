@@ -694,6 +694,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         external_id = request.data.get("external_id")
         external_source = request.data.get("external_source")
+        state = request.data.get("state") or request.data.get("state_id")
 
         # If the external_id and source are present, we need to find the exact
         # issue that needs to be updated with the provided external_id and
@@ -726,9 +727,9 @@ class IssueDetailAPIEndpoint(BaseAPIView):
 
                 # Check if state is updated then is the transition allowed
                 workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
-                if request.data.get("state_id") and not workflow_state_manager.validate_state_transition(
+                if state and not workflow_state_manager.validate_state_transition(
                     issue=issue,
-                    new_state_id=request.data.get("state_id"),
+                    new_state_id=state,
                     user_id=request.user.id,
                 ):
                     return Response(
@@ -751,7 +752,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         epoch=int(timezone.now().timestamp()),
                     )
                     cycle_issue = CycleIssue.objects.filter(issue_id=issue.id).first()
-                    if cycle_issue and (request.data.get("state") or request.data.get("estimate_point")):
+                    if cycle_issue and (state or request.data.get("estimate_point")):
                         entity_issue_state_activity_task.delay(
                             issue_cycle_data=[
                                 {
@@ -860,6 +861,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         Partially update an existing work item with the provided fields.
         Supports external ID validation to prevent conflicts.
         """
+        state = request.data.get("state") or request.data.get("state_id")
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
@@ -873,9 +875,9 @@ class IssueDetailAPIEndpoint(BaseAPIView):
 
         # Check if state is updated then is the transition allowed
         workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
-        if request.data.get("state_id") and not workflow_state_manager.validate_state_transition(
+        if state and not workflow_state_manager.validate_state_transition(
             issue=issue,
-            new_state_id=request.data.get("state_id"),
+            new_state_id=state,
             user_id=request.user.id,
         ):
             return Response(
@@ -914,7 +916,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 epoch=int(timezone.now().timestamp()),
             )
             cycle_issue = CycleIssue.objects.filter(issue_id=pk).first()
-            if cycle_issue and (request.data.get("state") or request.data.get("estimate_point")):
+            if cycle_issue and (state or request.data.get("estimate_point")):
                 entity_issue_state_activity_task.delay(
                     issue_cycle_data=[
                         {
