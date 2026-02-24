@@ -173,6 +173,10 @@ export const ColumnDragHandlePlugin = (editor: Editor, isFlagged: boolean): Plug
           }
 
           if (decorationsValid) {
+            // Update each handle's position getter so closures stay current
+            positions.forEach((pos, index) => {
+              prev.dragHandles.get(index)?.updateGetColumnPos(() => pos);
+            });
             return {
               decorations: mapped,
               columnLists: currentColumnLists,
@@ -181,11 +185,11 @@ export const ColumnDragHandlePlugin = (editor: Editor, isFlagged: boolean): Plug
           }
         }
 
-        const positions = collectColumnPositions(newState.doc);
+        const recreatedPositions = collectColumnPositions(newState.doc);
         const decorations: Decoration[] = [];
         const dragHandles = new Map<number, DragHandleInstance>();
 
-        positions.forEach((pos, index) => {
+        recreatedPositions.forEach((pos, index) => {
           let dragHandle: DragHandleInstance | undefined = prev.dragHandles.get(index);
           if (dragHandle) {
             dragHandle.updateGetColumnPos(() => pos);

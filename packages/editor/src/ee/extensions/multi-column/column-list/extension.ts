@@ -55,7 +55,7 @@ export const ColumnList: ColumnListNodeType = Node.create<TColumnListAttributes>
       "div",
       mergeAttributes(HTMLAttributes, {
         [EColumnAttributeNames.NODE_TYPE]: EColumnListNodeType.COLUMN_LIST,
-        class: "editor-column-list",
+        class: "editor-column-list horizontal-scrollbar scrollbar-sm",
       }),
       0,
     ];

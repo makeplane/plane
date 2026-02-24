@@ -3,15 +3,24 @@
 /* Custom HTML tags - make them block-level elements */
 .editor-column-list {
   display: flex;
-  gap: 3rem;
+  gap: 1.5rem; /* Default: smaller gap for mobile */
   align-items: stretch;
   border-radius: 0.375rem;
   position: relative;
+  /* Provide space for selection outline to avoid clipping at edges */
+  padding-left: 4px;
+  padding-right: 4px;
 
-  /* Browser-level virtualization - skip rendering for offscreen column lists */
-  content-visibility: auto;
-  contain-intrinsic-size: auto 1200px 400px; /* width height - adjust to typical column list size */
-  contain: layout paint style;
+  /* Extra top padding to contain drag handles that translate -50% above columns */
+  padding-top: 12px;
+}
+
+/* At sm breakpoint and above: restore larger gap, no scroll needed */
+@media (min-width: 640px) {
+  .editor-column-list {
+    gap: 3rem;
+    overflow: visible;
+  }
 }
 
 .editor-column {
@@ -19,7 +28,8 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-width: 0;
+  min-width: 280px; /* Default: fixed min-width for mobile scroll */
+  flex-shrink: 0; /* Default: prevent shrinking for mobile scroll */
   align-self: stretch;
   border-radius: 0.375rem;
   margin-bottom: 12px;
@@ -27,15 +37,30 @@
   /* flex-grow is set via data-width attribute - handled by browser's attribute selector or inline if needed */
 }
 
+/* At sm breakpoint and above: allow columns to shrink and fill space */
+@media (min-width: 640px) {
+  .editor-column {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+}
+
 .editor-column:not(:last-child):not(.selected-column)::before {
   content: "";
   position: absolute;
   top: 0;
   bottom: 0;
-  right: calc(-1.5rem - 6px);
+  /* Position based on gap: half of 1.5rem gap - 6px on mobile, half of 3rem gap - 6px on desktop */
+  right: calc(-0.75rem - 6px);
   width: 16px;
   z-index: 12;
   pointer-events: auto;
+}
+
+@media (min-width: 640px) {
+  .editor-column:not(:last-child):not(.selected-column)::before {
+    right: calc(-1.5rem - 6px);
+  }
 }
 
 /* Column selection */
@@ -50,11 +75,8 @@
   &::before {
     content: "";
     position: absolute;
-    top: -2px;
-    left: -8px;
-    right: -8px;
-    bottom: -2px;
-    border: 2px solid var(--border-color-accent-strong);
+    inset: 0;
+    outline: 2px solid var(--border-color-accent-strong);
     border-radius: 0.375rem;
     pointer-events: none;
     z-index: 1;
@@ -86,7 +108,8 @@
   content: "";
   position: absolute;
   top: 0;
-  right: calc(-1.5rem - 2px);
+  /* Position based on gap: half of 1.5rem gap - 2px on mobile, half of 3rem gap - 2px on desktop */
+  right: calc(-0.75rem - 2px);
   bottom: 0;
   width: 4px;
   height: calc(100% + 2px);
@@ -94,6 +117,12 @@
   pointer-events: none;
   opacity: 1;
   transition: all 0.15s ease;
+}
+
+@media (min-width: 640px) {
+  .editor-column.column-resize-hover::after {
+    right: calc(-1.5rem - 2px);
+  }
 }
 
 /* Resize handle - active resizing state */
@@ -106,7 +135,8 @@
   content: "";
   position: absolute;
   top: -1px;
-  right: calc(-1.5rem - 2px);
+  /* Position based on gap: half of 1.5rem gap - 2px on mobile, half of 3rem gap - 2px on desktop */
+  right: calc(-0.75rem - 2px);
   bottom: 0;
   width: 4px;
   height: calc(100% + 2px);
@@ -115,6 +145,12 @@
   z-index: 10;
   opacity: 1;
   transition: all 0.15s ease;
+}
+
+@media (min-width: 640px) {
+  .editor-column.column-resize-active::after {
+    right: calc(-1.5rem - 2px);
+  }
 }
 
 /* Drag preview styling - similar to table drag preview */
