@@ -448,8 +448,11 @@ class PlaneSDKAdapter:
     ) -> Dict[str, Any]:
         """Create work item relations (v0.2)."""
         try:
+            from plane.models.work_items import CreateWorkItemRelation
+
             payload = {"relation_type": relation_type, "issues": issues}
-            resp = self.client.work_items.relations.create(workspace_slug, project_id, issue_id, data=payload)
+            data_model = CreateWorkItemRelation(**payload)
+            resp = self.client.work_items.relations.create(workspace_slug, project_id, issue_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
             log.error(f"Failed to create work item relation: {e} ({getattr(e, "status_code", None)})")
@@ -1541,8 +1544,10 @@ class PlaneSDKAdapter:
     def transfer_cycle_work_items(self, workspace_slug: str, project_id: str, cycle_id: str, new_cycle_id: str) -> Dict[str, Any]:
         """Transfer work items between cycles (v0.2)."""
         try:
-            payload = {"new_cycle_id": new_cycle_id}
-            resp = self.client.cycles.transfer_work_items(workspace_slug, project_id, cycle_id, data=payload)
+            from plane.models.cycles import TransferCycleWorkItemsRequest
+
+            data_model = TransferCycleWorkItemsRequest(new_cycle_id=new_cycle_id)
+            resp = self.client.cycles.transfer_work_items(workspace_slug, project_id, cycle_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
             log.error(f"Failed to transfer cycle work items: {e} ({getattr(e, "status_code", None)})")
