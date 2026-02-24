@@ -261,10 +261,12 @@ def build_grouped_chart_response(
             display_name=Coalesce(Cast(display_field, CharField()), Value("None"), output_field=CharField()),
         )
         # For non-estimate charts, don't include project_id_for_ordering to combine items across projects
+
+        order_clause = "key" if id_field == "date_group" else "-count"
         data = (
             queryset.values("key", "group_key", "group_name", "display_name")
             .annotate(count=aggregate_func)
-            .order_by("-count")
+            .order_by(order_clause)
         )
     return process_grouped_data(data)
 
