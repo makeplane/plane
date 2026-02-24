@@ -65,7 +65,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
   const [declineIssueModal, setDeclineIssueModal] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // store
-  const { currentTab, deleteInboxIssue, filteredInboxIssueIds } = useProjectInbox();
+  const { currentTab, deleteInboxIssue, filteredInboxIssueIds, fetchInboxIssues } = useProjectInbox();
   const { data: currentUser } = useUser();
   const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails } = useProject();
@@ -125,6 +125,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
   const handleInboxIssueAccept = async () => {
     const nextOrPreviousIssueId = redirectIssue();
     await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.ACCEPTED);
+    try {
+      await fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    } catch (error) {
+      console.error("Failed to refresh inbox issues:", error);
+    }
     setAcceptIssueModal(false);
     handleRedirection(nextOrPreviousIssueId);
   };
@@ -132,6 +137,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
   const handleInboxIssueDecline = async () => {
     const nextOrPreviousIssueId = redirectIssue();
     await inboxIssue?.updateInboxIssueStatus(EInboxIssueStatus.DECLINED);
+    try {
+      await fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    } catch (error) {
+      console.error("Failed to refresh inbox issues:", error);
+    }
     setDeclineIssueModal(false);
     handleRedirection(nextOrPreviousIssueId);
   };
@@ -145,6 +155,11 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
 
   const handleInboxIssueDuplicate = async (issueId: string) => {
     await inboxIssue?.updateInboxIssueDuplicateTo(issueId);
+    try {
+      await fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
+    } catch (error) {
+      console.error("Failed to refresh inbox issues:", error);
+    }
   };
 
   const handleInboxIssueDelete = async () => {
