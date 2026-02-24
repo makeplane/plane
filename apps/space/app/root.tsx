@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import React from "react";
 import * as Sentry from "@sentry/react-router";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 // assets
@@ -89,6 +90,14 @@ export default function Root() {
 }
 
 export function HydrateFallback() {
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (typeof window === "undefined" || !isMounted) return <div />;
+
   return (
     <div className="bg-surface-1 relative flex h-screen w-full items-center justify-center">
       <LogoSpinner />
