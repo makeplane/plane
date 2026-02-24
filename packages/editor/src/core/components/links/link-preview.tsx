@@ -31,6 +31,7 @@ export function LinkPreview({
   };
 
   const copyLinkToClipboard = () => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     navigator.clipboard.writeText(url);
     viewProps.closeLinkView();
   };
@@ -39,7 +40,7 @@ export function LinkPreview({
     <div
       className="absolute left-0 top-0 max-w-max animate-in fade-in translate-y-1"
       style={{
-        transition: "all 0.2s cubic-bezier(.55, .085, .68, .53)",
+        transition: "opacity 0.2s cubic-bezier(.55, .085, .68, .53), transform 0.2s cubic-bezier(.55, .085, .68, .53)",
       }}
     >
       <div className="shadow-md items-center rounded-sm p-2 flex gap-3 bg-layer-1 border-subtle border-2 text-tertiary text-11">

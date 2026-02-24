@@ -62,6 +62,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
     src: imgNodeSrc,
     alignment: nodeAlignment,
     status,
+    alt,
   } = node.attrs;
   // states
   const [size, setSize] = useState<TCustomImageSize>({
@@ -196,7 +197,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
       window.addEventListener("mousemove", handleResize);
       window.addEventListener("mouseup", handleResizeEnd);
       window.addEventListener("mouseleave", handleResizeEnd);
-      window.addEventListener("touchmove", handleResize);
+      window.addEventListener("touchmove", handleResize, { passive: true });
       window.addEventListener("touchend", handleResizeEnd);
 
       return () => {
@@ -265,6 +266,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
         <img
           ref={imageRef}
           src={displayedImageSrc}
+          alt={alt ?? undefined}
           onLoad={handleImageLoad}
           onError={async (e) => {
             // for old image extension this command doesn't exist or if the image failed to load for the first time
@@ -328,6 +330,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
             isTouchDevice={isTouchDevice}
             width={size.width}
             src={resolvedImageSrc}
+            alt={alt ?? undefined}
           />
         )}
         {selected && displayedImageSrc === resolvedImageSrc && (
