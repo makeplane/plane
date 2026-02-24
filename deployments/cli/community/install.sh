@@ -13,7 +13,6 @@ export FALLBACK_DOWNLOAD_URL="https://raw.githubusercontent.com/$GH_REPO/$BRANCH
 
 CPU_ARCH=$(uname -m)
 OS_NAME=$(uname)
-UPPER_CPU_ARCH=$(tr '[:lower:]' '[:upper:]' <<< "$CPU_ARCH")
 
 mkdir -p $PLANE_INSTALL_DIR/archive
 DOCKER_FILE_PATH=$PLANE_INSTALL_DIR/docker-compose.yaml
@@ -218,6 +217,10 @@ function install() {
 
     if [ "$APP_RELEASE" == "stable" ]; then
         export APP_RELEASE=$(checkLatestRelease)
+        if [ -z "$APP_RELEASE" ]; then
+            echo "Failed to determine the latest release. Exiting..."
+            exit 1
+        fi
     fi
 
     local build_image=$(initialize)
@@ -677,11 +680,15 @@ else
     COMPOSE_CMD="docker compose"
 fi
 
+# Normalize CPU architecture names to match Docker manifest values
 if [ "$CPU_ARCH" == "x86_64" ] || [ "$CPU_ARCH" == "amd64" ]; then
     CPU_ARCH="amd64"
 elif [ "$CPU_ARCH" == "aarch64" ] || [ "$CPU_ARCH" == "arm64" ]; then
     CPU_ARCH="arm64"
 fi
+
+# Set UPPER_CPU_ARCH after normalization so display messages match Docker architecture names
+UPPER_CPU_ARCH=$(tr '[:lower:]' '[:upper:]' <<< "$CPU_ARCH")
 
 if [ -f "$DOCKER_ENV_PATH" ]; then
     DOCKERHUB_USER=$(getEnvValue "DOCKERHUB_USER" "$DOCKER_ENV_PATH")
