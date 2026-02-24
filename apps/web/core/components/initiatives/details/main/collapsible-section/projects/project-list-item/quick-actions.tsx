@@ -86,7 +86,7 @@ export const QuickActions = observer(function QuickActions(props: Props) {
         }
         className={cn("flex justify-center items-center pointer-events-auto flex-shrink-0 my-auto rounded-sm  ")}
         customButtonClassName="grid place-items-center"
-        placement="bottom-start"
+        placement="top-start"
       >
         {MENU_ITEMS.map((item) => (
           <CustomMenu.MenuItem

@@ -85,7 +85,7 @@ export const InitiativeAttachmentsListItem = observer(function InitiativeAttachm
               </>
             )}
 
-            <CustomMenu ellipsis closeOnSelect placement="bottom-end" disabled={disabled}>
+            <CustomMenu ellipsis closeOnSelect placement="top-end" disabled={disabled}>
               <CustomMenu.MenuItem
                 onClick={() => {
                   toggleDeleteAttachmentModal(attachmentId);

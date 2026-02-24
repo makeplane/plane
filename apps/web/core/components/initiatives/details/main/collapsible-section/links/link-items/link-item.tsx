@@ -102,7 +102,7 @@ export const InitiativeLinkItem = observer(function InitiativeLinkItem(props: TI
           <CustomMenu
             ellipsis
             buttonClassName="text-placeholder group-hover:text-secondary"
-            placement="bottom-end"
+            placement="top-end"
             closeOnSelect
             disabled={isNotAllowed}
           >

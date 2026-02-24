@@ -52,7 +52,7 @@ export const Toolbar = observer(function Toolbar(props: Props) {
         <Link
           href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}ai-chat/`}
           className={cn(
-            "flex items-center px-2 text-tertiary justify-center gap-2 h-8 w-8 rounded-md shadow border-[0.5px] border-subtle-1 transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-subtle-1 disabled:!text-tertiary",
+            "flex items-center px-2 text-secondary justify-center gap-2 h-8 w-8 rounded-md shadow-raised-100 border border-strong transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-subtle-1 disabled:!text-tertiary",
             {
               "w-full justify-start": !isSearchOpen,
             }
@@ -65,7 +65,7 @@ export const Toolbar = observer(function Toolbar(props: Props) {
         <button
           type="button"
           className={cn(
-            "flex items-center px-2 text-tertiary justify-center gap-2 h-8 w-8 rounded-md shadow border-[0.5px] border-subtle-1 transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-subtle-1 disabled:!text-tertiary",
+            "flex items-center px-2 text-secondary justify-center gap-2 h-8 w-8 rounded-md shadow-raised-100 border border-strong transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-subtle-1 disabled:!text-tertiary",
             {
               "w-full justify-start": !isSearchOpen,
             }
@@ -92,9 +92,9 @@ export const Toolbar = observer(function Toolbar(props: Props) {
 
         <div
           className={cn(
-            "ml-auto flex items-center justify-start gap-1 rounded-sm border-[0.5px] border-subtle-1 bg-layer-1 text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+            "ml-auto flex items-center justify-start gap-1 rounded-sm border border-strong bg-layer-1 text-secondary w-0 transition-[width] ease-linear overflow-hidden opacity-0",
             {
-              "w-full px-2.5 py-1.5 border-subtle-1 opacity-100": isSearchOpen,
+              "w-full px-2.5 py-1.5 border-strong opacity-100": isSearchOpen,
             }
           )}
         >

@@ -12,13 +12,12 @@
  */
 
 import { useEffect, useState, useRef } from "react";
-import { Rocket } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
+import { SearchIcon, CloseIcon, NewTabIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Switch } from "@plane/propel/switch";
@@ -299,7 +298,7 @@ export function ExistingIssuesListModal(props: Props) {
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <Rocket className="h-4 w-4" />
+                          <NewTabIcon className="h-4 w-4" />
                         </a>
                       </Combobox.Option>
                     );

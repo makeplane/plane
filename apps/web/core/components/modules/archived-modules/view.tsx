@@ -11,11 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
-// assets
-import AllFiltersImage from "@/app/assets/empty-state/module/all-filters.svg?url";
-import NameFilterImage from "@/app/assets/empty-state/module/name-filter.svg?url";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 // components
 import { ModuleListItem, ModulePeekOverview } from "@/components/modules";
 // ui
@@ -31,31 +30,30 @@ export interface IArchivedModulesView {
 
 export const ArchivedModulesView = observer(function ArchivedModulesView(props: IArchivedModulesView) {
   const { workspaceSlug, projectId } = props;
+  const { t } = useTranslation();
   // store hooks
   const { getFilteredArchivedModuleIds, loader } = useModule();
-  const { archivedModulesSearchQuery } = useModuleFilter();
+  const { archivedModulesSearchQuery, currentProjectArchivedFilters } = useModuleFilter();
   // derived values
   const filteredArchivedModuleIds = getFilteredArchivedModuleIds(projectId);
+  const hasSearchQuery = archivedModulesSearchQuery.trim() !== "";
+  const hasAppliedFilters = Object.values(currentProjectArchivedFilters ?? {}).some((filterValues) =>
+    filterValues ? filterValues.length > 0 : false
+  );
 
   if (loader || !filteredArchivedModuleIds) return <CycleModuleListLayoutLoader />;
 
   if (filteredArchivedModuleIds.length === 0)
     return (
-      <div className="h-full w-full grid place-items-center">
-        <div className="text-center">
-          <img
-            src={archivedModulesSearchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
-            className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
-            alt="No matching modules"
-          />
-          <h5 className="text-18 font-medium mt-7 mb-1">No matching modules</h5>
-          <p className="text-placeholder text-14">
-            {archivedModulesSearchQuery.trim() === ""
-              ? "Remove the filters to see all modules"
-              : "Remove the search criteria to see all modules"}
-          </p>
-        </div>
-      </div>
+      <EmptyStateDetailed
+        assetKey="search"
+        title={t("common_empty_state.search.title")}
+        description={
+          hasSearchQuery || hasAppliedFilters
+            ? t("common_empty_state.search.description")
+            : t("workspace_empty_state.archive_modules.description")
+        }
+      />
     );
 
   return (

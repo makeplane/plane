@@ -114,7 +114,7 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
         itemLink={getRedirectionLink?.()}
         onItemClick={() => router.push(getRedirectionLink?.() ?? "")}
         leftElementClassName="gap-2"
-        className={cn("outline-none rounded-md transition-colors", {
+        className={cn("outline-none transition-colors", {
           "is-dragging": isDropping,
         })}
         prependTitleElement={

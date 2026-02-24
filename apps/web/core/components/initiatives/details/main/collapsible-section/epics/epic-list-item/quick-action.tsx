@@ -110,7 +110,7 @@ export const EpicQuickActions = observer(function EpicQuickActions(props: Props)
         }
         className={cn("flex justify-center items-center pointer-events-auto flex-shrink-0 my-auto rounded-sm  ")}
         customButtonClassName="grid place-items-center"
-        placement="bottom-start"
+        placement="top-start"
       >
         {MENU_ITEMS.filter((item) => item.shouldRender).map((item) => (
           <CustomMenu.MenuItem
