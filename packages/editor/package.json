@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build": "tsc && tsdown",
-    "dev": "tsdown --watch",
+    "dev": "tsdown --watch --no-clean",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1435",
     "check:types": "tsc --noEmit",
     "check:format": "prettier . --cache --check",

@@ -9,7 +9,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "dev": "tsdown --watch",
+    "dev": "tsdown --watch --no-clean",
     "build": "tsdown",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=151",
     "check:types": "tsc --noEmit",
