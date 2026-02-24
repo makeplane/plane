@@ -109,3 +109,4 @@ build/
 .react-router/
 temp/
 scripts/
+dist-images/
