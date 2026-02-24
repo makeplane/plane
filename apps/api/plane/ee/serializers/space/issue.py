@@ -105,8 +105,9 @@ class IssueCreateSerializer(BaseSerializer):
             state = State.triage_objects.filter(project_id=project_id, workspace_id=workspace_id).first()
 
         # Create Issue
-        issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type, state=state)
-        issue.save(created_by_id=created_by_id)
+        issue = Issue.objects.create(
+            **validated_data, project_id=project_id, type=issue_type, state=state, created_by_id=created_by_id
+        )
 
         # Issue Audit Users
         created_by_id = issue.created_by_id

@@ -215,8 +215,9 @@ class IssueImportSerializer(BaseSerializer):
             state=state,
             type_id=type_id,
             external_source="csv",
+            created_by_id=self.context.get("created_by_id"),
         )
-        issue.save(created_by_id=self.context.get("created_by_id"))
+        issue.save()
 
         return issue
 

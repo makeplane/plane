@@ -338,8 +338,9 @@ class IntakeWorkItemTypeFormCreateSerializer(serializers.Serializer):
             extra={
                 "username": validated_data.get("username"),
             },
+            created_by_id=self.context.get("created_by_id"),
         )
-        intake_issue.save(created_by_id=self.context.get("created_by_id"))
+        intake_issue.save()
 
         # Base parameters for all property values
         base_params = {
