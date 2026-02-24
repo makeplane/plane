@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { StaffService  } from "@/plane-web/services/staff.service";
-import type {IMyStaffProfile} from "@/plane-web/services/staff.service";
+import { StaffService } from "@/plane-web/services/staff.service";
+import type { IMyStaffProfile } from "@/plane-web/services/staff.service";
 
 const staffService = new StaffService();
 
@@ -10,12 +10,27 @@ export const useMyStaffProfile = (workspaceSlug: string | undefined) => {
 
   useEffect(() => {
     if (!workspaceSlug) return;
-    setIsLoading(true);
-    staffService
-      .getMyStaffProfile(workspaceSlug)
-      .then(setData)
-      .catch(() => setData(null)) // 404 or error = hide section gracefully
-      .finally(() => setIsLoading(false));
+
+    let cancelled = false;
+
+    const load = async () => {
+      setIsLoading(true);
+      try {
+        const profile = await staffService.getMyStaffProfile(workspaceSlug);
+        if (!cancelled) setData(profile);
+      } catch {
+        // 404 or error = hide section gracefully
+        if (!cancelled) setData(null);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+
+    void load();
+
+    return () => {
+      cancelled = true;
+    };
   }, [workspaceSlug]);
 
   return { data, isLoading };

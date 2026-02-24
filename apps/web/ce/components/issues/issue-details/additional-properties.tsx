@@ -68,7 +68,7 @@ export const WorkItemAdditionalSidebarProperties = observer(function WorkItemAdd
     if (!issue) return;
     const minutes = parseHoursAndMinutes(draft);
     if (minutes !== issue.estimate_time) {
-      updateIssue(workspaceSlug, projectId, workItemId, { estimate_time: minutes });
+      void updateIssue(workspaceSlug, projectId, workItemId, { estimate_time: minutes });
     } else {
       setDraft(formatHoursAndMinutes(issue.estimate_time));
     }

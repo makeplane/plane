@@ -49,19 +49,24 @@ export default function TimeTrackingLayout() {
             return (
               <div
                 key={tab.key}
+                role="button"
+                tabIndex={0}
                 className={cn(
                   "text-13 relative flex items-center gap-2 h-full px-4 cursor-pointer transition-all font-semibold",
                   isActive ? "text-accent-primary" : "text-secondary hover:text-primary"
                 )}
                 onClick={() => {
-                  if (!isActive) navigate(`${basePath}${tab.path ? `/${tab.path}` : ""}`);
+                  if (!isActive) void navigate(`${basePath}${tab.path ? `/${tab.path}` : ""}`);
+                }}
+                onKeyDown={(e) => {
+                  if ((e.key === "Enter" || e.key === " ") && !isActive) {
+                    void navigate(`${basePath}${tab.path ? `/${tab.path}` : ""}`);
+                  }
                 }}
               >
                 <Icon size={14} className={isActive ? "text-accent-primary" : "text-tertiary"} />
                 <span>{t(tab.labelKey)}</span>
-                {isActive && (
-                  <div className="absolute bottom-0 left-0 right-0 border-b-2 border-accent-primary" />
-                )}
+                {isActive && <div className="absolute bottom-0 left-0 right-0 border-b-2 border-accent-primary" />}
               </div>
             );
           })}
