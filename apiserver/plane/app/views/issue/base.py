@@ -278,7 +278,7 @@ class IssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                custom_propertiess=Coalesce(
+                custom_property_values=Coalesce(
                     ArrayAgg(
                         Func(
                             F('custom_properties__key'),

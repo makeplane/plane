@@ -3,8 +3,8 @@ import uuid
 from datetime import timedelta, datetime
 
 from django.utils import timezone
-from django.db.models import Q, OuterRef
-from plane.db.models import IssueCustomProperty
+from django.db.models import Exists, Q, OuterRef
+from plane.db.models import IssueAssignee, IssueCustomProperty
 # The date from pattern
 pattern = re.compile(r"\d+_(weeks|months)$")
 
@@ -1010,8 +1010,14 @@ def apply_user_hub_filters(issue_queryset, user, workspace_slug=None):
         null_hub_filter = Q(hub_code__isnull=True) & Q(hub_name__isnull=True)
         hub_filter = hub_filter | null_hub_filter
     
-    user_tickets_filter = Q(created_by=user) | Q(assignees__in=[user])
+    user_tickets_filter = Q(created_by=user) | Exists(
+        IssueAssignee.objects.filter(
+            issue_id=OuterRef("id"),
+            assignee=user,
+            deleted_at__isnull=True,
+        )
+    )
     hub_filter = hub_filter | user_tickets_filter
-    
-    # Apply the filter to queryset
-    return issue_queryset.filter(hub_filter).distinct()
+
+    # Apply the filter to queryset — no .distinct() needed: Exists adds no JOIN columns
+    return issue_queryset.filter(hub_filter)
