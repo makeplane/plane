@@ -59,10 +59,18 @@ def base_host(
 
     # App Redirection
     if is_app:
+        app_base_path = getattr(settings, "APP_BASE_PATH", None)
+        if not isinstance(app_base_path, str):
+            app_base_path = "/"
+        if not app_base_path.startswith("/"):
+            app_base_path = "/" + app_base_path
+        if not app_base_path.endswith("/"):
+            app_base_path += "/"
+
         if settings.APP_BASE_URL:
-            return settings.APP_BASE_URL
+            return settings.APP_BASE_URL + app_base_path
         else:
-            return base_origin
+            return base_origin + app_base_path
 
     return base_origin
 

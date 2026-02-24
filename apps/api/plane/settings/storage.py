@@ -11,6 +11,9 @@ import boto3
 from botocore.exceptions import ClientError
 from urllib.parse import quote
 
+# Django imports
+from django.conf import settings
+
 # Module imports
 from plane.utils.exception_logger import log_exception
 from storages.backends.s3boto3 import S3Boto3Storage
@@ -48,7 +51,11 @@ class S3Storage(S3Boto3Storage):
                 aws_access_key_id=self.aws_access_key_id,
                 aws_secret_access_key=self.aws_secret_access_key,
                 region_name=self.aws_region,
-                endpoint_url=(f"{endpoint_protocol}://{request.get_host()}" if request else self.aws_s3_endpoint_url),
+                endpoint_url=(
+                    f"{endpoint_protocol}://{request.get_host()}{settings.APP_BASE_PATH}"
+                    if request
+                    else self.aws_s3_endpoint_url
+                ),
                 config=boto3.session.Config(signature_version="s3v4"),
             )
         else:
