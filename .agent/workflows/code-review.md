@@ -32,6 +32,7 @@ description: Review code changes against Plane design system and architecture st
    - [ ] `observer` wrapper on MobX-connected components
    - [ ] `runInAction` for async observable updates
    - [ ] `useTranslation()` for all user-facing strings
+   - [ ] Translations updated synchronously for all 3 locales (`en`, `vi`, `ko`)
    - [ ] `import type` for type-only imports
    - [ ] No `any` type without justification
    - [ ] Components <150 lines, hooks <100 lines

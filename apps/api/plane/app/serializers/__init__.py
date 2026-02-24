@@ -136,4 +136,4 @@ from .draft import (
 
 from .department import DepartmentSerializer, DepartmentTreeSerializer
 from .staff import StaffProfileSerializer, StaffProfileCreateSerializer
-from .worklog import IssueWorkLogSerializer
+from .worklog import IssueWorkLogSerializer, TimesheetBulkEntrySerializer

@@ -1,11 +1,13 @@
-/**
- * Copyright (c) 2023-present Plane Software, Inc. and contributors
- * SPDX-License-Identifier: AGPL-3.0-only
- * See the LICENSE file for details.
- */
-
 import { API_BASE_URL } from "@plane/constants";
-import type { IWorkLog, IWorkLogCreate, IWorkLogUpdate, IWorkLogSummary } from "@plane/types";
+import type {
+  IWorkLog,
+  IWorkLogCreate,
+  IWorkLogUpdate,
+  IWorkLogSummary,
+  ITimesheetGridResponse,
+  ITimesheetBulkPayload,
+  ICapacityReportResponse,
+} from "@plane/types";
 import { APIService } from "@/services/api.service";
 
 export class WorklogService extends APIService {
@@ -51,7 +53,7 @@ export class WorklogService extends APIService {
     data: IWorkLogUpdate
   ): Promise<IWorkLog> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       const response = await (this.patch(
         `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/worklogs/${worklogId}/`,
         data
@@ -104,6 +106,65 @@ export class WorklogService extends APIService {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response = await (this.get(`/api/workspaces/${workspaceSlug}/time-tracking/summary/`, { params }) as Promise<any>);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+      return response?.data;
+    } catch (error: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      throw error?.response?.data;
+    }
+  }
+
+  // Timesheet grid endpoints
+  async getTimesheetGrid(
+    workspaceSlug: string,
+    projectId: string,
+    params?: Record<string, string>
+  ): Promise<ITimesheetGridResponse> {
+    try {
+       
+      const response = await (this.get(
+        `/api/workspaces/${workspaceSlug}/projects/${projectId}/time-tracking/timesheet/`,
+        { params }
+      ) as Promise<any>);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+      return response?.data;
+    } catch (error: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      throw error?.response?.data;
+    }
+  }
+
+  async bulkUpdateTimesheet(
+    workspaceSlug: string,
+    projectId: string,
+    data: ITimesheetBulkPayload
+  ): Promise<{ results: Array<{ issue_id: string; logged_at: string; action: string }> }> {
+    try {
+       
+      const response = await (this.post(
+        `/api/workspaces/${workspaceSlug}/projects/${projectId}/time-tracking/timesheet/bulk/`,
+        data
+      ) as Promise<any>);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+      return response?.data;
+    } catch (error: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      throw error?.response?.data;
+    }
+  }
+
+  // Capacity report endpoint
+  async getCapacityReport(
+    workspaceSlug: string,
+    projectId: string,
+    params?: Record<string, string>
+  ): Promise<ICapacityReportResponse> {
+    try {
+       
+      const response = await (this.get(
+        `/api/workspaces/${workspaceSlug}/projects/${projectId}/time-tracking/capacity/`,
+        { params }
+      ) as Promise<any>);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
       return response?.data;
     } catch (error: any) {

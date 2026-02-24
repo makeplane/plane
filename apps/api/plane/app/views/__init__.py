@@ -85,6 +85,8 @@ from .workspace.sticky import WorkspaceStickyViewSet
 from .workspace.time_tracking import (
     ProjectWorkLogSummaryEndpoint,
     WorkspaceWorkLogSummaryEndpoint,
+    TimesheetGridEndpoint,
+    TimesheetBulkUpdateEndpoint,
 )
 
 from .state.base import StateViewSet, IntakeStateEndpoint
@@ -268,3 +270,5 @@ from .notification.base import MarkAllReadNotificationViewSet
 from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
 
 from .timezone.base import TimezoneEndpoint
+
+from .capacity import ProjectCapacityEndpoint

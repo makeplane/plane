@@ -66,6 +66,26 @@ class StaffProfileSerializer(BaseSerializer):
         }
 
 
+class MyStaffProfileSerializer(BaseSerializer):
+    """Lightweight serializer for current user's own staff profile — read-only."""
+
+    department_detail = serializers.SerializerMethodField()
+
+    class Meta:
+        model = StaffProfile
+        fields = ["id", "staff_id", "position", "department", "department_detail"]
+        read_only_fields = ["id", "staff_id", "position", "department", "department_detail"]
+
+    def get_department_detail(self, obj):
+        if not obj.department:
+            return None
+        return {
+            "id": str(obj.department.id),
+            "name": obj.department.name,
+            "code": obj.department.code,
+        }
+
+
 class StaffProfileCreateSerializer(serializers.Serializer):
     """Serializer for creating staff with auto User creation."""
 

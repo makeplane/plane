@@ -12,6 +12,7 @@ You are working on **Plane.so** — an open-source project management tool (self
 
 - `./docs/code-standards.md` — Coding standards
 - `./docs/design-guidelines.md` — UI design system
+- **`./docs/design-patterns/README.md`** — **MANDATORY**: Critical UI implementation patterns (Layouts, Tabs, Tables)
 - `./docs/system-architecture.md` — System architecture
 - `./docs/codebase-summary.md` — Codebase overview
 
@@ -77,6 +78,15 @@ Semantic tokens auto-handle dark mode. NEVER use `dark:` variants with hardcoded
 - Hooks: <100 lines
 - Use `cn()` from `@plane/utils` for conditional classnames
 
+### Route Files (`app/`)
+
+Route files (`page.tsx`, `layout.tsx`, `header.tsx`) MUST live in `app/(all)/...`, NOT in `ce/` or `core/`.
+
+- **`page.tsx`**: Thin wrapper — `PageHead` + import main component from `@/plane-web/` or `@/`
+- **`layout.tsx`**: Thin wrapper — `AppHeader` + `ContentWrapper` + `Outlet` (~24 lines)
+- **`header.tsx`**: MAY contain full breadcrumb/permission/action logic (80–90 lines is normal)
+- Reusable components, stores, hooks → `ce/` (for custom SHBVN features)
+
 ## Backend Rules
 
 ### Model Hierarchy
@@ -134,8 +144,8 @@ Semantic tokens auto-handle dark mode. NEVER use `dark:` variants with hardcoded
 3. Store → `apps/web/ce/store/` (CE layer)
 4. Hook → `apps/web/ce/hooks/store/`
 5. Components → `apps/web/ce/components/` (propel + semantic tokens)
-6. Routes → `app/routes/`
-7. Translations → `packages/i18n/src/locales/`
+6. Route files → `apps/web/app/(all)/...` (page.tsx, layout.tsx, header.tsx)
+7. Translations → MUST update ALL 3 supported languages in `packages/i18n/src/locales/` (`en`, `vi`, `ko`)
 
 ## Common Mistakes to Avoid
 
@@ -149,6 +159,7 @@ Semantic tokens auto-handle dark mode. NEVER use `dark:` variants with hardcoded
 - ❌ Forgetting `select_related`/`prefetch_related` (N+1 queries)
 - ❌ Manual `dark:` variants when semantic tokens handle it
 - ❌ Not registering new models/views/serializers in `__init__.py`
+- ❌ Updating only English translations (MUST update `en`, `vi`, and `ko` synchronously)
 
 ## Workflows
 

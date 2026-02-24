@@ -23,6 +23,7 @@ import { ChangeEmailModal } from "@/components/core/modals/change-email-modal";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 import { CoverImage } from "@/components/common/cover-image";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
+import { StaffProfileSection } from "@/plane-web/components/settings/profile/staff-profile-section";
 // helpers
 import { handleCoverImageChange } from "@/helpers/cover-image.helper";
 // hooks
@@ -379,6 +380,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
               </div>
             </div>
           </div>
+          <StaffProfileSection />
           <div>
             <Button variant="primary" type="submit" loading={isLoading}>
               {isLoading ? t("saving") : t("save_changes")}

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capacity Dashboard Prototype - Plane.so</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --color-surface-1: #0f1115;
+            --color-surface-2: #161920;
+            --color-border-subtle: #2d333b;
+            --color-text-primary: #f0f6fc;
+            --color-text-secondary: #8b949e;
+            --color-accent-primary: #3b82f6;
+            --color-success: #238636;
+            --color-error: #da3633;
+            --color-warning: #d29922;
+        }
+
+        body {
+            background-color: var(--color-surface-1);
+            color: var(--color-text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            background-color: var(--color-surface-2);
+            border-right: 1px solid var(--color-border-subtle);
+            width: 240px;
+        }
+
+        .content {
+            flex-grow: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--color-border-subtle) transparent;
+        }
+
+        .header {
+            background-color: var(--color-surface-1);
+            border-bottom: 1px solid var(--color-border-subtle);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+        }
+
+        .card {
+            background-color: var(--color-surface-2);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            border-color: var(--color-accent-primary);
+        }
+
+        .heatmap-cell {
+            width: 50px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.1);
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .cell-overload {
+            background-color: rgba(218, 54, 51, 0.15);
+            color: #f85149;
+            border-color: rgba(218, 54, 51, 0.4);
+        }
+
+        .cell-normal {
+            background-color: rgba(35, 134, 54, 0.15);
+            color: #3fb950;
+            border-color: rgba(35, 134, 54, 0.4);
+        }
+
+        .cell-under {
+            background-color: rgba(210, 153, 34, 0.15);
+            color: #d29922;
+            border-color: rgba(210, 153, 34, 0.4);
+        }
+
+        .cell-empty {
+            background-color: rgba(139, 148, 158, 0.1);
+            color: var(--color-text-secondary);
+        }
+
+        .dropdown {
+            background-color: var(--color-surface-2);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: 6px;
+            padding: 4px 12px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flex h-screen w-full">
+        <!-- Sidebar Mock -->
+        <div class="sidebar shrink-0 p-4 flex flex-col gap-6">
+            <div class="flex items-center gap-2 px-2">
+                <div class="w-8 h-8 rounded bg-blue-600"></div>
+                <span class="font-bold text-lg text-white">Plane</span>
+            </div>
+            <div class="flex flex-col gap-2">
+                <div class="px-2 py-1.5 rounded text-sm text-gray-400">Dashboard</div>
+                <div class="px-2 py-1.5 rounded text-sm text-gray-400">Issues</div>
+                <div class="px-2 py-1.5 rounded text-sm text-gray-400">Cycles</div>
+                <div
+                    class="px-2 py-1.5 rounded text-sm text-blue-400 bg-blue-400/10 border border-blue-400/20 font-semibold">
+                    Time Tracking</div>
+            </div>
+        </div>
+
+        <div class="flex flex-col flex-grow">
+            <!-- Top Bar -->
+            <div class="header justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-gray-500">Workspace</span>
+                    <span class="text-gray-500">/</span>
+                    <span class="font-medium">Project Capacity Analytics</span>
+                </div>
+                <div class="flex items-center gap-4 text-xs text-gray-400">
+                    Last updated: Feb 24, 2026
+                </div>
+            </div>
+
+            <!-- Content Area (Scrollable) -->
+            <div class="content">
+                <!-- 1. Title Section -->
+                <div class="px-8 pt-8 pb-6">
+                    <h1 class="text-2xl font-bold flex items-center gap-3">
+                        <span class="p-2 bg-blue-500/10 rounded-xl text-blue-500">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </span>
+                        Capacity Dashboard
+                    </h1>
+                    <p class="text-gray-500 mt-2 ml-1">Monitor workload and allocation across your team members.</p>
+                </div>
+
+                <!-- 2. Charts Section (Analytics) -->
+                <div class="px-8 mb-6">
+                    <div class="grid grid-cols-4 gap-6">
+                        <div class="card col-span-1 border-l-4 border-l-blue-500">
+                            <div class="text-[11px] uppercase tracking-wider text-gray-500 font-bold mb-2">Total Logged
+                            </div>
+                            <div class="text-4xl font-black">145.5<span
+                                    class="text-lg font-normal text-gray-600 ml-1">h</span></div>
+                        </div>
+                        <div class="card col-span-1 border-l-4 border-l-gray-500">
+                            <div class="text-[11px] uppercase tracking-wider text-gray-500 font-bold mb-2">Estimated
+                                Capacity</div>
+                            <div class="text-4xl font-black">160.0<span
+                                    class="text-lg font-normal text-gray-600 ml-1">h</span></div>
+                        </div>
+                        <div class="card col-span-2">
+                            <div class="text-[11px] uppercase tracking-wider text-gray-500 font-bold mb-4">Time Burndown
+                            </div>
+                            <div class="h-16 flex items-end gap-1">
+                                <div class="h-[100%] w-full bg-blue-500/10 rounded-t relative">
+                                    <div class="absolute bottom-0 w-full h-[80%] bg-blue-500 rounded-t opacity-80">
+                                    </div>
+                                </div>
+                                <div class="h-[100%] w-full bg-blue-500/10 rounded-t relative">
+                                    <div class="absolute bottom-0 w-full h-[70%] bg-blue-500 rounded-t opacity-80">
+                                    </div>
+                                </div>
+                                <div class="h-[100%] w-full bg-blue-500/10 rounded-t relative">
+                                    <div class="absolute bottom-0 w-full h-[65%] bg-blue-500 rounded-t opacity-80">
+                                    </div>
+                                </div>
+                                <div class="h-[100%] w-full bg-blue-500/10 rounded-t relative">
+                                    <div class="absolute bottom-0 w-full h-[40%] bg-blue-500 rounded-t opacity-80">
+                                    </div>
+                                </div>
+                                <div class="h-[100%] w-full bg-blue-500/10 rounded-t relative">
+                                    <div class="absolute bottom-0 w-full h-[15%] bg-blue-500 rounded-t opacity-80">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Filter Bar (Sticky below charts) -->
+                <div
+                    class="px-8 py-3 border-y border-border-subtle bg-[#161920]/80 flex items-center justify-between sticky top-0 z-30 backdrop-blur-md">
+                    <div class="flex items-center gap-4">
+                        <div class="dropdown">
+                            <span>Assignee: All Members</span>
+                            <svg class="w-3.5 h-3.5 text-gray-500" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                        <div class="dropdown">
+                            <svg class="w-3.5 h-3.5 text-gray-500" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span>Feb 12 - Feb 18, 2026</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button
+                            class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-md text-xs font-bold transition-colors shadow-sm">Export
+                            Report</button>
+                    </div>
+                </div>
+
+                <!-- 4. Member Heatmap Section -->
+                <div class="p-8">
+                    <div class="bg-surface-2 border border-border-subtle rounded-xl overflow-hidden shadow-xl">
+                        <table class="w-full text-sm">
+                            <thead class="bg-surface-1/50 border-b border-border-subtle">
+                                <tr>
+                                    <th
+                                        class="p-4 text-left font-bold text-gray-400 uppercase text-[10px] tracking-widest border-r border-border-subtle sticky left-0 bg-[#0f1115] z-20">
+                                        Team Member</th>
+                                    <th
+                                        class="p-4 text-right font-bold text-gray-400 uppercase text-[10px] tracking-widest">
+                                        Est.</th>
+                                    <th
+                                        class="p-4 text-right font-bold text-gray-400 uppercase text-[10px] tracking-widest border-r border-border-subtle">
+                                        Logged</th>
+                                    <th class="p-4 text-center font-bold text-gray-400 uppercase text-[10px]">Mon 12
+                                    </th>
+                                    <th class="p-4 text-center font-bold text-gray-400 uppercase text-[10px]">Tue 13
+                                    </th>
+                                    <th class="p-4 text-center font-bold text-gray-400 uppercase text-[10px]">Wed 14
+                                    </th>
+                                    <th class="p-4 text-center font-bold text-gray-400 uppercase text-[10px]">Thu 15
+                                    </th>
+                                    <th class="p-4 text-center font-bold text-gray-400 uppercase text-[10px]">Fri 16
+                                    </th>
+                                    <th
+                                        class="p-4 text-center font-bold text-gray-400 uppercase text-[10px] border-l border-border-subtle">
+                                        Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-border-subtle/50">
+                                <tr class="hover:bg-white/5 transition-colors group">
+                                    <td
+                                        class="p-4 border-r border-border-subtle sticky left-0 bg-[#161920] group-hover:bg-[#1c2128] z-10">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center font-bold text-xs">
+                                                NV</div>
+                                            <span class="font-semibold">Nguyen Van A</span>
+                                        </div>
+                                    </td>
+                                    <td class="p-4 text-right text-gray-500">40h</td>
+                                    <td class="p-4 text-right font-bold text-red-500 border-r border-border-subtle">
+                                        42.5h</td>
+                                    <td class="p-2">
+                                        <div class="heatmap-cell cell-normal mx-auto">8.0h</div>
+                                    </td>
+                                    <td class="p-2">
+                                        <div class="heatmap-cell cell-normal mx-auto">8.0h</div>
+                                    </td>
+                                    <td class="p-2">
+                                        <div class="heatmap-cell cell-overload mx-auto">9.5h</div>
+                                    </td>
+                                    <td class="p-2">
+                                        <div class="heatmap-cell cell-normal mx-auto">8.0h</div>
+                                    </td>
+                                    <td class="p-2">
+                                        <div class="heatmap-cell cell-overload mx-auto">9.0h</div>
+                                    </td>
+                                    <td class="p-4 border-l border-border-subtle text-center">
+                                        <span
+                                            class="px-2 py-0.5 rounded-full bg-red-500/10 text-red-500 text-[10px] font-bold border border-red-500/20">OVERLOAD</span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-white/5 transition-colors group">
+                                    <td
+                                        class="p-4 border-r border-border-subtle sticky left-0 bg-[#161920] group-hover:bg-[#1c2128] z-10">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center font-bold text-xs">
+                                                TT</div>
+                                            <span class="font-semibold">Tran Thi B</span>
+                                        </div>
+                                    </td>
+                                    <td class="p-4 text-right text-gray-500">40h</td>
+                                    <td class="p-4 text-right font-bold border-r border-border-subtle">35.0h</td>
+                                    <td class="p-2">
+                                        <div class="heatmap-cell cell-normal mx-auto">8.0h</div>
+                                    </td>
+                                    <td class="p-2">
+                                        <div class="heatmap-cell cell-under mx-auto">4.0h</div>
+                                    </td>
+                                    <td class="p-2">
+                                        <div class="heatmap-cell cell-normal mx-auto">8.0h</div>
+                                    </td>
+                                    <td class="p-2">
+                                        <div class="heatmap-cell cell-normal mx-auto">8.0h</div>
+                                    </td>
+                                    <td class="p-2">
+                                        <div class="heatmap-cell cell-under mx-auto">7.0h</div>
+                                    </td>
+                                    <td class="p-4 border-l border-border-subtle text-center">
+                                        <span
+                                            class="px-2 py-0.5 rounded-full bg-gray-500/20 text-gray-400 text-[10px] font-bold border border-gray-500/20">NORMAL</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="mt-6 flex items-center gap-6 text-[11px] text-gray-500 font-medium">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded bg-red-500/20 border border-red-500/40"></div> Overload (>8h)
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded bg-green-500/20 border border-green-500/40"></div> Healthy
+                            (7-8h)
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded bg-yellow-500/20 border border-yellow-500/40"></div> Under
+                            Capacity (<7h) </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>

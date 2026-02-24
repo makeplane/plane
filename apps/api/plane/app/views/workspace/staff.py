@@ -15,8 +15,8 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 
 # Module imports
-from plane.app.permissions import WorkSpaceAdminPermission
-from plane.app.serializers.staff import StaffProfileSerializer, StaffProfileCreateSerializer
+from plane.app.permissions import WorkSpaceAdminPermission, WorkspaceEntityPermission
+from plane.app.serializers.staff import StaffProfileSerializer, StaffProfileCreateSerializer, MyStaffProfileSerializer
 from plane.app.views.base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
 from plane.db.models import (
@@ -29,6 +29,28 @@ from plane.db.models import (
 )
 from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
+
+
+class MyStaffProfileEndpoint(BaseAPIView):
+    """Current user's own staff profile — read-only, no admin required."""
+
+    permission_classes = [WorkspaceEntityPermission]
+
+    def get(self, request, slug):
+        try:
+            staff = StaffProfile.objects.select_related("department").get(
+                workspace__slug=slug,
+                user=request.user,
+                deleted_at__isnull=True,
+            )
+        except StaffProfile.DoesNotExist:
+            return Response(
+                {"detail": "Staff profile not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = MyStaffProfileSerializer(staff)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class StaffEndpoint(BaseAPIView):

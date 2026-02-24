@@ -82,9 +82,29 @@ export interface IStaffStats {
   }>;
 }
 
+export interface IMyStaffProfile {
+  id: string;
+  staff_id: string;
+  position: string;
+  department: string | null;
+  department_detail: {
+    id: string;
+    name: string;
+    code: string;
+  } | null;
+}
+
 export class StaffService extends APIService {
   constructor() {
     super(API_BASE_URL);
+  }
+
+  async getMyStaffProfile(workspaceSlug: string): Promise<IMyStaffProfile> {
+    return this.get(`/api/workspaces/${workspaceSlug}/me/staff-profile/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 
   /**

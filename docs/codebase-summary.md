@@ -277,9 +277,10 @@ plane.so/
 
 ### Internationalization (i18n)
 
-- **@plane/i18n** (19 languages)
+- **@plane/i18n** (3 strictly supported languages)
   - MobX + intl-messageformat integration
-  - Supported: English, Spanish, French, German, Chinese, Japanese, Korean, etc.
+  - Supported: English (`en`), Vietnamese (`vi`), Korean (`ko`)
+  - Rule: All 3 locales MUST be updated simultaneously.
 
 ### State Management
 
@@ -416,7 +417,7 @@ apps/api/
 | MobX Stores (space)        | 14                          |
 | API v0 Modules             | 18 URL modules              |
 | API v1 Modules             | 25 URL modules              |
-| Supported Languages (i18n) | 19                          |
+| Supported Languages (i18n) | 3 (en, vi, ko)              |
 | Docker Compose Services    | 13                          |
 | Deployment Methods         | 4                           |
 

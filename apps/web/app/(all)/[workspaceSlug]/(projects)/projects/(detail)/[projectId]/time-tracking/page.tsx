@@ -7,15 +7,15 @@
 import { observer } from "mobx-react";
 // components
 import { PageHead } from "@/components/core/page-title";
-import { TimeTrackingReportPage } from "@/components/time-tracking/time-tracking-report-page";
+import { TimesheetGrid } from "@/plane-web/components/time-tracking/timesheet";
 import type { Route } from "./+types/page";
 
 const TimeTrackingPage = observer(({ params }: Route.ComponentProps) => {
   const { workspaceSlug, projectId } = params;
   return (
     <>
-      <PageHead title="Time Tracking" />
-      <TimeTrackingReportPage workspaceSlug={workspaceSlug} projectId={projectId} />
+      <PageHead title="My Timesheet" />
+      <TimesheetGrid workspaceSlug={workspaceSlug} projectId={projectId} />
     </>
   );
 });

@@ -1,6 +1,7 @@
 from django.urls import path
 
 from plane.app.views.workspace.staff import (
+    MyStaffProfileEndpoint,
     StaffEndpoint,
     StaffDetailEndpoint,
     StaffTransferEndpoint,
@@ -12,6 +13,11 @@ from plane.app.views.workspace.staff import (
 )
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/me/staff-profile/",
+        MyStaffProfileEndpoint.as_view(http_method_names=["get"]),
+        name="my-staff-profile",
+    ),
     path(
         "workspaces/<str:slug>/staff/",
         StaffEndpoint.as_view(http_method_names=["get", "post"]),

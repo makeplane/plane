@@ -43,4 +43,4 @@ description: Plan a new feature with research, design, and implementation steps
    - [ ] No hardcoded colors
    - [ ] CE code in `ce/` directory
    - [ ] All `__init__.py` files updated
-   - [ ] Translations added to all locales
+   - [ ] Translations added to ALL 3 supported locales (`en`, `vi`, `ko`)

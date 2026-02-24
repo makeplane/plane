@@ -34,7 +34,7 @@ description: Implement a planned feature following Plane architecture
      - Use `useTranslation()` for all user-facing text
      - Use `cn()` from `@plane/utils` for conditional classes
    - Add routes in `app/routes/`
-   - Add translations to ALL language files
+   - Add translations to ALL 3 supported locale files (`en`, `vi`, `ko`) simultaneously
 
 4. **Verification**
    - Run linting: `pnpm check:lint`
