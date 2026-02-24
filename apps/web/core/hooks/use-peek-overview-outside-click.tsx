@@ -22,7 +22,7 @@ const usePeekOverviewOutsideClickDetector = (
 ) => {
   const handleClick = useCallback(
     (event: MouseEvent) => {
-      if (!(event.target instanceof HTMLElement)) return;
+      if (!(event.target instanceof Element)) return;
       if (ref.current && !ref.current.contains(event.target)) {
         // check for the closest element with attribute name data-prevent-outside-click
         const preventOutsideClickElement = event.target.closest("[data-prevent-outside-click]");
@@ -40,13 +40,8 @@ const usePeekOverviewOutsideClickDetector = (
           }
         }
         // check if the click target is the current issue element or its children
-        let targetElement: HTMLElement | null = event.target;
-        while (targetElement) {
-          if (targetElement.id === `issue-${issueId}`) {
-            // if the click target is the current issue element, return
-            return;
-          }
-          targetElement = targetElement.parentElement;
+        if (event.target.closest(`#issue-${issueId}`)) {
+          return;
         }
         const delayOutsideClickElement = event.target.closest("[data-delay-outside-click]");
         if (delayOutsideClickElement) {
