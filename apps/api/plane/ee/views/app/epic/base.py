@@ -184,7 +184,9 @@ class EpicViewSet(BaseViewSet):
 
     def get_queryset(self):
         return (
-            Issue.objects.filter(project_id=self.kwargs.get("project_id"))
+            Issue.issue_and_epics_objects.filter(
+                project_id=self.kwargs.get("project_id"),
+            )
             .filter(Q(type__isnull=False) & Q(type__is_epic=True))
             .filter(workspace__slug=self.kwargs.get("slug"))
         ).distinct()
