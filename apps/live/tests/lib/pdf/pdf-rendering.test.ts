@@ -22,6 +22,24 @@ async function extractPdfText(buffer: Buffer): Promise<string> {
   return result.pages.map((p) => p.text).join("\n");
 }
 
+/**
+ * Helper to extract the first page size from the PDF MediaBox.
+ * MediaBox is represented as: /MediaBox [0 0 width height]
+ */
+function extractFirstPageSize(buffer: Buffer): { width: number; height: number } {
+  const pdfString = buffer.toString("latin1");
+  const mediaBoxMatch = /\/MediaBox\s*\[\s*0\s+0\s+([0-9.]+)\s+([0-9.]+)\s*\]/.exec(pdfString);
+
+  if (!mediaBoxMatch) {
+    throw new Error("Could not find /MediaBox in generated PDF");
+  }
+
+  return {
+    width: Number.parseFloat(mediaBoxMatch[1]),
+    height: Number.parseFloat(mediaBoxMatch[2]),
+  };
+}
+
 describe("PDF Rendering Integration", () => {
   describe("renderPlaneDocToPdfBuffer", () => {
     it("should render empty document to valid PDF", async () => {
@@ -443,11 +461,12 @@ describe("PDF Rendering Integration", () => {
 
       const a4Text = await extractPdfText(a4Buffer);
       const letterText = await extractPdfText(letterBuffer);
+      const a4PageSize = extractFirstPageSize(a4Buffer);
+      const letterPageSize = extractFirstPageSize(letterBuffer);
 
       expect(a4Text).toContain("Page size test content");
       expect(letterText).toContain("Page size test content");
-      // Different page sizes should produce different PDF sizes
-      expect(a4Buffer.length).not.toBe(letterBuffer.length);
+      expect(a4PageSize).not.toEqual(letterPageSize);
     });
 
     it("should support landscape orientation and verify content", async () => {
@@ -466,10 +485,15 @@ describe("PDF Rendering Integration", () => {
 
       const portraitText = await extractPdfText(portraitBuffer);
       const landscapeText = await extractPdfText(landscapeBuffer);
+      const portraitPageSize = extractFirstPageSize(portraitBuffer);
+      const landscapePageSize = extractFirstPageSize(landscapeBuffer);
 
       expect(portraitText).toContain("Landscape content here");
       expect(landscapeText).toContain("Landscape content here");
-      expect(portraitBuffer.length).not.toBe(landscapeBuffer.length);
+      expect(portraitPageSize.width).toBeLessThan(portraitPageSize.height);
+      expect(landscapePageSize.width).toBeGreaterThan(landscapePageSize.height);
+      expect(portraitPageSize.width).toBeCloseTo(landscapePageSize.height, 1);
+      expect(portraitPageSize.height).toBeCloseTo(landscapePageSize.width, 1);
     });
 
     it("should include author metadata in PDF", async () => {

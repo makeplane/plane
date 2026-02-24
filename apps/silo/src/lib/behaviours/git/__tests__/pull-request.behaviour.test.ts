@@ -341,7 +341,7 @@ describe("PullRequestBehaviour", () => {
         reference: { identifier: "PL", sequence: 123, isClosing: true },
         issue: mockIssue,
       });
-      expect(planeClient.issue.getIssueByIdentifier).toHaveBeenCalledWith("test-workspace", "PL", 123);
+      expect(planeClient.issue.getIssueByIdentifier).toHaveBeenCalledWith("test-workspace", "PL", 123, true);
       expect(planeClient.issue.update).toHaveBeenCalled();
       expect(planeClient.issue.createLink).toHaveBeenCalled();
     });

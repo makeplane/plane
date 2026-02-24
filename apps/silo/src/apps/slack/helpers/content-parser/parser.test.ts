@@ -44,6 +44,8 @@ const createMockSlackService = () =>
     ),
   }) as unknown as SlackService;
 
+const normalizeMentionIds = (html: string) => html.replace(/id="[a-f0-9-]{36}"/g, 'id="<uuid>"');
+
 describe("Slack Content Parser", () => {
   const mockConfig: TSlackContentParserConfig = {
     slackService: createMockSlackService(),
@@ -76,37 +78,20 @@ Some **bold text** and *italic text* and \`inline code\`.
     const parser = getSlackContentParser(mockConfig);
     const result = await parser.toPlaneHtml(slackRichText);
 
-    // Test mention components structure (with UUID pattern matching)
-    expect(result).toMatch(
-      /<mention-component id="[a-f0-9-]{36}" entity_identifier="plane-user-id-1" entity_name="user_mention"><\/mention-component>/
-    );
-    expect(result).toMatch(
-      /<mention-component id="[a-f0-9-]{36}" entity_identifier="plane-user-id-2" entity_name="user_mention"><\/mention-component>/
-    );
-
-    // Test channel mentions
-    expect(result).toContain('href="https%3A%2F%2Fmyteam.slack.com%2Farchives%2FC1234567890"');
-    expect(result).toContain("Slack Channel: C1234567890");
-
-    // Test broadcast mentions
-    expect(result).toContain('href="https%3A%2F%2Fmyteam.slack.com%2Fteam%2Fchannel"');
-    expect(result).toContain("Slack Broadcast: channel");
-
-    // Test regular links
-    expect(result).toContain('href="https://example.com"');
-    expect(result).toContain('href="https://plane.so"');
-
-    // Test text formatting
-    expect(result).toContain("<strong>bold text</strong>");
-    expect(result).toContain("<em>italic text</em>");
-    expect(result).toContain("<code>inline code</code>");
-
-    // Test list structure
-    expect(result).toContain("<ul>");
-    expect(result).toContain("<li>First item</li>");
-    expect(result).toContain("<li>Second item</li>");
-    expect(result).toContain("<li>Third item</li>");
-    expect(result).toContain("</ul>");
+    expect(normalizeMentionIds(result)).toMatchInlineSnapshot(`
+      "<p>Hello <mention-component id="<uuid>" entity_identifier="plane-user-id-1" entity_name="user_mention"></mention-component> and <mention-component id="<uuid>" entity_identifier="plane-user-id-2" entity_name="user_mention"></mention-component>!</p>
+      <p>Please check the <a href="https%3A%2F%2Fmyteam.slack.com%2Farchives%2FC1234567890" target="_blank">c1234567890</a> channel for updates.</p>
+      <p><a href="https%3A%2F%2Fmyteam.slack.com%2Fteam%2Fchannel" target="_blank">Slack Broadcast: channel</a> announcement for everyone.</p>
+      <p>Visit our website: <a href="https://example.com">https://example.com</a></p>
+      <p>Here&#39;s a formatted link: <a href="https://plane.so">Click here</a></p>
+      <p>Some <strong>bold text</strong> and <em>italic text</em> and <code>inline code</code>.</p>
+      <ul>
+      <li>First item</li>
+      <li>Second item</li>
+      <li>Third item</li>
+      </ul>
+      "
+    `);
   });
 
   it("should handle user mentions with fallback for unmapped users", async () => {
@@ -158,12 +143,16 @@ Some **bold text** and *italic text* and \`inline code\`.
     const parser = getSlackContentParser(mockConfig);
     const result = await parser.toPlaneHtml(slackRichText);
 
-    // Verify all mention types are processed
-    expect(result).toContain('entity_identifier="plane-user-id-1"'); // Mapped user
-    expect(result).toContain('entity_identifier="plane-user-id-2"'); // Mapped user
-    expect(result).toContain("Slack Channel: general"); // Channel mention
-    expect(result).toContain("Slack Broadcast: everyone"); // Broadcast mention
-    expect(result).toContain("https://docs.example.com"); // Regular link
+    expect(normalizeMentionIds(result)).toMatchInlineSnapshot(`
+      "<p>Team update from <mention-component id="<uuid>" entity_identifier="plane-user-id-1" entity_name="user_mention"></mention-component>:</p>
+      <ol>
+      <li>Check <a href="https%3A%2F%2Fmyteam.slack.com%2Farchives%2Fgeneral" target="_blank">general</a> for announcements</li>
+      <li><a href="https%3A%2F%2Fmyteam.slack.com%2Fteam%2Feveryone" target="_blank">Slack Broadcast: everyone</a> please review the docs</li>
+      <li>Contact <mention-component id="<uuid>" entity_identifier="plane-user-id-2" entity_name="user_mention"></mention-component> for questions</li>
+      </ol>
+      <p>  Link: <a href="https://docs.example.com">https://docs.example.com</a></p>
+      "
+    `);
   });
 
   it("should preserve markdown formatting in non-mention text", async () => {
@@ -208,13 +197,17 @@ Some **bold text** and *italic text* and \`inline code\`.
     const parser = getSlackContentParser(mockConfig);
     const result = await parser.toPlaneHtml(slackRichText);
 
-    // Verify the structure is maintained and all elements are processed
-    //
-    expect(result).toMatch(
-      /<mention-component id="[a-f0-9-]{36}" entity_identifier="plane-user-id-1" entity_name="user_mention"><\/mention-component>/
-    );
-    expect(result).toContain("Slack Channel: dev-team");
-    expect(result).toContain("Slack Broadcast: here");
-    expect(result).toContain('<a href="https://docs.plane.so">https://docs.plane.so</a>');
+    expect(normalizeMentionIds(result)).toMatchInlineSnapshot(`
+      "<p>Hi <mention-component id="<uuid>" entity_identifier="plane-user-id-1" entity_name="user_mention"></mention-component>! 👋</p>
+      <p>  Please review the PR in <a href="https%3A%2F%2Fmyteam.slack.com%2Farchives%2Fdev-team" target="_blank">dev-team</a> channel.</p>
+      <p>  <a href="https%3A%2F%2Fmyteam.slack.com%2Fteam%2Fhere" target="_blank">Slack Broadcast: here</a> - This is important for everyone.</p>
+      <p>  Resources:</p>
+      <ul>
+      <li>Documentation: <a href="https://docs.plane.so">https://docs.plane.so</a></li>
+      <li>Support: <a href="https://plane.so/contact">Contact us</a></li>
+      </ul>
+      <p>  Thanks!</p>
+      "
+    `);
   });
 });
