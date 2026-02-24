@@ -6,6 +6,8 @@
 
 import type { AxiosRequestConfig } from "axios";
 import axios from "axios";
+// plane types
+import { API_BASE_URL } from "@plane/constants";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -13,7 +15,7 @@ export class FileUploadService extends APIService {
   private cancelSource: any;
 
   constructor() {
-    super("");
+    super(API_BASE_URL);
   }
 
   async uploadFile(
