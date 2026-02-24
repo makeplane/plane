@@ -72,7 +72,7 @@ export const BaseKanbanGroup = observer(function BaseKanbanGroup<T extends IBase
 
       {/* Group Items */}
       {!isCollapsed && (
-        <div className="flex flex-col gap-2 py-2">
+        <div className="max-h-full overflow-hidden overflow-y-auto flex flex-col gap-y-2 mt-2">
           {itemIds.map((itemId, index) => {
             const item = items[itemId];
             if (!item) return null;

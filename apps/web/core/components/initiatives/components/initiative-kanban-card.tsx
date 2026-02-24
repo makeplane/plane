@@ -117,7 +117,7 @@ export const InitiativeKanbanCard = observer(function InitiativeKanbanCard(props
           workspaceSlug={workspaceSlug.toString()}
           initiativeId={initiativeId}
           analytics={initiativeStats}
-          showTabs={false}
+          showTabs
         />
       )}
 
