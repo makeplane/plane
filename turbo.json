@@ -62,7 +62,10 @@
     "DD_TRACE_ENABLED"
   ],
   "remoteCache": {
-    "enabled": false
+    "apiUrl": "https://turborepo-remote-cache.vamsi-906.workers.dev",
+    "enabled": true,
+    "signature": true,
+    "teamSlug": "plane"
   },
   "tasks": {
     "build": {
