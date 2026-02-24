@@ -33,13 +33,30 @@ export function Logo({ logo, size = 16, type = "material" }: Props) {
   // Reusable loading skeleton
   const loadingSkeleton = <span style={{ height: size, width: size }} className="rounded-sm bg-layer-1" />;
 
-  // Early returns for loading/empty states
-  if (!logo || !logo.in_use) return loadingSkeleton;
+  // Fallback for empty states
+  if (!logo || !logo.in_use || (logo.in_use === "emoji" && !logo.emoji?.value) || (logo.in_use === "icon" && !logo.icon?.name)) {
+    if (type === "lucide") {
+      const FallbackIcon = LUCIDE_ICONS_LIST.find((item) => item.name === "box")?.element;
+      if (FallbackIcon) return <FallbackIcon style={{ height: size, width: size }} className="text-tertiary" />;
+    }
+
+    if (!isMaterialSymbolsFontLoaded) return loadingSkeleton;
+
+    return (
+      <span
+        className="material-symbols-rounded text-tertiary"
+        style={{
+          fontSize: size,
+          scale: "115%",
+        }}
+      >
+        contrast
+      </span>
+    );
+  }
 
   const { in_use, emoji, icon } = logo;
   const value = in_use === "emoji" ? emoji?.value : icon?.name;
-
-  if (!value) return loadingSkeleton;
 
   // Emoji rendering
   if (in_use === "emoji") {

@@ -76,7 +76,7 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
           onClick={() => setIsAddIssueModalOpen(true)}
           className="text-[11px] font-semibold h-7"
         >
-          {t("timesheet_add_issue", "Add Issue")}
+          {t("timesheet_add_issue")}
         </Button>
       </div>
 

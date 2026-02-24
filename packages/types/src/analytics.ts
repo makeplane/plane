@@ -37,8 +37,8 @@ export enum ChartYAxisMetric {
   EPIC_WORK_ITEM_COUNT = "EPIC_WORK_ITEM_COUNT",
 }
 
-export type TAnalyticsTabsBase = "overview" | "work-items";
-export type TAnalyticsGraphsBase = "projects" | "work-items" | "custom-work-items";
+export type TAnalyticsTabsBase = "overview" | "work-items" | "projects" | "users" | "cycles" | "modules" | "intake";
+export type TAnalyticsGraphsBase = "projects" | "work-items" | "custom-work-items" | "users" | "cycles" | "modules" | "intake";
 export interface AnalyticsTab {
   key: TAnalyticsTabsBase;
   label: string;
@@ -53,6 +53,7 @@ export type TAnalyticsFilterParams = {
 
 // service types
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface IAnalyticsResponse {
   [key: string]: any;
 }
@@ -67,30 +68,4 @@ export interface IAnalyticsResponseFields {
 export interface IChartResponse {
   schema: Record<string, string>;
   data: TChartData<string, string>[];
-}
-
-// table types
-
-export interface WorkItemInsightColumns {
-  project_id?: string;
-  project__name?: string;
-  cancelled_work_items: number;
-  completed_work_items: number;
-  backlog_work_items: number;
-  un_started_work_items: number;
-  started_work_items: number;
-  // in case of peek view, we will display the display_name instead of project__name
-  display_name?: string;
-  avatar_url?: string;
-  assignee_id?: string;
-}
-
-export type AnalyticsTableDataMap = {
-  "work-items": WorkItemInsightColumns;
-};
-
-export interface IAnalyticsParams {
-  x_axis: ChartXAxisProperty;
-  y_axis: ChartYAxisMetric;
-  group_by?: ChartXAxisProperty;
 }

@@ -70,11 +70,11 @@ export class WorklogService extends APIService {
   }
 
   async deleteWorklog(workspaceSlug: string, projectId: string, issueId: string, worklogId: string): Promise<void> {
-    return (
-      this.delete(
-        `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/worklogs/${worklogId}/`
-      ) as Promise<void>
-    ).catch((error: { response?: { data: unknown } }) => {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/worklogs/${worklogId}/`
+    ).then(() => {
+      return;
+    }).catch((error: { response?: { data: unknown } }) => {
       throw error?.response?.data;
     });
   }

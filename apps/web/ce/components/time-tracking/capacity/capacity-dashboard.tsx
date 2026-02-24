@@ -71,12 +71,12 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
       "Issue Count": member.issue_count,
       Status: member.status.toUpperCase(),
       ...Object.keys(member.days || {}).reduce<Record<string, string>>((acc, date) => {
-        acc[date] = ((member.days[date] || 0) / 60).toFixed(2);
+        acc[date] = (((member.days && member.days[date]) || 0) / 60).toFixed(2);
         return acc;
       }, {}),
     }));
 
-    const csv = generateCsv(csvConfig)(exportData);
+    const csv = generateCsv(csvConfig)(exportData as any);
     download(csvConfig)(csv);
   };
 
@@ -116,7 +116,7 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
               {t("capacity_dashboard")}
             </h2>
             <p className="text-xs text-secondary mt-1.5 ml-0.5">
-              {t("capacity_dashboard_description", "View total logged time vs estimated capacity for project members")}
+              {t("capacity_dashboard_description")}
             </p>
           </div>
         </div>
@@ -143,7 +143,7 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
                 onChange={(val: string[]) => setSelectedMembers(val)}
                 projectId={projectId}
                 multiple
-                buttonVariant="outline"
+                buttonVariant="transparent-with-text"
                 buttonClassName="!h-7 !px-2.5 !py-0.5 text-[11px]"
                 dropdownArrow
               />
@@ -152,9 +152,9 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-medium text-secondary">{t("date_range")}:</span>
               <DateRangeDropdown
-                buttonVariant="outline"
+                buttonVariant="transparent-with-text"
                 value={dateRange}
-                onSelect={(range) => setDateRange(range || { from: undefined, to: undefined })}
+                onSelect={(range) => setDateRange(range ? { from: range.from, to: range.to || undefined } : { from: undefined, to: undefined })}
                 buttonClassName="!h-7 !px-2.5 !py-0.5 text-[11px]"
                 isClearable
               />

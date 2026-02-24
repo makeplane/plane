@@ -78,7 +78,7 @@ export const TimesheetWeekNavigator: FC<TimesheetWeekNavigatorProps> = ({ weekSt
                 </Button>
             </div>
 
-            <Button variant="outline" size="sm" onClick={goToThisWeek} className="h-7 px-2.5 py-1 text-[11px] font-semibold text-secondary">
+            <Button variant="secondary" size="sm" onClick={goToThisWeek} className="h-7 px-2.5 py-1 text-[11px] font-semibold text-secondary">
                 {t("timesheet_this_week")}
             </Button>
         </div>

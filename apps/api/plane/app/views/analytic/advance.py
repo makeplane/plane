@@ -116,6 +116,75 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
                 self.get_work_items_stats(),
                 status=status.HTTP_200_OK,
             )
+        elif tab == "projects":
+            return Response(
+                {
+                    "total_projects": self.get_filtered_counts(Project.objects.filter(**self.filters["project_filters"])),
+                    "on_track_updates": {"count": 0},  # Mocked until Page/Update integration
+                    "off_track_updates": {"count": 0},
+                    "at_risk_updates": {"count": 0},
+                },
+                status=status.HTTP_200_OK,
+            )
+        elif tab == "users":
+            members_query = WorkspaceMember.objects.filter(
+                workspace__slug=self._workspace_slug, is_active=True, member__is_bot=False
+            )
+            if request.GET.get("project_ids", None):
+                project_ids = request.GET.get("project_ids", None)
+                project_ids = [str(project_id) for project_id in project_ids.split(",")]
+                members_query = ProjectMember.objects.filter(
+                    project_id__in=project_ids, is_active=True, member__is_bot=False
+                )
+            return Response(
+                {
+                    "total_users": self.get_filtered_counts(members_query),
+                    "total_admins": self.get_filtered_counts(members_query.filter(role=ROLE.ADMIN.value)),
+                    "total_members": self.get_filtered_counts(members_query.filter(role=ROLE.MEMBER.value)),
+                    "total_guests": self.get_filtered_counts(members_query.filter(role=ROLE.GUEST.value)),
+                },
+                status=status.HTTP_200_OK,
+            )
+        elif tab == "cycles":
+            base_queryset = Cycle.objects.filter(**self.filters["base_filters"])
+            return Response(
+                {
+                    "total_cycles": self.get_filtered_counts(base_queryset),
+                    "current_cycles": self.get_filtered_counts(
+                        base_queryset.filter(
+                            start_date__lte=timezone.now().date(), end_date__gte=timezone.now().date()
+                        )
+                    ),
+                    "upcoming_cycles": self.get_filtered_counts(base_queryset.filter(start_date__gt=timezone.now().date())),
+                    "completed_cycles": self.get_filtered_counts(base_queryset.filter(end_date__lt=timezone.now().date())),
+                },
+                status=status.HTTP_200_OK,
+            )
+        elif tab == "modules":
+            base_queryset = Module.objects.filter(**self.filters["base_filters"])
+            return Response(
+                {
+                    "total_modules": self.get_filtered_counts(base_queryset),
+                    "completed_modules": self.get_filtered_counts(base_queryset.filter(status="completed")),
+                    "in_progress_modules": self.get_filtered_counts(base_queryset.filter(status="in-progress")),
+                    "planned_modules": self.get_filtered_counts(base_queryset.filter(status="planned")),
+                    "paused_modules": self.get_filtered_counts(base_queryset.filter(status="paused")),
+                },
+                status=status.HTTP_200_OK,
+            )
+        elif tab == "intake":
+            base_queryset = Issue.objects.filter(**self.filters["base_filters"]).filter(
+                issue_intake__isnull=False
+            )
+            return Response(
+                {
+                    "total_intake": self.get_filtered_counts(base_queryset),
+                    "accepted": self.get_filtered_counts(base_queryset.filter(issue_intake__status="1")),  # 1 is accepted
+                    "declined": self.get_filtered_counts(base_queryset.filter(issue_intake__status="-1")), # -1 is declined
+                    "duplicate": self.get_filtered_counts(base_queryset.filter(issue_intake__status="-2")),# -2 is duplicate
+                },
+                status=status.HTTP_200_OK,
+            )
         return Response({"message": "Invalid tab"}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -163,6 +232,140 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
         if type == "work-items":
             return Response(
                 self.get_work_items_stats(),
+                status=status.HTTP_200_OK,
+            )
+
+        elif type == "projects":
+            return Response(
+                [
+                    {
+                        "project_id": item["id"],
+                        "project__name": item["name"],
+                        "members": item["member_count"],
+                        "work_items": item["issue_count"],
+                        "state_groups": {
+                            "started": item["started_issues"],
+                            "completed": item["completed_issues"],
+                            "backlog": item["backlog_issues"],
+                            "unstarted": item["un_started_issues"],
+                            "cancelled": item["cancelled_issues"],
+                        },
+                    }
+                    for item in Project.objects.filter(**self.filters["project_filters"])
+                    .annotate(
+                        member_count=Count("project_projectmember", distinct=True, filter=Q(project_projectmember__is_active=True)),
+                        issue_count=Count("project_issue", distinct=True),
+                        started_issues=Count("project_issue", filter=Q(project_issue__state__group="started"), distinct=True),
+                        completed_issues=Count("project_issue", filter=Q(project_issue__state__group="completed"), distinct=True),
+                        backlog_issues=Count("project_issue", filter=Q(project_issue__state__group="backlog"), distinct=True),
+                        un_started_issues=Count("project_issue", filter=Q(project_issue__state__group="unstarted"), distinct=True),
+                        cancelled_issues=Count("project_issue", filter=Q(project_issue__state__group="cancelled"), distinct=True),
+                    )
+                    .values(
+                        "id", "name", "member_count", "issue_count",
+                        "started_issues", "completed_issues", "backlog_issues", "un_started_issues", "cancelled_issues"
+                    )
+                ],
+                status=status.HTTP_200_OK,
+            )
+        elif type == "users":
+            members_query = WorkspaceMember.objects.filter(
+                workspace__slug=self._workspace_slug, is_active=True, member__is_bot=False
+            )
+            if request.GET.get("project_ids", None):
+                project_ids = request.GET.get("project_ids", None)
+                project_ids = [str(project_id) for project_id in project_ids.split(",")]
+                members_query = ProjectMember.objects.filter(
+                    project_id__in=project_ids, is_active=True, member__is_bot=False
+                )
+            
+            return Response(
+                [
+                    {
+                        "assignee_id": item["member__id"],
+                        "display_name": item["member__display_name"],
+                        "avatar_url": item["member__avatar_url"],
+                        "started_work_items": item.get("started_count", 0),
+                        "completed_work_items": item.get("completed_count", 0),
+                        "un_started_work_items": item.get("unstarted_count", 0),
+                    }
+                    for item in members_query.values("member__id", "member__display_name", "member__avatar_url")
+                ],
+                status=status.HTTP_200_OK,
+            )
+        elif type == "cycles":
+            base_queryset = Cycle.objects.filter(**self.filters["base_filters"])
+            return Response(
+                [
+                    {
+                        "id": item["id"],
+                        "name": item["name"],
+                        "start_date": item["start_date"],
+                        "end_date": item["end_date"],
+                        "project_id": item["project_id"],
+                        "project__name": item["project__name"],
+                        "lead__display_name": item["owned_by__display_name"],
+                        "completed_issues": item["completed_issues"],
+                        "total_issues": item["total_issues"],
+                        "completion_percent": (item["completed_issues"] / item["total_issues"] * 100) if item["total_issues"] > 0 else 0,
+                    }
+                    for item in base_queryset.annotate(
+                        completed_issues=Count("issue_cycle", filter=Q(issue_cycle__issue__state__group="completed")),
+                        total_issues=Count("issue_cycle"),
+                    ).values(
+                        "id", "name", "start_date", "end_date", "project_id", "project__name", "owned_by__display_name",
+                        "completed_issues", "total_issues"
+                    )
+                ],
+                status=status.HTTP_200_OK,
+            )
+        elif type == "modules":
+            base_queryset = Module.objects.filter(**self.filters["base_filters"])
+            return Response(
+                [
+                    {
+                        "id": item["id"],
+                        "name": item["name"],
+                        "start_date": item["start_date"],
+                        "target_date": item["target_date"],
+                        "project_id": item["project_id"],
+                        "project__name": item["project__name"],
+                        "lead__display_name": item["lead__display_name"],
+                        "completed_issues": item["completed_issues"],
+                        "total_issues": item["total_issues"],
+                        "completion_percent": (item["completed_issues"] / item["total_issues"] * 100) if item["total_issues"] > 0 else 0,
+                    }
+                    for item in base_queryset.annotate(
+                        completed_issues=Count("issue_module", filter=Q(issue_module__issue__state__group="completed")),
+                        total_issues=Count("issue_module"),
+                    ).values(
+                        "id", "name", "start_date", "target_date", "project_id", "project__name", "lead__display_name",
+                        "completed_issues", "total_issues"
+                    )
+                ],
+                status=status.HTTP_200_OK,
+            )
+        elif type == "intake":
+            base_queryset = Project.objects.filter(**self.filters["project_filters"])
+            return Response(
+                [
+                    {
+                        "project_id": item["id"],
+                        "project__name": item["name"],
+                        "total_intakes": item["total_intakes"],
+                        "accepted": item["accepted_intakes"],
+                        "declined": item["declined_intakes"],
+                        "duplicate": item["duplicate_intakes"],
+                    }
+                    for item in base_queryset.annotate(
+                        total_intakes=Count("project_issue", filter=Q(project_issue__issue_intake__isnull=False)),
+                        accepted_intakes=Count("project_issue", filter=Q(project_issue__issue_intake__status="1")),
+                        declined_intakes=Count("project_issue", filter=Q(project_issue__issue_intake__status="-1")),
+                        duplicate_intakes=Count("project_issue", filter=Q(project_issue__issue_intake__status="-2")),
+                    ).values(
+                        "id", "name", "total_intakes", "accepted_intakes", "declined_intakes", "duplicate_intakes"
+                    )
+                ],
                 status=status.HTTP_200_OK,
             )
 
@@ -312,6 +515,155 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
         elif type == "work-items":
             return Response(
                 self.work_item_completion_chart(),
+                status=status.HTTP_200_OK,
+            )
+        elif type == "users":
+            members_query = WorkspaceMember.objects.filter(
+                workspace__slug=self._workspace_slug, is_active=True, member__is_bot=False
+            )
+            if request.GET.get("project_ids", None):
+                project_ids = request.GET.get("project_ids", None)
+                project_ids = [str(project_id) for project_id in project_ids.split(",")]
+                members_query = ProjectMember.objects.filter(
+                    project_id__in=project_ids, is_active=True, member__is_bot=False
+                )
+            
+            data = [
+                {
+                    "key": item["member__id"],
+                    "name": item["member__display_name"],
+                    "count": item.get("started_count", 0) + item.get("completed_count", 0) + item.get("unstarted_count", 0),
+                    "completed_issues": item.get("completed_count", 0),
+                    "pending_issues": item.get("started_count", 0) + item.get("unstarted_count", 0),
+                }
+                for item in members_query.values("member__id", "member__display_name")
+            ]
+            
+            schema = {
+                "completed_issues": "completed_issues",
+                "pending_issues": "pending_issues",
+            }
+            
+            return Response(
+                {"data": data, "schema": schema},
+                status=status.HTTP_200_OK,
+            )
+        elif type == "cycles":
+            base_queryset = Cycle.objects.filter(**self.filters["base_filters"])
+            data = [
+                {
+                    "key": item["id"],
+                    "name": item["name"],
+                    "count": item["total_issues"],
+                    "completed_issues": item["completed_issues"],
+                    "total_issues": item["total_issues"],
+                    "completion_percent": (item["completed_issues"] / item["total_issues"] * 100) if item["total_issues"] > 0 else 0,
+                    "is_current": timezone.now().date() >= item["start_date"] and timezone.now().date() <= item["end_date"] if item["start_date"] and item["end_date"] else False,
+                    "is_completed": timezone.now().date() > item["end_date"] if item["end_date"] else False,
+                    "is_upcoming": timezone.now().date() < item["start_date"] if item["start_date"] else False,
+                }
+                for item in base_queryset.annotate(
+                    completed_issues=Count("issue_cycle", filter=Q(issue_cycle__issue__state__group="completed")),
+                    total_issues=Count("issue_cycle"),
+                ).values(
+                    "id", "name", "start_date", "end_date", "completed_issues", "total_issues"
+                )
+            ]
+            
+            schema = {
+                "completion_percent": "completion_percent",
+            }
+            
+            return Response(
+                {"data": data, "schema": schema},
+                status=status.HTTP_200_OK,
+            )
+        elif type == "modules":
+            base_queryset = Module.objects.filter(**self.filters["base_filters"])
+            data = [
+                {
+                    "key": item["id"],
+                    "name": item["name"],
+                    "count": item["total_issues"],
+                    "completed_issues": item["completed_issues"],
+                    "total_issues": item["total_issues"],
+                    "status": item["status"],
+                    "completion_percent": (item["completed_issues"] / item["total_issues"] * 100) if item["total_issues"] > 0 else 0,
+                }
+                for item in base_queryset.annotate(
+                    completed_issues=Count("issue_module", filter=Q(issue_module__issue__state__group="completed")),
+                    total_issues=Count("issue_module"),
+                ).values(
+                    "id", "name", "status", "completed_issues", "total_issues"
+                )
+            ]
+            
+            schema = {
+                "completion_percent": "completion_percent",
+            }
+            
+            return Response(
+                {"data": data, "schema": schema},
+                status=status.HTTP_200_OK,
+            )
+        elif type == "intake":
+            base_queryset = Issue.objects.filter(
+                **self.filters["base_filters"]
+            ).filter(issue_intake__isnull=False)
+
+            workspace = Workspace.objects.get(slug=self._workspace_slug)
+            start_date = workspace.created_at.date().replace(day=1)
+
+            if self.filters["chart_period_range"]:
+                start_date, end_date = self.filters["chart_period_range"]
+                base_queryset = base_queryset.filter(created_at__date__gte=start_date, created_at__date__lte=end_date)
+
+            monthly_stats = (
+                base_queryset.annotate(month=TruncMonth("created_at"))
+                .values("month")
+                .annotate(
+                    accepted_count=Count("id", filter=Q(issue_intake__status="1")),
+                    declined_count=Count("id", filter=Q(issue_intake__status="-1")),
+                )
+                .order_by("month")
+            )
+
+            stats_dict = {
+                stat["month"].strftime("%Y-%m-%d"): {
+                    "accepted_count": stat["accepted_count"],
+                    "declined_count": stat["declined_count"],
+                }
+                for stat in monthly_stats
+            }
+
+            data = []
+            end_date = timezone.now().date()
+            last_month = end_date.replace(day=1)
+            current_month = start_date
+
+            while current_month <= last_month:
+                date_str = current_month.strftime("%Y-%m-%d")
+                stats = stats_dict.get(date_str, {"accepted_count": 0, "declined_count": 0})
+                data.append(
+                    {
+                        "key": date_str,
+                        "name": date_str,
+                        "accepted_issues": stats["accepted_count"],
+                        "declined_issues": stats["declined_count"],
+                    }
+                )
+                if current_month.month == 12:
+                    current_month = current_month.replace(year=current_month.year + 1, month=1)
+                else:
+                    current_month = current_month.replace(month=current_month.month + 1)
+
+            schema = {
+                "accepted_issues": "accepted_issues",
+                "declined_issues": "declined_issues",
+            }
+
+            return Response(
+                {"data": data, "schema": schema},
                 status=status.HTTP_200_OK,
             )
 

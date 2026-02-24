@@ -100,6 +100,108 @@ export const ANALYTICS_INSIGHTS_FIELDS: Record<TAnalyticsTabsBase, IInsightField
       i18nKey: "workspace_analytics.completed_work_items",
     },
   ],
+  projects: [
+    {
+      key: "total_projects",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: { entity: "common.projects" },
+    },
+    {
+      key: "on_track_updates",
+      i18nKey: "workspace_analytics.on_track",
+    },
+    {
+      key: "off_track_updates",
+      i18nKey: "workspace_analytics.off_track",
+    },
+    {
+      key: "at_risk_updates",
+      i18nKey: "workspace_analytics.at_risk",
+    },
+  ],
+  users: [
+    {
+      key: "total_users",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: { entity: "common.users" },
+    },
+    {
+      key: "total_admins",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: { entity: "common.admins" },
+    },
+    {
+      key: "total_members",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: { entity: "common.members" },
+    },
+    {
+      key: "total_guests",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: { entity: "common.guests" },
+    },
+  ],
+  cycles: [
+    {
+      key: "total_cycles",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: { entity: "common.cycles" },
+    },
+    {
+      key: "current_cycles",
+      i18nKey: "workspace_analytics.current_cycles",
+    },
+    {
+      key: "upcoming_cycles",
+      i18nKey: "workspace_analytics.upcoming_cycles",
+    },
+    {
+      key: "completed_cycles",
+      i18nKey: "workspace_analytics.completed_cycles",
+    },
+  ],
+  modules: [
+    {
+      key: "total_modules",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: { entity: "common.modules" },
+    },
+    {
+      key: "completed_modules",
+      i18nKey: "workspace_analytics.completed_modules",
+    },
+    {
+      key: "in_progress_modules",
+      i18nKey: "workspace_analytics.in_progress_modules",
+    },
+    {
+      key: "planned_modules",
+      i18nKey: "workspace_analytics.planned_modules",
+    },
+    {
+      key: "paused_modules",
+      i18nKey: "workspace_analytics.paused_modules",
+    },
+  ],
+  intake: [
+    {
+      key: "total_intake",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: { entity: "sidebar.intake" },
+    },
+    {
+      key: "accepted",
+      i18nKey: "workspace_analytics.accepted",
+    },
+    {
+      key: "declined",
+      i18nKey: "workspace_analytics.declined",
+    },
+    {
+      key: "duplicate",
+      i18nKey: "workspace_analytics.duplicate",
+    },
+  ],
 };
 
 export const ANALYTICS_DURATION_FILTER_OPTIONS = [

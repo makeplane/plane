@@ -96,7 +96,7 @@ export function TimesheetAddIssueModal({
           />
           <Combobox.Input
             className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none placeholder:text-placeholder focus:ring-0 sm:text-13"
-            placeholder={t("common.search.placeholder", "Search for issues...")}
+            placeholder={t("common.search.placeholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             displayValue={() => ""}
@@ -130,8 +130,7 @@ export function TimesheetAddIssueModal({
                   key={issue.id}
                   value={issue}
                   className={({ active, selected }) =>
-                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${
-                      active ? "bg-layer-1 text-primary" : ""
+                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${active ? "bg-layer-1 text-primary" : ""
                     } ${selected ? "text-primary" : ""}`
                   }
                 >

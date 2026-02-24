@@ -23,9 +23,9 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
     !dateFrom || !dateTo
       ? []
       : eachDayOfInterval({
-          start: parseISO(dateFrom),
-          end: parseISO(dateTo),
-        });
+        start: parseISO(dateFrom),
+        end: parseISO(dateTo),
+      });
 
   const getDailyCellInfo = (minutes: number = 0) => {
     if (minutes > 480) {
@@ -72,7 +72,7 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
                 {t("capacity_total_logged")}
               </th>
               <th scope="col" className="px-3 py-2 text-right border-r border-subtle">
-                {t("work_items", "Work Items")}
+                {t("work_items")}
               </th>
               {days.map((day) => (
                 <th key={day.toISOString()} scope="col" className="px-2 py-2 text-center min-w-[70px]">
@@ -175,11 +175,11 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
                             className={`px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase tracking-wider ${statusBgClassName} ${statusTextClassName} ${statusBorderClassName}`}
                           >
                             {isOverloaded
-                              ? t("capacity_overloaded", "Overload")
+                              ? t("capacity_overloaded")
                               : isUnder
-                                ? t("capacity_under_capacity", "Under")
+                                ? t("capacity_under_capacity")
                                 : member.total_estimated_minutes > 0
-                                  ? t("capacity_normal", "Normal")
+                                  ? t("capacity_normal")
                                   : "-"}
                           </div>
                         </Tooltip>
@@ -195,7 +195,7 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
               {/* Row 1: Logged Time Totals */}
               <tr className="border-b border-subtle/30">
                 <td className="px-3 py-2 sticky left-0 z-10 bg-surface-2 border-r border-subtle text-[10px] text-tertiary uppercase">
-                  {t("total_logged_time", "Total Logged")}
+                  {t("total_logged_time")}
                 </td>
                 <td className="px-3 py-2 text-right text-xs">
                   {formatHours(members.reduce((acc, m) => acc + m.total_estimated_minutes, 0))}h
@@ -218,7 +218,7 @@ export const CapacityHeatmap = observer((props: ICapacityHeatmapProps) => {
               {/* Row 2: Work Item Totals */}
               <tr>
                 <td className="px-3 py-2 sticky left-0 z-10 bg-surface-2 border-r border-subtle text-[10px] text-tertiary uppercase">
-                  {t("total_work_items", "Total Work Items")}
+                  {t("total_work_items")}
                 </td>
                 <td className="px-3 py-2 text-right"></td>
                 <td className="px-3 py-2 text-right"></td>
