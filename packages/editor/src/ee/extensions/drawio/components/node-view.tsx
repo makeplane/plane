@@ -30,8 +30,7 @@ export type DrawioNodeViewProps = Omit<NodeViewProps, "extension"> & {
 };
 
 export const DrawioNodeView = memo(function DrawioNodeView(props: DrawioNodeViewProps) {
-  const { decorations, selected, node, updateAttributes, extension } = props;
-  const hasImage = !!node.attrs[EDrawioAttributeNames.IMAGE_SRC];
+  const { decorations, node, updateAttributes, extension } = props;
   const imageSrc = node.attrs[EDrawioAttributeNames.IMAGE_SRC];
   const xmlSrc = node.attrs[EDrawioAttributeNames.XML_SRC];
   const status = node.attrs[EDrawioAttributeNames.STATUS];
@@ -43,68 +42,37 @@ export const DrawioNodeView = memo(function DrawioNodeView(props: DrawioNodeView
   // Handle drawio duplication when status is duplicating
   useEffect(() => {
     const handleDuplication = async () => {
-      if (status !== EDrawioStatus.DUPLICATING || !extension.options.duplicateDiagram) {
-        return;
-      }
-
-      // Need at least one source to duplicate
-      if (!imageSrc && !xmlSrc) {
-        return;
-      }
-
-      // Prevent duplicate calls - check if already duplicating this asset
-      if (isDuplicatingRef.current) {
-        return;
-      }
+      if (status !== EDrawioStatus.DUPLICATING || !extension.options.duplicateDiagram) return;
+      if (!imageSrc || !xmlSrc) return;
+      if (isDuplicatingRef.current) return;
 
       isDuplicatingRef.current = true;
       try {
-        // Duplicate both image and XML sources if they exist
-        // Using explicit structure instead of arrays since we know exactly what we have
-        const duplicatedFiles: {
-          newImageSrc: string | null;
-          newXmlSrc: string | null;
-        } = {
-          newImageSrc: null,
-          newXmlSrc: null,
-        };
+        let newImageSrc: string | null = null;
+        let newXmlSrc: string | null = null;
 
-        // Duplicate image if it exists and is not an external URL
-        if (imageSrc && !imageSrc.startsWith("http")) {
-          duplicatedFiles.newImageSrc = await extension.options.duplicateDiagram(imageSrc);
-        } else if (imageSrc && imageSrc.startsWith("http")) {
-          duplicatedFiles.newImageSrc = imageSrc;
+        if (imageSrc.startsWith("http")) {
+          newImageSrc = imageSrc;
+        } else {
+          newImageSrc = await extension.options.duplicateDiagram(imageSrc);
         }
 
-        // Duplicate XML if it exists and is not an external URL
-        if (xmlSrc && !xmlSrc.startsWith("http")) {
-          duplicatedFiles.newXmlSrc = await extension.options.duplicateDiagram(xmlSrc);
-        } else if (xmlSrc && xmlSrc.startsWith("http")) {
-          duplicatedFiles.newXmlSrc = xmlSrc;
+        if (xmlSrc.startsWith("http")) {
+          newXmlSrc = xmlSrc;
+        } else {
+          newXmlSrc = await extension.options.duplicateDiagram(xmlSrc);
         }
 
-        // Validate that at least one source exists (either duplicated or HTTP)
-        if (!duplicatedFiles.newImageSrc && !duplicatedFiles.newXmlSrc) {
-          throw new Error("Both image and XML duplication failed or returned invalid IDs");
+        if (!newImageSrc || !newXmlSrc) {
+          throw new Error("Diagram duplication failed");
         }
 
-        // Build update object with new sources
-        const updateAttrs: Partial<TDrawioBlockAttributes> = {
+        updateAttributes({
           [EDrawioAttributeNames.STATUS]: EDrawioStatus.UPLOADED,
-        };
-
-        if (duplicatedFiles.newImageSrc) {
-          updateAttrs[EDrawioAttributeNames.IMAGE_SRC] = duplicatedFiles.newImageSrc;
-        }
-
-        if (duplicatedFiles.newXmlSrc) {
-          updateAttrs[EDrawioAttributeNames.XML_SRC] = duplicatedFiles.newXmlSrc;
-        }
-
-        // Update node with new sources and success status
-        updateAttributes(updateAttrs);
+          [EDrawioAttributeNames.IMAGE_SRC]: newImageSrc,
+          [EDrawioAttributeNames.XML_SRC]: newXmlSrc,
+        });
       } catch {
-        // Update status to failed
         updateAttributes({ [EDrawioAttributeNames.STATUS]: EDrawioStatus.DUPLICATION_FAILED });
       } finally {
         isDuplicatingRef.current = false;
@@ -115,7 +83,7 @@ export const DrawioNodeView = memo(function DrawioNodeView(props: DrawioNodeView
   }, [status, imageSrc, xmlSrc, extension.options.duplicateDiagram, updateAttributes]);
 
   useEffect(() => {
-    if (status === EDrawioStatus.DUPLICATION_FAILED && !hasRetriedOnMount.current && (imageSrc || xmlSrc)) {
+    if (status === EDrawioStatus.DUPLICATION_FAILED && !hasRetriedOnMount.current && imageSrc && xmlSrc) {
       hasRetriedOnMount.current = true;
       updateAttributes({ [EDrawioAttributeNames.STATUS]: EDrawioStatus.DUPLICATING });
     }
@@ -135,9 +103,6 @@ export const DrawioNodeView = memo(function DrawioNodeView(props: DrawioNodeView
     >
       <div className="relative" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
         <DrawioBlock {...props} />
-        {selected && hasImage && (
-          <div className="absolute inset-0 size-full bg-accent-primary/30 pointer-events-none rounded-md" />
-        )}
       </div>
     </YChangeNodeViewWrapper>
   );

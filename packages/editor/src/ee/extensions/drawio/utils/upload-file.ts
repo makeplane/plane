@@ -16,30 +16,17 @@ import type { TDrawioExtension } from "../types";
 import { EDrawioAttributeNames } from "../types";
 import { base64ToFile } from "./base64-to-file";
 
-// Helper function to create diagram files with error handling
 const createDiagramFiles = (
   imageFile: string,
   xmlContent: string,
   diagramId: string
 ): { imageFile: File; xmlFile: File } => {
-  // Handle image file creation
-  let newImageFile: File;
-
-  if (imageFile.startsWith("data:image/svg+xml;base64,")) {
-    // It's a base64 data URL, convert it to File with error handling
-    newImageFile = base64ToFile(imageFile, `${diagramId}.svg`, "image/svg+xml");
-  } else {
-    // It's raw SVG content, create File directly
-    newImageFile = new File([imageFile], `${diagramId}.svg`, { type: "image/svg+xml" });
-  }
-
-  // Create .drawio file for XML content
+  const newImageFile: File = base64ToFile(imageFile, `${diagramId}.png`, "image/png");
   const newXmlFile = new File([xmlContent], `${diagramId}.drawio`, { type: "application/xml" });
 
   return { imageFile: newImageFile, xmlFile: newXmlFile };
 };
 
-// Upload SVG and XML files separately
 export const uploadDiagramFiles = async ({
   imageFile,
   xmlContent,
@@ -56,16 +43,13 @@ export const uploadDiagramFiles = async ({
   if (!diagramId || !extension?.options.uploadDiagram) return;
 
   try {
-    // Create diagram files with error handling
     const { imageFile: newImageFile, xmlFile: newXmlFile } = createDiagramFiles(imageFile, xmlContent, diagramId);
 
-    // Upload both files
     const [imageUrl, xmlUrl] = await Promise.all([
       extension.options.uploadDiagram(`${diagramId}`, newImageFile),
       extension.options.uploadDiagram(`${diagramId}`, newXmlFile),
     ]);
 
-    // Update attributes with the uploaded file URLs/IDs
     updateAttributes({
       [EDrawioAttributeNames.IMAGE_SRC]: imageUrl,
       [EDrawioAttributeNames.XML_SRC]: xmlUrl,
@@ -95,21 +79,16 @@ export const reuploadDiagramFiles = async ({
   imageSrc: string;
   xmlSrc: string;
 }) => {
-  if (!diagramId || !extension?.options.reuploadDiagram) {
-    return;
-  }
+  if (!diagramId || !extension?.options.reuploadDiagram) return;
 
   try {
-    // Create diagram files with error handling
     const { imageFile: newImageFile, xmlFile: newXmlFile } = createDiagramFiles(imageFile, xmlContent, diagramId);
 
-    // Reupload both files using the original asset IDs
     const [imageUrl, xmlUrl] = await Promise.all([
       extension.options.reuploadDiagram(`${diagramId}`, newImageFile, imageSrc),
       extension.options.reuploadDiagram(`${diagramId}`, newXmlFile, xmlSrc),
     ]);
 
-    // Update attributes with the uploaded file URLs/IDs
     updateAttributes({
       [EDrawioAttributeNames.IMAGE_SRC]: imageUrl,
       [EDrawioAttributeNames.XML_SRC]: xmlUrl,

@@ -18,10 +18,10 @@ import type { TFileHandler } from "@/types";
 // Core Enums
 export enum EDrawioAttributeNames {
   ID = "id",
-  IMAGE_SRC = "data-image-src", // SVG file source/URL
-  XML_SRC = "data-xml-src", // XML .drawio file source/URL
-  MODE = "data-mode", // Mode: "diagram" or "board"
-  STATUS = "status", // Status: pending, uploading, uploaded, duplicating, duplication-failed
+  IMAGE_SRC = "data-image-src",
+  XML_SRC = "data-xml-src",
+  MODE = "data-mode",
+  STATUS = "status",
 }
 
 export enum EDrawioMode {
@@ -37,13 +37,12 @@ export enum EDrawioStatus {
   DUPLICATION_FAILED = "duplication-failed",
 }
 
-// Core Types with strict mapping
 export type TDrawioBlockAttributes = {
   [EDrawioAttributeNames.ID]: string | null;
-  [EDrawioAttributeNames.IMAGE_SRC]: string | null; // SVG file source/URL for display
-  [EDrawioAttributeNames.XML_SRC]: string | null; // XML .drawio file source/URL for editing
-  [EDrawioAttributeNames.MODE]: EDrawioMode; // Mode: diagram or board
-  [EDrawioAttributeNames.STATUS]: EDrawioStatus; // Status: pending, uploading, uploaded, duplicating, duplication-failed
+  [EDrawioAttributeNames.IMAGE_SRC]: string | null;
+  [EDrawioAttributeNames.XML_SRC]: string | null;
+  [EDrawioAttributeNames.MODE]: EDrawioMode;
+  [EDrawioAttributeNames.STATUS]: EDrawioStatus;
 };
 
 export type InsertDrawioCommandProps = {
@@ -55,7 +54,7 @@ export type DrawioExtensionOptions = {
   onClick?: () => void;
   isFlagged: boolean;
   getDiagramSrc: TFileHandler["getAssetSrc"];
-  getFileContent?: TFileHandler["getFileContent"]; // Use TFileHandler type directly
+  getFileContent?: TFileHandler["getFileContent"];
   restoreDiagram: TFileHandler["restore"];
   uploadDiagram: TFileHandler["upload"];
   reuploadDiagram?: TFileHandler["reupload"];

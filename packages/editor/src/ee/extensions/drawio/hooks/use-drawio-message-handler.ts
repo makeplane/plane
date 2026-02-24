@@ -28,9 +28,7 @@ type UseDrawioMessageHandlerProps = {
   loadXmlContent: () => Promise<string>;
   handleCloseModal: () => void;
   setIsLoading: (loading: boolean) => void;
-  updateLiveImageData: (data: string) => void;
-  updateImageKey: () => void;
-  broadcastDiagramUpdate: (imageData?: string, imageSrc?: string) => void;
+  onXmlSaved?: (xmlContent: string) => void;
   updateAttributes: (attributes: Partial<TDrawioBlockAttributes>) => void;
   extension: TDrawioExtension;
 };
@@ -43,15 +41,12 @@ export const useDrawioMessageHandler = ({
   loadXmlContent,
   handleCloseModal,
   setIsLoading,
-  updateLiveImageData,
-  updateImageKey,
-  broadcastDiagramUpdate,
+  onXmlSaved,
   updateAttributes,
   extension,
 }: UseDrawioMessageHandlerProps) => {
   const handleMessage = useCallback(
     async (event: MessageEvent) => {
-      // Validate the message using our security validation
       const validation = validateDrawioMessage(event);
 
       if (!validation.isValid) {
@@ -60,13 +55,11 @@ export const useDrawioMessageHandler = ({
       }
 
       const msg = validation.message!;
-      // Create secure message sender
       const messageSender = createSecureMessageSender(iframeRef);
 
       try {
         switch (msg.event) {
           case "init": {
-            // Load existing XML content for editing
             const xmlContent = await loadXmlContent();
             messageSender.sendToDrawio("load", { xml: xmlContent });
             setTimeout(() => {
@@ -78,7 +71,7 @@ export const useDrawioMessageHandler = ({
 
           case "save":
             messageSender.sendToDrawio("export", {
-              format: "svg",
+              format: "png",
               spinKey: "saving",
             });
             break;
@@ -86,23 +79,14 @@ export const useDrawioMessageHandler = ({
           case "export":
             if (msg.data && msg.xml) {
               try {
-                if (diagramId && msg.data && msg.xml) {
+                if (diagramId) {
                   if (msg.data.length === DRAWIO_EMPTY_CONTENT_LENGTH) {
                     handleCloseModal();
                     return;
                   }
 
-                  // Show the updated image immediately using the exported data
-                  updateLiveImageData(msg.data);
-                  updateImageKey();
-
-                  // Broadcast the diagram update immediately to other users
-                  broadcastDiagramUpdate(msg.data, imageSrc || undefined);
-
-                  // Upload to S3 in the background (don't await)
                   if (imageSrc && xmlSrc) {
-                    // Reupload existing diagram
-                    reuploadDiagramFiles({
+                    await reuploadDiagramFiles({
                       imageFile: msg.data,
                       xmlContent: msg.xml,
                       diagramId,
@@ -112,8 +96,7 @@ export const useDrawioMessageHandler = ({
                       xmlSrc,
                     });
                   } else {
-                    // Upload new diagram
-                    uploadDiagramFiles({
+                    await uploadDiagramFiles({
                       xmlContent: msg.xml,
                       imageFile: msg.data,
                       diagramId,
@@ -121,9 +104,11 @@ export const useDrawioMessageHandler = ({
                       extension,
                     });
                   }
+
+                  onXmlSaved?.(msg.xml);
                 }
               } catch (error) {
-                console.error("❌ Error processing diagram export:", error);
+                console.error("Error processing diagram export:", error);
               }
             }
             break;
@@ -133,7 +118,7 @@ export const useDrawioMessageHandler = ({
             break;
         }
       } catch (error) {
-        console.error("❌ Error processing validated draw.io message:", error);
+        console.error("Error processing draw.io message:", error);
       }
     },
     [
@@ -144,9 +129,7 @@ export const useDrawioMessageHandler = ({
       loadXmlContent,
       handleCloseModal,
       setIsLoading,
-      updateLiveImageData,
-      updateImageKey,
-      broadcastDiagramUpdate,
+      onXmlSaved,
       updateAttributes,
       extension,
     ]

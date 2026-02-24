@@ -40,10 +40,9 @@ const attachmentComponentHandler: AssetDuplicationHandler = ({ element, original
 };
 
 const drawioComponentHandler: AssetDuplicationHandler = ({ element, originalHtml }) => {
-  const imageSrc = element.getAttribute(EDrawioAttributeNames.IMAGE_SRC);
   const xmlSrc = element.getAttribute(EDrawioAttributeNames.XML_SRC);
 
-  if (!imageSrc && !xmlSrc) {
+  if (!xmlSrc) {
     return { modifiedHtml: originalHtml, shouldProcess: false };
   }
 
