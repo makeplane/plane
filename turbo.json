@@ -6,6 +6,7 @@
     "DEV",
     "LOG_LEVEL",
     "NODE_ENV",
+    "BASE_URL",
     "SENTRY_DSN",
     "SENTRY_ENVIRONMENT",
     "SENTRY_TRACES_SAMPLE_RATE",

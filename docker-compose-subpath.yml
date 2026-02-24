@@ -1,0 +1,252 @@
+services:
+  plane-admin:
+    container_name: plane-admin-subpath
+    build:
+      context: .
+      dockerfile: ./apps/admin/Dockerfile.admin
+      args:
+        DOCKER_BUILDKIT: 1
+        VITE_API_BASE_URL: "http://localhost/plane"
+        VITE_WEB_BASE_URL: "http://localhost"
+        VITE_WEB_BASE_PATH: "/plane"
+        VITE_ADMIN_BASE_URL: "http://localhost"
+        VITE_ADMIN_BASE_PATH: "/plane/god-mode"
+        VITE_SPACE_BASE_URL: "http://localhost"
+        VITE_SPACE_BASE_PATH: "/plane/spaces"
+        VITE_LIVE_BASE_URL: "http://localhost"
+        VITE_LIVE_BASE_PATH: "/plane/live"
+    restart: unless-stopped
+    networks:
+      - traefik_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plane-admin.rule=PathPrefix(`/plane/god-mode`)"
+      - "traefik.http.routers.plane-admin.priority=100"
+      - "traefik.http.routers.plane-admin.entrypoints=web"
+      - "traefik.http.routers.plane-admin.middlewares=plane-admin-stripprefix"
+      - "traefik.http.services.plane-admin.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.plane-admin-stripprefix.stripprefix.prefixes=/plane"
+
+  web:
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile.web
+      args:
+        DOCKER_BUILDKIT: 1
+        VITE_API_BASE_URL: "http://localhost/plane"
+        VITE_WEB_BASE_URL: "http://localhost"
+        VITE_WEB_BASE_PATH: "/plane"
+        VITE_ADMIN_BASE_URL: "http://localhost"
+        VITE_ADMIN_BASE_PATH: "/plane/god-mode"
+        VITE_SPACE_BASE_URL: "http://localhost"
+        VITE_SPACE_BASE_PATH: "/plane/spaces"
+        VITE_LIVE_BASE_URL: "http://localhost"
+        VITE_LIVE_BASE_PATH: "/plane/live"
+    restart: unless-stopped
+    networks:
+      - traefik_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plane-web.rule=PathPrefix(`/plane`)"
+      - "traefik.http.routers.plane-web.priority=50"
+      - "traefik.http.routers.plane-web.entrypoints=web"
+      - "traefik.http.routers.plane-web.middlewares=plane-web-stripprefix"
+      - "traefik.http.services.plane-web.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.plane-web-stripprefix.stripprefix.prefixes=/plane"
+
+  space:
+    build:
+      context: .
+      dockerfile: ./apps/space/Dockerfile.space
+      args:
+        DOCKER_BUILDKIT: 1
+        VITE_API_BASE_URL: "http://localhost/plane"
+        VITE_WEB_BASE_URL: "http://localhost"
+        VITE_WEB_BASE_PATH: "/plane"
+        VITE_ADMIN_BASE_URL: "http://localhost"
+        VITE_ADMIN_BASE_PATH: "/plane/god-mode"
+        VITE_SPACE_BASE_URL: "http://localhost"
+        VITE_SPACE_BASE_PATH: "/plane/spaces"
+        VITE_LIVE_BASE_URL: "http://localhost"
+        VITE_LIVE_BASE_PATH: "/plane/live"
+    restart: unless-stopped
+    networks:
+      - traefik_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plane-space.rule=PathPrefix(`/plane/spaces`)"
+      - "traefik.http.routers.plane-space.priority=80"
+      - "traefik.http.routers.plane-space.entrypoints=web"
+      - "traefik.http.services.plane-space.loadbalancer.server.port=3000"
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    command: ./bin/docker-entrypoint-api.sh
+    networks:
+      - traefik_default
+      - plane_backend
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - plane-db
+      - plane-redis
+      - plane-mq
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plane-api.rule=PathPrefix(`/plane/api`) || PathPrefix(`/plane/auth`) || PathPrefix(`/plane/static`)"
+      - "traefik.http.routers.plane-api.priority=100"
+      - "traefik.http.routers.plane-api.entrypoints=web"
+      - "traefik.http.routers.plane-api.middlewares=plane-api-stripprefix"
+      - "traefik.http.services.plane-api.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.plane-api-stripprefix.stripprefix.prefixes=/plane"
+
+  worker:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    command: ./bin/docker-entrypoint-worker.sh
+    networks:
+      - plane_backend
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - api
+      - plane-db
+      - plane-redis
+
+  beat-worker:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    command: ./bin/docker-entrypoint-beat.sh
+    networks:
+      - plane_backend
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - api
+      - plane-db
+      - plane-redis
+
+  migrator:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: "no"
+    command: ./bin/docker-entrypoint-migrator.sh
+    networks:
+      - plane_backend
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - plane-db
+      - plane-redis
+
+  live:
+    build:
+      context: .
+      dockerfile: ./apps/live/Dockerfile.live
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    networks:
+      - traefik_default
+      - plane_backend
+    env_file:
+      - ./apps/live/.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plane-live.rule=PathPrefix(`/plane/live`)"
+      - "traefik.http.routers.plane-live.priority=90"
+      - "traefik.http.routers.plane-live.entrypoints=web"
+      - "traefik.http.services.plane-live.loadbalancer.server.port=3000"
+
+  plane-db:
+    image: postgres:15.7-alpine
+    restart: unless-stopped
+    command: postgres -c 'max_connections=1000'
+    networks:
+      - plane_backend
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: plane
+      POSTGRES_PASSWORD: plane
+      POSTGRES_DB: plane
+      PGDATA: /var/lib/postgresql/data
+
+  plane-redis:
+    image: valkey/valkey:7.2.11-alpine
+    restart: unless-stopped
+    networks:
+      - plane_backend
+    volumes:
+      - redisdata:/data
+
+  plane-mq:
+    image: rabbitmq:3.13.6-management-alpine
+    restart: unless-stopped
+    networks:
+      - plane_backend
+    environment:
+      RABBITMQ_DEFAULT_USER: plane
+      RABBITMQ_DEFAULT_PASS: plane
+      RABBITMQ_DEFAULT_VHOST: plane
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  plane-minio:
+    image: minio/minio
+    restart: unless-stopped
+    command: server /export --console-address ":9090"
+    networks:
+      - traefik_default
+      - plane_backend
+    volumes:
+      - uploads:/export
+    environment:
+      MINIO_ROOT_USER: access-key
+      MINIO_ROOT_PASSWORD: secret-key
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plane-uploads.rule=PathPrefix(`/plane/uploads`)"
+      - "traefik.http.routers.plane-uploads.priority=99"
+      - "traefik.http.routers.plane-uploads.entrypoints=web"
+      - "traefik.http.routers.plane-uploads.middlewares=plane-uploads-stripprefix"
+      - "traefik.http.services.plane-uploads.loadbalancer.server.port=9000"
+      - "traefik.http.middlewares.plane-uploads-stripprefix.stripprefix.prefixes=/plane"
+      # Add router for /plane/uploads to Minio S3 API
+      - "traefik.http.routers.plane-minio-uploads.rule=PathPrefix(`/plane/uploads`) && (Method(`POST`) || Method(`PUT`) || Method(`GET`) || Method(`DELETE`))"
+      - "traefik.http.routers.plane-minio-uploads.priority=1000"
+      - "traefik.http.routers.plane-minio-uploads.entrypoints=websecure"
+      - "traefik.http.routers.plane-minio-uploads.tls=true"
+      - "traefik.http.routers.plane-minio-uploads.service=plane-minio-uploads"
+      - "traefik.http.routers.plane-minio-uploads.middlewares=plane-minio-uploads-stripprefix"
+      - "traefik.http.services.plane-minio-uploads.loadbalancer.server.port=9000"
+      - "traefik.http.middlewares.plane-minio-uploads-stripprefix.stripprefix.prefixes=/plane"
+
+volumes:
+  pgdata:
+  redisdata:
+  uploads:
+  rabbitmq_data:
+
+
+networks:
+  traefik_default:
+    external: true
+  plane_backend:
+    driver: bridge
