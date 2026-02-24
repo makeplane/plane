@@ -125,8 +125,12 @@ class InitiativeEndpoint(BaseAPIView):
         # Get initiative by pk
         if pk:
             initiative = self.get_queryset().filter(pk=pk).first()
+            if not initiative:
+                return Response(
+                    {"error": "Initiative not found", "code": "INITIATIVE_NOT_FOUND"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
             serializer = InitiativeSerializer(initiative)
-
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Get all initiatives in workspace
