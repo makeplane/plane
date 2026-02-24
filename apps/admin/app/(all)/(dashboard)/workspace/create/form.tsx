@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { WEB_BASE_URL, ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
+import { WEB_URL, ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { InstanceWorkspaceService } from "@plane/services";
@@ -43,7 +43,7 @@ export function WorkspaceCreateForm() {
     formState: { errors, isSubmitting, isValid },
   } = useForm<IWorkspace>({ defaultValues, mode: "onChange" });
   // derived values
-  const workspaceBaseURL = encodeURI(WEB_BASE_URL || window.location.origin + "/");
+  const workspaceBaseURL = WEB_URL || encodeURI(window.location.origin + "/");
 
   const handleCreateWorkspace = async (formData: IWorkspace) => {
     await instanceWorkspaceService

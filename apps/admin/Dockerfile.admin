@@ -35,7 +35,7 @@ ENV VITE_API_BASE_PATH=$VITE_API_BASE_PATH
 
 ARG VITE_ADMIN_BASE_URL=""
 ENV VITE_ADMIN_BASE_URL=$VITE_ADMIN_BASE_URL
-ARG VITE_ADMIN_BASE_PATH="/god-mode"
+ARG VITE_ADMIN_BASE_PATH="/plane/god-mode"
 ENV VITE_ADMIN_BASE_PATH=$VITE_ADMIN_BASE_PATH
 
 ARG VITE_SPACE_BASE_URL=""
@@ -78,6 +78,7 @@ RUN pnpm turbo run build --filter=admin
 FROM nginx:1.29-alpine AS production
 
 COPY apps/admin/nginx/nginx.conf /etc/nginx/nginx.conf
+RUN rm -f /etc/nginx/conf.d/default.conf
 COPY --from=installer /app/apps/admin/build/client /usr/share/nginx/html/god-mode
 
 EXPOSE 3000

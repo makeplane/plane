@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { HelpCircle, MoveLeft } from "lucide-react";
 import { Transition } from "@headlessui/react";
-import { WEB_BASE_URL } from "@plane/constants";
+import { WEB_URL } from "@plane/constants";
 // plane internal packages
 import { DiscordIcon, GithubIcon, NewTabIcon, PageIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -45,7 +45,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
-  const redirectionLink = encodeURI(WEB_BASE_URL + "/");
+  const redirectionLink = WEB_URL;
 
   return (
     <div
