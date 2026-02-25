@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
 import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { joinUrlPath } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
@@ -30,7 +31,7 @@ export const SidebarItemBase = observer(function SidebarItemBase({
   const { t } = useTranslation();
   const pathname = usePathname();
   const { workspaceSlug } = useParams();
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { isWorkspaceItemPinned } = useWorkspaceNavigationPreferences();
   const { data } = useUser();
 
@@ -53,6 +54,17 @@ export const SidebarItemBase = observer(function SidebarItemBase({
   const slug = workspaceSlug?.toString() || "";
 
   if (!allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, slug)) return null;
+
+  const workspaceRole = getWorkspaceRoleByWorkspaceSlug(slug);
+  const roleNumber = workspaceRole ? Number(workspaceRole) : undefined;
+
+  if (
+    (roleNumber === EUserPermissions.SUPERVISOR || roleNumber === EUserPermissions.EXECUTOR) &&
+    !item.access.includes(EUserPermissions.SUPERVISOR as unknown as EUserWorkspaceRoles) &&
+    !item.access.includes(EUserPermissions.EXECUTOR as unknown as EUserWorkspaceRoles)
+  ) {
+    return null;
+  }
 
   const isPinned = isWorkspaceItemPinned(item.key);
   if (!isPinned && !staticItems.includes(item.key)) return null;
