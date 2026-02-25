@@ -1,0 +1,20 @@
+# Core dependencies
+google-genai>=0.2.0
+python-dotenv>=1.0.0
+
+# Image processing
+pillow>=10.0.0
+
+# PDF processing
+pypdf>=3.0.0
+
+# Document conversion
+markdown>=3.5
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.12.0
+
+# Optional dependencies for full functionality
+# ffmpeg-python>=0.2.0  # For media optimization (requires ffmpeg installed)

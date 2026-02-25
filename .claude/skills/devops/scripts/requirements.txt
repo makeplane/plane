@@ -1,0 +1,20 @@
+# DevOps Skill Dependencies
+# Python 3.10+ required
+
+# No Python package dependencies - uses only standard library
+
+# Testing dependencies (dev)
+pytest>=8.0.0
+pytest-cov>=4.1.0
+pytest-mock>=3.12.0
+
+# Note: This skill requires various CLI tools depending on platform:
+#
+# Cloudflare:
+#   - wrangler CLI: npm install -g wrangler
+#
+# Docker:
+#   - docker CLI: https://docs.docker.com/get-docker/
+#
+# Google Cloud:
+#   - gcloud CLI: https://cloud.google.com/sdk/docs/install

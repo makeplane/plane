@@ -1,0 +1,26 @@
+# AI Multimodal Skill Dependencies
+# Python 3.10+ required
+
+# Google Gemini API
+google-genai>=0.1.0
+
+# PDF processing
+pypdf>=4.0.0
+
+# Document conversion
+python-docx>=1.0.0
+docx2pdf>=0.1.8  # Windows only, optional on Linux/macOS
+
+# Markdown processing
+markdown>=3.5.0
+
+# Image processing
+Pillow>=10.0.0
+
+# Environment variable management
+python-dotenv>=1.0.0
+
+# Testing dependencies (dev)
+pytest>=8.0.0
+pytest-cov>=4.1.0
+pytest-mock>=3.12.0

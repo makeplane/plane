@@ -1,0 +1,15 @@
+[
+  {
+    "path": "/path/to/local/repo",
+    "output": "local-repo-output.xml"
+  },
+  {
+    "path": "owner/repo",
+    "remote": true,
+    "output": "remote-repo.xml"
+  },
+  {
+    "path": "https://github.com/yamadashy/repomix",
+    "remote": true
+  }
+]
