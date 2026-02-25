@@ -5,6 +5,28 @@
  */
 
 export default {
+  sidebar: {
+    projects: "Projects",
+    pages: "Pages",
+    new_work_item: "New work item",
+    home: "Home",
+    your_work: "Your work",
+    inbox: "Inbox",
+    workspace: "Workspace",
+    views: "Views",
+    analytics: "Analytics",
+    work_items: "Work items",
+    cycles: "Cycles",
+    modules: "Modules",
+    users: "Users",
+    intake: "Intake",
+    drafts: "Drafts",
+    favorites: "Favorites",
+    pro: "Pro",
+    upgrade: "Upgrade",
+    stickies: "Stickies",
+    time_tracking: "Time Tracking",
+  },
   auth: {
     common: {
       email: {
@@ -1347,6 +1369,8 @@ export default {
     total_projects: "Total projects",
     total_users: "Total users",
     total_intake: "Total intake",
+    total_admins: "Total admins",
+    total_guests: "Total guests",
     pending_work_items: {
       title: "Pending work items",
       empty_state: "Analysis of pending work items by co-workers appears here.",
