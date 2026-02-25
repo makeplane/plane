@@ -90,7 +90,12 @@ export default {
       already_have_an_account: "Đã có tài khoản?",
       login: "Đăng nhập",
       create_account: "Tạo tài khoản",
-      new_to_plane: "Mới sử dụng Plane?",
+      new_to_plane: "Mới sử dụng JMS?",
+      header: {
+        work_in_all_dimensions: "Làm việc đa chiều.",
+        welcome_back_jms: "Chào mừng bạn quay trở lại JMS (Hệ thống Quản lý Công việc).",
+        create_jms_account: "Tạo tài khoản JMS của bạn.",
+      },
       back_to_sign_in: "Quay lại đăng nhập",
       resend_in: "Gửi lại sau {seconds} giây",
       sign_in_with_unique_code: "Đăng nhập bằng mã xác thực",
@@ -174,6 +179,9 @@ export default {
           message: "Đăng xuất thất bại. Vui lòng thử lại.",
         },
       },
+    },
+    footer: {
+      custom_powered_by: "SHBVN JMS - Hệ thống Quản lý Công việc (Dựa trên kiến trúc Plane)",
     },
   },
 } as const;
