@@ -22,6 +22,7 @@ from .webhook import urlpatterns as webhook_urls
 from .workspace import urlpatterns as workspace_urls
 from .timezone import urlpatterns as timezone_urls
 from .exporter import urlpatterns as exporter_urls
+from .importer_job import urlpatterns as importer_job_urls  # [FA-CUSTOM]
 
 urlpatterns = [
     *analytic_urls,
@@ -44,4 +45,5 @@ urlpatterns = [
     *webhook_urls,
     *timezone_urls,
     *exporter_urls,
+    *importer_job_urls,  # [FA-CUSTOM]
 ]

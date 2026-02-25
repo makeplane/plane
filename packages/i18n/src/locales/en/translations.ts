@@ -1838,6 +1838,13 @@ export default {
         auto_close_status: "Auto-close status",
       },
     },
+    // [FA-CUSTOM] Import settings
+    import: {
+      label: "Import Issues",
+      heading: "Import Issues",
+      description: "Import issues from CSV or XLSX files exported from other tools.",
+      new_import: "New Import",
+    },
     empty_state: {
       labels: {
         title: "No labels yet",

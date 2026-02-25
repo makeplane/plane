@@ -124,6 +124,8 @@ from .notification import NotificationSerializer, UserNotificationPreferenceSeri
 
 from .exporter import ExporterHistorySerializer
 
+from .importer_job import ImportJobSerializer  # [FA-CUSTOM] file-based CSV/XLSX import
+
 from .webhook import WebhookSerializer, WebhookLogSerializer
 
 from .favorite import UserFavoriteSerializer

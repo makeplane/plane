@@ -7,13 +7,16 @@ on:
 
 concurrency:
   group: deploy-production
-  cancel-in-progress: false
+  cancel-in-progress: false # don't cancel mid-deploy
 
 env:
   REGISTRY: ghcr.io
   IMAGE_PREFIX: ghcr.io/${{ github.repository }}
 
 jobs:
+  # ---------------------------------------------------------------------------
+  # Build all Docker images in parallel and push to GHCR
+  # ---------------------------------------------------------------------------
   build-web:
     name: Build Web (plane-frontend)
     runs-on: ubuntu-latest
@@ -164,6 +167,9 @@ jobs:
           cache-from: type=gha,scope=proxy
           cache-to: type=gha,mode=max,scope=proxy
 
+  # ---------------------------------------------------------------------------
+  # Deploy to production server via SSH
+  # ---------------------------------------------------------------------------
   deploy:
     name: Deploy to Server
     runs-on: ubuntu-latest
@@ -186,12 +192,18 @@ jobs:
             set -e
             echo "=== Deploy started at $(date) ==="
 
+            # Login to GHCR
             echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u "${{ secrets.GHCR_USER }}" --password-stdin
 
             cd /root/apps/plane-fa/deploy
 
+            # Pull latest images
             docker compose pull
+
+            # Rolling restart (db/redis/mq stay untouched)
             docker compose up -d --remove-orphans
+
+            # Cleanup dangling images
             docker image prune -f
 
             echo "=== Deploy finished at $(date) ==="

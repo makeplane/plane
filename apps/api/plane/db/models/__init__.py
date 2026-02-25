@@ -18,6 +18,7 @@ from .draft import (
 from .estimate import Estimate, EstimatePoint
 from .exporter import ExporterHistory
 from .importer import Importer
+from .importer_job import ImportJob  # [FA-CUSTOM] file-based CSV/XLSX import
 from .intake import Intake, IntakeIssue
 from .integration import (
     GithubCommentSync,
