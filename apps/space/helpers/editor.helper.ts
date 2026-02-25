@@ -50,11 +50,26 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
     }
   };
 
+  const getFileContent = async (src: string): Promise<string> => {
+    if (!src) return "";
+    try {
+      const fileUrl = src.startsWith("http") ? src : (getEditorAssetSrc(anchor, src) ?? "");
+      if (!fileUrl) return "";
+      const response = await fetch(fileUrl);
+      if (!response.ok) return "";
+      return await response.text();
+    } catch (error) {
+      console.error("Error loading file content:", error);
+      return "";
+    }
+  };
+
   return {
     checkIfAssetExists: async () => true,
     assetsUploadStatus: {},
     getAssetDownloadSrc: getAssetSrc,
     getAssetSrc: getAssetSrc,
+    getFileContent,
     upload: uploadFile,
     delete: async (src: string) => {
       if (src?.startsWith("http")) {
