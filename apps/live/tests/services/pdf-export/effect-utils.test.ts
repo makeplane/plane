@@ -34,7 +34,7 @@ describe("effect-utils", () => {
 
       assert(Either.isLeft(result), "Expected Left but got Right");
       expect(result.left).toBeInstanceOf(PdfTimeoutError);
-      expect((result.left as PdfTimeoutError).operation).toBe("test-operation");
+      expect((result.left).operation).toBe("test-operation");
     });
 
     it("should retry on failure up to maxRetries times", async () => {

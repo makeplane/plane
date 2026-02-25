@@ -90,7 +90,12 @@ export default {
       already_have_an_account: "이미 계정이 있으신가요?",
       login: "로그인",
       create_account: "계정 만들기",
-      new_to_plane: "Plane이 처음이신가요?",
+      new_to_plane: "JMS가 처음이신가요?",
+      header: {
+        work_in_all_dimensions: "모든 차원에서 작업하세요.",
+        welcome_back_jms: "JMS(Job Management System)에 다시 오신 것을 환영합니다.",
+        create_jms_account: "JMS 계정을 만드세요.",
+      },
       back_to_sign_in: "로그인으로 돌아가기",
       resend_in: "{seconds}초 후 재전송",
       sign_in_with_unique_code: "고유 코드로 로그인",
@@ -174,6 +179,9 @@ export default {
           message: "로그아웃에 실패했습니다. 다시 시도해주세요.",
         },
       },
+    },
+    footer: {
+      custom_powered_by: "SHBVN JMS - 작업 관리 시스템 (Plane 아키텍처 기반)",
     },
   },
 } as const;

@@ -53,7 +53,7 @@ export type TAnalyticsFilterParams = {
 
 // service types
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 export interface IAnalyticsResponse {
   [key: string]: any;
 }
