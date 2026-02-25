@@ -15,9 +15,11 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import type { IMonthView } from "../../views";
 import { getNumberOfDaysBetweenTwoDates } from "../../views/helpers";
 
-export const MonthChartView = observer(function MonthChartView(_props: any) {
+export const MonthChartView = observer(function MonthChartView() {
   // chart hook
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { currentViewData, renderView } = useTimeLineChartStore();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const monthView: IMonthView = renderView;
 
   if (!monthView) return <></>;
@@ -83,7 +85,8 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                         "rounded-sm bg-accent-primary px-1 text-on-color": weekBlock.today,
                       })}
                     >
-                      {weekBlock.startDate.getDate()}-{weekBlock.endDate.getDate()}
+                      {weekBlock.startDayNumber}-{weekBlock.endDayNumber}
+                      {/* [FA-CUSTOM] Calendar-aware day range */}
                     </span>
                   </div>
                   <div className="space-x-1 text-11 font-medium">{weekBlock.weekData.shortTitle}</div>

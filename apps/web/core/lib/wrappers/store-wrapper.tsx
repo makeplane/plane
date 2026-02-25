@@ -12,7 +12,7 @@ import { useTheme } from "next-themes";
 import type { TLanguage } from "@plane/i18n";
 import { useTranslation } from "@plane/i18n";
 // helpers
-import { applyCustomTheme, clearCustomTheme } from "@plane/utils";
+import { applyCustomTheme, clearCustomTheme, setCalendarSystem } from "@plane/utils"; // [FA-CUSTOM] added setCalendarSystem
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useRouterParams } from "@/hooks/store/use-router-params";
@@ -22,6 +22,7 @@ type TStoreWrapper = {
   children: ReactNode;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 function StoreWrapper(props: TStoreWrapper) {
   const { children } = props;
   // theme
@@ -78,6 +79,7 @@ function StoreWrapper(props: TStoreWrapper) {
 
     // Mark as initialized - prevents future syncs from server
     hasInitializedThemeRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userProfile?.theme?.theme, setTheme]);
 
   /**
@@ -112,6 +114,12 @@ function StoreWrapper(props: TStoreWrapper) {
     changeLanguage(userProfile?.language as TLanguage);
   }, [userProfile?.language, changeLanguage]);
 
+  // [FA-CUSTOM] Sync calendar system preference (Gregorian/Jalali)
+  useEffect(() => {
+    if (!userProfile?.calendar_system) return;
+    setCalendarSystem(userProfile.calendar_system);
+  }, [userProfile?.calendar_system]);
+
   useEffect(() => {
     if (!params) return;
     setQuery(params);
@@ -120,4 +128,5 @@ function StoreWrapper(props: TStoreWrapper) {
   return <>{children}</>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export default observer(StoreWrapper);

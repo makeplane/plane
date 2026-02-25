@@ -8,7 +8,7 @@ import { cloneDeep, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
 import type { IUserTheme, TUserProfile } from "@plane/types";
-import { EStartOfTheWeek } from "@plane/types";
+import { ECalendarSystem, EStartOfTheWeek } from "@plane/types"; // [FA-CUSTOM] added ECalendarSystem
 // services
 import { UserService } from "@/services/user.service";
 // store
@@ -63,6 +63,7 @@ export class ProfileStore implements IUserProfileStore {
     updated_at: "",
     language: "",
     start_of_the_week: EStartOfTheWeek.SUNDAY,
+    calendar_system: ECalendarSystem.GREGORIAN, // [FA-CUSTOM]
   };
 
   // services
@@ -132,7 +133,9 @@ export class ProfileStore implements IUserProfileStore {
       if (currentUserProfileData) {
         this.mutateUserProfile(data);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const userProfile = await this.userService.updateCurrentUserProfile(data);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return userProfile;
     } catch {
       if (currentUserProfileData) {
@@ -199,7 +202,9 @@ export class ProfileStore implements IUserProfileStore {
     const isUserProfileTourCompleted = this.data.is_tour_completed || false;
     try {
       this.mutateUserProfile({ is_tour_completed: true });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const userProfile = await this.userService.updateUserTourCompleted();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return userProfile;
     } catch (error) {
       runInAction(() => {
@@ -226,9 +231,11 @@ export class ProfileStore implements IUserProfileStore {
           if (this.data.theme) set(this.data.theme, dataKey, data[dataKey]);
         });
       });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const userProfile = await this.userService.updateCurrentUserProfile({
         theme: this.data.theme,
       });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return userProfile;
     } catch (error) {
       runInAction(() => {

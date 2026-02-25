@@ -7,6 +7,9 @@
 // types
 import type { WeekMonthDataType, ChartDataType, TGanttViews } from "@plane/types";
 import { EStartOfTheWeek } from "@plane/types";
+// [FA-CUSTOM] Jalali calendar support
+import { getCalendarSystem } from "@plane/utils";
+import { getYear as jalaliGetYear, getMonth as jalaliGetMonth, getDate as jalaliGetDate } from "date-fns-jalali";
 
 // constants
 export const generateWeeks = (startOfWeek: EStartOfTheWeek = EStartOfTheWeek.SUNDAY): WeekMonthDataType[] => [
@@ -46,6 +49,36 @@ export const quarters: WeekMonthDataType[] = [
   { key: 3, shortTitle: "Q4", title: "Oct - Dec", abbreviation: "Q4" },
 ];
 
+// [FA-CUSTOM] Jalali month and quarter constants (English)
+export const jalaliMonths: WeekMonthDataType[] = [
+  { key: 0, shortTitle: "far", title: "Farvardin", abbreviation: "Far" },
+  { key: 1, shortTitle: "ord", title: "Ordibehesht", abbreviation: "Ord" },
+  { key: 2, shortTitle: "kho", title: "Khordad", abbreviation: "Kho" },
+  { key: 3, shortTitle: "tir", title: "Tir", abbreviation: "Tir" },
+  { key: 4, shortTitle: "mor", title: "Mordad", abbreviation: "Mor" },
+  { key: 5, shortTitle: "sha", title: "Shahrivar", abbreviation: "Sha" },
+  { key: 6, shortTitle: "meh", title: "Mehr", abbreviation: "Meh" },
+  { key: 7, shortTitle: "aba", title: "Aban", abbreviation: "Aba" },
+  { key: 8, shortTitle: "aza", title: "Azar", abbreviation: "Aza" },
+  { key: 9, shortTitle: "dey", title: "Dey", abbreviation: "Dey" },
+  { key: 10, shortTitle: "bah", title: "Bahman", abbreviation: "Bah" },
+  { key: 11, shortTitle: "esf", title: "Esfand", abbreviation: "Esf" },
+];
+
+export const jalaliQuarters: WeekMonthDataType[] = [
+  { key: 0, shortTitle: "Q1", title: "Far - Kho", abbreviation: "Q1" },
+  { key: 1, shortTitle: "Q2", title: "Tir - Sha", abbreviation: "Q2" },
+  { key: 2, shortTitle: "Q3", title: "Meh - Aza", abbreviation: "Q3" },
+  { key: 3, shortTitle: "Q4", title: "Dey - Esf", abbreviation: "Q4" },
+];
+
+/** [FA-CUSTOM] Get the appropriate months array based on calendar system */
+export const getActiveMonths = (): WeekMonthDataType[] => (getCalendarSystem() === "jalali" ? jalaliMonths : months);
+
+/** [FA-CUSTOM] Get the appropriate quarters array based on calendar system */
+export const getActiveQuarters = (): WeekMonthDataType[] =>
+  getCalendarSystem() === "jalali" ? jalaliQuarters : quarters;
+
 export const charCapitalize = (word: string) => `${word.charAt(0).toUpperCase()}${word.substring(1)}`;
 
 export const bindZero = (value: number) => (value > 9 ? `${value}` : `0${value}`);
@@ -63,12 +96,16 @@ export const timePreview = (date: Date) => {
 };
 
 export const datePreview = (date: Date, includeTime: boolean = false) => {
-  const day = date.getDate();
-  let month: number | WeekMonthDataType = date.getMonth();
-  month = months[month];
-  const year = date.getFullYear();
+  // [FA-CUSTOM] Calendar-aware date preview
+  const isJalali = getCalendarSystem() === "jalali";
+  const day = isJalali ? jalaliGetDate(date) : date.getDate();
+  const monthIndex = isJalali ? jalaliGetMonth(date) : date.getMonth();
+  const activeMonthList = isJalali ? jalaliMonths : months;
+  const month = activeMonthList[monthIndex];
+  const year = isJalali ? jalaliGetYear(date) : date.getFullYear();
 
-  return `${charCapitalize(month?.shortTitle)} ${day}, ${year}${includeTime ? `, ${timePreview(date)}` : ``}`;
+  const monthLabel = isJalali ? (month?.title ?? "") : charCapitalize(month?.shortTitle ?? "");
+  return `${monthLabel} ${day}, ${year}${includeTime ? `, ${timePreview(date)}` : ``}`;
 };
 
 // context data

@@ -7,8 +7,10 @@
 import { cloneDeep, uniqBy } from "lodash-es";
 // plane imports
 import type { ChartDataType } from "@plane/types";
+import { getCalendarSystem } from "@plane/utils"; // [FA-CUSTOM]
+import { getYear as jalaliGetYear, getMonth as jalaliGetMonth } from "date-fns-jalali"; // [FA-CUSTOM]
 // local imports
-import { months } from "../data";
+import { months, jalaliMonths } from "../data"; // [FA-CUSTOM] added jalaliMonths
 import { getNumberOfDaysBetweenTwoDates, getNumberOfDaysInMonth } from "./helpers";
 import type { IWeekBlock } from "./week-view";
 import { getWeeksBetweenTwoDates } from "./week-view";
@@ -127,6 +129,11 @@ const getMonthsViewBetweenTwoDates = (startDate: Date, endDate: Date): IMonthVie
  * @returns
  */
 export const getMonthsBetweenTwoDates = (startDate: Date, endDate: Date): IMonthBlock[] => {
+  // [FA-CUSTOM] Calendar-aware month generation
+  if (getCalendarSystem() === "jalali") {
+    return getJalaliMonthsBetweenTwoDates(startDate, endDate);
+  }
+
   const monthBlocks = [];
 
   const startYear = startDate.getFullYear();
@@ -148,6 +155,46 @@ export const getMonthsBetweenTwoDates = (startDate: Date, endDate: Date): IMonth
       monthData: months[currentMonth],
       title: `${months[currentMonth].title} ${currentYear}`,
       days: getNumberOfDaysInMonth(currentMonth, currentYear),
+      today: todayMonth === currentMonth && todayYear === currentYear,
+    });
+
+    currentDate.setMonth(currentDate.getMonth() + 1);
+  }
+
+  return monthBlocks;
+};
+
+/**
+ * [FA-CUSTOM] Generate Jalali-labelled month blocks between two dates.
+ * IMPORTANT: year/month/days remain Gregorian — they are used for pixel math
+ * and for constructing Date objects in quarter-view.ts. Only title/monthData
+ * use Jalali labels.
+ */
+const getJalaliMonthsBetweenTwoDates = (startDate: Date, endDate: Date): IMonthBlock[] => {
+  const monthBlocks: IMonthBlock[] = [];
+
+  const today = new Date();
+  const todayMonth = today.getMonth();
+  const todayYear = today.getFullYear();
+
+  const startYear = startDate.getFullYear();
+  const startMonth = startDate.getMonth();
+  const currentDate = new Date(startYear, startMonth);
+
+  while (currentDate <= endDate) {
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+
+    // Get Jalali month/year for labels only
+    const jYear = jalaliGetYear(currentDate);
+    const jMonth = jalaliGetMonth(currentDate);
+
+    monthBlocks.push({
+      year: currentYear, // Gregorian — used by quarter-view for Date construction
+      month: currentMonth, // Gregorian — used by quarter-view for Date construction
+      monthData: jalaliMonths[jMonth],
+      title: `${jalaliMonths[jMonth].title} ${jYear}`,
+      days: getNumberOfDaysInMonth(currentMonth, currentYear), // Gregorian days for pixel math
       today: todayMonth === currentMonth && todayYear === currentYear,
     });
 

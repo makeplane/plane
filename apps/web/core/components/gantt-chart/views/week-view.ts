@@ -7,11 +7,14 @@
 //
 import type { ChartDataType } from "@plane/types";
 import { EStartOfTheWeek } from "@plane/types";
-import { months, generateWeeks } from "../data";
+import { getCalendarSystem } from "@plane/utils"; // [FA-CUSTOM]
+import { getYear as jalaliGetYear, getMonth as jalaliGetMonth, getDate as jalaliGetDate } from "date-fns-jalali"; // [FA-CUSTOM]
+import { months, jalaliMonths, generateWeeks } from "../data"; // [FA-CUSTOM] added jalaliMonths
 import { getNumberOfDaysBetweenTwoDates, getWeekNumberByDate } from "./helpers";
 export interface IDayBlock {
   date: Date;
   day: number;
+  dayNumber: number; // [FA-CUSTOM] Calendar-aware day number for display
   dayData: {
     key: number;
     shortTitle: string;
@@ -32,6 +35,8 @@ export interface IWeekBlock {
   title: string;
   startDate: Date;
   endDate: Date;
+  startDayNumber: number; // [FA-CUSTOM] Calendar-aware start day number
+  endDayNumber: number; // [FA-CUSTOM] Calendar-aware end day number
   startMonth: number;
   startYear: number;
   endMonth: number;
@@ -149,12 +154,19 @@ export const getWeeksBetweenTwoDates = (
     const weekStartDate = new Date(currentDate.getTime());
     const weekEndDate = new Date(currentDate.getTime() + 6 * 24 * 60 * 60 * 1000);
 
-    const monthAtStartOfTheWeek = weekStartDate.getMonth();
-    const yearAtStartOfTheWeek = weekStartDate.getFullYear();
-    const monthAtEndOfTheWeek = weekEndDate.getMonth();
-    const yearAtEndOfTheWeek = weekEndDate.getFullYear();
+    // [FA-CUSTOM] Calendar-aware month/year for week titles
+    const isJalali = getCalendarSystem() === "jalali";
+    const activeMonthList = isJalali ? jalaliMonths : months;
+    const monthAtStartOfTheWeek = isJalali ? jalaliGetMonth(weekStartDate) : weekStartDate.getMonth();
+    const yearAtStartOfTheWeek = isJalali ? jalaliGetYear(weekStartDate) : weekStartDate.getFullYear();
+    const monthAtEndOfTheWeek = isJalali ? jalaliGetMonth(weekEndDate) : weekEndDate.getMonth();
+    const yearAtEndOfTheWeek = isJalali ? jalaliGetYear(weekEndDate) : weekEndDate.getFullYear();
 
     const weekNumber = getWeekNumberByDate(currentDate);
+
+    // [FA-CUSTOM] Calendar-aware day numbers for week range display
+    const startDayNum = isJalali ? jalaliGetDate(weekStartDate) : weekStartDate.getDate();
+    const endDayNum = isJalali ? jalaliGetDate(weekEndDate) : weekEndDate.getDate();
 
     weeks.push({
       children: shouldPopulateDaysForWeek ? populateDaysForWeek(weekStartDate, startOfWeek) : undefined,
@@ -165,8 +177,10 @@ export const getWeeksBetweenTwoDates = (
       },
       title:
         monthAtStartOfTheWeek === monthAtEndOfTheWeek
-          ? `${months[monthAtStartOfTheWeek].abbreviation} ${yearAtStartOfTheWeek}`
-          : `${months[monthAtStartOfTheWeek].abbreviation} ${yearAtStartOfTheWeek} - ${months[monthAtEndOfTheWeek].abbreviation} ${yearAtEndOfTheWeek}`,
+          ? `${activeMonthList[monthAtStartOfTheWeek].abbreviation} ${yearAtStartOfTheWeek}`
+          : `${activeMonthList[monthAtStartOfTheWeek].abbreviation} ${yearAtStartOfTheWeek} - ${activeMonthList[monthAtEndOfTheWeek].abbreviation} ${yearAtEndOfTheWeek}`,
+      startDayNumber: startDayNum, // [FA-CUSTOM]
+      endDayNumber: endDayNum, // [FA-CUSTOM]
       startMonth: monthAtStartOfTheWeek,
       startYear: yearAtStartOfTheWeek,
       endMonth: monthAtEndOfTheWeek,
@@ -192,13 +206,17 @@ const populateDaysForWeek = (startDate: Date, startOfWeek: EStartOfTheWeek = ESt
   const days: IDayBlock[] = [];
   const today = new Date();
   const weekDays = generateWeeks(startOfWeek);
+  const isJalali = getCalendarSystem() === "jalali"; // [FA-CUSTOM]
 
   for (let i = 0; i < 7; i++) {
+    // [FA-CUSTOM] Use Jalali day number when in Jalali mode
+    const dayNumber = isJalali ? jalaliGetDate(currentDate) : currentDate.getDate();
     days.push({
       date: new Date(currentDate),
       day: currentDate.getDay(),
+      dayNumber, // [FA-CUSTOM] Calendar-aware day number
       dayData: weekDays[i],
-      title: `${weekDays[i].abbreviation} ${currentDate.getDate()}`,
+      title: `${weekDays[i].abbreviation} ${dayNumber}`,
       today: today.setHours(0, 0, 0, 0) == currentDate.setHours(0, 0, 0, 0),
     });
     currentDate.setDate(currentDate.getDate() + 1);

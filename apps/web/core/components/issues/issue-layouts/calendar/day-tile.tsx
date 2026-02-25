@@ -14,13 +14,12 @@ import type { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate 
 // types
 // ui
 // components
-import { cn, renderFormattedPayloadDate } from "@plane/utils";
+import { cn, renderFormattedPayloadDate, getCalendarSystem } from "@plane/utils"; // [FA-CUSTOM] added getCalendarSystem
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 // helpers
-import { MONTHS_LIST } from "@/constants/calendar";
+import { MONTHS_LIST, JALALI_MONTHS_LIST } from "@/constants/calendar"; // [FA-CUSTOM] added JALALI_MONTHS_LIST
 // helpers
 // types
-import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
 import type { IProjectIssuesFilter } from "@/store/issue/project";
@@ -46,6 +45,7 @@ type Props = {
     sourceDate: string | undefined,
     destinationDate: string | undefined
   ) => Promise<void>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   readOnly?: boolean;
   selectedDate: Date;
@@ -120,6 +120,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
             }
           }
 
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           handleDragAndDrop(
             sourceData?.id,
             issueDetails?.project_id ?? undefined,
@@ -130,6 +131,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
         },
       })
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dayTileRef?.current, formattedDatePayload]);
 
   if (!formattedDatePayload) return null;
@@ -157,13 +159,18 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
               : "font-medium" // if week layout, highlight all days
           } ${isWeekend ? "bg-layer-1" : "bg-layer-transparent"} `}
         >
-          {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
+          {/* [FA-CUSTOM] Calendar-aware day display */}
+          {date.day === 1 &&
+            (getCalendarSystem() === "jalali"
+              ? JALALI_MONTHS_LIST[date.month + 1]
+              : MONTHS_LIST[date.date.getMonth() + 1]
+            )?.shortTitle + " "}
           {isToday ? (
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent-primary text-on-color">
-              {date.date.getDate()}
+              {date.day}
             </span>
           ) : (
-            <>{date.date.getDate()}</>
+            <>{date.day}</>
           )}
         </div>
 
@@ -197,6 +204,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
         </div>
 
         {/* Mobile view content */}
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div
           onClick={() => setSelectedDate(date.date)}
           className={cn(
@@ -212,7 +220,8 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
               "bg-accent-primary/10 text-accent-primary ": isToday && !isSelectedDate,
             })}
           >
-            {date.date.getDate()}
+            {date.day}
+            {/* [FA-CUSTOM] Calendar-aware day number */}
           </div>
         </div>
       </div>

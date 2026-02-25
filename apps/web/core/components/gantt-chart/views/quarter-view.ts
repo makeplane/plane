@@ -6,7 +6,8 @@
 
 //
 import type { ChartDataType } from "@plane/types";
-import { quarters } from "../data";
+import { getCalendarSystem } from "@plane/utils"; // [FA-CUSTOM]
+import { quarters, jalaliQuarters } from "../data"; // [FA-CUSTOM] added jalaliQuarters
 import { getNumberOfDaysBetweenTwoDates } from "./helpers";
 import type { IMonthBlock } from "./month-view";
 import { getMonthsBetweenTwoDates } from "./month-view";
@@ -123,6 +124,9 @@ export const groupMonthsToQuarters = (monthBlocks: IMonthBlock[]): IQuarterMonth
   const todayQuarterNumber = Math.floor(today.getMonth() / 3);
   const todayYear = today.getFullYear();
 
+  // [FA-CUSTOM] Use calendar-aware quarters
+  const activeQuarters = getCalendarSystem() === "jalali" ? jalaliQuarters : quarters;
+
   for (const monthBlock of monthBlocks) {
     const { month, year } = monthBlock;
 
@@ -133,7 +137,7 @@ export const groupMonthsToQuarters = (monthBlocks: IMonthBlock[]): IQuarterMonth
     if (quartersMap[quarterKey]) {
       quartersMap[quarterKey].children.push(monthBlock);
     } else {
-      const quarterData = quarters[quarterNumber];
+      const quarterData = activeQuarters[quarterNumber];
       quartersMap[quarterKey] = {
         children: [monthBlock],
         quarterNumber,

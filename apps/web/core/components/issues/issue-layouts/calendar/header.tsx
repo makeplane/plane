@@ -12,9 +12,14 @@ import { useTranslation } from "@plane/i18n";
 import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 import type { TSupportedFilterForUpdate } from "@plane/types";
 import { Row } from "@plane/ui";
+import { getCalendarSystem } from "@plane/utils"; // [FA-CUSTOM]
+import {
+  addMonths as jalaliAddMonths,
+  subMonths as jalaliSubMonths,
+  startOfMonth as jalaliStartOfMonth,
+} from "date-fns-jalali"; // [FA-CUSTOM]
 // icons
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
-import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
 import type { IProjectIssuesFilter } from "@/store/issue/project";
@@ -42,13 +47,20 @@ export const CalendarHeader = observer(function CalendarHeader(props: ICalendarH
 
   const { activeMonthDate, activeWeekDate } = issueCalendarView.calendarFilters;
 
+  // [FA-CUSTOM] Calendar-aware navigation
+  const isJalali = getCalendarSystem() === "jalali";
+
   const handlePrevious = () => {
     if (calendarLayout === "month") {
-      const previousMonthYear =
-        activeMonthDate.getMonth() === 0 ? activeMonthDate.getFullYear() - 1 : activeMonthDate.getFullYear();
-      const previousMonthMonth = activeMonthDate.getMonth() === 0 ? 11 : activeMonthDate.getMonth() - 1;
-
-      const previousMonthFirstDate = new Date(previousMonthYear, previousMonthMonth, 1);
+      // [FA-CUSTOM] Calendar-aware month navigation
+      const previousMonthFirstDate = isJalali
+        ? jalaliSubMonths(activeMonthDate, 1)
+        : (() => {
+            const prevYear =
+              activeMonthDate.getMonth() === 0 ? activeMonthDate.getFullYear() - 1 : activeMonthDate.getFullYear();
+            const prevMonth = activeMonthDate.getMonth() === 0 ? 11 : activeMonthDate.getMonth() - 1;
+            return new Date(prevYear, prevMonth, 1);
+          })();
 
       issueCalendarView.updateCalendarFilters({
         activeMonthDate: previousMonthFirstDate,
@@ -68,11 +80,15 @@ export const CalendarHeader = observer(function CalendarHeader(props: ICalendarH
 
   const handleNext = () => {
     if (calendarLayout === "month") {
-      const nextMonthYear =
-        activeMonthDate.getMonth() === 11 ? activeMonthDate.getFullYear() + 1 : activeMonthDate.getFullYear();
-      const nextMonthMonth = (activeMonthDate.getMonth() + 1) % 12;
-
-      const nextMonthFirstDate = new Date(nextMonthYear, nextMonthMonth, 1);
+      // [FA-CUSTOM] Calendar-aware month navigation
+      const nextMonthFirstDate = isJalali
+        ? jalaliAddMonths(activeMonthDate, 1)
+        : (() => {
+            const nextYear =
+              activeMonthDate.getMonth() === 11 ? activeMonthDate.getFullYear() + 1 : activeMonthDate.getFullYear();
+            const nextMonth = (activeMonthDate.getMonth() + 1) % 12;
+            return new Date(nextYear, nextMonth, 1);
+          })();
 
       issueCalendarView.updateCalendarFilters({
         activeMonthDate: nextMonthFirstDate,
@@ -92,7 +108,10 @@ export const CalendarHeader = observer(function CalendarHeader(props: ICalendarH
 
   const handleToday = () => {
     const today = new Date();
-    const firstDayOfCurrentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    // [FA-CUSTOM] Calendar-aware "today" navigation
+    const firstDayOfCurrentMonth = isJalali
+      ? jalaliStartOfMonth(today)
+      : new Date(today.getFullYear(), today.getMonth(), 1);
 
     issueCalendarView.updateCalendarFilters({
       activeMonthDate: firstDayOfCurrentMonth,

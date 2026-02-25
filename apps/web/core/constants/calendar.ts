@@ -63,6 +63,27 @@ export const MONTHS_LIST: {
   },
 };
 
+// [FA-CUSTOM] Jalali month names in English (1-indexed, same shape as MONTHS_LIST)
+export const JALALI_MONTHS_LIST: {
+  [monthNumber: number]: {
+    shortTitle: string;
+    title: string;
+  };
+} = {
+  1: { shortTitle: "Far", title: "Farvardin" },
+  2: { shortTitle: "Ord", title: "Ordibehesht" },
+  3: { shortTitle: "Kho", title: "Khordad" },
+  4: { shortTitle: "Tir", title: "Tir" },
+  5: { shortTitle: "Mor", title: "Mordad" },
+  6: { shortTitle: "Sha", title: "Shahrivar" },
+  7: { shortTitle: "Meh", title: "Mehr" },
+  8: { shortTitle: "Aba", title: "Aban" },
+  9: { shortTitle: "Aza", title: "Azar" },
+  10: { shortTitle: "Dey", title: "Dey" },
+  11: { shortTitle: "Bah", title: "Bahman" },
+  12: { shortTitle: "Esf", title: "Esfand" },
+};
+
 export const DAYS_LIST: {
   [dayIndex: number]: {
     shortTitle: string;

@@ -10,7 +10,14 @@ import { observable, action, makeObservable, runInAction, computed, reaction } f
 import { computedFn } from "mobx-utils";
 import type { ICalendarPayload, ICalendarWeek } from "@plane/types";
 import { EStartOfTheWeek } from "@plane/types";
-import { generateCalendarData, getWeekNumberOfDate } from "@plane/utils";
+import { generateCalendarData, getWeekNumberOfDate, getCalendarSystem } from "@plane/utils"; // [FA-CUSTOM] added getCalendarSystem
+// [FA-CUSTOM] Jalali calendar support
+import {
+  getYear as jalaliGetYear,
+  getMonth as jalaliGetMonth,
+  getDate as jalaliGetDate,
+  startOfMonth as jalaliStartOfMonth,
+} from "date-fns-jalali";
 // types
 import type { IIssueRootStore } from "./root.store";
 
@@ -40,7 +47,7 @@ export interface ICalendarStore {
 export class CalendarStore implements ICalendarStore {
   loader: boolean = false;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  error: any | null = null;
+  error: any = null;
 
   // observables
   calendarFilters: { activeMonthDate: Date; activeWeekDate: Date } = {
@@ -82,6 +89,14 @@ export class CalendarStore implements ICalendarStore {
         this.regenerateCalendar();
       }
     );
+
+    // [FA-CUSTOM] Watch for calendar system changes and regenerate
+    reaction(
+      () => this.rootStore.rootStore.user.userProfile.data?.calendar_system,
+      () => {
+        this.regenerateCalendar();
+      }
+    );
   }
 
   get allWeeksOfActiveMonth() {
@@ -89,11 +104,16 @@ export class CalendarStore implements ICalendarStore {
 
     const { activeMonthDate } = this.calendarFilters;
 
-    const year = activeMonthDate.getFullYear();
-    const month = activeMonthDate.getMonth();
+    // [FA-CUSTOM] Use calendar-aware year/month for payload lookup
+    const isJalali = getCalendarSystem() === "jalali";
+    const year = isJalali ? jalaliGetYear(activeMonthDate) : activeMonthDate.getFullYear();
+    const month = isJalali ? jalaliGetMonth(activeMonthDate) : activeMonthDate.getMonth();
 
     // Get the weeks for the current month
-    const weeks = this.calendarPayload[`y-${year}`][`m-${month}`];
+    const yearData = this.calendarPayload[`y-${year}`];
+    if (!yearData) return undefined;
+
+    const weeks = yearData[`m-${month}`];
 
     // If no weeks exist, return undefined
     if (!weeks) return undefined;
@@ -122,9 +142,12 @@ export class CalendarStore implements ICalendarStore {
     if (!this.calendarPayload) return undefined;
 
     const { activeWeekDate } = this.calendarFilters;
-    const year = activeWeekDate.getFullYear();
-    const month = activeWeekDate.getMonth();
-    const dayOfMonth = activeWeekDate.getDate();
+
+    // [FA-CUSTOM] Calendar-aware year/month/day for payload lookup
+    const isJalali = getCalendarSystem() === "jalali";
+    const year = isJalali ? jalaliGetYear(activeWeekDate) : activeWeekDate.getFullYear();
+    const month = isJalali ? jalaliGetMonth(activeWeekDate) : activeWeekDate.getMonth();
+    const dayOfMonth = isJalali ? jalaliGetDate(activeWeekDate) : activeWeekDate.getDate();
 
     // Check if calendar data exists for this year and month
     const yearData = this.calendarPayload[`y-${year}`];
@@ -133,10 +156,17 @@ export class CalendarStore implements ICalendarStore {
     const monthData = yearData[`m-${month}`];
     if (!monthData) return undefined;
 
-    // Calculate firstDayOfMonth offset (same logic as calendar generation)
+    // [FA-CUSTOM] Calendar-aware firstDayOfMonth offset
     const startOfWeek = this.rootStore?.rootStore?.user?.userProfile?.data?.start_of_the_week ?? EStartOfTheWeek.SUNDAY;
-    const firstDayOfMonthRaw = new Date(year, month, 1).getDay();
-    const firstDayOfMonth = (firstDayOfMonthRaw - startOfWeek + 7) % 7;
+    let firstDayOfMonth: number;
+    if (isJalali) {
+      const firstOfJalaliMonth = jalaliStartOfMonth(activeWeekDate);
+      const firstDayOfMonthRaw = firstOfJalaliMonth.getDay();
+      firstDayOfMonth = (firstDayOfMonthRaw - startOfWeek + 7) % 7;
+    } else {
+      const firstDayOfMonthRaw = new Date(year, month, 1).getDay();
+      firstDayOfMonth = (firstDayOfMonthRaw - startOfWeek + 7) % 7;
+    }
 
     // Calculate which sequential week this date falls into
     const weekIndex = Math.floor((dayOfMonth - 1 + firstDayOfMonth) / 7);
