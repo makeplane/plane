@@ -1734,14 +1734,20 @@ export default {
         },
       },
       billing_and_plans: {
+        heading: "Billing & Plans",
+        description: "Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
         title: "청구 및 플랜",
         current_plan: "현재 플랜",
         free_plan: "현재 무료 플랜을 사용 중입니다",
         view_plans: "플랜 보기",
       },
       exports: {
+        heading: "Exports",
+        description: "Export your project data in various formats and access your export history with download links.",
         title: "내보내기",
         exporting: "내보내기 중",
+        exporting_projects: "Exporting project",
+        format: "Format",
         previous_exports: "이전 내보내기",
         export_separate_files: "데이터를 별도의 파일로 내보내기",
         filters_info: "기준에 따라 특정 작업 항목을 내보내려면 필터를 적용하세요.",
@@ -1760,6 +1766,8 @@ export default {
         },
       },
       webhooks: {
+        heading: "Webhooks",
+        description: "Automate notifications to external services when project events occur.",
         title: "웹훅",
         add_webhook: "웹훅 추가",
         modal: {
@@ -1892,7 +1900,9 @@ export default {
       security: "보안",
       activity: "활동",
       appearance: "외관",
+      preferences: "Preferences",
       notifications: "알림",
+      "api-tokens": "Personal Access Tokens",
     },
     tabs: {
       summary: "요약",
@@ -1957,6 +1967,8 @@ export default {
       },
     },
     states: {
+      heading: "States",
+      description: "Define and customize workflow states to track the progress of your work items.",
       describe_this_state_for_your_members: "멤버를 위해 이 상태를 설명하세요.",
       empty_state: {
         title: "{groupKey} 그룹에 사용할 수 있는 상태 없음",
@@ -1964,6 +1976,8 @@ export default {
       },
     },
     labels: {
+      heading: "Labels",
+      description: "Create custom labels to categorize and organize your work items",
       label_title: "레이블 제목",
       label_title_is_required: "레이블 제목이 필요합니다",
       label_max_char: "레이블 이름은 255자를 초과할 수 없습니다",
@@ -1972,8 +1986,10 @@ export default {
       },
     },
     estimates: {
+      heading: "Estimates",
       label: "추정",
       title: "프로젝트 추정 활성화",
+      enable_description: "They help you in communicating complexity and workload of the team.",
       description: "팀의 복잡성과 작업량을 전달하는 데 도움이 됩니다.",
       no_estimate: "추정 없음",
       new: "새 추정 시스템",
@@ -2055,6 +2071,9 @@ export default {
       },
     },
     automations: {
+      heading: "Automations",
+      description:
+        "Configure automated actions to streamline your project management workflow and reduce manual tasks.",
       label: "자동화",
       "auto-archive": {
         title: "완료된 작업 항목 자동 보관",

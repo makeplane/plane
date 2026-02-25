@@ -27,6 +27,157 @@ export default {
     stickies: "Stickies",
     time_tracking: "Time Tracking",
   },
+  auth: {
+    common: {
+      email: {
+        label: "Email",
+        placeholder: "name@company.com",
+        errors: {
+          required: "Email is required",
+          invalid: "Invalid email address",
+        },
+      },
+      password: {
+        label: "Password",
+        set_password: "Set password",
+        placeholder: "Enter your password",
+        confirm_password: {
+          label: "Confirm password",
+          placeholder: "Confirm your password",
+        },
+        current_password: {
+          label: "Current password",
+        },
+        new_password: {
+          label: "New password",
+          placeholder: "Enter new password",
+        },
+        change_password: {
+          label: {
+            default: "Change password",
+            submitting: "Changing password",
+          },
+        },
+        errors: {
+          match: "Passwords do not match",
+          empty: "Please enter your password",
+          length: "Password must be at least 8 characters",
+          strength: {
+            weak: "Password is weak",
+            strong: "Password is strong",
+          },
+        },
+        submit: "Set password",
+        toast: {
+          change_password: {
+            success: {
+              title: "Success!",
+              message: "Password changed successfully.",
+            },
+            error: {
+              title: "Error!",
+              message: "Something went wrong. Please try again.",
+            },
+          },
+        },
+      },
+      unique_code: {
+        label: "Unique code",
+        placeholder: "123456",
+        paste_code: "Paste the code sent to your email",
+        requesting_new_code: "Requesting new code",
+        sending_code: "Sending code",
+      },
+      already_have_an_account: "Already have an account?",
+      login: "Log in",
+      create_account: "Create account",
+      new_to_plane: "New to Plane?",
+      back_to_sign_in: "Back to sign in",
+      resend_in: "Resend in {seconds}s",
+      sign_in_with_unique_code: "Sign in with unique code",
+      forgot_password: "Forgot password?",
+    },
+    sign_up: {
+      header: {
+        label: "Create an account to manage work with your team.",
+        step: {
+          email: {
+            header: "Sign up",
+            sub_header: "",
+          },
+          password: {
+            header: "Sign up",
+            sub_header: "Sign up with your email-password combination.",
+          },
+          unique_code: {
+            header: "Sign up",
+            sub_header: "Sign up with the unique code sent to the above email address.",
+          },
+        },
+      },
+      errors: {
+        password: {
+          strength: "Set a strong password to continue",
+        },
+      },
+    },
+    sign_in: {
+      header: {
+        label: "Sign in to manage work with your team.",
+        step: {
+          email: {
+            header: "Sign in or sign up",
+            sub_header: "",
+          },
+          password: {
+            header: "Sign in or sign up",
+            sub_header: "Sign in using your email-password combination.",
+          },
+          unique_code: {
+            header: "Sign in or sign up",
+            sub_header: "Sign in with the unique code sent to the above email address.",
+          },
+        },
+      },
+    },
+    forgot_password: {
+      title: "Reset password",
+      description:
+        "Enter the email address associated with your account and we will send you a link to reset your password.",
+      email_sent: "We sent a reset link to your email address",
+      send_reset_link: "Send reset link",
+      errors: {
+        smtp_not_enabled: "SMTP is not enabled. Password reset link cannot be sent.",
+      },
+      toast: {
+        success: {
+          title: "Email sent",
+          message:
+            "Check your email for the password reset link. If it doesn't appear within a few minutes, check your spam folder.",
+        },
+        error: {
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        },
+      },
+    },
+    reset_password: {
+      title: "Set new password",
+      description: "Protect your account with a strong password",
+    },
+    set_password: {
+      title: "Secure your account",
+      description: "Setting a password helps you sign in securely",
+    },
+    sign_out: {
+      toast: {
+        error: {
+          title: "Error!",
+          message: "Failed to sign out. Please try again.",
+        },
+      },
+    },
+  },
   submit: "Submit",
   cancel: "Cancel",
   loading: "Loading",
@@ -73,6 +224,7 @@ export default {
   security: "Security",
   activity: "Activity",
   preferences: "Preferences",
+  appearance: "Appearance",
   language_and_time: "Language & Time",
   notifications: "Notifications",
   workspaces: "Workspaces",
@@ -1312,6 +1464,10 @@ export default {
     active_projects: "Active Projects",
     customized_insights: "Customized Insights",
     created_vs_resolved: "Created vs Resolved",
+    total_projects: "Total Projects",
+    total_users: "Total Users",
+    total_work_items: "Total Work Items",
+    total_intake: "Total Intake",
     empty_state: {
       project_insights: {
         title: "No data yet",
@@ -1749,6 +1905,7 @@ export default {
       profile: "Profile",
       security: "Security",
       activity: "Activity",
+      appearance: "Appearance",
       preferences: "Preferences",
       notifications: "Notifications",
       "api-tokens": "Personal Access Tokens",

@@ -866,6 +866,7 @@ export default {
       open_in_new_tab: "Mở trong tab mới",
       copy_link: "Sao chép liên kết",
       archive: "Lưu trữ",
+      restore: "Restore",
       delete: "Xóa",
       remove_relation: "Xóa mối quan hệ",
       subscribe: "Đăng ký",
@@ -1512,6 +1513,7 @@ export default {
       label: "Thêm dự án",
     },
     network: {
+      label: "Network",
       private: {
         title: "Riêng tư",
         description: "Chỉ truy cập bằng lời mời",
@@ -1751,14 +1753,20 @@ export default {
         },
       },
       billing_and_plans: {
+        heading: "Billing & Plans",
+        description: "Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
         title: "Thanh toán và Kế hoạch",
         current_plan: "Kế hoạch hiện tại",
         free_plan: "Bạn đang sử dụng kế hoạch miễn phí",
         view_plans: "Xem kế hoạch",
       },
       exports: {
+        heading: "Exports",
+        description: "Export your project data in various formats and access your export history with download links.",
         title: "Xuất",
         exporting: "Đang xuất",
+        exporting_projects: "Exporting project",
+        format: "Format",
         previous_exports: "Xuất trước đây",
         export_separate_files: "Xuất dữ liệu thành các tệp riêng biệt",
         filters_info: "Áp dụng bộ lọc để xuất các mục công việc cụ thể dựa trên tiêu chí của bạn.",
@@ -1777,6 +1785,8 @@ export default {
         },
       },
       webhooks: {
+        heading: "Webhooks",
+        description: "Automate notifications to external services when project events occur.",
         title: "Webhooks",
         add_webhook: "Thêm webhook",
         modal: {
@@ -1909,7 +1919,9 @@ export default {
       security: "Bảo mật",
       activity: "Hoạt động",
       appearance: "Giao diện",
+      preferences: "Preferences",
       notifications: "Thông báo",
+      "api-tokens": "Personal Access Tokens",
     },
     tabs: {
       summary: "Tóm tắt",
@@ -1974,6 +1986,8 @@ export default {
       },
     },
     states: {
+      heading: "States",
+      description: "Define and customize workflow states to track the progress of your work items.",
       describe_this_state_for_your_members: "Mô tả trạng thái này cho thành viên của bạn.",
       empty_state: {
         title: "Không có trạng thái trong nhóm {groupKey}",
@@ -1981,6 +1995,8 @@ export default {
       },
     },
     labels: {
+      heading: "Labels",
+      description: "Create custom labels to categorize and organize your work items",
       label_title: "Tiêu đề nhãn",
       label_title_is_required: "Tiêu đề nhãn là bắt buộc",
       label_max_char: "Tên nhãn không nên vượt quá 255 ký tự",
@@ -1989,8 +2005,10 @@ export default {
       },
     },
     estimates: {
+      heading: "Estimates",
       label: "Ước tính",
       title: "Bật ước tính cho dự án của tôi",
+      enable_description: "They help you in communicating complexity and workload of the team.",
       description: "Chúng giúp bạn truyền đạt độ phức tạp và khối lượng công việc của nhóm.",
       no_estimate: "Không có ước tính",
       new: "Hệ thống ước tính mới",
@@ -2049,6 +2067,7 @@ export default {
         empty: "Giá trị ước tính không được để trống",
         already_exists: "Giá trị ước tính này đã tồn tại",
         unsaved_changes: "Bạn có thay đổi chưa lưu. Vui lòng lưu trước khi nhấn 'xong'",
+        remove_empty: "Estimate can't be empty. Enter a value in each field or remove those you don't have values for.",
       },
       systems: {
         points: {
@@ -2071,6 +2090,9 @@ export default {
       },
     },
     automations: {
+      heading: "Automations",
+      description:
+        "Configure automated actions to streamline your project management workflow and reduce manual tasks.",
       label: "Tự động hóa",
       "auto-archive": {
         title: "Tự động lưu trữ mục công việc đã đóng",
