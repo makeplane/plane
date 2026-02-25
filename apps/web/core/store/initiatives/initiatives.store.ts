@@ -499,6 +499,7 @@ export class InitiativeStore implements IInitiativeStore {
       return response;
     } catch (error) {
       console.error("error while fetching initiative details", error);
+      throw error;
     }
   };
 

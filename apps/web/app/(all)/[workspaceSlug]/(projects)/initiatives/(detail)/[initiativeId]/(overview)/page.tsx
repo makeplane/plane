@@ -99,7 +99,7 @@ function InitiativeDetailsPage({ params }: Route.ComponentProps) {
           title={t("initiatives.empty_state.not_found.title")}
           description={t("initiatives.empty_state.not_found.description")}
           primaryButton={{
-            text: t("initiatives.empty_state.not_found.primary_button.title"),
+            text: t("initiatives.empty_state.not_found.primary_button.text"),
             onClick: () => router.push(`/${workspaceSlug}/initiatives`),
           }}
         />
