@@ -108,5 +108,5 @@ build/
 build/
 .react-router/
 temp/
-scripts/
-dist-images/
+# scripts/
+/.opencode

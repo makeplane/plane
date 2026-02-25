@@ -97,29 +97,47 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
           title: t("toast.success"),
           message: t("project_settings.general.toast.success"),
         });
+        return undefined;
       })
-      .catch((err) => {
+      .catch((err: { name?: string[]; identifier?: string[] }) => {
         try {
           // Handle the new error format where codes are nested in arrays under field names
-          const errorData = err ?? {};
+          const errorData: { name?: string[]; identifier?: string[] } = err ?? {};
 
-          const nameError = errorData.name?.includes("PROJECT_NAME_ALREADY_EXIST");
-          const identifierError = errorData?.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST");
+          const nameAlreadyExists = errorData.name?.includes("PROJECT_NAME_ALREADY_EXIST");
+          const nameSpecialChars = errorData.name?.includes("PROJECT_NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS");
+          const identifierAlreadyExists = errorData?.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST");
+          const identifierSpecialChars = errorData?.identifier?.includes(
+            "PROJECT_IDENTIFIER_CANNOT_CONTAIN_SPECIAL_CHARACTERS"
+          );
 
-          if (nameError || identifierError) {
-            if (nameError) {
+          if (nameAlreadyExists || nameSpecialChars || identifierAlreadyExists || identifierSpecialChars) {
+            if (nameAlreadyExists) {
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: t("toast.error"),
                 message: t("project_name_already_taken"),
               });
             }
-
-            if (identifierError) {
+            if (nameSpecialChars) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: t("toast.error"),
+                message: t("project_name_cannot_contain_special_characters"),
+              });
+            }
+            if (identifierAlreadyExists) {
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: t("toast.error"),
                 message: t("project_identifier_already_taken"),
+              });
+            }
+            if (identifierSpecialChars) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: t("toast.error"),
+                message: t("project_identifier_cannot_contain_special_characters"),
               });
             }
           } else {
@@ -180,9 +198,10 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
     if (project.identifier !== formData.identifier)
       await projectService
         .checkProjectIdentifierAvailability(workspaceSlug, payload.identifier ?? "")
-        .then(async (res) => {
+        .then(async (res: { exists: boolean }) => {
           if (res.exists) setError("identifier", { message: t("common.identifier_already_exists") });
           else await handleUpdateChange(payload);
+          return undefined;
         });
     else await handleUpdateChange(payload);
     setTimeout(() => {
@@ -191,7 +210,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
       <div className="relative h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <CoverImage src={coverImage} alt="Project cover image" className="h-44 w-full rounded-md" />
@@ -209,9 +228,8 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                   className="flex items-center justify-center"
                   buttonClassName="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-white/10"
                   label={<Logo logo={value} size={28} />}
-                  // TODO: fix types
-                  onChange={(val: any) => {
-                    let logoValue = {};
+                  onChange={(val: { type: string; value: Record<string, unknown> }) => {
+                    let logoValue: Record<string, unknown> = {};
 
                     if (val?.type === "emoji")
                       logoValue = {

@@ -110,23 +110,40 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
           // Handle the new error format where codes are nested in arrays under field names
           const errorData = err?.data ?? {};
 
-          const nameError = errorData.name?.includes("PROJECT_NAME_ALREADY_EXIST");
-          const identifierError = errorData.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST");
+          const nameAlreadyExists = errorData.name?.includes("PROJECT_NAME_ALREADY_EXIST");
+          const nameSpecialChars = errorData.name?.includes("PROJECT_NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS");
+          const identifierAlreadyExists = errorData.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST");
+          const identifierSpecialChars = errorData.identifier?.includes(
+            "PROJECT_IDENTIFIER_CANNOT_CONTAIN_SPECIAL_CHARACTERS"
+          );
 
-          if (nameError || identifierError) {
-            if (nameError) {
+          if (nameAlreadyExists || nameSpecialChars || identifierAlreadyExists || identifierSpecialChars) {
+            if (nameAlreadyExists) {
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: t("toast.error"),
                 message: t("project_name_already_taken"),
               });
             }
-
-            if (identifierError) {
+            if (nameSpecialChars) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: t("toast.error"),
+                message: t("project_name_cannot_contain_special_characters"),
+              });
+            }
+            if (identifierAlreadyExists) {
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: t("toast.error"),
                 message: t("project_identifier_already_taken"),
+              });
+            }
+            if (identifierSpecialChars) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: t("toast.error"),
+                message: t("project_identifier_cannot_contain_special_characters"),
               });
             }
           } else {

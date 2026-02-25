@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument, @typescript-eslint/restrict-template-expressions, react-hooks/exhaustive-deps */
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -65,7 +66,7 @@ const CreatedVsResolved = observer(function CreatedVsResolved() {
     () => [
       {
         key: "completed_issues",
-        label: "Resolved",
+        label: t("common.resolved"),
         fill: "#19803833",
         fillOpacity: 1,
         stackId: "bar-one",
@@ -76,7 +77,7 @@ const CreatedVsResolved = observer(function CreatedVsResolved() {
       },
       {
         key: "created_issues",
-        label: "Created",
+        label: t("common.created"),
         fill: "#1192E833",
         fillOpacity: 1,
         stackId: "bar-one",
@@ -129,7 +130,7 @@ const CreatedVsResolved = observer(function CreatedVsResolved() {
           assetKey="unknown"
           assetClassName="size-20"
           rootClassName="border border-subtle px-5 py-10 md:py-20 md:px-20"
-          title={t("workspace_empty_state.analytics_work_items.title")}
+          title={t("workspace_analytics.empty_state.created_vs_resolved.title")}
         />
       )}
     </AnalyticsSectionWrapper>

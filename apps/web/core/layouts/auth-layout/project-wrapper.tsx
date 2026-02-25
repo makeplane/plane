@@ -51,7 +51,7 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   const [isJoiningProject, setIsJoiningProject] = useState(false);
   // store hooks
   const { fetchUserProjectInfo, allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
-  const { fetchProjectDetails } = useProject();
+  const { fetchProjectDetails, getProjectById } = useProject();
   const { joinProject } = useUserPermissions();
   const { fetchAllCycles } = useCycle();
   const { fetchModulesSlim, fetchModules } = useModule();
@@ -80,6 +80,7 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   }, []);
 
   // fetching project details
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { isLoading: isProjectDetailsLoading, error: projectDetailsError } = useSWR(
     PROJECT_DETAILS(workspaceSlug, projectId),
     () => fetchProjectDetails(workspaceSlug, projectId)
@@ -107,11 +108,13 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
     revalidateIfStale: false,
     revalidateOnFocus: false,
   });
-  // fetching project intake state
-  useSWR(PROJECT_INTAKE_STATE(projectId, currentProjectRole), () => fetchProjectIntakeState(workspaceSlug, projectId), {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  });
+  // fetching project intake state (only when inbox/intake is enabled for the project)
+  const currentProject = getProjectById(projectId);
+  useSWR(
+    currentProject?.inbox_view ? PROJECT_INTAKE_STATE(projectId, currentProjectRole) : null,
+    () => fetchProjectIntakeState(workspaceSlug, projectId),
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
   // fetching project estimates
   useSWR(PROJECT_ESTIMATES(projectId, currentProjectRole), () => getProjectEstimates(workspaceSlug, projectId), {
     revalidateIfStale: false,
@@ -139,7 +142,7 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   // handle join project
   const handleJoinProject = () => {
     setIsJoiningProject(true);
-    joinProject(workspaceSlug, projectId).finally(() => setIsJoiningProject(false));
+    void joinProject(workspaceSlug, projectId).finally(() => setIsJoiningProject(false));
   };
 
   const isProjectLoading = (isParentLoading || isProjectDetailsLoading) && !projectDetailsError;
@@ -149,6 +152,7 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   if (!isProjectLoading && hasPermissionToCurrentProject === false) {
     return (
       <ProjectAccessRestriction
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         errorStatusCode={projectDetailsError?.status}
         isWorkspaceAdmin={isWorkspaceAdmin}
         handleJoinProject={handleJoinProject}

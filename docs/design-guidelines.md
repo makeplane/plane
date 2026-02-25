@@ -1,12 +1,6 @@
 # Design Guidelines & UI System
 
-> [!IMPORTANT]
-> **CRITICAL: MODULAR DESIGN PATTERNS**
-> This file contains high-level philosophy and UI library overviews. For **strict, code-level implementation rules** (e.g. how to build a Modal, Table, Drawer, or empty state), you **MUST** consult the modular pattern guides located at:
-> 👉 **[`docs/design-patterns/README.md`](file:///Volumes/Data/SHBVN/plane.so/docs/design-patterns/README.md)** 👈
-> Failure to follow those 15 specific pattern guides will result in rejected code.
-
-**Last Updated**: 2026-02-24
+**Last Updated**: 2026-02-13
 **Scope**: UI components, theming, design patterns, accessibility
 
 ## UI Component Libraries
@@ -324,7 +318,7 @@ export const IssueForm = ({ onSubmit }: { onSubmit: (data: IssueFormData) => voi
 
 **Location**: `packages/i18n/`
 
-**Supported Languages**: 3 (English [`en` - default], Vietnamese [`vi`], Korean [`ko`]). The app strictly supports only these 3 languages. Any new translation key MUST be added to all 3 locales synchronously to avoid broken UI.
+**Supported Languages**: 19+ (English, Spanish, French, German, Chinese, Japanese, Korean, Portuguese, Russian, Turkish, Italian, Dutch, Swedish, Polish, Czech, etc.)
 
 ### Using Translations
 
@@ -369,9 +363,11 @@ export const LanguageSwitcher = () => {
 
   return (
     <select value={language} onChange={(e) => setLanguage(e.target.value)}>
-      <option value="en">English (Default)</option>
-      <option value="vi">Tiếng Việt</option>
-      <option value="ko">한국어</option>
+      <option value="en">English</option>
+      <option value="es">Español</option>
+      <option value="fr">Français</option>
+      <option value="de">Deutsch</option>
+      {/* More languages... */}
     </select>
   );
 };

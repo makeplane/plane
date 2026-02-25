@@ -5,9 +5,9 @@
 from rest_framework.response import Response
 from rest_framework import status
 from typing import Dict, List, Any
-from django.db.models import QuerySet, Q, Count
+from django.db.models import QuerySet, Q, Count, Case, When, Value, CharField
+from django.db.models.functions import Concat, TruncMonth
 from django.http import HttpRequest
-from django.db.models.functions import TruncMonth
 from django.utils import timezone
 from plane.app.views.base import BaseAPIView
 from plane.app.permissions import ROLE, allow_permission
@@ -278,18 +278,67 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                 members_query = ProjectMember.objects.filter(
                     project_id__in=project_ids, is_active=True, member__is_bot=False
                 )
-            
+
+            # Build issue scope filter for work item counts
+            issue_scope = Q(
+                member__issue_assignee__issue__workspace__slug=self._workspace_slug,
+                member__issue_assignee__issue__project__deleted_at__isnull=True,
+                member__issue_assignee__issue__project__archived_at__isnull=True,
+                member__issue_assignee__deleted_at__isnull=True,
+            )
+            project_ids_param = request.GET.get("project_ids", None)
+            if project_ids_param:
+                pid_list = [str(pid) for pid in project_ids_param.split(",")]
+                issue_scope &= Q(member__issue_assignee__issue__project_id__in=pid_list)
+
+            members_query = members_query.annotate(
+                member__avatar_url=Case(
+                    When(
+                        member__avatar_asset__isnull=False,
+                        then=Concat(
+                            Value("/api/assets/v2/static/"),
+                            "member__avatar_asset",
+                            Value("/"),
+                        ),
+                    ),
+                    When(
+                        member__avatar_asset__isnull=True,
+                        then="member__avatar",
+                    ),
+                    default=Value(None),
+                    output_field=CharField(),
+                ),
+                started_count=Count(
+                    "member__issue_assignee__issue",
+                    filter=issue_scope & Q(member__issue_assignee__issue__state__group="started"),
+                    distinct=True,
+                ),
+                completed_count=Count(
+                    "member__issue_assignee__issue",
+                    filter=issue_scope & Q(member__issue_assignee__issue__state__group="completed"),
+                    distinct=True,
+                ),
+                unstarted_count=Count(
+                    "member__issue_assignee__issue",
+                    filter=issue_scope & Q(member__issue_assignee__issue__state__group="unstarted"),
+                    distinct=True,
+                ),
+            )
+
             return Response(
                 [
                     {
                         "assignee_id": item["member__id"],
                         "display_name": item["member__display_name"],
                         "avatar_url": item["member__avatar_url"],
-                        "started_work_items": item.get("started_count", 0),
-                        "completed_work_items": item.get("completed_count", 0),
-                        "un_started_work_items": item.get("unstarted_count", 0),
+                        "started_work_items": item["started_count"],
+                        "completed_work_items": item["completed_count"],
+                        "un_started_work_items": item["unstarted_count"],
                     }
-                    for item in members_query.values("member__id", "member__display_name", "member__avatar_url")
+                    for item in members_query.values(
+                        "member__id", "member__display_name", "member__avatar_url",
+                        "started_count", "completed_count", "unstarted_count",
+                    )
                 ],
                 status=status.HTTP_200_OK,
             )
@@ -527,23 +576,56 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                 members_query = ProjectMember.objects.filter(
                     project_id__in=project_ids, is_active=True, member__is_bot=False
                 )
-            
+
+            # Build issue scope filter for work item counts
+            issue_scope = Q(
+                member__issue_assignee__issue__workspace__slug=self._workspace_slug,
+                member__issue_assignee__issue__project__deleted_at__isnull=True,
+                member__issue_assignee__issue__project__archived_at__isnull=True,
+                member__issue_assignee__deleted_at__isnull=True,
+            )
+            project_ids_param = request.GET.get("project_ids", None)
+            if project_ids_param:
+                pid_list = [str(pid) for pid in project_ids_param.split(",")]
+                issue_scope &= Q(member__issue_assignee__issue__project_id__in=pid_list)
+
+            members_query = members_query.annotate(
+                started_count=Count(
+                    "member__issue_assignee__issue",
+                    filter=issue_scope & Q(member__issue_assignee__issue__state__group="started"),
+                    distinct=True,
+                ),
+                completed_count=Count(
+                    "member__issue_assignee__issue",
+                    filter=issue_scope & Q(member__issue_assignee__issue__state__group="completed"),
+                    distinct=True,
+                ),
+                unstarted_count=Count(
+                    "member__issue_assignee__issue",
+                    filter=issue_scope & Q(member__issue_assignee__issue__state__group="unstarted"),
+                    distinct=True,
+                ),
+            )
+
             data = [
                 {
                     "key": item["member__id"],
                     "name": item["member__display_name"],
-                    "count": item.get("started_count", 0) + item.get("completed_count", 0) + item.get("unstarted_count", 0),
-                    "completed_issues": item.get("completed_count", 0),
-                    "pending_issues": item.get("started_count", 0) + item.get("unstarted_count", 0),
+                    "count": item["started_count"] + item["completed_count"] + item["unstarted_count"],
+                    "completed_issues": item["completed_count"],
+                    "pending_issues": item["started_count"] + item["unstarted_count"],
                 }
-                for item in members_query.values("member__id", "member__display_name")
+                for item in members_query.values(
+                    "member__id", "member__display_name",
+                    "started_count", "completed_count", "unstarted_count",
+                )
             ]
-            
+
             schema = {
                 "completed_issues": "completed_issues",
                 "pending_issues": "pending_issues",
             }
-            
+
             return Response(
                 {"data": data, "schema": schema},
                 status=status.HTTP_200_OK,

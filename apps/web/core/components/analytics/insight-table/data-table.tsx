@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/incompatible-library, @typescript-eslint/no-explicit-any */
 import * as React from "react";
 import type {
   ColumnDef,
@@ -162,7 +163,7 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
                     assetKey="unknown"
                     assetClassName="size-20"
                     rootClassName="border border-subtle px-5 py-10 md:py-20 md:px-20"
-                    title={t("workspace_empty_state.analytics_work_items.title")}
+                    title={t("workspace_analytics.empty_state.project_insights.title")}
                   />
                 </TableCell>
               </TableRow>

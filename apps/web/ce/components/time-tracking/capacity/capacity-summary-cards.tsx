@@ -90,7 +90,7 @@ export const CapacitySummaryCards = observer((props: ICapacitySummaryCardsProps)
 
       <div className="rounded-xl border border-subtle bg-gradient-to-b from-surface-1 to-surface-2 p-5 flex flex-col items-center col-span-1 shadow-sm hover:shadow-md transition-all duration-300">
         <span className="text-[10px] font-bold tracking-wide uppercase text-tertiary self-start mb-4">
-          Category Distribution
+          {t("capacity_category_distribution")}
         </span>
         <div className="h-48 w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -135,7 +135,7 @@ export const CapacitySummaryCards = observer((props: ICapacitySummaryCardsProps)
 
       <div className="rounded-xl border border-subtle bg-gradient-to-b from-surface-1 to-surface-2 p-5 flex flex-col items-center col-span-1 md:col-span-2 lg:col-span-2 shadow-sm hover:shadow-md transition-all duration-300 min-h-[300px]">
         <span className="text-[10px] font-bold tracking-wide uppercase text-tertiary self-start mb-4">
-          Time Burndown
+          {t("capacity_time_burndown")}
         </span>
         <div className="w-full flex-grow">
           <ResponsiveContainer width="100%" height="100%">

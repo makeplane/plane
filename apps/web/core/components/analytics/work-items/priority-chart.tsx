@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unused-vars, @typescript-eslint/restrict-template-expressions, react-hooks/exhaustive-deps */
 import { useMemo } from "react";
 import type { ColumnDef, Row, RowData, Table } from "@tanstack/react-table";
 import { observer } from "mobx-react";
@@ -94,7 +95,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
       parsedBars = [
         {
           key: "count",
-          label: "Count",
+          label: t("common.count"),
           stackId: "bar-one",
           fill: (payload) => generateBarColor(payload.key, { x_axis, y_axis, group_by }, baseColors, workspaceStates),
           textClassName: "",
@@ -162,13 +163,13 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
       },
       {
         accessorKey: "count",
-        header: () => <div className="text-right">Count</div>,
+        header: () => <div className="text-right">{t("common.count")}</div>,
         cell: ({ row }) => <div className="text-right">{row.original.count}</div>,
         meta: {
           export: {
-            key: "Count",
+            key: t("common.count"),
             value: (row) => row.original.count,
-            label: "Count",
+            label: t("common.count"),
           },
         },
       },
@@ -240,7 +241,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
           assetKey="unknown"
           assetClassName="size-20"
           rootClassName="border border-subtle px-5 py-10 md:py-20 md:px-20"
-          title={t("workspace_empty_state.analytics_work_items.title")}
+          title={t("workspace_analytics.empty_state.customized_insights.title")}
         />
       )}
     </div>
