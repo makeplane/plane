@@ -4,7 +4,7 @@ go 1.22.4
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/gofiber/fiber/v2 v2.52.11
+	github.com/gofiber/fiber/v2 v2.52.12
 )
 
 require (
