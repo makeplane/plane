@@ -721,7 +721,9 @@ export default {
     live: "Live",
     change_history: "Change History",
     coming_soon: "Coming soon",
-    member: "Member",
+    executor: "Executor",
+    supervisor: "Supervisor",
+    member: "PM",
     members: "Members",
     you: "You",
     upgrade_cta: {
@@ -2347,8 +2349,16 @@ export default {
       title: "Guest",
       description: "External members of organizations can be invited as guests.",
     },
+    executor: {
+      title: "Executor",
+      description: "Can view and execute assigned tasks and update status",
+    },
+    supervisor: {
+      title: "Supervisor",
+      description: "Can oversee projects, manage tasks and view team progress",
+    },
     member: {
-      title: "Member",
+      title: "PM",
       description: "Ability to read, write, edit, and delete entities inside projects, cycles, and modules",
     },
     admin: {

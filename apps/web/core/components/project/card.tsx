@@ -194,7 +194,6 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
           if (!isMemberOfProject || isArchived) {
             e.preventDefault();
             e.stopPropagation();
-            if (!isArchived) setJoinProjectModal(true);
           }
         }}
         data-prevent-progress={!isMemberOfProject || isArchived}
@@ -344,21 +343,6 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                       Joined
                     </span>
                   ))}
-                {!isMemberOfProject && (
-                  <div className="flex items-center">
-                    <Button
-                      variant="link"
-                      className="!p-0 font-semibold"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setJoinProjectModal(true);
-                      }}
-                    >
-                      Join
-                    </Button>
-                  </div>
-                )}
               </>
             )}
           </div>

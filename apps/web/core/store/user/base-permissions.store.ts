@@ -211,7 +211,17 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
       currentUserRole = parseInt(currentUserRole);
     }
 
-    if (currentUserRole && typeof currentUserRole === "number" && allowPermissions.includes(currentUserRole)) {
+    const expandedAllowPermissions = [...allowPermissions];
+    if (expandedAllowPermissions.includes(EUserPermissions.MEMBER as ETempUserRole)) {
+      if (!expandedAllowPermissions.includes(EUserPermissions.SUPERVISOR as ETempUserRole)) {
+        expandedAllowPermissions.push(EUserPermissions.SUPERVISOR as ETempUserRole);
+      }
+      if (!expandedAllowPermissions.includes(EUserPermissions.EXECUTOR as ETempUserRole)) {
+        expandedAllowPermissions.push(EUserPermissions.EXECUTOR as ETempUserRole);
+      }
+    }
+
+    if (currentUserRole && typeof currentUserRole === "number" && expandedAllowPermissions.includes(currentUserRole)) {
       if (onPermissionAllowed) {
         return onPermissionAllowed();
       } else {

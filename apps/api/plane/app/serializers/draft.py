@@ -90,7 +90,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
         if attrs.get("assignee_ids", []):
             attrs["assignee_ids"] = ProjectMember.objects.filter(
                 project_id=self.context["project_id"],
-                role__gte=ROLE.MEMBER.value,
+                role__gt=ROLE.GUEST.value,
                 is_active=True,
                 member_id__in=attrs["assignee_ids"],
             ).values_list("member_id", flat=True)

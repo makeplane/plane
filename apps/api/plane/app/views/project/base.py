@@ -112,7 +112,7 @@ class ProjectViewSet(BaseViewSet):
             member=request.user,
             workspace__slug=slug,
             is_active=True,
-            role=ROLE.MEMBER.value,
+            role__in=[ROLE.MEMBER.value, ROLE.SUPERVISOR.value, ROLE.EXECUTOR.value],
         ).exists():
             projects = projects.filter(
                 Q(
@@ -193,7 +193,7 @@ class ProjectViewSet(BaseViewSet):
             member=request.user,
             workspace__slug=slug,
             is_active=True,
-            role=ROLE.MEMBER.value,
+            role__in=[ROLE.MEMBER.value, ROLE.SUPERVISOR.value, ROLE.EXECUTOR.value],
         ).exists():
             projects = projects.filter(
                 Q(
@@ -236,7 +236,7 @@ class ProjectViewSet(BaseViewSet):
         serializer = ProjectListSerializer(project)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
 

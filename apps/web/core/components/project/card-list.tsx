@@ -43,7 +43,7 @@ export const ProjectCardList = observer(function ProjectCardList(props: TProject
 
   // permissions
   const canPerformEmptyStateActions = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    [EUserPermissions.ADMIN],
     EUserPermissionsLevel.WORKSPACE
   );
 
@@ -76,19 +76,19 @@ export const ProjectCardList = observer(function ProjectCardList(props: TProject
       <EmptyStateDetailed
         title={
           currentWorkspaceDisplayFilters?.archived_projects &&
-          calculateTotalFilters(currentWorkspaceFilters ?? {}) === 0
+            calculateTotalFilters(currentWorkspaceFilters ?? {}) === 0
             ? t("workspace_empty_state.projects_archived.title")
             : t("common_empty_state.search.title")
         }
         description={
           currentWorkspaceDisplayFilters?.archived_projects &&
-          calculateTotalFilters(currentWorkspaceFilters ?? {}) === 0
+            calculateTotalFilters(currentWorkspaceFilters ?? {}) === 0
             ? t("workspace_empty_state.projects_archived.description")
             : t("common_empty_state.search.description")
         }
         assetKey={
           currentWorkspaceDisplayFilters?.archived_projects &&
-          calculateTotalFilters(currentWorkspaceFilters ?? {}) === 0
+            calculateTotalFilters(currentWorkspaceFilters ?? {}) === 0
             ? "archived-work-item"
             : "search"
         }

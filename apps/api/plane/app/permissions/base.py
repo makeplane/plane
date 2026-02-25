@@ -9,7 +9,9 @@ from enum import Enum
 class ROLE(Enum):
     ADMIN = 20
     MEMBER = 15
-    GUEST = 5
+    SUPERVISOR = 10
+    EXECUTOR = 5
+    GUEST = 1
 
 
 def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
@@ -24,6 +26,14 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
 
             # Convert allowed_roles to their values if they are enum members
             allowed_role_values = [role.value if isinstance(role, ROLE) else role for role in allowed_roles]
+            
+            # Automatically add EXECUTOR and SUPERVISOR bounds if MEMBER is present
+            if ROLE.MEMBER.value in allowed_role_values:
+                if ROLE.SUPERVISOR.value not in allowed_role_values:
+                    allowed_role_values.append(ROLE.SUPERVISOR.value)
+                if ROLE.EXECUTOR.value not in allowed_role_values:
+                    allowed_role_values.append(ROLE.EXECUTOR.value)
+
 
             # Check role permissions
             if level == "WORKSPACE":

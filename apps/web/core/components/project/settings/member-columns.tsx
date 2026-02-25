@@ -39,7 +39,7 @@ export function NameColumn(props: NameProps) {
 
   return (
     <Disclosure>
-      {({}) => (
+      {({ }) => (
         <div className="relative group">
           <div className="flex items-center gap-2 w-72">
             <div className="flex items-center gap-x-2 gap-y-2 flex-1">
@@ -110,13 +110,13 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
   );
   const isCurrentUserWorkspaceAdmin = currentUser
     ? [EUserPermissions.ADMIN].includes(
-        Number(getWorkspaceMemberDetails(currentUser.id)?.role) ?? EUserPermissions.GUEST
-      )
+      Number(getWorkspaceMemberDetails(currentUser.id)?.role) ?? EUserPermissions.GUEST
+    )
     : false;
   const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
 
   const isCurrentUserProjectAdmin = currentProjectRole
-    ? ![EUserPermissions.MEMBER, EUserPermissions.GUEST].includes(Number(currentProjectRole) ?? EUserPermissions.GUEST)
+    ? [EUserPermissions.ADMIN].includes(Number(currentProjectRole) ?? EUserPermissions.GUEST)
     : false;
 
   // logic

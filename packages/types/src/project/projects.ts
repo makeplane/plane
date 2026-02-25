@@ -7,7 +7,9 @@ import type { IWorkspace } from "../workspace";
 export enum EUserProjectRoles {
   ADMIN = 20,
   MEMBER = 15,
-  GUEST = 5,
+  SUPERVISOR = 10,
+  EXECUTOR = 5,
+  GUEST = 1,
 }
 
 export interface IPartialProject {
@@ -95,17 +97,17 @@ export type TProjectMembership = {
   member: string;
   role: TUserPermissions | EUserProjectRoles;
 } & (
-  | {
+    | {
       id: string;
       original_role: EUserProjectRoles;
       created_at: string;
     }
-  | {
+    | {
       id: null;
       original_role: null;
       created_at: null;
     }
-);
+  );
 
 export interface IProjectBulkAddFormData {
   members: { role: TUserPermissions | EUserProjectRoles; member_id: string }[];

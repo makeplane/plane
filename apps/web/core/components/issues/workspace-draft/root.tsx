@@ -36,7 +36,7 @@ export const WorkspaceDraftIssuesRoot = observer(function WorkspaceDraftIssuesRo
   const { allowPermissions } = useUserPermissions();
   // derived values
   const hasMemberLevelPermission = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    [EUserWorkspaceRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE
   );
 

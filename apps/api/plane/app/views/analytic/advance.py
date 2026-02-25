@@ -74,7 +74,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
         return {
             "total_users": self.get_filtered_counts(members_query),
             "total_admins": self.get_filtered_counts(members_query.filter(role=ROLE.ADMIN.value)),
-            "total_members": self.get_filtered_counts(members_query.filter(role=ROLE.MEMBER.value)),
+            "total_members": self.get_filtered_counts(members_query.filter(role__in=[ROLE.MEMBER.value, ROLE.SUPERVISOR.value, ROLE.EXECUTOR.value])),
             "total_guests": self.get_filtered_counts(members_query.filter(role=ROLE.GUEST.value)),
             "total_projects": self.get_filtered_counts(Project.objects.filter(**self.filters["project_filters"])),
             "total_work_items": self.get_filtered_counts(Issue.issue_objects.filter(**self.filters["base_filters"])),

@@ -90,6 +90,14 @@ class WorkSpaceViewSet(BaseViewSet):
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
+            # Prevent users who only have Supervisor, Executor, or Guest roles across all their workspaces from creating a new workspace
+            user_roles = WorkspaceMember.objects.filter(member=request.user, is_active=True).values_list('role', flat=True)
+            if user_roles and not any(role in [ROLE.ADMIN.value, ROLE.MEMBER.value] for role in user_roles):
+                return Response(
+                    {"error": "You do not have permission to create a workspace"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             serializer = WorkSpaceSerializer(data=request.data)
 
             slug = request.data.get("slug", False)

@@ -30,7 +30,9 @@ export type TUserPermissionsLevel = EUserPermissionsLevel;
 export enum EUserPermissions {
   ADMIN = 20,
   MEMBER = 15,
-  GUEST = 5,
+  SUPERVISOR = 10,
+  EXECUTOR = 5,
+  GUEST = 1,
 }
 export type TUserPermissions = EUserPermissions;
 
@@ -52,7 +54,7 @@ export type TUserAllowedPermissions = {
 export const USER_ALLOWED_PERMISSIONS: TUserAllowedPermissions = {
   workspace: {
     dashboard: {
-      read: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+      read: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.SUPERVISOR, EUserPermissions.EXECUTOR, EUserPermissions.GUEST],
     },
   },
   project: {},

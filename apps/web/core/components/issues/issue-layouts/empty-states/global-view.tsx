@@ -22,6 +22,10 @@ export const GlobalViewEmptyState = observer(function GlobalViewEmptyState() {
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
+  const canCreateProject = allowPermissions(
+    [EUserWorkspaceRoles.ADMIN],
+    EUserPermissionsLevel.WORKSPACE
+  );
 
   if (workspaceProjectIds?.length === 0) {
     return (
@@ -37,7 +41,7 @@ export const GlobalViewEmptyState = observer(function GlobalViewEmptyState() {
               toggleCreateProjectModal(true);
               captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.GLOBAL_VIEW });
             },
-            disabled: !hasMemberLevelPermission,
+            disabled: !canCreateProject,
             variant: "primary",
           },
         ]}
