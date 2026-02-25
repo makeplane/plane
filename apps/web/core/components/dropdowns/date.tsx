@@ -15,10 +15,13 @@ import type { Matcher } from "@plane/propel/calendar";
 import { Calendar } from "@plane/propel/calendar";
 import { CloseIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
+import { ECalendarSystem } from "@plane/types"; // [FA-CUSTOM]
 import { cn, renderFormattedDate, getDate } from "@plane/utils";
 // helpers
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
+// [FA-CUSTOM] Shamsi calendar for Jalali mode
+import { ShamsiCalendar } from "@/components/fa/shamsi-calendar";
 import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
@@ -78,6 +81,7 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
   // hooks
   const { data } = useUserProfile();
   const startOfWeek = data?.start_of_the_week;
+  const isJalali = data?.calendar_system === ECalendarSystem.JALALI; // [FA-CUSTOM]
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -191,21 +195,36 @@ export const DateDropdown = observer(function DateDropdown(props: Props) {
               style={styles.popper}
               {...attributes.popper}
             >
-              <Calendar
-                className="rounded-md border border-subtle p-3"
-                captionLayout="dropdown"
-                selected={getDate(value)}
-                defaultMonth={getDate(value)}
-                onSelect={(date: Date | undefined) => {
-                  dropdownOnChange(date ?? null);
-                }}
-                showOutsideDays
-                initialFocus
-                disabled={disabledDays}
-                mode="single"
-                fixedWeeks
-                weekStartsOn={startOfWeek}
-              />
+              {/* [FA-CUSTOM] Conditional Jalali/Gregorian calendar */}
+              {isJalali ? (
+                <ShamsiCalendar
+                  className="rounded-md border border-subtle p-3"
+                  selected={getDate(value)}
+                  defaultMonth={getDate(value)}
+                  onSelect={(date: Date | undefined) => {
+                    dropdownOnChange(date ?? null);
+                  }}
+                  disabled={disabledDays}
+                  mode="single"
+                  weekStartsOn={startOfWeek}
+                />
+              ) : (
+                <Calendar
+                  className="rounded-md border border-subtle p-3"
+                  captionLayout="dropdown"
+                  selected={getDate(value)}
+                  defaultMonth={getDate(value)}
+                  onSelect={(date: Date | undefined) => {
+                    dropdownOnChange(date ?? null);
+                  }}
+                  showOutsideDays
+                  initialFocus
+                  disabled={disabledDays}
+                  mode="single"
+                  fixedWeeks
+                  weekStartsOn={startOfWeek}
+                />
+              )}
             </div>
           </Combobox.Options>,
           document.body

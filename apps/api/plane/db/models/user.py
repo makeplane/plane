@@ -250,6 +250,12 @@ class Profile(TimeAuditModel):
     # language
     language = models.CharField(max_length=255, default="en")
     start_of_the_week = models.PositiveSmallIntegerField(choices=START_OF_THE_WEEK_CHOICES, default=SUNDAY)
+    # [FA-CUSTOM] Dual calendar system support
+    CALENDAR_SYSTEM_CHOICES = (
+        ("gregorian", "Gregorian"),
+        ("jalali", "Jalali"),
+    )
+    calendar_system = models.CharField(max_length=20, choices=CALENDAR_SYSTEM_CHOICES, default="gregorian")
     goals = models.JSONField(default=dict)
     background_color = models.CharField(max_length=255, default=get_random_color)
 

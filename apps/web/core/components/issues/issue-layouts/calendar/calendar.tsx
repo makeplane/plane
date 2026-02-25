@@ -22,15 +22,15 @@ import type {
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // ui
 import { Spinner } from "@plane/ui";
-import { renderFormattedPayloadDate, cn } from "@plane/utils";
+import { renderFormattedPayloadDate, cn, getCalendarSystem } from "@plane/utils"; // [FA-CUSTOM] added getCalendarSystem
+import { getYear as jalaliGetYear, getMonth as jalaliGetMonth, getDate as jalaliGetDate } from "date-fns-jalali"; // [FA-CUSTOM]
 // constants
-import { MONTHS_LIST } from "@/constants/calendar";
+import { MONTHS_LIST, JALALI_MONTHS_LIST } from "@/constants/calendar"; // [FA-CUSTOM] added JALALI_MONTHS_LIST
 // helpers
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import useSize from "@/hooks/use-window-size";
 // store
-import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import type { ICycleIssuesFilter } from "@/store/issue/cycle";
 import type { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
 import type { IModuleIssuesFilter } from "@/store/issue/module";
@@ -62,6 +62,7 @@ type Props = {
     sourceDate: string | undefined,
     destinationDate: string | undefined
   ) => Promise<void>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   readOnly?: boolean;
   updateFilters?: (
@@ -123,6 +124,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
         element,
       })
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollableContainerRef?.current]);
 
   if (!calendarPayload || !formattedDatePayload)
@@ -207,9 +209,12 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
             {/* mobile view */}
             <div className="md:hidden">
               <p className="p-4 text-18 font-semibold">
-                {`${selectedDate.getDate()} ${
-                  MONTHS_LIST[selectedDate.getMonth() + 1].title
-                }, ${selectedDate.getFullYear()}`}
+                {/* [FA-CUSTOM] Calendar-aware mobile date display */}
+                {`${getCalendarSystem() === "jalali" ? jalaliGetDate(selectedDate) : selectedDate.getDate()} ${
+                  (getCalendarSystem() === "jalali" ? JALALI_MONTHS_LIST : MONTHS_LIST)[
+                    (getCalendarSystem() === "jalali" ? jalaliGetMonth(selectedDate) : selectedDate.getMonth()) + 1
+                  ].title
+                }, ${getCalendarSystem() === "jalali" ? jalaliGetYear(selectedDate) : selectedDate.getFullYear()}`}
               </p>
               <CalendarIssueBlocks
                 date={selectedDate}

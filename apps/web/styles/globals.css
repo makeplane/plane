@@ -1,6 +1,7 @@
 @import "@plane/tailwind-config/index.css";
 @import "@plane/editor/styles";
 @import "@plane/propel/styles/react-day-picker.css";
+@import "../core/components/fa/shamsi-calendar.css"; /* [FA-CUSTOM] Shamsi calendar styles */
 @import "./power-k.css";
 @import "./emoji.css";
 @plugin "@tailwindcss/typography";

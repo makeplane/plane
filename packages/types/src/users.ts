@@ -22,6 +22,12 @@ export enum EStartOfTheWeek {
   SATURDAY = 6,
 }
 
+// [FA-CUSTOM] Dual calendar system support
+export enum ECalendarSystem {
+  GREGORIAN = "gregorian",
+  JALALI = "jalali",
+}
+
 export interface IUserLite {
   avatar_url: string;
   display_name: string;
@@ -82,6 +88,7 @@ export type TUserProfile = {
   created_at: Date | string;
   updated_at: Date | string;
   start_of_the_week: EStartOfTheWeek;
+  calendar_system: ECalendarSystem; // [FA-CUSTOM]
 };
 
 export interface IInstanceAdminStatus {

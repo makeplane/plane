@@ -28,6 +28,7 @@
     "chroma-js": "^3.2.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "date-fns-jalali": "4.1.0-0",
     "hast": "^1.0.0",
     "hast-util-to-mdast": "^10.1.2",
     "lodash-es": "catalog:",

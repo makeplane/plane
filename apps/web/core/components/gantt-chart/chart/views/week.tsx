@@ -13,8 +13,10 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../../constants";
 import type { IWeekBlock } from "../../views";
 
-export const WeekChartView = observer(function WeekChartView(_props: any) {
+export const WeekChartView = observer(function WeekChartView() {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { currentViewData, renderView } = useTimeLineChartStore();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const weekBlocks: IWeekBlock[] = renderView;
 
   return (
@@ -66,7 +68,8 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
                           "rounded-sm bg-accent-primary px-1 text-on-color": weekDay.today,
                         })}
                       >
-                        {weekDay.date.getDate()}
+                        {weekDay.dayNumber}
+                        {/* [FA-CUSTOM] Calendar-aware day number */}
                       </span>
                     </div>
                   </div>

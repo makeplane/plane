@@ -4,8 +4,56 @@
  * See the LICENSE file for details.
  */
 
-import { differenceInDays, format, formatDistanceToNow, isAfter, isEqual, isValid, parseISO } from "date-fns";
+import {
+  differenceInDays,
+  format as gregorianFormat,
+  formatDistanceToNow as gregorianFDTN,
+  isAfter,
+  isEqual,
+  isValid,
+  parseISO,
+  getYear as gregorianGetYear,
+  getMonth as gregorianGetMonth,
+} from "date-fns";
+// [FA-CUSTOM] Dual calendar system — import Jalali equivalents
+import {
+  format as jalaliFormat,
+  formatDistanceToNow as jalaliFDTN,
+  getYear as jalaliGetYear,
+  getMonth as jalaliGetMonth,
+} from "date-fns-jalali";
 import { isNumber } from "lodash-es";
+
+// [FA-CUSTOM] Module-level calendar system state
+type TCalendarSystem = "gregorian" | "jalali";
+let _calendarSystem: TCalendarSystem = "gregorian";
+let activeFormat = gregorianFormat;
+let activeFDTN = gregorianFDTN;
+let activeGetYear = gregorianGetYear;
+let activeGetMonth = gregorianGetMonth;
+
+/**
+ * [FA-CUSTOM] Switch the active calendar system for all date formatting functions.
+ * Called from StoreWrapper when user preference changes.
+ * IMPORTANT: renderFormattedPayloadDate() always uses Gregorian regardless of this setting.
+ */
+export const setCalendarSystem = (system: TCalendarSystem) => {
+  _calendarSystem = system;
+  if (system === "jalali") {
+    activeFormat = jalaliFormat;
+    activeFDTN = jalaliFDTN;
+    activeGetYear = jalaliGetYear;
+    activeGetMonth = jalaliGetMonth;
+  } else {
+    activeFormat = gregorianFormat;
+    activeFDTN = gregorianFDTN;
+    activeGetYear = gregorianGetYear;
+    activeGetMonth = gregorianGetMonth;
+  }
+};
+
+/** [FA-CUSTOM] Get the currently active calendar system */
+export const getCalendarSystem = (): TCalendarSystem => _calendarSystem;
 
 // Format Date Helpers
 /**
@@ -29,10 +77,10 @@ export const renderFormattedDate = (
   let formattedDate;
   try {
     // Format the date in the format provided or default format (MMM dd, yyyy)
-    formattedDate = format(parsedDate, formatToken);
+    formattedDate = activeFormat(parsedDate, formatToken); // [FA-CUSTOM] calendar-aware
   } catch (_e) {
     // Format the date in format (MMM dd, yyyy) in case of any error
-    formattedDate = format(parsedDate, "MMM dd, yyyy");
+    formattedDate = activeFormat(parsedDate, "MMM dd, yyyy"); // [FA-CUSTOM] calendar-aware
   }
   return formattedDate;
 };
@@ -51,7 +99,7 @@ export const renderFormattedDateWithoutYear = (date: string | Date): string => {
   // Check if the parsed date is valid before formatting
   if (!isValid(parsedDate)) return ""; // Return empty string for invalid dates
   // Format the date in short format (MMM dd)
-  const formattedDate = format(parsedDate, "MMM dd");
+  const formattedDate = activeFormat(parsedDate, "MMM dd"); // [FA-CUSTOM] calendar-aware
   return formattedDate;
 };
 
@@ -69,7 +117,8 @@ export const renderFormattedPayloadDate = (date: Date | string | undefined | nul
   // Check if the parsed date is valid before formatting
   if (!isValid(parsedDate)) return; // Return null for invalid dates
   // Format the date in payload format (yyyy-mm-dd)
-  const formattedDate = format(parsedDate, "yyyy-MM-dd");
+  // [FA-CUSTOM] ALWAYS use Gregorian format for API payloads — never Jalali
+  const formattedDate = gregorianFormat(parsedDate, "yyyy-MM-dd");
   return formattedDate;
 };
 
@@ -91,11 +140,11 @@ export const renderFormattedTime = (date: string | Date, timeFormat: "12-hour" |
   if (!isValid(parsedDate)) return ""; // Return empty string for invalid dates
   // Format the date in 12 hour format if in12HourFormat is true
   if (timeFormat === "12-hour") {
-    const formattedTime = format(parsedDate, "hh:mm a");
+    const formattedTime = activeFormat(parsedDate, "hh:mm a"); // [FA-CUSTOM] calendar-aware
     return formattedTime;
   }
   // Format the date in 24 hour format
-  const formattedTime = format(parsedDate, "HH:mm");
+  const formattedTime = activeFormat(parsedDate, "HH:mm"); // [FA-CUSTOM] calendar-aware
   return formattedTime;
 };
 
@@ -175,7 +224,7 @@ export const calculateTimeAgo = (time: string | number | Date | null): string =>
   // return if undefined
   if (!parsedTime) return ""; // Return empty string for invalid dates
   // Format the time in the form of amount of time passed since the event happened
-  const distance = formatDistanceToNow(parsedTime, { addSuffix: true });
+  const distance = activeFDTN(parsedTime, { addSuffix: true }); // [FA-CUSTOM] calendar-aware
   return distance;
 };
 
@@ -500,38 +549,39 @@ export const formatDateRange = (
 
   // If only start date is provided
   if (parsedStartDate && !parsedEndDate) {
-    return format(parsedStartDate, "MMM dd, yyyy");
+    return activeFormat(parsedStartDate, "MMM dd, yyyy"); // [FA-CUSTOM]
   }
 
   // If only end date is provided
   if (!parsedStartDate && parsedEndDate) {
-    return format(parsedEndDate, "MMM dd, yyyy");
+    return activeFormat(parsedEndDate, "MMM dd, yyyy"); // [FA-CUSTOM]
   }
 
   // If both dates are provided
   if (parsedStartDate && parsedEndDate) {
-    const startYear = parsedStartDate.getFullYear();
-    const startMonth = parsedStartDate.getMonth();
-    const endYear = parsedEndDate.getFullYear();
-    const endMonth = parsedEndDate.getMonth();
+    // [FA-CUSTOM] Use calendar-aware year/month getters for correct comparison
+    const startYear = activeGetYear(parsedStartDate);
+    const startMonth = activeGetMonth(parsedStartDate);
+    const endYear = activeGetYear(parsedEndDate);
+    const endMonth = activeGetMonth(parsedEndDate);
 
     // Same year, same month
     if (startYear === endYear && startMonth === endMonth) {
-      const startDay = format(parsedStartDate, "dd");
-      const endDay = format(parsedEndDate, "dd");
-      return `${format(parsedStartDate, "MMM")} ${startDay} - ${endDay}, ${startYear}`;
+      const startDay = activeFormat(parsedStartDate, "dd"); // [FA-CUSTOM]
+      const endDay = activeFormat(parsedEndDate, "dd"); // [FA-CUSTOM]
+      return `${activeFormat(parsedStartDate, "MMM")} ${startDay} - ${endDay}, ${startYear}`;
     }
 
     // Same year, different month
     if (startYear === endYear) {
-      const startFormatted = format(parsedStartDate, "MMM dd");
-      const endFormatted = format(parsedEndDate, "MMM dd");
+      const startFormatted = activeFormat(parsedStartDate, "MMM dd"); // [FA-CUSTOM]
+      const endFormatted = activeFormat(parsedEndDate, "MMM dd"); // [FA-CUSTOM]
       return `${startFormatted} - ${endFormatted}, ${startYear}`;
     }
 
     // Different year
-    const startFormatted = format(parsedStartDate, "MMM dd, yyyy");
-    const endFormatted = format(parsedEndDate, "MMM dd, yyyy");
+    const startFormatted = activeFormat(parsedStartDate, "MMM dd, yyyy"); // [FA-CUSTOM]
+    const endFormatted = activeFormat(parsedEndDate, "MMM dd, yyyy"); // [FA-CUSTOM]
     return `${startFormatted} - ${endFormatted}`;
   }
 

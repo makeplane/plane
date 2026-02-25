@@ -18,10 +18,13 @@ import type { DateRange, Matcher } from "@plane/propel/calendar";
 import { Calendar } from "@plane/propel/calendar";
 import { CloseIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
+import { ECalendarSystem } from "@plane/types"; // [FA-CUSTOM]
 import { cn, renderFormattedDate } from "@plane/utils";
 // helpers
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
+// [FA-CUSTOM] Shamsi calendar for Jalali mode
+import { ShamsiCalendar } from "@/components/fa/shamsi-calendar";
 import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
@@ -111,6 +114,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
   // hooks
   const { data } = useUserProfile();
   const startOfWeek = data?.start_of_the_week;
+  const isJalali = data?.calendar_system === ECalendarSystem.JALALI; // [FA-CUSTOM]
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
@@ -268,20 +272,34 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
         style={styles.popper}
         {...attributes.popper}
       >
-        <Calendar
-          className="rounded-md border border-subtle p-3 text-12"
-          captionLayout="dropdown"
-          selected={dateRange}
-          onSelect={(val: DateRange | undefined) => {
-            onSelect?.(val);
-          }}
-          mode="range"
-          disabled={disabledDays}
-          showOutsideDays
-          fixedWeeks
-          weekStartsOn={startOfWeek}
-          initialFocus
-        />
+        {/* [FA-CUSTOM] Conditional Jalali/Gregorian calendar */}
+        {isJalali ? (
+          <ShamsiCalendar
+            className="rounded-md border border-subtle p-3 text-12"
+            selectedRange={dateRange}
+            onRangeSelect={(range) => {
+              onSelect?.(range);
+            }}
+            mode="range"
+            disabled={disabledDays}
+            weekStartsOn={startOfWeek}
+          />
+        ) : (
+          <Calendar
+            className="rounded-md border border-subtle p-3 text-12"
+            captionLayout="dropdown"
+            selected={dateRange}
+            onSelect={(val: DateRange | undefined) => {
+              onSelect?.(val);
+            }}
+            mode="range"
+            disabled={disabledDays}
+            showOutsideDays
+            fixedWeeks
+            weekStartsOn={startOfWeek}
+            initialFocus
+          />
+        )}
       </div>
     </Combobox.Options>
   );

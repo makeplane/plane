@@ -7,8 +7,16 @@
 // plane imports
 import type { ICalendarDate, ICalendarPayload } from "@plane/types";
 import { EStartOfTheWeek } from "@plane/types";
+// [FA-CUSTOM] Jalali calendar support
+import {
+  getYear as jalaliGetYear,
+  getMonth as jalaliGetMonth,
+  getDate as jalaliGetDate,
+  getDaysInMonth as jalaliGetDaysInMonth,
+  startOfMonth as jalaliStartOfMonth,
+} from "date-fns-jalali";
 // local imports
-import { getWeekNumberOfDate, renderFormattedPayloadDate } from "./datetime";
+import { getWeekNumberOfDate, renderFormattedPayloadDate, getCalendarSystem } from "./datetime";
 
 /**
  * @returns {ICalendarPayload} calendar payload to render the calendar
@@ -24,6 +32,22 @@ export const generateCalendarData = (
 ): ICalendarPayload => {
   const calendarData: ICalendarPayload = currentStructure ?? {};
 
+  // [FA-CUSTOM] Branch based on active calendar system
+  if (getCalendarSystem() === "jalali") {
+    return generateJalaliCalendarData(calendarData, startDate, startOfWeek);
+  }
+
+  return generateGregorianCalendarData(calendarData, startDate, startOfWeek);
+};
+
+/**
+ * Original Gregorian calendar data generation
+ */
+const generateGregorianCalendarData = (
+  calendarData: ICalendarPayload,
+  startDate: Date,
+  startOfWeek: EStartOfTheWeek
+): ICalendarPayload => {
   const startMonth = startDate.getMonth();
   const startYear = startDate.getFullYear();
 
@@ -70,6 +94,67 @@ export const generateCalendarData = (
     // Use sequential week index instead of calculated week number for the key
     // This ensures weeks are grouped correctly regardless of startOfWeek preference
     calendarData[`y-${year}`][`m-${month}`][`w-${week}`] = currentWeekObject;
+  }
+
+  return calendarData;
+};
+
+/**
+ * [FA-CUSTOM] Jalali calendar data generation.
+ * Uses Jalali year/month for grid keys, but Gregorian payload dates for issue matching.
+ */
+const generateJalaliCalendarData = (
+  calendarData: ICalendarPayload,
+  startDate: Date,
+  startOfWeek: EStartOfTheWeek
+): ICalendarPayload => {
+  // Get the Jalali year/month of the startDate
+  const jYear = jalaliGetYear(startDate);
+  const jMonth = jalaliGetMonth(startDate); // 0-indexed (0 = Farvardin)
+
+  // Get the first day of this Jalali month as a Gregorian Date
+  const firstOfMonth = jalaliStartOfMonth(startDate);
+  const totalDaysInMonth = jalaliGetDaysInMonth(startDate);
+
+  // Day of week for the first day of the Jalali month (0=Sunday, 6=Saturday)
+  const firstDayOfMonthRaw = firstOfMonth.getDay();
+  const firstDayOfMonth = (firstDayOfMonthRaw - startOfWeek + 7) % 7;
+
+  calendarData[`y-${jYear}`] ||= {};
+  calendarData[`y-${jYear}`][`m-${jMonth}`] = {};
+
+  const numWeeks = Math.ceil((totalDaysInMonth + firstDayOfMonth) / 7);
+
+  for (let week = 0; week < numWeeks; week++) {
+    const currentWeekObject: { [date: string]: ICalendarDate } = {};
+
+    for (let i = 0; i < 7; i++) {
+      const dayOffset = week * 7 + i - firstDayOfMonth;
+
+      // Calculate the actual Gregorian date by offsetting from the first of the Jalali month
+      const date = new Date(firstOfMonth);
+      date.setDate(firstOfMonth.getDate() + dayOffset);
+
+      const weekNumber = getWeekNumberOfDate(date);
+      const formattedDatePayload = renderFormattedPayloadDate(date);
+
+      // Check if this date's Jalali month matches the target month
+      const dateJMonth = jalaliGetMonth(date);
+
+      if (formattedDatePayload)
+        currentWeekObject[formattedDatePayload] = {
+          date,
+          year: jYear,
+          month: jMonth,
+          day: jalaliGetDate(date),
+          week: weekNumber,
+          is_current_month: dateJMonth === jMonth,
+          is_current_week: getWeekNumberOfDate(date) === getWeekNumberOfDate(new Date()),
+          is_today: date.toDateString() === new Date().toDateString(),
+        };
+    }
+
+    calendarData[`y-${jYear}`][`m-${jMonth}`][`w-${week}`] = currentWeekObject;
   }
 
   return calendarData;

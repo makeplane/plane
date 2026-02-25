@@ -10,6 +10,9 @@ import { Calendar } from "@plane/propel/calendar";
 import { CloseIcon } from "@plane/propel/icons";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@plane/utils";
+// [FA-CUSTOM] Shamsi calendar for Jalali mode
+import { ShamsiCalendar } from "@/components/fa/shamsi-calendar";
+import { useCalendarSystem } from "@/hooks/fa/use-calendar-system";
 import { DateFilterSelect } from "./date-filter-select";
 type Props = {
   title: string;
@@ -31,6 +34,7 @@ const defaultValues: TFormValues = {
 };
 
 export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props) {
+  const { isJalali } = useCalendarSystem(); // [FA-CUSTOM]
   const { handleSubmit, watch, control } = useForm<TFormValues>({
     defaultValues,
   });
@@ -46,7 +50,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
   };
 
   const date1 = getDate(watch("date1"));
-  const date2 = getDate(watch("date1"));
+  const date2 = getDate(watch("date2"));
 
   const isInvalid = watch("filterType") === "range" && date1 && date2 ? date1 > date2 : false;
 
@@ -69,8 +73,23 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
             name="date1"
             render={({ field: { value, onChange } }) => {
               const dateValue = getDate(value);
+              // eslint-disable-next-line react-hooks/incompatible-library
               const date2Value = getDate(watch("date2"));
-              return (
+              const disabledMatcher = date2Value ? [{ after: date2Value }] : undefined;
+              // [FA-CUSTOM] Conditional Jalali/Gregorian calendar
+              return isJalali ? (
+                <ShamsiCalendar
+                  className="rounded-md border border-subtle p-3"
+                  selected={dateValue}
+                  defaultMonth={dateValue}
+                  onSelect={(date: Date | undefined) => {
+                    if (!date) return;
+                    onChange(date);
+                  }}
+                  mode="single"
+                  disabled={disabledMatcher}
+                />
+              ) : (
                 <Calendar
                   className="rounded-md border border-subtle p-3"
                   captionLayout="dropdown"
@@ -81,7 +100,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
                     onChange(date);
                   }}
                   mode="single"
-                  disabled={date2Value ? [{ after: date2Value }] : undefined}
+                  disabled={disabledMatcher}
                 />
               );
             }}
@@ -93,7 +112,21 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
               render={({ field: { value, onChange } }) => {
                 const dateValue = getDate(value);
                 const date1Value = getDate(watch("date1"));
-                return (
+                const disabledMatcher = date1Value ? [{ before: date1Value }] : undefined;
+                // [FA-CUSTOM] Conditional Jalali/Gregorian calendar
+                return isJalali ? (
+                  <ShamsiCalendar
+                    className="rounded-md border border-subtle p-3"
+                    selected={dateValue}
+                    defaultMonth={dateValue}
+                    onSelect={(date: Date | undefined) => {
+                      if (!date) return;
+                      onChange(date);
+                    }}
+                    mode="single"
+                    disabled={disabledMatcher}
+                  />
+                ) : (
                   <Calendar
                     className="rounded-md border border-subtle p-3"
                     captionLayout="dropdown"
@@ -104,7 +137,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
                       onChange(date);
                     }}
                     mode="single"
-                    disabled={date1Value ? [{ before: date1Value }] : undefined}
+                    disabled={disabledMatcher}
                   />
                 );
               }}
@@ -127,6 +160,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
             variant="primary"
             size="lg"
             type="button"
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onClick={handleSubmit(handleFormSubmit)}
             disabled={isInvalid}
           >
