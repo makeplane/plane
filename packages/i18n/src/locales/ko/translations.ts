@@ -330,7 +330,9 @@ export default {
   project_created_successfully_description:
     "프로젝트가 성공적으로 생성되었습니다. 이제 작업 항목을 추가할 수 있습니다.",
   project_name_already_taken: "프로젝트 이름이 이미 사용 중입니다.",
+  project_name_cannot_contain_special_characters: "프로젝트 이름에 특수 문자를 사용할 수 없습니다.",
   project_identifier_already_taken: "프로젝트 식별자가 이미 사용 중입니다.",
+  project_identifier_cannot_contain_special_characters: "프로젝트 식별자에 특수 문자를 사용할 수 없습니다.",
   project_cover_image_alt: "프로젝트 커버 이미지",
   name_is_required: "이름이 필요합니다",
   title_should_be_less_than_255_characters: "제목은 255자 미만이어야 합니다",
@@ -888,6 +890,7 @@ export default {
     deactivated_user: "비활성화된 사용자",
     apply: "적용",
     applying: "적용 중",
+    overview: "개요",
     users: "사용자",
     admins: "관리자",
     guests: "게스트",
@@ -1631,14 +1634,20 @@ export default {
         },
       },
       billing_and_plans: {
+        heading: "청구 및 플랜",
+        description: "플랜을 선택하고, 구독을 관리하고, 필요에 따라 쉽게 업그레이드하세요.",
         title: "청구 및 플랜",
         current_plan: "현재 플랜",
         free_plan: "현재 무료 플랜을 사용 중입니다",
         view_plans: "플랜 보기",
       },
       exports: {
+        heading: "내보내기",
+        description: "다양한 형식으로 프로젝트 데이터를 내보내고 다운로드 링크가 포함된 내보내기 기록에 액세스합니다.",
         title: "내보내기",
         exporting: "내보내기 중",
+        exporting_projects: "프로젝트 내보내기 중",
+        format: "형식",
         previous_exports: "이전 내보내기",
         export_separate_files: "데이터를 별도의 파일로 내보내기",
         filters_info: "기준에 따라 특정 작업 항목을 내보내려면 필터를 적용하세요.",
@@ -1657,6 +1666,8 @@ export default {
         },
       },
       webhooks: {
+        heading: "웹훅",
+        description: "프로젝트 이벤트 발생 시 외부 서비스에 자동 알림을 보냅니다.",
         title: "웹훅",
         add_webhook: "웹훅 추가",
         modal: {
@@ -1788,8 +1799,10 @@ export default {
       profile: "프로필",
       security: "보안",
       activity: "활동",
+      preferences: "환경 설정",
       appearance: "외관",
       notifications: "알림",
+      "api-tokens": "개인 액세스 토큰",
     },
     tabs: {
       summary: "요약",
@@ -1854,6 +1867,8 @@ export default {
       },
     },
     states: {
+      heading: "상태",
+      description: "작업 항목의 진행 상황을 추적하기 위해 워크플로우 상태를 정의하고 사용자 지정합니다.",
       describe_this_state_for_your_members: "멤버를 위해 이 상태를 설명하세요.",
       empty_state: {
         title: "{groupKey} 그룹에 사용할 수 있는 상태 없음",
@@ -1861,6 +1876,8 @@ export default {
       },
     },
     labels: {
+      heading: "레이블",
+      description: "작업 항목을 분류하고 구성하기 위한 사용자 지정 레이블을 만듭니다",
       label_title: "레이블 제목",
       label_title_is_required: "레이블 제목이 필요합니다",
       label_max_char: "레이블 이름은 255자를 초과할 수 없습니다",
@@ -1869,9 +1886,11 @@ export default {
       },
     },
     estimates: {
+      heading: "추정",
       label: "추정",
       title: "프로젝트 추정 활성화",
-      description: "팀의 복잡성과 작업량을 전달하는 데 도움이 됩니다.",
+      enable_description: "팀의 복잡성과 작업량을 전달하는 데 도움이 됩니다.",
+      description: "각 작업 항목에 필요한 노력을 추적하고 전달하기 위한 추정 시스템을 설정합니다.",
       no_estimate: "추정 없음",
       new: "새 추정 시스템",
       create: {
@@ -1952,6 +1971,8 @@ export default {
       },
     },
     automations: {
+      heading: "자동화",
+      description: "프로젝트 관리 워크플로우를 간소화하고 수동 작업을 줄이기 위한 자동화된 작업을 구성합니다.",
       label: "자동화",
       "auto-archive": {
         title: "완료된 작업 항목 자동 보관",

@@ -5,6 +5,157 @@
  */
 
 export default {
+  auth: {
+    common: {
+      email: {
+        label: "Email",
+        placeholder: "name@company.com",
+        errors: {
+          required: "Email is required",
+          invalid: "Email is invalid",
+        },
+      },
+      password: {
+        label: "Password",
+        set_password: "Set password",
+        placeholder: "Enter password",
+        confirm_password: {
+          label: "Confirm password",
+          placeholder: "Confirm password",
+        },
+        current_password: {
+          label: "Current password",
+        },
+        new_password: {
+          label: "New password",
+          placeholder: "Enter new password",
+        },
+        change_password: {
+          label: {
+            default: "Change password",
+            submitting: "Changing password",
+          },
+        },
+        errors: {
+          match: "Passwords do not match",
+          empty: "Please enter a password",
+          length: "Password must be longer than 8 characters",
+          strength: {
+            weak: "Weak password",
+            strong: "Strong password",
+          },
+        },
+        submit: "Set password",
+        toast: {
+          change_password: {
+            success: {
+              title: "Success!",
+              message: "Password has been changed successfully.",
+            },
+            error: {
+              title: "Error!",
+              message: "Something went wrong. Please try again.",
+            },
+          },
+        },
+      },
+      unique_code: {
+        label: "Unique code",
+        placeholder: "123456",
+        paste_code: "Paste the verification code sent to your email",
+        requesting_new_code: "Requesting a new code",
+        sending_code: "Sending code",
+      },
+      already_have_an_account: "Already have an account?",
+      login: "Log in",
+      create_account: "Create account",
+      new_to_plane: "New to Plane?",
+      back_to_sign_in: "Back to sign in",
+      resend_in: "Resend in {seconds} seconds",
+      sign_in_with_unique_code: "Sign in with unique code",
+      forgot_password: "Forgot password?",
+    },
+    sign_up: {
+      header: {
+        label: "Create an account to start managing work with your team.",
+        step: {
+          email: {
+            header: "Sign up",
+            sub_header: "",
+          },
+          password: {
+            header: "Sign up",
+            sub_header: "Sign up with your email-password combination.",
+          },
+          unique_code: {
+            header: "Sign up",
+            sub_header: "Sign up with the unique code sent to your email above.",
+          },
+        },
+      },
+      errors: {
+        password: {
+          strength: "Please set a strong password to continue",
+        },
+      },
+    },
+    sign_in: {
+      header: {
+        label: "Sign in to start managing work with your team.",
+        step: {
+          email: {
+            header: "Sign in or sign up",
+            sub_header: "",
+          },
+          password: {
+            header: "Sign in or sign up",
+            sub_header: "Sign in with your email-password combination.",
+          },
+          unique_code: {
+            header: "Sign in or sign up",
+            sub_header: "Sign in with the unique code sent to your email above.",
+          },
+        },
+      },
+    },
+    forgot_password: {
+      title: "Reset password",
+      description: "Enter the verified email address for your user account and we will send you a password reset link.",
+      email_sent: "We have sent a reset link to your email",
+      send_reset_link: "Send reset link",
+      errors: {
+        smtp_not_enabled:
+          "We noticed your admin has not enabled SMTP, we will not be able to send the password reset link",
+      },
+      toast: {
+        success: {
+          title: "Email sent",
+          message:
+            "Check your inbox for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder.",
+        },
+        error: {
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        },
+      },
+    },
+    reset_password: {
+      title: "Set new password",
+      description: "Secure your account with a strong password",
+    },
+    set_password: {
+      title: "Secure your account",
+      description: "Set a password to sign in securely",
+    },
+    sign_out: {
+      toast: {
+        error: {
+          title: "Error!",
+          message: "Failed to sign out. Please try again.",
+        },
+      },
+    },
+  },
   submit: "Submit",
   cancel: "Cancel",
   loading: "Loading",
@@ -52,6 +203,7 @@ export default {
   activity: "Activity",
   preferences: "Preferences",
   language_and_time: "Language & Time",
+  appearance: "Appearance",
   notifications: "Notifications",
   workspaces: "Workspaces",
   create_workspace: "Create workspace",
@@ -171,7 +323,9 @@ export default {
   project_created_successfully: "Project created successfully",
   project_created_successfully_description: "Project created successfully. You can now start adding work items to it.",
   project_name_already_taken: "The project name is already taken.",
+  project_name_cannot_contain_special_characters: "The project name cannot contain special characters.",
   project_identifier_already_taken: "The project identifier is already taken.",
+  project_identifier_cannot_contain_special_characters: "The project identifier cannot contain special characters.",
   project_cover_image_alt: "Project cover image",
   name_is_required: "Name is required",
   title_should_be_less_than_255_characters: "Title should be less than 255 characters",
@@ -1189,6 +1343,10 @@ export default {
     total_members: "Total members",
     total_cycles: "Total cycles",
     total_modules: "Total modules",
+    total_work_items: "Total {entity}",
+    total_projects: "Total projects",
+    total_users: "Total users",
+    total_intake: "Total intake",
     pending_work_items: {
       title: "Pending work items",
       empty_state: "Analysis of pending work items by co-workers appears here.",
@@ -1659,6 +1817,7 @@ export default {
       security: "Security",
       activity: "Activity",
       preferences: "Preferences",
+      appearance: "Appearance",
       notifications: "Notifications",
       "api-tokens": "Personal Access Tokens",
     },
