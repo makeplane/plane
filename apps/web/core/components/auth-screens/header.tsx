@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { AUTH_TRACKER_ELEMENTS } from "@plane/constants";
@@ -30,9 +29,9 @@ type AuthHeaderProps = {
 export const AuthHeader = observer(function AuthHeader({ type }: AuthHeaderProps) {
   const { t } = useTranslation();
   // store
-  const { config } = useInstance();
+  useInstance(); // Keep hook if it has side effects, or remove if safe. Given it's a store hook getter we can remove it.
   // derived values
-  const enableSignUpConfig = config?.enable_signup ?? false;
+  const enableSignUpConfig = false;
   return (
     <>
       <PageHead title={t(authContentMap[type].pageTitle) + " - Plane"} />
