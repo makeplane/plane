@@ -26,6 +26,9 @@ const ProjectViewEmptyState = lazy(() =>
 const ProjectArchivedEmptyState = lazy(() =>
   import("./archived-issues").then((module) => ({ default: module.ProjectArchivedEmptyState }))
 );
+const ProjectArchivedEpicsEmptyState = lazy(() =>
+  import("./archived-epics").then((module) => ({ default: module.ProjectArchivedEpicsEmptyState }))
+);
 const CycleEmptyState = lazy(() => import("./cycle").then((module) => ({ default: module.CycleEmptyState })));
 const ModuleEmptyState = lazy(() => import("./module").then((module) => ({ default: module.ModuleEmptyState })));
 const GlobalViewEmptyState = lazy(() =>
@@ -45,20 +48,22 @@ const TeamProjectWorkItemEmptyState = lazy(() =>
   import("./team-project").then((module) => ({ default: module.TeamProjectWorkItemEmptyState }))
 );
 
-const WORK_ITEM_LAYOUT_EMPTY_STATES: Partial<Record<EIssuesStoreType, LazyExoticComponent<ComponentType> | undefined>> =
-  {
-    [EIssuesStoreType.PROJECT]: ProjectEmptyState,
-    [EIssuesStoreType.PROJECT_VIEW]: ProjectViewEmptyState,
-    [EIssuesStoreType.ARCHIVED]: ProjectArchivedEmptyState,
-    [EIssuesStoreType.CYCLE]: CycleEmptyState,
-    [EIssuesStoreType.MODULE]: ModuleEmptyState,
-    [EIssuesStoreType.GLOBAL]: GlobalViewEmptyState,
-    [EIssuesStoreType.PROFILE]: ProfileViewEmptyState,
-    [EIssuesStoreType.EPIC]: ProjectEpicsEmptyState,
-    [EIssuesStoreType.TEAM]: TeamEmptyState,
-    [EIssuesStoreType.TEAM_VIEW]: TeamViewEmptyState,
-    [EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS]: TeamProjectWorkItemEmptyState,
-  };
+const WORK_ITEM_LAYOUT_EMPTY_STATES: Record<EIssuesStoreType, LazyExoticComponent<ComponentType> | undefined> = {
+  [EIssuesStoreType.PROJECT]: ProjectEmptyState,
+  [EIssuesStoreType.PROJECT_VIEW]: ProjectViewEmptyState,
+  [EIssuesStoreType.ARCHIVED]: ProjectArchivedEmptyState,
+  [EIssuesStoreType.ARCHIVED_EPIC]: ProjectArchivedEpicsEmptyState,
+  [EIssuesStoreType.DEFAULT]: undefined,
+  [EIssuesStoreType.WORKSPACE_DRAFT]: undefined,
+  [EIssuesStoreType.CYCLE]: CycleEmptyState,
+  [EIssuesStoreType.MODULE]: ModuleEmptyState,
+  [EIssuesStoreType.GLOBAL]: GlobalViewEmptyState,
+  [EIssuesStoreType.PROFILE]: ProfileViewEmptyState,
+  [EIssuesStoreType.EPIC]: ProjectEpicsEmptyState,
+  [EIssuesStoreType.TEAM]: TeamEmptyState,
+  [EIssuesStoreType.TEAM_VIEW]: TeamViewEmptyState,
+  [EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS]: TeamProjectWorkItemEmptyState,
+};
 
 type TIssueLayoutEmptyStateProps = {
   storeType: EIssuesStoreType;

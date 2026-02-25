@@ -126,6 +126,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "No archived epics yet",
+      description: "You can archive epics that are completed or cancelled. Find them here once archived.",
+    },
     archive_work_items: {
       title: "No archived work items yet",
       description:

@@ -128,6 +128,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "Henüz arşivlenmiş epik yok",
+      description: "Tamamlanan veya iptal edilen epikleri arşivleyebilirsiniz. Arşivlendikten sonra burada bulun.",
+    },
     archive_work_items: {
       title: "Henüz arşivlenmiş iş öğesi yok",
       description:

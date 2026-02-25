@@ -129,6 +129,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "Ще немає архівованих епіків",
+      description: "Ви можете архівувати завершені або скасовані епіки. Знайдіть їх тут після архівації.",
+    },
     archive_work_items: {
       title: "Ще немає архівованих робочих елементів",
       description:

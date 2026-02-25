@@ -123,6 +123,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "暂无已归档史诗",
+      description: "您可以归档已完成或已取消的史诗。归档后在此处查找它们。",
+    },
     archive_work_items: {
       title: "暂无已归档工作项",
       description: "通过手动或自动化,您可以归档已完成或已取消的工作项。归档后在此处查找它们。",

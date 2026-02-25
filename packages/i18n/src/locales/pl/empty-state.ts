@@ -129,6 +129,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "Jeszcze brak zarchiwizowanych epik",
+      description: "Możesz archiwizować ukończone lub anulowane epiki. Znajdziesz je tutaj po zarchiwizowaniu.",
+    },
     archive_work_items: {
       title: "Jeszcze brak zarchiwizowanych elementów roboczych",
       description:

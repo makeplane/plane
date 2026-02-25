@@ -130,6 +130,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "Пока нет архивированных эпиков",
+      description: "Вы можете архивировать завершённые или отменённые эпики. Найдите их здесь после архивации.",
+    },
     archive_work_items: {
       title: "Пока нет архивированных рабочих элементов",
       description:

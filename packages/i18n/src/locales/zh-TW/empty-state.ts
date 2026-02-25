@@ -123,6 +123,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "暫無已封存史詩",
+      description: "您可以封存已完成或已取消的史詩。封存後在此處尋找它們。",
+    },
     archive_work_items: {
       title: "暫無已封存工作項",
       description: "透過手動或自動化,您可以封存已完成或已取消的工作項。封存後在此處尋找它們。",

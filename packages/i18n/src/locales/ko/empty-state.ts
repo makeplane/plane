@@ -125,6 +125,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "아직 보관된 에픽이 없습니다",
+      description: "완료되었거나 취소된 에픽을 보관할 수 있습니다. 보관 후 여기에서 찾을 수 있습니다.",
+    },
     archive_work_items: {
       title: "아직 보관된 작업 항목이 없습니다",
       description:

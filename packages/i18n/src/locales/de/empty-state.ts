@@ -131,6 +131,11 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "Noch keine archivierten Epics",
+      description:
+        "Sie können abgeschlossene oder stornierte Epics archivieren. Finden Sie sie hier, sobald sie archiviert sind.",
+    },
     archive_work_items: {
       title: "Noch keine archivierten Arbeitselemente",
       description:

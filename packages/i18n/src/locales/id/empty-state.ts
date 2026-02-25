@@ -128,6 +128,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "Belum ada epik yang diarsipkan",
+      description: "Anda dapat mengarsipkan epik yang selesai atau dibatalkan. Temukan di sini setelah diarsipkan.",
+    },
     archive_work_items: {
       title: "Belum ada item kerja yang diarsipkan",
       description:

@@ -125,6 +125,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "アーカイブされたエピックはまだありません",
+      description: "完了またはキャンセルされたエピックをアーカイブできます。アーカイブされると、ここで見つけられます。",
+    },
     archive_work_items: {
       title: "アーカイブされた作業項目はまだありません",
       description:

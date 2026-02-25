@@ -128,6 +128,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "Zatím žádné archivované epiky",
+      description: "Můžete archivovat dokončené nebo zrušené epiky. Najdete je zde po archivaci.",
+    },
     archive_work_items: {
       title: "Zatím žádné archivované pracovní položky",
       description:

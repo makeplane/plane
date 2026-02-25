@@ -129,6 +129,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "Aún no hay épicas archivadas",
+      description: "Puedes archivar épicas completadas o canceladas. Encuéntralas aquí una vez archivadas.",
+    },
     archive_work_items: {
       title: "Aún no hay elementos de trabajo archivados",
       description:

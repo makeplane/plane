@@ -131,6 +131,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "Aucune épique archivée pour le moment",
+      description: "Vous pouvez archiver les épiques terminées ou annulées. Retrouvez-les ici une fois archivées.",
+    },
     archive_work_items: {
       title: "Aucun élément de travail archivé pour le moment",
       description:

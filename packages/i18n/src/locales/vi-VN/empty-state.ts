@@ -129,6 +129,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "Chưa có epic nào được lưu trữ",
+      description: "Bạn có thể lưu trữ các epic đã hoàn thành hoặc đã hủy. Tìm chúng tại đây sau khi lưu trữ.",
+    },
     archive_work_items: {
       title: "Chưa có mục công việc được lưu trữ",
       description:

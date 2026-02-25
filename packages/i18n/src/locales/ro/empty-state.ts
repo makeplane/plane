@@ -129,6 +129,10 @@ export default {
     },
   },
   workspace_empty_state: {
+    archive_epics: {
+      title: "Încă nu există epici arhivate",
+      description: "Puteți arhiva epici finalizate sau anulate. Găsiți-le aici după arhivare.",
+    },
     archive_work_items: {
       title: "Încă nu există elemente de lucru arhivate",
       description:
