@@ -244,6 +244,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 archived_at__isnull=True,
                 is_draft=False,
                 project__archived_at__isnull=True,
+                state_id__isnull=False,
             )
             .exclude(
                 state_id__in=State.objects.filter(is_triage=True).values("id")
