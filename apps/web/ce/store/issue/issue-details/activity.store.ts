@@ -125,6 +125,18 @@ export class IssueActivityStore implements IIssueActivityStore {
       });
     });
 
+    // Merge worklog entries from WorklogStore into the activity feed
+    if (this.store.worklog) {
+      const worklogs = this.store.worklog.getWorklogsForIssue(issueId);
+      worklogs.forEach((worklog) => {
+        activityComments.push({
+          id: worklog.id,
+          activity_type: EActivityFilterType.WORKLOG,
+          created_at: worklog.created_at,
+        });
+      });
+    }
+
     return activityComments;
   }
 
@@ -160,7 +172,7 @@ export class IssueActivityStore implements IIssueActivityStore {
       const activityIds = activities.map((activity) => activity.id);
 
       runInAction(() => {
-        update(this.activities, issueId, (currentActivityIds) => {
+        update(this.activities, issueId, (currentActivityIds: string[] | undefined) => {
           if (!currentActivityIds) return activityIds;
           return uniq(concat(currentActivityIds, activityIds));
         });

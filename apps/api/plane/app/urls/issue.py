@@ -31,6 +31,11 @@ from plane.app.views import (
     WorkItemDescriptionVersionEndpoint,
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
+    IssueWorkLogViewSet,
+    ProjectWorkLogSummaryEndpoint,
+    TimesheetGridEndpoint,
+    TimesheetBulkUpdateEndpoint,
+    ProjectCapacityEndpoint,
 )
 
 urlpatterns = [
@@ -283,4 +288,45 @@ urlpatterns = [
         IssueDetailIdentifierEndpoint.as_view(),
         name="issue-detail-identifier",
     ),
+    ## Issue WorkLogs
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/worklogs/",
+        IssueWorkLogViewSet.as_view({"get": "list", "post": "create"}),
+        name="project-issue-worklogs",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/worklogs/<uuid:pk>/",
+        IssueWorkLogViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-issue-worklogs",
+    ),
+    ## Project WorkLog Summary
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/worklogs/summary/",
+        ProjectWorkLogSummaryEndpoint.as_view(),
+        name="project-worklog-summary",
+    ),
+    ## Timesheet Grid
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/time-tracking/timesheet/",
+        TimesheetGridEndpoint.as_view(),
+        name="project-timesheet-grid",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/time-tracking/timesheet/bulk/",
+        TimesheetBulkUpdateEndpoint.as_view(),
+        name="project-timesheet-bulk-update",
+    ),
+    ## Capacity Dashboard
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/time-tracking/capacity/",
+        ProjectCapacityEndpoint.as_view(),
+        name="project-capacity-report",
+    ),
+    ## End Issue WorkLogs
 ]

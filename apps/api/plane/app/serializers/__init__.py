@@ -133,3 +133,7 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+
+from .department import DepartmentSerializer, DepartmentTreeSerializer
+from .staff import StaffProfileSerializer, StaffProfileCreateSerializer
+from .worklog import IssueWorkLogSerializer, TimesheetBulkEntrySerializer

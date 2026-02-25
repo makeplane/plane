@@ -105,6 +105,13 @@ export const coreRoutes: RouteConfigEntry[] = [
           route(":workspaceSlug/stickies", "./(all)/[workspaceSlug]/(projects)/stickies/page.tsx"),
         ]),
 
+        // Dashboards
+        route(":workspaceSlug/dashboards", "./(all)/[workspaceSlug]/(projects)/dashboards/page.tsx"),
+        route(
+          ":workspaceSlug/dashboards/:dashboardId",
+          "./(all)/[workspaceSlug]/(projects)/dashboards/[dashboardId]/page.tsx"
+        ),
+
         // Workspace Views
         layout("./(all)/[workspaceSlug]/(projects)/workspace-views/layout.tsx", [
           route(":workspaceSlug/workspace-views", "./(all)/[workspaceSlug]/(projects)/workspace-views/page.tsx"),
@@ -216,6 +223,21 @@ export const coreRoutes: RouteConfigEntry[] = [
               "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/intake/page.tsx"
             ),
           ]),
+          // Time Tracking (tabbed layout)
+          layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/time-tracking/layout.tsx", [
+            route(
+              ":workspaceSlug/projects/:projectId/time-tracking",
+              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/time-tracking/page.tsx"
+            ),
+            route(
+              ":workspaceSlug/projects/:projectId/time-tracking/analytics",
+              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/time-tracking/analytics/page.tsx"
+            ),
+            route(
+              ":workspaceSlug/projects/:projectId/time-tracking/capacity",
+              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/time-tracking/capacity/page.tsx"
+            ),
+          ]),
         ]),
 
         // Project Archives - Issues, Cycles, Modules
@@ -281,6 +303,14 @@ export const coreRoutes: RouteConfigEntry[] = [
           route(
             ":workspaceSlug/settings/webhooks/:webhookId",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/webhooks/[webhookId]/page.tsx"
+          ),
+          route(
+            ":workspaceSlug/settings/departments",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/departments/page.tsx"
+          ),
+          route(
+            ":workspaceSlug/settings/staff",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/staff/page.tsx"
           ),
         ]),
 

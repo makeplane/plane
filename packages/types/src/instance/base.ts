@@ -53,6 +53,7 @@ export interface IInstanceConfig {
   is_gitea_enabled: boolean;
   is_magic_login_enabled: boolean;
   is_email_password_enabled: boolean;
+  is_ldap_enabled: boolean;
   github_app_name: string | undefined;
   slack_client_id: string | undefined;
   posthog_api_key: string | undefined;
@@ -107,4 +108,5 @@ export type IFormattedInstanceConfiguration = {
   [key in TInstanceConfigurationKeys]: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents -- EE placeholder type is intentionally `never`
 export type TLoginMediums = TCoreLoginMediums | TExtendedLoginMediums;

@@ -1,0 +1,13 @@
+{
+  "name": "plans-kanban",
+  "version": "1.0.0",
+  "description": "Kanban dashboard for viewing and managing implementation plans",
+  "main": "scripts/server.cjs",
+  "scripts": {
+    "start": "node scripts/server.cjs",
+    "test": "node scripts/tests/server.test.cjs"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3"
+  }
+}

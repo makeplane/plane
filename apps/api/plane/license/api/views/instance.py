@@ -63,6 +63,7 @@ class InstanceEndpoint(BaseAPIView):
             POSTHOG_HOST,
             UNSPLASH_ACCESS_KEY,
             LLM_API_KEY,
+            IS_LDAP_ENABLED,
             IS_INTERCOM_ENABLED,
             INTERCOM_APP_ID,
         ) = get_configuration_value(
@@ -124,6 +125,11 @@ class InstanceEndpoint(BaseAPIView):
                     "key": "LLM_API_KEY",
                     "default": os.environ.get("LLM_API_KEY", ""),
                 },
+                # LDAP settings
+                {
+                    "key": "IS_LDAP_ENABLED",
+                    "default": os.environ.get("IS_LDAP_ENABLED", "0"),
+                },
                 # Intercom settings
                 {
                     "key": "IS_INTERCOM_ENABLED",
@@ -146,6 +152,7 @@ class InstanceEndpoint(BaseAPIView):
         data["is_gitea_enabled"] = IS_GITEA_ENABLED == "1"
         data["is_magic_login_enabled"] = ENABLE_MAGIC_LINK_LOGIN == "1"
         data["is_email_password_enabled"] = ENABLE_EMAIL_PASSWORD == "1"
+        data["is_ldap_enabled"] = IS_LDAP_ENABLED == "1"
 
         # Github app name
         data["github_app_name"] = str(GITHUB_APP_NAME)

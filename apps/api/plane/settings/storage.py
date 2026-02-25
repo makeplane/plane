@@ -96,6 +96,13 @@ class S3Storage(S3Boto3Storage):
             print(f"Error generating presigned POST URL: {e}")
             return None
 
+        # For MinIO: convert absolute URL to relative path so the browser
+        # uploads through the same origin's reverse proxy (Caddy in prod, Vite in dev)
+        if os.environ.get("USE_MINIO") == "1" and response:
+            from urllib.parse import urlparse
+            parsed = urlparse(response["url"])
+            response["url"] = parsed.path or "/"
+
         return response
 
     def _get_content_disposition(self, disposition, filename=None):
@@ -135,6 +142,13 @@ class S3Storage(S3Boto3Storage):
         except ClientError as e:
             log_exception(e)
             return None
+
+        # For MinIO: convert to relative path so the redirect goes through
+        # the same origin's reverse proxy (Caddy in prod, Vite in dev)
+        if os.environ.get("USE_MINIO") == "1" and response:
+            from urllib.parse import urlparse
+            parsed = urlparse(response)
+            response = f"{parsed.path}?{parsed.query}" if parsed.query else parsed.path
 
         # The response contains the presigned URL
         return response

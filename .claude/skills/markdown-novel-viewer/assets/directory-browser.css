@@ -1,0 +1,215 @@
+/**
+ * Directory Browser Styles
+ * Minimal, clean design matching novel-reader aesthetic
+ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #faf8f3;
+  color: #333;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e0dcd4;
+}
+
+header h1 {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 400;
+  color: #8b4513;
+  margin-bottom: 0.5rem;
+}
+
+header .path {
+  font-size: 0.875rem;
+  color: #666;
+  font-family: 'JetBrains Mono', monospace;
+  word-break: break-all;
+}
+
+.file-list {
+  list-style: none;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.dir-item {
+  border-bottom: 1px solid #f0ebe3;
+}
+
+.dir-item:last-child {
+  border-bottom: none;
+}
+
+.dir-item a {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1rem;
+  text-decoration: none;
+  color: #333;
+  transition: background 0.15s ease;
+}
+
+.dir-item a:hover {
+  background: #faf8f3;
+}
+
+.dir-item .icon {
+  font-size: 1.25rem;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+.dir-item .name {
+  font-size: 0.9375rem;
+  word-break: break-word;
+}
+
+/* Folder styles */
+.dir-item.folder .name {
+  font-weight: 500;
+}
+
+.dir-item.parent a {
+  color: #666;
+}
+
+.dir-item.parent a:hover {
+  color: #8b4513;
+}
+
+/* Markdown file styles */
+.dir-item.markdown .name {
+  color: #8b4513;
+}
+
+.dir-item.markdown a:hover {
+  background: #f5f0e8;
+}
+
+/* Empty state */
+.dir-item.empty {
+  padding: 2rem;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}
+
+footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0dcd4;
+  text-align: center;
+}
+
+footer p {
+  font-size: 0.8125rem;
+  color: #999;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #1a1a1a;
+    color: #e0e0e0;
+  }
+
+  header {
+    border-bottom-color: #333;
+  }
+
+  header h1 {
+    color: #d4a574;
+  }
+
+  header .path {
+    color: #888;
+  }
+
+  .file-list {
+    background: #252525;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .dir-item {
+    border-bottom-color: #333;
+  }
+
+  .dir-item a {
+    color: #e0e0e0;
+  }
+
+  .dir-item a:hover {
+    background: #2a2a2a;
+  }
+
+  .dir-item.parent a {
+    color: #888;
+  }
+
+  .dir-item.parent a:hover {
+    color: #d4a574;
+  }
+
+  .dir-item.markdown .name {
+    color: #d4a574;
+  }
+
+  .dir-item.markdown a:hover {
+    background: #2d2520;
+  }
+
+  .dir-item.empty {
+    color: #666;
+  }
+
+  footer {
+    border-top-color: #333;
+  }
+
+  footer p {
+    color: #666;
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  .dir-item a {
+    padding: 0.75rem;
+  }
+
+  .dir-item .icon {
+    font-size: 1.125rem;
+  }
+
+  .dir-item .name {
+    font-size: 0.875rem;
+  }
+}

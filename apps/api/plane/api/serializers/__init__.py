@@ -60,3 +60,8 @@ from .asset import (
 from .invite import WorkspaceInviteSerializer
 from .member import ProjectMemberSerializer
 from .sticky import StickySerializer
+from .analytics_dashboard import (
+    AnalyticsDashboardSerializer,
+    AnalyticsDashboardDetailSerializer,
+    AnalyticsDashboardWidgetSerializer,
+)

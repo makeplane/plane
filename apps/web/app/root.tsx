@@ -9,7 +9,7 @@ import * as Sentry from "@sentry/react-router";
 import Script from "next/script";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
-import { ThemeProvider, useTheme } from "next-themes";
+import { ThemeProvider } from "next-themes";
 // plane imports
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
 import { cn } from "@plane/utils";
@@ -134,11 +134,8 @@ export default function Root() {
 }
 
 export function HydrateFallback() {
-  const { resolvedTheme } = useTheme();
-
-  // if we are on the server or the theme is not resolved, return an empty div
-  if (typeof window === "undefined" || resolvedTheme === undefined) return <div />;
-
+  // Always render the same structure on server and client to avoid hydration mismatch.
+  // LogoSpinner defaults to light theme when resolvedTheme is undefined (SSR).
   return (
     <div className="relative flex bg-canvas h-screen w-full items-center justify-center">
       <LogoSpinner />

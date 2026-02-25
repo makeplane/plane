@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import uniq from "lodash-es/uniq";
 import { observer } from "mobx-react";
 // plane package imports
@@ -21,6 +21,7 @@ import { CommentCreate } from "@/components/comments/comment-create";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useWorklog } from "@/hooks/store/use-worklog";
 // plane web components
 import { ActivityFilterRoot } from "@/plane-web/components/issues/worklog/activity/filter-root";
 import { IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog/activity/worklog-create-button";
@@ -61,6 +62,18 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
   const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { getProjectById } = useProject();
   const { data: currentUser } = useUser();
+  const worklogStore = useWorklog();
+
+  // Fetch worklogs so they appear in the activity feed (skip if already loaded)
+  useEffect(() => {
+    if (workspaceSlug && projectId && issueId) {
+      const existing = worklogStore.getWorklogsForIssue(issueId);
+      if (existing.length === 0) {
+        void worklogStore.fetchWorklogs(workspaceSlug, projectId, issueId);
+      }
+    }
+  }, [workspaceSlug, projectId, issueId, worklogStore]);
+
   // derived values
   const issue = issueId ? getIssueById(issueId) : undefined;
   const currentUserProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);

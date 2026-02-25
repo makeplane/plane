@@ -15,7 +15,7 @@ import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import type { IUser, TUserProfile } from "@plane/types";
 import { Input } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
+import { getFileURL, validatePersonName, validateDisplayName } from "@plane/utils";
 // components
 import { DeactivateAccountModal } from "@/components/account/deactivate-account-modal";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -23,18 +23,17 @@ import { ChangeEmailModal } from "@/components/core/modals/change-email-modal";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 import { CoverImage } from "@/components/common/cover-image";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
+import { StaffProfileSection } from "@/plane-web/components/settings/profile/staff-profile-section";
 // helpers
 import { handleCoverImageChange } from "@/helpers/cover-image.helper";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
-// utils
-import { validatePersonName, validateDisplayName } from "@plane/utils";
 
 type TUserProfileForm = {
   avatar_url: string;
   cover_image: string;
-  cover_image_asset: any;
+  cover_image_asset: string | null;
   cover_image_url: string;
   first_name: string;
   last_name: string;
@@ -188,14 +187,14 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
             handleRemove={async () => await handleProfilePictureDelete(currentUser?.avatar_url)}
             onSuccess={(url) => {
               onChange(url);
-              handleSubmit(onSubmit)();
+              void handleSubmit(onSubmit)();
               setIsImageUploadModalOpen(false);
             }}
             value={value && value.trim() !== "" ? value : null}
           />
         )}
       />
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+      <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="w-full">
         <div className="flex w-full flex-col gap-7">
           <div className="relative h-44 w-full">
             <CoverImage
@@ -216,9 +215,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                         <img
                           src={getFileURL(userAvatar)}
                           className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
-                          onClick={() => setIsImageUploadModalOpen(true)}
                           alt={currentUser?.display_name}
-                          role="button"
                         />
                       </div>
                     )}
@@ -379,6 +376,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
               </div>
             </div>
           </div>
+          <StaffProfileSection />
           <div>
             <Button variant="primary" type="submit" loading={isLoading}>
               {isLoading ? t("saving") : t("save_changes")}

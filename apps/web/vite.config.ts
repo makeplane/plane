@@ -33,6 +33,23 @@ export default defineConfig(() => ({
   },
   server: {
     host: "127.0.0.1",
+    proxy: {
+      // Mirror Caddy's production reverse proxy setup for local dev:
+      // All requests go through Vite so relative redirects (e.g. /uploads/...)
+      // resolve to the same origin and get proxied correctly.
+      "/api": {
+        target: "http://localhost:8000",
+        changeOrigin: false, // preserve Host header for presigned URL signature consistency
+      },
+      "/auth": {
+        target: "http://localhost:8000",
+        changeOrigin: false,
+      },
+      "/uploads": {
+        target: "http://localhost:9000",
+        changeOrigin: false,
+      },
+    },
   },
   // No SSR-specific overrides needed; alias resolves to ESM build
 }));

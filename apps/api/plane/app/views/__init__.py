@@ -82,6 +82,12 @@ from .workspace.module import WorkspaceModulesEndpoint
 from .workspace.cycle import WorkspaceCyclesEndpoint
 from .workspace.quick_link import QuickLinkViewSet
 from .workspace.sticky import WorkspaceStickyViewSet
+from .workspace.time_tracking import (
+    ProjectWorkLogSummaryEndpoint,
+    WorkspaceWorkLogSummaryEndpoint,
+    TimesheetGridEndpoint,
+    TimesheetBulkUpdateEndpoint,
+)
 
 from .state.base import StateViewSet, IntakeStateEndpoint
 from .view.base import (
@@ -139,6 +145,7 @@ from .issue.attachment import (
 )
 
 from .issue.comment import IssueCommentViewSet, CommentReactionViewSet
+from .issue.worklog import IssueWorkLogViewSet
 
 from .issue.label import LabelViewSet, BulkCreateIssueLabelsEndpoint
 
@@ -232,9 +239,36 @@ from .webhook.base import (
     WebhookSecretRegenerateEndpoint,
 )
 
+from .analytics_dashboard import (
+    AnalyticsDashboardEndpoint,
+    AnalyticsDashboardDetailEndpoint,
+    AnalyticsDashboardWidgetEndpoint,
+    AnalyticsDashboardWidgetDetailEndpoint,
+    AnalyticsDashboardWidgetDataEndpoint,
+)
+
+from .workspace.department import (
+    DepartmentEndpoint,
+    DepartmentDetailEndpoint,
+    DepartmentTreeEndpoint,
+    DepartmentStaffEndpoint,
+    DepartmentLinkProjectEndpoint,
+)
+from .workspace.staff import (
+    StaffEndpoint,
+    StaffDetailEndpoint,
+    StaffTransferEndpoint,
+    StaffDeactivateEndpoint,
+    StaffBulkImportEndpoint,
+    StaffExportEndpoint,
+    StaffStatsEndpoint,
+)
+
 from .error_404 import custom_404_view
 
 from .notification.base import MarkAllReadNotificationViewSet
 from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
 
 from .timezone.base import TimezoneEndpoint
+
+from .capacity import ProjectCapacityEndpoint

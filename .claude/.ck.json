@@ -1,0 +1,78 @@
+{
+  "$schema": "./schemas/ck-config.schema.json",
+  "codingLevel": -1,
+  "statusline": "minimal",
+  "privacyBlock": true,
+  "docs": {
+    "maxLoc": 800
+  },
+  "plan": {
+    "namingFormat": "{date}-{issue}-{slug}",
+    "dateFormat": "YYMMDD-HHmm",
+    "issuePrefix": "GH-",
+    "reportsDir": "reports",
+    "resolution": {
+      "order": [
+        "session",
+        "branch"
+      ],
+      "branchPattern": "(?:feat|fix|chore|refactor|docs)/(?:[^/]+/)?(.+)"
+    },
+    "validation": {
+      "mode": "prompt",
+      "minQuestions": 3,
+      "maxQuestions": 8,
+      "focusAreas": [
+        "assumptions",
+        "risks",
+        "tradeoffs",
+        "architecture"
+      ]
+    }
+  },
+  "paths": {
+    "docs": "docs",
+    "plans": "plans"
+  },
+  "locale": {
+    "thinkingLanguage": null,
+    "responseLanguage": null
+  },
+  "trust": {
+    "passphrase": null,
+    "enabled": false
+  },
+  "project": {
+    "type": "auto",
+    "packageManager": "auto",
+    "framework": "auto"
+  },
+  "gemini": {
+    "model": "gemini-3-flash-preview"
+  },
+  "skills": {
+    "research": {
+      "useGemini": true
+    }
+  },
+  "hooks": {},
+  "assertions": [],
+  "kits": {
+    "ClaudeKit Engineer": {
+      "installedSettings": {
+        "hooks": [
+          "node $HOME/.claude/hooks/session-init.cjs",
+          "node $HOME/.claude/hooks/subagent-init.cjs",
+          "node $HOME/.claude/hooks/cook-after-plan-reminder.cjs",
+          "node $HOME/.claude/hooks/dev-rules-reminder.cjs",
+          "node $HOME/.claude/hooks/usage-context-awareness.cjs",
+          "node $HOME/.claude/hooks/descriptive-name.cjs",
+          "node $HOME/.claude/hooks/scout-block.cjs",
+          "node $HOME/.claude/hooks/privacy-block.cjs",
+          "node $HOME/.claude/hooks/post-edit-simplify-reminder.cjs"
+        ],
+        "mcpServers": []
+      }
+    }
+  }
+}

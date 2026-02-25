@@ -1,0 +1,56 @@
+/**
+ * Novel Theme - CSS Custom Properties
+ * Light and dark theme variables
+ */
+
+:root {
+  /* Light Theme (Default) */
+  --bg-primary: #faf8f3;
+  --bg-secondary: #f5f2eb;
+  --bg-tertiary: #ebe7de;
+  --text-heading: #3a3a3a;
+  --text-primary: #5a5a5a;
+  --text-secondary: #6a6a6a;
+  --text-muted: #8c8c8c;
+  --accent: #8b4513;
+  --accent-hover: #6d360f;
+  --border: #e8e4db;
+  --border-light: #f0ece3;
+  --shadow: rgba(0, 0, 0, 0.08);
+  --code-bg: #f8f5ef;
+  --link: #5c4033;
+  --link-hover: #8b4513;
+
+  /* Fonts */
+  --font-heading: 'Libre Baskerville', Georgia, serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Spacing */
+  --content-width: 720px;
+  --sidebar-width: 280px;
+  --header-height: 56px;
+}
+
+/* Content width responsive to font size */
+html[data-font-size="S"] { --content-width: 640px; }
+html[data-font-size="M"] { --content-width: 720px; }
+html[data-font-size="L"] { --content-width: 800px; }
+
+[data-theme="dark"] {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #252525;
+  --bg-tertiary: #303030;
+  --text-heading: #e0dcd3;
+  --text-primary: #b0aca3;
+  --text-secondary: #9a9a9a;
+  --text-muted: #707070;
+  --accent: #d4a574;
+  --accent-hover: #e0b98a;
+  --border: #3a3a3a;
+  --border-light: #2a2a2a;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --code-bg: #2a2a2a;
+  --link: #d4a574;
+  --link-hover: #e8c9a0;
+}

@@ -64,39 +64,31 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
     // Upper case identifier
     formData.identifier = formData.identifier?.toUpperCase();
     const coverImage = formData.cover_image_url;
-    let uploadedAssetUrl: string | null = null;
+    const isLocalStatic = coverImage ? getCoverImageType(coverImage) === "local_static" : false;
 
-    if (coverImage) {
-      const imageType = getCoverImageType(coverImage);
-
-      if (imageType === "local_static") {
-        try {
-          uploadedAssetUrl = await uploadCoverImage(coverImage, {
-            workspaceSlug: workspaceSlug.toString(),
-            entityIdentifier: "",
-            entityType: EFileAssetType.PROJECT_COVER,
-            isUserAsset: false,
-          });
-        } catch (error) {
-          console.error("Error uploading cover image:", error);
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: t("toast.error"),
-            message: error instanceof Error ? error.message : "Failed to upload cover image",
-          });
-          return Promise.reject(error);
-        }
-      } else {
-        formData.cover_image = coverImage;
-        formData.cover_image_asset = null;
-      }
+    // For non-static images, set cover_image fields directly
+    if (coverImage && !isLocalStatic) {
+      formData.cover_image = coverImage;
+      formData.cover_image_asset = null;
     }
 
     return createProject(workspaceSlug.toString(), formData)
       .then(async (res) => {
-        if (uploadedAssetUrl) {
-          await updateCoverImageStatus(res.id, uploadedAssetUrl);
-          await updateProject(workspaceSlug.toString(), res.id, { cover_image_url: uploadedAssetUrl });
+        // Upload static cover image AFTER project creation so we have the project ID
+        if (coverImage && isLocalStatic) {
+          try {
+            const uploadedAssetUrl = await uploadCoverImage(coverImage, {
+              workspaceSlug: workspaceSlug.toString(),
+              entityIdentifier: res.id,
+              entityType: EFileAssetType.PROJECT_COVER,
+              isUserAsset: false,
+            });
+            await updateCoverImageStatus(res.id, uploadedAssetUrl);
+            await updateProject(workspaceSlug.toString(), res.id, { cover_image_url: uploadedAssetUrl });
+          } catch (error) {
+            console.error("Error uploading cover image:", error);
+            // Project created successfully, just cover image failed — don't block
+          }
         } else if (coverImage && coverImage.startsWith("http")) {
           await updateCoverImageStatus(res.id, coverImage);
           await updateProject(workspaceSlug.toString(), res.id, { cover_image_url: coverImage });
@@ -111,14 +103,15 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
           handleAddToFavorites(res.id);
         }
         handleNextStep(res.id);
+        return res;
       })
-      .catch((err) => {
+      .catch((err: { data?: { name?: string[]; identifier?: string[] } }) => {
         try {
           // Handle the new error format where codes are nested in arrays under field names
           const errorData = err?.data ?? {};
 
           const nameError = errorData.name?.includes("PROJECT_NAME_ALREADY_EXIST");
-          const identifierError = errorData?.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST");
+          const identifierError = errorData.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST");
 
           if (nameError || identifierError) {
             if (nameError) {
@@ -167,7 +160,7 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
     <FormProvider {...methods}>
       <ProjectCreateHeader handleClose={handleClose} isMobile={isMobile} />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="px-3">
+      <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="px-3">
         <div className="mt-9 space-y-6 pb-5">
           <ProjectCommonAttributes
             setValue={setValue}

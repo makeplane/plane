@@ -1,0 +1,359 @@
+/**
+ * Novel Theme - Sidebar Styles
+ * Layout, sidebar, plan navigation, TOC
+ */
+
+/* Layout */
+.layout {
+  display: flex;
+  margin-top: var(--header-height);
+  min-height: calc(100vh - var(--header-height));
+}
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: 200px;
+  max-width: 480px;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  padding: 1.5rem;
+  overflow-y: auto;
+  position: fixed;
+  top: var(--header-height);
+  bottom: 0;
+  left: 0;
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+}
+
+/* Custom scrollbar */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Resize handle */
+.sidebar-resize-handle {
+  position: absolute;
+  top: 0;
+  right: -3px;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  background: transparent;
+  z-index: 10;
+  transition: background 0.2s;
+}
+
+.sidebar-resize-handle:hover,
+.sidebar-resize-handle.dragging {
+  background: var(--accent);
+}
+
+.sidebar.hidden {
+  transform: translateX(-100%);
+}
+
+/* Plan Navigation */
+.plan-nav {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.plan-title {
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.plan-icon {
+  font-size: 1rem;
+}
+
+.phase-list {
+  list-style: none;
+}
+
+.phase-item {
+  margin-bottom: 0.25rem;
+}
+
+/* Inline section items (anchors within same doc) - indented with visual distinction */
+.phase-item.inline-section {
+  margin-left: 0.75rem;
+  position: relative;
+}
+
+.phase-item.inline-section::before {
+  content: '';
+  position: absolute;
+  left: -0.5rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+  border-radius: 1px;
+}
+
+.phase-item a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+/* Inline sections have subtler styling */
+.phase-item.inline-section a {
+  font-size: 0.8125rem;
+  padding: 0.375rem 0.625rem;
+  background: var(--bg-secondary);
+  border: 1px solid transparent;
+}
+
+.phase-item.inline-section a:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border);
+}
+
+.phase-item a:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.phase-item.active a {
+  background: var(--accent);
+  color: white;
+}
+
+.phase-item.inline-section.active a {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+/* Type indicator icon */
+.phase-type-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.phase-item.active .phase-type-icon {
+  opacity: 1;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-dot.pending { background: #d4a574; }
+.status-dot.in-progress { background: #4a90d9; }
+.status-dot.completed, .status-dot.done { background: #5cb85c; }
+.status-dot.overview { background: #8b4513; }
+
+/* Unavailable/Planned phases */
+.phase-item.unavailable {
+  opacity: 0.6;
+}
+
+.phase-item.unavailable .phase-link-disabled {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  border-radius: 6px;
+  cursor: not-allowed;
+  background: var(--bg-tertiary);
+  border: 1px dashed var(--border);
+}
+
+.phase-item.unavailable .status-dot {
+  background: var(--text-muted);
+  opacity: 0.5;
+}
+
+.unavailable-badge,
+.nav-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  background: var(--text-muted);
+  color: var(--bg-primary);
+  margin-left: auto;
+}
+
+/* Nav footer unavailable state */
+.nav-unavailable {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-style: dashed !important;
+}
+
+.nav-unavailable .nav-badge {
+  font-size: 0.6rem;
+  margin: 0 0.25rem;
+}
+
+/* Phase accordion */
+.phase-group {
+  margin-bottom: 0.5rem;
+}
+
+.phase-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: left;
+  transition: background 0.2s;
+}
+
+.phase-header:hover {
+  background: var(--bg-tertiary);
+}
+
+.phase-chevron {
+  font-size: 0.625rem;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.phase-group.collapsed .phase-chevron {
+  transform: rotate(-90deg);
+}
+
+.phase-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Progress badges */
+.phase-badge {
+  font-size: 0.75rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.badge-done {
+  background: #d4edda;
+  color: #155724;
+}
+
+[data-theme="dark"] .badge-done {
+  background: #1e3a2f;
+  color: #75d49b;
+}
+
+.badge-progress {
+  background: #cce5ff;
+  color: #004085;
+}
+
+[data-theme="dark"] .badge-progress {
+  background: #1a3a5c;
+  color: #6db3f2;
+}
+
+.badge-pending {
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+}
+
+/* Phase items container */
+.phase-items {
+  list-style: none;
+  padding-left: 1.25rem;
+  margin-top: 0.25rem;
+  overflow: hidden;
+  max-height: 500px;
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+}
+
+.phase-group.collapsed .phase-items {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+}
+
+/* TOC */
+.toc-section {
+  margin-top: 1rem;
+}
+
+.toc-title {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.toc-list {
+  list-style: none;
+}
+
+.toc-list li {
+  margin-bottom: 0.25rem;
+}
+
+.toc-list a {
+  display: block;
+  padding: 0.25rem 0;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s;
+}
+
+.toc-list a:hover {
+  color: var(--accent);
+}

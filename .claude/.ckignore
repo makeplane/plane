@@ -1,0 +1,27 @@
+# ClaudeKit Ignore File - SIZE-based blocking
+# Blocks directories with heavy file counts that fill LLM context
+# Syntax: gitignore-spec | Use ! prefix to allow (e.g., !src/vendor)
+
+# JS/TS
+node_modules
+dist
+build
+.next
+.nuxt
+
+# Python
+__pycache__
+.venv
+venv
+
+# Go/PHP/Rust/Java
+vendor
+target
+
+# VCS & Coverage
+.git
+coverage
+
+# Allow reading these files
+!.env
+!.env.*

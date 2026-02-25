@@ -313,6 +313,7 @@ export enum EActivityFilterType {
   COMMENT = "COMMENT",
   STATE = "STATE",
   ASSIGNEE = "ASSIGNEE",
+  WORKLOG = "WORKLOG",
   DEFAULT = "DEFAULT",
 }
 
@@ -333,6 +334,9 @@ export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<TActivityFilterOptionsKey, { l
   [EActivityFilterType.ASSIGNEE]: {
     labelTranslationKey: "common.assignee",
   },
+  [EActivityFilterType.WORKLOG]: {
+    labelTranslationKey: "worklog.title",
+  },
 };
 
 export type TActivityFilterOption = {
@@ -347,6 +351,7 @@ export const defaultActivityFilters: TActivityFilters[] = [
   EActivityFilterType.COMMENT,
   EActivityFilterType.STATE,
   EActivityFilterType.ASSIGNEE,
+  EActivityFilterType.WORKLOG,
 ];
 
 export const filterActivityOnSelectedFilters = (

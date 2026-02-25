@@ -26,6 +26,7 @@ import { TermsAndConditions } from "../terms-and-conditions";
 import { AuthBanner } from "./auth-banner";
 import { AuthHeader, AuthHeaderBase } from "./auth-header";
 import { AuthFormRoot } from "./form-root";
+import { StaffIdLoginForm } from "./staff-id";
 
 type TAuthRoot = {
   authMode: EAuthModes;
@@ -39,6 +40,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   const invitation_id = searchParams.get("invitation_id");
   const workspaceSlug = searchParams.get("slug");
   const error_code = searchParams.get("error_code");
+  const nextPath = searchParams.get("next_path");
   // props
   const { authMode: currentAuthMode } = props;
   // states
@@ -51,8 +53,9 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   // derived values
   const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
   const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
+  const isLDAPEnabled = config?.is_ldap_enabled || false;
   const isEmailBasedAuthEnabled = config?.is_email_password_enabled || config?.is_magic_login_enabled;
-  const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled;
+  const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled && !isLDAPEnabled;
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
@@ -125,24 +128,31 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
         authMode={authMode}
         currentAuthStep={authStep}
       />
-      {isOAuthEnabled && (
-        <OAuthOptions
-          options={oAuthOptions}
-          compact={authStep === EAuthSteps.PASSWORD}
-          showDivider={isEmailBasedAuthEnabled}
-        />
-      )}
-      {isEmailBasedAuthEnabled && (
-        <AuthFormRoot
-          authStep={authStep}
-          authMode={authMode}
-          email={email}
-          setEmail={(email) => setEmail(email)}
-          setAuthMode={(authMode) => setAuthMode(authMode)}
-          setAuthStep={(authStep) => setAuthStep(authStep)}
-          setErrorInfo={(errorInfo) => setErrorInfo(errorInfo)}
-          currentAuthMode={currentAuthMode}
-        />
+      {authMode === EAuthModes.SIGN_IN ? (
+        /* Unified login — Staff ID / LDAP / Email auto-detect */
+        <StaffIdLoginForm nextPath={nextPath || undefined} isLDAPEnabled={isLDAPEnabled} />
+      ) : (
+        <>
+          {isOAuthEnabled && (
+            <OAuthOptions
+              options={oAuthOptions}
+              compact={authStep === EAuthSteps.PASSWORD}
+              showDivider={isEmailBasedAuthEnabled}
+            />
+          )}
+          {isEmailBasedAuthEnabled && (
+            <AuthFormRoot
+              authStep={authStep}
+              authMode={authMode}
+              email={email}
+              setEmail={(email) => setEmail(email)}
+              setAuthMode={(authMode) => setAuthMode(authMode)}
+              setAuthStep={(authStep) => setAuthStep(authStep)}
+              setErrorInfo={(errorInfo) => setErrorInfo(errorInfo)}
+              currentAuthMode={currentAuthMode}
+            />
+          )}
+        </>
       )}
       <TermsAndConditions authType={authMode} />
     </AuthContainer>

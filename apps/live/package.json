@@ -13,7 +13,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc --noEmit && tsdown",
-    "dev": "tsdown --watch --onSuccess \"node --env-file=.env .\"",
+    "dev": "tsdown --watch --no-clean --onSuccess \"node --env-file=.env .\"",
     "start": "node --env-file=.env .",
     "test": "vitest run",
     "test:watch": "vitest",

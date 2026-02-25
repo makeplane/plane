@@ -1,0 +1,587 @@
+
+> plane@1.2.0 check:types /Volumes/Data/SHBVN/plane.so
+> turbo run check:types
+
+turbo 2.6.3
+
+• Packages in scope: @plane/codemods, @plane/constants, @plane/decorators, @plane/editor, @plane/hooks, @plane/i18n, @plane/logger, @plane/propel, @plane/services, @plane/shared-state, @plane/tailwind-config, @plane/types, @plane/typescript-config, @plane/ui, @plane/utils, admin, live, space, web
+• Running check:types in 19 packages
+• Remote caching disabled
+@plane/logger:check:types: cache hit, replaying logs ef9ac5696156b131
+@plane/logger:check:types: 
+@plane/logger:check:types: 
+@plane/logger:check:types: > @plane/logger@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/packages/logger
+@plane/logger:check:types: > tsc --noEmit
+@plane/logger:check:types: 
+@plane/hooks:check:types: cache hit, replaying logs ef896fa9a7f57bfb
+@plane/hooks:check:types: 
+@plane/hooks:check:types: 
+@plane/hooks:check:types: > @plane/hooks@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/packages/hooks
+@plane/hooks:check:types: > tsc --noEmit
+@plane/hooks:check:types: 
+@plane/decorators:build: cache hit, replaying logs 7472b14b043389ed
+@plane/decorators:build: 
+@plane/decorators:build: > @plane/decorators@0.1.0 build /Volumes/Data/SHBVN/plane.so/packages/decorators
+@plane/decorators:build: > tsdown
+@plane/decorators:build: 
+@plane/decorators:build: [34mℹ[39m tsdown [2mv0.16.0[22m powered by rolldown [2mv1.0.0-beta.46[22m
+@plane/decorators:build: [34mℹ[39m Using tsdown config: [4m/Volumes/Data/SHBVN/plane.so/packages/decorators/tsdown.config.ts[24m
+@plane/decorators:build: [34mℹ[39m entry: [34msrc/index.ts[39m
+@plane/decorators:build: [34mℹ[39m tsconfig: [34mtsconfig.json[39m
+@plane/decorators:build: [34mℹ[39m Build start
+@plane/decorators:build: [34mℹ[39m [2mdist/[22m[1mindex.mjs[22m        [2m49.41 kB[22m [2m│ gzip:  8.69 kB[22m
+@plane/decorators:build: [34mℹ[39m [2mdist/[22mindex.mjs.map    [2m93.65 kB[22m [2m│ gzip: 16.13 kB[22m
+@plane/decorators:build: [34mℹ[39m [2mdist/[22mindex.d.mts.map  [2m 0.86 kB[22m [2m│ gzip:  0.47 kB[22m
+@plane/decorators:build: [34mℹ[39m [2mdist/[22m[32m[1mindex.d.mts[22m[39m      [2m 1.39 kB[22m [2m│ gzip:  0.51 kB[22m
+@plane/decorators:build: [34mℹ[39m 4 files, total: 145.32 kB
+@plane/decorators:build: [32m✔[39m Build complete in [32m442ms[39m
+@plane/types:build: cache hit, replaying logs ad55a12f0d993017
+@plane/types:build: 
+@plane/types:build: 
+@plane/types:build: > @plane/types@1.2.0 build /Volumes/Data/SHBVN/plane.so/packages/types
+@plane/types:build: > tsdown
+@plane/types:build: 
+@plane/types:build: [34mℹ[39m tsdown [2mv0.16.0[22m powered by rolldown [2mv1.0.0-beta.46[22m
+@plane/types:build: [34mℹ[39m Using tsdown config: [4m/Volumes/Data/SHBVN/plane.so/packages/types/tsdown.config.ts[24m
+@plane/types:build: [34mℹ[39m entry: [34msrc/index.ts[39m
+@plane/types:build: [34mℹ[39m tsconfig: [34mtsconfig.json[39m
+@plane/types:build: [34mℹ[39m Build start
+@plane/types:build: [34mℹ[39m Cleaning 4 files
+@plane/types:build: [34mℹ[39m [2mdist/[22m[1mindex.mjs[22m        [2m 16.65 kB[22m [2m│ gzip:  3.55 kB[22m
+@plane/types:build: [34mℹ[39m [2mdist/[22mindex.d.mts.map  [2m 96.57 kB[22m [2m│ gzip: 31.13 kB[22m
+@plane/types:build: [34mℹ[39m [2mdist/[22mindex.mjs.map    [2m 67.65 kB[22m [2m│ gzip: 13.91 kB[22m
+@plane/types:build: [34mℹ[39m [2mdist/[22m[32m[1mindex.d.mts[22m[39m      [2m151.74 kB[22m [2m│ gzip: 29.69 kB[22m
+@plane/types:build: [34mℹ[39m 4 files, total: 332.61 kB
+@plane/types:build: [32m✔[39m Build complete in [32m1062ms[39m
+@plane/types:check:types: cache hit, replaying logs 89a3a884e407defd
+@plane/types:check:types: 
+@plane/types:check:types: 
+@plane/types:check:types: > @plane/types@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/packages/types
+@plane/types:check:types: > tsc --noEmit
+@plane/types:check:types: 
+@plane/hooks:build: cache hit, replaying logs ec23431c03d1dff3
+@plane/hooks:build: 
+@plane/hooks:build: > @plane/hooks@1.2.0 build /Volumes/Data/SHBVN/plane.so/packages/hooks
+@plane/hooks:build: > tsdown
+@plane/hooks:build: 
+@plane/hooks:build: [34mℹ[39m tsdown [2mv0.16.0[22m powered by rolldown [2mv1.0.0-beta.46[22m
+@plane/hooks:build: [34mℹ[39m Using tsdown config: [4m/Volumes/Data/SHBVN/plane.so/packages/hooks/tsdown.config.ts[24m
+@plane/hooks:build: [34mℹ[39m entry: [34msrc/index.ts[39m
+@plane/hooks:build: [34mℹ[39m tsconfig: [34mtsconfig.json[39m
+@plane/hooks:build: [34mℹ[39m Build start
+@plane/hooks:build: [34mℹ[39m [2mdist/[22m[1mindex.js[22m        [2m 5.75 kB[22m [2m│ gzip: 1.93 kB[22m
+@plane/hooks:build: [34mℹ[39m [2mdist/[22mindex.js.map    [2m11.09 kB[22m [2m│ gzip: 3.55 kB[22m
+@plane/hooks:build: [34mℹ[39m [2mdist/[22mindex.d.ts.map  [2m 0.66 kB[22m [2m│ gzip: 0.38 kB[22m
+@plane/hooks:build: [34mℹ[39m [2mdist/[22m[32m[1mindex.d.ts[22m[39m      [2m 1.99 kB[22m [2m│ gzip: 0.80 kB[22m
+@plane/hooks:build: [34mℹ[39m 4 files, total: 19.50 kB
+@plane/hooks:build: [32m✔[39m Build complete in [32m543ms[39m
+@plane/decorators:check:types: cache hit, replaying logs ea173c373c30f476
+@plane/decorators:check:types: 
+@plane/decorators:check:types: 
+@plane/decorators:check:types: > @plane/decorators@0.1.0 check:types /Volumes/Data/SHBVN/plane.so/packages/decorators
+@plane/decorators:check:types: > tsc --noEmit
+@plane/decorators:check:types: 
+@plane/logger:build: cache hit, replaying logs 4e2977c37da0647b
+@plane/logger:build: 
+@plane/logger:build: > @plane/logger@1.2.0 build /Volumes/Data/SHBVN/plane.so/packages/logger
+@plane/logger:build: > tsdown
+@plane/logger:build: 
+@plane/logger:build: [34mℹ[39m tsdown [2mv0.16.0[22m powered by rolldown [2mv1.0.0-beta.46[22m
+@plane/logger:build: [34mℹ[39m Using tsdown config: [4m/Volumes/Data/SHBVN/plane.so/packages/logger/tsdown.config.ts[24m
+@plane/logger:build: [34mℹ[39m entry: [34msrc/index.ts[39m
+@plane/logger:build: [34mℹ[39m tsconfig: [34mtsconfig.json[39m
+@plane/logger:build: [34mℹ[39m Build start
+@plane/logger:build: [34mℹ[39m [2mdist/[22m[1mindex.mjs[22m        [2m0.73 kB[22m [2m│ gzip: 0.39 kB[22m
+@plane/logger:build: [34mℹ[39m [2mdist/[22mindex.mjs.map    [2m1.68 kB[22m [2m│ gzip: 0.74 kB[22m
+@plane/logger:build: [34mℹ[39m [2mdist/[22mindex.d.mts.map  [2m0.22 kB[22m [2m│ gzip: 0.18 kB[22m
+@plane/logger:build: [34mℹ[39m [2mdist/[22m[32m[1mindex.d.mts[22m[39m      [2m0.42 kB[22m [2m│ gzip: 0.22 kB[22m
+@plane/logger:build: [34mℹ[39m 4 files, total: 3.05 kB
+@plane/logger:build: [32m✔[39m Build complete in [32m453ms[39m
+@plane/constants:check:types: cache hit, replaying logs 63a28e4052169419
+@plane/constants:check:types: 
+@plane/constants:check:types: 
+@plane/constants:check:types: > @plane/constants@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/packages/constants
+@plane/constants:check:types: > tsc --noEmit
+@plane/constants:check:types: 
+@plane/constants:build: cache hit, replaying logs 8a4a62fd4fb4793d
+@plane/constants:build: 
+@plane/constants:build: 
+@plane/constants:build: > @plane/constants@1.2.0 build /Volumes/Data/SHBVN/plane.so/packages/constants
+@plane/constants:build: > tsdown
+@plane/constants:build: 
+@plane/constants:build: [34mℹ[39m tsdown [2mv0.16.0[22m powered by rolldown [2mv1.0.0-beta.46[22m
+@plane/constants:build: [34mℹ[39m Using tsdown config: [4m/Volumes/Data/SHBVN/plane.so/packages/constants/tsdown.config.ts[24m
+@plane/constants:build: [34mℹ[39m entry: [34msrc/index.ts[39m
+@plane/constants:build: [34mℹ[39m tsconfig: [34mtsconfig.json[39m
+@plane/constants:build: [34mℹ[39m Build start
+@plane/constants:build: [34mℹ[39m Cleaning 4 files
+@plane/constants:build: [34mℹ[39m [2mdist/[22m[1mindex.mjs[22m        [2m123.74 kB[22m [2m│ gzip: 24.52 kB[22m
+@plane/constants:build: [34mℹ[39m [2mdist/[22mindex.mjs.map    [2m192.56 kB[22m [2m│ gzip: 33.39 kB[22m
+@plane/constants:build: [34mℹ[39m [2mdist/[22mindex.d.mts.map  [2m 29.58 kB[22m [2m│ gzip: 10.44 kB[22m
+@plane/constants:build: [34mℹ[39m [2mdist/[22m[32m[1mindex.d.mts[22m[39m      [2m 64.43 kB[22m [2m│ gzip: 13.23 kB[22m
+@plane/constants:build: [34mℹ[39m 4 files, total: 410.30 kB
+@plane/constants:build: [32m✔[39m Build complete in [32m594ms[39m
+@plane/utils:check:types: cache hit, replaying logs b492585e28b15624
+@plane/services:build: cache hit, replaying logs e64f20c03c71cd01
+@plane/utils:check:types: 
+@plane/utils:check:types: 
+@plane/utils:check:types: > @plane/utils@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/packages/utils
+@plane/utils:check:types: > tsc --noEmit
+@plane/utils:check:types: 
+@plane/services:build: 
+@plane/services:build: 
+@plane/services:build: > @plane/services@1.2.0 build /Volumes/Data/SHBVN/plane.so/packages/services
+@plane/services:build: > tsdown
+@plane/services:build: 
+@plane/services:build: [34mℹ[39m tsdown [2mv0.16.0[22m powered by rolldown [2mv1.0.0-beta.46[22m
+@plane/services:build: [34mℹ[39m Using tsdown config: [4m/Volumes/Data/SHBVN/plane.so/packages/services/tsdown.config.ts[24m
+@plane/services:build: [34mℹ[39m entry: [34msrc/index.ts[39m
+@plane/services:build: [34mℹ[39m tsconfig: [34mtsconfig.json[39m
+@plane/services:build: [34mℹ[39m Build start
+@plane/services:build: [34mℹ[39m Cleaning 4 files
+@plane/services:build: [34mℹ[39m [2mdist/[22m[1mindex.js[22m        [2m 98.04 kB[22m [2m│ gzip: 11.26 kB[22m
+@plane/services:build: [34mℹ[39m [2mdist/[22mindex.js.map    [2m154.33 kB[22m [2m│ gzip: 17.96 kB[22m
+@plane/services:build: [34mℹ[39m [2mdist/[22mindex.d.ts.map  [2m 20.94 kB[22m [2m│ gzip:  5.67 kB[22m
+@plane/services:build: [34mℹ[39m [2mdist/[22m[32m[1mindex.d.ts[22m[39m      [2m 70.36 kB[22m [2m│ gzip:  9.08 kB[22m
+@plane/services:build: [34mℹ[39m 4 files, total: 343.67 kB
+@plane/services:build: [32m✔[39m Build complete in [32m882ms[39m
+@plane/services:check:types: cache hit, replaying logs aad2dd3811802a31
+@plane/services:check:types: 
+@plane/services:check:types: 
+@plane/services:check:types: > @plane/services@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/packages/services
+@plane/services:check:types: > tsc --noEmit
+@plane/services:check:types: 
+@plane/utils:build: cache hit, replaying logs b3b5851a7d822d04
+@plane/utils:build: 
+@plane/utils:build: 
+@plane/utils:build: > @plane/utils@1.2.0 build /Volumes/Data/SHBVN/plane.so/packages/utils
+@plane/utils:build: > tsdown
+@plane/utils:build: 
+@plane/utils:build: [34mℹ[39m tsdown [2mv0.16.0[22m powered by rolldown [2mv1.0.0-beta.46[22m
+@plane/utils:build: [34mℹ[39m Using tsdown config: [4m/Volumes/Data/SHBVN/plane.so/packages/utils/tsdown.config.ts[24m
+@plane/utils:build: [34mℹ[39m entry: [34msrc/index.ts[39m
+@plane/utils:build: [34mℹ[39m tsconfig: [34mtsconfig.json[39m
+@plane/utils:build: [34mℹ[39m Build start
+@plane/utils:build: [34mℹ[39m Cleaning 4 files
+@plane/utils:build: [34mℹ[39m [2mdist/[22m[1mindex.js[22m        [2m218.37 kB[22m [2m│ gzip: 54.26 kB[22m
+@plane/utils:build: [34mℹ[39m [2mdist/[22mindex.js.map    [2m397.20 kB[22m [2m│ gzip: 88.11 kB[22m
+@plane/utils:build: [34mℹ[39m [2mdist/[22mindex.d.ts.map  [2m 43.37 kB[22m [2m│ gzip: 14.51 kB[22m
+@plane/utils:build: [34mℹ[39m [2mdist/[22m[32m[1mindex.d.ts[22m[39m      [2m117.11 kB[22m [2m│ gzip: 27.02 kB[22m
+@plane/utils:build: [34mℹ[39m 4 files, total: 776.05 kB
+@plane/utils:build: [32m✔[39m Build complete in [32m1694ms[39m
+@plane/i18n:check:types: cache hit, replaying logs 8d3c79abf9c9b3e4
+@plane/i18n:check:types: 
+@plane/i18n:check:types: 
+@plane/i18n:check:types: > @plane/i18n@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/packages/i18n
+@plane/i18n:check:types: > tsc --noEmit
+@plane/i18n:check:types: 
+@plane/propel:check:types: cache hit, replaying logs 523cc3532dc0885f
+@plane/propel:check:types: 
+@plane/propel:check:types: 
+@plane/propel:check:types: > @plane/propel@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/packages/propel
+@plane/propel:check:types: > tsc --noEmit
+@plane/propel:check:types: 
+@plane/shared-state:check:types: cache hit, replaying logs 92b01e1b1d783c30
+@plane/shared-state:check:types: 
+@plane/shared-state:check:types: 
+@plane/shared-state:check:types: > @plane/shared-state@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/packages/shared-state
+@plane/shared-state:check:types: > tsc --noEmit
+@plane/shared-state:check:types: 
+@plane/shared-state:build: cache hit, replaying logs 413c4d4af64b4026
+@plane/shared-state:build: 
+@plane/shared-state:build: 
+@plane/shared-state:build: > @plane/shared-state@1.2.0 build /Volumes/Data/SHBVN/plane.so/packages/shared-state
+@plane/shared-state:build: > tsdown
+@plane/shared-state:build: 
+@plane/shared-state:build: [34mℹ[39m tsdown [2mv0.16.0[22m powered by rolldown [2mv1.0.0-beta.46[22m
+@plane/shared-state:build: [34mℹ[39m Using tsdown config: [4m/Volumes/Data/SHBVN/plane.so/packages/shared-state/tsdown.config.ts[24m
+@plane/shared-state:build: [34mℹ[39m entry: [34msrc/index.ts[39m
+@plane/shared-state:build: [34mℹ[39m tsconfig: [34mtsconfig.json[39m
+@plane/shared-state:build: [34mℹ[39m Build start
+@plane/shared-state:build: [34mℹ[39m Cleaning 4 files
+@plane/shared-state:build: [34mℹ[39m [2mdist/[22m[1mindex.js[22m        [2m39.80 kB[22m [2m│ gzip:  8.32 kB[22m
+@plane/shared-state:build: [34mℹ[39m [2mdist/[22mindex.js.map    [2m82.77 kB[22m [2m│ gzip: 17.19 kB[22m
+@plane/shared-state:build: [34mℹ[39m [2mdist/[22mindex.d.ts.map  [2m 9.10 kB[22m [2m│ gzip:  3.44 kB[22m
+@plane/shared-state:build: [34mℹ[39m [2mdist/[22m[32m[1mindex.d.ts[22m[39m      [2m21.30 kB[22m [2m│ gzip:  4.30 kB[22m
+@plane/shared-state:build: [34mℹ[39m 4 files, total: 152.97 kB
+@plane/shared-state:build: [32m✔[39m Build complete in [32m1416ms[39m
+@plane/i18n:build: cache hit, replaying logs fee9231d765ff1f5
+@plane/i18n:build: 
+@plane/i18n:build: 
+@plane/i18n:build: > @plane/i18n@1.2.0 build /Volumes/Data/SHBVN/plane.so/packages/i18n
+@plane/i18n:build: > tsdown
+@plane/i18n:build: 
+@plane/i18n:build: [34mℹ[39m tsdown [2mv0.16.0[22m powered by rolldown [2mv1.0.0-beta.46[22m
+@plane/i18n:build: [34mℹ[39m Using tsdown config: [4m/Volumes/Data/SHBVN/plane.so/packages/i18n/tsdown.config.ts[24m
+@plane/i18n:build: [34mℹ[39m entry: [34msrc/index.ts[39m
+@plane/i18n:build: [34mℹ[39m tsconfig: [34mtsconfig.json[39m
+@plane/i18n:build: [34mℹ[39m Build start
+@plane/i18n:build: [34mℹ[39m Cleaning 39 files
+@plane/i18n:build: [34mℹ[39m [2mdist/[22m[1mindex.js[22m                       [2m 10.90 kB[22m [2m│ gzip:  3.26 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mtranslations-DQ2djHxB.js.map   [2m148.64 kB[22m [2m│ gzip: 31.14 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mtranslations-yDvEZIeC.js.map   [2m141.10 kB[22m [2m│ gzip: 30.78 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mtranslations-CS6BrJpe.js.map   [2m135.96 kB[22m [2m│ gzip: 30.19 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mtranslations-DQ2djHxB.js       [2m105.55 kB[22m [2m│ gzip: 25.34 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mtranslations-yDvEZIeC.js       [2m 98.23 kB[22m [2m│ gzip: 25.11 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mtranslations-CS6BrJpe.js       [2m 91.61 kB[22m [2m│ gzip: 24.35 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mindex.js.map                   [2m 18.98 kB[22m [2m│ gzip:  5.28 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mindex.d.ts.map                 [2m 18.58 kB[22m [2m│ gzip:  2.31 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mempty-state-CnSXPUN6.js.map    [2m 12.81 kB[22m [2m│ gzip:  3.46 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mempty-state-BTojO3iH.js.map    [2m 11.90 kB[22m [2m│ gzip:  3.38 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mempty-state-Dl5vz2rd.js.map    [2m 10.18 kB[22m [2m│ gzip:  2.97 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mempty-state-CnSXPUN6.js        [2m 10.04 kB[22m [2m│ gzip:  3.02 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mempty-state-BTojO3iH.js        [2m  9.22 kB[22m [2m│ gzip:  2.96 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mcore-D3vxfQMN.js.map           [2m  7.75 kB[22m [2m│ gzip:  2.47 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mcore-Ck4zP5_7.js.map           [2m  7.74 kB[22m [2m│ gzip:  2.35 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mempty-state-Dl5vz2rd.js        [2m  7.47 kB[22m [2m│ gzip:  2.54 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mcore-C2bLCmLT.js.map           [2m  7.18 kB[22m [2m│ gzip:  2.12 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mcore-D3vxfQMN.js               [2m  5.04 kB[22m [2m│ gzip:  1.93 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mcore-Ck4zP5_7.js               [2m  5.03 kB[22m [2m│ gzip:  1.82 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mcore-C2bLCmLT.js               [2m  4.46 kB[22m [2m│ gzip:  1.59 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22maccessibility-VZYA0LEw.js.map  [2m  2.23 kB[22m [2m│ gzip:  1.00 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22maccessibility-Cto7T6kn.js.map  [2m  2.22 kB[22m [2m│ gzip:  0.98 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22maccessibility-CS55y57L.js.map  [2m  2.08 kB[22m [2m│ gzip:  0.81 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22maccessibility-VZYA0LEw.js      [2m  1.63 kB[22m [2m│ gzip:  0.83 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22maccessibility-Cto7T6kn.js      [2m  1.62 kB[22m [2m│ gzip:  0.80 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22maccessibility-CS55y57L.js      [2m  1.47 kB[22m [2m│ gzip:  0.64 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22meditor-BvotMtya.js.map         [2m  0.34 kB[22m [2m│ gzip:  0.28 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22meditor-Cyw-rlGz.js.map         [2m  0.34 kB[22m [2m│ gzip:  0.28 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22meditor-p6SCWfPx.js.map         [2m  0.34 kB[22m [2m│ gzip:  0.28 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22meditor-BvotMtya.js             [2m  0.31 kB[22m [2m│ gzip:  0.25 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22meditor-p6SCWfPx.js             [2m  0.31 kB[22m [2m│ gzip:  0.25 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22meditor-Cyw-rlGz.js             [2m  0.30 kB[22m [2m│ gzip:  0.25 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22maccessibility-CMGcTIEV.js      [2m  0.12 kB[22m [2m│ gzip:  0.10 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mtranslations-BZ-U5A_A.js       [2m  0.12 kB[22m [2m│ gzip:  0.09 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mempty-state-DGudj543.js        [2m  0.11 kB[22m [2m│ gzip:  0.10 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22meditor-rZ0zenag.js             [2m  0.10 kB[22m [2m│ gzip:  0.09 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22mcore-C-WRPNJm.js               [2m  0.09 kB[22m [2m│ gzip:  0.09 kB[22m
+@plane/i18n:build: [34mℹ[39m [2mdist/[22m[32m[1mindex.d.ts[22m[39m                     [2m451.21 kB[22m [2m│ gzip: 89.98 kB[22m
+@plane/i18n:build: [34mℹ[39m 39 files, total: 1333.31 kB
+@plane/i18n:build: [32m✔[39m Build complete in [32m1567ms[39m
+@plane/propel:build: cache hit, replaying logs 0039b51c2176c8b5
+@plane/propel:build: 
+@plane/propel:build: 
+@plane/propel:build: > @plane/propel@1.2.0 build /Volumes/Data/SHBVN/plane.so/packages/propel
+@plane/propel:build: > tsdown
+@plane/propel:build: 
+@plane/propel:build: [34mℹ[39m tsdown [2mv0.16.0[22m powered by rolldown [2mv1.0.0-beta.46[22m
+@plane/propel:build: [34mℹ[39m Using tsdown config: [4m/Volumes/Data/SHBVN/plane.so/packages/propel/tsdown.config.ts[24m
+@plane/propel:build: [34mℹ[39m entry: [34msrc/accordion/index.ts, src/animated-counter/index.ts, src/badge/index.ts, src/avatar/index.ts, src/banner/index.ts, src/button/index.ts, src/calendar/index.ts, src/card/index.ts, src/combobox/index.ts, src/collapsible/index.ts, src/command/index.ts, src/context-menu/index.ts, src/emoji-reaction/index.ts, src/dialog/index.ts, src/emoji-icon-picker/index.ts, src/empty-state/index.ts, src/icon-button/index.ts, src/input/index.ts, src/icons/index.ts, src/menu/index.ts, src/pill/index.ts, src/popover/index.ts, src/portal/index.ts, src/scrollarea/index.ts, src/skeleton/index.ts, src/switch/index.ts, src/table/index.ts, src/tab-navigation/index.ts, src/toast/index.ts, src/tooltip/index.ts, src/tabs/index.ts, src/toolbar/index.ts, src/utils/index.ts, src/charts/area-chart/index.ts, src/charts/bar-chart/index.ts, src/charts/pie-chart/index.ts, src/charts/line-chart/index.ts, src/charts/radar-chart/index.ts, src/charts/scatter-chart/index.ts, src/charts/tree-map/index.ts[39m
+@plane/propel:build: [34mℹ[39m tsconfig: [34mtsconfig.json[39m
+@plane/propel:build: [34mℹ[39m Build start
+@plane/propel:build: [34mℹ[39m Cleaning 279 files
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mempty-state/index.js[22m                 [2m749.12 kB[22m [2m│ gzip: 215.79 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mtoast/index.js[22m                       [2m 11.02 kB[22m [2m│ gzip:   2.71 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mcharts/bar-chart/index.js[22m            [2m  9.75 kB[22m [2m│ gzip:   3.18 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mcharts/tree-map/index.js[22m             [2m  9.39 kB[22m [2m│ gzip:   2.76 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mportal/index.js[22m                      [2m  6.41 kB[22m [2m│ gzip:   2.15 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mcharts/pie-chart/index.js[22m            [2m  6.25 kB[22m [2m│ gzip:   2.03 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1micons/index.js[22m                       [2m  6.24 kB[22m [2m│ gzip:   1.92 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mmenu/index.js[22m                        [2m  5.79 kB[22m [2m│ gzip:   1.97 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1memoji-reaction/index.js[22m              [2m  5.66 kB[22m [2m│ gzip:   1.97 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mcharts/area-chart/index.js[22m           [2m  5.21 kB[22m [2m│ gzip:   1.92 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mcombobox/index.js[22m                    [2m  5.00 kB[22m [2m│ gzip:   1.82 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mcharts/line-chart/index.js[22m           [2m  4.50 kB[22m [2m│ gzip:   1.69 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mcharts/scatter-chart/index.js[22m        [2m  4.24 kB[22m [2m│ gzip:   1.56 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mtoolbar/index.js[22m                     [2m  4.05 kB[22m [2m│ gzip:   1.43 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mcontext-menu/index.js[22m                [2m  3.68 kB[22m [2m│ gzip:   1.13 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mbanner/index.js[22m                      [2m  3.43 kB[22m [2m│ gzip:   1.33 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mdialog/index.js[22m                      [2m  3.33 kB[22m [2m│ gzip:   1.13 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mscrollarea/index.js[22m                  [2m  2.96 kB[22m [2m│ gzip:   1.08 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mtabs/index.js[22m                        [2m  2.87 kB[22m [2m│ gzip:   1.13 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mcharts/radar-chart/index.js[22m          [2m  2.83 kB[22m [2m│ gzip:   1.19 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mtable/index.js[22m                       [2m  2.72 kB[22m [2m│ gzip:   0.84 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mavatar/index.js[22m                      [2m  2.60 kB[22m [2m│ gzip:   1.00 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mpill/index.js[22m                        [2m  2.37 kB[22m [2m│ gzip:   1.03 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1maccordion/index.js[22m                   [2m  2.18 kB[22m [2m│ gzip:   0.83 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mcollapsible/index.js[22m                 [2m  2.17 kB[22m [2m│ gzip:   0.91 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mbadge/index.js[22m                       [2m  2.12 kB[22m [2m│ gzip:   0.98 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mtab-navigation/index.js[22m              [2m  1.75 kB[22m [2m│ gzip:   0.79 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mcommand/index.js[22m                     [2m  1.68 kB[22m [2m│ gzip:   0.66 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mswitch/index.js[22m                      [2m  1.46 kB[22m [2m│ gzip:   0.70 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1minput/index.js[22m                       [2m  1.42 kB[22m [2m│ gzip:   0.77 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mcalendar/index.js[22m                    [2m  1.20 kB[22m [2m│ gzip:   0.60 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mskeleton/index.js[22m                    [2m  0.92 kB[22m [2m│ gzip:   0.46 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1memoji-icon-picker/index.js[22m           [2m  0.82 kB[22m [2m│ gzip:   0.39 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mutils/index.js[22m                       [2m  0.25 kB[22m [2m│ gzip:   0.17 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1micon-button/index.js[22m                 [2m  0.23 kB[22m [2m│ gzip:   0.17 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mbutton/index.js[22m                      [2m  0.21 kB[22m [2m│ gzip:   0.16 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mcard/index.js[22m                        [2m  0.20 kB[22m [2m│ gzip:   0.15 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1manimated-counter/index.js[22m            [2m  0.20 kB[22m [2m│ gzip:   0.15 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mtooltip/index.js[22m                     [2m  0.18 kB[22m [2m│ gzip:   0.14 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[1mpopover/index.js[22m                     [2m  0.11 kB[22m [2m│ gzip:   0.10 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mempty-state/index.js.map             [2m859.86 kB[22m [2m│ gzip: 219.93 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22micons-DTVN1l9V.js.map                [2m389.13 kB[22m [2m│ gzip: 102.03 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22micons-DTVN1l9V.js                    [2m308.94 kB[22m [2m│ gzip:  95.78 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22memoji-icon-picker-tQmnnHXR.js.map    [2m 58.16 kB[22m [2m│ gzip:  13.16 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22memoji-icon-picker-tQmnnHXR.js        [2m 32.67 kB[22m [2m│ gzip:   8.53 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mindex-xqZP7a1F.d.ts.map              [2m 26.38 kB[22m [2m│ gzip:   5.90 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcharts/bar-chart/index.js.map        [2m 18.54 kB[22m [2m│ gzip:   5.80 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtoast/index.js.map                   [2m 17.61 kB[22m [2m│ gzip:   4.65 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcharts/tree-map/index.js.map         [2m 16.84 kB[22m [2m│ gzip:   4.91 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcharts/pie-chart/index.js.map        [2m 10.95 kB[22m [2m│ gzip:   3.45 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcharts/area-chart/index.js.map       [2m  9.79 kB[22m [2m│ gzip:   3.29 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcombobox/index.js.map                [2m  9.76 kB[22m [2m│ gzip:   3.23 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22memoji-reaction/index.js.map          [2m  9.73 kB[22m [2m│ gzip:   3.18 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mempty-state/index.d.ts.map           [2m  9.66 kB[22m [2m│ gzip:   2.35 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mportal/index.js.map                  [2m  9.54 kB[22m [2m│ gzip:   3.29 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mmenu/index.js.map                    [2m  9.53 kB[22m [2m│ gzip:   3.18 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcharts/line-chart/index.js.map       [2m  8.10 kB[22m [2m│ gzip:   2.72 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcharts/scatter-chart/index.js.map    [2m  7.53 kB[22m [2m│ gzip:   2.51 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtoolbar/index.js.map                 [2m  7.21 kB[22m [2m│ gzip:   2.31 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcontext-menu/index.js.map            [2m  7.16 kB[22m [2m│ gzip:   1.91 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mbanner/index.js.map                  [2m  6.96 kB[22m [2m│ gzip:   2.54 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtabs/index.js.map                    [2m  6.22 kB[22m [2m│ gzip:   1.84 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtooltip-BUY6BH8K.js.map              [2m  5.98 kB[22m [2m│ gzip:   2.13 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mdialog/index.js.map                  [2m  5.75 kB[22m [2m│ gzip:   1.95 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mbutton-Dg_dPYJ2.js.map               [2m  5.43 kB[22m [2m│ gzip:   1.83 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcharts/radar-chart/index.js.map      [2m  4.91 kB[22m [2m│ gzip:   1.88 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mavatar/index.js.map                  [2m  4.89 kB[22m [2m│ gzip:   1.70 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mscrollarea/index.js.map              [2m  4.86 kB[22m [2m│ gzip:   1.63 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22micon-button-B7isAM9o.js.map          [2m  4.86 kB[22m [2m│ gzip:   1.65 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtable/index.js.map                   [2m  4.83 kB[22m [2m│ gzip:   1.31 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mpopover-DXIecA9A.js.map              [2m  4.11 kB[22m [2m│ gzip:   1.48 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22manimated-counter-CoOPOa-u.js.map     [2m  3.95 kB[22m [2m│ gzip:   1.51 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcollapsible/index.js.map             [2m  3.94 kB[22m [2m│ gzip:   1.51 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mbadge/index.js.map                   [2m  3.81 kB[22m [2m│ gzip:   1.48 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mlegend-DVbFtJNF.js.map               [2m  3.79 kB[22m [2m│ gzip:   1.64 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtooltip-BUY6BH8K.js                  [2m  3.75 kB[22m [2m│ gzip:   1.28 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22maccordion/index.js.map               [2m  3.71 kB[22m [2m│ gzip:   1.32 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtooltip-DlTfF5ba.js.map              [2m  3.66 kB[22m [2m│ gzip:   1.47 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mpill/index.js.map                    [2m  3.46 kB[22m [2m│ gzip:   1.38 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcard-BUQNKohG.js.map                 [2m  3.43 kB[22m [2m│ gzip:   1.35 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mbutton-Dg_dPYJ2.js                   [2m  3.31 kB[22m [2m│ gzip:   1.22 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mclassname-CGwMw9t9.js.map            [2m  3.14 kB[22m [2m│ gzip:   1.30 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22micon-button-B7isAM9o.js              [2m  2.93 kB[22m [2m│ gzip:   1.09 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mplacement-5lr8_EF6.js.map            [2m  2.73 kB[22m [2m│ gzip:   0.82 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mswitch/index.js.map                  [2m  2.71 kB[22m [2m│ gzip:   1.18 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtab-navigation/index.js.map          [2m  2.68 kB[22m [2m│ gzip:   1.04 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcommand/index.js.map                 [2m  2.49 kB[22m [2m│ gzip:   0.94 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22minput/index.js.map                   [2m  2.34 kB[22m [2m│ gzip:   1.10 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mpopover-DXIecA9A.js                  [2m  2.30 kB[22m [2m│ gzip:   0.85 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22manimated-counter-CoOPOa-u.js         [2m  2.27 kB[22m [2m│ gzip:   0.93 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcard-BUQNKohG.js                     [2m  2.13 kB[22m [2m│ gzip:   0.90 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mlegend-DVbFtJNF.js                   [2m  2.08 kB[22m [2m│ gzip:   1.02 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtooltip-DlTfF5ba.js                  [2m  2.05 kB[22m [2m│ gzip:   0.96 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcombobox/index.d.ts.map              [2m  1.95 kB[22m [2m│ gzip:   0.64 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcalendar/index.js.map                [2m  1.94 kB[22m [2m│ gzip:   0.92 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mportal/index.d.ts.map                [2m  1.74 kB[22m [2m│ gzip:   0.69 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22memoji-icon-picker/index.d.ts.map     [2m  1.71 kB[22m [2m│ gzip:   0.73 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22memoji-reaction/index.d.ts.map        [2m  1.69 kB[22m [2m│ gzip:   0.60 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mskeleton/index.js.map                [2m  1.66 kB[22m [2m│ gzip:   0.81 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtable/index.d.ts.map                 [2m  1.61 kB[22m [2m│ gzip:   0.46 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22micon-wrapper-DICSmd0D.js.map         [2m  1.56 kB[22m [2m│ gzip:   0.81 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mclassname-CGwMw9t9.js                [2m  1.47 kB[22m [2m│ gzip:   0.73 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtoast/index.d.ts.map                 [2m  1.47 kB[22m [2m│ gzip:   0.67 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtabs/index.d.ts.map                  [2m  1.42 kB[22m [2m│ gzip:   0.47 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mclose-icon-CixvqMEY.js.map           [2m  1.35 kB[22m [2m│ gzip:   0.70 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22maccordion/index.d.ts.map             [2m  1.26 kB[22m [2m│ gzip:   0.48 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mchevron-left-E3hjEvLk.js.map         [2m  1.15 kB[22m [2m│ gzip:   0.67 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mplacement-5lr8_EF6.js                [2m  1.13 kB[22m [2m│ gzip:   0.36 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mmenu/index.d.ts.map                  [2m  1.09 kB[22m [2m│ gzip:   0.46 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mdialog/index.d.ts.map                [2m  1.09 kB[22m [2m│ gzip:   0.50 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mbadge/index.d.ts.map                 [2m  1.08 kB[22m [2m│ gzip:   0.41 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mclose-icon-CixvqMEY.js               [2m  1.01 kB[22m [2m│ gzip:   0.50 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtoolbar/index.d.ts.map               [2m  1.00 kB[22m [2m│ gzip:   0.44 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mpill/index.d.ts.map                  [2m  0.99 kB[22m [2m│ gzip:   0.44 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22micon-button/index.d.ts.map           [2m  0.96 kB[22m [2m│ gzip:   0.44 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcollapsible/index.d.ts.map           [2m  0.95 kB[22m [2m│ gzip:   0.43 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcontext-menu/index.d.ts.map          [2m  0.94 kB[22m [2m│ gzip:   0.40 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcommand/index.d.ts.map               [2m  0.94 kB[22m [2m│ gzip:   0.38 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22micon-wrapper-DICSmd0D.js             [2m  0.86 kB[22m [2m│ gzip:   0.45 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mchevron-left-E3hjEvLk.js             [2m  0.81 kB[22m [2m│ gzip:   0.47 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mhelper-X-kK0xFZ.d.ts.map             [2m  0.73 kB[22m [2m│ gzip:   0.37 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcard/index.d.ts.map                  [2m  0.69 kB[22m [2m│ gzip:   0.38 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mskeleton/index.d.ts.map              [2m  0.65 kB[22m [2m│ gzip:   0.30 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mscrollarea/index.d.ts.map            [2m  0.61 kB[22m [2m│ gzip:   0.33 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mbanner/index.d.ts.map                [2m  0.59 kB[22m [2m│ gzip:   0.31 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mpopover/index.d.ts.map               [2m  0.57 kB[22m [2m│ gzip:   0.31 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtab-navigation/index.d.ts.map        [2m  0.52 kB[22m [2m│ gzip:   0.28 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mbutton/index.d.ts.map                [2m  0.51 kB[22m [2m│ gzip:   0.23 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mswitch/index.d.ts.map                [2m  0.50 kB[22m [2m│ gzip:   0.25 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mplacement-DQm7mIn2.d.ts.map          [2m  0.49 kB[22m [2m│ gzip:   0.26 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mavatar/index.d.ts.map                [2m  0.38 kB[22m [2m│ gzip:   0.24 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22manimated-counter/index.d.ts.map      [2m  0.38 kB[22m [2m│ gzip:   0.22 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mtooltip/index.d.ts.map               [2m  0.36 kB[22m [2m│ gzip:   0.24 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22minput/index.d.ts.map                 [2m  0.35 kB[22m [2m│ gzip:   0.21 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcharts/scatter-chart/index.d.ts.map  [2m  0.32 kB[22m [2m│ gzip:   0.20 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcharts/bar-chart/index.d.ts.map      [2m  0.32 kB[22m [2m│ gzip:   0.20 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcharts/pie-chart/index.d.ts.map      [2m  0.32 kB[22m [2m│ gzip:   0.20 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcharts/area-chart/index.d.ts.map     [2m  0.31 kB[22m [2m│ gzip:   0.20 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcharts/line-chart/index.d.ts.map     [2m  0.31 kB[22m [2m│ gzip:   0.20 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcalendar/index.d.ts.map              [2m  0.30 kB[22m [2m│ gzip:   0.21 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcharts/radar-chart/index.d.ts.map    [2m  0.27 kB[22m [2m│ gzip:   0.18 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mcharts/tree-map/index.d.ts.map       [2m  0.16 kB[22m [2m│ gzip:   0.14 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mutils/index.d.ts.map                 [2m  0.14 kB[22m [2m│ gzip:   0.14 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22mutils-D4TPpwH7.js                    [2m  0.00 kB[22m [2m│ gzip:   0.02 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mempty-state/index.d.ts[22m[39m               [2m 15.26 kB[22m [2m│ gzip:   2.19 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1micons/index.d.ts[22m[39m                     [2m  6.24 kB[22m [2m│ gzip:   1.89 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1memoji-icon-picker/index.d.ts[22m[39m         [2m  4.23 kB[22m [2m│ gzip:   1.44 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mportal/index.d.ts[22m[39m                    [2m  4.04 kB[22m [2m│ gzip:   1.44 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mcombobox/index.d.ts[22m[39m                  [2m  2.32 kB[22m [2m│ gzip:   0.77 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1memoji-reaction/index.d.ts[22m[39m            [2m  2.27 kB[22m [2m│ gzip:   0.69 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mtabs/index.d.ts[22m[39m                      [2m  2.03 kB[22m [2m│ gzip:   0.44 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mtable/index.d.ts[22m[39m                     [2m  1.95 kB[22m [2m│ gzip:   0.37 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mcontext-menu/index.d.ts[22m[39m              [2m  1.95 kB[22m [2m│ gzip:   0.53 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mmenu/index.d.ts[22m[39m                      [2m  1.89 kB[22m [2m│ gzip:   0.75 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mtoast/index.d.ts[22m[39m                     [2m  1.88 kB[22m [2m│ gzip:   0.65 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mtoolbar/index.d.ts[22m[39m                   [2m  1.80 kB[22m [2m│ gzip:   0.55 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1maccordion/index.d.ts[22m[39m                 [2m  1.59 kB[22m [2m│ gzip:   0.48 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mbadge/index.d.ts[22m[39m                     [2m  1.59 kB[22m [2m│ gzip:   0.54 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mavatar/index.d.ts[22m[39m                    [2m  1.41 kB[22m [2m│ gzip:   0.66 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mdialog/index.d.ts[22m[39m                    [2m  1.38 kB[22m [2m│ gzip:   0.52 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mtab-navigation/index.d.ts[22m[39m            [2m  1.32 kB[22m [2m│ gzip:   0.49 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1micon-button/index.d.ts[22m[39m               [2m  1.26 kB[22m [2m│ gzip:   0.55 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mbanner/index.d.ts[22m[39m                    [2m  1.22 kB[22m [2m│ gzip:   0.61 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mcard/index.d.ts[22m[39m                      [2m  1.11 kB[22m [2m│ gzip:   0.56 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mcommand/index.d.ts[22m[39m                   [2m  1.07 kB[22m [2m│ gzip:   0.34 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mcollapsible/index.d.ts[22m[39m               [2m  1.05 kB[22m [2m│ gzip:   0.41 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mpill/index.d.ts[22m[39m                      [2m  1.05 kB[22m [2m│ gzip:   0.52 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mbutton/index.d.ts[22m[39m                    [2m  1.04 kB[22m [2m│ gzip:   0.48 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mscrollarea/index.d.ts[22m[39m                [2m  0.97 kB[22m [2m│ gzip:   0.43 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mskeleton/index.d.ts[22m[39m                  [2m  0.83 kB[22m [2m│ gzip:   0.36 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mpopover/index.d.ts[22m[39m                   [2m  0.83 kB[22m [2m│ gzip:   0.44 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mtooltip/index.d.ts[22m[39m                   [2m  0.72 kB[22m [2m│ gzip:   0.40 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mswitch/index.d.ts[22m[39m                    [2m  0.71 kB[22m [2m│ gzip:   0.44 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1manimated-counter/index.d.ts[22m[39m          [2m  0.59 kB[22m [2m│ gzip:   0.37 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mcalendar/index.d.ts[22m[39m                  [2m  0.49 kB[22m [2m│ gzip:   0.30 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mutils/index.d.ts[22m[39m                     [2m  0.45 kB[22m [2m│ gzip:   0.28 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1minput/index.d.ts[22m[39m                     [2m  0.45 kB[22m [2m│ gzip:   0.28 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mcharts/scatter-chart/index.d.ts[22m[39m      [2m  0.42 kB[22m [2m│ gzip:   0.27 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mcharts/area-chart/index.d.ts[22m[39m         [2m  0.40 kB[22m [2m│ gzip:   0.26 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mcharts/line-chart/index.d.ts[22m[39m         [2m  0.40 kB[22m [2m│ gzip:   0.26 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mcharts/bar-chart/index.d.ts[22m[39m          [2m  0.40 kB[22m [2m│ gzip:   0.26 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mcharts/pie-chart/index.d.ts[22m[39m          [2m  0.40 kB[22m [2m│ gzip:   0.26 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mcharts/radar-chart/index.d.ts[22m[39m        [2m  0.35 kB[22m [2m│ gzip:   0.24 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32m[1mcharts/tree-map/index.d.ts[22m[39m           [2m  0.27 kB[22m [2m│ gzip:   0.19 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32mindex-xqZP7a1F.d.ts[39m                  [2m 37.55 kB[22m [2m│ gzip:   5.34 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32mhelper-X-kK0xFZ.d.ts[39m                 [2m  1.02 kB[22m [2m│ gzip:   0.49 kB[22m
+@plane/propel:build: [34mℹ[39m [2mdist/[22m[32mplacement-DQm7mIn2.d.ts[39m              [2m  0.75 kB[22m [2m│ gzip:   0.40 kB[22m
+@plane/propel:build: [34mℹ[39m 187 files, total: 2982.63 kB
+@plane/propel:build: [32m✔[39m Build complete in [32m2859ms[39m
+@plane/ui:build: cache hit, replaying logs 9f5912e1e4346f2e
+@plane/ui:build: 
+@plane/ui:build: 
+@plane/ui:build: > @plane/ui@1.2.0 build /Volumes/Data/SHBVN/plane.so/packages/ui
+@plane/ui:build: > tsdown
+@plane/ui:build: 
+@plane/ui:build: [34mℹ[39m tsdown [2mv0.16.0[22m powered by rolldown [2mv1.0.0-beta.46[22m
+@plane/ui:build: [34mℹ[39m Using tsdown config: [4m/Volumes/Data/SHBVN/plane.so/packages/ui/tsdown.config.ts[24m
+@plane/ui:build: [34mℹ[39m entry: [34msrc/index.ts[39m
+@plane/ui:build: [34mℹ[39m tsconfig: [34mtsconfig.json[39m
+@plane/ui:build: [34mℹ[39m Build start
+@plane/ui:build: [34mℹ[39m Cleaning 4 files
+@plane/ui:build: [34mℹ[39m [2mdist/[22m[1mindex.js[22m        [2m156.80 kB[22m [2m│ gzip: 31.89 kB[22m
+@plane/ui:build: [34mℹ[39m [2mdist/[22mindex.js.map    [2m288.43 kB[22m [2m│ gzip: 59.76 kB[22m
+@plane/ui:build: [34mℹ[39m [2mdist/[22mindex.d.ts.map  [2m 20.14 kB[22m [2m│ gzip:  6.47 kB[22m
+@plane/ui:build: [34mℹ[39m [2mdist/[22m[32m[1mindex.d.ts[22m[39m      [2m 40.69 kB[22m [2m│ gzip:  7.80 kB[22m
+@plane/ui:build: [34mℹ[39m 4 files, total: 506.07 kB
+@plane/ui:build: [32m✔[39m Build complete in [32m1469ms[39m
+@plane/ui:check:types: cache hit, replaying logs a2607b3e5f9319ac
+@plane/ui:check:types: 
+@plane/ui:check:types: 
+@plane/ui:check:types: > @plane/ui@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/packages/ui
+@plane/ui:check:types: > tsc --noEmit
+@plane/ui:check:types: 
+admin:check:types: cache hit, replaying logs e42a5bc84371541c
+admin:check:types: 
+admin:check:types: 
+admin:check:types: > admin@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/apps/admin
+admin:check:types: > react-router typegen && tsc --noEmit
+admin:check:types: 
+admin:check:types: [38;5;142m[dotenvx@1.51.1] injecting env (8) from /Volumes/Data/SHBVN/plane.so/apps/admin/.env[39m
+admin:check:types: (node:89572) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Volumes/Data/SHBVN/plane.so/packages/tailwind-config/postcss.config.js is not specified and it doesn't parse as CommonJS.
+admin:check:types: Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+admin:check:types: To eliminate this warning, add "type": "module" to /Volumes/Data/SHBVN/plane.so/packages/tailwind-config/package.json.
+admin:check:types: (Use `node --trace-warnings ...` to show where the warning was created)
+admin:check:types: [38;5;142m[dotenvx@1.51.1] injecting env (0) from /Volumes/Data/SHBVN/plane.so/apps/admin/.env[39m
+@plane/editor:check:types: cache hit, replaying logs ea637c4ad9605dff
+@plane/editor:check:types: 
+@plane/editor:check:types: 
+@plane/editor:check:types: > @plane/editor@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/packages/editor
+@plane/editor:check:types: > tsc --noEmit
+@plane/editor:check:types: 
+@plane/editor:build: cache hit, replaying logs 9a81e25755f4cf3a
+@plane/editor:build: 
+@plane/editor:build: 
+@plane/editor:build: > @plane/editor@1.2.0 build /Volumes/Data/SHBVN/plane.so/packages/editor
+@plane/editor:build: > tsc && tsdown
+@plane/editor:build: 
+@plane/editor:build: [34mℹ[39m tsdown [2mv0.16.0[22m powered by rolldown [2mv1.0.0-beta.46[22m
+@plane/editor:build: [34mℹ[39m Using tsdown config: [4m/Volumes/Data/SHBVN/plane.so/packages/editor/tsdown.config.ts[24m
+@plane/editor:build: [34mℹ[39m entry: [34msrc/index.ts, src/lib.ts[39m
+@plane/editor:build: [34mℹ[39m tsconfig: [34mtsconfig.json[39m
+@plane/editor:build: [34mℹ[39m Build start
+@plane/editor:build: [34mℹ[39m Cleaning 20 files
+@plane/editor:build: [34mℹ[39m [2mdist/[22m[1mindex.js[22m                                       [2m203.83 kB[22m [2m│ gzip: 44.87 kB[22m
+@plane/editor:build: [34mℹ[39m [2mdist/[22m[1mlib.js[22m                                         [2m  2.67 kB[22m [2m│ gzip:  0.85 kB[22m
+@plane/editor:build: [34mℹ[39m [2mdist/[22mdocument-collaborative-events-DVx9tXzE.js.map  [2m443.57 kB[22m [2m│ gzip: 92.77 kB[22m
+@plane/editor:build: [34mℹ[39m [2mdist/[22mindex.js.map                                   [2m428.20 kB[22m [2m│ gzip: 94.73 kB[22m
+@plane/editor:build: [34mℹ[39m [2mdist/[22mdocument-collaborative-events-DVx9tXzE.js      [2m211.02 kB[22m [2m│ gzip: 45.53 kB[22m
+@plane/editor:build: [34mℹ[39m [2mdist/[22myjs-utils-CMtKb-Y5.d.ts.map                    [2m 13.17 kB[22m [2m│ gzip:  4.88 kB[22m
+@plane/editor:build: [34mℹ[39m [2mdist/[22mlib.js.map                                     [2m  4.81 kB[22m [2m│ gzip:  1.33 kB[22m
+@plane/editor:build: [34mℹ[39m [2mdist/[22mindex.d.ts.map                                 [2m  2.10 kB[22m [2m│ gzip:  0.88 kB[22m
+@plane/editor:build: [34mℹ[39m [2mdist/[22mlib.d.ts.map                                   [2m  0.16 kB[22m [2m│ gzip:  0.14 kB[22m
+@plane/editor:build: [34mℹ[39m [2mdist/[22m[32m[1mindex.d.ts[22m[39m                                     [2m  9.41 kB[22m [2m│ gzip:  2.67 kB[22m
+@plane/editor:build: [34mℹ[39m [2mdist/[22m[32m[1mlib.d.ts[22m[39m                                       [2m  2.43 kB[22m [2m│ gzip:  0.79 kB[22m
+@plane/editor:build: [34mℹ[39m [2mdist/[22m[32myjs-utils-CMtKb-Y5.d.ts[39m                        [2m 31.97 kB[22m [2m│ gzip:  7.87 kB[22m
+@plane/editor:build: [34mℹ[39m 12 files, total: 1353.34 kB
+@plane/editor:build: [32m✔[39m Build complete in [32m1930ms[39m
+web:check:types: cache miss, executing 1fba5fb1a56c003b
+live:check:types: cache hit, replaying logs 3a3d95c791e159f6
+live:check:types: 
+live:check:types: 
+live:check:types: > live@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/apps/live
+live:check:types: > tsc --noEmit
+live:check:types: 
+space:check:types: cache hit, replaying logs 922f1f56f1737a4a
+space:check:types: 
+space:check:types: 
+space:check:types: > space@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/apps/space
+space:check:types: > react-router typegen && tsc --noEmit
+space:check:types: 
+space:check:types: [38;5;142m[dotenvx@1.51.1] injecting env (8) from /Volumes/Data/SHBVN/plane.so/apps/space/.env[39m
+space:check:types: (node:89680) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Volumes/Data/SHBVN/plane.so/packages/tailwind-config/postcss.config.js is not specified and it doesn't parse as CommonJS.
+space:check:types: Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+space:check:types: To eliminate this warning, add "type": "module" to /Volumes/Data/SHBVN/plane.so/packages/tailwind-config/package.json.
+space:check:types: (Use `node --trace-warnings ...` to show where the warning was created)
+space:check:types: [38;5;142m[dotenvx@1.51.1] injecting env (0) from /Volumes/Data/SHBVN/plane.so/apps/space/.env[39m
+web:check:types: 
+web:check:types: > web@1.2.0 check:types /Volumes/Data/SHBVN/plane.so/apps/web
+web:check:types: > react-router typegen && tsc --noEmit
+web:check:types: 
+web:check:types: [38;5;142m[dotenvx@1.51.1] injecting env (8) from /Volumes/Data/SHBVN/plane.so/apps/web/.env[39m
+web:check:types: (node:90813) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Volumes/Data/SHBVN/plane.so/packages/tailwind-config/postcss.config.js is not specified and it doesn't parse as CommonJS.
+web:check:types: Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+web:check:types: To eliminate this warning, add "type": "module" to /Volumes/Data/SHBVN/plane.so/packages/tailwind-config/package.json.
+web:check:types: (Use `node --trace-warnings ...` to show where the warning was created)
+web:check:types: [38;5;142m[dotenvx@1.51.1] injecting env (0) from /Volumes/Data/SHBVN/plane.so/apps/web/.env[39m
+web:check:types: ce/components/time-tracking/capacity/capacity-dashboard.tsx(74,23): error TS18048: 'member.days' is possibly 'undefined'.
+web:check:types: ce/components/time-tracking/capacity/capacity-dashboard.tsx(119,52): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, unknown>'.
+web:check:types: ce/components/time-tracking/capacity/capacity-dashboard.tsx(146,17): error TS2322: Type '"outline"' is not assignable to type 'TButtonVariants'.
+web:check:types: ce/components/time-tracking/capacity/capacity-dashboard.tsx(155,17): error TS2322: Type '"outline"' is not assignable to type 'TButtonVariants'.
+web:check:types: ce/components/time-tracking/capacity/capacity-dashboard.tsx(157,51): error TS2345: Argument of type 'DateRange' is not assignable to parameter of type 'SetStateAction<{ from: Date | undefined; to: Date | undefined; }>'.
+web:check:types:   Type 'DateRange' is not assignable to type '{ from: Date | undefined; to: Date | undefined; }'.
+web:check:types:     Property 'to' is optional in type 'DateRange' but required in type '{ from: Date | undefined; to: Date | undefined; }'.
+web:check:types: ce/components/time-tracking/capacity/capacity-heatmap.tsx(75,34): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, unknown>'.
+web:check:types: ce/components/time-tracking/capacity/capacity-heatmap.tsx(178,58): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, unknown>'.
+web:check:types: ce/components/time-tracking/capacity/capacity-heatmap.tsx(180,64): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, unknown>'.
+web:check:types: ce/components/time-tracking/capacity/capacity-heatmap.tsx(182,58): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, unknown>'.
+web:check:types: ce/components/time-tracking/capacity/capacity-heatmap.tsx(198,43): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, unknown>'.
+web:check:types: ce/components/time-tracking/capacity/capacity-heatmap.tsx(221,42): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, unknown>'.
+web:check:types: ce/components/time-tracking/timesheet/timesheet-add-issue-modal.tsx(99,57): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, unknown>'.
+web:check:types: ce/components/time-tracking/timesheet/timesheet-grid.tsx(79,37): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, unknown>'.
+web:check:types: ce/components/time-tracking/timesheet/timesheet-week-navigator.tsx(81,21): error TS2322: Type '"outline"' is not assignable to type '"link" | "primary" | "secondary" | "tertiary" | "error-fill" | "error-outline" | "ghost" | null | undefined'.
+web:check:types: core/services/worklog.service.ts(74,7): error TS2352: Conversion of type 'Promise<AxiosResponse<any, any, {}>>' to type 'Promise<void>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+web:check:types:   Type 'AxiosResponse<any, any, {}>' is not comparable to type 'void'.
+web:check:types:  ELIFECYCLE  Command failed with exit code 2.
+web:check:types: ERROR: command finished with error: command (/Volumes/Data/SHBVN/plane.so/apps/web) /Users/duonglx/Library/pnpm/.tools/pnpm/10.24.0/bin/pnpm run check:types exited (2)
+web#check:types: command (/Volumes/Data/SHBVN/plane.so/apps/web) /Users/duonglx/Library/pnpm/.tools/pnpm/10.24.0/bin/pnpm run check:types exited (2)
+
+ Tasks:    27 successful, 28 total
+Cached:    27 cached, 28 total
+  Time:    21.409s 
+Failed:    web#check:types
+
+ ERROR  run failed: command  exited (2)
+ ELIFECYCLE  Command failed with exit code 2.

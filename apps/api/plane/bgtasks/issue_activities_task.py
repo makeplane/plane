@@ -591,6 +591,45 @@ def create_issue_activity(
         )
 
 
+# Track changes in estimate time
+def track_estimate_time(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    def format_time(m):
+        if not m:
+            return "None"
+        h = m // 60
+        mins = m % 60
+        if h == 0:
+            return f"{mins}m"
+        if mins == 0:
+            return f"{h}h"
+        return f"{h}h {mins}m"
+
+    if "estimate_time" in requested_data and current_instance.get("estimate_time") != requested_data.get("estimate_time"):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=format_time(current_instance.get("estimate_time")),
+                new_value=format_time(requested_data.get("estimate_time")),
+                field="estimate_time",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the estimate time to ",
+                epoch=epoch,
+            )
+        )
+
+
 def update_issue_activity(
     requested_data,
     current_instance,
@@ -612,6 +651,7 @@ def update_issue_activity(
         "label_ids": track_labels,
         "assignee_ids": track_assignees,
         "estimate_point": track_estimate_points,
+        "estimate_time": track_estimate_time,
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,
         # External endpoint keys

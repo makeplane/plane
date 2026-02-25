@@ -36,6 +36,7 @@ from plane.app.views import (
     WorkspaceHomePreferenceViewSet,
     WorkspaceStickyViewSet,
     WorkspaceUserPreferenceViewSet,
+    WorkspaceWorkLogSummaryEndpoint,
 )
 
 
@@ -256,5 +257,11 @@ urlpatterns = [
         "workspaces/<str:slug>/sidebar-preferences/",
         WorkspaceUserPreferenceViewSet.as_view(),
         name="workspace-user-preference",
+    ),
+    ## Time Tracking
+    path(
+        "workspaces/<str:slug>/time-tracking/summary/",
+        WorkspaceWorkLogSummaryEndpoint.as_view(),
+        name="workspace-time-tracking-summary",
     ),
 ]

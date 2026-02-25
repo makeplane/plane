@@ -166,6 +166,9 @@ class Issue(ProjectBaseModel):
         null=True,
         blank=True,
     )
+    estimate_time = models.PositiveIntegerField(
+        null=True, blank=True, help_text="Time estimate in minutes"
+    )
 
     issue_objects = IssueManager()
 

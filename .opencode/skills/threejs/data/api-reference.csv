@@ -1,0 +1,61 @@
+ID,Category,Class,Keywords,Description,Common Methods,Related Classes
+1,Core,Scene,"scene, container, root, hierarchy",Root container for all 3D objects,"add(), remove(), traverse(), getObjectByName()",Object3D; Group
+2,Core,Camera,"camera, view, projection",Base camera class for all camera types,"lookAt(), updateProjectionMatrix()",PerspectiveCamera; OrthographicCamera
+3,Core,PerspectiveCamera,"perspective, fov, aspect, near, far",Perspective projection camera,"setFocalLength(), updateProjectionMatrix()",Camera; OrthographicCamera
+4,Core,OrthographicCamera,"orthographic, 2d, isometric, parallel",Orthographic projection camera,"updateProjectionMatrix(), zoom",Camera; PerspectiveCamera
+5,Core,WebGLRenderer,"renderer, webgl, canvas, draw",WebGL rendering engine,"render(), setSize(), setPixelRatio(), dispose()",Scene; Camera
+6,Core,WebGPURenderer,"renderer, webgpu, modern, compute",WebGPU rendering engine,"render(), setSize(), compute()",WebGLRenderer; Scene
+7,Geometry,BufferGeometry,"geometry, vertices, faces, mesh",Efficient geometry representation,"setAttribute(), setIndex(), computeVertexNormals()",Mesh; BufferAttribute
+8,Geometry,BoxGeometry,"box, cube, rectangular",Box/cube primitive geometry,"parameters: width, height, depth, segments",BufferGeometry; SphereGeometry
+9,Geometry,SphereGeometry,"sphere, ball, globe",Sphere primitive geometry,"parameters: radius, widthSegments, heightSegments",BufferGeometry; BoxGeometry
+10,Geometry,PlaneGeometry,"plane, flat, ground, floor",Flat plane primitive geometry,"parameters: width, height, widthSegments",BufferGeometry; CircleGeometry
+11,Geometry,CylinderGeometry,"cylinder, tube, pillar",Cylinder primitive geometry,"parameters: radiusTop, radiusBottom, height",BufferGeometry; ConeGeometry
+12,Geometry,TorusGeometry,"torus, donut, ring",Torus/donut primitive geometry,"parameters: radius, tube, radialSegments",BufferGeometry; TorusKnotGeometry
+13,Material,Material,"material, appearance, surface",Base material class,"dispose(), clone(), needsUpdate",MeshStandardMaterial; ShaderMaterial
+14,Material,MeshStandardMaterial,"standard, pbr, metalness, roughness",PBR metallic-roughness material,"color, metalness, roughness, map, normalMap",Material; MeshPhysicalMaterial
+15,Material,MeshPhysicalMaterial,"physical, transmission, clearcoat, sheen",Advanced PBR material,"transmission, thickness, clearcoat, sheen, ior",MeshStandardMaterial; Material
+16,Material,MeshBasicMaterial,"basic, unlit, simple, fast",Unlit material for simple rendering,"color, map, wireframe, transparent",Material; MeshLambertMaterial
+17,Material,MeshLambertMaterial,"lambert, diffuse, non-shiny",Diffuse-only material,"color, map, emissive, reflectivity",Material; MeshPhongMaterial
+18,Material,MeshPhongMaterial,"phong, specular, shiny, highlight",Specular highlight material,"color, specular, shininess, map",Material; MeshStandardMaterial
+19,Material,MeshToonMaterial,"toon, cartoon, cel, stylized",Cel-shaded toon material,"color, gradientMap, map",Material; MeshLambertMaterial
+20,Material,ShaderMaterial,"shader, custom, glsl, vertex, fragment",Custom GLSL shader material,"vertexShader, fragmentShader, uniforms",Material; RawShaderMaterial
+21,Material,PointsMaterial,"points, particles, sprites",Material for point clouds,"color, size, sizeAttenuation, map",Material; SpriteMaterial
+22,Light,Light,"light, illumination, source",Base light class,"color, intensity",DirectionalLight; PointLight
+23,Light,DirectionalLight,"directional, sun, parallel, shadow",Parallel light rays (sun-like),"position, target, shadow, castShadow",Light; SpotLight
+24,Light,PointLight,"point, bulb, omnidirectional",Omnidirectional light source,"position, distance, decay, shadow",Light; SpotLight
+25,Light,SpotLight,"spotlight, cone, focused, shadow",Cone-shaped spotlight,"position, target, angle, penumbra, shadow",Light; DirectionalLight
+26,Light,AmbientLight,"ambient, fill, global",Global ambient illumination,"color, intensity",Light; HemisphereLight
+27,Light,HemisphereLight,"hemisphere, sky, ground, outdoor",Sky/ground gradient light,"skyColor, groundColor, intensity",Light; AmbientLight
+28,Light,RectAreaLight,"rectarea, area, soft, studio",Rectangular area light,"width, height, intensity, lookAt()",Light; SpotLight
+29,Object,Mesh,"mesh, geometry, material, object",3D object with geometry and material,"geometry, material, position, rotation, scale",Object3D; SkinnedMesh
+30,Object,SkinnedMesh,"skinned, rigged, animation, bones",Mesh with skeletal animation,"skeleton, bind(), pose()",Mesh; Bone
+31,Object,InstancedMesh,"instanced, performance, many, clone",Efficient multiple instance rendering,"count, setMatrixAt(), setColorAt()",Mesh; BatchedMesh
+32,Object,Group,"group, container, parent, hierarchy",Container for grouping objects,"add(), remove(), children",Object3D; Scene
+33,Object,Points,"points, particles, cloud",Point cloud rendering,"geometry, material",Mesh; Line
+34,Object,Line,"line, path, wire",Line rendering,"geometry, material",Points; LineSegments
+35,Object,Sprite,"sprite, billboard, always-facing",Always camera-facing plane,"material, center, scale",Points; Mesh
+36,Animation,AnimationMixer,"mixer, animation, playback, control",Animation playback controller,"clipAction(), update(), stopAllAction()",AnimationClip; AnimationAction
+37,Animation,AnimationClip,"clip, keyframes, track, animation data",Animation data container,"tracks, duration, resetDuration()",AnimationMixer; KeyframeTrack
+38,Animation,AnimationAction,"action, play, pause, loop",Animation playback control,"play(), stop(), crossFadeTo(), setEffectiveWeight()",AnimationMixer; AnimationClip
+39,Loader,GLTFLoader,"gltf, glb, loader, model",GLTF/GLB model loader,"load(), parse(), setDRACOLoader()",Loader; DRACOLoader
+40,Loader,FBXLoader,"fbx, autodesk, animation",FBX model loader,"load(), parse()",Loader; GLTFLoader
+41,Loader,OBJLoader,"obj, wavefront, simple",OBJ model loader,"load(), parse(), setMaterials()",Loader; MTLLoader
+42,Loader,TextureLoader,"texture, image, map",Image texture loader,"load(), loadAsync()",Loader; CubeTextureLoader
+43,Loader,DRACOLoader,"draco, compression, mesh",Draco compressed mesh decoder,"setDecoderPath(), preload()",GLTFLoader; Loader
+44,Control,OrbitControls,"orbit, rotate, zoom, pan, camera",Orbiting camera controls,"update(), target, enableDamping",Controls; TrackballControls
+45,Control,MapControls,"map, overhead, 2d, navigation",Map-style camera controls,"update(), target, screenSpacePanning",OrbitControls; Controls
+46,Control,FirstPersonControls,"fps, first person, walk",First-person camera controls,"update(), movementSpeed, lookSpeed",Controls; PointerLockControls
+47,Control,TransformControls,"transform, gizmo, move, rotate, scale",Object manipulation gizmo,"attach(), detach(), setMode()",Controls; DragControls
+48,Math,Vector3,"vector, position, direction, xyz",3D vector math,"add(), sub(), multiply(), normalize(), length()",Vector2; Quaternion
+49,Math,Quaternion,"quaternion, rotation, orientation",Rotation representation,"setFromEuler(), slerp(), multiply()",Vector3; Euler
+50,Math,Matrix4,"matrix, transform, 4x4",4x4 transformation matrix,"multiply(), invert(), decompose()",Matrix3; Vector3
+51,Math,Box3,"box, aabb, bounds, collision",Axis-aligned bounding box,"setFromObject(), containsPoint(), intersectsBox()",Sphere; Raycaster
+52,Math,Raycaster,"raycast, pick, intersect, mouse",Ray intersection testing,"setFromCamera(), intersectObjects()",Box3; Vector3
+53,Helper,AxesHelper,"axes, xyz, debug, orientation",XYZ axes visualization,"size parameter",Helper; GridHelper
+54,Helper,GridHelper,"grid, floor, debug, reference",Grid plane visualization,"size, divisions, colors",Helper; AxesHelper
+55,Helper,BoxHelper,"box, bounds, debug, wireframe",Bounding box visualization,"setFromObject(), update()",Helper; Box3Helper
+56,Effect,EffectComposer,"composer, postprocessing, chain",Post-processing effect chain,"addPass(), render(), setSize()",Pass; ShaderPass
+57,Effect,RenderPass,"render, scene, camera, base",Base scene render pass,"scene, camera",Pass; EffectComposer
+58,Effect,UnrealBloomPass,"bloom, glow, emissive, hdr",Unreal-style bloom effect,"strength, radius, threshold",Pass; EffectComposer
+59,Effect,SSAOPass,"ssao, ao, ambient occlusion",Screen-space ambient occlusion,"kernelRadius, minDistance, maxDistance",Pass; GTAOPass
+60,Effect,OutlinePass,"outline, selection, highlight",Object outline effect,"selectedObjects, visibleEdgeColor",Pass; EffectComposer

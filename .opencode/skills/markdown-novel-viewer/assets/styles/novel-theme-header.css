@@ -1,0 +1,217 @@
+/**
+ * Novel Theme - Header Styles
+ * Header, controls, navigation, theme toggle
+ */
+
+/* Header */
+.reader-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  z-index: 100;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.reader-header.is-hidden {
+  transform: translateY(-100%);
+}
+
+.reader-header.is-fixed {
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.back-to-dashboard {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.625rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.back-to-dashboard:hover {
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.back-to-dashboard svg {
+  flex-shrink: 0;
+}
+
+.header-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 0.25rem;
+}
+
+.header-center {
+  flex: 1;
+  text-align: center;
+  overflow: hidden;
+}
+
+.doc-title {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.icon-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* Back button (link styled as icon-btn) */
+a.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+
+a.icon-btn.back-btn {
+  color: var(--text-secondary);
+}
+
+a.icon-btn.back-btn:hover {
+  color: var(--accent);
+  background: var(--bg-tertiary);
+}
+
+/* Header Navigation (prev/next in header) */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 0.5rem;
+  padding-left: 0.5rem;
+  border-left: 1px solid var(--border);
+}
+
+.header-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.375rem 0.625rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.header-nav-btn:hover {
+  color: var(--accent);
+  background: var(--bg-tertiary);
+  text-decoration: none;
+}
+
+.header-nav-btn svg {
+  flex-shrink: 0;
+}
+
+.header-nav-btn.prev svg {
+  margin-right: 0.125rem;
+}
+
+.header-nav-btn.next svg {
+  margin-left: 0.125rem;
+}
+
+/* Theme toggle icons */
+.sun-icon { display: block; }
+.moon-icon { display: none; }
+[data-theme="dark"] .sun-icon { display: none; }
+[data-theme="dark"] .moon-icon { display: block; }
+
+/* Font controls */
+.font-controls {
+  display: flex;
+  gap: 2px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.font-btn {
+  background: transparent;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.font-btn:hover {
+  color: var(--text-primary);
+}
+
+.font-btn.active {
+  background: var(--bg-primary);
+  color: var(--accent);
+  box-shadow: 0 1px 2px var(--shadow);
+}
+
+/* Progress bar */
+.progress-bar-container {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--bg-tertiary);
+  z-index: 99;
+  transition: top 0.3s ease;
+}
+
+.reader-header.is-hidden ~ .progress-bar-container {
+  top: 0;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+  transition: width 0.1s ease-out;
+}

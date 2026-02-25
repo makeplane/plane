@@ -7,6 +7,7 @@
 export * from "./activity";
 export * from "./ai";
 export * from "./analytics";
+export * from "./analytics-dashboard";
 export * from "./api_token";
 export * from "./auth";
 export * from "./calendar";
@@ -55,6 +56,7 @@ export * from "./webhook";
 export * from "./workspace";
 export * from "./workspace-draft-issues/base";
 export * from "./workspace-notifications";
+export * from "./worklog";
 export * from "./workspace-views";
 export * from "./base-layouts";
 export * from "./pagination";

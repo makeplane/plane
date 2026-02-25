@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plans Dashboard</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <!-- Apply stored theme BEFORE CSS loads to prevent FOUC -->
+  <script>
+    (function(){
+      var h=document.documentElement;
+      var t=localStorage.getItem('theme');
+      if(t)h.dataset.theme=t;
+      else if(window.matchMedia('(prefers-color-scheme:dark)').matches)h.dataset.theme='dark';
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/novel-theme.css">
+  <link rel="stylesheet" href="/assets/dashboard.css">
+</head>
+<body class="dashboard-view {{has-plans}}">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="dashboard-header">
+    <div class="header-left">
+      <h1>Plans</h1>
+      <div class="header-stats">
+        <span class="header-stat"><strong>{{stat-total}}</strong> total</span>
+        <span class="header-stat-divider"></span>
+        <span class="header-stat"><strong>{{stat-completed}}</strong> done</span>
+        <span class="header-stat-divider"></span>
+        <span class="header-stat"><strong>{{stat-in-progress}}</strong> active</span>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <div class="search-box">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="search" id="plan-search" placeholder="Search plans..." aria-label="Search plans">
+      </div>
+
+      <select id="sort-select" aria-label="Sort plans by">
+        <option value="date-desc">Newest First</option>
+        <option value="date-asc">Oldest First</option>
+        <option value="name-asc">Name A-Z</option>
+        <option value="name-desc">Name Z-A</option>
+        <option value="progress-desc">Most Progress</option>
+        <option value="progress-asc">Least Progress</option>
+      </select>
+
+      <div class="filter-pills" role="group" aria-label="Filter by status">
+        <button class="filter-pill active" data-filter="all" aria-pressed="true">All</button>
+        <button class="filter-pill" data-filter="completed" aria-pressed="false">Done</button>
+        <button class="filter-pill" data-filter="in-progress" aria-pressed="false">Active</button>
+        <button class="filter-pill" data-filter="pending" aria-pressed="false">Pending</button>
+      </div>
+
+      <div role="status" aria-live="polite" class="result-count">
+        <strong>{{plan-count}}</strong> plans
+      </div>
+
+      <div class="view-toggle" role="group" aria-label="View mode">
+        <button class="view-toggle-btn active" data-view="kanban" aria-pressed="true" title="Kanban view">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="12" rx="1"/><rect x="17" y="3" width="5" height="8" rx="1"/>
+          </svg>
+        </button>
+        <button class="view-toggle-btn" data-view="grid" aria-pressed="false" title="Grid view">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+        </button>
+      </div>
+
+      <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme">
+        <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main-content" role="main" aria-label="Plans Dashboard">
+    {{timeline-section}}
+
+    <!-- Kanban Board View -->
+    <div class="kanban-board" aria-label="Kanban board">
+      {{kanban-columns}}
+    </div>
+
+    <div class="loading-skeleton" aria-hidden="true">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </div>
+
+    <section class="plans-grid" aria-label="Plans list">
+      {{plans-grid}}
+    </section>
+
+    {{empty-state}}
+  </main>
+
+  <div id="sr-announce" role="status" aria-live="polite" aria-atomic="true" class="visually-hidden"></div>
+
+  <script>window.__plans = {{plans-json}};</script>
+  <script src="/assets/dashboard.js"></script>
+</body>
+</html>

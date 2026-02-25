@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - Novel Viewer</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <!-- Apply stored preferences BEFORE CSS loads to prevent FOUC -->
+  <script>
+    (function(){
+      var h=document.documentElement;
+      var t=localStorage.getItem('theme');
+      var f=localStorage.getItem('novel-viewer-font');
+      if(t)h.dataset.theme=t;
+      else if(window.matchMedia('(prefers-color-scheme:dark)').matches)h.dataset.theme='dark';
+      if(f)h.dataset.fontSize=f;
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/novel-theme.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" id="hljs-light">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="hljs-dark" disabled>
+  <!-- Mermaid.js for diagram rendering -->
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    window.mermaidModule = mermaid;
+  </script>
+</head>
+<body class="{{has-plan}}">
+  <header class="reader-header">
+    <div class="header-left">
+      {{back-button}}
+      <button id="sidebar-toggle" class="icon-btn" aria-label="Toggle sidebar" title="Toggle sidebar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+      {{header-nav}}
+    </div>
+    <div class="header-center">
+      <span class="doc-title">{{title}}</span>
+    </div>
+    <div class="header-right">
+      <div class="font-controls">
+        <button class="font-btn" data-size="S" title="Small font">S</button>
+        <button class="font-btn" data-size="M" title="Medium font">M</button>
+        <button class="font-btn" data-size="L" title="Large font">L</button>
+      </div>
+      <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme" title="Toggle theme">
+        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="progress-bar-container" id="progress-bar">
+    <div class="progress-bar-fill"></div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-resize-handle" id="sidebar-resize"></div>
+      {{nav-sidebar}}
+      <div class="toc-section">
+        <div class="toc-title">Contents</div>
+        {{toc}}
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <article class="content">
+        {{content}}
+      </article>
+      {{nav-footer}}
+    </main>
+  </div>
+
+  <!-- Keyboard shortcuts toast -->
+  <div class="shortcuts-toast" id="shortcuts-toast" role="status" aria-live="polite">
+    <span>Press <kbd>?</kbd> for keyboard shortcuts</span>
+    <button class="toast-dismiss" aria-label="Dismiss">&times;</button>
+  </div>
+
+  <!-- Keyboard shortcuts cheatsheet -->
+  <div class="shortcuts-overlay" id="shortcuts-overlay" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title" hidden>
+    <div class="shortcuts-backdrop"></div>
+    <div class="shortcuts-modal">
+      <header>
+        <h2 id="shortcuts-title">Keyboard Shortcuts</h2>
+        <button class="modal-close" aria-label="Close">&times;</button>
+      </header>
+      <table class="shortcuts-table">
+        <tbody>
+          <tr><td><kbd>T</kbd></td><td>Toggle theme (light/dark)</td></tr>
+          <tr><td><kbd>S</kbd></td><td>Toggle sidebar</td></tr>
+          <tr><td><kbd>←</kbd></td><td>Previous page</td></tr>
+          <tr><td><kbd>→</kbd></td><td>Next page</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Close sidebar / modal</td></tr>
+          <tr><td><kbd>?</kbd></td><td>Show this help</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Mobile FAB group -->
+  <div class="fab-group" id="fab-group" aria-label="Quick navigation">
+    <button class="fab fab-menu" id="fab-menu" aria-label="Open navigation menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 12h18M3 6h18M3 18h18"/>
+      </svg>
+    </button>
+    <a class="fab fab-next nav-next-mobile" aria-label="Next page">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </a>
+    <a class="fab fab-prev nav-prev-mobile" aria-label="Previous page">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </a>
+  </div>
+
+  <!-- Mobile bottom sheet -->
+  <div class="bottom-sheet" id="bottom-sheet" aria-hidden="true">
+    <div class="bottom-sheet-backdrop"></div>
+    <div class="bottom-sheet-container">
+      <div class="bottom-sheet-handle" aria-label="Drag to close">
+        <span class="handle-bar"></span>
+      </div>
+      <div class="bottom-sheet-content" id="bottom-sheet-content">
+        <!-- Sidebar content cloned here via JS -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.__frontmatter = {{frontmatter}};
+  </script>
+  <script src="/assets/reader.js"></script>
+</body>
+</html>

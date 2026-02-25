@@ -6,6 +6,7 @@
 
 export * from "./ai";
 export * from "./analytics";
+export * from "./analytics-dashboard";
 export * from "./auth";
 export * from "./chart";
 export * from "./cycle";
@@ -43,4 +44,5 @@ export * from "./themes";
 export * from "./user";
 export * from "./views";
 export * from "./workspace-drafts";
+export * from "./worklog";
 export * from "./workspace";
