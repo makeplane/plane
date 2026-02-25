@@ -428,7 +428,10 @@ function restartServices() {
 }
 function upgrade() {
     local latest_release=$(checkLatestRelease)
-
+    if [ -z "$latest_release" ]; then
+        echo "Failed to determine the latest release. Exiting..."
+        exit 1
+    fi
     echo ""
     echo "Current release: $APP_RELEASE"
 
