@@ -52,7 +52,7 @@
     content: "";
     position: absolute;
     top: 0;
-    left: calc(-1 * var(--horizontal-offset));
+    inset-inline-start: calc(-1 * var(--horizontal-offset)); /* [FA-CUSTOM] was: left — logical property for RTL */
     height: 100%;
     width: calc(100% + (var(--horizontal-offset) * 2));
     background-color: --alpha(var(--background-color-accent-primary) / 20%);
@@ -73,12 +73,12 @@
 
 /* for targeting the task list items */
 li.ProseMirror-selectednode:not(.dragging)[data-checked]::after {
-  margin-left: -5px;
+  margin-inline-start: -5px; /* [FA-CUSTOM] was: margin-left — logical property for RTL */
 }
 
 /* for targeting the unordered list items */
 ul > li.ProseMirror-selectednode:not(.dragging)::after {
-  margin-left: -10px; /* Adjust as needed */
+  margin-inline-start: -10px; /* [FA-CUSTOM] was: margin-left — logical property for RTL */
 }
 
 /* Initialize a counter for the ordered list */
@@ -89,17 +89,17 @@ ol {
 /* for targeting the ordered list items */
 ol > li.ProseMirror-selectednode:not(.dragging)::after {
   counter-increment: item;
-  margin-left: -18px;
+  margin-inline-start: -18px; /* [FA-CUSTOM] was: margin-left — logical property for RTL */
 }
 
 /* for targeting the ordered list items after the 9th item */
 ol > li:nth-child(n + 10).ProseMirror-selectednode:not(.dragging)::after {
-  margin-left: -25px;
+  margin-inline-start: -25px; /* [FA-CUSTOM] was: margin-left — logical property for RTL */
 }
 
 /* for targeting the ordered list items after the 99th item */
 ol > li:nth-child(n + 100).ProseMirror-selectednode:not(.dragging)::after {
-  margin-left: -35px;
+  margin-inline-start: -35px; /* [FA-CUSTOM] was: margin-left — logical property for RTL */
 }
 
 .ProseMirror node-image,

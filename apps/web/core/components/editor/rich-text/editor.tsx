@@ -61,6 +61,7 @@ export const RichTextEditor = forwardRef(function RichTextEditor(
   });
   // use editor mention
   const { fetchMentions } = useEditorMention({
+    // eslint-disable-next-line @typescript-eslint/require-await
     searchEntity: editable ? async (payload) => await props.searchMentionCallback(payload) : async () => ({}),
   });
   // editor config
@@ -79,7 +80,9 @@ export const RichTextEditor = forwardRef(function RichTextEditor(
       flaggedExtensions={richTextEditorExtensions.flagged}
       fileHandler={getEditorFileHandlers({
         projectId,
+        // eslint-disable-next-line @typescript-eslint/require-await
         uploadFile: editable ? props.uploadFile : async () => "",
+        // eslint-disable-next-line @typescript-eslint/require-await
         duplicateFile: editable ? props.duplicateFile : async () => "",
         workspaceId,
         workspaceSlug,
@@ -98,7 +101,7 @@ export const RichTextEditor = forwardRef(function RichTextEditor(
       }}
       extendedEditorProps={{}}
       {...rest}
-      containerClassName={cn("relative pl-3 pb-3", containerClassName)}
+      containerClassName={cn("relative px-3 pb-3", containerClassName)} // [FA-CUSTOM] was: pl-3 — symmetric padding for RTL support
     />
   );
 });

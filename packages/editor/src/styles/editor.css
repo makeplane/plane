@@ -24,7 +24,7 @@
 /* Placeholder only for the first line in an empty editor. */
 .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
-  float: left;
+  float: inline-start; /* [FA-CUSTOM] was: float: left — logical property for RTL */
   color: var(--color-placeholder);
   pointer-events: none;
   height: 0;
@@ -33,7 +33,7 @@
 /* Display Placeholders on every new line. */
 .ProseMirror p.is-empty::before {
   content: attr(data-placeholder);
-  float: left;
+  float: inline-start; /* [FA-CUSTOM] was: float: left — logical property for RTL */
   color: var(--color-placeholder);
   pointer-events: none;
   height: 0;
@@ -48,7 +48,8 @@
 .ProseMirror blockquote {
   font-style: normal;
   font-weight: 400;
-  @apply border-l-[3px] border-strong;
+  /* [FA-CUSTOM] was: @apply border-l-[3px] border-strong — logical property for RTL */
+  border-inline-start: 3px solid var(--border-color-strong);
 }
 
 .ProseMirror blockquote p::before,
@@ -95,13 +96,13 @@ ul[data-type="taskList"] li {
 
 ul[data-type="taskList"] li > label {
   position: absolute;
-  left: -5px;
+  inset-inline-start: -5px; /* [FA-CUSTOM] was: left: -5px — logical property for RTL */
   margin: 0.1rem 0.15rem 0 0;
   user-select: none;
 }
 
 ul[data-type="taskList"] li > div {
-  margin-left: 1.15rem;
+  margin-inline-start: 1.15rem; /* [FA-CUSTOM] was: margin-left: 1.15rem — logical property for RTL */
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"] {
@@ -132,7 +133,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"]:checked:hover {
 
 @media screen and (max-width: 768px) {
   ul[data-type="taskList"] li > label {
-    margin-right: 0.5rem;
+    margin-inline-end: 0.5rem; /* [FA-CUSTOM] was: margin-right — logical property for RTL */
   }
 }
 
@@ -152,7 +153,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   height: 0.8rem;
   position: relative;
   @apply border-md border-subtle-1;
-  margin-right: 0.2rem;
+  margin-inline-end: 0.2rem; /* [FA-CUSTOM] was: margin-right — logical property for RTL */
   margin-top: 0.15rem;
 
   &:active {
@@ -282,9 +283,9 @@ div[data-type="horizontalRule"] {
 
 div:focus .fake-cursor,
 span:focus .fake-cursor {
-  margin-right: -1px;
-  border-left-width: 1.5px;
-  border-left-style: solid;
+  margin-inline-end: -1px; /* [FA-CUSTOM] was: margin-right — logical property for RTL */
+  border-inline-start-width: 1.5px; /* [FA-CUSTOM] was: border-left-width — logical property for RTL */
+  border-inline-start-style: solid; /* [FA-CUSTOM] was: border-left-style — logical property for RTL */
   animation: blink 1s;
   animation-iteration-count: infinite;
   position: relative;
@@ -500,6 +501,28 @@ span[data-name][data-type="emoji"] img {
   max-width: 1.25em;
   max-height: 1.25em;
 }
+
+/* [FA-CUSTOM] RTL text direction support */
+.ProseMirror p[dir="rtl"],
+.ProseMirror h1[dir="rtl"],
+.ProseMirror h2[dir="rtl"],
+.ProseMirror h3[dir="rtl"],
+.ProseMirror h4[dir="rtl"],
+.ProseMirror h5[dir="rtl"],
+.ProseMirror h6[dir="rtl"] {
+  text-align: right;
+}
+
+.ProseMirror p[dir="ltr"],
+.ProseMirror h1[dir="ltr"],
+.ProseMirror h2[dir="ltr"],
+.ProseMirror h3[dir="ltr"],
+.ProseMirror h4[dir="ltr"],
+.ProseMirror h5[dir="ltr"],
+.ProseMirror h6[dir="ltr"] {
+  text-align: left;
+}
+/* end RTL text direction support */
 
 /* touch device styles */
 .touch-select-none {
