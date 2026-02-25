@@ -282,7 +282,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               disabled={isCurrentBlockDragging}
               renderByDefault={false}
             >
-              <p className="truncate cursor-pointer text-body-xs-medium text-primary">{issue.name}</p>
+              <p className="truncate cursor-pointer text-body-xs-medium text-primary"><bdi>{issue.name}</bdi></p> {/* [FA-CUSTOM] bdi isolates bidi text */}
             </Tooltip>
             {isEpic && displayProperties && (
               <WithDisplayPropertiesHOC

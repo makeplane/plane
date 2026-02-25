@@ -1,0 +1,11 @@
+/* [FA-CUSTOM] Yekan Bakh variable font for Farsi/Persian support */
+@font-face {
+  font-family: "Yekan Bakh";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src:
+    url("../app/assets/fonts/yekan-bakh/YekanBakh-VF.woff2") format("woff2"),
+    url("../app/assets/fonts/yekan-bakh/YekanBakh-VF.woff") format("woff"),
+    url("../app/assets/fonts/yekan-bakh/YekanBakh-VF.ttf") format("truetype");
+}

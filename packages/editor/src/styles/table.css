@@ -80,7 +80,7 @@
     }
 
     th {
-      @apply font-medium text-left;
+      @apply font-medium text-start; /* [FA-CUSTOM] was: text-left — logical property for RTL */
     }
 
     tr[background="none"],
@@ -113,7 +113,7 @@
     }
 
     .table-row-drag-marker {
-      left: 0;
+      inset-inline-start: 0; /* [FA-CUSTOM] was: left: 0 — logical property for RTL */
     }
   }
 
@@ -129,7 +129,7 @@
 /* Column resizer */
 .table-wrapper table .column-resize-handle {
   position: absolute;
-  right: -1px;
+  inset-inline-end: -1px; /* [FA-CUSTOM] was: right: -1px — logical property for RTL */
   top: -1px;
   width: 2px;
   height: calc(100% + 2px);

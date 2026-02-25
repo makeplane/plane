@@ -2,7 +2,7 @@
 import React, { useCallback, useMemo } from "react";
 import { Calendar as RMDPCalendar, DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
+import persian_en from "react-date-object/locales/persian_en";
 import type { Matcher } from "@plane/propel/calendar";
 
 type ShamsiCalendarProps = {
@@ -85,7 +85,7 @@ export const ShamsiCalendar: React.FC<ShamsiCalendarProps> = ({
 
   // Helper: create DateObject with Persian calendar from a JS Date
   const toPersianDateObj = useCallback(
-    (d: Date) => new DateObject({ date: d, calendar: persian, locale: persian_fa }),
+    (d: Date) => new DateObject({ date: d, calendar: persian, locale: persian_en }),
     []
   );
 
@@ -105,7 +105,7 @@ export const ShamsiCalendar: React.FC<ShamsiCalendarProps> = ({
     if (mode === "range" && selectedRange?.from) return toPersianDateObj(selectedRange.from);
     if (defaultMonth) return toPersianDateObj(defaultMonth);
     if (selected) return toPersianDateObj(selected);
-    return new DateObject({ calendar: persian, locale: persian_fa });
+    return new DateObject({ calendar: persian, locale: persian_en });
   }, [mode, defaultMonth, selected, selectedRange, toPersianDateObj]);
 
   return (
@@ -114,7 +114,7 @@ export const ShamsiCalendar: React.FC<ShamsiCalendarProps> = ({
         value={value}
         onChange={mode === "range" ? handleRangeChange : handleSingleChange}
         calendar={persian}
-        locale={persian_fa}
+        locale={persian_en}
         currentDate={currentDate}
         minDate={minDate ? toPersianDateObj(minDate) : undefined}
         maxDate={maxDate ? toPersianDateObj(maxDate) : undefined}

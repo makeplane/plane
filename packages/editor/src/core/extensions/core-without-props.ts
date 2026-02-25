@@ -25,6 +25,7 @@ import { CustomQuoteExtension } from "./quote";
 import { CustomStarterKitExtension } from "./starter-kit";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomTextAlignExtension } from "./text-align";
+import { CustomTextDirectionExtension } from "./text-direction"; // [FA-CUSTOM] bidi text direction
 import { WorkItemEmbedExtensionConfig } from "./work-item-embed/extension-config";
 
 export const CoreEditorExtensionsWithoutProps = [
@@ -41,7 +42,7 @@ export const CoreEditorExtensionsWithoutProps = [
   TextStyle,
   TaskList.configure({
     HTMLAttributes: {
-      class: "not-prose pl-2 space-y-2",
+      class: "not-prose ps-2 space-y-2", // [FA-CUSTOM] ps-2 (logical) instead of pl-2 for RTL
     },
   }),
   TaskItem.configure({
@@ -58,6 +59,7 @@ export const CoreEditorExtensionsWithoutProps = [
   TableRow,
   CustomMentionExtensionConfig,
   CustomTextAlignExtension,
+  CustomTextDirectionExtension, // [FA-CUSTOM] bidi text direction
   CustomCalloutExtensionConfig,
   CustomColorExtension,
   ...CoreEditorAdditionalExtensionsWithoutProps,

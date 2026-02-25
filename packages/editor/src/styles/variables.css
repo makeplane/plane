@@ -113,10 +113,10 @@
   /* end font sizes and line heights */
 
   /* font styles */
-  --font-style: "Inter Variable", sans-serif;
+  --font-style: "Yekan Bakh", "Inter Variable", sans-serif; /* [FA-CUSTOM] Yekan Bakh primary */
 
   &.sans-serif {
-    --font-style: "Inter Variable", sans-serif;
+    --font-style: "Yekan Bakh", "Inter Variable", sans-serif; /* [FA-CUSTOM] */
   }
   &.serif {
     --font-style: serif;

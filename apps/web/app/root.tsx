@@ -33,6 +33,8 @@ import "@fontsource-variable/inter";
 import interVariableWoff2 from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 import "@fontsource/material-symbols-rounded";
 import "@fontsource/ibm-plex-mono";
+// [FA-CUSTOM] Yekan Bakh font preload
+import yekanBakhWoff2 from "@/app/assets/fonts/yekan-bakh/YekanBakh-VF.woff2?url";
 
 const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
 
@@ -49,6 +51,14 @@ export const links: LinksFunction = () => [
   {
     rel: "preload",
     href: interVariableWoff2,
+    as: "font",
+    type: "font/woff2",
+    crossOrigin: "anonymous",
+  },
+  // [FA-CUSTOM] Preload Yekan Bakh font
+  {
+    rel: "preload",
+    href: yekanBakhWoff2,
     as: "font",
     type: "font/woff2",
     crossOrigin: "anonymous",

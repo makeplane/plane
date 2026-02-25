@@ -359,10 +359,10 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
                   <div className="w-full overflow-hidden">
                     <Tooltip tooltipContent={issueDetail.name} isMobile={isMobile}>
                       <div
-                        className="h-full w-full cursor-pointer truncate pr-4 text-left text-13 text-primary focus:outline-none"
+                        className="h-full w-full cursor-pointer truncate pr-4 text-start text-13 text-primary focus:outline-none" // [FA-CUSTOM] text-start instead of text-left for RTL
                         tabIndex={-1}
                       >
-                        {issueDetail.name}
+                        <bdi>{issueDetail.name}</bdi> {/* [FA-CUSTOM] bdi isolates bidi text */}
                       </div>
                     </Tooltip>
                   </div>

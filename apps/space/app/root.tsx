@@ -24,6 +24,8 @@ import "@fontsource-variable/inter";
 import interVariableWoff2 from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 import "@fontsource/material-symbols-rounded";
 import "@fontsource/ibm-plex-mono";
+// [FA-CUSTOM] Yekan Bakh font preload
+import yekanBakhWoff2 from "@/app/assets/fonts/yekan-bakh/YekanBakh-VF.woff2?url";
 
 const APP_TITLE = "Plane Publish | Make your Plane boards public with one-click";
 const APP_DESCRIPTION = "Plane Publish is a customer feedback management tool built on top of plane.so";
@@ -38,6 +40,14 @@ export const links: Route.LinksFunction = () => [
   {
     rel: "preload",
     href: interVariableWoff2,
+    as: "font",
+    type: "font/woff2",
+    crossOrigin: "anonymous",
+  },
+  // [FA-CUSTOM] Preload Yekan Bakh font
+  {
+    rel: "preload",
+    href: yekanBakhWoff2,
     as: "font",
     type: "font/woff2",
     crossOrigin: "anonymous",

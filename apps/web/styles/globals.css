@@ -1,4 +1,5 @@
 @import "@plane/tailwind-config/index.css";
+@import "./fonts.css"; /* [FA-CUSTOM] Yekan Bakh font */
 @import "@plane/editor/styles";
 @import "@plane/propel/styles/react-day-picker.css";
 @import "../core/components/fa/shamsi-calendar.css"; /* [FA-CUSTOM] Shamsi calendar styles */
