@@ -5,7 +5,7 @@
   "license": "AGPL-3.0",
   "type": "module",
   "scripts": {
-    "dev": "tsdown --watch",
+    "dev": "tsdown --watch --no-clean",
     "build": "tsdown",
     "check:lint": "eslint . --cache --cache-location node_modules/.cache/eslint/ --max-warnings=1306",
     "check:types": "tsc --noEmit",
