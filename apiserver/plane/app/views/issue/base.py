@@ -1,9 +1,6 @@
 # Python imports
 import json
-import logging
 from collections import defaultdict
-
-logger = logging.getLogger(__name__)
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -463,11 +460,6 @@ class IssueViewSet(BaseViewSet):
         has_m2m_group = group_by and group_by in self.FIELD_MAPPER
         has_m2m_subgroup = sub_group_by and sub_group_by in self.FIELD_MAPPER
 
-        logger.debug(
-            "[IssueViewSet] Phase 1 SQL (project=%s, group_by=%s, sub_group_by=%s):\n%s",
-            project_id, group_by, sub_group_by, issue_queryset.query,
-        )
-
         def on_results_fn(issues):
             # Phase 1: extract IDs (+ raw M2M group-by keys if needed).
             phase1_fields = ["id"]
@@ -484,10 +476,6 @@ class IssueViewSet(BaseViewSet):
 
             # Phase 2: full details + counts on the small ID set.
             detail_qs_values = self._build_detail_queryset(page_ids).values(*self.DETAIL_FIELDS)
-            logger.debug(
-                "[IssueViewSet] Phase 2 SQL (%d IDs):\n%s",
-                len(page_ids), detail_qs_values.query,
-            )
             results = list(detail_qs_values)
             id_to_result = {r["id"]: r for r in results}
 
