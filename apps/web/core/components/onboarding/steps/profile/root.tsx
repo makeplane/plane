@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -8,7 +14,7 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
-import { cn, getFileURL, getPasswordStrength } from "@plane/utils";
+import { cn, getFileURL, getPasswordStrength, validatePersonName } from "@plane/utils";
 // components
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // hooks
@@ -202,9 +208,10 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
             name="first_name"
             rules={{
               required: "Name is required",
+              validate: validatePersonName,
               maxLength: {
-                value: 24,
-                message: "Name must be within 24 characters.",
+                value: 50,
+                message: "Name must be within 50 characters.",
               },
             }}
             render={({ field: { value, onChange, ref } }) => (

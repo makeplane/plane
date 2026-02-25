@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -98,7 +104,7 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
                 hasError={Boolean(errors.email)}
                 placeholder={t("auth.common.email.placeholder")}
                 className="h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
-                autoComplete="on"
+                autoComplete="off"
                 disabled={resendTimerCode > 0}
               />
             )}

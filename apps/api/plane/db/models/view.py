@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Django imports
 from django.conf import settings
 from django.db import models
@@ -64,6 +68,7 @@ class IssueView(WorkspaceBaseModel):
     logo_props = models.JSONField(default=dict)
     owned_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="views")
     is_locked = models.BooleanField(default=False)
+    archived_at = models.DateTimeField(null=True)
 
     class Meta:
         verbose_name = "Issue View"

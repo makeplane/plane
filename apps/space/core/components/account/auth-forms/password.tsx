@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
@@ -153,7 +159,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
-            autoComplete="on"
+            autoComplete="off"
             autoFocus
           />
           {showPassword?.password ? (
@@ -186,6 +192,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
+              autoComplete="off"
             />
             {showPassword?.retypePassword ? (
               <EyeOff

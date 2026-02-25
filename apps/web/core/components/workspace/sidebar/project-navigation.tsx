@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -37,7 +43,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
   const { workItem: workItemIdentifierFromRoute } = useParams();
   // store hooks
   const { t } = useTranslation();
-  const { toggleSidebar } = useAppTheme();
+  const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar, toggleSidebar } = useAppTheme();
   const { getPartialProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
   const {
@@ -55,6 +61,10 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
   const handleProjectClick = () => {
     if (window.innerWidth < 768) {
       toggleSidebar();
+    }
+    // close the extended sidebar if it is open
+    if (isExtendedProjectSidebarOpened) {
+      toggleExtendedProjectSidebar(false);
     }
   };
 
@@ -171,12 +181,19 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         const hasAccess = allowPermissions(item.access, EUserPermissionsLevel.PROJECT, workspaceSlug, project.id);
         if (!hasAccess) return null;
 
+        const shouldShowCount = item.key === "intake" && (project.intake_count ?? 0) > 0;
+
         return (
           <Link key={item.key} href={item.href} onClick={handleProjectClick}>
             <SidebarNavItem isActive={!!isActive(item)}>
-              <div className="flex items-center gap-1.5 py-[1px]">
-                <item.icon className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`} />
-                <span className="text-11 font-medium">{t(item.i18n_key)}</span>
+              <div className="flex items-center justify-between gap-1.5 py-[1px] w-full">
+                <div className="flex items-center gap-1.5">
+                  <item.icon
+                    className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
+                  />
+                  <span className="text-11 font-medium">{t(item.i18n_key)}</span>
+                </div>
+                {shouldShowCount && <span className="text-11 font-medium text-tertiary">{project.intake_count}</span>}
               </div>
             </SidebarNavItem>
           </Link>

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { uniq, update, isEmpty, omit, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -467,6 +473,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
             ["inboxIssuePaginationInfo", "total_results"],
             (this.inboxIssuePaginationInfo?.total_results || 0) + 1
           );
+          // Increment intake_count if the new issue is PENDING
+          if (inboxIssueResponse.status === EInboxIssueStatus.PENDING) {
+            const currentCount = this.store.projectRoot.project.projectMap[projectId]?.intake_count ?? 0;
+            set(this.store.projectRoot.project.projectMap, [projectId, "intake_count"], currentCount + 1);
+          }
         });
       return inboxIssueResponse;
     } catch (error) {
@@ -483,6 +494,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
    */
   deleteInboxIssue = async (workspaceSlug: string, projectId: string, inboxIssueId: string) => {
     const currentIssue = this.inboxIssues?.[inboxIssueId];
+    const wasPending = currentIssue?.status === EInboxIssueStatus.PENDING;
     try {
       if (!currentIssue) return;
       await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId).then(() => {
@@ -498,6 +510,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
             ["inboxIssueIds"],
             this.inboxIssueIds.filter((id) => id !== inboxIssueId)
           );
+          // Decrement intake_count if the deleted issue was PENDING
+          if (wasPending) {
+            const currentCount = this.store.projectRoot.project.projectMap[projectId]?.intake_count ?? 0;
+            set(this.store.projectRoot.project.projectMap, [projectId, "intake_count"], Math.max(0, currentCount - 1));
+          }
         });
       });
     } catch (error) {
