@@ -34,6 +34,7 @@ const Input = React.forwardRef(function Input(props: InputProps, ref: React.Forw
       ref={ref}
       type={type}
       name={name}
+      dir="auto" // [FA-CUSTOM] Auto bidi text direction
       className={cn(
         "block rounded-md bg-layer-2 text-13 placeholder-tertiary border-subtle-1 focus:outline-none",
         {

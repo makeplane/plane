@@ -42,6 +42,7 @@ import { CustomImageExtension } from "./custom-image/extension";
 import { EmojiExtension } from "./emoji/extension";
 import { CustomPlaceholderExtension } from "./placeholder";
 import { CustomStarterKitExtension } from "./starter-kit";
+import { CustomTextDirectionExtension } from "./text-direction"; // [FA-CUSTOM] bidi text direction
 import { UniqueID } from "./unique-id/extension";
 
 type TArguments = Pick<
@@ -94,7 +95,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     TextStyle,
     TaskList.configure({
       HTMLAttributes: {
-        class: "not-prose pl-2 space-y-2",
+        class: "not-prose ps-2 space-y-2", // [FA-CUSTOM] ps-2 (logical) instead of pl-2 for RTL
       },
     }),
     TaskItem.configure({
@@ -120,6 +121,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CharacterCount,
     CustomColorExtension,
     CustomTextAlignExtension,
+    CustomTextDirectionExtension, // [FA-CUSTOM] bidi text direction
     CustomCalloutExtension,
     UtilityExtension({
       disabledExtensions,

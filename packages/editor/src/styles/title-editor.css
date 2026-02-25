@@ -34,7 +34,7 @@
 /* Placeholder */
 .page-title-editor .ProseMirror h1.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
-  float: left;
+  float: inline-start; /* [FA-CUSTOM] was: float: left — logical property for RTL */
   color: var(--color-placeholder);
   pointer-events: none;
   height: 0;
@@ -42,7 +42,7 @@
 
 .page-title-editor .ProseMirror h1.is-empty::before {
   content: attr(data-placeholder);
-  float: left;
+  float: inline-start; /* [FA-CUSTOM] was: float: left — logical property for RTL */
   color: var(--color-placeholder);
   pointer-events: none;
   height: 0;

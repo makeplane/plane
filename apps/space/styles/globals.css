@@ -1,4 +1,5 @@
 @import "@plane/tailwind-config/index.css";
+@import "./fonts.css"; /* [FA-CUSTOM] Yekan Bakh font */
 @import "@plane/editor/styles";
 @import "@plane/propel/styles/react-day-picker.css";
 @plugin "@tailwindcss/typography";

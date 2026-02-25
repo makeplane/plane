@@ -1037,6 +1037,9 @@ importers:
       tiptap-markdown:
         specifier: ^0.8.10
         version: 0.8.10(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))
+      tiptap-text-direction:
+        specifier: ^0.4.0
+        version: 0.4.0(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1)
       uuid:
         specifier: 'catalog:'
         version: 13.0.0
@@ -9283,6 +9286,12 @@ packages:
     resolution: {integrity: sha512-iDVkR2BjAqkTDtFX0h94yVvE2AihCXlF0Q7RIXSJPRSR5I0PA1TMuAg6FHFpmqTn4tPxJ0by0CK7PUMlnFLGEQ==}
     peerDependencies:
       '@tiptap/core': ^2.0.3
+
+  tiptap-text-direction@0.4.0:
+    resolution: {integrity: sha512-Hm3s8CSdGqmTwF6/ypJ7K95OaIg24+3easuSyzGODDkANfLz1jWdpnlxnhpnKtQB/KL3pYLQipDdzJp09gyErg==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0 || ^3.0.0
+      '@tiptap/pm': ^2.0.0 || ^3.0.0
 
   tldts-core@6.1.86:
     resolution: {integrity: sha512-Je6p7pkk+KMzMv2XXKmAE3McmolOQFdxkKw0R8EYNr7sELW46JqnNeTX8ybPiQgvg1ymCoF8LXs5fzFaZvJPTA==}
@@ -18948,6 +18957,11 @@ snapshots:
       markdown-it: 14.1.0
       markdown-it-task-lists: 2.1.1
       prosemirror-markdown: 1.13.2
+
+  tiptap-text-direction@0.4.0(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1):
+    dependencies:
+      '@tiptap/core': 2.26.3(@tiptap/pm@2.26.1)
+      '@tiptap/pm': 2.26.1
 
   tldts-core@6.1.86:
     optional: true

@@ -4,11 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 // plane types
 import { useTranslation } from "@plane/i18n";
 import type { IUser } from "@plane/types";
-// plane ui
+// [FA-CUSTOM] Calendar-aware date formatting (English text, Jalali calendar)
+import { getCalendarSystem } from "@plane/utils";
 // hooks
 import { useCurrentTime } from "@/hooks/use-current-time";
 
@@ -28,21 +28,11 @@ export function UserGreetingsView(props: IUserGreetingsView) {
     hour: "numeric",
   }).format(currentTime);
 
-  const date = new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-  }).format(currentTime);
-
-  const weekDay = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-  }).format(currentTime);
-
-  const timeString = new Intl.DateTimeFormat("en-US", {
-    timeZone: user?.user_timezone,
-    hour12: false, // Use 24-hour format
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(currentTime);
+  // [FA-CUSTOM] Use Intl with persian calendar for Jalali — always English text
+  const dateLocale = getCalendarSystem() === "jalali" ? "en-US-u-ca-persian" : "en-US";
+  const date = new Intl.DateTimeFormat(dateLocale, { month: "short", day: "numeric" }).format(currentTime);
+  const weekDay = new Intl.DateTimeFormat(dateLocale, { weekday: "long" }).format(currentTime);
+  const timeString = new Intl.DateTimeFormat("en-US", { hour: "2-digit", minute: "2-digit", hour12: false }).format(currentTime);
 
   const greeting = parseInt(hour, 10) < 12 ? "morning" : parseInt(hour, 10) < 18 ? "afternoon" : "evening";
 

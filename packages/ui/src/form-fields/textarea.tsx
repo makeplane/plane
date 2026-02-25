@@ -42,6 +42,7 @@ const TextArea = React.forwardRef(function TextArea(
       name={name}
       ref={textAreaRef}
       value={value}
+      dir="auto" // [FA-CUSTOM] Auto bidi text direction
       className={cn(
         "no-scrollbar w-full bg-layer-2 placeholder-(--text-color-placeholder) outline-none",
         {
