@@ -39,7 +39,8 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
 
   const workspaceRole = workspaceSlug ? getWorkspaceRoleByWorkspaceSlug(workspaceSlug) : undefined;
   const roleNumber = workspaceRole ? Number(workspaceRole) : undefined;
-  const canUserCreateWorkItem = canCreateIssue && roleNumber !== EUserPermissions.SUPERVISOR && roleNumber !== EUserPermissions.EXECUTOR;
+  const canUserCreateWorkItem =
+    canCreateIssue && roleNumber !== EUserPermissions.SUPERVISOR && roleNumber !== EUserPermissions.EXECUTOR;
 
   const disabled = joinedProjectIds.length === 0 || !canUserCreateWorkItem;
   const workspaceDraftIssue = workspaceSlug ? (storedValue?.[workspaceSlug] ?? undefined) : undefined;
@@ -75,21 +76,23 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
         fetchIssueDetails={false}
         isDraft
       />
-      <div className="flex items-center justify-between gap-2 cursor-pointer">
-        <SidebarAddButton
-          label={
-            <>
-              <AddWorkItemIcon className="size-4" />
-              <span className="text-13 font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
-            </>
-          }
-          onClick={() => toggleCreateIssueModal(true)}
-          disabled={disabled}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          data-ph-element={SIDEBAR_TRACKER_ELEMENTS.CREATE_WORK_ITEM_BUTTON}
-        />
-      </div>
+      {canUserCreateWorkItem && (
+        <div className="flex items-center justify-between gap-2 cursor-pointer">
+          <SidebarAddButton
+            label={
+              <>
+                <AddWorkItemIcon className="size-4" />
+                <span className="text-13 font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
+              </>
+            }
+            onClick={() => toggleCreateIssueModal(true)}
+            disabled={disabled}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            data-ph-element={SIDEBAR_TRACKER_ELEMENTS.CREATE_WORK_ITEM_BUTTON}
+          />
+        </div>
+      )}
     </>
   );
 });
