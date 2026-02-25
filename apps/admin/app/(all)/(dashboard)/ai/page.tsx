@@ -22,6 +22,7 @@ import { useInstance } from "@/hooks/store";
 import type { Route } from "./+types/page";
 // local
 import { InstanceAIForm } from "./form";
+import { TriangleAlert } from "lucide-react";
 
 const InstanceAIPage = observer(function InstanceAIPage(_props: Route.ComponentProps) {
   // store
@@ -35,6 +36,12 @@ const InstanceAIPage = observer(function InstanceAIPage(_props: Route.ComponentP
         title: "AI features for all your workspaces",
         description: "Configure your AI API credentials so Plane AI features are turned on for all your workspaces.",
       }}
+      banner={
+        <div className="relative inline-flex items-center gap-1.5 rounded-sm border border-warning-subtle bg-warning-subtle px-4 py-2 text-caption-sm-regular text-warning-primary">
+          <TriangleAlert className="size-4" />
+          <div>These features will be deprecated in the next release, please configure Plane AI.</div>
+        </div>
+      }
     >
       {formattedConfig ? (
         <InstanceAIForm config={formattedConfig} />

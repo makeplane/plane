@@ -56,7 +56,12 @@ export const AdminSidebarMenu = observer(function AdminSidebarMenu() {
                   {<item.Icon className="h-4 w-4 flex-shrink-0" />}
                   {!isSidebarCollapsed && (
                     <div className="w-full ">
-                      <div className={cn(`text-body-xs-medium transition-colors`)}>{item.name}</div>
+                      <div className={cn(`text-body-xs-medium transition-colors flex items-center gap-1`)}>
+                        <span> {item.name}</span>
+                        {item.deprecated && (
+                          <span className="text-caption-xs-regular text-warning-primary">(deprecated)</span>
+                        )}
+                      </div>
                       <div className={cn(`text-caption-sm-regular transition-colors`)}>{item.description}</div>
                     </div>
                   )}
